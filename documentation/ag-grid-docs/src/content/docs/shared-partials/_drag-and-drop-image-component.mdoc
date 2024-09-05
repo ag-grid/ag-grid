@@ -1,0 +1,27 @@
+## Custom Drag And Drop Image
+
+The drag and drop image can be customised via the grid property `dragAndDropImageComponent`.
+
+{% if isFramework("javascript", "angular") %}
+Implement this interface to provide a custom drag and drop image component when dragging parts of the grid.
+{% /if %}
+
+{% if isFramework("vue") %}
+Any valid Vue component can be a drag and drop image component, however it is also possible to implement the following optional methods:
+{% /if %}
+
+{% if isFramework("angular") %}
+{% interfaceDocumentation interfaceName="IDragAndDropImageAngularComp" config={"asCode":true } /%}
+{% /if %}
+
+{% if isFramework("javascript") %}
+{% interfaceDocumentation interfaceName="IDragAndDropImageComp" config={"asCode":true } /%}
+{% /if %}
+
+{% if isFramework("vue") %}
+{% interfaceDocumentation interfaceName="IDragAndDropImage" config={"asCode":true } /%}
+{% /if %}
+
+
+
+{% gridExampleRunner title="Custom Drag and Drop Image" name="custom-drag-drop-image" /%}

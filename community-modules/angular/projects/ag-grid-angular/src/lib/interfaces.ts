@@ -1,4 +1,4 @@
-import {
+import type {
     ICellEditor,
     ICellEditorParams,
     ICellEditorRendererParams,
@@ -6,6 +6,8 @@ import {
     ICellRendererParams,
     IDate,
     IDateParams,
+    IDragAndDropImage,
+    IDragAndDropImageParams,
     IFilter,
     IFilterParams,
     IFloatingFilter,
@@ -42,6 +44,10 @@ export interface IFloatingFilterAngularComp<P = any>
         IFloatingFilter {}
 
 export interface IDateAngularComp extends AgFrameworkComponent<IDateParams>, IDate {}
+
+export interface IDragAndDropImageAngularComp
+    extends AgFrameworkComponent<IDragAndDropImageParams>,
+        IDragAndDropImage {}
 
 export interface IFilterAngularComp extends AgFrameworkComponent<IFilterParams>, IFilter {}
 

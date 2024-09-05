@@ -11,14 +11,17 @@ export interface IDragAndDropImageParams<TData = any, TContext = any> extends Ag
     dragSource: DragSource;
 }
 
+export interface IDragAndDropImage {
+    setIcon(iconName: DragAndDropIcon | null, shake: boolean): void;
+    setLabel(label: string): void;
+}
+
 export interface IDragAndDropImageComp<
     TData = any,
     TContext = any,
     TParams extends Readonly<IDragAndDropImageParams<TData, TContext>> = IDragAndDropImageParams<TData, TContext>,
-> extends IComponent<TParams> {
-    setIcon(iconName: DragAndDropIcon | null, shake: boolean): void;
-    setLabel(label: string): void;
-}
+> extends IComponent<TParams>,
+        IDragAndDropImage {}
 
 export class DragAndDropImageComp extends Component implements IDragAndDropImageComp<any, any> {
     private dragSource: DragSource | null = null;
