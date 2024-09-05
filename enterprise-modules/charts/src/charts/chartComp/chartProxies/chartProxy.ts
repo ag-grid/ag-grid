@@ -119,7 +119,7 @@ export abstract class ChartProxy<
             ...updatedOptions,
             series: this.addSeriesListeners(updatedOptions.series as AgChartSeriesOptions[]),
             legend: {
-                toggleSeries: true,
+                toggleSeries: false,
                 listeners: {
                     legendItemClick: (event: any) => {
                         this.dispatchCrossFilterEvent(this.mapLegendEventToSeriesEvent(event));
