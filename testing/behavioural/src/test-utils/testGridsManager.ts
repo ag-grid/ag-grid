@@ -14,14 +14,19 @@ const gridApiHtmlElementsMap = new WeakMap<GridApi, HTMLElement>();
  */
 export class TestGridsManager {
     public static defaultGridOptions: GridOptions = {
-        // We select "print" as the default layout for testing.
-        // This is because jsdom does not have height and width, as
-        // it does not have a layout engine, and we want to check the DOM for all the rows.
-        // Without it not all the rows are rendered.
-        domLayout: 'print',
-
         // We disable animations by default in tests
         animateRows: false,
+
+        // jsdom does not have a layout engine, so, elements don't have size (width/height are 0 and not computed)
+        // We need to disable virtualization by default for tests
+        suppressRowVirtualisation: true,
+
+        // jsdom does not have a layout engine, so, elements don't have size (width/height are 0 and not computed)
+        // We need to disable virtualization by default for tests
+        suppressColumnVirtualisation: true,
+
+        // Ensure consistent order of elements in the DOM by default
+        ensureDomOrder: true,
     };
 
     private gridsMap = new Map<HTMLElement, GridApi>();

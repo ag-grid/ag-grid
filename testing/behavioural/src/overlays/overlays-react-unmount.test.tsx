@@ -7,6 +7,8 @@ import '@testing-library/jest-dom';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 
+import { asyncSetTimeout } from '../test-utils';
+
 describe('ag-grid custom overlay react unmount', () => {
     const columnDefs: ColDef[] = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
 
@@ -61,7 +63,7 @@ describe('ag-grid custom overlay react unmount', () => {
 
             await waitFor(() => expect(screen.queryByText('Custom Overlay')).not.toBeInTheDocument());
 
-            await new Promise((resolve) => setTimeout(resolve)); // unmount will be called on the next tick
+            await asyncSetTimeout(1); // unmount will be called on the next tick
 
             expect(mounts).toBe(1);
             expect(unmounts).toBe(1);
@@ -90,7 +92,7 @@ describe('ag-grid custom overlay react unmount', () => {
 
             await waitFor(() => expect(screen.queryByText('Custom Overlay')).not.toBeInTheDocument());
 
-            await new Promise((resolve) => setTimeout(resolve)); // unmount will be called on the next tick
+            await asyncSetTimeout(1); // unmount will be called on the next tick
 
             expect(mounts).toBe(1);
             expect(unmounts).toBe(1);
@@ -112,7 +114,7 @@ describe('ag-grid custom overlay react unmount', () => {
 
             await waitFor(() => expect(screen.queryByText('Custom Overlay')).not.toBeInTheDocument());
 
-            await new Promise((resolve) => setTimeout(resolve)); // unmount will be called on the next tick
+            await asyncSetTimeout(1); // unmount will be called on the next tick
 
             expect(mounts).toBe(1);
             expect(unmounts).toBe(1);
@@ -169,7 +171,12 @@ describe('ag-grid custom overlay react unmount', () => {
 
         await waitFor(() => expect(screen.queryByText('Custom Overlay')).not.toBeInTheDocument());
 
-        await new Promise((resolve) => setTimeout(resolve)); // unmount will be called on the next tick
+        for (let retry = 0; retry < 100; ++retry) {
+            await asyncSetTimeout(1);
+            if (mounts - unmounts === 0) {
+                break;
+            }
+        }
 
         expect(mounts - unmounts).toBe(0);
 
