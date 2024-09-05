@@ -10,9 +10,10 @@ import Showcase from '../components/framework-landing-pages/react/sections/showc
 import InstallText from '@components/framework-landing-pages/InstallText';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Finance } from 'src/components/demos/examples/finance';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+
 const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
 const { data: examples } = await getEntry('react-landing-page', 'examples');
-import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 ---
 

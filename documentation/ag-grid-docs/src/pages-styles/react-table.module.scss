@@ -483,6 +483,11 @@ div.divider:nth-of-type(4n) {
     object-position: 0 0;
     border-right: 1px solid var(--color-gray-200);
     border-radius: var(--radius-md) var(--radius-md) 0 0;
+
+    #{$selector-darkmode} & {
+        filter: brightness(0.9);
+        mix-blend-mode: lighten;
+    }
 }
 
 .examplesSectioncardDetails {
