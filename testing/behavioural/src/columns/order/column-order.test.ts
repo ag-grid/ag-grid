@@ -1,19 +1,15 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef, ColGroupDef, GridApi } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import type { ColDef, ColGroupDef } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { createMyGrid, getColumnOrder, getColumnOrderFromState } from '../column-test-utils';
+import { TestGridsManager } from '../../test-utils';
+import { getColumnOrder, getColumnOrderFromState } from '../column-test-utils';
 
 describe('Column Order', () => {
-    beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-    });
-
-    let gridApi: GridApi;
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
     afterEach(() => {
-        gridApi.destroy();
+        gridsManager.reset();
     });
 
     test('basic columns ordered as provided', () => {
@@ -27,7 +23,7 @@ describe('Column Order', () => {
             { colId: 'a' },
         ];
 
-        gridApi = createMyGrid({ columnDefs });
+        const gridApi = gridsManager.createGrid('myGrid', { columnDefs });
 
         expect(getColumnOrderFromState(gridApi)).toEqual(['g', 'f', 'e', 'd', 'c', 'b', 'a']);
         expect(getColumnOrder(gridApi, 'all')).toEqual(['g', 'f', 'e', 'd', 'c', 'b', 'a']);
@@ -55,7 +51,7 @@ describe('Column Order', () => {
             { colId: 'a' },
         ];
 
-        gridApi = createMyGrid({ columnDefs });
+        const gridApi = gridsManager.createGrid('myGrid', { columnDefs });
 
         expect(getColumnOrderFromState(gridApi)).toEqual(['g', 'f', 'e', 'd', 'c', 'b', 'a']);
         expect(getColumnOrder(gridApi, 'all')).toEqual(['g', 'f', 'e', 'd', 'c', 'b', 'a']);
@@ -75,7 +71,7 @@ describe('Column Order', () => {
             { colId: 'a' },
         ];
 
-        gridApi = createMyGrid({ columnDefs });
+        const gridApi = gridsManager.createGrid('myGrid', { columnDefs });
 
         expect(getColumnOrderFromState(gridApi)).toEqual(['g', 'f', 'e', 'd', 'c', 'b', 'a']);
         expect(getColumnOrder(gridApi, 'all')).toEqual(['g', 'f', 'e', 'd', 'c', 'b', 'a']);
@@ -95,7 +91,7 @@ describe('Column Order', () => {
                 test('preserves initial column order, inserting new cols at tail', () => {
                     const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'g' }, { colId: 'f' }, { colId: 'e' }];
 
-                    gridApi = createMyGrid({ columnDefs, maintainColumnOrder });
+                    const gridApi = gridsManager.createGrid('myGrid', { columnDefs, maintainColumnOrder });
 
                     const columnDefsNew: (ColDef | ColGroupDef)[] = [
                         { colId: 'e' },
@@ -121,7 +117,7 @@ describe('Column Order', () => {
                         { colId: 'f' },
                     ];
 
-                    gridApi = createMyGrid({ columnDefs, maintainColumnOrder });
+                    const gridApi = gridsManager.createGrid('myGrid', { columnDefs, maintainColumnOrder });
                     expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'b', 'c', 'd', 'e', 'f']);
 
                     const columnDefsNew: (ColDef | ColGroupDef)[] = [
@@ -152,7 +148,7 @@ describe('Column Order', () => {
                         { colId: 'f' },
                     ];
 
-                    gridApi = createMyGrid({ columnDefs, maintainColumnOrder });
+                    const gridApi = gridsManager.createGrid('myGrid', { columnDefs, maintainColumnOrder });
                     expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'b', 'c', 'd', 'e', 'f']);
 
                     gridApi.moveColumns(['b'], 3);
@@ -176,7 +172,7 @@ describe('Column Order', () => {
                 test('inserts new auto columns at head', () => {
                     const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'g' }, { colId: 'f' }, { colId: 'e' }];
 
-                    gridApi = createMyGrid({ columnDefs, maintainColumnOrder });
+                    const gridApi = gridsManager.createGrid('myGrid', { columnDefs, maintainColumnOrder });
 
                     const columnDefsNew: (ColDef | ColGroupDef)[] = [
                         { colId: 'e' },
@@ -193,7 +189,7 @@ describe('Column Order', () => {
                 test('preserves user order changes', () => {
                     const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'g' }, { colId: 'f' }, { colId: 'e' }];
 
-                    gridApi = createMyGrid({ columnDefs, maintainColumnOrder });
+                    const gridApi = gridsManager.createGrid('myGrid', { columnDefs, maintainColumnOrder });
                     expect(getColumnOrder(gridApi, 'center')).toEqual(['g', 'f', 'e']);
 
                     gridApi.moveColumns(['e', 'f'], 0);
@@ -225,7 +221,7 @@ describe('Column Order', () => {
             { colId: 'g' },
         ];
 
-        gridApi = createMyGrid({ columnDefs });
+        const gridApi = gridsManager.createGrid('myGrid', { columnDefs });
 
         expect(getColumnOrderFromState(gridApi)).toEqual(['a', 'b', 'c', 'd', 'e', 'f', 'g']);
         expect(getColumnOrder(gridApi, 'all')).toEqual(['a', 'c', 'd', 'e', 'f', 'g']);

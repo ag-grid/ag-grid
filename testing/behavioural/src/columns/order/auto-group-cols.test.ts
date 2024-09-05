@@ -1,25 +1,20 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef, ColGroupDef, GridApi, RowGroupingDisplayType } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import type { ColDef, ColGroupDef, RowGroupingDisplayType } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
+import { TestGridsManager } from '../../test-utils';
 import {
     GROUP_AUTO_COLUMN_ID,
-    createMyGrid,
     getAutoGroupColumnIds,
     getColumnOrder,
     getColumnOrderFromState,
 } from '../column-test-utils';
 
 describe('Auto Group Column Order', () => {
-    beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
-    });
-
-    let gridApi: GridApi;
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
 
     afterEach(() => {
-        gridApi.destroy();
+        gridsManager.reset();
     });
 
     describe('groupDisplayType=groupRows', () => {
@@ -34,7 +29,7 @@ describe('Auto Group Column Order', () => {
                 { colId: 'g', aggFunc: 'sum' },
             ];
 
-            gridApi = createMyGrid({ columnDefs, groupDisplayType: 'groupRows' });
+            const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType: 'groupRows' });
 
             const expected = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
             expect(getColumnOrderFromState(gridApi)).toEqual(expected);
@@ -49,7 +44,7 @@ describe('Auto Group Column Order', () => {
             test('omits row group column when no grouping', () => {
                 const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a' }, { colId: 'b' }];
 
-                gridApi = createMyGrid({ columnDefs, groupDisplayType });
+                const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
 
                 const expected = ['a', 'b'];
                 expect(getColumnOrderFromState(gridApi)).toEqual(expected);
@@ -64,7 +59,7 @@ describe('Auto Group Column Order', () => {
                     { colId: 'c', rowGroup: true },
                 ];
 
-                gridApi = createMyGrid({ columnDefs, groupDisplayType, enableRtl });
+                const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType, enableRtl });
 
                 const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
                 const expected = [...groupColIds, 'a', 'b', 'c'];
@@ -82,7 +77,7 @@ describe('Auto Group Column Order', () => {
                         { colId: 'c', rowGroupIndex: 0 },
                     ];
 
-                    gridApi = createMyGrid({ columnDefs, groupDisplayType, enableRtl });
+                    const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType, enableRtl });
 
                     let groupColIds = [GROUP_AUTO_COLUMN_ID];
                     if (groupDisplayType === 'multipleColumns') {
@@ -106,7 +101,7 @@ describe('Auto Group Column Order', () => {
                     { colId: 'c', lockPosition: 'left' },
                 ];
 
-                gridApi = createMyGrid({ columnDefs, groupDisplayType });
+                const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
 
                 const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
                 const expected = ['c', ...groupColIds, 'b', 'a'];
@@ -125,7 +120,7 @@ describe('Auto Group Column Order', () => {
                         { colId: 'c' },
                     ];
 
-                    gridApi = createMyGrid({ columnDefs, defaultColDef, groupDisplayType });
+                    const gridApi = gridsManager.createGrid('myGrid', { columnDefs, defaultColDef, groupDisplayType });
 
                     const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
                     const expected = [...groupColIds, 'a', 'b', 'c'];
@@ -142,7 +137,11 @@ describe('Auto Group Column Order', () => {
                         { colId: 'c', rowGroup: true },
                     ];
 
-                    gridApi = createMyGrid({ columnDefs, groupDisplayType, autoGroupColumnDef });
+                    const gridApi = gridsManager.createGrid('myGrid', {
+                        columnDefs,
+                        groupDisplayType,
+                        autoGroupColumnDef,
+                    });
 
                     const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
                     expect(getColumnOrder(gridApi, 'center')).toEqual(['a', 'b', 'c']);
@@ -157,7 +156,11 @@ describe('Auto Group Column Order', () => {
                         { colId: 'c', pinned, rowGroup: true },
                     ];
 
-                    gridApi = createMyGrid({ columnDefs, groupDisplayType, autoGroupColumnDef });
+                    const gridApi = gridsManager.createGrid('myGrid', {
+                        columnDefs,
+                        groupDisplayType,
+                        autoGroupColumnDef,
+                    });
 
                     const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
                     expect(getColumnOrder(gridApi, pinned)).toEqual([...groupColIds, 'a', 'b', 'c']);
@@ -169,7 +172,11 @@ describe('Auto Group Column Order', () => {
                 (maintainColumnOrder) => {
                     const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }];
 
-                    gridApi = createMyGrid({ columnDefs, groupDisplayType, maintainColumnOrder });
+                    const gridApi = gridsManager.createGrid('myGrid', {
+                        columnDefs,
+                        groupDisplayType,
+                        maintainColumnOrder,
+                    });
 
                     const columnDefsNew: (ColDef | ColGroupDef)[] = [
                         { colId: 'a' },
@@ -193,7 +200,11 @@ describe('Auto Group Column Order', () => {
                         { colId: 'c' },
                     ];
 
-                    gridApi = createMyGrid({ columnDefs, groupDisplayType, maintainColumnOrder });
+                    const gridApi = gridsManager.createGrid('myGrid', {
+                        columnDefs,
+                        groupDisplayType,
+                        maintainColumnOrder,
+                    });
 
                     gridApi.moveColumns(['a'], 0);
 
@@ -213,7 +224,11 @@ describe('Auto Group Column Order', () => {
                         { colId: 'c' },
                     ];
 
-                    gridApi = createMyGrid({ columnDefs, groupDisplayType, maintainColumnOrder });
+                    const gridApi = gridsManager.createGrid('myGrid', {
+                        columnDefs,
+                        groupDisplayType,
+                        maintainColumnOrder,
+                    });
 
                     gridApi.moveColumns(['a'], 0);
 
@@ -231,7 +246,7 @@ describe('Auto Group Column Order', () => {
                     { colId: 'c' },
                 ];
 
-                gridApi = createMyGrid({ columnDefs, groupDisplayType });
+                const gridApi = gridsManager.createGrid('myGrid', { columnDefs, groupDisplayType });
                 const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
                 gridApi.moveColumns(groupColIds, 2);
 
