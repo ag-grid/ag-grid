@@ -205,6 +205,8 @@ div.divider:nth-of-type(4n) {
     flex-wrap: wrap;
     justify-content: center;
     gap: $spacing-size-8;
+    max-width: 100%; /* Prevents the container from exceeding viewport width */
+    overflow-x: hidden; /* Hides any overflow in the horizontal direction */
 }
 
 .heroSectionheadingContainer {
@@ -305,7 +307,7 @@ div.divider:nth-of-type(4n) {
 
         @media screen and (max-width: $breakpoint-react-landing-page-medium) {
             font-size: 52px;
-            padding: 0px $spacing-size-2;
+            padding: 0; /* Updated to remove extra padding */
             line-height: 55px;
         }
     }
@@ -319,7 +321,8 @@ div.divider:nth-of-type(4n) {
         margin-bottom: 0px;
 
         @media screen and (max-width: $breakpoint-react-landing-page-medium) {
-            padding: 0px;
+            margin: 0; /* Remove extra margins on smaller screens */
+            padding: 0;
         }
     }
 }
@@ -358,6 +361,11 @@ div.divider:nth-of-type(4n) {
 
         #{$selector-darkmode} & {
             background-color: var(--color-bg-secondary);
+        }
+
+        @media screen and (max-width: $breakpoint-react-landing-page-medium) {
+            min-width: auto; /* Remove fixed min-width for smaller screens */
+            width: 100%; /* Allow it to take the full width of its container */
         }
     }
 
@@ -406,6 +414,13 @@ div.divider:nth-of-type(4n) {
     width: 16px;
     margin-left: $spacing-size-2 !important;
     fill: var(--color-link) !important;
+}
+
+/* Global Box-Sizing Reset */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
 .examplesSectionheadingContainer {
