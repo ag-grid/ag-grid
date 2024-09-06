@@ -330,10 +330,13 @@ export class GridChartComp extends Component {
             this.chartMenuService.hideAdvancedSettings();
             const lastFocusedCell = this.focusService.getFocusedCell();
             setTimeout(() => {
-                if (lastFocusedCell) {
-                    this.focusService.setFocusedCell({ ...lastFocusedCell, forceBrowserFocus: true });
-                } else {
-                    this.focusService.focusGridInnerElement();
+                if (this.focusService.isAlive()) {
+                    // focus Service may have been destroyed if both grid and chart destroyed together
+                    if (lastFocusedCell) {
+                        this.focusService.setFocusedCell({ ...lastFocusedCell, forceBrowserFocus: true });
+                    } else {
+                        this.focusService.focusGridInnerElement();
+                    }
                 }
             });
         });
