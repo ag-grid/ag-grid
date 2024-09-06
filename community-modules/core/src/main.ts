@@ -384,7 +384,11 @@ export {
     ILoadingOverlay,
 } from './rendering/overlays/loadingOverlayComponent';
 export { INoRowsOverlayComp, INoRowsOverlayParams, INoRowsOverlay } from './rendering/overlays/noRowsOverlayComponent';
-export { IDragAndDropImageComp, IDragAndDropImageParams } from './dragAndDrop/dragAndDropImageComponent';
+export {
+    IDragAndDropImageComponent,
+    IDragAndDropImage,
+    IDragAndDropImageParams,
+} from './dragAndDrop/dragAndDropImageComponent';
 export { OverlayWrapperComponent } from './rendering/overlays/overlayWrapperComponent';
 
 // features

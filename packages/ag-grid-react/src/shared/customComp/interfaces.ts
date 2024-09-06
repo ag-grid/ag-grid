@@ -8,7 +8,6 @@ import type {
     BaseMenuItem,
     BaseMenuItemParams,
     BaseToolPanelParams,
-    DragAndDropIcon,
     ICellEditorParams,
     ICellRendererParams,
     IDetailCellRendererParams,
@@ -101,7 +100,7 @@ export interface CustomMenuItemProps<TData = any, TContext = any> extends BaseMe
 export interface CustomDragAndDropImageProps<TData = any, TContext = any>
     extends IDragAndDropImageParams<TData, TContext> {
     label: string;
-    icon: DragAndDropIcon | null;
+    icon: string | null;
     shake: boolean;
 }
 
