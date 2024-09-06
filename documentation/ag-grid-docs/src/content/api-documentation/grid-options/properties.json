@@ -776,6 +776,7 @@
             }
         },
         "dragAndDropImageComponent": {},
+        "noRowsOverlayComponentParams": {},
         "suppressFocusAfterRefresh": {},
         "suppressPropertyNamesCheck": {},
         "suppressChangeDetection": {

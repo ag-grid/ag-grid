@@ -99,8 +99,11 @@ export interface CustomMenuItemProps<TData = any, TContext = any> extends BaseMe
 
 export interface CustomDragAndDropImageProps<TData = any, TContext = any>
     extends IDragAndDropImageParams<TData, TContext> {
+    /** The label provided by the grid about the item being dragged. */
     label: string;
+    /** The name of the icon provided by the grid about the current drop target. */
     icon: string | null;
+    /** `True` if the grid is attempting to scroll horizontally while dragging. */
     shake: boolean;
 }
 
