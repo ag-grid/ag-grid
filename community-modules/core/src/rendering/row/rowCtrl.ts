@@ -1,3 +1,4 @@
+import { setupCompBean } from '../../components/emptyBean';
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -221,7 +222,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         containerType: RowContainerType,
         compBean: BeanStub<any> | undefined
     ): void {
-        compBean ??= this;
+        compBean = setupCompBean(this, this.beans.context, compBean);
+
         const gui: RowGui = { rowComp, element, containerType, compBean };
         this.allRowGuis.push(gui);
         this.updateGui(containerType, gui);

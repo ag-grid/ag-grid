@@ -329,12 +329,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             }
         }
 
-        this.dragAndDropService.addDropTarget({
+        const dropTarget: DropTarget = {
             isInterestedIn: (type: DragSourceType) => type === DragSourceType.RowDrag,
             getIconName: () => 'move',
             external: true,
             ...(processedParams as any),
-        });
+        };
+        this.dragAndDropService.addDropTarget(dropTarget);
+        this.addDestroyFunc(() => this.dragAndDropService.removeDropTarget(dropTarget));
     }
 
     public getRowDropZone(events?: RowDropZoneEvents): RowDropZoneParams {
