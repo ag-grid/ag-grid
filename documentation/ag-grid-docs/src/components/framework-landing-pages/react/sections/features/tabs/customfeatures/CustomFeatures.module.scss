@@ -45,23 +45,3 @@
     font-size: var(--text-fs-md);
     margin-bottom: $spacing-size-2;
 }
-
-.buttonContainer {
-    display: flex;
-    justify-content: flex-end;
-    gap: $spacing-size-2;
-}
-
-.featureNavButton {
-    appearance: none;
-    padding: 0;
-    text-align: left;
-    font-weight: var(--text-regular);
-    border: none;
-    background-color: transparent;
-    box-shadow: none;
-}
-
-.featureNavIcon {
-    fill: var(--color-fg-primary);
-}
