@@ -16,16 +16,27 @@ const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
 const { data: examples } = await getEntry('react-landing-page', 'examples');
 ---
 
-<Layout title={'AG Grid: A Fast, Powerful, and Flexible React Data Table'} description={'Explore AG Grid\'s fast, powerful, and customisable React Table library. Add high-performance React Data Tables to your React applications in minutes, for free.'} showDocsNav={false} showSearchBar={true}>
+<Layout
+    title={'AG Grid: A Fast, Powerful, and Flexible React Data Table'}
+    description={"Explore AG Grid's fast, powerful, and customisable React Table library. Add high-performance React Data Tables to your React applications in minutes, for free."}
+    showDocsNav={false}
+    showSearchBar={true}
+>
     <div class={styles.container}>
         <div class={styles.sectionContent}>
             <div class={styles.smallRectangleLeft}></div>
-            <div class={styles.smallRectangleRight}></div> 
-            <div class={styles.blueRectangle}></div> 
+            <div class={styles.smallRectangleRight}></div>
+            <div class={styles.blueRectangle}></div>
             <div class={styles.sectionInner}>
                 <div class={styles.heroSectioncontainer}>
                     <div class={styles.heroSectionheadingContainer}>
-                        <a href={urlWithBaseUrl('./whats-new')} class:list={[styles.heroSectionversionTagContainer, 'plausible-event-name=react-table-whats-new']}>
+                        <a
+                            href={urlWithBaseUrl('./whats-new')}
+                            class:list={[
+                                styles.heroSectionversionTagContainer,
+                                'plausible-event-name=react-table-whats-new',
+                            ]}
+                        >
                             <span class={styles.heroSectionversion}>AG Grid v{versionsData[0].version}</span>
                             <span class={styles.heroSectionfeatureHighlight}>
                                 {versionsData[0].landingPageHighlight}
@@ -40,7 +51,14 @@ const { data: examples } = await getEntry('react-landing-page', 'examples');
                         </h3>
                     </div>
                     <div class={styles.heroSectionbuttonContainer}>
-                        <a class:list={["button-secondary", styles.heroSectioncta1, 'plausible-event-name=react-table-get-started']} href={urlWithBaseUrl('./react-data-grid/getting-started/')}>Get Started</a>
+                        <a
+                            class:list={[
+                                'button-secondary',
+                                styles.heroSectioncta1,
+                                'plausible-event-name=react-table-get-started',
+                            ]}
+                            href={urlWithBaseUrl('./react-data-grid/getting-started/')}>Get Started</a
+                        >
                         <div class={styles.heroSectioncta2}>
                             <InstallText client:load />
                         </div>
@@ -48,8 +66,16 @@ const { data: examples } = await getEntry('react-landing-page', 'examples');
                     <div class={styles.heroSectiondemoContainer}>
                         <Finance client:only="react" gridHeight={600} />
                     </div>
-                    <a class:list={["button", styles.heroSectionviewAllDemosLink, 'plausible-event-name=react-table-view-demos']} href={urlWithBaseUrl('./example')}>View All Demos 
-                        <Icon svgClasses={styles.heroSectiondemosArrow} name="arrowRight" /></a>
+                    <a
+                        class:list={[
+                            'button',
+                            styles.heroSectionviewAllDemosLink,
+                            'plausible-event-name=react-table-view-demos',
+                        ]}
+                        href={urlWithBaseUrl('./example')}
+                        >View All Demos
+                        <Icon svgClasses={styles.heroSectiondemosArrow} name="arrowRight" /></a
+                    >
                 </div>
             </div>
         </div>
@@ -150,33 +176,36 @@ const { data: examples } = await getEntry('react-landing-page', 'examples');
                     <h2 class={styles.tag}>How Do I Build a React Table with AG Grid?</h2>
                     <h3 class={styles.heading}>Get Started with React Table Examples</h3>
                     <h4 class={styles.subHeading}>
-                        We have a range of examples, tutorials and documentation to help you start building your first React Table with AG Grid.
+                        We have a range of examples, tutorials and documentation to help you start building your first
+                        React Table with AG Grid.
                     </h4>
                 </div>
                 <div class={styles.examplesSectioncontainer}>
                     <div class={styles.examplesSectionexamplesContainer}>
                         <div class={styles.examplesSectioncardsContainer}>
-                            {examples.map((card) => (
-                                <div class={styles.examplesSectioncard}>
-                                    <img
-                                        class={styles.examplesSectioncardImage}
-                                        src={urlWithBaseUrl(`landing-pages/examples/${card.img}`)}
-                                        alt={card.img_alt}
-                                    ></img>
-                                    <div class={styles.examplesSectioncardDetails}>
-                                        <h3>{card.title}</h3>
-                                        <p>{card.content}</p>
+                            {
+                                examples.map((card) => (
+                                    <div class={styles.examplesSectioncard}>
+                                        <img
+                                            class={styles.examplesSectioncardImage}
+                                            src={urlWithBaseUrl(`landing-pages/examples/${card.img}`)}
+                                            alt={card.img_alt}
+                                        />
+                                        <div class={styles.examplesSectioncardDetails}>
+                                            <h3>{card.title}</h3>
+                                            <p>{card.content}</p>
+                                        </div>
+                                        <div class={styles.examplesSectioncardCta}>
+                                            <a href={card.demo} target="_blank">
+                                                Live Demo
+                                            </a>
+                                            <a href={card.docs} target="_blank">
+                                                Docs
+                                            </a>
+                                        </div>
                                     </div>
-                                    <div class={styles.examplesSectioncardCta}>
-                                        <a href={card.demo} target="_blank">
-                                            Live Demo
-                                        </a>
-                                        <a href={card.docs} target="_blank">
-                                            Docs
-                                        </a>
-                                    </div>
-                                </div>
-                            ))}
+                                ))
+                            }
                         </div>
                     </div>
                 </div>
