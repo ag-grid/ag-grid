@@ -66,4 +66,9 @@ export interface IFrameworkOverrides {
 
     /** Used by `RowRenderer` when releasing lock. Allows React async refreshes to work. */
     releaseLockOnRefresh?(): void;
+
+    /** Used by the CtrlsService to decide whether to trigger the whenReady callbacks asynchronously.
+     * Required for React to work with StrictMode from v19 with the current implementation of the CtrlsService.
+     */
+    initGridAsync?(): boolean;
 }

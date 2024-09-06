@@ -54,7 +54,7 @@ import { ReactComponent } from '../shared/reactComponent';
 import { BeansContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
-import { CssClasses, runWithoutFlushSync } from './utils';
+import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
 
 export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     const apiRef = useRef<GridApi<TData>>();
@@ -133,8 +133,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             });
 
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
-            const ctrlsService = context.getBean('ctrlsService');
-            ctrlsService.whenReady(
+            context.getBean('ctrlsService').whenReady(
                 {
                     addDestroyFunc: (func) => {
                         destroyFuncs.current.push(func);
@@ -157,8 +156,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
         // funcs in the order they were received, we know adding items here will be AFTER the grid has set columns
         // and data. this is because GridCoreCreator sets these between calling createUiCallback and acceptChangesCallback
         const acceptChangesCallback = (context: Context) => {
-            const ctrlsService = context.getBean('ctrlsService');
-            ctrlsService.whenReady(
+            context.getBean('ctrlsService').whenReady(
                 {
                     addDestroyFunc: (func) => {
                         destroyFuncs.current.push(func);
@@ -459,5 +457,9 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
 
     shouldQueueUpdates(): boolean {
         return this.queueUpdates;
+    }
+
+    initGridAsync(): boolean {
+        return isReact19();
     }
 }

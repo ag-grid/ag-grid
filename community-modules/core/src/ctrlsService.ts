@@ -64,14 +64,15 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         // The first time after the first render cycle, and the second time after the second render cycle which is only done in StrictMode.
         // By making the local events async, we effectively debounce the first ready event until after the second render cycle has completed.
         // This means that the ready logic across the grid will run against the currently rendered components and controllers.
-        // TODO: Do we make this async only for React 19?
-        this.localEventsAsync = beans.frameworkOverrides.renderingEngine === 'react';
+        // We make this async only for React 19
+        this.localEventsAsync = beans.frameworkOverrides.initGridAsync?.() ?? false;
     }
 
     public postConstruct() {
         this.addEventListener(
             'ready',
             () => {
+                this.updateReady();
                 if (this.ready) {
                     this.readyCallbacks.forEach((c) => c(this.params));
                     this.readyCallbacks.length = 0;
@@ -80,7 +81,7 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
             this.localEventsAsync
         );
     }
-    private checkReady(): void {
+    private updateReady(): void {
         const params = this.params;
         this.ready =
             params.gridCtrl?.isAlive() &&
@@ -106,10 +107,6 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
             params.fakeHScrollComp?.isAlive() &&
             params.fakeVScrollComp?.isAlive() &&
             params.gridHeaderCtrl?.isAlive();
-
-        if (this.ready) {
-            this.dispatchLocalEvent({ type: 'ready' });
-        }
     }
 
     public whenReady(caller: BeanDestroyFunc, callback: (p: ReadyParams) => void): void {
@@ -129,37 +126,21 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
 
     public register<K extends CtrlType, T extends ReadyParams[K]>(ctrlType: K, ctrl: T): void {
         this.params[ctrlType] = ctrl;
-        this.checkReady();
+        this.updateReady();
+        if (this.ready) {
+            this.dispatchLocalEvent({ type: 'ready' });
+        }
 
         ctrl.addDestroyFunc(() => {
             // Ensure ready is false when a controller is destroyed
             // We do not clear them as a lot of code still runs during destroy which may need access to the controllers
             // NOTE: This is not ideal and we should look to stop logic using controllers during destroy
-            this.checkReady();
+            this.updateReady();
         });
-    }
-
-    public registerHeaderContainer(ctrl: HeaderRowContainerCtrl, pinned: ColumnPinnedType): void {
-        const params = this.params;
-        switch (pinned) {
-            case 'left':
-                params.leftHeader = ctrl;
-                break;
-            case 'right':
-                params.rightHeader = ctrl;
-                break;
-            default:
-                params.centerHeader = ctrl;
-                break;
-        }
-        this.checkReady();
     }
 
     public get<K extends CtrlType>(ctrlType: K): ReadyParams[K] {
         return this.params[ctrlType];
-    }
-    public getParams(): Readonly<ReadyParams> {
-        return this.params;
     }
 
     public getGridBodyCtrl(): GridBodyCtrl {
