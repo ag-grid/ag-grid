@@ -1,31 +1,19 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColumnGroup, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    ColumnsToolPanelModule,
-    FiltersToolPanelModule,
-    MenuModule,
-    RowGroupingModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule, RowGroupingModule]);
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'country', rowGroup: true, enableRowGroup: true },
-        { field: 'athlete' },
-        { field: 'sport', pivot: true, enablePivot: true },
-        { field: 'year', pivot: true, enablePivot: true },
-        { field: 'date', pivot: true, enablePivot: true },
-        { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
-        { field: 'bronze', aggFunc: 'sum' },
+        { field: 'country', rowGroup: true },
+        { field: 'sport', pivot: true },
+        { field: 'gold', aggFunc: 'sum', cellStyle: { backgroundColor: '#f2e2879e' } },
     ],
     defaultColDef: {
         flex: 1,
@@ -35,8 +23,11 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 200,
     },
     pivotMode: true,
-    // first (sport) row group will be open by default
-    pivotDefaultExpanded: 1,
+    processPivotResultColDef: (colDef) => {
+        if (typeof colDef.cellStyle === 'object') {
+            colDef.cellStyle.color = 'red';
+        }
+    },
 };
 
 // setup the grid after the page has finished loading

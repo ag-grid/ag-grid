@@ -18,6 +18,10 @@
         {
           "dependentTasksOutputFiles": "**/main.cjs.js",
           "transitive": true
+        },
+        {
+          "dependentTasksOutputFiles": "**/*.css",
+          "transitive": true
         }
       ],
       "outputs": [],
