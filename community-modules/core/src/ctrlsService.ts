@@ -60,11 +60,11 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     private runReadyCallbacksAsync = false;
 
     public wireBeans(beans: BeanCollection) {
-        // React could be running in StrictMode, which results in the ctrlService being ready twice.
+        // With React 19 StrictMode, ctrlService can be ready twice.
         // The first time after the first render cycle, and the second time after the second render cycle which is only done in StrictMode.
         // By making the local events async, we effectively debounce the first ready event until after the second render cycle has completed.
         // This means that the ready logic across the grid will run against the currently rendered components and controllers.
-        // We make this async only for React 19
+        // We make this async only for React 19 as StrictMode in React 19 double fires ref callbacks whereas previous versions of React do not.
         this.runReadyCallbacksAsync = beans.frameworkOverrides.initGridAsync?.() ?? false;
     }
 
@@ -133,7 +133,7 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
 
         ctrl.addDestroyFunc(() => {
             // Ensure ready is false when a controller is destroyed
-            // We do not clear them as a lot of code still runs during destroy which may need access to the controllers
+            // We do not clear them as a lot of code still runs during destroy logic which may need access to the controllers
             // NOTE: This is not ideal and we should look to stop logic using controllers during destroy
             this.updateReady();
         });

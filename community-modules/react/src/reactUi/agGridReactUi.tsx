@@ -460,6 +460,7 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
     }
 
     initGridAsync(): boolean {
+        // We make this async only for React 19 as StrictMode in React 19 double fires ref callbacks whereas previous versions of React do not.
         return isReact19();
     }
 }
