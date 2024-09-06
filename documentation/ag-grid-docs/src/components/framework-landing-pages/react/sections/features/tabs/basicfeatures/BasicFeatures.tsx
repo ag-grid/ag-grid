@@ -2,7 +2,7 @@ import { Snippet } from '@ag-website-shared/components/snippet/Snippet';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import React from 'react';
 
-import styles from './BasicFeatures.module.scss';
+import styles from '../FeatureTabs.module.scss';
 
 const BasicFeatures: React.FC = () => {
     const codeExample = `const GridExample = () => {
