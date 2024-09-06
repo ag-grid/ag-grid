@@ -27,7 +27,7 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
     },
-    enableRangeSelection: true,
+    selection: { mode: 'cell' },
     popupParent: document.body,
     enableCharts: true,
     chartThemeOverrides: {

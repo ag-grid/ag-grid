@@ -47,8 +47,7 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
             dataTypeMatcher: (value: any) => value && !!value.name,
         },
     },
-    enableFillHandle: true,
-    enableRangeSelection: true,
+    selection: { mode: 'cell', handle: { mode: 'fill' } },
 };
 
 // setup the grid after the page has finished loading

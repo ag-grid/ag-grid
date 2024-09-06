@@ -19,7 +19,7 @@ const gridOptions: GridOptions = {
         { field: 'bronze', chartDataType: 'series' },
     ],
     defaultColDef: { flex: 1 },
-    enableRangeSelection: true,
+    selection: { mode: 'cell' },
     popupParent: document.body,
     enableCharts: true,
     chartToolPanelsDef: {

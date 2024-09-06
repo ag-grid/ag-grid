@@ -14,7 +14,7 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     columnDefs: [{ field: 'timestamp', chartDataType: 'time' }, { field: 'cpuUsage' }],
     defaultColDef: { flex: 1 },
-    enableRangeSelection: true,
+    selection: { mode: 'cell' },
     popupParent: document.body,
     enableCharts: true,
     chartThemeOverrides: {
