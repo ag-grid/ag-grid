@@ -47,7 +47,7 @@ const GridExample = () => {
         },
         { field: 'athlete', minWidth: 200 },
         { field: 'age' },
-        { field: 'country', minWidth: 200, checkboxSelection: true },
+        { field: 'country', minWidth: 200 },
         { field: 'year' },
         { field: 'date', minWidth: 150 },
         { field: 'sport', minWidth: 150 },
