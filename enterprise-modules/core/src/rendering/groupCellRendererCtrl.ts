@@ -527,18 +527,17 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
     private addExpandAndContract(): void {
         const params = this.params;
-        const eExpandedIcon = _createIconNoSpan('groupExpanded', this.gos, null);
-        const eContractedIcon = _createIconNoSpan('groupContracted', this.gos, null);
 
-        if (eExpandedIcon) {
-            this.eExpanded.appendChild(eExpandedIcon);
-            this.addDestroyFunc(() => this.eExpanded.removeChild(eExpandedIcon));
-        }
+        const setupIcon = (iconName: 'groupExpanded' | 'groupContracted', element: HTMLElement) => {
+            const icon = _createIconNoSpan(iconName, this.gos, null);
+            if (icon) {
+                element.appendChild(icon);
+                this.addDestroyFunc(() => element.removeChild(icon));
+            }
+        };
 
-        if (eContractedIcon) {
-            this.eContracted.appendChild(eContractedIcon);
-            this.addDestroyFunc(() => this.eContracted.removeChild(eContractedIcon));
-        }
+        setupIcon('groupExpanded', this.eExpanded);
+        setupIcon('groupContracted', this.eContracted);
 
         const eGroupCell = params.eGridCell;
 
