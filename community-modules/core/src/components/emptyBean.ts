@@ -21,6 +21,7 @@ export class EmptyBean extends BeanStub {}
  */
 export function setupCompBean(ctrl: BeanStub<any>, ctx: Context, compBean: BeanStub<any> | undefined): BeanStub<any> {
     if (compBean) {
+        // If the ctrl is destroyed first, we need to destroy the compBean
         ctrl.addDestroyFunc(() => ctx.destroyBean(compBean));
     }
     return compBean ?? ctrl;
