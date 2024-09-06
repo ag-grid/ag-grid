@@ -151,37 +151,37 @@ div.divider:nth-of-type(4n) {
     text-align: center;
     margin-bottom: $spacing-size-12;
     gap: $spacing-size-2;
+}
 
-    .tag,
-    .heading,
-    .subHeading {
+.tag,
+.heading,
+.subHeading {
+    margin: 0;
+}
+
+.tag {
+    font-size: var(--text-fs-xl);
+    font-weight: var(--text-semibold);
+    color: var(--color-util-brand-600);
+}
+
+.heading {
+    font-size: 48px;
+    font-weight: var(--text-bold);
+    padding: 0 $spacing-size-24;
+
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
+        padding: 0;
+    }
+}
+
+.subHeading {
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-base);
+    text-align: center;
+
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         margin: 0;
-    }
-
-    .tag {
-        font-size: var(--text-fs-xl);
-        font-weight: var(--text-semibold);
-        color: var(--color-util-brand-600);
-    }
-
-    .heading {
-        font-size: 48px;
-        font-weight: var(--text-bold);
-        padding: 0 $spacing-size-24;
-
-        @media screen and (max-width: $breakpoint-react-landing-page-medium) {
-            padding: 0;
-        }
-    }
-
-    .subHeading {
-        font-size: var(--text-fs-lg);
-        font-weight: var(--text-base);
-        text-align: center;
-
-        @media screen and (max-width: $breakpoint-react-landing-page-medium) {
-            margin: 0;
-        }
     }
 }
 
@@ -217,114 +217,114 @@ div.divider:nth-of-type(4n) {
     @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         margin-top: $spacing-size-4;
     }
+}
 
-    .heroSectionversionTagContainer {
-        display: flex;
-        border-radius: var(--radius-4xl);
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        align-self: center;
-        background-color: var(--color-brand-200);
-        font-weight: var(--text-base);
+.heroSectionversionTagContainer {
+    display: flex;
+    border-radius: var(--radius-4xl);
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    align-self: center;
+    background-color: var(--color-brand-200);
+    font-weight: var(--text-base);
 
-        #{$selector-darkmode} & {
-            background-color: var(--color-bg-secondary);
-        }
-
-        @media screen and (max-width: $breakpoint-react-landing-page-medium) {
-            width: 100%;
-        }
-
-        .heroSectionversion {
-            border: 2px solid var(--color-util-brand-200);
-            background: var(--color-white);
-            border-radius: var(--radius-4xl);
-            margin: 2px;
-            padding: 0px $spacing-size-2;
-            font-size: var(--text-fs-sm);
-            font-weight: var(--text-base);
-            color: var(--color-brand-500);
-
-            #{$selector-darkmode} & {
-                color: var(--color-brand-400);
-                background: var(--color-bg-primary);
-                border: 2px solid var(--color-bg-secondary);
-            }
-
-            @media screen and (max-width: $breakpoint-react-landing-page-medium) {
-                display: none;
-            }
-        }
-
-        .heroSectionfeatureHighlight {
-            padding: 0px $spacing-size-2;
-            font-size: var(--text-fs-sm);
-            font-weight: var(--text-base);
-            color: var(--color-brand-500);
-
-            @media screen and (max-width: $breakpoint-react-landing-page-medium) {
-                font-size: var(--text-fs-sm);
-            }
-
-            #{$selector-darkmode} & {
-                color: white;
-            }
-        }
-
-        .heroSectionfeatureArrow {
-            height: 16px;
-            width: 16px;
-            margin-left: $spacing-size-2;
-            fill: var(--color-brand-500);
-
-            @media screen and (max-width: $breakpoint-react-landing-page-medium) {
-                margin-left: 0;
-            }
-
-            #{$selector-darkmode} & {
-                fill: white;
-            }
-        }
+    #{$selector-darkmode} & {
+        background-color: var(--color-bg-secondary);
     }
 
-    .heroSectionTag {
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
+        width: 100%;
+    }
+}
+
+.heroSectionversion {
+    border: 2px solid var(--color-util-brand-200);
+    background: var(--color-white);
+    border-radius: var(--radius-4xl);
+    margin: 2px;
+    padding: 0px $spacing-size-2;
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-base);
+    color: var(--color-brand-500);
+
+    #{$selector-darkmode} & {
         color: var(--color-brand-400);
-        font-size: 24px;
-        text-align: center;
-        line-height: 24px;
-        font-weight: var(--text-bold);
-        margin-top: $spacing-size-8;
-        margin-bottom: 0;
+        background: var(--color-bg-primary);
+        border: 2px solid var(--color-bg-secondary);
     }
 
-    .heroSectionheading {
-        font-size: 72px;
-        text-align: center;
-        line-height: 77px;
-        margin-bottom: $spacing-size-8;
-        padding: 0px $spacing-size-64;
-        font-weight: var(--text-bold);
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
+        display: none;
+    }
+}
 
-        @media screen and (max-width: $breakpoint-react-landing-page-medium) {
-            font-size: 52px;
-            padding: 0;
-            line-height: 55px;
-        }
+.heroSectionfeatureHighlight {
+    padding: 0px $spacing-size-2;
+    font-size: var(--text-fs-sm);
+    font-weight: var(--text-base);
+    color: var(--color-brand-500);
+
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
+        font-size: var(--text-fs-sm);
     }
 
-    .heroSectionsubHeading {
-        font-size: var(--text-fs-lg);
-        font-weight: var(--text-base);
-        color: var(--color-text-primary);
-        margin: 0px $spacing-size-48;
-        text-align: center;
-        margin-bottom: 0px;
+    #{$selector-darkmode} & {
+        color: white;
+    }
+}
 
-        @media screen and (max-width: $breakpoint-react-landing-page-medium) {
-            margin: 0;
-            padding: 0;
-        }
+.heroSectionfeatureArrow {
+    height: 16px;
+    width: 16px;
+    margin-left: $spacing-size-2;
+    fill: var(--color-brand-500);
+
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
+        margin-left: 0;
+    }
+
+    #{$selector-darkmode} & {
+        fill: white;
+    }
+}
+
+.heroSectionTag {
+    color: var(--color-brand-400);
+    font-size: 24px;
+    text-align: center;
+    line-height: 24px;
+    font-weight: var(--text-bold);
+    margin-top: $spacing-size-8;
+    margin-bottom: 0;
+}
+
+.heroSectionheading {
+    font-size: 72px;
+    text-align: center;
+    line-height: 77px;
+    margin-bottom: $spacing-size-8;
+    padding: 0px $spacing-size-64;
+    font-weight: var(--text-bold);
+
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
+        font-size: 52px;
+        padding: 0;
+        line-height: 55px;
+    }
+}
+
+.heroSectionsubHeading {
+    font-size: var(--text-fs-lg);
+    font-weight: var(--text-base);
+    color: var(--color-text-primary);
+    margin: 0px $spacing-size-48;
+    text-align: center;
+    margin-bottom: 0px;
+
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
+        margin: 0;
+        padding: 0;
     }
 }
 
@@ -337,52 +337,52 @@ div.divider:nth-of-type(4n) {
     @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         flex-direction: column;
     }
+}
 
-    .heroSectioncta1 {
+.heroSectioncta1 {
+    color: var(--color-white);
+    background: var(--color-brand-700);
+    align-content: center;
+
+    &:hover {
         color: var(--color-white);
-        background: var(--color-brand-700);
-        align-content: center;
+    }
+}
 
-        &:hover {
-            color: var(--color-white);
-        }
+.heroSectioncta2 {
+    display: flex;
+    min-width: 315px;
+    align-items: center;
+    gap: $spacing-size-2;
+    padding: $spacing-size-2;
+    border-radius: var(--radius-md);
+    background-color: var(--color-brand-200);
+    color: var(--color-gray-900);
+    font-family: var(--text-monospace-font-family);
+    justify-content: center;
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-bg-secondary);
     }
 
-    .heroSectioncta2 {
-        display: flex;
-        min-width: 315px;
-        align-items: center;
-        gap: $spacing-size-2;
-        padding: $spacing-size-2;
-        border-radius: var(--radius-md);
-        background-color: var(--color-brand-200);
-        color: var(--color-gray-900);
-        font-family: 'SF Mono', Courier, monospace;
-        justify-content: center;
-
-        #{$selector-darkmode} & {
-            background-color: var(--color-bg-secondary);
-        }
-
-        @media screen and (max-width: $breakpoint-react-landing-page-medium) {
-            min-width: auto;
-            width: 100%;
-        }
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
+        min-width: auto;
+        width: 100%;
     }
+}
 
-    .heroSectioninstallText {
-        font-size: var(--text-fs-base);
-        color: var(--color-fg-primary);
-    }
+.heroSectioninstallText {
+    font-size: var(--text-fs-base);
+    color: var(--color-fg-primary);
+}
 
-    .heroSectionicon svg {
-        fill: var(--color-gray-900);
-        padding: 6px;
+.heroSectionicon svg {
+    fill: var(--color-gray-900);
+    padding: 6px;
 
-        &:hover {
-            cursor: pointer;
-            fill: var(--color-util-brand-400);
-        }
+    &:hover {
+        cursor: pointer;
+        fill: var(--color-util-brand-400);
     }
 }
 
@@ -432,16 +432,16 @@ div.divider:nth-of-type(4n) {
     text-align: center;
     padding: 0px $spacing-size-32;
     margin-bottom: $spacing-size-12;
+}
 
-    .examplesSectionheading {
-        font-size: 48px;
-        font-weight: var(--text-bold);
-    }
+.examplesSectionheading {
+    font-size: 48px;
+    font-weight: var(--text-bold);
+}
 
-    .examplesSectionsubHeading {
-        font-size: var(--text-fs-lg);
-        text-align: center;
-    }
+.examplesSectionsubHeading {
+    font-size: var(--text-fs-lg);
+    text-align: center;
 }
 
 .examplesSectionexamplesContainer {
