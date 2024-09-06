@@ -141,6 +141,7 @@ const App = {
         return {
             rowData,
             colDefs,
+            selection,
             defaultColDef,
             themeClass:
                 /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||

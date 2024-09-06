@@ -53,7 +53,7 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         this.addManagedPropertyListeners(['rowSelection', 'selection'], () => {
             // Only reset selection when selection mode changes, not just any part of selection options
             const rowSelection = _getRowSelectionMode(this.gos);
-            if (rowSelection && rowSelection !== this.selectionMode) {
+            if (rowSelection !== this.selectionMode) {
                 this.selectionMode = rowSelection;
                 this.deselectAllRowNodes({ source: 'api' });
             }

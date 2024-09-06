@@ -470,7 +470,14 @@ export function _getRowSelectionMode(gos: GridOptionsService): RowSelectionOptio
     const useNewAPI = selection !== undefined;
 
     if (!useNewAPI) {
-        return gos.get('rowSelection') === 'multiple' ? 'multiRow' : 'singleRow';
+        switch (gos.get('rowSelection')) {
+            case 'multiple':
+                return 'multiRow';
+            case 'single':
+                return 'singleRow';
+            default:
+                return;
+        }
     }
 
     return selection.mode !== 'cell' ? selection.mode : undefined;
