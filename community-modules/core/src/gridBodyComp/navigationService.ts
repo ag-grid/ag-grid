@@ -336,12 +336,11 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     private getViewportHeight(): number {
-        const { gridBodyCtrl, center } = this.ctrlsService.getParams();
-        const scrollPosition = gridBodyCtrl.getScrollFeature().getVScrollPosition();
+        const scrollPosition = this.ctrlsService.getGridBodyCtrl().getScrollFeature().getVScrollPosition();
         const scrollbarWidth = this.scrollVisibleService.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
-        if (center.isHorizontalScrollShowing()) {
+        if (this.ctrlsService.get('center').isHorizontalScrollShowing()) {
             pixelsInOnePage -= scrollbarWidth;
         }
 

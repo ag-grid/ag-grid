@@ -123,19 +123,18 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private addHorizontalScrollListeners(): void {
-        const params = this.ctrlsService.getParams();
         this.addManagedElementListeners(this.centerRowsCtrl.getViewportElement(), {
             scroll: this.onHScroll.bind(this, CommonSources.Viewport),
         });
 
         for (const source of Object.values(HorizontalSources)) {
-            const scrollPartner: ScrollPartner = params[source];
+            const scrollPartner: ScrollPartner = this.ctrlsService.get(source);
             this.registerScrollPartner(scrollPartner, this.onHScroll.bind(this, source));
         }
     }
 
     private addVerticalScrollListeners(): void {
-        const params = this.ctrlsService.getParams();
+        const fakeVScrollComp = this.ctrlsService.get('fakeVScrollComp');
         const isDebounce = this.gos.get('debounceVerticalScrollbar');
 
         const onVScroll = isDebounce
@@ -146,7 +145,7 @@ export class GridBodyScrollFeature extends BeanStub {
             : this.onVScroll.bind(this, VerticalSources.FakeVScrollbar);
 
         this.addManagedElementListeners(this.eBodyViewport, { scroll: onVScroll });
-        this.registerScrollPartner(params.fakeVScrollComp, onFakeVScroll);
+        this.registerScrollPartner(fakeVScrollComp, onFakeVScroll);
     }
 
     private registerScrollPartner(comp: ScrollPartner, callback: () => void) {
