@@ -690,7 +690,7 @@
 
     .ag-header-highlight-before::after,
     .ag-header-highlight-after::after {
-        background-color: red; // Hack for testing
+        background-color: var(--ag-active-color);
     }
 }
 
