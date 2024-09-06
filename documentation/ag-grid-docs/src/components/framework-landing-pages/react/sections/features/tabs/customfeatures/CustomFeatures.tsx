@@ -60,15 +60,7 @@ const CustomFeatures: React.FC = () => {
                 </div>
             </div>
             <div className={styles.column}>
-                <div className={styles.gridContainer}>
-                    <Snippet
-                        framework={'react'}
-                        language={'css'}
-                        content={codeExample}
-                        transform={false}
-                        copyToClipboard
-                    />
-                </div>
+                <Snippet framework={'react'} language={'css'} content={codeExample} transform={false} copyToClipboard />
             </div>
         </div>
     );

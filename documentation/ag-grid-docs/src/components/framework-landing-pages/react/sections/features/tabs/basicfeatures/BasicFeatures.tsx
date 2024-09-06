@@ -65,15 +65,7 @@ const BasicFeatures: React.FC = () => {
                 </div>
             </div>
             <div className={styles.column}>
-                <div className={styles.gridContainer}>
-                    <Snippet
-                        framework={'react'}
-                        language={'js'}
-                        content={codeExample}
-                        transform={false}
-                        copyToClipboard
-                    />
-                </div>
+                <Snippet framework={'react'} language={'js'} content={codeExample} transform={false} copyToClipboard />
             </div>
         </div>
     );
