@@ -91,13 +91,11 @@ Properties of simple types (string, boolean and number) do not need to use hooks
 const App = () => {
 
     const rowBuffer = 0;
-    const rowSelection = 'multiple';
 
     return (
         <AgGridReact 
             // GOOD
-            rowBuffer={rowBuffer} 
-            rowSelection={rowSelection} 
+            rowBuffer={rowBuffer}
 
             // GOOD
             rowModelType='clientSide'

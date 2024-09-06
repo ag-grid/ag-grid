@@ -201,7 +201,6 @@ const GridExample = () => {
                 <AgGridReact
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    rowSelection={'multiple'}
                     rowModelType={'infinite'}
                     cacheOverflowSize={2}
                     maxConcurrentDatasourceRequests={2}

@@ -54,7 +54,7 @@ const App = {
         :rowData="rowData"
         :defaultColDef="defaultColDef"
         :pagination="true"
-        :rowSelection="'multiple'"
+        :selection="selection"
         @cell-value-changed="onCellValueChanged"
         @selection-changed="onSelectionChanged"
     >
@@ -94,7 +94,6 @@ const App = {
             {
                 field: 'mission',
                 width: 150,
-                checkboxSelection: true,
             },
             {
                 field: 'company',
@@ -123,6 +122,11 @@ const App = {
             },
             { field: 'rocket' },
         ]);
+
+        const selection = ref({
+            mode: 'multiRow',
+            headerCheckbox: false,
+        });
 
         const defaultColDef = ref({
             filter: true,

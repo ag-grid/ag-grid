@@ -6,6 +6,7 @@ import {
     GridReadyEvent,
     ModuleRegistry,
     RowDragEndEvent,
+    SelectionOptions,
 } from '@ag-grid-community/core';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
@@ -73,6 +74,12 @@ const defaultColDef: ColDef = {
     flex: 1,
     minWidth: 100,
     filter: true,
+};
+
+const selection: SelectionOptions = {
+    mode: 'multiRow',
+    checkboxes: false,
+    headerCheckbox: false,
 };
 
 const GridExample = () => {
@@ -186,7 +193,7 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
-                    rowSelection={id === 0 ? 'multiple' : undefined}
+                    selection={id === 0 ? selection : undefined}
                     rowDragMultiRow={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
                     rowData={id === 0 ? leftRowData : rightRowData}

@@ -78,11 +78,15 @@ const gridOptions = {
         // enables flashing to help see cell changes
         enableCellChangeFlash: true,
     },
-    // allows copy / paste using cell ranges
-    enableRangeSelection: true,
 
-    // enables the fill handle
-    enableFillHandle: true,
+    selection: {
+        // allows copy / paste using cell ranges
+        mode: 'cell',
+        // enables the fill handle
+        handle: {
+            mode: 'fill',
+        }
+    }
 
     // enables undo / redo
     undoRedoCellEditing: true,

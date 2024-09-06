@@ -29,7 +29,6 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: 'make',
-            checkboxSelection: true,
         },
         { field: 'model' },
         { field: 'price', filter: 'agNumberColumnFilter' },
@@ -49,7 +48,6 @@ const gridOptions: GridOptions = {
     },
     selection: {
         mode: 'multiRow',
-        checkboxes: false,
         headerCheckbox: false,
     },
 };

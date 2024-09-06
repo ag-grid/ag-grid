@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 // Theme
-import { ColDef, ModuleRegistry, ValueFormatterParams } from '@ag-grid-community/core';
+import { ColDef, ModuleRegistry, SelectionOptions, ValueFormatterParams } from '@ag-grid-community/core';
 import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 // React Grid Logic
 import '@ag-grid-community/styles/ag-grid.css';
@@ -67,6 +67,11 @@ interface IRow {
     successful: boolean;
 }
 
+const selection: SelectionOptions = {
+    mode: 'multiRow',
+    headerCheckbox: false,
+};
+
 // Create new GridExample component
 const GridExample = () => {
     // Row Data: The data to be displayed.
@@ -77,7 +82,6 @@ const GridExample = () => {
         {
             field: 'mission',
             width: 150,
-            checkboxSelection: true,
         },
         {
             field: 'company',
@@ -136,7 +140,7 @@ const GridExample = () => {
                 columnDefs={colDefs}
                 defaultColDef={defaultColDef}
                 pagination={true}
-                rowSelection="multiple"
+                selection={selection}
                 onSelectionChanged={(event) => console.log('Row Selected!')}
                 onCellValueChanged={(event) => console.log(`New Cell Value: ${event.value}`)}
             />
