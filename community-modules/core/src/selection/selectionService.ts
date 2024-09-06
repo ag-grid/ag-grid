@@ -80,7 +80,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         if (nodes.length === 0) return 0;
 
         if (nodes.length > 1 && !this.isMultiSelect) {
-            _warnOnce(`cannot multi select while rowSelection='single'`);
+            _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
             return 0;
         }
 
