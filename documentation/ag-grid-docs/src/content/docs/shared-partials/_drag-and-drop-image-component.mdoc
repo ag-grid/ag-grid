@@ -36,7 +36,7 @@ interface IDragAndDropImageComponent {
 {% /if %}
 {% if isFramework("react") %}
 ```ts
-const CustomDragAndDropImage = props => {
+const CustomDragAndDropImage = (props: CustomDragAndDropImageProps) => {
     return <div>{props.label}</div>;
 };
 ```
