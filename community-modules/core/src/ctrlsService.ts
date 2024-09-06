@@ -83,29 +83,29 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     private checkReady(): void {
         const params = this.params;
         this.ready =
-            params.gridCtrl != null &&
-            params.gridBodyCtrl != null &&
-            params.center != null &&
-            params.left != null &&
-            params.right != null &&
-            params.bottomCenter != null &&
-            params.bottomLeft != null &&
-            params.bottomRight != null &&
-            params.topCenter != null &&
-            params.topLeft != null &&
-            params.topRight != null &&
-            params.stickyTopCenter != null &&
-            params.stickyTopLeft != null &&
-            params.stickyTopRight != null &&
-            params.stickyBottomCenter != null &&
-            params.stickyBottomLeft != null &&
-            params.stickyBottomRight != null &&
-            params.centerHeader != null &&
-            params.leftHeader != null &&
-            params.rightHeader != null &&
-            params.fakeHScrollComp != null &&
-            params.fakeVScrollComp != null &&
-            params.gridHeaderCtrl != null;
+            params.gridCtrl?.isAlive() &&
+            params.gridBodyCtrl?.isAlive() &&
+            params.center?.isAlive() &&
+            params.left?.isAlive() &&
+            params.right?.isAlive() &&
+            params.bottomCenter?.isAlive() &&
+            params.bottomLeft?.isAlive() &&
+            params.bottomRight?.isAlive() &&
+            params.topCenter?.isAlive() &&
+            params.topLeft?.isAlive() &&
+            params.topRight?.isAlive() &&
+            params.stickyTopCenter?.isAlive() &&
+            params.stickyTopLeft?.isAlive() &&
+            params.stickyTopRight?.isAlive() &&
+            params.stickyBottomCenter?.isAlive() &&
+            params.stickyBottomLeft?.isAlive() &&
+            params.stickyBottomRight?.isAlive() &&
+            params.centerHeader?.isAlive() &&
+            params.leftHeader?.isAlive() &&
+            params.rightHeader?.isAlive() &&
+            params.fakeHScrollComp?.isAlive() &&
+            params.fakeVScrollComp?.isAlive() &&
+            params.gridHeaderCtrl?.isAlive();
 
         if (this.ready) {
             this.dispatchLocalEvent({ type: 'ready' });
@@ -132,8 +132,9 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         this.checkReady();
 
         ctrl.addDestroyFunc(() => {
-            // Enables going back into waiting state during extra React StrictMode render.
-            this.params[ctrlType] = null!;
+            // Ensure ready is false when a controller is destroyed
+            // We do not clear them as a lot of code still runs during destroy which may need access to the controllers
+            // NOTE: This is not ideal and we should look to stop logic using controllers during destroy
             this.checkReady();
         });
     }
