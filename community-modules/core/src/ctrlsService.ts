@@ -57,7 +57,7 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     private ready = false;
     private readyCallbacks: ((p: ReadyParams) => void)[] = [];
 
-    private localEventsAsync = false;
+    private runReadyCallbacksAsync = false;
 
     public wireBeans(beans: BeanCollection) {
         // React could be running in StrictMode, which results in the ctrlService being ready twice.
@@ -65,7 +65,7 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         // By making the local events async, we effectively debounce the first ready event until after the second render cycle has completed.
         // This means that the ready logic across the grid will run against the currently rendered components and controllers.
         // We make this async only for React 19
-        this.localEventsAsync = beans.frameworkOverrides.initGridAsync?.() ?? false;
+        this.runReadyCallbacksAsync = beans.frameworkOverrides.initGridAsync?.() ?? false;
     }
 
     public postConstruct() {
@@ -78,7 +78,7 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
                     this.readyCallbacks.length = 0;
                 }
             },
-            this.localEventsAsync
+            this.runReadyCallbacksAsync
         );
     }
     private updateReady(): void {
