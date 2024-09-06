@@ -8,16 +8,16 @@
     margin-bottom: $spacing-size-12;
     padding: 0px $spacing-size-32;
     gap: $spacing-size-8;
+}
 
-    .heading {
-        font-size: 48px;
-        font-weight: var(--text-bold);
-    }
+.heading {
+    font-size: 48px;
+    font-weight: var(--text-bold);
+}
 
-    .subHeading {
-        font-size: var(--text-fs-lg);
-        text-align: center;
-    }
+.subHeading {
+    font-size: var(--text-fs-lg);
+    text-align: center;
 }
 
 .columnContainer {
@@ -41,49 +41,49 @@
     display: flex;
     flex-direction: column;
     gap: $spacing-size-4;
+}
 
-    .button {
-        background: #fdfefe;
-        padding: $spacing-size-4;
-        border: 1px solid #dde0e7;
-        border-radius: var(--radius-xl);
-        box-shadow: var(--shadow-sm);
-        cursor: pointer;
+.buttonTitleContainer {
+    display: flex;
+    justify-content: space-between;
+}
 
-        #{$selector-darkmode} & {
-            background-color: var(--color-bg-secondary);
-            border: 1px solid var(--color-bg-disabled_subtle);
-        }
-    }
+.buttonTitle {
+    font-size: var(--text-fs-xl);
+    font-weight: var(--text-bold);
+}
 
-    .buttonTitleContainer {
-        display: flex;
-        justify-content: space-between;
+.buttonIcon {
+    padding: $spacing-size-2;
+    fill: var(--color-fg-primary);
+}
 
-        .buttonTitle {
-            font-size: var(--text-fs-xl);
-            font-weight: var(--text-bold);
-        }
+.buttonDetail {
+    margin: $spacing-size-24 0px;
+}
 
-        .buttonIcon {
-            padding: $spacing-size-2;
-            fill: var(--color-fg-primary);
-        }
-    }
+.buttonFooter {
+    display: flex;
+    margin-top: $spacing-size-4;
+    justify-content: flex-end;
+    gap: $spacing-size-4;
+}
 
-    .buttonDetail {
-        margin: $spacing-size-24 0px;
-    }
+.secondaryCta {
+    color: var(--color-util-brand-400);
+}
 
-    .buttonFooter {
-        display: flex;
-        margin-top: $spacing-size-4;
-        justify-content: flex-end;
-        gap: $spacing-size-4;
+.button {
+    background: #fdfefe;
+    padding: $spacing-size-4;
+    border: 1px solid #dde0e7;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
 
-        .secondaryCta {
-            color: var(--color-util-brand-400);
-        }
+    #{$selector-darkmode} & {
+        background-color: var(--color-bg-secondary);
+        border: 1px solid var(--color-bg-disabled_subtle);
     }
 }
 
@@ -105,32 +105,32 @@
         width: 100%;
         height: 100%;
     }
+}
 
-    .imageTitle {
-        width: 100%;
-        background: var(--color-util-gray-200);
-        text-align: center;
-        padding: $spacing-size-1;
-        border-top-right-radius: var(--radius-xl);
-        border-top-left-radius: var(--radius-xl);
-    }
+.imageTitle {
+    width: 100%;
+    background: var(--color-util-gray-200);
+    text-align: center;
+    padding: $spacing-size-1;
+    border-top-right-radius: var(--radius-xl);
+    border-top-left-radius: var(--radius-xl);
+}
 
-    .stackedImage {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: top center;
-        border-bottom-right-radius: var(--radius-xl);
-        border-bottom-left-radius: var(--radius-xl);
-    }
+.stackedImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    border-bottom-right-radius: var(--radius-xl);
+    border-bottom-left-radius: var(--radius-xl);
+}
 
-    .newTabIcon {
-        padding: $spacing-size-2;
-        fill: var(--color-brand-500);
+.newTabIcon {
+    padding: $spacing-size-2;
+    fill: var(--color-brand-500);
 
-        #{$selector-darkmode} & {
-            fill: var(--color-brand-200);
-        }
+    #{$selector-darkmode} & {
+        fill: var(--color-brand-200);
     }
 }
 
