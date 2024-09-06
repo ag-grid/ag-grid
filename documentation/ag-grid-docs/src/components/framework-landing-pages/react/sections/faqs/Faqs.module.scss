@@ -5,7 +5,7 @@
     width: 100%;
     max-width: 1500px;
     justify-content: space-between;
-    padding: 20px;
+    padding: $spacing-size-5;
 
     @media screen and (max-width: $breakpoint-react-landing-page-medium) {
         flex-direction: column;
@@ -16,7 +16,7 @@
 .column {
     flex: 1;
     box-sizing: border-box;
-    padding: 20px 0px;
+    padding: $spacing-size-5 0px;
     max-width: 48%;
 
     @media screen and (max-width: $breakpoint-react-landing-page-medium) {
@@ -30,7 +30,7 @@
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    margin-bottom: 20px;
+    margin-bottom: $spacing-size-5;
 }
 
 .titleContainer {
