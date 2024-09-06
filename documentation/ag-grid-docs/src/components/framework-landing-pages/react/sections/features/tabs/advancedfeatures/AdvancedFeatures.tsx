@@ -56,15 +56,7 @@ const AdvancedFeatures: React.FC = () => {
                 </div>
             </div>
             <div className={styles.column}>
-                <div className={styles.gridContainer}>
-                    <Snippet
-                        framework={'react'}
-                        language={'jsx'}
-                        content={codeExample}
-                        transform={false}
-                        copyToClipboard
-                    />
-                </div>
+                <Snippet framework={'react'} language={'jsx'} content={codeExample} transform={false} copyToClipboard />
             </div>
         </div>
     );
