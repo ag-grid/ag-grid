@@ -1,34 +1,34 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { GridApi, GridOptions, IRowNode, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule, RowGroupingModule]);
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-    columnDefs: [
-        { field: 'athlete' },
-        { field: 'age', maxWidth: 100 },
-        { field: 'country', minWidth: 180 },
-        { field: 'year', maxWidth: 120 },
-        { field: 'date', minWidth: 150 },
-        { field: 'sport' },
-        { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
-        { field: 'bronze', aggFunc: 'sum' },
-    ],
+    columnDefs: [{ field: 'athlete' }, { field: 'sport' }, { field: 'year', maxWidth: 120 }],
     defaultColDef: {
         flex: 1,
-        minWidth: 150,
-        filter: true,
+        minWidth: 100,
     },
     selection: {
         mode: 'singleRow',
+        hideDisabledCheckboxes: true,
         isRowSelectable: (rowNode) => (rowNode.data ? rowNode.data.year < 2007 : false),
     },
 };
+
+function toggleHideCheckbox() {
+    gridApi.setGridOption('selection', {
+        mode: 'singleRow',
+        isRowSelectable: (rowNode) => (rowNode.data ? rowNode.data.year < 2007 : false),
+        hideDisabledCheckboxes: getCheckboxValue('#toggle-hide-checkbox'),
+    });
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
@@ -39,3 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then((response) => response.json())
         .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 });
+
+function getCheckboxValue(id: string): boolean {
+    return document.querySelector<HTMLInputElement>(id)?.checked ?? false;
+}

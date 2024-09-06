@@ -29,7 +29,7 @@ const GridExample = () => {
         () => ({
             mode: 'singleRow',
             hideDisabledCheckboxes: true,
-            isRowSelectable: (node) => (node.data ? node.data.year <= 2004 : false),
+            isRowSelectable: (node) => (node.data ? node.data.year <= 2007 : false),
         }),
         []
     );
@@ -44,7 +44,7 @@ const GridExample = () => {
     function toggleHideCheckbox() {
         grid.current?.api.setGridOption('selection', {
             mode: 'singleRow',
-            isRowSelectable: (node) => (node.data ? node.data.year <= 2004 : false),
+            isRowSelectable: (node) => (node.data ? node.data.year <= 2007 : false),
             hideDisabledCheckboxes: getCheckboxValue('#toggle-hide-checkbox'),
         });
     }
