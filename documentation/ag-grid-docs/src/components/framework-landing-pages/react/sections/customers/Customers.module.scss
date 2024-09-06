@@ -8,33 +8,33 @@
     text-align: center;
     padding: 0px $spacing-size-32;
     margin-bottom: $spacing-size-12;
+}
 
-    .heading {
-        font-size: 48px;
-        font-weight: var(--text-bold);
-    }
+.heading {
+    font-size: 48px;
+    font-weight: var(--text-bold);
+}
 
-    .subHeading {
-        font-size: var(--text-fs-lg);
-        text-align: center;
-    }
+.subHeading {
+    font-size: var(--text-fs-lg);
+    text-align: center;
 }
 
 .statsContainer {
     display: flex;
     justify-content: space-around;
     margin-bottom: $spacing-size-12;
+}
 
-    .stat {
-        display: flex;
-        font-size: 64px;
-        font-weight: var(--text-bold);
-        color: var(--color-util-brand-600);
-    }
+.stat {
+    display: flex;
+    font-size: 64px;
+    font-weight: var(--text-bold);
+    color: var(--color-util-brand-600);
+}
 
-    .statName {
-        text-align: center;
-    }
+.statName {
+    text-align: center;
 }
 
 .quotesContainer {
