@@ -1041,6 +1041,16 @@
                                 "title": "Overview",
                                 "path": "pivoting",
                                 "isEnterprise": true
+                            },
+                            {
+                                "title": "Pivot Result Columns",
+                                "path": "pivoting-result-columns",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Pivot Group Columns",
+                                "path": "pivoting-group-columns",
+                                "isEnterprise": true
                             }
                         ]
                     },
