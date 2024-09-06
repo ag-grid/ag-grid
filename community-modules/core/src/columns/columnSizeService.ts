@@ -325,19 +325,20 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
             }
         }
 
-        // the minimum width required by all flex and non-flex columns
+        // the width of all of the columns for which the width has been determined
         let knownColumnsWidth = 0;
 
         let flexingColumns: AgColumn[] = [];
 
         // store the minimum width of all the flex columns, so we can determine if flex is even possible more quickly
+        let minimumFlexedWidth = 0;
         let totalFlex = 0;
         for (let i = 0; i < displayedCenterCols.length; i++) {
             const isFlex = displayedCenterCols[i].getFlex() && i > flexAfterDisplayIndex;
             if (isFlex) {
                 flexingColumns.push(displayedCenterCols[i]);
                 totalFlex += displayedCenterCols[i].getFlex();
-                knownColumnsWidth += displayedCenterCols[i].getMinWidth();
+                minimumFlexedWidth += displayedCenterCols[i].getMinWidth();
             } else {
                 knownColumnsWidth += displayedCenterCols[i].getActualWidth();
             }
@@ -350,7 +351,7 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
         let changedColumns: AgColumn[] = [];
 
         // this is for performance to prevent trying to flex when unnecessary
-        if (knownColumnsWidth > this.flexViewportWidth) {
+        if (knownColumnsWidth + minimumFlexedWidth > this.flexViewportWidth) {
             // known columns and the minimum width of all the flex cols are too wide for viewport
             // so don't flex
             flexingColumns.forEach((col) => col.setActualWidth(col.getMinWidth(), source));
@@ -361,46 +362,52 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
             flexingColumns = [];
         }
 
-        const flexAmounts: number[] = [];
-        const flexAmountIsFinal: boolean[] = [];
-        const widthToDistribute = this.flexViewportWidth - knownColumnsWidth;
-        let finalisedAmount = 0;
+        const flexingColumnSizes: number[] = [];
+        let spaceForFlexingColumns: number;
 
         outer: while (true) {
-            const spacePerFlex = (widthToDistribute - finalisedAmount) / totalFlex;
+            spaceForFlexingColumns = this.flexViewportWidth - knownColumnsWidth;
+            const spacePerFlex = spaceForFlexingColumns / totalFlex;
             for (let i = 0; i < flexingColumns.length; i++) {
-                if (flexAmountIsFinal[i]) continue;
-
                 const col = flexingColumns[i];
+                const widthByFlexRule = spacePerFlex * col.getFlex();
+                let constrainedWidth = 0;
 
                 const minWidth = col.getMinWidth();
                 const maxWidth = col.getMaxWidth();
-                const flexAmount = spacePerFlex * col.getFlex();
 
-                if (flexAmount + minWidth > maxWidth) {
-                    const flexAmount = maxWidth - minWidth;
-                    flexAmounts[i] = flexAmount;
-                    flexAmountIsFinal[i] = true;
-                    finalisedAmount += flexAmount;
+                if (widthByFlexRule < minWidth) {
+                    constrainedWidth = minWidth;
+                } else if (widthByFlexRule > maxWidth) {
+                    constrainedWidth = maxWidth;
+                }
+
+                if (constrainedWidth) {
+                    // This column is not in fact flexing as it is being constrained to a specific size
+                    // so remove it from the list of flexing columns and start again
+                    col.setActualWidth(constrainedWidth, source);
+                    _removeFromUnorderedArray(flexingColumns, col);
                     totalFlex -= col.getFlex();
+                    changedColumns.push(col);
+                    knownColumnsWidth += col.getActualWidth();
                     continue outer;
                 }
 
-                flexAmounts[i] = Math.floor(flexAmount);
+                flexingColumnSizes[i] = Math.floor(widthByFlexRule);
             }
             break;
         }
 
-        let remainingSpace = widthToDistribute;
+        let remainingSpace = spaceForFlexingColumns;
         flexingColumns.forEach((col, i) => {
-            const amount =
+            const size =
                 i < flexingColumns.length - 1
-                    ? Math.min(flexAmounts[i], remainingSpace)
+                    ? Math.min(flexingColumnSizes[i], remainingSpace)
                     : // ensure flex columns fill available width by growing the last column to fit available space if there is more available
-                      remainingSpace;
-            col.setActualWidth(col.getMinWidth() + amount, source);
+                      Math.max(flexingColumnSizes[i], remainingSpace);
+            col.setActualWidth(size, source);
             changedColumns.push(col);
-            remainingSpace -= flexAmounts[i];
+            remainingSpace -= flexingColumnSizes[i];
         });
 
         if (!params.skipSetLeft) {
