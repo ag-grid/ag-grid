@@ -24,31 +24,31 @@
     #{$selector-darkmode} & {
         background: var(--color-bg-secondary);
     }
+}
 
-    .tab {
-        width: 150px;
-        height: 50px;
-        color: var(--color-fg-primary);
-        border-radius: var(--radius-4xl);
-        border: none;
-        appearance: none;
-        background-color: transparent;
-        box-shadow: none;
-        font-weight: var(--text-regular);
-    }
+.tab {
+    width: 150px;
+    height: 50px;
+    color: var(--color-fg-primary);
+    border-radius: var(--radius-4xl);
+    border: none;
+    appearance: none;
+    background-color: transparent;
+    box-shadow: none;
+    font-weight: var(--text-regular);
+}
 
-    .activeTab {
-        width: 150px;
-        height: 50px;
-        border-radius: var(--radius-4xl);
-        background: white;
-        color: var(--color-brand-600);
-        border: none;
-        box-shadow: var(--shadow-lg);
+.activeTab {
+    width: 150px;
+    height: 50px;
+    border-radius: var(--radius-4xl);
+    background: white;
+    color: var(--color-brand-600);
+    border: none;
+    box-shadow: var(--shadow-lg);
 
-        #{$selector-darkmode} & {
-            background-color: var(--color-fg-secondary);
-        }
+    #{$selector-darkmode} & {
+        background-color: var(--color-fg-secondary);
     }
 }
 
@@ -57,27 +57,27 @@
     display: flex;
     justify-content: center;
     gap: $spacing-size-2;
+}
 
-    .featureNavButton {
-        appearance: none;
-        padding: 0;
-        text-align: left;
-        font-weight: var(--text-regular);
-        border: none;
-        background-color: transparent;
-        box-shadow: none;
+.featureNavButton {
+    appearance: none;
+    padding: 0;
+    text-align: left;
+    font-weight: var(--text-regular);
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.featureNavIcon {
+    fill: var(--color-fg-primary);
+
+    &:hover {
+        cursor: pointer;
+        fill: var(--color-util-brand-400);
     }
+}
 
-    .featureNavIcon {
-        fill: var(--color-fg-primary);
-
-        &:hover {
-            cursor: pointer;
-            fill: var(--color-util-brand-400);
-        }
-    }
-
-    .featureNavIconDisabled {
-        fill: var(--color-fg-disabled);
-    }
+.featureNavIconDisabled {
+    fill: var(--color-fg-disabled);
 }
