@@ -23,25 +23,25 @@
     flex-wrap: wrap;
     gap: $spacing-size-4;
     margin-bottom: $spacing-size-4;
+}
 
-    .title {
-        font-size: var(--text-fs-2xl);
-    }
+.title {
+    font-size: var(--text-fs-2xl);
+}
 
-    .feature {
-        display: flex;
-        flex-direction: column;
+.feature {
+    display: flex;
+    flex-direction: column;
+}
 
-        .featureHeading {
-            display: flex;
-            flex-grow: 1;
-            font-size: var(--text-xl);
-            margin-bottom: $spacing-size-2;
-        }
+.featureHeading {
+    display: flex;
+    flex-grow: 1;
+    font-size: var(--text-xl);
+    margin-bottom: $spacing-size-2;
+}
 
-        .featureDetail {
-            font-size: var(--text-fs-md);
-            margin-bottom: $spacing-size-2;
-        }
-    }
+.featureDetail {
+    font-size: var(--text-fs-md);
+    margin-bottom: $spacing-size-2;
 }
