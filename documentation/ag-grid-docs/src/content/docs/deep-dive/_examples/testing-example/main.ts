@@ -1,7 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import {
     CellValueChangedEvent,
-    ColDef,
     GridApi,
     GridOptions,
     ICellRendererComp,
@@ -98,7 +97,7 @@ interface IRow {
 
 const gridOptions: GridOptions = {
     // Data to be displayed
-    rowData: [] as IRow[],
+    rowData: [],
     // Columns to be displayed (Should match rowData properties)
     columnDefs: [
         {
@@ -131,12 +130,12 @@ const gridOptions: GridOptions = {
             cellRenderer: MissionResultRenderer,
         },
         { field: 'rocket' },
-    ] as ColDef[],
+    ],
     // Configurations applied to all columns
     defaultColDef: {
         filter: true,
         editable: true,
-    } as ColDef,
+    },
     // Grid Options & Callbacks
     pagination: true,
     selection: { mode: 'multiRow', headerCheckbox: false },

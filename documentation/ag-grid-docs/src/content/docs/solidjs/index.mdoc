@@ -104,7 +104,7 @@ const MySolidApp = ()=> {
             <AgGridSolid
                 rowData={rowData()} // use signal
                 columnDefs={columnDefs} // no signal
-                rowSelection="single" // no signal, inline
+                rowGroupPanelShow="always" // no signal, inline
                 onSelectionChanged={selectionChangedCallback} // listen for grid event
             />
         </div>

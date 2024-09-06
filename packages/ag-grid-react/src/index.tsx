@@ -1,10 +1,9 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import React, { useState } from 'react';
+import type { ColDef, SelectionOptions } from 'ag-grid-community';
+import React, { useState, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-
-import { ColDef } from 'ag-grid-community';
 
 import { AgGridReact } from './agGridReact';
 
@@ -14,9 +13,16 @@ const App = () => {
         { make: 'Ford', model: 'Mondeo', price: 32000 },
         { make: 'Porsche', model: 'Boxster', price: 72000 },
     ]);
-    const [colDefs, setColDefs] = useState<ColDef[]>([{ field: 'make' }, { field: 'model' }, { field: 'price' }]);
-
-    const onGridReady = (params: any) => {
+    const [colDefs] = useState<ColDef[]>([{ field: 'make' }, { field: 'model' }, { field: 'price' }]);
+    const selection = useMemo<SelectionOptions>(
+        () => ({
+            mode: 'multiRow',
+            checkboxes: false,
+            headerCheckbox: false,
+        }),
+        []
+    );
+    const onGridReady = () => {
         setTimeout(() => setRowData([...rowData, ...rowData]), 2000);
     };
 
@@ -28,7 +34,7 @@ const App = () => {
                         filter: true,
                         flex: 1,
                     }}
-                    rowSelection="multiple"
+                    selection={selection}
                     onGridReady={onGridReady}
                     rowData={rowData}
                     columnDefs={colDefs}
