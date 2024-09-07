@@ -13,6 +13,7 @@ ModuleRegistry.registerModules([InfiniteRowModelModule]);
 const selection = {
     mode: 'multiRow',
     hideDisabledCheckboxes: true,
+    headerCheckbox: false,
     isRowSelectable: (rowNode) => {
         return rowNode.data ? rowNode.data.country === 'United States' : false;
     },

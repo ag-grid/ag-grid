@@ -54,8 +54,6 @@
                 "url": "./change-detection/#comparing-values"
             }
         },
-        "checkboxSelection": {},
-        "showDisabledCheckboxes": {},
         "toolPanelClass": {},
         "suppressColumnsToolPanel": {},
         "columnGroupShow": {},
@@ -187,24 +185,6 @@
             "more": {
                 "name": "Suppress Keyboard Events",
                 "url": "./keyboard-navigation/#suppressheaderkeyboardevent"
-            }
-        },
-        "headerCheckboxSelection": {
-            "more": {
-                "name": "Header Checkbox Selection",
-                "url": "./row-selection-multi-row/#selecting-all-rows"
-            }
-        },
-        "headerCheckboxSelectionFilteredOnly": {
-            "more": {
-                "name": "Select Everything or Just Filtered",
-                "url": "./row-selection-multi-row/#selecting-all-rows"
-            }
-        },
-        "headerCheckboxSelectionCurrentPageOnly": {
-            "more": {
-                "name": "Select Everything on the Current Page",
-                "url": "./row-selection-multi-row/#selecting-all-rows"
             }
         },
         "suppressFloatingFilterButton": {
