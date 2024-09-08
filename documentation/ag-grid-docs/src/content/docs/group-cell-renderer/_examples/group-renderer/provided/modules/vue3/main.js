@@ -23,10 +23,8 @@ const VueExample = {
                 :defaultColDef="defaultColDef"
                 :rowData="rowData"
                 :groupDisplayType="groupDisplayType"
-                :suppressRowClickSelection="true"
                 :groupDefaultExpanded="groupDefaultExpanded"
-                :rowSelection="rowSelection"
-                :groupSelectsChildren="true"></ag-grid-vue>
+                :selection="selection"></ag-grid-vue>
         </div>
     `,
     components: {
@@ -96,7 +94,7 @@ const VueExample = {
             rowData: null,
             groupDisplayType: null,
             groupDefaultExpanded: null,
-            rowSelection: null,
+            selection: null,
             themeClass:
                 /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
                 'ag-theme-quartz' /** DARK MODE END **/,
@@ -106,7 +104,13 @@ const VueExample = {
         this.rowData = getData();
         this.groupDisplayType = 'custom';
         this.groupDefaultExpanded = 1;
-        this.rowSelection = 'multiple';
+        this.selection = {
+            mode: 'multiRow',
+            checkboxes: false,
+            headerCheckbox: false,
+            groupSelects: 'descendants',
+            suppressClickSelection: true,
+        };
     },
     methods: {
         onGridReady(params) {

@@ -29,7 +29,6 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: 'make',
-            checkboxSelection: true,
         },
         { field: 'model' },
         { field: 'price', filter: 'agNumberColumnFilter' },
@@ -47,7 +46,10 @@ const gridOptions: GridOptions = {
         // apply red to Ford cars
         'rag-red': (params) => params.data.make === 'Ford',
     },
-    rowSelection: 'multiple',
+    selection: {
+        mode: 'multiRow',
+        headerCheckbox: false,
+    },
 };
 
 const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

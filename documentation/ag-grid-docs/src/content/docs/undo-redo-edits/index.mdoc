@@ -10,7 +10,7 @@ Users can change the contents of cells through the following grid features:
 
 * [Cell Editing](./cell-editing/)
 * [Copy / Paste](./clipboard/)
-* [Fill Handle](./range-selection-fill-handle/)
+* [Fill Handle](./cell-selection-fill-handle/)
 
 {% note %}
 This Undo / Redo feature is designed to be a recovery mechanism for user editing mistakes. Performing data updates (except for cell edits), or grid
@@ -78,11 +78,15 @@ const gridOptions = {
         // enables flashing to help see cell changes
         enableCellChangeFlash: true,
     },
-    // allows copy / paste using cell ranges
-    enableRangeSelection: true,
 
-    // enables the fill handle
-    enableFillHandle: true,
+    selection: {
+        // allows copy / paste using cell ranges
+        mode: 'cell',
+        // enables the fill handle
+        handle: {
+            mode: 'fill',
+        }
+    }
 
     // enables undo / redo
     undoRedoCellEditing: true,

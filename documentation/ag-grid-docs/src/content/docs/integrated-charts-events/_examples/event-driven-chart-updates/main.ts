@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
         { field: 'Rainfall (mm)', chartDataType: 'series' },
     ],
     defaultColDef: { flex: 1 },
-    enableRangeSelection: true,
+    selection: { mode: 'cell' },
     popupParent: document.body,
     enableCharts: true,
     chartThemeOverrides: {

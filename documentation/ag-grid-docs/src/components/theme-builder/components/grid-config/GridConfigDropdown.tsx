@@ -11,7 +11,7 @@ import { allConfigFields, incompatibleGridConfigProperties, productionConfigFiel
 export const GridConfigDropdownButton = () => {
     return (
         <GridFeatureButtonWrapper>
-            <UIPopupButton placement="right-start" dropdownContent={<GridConfigDropdown />}>
+            <UIPopupButton allowedPlacements={['right-start']} dropdownContent={<GridConfigDropdown />}>
                 {configIcon} Grid Features
             </UIPopupButton>
         </GridFeatureButtonWrapper>
@@ -79,6 +79,7 @@ const Container = styled('div')`
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: 350px;
 `;
 
 const GridFeatureButtonWrapper = styled('div')`

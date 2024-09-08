@@ -29,8 +29,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
 
-    enableRangeSelection: true,
-    rowSelection: 'multiple',
+    selection: { mode: 'cell' },
 
     sendToClipboard: sendToClipboard,
 };
@@ -46,6 +45,11 @@ function onBtCopyRows() {
 
 function onBtCopyRange() {
     gridApi!.copySelectedRangeToClipboard();
+}
+
+function onModeChange() {
+    const mode = document.querySelector<HTMLSelectElement>('#select-mode')?.value as any;
+    gridApi.setGridOption('selection', mode ? { mode } : undefined);
 }
 
 // setup the grid after the page has finished loading

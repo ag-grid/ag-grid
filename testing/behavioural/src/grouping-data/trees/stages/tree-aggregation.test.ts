@@ -34,7 +34,7 @@ describe('ag-grid tree aggregation', () => {
             autoGroupColumnDef: { headerName: 'Path' },
             treeData: true,
             animateRows: false,
-            rowSelection: 'multiple',
+            selection: { mode: 'multiRow' },
             groupDefaultExpanded: -1,
             rowData,
             getRowId: (params) => params.data.id,
@@ -129,11 +129,6 @@ describe('ag-grid tree aggregation', () => {
 
         api.setGridOption('rowData', movedRowData);
 
-        // TODO: HACK: Setting the rowData twice here is because AG-12650
-        // Aggregations do not update the UI with tree data fillers removed
-        // Remove this line after AG-12650 is fixed
-        api.setGridOption('rowData', JSON.parse(JSON.stringify(movedRowData)));
-
         await new GridRows(api, 'move', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
             ├─┬ A GROUP id:1 name:"John Von Neumann" x:25
@@ -172,7 +167,7 @@ describe('ag-grid tree aggregation', () => {
             aggregateOnlyChangedColumns: true,
             treeData: true,
             animateRows: false,
-            rowSelection: 'multiple',
+            selection: { mode: 'multiRow' },
             groupDefaultExpanded: -1,
             rowData,
             getRowId: (params) => params.data.id,
@@ -332,7 +327,7 @@ describe('ag-grid tree aggregation', () => {
             alwaysAggregateAtRootLevel: true,
             treeData: true,
             animateRows: false,
-            rowSelection: 'multiple',
+            selection: { mode: 'multiRow' },
             groupDefaultExpanded: -1,
             rowData,
             getRowId: (params) => params.data.id,

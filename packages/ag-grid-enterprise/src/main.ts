@@ -54,6 +54,7 @@ ModuleRegistry.__registerModules(
 );
 
 export * from '@ag-grid-community/core';
+export * from '@ag-grid-community/theming';
 export * from '@ag-grid-enterprise/core';
 export * from '@ag-grid-enterprise/advanced-filter';
 export * from '@ag-grid-enterprise/charts';

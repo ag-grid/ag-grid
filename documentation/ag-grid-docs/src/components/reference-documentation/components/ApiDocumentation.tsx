@@ -7,9 +7,10 @@ import { Section } from './Section';
 interface Props {
     framework: Framework;
     model: ApiDocumentationModel;
+    isInline: boolean;
 }
 
-export const ApiDocumentation: FunctionComponent<Props> = ({ framework, model }) => {
+export const ApiDocumentation: FunctionComponent<Props> = ({ framework, model, isInline }) => {
     if (model.type === 'multiple') {
         return model.entries.map(([name, { properties, meta }]) => (
             <Section
@@ -19,6 +20,7 @@ export const ApiDocumentation: FunctionComponent<Props> = ({ framework, model })
                 properties={properties}
                 config={model.config}
                 meta={meta}
+                isInline={isInline}
             />
         ));
     }
@@ -30,6 +32,7 @@ export const ApiDocumentation: FunctionComponent<Props> = ({ framework, model })
             properties={model.properties}
             config={{ ...model.config, isSubset: true }}
             names={model.names}
+            isInline={isInline}
         />
     );
 };

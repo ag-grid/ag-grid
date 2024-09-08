@@ -5,7 +5,7 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const columnDefs: ColDef[] = [
-    { field: 'athlete', minWidth: 170, checkboxSelection: true, headerCheckboxSelection: true },
+    { field: 'athlete', minWidth: 170 },
     { field: 'age' },
     { field: 'country' },
     { field: 'year' },
@@ -22,7 +22,7 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     rowData: null,
     columnDefs: columnDefs,
-    rowSelection: 'multiple',
+    selection: { mode: 'multiRow' },
     defaultColDef: {
         editable: true,
         filter: true,

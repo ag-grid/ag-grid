@@ -1,0 +1,79 @@
+## Custom Drag And Drop Image
+
+The drag and drop image can be customised via the grid properties `dragAndDropImageComponent` and `dragAndDropImageComponentParams`.
+
+{% if isFramework("javascript", "angular") %}
+Implement this interface to provide a custom drag and drop image component when dragging parts of the grid.
+{% /if %}
+{% if isFramework("javascript") %}
+```ts
+interface IDragAndDropImageComponent {
+   // Optional - props for rendering.
+   init?(params: IDragAndDropImageParams): void;
+
+   // Mandatory - Return the DOM element of the component, this is what the grid will display while dragging
+   getGui(): HTMLElement;
+
+   // Optional - Gets called once by grid after rendering is finished - if your renderer needs to do any cleanup,
+   // do it here
+   destroy?(): void;
+
+   // Mandatory - Gets called every time the grid needs to updated the label of the Drag Image.
+   setLabel(label: string): void;
+
+    // Mandatory - Gets called every time the grid needs to updated the icon of the Drag Image.
+   setIcon(icon: string | null, shake: boolean): void;
+}
+```
+{% /if %}
+{% if isFramework("angular") %}
+### IDragAndDropImageAngularComponent
+{% interfaceDocumentation interfaceName="IDragAndDropImageAngularComponent" config={"asCode":true } /%}
+{% /if %}
+{% if isFramework("javascript", "angular") %}
+### IDragAndDropImageParams
+{% interfaceDocumentation interfaceName="IDragAndDropImageParams" exclude=["template"] config={ "description": "" } /%}
+{% /if %}
+{% if isFramework("react") %}
+```ts
+const CustomDragAndDropImage = (props: CustomDragAndDropImageProps) => {
+    return <div>{props.label}</div>;
+};
+```
+The following props are passed to the Custom Component (`CustomDragAndDropImageProps` interface).
+### CustomDragAndDropImageProps
+{% interfaceDocumentation interfaceName="CustomDragAndDropImageProps" config={ "description": "" } /%}
+{% /if %}
+{% if isFramework("vue") %}
+Any valid Vue component can be a drag and drop image component, however it must implement the `IDragAndDropImage` interface:
+
+### IDragAndDropImage
+{% interfaceDocumentation interfaceName="IDragAndDropImage" config={"asCode":true } /%}
+{% /if %}
+### Custom Params
+On top of the parameters provided by the grid, you can also provide your own parameters. 
+This is useful if you want to allow configuring the component. For example, you might have parts of the grid that you want to highlight with a different colour.
+{% if isFramework("javascript", "angular", "react") %}
+```js
+colDef = {
+   ...
+   dragAndDropImageComponent: MyDragAndDropImageComponent;
+   dragAndDropImageComponentParams : {
+       accentColour: 'orange'
+   }
+}
+```
+{% /if %}
+{% if isFramework("vue") %}
+```js
+colDef = {
+   ...
+   dragAndDropImageComponent: 'MyDragAndDropImageComponent';
+   dragAndDropImageComponentParams : {
+       accentColour: 'orange'
+   }
+}
+```
+{% /if %}
+
+{% gridExampleRunner title="Custom Drag and Drop Image" name="custom-drag-drop-image" exampleHeight=650 /%}

@@ -8,15 +8,10 @@ import { applyPreset, darkModePreset, lightModePreset } from './components/prese
 import { allParamModels } from './model/ParamModel';
 import { allFeatureModels } from './model/PartModel';
 import { addChangedModelItem, getChangedModelItemCount } from './model/changed-model-items';
-import { rerenderTheme } from './model/rendered-theme';
 import { initialiseStore } from './model/store';
 
 export const ThemeBuilder = () => {
     const store = useMemo(initialiseStore, []);
-
-    (window as any).handlePartsCssChange = () => {
-        rerenderTheme(store);
-    };
 
     const [initialised, setInitialised] = useState(false);
 

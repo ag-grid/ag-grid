@@ -84,21 +84,21 @@
         "viewport": true
     },
     {
-        "feature": "[Specify Selectable Rows](./row-selection/#specify-selectable-rows)",
+        "feature": "[Specify Selectable Rows](./row-selection-multi-row/#configure-selectable-rows)",
         "clientSide": true,
         "infinite": true,
         "serverSide": true,
         "viewport": false
     },
     {
-        "feature": "[Header Checkbox Selection](./row-selection/#header-checkbox-selection)",
+        "feature": "[Header Checkbox Selection](./row-selection-multi-row/#selecting-all-rows)",
         "clientSide": true,
         "infinite": false,
         "serverSide": true,
         "viewport": false
     },
     {
-        "feature": "[Range Selection](./range-selection)",
+        "feature": "[Cell Selection](./cell-selection)",
         "clientSide": true,
         "infinite": true,
         "serverSide": true,

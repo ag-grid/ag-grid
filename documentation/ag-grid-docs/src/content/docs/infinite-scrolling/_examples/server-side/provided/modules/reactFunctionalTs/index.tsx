@@ -1,6 +1,13 @@
 'use strict';
 
-import { ColDef, GetRowIdParams, GridReadyEvent, IDatasource, ModuleRegistry } from '@ag-grid-community/core';
+import {
+    ColDef,
+    GetRowIdParams,
+    GridReadyEvent,
+    IDatasource,
+    ModuleRegistry,
+    SelectionOptions,
+} from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -92,6 +99,12 @@ const filterData = (filterModel: any, data: any[]) => {
         resultOfFilter.push(item);
     }
     return resultOfFilter;
+};
+
+const selection: SelectionOptions = {
+    mode: 'multiRow',
+    checkboxes: false,
+    headerCheckbox: false,
 };
 
 const GridExample = () => {
@@ -201,7 +214,7 @@ const GridExample = () => {
                 <AgGridReact
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    rowSelection={'multiple'}
+                    selection={selection}
                     rowModelType={'infinite'}
                     cacheBlockSize={100}
                     cacheOverflowSize={2}

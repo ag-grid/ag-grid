@@ -4,13 +4,14 @@ import { ModuleNames } from '../../modules/moduleNames';
 import { PropertyKeys } from '../../propertyKeys';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 import { COL_DEF_VALIDATORS } from './colDefValidations';
+import { SELECTION_VALIDATORS } from './selectionValidations';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
  *
  * If the property was simply renamed, use the `renamed` property. The value will be implicitly copied to the new property.
  */
-const GRID_OPTION_DEPRECATIONS: () => Deprecations<GridOptions> = () => ({
+const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     advancedFilterModel: { version: '31', message: 'Use `initialState.filter.advancedFilterModel` instead.' },
     suppressAsyncEvents: { version: '31', message: 'Events should be handled asynchronously.' },
 
@@ -30,6 +31,47 @@ const GRID_OPTION_DEPRECATIONS: () => Deprecations<GridOptions> = () => ({
     groupIncludeTotalFooter: { version: '31.3', message: 'Use `grandTotalRow` instead.' },
 
     suppressLoadingOverlay: { version: '32', message: 'Use `loading`=false instead.' },
+
+    enableFillHandle: { version: '32.2', message: 'Use `selection.handle` instead.' },
+    enableRangeHandle: { version: '32.2', message: 'Use `selection.handle` instead.' },
+    enableRangeSelection: { version: '32.2', message: 'Use `selection.mode = "cell"` instead.' },
+    rowSelection: {
+        version: '32.2',
+        message: 'Use `selection.mode = "singleRow"` or `selection.mode = "multiRow" instead.',
+    },
+    suppressMultiRangeSelection: {
+        version: '32.2',
+        message: 'Use `selection.suppressMultiRanges` instead.',
+    },
+    suppressClearOnFillReduction: {
+        version: '32.2',
+        message: 'Use `selection.handle.suppressClearOnFillReduction` instead.',
+    },
+    fillHandleDirection: { version: '32.2', message: 'Use `selection.handle.direction` instead.' },
+    fillOperation: { version: '32.2', message: 'Use `selection.handle.setFillValue` instead.' },
+    suppressRowClickSelection: {
+        version: '32.2',
+        message: 'Use `selection.suppressClickSelection` instead.',
+    },
+    suppressRowDeselection: { version: '32.2', message: 'Use `selection.suppressDeselection` instead.' },
+    rowMultiSelectWithClick: {
+        version: '32.2',
+        message: 'Use `selection.enableMultiSelectWithClick` instead.',
+    },
+    groupSelectsChildren: {
+        version: '32.2',
+        message: 'Use `selection.groupSelects = "descendants"` instead.',
+    },
+    groupSelectsFiltered: {
+        version: '32.2',
+        message: 'Use `selection.groupSelects = "filteredDescendants"` instead.',
+    },
+    isRowSelectable: { version: '32.2', message: 'Use `selectionOptions.isRowSelectable` instead.' },
+    suppressCopySingleCellRanges: { version: '32.2', message: 'Use `selection.copySelectedRows` instead.' },
+    suppressCopyRowsToClipboard: { version: '32.2', message: 'Use `selection.copySelectedRows` instead.' },
+    onRangeSelectionChanged: { version: '32.2', message: 'Use `onCellSelectionChanged` instead.' },
+    onRangeDeleteStart: { version: '32.2', message: 'Use `onCellSelectionDeleteStart` instead.' },
+    onRangeDeleteEnd: { version: '32.2', message: 'Use `onCellSelectionDeleteEnd` instead.' },
 
     suppressBrowserResizeObserver: {
         version: '32.2',
@@ -65,7 +107,7 @@ export const GRID_OPTION_DEFAULTS = {
     suppressClipboardPaste: false,
     suppressClipboardApi: false,
     suppressCutToClipboard: false,
-    maintainColumnOrder: false,
+    maintainColumnOrder: 'pivotResultColumns',
     suppressFieldDotNotation: false,
     allowDragFromColumnsToolPanel: false,
     suppressMovableColumns: false,
@@ -349,11 +391,24 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
             return null;
         },
     },
+    maintainColumnOrder: {
+        validate: (options) => {
+            const value = options.maintainColumnOrder;
+            if (typeof value === 'boolean') {
+                return `As of v32.2.0, the use of boolean values with 'maintainColumnOrder' is deprecated.
+                    Please use 'primaryColumns', 'pivotResultColumns', 'all' or 'none' instead.`;
+            }
+            return null;
+        },
+    },
 
     columnDefs: () => COL_DEF_VALIDATORS,
     defaultColDef: () => COL_DEF_VALIDATORS,
     defaultColGroupDef: () => COL_DEF_VALIDATORS,
     autoGroupColumnDef: () => COL_DEF_VALIDATORS,
+    controlsColDef: () => COL_DEF_VALIDATORS,
+
+    selection: () => SELECTION_VALIDATORS,
 });
 
 export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({

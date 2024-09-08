@@ -67,14 +67,14 @@ By default, the managed row dragging moves the rows while you are dragging them.
 
 ### Multi-Row Dragging
 
-It is possible to drag multiple rows at the same time, when `rowDragMultiRow` is set to `true` in the `gridOptions` and it is combined with `rowSelection='multiple'`.
+It is possible to drag multiple rows at the same time, when `rowDragMultiRow` is set to `true` in the `gridOptions` and it is combined with `selection.mode='multiRow'`.
 
 For this example note the following:
 
 * When you select multiple items and drag one of them, all items in the selection will be dragged.
 * When you drag an item that is not selected while other items are selected, only the unselected item will be dragged.
 
-{% gridExampleRunner title="Row Drag with Multi Row Drag" name="managed-with-multi-row-drag" /%}
+{% gridExampleRunner title="Row Drag with Multi-Row Drag" name="managed-with-multi-row-drag" /%}
 
 ## Unmanaged Dragging
 
@@ -177,13 +177,13 @@ const gridOptions = {
 The example below demonstrates entire row dragging with [Multi-Row Dragging](./row-dragging/#multi-row-dragging). Note the following:
 
 * Reordering rows by clicking and dragging anywhere on a row is possible as `rowDragEntireRow` is enabled.
-* Multiple rows can be selected and dragged as `rowDragMultiRow` is also enabled with `rowSelection = 'multiple'`.
+* Multiple rows can be selected and dragged as `rowDragMultiRow` is also enabled with `selection.mode = 'multiRow'`.
 * Row Drag Managed is being used, but it is not a requirement for `Entire Row Dragging`.
 
 {% gridExampleRunner title="Entire Row Dragging" name="entire-row-dragging" /%}
 
 {% warning %}
-[Range Selection](./range-selection/) is not supported when `rowDragEntireRow` is enabled.
+[Cell Selection](./cell-selection/) is not supported when `rowDragEntireRow` is enabled.
 {% /warning %}
 
 ## Suppress Row Drag
@@ -408,3 +408,5 @@ Note the following:
 * The drag event starts as soon as `mousedown` is fired.
 
 {% gridExampleRunner title="Row Drag With Custom Start Drag Pixels" name="dragger-inside-custom-start-drag-pixels" /%}
+
+{% partial file="../shared-partials/_drag-and-drop-image-component.mdoc" /%}

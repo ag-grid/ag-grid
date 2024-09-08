@@ -10,6 +10,7 @@ import React, { Fragment } from 'react';
 import type { Config, ObjectCode, Properties, SectionProps } from '../types';
 import { convertMarkdown, escapeGenericCode, getLinkedType } from '../utils/documentation-helpers';
 import { formatJson, getInterfaceName } from '../utils/interface-helpers';
+import legacyStyles from './LegacyApiReference.module.scss';
 import { Property } from './Property';
 
 const Breadcrumbs = ({ breadcrumbs }: { breadcrumbs: Record<string, string> }) => {
@@ -165,6 +166,7 @@ export const Section: FunctionComponent<SectionProps> = ({
     config = {} as Config,
     breadcrumbs = {},
     meta,
+    isInline,
 }) => {
     const showHeader = !config.isSubset;
     const displayName = meta?.displayName || title;
@@ -176,7 +178,11 @@ export const Section: FunctionComponent<SectionProps> = ({
     const id = breadcrumbKeys.join('.');
 
     return (
-        <div className={styles.apiReferenceOuter}>
+        <div
+            className={classnames(styles.apiReferenceOuter, {
+                [styles.isInline]: isInline,
+            })}
+        >
             {showHeader && (
                 <SectionHeader
                     description={meta?.description}
@@ -191,7 +197,7 @@ export const Section: FunctionComponent<SectionProps> = ({
                 />
             )}
             <table
-                className={classnames(styles.reference, styles.apiReference, 'no-zebra')}
+                className={classnames(styles.reference, styles.apiReference, legacyStyles.apiReference, 'no-zebra')}
                 style={config.overrideBottomMargin ? { marginBottom: config.overrideBottomMargin } : {}}
             >
                 <colgroup>

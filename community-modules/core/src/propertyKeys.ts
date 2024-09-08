@@ -66,7 +66,7 @@ export const INITIAL_GRID_OPTION_KEYS = {
     suppressBrowserResizeObserver: true,
     suppressPropertyNamesCheck: true,
     debug: true,
-    dragAndDropCoverComponent: true,
+    dragAndDropImageComponent: true,
     loadingOverlayComponent: true,
     suppressLoadingOverlay: true,
     noRowsOverlayComponent: true,
@@ -165,6 +165,7 @@ export class PropertyKeys {
         'localeText',
         'icons',
         'datasource',
+        'dragAndDropImageComponentParams',
         'serverSideDatasource',
         'viewportDatasource',
         'groupRowRendererParams',
@@ -183,6 +184,7 @@ export class PropertyKeys {
         'popupParent',
         'statusBar',
         'sideBar',
+        'theme',
         'chartThemeOverrides',
         'customChartThemes',
         'chartToolPanelsDef',
@@ -192,6 +194,8 @@ export class PropertyKeys {
         'advancedFilterBuilderParams',
         'initialState',
         'autoSizeStrategy',
+        'selection',
+        'controlsColDef',
     ];
 
     public static ARRAY_PROPERTIES: KeysOfType<any[]>[] = [
@@ -366,7 +370,6 @@ export class PropertyKeys {
         'suppressClipboardApi',
         'suppressModelUpdateAfterUpdateTransaction',
         'stopEditingWhenCellsLoseFocus',
-        'maintainColumnOrder',
         'groupMaintainOrder',
         'columnHoverHighlight',
         'readOnlyEdit',
@@ -389,10 +392,11 @@ export class PropertyKeys {
         'suppressServerSideFullWidthLoadingRow',
         'suppressAdvancedFilterEval',
         'loading',
+        'loadThemeGoogleFonts',
     ];
 
     // If property does not fit above, i.e union that should not be coerced.
-    public static OTHER_PROPERTIES: GridOptionKey[] = ['suppressStickyTotalRow'];
+    public static OTHER_PROPERTIES: GridOptionKey[] = ['suppressStickyTotalRow', 'maintainColumnOrder'];
 
     public static FUNCTION_PROPERTIES: (CallbackKeys | FunctionKeys)[] = [
         'doesExternalFilterPass',
@@ -402,7 +406,7 @@ export class PropertyKeys {
         'isRowSelectable',
         'rowDragText',
         'groupRowRenderer',
-        'dragAndDropCoverComponent',
+        'dragAndDropImageComponent',
         'fullWidthCellRenderer',
         'loadingCellRenderer',
         'loadingOverlayComponent',

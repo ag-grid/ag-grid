@@ -2,7 +2,12 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
-import { _isClientSideRowModel } from '../gridOptionsUtils';
+import {
+    _getGroupSelectsDescendants,
+    _getIsRowSelectable,
+    _getRowSelectionMode,
+    _isClientSideRowModel,
+} from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
@@ -32,16 +37,17 @@ export class SelectableService extends BeanStub implements NamedBean {
     }
 
     private updateSelectable(skipLeafNodes = false) {
-        const isRowSelecting = !!this.gos.get('rowSelection');
-        const isRowSelectable = this.gos.get('isRowSelectable');
+        const { gos } = this;
+
+        const isRowSelecting = _getRowSelectionMode(gos) !== undefined;
+        const isRowSelectable = _getIsRowSelectable(gos);
 
         if (!isRowSelecting || !isRowSelectable) {
             return;
         }
 
-        const isGroupSelectsChildren = this.gos.get('groupSelectsChildren');
-
-        const isCsrmGroupSelectsChildren = _isClientSideRowModel(this.gos) && isGroupSelectsChildren;
+        const isGroupSelectsChildren = _getGroupSelectsDescendants(gos);
+        const isCsrmGroupSelectsChildren = _isClientSideRowModel(gos) && isGroupSelectsChildren;
 
         const nodesToDeselect: RowNode[] = [];
 
@@ -57,7 +63,7 @@ export class SelectableService extends BeanStub implements NamedBean {
                 return;
             }
 
-            const rowSelectable = isRowSelectable ? isRowSelectable(node) : true;
+            const rowSelectable = isRowSelectable?.(node) ?? true;
             node.setRowSelectable(rowSelectable, true);
 
             if (!rowSelectable && node.isSelected()) {

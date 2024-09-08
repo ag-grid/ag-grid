@@ -31,7 +31,7 @@ const gridOptions: GridOptions = {
         minWidth: 100,
     },
     rowData: generateData(),
-    enableRangeSelection: true,
+    selection: { mode: 'cell' },
     popupParent: document.body,
     enableCharts: true,
     onFirstDataRendered: onFirstDataRendered,

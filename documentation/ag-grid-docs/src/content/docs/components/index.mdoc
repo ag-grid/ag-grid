@@ -290,23 +290,24 @@ The below table gives a summary of the components, where they are configured and
 | Component                     | Where                     | Attribute |
 | ----------------------------- | ------------------------- | ------------------------ |
 | Cell Component                 | Column Definition         | cellRenderer{% br /%}cellRendererParams{% br /%}cellRendererSelector         |
-| Editor Component                   | Column Definition         | cellEditor{% br /%}cellEditorParams{% br /%}cellEditorSelector|
-| Filter                        | Column Definition         | filter{% br /%}filterParams              |
-| Floating Filter               | Column Definition         | floatingFilter{% br /%}floatingFilterParams       |
-| Header Component              | Column Definition         | headerComponent{% br /%}headerComponentParams               |
-| Header Group Component        | Column Definition         | headerGroupComponent{% br /%}headerGroupComponentParams         |
-| Tooltip Component             | Column Definition         | tooltipComponent{% br /%}tooltipComponentParams              |
+| Editor Component               | Column Definition         | cellEditor{% br /%}cellEditorParams{% br /%}cellEditorSelector|
+| Filter                         | Column Definition         | filter{% br /%}filterParams              |
+| Floating Filter                | Column Definition         | floatingFilter{% br /%}floatingFilterParams       |
+| Header Component               | Column Definition         | headerComponent{% br /%}headerComponentParams               |
+| Header Group Component         | Column Definition         | headerGroupComponent{% br /%}headerGroupComponentParams         |
+| Tooltip Component              | Column Definition         | tooltipComponent{% br /%}tooltipComponentParams              |
 | Group Row Cell Component       | Grid Option               | groupRowRenderer{% br /%}groupRowRendererParams         |
 | Group Row Inner Cell Component | Grid Option               | innerRenderer{% br /%}innerRendererParams            |
 | Detail Cell Component          | Grid Option               | detailCellRenderer{% br /%}detailCellRendererParams        |
 | Full Width Cell Component      | Grid Option               | fullWidthCellRenderer{% br /%}fullWidthCellRendererParams        |
 | Loading Cell Component         | Grid Option{%br /%}Column Definition               | loadingCellRenderer{% br /%}loadingCellRendererParams       |
-| Loading Overlay               | Grid Option               | loadingOverlayComponent{% br /%}loadingOverlayComponentParams       |
-| No Rows Overlay               | Grid Option               | noRowsOverlayComponent{% br /%}noRowsOverlayComponentParams        |
-| Date Component                | Grid Option               | dateComponent{% br /%}dateComponentParams                  |
-| Status Bar Component          | Grid Option -> Status Bar | statusPanel{% br /%}statusPanelParams          |
-| Tool Panel                    | Grid Option -> Side Bar   | toolPanel{% br /%}toolPanelParams            |
-| Menu Item                     | Grid Option -> Menu       | menuItem{% br /%}menuItemParams            |
+| Loading Overlay                | Grid Option               | loadingOverlayComponent{% br /%}loadingOverlayComponentParams       |
+| No Rows Overlay                | Grid Option               | noRowsOverlayComponent{% br /%}noRowsOverlayComponentParams        |
+| Drag and Drop Image            | Grid Option               | dragAndDropImageComponent{% br /%}dragAndDropImageComponentParams        |
+| Date Component                 | Grid Option               | dateComponent{% br /%}dateComponentParams                  |
+| Status Bar Component           | Grid Option -> Status Bar | statusPanel{% br /%}statusPanelParams          |
+| Tool Panel                     | Grid Option -> Side Bar   | toolPanel{% br /%}toolPanelParams            |
+| Menu Item                      | Grid Option -> Menu       | menuItem{% br /%}menuItemParams            |
 
 ## Grid Provided Components
 
@@ -314,7 +315,7 @@ The grid comes with pre-registered components that can be used. Each component p
 
 | Drag And Drop | |
 | - | - |
-| agDragAndDropCover | Default cover element when grid parts are being dragged |
+| agDragAndDropImage | Default cover element when grid parts are being dragged |
 
 | Date Inputs | |
 | - | - |
@@ -380,7 +381,7 @@ The grid comes with pre-registered components that can be used. Each component p
 
 It is also possible to override components. Where the grid uses a default value, this means the override component will be used instead. The default components, where overriding makes sense, are as follows:
 
-* **agDragAndDropCover**: To change the default drag and drop cover when dragging grid parts.
+* **agDragAndDropImage**: To change the default drag and drop image when dragging grid parts.
 * **agDateInput**: To change the default date selection across all filters.
 * **agColumnHeader**: To change the default column header across all columns.
 * **agColumnGroupHeader**: To change the default column group header across all columns.

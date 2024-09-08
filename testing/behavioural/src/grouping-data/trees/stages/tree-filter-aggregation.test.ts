@@ -38,7 +38,7 @@ describe('ag-grid tree aggregation and filter', () => {
             autoGroupColumnDef: { headerName: 'Path' },
             treeData: true,
             animateRows: false,
-            rowSelection: 'multiple',
+            selection: { mode: 'multiRow' },
             grandTotalRow: 'top',
             alwaysAggregateAtRootLevel: true,
             groupDefaultExpanded: -1,

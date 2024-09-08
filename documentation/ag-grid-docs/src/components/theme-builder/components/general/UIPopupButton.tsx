@@ -1,5 +1,13 @@
 import styled from '@emotion/styled';
-import { type Placement, type UseFloatingOptions, autoUpdate, offset, shift, useFloating } from '@floating-ui/react';
+import {
+    type Placement,
+    type UseFloatingOptions,
+    autoPlacement,
+    autoUpdate,
+    offset,
+    shift,
+    useFloating,
+} from '@floating-ui/react';
 import { type ReactNode, useState } from 'react';
 
 import { combineClassNames, useClickAwayListener } from '../component-utils';
@@ -12,7 +20,7 @@ export type UIPopupButtonProps = {
     endDecorator?: React.ReactNode;
     className?: string;
     variant?: 'primary' | 'secondary';
-    placement?: Placement;
+    allowedPlacements?: Placement[];
     offset?: number;
 };
 
@@ -20,11 +28,13 @@ export type UIPopupButtonProps = {
  * A version of MUI's menu component that can contain interactive UI in the dropdown. It doesn't close until you click outside the dropdown.
  */
 export const UIPopupButton = (props: UIPopupButtonProps) => {
-    const { placement = 'left-start', offset: offsetValue = 0 } = props;
     const floatingOptions: Partial<UseFloatingOptions> = {
         whileElementsMounted: autoUpdate,
-        placement,
-        middleware: [shift({ padding: 8 }), offset(offsetValue)],
+        middleware: [
+            autoPlacement({ allowedPlacements: props.allowedPlacements || ['right'] }),
+            offset(8),
+            shift({ padding: 8 }),
+        ],
     };
     const { refs, floatingStyles, elements } = useFloating(floatingOptions);
     const [show, setShow] = useState(false);
@@ -85,9 +95,7 @@ const DropdownArea = styled(Card)`
     position: absolute;
     pointer-events: all;
     max-height: calc(100vh - 16px);
-    margin-left: 8px;
     padding: 16px;
-    width: 350px;
     overflow: auto;
 
     .dropdownWrapper {

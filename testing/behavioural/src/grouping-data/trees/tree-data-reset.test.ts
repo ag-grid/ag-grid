@@ -3,7 +3,7 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { setTimeout as asyncSetTimeout } from 'timers/promises';
 import type { MockInstance } from 'vitest';
 
-import { GridRows, TestGridsManager, cachedJSONObjects, flushFakeTimers } from '../../test-utils';
+import { GridRows, TestGridsManager, cachedJSONObjects } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 
 const defaultGridRowsOptions: GridRowsOptions = {
@@ -499,30 +499,28 @@ describe('ag-grid tree data', () => {
             animateRows: false,
             groupDefaultExpanded: -1,
             rowData: [],
-            rowSelection: 'multiple',
+            selection: {
+                mode: 'multiRow',
+            },
             getDataPath,
             getRowId: (params) => params.data.id,
         });
 
         const gridRowsOptions = { ...defaultGridRowsOptions, columns: ['label'] };
 
-        vitest.useFakeTimers({ shouldAdvanceTime: true });
-
         api.setGridOption('rowData', rowData1);
 
         // set B collapsed (a leaf)
-        api.setRowNodeExpanded(api.getRowNode('1')!, false);
+        api.setRowNodeExpanded(api.getRowNode('1')!, false, undefined, true);
 
         // set P collapsed (a filler node group, that is going to be moved)
-        api.setRowNodeExpanded(api.getRowNode('4')!.parent!, false);
+        api.setRowNodeExpanded(api.getRowNode('4')!.parent!, false, undefined, true);
 
         // set R collapsed (a filler node group, that is not going to be moved)
-        api.setRowNodeExpanded(api.getRowNode('5')!.parent!, false);
+        api.setRowNodeExpanded(api.getRowNode('5')!.parent!, false, undefined, true);
 
         // Select all nodes
         api.selectAll();
-
-        await flushFakeTimers();
 
         await new GridRows(api, 'update 0', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
@@ -538,8 +536,6 @@ describe('ag-grid tree data', () => {
             ├── M LEAF selected id:6 label:"6-v1"
             └── N LEAF selected id:7 label:"7-v1"
         `);
-
-        await asyncSetTimeout(1); // Simulate async re-loading
 
         api.setGridOption('rowData', rowData2);
 

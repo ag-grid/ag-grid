@@ -1071,18 +1071,17 @@ _Refer to our [Grid Events](./grid-events/) documentation for a full list of eve
 
 ## Test Your Knowledge
 
-{% if isFramework("javascript") %}
 <!-- Test Your Knowledge-->
 
 Let's put what you've learned so far into action by modifying the grid:
 
-1) Enable Checkbox Selection on the 'mission' column
+1) Enable filtering on all columns
 
-   _Hint: `checkboxSelection` is a Column Definition property_
+   _Hint: `filter` is a Column Definition property_
 
 1) Enable multiple row selection
 
-   _Hint: `rowSelection` is a Grid Option property_
+   _Hint: `selection` is a Grid Option property_
 
 1) Log a message to the console when a row selection is changed
 
@@ -1101,107 +1100,8 @@ Once complete, your grid should look like the example below. If you're stuck, ch
 {% gridExampleRunner title="Testing Example" name="testing-example"  exampleHeight=550 /%}
 
 ***
-{% /if %}
-
-{% if isFramework("react") %}
-<!-- Test Your Knowledge-->
-
-Let's put what you've learned so far into action by modifying the grid:
-
-1) Enable Checkbox Selection on the 'mission' column
-
-   _Hint: `checkboxSelection` is a Column Definition property_
-
-1) Enable multiple row selection
-
-   _Hint: `rowSelection` is a Grid Option property_
-
-1) Log a message to the console when a row selection is changed
-
-   _Hint: `onSelectionChanged` is a Grid Event_
-
-1) Format the Date column using `.toLocaleDateString()`;
-
-   _Hint: Use a `valueFormatter` on the 'Date' column to format its value_
-
-1) Add a Cell Renderer to display [ticks](https://www.ag-grid.com/example-assets/icons/tick-in-circle.png) and [crosses](https://www.ag-grid.com/example-assets/icons/cross-in-circle.png) in place of checkboxes on the 'Successful' column:
-
-   _Hint: Use a `cellRenderer` on the 'successful' column_
-
-Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
-
-{% gridExampleRunner title="Testing Example" name="testing-example"  exampleHeight=550 /%}
-
-***
-{% /if %}
-
-{% if isFramework("angular") %}
-<!-- Test Your Knowledge-->
-
-Let's put what you've learned so far into action by modifying the grid:
-
-1) Enable Checkbox Selection on the 'mission' column
-
-   _Hint: `checkboxSelection` is a Column Definition property_
-
-1) Enable multiple row selection
-
-   _Hint: `rowSelection` is a Grid Option property_
-
-1) Log a message to the console when a row selection is changed
-
-   _Hint: `onSelectionChanged` is a Grid Event_
-
-1) Format the Date column using `.toLocaleDateString()`;
-
-   _Hint: Use a `valueFormatter` on the 'Date' column to format its value_
-
-1) Add a Cell Renderer to display [ticks](https://www.ag-grid.com/example-assets/icons/tick-in-circle.png) and [crosses](https://www.ag-grid.com/example-assets/icons/cross-in-circle.png) in place of checkboxes on the 'Successful' column:
-
-   _Hint: Use a `cellRenderer` on the 'successful' column_
-
-Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
-
-{% gridExampleRunner title="Testing Example" name="testing-example"  exampleHeight=550 /%}
-
-***
-{% /if %}
-
-{% if isFramework("vue") %}
-<!-- Test Your Knowledge-->
-
-Let's put what you've learned so far into action by modifying the grid:
-
-1) Enable Checkbox Selection on the 'mission' column
-
-   _Hint: `checkboxSelection` is a Column Definition property_
-
-1) Enable multiple row selection
-
-   _Hint: `rowSelection` is a Grid Option property_
-
-1) Log a message to the console when a row selection is changed
-
-   _Hint: `onSelectionChanged` is a Grid Event_
-
-1) Format the Date column using `.toLocaleDateString()`;
-
-   _Hint: Use a `valueFormatter` on the 'Date' column to format its value_
-
-1) Add a Cell Renderer to display [ticks](https://www.ag-grid.com/example-assets/icons/tick-in-circle.png) and [crosses](https://www.ag-grid.com/example-assets/icons/cross-in-circle.png) in place of checkboxes on the 'Successful' column:
-
-   _Hint: Use a `cellRenderer` on the 'successful' column_
-
-Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
-
-{% gridExampleRunner title="Testing Example" name="testing-example"  exampleHeight=550 /%}
-
-***
-{% /if %}
 
 ## Summary
-
-{% if isFramework("javascript") %}
 <!-- Summary-->
 
 Congratulations! You've completed the tutorial and built your first grid. By now, you should be familiar with the key concepts of AG Grid:
@@ -1219,85 +1119,19 @@ Congratulations! You've completed the tutorial and built your first grid. By now
 - **Value Formatters:** Functions used for basic text formatting
 
 - **Cell Renderers:** Add your own components to cells
-{% /if %}
-
-{% if isFramework("react") %}
-<!-- Summary-->
-
-Congratulations! You've completed the tutorial and built your first grid. By now, you should be familiar with the key concepts of AG Grid:
-
-- **Row Data:** Your data, in JSON format, that you want the grid to display.
-
-- **Column Definitions:** Define your columns and control column-specific functionality, like sorting and filtering.
-
-- **Default Column Definitions:** Similar to Column Definitions, but applies configurations to all columns.
-
-- **Grid Options:** Configure functionality which extends across the entire grid.
-
-- **Grid Events:** Events raised by the grid, typically as a result of user interaction.
-
-- **Value Formatters:** Functions used for basic text formatting
-
-- **Cell Renderers:** Add your own components to cells
-{% /if %}
-
-{% if isFramework("angular") %}
-<!-- Summary-->
-
-Congratulations! You've completed the tutorial and built your first grid. By now, you should be familiar with the key concepts of AG Grid:
-
-- **Row Data:** Your data, in JSON format, that you want the grid to display.
-
-- **Column Definitions:** Define your columns and control column-specific functionality, like sorting and filtering.
-
-- **Default Column Definitions:** Similar to Column Definitions, but applies configurations to all columns.
-
-- **Grid Options:** Configure functionality which extends across the entire grid.
-
-- **Grid Events:** Events raised by the grid, typically as a result of user interaction.
-
-- **Value Formatters:** Functions used for basic text formatting
-
-- **Cell Renderers:** Add your own components to cells
-{% /if %}
-
-{% if isFramework("vue") %}
-<!-- Summary-->
-
-Congratulations! You've completed the tutorial and built your first grid. By now, you should be familiar with the key concepts of AG Grid:
-
-- **Row Data:** Your data, in JSON format, that you want the grid to display.
-
-- **Column Definitions:** Define your columns and control column-specific functionality, like sorting and filtering.
-
-- **Default Column Definitions:** Similar to Column Definitions, but applies configurations to all columns.
-
-- **Grid Options:** Configure functionality which extends across the entire grid.
-
-- **Grid Events:** Events raised by the grid, typically as a result of user interaction.
-
-- **Value Formatters:** Functions used for basic text formatting
-
-- **Cell Renderers:** Add your own components to cells
-{% /if %}
 
 ## Next Steps
 
-{% if isFramework("javascript") %}
 <!-- Next Steps-->
 
 Browse our guides to dive into specific features of the grid:
-
+{% if isFramework("javascript") %}
 - [Theming & Styling](./global-style-customisation/)
 - [Testing](./testing/)
 - [Security](./security/)
 {% /if %}
 
 {% if isFramework("react") %}
-<!-- Next Steps-->
-
-Browse our guides to dive into specific features of the grid:
-
 - [Theming & Styling](./global-style-customisation/)
 - [Testing](./testing/)
 - [Security](./security/)
@@ -1305,18 +1139,12 @@ Browse our guides to dive into specific features of the grid:
 {% /if %}
 
 {% if isFramework("angular") %}
-<!-- Next Steps-->
-
-Browse our guides to dive into specific features of the grid:
-
 - [Theming & Styling](./global-style-customisation/)
 - [Testing](./testing/)
 - [Security](./security/)
 {% /if %}
 
 {% if isFramework("vue") %}
-Browse our guides to dive into specific features of the grid:
-
 - [Theming & Styling](./global-style-customisation/)
 - [Testing](./testing/)
 - [Security](./security/)

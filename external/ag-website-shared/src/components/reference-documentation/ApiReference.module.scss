@@ -25,6 +25,16 @@
     container-type: inline-size;
     width: 100%;
 
+    &.isInline {
+        margin-top: $spacing-size-5;
+        margin-bottom: $spacing-size-5;
+    }
+
+    :global(.tabs-outer) &.isInline {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
     + .apiReferenceOuter {
         margin-top: -1px;
     }
@@ -71,9 +81,25 @@
     padding: $spacing-size-4 0;
     flex-wrap: wrap;
     scroll-margin-top: var(--anchor-offset, 0);
+    border-top: 1px solid var(--color-border-secondary);
 
-    &:where(:not(:first-child)) {
-        border-top: 1px solid var(--color-border-secondary);
+    &:last-child {
+        border-bottom: 1px solid var(--color-border-secondary);
+    }
+
+    #{$selector-darkmode} & {
+        border-top-color: var(--color-util-gray-400);
+        border-bottom-color: var(--color-util-gray-400);
+    }
+
+    :global(.tabs-outer) & {
+        &:first-child {
+            border-top: none;
+        }
+
+        &:last-child {
+            border-bottom: none;
+        }
     }
 
     @container (max-width: #{$breakpoint-table-small}) {
@@ -230,6 +256,43 @@ a.metaValue {
     transform: rotate(180deg);
 }
 
+.childButton {
+    color: color-mix(in srgb, var(--color-fg-secondary), var(--color-bg-primary) 20%);
+    font-weight: var(--text-regular);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: $spacing-size-2;
+
+    .childButtonName {
+        font-family: var(--text-monospace-font-family);
+        font-weight: var(--text-semibold);
+        font-size: var(--text-fs-sm);
+    }
+
+    &:hover {
+        color: var(--color-text-primary);
+    }
+
+    &::before {
+        content: '';
+        display: inline-block;
+        width: 0px;
+        height: 0px;
+        border-style: solid;
+        border-width: 0 6px 8px 6px;
+        border-color: transparent transparent color-mix(in srgb, var(--color-fg-secondary), var(--color-bg-primary) 50%)
+            transparent;
+        transform: rotate(90deg);
+        transition: transform 0.25s ease-in-out;
+    }
+
+    &.isExpanded::before {
+        transform: rotate(180deg);
+        transition: transform 0.25s ease-in-out;
+    }
+}
+
 button.seeMore {
     color: var(--color-link);
     justify-content: center;
@@ -328,24 +391,6 @@ button.seeMore {
 
 .isChildProp {
     border-top: 1px dashed var(--color-util-gray-200);
-
-    .name {
-        font-size: calc(var(--text-fs-base) * 0.92);
-    }
-
-    .description p,
-    .description ul,
-    .actions button {
-        font-size: calc(var(--text-fs-base) * 0.9);
-    }
-
-    .description code {
-        font-size: calc(var(--text-fs-base) * 0.8125);
-    }
-
-    .metaValue {
-        font-size: calc(var(--text-fs-sm) * 0.92);
-    }
 }
 
 @container (max-width: #{$breakpoint-table-small}) {

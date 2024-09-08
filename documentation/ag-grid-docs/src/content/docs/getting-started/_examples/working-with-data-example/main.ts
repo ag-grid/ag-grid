@@ -48,7 +48,6 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: 'make',
-            checkboxSelection: true,
             editable: true,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
@@ -85,8 +84,11 @@ const gridOptions: GridOptions = {
         filter: 'agTextColumnFilter',
         floatingFilter: true,
     },
-    rowSelection: 'multiple',
-    suppressRowClickSelection: true,
+    selection: {
+        mode: 'multiRow',
+        headerCheckbox: false,
+        suppressClickSelection: true,
+    },
     pagination: true,
     paginationPageSize: 10,
     paginationPageSizeSelector: [10, 25, 50],

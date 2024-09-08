@@ -94,32 +94,32 @@
         "rowSelected": {
             "more": {
                 "name": "Selection Events",
-                "url": "./row-selection/#selection-events"
+                "url": "./row-selection-api-reference/#reference--rowSelected"
             }
         },
         "selectionChanged": {
             "more": {
                 "name": "Selection Events",
-                "url": "./row-selection/#selection-events"
+                "url": "./row-selection-api-reference/#reference--selectionChanged"
             }
         },
         "cellContextMenu": {},
-        "rangeSelectionChanged": {
+        "cellSelectionChanged": {
             "more": {
-                "name": "Range Selection Changed Event",
-                "url": "./range-selection/#range-selection-changed-event"
+                "name": "Cell Selection Changed Event",
+                "url": "./cell-selection-api-reference/#selection-events"
             }
         },
         "fillStart": {
             "more": {
                 "name": "Fill Range Event",
-                "url": "./range-selection-fill-handle/#fill-handle-events"
+                "url": "./cell-selection-fill-handle/#reference--fillStart"
             }
         },
         "fillEnd": {
             "more": {
                 "name": "Fill Range Event",
-                "url": "./range-selection-fill-handle/#fill-handle-events"
+                "url": "./cell-selection-fill-handle/#reference--fillEnd"
             }
         }
     },
@@ -234,16 +234,16 @@
                 "url": "./undo-redo-edits/#undo--redo-events"
             }
         },
-        "rangeDeleteStart": {
+        "cellSelectionDeleteStart": {
             "more": {
-                "name": "Delete Range",
-                "url": "./range-selection/#delete-range"
+                "name": "Delete Cell Selection",
+                "url": "./cell-selection/#reference--cellSelectionDeleteStart"
             }
         },
-        "rangeDeleteEnd": {
+        "cellSelectionDeleteEnd": {
             "more": {
-                "name": "Delete Range",
-                "url": "./range-selection/#delete-range"
+                "name": "Delete Cell Selection",
+                "url": "./cell-selection/#reference--cellSelectionDeleteEnd"
             }
         }
     },

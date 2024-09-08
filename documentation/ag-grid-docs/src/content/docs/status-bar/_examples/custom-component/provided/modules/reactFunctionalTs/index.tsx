@@ -1,7 +1,7 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, StatusPanelDef } from '@ag-grid-community/core';
+import { ColDef, SelectionOptions, StatusPanelDef } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -16,6 +16,12 @@ import CountStatusBarComponent from './countStatusBarComponent';
 import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, StatusBarModule, RangeSelectionModule]);
+
+const selection: SelectionOptions = {
+    mode: 'multiRow',
+    checkboxes: false,
+    headerCheckbox: false,
+};
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -86,8 +92,7 @@ const GridExample = () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    enableRangeSelection={true}
-                    rowSelection={'multiple'}
+                    selection={selection}
                     statusBar={statusBar}
                 />
             </div>

@@ -303,15 +303,15 @@ const gridOptions: GridOptions = {
     autoGroupColumnDef: {
         width: 250,
         field: 'trade',
-        cellRendererParams: {
-            checkbox: true,
-        },
     },
-    rowSelection: 'multiple',
-    groupSelectsChildren: true,
+    selection: {
+        mode: 'multiRow',
+        groupSelects: 'descendants',
+        headerCheckbox: false,
+        suppressClickSelection: true,
+    },
     rowData: globalRowData,
     suppressAggFuncInHeader: true,
-    suppressRowClickSelection: true,
     getRowId: (params: GetRowIdParams) => String(params.data.trade),
     onGridReady: (params) => {
         createRowData();

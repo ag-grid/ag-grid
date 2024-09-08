@@ -189,6 +189,7 @@ export type SectionProps = {
     config: Config;
     breadcrumbs?: Record<string, string>;
     meta?: MetaTag;
+    isInline?: boolean;
 };
 export type PropertyCall = {
     framework: Framework;

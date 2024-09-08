@@ -107,18 +107,6 @@
                 "url": "./clipboard/#disabling-cut"
             }
         },
-        "suppressCopyRowsToClipboard": {
-            "more": {
-                "name": "Copying Rows",
-                "url": "./clipboard/#copying-rows"
-            }
-        },
-        "suppressCopySingleCellRanges": {
-            "more": {
-                "name": "Mixed Copying Cell Ranges & Rows",
-                "url": "./clipboard/#mixed-copying-cell-ranges--rows"
-            }
-        },
         "suppressLastEmptyLineOnPaste": {},
         "suppressClipboardPaste": {
             "more": {
@@ -203,7 +191,8 @@
             "more": {
                 "name": "Maintain Column Order",
                 "url": "./column-updating-definitions/#maintain-column-order"
-            }
+            },
+            "type": "'all' | 'primaryColumns' | 'pivotResultColumns' | 'none'"
         },
         "suppressFieldDotNotation": {
             "more": {
@@ -786,7 +775,8 @@
                 "url": "./touch/"
             }
         },
-        "dragAndDropCoverComponent": {},
+        "dragAndDropImageComponent": {},
+        "noRowsOverlayComponentParams": {},
         "suppressFocusAfterRefresh": {},
         "suppressPropertyNamesCheck": {},
         "suppressChangeDetection": {
@@ -959,26 +949,20 @@
         },
         "pivotPanelShow": {
             "more": {
-                "name": "Enabling Pivot Panel",
-                "url": "./pivoting/#enabling-pivot-panel"
+                "name": "Enabling the Pivot Panel",
+                "url": "./pivoting/#enabling-the-pivot-panel"
             }
         },
         "pivotDefaultExpanded": {
             "more": {
-                "name": "Opening Pivot Group Levels by Default",
-                "url": "./pivoting/#opening-pivot-group-levels-by-default"
-            }
-        },
-        "pivotColumnGroupTotals": {
-            "more": {
-                "name": "Pivot Column Group Totals",
-                "url": "./pivoting/#pivot-column-group-totals"
+                "name": "Expand Pivot Column Groups by Default",
+                "url": "./pivoting/#expanded-by-default"
             }
         },
         "pivotRowTotals": {
             "more": {
                 "name": "Pivot Row Totals",
-                "url": "./pivoting/#pivot-row-totals"
+                "url": "./pivoting/#row-totals"
             }
         },
         "pivotSuppressAutoColumn": {
@@ -987,25 +971,25 @@
         "pivotMaxGeneratedColumns": {
             "more": {
                 "name": "Pivot Max Generated Columns",
-                "url": "./pivoting/#pivoting-extreme-amounts-of-data"
+                "url": "./pivoting/#prevent-extreme-column-generation"
             }
         },
         "processPivotResultColDef": {
             "more": {
                 "name": "Pivot Result Column Definitions",
-                "url": "./pivoting/#pivot-result-column-definitions"
+                "url": "./pivoting/#column-definitions"
             }
         },
         "processPivotResultColGroupDef": {
             "more": {
-                "name": "Pivot Result Column Definitions",
-                "url": "./pivoting/#pivot-result-column-definitions"
+                "name": "Pivot Result Column Group Definitions",
+                "url": "./pivoting/#customising-group-definitions"
             }
         },
         "suppressExpandablePivotGroups": {
             "more": {
-                "name": "Fixed Pivot Column Groups",
-                "url": "./pivoting/#fixed-pivot-column-groups"
+                "name": "Prevent Expanding Pivot Column Groups",
+                "url": "./pivoting/#prevent-expanding-groups"
             }
         },
         "functionsReadOnly": {
@@ -1054,7 +1038,7 @@
         "removePivotHeaderRowWhenSingleValueColumn": {
             "more": {
                 "name": "Hiding Repeated Value Column Labels",
-                "url": "./pivoting/#hiding-repeated-value-column-labels"
+                "url": "./pivoting/#hide-group-with-single-value-column"
             }
         }
     },
@@ -1226,12 +1210,6 @@
                 "url": "./grouping-sorting/#maintain-group-order"
             }
         },
-        "groupSelectsChildren": {
-            "more": {
-                "name": "Group Selection",
-                "url": "./row-selection/#group-selection"
-            }
-        },
         "groupLockGroupColumns": {
             "more": {
                 "name": "Group Lock Group Columns",
@@ -1255,12 +1233,6 @@
             "more": {
                 "name": "Showing Values in Group and Total Rows",
                 "url": "./total-rows/#showing-values-in-group-and-total-rows"
-            }
-        },
-        "groupSelectsFiltered": {
-            "more": {
-                "name": "Group Selection",
-                "url": "./row-selection/#group-selection"
             }
         },
         "showOpenedGroup": {
@@ -1647,37 +1619,16 @@
                 "url": "./selection-overview/"
             }
         },
-        "rowSelection": {
+        "selection": {
             "more": {
                 "name": "Row Selection",
                 "url": "./row-selection"
             },
-            "description": "Type of Row Selection."
+            "addNestedFields": true
         },
-        "rowMultiSelectWithClick": {
-            "more": {
-                "name": "Multi Select Single Click",
-                "url": "./row-selection/#multi-select-with-click"
-            }
-        },
-        "isRowSelectable": {
-            "more": {
-                "name": "Specify Selectable Rows",
-                "url": "./row-selection/#specify-selectable-rows"
-            }
-        },
-        "suppressRowDeselection": {
-            "more": {
-                "name": "Row Selection",
-                "url": "./row-selection"
-            },
-            "description": "If `true`, rows will not be deselected if you hold down <kbd>^ Ctrl</kbd> and click the row or press <kbd>␣ Space</kbd>. Default: `false`"
-        },
-        "suppressRowClickSelection": {
-            "more": {
-                "name": "Row Selection",
-                "url": "./row-selection"
-            }
+        "controlsColDef": {
+            "name": "Controls Column Definition",
+            "url": "./row-selection-single-row/#customising-the-checkbox-column"
         },
         "suppressCellFocus": {
             "more": {
@@ -1691,52 +1642,10 @@
                 "url": "./keyboard-navigation/#suppress-header-focus"
             }
         },
-        "suppressMultiRangeSelection": {
-            "more": {
-                "name": "Suppress Multi Range Selection",
-                "url": "./range-selection/#suppress-multi-range-selection"
-            }
-        },
         "enableCellTextSelection": {
             "more": {
                 "name": "Using Cell Text Selection",
                 "url": "./clipboard/#using-the-browsers-text-selection"
-            }
-        },
-        "enableRangeSelection": {
-            "more": {
-                "name": "Range Selection",
-                "url": "./range-selection"
-            }
-        },
-        "enableRangeHandle": {
-            "more": {
-                "name": "Range Handle",
-                "url": "./range-selection-handle"
-            }
-        },
-        "enableFillHandle": {
-            "more": {
-                "name": "Fill Handle",
-                "url": "./range-selection-fill-handle/"
-            }
-        },
-        "fillHandleDirection": {
-            "more": {
-                "name": "Fill Handle Axis",
-                "url": "./range-selection-fill-handle/#fill-handle-axis"
-            }
-        },
-        "fillOperation": {
-            "more": {
-                "name": "Custom User Function",
-                "url": "./range-selection-fill-handle/#custom-user-function"
-            }
-        },
-        "suppressClearOnFillReduction": {
-            "more": {
-                "name": "Preventing Range Reduction",
-                "url": "./range-selection-fill-handle/#preventing-range-reduction"
             }
         }
     },

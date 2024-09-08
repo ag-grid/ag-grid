@@ -59,11 +59,6 @@ const groupColumn = {
     headerName: 'Group',
     width: 250,
     field: 'name',
-    headerCheckboxSelection: true,
-    headerCheckboxSelectionFilteredOnly: true,
-    cellRendererParams: {
-        checkbox: true,
-    },
 };
 
 function currencyCssFunc(params) {
@@ -153,15 +148,6 @@ const mobileDefaultCols = [
         field: 'name',
         width: 200,
         cellClass: 'v-align',
-        checkboxSelection: (params) => {
-            // we put checkbox on the name if we are not doing grouping
-            return params.api.getRowGroupColumns().length === 0;
-        },
-        headerCheckboxSelection: (params) => {
-            // we put checkbox on the name if we are not doing grouping
-            return params.api.getRowGroupColumns().length === 0;
-        },
-        headerCheckboxSelectionFilteredOnly: true,
     },
     {
         field: 'language',
@@ -227,15 +213,6 @@ const desktopDefaultCols = [
                 width: 200,
                 enableRowGroup: true,
                 cellClass: 'v-align',
-                checkboxSelection: (params) => {
-                    // we put checkbox on the name if we are not doing grouping
-                    return params.api.getRowGroupColumns().length === 0;
-                },
-                headerCheckboxSelection: (params) => {
-                    // we put checkbox on the name if we are not doing grouping
-                    return params.api.getRowGroupColumns().length === 0;
-                },
-                headerCheckboxSelectionFilteredOnly: true,
             },
             {
                 field: 'language',
@@ -664,16 +641,16 @@ const ExampleInner = ({ darkMode }) => {
             suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
             enableRtl: IS_SSR ? false : /[?&]rtl=true/.test(window.location.search),
             enableCharts: true,
-            enableRangeSelection: true,
-            enableFillHandle: true,
             undoRedoCellEditing: true,
             undoRedoCellEditingLimit: 50,
-            suppressClearOnFillReduction: false,
-            rowSelection: 'multiple',
             quickFilterText: null,
-            groupSelectsChildren: true,
-            suppressRowClickSelection: true,
             autoGroupColumnDef: groupColumn,
+            selection: {
+                mode: 'multiRow',
+                groupSelects: 'descendants',
+                selectAll: 'filtered',
+                suppressClickSelection: true,
+            },
             sideBar: {
                 toolPanels: ['columns', 'filters'],
                 position: 'right',
@@ -706,7 +683,6 @@ const ExampleInner = ({ darkMode }) => {
             columnTypes: {
                 currencyType: {
                     useValueFormatterForExport: false,
-                    // useValueParserForImport: false,
                     valueFormatter: currencyFormatter,
                 },
             },

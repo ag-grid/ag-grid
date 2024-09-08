@@ -87,7 +87,6 @@ const gridOptions: GridOptions<IOlympicData> = {
             sortAscending: '<i class="fa fa-sort-alpha-up"/>',
             sortDescending: '<i class="fa fa-sort-alpha-down"/>',
         },
-        headerCheckboxSelection: true,
         width: 300,
     },
     // override all the defaults with font awesome
@@ -124,7 +123,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         rowDrag: '<i class="fa fa-circle"/>',
         columnDrag: '<i class="fa fa-square"/>',
     },
-    rowSelection: 'multiple',
 };
 
 // setup the grid after the page has finished loading
