@@ -165,6 +165,7 @@ export class PropertyKeys {
         'localeText',
         'icons',
         'datasource',
+        'dragAndDropImageComponentParams',
         'serverSideDatasource',
         'viewportDatasource',
         'groupRowRendererParams',

@@ -5,82 +5,62 @@ description: "Configure single row selection, with and without checkboxes"
 
 Enable users to select a single row within a grid.
 
-## Using Single Row Selection
+## Enabling Single Row Selection
 
-Single row selection is configured by setting `selection.mode` to `'singleRow'`.
+To enable single row selection set `selection.mode` to `'singleRow'`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: { 
-        mode: 'singleRow' 
+    selection: {
+        mode: 'singleRow'
     }
 }
 ```
 
-The following example illustrates a basic single row selection configuration.
+The example below uses this configuration to restrict selection to a single row
 
 {% gridExampleRunner title="Enabling Row Selection" name="enabling-row-selection" /%}
 
-### Deselecting a Row
-When checkboxes are enabled, selected rows can be de-selected by clicking the checkbox. 
-When checkboxes are disabled, rows can be deselected by holding {% kbd "^ Ctrl" /%} and clicking the row. 
-This is also possible when checkboxes are enabled, as long as `selection.suppressClickSelection` is not enabled.
-Hold {% kbd "^ Ctrl" /%} and click the selected row in the example below. 
+Deselect a row by clicking its checkbox, or by holding {% kbd "^ Ctrl" /%} and clicking the row directly.
 
-{% gridExampleRunner title="Deselecting Rows" name="deselection" /%}
-
-## Checkbox Selection
-
-Note that in the example above, by default, the grid will display a selection checkbox for each row, which can be used to select and deselect that row and display its selection state. 
-This is controlled by the `selection.checkboxes` property. To hide the checkbox column, set `selection.checkboxes = false`.
-
-The rendering of the checkbox can also be determined dynamically, by instead setting `selection.checkboxes` to a function.
-The function will be invoked for a given row to determine whether or not that row should display a checkbox.
-
-Note that when using a function in `selection.checkboxes`, the checkbox column will appear (albeit disabled) even if the function returns `false` for all rows. 
-The table below illustrates the expected behaviour of various `selection.checkboxes` configurations:
-
-| Value of `selection.checkboxes` | Checkbox column rendered | Checkbox visible |
-|------------------------------|--------------------------|------------------|
-| `false`                      | No ❌                    | No ❌            |
-| `true`                       | Yes ✅                   | Yes ✅           |
-| Function returning `false`   | Yes ✅                   | Yes ✅ ([disabled](#hiding-disabled-checkboxes)) |
-| Function returning `true`    | Yes ✅                   | Yes ✅           |
-
-Rows for which the `selection.checkboxes` function returns `false` may still be selected by other means (specifically the API and the header checkbox).
-
-### Hiding Disabled Checkboxes
-
-When `selection.checkboxes` is a function that returns `false`, or when [selection of a particular row is disabled](#configure-selectable-rows), by default the grid will display a disabled checkbox in that row. Alternatively, you may configure the grid to hide the checkbox in such rows.
-This can be done by setting `selection.hideDisabledCheckboxes` to `true`. In the example below, the rows where `year` does not fall between 2002 and 2010 have their checkboxes hidden.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    selection: { 
-        mode: 'singleRow',
-        hideDisabledCheckboxes: true
-    }
-}
-```
-
-{% gridExampleRunner title="Checkbox Selection: Disabled Checkboxes" name="checkbox-selection-disabled-checkboxes" /%}
-
-### Disabling Checkboxes
+## Removing Selection Checkboxes
 
 To prevent any checkboxes from being rendered, set `selection.checkboxes` to `false`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: { 
+    selection: {
         mode: 'singleRow',
         checkboxes: false,
     }
 }
 ```
 
-{% gridExampleRunner title="Checkbox Selection: Disabled Checkboxes" name="turn-off-checkboxes" /%}
+{% gridExampleRunner title="Disabling Checkboxes" name="removing-selection-checkboxes" /%}
 
-### Customising the Checkbox Column
+## Configure Selectable Rows
+
+It is possible to specify which rows can be selected via the `selection.isRowSelectable` callback function.
+
+For instance if we only wanted to allow rows where the 'year' property is less than 2007, we could implement the following:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: {
+        mode: 'singleRow',
+        isRowSelectable: (rowNode) => rowNode.data ? rowNode.data.year < 2007 : false,
+        hideDisabledCheckboxes: true
+    }
+}
+```
+
+Rows for which `isRowSelectable` return `false` cannot be selected at all, whether using the UI or the API.
+
+{% gridExampleRunner title="Configuring Selectable Rows" name="configure-selectable-rows" /%}
+
+Note this example uses `hideDisabledCheckboxes` to hide disabled checkboxes, which can be toggled on or off.
+
+## Customising the Checkbox Column
 The checkbox column may be customised in a similar way to any other column, by specifying its column definition in the `controlsColDef` grid option.
 
 {% apiDocumentation source="grid-options/properties.json" section="selection" names=["controlsColDef"] /%}
@@ -108,8 +88,8 @@ The `selection.suppressClickSelection` property configures whether a rows select
 
 {% interfaceDocumentation interfaceName="SingleRowSelectionOptions" names=["suppressClickSelection"] config={"description": ""}/%}
 
-In some scenarios, such as when using [Checkbox Selection](#checkbox-selection), it can be preferable to disable other methods of selection, 
-such as with the keyboard (via {% kbd "␣ Space" /%}), selection via row click, and [Deselection via Row Click](#deselecting-a-row). 
+In some scenarios, such as when using checkbox selection, it can be preferable to disable other methods of selection,
+such as with the keyboard (via {% kbd "␣ Space" /%}), selection via row click, and deselection via row click.
 Both selection and deselection can be disabled by setting `suppressClickSelection` to `true`, otherwise they may be disabled separately using the values `'suppressSelection'` and `'suppressDeselection'`.
 
 ```{% frameworkTransform=true %}
@@ -129,41 +109,19 @@ The example below demonstrates the three possible configurations for this proper
 Note that deselection is still possible when checkboxes are enabled by clicking a selected checkbox.
 {% /note %}
 
-## Configure Selectable Rows
-
-It is possible to specify which rows can be selected via the `selection.isRowSelectable` callback function.
-
-For instance if we only wanted to allow rows where the 'year' property is less than 2007, we could implement the following:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    selection: {
-        mode: 'singleRow',
-        isRowSelectable: (rowNode) => rowNode.data ? rowNode.data.year < 2007 : false,
-    }
-}
-```
-
-Rows for which `isRowSelectable` return `false` cannot be selected at all, whether using the UI or the API.
-
-{% gridExampleRunner title="Configuring Selectable Rows" name="specify-selectable-rows" /%}
-
-Note that in the example above the checkboxes for unselectable rows are displayed as disabled.
-See [Hiding Disabled Checkboxes](#hiding-disabled-checkboxes) for instructions on how to prevent them being displayed.
-
 ## API Reference
 
 Here you can find a full list of configuration options available in `'singleRow'` mode.
 
 {% interfaceDocumentation interfaceName="SingleRowSelectionOptions" config={"description":""} /%}
 
-## Enterprise Features
 
-Row selection can be used when using row grouping, tree data and the server side row model. See the respective sections of the documentation:
+## Next up
+
+Row selection works with row grouping, tree data, and the server-side row model. See the relevant documentation sections:
+
 - [Row Group Selection](./grouping-row-selection)
 - [Tree Data Selection](./tree-data/#selection)
 - [Server-Side Row Model Selection](./server-side-model-selection)
-
-## Next up
 
 Continue to the next section to learn about [Multi-Row Selection](./row-selection-multi-row).

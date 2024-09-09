@@ -39,7 +39,7 @@ const VueExample = {
                                 style="height: 100%;"
                                 :class="themeClass"
                                 :defaultColDef="defaultColDef"
-                                rowSelection="multiple"
+                                :selection="selection"
                                 :rowDragMultiRow="true"
                                 :getRowId="getRowId"
                                 :rowDragManaged="true"
@@ -80,6 +80,11 @@ const VueExample = {
             leftApi: null,
             rightApi: null,
 
+            selection: {
+                mode: 'multiRow',
+                checkboxes: false,
+                headerCheckbox: false,
+            },
             defaultColDef: {
                 flex: 1,
                 minWidth: 100,

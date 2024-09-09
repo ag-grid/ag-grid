@@ -32,7 +32,6 @@
     },
     "build:copy-styles": {
       "dependsOn": ["@ag-grid-community/styles:build"],
-      "cache": true,
       "command": "rsync -r ../../community-modules/styles/*.*css --delete styles",
       "options": {
         "cwd": "packages/ag-grid-community"

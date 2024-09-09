@@ -1,7 +1,7 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ChartRef, ColDef, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
+import { ChartRef, ColDef, GridReadyEvent, ModuleRegistry, SelectionOptions } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -14,6 +14,10 @@ import { createRoot } from 'react-dom/client';
 import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule, RowGroupingModule]);
+
+const selection: SelectionOptions = {
+    mode: 'cell',
+};
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -73,7 +77,7 @@ const GridExample = () => {
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                        enableRangeSelection={true}
+                        selection={selection}
                         enableCharts={true}
                         popupParent={popupParent}
                         createChartContainer={updateChartParams}

@@ -68,6 +68,12 @@ const defaultColDef = {
     filter: true,
 };
 
+const selection = {
+    mode: 'multiRow',
+    checkboxes: false,
+    headerCheckbox: false,
+};
+
 const GridExample = () => {
     const [leftApi, setLeftApi] = useState(null);
     const [rightApi, setRightApi] = useState(null);
@@ -180,7 +186,7 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
-                    rowSelection={id === 0 ? 'multiple' : undefined}
+                    selection={id === 0 ? selection : undefined}
                     rowDragMultiRow={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
                     rowData={id === 0 ? leftRowData : rightRowData}

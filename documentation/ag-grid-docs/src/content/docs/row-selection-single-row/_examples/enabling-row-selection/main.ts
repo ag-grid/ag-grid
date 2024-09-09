@@ -14,20 +14,20 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'athlete', minWidth: 150 },
         { field: 'age', maxWidth: 90 },
-        { field: 'country', minWidth: 150 },
         { field: 'year', maxWidth: 90 },
-        { field: 'date', minWidth: 150 },
         { field: 'sport', minWidth: 150 },
         { field: 'gold' },
         { field: 'silver' },
         { field: 'bronze' },
-        { field: 'total' },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 100,
     },
     selection: { mode: 'singleRow' },
+    initialState: {
+        rowSelection: ['2'],
+    },
 };
 
 // setup the grid after the page has finished loading

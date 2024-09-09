@@ -256,7 +256,7 @@ function addDiagramToError(error: any, diagram: string | null | undefined, label
         return;
     }
     if (diagram) {
-        diagram = '\n' + diagram;
+        diagram = '\n\n' + diagram;
     }
     let diagramText = '';
     if (label) {

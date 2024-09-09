@@ -1,14 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
-    ChartRef,
-    ChartRefParams,
-    ColDef,
-    ColGroupDef,
-    GridApi,
-    GridOptions,
-    ModuleRegistry,
-    createGrid,
-} from '@ag-grid-community/core';
+import { ChartRef, GridApi, GridOptions, ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
@@ -28,7 +19,7 @@ const gridOptions: GridOptions = {
         { field: 'total', chartDataType: 'series' },
     ],
     defaultColDef: { flex: 1 },
-    enableRangeSelection: true,
+    selection: { mode: 'cell' },
     enableCharts: true,
     popupParent: document.body,
     createChartContainer,

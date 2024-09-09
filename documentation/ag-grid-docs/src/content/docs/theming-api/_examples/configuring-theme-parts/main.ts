@@ -95,10 +95,10 @@ function setColorScheme(id: string) {
 function buildTheme() {
     let theme = baseTheme;
     if (iconSet) {
-        theme = baseTheme.usePart(iconSet);
+        theme = baseTheme.with(iconSet);
     }
     if (colorScheme) {
-        theme = baseTheme.usePart(colorScheme);
+        theme = baseTheme.with(colorScheme);
     }
     return theme;
 }

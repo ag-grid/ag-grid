@@ -13,12 +13,6 @@ const gridOptions: GridOptions = {
         width: 80,
         filter: true,
     },
-    selection: {
-        mode: 'multiRow',
-        checkboxes: false,
-        headerCheckbox: false,
-        suppressClickSelection: true,
-    },
     rowClassRules: {
         'red-row': 'data.color == "Red"',
         'green-row': 'data.color == "Green"',
@@ -31,7 +25,6 @@ const gridOptions: GridOptions = {
             valueGetter: "'Drag'",
             dndSource: true,
             dndSourceOnRowDrag: onRowDrag,
-            checkboxSelection: true,
         },
         { field: 'id' },
         { field: 'color' },

@@ -51,10 +51,8 @@
         "!{projectRoot}/_css-content.scss"
       ],
       "options": {
-        "options": {
-          "cwd": "community-modules/styles",
-          "command": "sass --no-source-map --load-path src/internal src:."
-        }
+        "cwd": "community-modules/styles",
+        "command": "sass --no-source-map --load-path src/internal src:."
       },
       "cache": true
     },

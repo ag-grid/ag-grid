@@ -12,6 +12,12 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const gridDiv = document.querySelector('#myGrid');
 
+const selection = {
+    mode: 'multiRow',
+    suppressClickSelection: true,
+    headerCheckbox: false,
+};
+
 const GridExample = () => {
     const [rowData, setRowData] = useState([
         { make: 'Tesla', model: 'Model Y', price: 64950, electric: true, month: 'June' },
@@ -55,7 +61,6 @@ const GridExample = () => {
     const [columnDefs, setColumnDefs] = useState([
         {
             field: 'make',
-            checkboxSelection: true,
             editable: true,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
@@ -108,8 +113,7 @@ const GridExample = () => {
                 rowData={rowData}
                 columnDefs={columnDefs}
                 defaultColDef={defaultColDef}
-                rowSelection="multiple"
-                suppressRowClickSelection={true}
+                selection={selection}
                 pagination={true}
                 paginationPageSize={10}
                 paginationPageSizeSelector={[10, 25, 50]}

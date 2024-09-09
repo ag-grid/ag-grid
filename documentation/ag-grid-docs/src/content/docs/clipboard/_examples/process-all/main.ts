@@ -16,7 +16,7 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     rowData: getData(),
     columnDefs: columnDefs,
-    enableRangeSelection: true,
+    selection: { mode: 'cell' },
 
     defaultColDef: {
         editable: true,
