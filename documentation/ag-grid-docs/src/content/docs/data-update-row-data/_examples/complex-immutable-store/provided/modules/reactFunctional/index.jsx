@@ -192,6 +192,13 @@ const updateImmutableObject = (original, newValues) => {
     return newObject;
 };
 
+const selection = {
+    mode: 'multiRow',
+    groupSelects: 'descendants',
+    headerCheckbox: false,
+    suppressClickSelection: true,
+};
+
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
@@ -359,9 +366,6 @@ const GridExample = () => {
         return {
             width: 250,
             field: 'trade',
-            cellRendererParams: {
-                checkbox: true,
-            },
         };
     }, []);
     const getRowId = useCallback(function (params) {
@@ -398,8 +402,7 @@ const GridExample = () => {
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         autoGroupColumnDef={autoGroupColumnDef}
-                        rowSelection={'multiple'}
-                        groupSelectsChildren={true}
+                        selection={selection}
                         suppressAggFuncInHeader={true}
                         getRowId={getRowId}
                     />

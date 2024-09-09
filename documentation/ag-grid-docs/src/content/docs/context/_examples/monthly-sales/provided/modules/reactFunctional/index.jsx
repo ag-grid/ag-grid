@@ -53,6 +53,12 @@ const monthNames = [
     'Full Year',
 ];
 
+const selection = {
+    mode: 'multiRow',
+    headerCheckbox: false,
+    groupSelects: 'descendants',
+};
+
 const GridExample = () => {
     const gridRef = useRef(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -141,9 +147,6 @@ const GridExample = () => {
             field: 'city',
             minWidth: 260,
             cellRenderer: 'agGroupCellRenderer',
-            cellRendererParams: {
-                checkbox: true,
-            },
         };
     }, []);
 
@@ -224,8 +227,7 @@ const GridExample = () => {
                         context={context.current}
                         defaultColDef={defaultColDef}
                         autoGroupColumnDef={autoGroupColumnDef}
-                        rowSelection={'multiple'}
-                        groupSelectsChildren={true}
+                        selection={selection}
                         onGridReady={onGridReady}
                     />
                 </div>

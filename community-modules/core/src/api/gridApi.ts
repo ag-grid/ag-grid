@@ -932,10 +932,10 @@ export interface _RowGroupingGridApi<TData> {
     /** Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function. */
     setColumnAggFunc(key: string | ColDef | Column, aggFunc: string | IAggFunc | null | undefined): void;
 
-    /** Get the pivot mode. */
+    /** Returns whether pivot mode is currently active. */
     isPivotMode(): boolean;
 
-    /** Returns the pivot result column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */
+    /** Returns the pivot result column for the given `pivotKeys` and `valueColId`. */
     getPivotResultColumn<TValue = any>(
         pivotKeys: string[],
         valueColKey: string | ColDef<TData, TValue> | Column<TValue>
@@ -980,25 +980,25 @@ export interface _RowGroupingGridApi<TData> {
     /** Get row group columns. */
     getRowGroupColumns(): Column[];
 
-    /** Set the pivot columns. */
+    /** Set the columns for the grid to pivot on. */
     setPivotColumns(colKeys: (string | ColDef | Column)[]): void;
 
     /** @deprecated v31.1 removePivotColumn(colKey) deprecated, please use removePivotColumns([colKey]) instead. */
     removePivotColumn(colKey: string | ColDef | Column): void;
 
-    /** Remove pivot columns. */
+    /** Stops the grid from pivoting on the provided columns. */
     removePivotColumns(colKeys: (string | ColDef | Column)[]): void;
 
     /** @deprecated v31.1 addPivotColumn(colKey) deprecated, please use addPivotColumns([colKey]) instead. */
     addPivotColumn(colKey: string | ColDef | Column): void;
 
-    /** Add pivot columns. */
+    /** Add columns for the grid to pivot on. */
     addPivotColumns(colKeys: (string | ColDef | Column)[]): void;
 
-    /** Get the pivot columns. */
+    /** Get the columns which the grid is pivoting on. */
     getPivotColumns(): Column[];
 
-    /** Set the pivot result columns. */
+    /** Set explicit pivot column definitions yourself. Used for advanced use cases only. */
     setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[] | null): void;
 
     /** Returns the grid's pivot result columns. */

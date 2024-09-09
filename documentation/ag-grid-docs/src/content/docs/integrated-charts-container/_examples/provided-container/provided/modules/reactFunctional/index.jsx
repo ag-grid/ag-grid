@@ -15,6 +15,10 @@ import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule, RowGroupingModule]);
 
+const selection = {
+    mode: 'cell',
+};
+
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '300px', width: '100%' }), []);
@@ -73,7 +77,7 @@ const GridExample = () => {
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                        enableRangeSelection={true}
+                        selection={selection}
                         enableCharts={true}
                         popupParent={popupParent}
                         createChartContainer={updateChartParams}

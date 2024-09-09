@@ -97,10 +97,10 @@ const VueExample = {
             theme: computed(() => {
                 let theme = baseTheme.value;
                 if (colorScheme.value) {
-                    theme = theme.usePart(colorScheme.value);
+                    theme = theme.with(colorScheme.value);
                 }
                 if (iconSet.value) {
-                    theme = theme.usePart(iconSet.value);
+                    theme = theme.with(iconSet.value);
                 }
                 return theme;
             }),

@@ -7,7 +7,13 @@ Control the look and feel of the grid
 
 ### Simple example
 
-Every grid must have a theme. You can import one of the built-in themes and provide it as a grid option:
+Every grid must have a theme. You can import one of the built-in themes from our NPM packages and provide it as a grid option. Where to import the themes from depends on how your build is set up:
+
+* If using [modules](./modules/), import themes from `@ag-grid-community/theming`
+* If using our all-in-one packages like `ag-grid-community` and `ag-grid-charts-enterprise`, import themes from that package
+{% if isFramework("javascript") %}
+* If using the browser-ready UMD bundle without a build step, themes are available from the global `agGrid` object.
+{% /if %}
 
 ```js
 import { themeQuartz } from '@ag-grid-community/theming';
@@ -15,6 +21,12 @@ import { themeQuartz } from '@ag-grid-community/theming';
 {% if isFramework("javascript") %}
 const gridOptions = {
     theme: themeQuartz,
+    ...
+}
+
+// Or for UMD bundle users:
+const gridOptions = {
+    theme: agGrid.themeQuartz,
     ...
 }
 {% /if %}
@@ -55,13 +67,13 @@ public theme = themeQuartz;
 
 ### Combining parts of multiple themes
 
-To change the color scheme or mix and match different elements of built-in themes, import parts and call `theme.usePart(...)`:
+To change the color scheme or mix and match different elements of built-in themes, import parts and call `theme.with(...)`:
 
 ```
 import { themeQuartz, iconSetMaterial } from '@ag-grid-community/theming';
 
-// themes are immutable, usePart returns a new theme
-const quartzWithMaterialIcons = themeQuartz.usePart(iconSetMaterial);
+// themes are immutable, with() returns a new theme
+const quartzWithMaterialIcons = themeQuartz.with(iconSetMaterial);
 ```
 
 {% gridExampleRunner title="Theming API" name="configuring-theme-parts" /%}
@@ -71,7 +83,9 @@ const quartzWithMaterialIcons = themeQuartz.usePart(iconSetMaterial);
 Themes have many parameters that can be changed using CSS custom properties (variables).
 
 ```js
-themeQuartz.applyCustomProperties({ accentColor: 'red' }, document.body);
+import { applyCustomProperties } from '@ag-grid-community/theming';
+
+applyCustomProperties({ accentColor: 'red' }, document.body);
 // equivalent to document.body.style.setProperty('--ag-accent-color', 'red');
 ```
 

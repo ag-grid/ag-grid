@@ -2,6 +2,7 @@
     {
         "version": "32.1.0",
         "date": "August 8th 2024",
+        "landingPageHighlight": "New SSRM, Column Group & Excel Export Features",
         "highlights": [
             {
                 "text": "Server-side Row Model - Hide Open Parents",

@@ -3,7 +3,7 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
-import { themeBalham, themeMaterial, themeQuartz } from '@ag-grid-community/theming';
+import { applyCustomProperties, themeBalham, themeMaterial, themeQuartz } from '@ag-grid-community/theming';
 import React, { StrictMode, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -19,8 +19,8 @@ const GridExample = () => {
     const grid4Ref = useRef(null);
 
     useEffect(() => {
-        themeQuartz.applyCustomProperties({ headerBackgroundColor: '#33cc3344' }, grid3Ref.current);
-        themeQuartz.applyCustomProperties({ headerBackgroundColor: '#cc222244' }, grid4Ref.current);
+        applyCustomProperties({ headerBackgroundColor: '#33cc3344' }, grid3Ref.current);
+        applyCustomProperties({ headerBackgroundColor: '#cc222244' }, grid4Ref.current);
     }, []);
 
     return (

@@ -27,18 +27,16 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'silver', aggFunc: 'sum' },
         { field: 'bronze', aggFunc: 'sum' },
     ],
-
-    // first (sport) row group will be open by default
-    pivotDefaultExpanded: 1,
-
     defaultColDef: {
-        maxWidth: 140,
-        filter: true,
+        flex: 1,
+        minWidth: 130,
     },
     autoGroupColumnDef: {
-        minWidth: 180,
+        minWidth: 200,
     },
     pivotMode: true,
+    // first (sport) row group will be open by default
+    pivotDefaultExpanded: 1,
 };
 
 // setup the grid after the page has finished loading
