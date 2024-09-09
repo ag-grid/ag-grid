@@ -149,7 +149,7 @@ export abstract class ChartProxy<
             event,
             datum,
             seriesId,
-            ...{ [crossFilteringKey]: series.properties[crossFilteringKey] },
+            [crossFilteringKey]: series.properties[crossFilteringKey],
         };
 
         return params;
