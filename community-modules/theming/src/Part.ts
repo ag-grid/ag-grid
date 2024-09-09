@@ -14,7 +14,7 @@ export type Part<TParams = unknown> = {
      * Add one or more dependent part. The part will replace any existing part
      * of the same feature
      */
-    usePart<TPartParams>(part: Part<TPartParams>): Part<TParams & TPartParams>;
+    with<TPartParams>(part: Part<TPartParams>): Part<TParams & TPartParams>;
 
     /**
      * Provide new values for theme params. You may only provide values for
@@ -61,7 +61,7 @@ class PartImpl<TParams = unknown> implements Part<TParams> {
         return this.feature ? `${this.feature}/${this.variant}` : this.variant;
     }
 
-    usePart<TPartParams>(part: Part<TPartParams>): Part<TParams & TPartParams> {
+    with<TPartParams>(part: Part<TPartParams>): Part<TParams & TPartParams> {
         return new PartImpl<TParams & TPartParams>(
             this.feature,
             this.variant,

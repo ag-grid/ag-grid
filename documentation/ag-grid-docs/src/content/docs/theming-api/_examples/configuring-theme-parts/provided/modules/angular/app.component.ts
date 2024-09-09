@@ -90,10 +90,10 @@ export class AppComponent {
     get theme() {
         let theme = this.baseTheme;
         if (this.iconSet) {
-            theme = theme.usePart(this.iconSet);
+            theme = theme.with(this.iconSet);
         }
         if (this.colorScheme) {
-            theme = theme.usePart(this.colorScheme);
+            theme = theme.with(this.colorScheme);
         }
         return theme;
     }

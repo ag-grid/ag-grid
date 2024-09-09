@@ -52,10 +52,10 @@ const GridExample = () => {
     const theme = useMemo(() => {
         let theme = baseTheme;
         if (colorScheme) {
-            theme = theme.usePart(colorScheme);
+            theme = theme.with(colorScheme);
         }
         if (iconSet) {
-            theme = theme.usePart(iconSet);
+            theme = theme.with(iconSet);
         }
         return theme;
     }, [baseTheme, colorScheme, iconSet]);

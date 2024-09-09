@@ -17,7 +17,7 @@ export type Theme<TParams = unknown> = GridTheme & {
      * Add one or more dependent part. The part will replace any existing part
      * of the same feature
      */
-    usePart<TPartParams>(part: Part<TPartParams>): Theme<TParams & TPartParams>;
+    with<TPartParams>(part: Part<TPartParams>): Theme<TParams & TPartParams>;
 
     /**
      * Provide new values for theme params. You may only provide values for
@@ -70,7 +70,7 @@ class ThemeImpl<TParams = unknown> implements Theme {
         readonly css: ReadonlyArray<CssFragment> = []
     ) {}
 
-    usePart<TPartParams>(part: Part<TPartParams>): Theme<TParams & TPartParams> {
+    with<TPartParams>(part: Part<TPartParams>): Theme<TParams & TPartParams> {
         return new ThemeImpl<TParams & TPartParams>(
             this.id,
             this.dependencies.concat(part as any),

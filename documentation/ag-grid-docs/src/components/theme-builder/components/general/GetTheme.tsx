@@ -77,7 +77,7 @@ const renderThemeCodeSample = ({ overriddenParams, usedParts }: RenderedThemeInf
     code += `const myTheme = themeQuartz\n`;
     for (const part of usedParts) {
         const partImport = camelCase(part.id);
-        code += `\t.usePart(${partImport})\n`;
+        code += `\t.with(${partImport})\n`;
         imports.push(partImport);
     }
     code += `\t.overrideParams(${paramsJSON.replaceAll('\n', '\n\t')})\n`;

@@ -67,13 +67,13 @@ public theme = themeQuartz;
 
 ### Combining parts of multiple themes
 
-To change the color scheme or mix and match different elements of built-in themes, import parts and call `theme.usePart(...)`:
+To change the color scheme or mix and match different elements of built-in themes, import parts and call `theme.with(...)`:
 
 ```
 import { themeQuartz, iconSetMaterial } from '@ag-grid-community/theming';
 
-// themes are immutable, usePart returns a new theme
-const quartzWithMaterialIcons = themeQuartz.usePart(iconSetMaterial);
+// themes are immutable, with() returns a new theme
+const quartzWithMaterialIcons = themeQuartz.with(iconSetMaterial);
 ```
 
 {% gridExampleRunner title="Theming API" name="configuring-theme-parts" /%}
