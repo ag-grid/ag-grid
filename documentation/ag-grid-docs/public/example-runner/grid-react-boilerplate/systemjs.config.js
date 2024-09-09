@@ -1,4 +1,4 @@
-
+(function (global) {
     System.config({
         transpiler: 'ts',
         typescriptOptions: {
