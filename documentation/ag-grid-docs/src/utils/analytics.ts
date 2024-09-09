@@ -10,6 +10,20 @@ const EVENT_NAME = {
     buyButton: 'Buy Button',
     downloadDS: 'Download Figma Design System',
     page404: '404',
+    // React Landing Page Goals
+    reactLandingPageGetStarted: 'React Landing Page - Get Started',
+    reactLandingPageInstall: 'React Landing Page - Install',
+    reactLandingPageDemo: 'React Landing Page - Demo',
+    reactLandingPageCustomise: 'React Landing Page - Customise',
+    reactLandingPageExpand: 'React Landing Page - Expand',
+    reactLandingPageShowcase: 'React Landing Page - Showcase',
+    reactLandingPageStars: 'React Landing Page - Stars',
+    reactLandingPageNpmDownloads: 'React Landing Page - NPM Downloads',
+    reactLandingPageQuickStartTemplate: 'React Landing Page - Quick Start Template',
+    reactLandingPageBasicTutorialTemplate: 'React Landing Page - Basic Tutorial Template',
+    reactLandingPageCustomStylesTemplate: 'React Landing Page - Custom Styles Template',
+    reactLandingPageIntegratedChartsTemplate: 'React Landing Page - Integrated Charts Template',
+    reactLandingPageFaqExpand: 'React Landing Page - FAQ Expand',
 };
 
 const trackPlausible = ({ eventName, props }: { eventName: string; props?: object }) => {

@@ -1,0 +1,96 @@
+@use 'design-system' as *;
+
+.headingContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0px $spacing-size-32;
+    margin-bottom: $spacing-size-12;
+}
+
+.heading {
+    font-size: 48px;
+    font-weight: var(--text-bold);
+}
+
+.subHeading {
+    font-size: var(--text-fs-lg);
+    text-align: center;
+}
+
+.statsContainer {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: $spacing-size-12;
+}
+
+.stat {
+    display: flex;
+    font-size: 64px;
+    font-weight: var(--text-bold);
+    color: var(--color-util-brand-600);
+}
+
+.statName {
+    text-align: center;
+}
+
+.quotesContainer {
+    margin: $spacing-size-6 0px;
+    blockquote {
+        --quote-background-color: var(--color-util-gray-100);
+    }
+}
+
+.customerLogos {
+    --overflow-width: 10vw;
+    position: relative;
+    width: calc(100% + var(--overflow-width) * 2);
+    height: 107px;
+    margin-left: calc(var(--overflow-width) * -1);
+    background-image: url(urlWithBaseUrl('/images/ag-grid-customer-logos.webp'));
+    background-size: auto 107px;
+    animation-name: customerMarquee;
+    animation-duration: 1600s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    @media screen and (min-width: $breakpoint-grid-homepage-medium) {
+        animation-duration: 400s;
+    }
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        height: 100%;
+        width: var(--overflow-width);
+    }
+
+    &::before {
+        left: 0;
+        background-image: linear-gradient(90deg, transparent, var(--color-util-gray-900));
+    }
+
+    &::after {
+        right: 0;
+        background-image: linear-gradient(90deg, var(--color-util-gray-900), transparent);
+    }
+
+    @media screen and (max-width: $breakpoint-hero-small) {
+        margin: 0 auto;
+        width: 100%;
+        animation-duration: 1100s;
+    }
+}
+
+@keyframes customerMarquee {
+    from {
+        background-position-x: 0%;
+    }
+
+    to {
+        background-position-x: 5000%;
+    }
+}

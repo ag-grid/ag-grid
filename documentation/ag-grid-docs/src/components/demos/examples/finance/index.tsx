@@ -3,8 +3,8 @@ import { type FunctionComponent } from 'react';
 
 import { FinanceExample } from './FinanceExample';
 
-export const Finance: FunctionComponent = () => {
+export const Finance: FunctionComponent = ({ gridHeight = null }) => {
     const [isDarkMode] = useDarkmode();
 
-    return <FinanceExample isDarkMode={isDarkMode} />;
+    return <FinanceExample isDarkMode={isDarkMode} gridHeight={gridHeight} />;
 };
