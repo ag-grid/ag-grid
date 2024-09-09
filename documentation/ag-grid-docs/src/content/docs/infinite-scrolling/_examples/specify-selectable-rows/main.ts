@@ -51,6 +51,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     selection: {
         mode: 'multiRow',
         hideDisabledCheckboxes: true,
+        headerCheckbox: false,
         isRowSelectable: (rowNode: IRowNode) => {
             return rowNode.data ? rowNode.data.country === 'United States' : false;
         },

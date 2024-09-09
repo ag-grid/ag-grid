@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
         minWidth: 100,
         filter: true,
     },
-    enableRangeSelection: true,
+    selection: { mode: 'cell' },
     enableCharts: true,
     popupParent: document.body,
     onGridReady: (params: GridReadyEvent) => {

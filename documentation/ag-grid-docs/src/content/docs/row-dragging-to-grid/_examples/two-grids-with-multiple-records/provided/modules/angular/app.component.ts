@@ -8,6 +8,7 @@ import {
     GridReadyEvent,
     ICellRendererParams,
     ModuleRegistry,
+    SelectionOptions,
 } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -51,8 +52,6 @@ export class SportRenderer implements ICellRendererAngularComp {
                 <label for="deselect">Only Deselect Source Rows</label>
                 <input type="radio" id="none" name="radio" />
                 <label for="none">None</label>
-                <input type="checkbox" id="toggleCheck" checked #eSelectCheckbox (change)="checkboxSelectChange()" />
-                <label for="toggleCheck">Checkbox Select</label>
                 <span class="input-group-button">
                     <button type="button" class="btn btn-default reset" style="margin-left: 5px;" (click)="reset()">
                         <i class="fas fa-redo" style="margin-right: 5px;"></i>Reset
@@ -69,9 +68,8 @@ export class SportRenderer implements ICellRendererAngularComp {
                             style="height: 100%;"
                             [class]="themeClass"
                             [defaultColDef]="defaultColDef"
-                            rowSelection="multiple"
+                            [selection]="selection"
                             [rowDragMultiRow]="true"
-                            [suppressRowClickSelection]="true"
                             [getRowId]="getRowId"
                             [rowDragManaged]="true"
                             [suppressMoveWhenRowDragging]="true"
@@ -118,6 +116,11 @@ export class AppComponent {
         filter: true,
     };
 
+    selection: SelectionOptions = {
+        mode: 'multiRow',
+        suppressClickSelection: true,
+    };
+
     leftColumns: ColDef[] = [
         {
             rowDrag: true,
@@ -130,14 +133,6 @@ export class AppComponent {
                 }
                 return params.rowNode!.data.athlete;
             },
-        },
-        {
-            colId: 'checkbox',
-            maxWidth: 50,
-            checkboxSelection: true,
-            suppressHeaderMenuButton: true,
-            suppressHeaderFilterButton: true,
-            headerCheckboxSelection: true,
         },
         { field: 'athlete' },
         { field: 'sport' },
@@ -170,7 +165,6 @@ export class AppComponent {
     @ViewChild('eRightGrid') eRightGrid: any;
     @ViewChild('eMoveRadio') eMoveRadio: any;
     @ViewChild('eDeselectRadio') eDeselectRadio: any;
-    @ViewChild('eSelectCheckbox') eSelectCheckbox: any;
 
     constructor(private http: HttpClient) {
         this.http.get('https://www.ag-grid.com/example-assets/olympic-winners.json').subscribe((data) => {
@@ -198,17 +192,7 @@ export class AppComponent {
     reset = () => {
         this.eMoveRadio.nativeElement.checked = true;
 
-        if (!this.eSelectCheckbox.nativeElement.checked) {
-            this.eSelectCheckbox.nativeElement.click();
-        }
-
         this.loadGrids();
-    };
-
-    checkboxSelectChange = () => {
-        const checked = this.eSelectCheckbox.nativeElement.checked;
-        this.leftApi.setColumnsVisible(['checkbox'], checked);
-        this.leftApi.setGridOption('suppressRowClickSelection', checked);
     };
 
     getRowId = (params: GetRowIdParams) => params.data.athlete;

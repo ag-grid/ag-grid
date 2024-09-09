@@ -2,7 +2,10 @@ import pluginReact from '@vitejs/plugin-react';
 import { existsSync } from 'fs';
 import { readFile, readdir } from 'fs/promises';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { defineConfig } from 'vitest/config';
+
+const workspaceRootPath = path.resolve(fileURLToPath(import.meta.url), '../../../');
 
 /** Resolve aliases */
 const resolveAlias = {};
@@ -65,5 +68,8 @@ async function loadSourceCodeAliases(modulesDirectories) {
         }
         await Promise.all(promises);
     };
-    await Promise.all(modulesDirectories.map((name) => processSourceDirectory(name, 0)));
+
+    await Promise.all(
+        modulesDirectories.map((name) => processSourceDirectory(path.resolve(workspaceRootPath, name), 0))
+    );
 }

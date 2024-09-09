@@ -106,15 +106,15 @@ const GridPreview = () => {
                                     rowSelection: config.rowSelection
                                         ? stateRef.current.rowSelection || ['5', '3']
                                         : undefined,
-                                    rangeSelection: stateRef.current.rangeSelection,
+                                    cellSelection: stateRef.current.cellSelection,
                                 }}
                                 onSelectionChanged={({ api }) => {
                                     stateRef.current.rowSelection = api.getState().rowSelection || [];
                                 }}
                                 onCellSelectionChanged={({ api }) => {
-                                    stateRef.current.rangeSelection = config.showIntegratedChartPopup
+                                    stateRef.current.cellSelection = config.showIntegratedChartPopup
                                         ? undefined
-                                        : api.getState().rangeSelection;
+                                        : api.getState().cellSelection;
                                 }}
                                 key={updateCount}
                                 {...gridOptions}

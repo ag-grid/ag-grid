@@ -1,6 +1,6 @@
 import { AgGridAngular } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ChartRef, ColDef, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
+import { ChartRef, ColDef, GridReadyEvent, ModuleRegistry, SelectionOptions } from '@ag-grid-community/core';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -23,7 +23,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, Menu
             style="width: 100%; height: 300px;"
             [columnDefs]="columnDefs"
             [defaultColDef]="defaultColDef"
-            [enableRangeSelection]="true"
+            [selection]="selection"
             [enableCharts]="true"
             [popupParent]="popupParent"
             [createChartContainer]="createChartContainer"
@@ -52,6 +52,7 @@ export class AppComponent {
         { field: 'total', chartDataType: 'series' },
     ];
     defaultColDef: ColDef = { flex: 1 };
+    selection: SelectionOptions = { mode: 'cell' };
     popupParent: HTMLElement | null = document.body;
     rowData!: any[];
     themeClass =

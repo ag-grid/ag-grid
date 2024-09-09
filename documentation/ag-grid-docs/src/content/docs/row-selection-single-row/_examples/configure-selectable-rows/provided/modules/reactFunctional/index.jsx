@@ -22,21 +22,12 @@ const GridExample = () => {
     const selection = useMemo(
         () => ({
             mode: 'singleRow',
-            headerCheckbox: false,
+            hideDisabledCheckboxes: true,
+            isRowSelectable: (node) => (node.data ? node.data.year <= 2007 : false),
         }),
         []
     );
     const [rowData, setRowData] = useState();
-
-    const onFirstDataRendered = useCallback((params) => {
-        const nodesToSelect = [];
-        params.api.forEachNode((node) => {
-            if (node.rowIndex === 3) {
-                nodesToSelect.push(node);
-            }
-        });
-        params.api.setNodesSelected({ nodes: nodesToSelect, newValue: true });
-    });
 
     const onGridReady = (params) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -44,12 +35,11 @@ const GridExample = () => {
             .then((data) => setRowData(data));
     };
 
-    function toggleCheckbox() {
-        grid.current.api.setGridOption('selection', {
+    function toggleHideCheckbox() {
+        grid.current?.api.setGridOption('selection', {
             mode: 'singleRow',
-            headerCheckbox: false,
-            isRowSelectable: (params) => params.data.year >= 2002 && params.data.year <= 2010,
-            checkboxes: getCheckboxValue('#toggle-checkbox'),
+            isRowSelectable: (node) => (node.data ? node.data.year <= 2007 : false),
+            hideDisabledCheckboxes: getCheckboxValue('#toggle-hide-checkbox'),
         });
     }
 
@@ -57,8 +47,8 @@ const GridExample = () => {
         <div className="example-wrapper">
             <div className="example-header">
                 <label>
-                    <span>Enable checkboxes:</span>
-                    <input id="toggle-checkbox" type="checkbox" defaultChecked onChange={toggleCheckbox} />
+                    <span>Hide disabled checkboxes:</span>
+                    <input id="toggle-hide-checkbox" type="checkbox" defaultChecked onChange={toggleHideCheckbox} />
                 </label>
             </div>
             <div
@@ -75,7 +65,6 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
                     selection={selection}
-                    onFirstDataRendered={onFirstDataRendered}
                     onGridReady={onGridReady}
                 />
             </div>

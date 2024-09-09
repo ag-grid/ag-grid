@@ -67,7 +67,7 @@ By default, the managed row dragging moves the rows while you are dragging them.
 
 ### Multi-Row Dragging
 
-It is possible to drag multiple rows at the same time, when `rowDragMultiRow` is set to `true` in the `gridOptions` and it is combined with `rowSelection='multiple'`.
+It is possible to drag multiple rows at the same time, when `rowDragMultiRow` is set to `true` in the `gridOptions` and it is combined with `selection.mode='multiRow'`.
 
 For this example note the following:
 
@@ -177,7 +177,7 @@ const gridOptions = {
 The example below demonstrates entire row dragging with [Multi-Row Dragging](./row-dragging/#multi-row-dragging). Note the following:
 
 * Reordering rows by clicking and dragging anywhere on a row is possible as `rowDragEntireRow` is enabled.
-* Multiple rows can be selected and dragged as `rowDragMultiRow` is also enabled with `rowSelection = 'multiple'`.
+* Multiple rows can be selected and dragged as `rowDragMultiRow` is also enabled with `selection.mode = 'multiRow'`.
 * Row Drag Managed is being used, but it is not a requirement for `Entire Row Dragging`.
 
 {% gridExampleRunner title="Entire Row Dragging" name="entire-row-dragging" /%}

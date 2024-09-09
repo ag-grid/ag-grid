@@ -71,7 +71,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         sideBar,
         enableCharts: true,
         columnHoverHighlight: config.columnHover,
-        enableRangeSelection: true,
+        selection: { mode: 'cell' },
         rowData: defaultRowData(),
         columnDefs: config.columnGroupsDeep
             ? buildDeepGroupColumnDefs(columnDefs)
@@ -86,7 +86,6 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         autoGroupColumnDef: {
             headerName: 'Group',
             field: 'name',
-            headerCheckboxSelection: config.rowSelection,
             minWidth: 250,
         },
         popupParent: config.popupParentIsBody ? document.body : undefined,
@@ -119,21 +118,9 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
     }
 
     if (config.rowSelection) {
-        options.rowSelection = 'multiple';
-        options.autoGroupColumnDef!.cellRendererParams = {
-            checkbox: true,
+        options.selection = {
+            mode: 'multiRow',
         };
-
-        if (!config.rowGrouping) {
-            columnDefs[0].checkboxSelection = (params) => {
-                // we put checkbox on the name if we are not doing grouping
-                return params.api.getRowGroupColumns().length === 0;
-            };
-            columnDefs[0].headerCheckboxSelection = (params) => {
-                // we put checkbox on the name if we are not doing grouping
-                return params.api.getRowGroupColumns().length === 0;
-            };
-        }
     }
 
     if (config.statusBar) {

@@ -1,7 +1,14 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GetRowIdParams, GridApi, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
+import {
+    ColDef,
+    GetRowIdParams,
+    GridApi,
+    GridReadyEvent,
+    ModuleRegistry,
+    SelectionOptions,
+} from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -76,6 +83,13 @@ function setItemVisible(id: string, visible: boolean) {
     const element = document.querySelector('#' + id) as any;
     element.style.display = visible ? 'inline' : 'none';
 }
+
+const selection: SelectionOptions = {
+    mode: 'multiRow',
+    groupSelects: 'descendants',
+    headerCheckbox: false,
+    suppressClickSelection: true,
+};
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
@@ -224,8 +238,7 @@ const GridExample = () => {
                             rowData={rowData}
                             columnDefs={columnDefs}
                             defaultColDef={defaultColDef}
-                            rowSelection={'multiple'}
-                            enableRangeSelection={true}
+                            selection={selection}
                             autoGroupColumnDef={autoGroupColumnDef}
                             statusBar={statusBar}
                             groupDefaultExpanded={1}

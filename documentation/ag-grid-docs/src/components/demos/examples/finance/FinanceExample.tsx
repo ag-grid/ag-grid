@@ -3,6 +3,7 @@ import {
     type ColDef,
     type GetRowIdFunc,
     type GetRowIdParams,
+    type SelectionOptions,
     type ValueFormatterFunc,
     type ValueGetterParams,
 } from '@ag-grid-community/core';
@@ -163,6 +164,13 @@ export const FinanceExample: React.FC<Props> = ({
         []
     );
 
+    const selection: SelectionOptions = useMemo(
+        () => ({
+            mode: 'cell',
+        }),
+        []
+    );
+
     const getRowId = useCallback<GetRowIdFunc>(({ data: { ticker } }: GetRowIdParams) => ticker, []);
 
     const statusBar = useMemo(
@@ -191,9 +199,8 @@ export const FinanceExample: React.FC<Props> = ({
                 rowData={rowData}
                 columnDefs={colDefs}
                 defaultColDef={defaultColDef}
-                enableRangeSelection
+                selection={selection}
                 enableCharts
-                rowSelection={'multiple'}
                 rowGroupPanelShow={'always'}
                 suppressAggFuncInHeader
                 groupDefaultExpanded={-1}

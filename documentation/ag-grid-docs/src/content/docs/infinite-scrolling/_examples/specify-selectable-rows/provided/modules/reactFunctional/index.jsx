@@ -10,6 +10,15 @@ import { createRoot } from 'react-dom/client';
 
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
+const selection = {
+    mode: 'multiRow',
+    hideDisabledCheckboxes: true,
+    headerCheckbox: false,
+    isRowSelectable: (rowNode) => {
+        return rowNode.data ? rowNode.data.country === 'United States' : false;
+    },
+};
+
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
@@ -32,7 +41,7 @@ const GridExample = () => {
         },
         { field: 'athlete', minWidth: 200 },
         { field: 'age' },
-        { field: 'country', minWidth: 200, checkboxSelection: true },
+        { field: 'country', minWidth: 200 },
         { field: 'year' },
         { field: 'date', minWidth: 150 },
         { field: 'sport', minWidth: 150 },
@@ -47,9 +56,6 @@ const GridExample = () => {
             minWidth: 100,
             sortable: false,
         };
-    }, []);
-    const isRowSelectable = useCallback(function (rowNode) {
-        return rowNode.data ? rowNode.data.country === 'United States' : false;
     }, []);
 
     const onGridReady = useCallback((params) => {
@@ -92,8 +98,7 @@ const GridExample = () => {
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     rowBuffer={0}
-                    rowSelection={'multiple'}
-                    isRowSelectable={isRowSelectable}
+                    selection={selection}
                     rowModelType={'infinite'}
                     cacheBlockSize={100}
                     cacheOverflowSize={2}
