@@ -7,7 +7,13 @@ Control the look and feel of the grid
 
 ### Simple example
 
-Every grid must have a theme. You can import one of the built-in themes and provide it as a grid option:
+Every grid must have a theme. You can import one of the built-in themes from our NPM packages and provide it as a grid option. Where to import the themes from depends on how your build is set up:
+
+* If using [modules](./modules/), import themes from `@ag-grid-community/theming`
+* If using our all-in-one packages like `ag-grid-community` and `ag-grid-charts-enterprise`, import themes from that package
+{% if isFramework("javascript") %}
+* If using the browser-ready UMD bundle without a build step, themes are available from the global `agGrid` object.
+{% /if %}
 
 ```js
 import { themeQuartz } from '@ag-grid-community/theming';
@@ -15,6 +21,12 @@ import { themeQuartz } from '@ag-grid-community/theming';
 {% if isFramework("javascript") %}
 const gridOptions = {
     theme: themeQuartz,
+    ...
+}
+
+// Or for UMD bundle users:
+const gridOptions = {
+    theme: agGrid.themeQuartz,
     ...
 }
 {% /if %}

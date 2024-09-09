@@ -53,7 +53,7 @@ export type Theme<TParams = unknown> = GridTheme & {
      * except that it provides typescript validation of the params object, only
      * permitting values that are supported by the current theme.
      */
-    applyCustomProperties(params: Partial<TParams>, el: HTMLElement): void;
+    applyCustomProperties(params: Partial<TParams>, el: HTMLElement): Theme<TParams>;
 };
 
 export const createTheme = (id: string): Theme<CoreParams> => /*#__PURE__*/ new ThemeImpl(id, [], {}, []);
@@ -103,10 +103,11 @@ class ThemeImpl<TParams = unknown> implements Theme {
             .join('\n\n');
     }
 
-    applyCustomProperties(params: Partial<TParams>, el: HTMLElement): void {
+    applyCustomProperties(params: Partial<TParams>, el: HTMLElement): Theme<TParams> {
         for (const [key, value] of getCustomProperties(params)) {
             el.style.setProperty(key, value);
         }
+        return this;
     }
 
     private useCount = 0;
