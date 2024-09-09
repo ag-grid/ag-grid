@@ -88,7 +88,7 @@ const renderThemeCodeSample = ({ overriddenParams, usedParts }: RenderedThemeInf
 };
 
 const CodeWrapper = styled('div')`
-    user-select: all;
+    user-select: text;
 
     .code {
         max-height: 500px;
