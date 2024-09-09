@@ -57,6 +57,9 @@ const isReactVersion17Minus = reactVersion === '16' || reactVersion === '17';
 export function isReact17Minus(): boolean {
     return isReactVersion17Minus;
 }
+export function isReact19(): boolean {
+    return reactVersion === '19';
+}
 
 let disableFlushSync = false;
 /** Enable flushSync to be disabled for the callback and the next frame (via setTimeout 0) to prevent flushSync during an existing render.
