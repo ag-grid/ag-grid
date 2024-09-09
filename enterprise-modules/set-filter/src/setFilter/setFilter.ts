@@ -248,15 +248,19 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private haveColDefParamsChanged(params: SetFilterParams<any, V>): boolean {
         const { colDef, keyCreator } = params;
         const { colDef: existingColDef, keyCreator: existingKeyCreator } = this.setFilterParams ?? {};
-        const processedKeyCreator = keyCreator ?? colDef.keyCreator;
-        return (
-            colDef.filterValueGetter !== existingColDef?.filterValueGetter ||
-            processedKeyCreator !== (existingKeyCreator ?? existingColDef?.keyCreator) ||
-            (!!this.dataTypeService &&
-                !!processedKeyCreator &&
-                this.dataTypeService.getFormatValue(colDef.cellDataType as string) === processedKeyCreator &&
-                colDef.valueFormatter !== existingColDef?.valueFormatter)
-        );
+
+        const currentKeyCreator = keyCreator ?? colDef.keyCreator;
+        const previousKeyCreator = existingKeyCreator ?? existingColDef?.keyCreator;
+
+        const filterValueGetterChanged = colDef.filterValueGetter !== existingColDef?.filterValueGetter;
+        const keyCreatorChanged = currentKeyCreator !== previousKeyCreator;
+        const valueFormatterIsKeyCreatorAndHasChanged =
+            !!this.dataTypeService &&
+            !!currentKeyCreator &&
+            this.dataTypeService.getFormatValue(colDef.cellDataType as string) === currentKeyCreator &&
+            colDef.valueFormatter !== existingColDef?.valueFormatter;
+
+        return filterValueGetterChanged || keyCreatorChanged || valueFormatterIsKeyCreatorAndHasChanged;
     }
 
     private setModelAndRefresh(values: SetFilterModelValue | null): AgPromise<void> {
