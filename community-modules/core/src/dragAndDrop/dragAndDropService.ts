@@ -1,3 +1,4 @@
+import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { HorizontalDirection, VerticalDirection } from '../constants/direction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -13,11 +14,10 @@ import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _flatten, _removeFromArray } from '../utils/array';
 import { _getBodyHeight, _getBodyWidth } from '../utils/browser';
-import { _clearElement, _getElementRectWithOffset, _loadTemplate } from '../utils/dom';
+import { _getElementRectWithOffset } from '../utils/dom';
 import { _isFunction, _warnOnce } from '../utils/function';
-import type { IconName } from '../utils/icon';
-import { _createIcon } from '../utils/icon';
-import { _escapeString } from '../utils/string';
+import type { AgPromise } from '../utils/promise';
+import type { DragAndDropImageComponent } from './dragAndDropImageComponent';
 import type { DragListenerParams, DragService } from './dragService';
 
 export interface DragItem<TValue = any> {
@@ -77,7 +77,7 @@ export interface DragSource {
      */
     getDragItem: () => DragItem;
     /**
-     * This name appears in the ghost icon when dragging.
+     * This name appears in the drag and drop image component when dragging.
      */
     dragItemName: string | (() => string) | null;
     /**
@@ -158,11 +158,6 @@ export interface DraggingEvent<TData = any, TContext = any> extends AgGridCommon
     dropZoneTarget: HTMLElement;
 }
 
-const GHOST_TEMPLATE = /* html */ `<div class="ag-dnd-ghost ag-unselectable">
-<span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>
-<div class="ag-dnd-ghost-label"></div>
-</div>`;
-
 export type DragAndDropIcon =
     | 'pinned'
     | 'move'
@@ -181,12 +176,14 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     private dragService: DragService;
     private mouseEventService: MouseEventService;
     private environment: Environment;
+    private userComponentFactory: UserComponentFactory;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
         this.dragService = beans.dragService;
         this.mouseEventService = beans.mouseEventService;
         this.environment = beans.environment;
+        this.userComponentFactory = beans.userComponentFactory;
     }
 
     private dragSourceAndParamsList: { params: DragListenerParams; dragSource: DragSource }[] = [];
@@ -196,29 +193,11 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     private dragSource: DragSource | null;
     private dragging: boolean;
 
-    private eGhost: HTMLElement | null;
-    private eGhostParent: HTMLElement | ShadowRoot;
-    private eGhostIcon: HTMLElement;
+    private dragAndDropImageComponent: DragAndDropImageComponent | null;
+    private dragAndDropImageParent: HTMLElement | ShadowRoot;
 
     private dropTargets: DropTarget[] = [];
     private lastDropTarget: DropTarget | null | undefined;
-
-    private dropIconMap: { [key in DragAndDropIcon]: Element };
-
-    public postConstruct(): void {
-        const create = (iconName: IconName) => _createIcon(iconName, this.gos, null);
-        this.dropIconMap = {
-            pinned: create('columnMovePin'),
-            hide: create('columnMoveHide'),
-            move: create('columnMoveMove'),
-            left: create('columnMoveLeft'),
-            right: create('columnMoveRight'),
-            group: create('columnMoveGroup'),
-            aggregate: create('columnMoveValue'),
-            pivot: create('columnMovePivot'),
-            notAllowed: create('dropNotAllowed'),
-        };
-    }
 
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
         const params: DragListenerParams = {
@@ -232,8 +211,11 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         };
 
         this.dragSourceAndParamsList.push({ params: params, dragSource: dragSource });
-
         this.dragService.addDragSource(params);
+    }
+
+    public getDragAndDropImageComponent(): DragAndDropImageComponent | null {
+        return this.dragAndDropImageComponent;
     }
 
     public removeDragSource(dragSource: DragSource): void {
@@ -251,6 +233,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         );
         this.dragSourceAndParamsList.length = 0;
         this.dropTargets.length = 0;
+        this.clearDragAndDropProperties();
         super.destroy();
     }
 
@@ -267,8 +250,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.dragItem = this.dragSource.getDragItem();
 
         this.dragSource.onDragStarted?.();
-
-        this.createGhost();
+        this.createDragAndDropImageComponent();
     }
 
     private onDragStop(mouseEvent: MouseEvent): void {
@@ -299,7 +281,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.lastDropTarget = undefined;
         this.dragItem = null;
         this.dragSource = null;
-        this.removeGhost();
+        this.removeDragAndDropImageComponent();
     }
 
     private onDragging(mouseEvent: MouseEvent, fromNudge: boolean): void {
@@ -307,7 +289,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         const vDirection = this.getVerticalDirection(mouseEvent);
 
         this.eventLastTime = mouseEvent;
-        this.positionGhost(mouseEvent);
+        this.positionDragAndDropImageComp(mouseEvent);
 
         // check if mouseEvent intersects with any of the drop targets
         const validDropTargets = this.dropTargets.filter((target) => this.isMouseOnDropTarget(mouseEvent, target));
@@ -430,7 +412,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             dropTarget.onDragEnter(dragEnterEvent);
         }
 
-        this.setGhostIcon(dropTarget.getIconName ? dropTarget.getIconName() : null);
+        this.dragAndDropImageComponent?.setIcon(dropTarget.getIconName ? dropTarget.getIconName() : null);
     }
 
     private leaveLastTargetIfExists(
@@ -455,7 +437,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             this.lastDropTarget.onDragLeave(dragLeaveEvent);
         }
 
-        this.setGhostIcon(null);
+        this.dragAndDropImageComponent?.setIcon(null);
     }
 
     public addDropTarget(dropTarget: DropTarget) {
@@ -533,24 +515,31 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         });
     }
 
-    private positionGhost(event: MouseEvent): void {
-        const ghost = this.eGhost;
+    private positionDragAndDropImageComp(event: MouseEvent): void {
+        const dragAndDropImageComponent = this.dragAndDropImageComponent;
 
-        if (!ghost) {
+        if (!dragAndDropImageComponent) {
             return;
         }
 
-        const ghostRect = ghost.getBoundingClientRect();
-        const ghostHeight = ghostRect.height;
+        const eGui = dragAndDropImageComponent.getGui();
+        const eRect = eGui.getBoundingClientRect();
+        const height = eRect.height;
 
         const browserWidth = _getBodyWidth() - 2; // 2px for 1px borderLeft and 1px borderRight
         const browserHeight = _getBodyHeight() - 2; // 2px for 1px borderTop and 1px borderBottom
 
-        const offsetParentSize = _getElementRectWithOffset(ghost.offsetParent as HTMLElement);
+        const offsetParent = eGui.offsetParent;
+
+        if (!offsetParent) {
+            return;
+        }
+
+        const offsetParentSize = _getElementRectWithOffset(eGui.offsetParent as HTMLElement);
 
         const { clientY, clientX } = event;
 
-        let top = clientY - offsetParentSize.top - ghostHeight / 2;
+        let top = clientY - offsetParentSize.top - height / 2;
         let left = clientX - offsetParentSize.left - 10;
 
         const eDocument = _getDocument(this.gos);
@@ -558,55 +547,87 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         const windowScrollY = win.pageYOffset || eDocument.documentElement.scrollTop;
         const windowScrollX = win.pageXOffset || eDocument.documentElement.scrollLeft;
 
-        // check ghost is not positioned outside of the browser
-        if (browserWidth > 0 && left + ghost.clientWidth > browserWidth + windowScrollX) {
-            left = browserWidth + windowScrollX - ghost.clientWidth;
+        // check if the drag and drop image component is not positioned outside of the browser
+        if (browserWidth > 0 && left + eGui.clientWidth > browserWidth + windowScrollX) {
+            left = browserWidth + windowScrollX - eGui.clientWidth;
         }
 
         if (left < 0) {
             left = 0;
         }
 
-        if (browserHeight > 0 && top + ghost.clientHeight > browserHeight + windowScrollY) {
-            top = browserHeight + windowScrollY - ghost.clientHeight;
+        if (browserHeight > 0 && top + eGui.clientHeight > browserHeight + windowScrollY) {
+            top = browserHeight + windowScrollY - eGui.clientHeight;
         }
 
         if (top < 0) {
             top = 0;
         }
 
-        ghost.style.left = `${left}px`;
-        ghost.style.top = `${top}px`;
+        eGui.style.left = `${left}px`;
+        eGui.style.top = `${top}px`;
     }
 
-    private removeGhost(): void {
-        if (this.eGhost && this.eGhostParent) {
-            this.eGhostParent.removeChild(this.eGhost);
+    private removeDragAndDropImageComponent(): void {
+        if (this.dragAndDropImageComponent) {
+            const eGui = this.dragAndDropImageComponent.getGui();
+            if (this.dragAndDropImageParent) {
+                this.dragAndDropImageParent.removeChild(eGui);
+            }
+            this.destroyBean(this.dragAndDropImageComponent);
         }
 
-        this.eGhost = null;
+        this.dragAndDropImageComponent = null;
     }
 
-    private createGhost(): void {
-        this.eGhost = _loadTemplate(GHOST_TEMPLATE);
-        this.mouseEventService.stampTopLevelGridCompWithGridInstance(this.eGhost);
+    private createDragAndDropImageComponent(): void {
+        const { dragSource } = this;
 
-        this.environment.applyThemeClasses(this.eGhost);
-
-        this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon') as HTMLElement;
-        this.setGhostIcon(null);
-
-        const eText = this.eGhost.querySelector('.ag-dnd-ghost-label') as HTMLElement;
-        let dragItemName = this.dragSource?.dragItemName;
-
-        if (_isFunction(dragItemName)) {
-            dragItemName = (dragItemName as () => string)();
+        if (!dragSource) {
+            return;
         }
 
-        eText.innerHTML = _escapeString(dragItemName as string) || '';
+        const userCompDetails = this.userComponentFactory.getDragAndDropImageCompDetails({
+            dragSource,
+        });
 
-        this.eGhost.style.top = '20px';
-        this.eGhost.style.left = '20px';
+        const promise: AgPromise<DragAndDropImageComponent> = userCompDetails.newAgStackInstance();
+
+        promise.then((comp) => {
+            if (!comp || !this.isAlive()) {
+                return;
+            }
+
+            this.dragAndDropImageComponent = comp;
+            this.processDragAndDropImageComponent();
+        });
+    }
+
+    private processDragAndDropImageComponent(): void {
+        const { dragAndDropImageComponent, dragSource, mouseEventService, environment } = this;
+
+        if (!dragAndDropImageComponent || !dragSource) {
+            return;
+        }
+        const eGui = dragAndDropImageComponent.getGui();
+
+        eGui.style.setProperty('position', 'absolute');
+        eGui.style.setProperty('z-index', '9999');
+
+        mouseEventService.stampTopLevelGridCompWithGridInstance(eGui);
+        environment.applyThemeClasses(eGui);
+        dragAndDropImageComponent.setIcon(null);
+
+        let { dragItemName } = dragSource;
+
+        if (_isFunction<string>(dragItemName)) {
+            dragItemName = dragItemName();
+        }
+
+        dragAndDropImageComponent.setLabel(dragItemName || '');
+
+        eGui.style.top = '20px';
+        eGui.style.left = '20px';
 
         const eDocument = _getDocument(this.gos);
         let rootNode: Document | ShadowRoot | HTMLElement | null = null;
@@ -633,32 +654,12 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             }
         }
 
-        this.eGhostParent = targetEl;
+        this.dragAndDropImageParent = targetEl;
 
-        if (!this.eGhostParent) {
-            _warnOnce('Could not find document body, it is needed for dragging columns');
+        if (!targetEl) {
+            _warnOnce('Could not find document body, it is needed for drag and drop.');
         } else {
-            this.eGhostParent.appendChild(this.eGhost);
-        }
-    }
-
-    public setGhostIcon(iconName: DragAndDropIcon | null, shake = false): void {
-        _clearElement(this.eGhostIcon);
-
-        let eIcon: Element | null = null;
-
-        if (!iconName) {
-            iconName = this.dragSource?.getDefaultIconName ? this.dragSource?.getDefaultIconName() : 'notAllowed';
-        }
-        eIcon = this.dropIconMap[iconName];
-
-        this.eGhostIcon.classList.toggle('ag-shake-left-to-right', shake);
-
-        if (eIcon === this.dropIconMap['hide'] && this.gos.get('suppressDragLeaveHidesColumns')) {
-            return;
-        }
-        if (eIcon) {
-            this.eGhostIcon.appendChild(eIcon);
+            targetEl.appendChild(eGui);
         }
     }
 }

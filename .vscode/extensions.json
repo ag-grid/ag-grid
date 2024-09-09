@@ -19,6 +19,8 @@
     // prettier
     "esbenp.prettier-vscode",
     // markdoc
-    "stripe.markdoc-language-support"
+    "stripe.markdoc-language-support",
+    // vitest test runner, used for behavioural tests
+    "vitest.explorer"
   ]
 }

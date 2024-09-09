@@ -1,11 +1,8 @@
 import {
-    FirstDataRenderedEvent,
-    GetRowIdParams,
     GridApi,
     GridOptions,
     IServerSideDatasource,
     IServerSideGroupSelectionState,
-    IsServerSideGroupOpenByDefaultParams,
     createGrid,
 } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -16,13 +13,13 @@ import { FakeServer } from './fakeServer';
 
 ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
 
-let gridApi: GridApi<IOlympicData>;
-const gridOptions: GridOptions<IOlympicData> = {
+let gridApi: GridApi<IOlympicDataWithId>;
+const gridOptions: GridOptions<IOlympicDataWithId> = {
     columnDefs: [
         { field: 'country', enableRowGroup: true, rowGroup: true, hide: true },
         { field: 'year', enableRowGroup: true, rowGroup: true, hide: true },
         { field: 'athlete', hide: true },
-        { field: 'sport', enableRowGroup: true, checkboxSelection: true, filter: 'agTextColumnFilter' },
+        { field: 'sport', enableRowGroup: true, filter: 'agTextColumnFilter' },
         { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
         { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
         { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
@@ -32,7 +29,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 120,
     },
-    getRowId: (params: GetRowIdParams) => {
+    getRowId: (params) => {
         if (params.data.id != null) {
             return 'leaf-' + params.data.id;
         }
@@ -44,13 +41,13 @@ const gridOptions: GridOptions<IOlympicData> = {
             rowGroupColIds +
             '-' +
             (params.parentKeys || []).join('-') +
-            params.data[thisGroupCol.getColDef().field!]
+            params.data[thisGroupCol.getColDef().field as keyof IOlympicDataWithId]
         );
     },
-    isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
+    isServerSideGroupOpenByDefault: (params) => {
         return params.rowNode.key === 'United States' || String(params.rowNode.key) === '2004';
     },
-    onFirstDataRendered: (params: FirstDataRenderedEvent) => {
+    onFirstDataRendered: (params) => {
         params.api.setServerSideSelectionState({
             selectAllChildren: true,
             toggledNodes: [
@@ -68,26 +65,21 @@ const gridOptions: GridOptions<IOlympicData> = {
         });
     },
     autoGroupColumnDef: {
-        headerCheckboxSelection: true,
         field: 'athlete',
         flex: 1,
         minWidth: 240,
-        cellRendererParams: {
-            checkbox: true,
-        },
     },
 
     // use the server-side row model
     rowModelType: 'serverSide',
 
     // allow multiple row selections
-    rowSelection: 'multiple',
+    selection: {
+        mode: 'multiRow',
+        suppressClickSelection: true,
+        groupSelects: 'descendants',
+    },
     rowGroupPanelShow: 'always',
-
-    // restrict row selections via checkbox selection
-    suppressRowClickSelection: true,
-
-    groupSelectsChildren: true,
 
     suppressAggFuncInHeader: true,
 };

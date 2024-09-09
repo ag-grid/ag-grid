@@ -40,12 +40,12 @@ const GridExample = () => {
         return {
             refreshStrategy: 'rows',
             detailGridOptions: {
-                rowSelection: 'multiple',
+                selection: { mode: 'multiple' },
                 getRowId: (params) => {
                     return String(params.data.callId);
                 },
                 columnDefs: [
-                    { field: 'callId', checkboxSelection: true },
+                    { field: 'callId' },
                     { field: 'direction' },
                     { field: 'number', minWidth: 150 },
                     { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
@@ -57,7 +57,6 @@ const GridExample = () => {
                 },
             },
             getDetailRowData: (params) => {
-                // params.successCallback([]);
                 params.successCallback(params.data.callRecords);
             },
         };

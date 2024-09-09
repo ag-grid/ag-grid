@@ -40,8 +40,7 @@ const VueExample = {
                 :context="context"
                 :defaultColDef="defaultColDef"
                 :autoGroupColumnDef="autoGroupColumnDef"
-                :rowSelection="rowSelection"
-                :groupSelectsChildren="true"
+                :selection="selection"
                 :rowData="rowData"></ag-grid-vue></div>
         </div>
     `,
@@ -119,8 +118,8 @@ const VueExample = {
         });
         const context = ref(null);
         const autoGroupColumnDef = ref(null);
-        const rowSelection = ref(null);
         const rowData = ref(null);
+        const selection = ref(null);
 
         onBeforeMount(() => {
             context.value = {
@@ -132,11 +131,12 @@ const VueExample = {
                 field: 'city',
                 minWidth: 260,
                 cellRenderer: 'agGroupCellRenderer',
-                cellRendererParams: {
-                    checkbox: true,
-                },
             };
-            rowSelection.value = 'multiple';
+            selection.value = {
+                mode: 'multiRow',
+                headerCheckbox: false,
+                groupSelects: 'descendants',
+            };
         });
 
         const onChangeMonth = (i) => {
@@ -174,7 +174,7 @@ const VueExample = {
             context,
             defaultColDef,
             autoGroupColumnDef,
-            rowSelection,
+            selection,
             rowData,
             onGridReady,
             themeClass:

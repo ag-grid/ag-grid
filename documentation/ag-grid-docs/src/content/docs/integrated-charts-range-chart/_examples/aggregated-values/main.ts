@@ -22,7 +22,7 @@ const gridOptions: GridOptions = {
         flex: 1,
     },
     rowData: generateData(),
-    enableRangeSelection: true,
+    selection: { mode: 'cell' },
     popupParent: document.body,
     enableCharts: true,
     groupDefaultExpanded: 1,

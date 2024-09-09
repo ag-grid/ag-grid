@@ -15,10 +15,7 @@ ModuleRegistry.registerModules([InfiniteRowModelModule]);
 var ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
 function getColumnDefs() {
-    const columnDefs: ColDef[] = [
-        { checkboxSelection: true, headerName: '', width: 60 },
-        { headerName: '#', width: 80, valueGetter: 'node.rowIndex' },
-    ];
+    const columnDefs: ColDef[] = [{ headerName: '#', width: 80, valueGetter: 'node.rowIndex' }];
 
     ALPHABET.forEach((letter) => {
         columnDefs.push({
@@ -35,9 +32,8 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     columnDefs: getColumnDefs(),
     rowModelType: 'infinite',
-    rowSelection: 'multiple',
+    selection: { mode: 'multiRow', headerCheckbox: false, suppressClickSelection: true },
     maxBlocksInCache: 2,
-    suppressRowClickSelection: true,
     getRowId: (params: GetRowIdParams) => {
         return params.data.a;
     },

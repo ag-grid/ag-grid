@@ -1,0 +1,400 @@
+@use 'sass:map';
+@use 'design-system' as *;
+
+.required {
+    font-family: var(--text-monospace-font-family);
+    font-size: var(--text-fs-sm);
+    font-weight: 400;
+    background-color: color-mix(in srgb, red, var(--color-bg-primary) 95%);
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: var(--radius-sm);
+    color: red;
+    font-size: var(--text-fs-sm);
+    vertical-align: text-top;
+
+    #{$selector-darkmode} & {
+        color: rgb(255, 174, 174);
+        background-color: color-mix(in srgb, rgb(236, 180, 180), var(--color-bg-primary) 90%);
+    }
+}
+
+.apiReferenceOuter {
+    container-type: inline-size;
+    width: 100%;
+
+    &.isInline {
+        margin-top: $spacing-size-5;
+        margin-bottom: $spacing-size-5;
+    }
+
+    :global(.tabs-outer) &.isInline {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    + .apiReferenceOuter {
+        margin-top: -1px;
+    }
+
+    > a[id] {
+        scroll-margin-top: var(--anchor-offset, 0);
+    }
+
+    :global(.docPage) & {
+        margin-bottom: $spacing-size-4;
+    }
+}
+
+.propertyDescription {
+    margin-top: -$spacing-size-2;
+    margin-bottom: $spacing-size-6;
+    color: var(--color-fg-secondary);
+}
+
+.apiReference {
+    display: table; // remove after table > div refactor
+    position: relative;
+    table-layout: fixed;
+    width: 100%;
+
+    @container (max-width: #{$breakpoint-table-small}) {
+        display: block;
+    }
+
+    @container (min-width: #{$breakpoint-table-small}) {
+        height: 1px; // needed for divs to fit table cell heights correctly
+    }
+
+    pre:global(.code) {
+        margin-top: 0;
+        margin-bottom: $spacing-size-2;
+    }
+}
+
+.propertyRow {
+    display: flex;
+    gap: $spacing-size-4;
+    width: 100%;
+    padding: $spacing-size-4 0;
+    flex-wrap: wrap;
+    scroll-margin-top: var(--anchor-offset, 0);
+    border-top: 1px solid var(--color-border-secondary);
+
+    &:last-child {
+        border-bottom: 1px solid var(--color-border-secondary);
+    }
+
+    #{$selector-darkmode} & {
+        border-top-color: var(--color-util-gray-400);
+        border-bottom-color: var(--color-util-gray-400);
+    }
+
+    :global(.tabs-outer) & {
+        &:first-child {
+            border-top: none;
+        }
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+
+    @container (max-width: #{$breakpoint-table-small}) {
+        display: block;
+        width: 100%;
+        padding-top: $spacing-size-2;
+        padding-bottom: $spacing-size-2;
+    }
+
+    #{$selector-darkmode} & {
+        border-top-color: var(--color-util-gray-400);
+    }
+
+    > div {
+        flex: 1;
+        box-sizing: border-box;
+        min-width: calc(50% - $spacing-size-2);
+    }
+}
+
+.leftColumn {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-2;
+    padding-left: calc(var(--nested-path-depth, 0) * $spacing-size-2);
+
+    @container (max-width: #{$breakpoint-table-small}) {
+        width: 100%;
+    }
+}
+
+.rightColumn {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+
+    @container (max-width: #{$breakpoint-table-small}) {
+        width: 100%;
+        padding-left: calc(var(--nested-path-depth, 0) * $spacing-size-2);
+    }
+}
+
+.name {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    --parent-properties-color: var(--color-fg-secondary);
+    --parent-properties-font-weight: var(--text-regular);
+
+    color: var(--color-fg-primary);
+    position: relative;
+    display: inline-block;
+    margin-top: 0;
+    padding-right: $spacing-size-2;
+    font-family: var(--text-monospace-font-family);
+    font-size: 15px;
+    line-height: var(--text-lh-xs);
+    font-weight: 700;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: row;
+
+    @container (min-width: #{$breakpoint-table-small}) {
+        font-size: 15px;
+    }
+}
+
+.parentProperties {
+    font-weight: var(--parent-properties-font-weight);
+    color: var(--parent-properties-color);
+    line-break: anywhere;
+}
+
+.metaItem {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-size-3;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.metaRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: $spacing-size-2;
+}
+
+.metaLabel {
+    font-size: var(--text-fs-sm);
+    color: var(--color-fg-secondary);
+    opacity: 0.8;
+}
+
+.metaValue {
+    font-size: var(--text-fs-sm);
+    font-family: var(--text-monospace-font-family);
+    color: var(--color-fg-code);
+    background-color: color-mix(in srgb, var(--color-fg-code), var(--color-bg-primary) 94%);
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: var(--radius-sm);
+}
+
+.defaultValue {
+    font-size: var(--text-fs-sm);
+    padding: 2px 8px;
+    font-family: var(--text-monospace-font-family);
+    white-space: normal;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg-code) !important;
+    color: var(--color-fg-primary);
+    font-size: var(--text-fs-sm);
+    font-variant-ligatures: none;
+    font-optical-sizing: auto;
+    font-weight: 400;
+}
+
+a.metaValue {
+    color: var(--color-link);
+    text-decoration: underline;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: var(--radius-sm);
+    background-color: color-mix(in srgb, var(--color-link), var(--color-bg-primary) 90%);
+
+    &:hover {
+        color: var(--color-link-hover);
+    }
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-4 $spacing-size-8;
+
+    pre {
+        min-width: 100%;
+    }
+}
+
+.isExpanded svg {
+    transform: rotate(180deg);
+}
+
+.childButton {
+    color: color-mix(in srgb, var(--color-fg-secondary), var(--color-bg-primary) 20%);
+    font-weight: var(--text-regular);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: $spacing-size-2;
+
+    .childButtonName {
+        font-family: var(--text-monospace-font-family);
+        font-weight: var(--text-semibold);
+        font-size: var(--text-fs-sm);
+    }
+
+    &:hover {
+        color: var(--color-text-primary);
+    }
+
+    &::before {
+        content: '';
+        display: inline-block;
+        width: 0px;
+        height: 0px;
+        border-style: solid;
+        border-width: 0 6px 8px 6px;
+        border-color: transparent transparent color-mix(in srgb, var(--color-fg-secondary), var(--color-bg-primary) 50%)
+            transparent;
+        transform: rotate(90deg);
+        transition: transform 0.25s ease-in-out;
+    }
+
+    &.isExpanded::before {
+        transform: rotate(180deg);
+        transition: transform 0.25s ease-in-out;
+    }
+}
+
+button.seeMore {
+    color: var(--color-link);
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    gap: $spacing-size-2;
+    color: var(--color-link);
+    font-weight: 600;
+    border: 1px solid color-mix(in srgb, var(--color-link), var(--color-bg-primary) 80%);
+    height: 24px;
+    width: 24px;
+    transition:
+        color 0.5s ease-in-out,
+        border-color 0.5s ease-in-out;
+    flex-shrink: 0;
+
+    &:active {
+        background-color: transparent;
+    }
+
+    svg {
+        --icon-size: 16px;
+
+        margin-left: 2px;
+        fill: var(--color-link);
+        transition:
+            fill 0.25s ease-in-out,
+            transform 0.25s ease-in-out;
+        top: 1px;
+    }
+
+    span {
+        height: 24px;
+
+        @container (max-width: #{$breakpoint-table-small}) {
+            display: none;
+        }
+    }
+
+    &:hover {
+        color: var(--color-link-hover);
+        border: 1px solid color-mix(in srgb, var(--color-link), var(--color-bg-primary) 50%);
+
+        svg {
+            fill: var(--color-link-hover);
+        }
+    }
+
+    @container (max-width: #{$breakpoint-table-small}) {
+        min-width: 1.5ch;
+    }
+}
+
+.docLink {
+    white-space: nowrap;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    svg {
+        --icon-size: 16px;
+    }
+}
+
+.highlightAnimate {
+    animation: highlight-animation 3000ms ease-out;
+
+    #{$selector-darkmode} & {
+        animation: highlight-animation-dark 3000ms ease-out;
+    }
+}
+
+@keyframes highlight-animation {
+    0%,
+    100% {
+        background-color: transparent;
+    }
+
+    10%,
+    50% {
+        background-color: var(--color-util-brand-100);
+    }
+}
+
+@keyframes highlight-animation-dark {
+    0%,
+    100% {
+        background-color: transparent;
+    }
+
+    10%,
+    50% {
+        background-color: rgba(255, 255, 255, 0.075);
+    }
+}
+
+.isChildProp {
+    border-top: 1px dashed var(--color-util-gray-200);
+}
+
+@container (max-width: #{$breakpoint-table-small}) {
+    .level-1 .rightColumn {
+        padding-left: $spacing-size-2;
+    }
+
+    .level-2 .rightColumn {
+        padding-left: $spacing-size-4;
+    }
+
+    .level-3 .rightColumn {
+        padding-left: $spacing-size-6;
+    }
+}

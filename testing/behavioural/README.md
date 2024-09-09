@@ -17,13 +17,13 @@ nx test ag-behavioural-testing
 To execute a single test file
 
 ```sh
-nx test ag-behavioural-testing --testFile=src/folder/filename.test.ts
+nx test ag-behavioural-testing -- --testFile=src/folder/filename.test.ts
 ```
 
-To pass arguments to jest, for example to execute only a specific test, use:
+To run in watch mode
 
 ```sh
-npx jest -c ./testing/behavioural/jest.config.js <additional arguments>
+nx test ag-behavioural-testing -- -w
 ```
 
 ## References:

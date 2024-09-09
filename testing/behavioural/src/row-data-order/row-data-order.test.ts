@@ -1,19 +1,19 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { GridOptions, RowDataTransaction } from '@ag-grid-community/core';
+import type { MockInstance } from 'vitest';
 
-import {
-    TestGridsManager,
-    cachedJSONObjects,
-    checkSimpleRowNodesDom,
-    executeTransactionsAsync,
-    getAllRowData,
-    verifyPositionInRootChildren,
-} from '../test-utils';
+import type { GridRowsOptions } from '../test-utils';
+import { GridRows, TestGridsManager, cachedJSONObjects, executeTransactionsAsync } from '../test-utils';
+
+const defaultGridRowsOptions: GridRowsOptions = {
+    columns: ['x'],
+    checkDom: 'myGrid',
+};
 
 describe('ag-grid rows-ordering', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
-    let consoleWarnSpy: jest.SpyInstance | undefined;
-    let consoleErrorSpy: jest.SpyInstance | undefined;
+    let consoleWarnSpy: MockInstance | undefined;
+    let consoleErrorSpy: MockInstance | undefined;
 
     beforeEach(() => {
         cachedJSONObjects.clear();
@@ -40,27 +40,45 @@ describe('ag-grid rows-ordering', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        let allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual([{ x: 1 }, { x: 2 }, { x: 3 }, { x: 4 }]);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 x:1
+            ├── LEAF id:1 x:2
+            ├── LEAF id:2 x:3
+            └── LEAF id:3 x:4
+        `);
 
         api.setGridOption('rowData', rowData2);
 
-        allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual(rowData2);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 x:2
+            ├── LEAF id:1 x:1
+            └── LEAF id:2 x:4
+        `);
 
         api.applyTransaction({ add: [{ x: 7 }, { x: 5 }] });
 
-        allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual([{ x: 2 }, { x: 1 }, { x: 4 }, { x: 7 }, { x: 5 }]);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 x:2
+            ├── LEAF id:1 x:1
+            ├── LEAF id:2 x:4
+            ├── LEAF id:3 x:7
+            └── LEAF id:4 x:5
+        `);
 
         api.applyTransaction({ addIndex: 1, add: [{ x: 6 }] });
 
-        allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual([{ x: 2 }, { x: 6 }, { x: 1 }, { x: 4 }, { x: 7 }, { x: 5 }]);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 x:2
+            ├── LEAF id:5 x:6
+            ├── LEAF id:1 x:1
+            ├── LEAF id:2 x:4
+            ├── LEAF id:3 x:7
+            └── LEAF id:4 x:5
+        `);
     });
 
     test('row order is the same as row data (with id)', async () => {
@@ -83,24 +101,22 @@ describe('ag-grid rows-ordering', () => {
             getRowId: (params) => params.data.id,
         });
 
-        let allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual([
-            { id: '1', x: 1 },
-            { id: '2', x: 2 },
-            { id: '3', x: 3 },
-            { id: '4', x: 4 },
-        ]);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 x:1
+            ├── LEAF id:2 x:2
+            ├── LEAF id:3 x:3
+            └── LEAF id:4 x:4
+        `);
 
         api.setGridOption('rowData', rowData2);
 
-        allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual([
-            { id: '2', x: 2 },
-            { id: '1', x: 1 },
-            { id: '4', x: 4 },
-        ]);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:2 x:2
+            ├── LEAF id:1 x:1
+            └── LEAF id:4 x:4
+        `);
 
         api.applyTransaction({
             add: [
@@ -108,35 +124,32 @@ describe('ag-grid rows-ordering', () => {
                 { id: '5', x: 5 },
             ],
         });
-        checkSimpleRowNodesDom('myGrid', api);
 
-        allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual([
-            { id: '2', x: 2 },
-            { id: '1', x: 1 },
-            { id: '4', x: 4 },
-            { id: '7', x: 7 },
-            { id: '5', x: 5 },
-        ]);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:2 x:2
+            ├── LEAF id:1 x:1
+            ├── LEAF id:4 x:4
+            ├── LEAF id:7 x:7
+            └── LEAF id:5 x:5
+        `);
 
         api.applyTransaction({
             addIndex: 1,
             add: [{ id: '6', x: 6 }],
         });
-        checkSimpleRowNodesDom('myGrid', api);
 
-        allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual([
-            { id: '2', x: 2 },
-            { id: '6', x: 6 },
-            { id: '1', x: 1 },
-            { id: '4', x: 4 },
-            { id: '7', x: 7 },
-            { id: '5', x: 5 },
-        ]);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:2 x:2
+            ├── LEAF id:6 x:6
+            ├── LEAF id:1 x:1
+            ├── LEAF id:4 x:4
+            ├── LEAF id:7 x:7
+            └── LEAF id:5 x:5
+        `);
 
-        consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
         await executeTransactionsAsync(
             [
@@ -165,18 +178,18 @@ describe('ag-grid rows-ordering', () => {
 
         consoleWarnSpy.mockRestore();
 
-        allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual([
-            { id: '2', x: 2 },
-            { id: '1', x: 1 },
-            { id: '4', x: 4 },
-            { id: '7', x: 7 },
-            { id: '5', x: 5 },
-            { id: '9', x: 91 },
-            { id: '10', x: 10 },
-            { id: '9', x: 9 },
-            { id: '8', x: 80 },
-        ]);
+        await new GridRows(api, 'data', { ...defaultGridRowsOptions, checkDom: false }).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:2 x:2
+            ├── LEAF id:1 x:1
+            ├── LEAF id:4 x:4
+            ├── LEAF id:7 x:7
+            ├── LEAF id:5 x:5
+            ├── LEAF id:9 x:91
+            ├── LEAF id:10 x:10
+            ├── LEAF id:9 x:9
+            └── LEAF id:8 x:80
+        `);
     });
 
     test('setRowData after a transaction overrides the order (with id)', async () => {
@@ -198,12 +211,11 @@ describe('ag-grid rows-ordering', () => {
             { id: '1', x: 1 },
         ]);
 
-        let allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual([
-            { id: '2', x: 2 },
-            { id: '1', x: 1 },
-        ]);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:2 x:2
+            └── LEAF id:1 x:1
+        `);
 
         api.setGridOption('suppressMaintainUnsortedOrder', true);
 
@@ -217,13 +229,12 @@ describe('ag-grid rows-ordering', () => {
             { id: '1', x: 11 },
         ]);
 
-        allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual([
-            { id: '2', x: 12 },
-            { id: '1', x: 11 },
-            { id: '3', x: 13 },
-        ]);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:2 x:12
+            ├── LEAF id:1 x:11
+            └── LEAF id:3 x:13
+        `);
     });
 
     test('suppressMaintainUnsortedOrder (with id)', async () => {
@@ -249,29 +260,27 @@ describe('ag-grid rows-ordering', () => {
             suppressMaintainUnsortedOrder: true,
         });
 
-        let allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual([
-            { id: '1', x: 1 },
-            { id: '2', x: 2 },
-            { id: '3', x: 3 },
-            { id: '4', x: 4 },
-        ]);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 x:1
+            ├── LEAF id:2 x:2
+            ├── LEAF id:3 x:3
+            └── LEAF id:4 x:4
+        `);
 
         api.setGridOption('rowData', rowData2);
 
-        allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual([
-            { id: '1', x: 11 },
-            { id: '3', x: 13 },
-            { id: '4', x: 14 },
-            { id: '5', x: 15 },
-            { id: '6', x: 16 },
-        ]);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 x:11
+            ├── LEAF id:3 x:13
+            ├── LEAF id:4 x:14
+            ├── LEAF id:5 x:15
+            └── LEAF id:6 x:16
+        `);
     });
 
-    test('complex setRowData with remove, update, change order, add', () => {
+    test('complex setRowData with remove, update, change order, add', async () => {
         const rowData1 = [
             { id: '1', x: 1 },
             { id: '2', x: 2 },
@@ -295,14 +304,13 @@ describe('ag-grid rows-ordering', () => {
             { id: '3', x: 14 },
         ]);
 
-        let allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual([
-            { id: '5', x: 11 },
-            { id: '2', x: 13 },
-            { id: '6', x: 12 },
-            { id: '3', x: 14 },
-        ]);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:5 x:11
+            ├── LEAF id:2 x:13
+            ├── LEAF id:6 x:12
+            └── LEAF id:3 x:14
+        `);
 
         api.applyTransaction({
             remove: [{ id: '5' }],
@@ -318,16 +326,15 @@ describe('ag-grid rows-ordering', () => {
             ],
         });
 
-        allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual([
-            { id: '2', x: 13 },
-            { id: '7', x: 102 },
-            { id: '8', x: 103 },
-            { id: '9', x: 104 },
-            { id: '6', x: 100 },
-            { id: '3', x: 101 },
-        ]);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:2 x:13
+            ├── LEAF id:7 x:102
+            ├── LEAF id:8 x:103
+            ├── LEAF id:9 x:104
+            ├── LEAF id:6 x:100
+            └── LEAF id:3 x:101
+        `);
     });
 
     test('multiple interleaved addIndex with async transaction', async () => {
@@ -376,20 +383,19 @@ describe('ag-grid rows-ordering', () => {
             api
         );
 
-        const allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual([
-            { id: '1', x: 1 },
-            { id: '7', x: 33 },
-            { id: '8', x: 8 },
-            { id: '9', x: 99 },
-            { id: '2', x: 2 },
-            { id: '10', x: 10 },
-            { id: '5', x: 105 },
-            { id: '11', x: 11 },
-            { id: '3', x: 3 },
-            { id: '4', x: 4 },
-        ]);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 x:1
+            ├── LEAF id:7 x:33
+            ├── LEAF id:8 x:8
+            ├── LEAF id:9 x:99
+            ├── LEAF id:2 x:2
+            ├── LEAF id:10 x:10
+            ├── LEAF id:5 x:105
+            ├── LEAF id:11 x:11
+            ├── LEAF id:3 x:3
+            └── LEAF id:4 x:4
+        `);
     });
 
     test('can swap rows by updating row data', async () => {
@@ -436,24 +442,48 @@ describe('ag-grid rows-ordering', () => {
             getRowId: (params) => params.data.id,
         });
 
-        let allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual(rowData1);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 x:1
+            ├── LEAF id:1 x:1
+            ├── LEAF id:2 x:1
+            ├── LEAF id:3 x:1
+            ├── LEAF id:4 x:1
+            └── LEAF id:5 x:1
+        `);
 
         api.setGridOption('rowData', rowData2);
-        allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual(rowData2);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:0 x:1
+            ├── LEAF id:1 x:1
+            ├── LEAF id:3 x:1
+            ├── LEAF id:2 x:1
+            ├── LEAF id:4 x:1
+            └── LEAF id:5 x:1
+        `);
 
         api.setGridOption('rowData', rowData3);
-        allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual(rowData3);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:4 x:1
+            ├── LEAF id:1 x:1
+            ├── LEAF id:3 x:1
+            ├── LEAF id:2 x:1
+            ├── LEAF id:0 x:1
+            └── LEAF id:5 x:1
+        `);
 
         api.setGridOption('rowData', rowData4);
-        allRowData = getAllRowData(verifyPositionInRootChildren(api));
-        expect(allRowData).toEqual(rowData4);
-        checkSimpleRowNodesDom('myGrid', api);
+        await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:5 x:1
+            ├── LEAF id:1 x:1
+            ├── LEAF id:3 x:1
+            ├── LEAF id:2 x:1
+            ├── LEAF id:0 x:1
+            └── LEAF id:4 x:1
+        `);
     });
 
     describe('complex transaction', () => {
@@ -486,39 +516,65 @@ describe('ag-grid rows-ordering', () => {
                 getRowId: (params) => params.data.id,
             });
 
-            let allData = getAllRowData(verifyPositionInRootChildren(api));
-            expect(allData).toEqual([row0, row1a]);
-            checkSimpleRowNodesDom('myGrid', api);
+            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 x:"0"
+                └── LEAF id:1 x:"1a"
+            `);
 
             api.applyTransaction(transactions[0]);
 
-            allData = getAllRowData(verifyPositionInRootChildren(api));
-            expect(allData).toEqual([row0, row1a, row2]);
-            checkSimpleRowNodesDom('myGrid', api);
+            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 x:"0"
+                ├── LEAF id:1 x:"1a"
+                └── LEAF id:2 x:"2"
+            `);
 
             api.applyTransaction(transactions[1]);
 
-            allData = getAllRowData(verifyPositionInRootChildren(api));
-            expect(allData).toEqual([row0, row1b, row2, row3, row4]);
-            checkSimpleRowNodesDom('myGrid', api);
+            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 x:"0"
+                ├── LEAF id:1 x:"1b"
+                ├── LEAF id:2 x:"2"
+                ├── LEAF id:3 x:"3"
+                └── LEAF id:4 x:"4"
+            `);
 
             api.applyTransaction(transactions[2]);
 
-            allData = getAllRowData(verifyPositionInRootChildren(api));
-            expect(allData).toEqual([row0, row2, row3, row4, row5a, row6a]);
-            checkSimpleRowNodesDom('myGrid', api);
+            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 x:"0"
+                ├── LEAF id:2 x:"2"
+                ├── LEAF id:3 x:"3"
+                ├── LEAF id:4 x:"4"
+                ├── LEAF id:5 x:"5a"
+                └── LEAF id:6 x:"6a"
+            `);
 
             api.applyTransaction(transactions[3]);
 
-            allData = getAllRowData(verifyPositionInRootChildren(api));
-            expect(allData).toEqual([row0, row3, row4, row5a, row6b]);
-            checkSimpleRowNodesDom('myGrid', api);
+            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 x:"0"
+                ├── LEAF id:3 x:"3"
+                ├── LEAF id:4 x:"4"
+                ├── LEAF id:5 x:"5a"
+                └── LEAF id:6 x:"6b"
+            `);
 
             api.applyTransaction(transactions[4]);
 
-            allData = getAllRowData(verifyPositionInRootChildren(api));
-            expect(allData).toEqual([row0, row3, row4, row5b, row6b]);
-            checkSimpleRowNodesDom('myGrid', api);
+            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 x:"0"
+                ├── LEAF id:3 x:"3"
+                ├── LEAF id:4 x:"4"
+                ├── LEAF id:5 x:"5b"
+                └── LEAF id:6 x:"6b"
+            `);
         });
 
         test('ag-grid async complex transaction', async () => {
@@ -552,9 +608,14 @@ describe('ag-grid rows-ordering', () => {
 
             await executeTransactionsAsync(transactions, api);
 
-            const allData = getAllRowData(verifyPositionInRootChildren(api));
-            expect(allData).toEqual([row0, row3, row4, row5b, row6b]);
-            checkSimpleRowNodesDom('myGrid', api);
+            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 x:"0"
+                ├── LEAF id:3 x:"3"
+                ├── LEAF id:4 x:"4"
+                ├── LEAF id:5 x:"5b"
+                └── LEAF id:6 x:"6b"
+            `);
         });
     });
 
@@ -572,14 +633,13 @@ describe('ag-grid rows-ordering', () => {
                 getRowId: (params) => params.data.id,
             });
 
-            consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+            consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
 
             api.applyTransaction({ update: [{ id: 'jhDjSi3Ec-3', x: 3 }] });
 
             expect(consoleErrorSpy).toHaveBeenCalledWith(
                 'AG Grid: could not find row id=jhDjSi3Ec-3, data item was not found for this id'
             );
-            checkSimpleRowNodesDom('myGrid', api);
 
             await executeTransactionsAsync({ update: [{ id: 'jhDjSi3Ec-4', x: 4 }] }, api);
 
@@ -589,12 +649,11 @@ describe('ag-grid rows-ordering', () => {
 
             consoleErrorSpy.mockRestore();
 
-            const allRowData = getAllRowData(verifyPositionInRootChildren(api));
-            expect(allRowData).toEqual([
-                { id: '1', x: 1 },
-                { id: '2', x: 2 },
-            ]);
-            checkSimpleRowNodesDom('myGrid', api);
+            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 x:1
+                └── LEAF id:2 x:2
+            `);
         });
 
         test('duplicate IDs do not cause sourceRowIndex to be invalid', async () => {
@@ -607,7 +666,12 @@ describe('ag-grid rows-ordering', () => {
                 { id: '3', x: 6 },
             ];
 
-            consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+            const gridRowsOptions: GridRowsOptions = {
+                ...defaultGridRowsOptions,
+                checkDom: false,
+            };
+
+            consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
 
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'x' }],
@@ -619,15 +683,15 @@ describe('ag-grid rows-ordering', () => {
             expect(consoleWarnSpy).toHaveBeenCalled();
             consoleWarnSpy.mockReset();
 
-            let allRowData = getAllRowData(verifyPositionInRootChildren(api));
-            expect(allRowData).toEqual([
-                { id: '1', x: 1 },
-                { id: '2', x: 2 },
-                { id: '3', x: 3 },
-                { id: '4', x: 4 },
-                { id: '3', x: 5 },
-                { id: '3', x: 6 },
-            ]);
+            await new GridRows(api, 'data', gridRowsOptions).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 x:1
+                ├── LEAF id:2 x:2
+                ├── LEAF id:3 x:3
+                ├── LEAF id:4 x:4
+                ├── LEAF id:3 x:5
+                └── LEAF id:3 x:6
+            `);
 
             await executeTransactionsAsync(
                 [
@@ -648,19 +712,18 @@ describe('ag-grid rows-ordering', () => {
             expect(consoleWarnSpy).toHaveBeenCalled();
             consoleWarnSpy.mockReset();
 
-            allRowData = getAllRowData(verifyPositionInRootChildren(api));
-
-            expect(allRowData).toEqual([
-                { id: '1', x: 1 },
-                { id: '13', x: 131 },
-                { id: '13', x: 132 },
-                { id: '13', x: 134 },
-                { id: '2', x: 33 },
-                { id: '3', x: 3 },
-                { id: '13', x: 133 },
-                { id: '3', x: 5 },
-                { id: '3', x: 6 },
-            ]);
+            await new GridRows(api, 'data', gridRowsOptions).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 x:1
+                ├── LEAF id:13 x:131
+                ├── LEAF id:13 x:132
+                ├── LEAF id:13 x:134
+                ├── LEAF id:2 x:33
+                ├── LEAF id:3 x:3
+                ├── LEAF id:13 x:133
+                ├── LEAF id:3 x:5
+                └── LEAF id:3 x:6
+            `);
         });
 
         test('addIndex is tolerant to floating point numbers, negative values, and values bigger than the array', async () => {
@@ -693,25 +756,22 @@ describe('ag-grid rows-ordering', () => {
                 api
             );
 
-            const allRowData = getAllRowData(verifyPositionInRootChildren(api));
-
-            expect(allRowData).toEqual([
-                { id: '1', x: 1 },
-                { id: '2', x: 2 },
-                { id: '6', x: 6 },
-                { id: '3', x: 3 },
-                { id: '7', x: 7 },
-                { id: '4', x: 4 },
-                { id: '5', x: 5 },
-                { id: '8', x: 8 },
-                { id: '9', x: 9 },
-                { id: '10', x: 10 },
-                { id: '11', x: 11 },
-                { id: '12', x: 12 },
-                { id: '13', x: 13 },
-            ]);
-
-            checkSimpleRowNodesDom('myGrid', api);
+            await new GridRows(api, 'data', defaultGridRowsOptions).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:1 x:1
+                ├── LEAF id:2 x:2
+                ├── LEAF id:6 x:6
+                ├── LEAF id:3 x:3
+                ├── LEAF id:7 x:7
+                ├── LEAF id:4 x:4
+                ├── LEAF id:5 x:5
+                ├── LEAF id:8 x:8
+                ├── LEAF id:9 x:9
+                ├── LEAF id:10 x:10
+                ├── LEAF id:11 x:11
+                ├── LEAF id:12 x:12
+                └── LEAF id:13 x:13
+            `);
         });
     });
 });

@@ -1,21 +1,13 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions, IRowNode } from '@ag-grid-community/core';
+import type { GridOptions } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { TestGridsManager } from '../../test-utils';
+import { GridRows, TestGridsManager } from '../../test-utils';
 import { getRowsSnapshot } from '../row-snapshot-test-utils';
 import type { RowSnapshot } from '../row-snapshot-test-utils';
 
 describe('ag-grid grouping simple data', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
-
-    function getAllRows(api: GridApi) {
-        const rows: IRowNode<any>[] = [];
-        api.forEachNode((node) => {
-            rows.push(node);
-        });
-        return rows;
-    }
 
     beforeEach(() => {
         gridsManager.reset();
@@ -46,8 +38,25 @@ describe('ag-grid grouping simple data', () => {
 
         const api = gridsManager.createGrid('myGrid', gridOptions);
 
-        const rows = getAllRows(api);
+        const gridRows = new GridRows(api, 'data', {
+            columns: ['country', 'year', 'athlete'],
+        });
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ filler id:row-group-country-Ireland
+            │ ├─┬ filler id:row-group-country-Ireland-year-2000
+            │ │ ├── LEAF id:0 country:"Ireland" year:"2000" athlete:"John Von Neumann"
+            │ │ └── LEAF id:1 country:"Ireland" year:"2000" athlete:"Ada Lovelace"
+            │ └─┬ filler id:row-group-country-Ireland-year-2001
+            │ · └── LEAF id:2 country:"Ireland" year:"2001" athlete:"Alan Turing"
+            └─┬ filler id:row-group-country-Italy
+            · ├─┬ filler id:row-group-country-Italy-year-2000
+            · │ └── LEAF id:3 country:"Italy" year:"2000" athlete:"Donald Knuth"
+            · └─┬ filler id:row-group-country-Italy-year-2001
+            · · └── LEAF id:4 country:"Italy" year:"2001" athlete:"Marvin Minsky"
+        `);
 
+        const rows = gridRows.rowNodes;
         expect(rows.length).toBe(11);
 
         const rowsSnapshot = getRowsSnapshot(rows);

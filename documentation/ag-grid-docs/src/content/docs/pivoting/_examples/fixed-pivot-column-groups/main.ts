@@ -27,11 +27,11 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'bronze', aggFunc: 'sum' },
     ],
     defaultColDef: {
-        maxWidth: 140,
-        filter: true,
+        flex: 1,
+        minWidth: 130,
     },
     autoGroupColumnDef: {
-        minWidth: 180,
+        minWidth: 200,
     },
     pivotMode: true,
     suppressExpandablePivotGroups: true,

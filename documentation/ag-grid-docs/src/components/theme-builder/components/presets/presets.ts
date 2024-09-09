@@ -73,7 +73,7 @@ export const allPresets: Preset[] = [
 
             rangeSelectionBorderColor: 'yellow',
             rangeSelectionBorderStyle: 'dashed',
-            rangeSelectionBackgroundColor: 'color-mix(in srgb, transparent, yellow 10%)',
+            rangeSelectionBackgroundColor: '#FFFF0020',
         },
         additionalGridFeatures: ['columnsToolPanel'],
     },

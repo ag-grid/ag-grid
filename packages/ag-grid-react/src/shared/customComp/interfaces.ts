@@ -11,6 +11,7 @@ import type {
     ICellEditorParams,
     ICellRendererParams,
     IDetailCellRendererParams,
+    IDragAndDropImageParams,
     IFilter,
     IFloatingFilterParams,
     IGroupCellRendererParams,
@@ -94,6 +95,16 @@ export interface CustomMenuItemProps<TData = any, TContext = any> extends BaseMe
     expanded: boolean;
     /** Callback that should be called every time the active status is updated (if providing custom behaviour). */
     onActiveChange: (active: boolean) => void;
+}
+
+export interface CustomDragAndDropImageProps<TData = any, TContext = any>
+    extends IDragAndDropImageParams<TData, TContext> {
+    /** The label provided by the grid about the item being dragged. */
+    label: string;
+    /** The name of the icon provided by the grid about the current drop target. */
+    icon: string | null;
+    /** `True` if the grid is attempting to scroll horizontally while dragging. */
+    shake: boolean;
 }
 
 /** Props provided to custom loading overlay component */

@@ -29,8 +29,7 @@ const VueExample = {
                     :class="themeClass"
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"
-                    :rowData="rowData"
-                    :rowSelection="rowSelection"></ag-grid-vue>
+                    :rowData="rowData"></ag-grid-vue>
             </div>
         </div>
     `,
@@ -69,12 +68,10 @@ const VueExample = {
         const gridApi = shallowRef();
 
         const rowData = ref(null);
-        const rowSelection = ref(null);
         const isVisible = ref(true);
 
         onBeforeMount(() => {
             rowData.value = getData();
-            rowSelection.value = 'multiple';
         });
 
         const reloadGrid = () => {
@@ -98,7 +95,6 @@ const VueExample = {
             columnDefs,
             gridApi,
             rowData,
-            rowSelection,
             onGridReady,
             reloadGrid,
             isVisible,

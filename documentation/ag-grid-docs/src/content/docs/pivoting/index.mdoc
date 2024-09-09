@@ -3,441 +3,290 @@ title: "Pivoting"
 enterprise: true
 ---
 
-Pivoting allows you to take row values and turn them into columns. For example you can pivot on Country to make columns for Ireland, United Kingdom, USA etc.
+Pivoting breaks down data in an additional dimension.
 
-Pivoting only makes sense when mixed with aggregation. If you turn a column into a pivot column, you must have at least one aggregation (value) active for the configuration to make sense. For example, if pivoting by country, you must provide something you are measuring such as 'gold medals per country'.
+## Simple Pivot
 
-## Pivot Mode
+In the following example, the rows are [Grouped](./grouping) on the `Country` column and [Aggregated](./aggregation) to total the number of `Gold` medals won by each country.
 
-Pivot mode is required to be turned on for pivoting to work. When the grid is in pivot mode, the following will happen:
+Pivot mode has then been enabled by setting the grid option `pivotMode: true`. Pivoting is then applied to the `Sport` column values which generates a pivot result column showing the total number of `Gold` medals won by each country in each sport.
 
-* Only columns with Group, Pivot or Value active will be included in the grid.
-* Only aggregated rows will be shown, the lowest level `rowData` will not be displayed.
+{% gridExampleRunner title="Simple Example" name="simple" /%}
 
-If pivot mode is off, then adding or removing pivot columns will have no effect.
-
-{% note %}
-To allow a column to be used as pivot column via the [Tool Panel](./tool-panel/),
-set `enablePivot=true` on the required columns. Otherwise you won't be able to drag
-and drop the columns to the pivot drop zone from the Tool Panel.
-{% /note %}
-
-## Specifying Pivot Columns
-
-To pivot rows by a particular column, mark the column you want to group with `pivot=true`. There is no limit on the number of columns that the grid can pivot by. For example, the following will pivot the rows in the grid by country and then sport:
+Note that the majority of the configuration for pivoting is applied to the column definitions. The example above uses the following configuration:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
-        { field: "country", pivot: true },
-        { field: "sport", pivot: true }
-    ]
-}
+        { field: 'country', rowGroup: true },
+        { field: 'gold', aggFunc: 'sum' },
+        { field: 'sport', pivot: true },
+    ],
+    pivotMode: true,
+};
 ```
 
-## Example: Simple Pivot
+## Configuring via the UI
 
-The example below shows a simple pivot on the Sport column using the Gold, Silver and Bronze columns for values.
+Pivoting is often controlled by end users rather than configured by developers. The grid provides some UI options for users to control these settings.
 
-Columns Date and Year, although defined as columns, are not displayed in the grid as they have no group, pivot or value associated with them.
+### Using the Side Bar
 
-{% gridExampleRunner title="Simple Example" name="simple"  exampleHeight=610 /%}
+The [Side Bar](./side-bar) is the most common control for pivoting as it allows users to toggle pivot mode (equivalent to the grid option `pivotMode`), as well as
+setting the [Row Grouped](./grouping), [Aggregated](./aggregation) and pivoted columns via right click context menus or drag and drop.
 
-## Pivot Mode vs Pivot Active
+{% gridExampleRunner title="Side Bar" name="side-bar" /%}
 
-It is possible to have pivot mode turned on even though there is no pivot active on the grid. In this scenario, the grid will display the data as normal but will strip out columns that have no grouping or value active.
-
-The example below demonstrates the difference between pivot mode and having a column with pivot active. The example has three modes of operation that can be switched between using the top buttons. The modes are as follows:
-
-* **1 - Grouping Active:** This is normal grouping. The grid groups with aggregations over Gold, Silver and Bronze. The user can drill down to the lowest level row data and columns without aggregation or group (eg Country, Year, Date and Sport) are shown.
-
-* **2 - Grouping Active with Pivot Mode:** This is grouping with pivotMode=true, but without any pivot active. The data shown is identical to the first option except the grid removes access to the lowest level row data and columns without aggregation or group are not shown.
-
-* **3 - Grouping Active with Pivot Mode and Pivot Active:** This is grouping with pivotMode=true and pivot active. Although it appears similar to the second option, there is no pivot active in the second option.
-
-{% gridExampleRunner title="Pivot Mode Vs Pivot Active" name="pivot-mode"  exampleHeight=630 /%}
-
-Note that a pivot can only be active if pivot mode is on. If pivot mode is off, all pivot columns are ignored.
-
-## Pivot Mode & Visible Columns
-
-When not in pivot mode, only columns that are visible are shown in the grid. To remove a column from the grid, use `api.setColumnsVisible([colKey], visible)`. Checking a column in the toolPanel will set the visibility on the column.
-
-When in pivot mode and not pivoting, only columns that have row group or aggregation active are included in the grid. To add a column to the grid you either add it as a row group column or a value column. Setting visibility on a column has no impact when in pivot mode. Checking a column in the toolPanel will either add the column as a row group (if the column is configured as a dimension) or as an aggregated value (if the columns is configured as a value).
-
-When in pivot mode and pivoting, then the columns displayed in the grid are pivot result columns (explained below) and not the grid options supplied columns. The pivot result columns are a product of the pivot and value columns. To have a column included in the calculation of the pivot result columns, it should be added as either a pivot or a value column. As with 'pivot mode and not pivoting', checking a column in the toolPanel while in pivot mode will add the column as a row group or an aggregated value. You must drag the column to a pivot drop zone in order to add it as a pivot column. As before, setting visibility on the column will have no effect when in pivot mode.
-
-## Columns vs Pivot Result Columns
-
-When Pivot Mode is off, the Columns in the grid correspond to the Column Definitions provided to the grid by the application. When Pivot Mode is on and Pivot is active, the Columns in the grid are Pivot Result Columns, which are the combinatorial product of Pivot Column values and the aggregated Value Columns.
-
-For example, consider the Columns from the examples `Year` and `Gold`. If a Pivot is placed on Year and an Aggregation of `sum` is placed on Gold, then the Pivot Result Columns that get displayed in the grid would be: `2002 sum(Gold)`, `2004 sum(Gold)`, `2006 sum(Gold)`, `2008 sum(Gold)`, `2010 sum(Gold)` and `2012 sum(Gold)`.
-
-The Pivot Result Columns do not behave the same as the initial Columns in the following scenarios:
-
-* **Tool Panel**: The Tool Panel shows initial Columns, never Pivot Result Columns.
-* **Filtering**: Filtering on Pivot Result Columns is slightly different, [See below](./pivoting/#filtering) for details.
-
-## Looking up Pivot Result Columns
-
-As mentioned above, the Pivot Result Columns in the grid are created by the grid by cross referencing Pivot Columns with Value Columns. The result of which are new Pivot Result Columns that have Column ID's generated by the grid. If you want to use the grid API to manage the Pivot Result Columns (e.g. to set width, apply sort etc) you look up the column using the grid API `getPivotResultColumn(pivotCols, valueCol)`.
-
-{% apiDocumentation source="grid-api/api.json" section="Pivoting" names=["getPivotResultColumn"] /%}
-
-```{% frameworkTransform=true %}
-// look up the Column that pivots on country Ireland and aggregates Gold
-const irelandGoldColumn = api.getPivotResultColumn(['Ireland'],'gold');
-
-// change the width of the Pivot Result Column
-api.setColumnWidths([{ key: irelandGoldColumn, newWidth: newWidth }]);
-
-// look up the Column that pivots on country SausageKingdom and year 2002 and aggregates silver
-const sausageKingdomColumn = api.getPivotResultColumn(['SausageKingdom','2002'],'silver');
-
-console.log('found column with id ' + sausageKingdomColumn.getId());
-```
-
-## Pivot Result Column Definitions
-
-It is possible to manipulate the [Column Definition](./column-definitions/) of the Pivot Result Columns using the `processPivotResultColDef` callback (or `processPivotResultColGroupDef` callback for Column Groups).
-
-{% note %}
-The `field` and `colId` properties of the Pivot Result Column definitions should not be overwritten.
-{% /note %}
+In the example above, the `Sport` column is configured with `enablePivot: true`. This enables users to pivot by the column using UI controls, for example
+when right clicking the column in the side bar, the option to add `Sport` to labels becomes available.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
+    columnDefs: [
+        // ...other column definitions
+        { field: 'sport', enablePivot: true },
+    ],
+    sideBar: true,
+    pivotMode: true,
+};
+```
+
+Refer to the [Column Tool Panel](./tool-panel-columns/) documentation for more information on configuring the [Side Bar](./side-bar).
+
+### Enabling the Pivot Panel
+
+The pivot panel is an alternative UI control for allowing users to control pivot columns. It is a panel attached to the top of the grid similar to the [Row Group Panel](./grouping-group-panel)
+allowing users to reorder, remove, or add pivot columns via drag and drop.
+
+The example below demonstrates the pivot panel alongside a [Column Tool Panel](./tool-panel-columns/) which has been configured to increase the available space in the [Side Bar](./side-bar) by hiding the pivoting section.
+
+{% gridExampleRunner title="Enabling Pivot Panel" name="pivot-panel"  /%}
+
+The example above uses the following configuration to only show the pivot panel while pivoting is active:
+
+```{% frameworkTransform=true %} 
+const gridOptions = {
+    columnDefs: [
+        // ...other column definitions
+        { field: 'sport', pivot: true, enablePivot: true },
+        { field: 'year', pivot: true, enablePivot: true },
+    ],
+    pivotMode: true,
+    pivotPanelShow: 'onlyWhenPivoting',
+};
+```
+
+## Pivot Result Columns
+
+Pivot Result Columns are the columns generated by the grid when pivoting is applied. Every aggregated column will result in one pivot result column being created for every unique permutation of pivot values.
+
+### Column Definitions
+
+Pivot Result Columns inherit [Column Definitions](./column-definitions) from the value column that they were created from. It is also possible to extend this definition further using the `processPivotResultColDef` grid option.
+
+{% apiDocumentation source="grid-options/properties.json" section="rowPivoting" names=["processPivotResultColDef"] /%}
+
+In the example below, the `Gold` column has `cellStyle: { backgroundColor: 'gold' }` applied, this is then inherited by the pivot result columns, making all of the `sum(Gold)` columns have a gold background.
+
+The grid option `processPivotResultColDef` is then also used, which sets the text colour of the pivot result columns to red.
+
+{% gridExampleRunner title="Column Definitions Example" name="column-definitions-example"  /%}
+
+The example above uses the following configuration to both inherit and modify column definitions on the pivot result columns:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        // ...other column definitions
+        { field: 'gold', aggFunc: 'sum', cellStyle: { backgroundColor: 'gold' } },
+    ],
+    pivotMode: true,
     processPivotResultColDef: (colDef) => {
-        if (colDef.pivotValueColumn.getId() === 'gold') {
-            colDef.headerName = colDef.headerName.toUpperCase();
-        }
-    },
-    processPivotResultColGroupDef: (colGroupDef) => {
-        if (colGroupDef.pivotKeys.length && colGroupDef.pivotKeys[0] === '2010') {
-            colGroupDef.headerClass = 'color-background'
-        }
-        colGroupDef.headerName = 'Year ' + colGroupDef.headerName
+        colDef.cellStyle.color = 'red'; // the params are mutated directly, not returned
     },
 }
 ```
 
-In the example below, notice how applying these functions can be used to manipulate the headers
+### Ordering Columns
 
-* The Group Headers have had `Year` prefixed onto each value
-* The Group `Year 2010` has been coloured yellow
-* The Columns pivoted from the `Gold` Column have been uppercased
+Pivot Result Columns are ordered within their groups based on the order of the value columns, either from the column definitions or user input.
 
-{% gridExampleRunner title="Pivot Result Columns" name="secondary-columns"  exampleHeight=650 /%}
+By default, the current column order is preserved when new columns are added by changes in the underlying data or changes in filtering.
+Any new columns will be applied at the end of the grid, however the grid option `maintainColumnOrder` can be set to `'none'` or `'primaryColumns'` to instead prioritise
+strict order over preserving the users order.
 
-## Filtering
+Refer to the [Maintain Column Order](./column-updating-definitions/#maintain-column-order) documentation for more information.
 
-It is possible to filter on both grid options supplied columns and pivot result columns when pivoting is active in the grid. However, there are
-some differences in how users can filter on both column types. These differences are described in sections below:
+### Prevent Extreme Column Generation
 
-### Filtering on Regular Columns
+When pivoting, changes in data, aggregation or pivot columns can cause the number of generated columns to scale exponentially.
+This can cause performance issues such as long delays in rendering, and often the resulting view would be unmanageable for the user.
 
-When pivoting is active in the grid,  [Filtering](./filtering-overview/) on columns supplied in the grid options is possible through the
-[Filters Tool Panel](./tool-panel-filters/) and the [Filter API](./grid-api/#reference-filter).
+To prevent this from happening, you can set the `pivotMaxGeneratedColumns` option. When the grid generates a number of pivot columns
+exceeding this value, it halts column generation, clears the view, and fires the `onPivotMaxColumnsExceeded` event to allow your
+application to intervene.
 
-{% note %}
-When pivoting is active, it is not possible to filter on regular columns using [Column Filters](./filtering/) as the grid only displays group and pivot result columns.
-{% /note %}
+{% gridExampleRunner title="Extreme Pivot Handling" name="extreme-pivot" /%}
 
-These filters are applied to the data before it is pivoted, as such a change in these filters can effect not only the resulting
-values and rows, but also the columns generated from the pivot.
+In the example above, pivoting by the `Athlete` column will instead trigger the `pivotMaxColumnsExceeded` event, which logs an error in the browser console.
 
+The example above demonstrates the following configuration;
 ```{% frameworkTransform=true %}
 const gridOptions = {
-   columnDefs: [
-       { field: 'country', rowGroup: true, filter: true },
-       { field: 'year', pivot: true, filter: true },
-       { field: 'sport', filter: true },
-       { field: 'gold', aggFunc: 'sum' },
-       { field: 'silver', aggFunc: 'sum' },
-       { field: 'bronze', aggFunc: 'sum' },
-   ],
-   pivotMode: true,
-   sideBar: 'filters',
+    pivotMode: true,
+    pivotMaxGeneratedColumns: 1000,
+    onPivotMaxColumnsExceeded: () => {
+        console.error(
+            'The limit of 1000 generated columns has been exceeded. Either remove pivot or aggregations from some columns or increase the limit.'
+        );
+    },
 }
 ```
 
-The snippet above has been used to construct the example below, demonstrating the effects of applying filters to the columns in the grid options while pivot mode is enabled.
-
-Filtering on a grouped column:
-
-* Using the filters tool panel, deselect **United States** using the **Country** column filters.
-* Observe how the row has disappeared from the pivot grid.
-* Make note of the column group for the year **2002**.
-* Now, using the filters tool panel, deselect **Norway**, again using the **Country** column filters.
-* Observe now, how not only the row has disappeared, but so has the **2002** year column group.
-
-Filtering on a pivoted column:
-
-* Click `Reset` to clear any filters.
-* Using the filters tool panel, deselect **2002** using the **Year** column filters.
-* Observe how, rather than reducing the number of rows, the **2002** column group and the columns belonging to it are now gone.
-
-Filtering on any other column:
-
-* Click `Reset` to clear any filters.
-* Using the filters tool panel, deselect **Swimming** using the **Sport** column filters.
-* Observe how in this case, some rows are hidden, and some pivot values change.
-
-{% gridExampleRunner title="Filtering With Pivot" name="filter"  exampleHeight=610 /%}
-
-### Filtering on Pivot Result Columns
-
-When pivot mode is enabled, you may also [Filter](./filtering-overview/) on the generated pivot result columns using the column menu, or [Floating Filters](./floating-filters/). As pivot values are all aggregates, filtering pivot result columns shares the same behaviour as [Filtering Group Aggregations](./aggregation-filtering/#filtering-group-aggregations). This means that when filtering pivoting result columns, the aggregated values on any level will not change because of child rows being filtered out.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-   columnDefs: [
-       { field: 'country', rowGroup: true },
-       { field: 'year', pivot: true },
-       { field: 'sport' },
-       { field: 'gold', aggFunc: 'sum', filter: true },
-       { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
-       { field: 'bronze', aggFunc: 'sum' },
-   ],
-   pivotMode: true,
-}
-```
-
-As shown in the snippet above, filters are enabled on pivot result columns by inheriting properties from the underlying value column. The below example demonstrates this behaviour.
-
-{% note %}
-While pivot result columns inherit the properties of the value column from which they are generated, setting `filter: true` will instead
-default to a [Number Filter](./filter-number/) in the case of a pivot result column.
-You can use [Text Filter](./filter-text/) or [Date Filter](./filter-date/). However, [Set Filter](./filter-set/) cannot
-be used for filtering pivot result columns.
-{% /note %}
-
-Filtering on a pivot result column:
-
-* Using the floating filters, apply the filter **Not Blank** to the **2000, gold** column
-* Observe how in this case, all rows which did not have a value for the **2000, gold** column have been hidden.
-* Using the floating filters, apply the filter **Equals 2** to the **2000, gold** column
-* Observe how the group values do not reaggregate after this filter has been applied
-
-{% gridExampleRunner title="Filtering Pivot Result Columns" name="secondary-columns-filter"  exampleHeight=610 /%}
-
-### Filtering using the API
-
-When pivot mode is enabled, you may also [Filter](./filtering-overview/) on both the pivot result columns, and the regular columns using the [Filter API](./filter-api/).
-
-```{% frameworkTransform=true %}
-const filterNotBlank2000Silvers = () => {
-  const targetCol = api.getPivotResultColumn(['2000'], 'silver');
-  if (targetCol) {
-    api.setFilterModel({
-      [targetCol.getId()]: {
-        filterType: 'number',
-        type: 'notBlank'
-      },
-    })
-  }
-}
-```
-
-As shown in the snippet above, you can also set filters on pivot result columns using the API.
-
-{% gridExampleRunner title="Filtering using the API" name="filter-api"  exampleHeight=610 /%}
 
 ## Pivot Column Groups
 
-Multiple group columns will be shown in the grid when there is more than one active pivot column. These columns can be collapsed, expanded or fixed as described in the sections below:
+Multiple group columns will be shown in the grid when there is more than one active pivot column. These columns can be collapsed,
+expanded or fixed as described in the sections below:
 
-### Expandable Pivot Column Groups
+### Customising Group Definitions
 
-When there is more than one active pivot column, multiple group columns will appear in a collapsed state by default. Each value column will be aggregated based on the configured `colDef.aggFunc` at each column group level.
+Pivot Result Column Group definitions can be configured by using the `processPivotResultColGroupDef` grid option.
 
-{% apiDocumentation source="column-properties/properties.json" section="grouping" names=["aggFunc"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="rowPivoting" names=["processPivotResultColGroupDef"] /%}
 
-{% gridExampleRunner title="Expandable Pivot Column Groups" name="expandable-pivot-column-groups"  exampleHeight=655 /%}
+In the example below, the `processPivotResultColGroupDef` callback is used to apply a class to the group header cells,
+which is subsequently used to style them with a golden background.
 
-### Opening Pivot Group Levels by Default
+{% gridExampleRunner title="Column Group Definitions Example" name="column-group-definitions-example"  /%}
 
-To open all pivot groups down to a given group depth level use the `pivotDefaultExpanded` grid option as shown below:
-
+The example above demonstrates the following configuration for applying a class to the group header cells:
 ```{% frameworkTransform=true %}
 const gridOptions = {
-   columnDefs: [
-       { field: 'country', rowGroup: true, enableRowGroup: true },
-       { field: 'athlete' },
-       { field: 'sport', pivot: true, enablePivot: true },
-       { field: 'year', pivot: true, enablePivot: true },
-       { field: 'date', pivot: true, enablePivot: true },
-       { field: 'gold', aggFunc: 'sum' },
-       { field: 'silver', aggFunc: 'sum' },
-       { field: 'bronze', aggFunc: 'sum' },
-       { field: 'bronze', aggFunc: 'sum' },
-   ],
-   // first (sport) pivot group level will be open by default
-   pivotDefaultExpanded: 1,
-   // other grid options ...
+    pivotMode: true,
+    processPivotResultColGroupDef: (colDef) => {
+        colDef.headerClass = 'pivot-gold'; // the params are mutated directly, not returned
+    },
 }
 ```
 
-In the snippet above, the first pivot group level `sport` will be expanded by default as `pivotDefaultExpanded = 1`.
+### Ordering Groups
 
-By default all pivot group levels are collapsed. To expand all pivot group levels set `pivotDefaultExpanded = -1`.
-
-The example below demonstrates the `pivotDefaultExpanded` behaviour. Note the first pivot group level `sport` is expanded by default as `pivotDefaultExpanded = 1`.
-
-{% gridExampleRunner title="Open Pivot Group By Default" name="open-pivot-group-by-default"  exampleHeight=655 /%}
-
-### Fixed Pivot Column Groups
-
-To fix the pivot column groups without the ability to expand and collapse the column groups, enable the following grid option property: `suppressExpandablePivotGroups=true`.
-
-{% gridExampleRunner title="Fixed Pivot Column Groups" name="fixed-pivot-column-groups"  exampleHeight=655 /%}
-
-## Pivot Row Totals
-
-When in pivot mode you can also include automatically calculated Row Total Columns. These total columns will use the provided aggregation function on the value columns to 'roll-up' each group level.
-
-To enable Pivot Row Totals, declare the following property: `gridOption.pivotRowTotals = 'before' | 'after'`. The values `before` and `after` are used to control the position of the row total columns relative to the other pivot columns.
-
-The example below demonstrates Pivot Row Totals as follows:
-
-* Pivot Row Totals are positioned before the other pivot group columns using: `gridOption.pivotRowTotals = 'before'`.
-* Pivot Row Totals are added for each of the value columns: 'gold', 'silver' and 'bronze'.
-
-{% gridExampleRunner title="Pivot Row Totals" name="row-totals"  exampleHeight=655 /%}
-
-## Pivot Column Group Totals
-
-When in pivot mode you can also include automatically calculated total pivot columns. These total columns will use the provided aggregation function on the value columns to 'roll-up' each group level.
-
-Pivot column groups that contain more than one child will have a total column included. Expanding this group will reveal the columns that make up this total value.
-
-To enable total columns set `gridOptions.pivotColumnGroupTotals = 'before' | 'after'`. The values `before` and `after` are used to control the relative position of the total column when the group is expanded.
-
-All value columns must use the same aggregation function for the total column to make sense, otherwise the total column will not be included.
-
-The example below demonstrates Pivot Column Group Totals as follows:
-
-* Pivot Column Group Totals added on \['sport', 'year'] columns.
-* Expanding pivot groups reveals columns that make up totals.
-
-{% gridExampleRunner title="Pivot Column Group Totals" name="totals"  exampleHeight=655 /%}
-
-## Hiding Repeated Value Column Labels
-
-When pivoting with only one value column, it can appear redundant to have the value column label repeated for each pivot
-key. To address this, you can enable the grid option `removePivotHeaderRowWhenSingleValueColumn`, when set to `true` it
-will cause the value column labels to be skipped, instead using the pivot keys for the column label.
-
-The example below demonstrates hiding repeated column labels. Note the following:
-
-* The `removePivotHeaderRowWhenSingleValueColumn` grid option is enabled.
-* As **Gold** is the only value column, the `'sum(Gold)'` columns labels are hidden.
-* If more than one value column is used, the option is disabled and the row showing all the value column labels is displayed.
-
-{% gridExampleRunner title="Hiding Repeated Column Labels" name="hidden-single-value-column-header"  exampleHeight=655 /%}
-
-## Saving & Restoring Column State with Pivot
-
-Saving and restoring column state is also possible when pivoting. The generated pivot result columns have IDs dependant on the pivot setup, so assuming the row data is the same, the same pivot result columns will be created and it will be possible to apply saved states to the columns.
-
-Below shows some examples of saving and restoring state with pivot in mind. Note that `pivotMode` is not stored as part of the column state. If `pivotMode` is important to your columns state, it needs to be stored separately.
-
-{% gridExampleRunner title="Saving & Restoring Column State" name="state"  exampleHeight=630 /%}
-
-## Enabling Pivot Panel
-
-To display the pivot panel set `pivotPanelShow` as shown below:
-
-```{% frameworkTransform=true spaceBetweenProperties=true %}
- const gridOptions = {
-     columnDefs: [
-         { field: 'country', rowGroup: true, enableRowGroup: true },
-         { field: 'athlete' },
-         { field: 'year', pivot: true, enablePivot: true },
-         { field: 'sport', pivot: true, enablePivot: true },
-         { field: 'gold', aggFunc: 'sum' },
-         { field: 'silver', aggFunc: 'sum' },
-     ],
-     pivotMode: true,
-     // possible options: 'never', 'always', 'onlyWhenPivoting'
-     pivotPanelShow: 'always',
- }
-```
-
-In the snippet above, the Pivot Panel is configured so that it is `'always'` displayed. To only display the Pivot
-Panel when pivoting is active use: `'onlyWhenPivoting'`.
-
-This is demonstrated in the following example, note the following:
-
-* There are two active pivot columns as the supplied `year` and `sport` column definitions have `enablePivot=true` declared.
-
-* The Pivot Panel is always shown as `pivotPanelShow = 'always'`.
-
-* The order of `year` and `sport` can be re-arranged within Pivot Panel as they have `enablePivot=true` enabled.
-
-{% gridExampleRunner title="Enabling Pivot Panel" name="pivot-panel"  exampleHeight=540 /%}
-
-## Pivoting Extreme Amounts of Data
-
-When pivoting the grid generates the necessary number of pivot result columns to aggregate the value columns for all the combinations
-of unique values of the pivoted columns. However, when many value columns are used or multiple pivoted columns have a large number
-of distinct values, the grid has to generate a potentially much larger number of pivot result columns. In extreme cases, this can cause
-a delay in rendering or even make the page unresponsive.
-
-To prevent this from happening, you can set the `pivotMaxGeneratedColumns` option. When the grid generates a number of pivot columns
-across all levels exceeding the `pivotMaxGeneratedColumns` value, the grid halts column generation, clears all pivot result column headers,
-and fires the `onPivotMaxColumnsExceeded` event. This event allows your application to provide custom handling - for example removing the
-last added pivoted column, filtering the pivoted columns or removing a value column.
-
-In the example below, note the following:
-
-* The `pivotMaxGeneratedColumns` is set to `1000`.
-
-* The `pivotMaxColumnsExceeded` event is triggered when the grid reaches the `pivotMaxGeneratedColumns` limit, this logs an error in the browser console.
-
-* Try pivoting by the 'Athlete' column, this will exceed the `pivotMaxGeneratedColumns` limit and trigger the `pivotMaxColumnsExceeded` event.
-
-{% gridExampleRunner title="Extreme Pivot Handling" name="extreme-pivot"  exampleHeight=620 /%}
-
-## Pivot API
-
-Below shows examples of using the pivot API directly. Use this is you want to build out your own toolPanel.
-
-The example also demonstrates exporting to CSV while using Pivot. Basically what you see inside the grid is what will be exported.
-
-{% gridExampleRunner title="Pivot API" name="api"  exampleHeight=620 /%}
-
-## Ordering Pivot Columns
-
-The user is free to drag columns to reorder them and you are able to reorder columns via the api in the normal way. However you may want to change the default order of the pivot columns.
-
-**Order of Pivot Value Column Groups**{% br /%}
-Pivot value columns are the column groups created by the pivot values - eg if 'Country' is a pivot column, then the Pivot Value Column Groups are 'Ireland', 'UK', etc. These columns are ordered alphabetically by default. To override this, provide `pivotComparator(a,b)` function in the column definition.
+The pivot result groups are initially displayed in alphabetical order, however, you can change this by providing a `pivotComparator` function to the pivoted columns definition.
 
 {% apiDocumentation source="column-properties/properties.json" section="pivoting" names=["pivotComparator"] /%}
 
-In the example below, note the following:
+In the example below, note that a `pivotComparator` has been supplied to the `sport` column, and the groups are instead sorted in reversed alphabetical order.
 
-* A `pivotComparator` has been supplied to the `year` column.
-* The pivot column groups have been reversed, to instead display from highest to lowest.
+{% gridExampleRunner title="Ordering Pivot Groups" name="order-pivot-groups" /%}
 
-{% gridExampleRunner title="Ordering Pivot Groups" name="order-pivot-groups"  exampleHeight=650 /%}
+The example above demonstrates the following configuration for modifying the resulting order of groups:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        // ...other column definitions
+        {
+            field: 'sport',
+            pivot: true,
+            pivotComparator: (a, b) => b.localeCompare(a),
+        },
+    ],
+    pivotMode: true,
+}
+```
 
-**Order of Pivot Value Columns**{% br /%}
-Pivot value columns are the lowest level column and correspond to the values selected in your pivot. For example, if value columns are the months of the year, then the values will be 'Jan', 'Feb', 'Mar' etc, one for each value column added. The order of these will either be a) the order the value columns appear in the original column definitions if you provide 'aggFunc' as part of the columns or b) the order you add the columns as value columns.
+### Group Totals
 
-## Hide Open Parents
+When pivoting by multiple columns the grid will automatically insert a total column representing the total for each aggregation for that group level.
+These columns are by default only displayed when the column group is closed.
 
-The example below shows mixing in different options for the row group column. For more info on these properties, see [Grouping Rows](./grouping/).
+The example below demonstrates that when collapsed, group totals are displayed for each sport. When expanded, these are hidden and instead display the break-down per year.
 
-* `groupHideOpenParents=true: ` So that when the row group is expanded, the parent row is not shown.
-* `groupDisplayType: 'multipleColumns':` So that one group column is created for each row group column (country and athlete).
-* `groupDefaultExpanded=2: ` So that all the groups are opened by default.
+{% gridExampleRunner title="Expandable Pivot Column Groups" name="expandable-pivot-column-groups" /%}
 
-{% gridExampleRunner title="Hide Open Parents" name="hide-open-parents"  exampleHeight=650 /%}
+### Expanded by Default
 
-## Change Detection and Pivot
+Pivot Column Groups can be configured to expand by default, down to a given depth. This depth can be configured using the `pivotDefaultExpanded` grid option.
 
-While pivoting, you can do delta changes to your data and have the grid reflect this delta changes with animations.
+The following example demonstrates `pivotDefaultExpanded` being used to expand the first pivot group level by default. Providing `-1` will expand all pivot group levels by default.
 
-This is demonstrated in the section on [Change Detection and Pivot](./change-detection/#change-detection-and-pivot), so rather than repeat that, check out the example there.
+{% gridExampleRunner title="Open Pivot Group By Default" name="open-pivot-group-by-default" /%}
+
+The example above demonstrates the following configuration for expanding pivot groups by default:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    pivotDefaultExpanded: 1,
+}
+```
+
+### Prevent Expanding Groups
+
+When using multiple pivot columns, groups become expandable by default. To prevent this and instead always show all columns, set the grid option `suppressExpandablePivotGroups=true`.
+
+{% gridExampleRunner title="Fixed Pivot Column Groups" name="fixed-pivot-column-groups" /%}
+
+The example above demonstrates the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    pivotMode: true,
+    suppressExpandablePivotGroups: true,
+}
+```
+
+### Hide Group with Single Value Column
+
+When pivoting with only one aggregated column, it can simplify the grid to omit the groups with only one child.
+Enabling the grid option `removePivotHeaderRowWhenSingleValueColumn=true`, when set to `true` will instead skip the group and
+use the pivot keys to label the pivot result column instead.
+
+{% gridExampleRunner title="Hiding Repeated Column Labels" name="hidden-single-value-column-header" /%}
+
+The example above demonstrates the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroup: true },
+        { field: 'sport', pivot: true },
+        { field: 'gold', aggFunc: 'sum' },
+    ],
+    pivotMode: true,
+    removePivotHeaderRowWhenSingleValueColumn: true,
+};
+```
+
+
+## Filtering
+
+When pivot mode is enabled, you may also [Filter](./filtering-overview/) on the pivot result columns.
+
+{% gridExampleRunner title="Filtering Pivot Result Columns" name="secondary-columns-filter" /%}
+
+As pivot values are all aggregates, filtering out rows will not re-aggregate the parent rows. Refer to [Filtering Group Aggregations](./aggregation-filtering/#filtering-group-aggregations) for more information.
+
+{% note %}
+Pivot result columns inherit the properties of the value column from which they are generated, however, setting `filter: true` will instead
+default to a [Number Filter](./filter-number/) in the case of a pivot result column. The [Set Filter](./filter-set/) cannot be used for filtering pivot result columns.
+{% /note %}
+
+## Row Totals
+
+It is possible to include [Group Totals](./pivoting/#group-totals) for the entire grid, to show the total aggregation for each value column. This can be configured
+by setting the grid option `pivotRowTotals` to `'before'` or `'after'` (determining the inserted total columns position in the grid).
+
+{% gridExampleRunner title="Pivot Row Totals" name="row-totals" /%}
+
+The example above demonstrates the following configuration for adding an additional `Gold` row total at the start of the grid:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        // ...other column defs
+        { field: 'gold', aggFunc: 'sum' },
+    ],
+    pivotMode: true,
+    pivotRowTotals: 'before',
+}
+```
+
+## Pivot API
+
+{% apiDocumentation source="grid-api/api.json" section="Pivoting" /%}

@@ -48,7 +48,88 @@ function toCamelCase(value) {
     return value[0].toLowerCase() + value.substring(1);
 }
 
-function extractTypesFromNode(node, srcFile, includeQuestionMark) {
+function silentFindNode(text: string, srcFile: ts.SourceFile): ts.Node | undefined {
+    let typeRef: ts.Node | undefined = undefined;
+    try {
+        typeRef = findNode(text, srcFile);
+    } catch {
+        try {
+            typeRef = findNode(text, srcFile, 'TypeAliasDeclaration');
+        } catch {
+            // Do nothing
+        }
+    }
+    return typeRef;
+}
+
+function extractNestedTypes<T extends ts.Node>(
+    node: T,
+    srcFile: ts.SourceFile,
+    includeQuestionMark: boolean,
+    results: Record<string, any>,
+    visited: Set<ts.Node>
+): void {
+    if (visited.has(node)) {
+        return;
+    }
+
+    if (ts.isTypeReferenceNode(node)) {
+        const typeRef = silentFindNode(node.typeName.getText(), srcFile);
+        if (typeRef === undefined) {
+            return;
+        }
+        visited.add(node);
+        extractNestedTypes(typeRef, srcFile, includeQuestionMark, results, visited);
+        return;
+    }
+
+    if (ts.isTypeAliasDeclaration(node)) {
+        visited.add(node);
+        extractNestedTypes(node.type, srcFile, includeQuestionMark, results, visited);
+        return;
+    }
+
+    if (ts.isInterfaceDeclaration(node)) {
+        visited.add(node);
+        node.heritageClauses?.map((n) => extractNestedTypes(n, srcFile, includeQuestionMark, results, visited));
+        node.members.map((n) => extractNestedTypes(n, srcFile, includeQuestionMark, results, visited));
+        return;
+    }
+
+    if (ts.isHeritageClause(node)) {
+        node.types.map((n) => extractNestedTypes(n, srcFile, includeQuestionMark, results, visited));
+        return;
+    }
+
+    if (ts.isUnionTypeNode(node)) {
+        node.types.map((n) => extractNestedTypes(n, srcFile, includeQuestionMark, results, visited));
+        return;
+    }
+
+    if (ts.isExpressionWithTypeArguments(node)) {
+        extractNestedTypes(node.expression, srcFile, includeQuestionMark, results, visited);
+        return;
+    }
+
+    if (ts.isPropertySignature(node)) {
+        results[node.name.getText()] = getJsDoc(node);
+        node.type && extractNestedTypes(node.type, srcFile, includeQuestionMark, results, visited);
+        return;
+    }
+
+    if (ts.isIdentifier(node)) {
+        const ref = findNode(node.escapedText, srcFile);
+        extractNestedTypes(ref, srcFile, includeQuestionMark, results, visited);
+        return;
+    }
+
+    if (ts.isTypeLiteralNode(node)) {
+        node.members.map((n) => extractNestedTypes(n, srcFile, includeQuestionMark, results, visited));
+        return;
+    }
+}
+
+function extractTypesFromNode(node, srcFile, includeQuestionMark, extractNested = false) {
     const nodeMembers = {};
     const kind = ts.SyntaxKind[node.kind];
 
@@ -67,7 +148,16 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark) {
             };
         } else {
             // i.e colWidth?: number;
-            nodeMembers[name] = { meta: getJsDoc(node), type: { returnType, optional } };
+            const type: { returnType: string; optional: boolean; nested?: Record<string, any> } = {
+                returnType,
+                optional,
+            };
+            if (extractNested) {
+                const nested = {};
+                extractNestedTypes(node.type, srcFile, includeQuestionMark, nested, new Set());
+                type.nested = nested;
+            }
+            nodeMembers[name] = { meta: getJsDoc(node), type };
         }
     } else if (kind == 'MethodSignature' || kind == 'MethodDeclaration') {
         // i.e isExternalFilterPresent?(): boolean;
@@ -414,7 +504,7 @@ export function getGridOptions(gridOpsFile: string) {
 
     let gridOpsMembers = {};
     ts.forEachChild(gridOptionsNode, (n) => {
-        gridOpsMembers = { ...gridOpsMembers, ...extractTypesFromNode(n, srcFile, false) };
+        gridOpsMembers = { ...gridOpsMembers, ...extractTypesFromNode(n, srcFile, false, true) };
     });
 
     return gridOpsMembers;

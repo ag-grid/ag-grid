@@ -218,7 +218,6 @@ const GridExample = () => {
                             columnDefs={columnDefs}
                             datasource={datasource}
                             defaultColDef={defaultColDef}
-                            rowSelection={'multiple'}
                             rowModelType={'infinite'}
                             maxBlocksInCache={2}
                             infiniteInitialRowCount={500}

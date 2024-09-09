@@ -94,7 +94,13 @@ function processDefaultColumnDefForVue(propertyName: string, providedExamples) {
     return false;
 }
 
-const GLOBAL_COMPONENTS = ['dateComponent', 'loadingCellRenderer', 'loadingOverlayComponent', 'noRowsOverlayComponent'];
+const GLOBAL_COMPONENTS = [
+    'dateComponent',
+    'loadingCellRenderer',
+    'loadingOverlayComponent',
+    'noRowsOverlayComponent',
+    'dragAndDropImageComponent',
+];
 
 function processGlobalComponentsForVue(propertyName: string, providedExamples) {
     if (GLOBAL_COMPONENTS.indexOf(propertyName) !== -1) {

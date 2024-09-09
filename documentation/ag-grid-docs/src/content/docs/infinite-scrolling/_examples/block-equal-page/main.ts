@@ -72,7 +72,6 @@ const gridOptions: GridOptions = {
         minWidth: 150,
         floatingFilter: true,
     },
-    rowSelection: 'multiple',
     columnDefs: columnDefs,
     rowModelType: 'infinite',
     cacheOverflowSize: 2,
@@ -80,7 +79,6 @@ const gridOptions: GridOptions = {
     infiniteInitialRowCount: 1,
     maxBlocksInCache: 2,
     pagination: true,
-    // debug: true,
     getRowId: (params: GetRowIdParams) => {
         return params.data.id;
     },

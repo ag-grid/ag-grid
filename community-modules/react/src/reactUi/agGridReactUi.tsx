@@ -19,6 +19,7 @@ import {
     ModuleRegistry,
     VanillaFrameworkOverrides,
     _combineAttributesAndGridOptions,
+    _getGlobalGridOption,
     _isClientSideRowModel,
     _isServerSideRowModel,
     _processOnChange,
@@ -38,6 +39,7 @@ import React, {
 import GroupCellRenderer from '../reactUi/cellRenderer/groupCellRenderer';
 import { CellRendererComponentWrapper } from '../shared/customComp/cellRendererComponentWrapper';
 import { DateComponentWrapper } from '../shared/customComp/dateComponentWrapper';
+import { DragAndDropImageComponentWrapper } from '../shared/customComp/dragAndDropComponentWrapper';
 import { FilterComponentWrapper } from '../shared/customComp/filterComponentWrapper';
 import { FloatingFilterComponentWrapper } from '../shared/customComp/floatingFilterComponentWrapper';
 import { LoadingOverlayComponentWrapper } from '../shared/customComp/loadingOverlayComponentWrapper';
@@ -114,7 +116,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             providedBeanInstances: {
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(
                     portalManager.current,
-                    mergedGridOps.reactiveCustomComponents ?? true
+                    mergedGridOps.reactiveCustomComponents ?? _getGlobalGridOption('reactiveCustomComponents') ?? true
                 ),
                 renderStatusService,
             },
@@ -234,6 +236,8 @@ class ReactFrameworkComponentWrapper
                         return FloatingFilterComponentWrapper;
                     case 'dateComponent':
                         return DateComponentWrapper;
+                    case 'dragAndDropImageComponent':
+                        return DragAndDropImageComponentWrapper;
                     case 'loadingOverlayComponent':
                         return LoadingOverlayComponentWrapper;
                     case 'noRowsOverlayComponent':
@@ -257,6 +261,7 @@ class ReactFrameworkComponentWrapper
                 case 'filter':
                 case 'floatingFilterComponent':
                 case 'dateComponent':
+                case 'dragAndDropImageComponent':
                 case 'loadingOverlayComponent':
                 case 'noRowsOverlayComponent':
                 case 'statusPanel':

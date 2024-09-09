@@ -8,9 +8,10 @@ interface Props {
     framework: Framework;
     model: DocProperties;
     config: Config;
+    isInline: boolean;
 }
 
-export const InterfaceDocumentation: FunctionComponent<Props> = ({ framework, model, config }) => {
+export const InterfaceDocumentation: FunctionComponent<Props> = ({ framework, model, config, isInline }) => {
     return Object.entries(model.properties).map(([key, properties]) => (
         <Section
             key={key}
@@ -19,6 +20,7 @@ export const InterfaceDocumentation: FunctionComponent<Props> = ({ framework, mo
             properties={properties}
             config={config}
             meta={model.meta}
+            isInline={isInline}
         />
     ));
 };

@@ -7,19 +7,26 @@ export interface TestGridManagerOptions {
     modules?: Module[] | null | undefined;
 }
 
+const gridApiHtmlElementsMap = new WeakMap<GridApi, HTMLElement>();
+
 /**
  * A helper class to manage the creation and destruction of grids in tests.
  */
 export class TestGridsManager {
     public static defaultGridOptions: GridOptions = {
-        // We select "print" as the default layout for testing.
-        // This is because jsdom does not have height and width, as
-        // it does not have a layout engine, and we want to check the DOM for all the rows.
-        // Without it not all the rows are rendered.
-        domLayout: 'print',
-
         // We disable animations by default in tests
         animateRows: false,
+
+        // jsdom does not have a layout engine, so, elements don't have size (width/height are 0 and not computed)
+        // We need to disable virtualization by default for tests
+        suppressRowVirtualisation: true,
+
+        // jsdom does not have a layout engine, so, elements don't have size (width/height are 0 and not computed)
+        // We need to disable virtualization by default for tests
+        suppressColumnVirtualisation: true,
+
+        // Ensure consistent order of elements in the DOM by default
+        ensureDomOrder: true,
     };
 
     private gridsMap = new Map<HTMLElement, GridApi>();
@@ -66,11 +73,11 @@ export class TestGridsManager {
         this.destroyAllGrids();
     }
 
-    public createGrid(
+    public createGrid<TData = any>(
         eGridDiv: HTMLElement | string | null | undefined,
         gridOptions: GridOptions,
         params?: Params
-    ): GridApi {
+    ): GridApi<TData> {
         this.registerModules();
 
         let id: string | undefined;
@@ -123,6 +130,7 @@ export class TestGridsManager {
         }
 
         this.gridsMap.set(element, api);
+        gridApiHtmlElementsMap.set(api, element);
 
         const oldDestroy = api.destroy;
 
@@ -143,5 +151,13 @@ export class TestGridsManager {
         };
 
         return api;
+    }
+
+    public static getHTMLElement(api: GridApi | null | undefined): HTMLElement | null {
+        return (api && gridApiHtmlElementsMap.get(api)) ?? null;
+    }
+
+    public static registerHTMLElement(api: GridApi, element: HTMLElement) {
+        gridApiHtmlElementsMap.set(api, element);
     }
 }

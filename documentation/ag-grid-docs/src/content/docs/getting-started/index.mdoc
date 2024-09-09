@@ -599,15 +599,17 @@ Data is [Sorted](./row-sorting/) by clicking the column headers. Sorting is enab
 
 ### Row Selection
 
-[Row Selection](./row-selection/) is enabled using the `rowSelection` attribute. Use the `checkboxSelection` column definition attribute to render checkboxes for selection.
+[Row Selection](./row-selection/) is enabled using the `selection` attribute.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     // Column Definitions: Defines the columns to be displayed.
     columnDefs: [
-        { field: "make", checkboxSelection: true },
+        { field: "make" },
     ],
-    rowSelection: 'multiple',
+    selection: {
+      mode: 'multiRow',
+    },
 };
 ```
 
@@ -706,34 +708,10 @@ const VueExample = {
 
 {% /if %}
 
-{% tabs %}
-{% tabItem id="quartz" label="Quartz" %}
+{% imageCaption imagePath="resources/ag-grid-alpine-quartz-themes.png" alt="AG Grid Themes" maxWidth="860px" /%}
 
-{% flex justifyContent="flex-start" alignItems="center" %}
-{% imageCaption imagePath="resources/themeQuartz.png" alt="AG Theme Quartz" descriptionTop=true %}
-{% flex justifyContent="center" %}**Quartz**{% /flex %}
-{% /imageCaption %}
 
-{% imageCaption imagePath="resources/themeQuartzDark.png" alt="AG Theme Quartz Dark" descriptionTop=true %}
-{% flex justifyContent="center" %}**Quartz Dark**{% /flex %}
-{% /imageCaption %}
-{% /flex %}
-
-{% /tabItem %}
-{% tabItem id="alpine" label="Alpine" %}
-
-{% flex justifyContent="flex-start" alignItems="center" %}
-{% imageCaption imagePath="resources/themeAlpine.png" alt="AG Theme Alpine" descriptionTop=true %}
-{% flex justifyContent="center" %}**Alpine**{% /flex %}
-{% /imageCaption %}
-
-{% imageCaption imagePath="resources/themeAlpineDark.png" alt="AG Theme Alpine Dark" descriptionTop=true %}
-{% flex justifyContent="center" %}**Alpine Dark**{% /flex %}
-{% /imageCaption %}
-{% /flex %}
-
-{% /tabItem %}
-{% /tabs %}
+From left to right [Alpine Light](/example?theme=ag-theme-alpine), [Alpine Dark](/example?theme=ag-theme-alpine-dark), [Quartz Light](/example?theme=ag-theme-quartz), and [Quartz Dark](/example?theme=ag-theme-quartz-dark) AG Grid themes. 
 
 ### Customising a Theme
 

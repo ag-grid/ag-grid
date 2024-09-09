@@ -72,7 +72,6 @@ const GridExample = () => {
                         ref={gridRef}
                         rowData={rowData}
                         columnDefs={columnDefs}
-                        rowSelection={'multiple'}
                         onGridReady={onGridReady}
                     />
                 </div>

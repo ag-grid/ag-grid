@@ -45,6 +45,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         rowDataUpdated: RowDataUpdatedEvent<TData, TContext>;
         pinnedRowDataChanged: PinnedRowDataChangedEvent<TData, TContext>;
         rangeSelectionChanged: RangeSelectionChangedEvent<TData, TContext>;
+        cellSelectionChanged: CellSelectionChangedEvent<TData, TContext>;
         chartCreated: ChartCreatedEvent<TData, TContext>;
         chartRangeSelectionChanged: ChartRangeSelectionChangedEvent<TData, TContext>;
         chartOptionsChanged: ChartOptionsChangedEvent<TData, TContext>;
@@ -58,6 +59,8 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         pasteEnd: PasteEndEvent<TData, TContext>;
         fillStart: FillStartEvent<TData, TContext>;
         fillEnd: FillEndEvent<TData, TContext>;
+        cellSelectionDeleteStart: CellSelectionDeleteStartEvent<TData, TContext>;
+        cellSelectionDeleteEnd: CellSelectionDeleteEndEvent<TData, TContext>;
         rangeDeleteStart: RangeDeleteStartEvent<TData, TContext>;
         rangeDeleteEnd: RangeDeleteEndEvent<TData, TContext>;
         undoStarted: UndoStartedEvent<TData, TContext>;
@@ -244,6 +247,10 @@ export interface VirtualColumnsChangedEvent<TData = any, TContext = any>
     afterScroll: boolean;
 }
 
+/**
+ * @deprecated v32.2 Either use `displayedColumnsChanged` which is fired at the same time,
+ * or use one of the more specific column events.
+ */
 export interface ColumnEverythingChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'columnEverythingChanged', TData, TContext> {
     source: string;
@@ -258,7 +265,9 @@ export interface GridColumnsChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'gridColumnsChanged', TData, TContext> {}
 
 export interface DisplayedColumnsChangedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'displayedColumnsChanged', TData, TContext> {}
+    extends AgGlobalEvent<'displayedColumnsChanged', TData, TContext> {
+    source: ColumnEventType;
+}
 
 export interface RowDataUpdatedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowDataUpdated', TData, TContext> {}
@@ -282,11 +291,11 @@ export interface PinnedHeightChangedEvent<TData = any, TContext = any>
  * - `rowClicked` - row clicked when row selection enabled
  * - `rowDataChanged` - row data updated which triggered selection updates
  * - `rowGroupChanged` - grouping changed which updated the selection
- * - `selectableChanged`- selectable status of row has changed when `groupSelectsChildren = true`
+ * - `selectableChanged`- selectable status of row has changed when `selection.groupSelects` is `'descendants'` or `'filteredDescendants'`
  * - `spaceKey` - space key pressed on row
  * - `uiSelectAll` - select all in header clicked
- * - `uiSelectAllFiltered` - select all in header clicked when `headerCheckboxSelectionFilteredOnly = true`
- * - `uiSelectAllCurrentPage` - select all in header clicked when `headerCheckboxSelectionCurrentPageOnly = true`
+ * - `uiSelectAllFiltered` - select all in header clicked when `selection.selectAll = 'filtered'`
+ * - `uiSelectAllCurrentPage` - select all in header clicked when `selection.selectAll = 'currentPage'`
  * - 'gridInitializing' - set as part of initial state while the grid is initializing
  */
 export type SelectionEventSourceType =
@@ -521,6 +530,16 @@ export interface FillEndEvent<TData = any, TContext = any> extends AgGlobalEvent
     finalRange: CellRange;
 }
 
+export interface CellSelectionDeleteStartEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'cellSelectionDeleteStart', TData, TContext> {
+    source: 'deleteKey';
+}
+
+export interface CellSelectionDeleteEndEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'cellSelectionDeleteEnd', TData, TContext> {
+    source: 'deleteKey';
+}
+
 export interface RangeDeleteStartEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rangeDeleteStart', TData, TContext> {
     source: 'deleteKey';
@@ -573,6 +592,15 @@ export interface FirstDataRenderedEvent<TData = any, TContext = any>
 
 export interface RangeSelectionChangedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rangeSelectionChanged', TData, TContext> {
+    id?: string;
+    /** True for the first change event, otherwise false */
+    started: boolean;
+    /** True for the last change event, otherwise false */
+    finished: boolean;
+}
+
+export interface CellSelectionChangedEvent<TData = any, TContext = any>
+    extends AgGlobalEvent<'cellSelectionChanged', TData, TContext> {
     id?: string;
     /** True for the first change event, otherwise false */
     started: boolean;
@@ -867,9 +895,13 @@ export interface ColumnMenuVisibleChangedEvent<TData = any, TContext = any>
         | 'columnChooser';
     /**
      * Column the menu is opened for. Will be `null` if not launched from a column
-     * (e.g. column chooser from the API, or column menu via right-click on an empty header).
+     * (e.g. column chooser from the API, or column menu via right-click on a column group or empty header).
      */
     column: Column | null;
+    /**
+     * Column group the menu is opened for if launched from right-click on a column group
+     */
+    columnGroup?: ProvidedColumnGroup | null;
 }
 
 /**------------*/

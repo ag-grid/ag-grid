@@ -2,13 +2,11 @@ import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import { _warnOnce } from '../utils/function';
 import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
 import { validateApiFunction } from './apiFunctionValidator';
-import { COL_DEF_VALIDATORS } from './rules/colDefValidations';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import type { OptionsValidation, OptionsValidator, RequiredOptions } from './validationTypes';
 
@@ -31,10 +29,6 @@ export class ValidationService extends BeanStub implements NamedBean {
         this.processOptions(options, GRID_OPTIONS_VALIDATORS());
     }
 
-    public processColumnDefs(options: ColDef | ColGroupDef): void {
-        this.processOptions(options, COL_DEF_VALIDATORS);
-    }
-
     public validateApiFunction<TFunctionName extends ApiFunctionName>(
         functionName: TFunctionName,
         apiFunction: ApiFunction<TFunctionName>
@@ -55,18 +49,18 @@ export class ValidationService extends BeanStub implements NamedBean {
             );
         }
 
-        const warnings: Set<string> = new Set();
+        const warnings = new Set<string>();
 
         const optionKeys = Object.keys(options) as (keyof T)[];
         optionKeys.forEach((key: keyof T) => {
-            const deprecation = deprecations[key] as any;
+            const deprecation = deprecations[key];
             if (deprecation) {
                 if ('renamed' in deprecation) {
                     const { renamed, version } = deprecation;
                     warnings.add(
                         `As of v${version}, ${String(key)} is deprecated. Please use ${String(renamed)} instead.`
                     );
-                    (options as any)[renamed] = options[key];
+                    options[renamed] = options[key];
                 } else {
                     const { message, version } = deprecation;
                     warnings.add(`As of v${version}, ${String(key)} is deprecated. ${message ?? ''}`);
@@ -74,7 +68,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             }
 
             const value = options[key];
-            if (value == null || (value as any) === false) {
+            if (value == null || value === false) {
                 // false implies feature is disabled, don't validate.
                 return;
             }

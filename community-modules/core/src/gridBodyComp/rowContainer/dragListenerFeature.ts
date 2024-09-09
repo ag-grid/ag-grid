@@ -1,6 +1,7 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
+import { _isCellSelectionEnabled } from '../../gridOptionsUtils';
 import type { IRangeService } from '../../interfaces/IRangeService';
 
 export class DragListenerFeature extends BeanStub {
@@ -33,18 +34,18 @@ export class DragListenerFeature extends BeanStub {
             onDragging: this.rangeService.onDragging.bind(this.rangeService),
         };
 
-        this.addManagedPropertyListener('enableRangeSelection', (props) => {
-            const isEnabled = props.currentValue;
+        this.addManagedPropertyListeners(['enableRangeSelection', 'selection'], () => {
+            const isEnabled = _isCellSelectionEnabled(this.gos);
             if (isEnabled) {
                 this.enableFeature();
-                return;
+            } else {
+                this.disableFeature();
             }
-            this.disableFeature();
         });
 
         this.addDestroyFunc(() => this.disableFeature());
 
-        const isRangeSelection = this.gos.get('enableRangeSelection');
+        const isRangeSelection = _isCellSelectionEnabled(this.gos);
         if (isRangeSelection) {
             this.enableFeature();
         }

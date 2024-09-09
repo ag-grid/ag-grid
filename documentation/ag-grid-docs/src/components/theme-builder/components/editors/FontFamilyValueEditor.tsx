@@ -107,5 +107,7 @@ export const LoadFontFamilyMenuFonts = () => {
     return <style>{css}</style>;
 };
 
-const isSameFont = (a: FontFamilyValue, b: FontFamilyValue) =>
+const isSameFont = (a: FontFamilyValue, b: FontFamilyValue): boolean =>
+    (Array.isArray(b) && isSameFont(a, b[0])) ||
+    (Array.isArray(a) && isSameFont(a[0], b)) ||
     paramValueToCss('fontFamily', a) === paramValueToCss('fontFamily', b);

@@ -3,7 +3,9 @@ import dotenv from 'dotenv';
 
 import { getApiPageData, parseApiPageData } from './generators/api-refs';
 import { getAllDocPages, parseDocPage } from './generators/docs-pages';
+import type { FlattenedMenuItem } from './generators/docs-pages';
 import { SUPPORTED_FRAMEWORKS } from './utils/constants';
+import type { SupportedFrameworks } from './utils/constants';
 import { enablePrintMode, updateAlgolia, writeResults } from './utils/output';
 
 program
@@ -30,13 +32,15 @@ if (debug) {
     dotenv.config();
 }
 
-const indices = {
+const indices: Record<SupportedFrameworks, any[]> = {
     react: [],
     angular: [],
     vue: [],
     javascript: [],
 };
-const prefixPath = (framework) => (record) => ({ ...record, path: `/${framework}-data-grid/${record.path}` });
+const prefixPath =
+    (framework: SupportedFrameworks) =>
+    (record: FlattenedMenuItem): FlattenedMenuItem => ({ ...record, path: `/${framework}-data-grid/${record.path}` });
 
 /**
  * First scrape docs for APIs and generate Algolia records

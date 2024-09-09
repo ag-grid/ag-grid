@@ -1,14 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
-    ChartRef,
-    ChartRefParams,
-    ColDef,
-    ColGroupDef,
-    GridApi,
-    GridOptions,
-    ModuleRegistry,
-    createGrid,
-} from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from '@ag-grid-community/vue3';
@@ -31,7 +22,7 @@ const VueExample = {
             :columnDefs="columnDefs"
             :rowData="rowData"
             :defaultColDef="defaultColDef"
-            :enableRangeSelection="true"
+            :selection="selection"
             :enableCharts="true"
             :popupParent="popupParent"
             :createChartContainer="createChartContainer"
@@ -62,6 +53,9 @@ const VueExample = {
         const defaultColDef = ref({ flex: 1 });
         const popupParent = ref(null);
         const rowData = ref(null);
+        const selection = ref({
+            mode: 'cell',
+        });
 
         onBeforeMount(() => {
             popupParent.value = document.body;
@@ -115,6 +109,7 @@ const VueExample = {
             gridApi,
             defaultColDef,
             popupParent,
+            selection,
             rowData,
             createChartContainer,
             onGridReady,

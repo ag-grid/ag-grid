@@ -143,29 +143,32 @@ The example below demonstrates the different matching strategies. Note the follo
 
 ## Maintain Column Order
 
-When Column Definitions are provided to the grid, the order of the Columns inside the grid is set to
-match the order of the newly provided Column Definitions. This means every time Columns are set, the order
-is guaranteed to match the order of the definitions. This is usually the desired and expected behaviour.
+When providing new [Column Definitions](./column-definitions/) to the grid, the order in which they are provided
+is the order in which the columns are displayed. This can mean that when overwriting columns with a new set of columns,
+any columns moved by the user will have their position reset.
 
-You may wish for the order of the Columns to not match the Column Definitions. For example suppose the user
-has rearranged Columns to their desired order, and then the application updates the Column Definitions (e.g.
-changes the Cell Renderer used), then it would be undesirable to reset the Column order, as the user's
-arranged order would be lost.
+If you instead want to prioritise the order of the columns as they appear in the grid, set the grid property `maintainColumnOrder`.
 
-If the desired behaviour is that Column's order should be maintained, set the grid
-property `maintainColumnOrder=true`.
+This can be set to `'all'`, `'primaryColumns'`, `'pivotResultColumns'` or `'none'`.
+```{% frameworkTransform=true %}
+const gridOptions = {
+    maintainColumnOrder: 'all',
+}
+```
 
-The example below demonstrates suppressing the Column order when Column Definitions are updated. The example has two sets of Columns, A and B. The order of the Column Definitions are different, however when switching between the Column sets, the order in the grid is maintained.
-
-If the Columns are cleared out (clicking Clear) then when columns are set again the order will match the Column Definition order.
+In the example below, note the following:
+- The grid is configured with `maintainColumnOrder='all'`.
+- The columns can be reordered by dragging them.
+- Two buttons exist, **Column Set A** and **Column Set B**. Clicking these buttons will swap between two column definitions, each with a different order of columns.
+- Swapping between the column sets does not reset or change the column order, instead preserving the grid state.
+- A **Clear** button also exists, when clicking this the columns are removed, and subsequently applying a column set applies their order.
 
 {% gridExampleRunner title="Column Definition Order" name="col-def-order" /%}
 
-If there are new Columns added (eg the new set of Column Definitions has additional Columns to those currently
-present), then these new Columns will always be added at the end.
+If there are new Columns added, then these new Columns will always be added at the end.
 
 In order for the Column Order to be maintained, the grid needs to match the Columns. This can be done by ensuring
-each Column has a `field` or `colId` defined. Any Columns that can't be matched will be treated as new Columns and
+each Column has a unique `field` or `colId` defined. Any Columns that can't be matched will be treated as new Columns and
 placed at the end.
 
 ## Column Events
@@ -228,7 +231,7 @@ gridApi.getColumnDefs();
 Column Groups can be updated in the same way as Columns, you just update the Column Group Definition. For expandable
 groups, to have open / closed state to be maintained, you need to assign `groupId` in the Column Group Definition.
 
-```{% frameworkTransform=true suppressFrameworkContext=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {

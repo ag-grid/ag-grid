@@ -11,6 +11,7 @@ export const GRID_WIDE_COMPONENTS = [
     'noRowsOverlayComponent',
     'fullWidthCellRenderer',
     'detailCellRenderer',
+    'dragAndDropImageComponent',
 ];
 
 export const GRID_COMPONENTS = [
@@ -19,6 +20,7 @@ export const GRID_COMPONENTS = [
     'loadingCellRenderer',
     'loadingOverlayComponent',
     'noRowsOverlayComponent',
+    'dragAndDropImageComponent',
     'dateComponent',
     'statusPanel',
     'cellRenderer',
@@ -37,6 +39,7 @@ export const GRID_COMPONENTS = [
 export const PARAMS_PROPERTIES = ['cellEditorParams', 'filterParams'];
 
 export const OVERRIDABLE_AG_COMPONENTS = [
+    'agDragAndDropImage',
     'agDateInput',
     'agColumnHeader',
     'agColumnGroupHeader',

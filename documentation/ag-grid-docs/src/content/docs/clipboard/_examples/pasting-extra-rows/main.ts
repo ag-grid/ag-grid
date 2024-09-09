@@ -23,7 +23,11 @@ const gridOptions: GridOptions = {
         editable: true,
     },
     columnDefs,
-    rowSelection: 'multiple',
+    selection: {
+        mode: 'multiRow',
+        checkboxes: false,
+        headerCheckbox: false,
+    },
     processDataFromClipboard,
 };
 

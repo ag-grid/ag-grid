@@ -1,14 +1,22 @@
+import { isColumnControlsCol } from '../../columns/columnUtils';
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellPosition } from '../../entities/cellPositionUtils';
-import type { CellStyle } from '../../entities/colDef';
+import type { CellStyle, ColDef } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
-import { _getDocument, _getRowHeightForNode, _isClientSideRowModel, _setDomData } from '../../gridOptionsUtils';
+import {
+    _getCheckboxes,
+    _getDocument,
+    _getRowHeightForNode,
+    _isCellSelectionEnabled,
+    _isClientSideRowModel,
+    _setDomData,
+} from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
@@ -48,6 +56,10 @@ export interface ICellComp {
     setUserStyles(styles: CellStyle): void;
     getFocusableElement(): HTMLElement;
 
+    setIncludeSelection(include: boolean): void;
+    setIncludeRowDrag(include: boolean): void;
+    setIncludeDndSource(include: boolean): void;
+
     getCellEditor(): ICellEditor | null;
     getCellRenderer(): ICellRenderer | null;
     getParentOfValue(): HTMLElement | null;
@@ -73,9 +85,6 @@ export class CellCtrl extends BeanStub {
 
     public readonly instanceId: CellCtrlInstanceId;
     public readonly colIdSanitised: string;
-    public readonly includeSelection: boolean;
-    public readonly includeDndSource: boolean;
-    public readonly includeRowDrag: boolean;
 
     private eGui: HTMLElement;
     private cellComp: ICellComp;
@@ -98,6 +107,9 @@ export class CellCtrl extends BeanStub {
     private cellPosition: CellPosition;
     private editing: boolean;
 
+    private includeSelection: boolean;
+    private includeDndSource: boolean;
+    private includeRowDrag: boolean;
     private isAutoHeight: boolean;
 
     private suppressRefreshCell = false;
@@ -106,6 +118,7 @@ export class CellCtrl extends BeanStub {
     private customRowDragComp: RowDragComp;
 
     private onCellCompAttachedFuncs: (() => void)[] = [];
+    private onCellEditorAttachedFuncs: (() => void)[] = [];
 
     constructor(
         private readonly column: AgColumn,
@@ -119,11 +132,6 @@ export class CellCtrl extends BeanStub {
         this.instanceId = (column.getId() + '-' + instanceIdSequence++) as CellCtrlInstanceId;
 
         this.colIdSanitised = _escapeString(this.column.getId())!;
-
-        const colDef = column.getColDef();
-        this.includeSelection = this.isIncludeControl(colDef.checkboxSelection);
-        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
-        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
 
         this.createCellPosition();
         this.addFeatures();
@@ -157,8 +165,8 @@ export class CellCtrl extends BeanStub {
             this.enableTooltipFeature();
         }
 
-        const rangeSelectionEnabled = this.beans.rangeService && this.beans.gos.get('enableRangeSelection');
-        if (rangeSelectionEnabled) {
+        const cellSelectionEnabled = this.beans.rangeService && _isCellSelectionEnabled(this.beans.gos);
+        if (cellSelectionEnabled) {
             this.cellRangeFeature = new CellRangeFeature(this.beans, this);
         }
     }
@@ -259,6 +267,7 @@ export class CellCtrl extends BeanStub {
         this.onFirstRightPinnedChanged();
         this.onLastLeftPinnedChanged();
         this.onColumnHover();
+        this.setupControlComps();
 
         this.setupAutoHeight(eCellWrapper);
 
@@ -386,6 +395,17 @@ export class CellCtrl extends BeanStub {
         this.cellRangeFeature?.refreshHandle();
     }
 
+    private setupControlComps(): void {
+        const colDef = this.column.getColDef();
+        this.includeSelection = this.isIncludeControl(this.isCheckboxSelection(colDef));
+        this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
+        this.includeDndSource = this.isIncludeControl(colDef.dndSource);
+
+        this.cellComp.setIncludeSelection(this.includeSelection);
+        this.cellComp.setIncludeDndSource(this.includeDndSource);
+        this.cellComp.setIncludeRowDrag(this.includeRowDrag);
+    }
+
     public isForceWrapper(): boolean {
         // text selection requires the value to be wrapped in another element
         const forceWrapper = this.beans.gos.get('enableCellTextSelection') || this.column.isAutoHeight();
@@ -401,9 +421,14 @@ export class CellCtrl extends BeanStub {
         return res;
     }
 
+    private isCheckboxSelection(colDef: ColDef): boolean | Function | undefined {
+        const { selection } = this.beans.gridOptions;
+        return colDef.checkboxSelection || (isColumnControlsCol(this.column) && selection && _getCheckboxes(selection));
+    }
+
     private refreshShouldDestroy(): boolean {
         const colDef = this.column.getColDef();
-        const selectionChanged = this.includeSelection != this.isIncludeControl(colDef.checkboxSelection);
+        const selectionChanged = this.includeSelection != this.isIncludeControl(this.isCheckboxSelection(colDef));
         const rowDragChanged = this.includeRowDrag != this.isIncludeControl(colDef.rowDrag);
         const dndSourceChanged = this.includeDndSource != this.isIncludeControl(colDef.dndSource);
         // auto height uses wrappers, so need to destroy
@@ -470,6 +495,7 @@ export class CellCtrl extends BeanStub {
      * @returns `True` if the value of the `GridCell` has been updated, otherwise `False`.
      */
     public stopEditing(cancel = false): boolean {
+        this.onCellEditorAttachedFuncs = [];
         const { editService } = this.beans;
         if (!this.editing || !editService) {
             return false;
@@ -858,12 +884,12 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    public onRangeSelectionChanged(): void {
+    public onCellSelectionChanged(): void {
         if (!this.cellComp) {
             return;
         }
         if (this.cellRangeFeature) {
-            this.cellRangeFeature.onRangeSelectionChanged();
+            this.cellRangeFeature.onCellSelectionChanged();
         }
     }
 
@@ -888,7 +914,7 @@ export class CellCtrl extends BeanStub {
         this.onCellFocused();
         // check range selection
         if (this.cellRangeFeature) {
-            this.cellRangeFeature.onRangeSelectionChanged();
+            this.cellRangeFeature.onCellSelectionChanged();
         }
     }
 
@@ -1047,6 +1073,7 @@ export class CellCtrl extends BeanStub {
 
     public override destroy(): void {
         this.onCellCompAttachedFuncs = [];
+        this.onCellEditorAttachedFuncs = [];
         super.destroy();
     }
 
@@ -1131,5 +1158,14 @@ export class CellCtrl extends BeanStub {
 
     public getEditCompDetails(): UserCompDetails | undefined {
         return this.editCompDetails;
+    }
+
+    public onCellEditorAttached(callback: () => void): void {
+        this.onCellEditorAttachedFuncs.push(callback);
+    }
+
+    public cellEditorAttached(): void {
+        this.onCellEditorAttachedFuncs.forEach((func) => func());
+        this.onCellEditorAttachedFuncs = [];
     }
 }

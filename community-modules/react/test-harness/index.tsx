@@ -1,8 +1,8 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef } from '@ag-grid-community/core';
+import type { ColDef, SelectionOptions } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { AgGridReact } from './agGridReact';
@@ -14,7 +14,14 @@ const App = () => {
         { make: 'Porsche', model: 'Boxster', price: 72000 },
     ]);
     const [colDefs] = useState<ColDef[]>([{ field: 'make' }, { field: 'model' }, { field: 'price' }]);
-
+    const selection = useMemo<SelectionOptions>(
+        () => ({
+            mode: 'multiRow',
+            checkboxes: false,
+            headerCheckbox: false,
+        }),
+        []
+    );
     const onGridReady = () => {
         setTimeout(() => setRowData([...rowData, ...rowData]), 2000);
     };
@@ -27,7 +34,7 @@ const App = () => {
                         filter: true,
                         flex: 1,
                     }}
-                    rowSelection="multiple"
+                    selection={selection}
                     onGridReady={onGridReady}
                     rowData={rowData}
                     columnDefs={colDefs}
