@@ -53,8 +53,6 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
         selectAll: 'all',
     },
 
-    groupDefaultExpanded: -1,
-
     suppressAggFuncInHeader: true,
 };
 

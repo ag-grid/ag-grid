@@ -718,10 +718,6 @@
                         "title": "Selection",
                         "items": [
                             {
-                                "title": "Overview",
-                                "path": "selection-overview"
-                            },
-                            {
                                 "title": "Row Selection",
                                 "path": "row-selection",
                                 "items": [
