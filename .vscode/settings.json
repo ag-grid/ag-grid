@@ -38,8 +38,7 @@
     "themeable",
     "tran",
     "trans",
-    "treemap",
-    "unclamped"
+    "treemap"
   ],
   "git.detectSubmodulesLimit": 20,
   "files.exclude": {

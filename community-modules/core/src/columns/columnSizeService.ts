@@ -365,22 +365,22 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
         const flexingColumnSizes: number[] = [];
         let spaceForFlexingColumns: number;
 
-        // Implement the "Resolving Flexible Lengths" part of the CSS Flexbox spec
-        //           https://www.w3.org/TR/css-flexbox-1/#resolve-flexible-lengths
-
-        while (true) {
-            if (flexingColumns.length === 0) break;
-
+        outer: while (true) {
             spaceForFlexingColumns = this.flexViewportWidth - knownColumnsWidth;
             const spacePerFlex = spaceForFlexingColumns / totalFlex;
-            let totalMinMaxViolation = 0;
             for (let i = 0; i < flexingColumns.length; i++) {
                 const col = flexingColumns[i];
-                const unclampedSize = spacePerFlex * col.getFlex();
-                const clampedSize = Math.max(col.getMinWidth(), Math.min(col.getMaxWidth(), unclampedSize));
+                const widthByFlexRule = spacePerFlex * col.getFlex();
+                let constrainedWidth = 0;
 
-                const minMaxViolation = clampedSize - unclampedSize
-                totalMinMaxViolation += minMaxViolation;
+                const minWidth = col.getMinWidth();
+                const maxWidth = col.getMaxWidth();
+
+                if (widthByFlexRule < minWidth) {
+                    constrainedWidth = minWidth;
+                } else if (widthByFlexRule > maxWidth) {
+                    constrainedWidth = maxWidth;
+                }
 
                 if (constrainedWidth) {
                     // This column is not in fact flexing as it is being constrained to a specific size
@@ -393,9 +393,22 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
                     continue outer;
                 }
 
-                flexingColumnSizes[i] = Math.floor(unclampedSize);
+                flexingColumnSizes[i] = Math.floor(widthByFlexRule);
             }
+            break;
         }
+
+        let remainingSpace = spaceForFlexingColumns;
+        flexingColumns.forEach((col, i) => {
+            const size =
+                i < flexingColumns.length - 1
+                    ? Math.min(flexingColumnSizes[i], remainingSpace)
+                    : // ensure flex columns fill available width by growing the last column to fit available space if there is more available
+                      Math.max(flexingColumnSizes[i], remainingSpace);
+            col.setActualWidth(size, source);
+            changedColumns.push(col);
+            remainingSpace -= flexingColumnSizes[i];
+        });
 
         if (!params.skipSetLeft) {
             this.visibleColsService.setLeftValues(source);
