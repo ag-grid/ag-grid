@@ -16,6 +16,11 @@ ModuleRegistry.registerModules([
 
 let gridApi: GridApi<IOlympicData>;
 
+function togglePivotHeader() {
+    const checkbox = document.querySelector<HTMLInputElement>('#removePivotHeaderRowWhenSingleValueColumn')!;
+    gridApi.setGridOption('removePivotHeaderRowWhenSingleValueColumn', checkbox.checked);
+}
+
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'country', rowGroup: true },
@@ -32,11 +37,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     pivotMode: true,
     removePivotHeaderRowWhenSingleValueColumn: true,
 };
-
-function onCheckboxChanged() {
-    const checkbox = document.querySelector<HTMLInputElement>('#removePivotHeaderRowWhenSingleValueColumn')!;
-    gridApi.setGridOption('removePivotHeaderRowWhenSingleValueColumn', checkbox.checked);
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
