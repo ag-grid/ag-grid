@@ -5,7 +5,6 @@ import type {
     AgPolarSeriesOptions,
 } from 'ag-charts-community';
 
-import { changeOpacity } from '../../utils/color';
 import type { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
 
@@ -32,9 +31,13 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
     protected getUpdateOptions(params: UpdateParams, commonChartOptions: AgPolarChartOptions): AgPolarChartOptions {
         return {
             ...commonChartOptions,
-            data: this.crossFiltering ? this.getCrossFilterData(params) : params.data,
+            data: params.data,
             series: this.getSeries(params),
         };
+    }
+
+    protected override getCrossFilterKey() {
+        return 'calloutLabelKey';
     }
 
     private getSeries(params: UpdateParams): AgPolarSeriesOptions[] {
@@ -53,6 +56,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
                     type: this.standaloneChartType as AgPieSeriesOptions['type'],
                     angleKey: f.colId,
                     angleName: f.displayName!,
+                    ...(this.crossFiltering && { angleFilter: `${f.colId}Filter` }),
                     sectorLabelKey: f.colId,
                     calloutLabelName: category.name,
                     calloutLabelKey: category.id,
@@ -83,59 +87,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
             }
         );
 
-        return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
-    }
-
-    private getCrossFilterData(params: UpdateParams) {
-        const colId = params.fields[0].colId;
-        const filteredOutColId = `${colId}-filtered-out`;
-
-        return params.data.map((d) => {
-            const total = d[colId] + d[filteredOutColId];
-            d[`${colId}-total`] = total;
-            d[filteredOutColId] = 1; // normalise to 1
-            d[colId] = d[colId] / total; // fraction of 1
-            return d;
-        });
-    }
-
-    private extractCrossFilterSeries(series: (AgPieSeriesOptions | AgDonutSeriesOptions)[]) {
-        const palette = this.getChartPalette();
-
-        const primaryOptions = (seriesOptions: AgPieSeriesOptions | AgDonutSeriesOptions) => {
-            return {
-                ...seriesOptions,
-                legendItemKey: seriesOptions.calloutLabelKey,
-                calloutLabel: { enabled: false }, // hide labels on primary series
-                highlightStyle: { item: { fill: undefined } },
-                radiusKey: seriesOptions.angleKey,
-                angleKey: seriesOptions.angleKey + '-total',
-                radiusMin: 0,
-                radiusMax: 1,
-                listeners: {
-                    nodeClick: this.crossFilterCallback,
-                },
-            };
-        };
-
-        const filteredOutOptions = (seriesOptions: AgPieSeriesOptions | AgDonutSeriesOptions, angleKey: string) => {
-            return {
-                ...primaryOpts,
-                radiusKey: angleKey + '-filtered-out',
-                fills: changeOpacity(seriesOptions.fills ?? palette?.fills ?? [], 0.3),
-                strokes: changeOpacity(seriesOptions.strokes ?? palette?.strokes ?? [], 0.3),
-                showInLegend: false,
-            };
-        };
-
-        // currently, only single 'donut' cross-filter series are supported
-        const primarySeries = series[0];
-
-        // update primary series
-        const angleKey = primarySeries.angleKey!;
-        const primaryOpts = primaryOptions(primarySeries);
-
-        return [filteredOutOptions(primaryOptions(primarySeries), angleKey), primaryOpts];
+        return series;
     }
 
     private getFields(params: UpdateParams): FieldDefinition[] {
