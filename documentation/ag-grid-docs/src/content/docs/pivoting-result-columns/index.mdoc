@@ -58,7 +58,7 @@ Pivot result columns inherit the properties of the value column from which they 
 default to a [Number Filter](./filter-number/) in the case of a pivot result column. The [Set Filter](./filter-set/) cannot be used for filtering pivot result columns.
 {% /note %}
 
-### Filtering Value Columns
+### Filtering Primary Columns
 
 When pivoting is active, filters can be applied to columns defined within the column definitions through
 the [Filters Tool Panel](./tool-panel-filters/) and the [Filter API](./grid-api/#reference-filter).
@@ -70,7 +70,7 @@ the data prior to pivoting and as such a change in these filters can effect not 
 
 ## Best Practices
 
-### Preventing Extreme Column Generation
+### Limiting Column Generation
 
 When pivoting, changes in data, aggregation or pivot columns can cause the number of generated columns to scale exponentially.
 This can cause performance issues such as long delays in rendering, and often the resulting view would be unmanageable for the user.
