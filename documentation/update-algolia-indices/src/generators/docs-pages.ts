@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { JSDOM, VirtualConsole } from 'jsdom';
 
+import type { AlgoliaRecord } from '../types/algolia';
 import { DIST_DIR, MENU_FILE_PATH } from '../utils/constants';
 import { logWarning } from '../utils/output';
 
@@ -10,7 +11,7 @@ const virtualConsole = new VirtualConsole();
 virtualConsole.on('error', () => {});
 
 let pageRank = 0;
-export const getAllDocPages = () => {
+export const getAllDocPages = (): FlattenedMenuItem[] => {
     const docsMenu = getDocsMenuData();
     const apiMenu = getApiMenuData();
     pageRank = 0;
@@ -26,7 +27,7 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
         return null;
     }
     const { title, rank, breadcrumb, path } = item;
-    const records = [];
+    const records: AlgoliaRecord[] = [];
     const dom = await JSDOM.fromFile(filePath, { virtualConsole });
 
     const titleTag = dom.window.document.querySelector('h1');
@@ -35,17 +36,17 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
         logWarning({ pageTitle, title, filePath, message: 'Title mismatched to navbar.' });
     }
 
-    let container = dom.window.document.querySelector('#doc-content article').firstChild;
+    const container = dom.window.document.querySelector('#doc-content article')?.firstChild;
     if (!container) {
         logWarning({ title, filePath, message: 'No content found.' });
         return null;
     }
 
-    let heading = undefined;
-    let subHeading = undefined;
+    let heading: string | undefined = undefined;
+    let subHeading: string | undefined = undefined;
     let text = '';
     let position = 0;
-    let metaTag = undefined;
+    let metaTag: string | undefined = undefined;
 
     const createPreviousRecord = () => {
         // Because content for the header comes after the header
@@ -70,7 +71,7 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
         });
     };
 
-    const recursivelyParseContent = (container) => {
+    const recursivelyParseContent = (container: Element | null) => {
         for (let currentTag = container; currentTag != null; currentTag = currentTag.nextElementSibling) {
             try {
                 if (['style', 'pre'].includes(currentTag.nodeName.toLowerCase())) {
@@ -82,7 +83,7 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
                     // split records based on H2 and H3 tags
                     case 'H2': {
                         createPreviousRecord();
-                        heading = currentTag.textContent.trim();
+                        heading = currentTag.textContent?.trim();
                         subHeading = undefined;
                         text = '';
                         break;
@@ -91,7 +92,7 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
                     case 'H3':
                     case 'H4': {
                         createPreviousRecord();
-                        subHeading = currentTag.textContent.trim();
+                        subHeading = currentTag.textContent?.trim();
                         text = '';
                         break;
                     }
@@ -99,17 +100,17 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
                     case 'DIV': {
                         createPreviousRecord();
                         if (currentTag.getAttribute('data-meta')) {
-                            metaTag = JSON.parse(currentTag.getAttribute('data-meta').replaceAll('&quot;', '"'));
+                            metaTag = JSON.parse(currentTag.getAttribute('data-meta')?.replaceAll('&quot;', '"') ?? '');
                         }
                         // process content inside div containers
-                        recursivelyParseContent(currentTag.firstChild);
+                        recursivelyParseContent(currentTag.firstChild as Element | null);
                         break;
                     }
 
                     default: {
                         const contents = currentTag.innerHTML || currentTag.textContent;
 
-                        if (currentTag.nodeName === 'A' && contents.includes('Example: <!-- -->')) {
+                        if (currentTag.nodeName === 'A' && contents?.includes('Example: <!-- -->')) {
                             // exclude example runner titles
                             continue;
                         }
@@ -123,7 +124,7 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
             }
         }
     };
-    recursivelyParseContent(container);
+    recursivelyParseContent(container as Element);
     createPreviousRecord();
 
     return records;
@@ -136,25 +137,29 @@ interface MenuItem {
 }
 
 const getDocsMenuData = () => {
-    const file = fs.readFileSync(MENU_FILE_PATH, null);
+    const file = fs.readFileSync(MENU_FILE_PATH, 'utf-8');
     const { main } = JSON.parse(file);
     return main;
 };
 
 const getApiMenuData = () => {
-    const file = fs.readFileSync(MENU_FILE_PATH, null);
+    const file = fs.readFileSync(MENU_FILE_PATH, 'utf-8');
     const { api } = JSON.parse(file);
     return api;
 };
 
-interface FlattenedMenuItem {
+export interface FlattenedMenuItem {
     title: string;
     path: string;
     rank: number;
     breadcrumb: string;
 }
 
-const getFlattenedMenuItems = (menuItems: MenuItem[], result = [], prefix) => {
+const getFlattenedMenuItems = (
+    menuItems: MenuItem[],
+    result: FlattenedMenuItem[] = [],
+    prefix?: string
+): FlattenedMenuItem[] => {
     menuItems.forEach((item) => {
         if (item.path) {
             result.push({
@@ -172,7 +177,7 @@ const getFlattenedMenuItems = (menuItems: MenuItem[], result = [], prefix) => {
 };
 
 const disallowedTags = ['style', 'pre'];
-const cleanContents = (contents) => {
+const cleanContents = (contents: string): string => {
     // remove all content from disallowed tags
     disallowedTags.forEach(
         (tag) => (contents = contents.replace(new RegExp(`<${tag}(\\s.*?)?>.*?</${tag}>`, 'gs'), ''))
@@ -190,6 +195,6 @@ const cleanContents = (contents) => {
         .trim();
 };
 
-const extractTitle = (titleTag) => {
-    return titleTag.textContent;
+const extractTitle = (titleTag: HTMLElement | null) => {
+    return titleTag?.textContent;
 };

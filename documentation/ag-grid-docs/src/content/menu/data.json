@@ -601,6 +601,10 @@
                             {
                                 "title": "Reference Data",
                                 "path": "reference-data"
+                            },
+                            {
+                                "title": "Cell Text Selection",
+                                "path": "cell-text-selection"
                             }
                         ]
                     },
@@ -719,21 +723,40 @@
                             },
                             {
                                 "title": "Row Selection",
-                                "path": "row-selection"
+                                "path": "row-selection",
+                                "items": [
+                                    {
+                                        "title": "Single Row Selection",
+                                        "path": "row-selection-single-row"
+                                    },
+                                    {
+                                        "title": "Multi-Row Selection",
+                                        "path": "row-selection-multi-row"
+                                    },
+                                    {
+                                        "title": "API Reference",
+                                        "path": "row-selection-api-reference"
+                                    }
+                                ]
                             },
                             {
-                                "title": "Range Selection",
-                                "path": "range-selection",
+                                "title": "Cell Selection",
+                                "path": "cell-selection",
                                 "isEnterprise": true,
                                 "items": [
                                     {
                                         "title": "Range Handle",
-                                        "path": "range-selection-handle",
+                                        "path": "cell-selection-handle",
                                         "isEnterprise": true
                                     },
                                     {
                                         "title": "Fill Handle",
-                                        "path": "range-selection-fill-handle",
+                                        "path": "cell-selection-fill-handle",
+                                        "isEnterprise": true
+                                    },
+                                    {
+                                        "title": "API Reference",
+                                        "path": "cell-selection-api-reference",
                                         "isEnterprise": true
                                     }
                                 ]
@@ -861,146 +884,161 @@
                 "title": "Advanced Features",
                 "items": [
                     {
-                        "title": "Group & Pivot",
+                        "title": "Row Grouping",
                         "items": [
                             {
-                                "title": "Row Grouping",
+                                "title": "Overview",
                                 "path": "grouping",
-                                "isEnterprise": true,
-                                "items": [
-                                    {
-                                        "title": "Display Types",
-                                        "path": "grouping-display-types",
-                                        "isEnterprise": true,
-                                        "items": [
-                                            {
-                                                "title": "Single Column",
-                                                "path": "grouping-single-group-column",
-                                                "isEnterprise": true
-                                            },
-                                            {
-                                                "title": "Multiple Columns",
-                                                "path": "grouping-multiple-group-columns",
-                                                "isEnterprise": true
-                                            },
-                                            {
-                                                "title": "Group Rows",
-                                                "path": "grouping-group-rows",
-                                                "isEnterprise": true
-                                            },
-                                            {
-                                                "title": "Custom Group",
-                                                "path": "grouping-custom-group-columns",
-                                                "isEnterprise": true
-                                            }
-                                        ]
-                                    },
-
-                                    {
-                                        "title": "Group Cell Component",
-                                        "path": "group-expand-collapse-comp",
-                                        "isEnterprise": true,
-                                        "items": [
-                                            {
-                                                "title": "Provided Component",
-                                                "path": "group-cell-renderer",
-                                                "isEnterprise": true
-                                            },
-                                            {
-                                                "title": "Custom Component",
-                                                "path": "group-custom-group-comp",
-                                                "isEnterprise": true
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "title": "Row Group Panel",
-                                        "path": "grouping-group-panel",
-                                        "isEnterprise": true
-                                    },
-                                    {
-                                        "title": "Locking Group Columns",
-                                        "path": "grouping-locking-group-columns",
-                                        "isEnterprise": true
-                                    },
-                                    {
-                                        "title": "Group Order",
-                                        "path": "grouping-group-order",
-                                        "isEnterprise": true
-                                    },
-                                    {
-                                        "title": "Sorting Groups",
-                                        "path": "grouping-sorting",
-                                        "isEnterprise": true
-                                    },
-                                    {
-                                        "title": "Filtering Groups",
-                                        "path": "grouping-filtering",
-                                        "isEnterprise": true,
-                                        "items": [
-                                            {
-                                                "title": "Group Column Filter",
-                                                "path": "grouping-column-filter",
-                                                "isEnterprise": true
-                                            },
-                                            {
-                                                "title": "Custom Filtering",
-                                                "path": "grouping-custom-filtering",
-                                                "isEnterprise": true
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        "title": "Opening Groups",
-                                        "path": "grouping-opening-groups",
-                                        "isEnterprise": true
-                                    },
-                                    {
-                                        "title": "Complex Objects",
-                                        "path": "grouping-complex-objects",
-                                        "isEnterprise": true
-                                    },
-                                    {
-                                        "title": "Unbalanced Groups",
-                                        "path": "grouping-unbalanced-groups",
-                                        "isEnterprise": true
-                                    }
-                                ]
-                            },
-                            {
-                                "title": "Aggregation",
-                                "path": "aggregation",
-                                "isEnterprise": true,
-                                "items": [
-                                    {
-                                        "title": "Custom Functions",
-                                        "path": "aggregation-custom-functions",
-                                        "isEnterprise": true
-                                    },
-                                    {
-                                        "title": "Filtering ",
-                                        "path": "aggregation-filtering",
-                                        "isEnterprise": true
-                                    },
-                                    {
-                                        "title": "Total Rows",
-                                        "path": "total-rows",
-                                        "isEnterprise": true
-                                    },
-                                    {
-                                        "title": "Other",
-                                        "path": "aggregation-other",
-                                        "isEnterprise": true
-                                    }
-                                ]
-                            },
-                            {
-                                "title": "Tree Data",
-                                "path": "tree-data",
                                 "isEnterprise": true
                             },
                             {
-                                "title": "Pivoting",
+                                "title": "Display Types",
+                                "path": "grouping-display-types",
+                                "isEnterprise": true,
+                                "items": [
+                                    {
+                                        "title": "Single Column",
+                                        "path": "grouping-single-group-column",
+                                        "isEnterprise": true
+                                    },
+                                    {
+                                        "title": "Multiple Columns",
+                                        "path": "grouping-multiple-group-columns",
+                                        "isEnterprise": true
+                                    },
+                                    {
+                                        "title": "Group Rows",
+                                        "path": "grouping-group-rows",
+                                        "isEnterprise": true
+                                    },
+                                    {
+                                        "title": "Custom Group",
+                                        "path": "grouping-custom-group-columns",
+                                        "isEnterprise": true
+                                    }
+                                ]
+                            },
+                            {
+                                "title": "Group Cell Component",
+                                "path": "group-expand-collapse-comp",
+                                "isEnterprise": true,
+                                "items": [
+                                    {
+                                        "title": "Provided Component",
+                                        "path": "group-cell-renderer",
+                                        "isEnterprise": true
+                                    },
+                                    {
+                                        "title": "Custom Component",
+                                        "path": "group-custom-group-comp",
+                                        "isEnterprise": true
+                                    }
+                                ]
+                            },
+                            {
+                                "title": "Row Group Panel",
+                                "path": "grouping-group-panel",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Locking Group Columns",
+                                "path": "grouping-locking-group-columns",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Group Order",
+                                "path": "grouping-group-order",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Sorting Groups",
+                                "path": "grouping-sorting",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Filtering Groups",
+                                "path": "grouping-filtering",
+                                "isEnterprise": true,
+                                "items": [
+                                    {
+                                        "title": "Group Column Filter",
+                                        "path": "grouping-column-filter",
+                                        "isEnterprise": true
+                                    },
+                                    {
+                                        "title": "Custom Filtering",
+                                        "path": "grouping-custom-filtering",
+                                        "isEnterprise": true
+                                    }
+                                ]
+                            },
+                            {
+                                "title": "Selecting Groups",
+                                "path": "grouping-row-selection",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Opening Groups",
+                                "path": "grouping-opening-groups",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Complex Objects",
+                                "path": "grouping-complex-objects",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Unbalanced Groups",
+                                "path": "grouping-unbalanced-groups",
+                                "isEnterprise": true
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Aggregation",
+                        "items": [
+                            {
+                                "title": "Overview",
+                                "path": "aggregation",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Custom Functions",
+                                "path": "aggregation-custom-functions",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Filtering ",
+                                "path": "aggregation-filtering",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Total Rows",
+                                "path": "total-rows",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Other",
+                                "path": "aggregation-other",
+                                "isEnterprise": true
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Tree Data",
+                        "items": [
+                            {
+                                "title": "Overview",
+                                "path": "tree-data",
+                                "isEnterprise": true
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Pivoting",
+                        "items": [
+                            {
+                                "title": "Overview",
                                 "path": "pivoting",
                                 "isEnterprise": true
                             }

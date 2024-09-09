@@ -83,7 +83,10 @@ const gridOptions: GridOptions = {
         // the code is unique, so perfect for the id
         return params.data.code;
     },
-    // debug: true,
+    selection: {
+        mode: 'multiRow',
+        headerCheckbox: false,
+    },
 };
 
 function numberFormatter(params: ValueFormatterParams) {

@@ -9,7 +9,7 @@ This page covers the key concepts of AG Grid: A high performance, feature rich, 
 
 {% if isFramework("react") %}
 {% videoSection id="6hxbPqziELk" title="React Data Grid quick start video tutorial" playlist="PLsZlhayVgqNwHNHeqpCkSgdRV08xrKtzW" showHeader=true %}
-This page covers the key concepts of AG Grid: A high performance, feature rich, React Table and React Data Grid. 
+This page covers the key concepts of AG Grid: A high performance, feature rich, [React Table](https://www.ag-grid.com/react-table/) and React Data Grid. 
 {% /videoSection %}
 {% /if %}
 
@@ -599,15 +599,17 @@ Data is [Sorted](./row-sorting/) by clicking the column headers. Sorting is enab
 
 ### Row Selection
 
-[Row Selection](./row-selection/) is enabled using the `rowSelection` attribute. Use the `checkboxSelection` column definition attribute to render checkboxes for selection.
+[Row Selection](./row-selection/) is enabled using the `selection` attribute.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     // Column Definitions: Defines the columns to be displayed.
     columnDefs: [
-        { field: "make", checkboxSelection: true },
+        { field: "make" },
     ],
-    rowSelection: 'multiple',
+    selection: {
+      mode: 'multiRow',
+    },
 };
 ```
 

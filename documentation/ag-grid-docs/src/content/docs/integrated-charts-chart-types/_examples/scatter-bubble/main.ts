@@ -33,7 +33,7 @@ const gridOptions: GridOptions = {
         minWidth: 100,
     },
     popupParent: document.body,
-    enableRangeSelection: true,
+    selection: { mode: 'cell' },
     enableCharts: true,
     chartToolPanelsDef: {
         defaultToolPanel: 'settings',

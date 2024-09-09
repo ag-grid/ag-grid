@@ -54,8 +54,6 @@
                 "url": "./change-detection/#comparing-values"
             }
         },
-        "checkboxSelection": {},
-        "showDisabledCheckboxes": {},
         "toolPanelClass": {},
         "suppressColumnsToolPanel": {},
         "columnGroupShow": {},
@@ -76,7 +74,7 @@
         "suppressFillHandle": {
             "more": {
                 "name": "Suppressing the Fill Handle",
-                "url": "./range-selection-fill-handle/#suppressing-the-fill-handle"
+                "url": "./cell-selection-fill-handle/#suppressing-the-fill-handle"
             }
         },
         "contextMenuItems": {
@@ -187,24 +185,6 @@
             "more": {
                 "name": "Suppress Keyboard Events",
                 "url": "./keyboard-navigation/#suppressheaderkeyboardevent"
-            }
-        },
-        "headerCheckboxSelection": {
-            "more": {
-                "name": "Header Checkbox Selection",
-                "url": "./row-selection/#header-checkbox-selection"
-            }
-        },
-        "headerCheckboxSelectionFilteredOnly": {
-            "more": {
-                "name": "Select Everything or Just Filtered",
-                "url": "./row-selection/#select-everything-or-just-filtered"
-            }
-        },
-        "headerCheckboxSelectionCurrentPageOnly": {
-            "more": {
-                "name": "Select Everything on the Current Page",
-                "url": "./row-selection/#select-only-the-current-page"
             }
         },
         "suppressFloatingFilterButton": {

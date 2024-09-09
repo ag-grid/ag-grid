@@ -83,6 +83,10 @@
       "IDatasource"
     ]
   },
+  "dragAndDropImageComponentParams": {
+    "typeName": "any",
+    "typesToInclude": []
+  },
   "serverSideDatasource": {
     "typeName": "IServerSideDatasource",
     "typesToInclude": [
@@ -177,6 +181,12 @@
       "SideBarDef"
     ]
   },
+  "theme": {
+    "typeName": "GridTheme",
+    "typesToInclude": [
+      "GridTheme"
+    ]
+  },
   "chartThemeOverrides": {
     "typeName": "AgChartThemeOverrides",
     "typesToInclude": [
@@ -229,6 +239,18 @@
       "SizeColumnsToFitGridStrategy",
       "SizeColumnsToFitProvidedWidthStrategy",
       "SizeColumnsToContentStrategy"
+    ]
+  },
+  "selection": {
+    "typeName": "SelectionOptions",
+    "typesToInclude": [
+      "SelectionOptions"
+    ]
+  },
+  "controlsColDef": {
+    "typeName": "ControlsColDef",
+    "typesToInclude": [
+      "ControlsColDef"
     ]
   },
   "rowSelection": {
@@ -1376,6 +1398,10 @@
     "typesToInclude": []
   },
   "loading": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
+  "loadThemeGoogleFonts": {
     "typeName": "boolean",
     "typesToInclude": []
   },

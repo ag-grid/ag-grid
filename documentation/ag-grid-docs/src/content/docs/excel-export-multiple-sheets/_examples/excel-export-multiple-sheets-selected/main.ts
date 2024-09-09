@@ -26,8 +26,12 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
     },
 
-    columnDefs: columnDefs,
-    rowSelection: 'multiple',
+    columnDefs,
+    selection: {
+        mode: 'multiRow',
+        checkboxes: false,
+        headerCheckbox: false,
+    },
 };
 
 function onBtExport() {

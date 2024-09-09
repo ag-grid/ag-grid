@@ -1,11 +1,4 @@
-import {
-    GetRowIdParams,
-    GridApi,
-    GridOptions,
-    IRowNode,
-    IServerSideDatasource,
-    createGrid,
-} from '@ag-grid-community/core';
+import { GridApi, GridOptions, IServerSideDatasource, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
@@ -14,12 +7,12 @@ import { FakeServer } from './fakeServer';
 
 ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
 
-let gridApi: GridApi<IOlympicData>;
-const gridOptions: GridOptions<IOlympicData> = {
+let gridApi: GridApi<IOlympicDataWithId>;
+const gridOptions: GridOptions<IOlympicDataWithId> = {
     columnDefs: [
         { field: 'country', enableRowGroup: true },
         { field: 'year', enableRowGroup: true, rowGroup: true, hide: true },
-        { field: 'sport', enableRowGroup: true, checkboxSelection: true, filter: 'agTextColumnFilter' },
+        { field: 'sport', enableRowGroup: true, filter: 'agTextColumnFilter' },
         { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
         { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
         { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
@@ -29,7 +22,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 120,
     },
-    getRowId: (params: GetRowIdParams) => {
+    getRowId: (params) => {
         if (params.data.id != null) {
             return 'leaf-' + params.data.id;
         }
@@ -41,28 +34,26 @@ const gridOptions: GridOptions<IOlympicData> = {
             rowGroupColIds +
             '-' +
             (params.parentKeys || []).join('-') +
-            params.data[thisGroupCol.getColDef().field!]
+            params.data[thisGroupCol.getColDef().field as keyof IOlympicDataWithId]
         );
     },
     autoGroupColumnDef: {
-        headerCheckboxSelection: true,
         field: 'athlete',
         flex: 1,
         minWidth: 240,
-        cellRendererParams: {
-            checkbox: true,
-        },
     },
     rowGroupPanelShow: 'always',
 
     // use the server-side row model
     rowModelType: 'serverSide',
 
-    // allow multiple row selections
-    rowSelection: 'multiple',
+    selection: {
+        mode: 'multiRow',
+        suppressClickSelection: true,
+        selectAll: 'all',
+    },
 
-    // restrict row selections via checkbox selection
-    suppressRowClickSelection: true,
+    groupDefaultExpanded: -1,
 
     suppressAggFuncInHeader: true,
 };
@@ -111,3 +102,11 @@ document.addEventListener('DOMContentLoaded', function () {
             gridApi!.setGridOption('serverSideDatasource', datasource);
         });
 });
+
+function onSelectAllChanged() {
+    gridApi.setGridOption('selection', {
+        mode: 'multiRow',
+        suppressClickSelection: true,
+        selectAll: document.querySelector<HTMLSelectElement>('#input-select-all')!.value as any,
+    });
+}

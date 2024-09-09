@@ -165,6 +165,7 @@ export class PropertyKeys {
         'localeText',
         'icons',
         'datasource',
+        'dragAndDropImageComponentParams',
         'serverSideDatasource',
         'viewportDatasource',
         'groupRowRendererParams',
@@ -183,6 +184,7 @@ export class PropertyKeys {
         'popupParent',
         'statusBar',
         'sideBar',
+        'theme',
         'chartThemeOverrides',
         'customChartThemes',
         'chartToolPanelsDef',
@@ -192,6 +194,8 @@ export class PropertyKeys {
         'advancedFilterBuilderParams',
         'initialState',
         'autoSizeStrategy',
+        'selection',
+        'controlsColDef',
     ];
 
     public static ARRAY_PROPERTIES: KeysOfType<any[]>[] = [
@@ -388,6 +392,7 @@ export class PropertyKeys {
         'suppressServerSideFullWidthLoadingRow',
         'suppressAdvancedFilterEval',
         'loading',
+        'loadThemeGoogleFonts',
     ];
 
     // If property does not fit above, i.e union that should not be coerced.

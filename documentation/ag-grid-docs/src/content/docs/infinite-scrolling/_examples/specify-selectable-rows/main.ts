@@ -33,7 +33,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         },
         { field: 'athlete', minWidth: 200 },
         { field: 'age' },
-        { field: 'country', minWidth: 200, checkboxSelection: true },
+        { field: 'country', minWidth: 200 },
         { field: 'year' },
         { field: 'date', minWidth: 150 },
         { field: 'sport', minWidth: 150 },
@@ -48,10 +48,13 @@ const gridOptions: GridOptions<IOlympicData> = {
         sortable: false,
     },
     rowBuffer: 0,
-    // debug: true,
-    rowSelection: 'multiple',
-    isRowSelectable: (rowNode: IRowNode) => {
-        return rowNode.data ? rowNode.data.country === 'United States' : false;
+    selection: {
+        mode: 'multiRow',
+        hideDisabledCheckboxes: true,
+        headerCheckbox: false,
+        isRowSelectable: (rowNode: IRowNode) => {
+            return rowNode.data ? rowNode.data.country === 'United States' : false;
+        },
     },
     // tell grid we want virtual row model type
     rowModelType: 'infinite',

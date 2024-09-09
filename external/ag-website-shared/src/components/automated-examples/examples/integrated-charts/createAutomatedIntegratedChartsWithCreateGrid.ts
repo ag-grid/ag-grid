@@ -137,7 +137,7 @@ const gridOptions: GridOptions = {
         },
     },
     enableCharts: true,
-    enableRangeSelection: true,
+    selection: { mode: 'cell' },
     suppressAggFuncInHeader: true,
     rowGroupPanelShow: 'always',
     chartToolPanelsDef: {

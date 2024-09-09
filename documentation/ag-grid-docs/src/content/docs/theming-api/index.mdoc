@@ -1,0 +1,124 @@
+---
+title: "Theming API"
+description: "The Theming API provides control over the styling of the grid and its components"
+---
+
+Control the look and feel of the grid
+
+### Simple example
+
+Every grid must have a theme. You can import one of the built-in themes from our NPM packages and provide it as a grid option. Where to import the themes from depends on how your build is set up:
+
+* If using [modules](./modules/), import themes from `@ag-grid-community/theming`
+* If using our all-in-one packages like `ag-grid-community` and `ag-grid-charts-enterprise`, import themes from that package
+{% if isFramework("javascript") %}
+* If using the browser-ready UMD bundle without a build step, themes are available from the global `agGrid` object.
+{% /if %}
+
+```js
+import { themeQuartz } from '@ag-grid-community/theming';
+
+{% if isFramework("javascript") %}
+const gridOptions = {
+    theme: themeQuartz,
+    ...
+}
+
+// Or for UMD bundle users:
+const gridOptions = {
+    theme: agGrid.themeQuartz,
+    ...
+}
+{% /if %}
+{% if isFramework("react") %}
+<AgGridReact
+    theme={theme}
+    ...
+/>
+{% /if %}
+{% if isFramework("vue") %}
+// in template
+<ag-grid-vue
+    :theme="theme"
+    ...
+></ag-grid-vue>
+
+// in component setup hook
+setup() {
+    return {
+        theme: themeQuartz,
+        ...
+    };
+}
+{% /if %}
+{% if isFramework("angular") %}
+// in template
+<ag-grid-angular
+    [theme]="theme"
+/>
+
+// in component class
+public theme = themeQuartz;
+{% /if %}
+```
+
+
+{% gridExampleRunner title="Theming API" name="basic" /%}
+
+### Combining parts of multiple themes
+
+To change the color scheme or mix and match different elements of built-in themes, import parts and call `theme.with(...)`:
+
+```
+import { themeQuartz, iconSetMaterial } from '@ag-grid-community/theming';
+
+// themes are immutable, with() returns a new theme
+const quartzWithMaterialIcons = themeQuartz.with(iconSetMaterial);
+```
+
+{% gridExampleRunner title="Theming API" name="configuring-theme-parts" /%}
+
+### Setting parameters using CSS custom properties
+
+Themes have many parameters that can be changed using CSS custom properties (variables).
+
+```js
+import { applyCustomProperties } from '@ag-grid-community/theming';
+
+applyCustomProperties({ accentColor: 'red' }, document.body);
+// equivalent to document.body.style.setProperty('--ag-accent-color', 'red');
+```
+
+This utility method provides typescript type checking and validation of the parameters, but since it's just setting CSS custom properties, you can also do this directly in your application's CSS:
+
+```css
+body {
+    /* CSS property names have the --ag- prefix and are kebab-case */
+    --ag-accent-color: red;
+}
+```
+
+### Adjusting the default values for theme parameters
+
+The `theme.overrideParams` method generates a new theme with different default values for its params.
+
+```js
+import { themeQuartz } from '@ag-grid-community/theming';
+
+const redQuartz = themeQuartz.overrideParams({ accentColor: 'red' });
+```
+
+{% note %}
+Changing the theme of a running grid is a slower operation than setting custom properties. Where possible cache generated themes in global variables, and use custom properties when you are making changes rapidly e.g. animating a color change.
+{% /note %}
+
+### Multiple grids
+
+Each grid on the page can have its own theme. In the example below, 3 themes are used by 4 grids. The bottom two grids share a theme (Balham) and use CSS custom properties to achieve different header colours:
+
+{% if isFramework("react") %}
+_(NOTE: the checkboxes are a temporary testing feature - a theme's CSS should be removed from the document head when no grids are using the theme)_
+{% /if %}
+
+{% gridExampleRunner title="Theming API" name="multiple-grids" /%}
+

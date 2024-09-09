@@ -27,7 +27,7 @@ export { ColumnSizeService, IColumnLimit, ISizeColumnsToFitParams } from './colu
 export { ColumnKeyCreator } from './columns/columnKeyCreator';
 export { VisibleColsService } from './columns/visibleColsService';
 export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
-export { GROUP_AUTO_COLUMN_ID } from './columns/columnUtils';
+export { GROUP_AUTO_COLUMN_ID, isColumnControlsCol, isColumnGroupAutoCol } from './columns/columnUtils';
 export { IAutoColService } from './interfaces/iAutoColService';
 export {
     SizeColumnsToFitGridColumnLimits,
@@ -384,7 +384,11 @@ export {
     ILoadingOverlay,
 } from './rendering/overlays/loadingOverlayComponent';
 export { INoRowsOverlayComp, INoRowsOverlayParams, INoRowsOverlay } from './rendering/overlays/noRowsOverlayComponent';
-export { IDragAndDropImageComp, IDragAndDropImageParams } from './dragAndDrop/dragAndDropImageComponent';
+export {
+    IDragAndDropImageComponent,
+    IDragAndDropImage,
+    IDragAndDropImageParams,
+} from './dragAndDrop/dragAndDropImageComponent';
 export { OverlayWrapperComponent } from './rendering/overlays/overlayWrapperComponent';
 
 // features
@@ -622,6 +626,15 @@ export {
     _getGroupAggFiltering,
     _isRowSelection,
     _isGetRowHeightFunction,
+    _getGroupSelection,
+    _getGroupSelectsDescendants,
+    _getIsRowSelectable,
+    _getHeaderCheckbox,
+    _isMultiRowSelection,
+    _getFillHandle,
+    _isCellSelectionEnabled,
+    _getSuppressMultiRanges,
+    _getRowSelectionMode,
 } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
 export { EventService } from './eventService';
@@ -754,6 +767,14 @@ export {
 export { DataTypeService } from './columns/dataTypeService';
 export {
     GridOptions,
+    SelectionOptions,
+    GroupSelectionMode,
+    SelectAllMode,
+    ControlsColDef,
+    CellSelectionOptions,
+    RowSelectionOptions,
+    GridTheme,
+    GridThemeUseArgs,
     IsApplyServerSideTransaction,
     GetContextMenuItems,
     GetDataPath,

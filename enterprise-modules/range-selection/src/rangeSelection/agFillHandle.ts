@@ -11,9 +11,8 @@ import type {
     RowPosition,
     ValueService,
     VisibleColsService,
-    WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { SelectionHandleType, _last, _toStringOrNull, _warnOnce } from '@ag-grid-community/core';
+import { SelectionHandleType, _getFillHandle, _last, _toStringOrNull, _warnOnce } from '@ag-grid-community/core';
 
 import { AbstractSelectionHandle } from './abstractSelectionHandle';
 import { findLineByLeastSquares } from './utils';
@@ -169,7 +168,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     }
 
     private getFillHandleDirection(): 'x' | 'y' | 'xy' {
-        const direction = this.gos.get('fillHandleDirection');
+        const direction = _getFillHandle(this.gos)?.direction;
 
         if (!direction) {
             return 'xy';
@@ -192,7 +191,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
         // if the range is being reduced in size, all we need to do is
         // clear the cells that are no longer part of the range
-        if (this.isReduce && !this.gos.get('suppressClearOnFillReduction')) {
+        if (this.isReduce && !_getFillHandle(this.gos)?.suppressClearOnFillReduction) {
             const columns = (
                 isVertical
                     ? initialRange.columns
@@ -362,7 +361,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         const { event, values, initialValues, initialNonAggregatedValues, initialFormattedValues, col, rowNode, idx } =
             params;
 
-        const userFillOperation = this.gos.getCallback('fillOperation');
+        const userFillOperation = _getFillHandle(this.gos)?.setFillValue;
         const isVertical = this.dragAxis === 'y';
         let direction: 'up' | 'down' | 'left' | 'right';
 
@@ -373,7 +372,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         if (userFillOperation) {
-            const params: WithoutGridCommon<FillOperationParams> = {
+            const params = this.gos.addGridCommonParams<FillOperationParams>({
                 event,
                 values: values.map(({ value }) => value),
                 initialValues,
@@ -384,7 +383,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 direction,
                 column: col,
                 rowNode: rowNode,
-            };
+            });
             const userResult = userFillOperation(params);
             if (userResult !== false) {
                 return { value: userResult, fromUserFunction: true };

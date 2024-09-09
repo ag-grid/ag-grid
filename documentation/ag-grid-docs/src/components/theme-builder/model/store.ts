@@ -1,4 +1,4 @@
-import { VERSION } from '@ag-grid-community/theming';
+import { VERSION } from 'ag-charts-community';
 import { createStore } from 'jotai';
 
 import { STORAGE_KEY_PREFIX, atomWithJSONStorage } from './JSONStorage';

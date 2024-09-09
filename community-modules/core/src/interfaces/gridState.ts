@@ -10,7 +10,7 @@ export interface FilterState {
     advancedFilterModel?: AdvancedFilterModel;
 }
 
-export interface RangeSelectionCellState {
+export interface CellSelectionCellState {
     id?: string;
     type?: CellRangeType;
     /** The start row of the range */
@@ -23,6 +23,14 @@ export interface RangeSelectionCellState {
     startColId: string;
 }
 
+/** @deprecated v32.2 Use `CellSelectionCellState` instead. */
+export interface RangeSelectionCellState extends CellSelectionCellState {}
+
+export interface CellSelectionState {
+    cellRanges: CellSelectionCellState[];
+}
+
+/** @deprecated v32.2 Use `CellSelectionState` instead. */
 export interface RangeSelectionState {
     cellRanges: RangeSelectionCellState[];
 }
@@ -122,6 +130,8 @@ export interface RowGroupExpansionState {
 }
 
 export interface GridState {
+    /** Grid version number */
+    version?: string;
     /** Includes aggregation functions (column state) */
     aggregation?: AggregationState;
     /** Includes opened groups */
@@ -143,6 +153,11 @@ export interface GridState {
     /** Includes current pivot mode and pivot columns (column state) */
     pivot?: PivotState;
     /** Includes currently selected cell ranges */
+    cellSelection?: CellSelectionState;
+    /**
+     * Includes currently selected cell ranges
+     * @deprecated v32.2 Use `cellSelection` instead.
+     */
     rangeSelection?: RangeSelectionState;
     /** Includes current row group columns (column state) */
     rowGroup?: RowGroupState;

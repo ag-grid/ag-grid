@@ -77,6 +77,13 @@ function setItemVisible(id, visible) {
     element.style.display = visible ? 'inline' : 'none';
 }
 
+const selection = {
+    mode: 'multiRow',
+    groupSelects: 'descendants',
+    headerCheckbox: false,
+    suppressClickSelection: true,
+};
+
 const GridExample = () => {
     const gridRef = useRef(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -224,8 +231,7 @@ const GridExample = () => {
                             rowData={rowData}
                             columnDefs={columnDefs}
                             defaultColDef={defaultColDef}
-                            rowSelection={'multiple'}
-                            enableRangeSelection={true}
+                            selection={selection}
                             autoGroupColumnDef={autoGroupColumnDef}
                             statusBar={statusBar}
                             groupDefaultExpanded={1}

@@ -19,6 +19,9 @@ import type {
     CellMouseDownEvent,
     CellMouseOutEvent,
     CellMouseOverEvent,
+    CellSelectionChangedEvent,
+    CellSelectionDeleteEndEvent,
+    CellSelectionDeleteStartEvent,
     CellValueChangedEvent,
     ChartCreatedEvent,
     ChartDestroyedEvent,
@@ -163,7 +166,7 @@ import type { MenuItemDef } from '../interfaces/menuItem';
 import type { ILoadingCellRendererParams } from '../rendering/cellRenderers/loadingCellRenderer';
 import type { IRowDragItem } from '../rendering/row/rowDragComp';
 import type { CellPosition } from './cellPositionUtils';
-import type { ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
+import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
 
 export interface GridOptions<TData = any> {
@@ -280,11 +283,13 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows.
      * @default false
+     * @deprecated v32.2 Use `selection.copySelectedRows` instead.
      */
     suppressCopyRowsToClipboard?: boolean;
     /**
      * Set to `true` to copy rows instead of ranges when a range with only a single cell is selected.
      * @default false
+     * @deprecated v32.2 Use `selection.copySelectedRows` instead.
      */
     suppressCopySingleCellRanges?: boolean;
     /**
@@ -702,6 +707,10 @@ export interface GridOptions<TData = any> {
      */
     dragAndDropImageComponent?: any;
     /**
+     * Customise the parameters provided to the Drag and Drop Image Component.
+     */
+    dragAndDropImageComponentParams?: any;
+    /**
      *
      * A list of grids to treat as Aligned Grids.
      * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
@@ -944,7 +953,6 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to omit the value Column header when there is only a single value column.
      * @default false
-     * @initial
      */
     removePivotHeaderRowWhenSingleValueColumn?: boolean;
     // *** Rendering *** //
@@ -1111,6 +1119,7 @@ export interface GridOptions<TData = any> {
     /**
      * When `true`, if you select a group, the children of the group will also be selected.
      * @default false
+     * @deprecated v32.1 Use `selection.groupSelects` instead
      */
     groupSelectsChildren?: boolean;
     /**
@@ -1169,6 +1178,7 @@ export interface GridOptions<TData = any> {
     /**
      * If using `groupSelectsChildren`, then only the children that pass the current filter will get selected.
      * @default false
+     * @deprecated v32.1 Use `selection.groupSelects` instead
      */
     groupSelectsFiltered?: boolean;
     /**
@@ -1449,21 +1459,25 @@ export interface GridOptions<TData = any> {
     // *** Selection *** //
     /**
      * Type of Row Selection: `single`, `multiple`.
+     * @deprecated v32.1 Instead, set `selection.mode` to `'singleRow'` or `'multiRow'`
      */
     rowSelection?: 'single' | 'multiple';
     /**
      * Set to `true` to allow multiple rows to be selected using single click.
      * @default false
+     * @deprecated v32.1 Use `selection.enableMultiSelectWithClick` instead
      */
     rowMultiSelectWithClick?: boolean;
     /**
      * If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
      * @default false
+     * @deprecated v32.1 Use `selection.suppressDeselection` instead
      */
     suppressRowDeselection?: boolean;
     /**
      * If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.
      * @default false
+     * @deprecated v32.1 Use `selection.suppressClickSelection` instead
      */
     suppressRowClickSelection?: boolean;
     /**
@@ -1476,10 +1490,21 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     suppressHeaderFocus?: boolean;
+    /**
+     * Selection options object representing the new selection API. If this value is set all other selection related grid options will be ignored.
+     */
+    selection?: SelectionOptions;
+    /**
+     * Configure the control column, used for displaying checkboxes.
+     *
+     * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features such as editing, pivoting and grouping.
+     */
+    controlsColDef?: ControlsColDef;
 
     /**
      * If `true`, only a single range can be selected.
      * @default false
+     * @deprecated v32.1 Use `selection.suppressMultiRanges` instead
      */
     suppressMultiRangeSelection?: boolean;
     /**
@@ -1492,26 +1517,31 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to enable Range Selection.
      * @default false
+     * @deprecated v32.1 Use `selection.mode = 'cell'` instead
      */
     enableRangeSelection?: boolean;
     /**
      * Set to `true` to enable the Range Handle.
      * @default false
+     * @deprecated v32.1 Use `selection.handle` instead
      */
     enableRangeHandle?: boolean;
     /**
      * Set to `true` to enable the Fill Handle.
      * @default false
+     * @deprecated v32.1 Use `selection.handle` instead
      */
     enableFillHandle?: boolean;
     /**
      * Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical.
      * @default 'xy'
+     * @deprecated v32.1 Use `selection.handle.direction` instead
      */
     fillHandleDirection?: 'x' | 'y' | 'xy';
     /**
      * Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle.
      * @default false
+     * @deprecated v32.1 Use `selection.suppressClearOnFillReduction` instead
      */
     suppressClearOnFillReduction?: boolean;
 
@@ -1627,6 +1657,20 @@ export interface GridOptions<TData = any> {
      * @default true
      */
     reactiveCustomComponents?: boolean;
+
+    /**
+     * Theme to apply to the grid.
+     */
+    theme?: GridTheme;
+
+    /**
+     * Whether to load supported theme fonts from the Google Fonts server.
+     *
+     * - `true` -> load fonts automatically if your theme uses them
+     * - `false` -> do not load fonts, you must either load them from Google Fonts
+     *   yourself or download them and serve them from your app
+     */
+    loadThemeGoogleFonts?: boolean;
 
     // *****************************************************************************************************
     // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
@@ -1766,11 +1810,11 @@ export interface GridOptions<TData = any> {
      */
     initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams<TData>) => number;
     /**
-     * Callback to be used with pivoting, to allow changing the second column definition.
+     * Callback for the mutation of the generated pivot result column definitions
      */
     processPivotResultColDef?: (colDef: ColDef<TData>) => void;
     /**
-     * Callback to be used with pivoting, to allow changing the second column group definition.
+     * Callback for the mutation of the generated pivot result column group definitions
      */
     processPivotResultColGroupDef?: (colGroupDef: ColGroupDef<TData>) => void;
     /**
@@ -1829,6 +1873,7 @@ export interface GridOptions<TData = any> {
     processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
     /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
+     * @deprecated v32.1 Use `selection.isRowSelectable` instead
      */
     isRowSelectable?: IsRowSelectable<TData>;
     /**
@@ -2037,11 +2082,23 @@ export interface GridOptions<TData = any> {
      */
     onRedoEnded?(event: RedoEndedEvent<TData>): void;
     /**
+     * Cell selection delete operation (cell clear) has started.
+     */
+    onCellSelectionDeleteStart?(event: CellSelectionDeleteStartEvent<TData>): void;
+    /**
+     * Cell selection delete operation (cell clear) has ended.
+     */
+    onCellSelectionDeleteEnd?(event: CellSelectionDeleteEndEvent<TData>): void;
+    /**
      * Range delete operation (cell clear) has started.
+     *
+     * @deprecated v32.2 Use `onCellSelectionDeleteStart` instead
      */
     onRangeDeleteStart?(event: RangeDeleteStartEvent<TData>): void;
     /**
      * Range delete operation (cell clear) has ended.
+     *
+     * @deprecated v32.2 Use `onCellSelectionDeleteEnd` instead
      */
     onRangeDeleteEnd?(event: RangeDeleteEndEvent<TData>): void;
 
@@ -2275,8 +2332,14 @@ export interface GridOptions<TData = any> {
     onCellContextMenu?(event: CellContextMenuEvent<TData>): void;
     /**
      * A change to range selection has occurred.
+     *
+     * @deprecated v32.2 Use `onCellSelectionChanged` instead
      */
     onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData>): void;
+    /**
+     * A change to cell selection has occurred.
+     */
+    onCellSelectionChanged?(event: CellSelectionChangedEvent<TData>): void;
 
     /**
      * A tooltip has been displayed */
@@ -2354,6 +2417,28 @@ export interface RowClassParams<TData = any, TContext = any> extends AgGridCommo
     /**
      * The index of the row */
     rowIndex: number;
+}
+
+export type GridThemeUseArgs = {
+    loadThemeGoogleFonts: boolean | undefined;
+    container: HTMLElement;
+};
+
+export interface GridTheme {
+    /**
+     * Called by a grid instance when it starts using the theme.
+     */
+    startUse(args: GridThemeUseArgs): void;
+
+    /**
+     * Called by a grid instance when it stops using the theme.
+     */
+    stopUse(): void;
+
+    /**
+     * CSS class to be applied to the grid wrapper element in order to apply the theme.
+     */
+    getCssClass(): string;
 }
 
 export interface GetContextMenuItems<TData = any, TContext = any> {
@@ -2441,3 +2526,195 @@ export interface LoadingCellRendererSelectorResult {
 }
 
 export type DomLayoutType = 'normal' | 'autoHeight' | 'print';
+
+/** Configuration options for selection */
+export type SelectionOptions<TData = any, TValue = any> =
+    | RowSelectionOptions<TData, TValue>
+    | CellSelectionOptions<TData>;
+
+/** Cell selection options */
+export interface CellSelectionOptions<TData = any> {
+    mode: 'cell';
+    /**
+     * If `true`, only a single range can be selected
+     * @default false
+     */
+    suppressMultiRanges?: boolean;
+    /**
+     * Determine the selection handle behaviour. Can be used to configure the range handle and the fill handle.
+     * Set to `true` to enable the range handle with default configuration.
+     */
+    handle?: boolean | RangeHandleOptions | FillHandleOptions<TData>;
+}
+
+/**
+ * Configuration options for the range handle
+ */
+export interface RangeHandleOptions {
+    mode: 'range';
+}
+
+/**
+ * Configuration options for the fill handle
+ */
+export interface FillHandleOptions<TData = any> {
+    mode: 'fill';
+    /**
+     * Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle.
+     * @default false
+     */
+    suppressClearOnFillReduction?: boolean;
+    /**
+     * Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical.
+     * @default 'xy'
+     */
+    direction?: 'x' | 'y' | 'xy';
+    /**
+     * Callback to fill values instead of simply copying values or increasing number values using linear progression.
+     */
+    setFillValue?: <TContext = any>(params: FillOperationParams<TData, TContext>) => any;
+}
+
+export type RowSelectionOptions<TData = any, TValue = any> =
+    | SingleRowSelectionOptions<TData, TValue>
+    | MultiRowSelectionOptions<TData>;
+
+interface CommonRowSelectionOptions<TData = any, TValue = any> {
+    /**
+     * Modifies the selection behaviour when clicking a row, or pressing `Space` while focusing a row.
+     * @default false
+     */
+    suppressClickSelection?: boolean | 'suppressDeselection' | 'suppressSelection';
+    /**
+     * Set to `true` or return `true` from the callback to render a selection checkbox.
+     * @default false
+     */
+    checkboxes?: boolean | CheckboxSelectionCallback<TData, TValue>;
+    /**
+     * Set to `true` to hide a disabled checkbox when row is not selectable and checkboxes are enabled.
+     * @default false
+     */
+    hideDisabledCheckboxes?: boolean;
+    /**
+     * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
+     */
+    isRowSelectable?: IsRowSelectable<TData>;
+    /**
+     * When enabled and a row is selected, the copy action should copy the entire row, rather than just the focused cell
+     */
+    copySelectedRows?: boolean;
+}
+
+/**
+ * Determines selection behaviour when only a single row can be selected at a time
+ */
+export interface SingleRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData, TValue> {
+    mode: 'singleRow';
+}
+
+/**
+ * Determines selection behaviour when multiple rows can be selected at once.
+ */
+export interface MultiRowSelectionOptions<TData = any> extends CommonRowSelectionOptions<TData> {
+    mode: 'multiRow';
+    /**
+     * Determine group selection behaviour
+     * @default 'self'
+     */
+    groupSelects?: GroupSelectionMode;
+    /**
+     * Determines how "select all" behaviour works. This controls header checkbox selection.
+     * @default 'all'
+     */
+    selectAll?: SelectAllMode;
+    /**
+     * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
+     * @default false
+     */
+    headerCheckbox?: boolean;
+    /**
+     * Set to `true` to allow multiple rows to be selected using single click.
+     * @default false
+     */
+    enableMultiSelectWithClick?: boolean;
+}
+
+/** Subset of ColDef allowing for customisation of the Controls column, currently used for checkbox selection */
+export type ControlsColDef = Pick<
+    ColDef,
+    | 'icons'
+    | 'suppressNavigable'
+    | 'suppressKeyboardEvent'
+    | 'contextMenuItems'
+    | 'context'
+    | 'onCellClicked'
+    | 'onCellContextMenu'
+    | 'onCellDoubleClicked'
+    | 'onCellValueChanged'
+    | 'headerTooltip'
+    | 'headerClass'
+    | 'headerComponent'
+    | 'headerComponentParams'
+    | 'mainMenuItems'
+    | 'suppressHeaderContextMenu'
+    | 'suppressHeaderMenuButton'
+    | 'suppressHeaderKeyboardEvent'
+    | 'pinned'
+    | 'lockPinned'
+    | 'initialPinned'
+    | 'cellAriaRole'
+    | 'cellStyle'
+    | 'cellClass'
+    | 'cellClassRules'
+    | 'cellRenderer'
+    | 'cellRendererParams'
+    | 'cellRendererSelector'
+    | 'rowDrag'
+    | 'rowDragText'
+    | 'dndSource'
+    | 'dndSourceOnRowDrag'
+    | 'sortable'
+    | 'sort'
+    | 'initialSort'
+    | 'sortIndex'
+    | 'initialSortIndex'
+    | 'sortingOrder'
+    | 'unSortIcon'
+    | 'tooltipField'
+    | 'tooltipValueGetter'
+    | 'tooltipComponent'
+    | 'tooltipComponentParams'
+    | 'width'
+    | 'initialWidth'
+    | 'maxWidth'
+    | 'minWidth'
+    | 'flex'
+    | 'initialFlex'
+    | 'resizable'
+    | 'suppressSizeToFit'
+    | 'suppressAutoSize'
+>;
+
+/**
+ * Determines the behaviour when selecting a group row.
+ *
+ * - When `'self'`, selects only the group row itself.
+ * - When `'descendants'`, selecting a group row selects all its child rows.
+ * - When `'filteredDescendants'`, selecting a group row selects all child rows that satisfy the currently active filter.
+ */
+export type GroupSelectionMode = 'self' | 'descendants' | 'filteredDescendants';
+
+/**
+ * Determines how "select all" behaviour works.
+ *
+ * - When `'all'`, selects all rows, regardless of filter and pagination settings.
+ * - When `'filtered'`, selects all rows that satisfy the currently active filter.
+ * - When `'currentPage'`, selects all rows that satisfy the currently active filter on the current page.
+ */
+export type SelectAllMode =
+    /** selects all rows, regardless of filter and pagination settings */
+    | 'all'
+    /** selects all rows that satisfy the currently active filter */
+    | 'filtered'
+    /** selects all rows that satisfy the currently active filter on the current page */
+    | 'currentPage';

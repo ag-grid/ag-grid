@@ -93,14 +93,19 @@ export class ColumnFactory extends BeanStub implements NamedBean {
         return { existingCols, existingGroups, existingColKeys };
     }
 
-    public createForAutoGroups(
-        autoGroupCols: AgColumn[],
+    /**
+     * Inserts dummy group columns in the hierarchy above auto-generated columns
+     * in order to ensure auto-generated columns are leaf nodes (and therefore are
+     * displayed correctly)
+     */
+    public balanceTreeForAutoCols(
+        autoCols: AgColumn[],
         liveTree: (AgColumn | AgProvidedColumnGroup)[]
     ): [(AgColumn | AgProvidedColumnGroup)[], number] {
         const tree: (AgColumn | AgProvidedColumnGroup)[] = [];
         const dept = this.findDepth(liveTree);
 
-        autoGroupCols.forEach((col) => {
+        autoCols.forEach((col) => {
             // at the end, this will be the top of the tree item.
             let nextChild: AgColumn | AgProvidedColumnGroup = col;
 

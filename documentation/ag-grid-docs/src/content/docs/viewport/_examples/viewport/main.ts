@@ -1,6 +1,5 @@
 import {
     ColDef,
-    GetRowIdParams,
     GridApi,
     GridOptions,
     ICellRendererComp,
@@ -22,7 +21,7 @@ class RowIndexRenderer implements ICellRendererComp {
         this.eGui = document.createElement('div');
         this.eGui.textContent = '' + params.node.rowIndex;
     }
-    refresh(params: ICellRendererParams): boolean {
+    refresh(): boolean {
         return false;
     }
     getGui(): HTMLElement {
@@ -73,10 +72,13 @@ const gridOptions: GridOptions = {
         minWidth: 140,
         sortable: false,
     },
-    rowSelection: 'multiple',
+    selection: {
+        mode: 'multiRow',
+        headerCheckbox: false,
+    },
     rowModelType: 'viewport',
     // implement this so that we can do selection
-    getRowId: (params: GetRowIdParams) => {
+    getRowId: (params) => {
         // the code is unique, so perfect for the id
         return params.data.code;
     },

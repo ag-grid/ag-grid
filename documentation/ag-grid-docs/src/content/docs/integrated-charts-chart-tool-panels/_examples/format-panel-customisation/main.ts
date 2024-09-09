@@ -20,7 +20,7 @@ const gridOptions: GridOptions = {
     ],
     defaultColDef: { flex: 1 },
     popupParent: document.body,
-    enableRangeSelection: true,
+    selection: { mode: 'cell' },
     enableCharts: true,
     chartToolPanelsDef: {
         defaultToolPanel: 'format',

@@ -161,24 +161,9 @@
         "setPivotColumns": {},
         "addPivotColumns": {},
         "removePivotColumns": {},
-        "getPivotResultColumn": {
-            "more": {
-                "name": "Looking up Pivot Result Columns",
-                "url": "./pivoting/#looking-up-pivot-result-columns"
-            }
-        },
-        "setPivotResultColumns": {
-            "more": {
-                "name": "Creating Pivot Result Columns",
-                "url": "./server-side-model-pivoting/#creating-pivot-result-columns-advanced"
-            }
-        },
-        "getPivotResultColumns": {
-            "more": {
-                "name": "Columns vs Pivot Result Columns",
-                "url": "./pivoting/#columns-vs-pivot-result-columns"
-            }
-        }
+        "getPivotResultColumn": {},
+        "setPivotResultColumns": {},
+        "getPivotResultColumns": {}
     },
     "pinned": {
         "meta": {
@@ -312,19 +297,19 @@
         "getCellRanges": {
             "more": {
                 "name": "getCellRanges",
-                "url": "./range-selection/#getcellranges"
+                "url": "./cell-selection/#reference--getCellRanges"
             }
         },
         "addCellRange": {
             "more": {
                 "name": "addCellRange",
-                "url": "./range-selection/#addcellrangerangeselection"
+                "url": "./cell-selection/#reference--addCellRange"
             }
         },
-        "clearRangeSelection": {
+        "clearCellSelection": {
             "more": {
-                "name": "clearRangeSelection",
-                "url": "./range-selection/#clearrangeselection"
+                "name": "clearCellSelection",
+                "url": "./cell-selection/#reference--clearCellSelection"
             }
         }
     },
@@ -1151,13 +1136,13 @@
         "getServerSideSelectionState": {
             "more": {
                 "name": "Selection",
-                "url": "./server-side-model-selection/#api-selection"
+                "url": "./server-side-model-selection/#api-reference"
             }
         },
         "setServerSideSelectionState": {
             "more": {
                 "name": "Selection",
-                "url": "./server-side-model-selection/#api-selection"
+                "url": "./server-side-model-selection/#api-reference"
             }
         },
         "getCacheBlockState": {

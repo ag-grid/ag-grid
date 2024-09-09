@@ -47,12 +47,12 @@ const gridOptions: GridOptions<IAccount> = {
         },
 
         detailGridOptions: {
-            rowSelection: 'multiple',
+            selection: { mode: 'multiRow', headerCheckbox: false, checkboxes: true },
             getRowId: (params: GetRowIdParams) => {
                 return String(params.data.callId);
             },
             columnDefs: [
-                { field: 'callId', checkboxSelection: true },
+                { field: 'callId' },
                 { field: 'direction' },
                 { field: 'number', minWidth: 150 },
                 { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },

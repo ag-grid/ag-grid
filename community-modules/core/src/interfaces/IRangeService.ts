@@ -57,6 +57,7 @@ export enum CellRangeType {
     DIMENSION,
 }
 
+/** Describes a single range of cells */
 export interface CellRange {
     id?: string;
     type?: CellRangeType;
@@ -94,8 +95,8 @@ export interface ClearCellRangeParams {
     cellRanges?: CellRange[];
     /** Source passed to `cellValueChanged` event */
     cellEventSource?: string;
-    /** `true` to dispatch `rangeDeleteStart` and `rangeDeleteEnd` events */
+    /** `true` to dispatch `cellSelectionDeleteStart` and `cellSelectionDeleteEnd` events */
     dispatchWrapperEvents?: boolean;
-    /** Source passed to `rangeDeleteStart` and `rangeDeleteEnd` events */
+    /** Source passed to `cellSelectionDeleteStart` and `cellSelectionDeleteEnd` events */
     wrapperEventSource?: 'deleteKey';
 }

@@ -932,10 +932,10 @@ export interface _RowGroupingGridApi<TData> {
     /** Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function. */
     setColumnAggFunc(key: string | ColDef | Column, aggFunc: string | IAggFunc | null | undefined): void;
 
-    /** Get the pivot mode. */
+    /** Returns whether pivot mode is currently active. */
     isPivotMode(): boolean;
 
-    /** Returns the pivot result column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */
+    /** Returns the pivot result column for the given `pivotKeys` and `valueColId`. */
     getPivotResultColumn<TValue = any>(
         pivotKeys: string[],
         valueColKey: string | ColDef<TData, TValue> | Column<TValue>
@@ -980,25 +980,25 @@ export interface _RowGroupingGridApi<TData> {
     /** Get row group columns. */
     getRowGroupColumns(): Column[];
 
-    /** Set the pivot columns. */
+    /** Set the columns for the grid to pivot on. */
     setPivotColumns(colKeys: (string | ColDef | Column)[]): void;
 
     /** @deprecated v31.1 removePivotColumn(colKey) deprecated, please use removePivotColumns([colKey]) instead. */
     removePivotColumn(colKey: string | ColDef | Column): void;
 
-    /** Remove pivot columns. */
+    /** Stops the grid from pivoting on the provided columns. */
     removePivotColumns(colKeys: (string | ColDef | Column)[]): void;
 
     /** @deprecated v31.1 addPivotColumn(colKey) deprecated, please use addPivotColumns([colKey]) instead. */
     addPivotColumn(colKey: string | ColDef | Column): void;
 
-    /** Add pivot columns. */
+    /** Add columns for the grid to pivot on. */
     addPivotColumns(colKeys: (string | ColDef | Column)[]): void;
 
-    /** Get the pivot columns. */
+    /** Get the columns which the grid is pivoting on. */
     getPivotColumns(): Column[];
 
-    /** Set the pivot result columns. */
+    /** Set explicit pivot column definitions yourself. Used for advanced use cases only. */
     setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[] | null): void;
 
     /** Returns the grid's pivot result columns. */
@@ -1006,30 +1006,45 @@ export interface _RowGroupingGridApi<TData> {
 }
 
 export interface _RangeSelectionGridApi {
-    /** Returns the list of selected cell ranges. */
+    /**
+     * Returns the list of selected cell ranges.
+     *
+     * The start is the first cell the user clicked on and the end is the cell where the user stopped dragging.
+     * Do not assume that the start cell's index is numerically before the end cell, as the user could have dragged up.
+     */
     getCellRanges(): CellRange[] | null;
 
-    /** Adds the provided cell range to the selected ranges. */
+    /**
+     * Adds the provided cell range to the selected ranges.
+     *
+     * This keeps any previous ranges. If you wish to only have the new range selected, then call `clearCellSelection()` first.
+     */
     addCellRange(params: CellRangeParams): void;
 
-    /** Clears the selected ranges. */
+    /**
+     * Clears the selected ranges.
+     * @deprecated v32.2 Use `clearCellSelection` instead
+     */
     clearRangeSelection(): void;
+
+    /** Clears the selected cell ranges. */
+    clearCellSelection(): void;
 }
 
 export interface _ServerSideRowModelGridApi {
     /**
      * Returns an object containing rules matching the selected rows in the SSRM.
      *
-     * If `groupSelectsChildren=false` the returned object will be flat, and will conform to `IServerSideSelectionState`.
-     * If `groupSelectsChildren=true` the returned object will be hierarchical, and will conform to `IServerSideGroupSelectionState`.
+     * If `selection.groupSelects` is `'self'` the returned object will be flat, and will conform to `IServerSideSelectionState`.
+     * If `selection.groupSelects` is `'descendants'` or `'filteredDescendants'` the returned object will be hierarchical, and will conform to `IServerSideGroupSelectionState`.
      */
     getServerSideSelectionState(): IServerSideSelectionState | IServerSideGroupSelectionState | null;
 
     /**
      * Set the rules matching the selected rows in the SSRM.
      *
-     * If `groupSelectsChildren=false` the param will be flat, and should conform to `IServerSideSelectionState`.
-     * If `groupSelectsChildren=true` the param will be hierarchical, and should conform to `IServerSideGroupSelectionState`.
+     * If `selection.groupSelects` is `'self'` the param will be flat, and should conform to `IServerSideSelectionState`.
+     * If `selection.groupSelects` is `'descendants'` or `'filteredDescendants'` the param will be hierarchical, and should conform to `IServerSideGroupSelectionState`.
      */
     setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
 

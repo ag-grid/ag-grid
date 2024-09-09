@@ -33,14 +33,6 @@ const leftColumns = [
             return params.rowNode.data.athlete;
         },
     },
-    {
-        colId: 'checkbox',
-        maxWidth: 50,
-        checkboxSelection: true,
-        suppressHeaderMenuButton: true,
-        suppressHeaderFilterButton: true,
-        headerCheckboxSelection: true,
-    },
     { field: 'athlete' },
     { field: 'sport' },
 ];
@@ -74,6 +66,11 @@ const defaultColDef = {
     filter: true,
 };
 
+const selection = {
+    mode: 'multiRow',
+    suppressClickSelection: true,
+};
+
 const GridExample = () => {
     const [leftApi, setLeftApi] = useState(null);
     const [rightApi, setRightApi] = useState(null);
@@ -81,7 +78,6 @@ const GridExample = () => {
     const [leftRowData, setLeftRowData] = useState(null);
     const [rightRowData, setRightRowData] = useState([]);
     const [radioChecked, setRadioChecked] = useState(0);
-    const [checkBoxSelected, setCheckBoxSelected] = useState(true);
 
     useEffect(() => {
         if (!rawData.length) {
@@ -115,26 +111,13 @@ const GridExample = () => {
         }
     }, [rawData, loadGrids]);
 
-    useEffect(() => {
-        if (leftApi) {
-            leftApi.setColumnsVisible(['checkbox'], checkBoxSelected);
-            leftApi.setGridOption('suppressRowClickSelection', checkBoxSelected);
-        }
-    }, [leftApi, checkBoxSelected]);
-
     const reset = () => {
         setRadioChecked(0);
-        setCheckBoxSelected(true);
         loadGrids();
     };
 
     const onRadioChange = (e) => {
         setRadioChecked(parseInt(e.target.value, 10));
-    };
-
-    const onCheckboxChange = (e) => {
-        const checked = e.target.checked;
-        setCheckBoxSelected(checked);
     };
 
     const getRowId = (params) => params.data.athlete;
@@ -187,8 +170,6 @@ const GridExample = () => {
                     <input type="radio" id="none" name="radio" value="2" checked={radioChecked === 2} />{' '}
                     <label htmlFor="none">None</label>
                 </div>
-                <input type="checkbox" id="toggleCheck" checked={checkBoxSelected} onChange={onCheckboxChange} />
-                <label htmlFor="toggleCheck">Checkbox Select</label>
                 <span className="input-group-button">
                     <button
                         type="button"
@@ -212,9 +193,8 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
-                    rowSelection={id === 0 ? 'multiple' : undefined}
+                    selection={id === 0 ? selection : undefined}
                     rowDragMultiRow={id === 0}
-                    suppressRowClickSelection={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
                     rowData={id === 0 ? leftRowData : rightRowData}
                     columnDefs={id === 0 ? leftColumns : rightColumns}

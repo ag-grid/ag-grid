@@ -197,12 +197,14 @@ const gridOptions: GridOptions = {
         filter: true,
     },
     getRowId: getRowId,
-    rowSelection: 'multiple',
-    groupSelectsChildren: true,
-    suppressRowClickSelection: true,
+    selection: {
+        mode: 'multiRow',
+        groupSelects: 'descendants',
+        suppressClickSelection: true,
+        headerCheckbox: false,
+    },
     autoGroupColumnDef: {
         field: 'name',
-        cellRendererParams: { checkbox: true },
     },
     onGridReady: (params) => {
         params.api.setFilterModel({

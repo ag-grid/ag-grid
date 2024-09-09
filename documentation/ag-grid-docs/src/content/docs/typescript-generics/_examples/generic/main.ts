@@ -46,9 +46,11 @@ let gridApi: GridApi<ICar>;
 
 // Pass ICar as generic row data type
 const gridOptions: GridOptions<ICar> = {
-    columnDefs: columnDefs,
-    rowData: rowData,
-    rowSelection: 'multiple',
+    columnDefs,
+    rowData,
+    selection: {
+        mode: 'multiRow',
+    },
     context: {
         discount: 0.9,
     } as IDiscountRate,

@@ -18,25 +18,25 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'country', rowGroup: true, enableRowGroup: true },
-        { field: 'year', pivot: true, enablePivot: true },
-        { field: 'date' },
-        { field: 'sport', enablePivot: true },
-        { field: 'gold', aggFunc: 'sum', enableValue: true },
-        { field: 'silver', enableValue: true },
-        { field: 'bronze', enableValue: true },
+        { field: 'country', rowGroup: true },
+        { field: 'sport', pivot: true },
+        { field: 'gold', aggFunc: 'sum' },
     ],
     defaultColDef: {
         flex: 1,
-        minWidth: 150,
+        minWidth: 130,
     },
     autoGroupColumnDef: {
         minWidth: 200,
     },
-    sideBar: 'columns',
     pivotMode: true,
     removePivotHeaderRowWhenSingleValueColumn: true,
 };
+
+function onCheckboxChanged() {
+    const checkbox = document.querySelector<HTMLInputElement>('#removePivotHeaderRowWhenSingleValueColumn')!;
+    gridApi.setGridOption('removePivotHeaderRowWhenSingleValueColumn', checkbox.checked);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

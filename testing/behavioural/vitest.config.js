@@ -2,7 +2,10 @@ import pluginReact from '@vitejs/plugin-react';
 import { existsSync } from 'fs';
 import { readFile, readdir } from 'fs/promises';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { defineConfig } from 'vitest/config';
+
+const workspaceRootPath = path.resolve(fileURLToPath(import.meta.url), '../../../');
 
 /** Resolve aliases */
 const resolveAlias = {};
@@ -48,9 +51,13 @@ async function loadSourceCodeAliases(modulesDirectories) {
                     if (existsSync(packageJsonPath)) {
                         const packageJson = JSON.parse(await readFile(packageJsonPath, 'utf-8'));
                         if (!(packageJson.name in resolveAlias)) {
-                            const mainTsPath = path.resolve(modulePath, dir.name, 'src/main.ts');
-                            if (existsSync(mainTsPath)) {
-                                resolveAlias[packageJson.name] = mainTsPath;
+                            const mainFiles = ['src/index.ts', 'src/index.tsx', 'src/main.ts', 'src/main.tsx'];
+                            for (const mainFile of mainFiles) {
+                                let mainTsPath = path.resolve(modulePath, dir.name, mainFile);
+                                if (existsSync(mainTsPath)) {
+                                    resolveAlias[packageJson.name] = mainTsPath;
+                                    break;
+                                }
                             }
                         }
                     } else if (level < 2) {
@@ -61,5 +68,8 @@ async function loadSourceCodeAliases(modulesDirectories) {
         }
         await Promise.all(promises);
     };
-    await Promise.all(modulesDirectories.map((name) => processSourceDirectory(name, 0)));
+
+    await Promise.all(
+        modulesDirectories.map((name) => processSourceDirectory(path.resolve(workspaceRootPath, name), 0))
+    );
 }
