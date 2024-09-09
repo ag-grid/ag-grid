@@ -646,10 +646,10 @@ const ExampleInner = ({ darkMode }) => {
             quickFilterText: null,
             autoGroupColumnDef: groupColumn,
             selection: {
-                mode: 'multiRow',
-                groupSelects: 'descendants',
-                selectAll: 'filtered',
-                suppressClickSelection: true,
+                mode: 'cell',
+                handle: {
+                    mode: 'fill',
+                },
             },
             sideBar: {
                 toolPanels: ['columns', 'filters'],
