@@ -14,6 +14,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'country', rowGroup: true },
         { field: 'sport', pivot: true },
         { field: 'gold', aggFunc: 'sum', cellStyle: { backgroundColor: '#f2e2879e' } },
+        { field: 'silver', aggFunc: 'sum', cellStyle: {} },
     ],
     defaultColDef: {
         flex: 1,

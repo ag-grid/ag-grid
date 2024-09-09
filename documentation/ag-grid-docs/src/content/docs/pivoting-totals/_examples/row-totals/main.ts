@@ -10,9 +10,10 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'country', rowGroup: true },
-        { field: 'sport', pivot: true },
         { field: 'year', pivot: true },
         { field: 'gold', aggFunc: 'sum' },
+        { field: 'silver', aggFunc: 'sum' },
+        { field: 'bronze', aggFunc: 'sum' },
     ],
     defaultColDef: {
         flex: 1,
@@ -22,6 +23,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 200,
     },
     pivotMode: true,
+    pivotRowTotals: 'before',
 };
 
 // setup the grid after the page has finished loading

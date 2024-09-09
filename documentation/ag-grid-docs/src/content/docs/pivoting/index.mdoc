@@ -6,7 +6,7 @@ enterprise: true
 Pivoting breaks down data in an additional dimension.
 
 Pivoting can be configured in the grid column definitions or can be applied using the grid API. Users can also configure pivoting through the UI
-using either the side bar or the pivot panel, as shown below:
+using either the [Side Bar](./pivoting/#using-the-side-bar) or the [Pivot Panel](./pivoting/#enabling-the-pivot-panel/), as shown below:
 
 {% gridExampleRunner title="Pivot Overview" name="pivot-overview" /%}
 
@@ -26,9 +26,10 @@ const gridOptions = {
 ```
 
 In the snippet above, the rows are [Grouped](./grouping) on the `Country` column and [Aggregated](./aggregation)
-to total the number of `Gold` medals won by each country. Pivoting is then applied to the `Sport`
-column values which generates a [Pivot Result Column](./pivoting-result-columns/) showing the total number of `Gold` medals won by each country in each sport,
-as seen in this example:
+to total the number of `Gold` medals won by each country. You must provide at least one aggregation column as only aggregated rows are shown when pivoting.
+
+Pivoting is then applied to the `Sport` column values which generates a [Pivot Result Column](./pivoting-result-columns/) 
+showing the total number of `Gold` medals won by each country in each sport, as seen in this example:
 
 {% gridExampleRunner title="Simple Example" name="simple" /%}
 
@@ -39,7 +40,7 @@ Pivoting is often controlled by end users rather than configured by developers. 
 
 ### Using the Side Bar
 
-The [Side Bar](./side-bar) is the most common control for pivoting as it allows users to toggle pivot mode (equivalent to the grid option `pivotMode`), as well as
+The [Side Bar](./side-bar) is the most common control for pivoting as it allows users to toggle pivot mode (equivalent to setting the grid option `pivotMode`), as well as
 setting the [Row Grouped](./grouping), [Aggregated](./aggregation) and pivoted columns via right click context menus or drag and drop.
 
 {% gridExampleRunner title="Side Bar" name="side-bar" /%}
@@ -88,3 +89,7 @@ const gridOptions = {
 Pivoting can be configured using the following grid properties:
 
 {% apiDocumentation source="grid-api/api.json" section="Pivoting" /%}
+
+## Next Up
+
+Continue to the next section to learn about how to customise [Pivot Result Columns](./pivoting-result-columns/).

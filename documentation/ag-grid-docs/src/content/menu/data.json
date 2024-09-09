@@ -1051,6 +1051,11 @@
                                 "title": "Pivot Group Columns",
                                 "path": "pivoting-group-columns",
                                 "isEnterprise": true
+                            },
+                            {
+                                "title": "Pivot Totals",
+                                "path": "pivoting-totals",
+                                "isEnterprise": true
                             }
                         ]
                     },
