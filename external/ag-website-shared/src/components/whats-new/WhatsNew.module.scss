@@ -28,6 +28,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    flex-shrink: 0;
     width: 100%;
     padding: $spacing-size-4;
     border-radius: 8px;

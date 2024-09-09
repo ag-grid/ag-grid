@@ -10,20 +10,30 @@ $z-index-debug-panel: $z-index-splash + 10;
 $z-index-splash-contents: 10;
 
 .automatedExampleWrapper {
+    --ic-grid-height: 550px;
+
     position: relative;
     width: 100%;
     z-index: $z-index-grid;
 
     @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-        height: 550px;
+        height: calc(var(--ic-grid-height) / 2);
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    @media screen and (max-width: $breakpoint-automated-row-grouping-small) {
+        height: calc(var(--ic-grid-height) / 3);
     }
 
     @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
-        height: 450px;
+        --ic-grid-height: 450px;
+
+        height: var(--ic-grid-height);
     }
 
     @media screen and (min-width: $breakpoint-automated-row-grouping-large) {
-        height: 600px;
+        --ic-grid-height: 600px;
     }
 
     svg[class*='logo-mark'] {
@@ -42,8 +52,7 @@ $z-index-splash-contents: 10;
 :global(.automated-integrated-charts-grid.ag-theme-quartz-dark) {
     @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
         width: 200% !important;
-        height: 550px !important;
-        margin-bottom: calc(450px / -2 + $spacing-size-4);
+        height: var(--ic-grid-height) !important;
         transform-origin: top left;
         transform: scale(0.5);
         overflow: hidden;
@@ -53,12 +62,14 @@ $z-index-splash-contents: 10;
         }
     }
 
-    @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
-        height: 450px;
+    @media screen and (max-width: $breakpoint-automated-row-grouping-small) {
+        width: 300% !important;
+        height: var(--ic-grid-height) !important;
+        transform: scale(0.3333);
     }
 
-    @media screen and (min-width: $breakpoint-automated-row-grouping-large) {
-        height: 600px;
+    @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
+        height: var(--ic-grid-height);
     }
 
     :global(.country) {
@@ -90,11 +101,15 @@ $z-index-splash-contents: 10;
 }
 
 .sectionFooter {
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
     gap: $spacing-size-12;
     margin-top: $spacing-size-12;
+
+    @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
+        display: flex;
+    }
 
     button:not([class^='ag-']) {
         margin-left: $spacing-size-2;
@@ -102,12 +117,7 @@ $z-index-splash-contents: 10;
 }
 
 .exploreButtonOuter {
-    display: none;
-
-    @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
-        display: block;
-        margin-left: -80px;
-    }
+    margin-left: -80px;
 
     @media screen and (min-width: $breakpoint-site-header-large) {
         margin-left: -100px;
