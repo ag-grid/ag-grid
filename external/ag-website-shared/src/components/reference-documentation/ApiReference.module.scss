@@ -164,14 +164,6 @@
     @container (min-width: #{$breakpoint-table-small}) {
         font-size: 15px;
     }
-
-    span {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        width: fit-content;
-        gap: $spacing-size-2;
-    }
 }
 
 .parentProperties {
