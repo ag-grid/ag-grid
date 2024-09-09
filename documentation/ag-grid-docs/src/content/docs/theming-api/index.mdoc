@@ -83,7 +83,9 @@ const quartzWithMaterialIcons = themeQuartz.with(iconSetMaterial);
 Themes have many parameters that can be changed using CSS custom properties (variables).
 
 ```js
-themeQuartz.applyCustomProperties({ accentColor: 'red' }, document.body);
+import { applyCustomProperties } from '@ag-grid-community/theming';
+
+applyCustomProperties({ accentColor: 'red' }, document.body);
 // equivalent to document.body.style.setProperty('--ag-accent-color', 'red');
 ```
 
