@@ -74,6 +74,7 @@ const gridOptions: GridOptions = {
     },
     selection: {
         mode: 'multiRow',
+        headerCheckbox: false,
     },
     rowModelType: 'viewport',
     // implement this so that we can do selection
