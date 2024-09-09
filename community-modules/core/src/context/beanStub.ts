@@ -264,9 +264,6 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
             func();
         }
     }
-    public removeDestroyFunc(func: () => void): void {
-        this.destroyFunctions = this.destroyFunctions.filter((fn) => fn !== func);
-    }
 
     public createManagedBean<T extends Bean | null | undefined>(bean: T, context?: Context): T {
         const res = this.createBean(bean, context);
