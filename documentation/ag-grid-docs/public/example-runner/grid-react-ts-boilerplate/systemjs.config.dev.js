@@ -33,10 +33,10 @@
         packages: {
             css: {},
             react: {
-                main: './umd/react.development.js',
+                main: './umd/react.production.min.js',
             },
             'react-dom': {
-                main: './umd/react-dom.development.js',
+                main: './umd/react-dom.production.min.js',
             },
             'react-dom/server': {
                 main: '../umd/react-dom-server.browser.production.min.js',
