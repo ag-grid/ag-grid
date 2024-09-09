@@ -161,7 +161,9 @@
                             {
                                 "title": "React Best Practices",
                                 "path": "react-hooks",
-                                "frameworks": ["react"]
+                                "frameworks": [
+                                    "react"
+                                ]
                             }
                         ]
                     },
@@ -179,7 +181,9 @@
                             {
                                 "title": "Testing Async",
                                 "path": "testing-async",
-                                "frameworks": ["angular"]
+                                "frameworks": [
+                                    "angular"
+                                ]
                             },
                             {
                                 "title": "Compatibility",
@@ -196,7 +200,9 @@
                             {
                                 "title": "Installation",
                                 "path": "installation",
-                                "frameworks": ["javascript"]
+                                "frameworks": [
+                                    "javascript"
+                                ]
                             }
                         ]
                     }
@@ -1066,6 +1072,31 @@
                                 "title": "Overview",
                                 "path": "tree-data",
                                 "isEnterprise": true
+                            },
+                            {
+                                "title": "Row Hierarchy",
+                                "path": "tree-data-hierarchy",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Group Column",
+                                "path": "tree-data-group-column",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Expanding Groups",
+                                "path": "tree-data-opening-groups",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Tree Selection",
+                                "path": "tree-data-selection",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Filtering",
+                                "path": "tree-data-opening-groups",
+                                "isEnterprise": true
                             }
                         ]
                     },
@@ -1446,7 +1477,9 @@
                             {
                                 "title": "NgZone",
                                 "path": "angular-ngzone",
-                                "frameworks": ["angular"]
+                                "frameworks": [
+                                    "angular"
+                                ]
                             }
                         ]
                     }
@@ -1514,12 +1547,16 @@
                             {
                                 "title": "Best Practices",
                                 "path": "framework-data-flow",
-                                "frameworks": ["vue"]
+                                "frameworks": [
+                                    "vue"
+                                ]
                             },
                             {
                                 "title": "Vue2 Tutorial",
                                 "path": "vue2",
-                                "frameworks": ["vue"]
+                                "frameworks": [
+                                    "vue"
+                                ]
                             },
                             {
                                 "title": "Aligned Grids",

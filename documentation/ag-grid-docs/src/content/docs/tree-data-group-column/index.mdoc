@@ -1,0 +1,56 @@
+---
+title: "Tree Data - Group Column"
+enterprise: true
+---
+Customise the generated group column when using Tree Data.
+
+## Group Column Configuration
+
+To change the default configuration of the group column, use the `autoGroupColumnDef` grid option as shown below:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoGroupColumnDef: {
+        headerName: 'My Group',
+        minWidth: 220,
+        cellRendererParams: {
+            suppressCount: true,
+            checkbox: true,
+        }
+    },
+}
+```
+
+Note how in the snippet above that the `autoGroupColumnDef` can be used to override any [Column Property](./column-definitions/).
+
+The Auto Group Column uses the [Group Cell Renderer](./group-cell-renderer/) to render group cells, and are configured via the `cellRendererParams` property.
+
+The following example demonstrates some of the available `autoGroupColumnDef` configurations. Note that:
+
+* The group column name is changed by setting `headerName = 'My Group'`.
+
+* The min width of the group column is changed via `minWidth = 220`.
+
+* The count of each row group is removed by setting `cellRendererParams.suppressCount = true`.
+
+* Checkboxes are displayed beside each row group by setting `cellRendererParams.checkbox = true`.
+
+{% gridExampleRunner title="Single Group Column Configuration" name="single-group-column-configuration" /%}
+
+## Group Cell Component
+
+The default group cell renderer can be replaced with a custom cell renderer by providing a custom cell renderer component to
+the `autoGroupColumnDef` configuration.
+
+For further information on configuring the default renderer, refer to the [Group Cell Renderer](./group-cell-renderer/) documentation.
+For further information on creating a custom cell renderer, refer to the [Custom Group Renderer Component](./group-custom-group-comp/) documentation.
+
+### Child Counts
+
+If you are showing child counts for the groups, then the child count is a count of all children and grandchildren.
+This is different to [Row Grouping](./grouping/) where only leaf levels are counted; in tree data all group children are also counted.
+
+{% gridExampleRunner title="Child Counts" name="child-counts" /%}
+
+## Custom Group Cell Component
+TODO

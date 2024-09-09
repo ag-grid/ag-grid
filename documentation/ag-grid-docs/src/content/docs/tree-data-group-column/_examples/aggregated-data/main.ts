@@ -3,43 +3,37 @@ import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+import { getData } from './data';
 
-// specify the data
-var rowData = [
-    { orgHierarchy: ['A'] },
-    { orgHierarchy: ['A', 'B'] },
-    { orgHierarchy: ['C', 'D'] },
-    { orgHierarchy: ['E', 'F', 'G', 'H'] },
-];
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
-        // we're using the auto group column by default!
         {
-            field: 'groupType',
-            valueGetter: (params) => {
-                return params.data ? 'Provided' : 'Filler';
-            },
+            headerName: 'Aggregated (Sum)',
+            aggFunc: 'sum',
+            field: 'items',
+        },
+        {
+            headerName: 'Provided',
+            field: 'items',
         },
     ],
     defaultColDef: {
         flex: 1,
     },
     autoGroupColumnDef: {
-        headerName: 'Organisation Hierarchy',
+        headerName: 'Organisation Chart',
         cellRendererParams: {
             suppressCount: true,
         },
     },
-    rowData: rowData,
+    rowData: getData(),
     treeData: true, // enable Tree Data mode
     groupDefaultExpanded: -1, // expand all groups by default
-    getDataPath: (data: any) => {
-        return data.orgHierarchy;
-    },
+    getDataPath: (data) => data.path,
 };
 
 // wait for the document to be loaded, otherwise

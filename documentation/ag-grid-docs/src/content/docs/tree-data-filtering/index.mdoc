@@ -1,0 +1,63 @@
+---
+title: "Tree Data"
+enterprise: true
+---
+Filtering can be applied to Tree Data to reduce the range of displayed data.
+
+## Filtering
+By default, when filtering is applied to a group, the group will be included if any of its children pass the filter.
+
+The example below applies a default filter to the group column for 'ProjectAlpha', note that two 'ProjectAlpha' groups are displayed
+alongside their children.
+
+{% gridExampleRunner title="Filtering" name="filtering-simple" /%}
+
+The example above demonstrates that by default, when a parent passes a filter, all children are also included in the results.
+
+### Exclude Children when Filtering
+To omit children when a parent row passes a filter, set `excludeChildrenWhenTreeDataFiltering` to `true` in the grid options.
+
+The example below applies a default filter to the group column for 'ProjectAlpha', note that only one 'ProjectAlpha' group passes
+the filter instead of two - this is because the `Desktop -> ProjectAlpha` group is a [Filler Group](./tree-data/#filler-groups).
+
+{% gridExampleRunner title="Exclude Children when Filtering" name="filtering-exclude-children" /%}
+
+The above example demonstrates the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    excludeChildrenWhenTreeDataFiltering: true,
+}
+```
+
+### Ignore Filters when Aggregating
+
+When using Tree Data and filters, the aggregates are calculated from the resulting filtered rows only. This can be changed by enabling the grid option `suppressAggFilteredOnly`.
+
+The following example demonstrates aggregated values based on pre-filtered data by enabling the grid option `suppressAggFilteredOnly`.
+
+* Using the **Size** column apply a filter for the value **24.6**. Note that all results are displayed.
+* Using the **Size** column apply a filter for the value **2.4**. Note that the 'cv.pdf' row and its parents are displayed. The value in the **Size** column for the 'Documents' parent row is **24.6 MB** (the pre-filtered value).
+
+{% gridExampleRunner title="Aggregated Values Based on Pre-Filtered Data" name="group-agg-filtering"  exampleHeight=570 /%}
+
+### Tree Filter
+
+When used with Tree Data, the [Set Filter](./filter-set/) will contain a list of all unique leaf values across each level of the group hierarchy.
+
+The example below demonstrates using the Set Filter Tree List with Tree Data. Note the following:
+
+1. The **Employee** group column has the Set Filter Tree List enabled via `filterParams.treeList = true`. A Key Creator is specified to convert the path into a string.
+1. The Filter List displayed for the **Employee** column matches the format of the Tree Data structure.
+1. The **Date** column has `filterParams.treeList = true` and is grouped by year -> month -> day.
+
+{% gridExampleRunner title="Tree List" name="tree-list-filtering" /%}
+
+### Set Filter
+
+The Set Filter can be used with Tree Data, and will list all unique leaf values across each level of the group hierarchy.
+
+{% gridExampleRunner title="Set List" name="set-list-filtering" /%}
+
+{% note %}
+When using the Set Filter with Tree Data, it only applies to leaf rows by default. To have the set filter also list and apply to group level nodes, set `groupAggFiltering: true`.
+{% /note %}

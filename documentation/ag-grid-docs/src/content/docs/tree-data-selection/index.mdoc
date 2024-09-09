@@ -1,0 +1,47 @@
+---
+title: "Tree Data - Tree Selection"
+enterprise: true
+---
+Tree Data can be configured to cause selection to impact the children or parents.
+
+## Enabling Tree Selection
+
+{% interfaceDocumentation interfaceName="MultiRowSelectionOptions" names=["groupSelects"] config={"description":""} /%}
+
+There are three values of `groupSelects`, corresponding to three modes of operation for selection of row groups:
+- `'self'`: Selecting a row group selects only that row and none of the rows within the group.
+- `'descendants'`: Selecting a row group recursively selects all rows within the group. The group row will also display as selected. When any of the descendants of the group row are deselected, the group row will display as "indeterminate". In this mode, the group row node will not be part of the selected nodes returned from `api.getSelectedNodes()`.
+- `'filteredDescendants'`: As for `'descendants'`, but only those grouped rows that satisfy the currently active filter will be selected/unselected. Note in particular that when some rows are filtered out of a group, selecting that group row will leave it in an indeterminate state.
+
+{% gridExampleRunner title="Group Selection" name="group-selection" /%}
+
+Use the controls above the grid to explore the effects of different values for `groupSelects`. For example, try the following:
+1. Select `'filteredDescendants'` from the "Group Selects" dropdown
+1. Type in a filter
+1. Select a group
+1. Notice that all filtered rows are selected. Upon removing the filter, the non-filtered rows are not selected.
+1. Notice that the group checkbox becomes indeterminate even while all its filtered descendants are selected. This is because the selected state of the group node is independent of the filter, so it becomes indeterminate since not all of its descendants are selected.
+
+{% note %}
+When using Selection with Tree Data, it is important to remember that [Filler Row](./) state is not preserved.
+{% /note %}
+
+## Preventing Leaf Nodes from Being Selected
+
+The example below is similar to the previous example except it does not render checkboxes on the leaf level nodes, allowing only entire groups to be selected. 
+This is achieved by providing a function for `selection.checkboxes` and setting `selection.hideDisabledCheckboxes = true`.
+
+Alternatively, you may instead prefer to provide a function to `autoGroupColumnDef.cellRendererParams.checkbox`. 
+This will instead render checkboxes next to the expansion chevron in the group cell. 
+You will still need to set `selection.hideDisabledCheckboxes = true` to prevent checkboxes from being visible.
+
+{% gridExampleRunner title="Prevent Leaf Nodes from Being Selected" name="prevent-leaf-node-selection" /%}
+
+## Checkboxes in Group Cells
+By default, the grid will render checkboxes in their own column. If there is a preference for rendering checkboxes in the group cell, next to the expansion chevron, this can be done by:
+1. Disabling checkboxes in the checkbox column: `selection.checkboxes = false`
+1. Enabling checkboxes in the group cell renderer: `autoGroupColumnDef.cellRendererParams.checkbox = true`
+
+This is illustrated below. Note that the checkbox column will still be rendered unless `selection.headerCheckbox` is also set to `false`.
+
+{% gridExampleRunner title="Group Cell Checkboxes" name="group-cell-checkboxes" /%}

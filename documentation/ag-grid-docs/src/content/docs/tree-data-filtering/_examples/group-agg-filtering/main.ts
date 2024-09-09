@@ -60,7 +60,7 @@ const gridOptions: GridOptions = {
     getRowId: (params: GetRowIdParams) => {
         return String(params.data.id);
     },
-    groupAggFiltering: true,
+    suppressAggFilteredOnly: true,
 };
 
 function getFileCellRenderer() {
