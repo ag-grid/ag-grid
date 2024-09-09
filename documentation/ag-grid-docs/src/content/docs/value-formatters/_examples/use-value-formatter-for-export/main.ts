@@ -36,8 +36,12 @@ const gridOptions: GridOptions = {
         editable: true,
     },
     rowData: createRowData(),
-    enableRangeSelection: true,
-    enableFillHandle: true,
+    selection: {
+        mode: 'cell',
+        handle: {
+            mode: 'fill',
+        },
+    },
 };
 
 function currencyFormatter(params: ValueFormatterParams) {

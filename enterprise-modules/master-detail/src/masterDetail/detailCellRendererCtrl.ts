@@ -111,16 +111,17 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
             return;
         }
 
-        const autoHeight = this.gos.get('detailRowAutoHeight');
-
         // we clone the detail grid options, as otherwise it would be shared
         // across many instances, and that would be a problem because we set
         // api into gridOptions
         const gridOptions = { ...this.params.detailGridOptions };
 
+        const autoHeight = this.gos.get('detailRowAutoHeight');
         if (autoHeight) {
             gridOptions.domLayout = 'autoHeight';
         }
+
+        gridOptions.theme ||= this.gos.get('theme');
 
         this.comp.setDetailGrid(gridOptions);
     }

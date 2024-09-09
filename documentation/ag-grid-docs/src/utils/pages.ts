@@ -35,7 +35,12 @@ export interface ExtraFileRoute {
 /**
  * Mapping for extra files, from route to file path
  *
- * NOTE: File path is after `getRootUrl()`
+ * NOTE:
+ *  * File path is after `getRootUrl()`
+ *  * Remember to add references to `ag-grid-docs/project.json` > `targets.build.inputs`
+ *    if the nx build does not already account for the files. Otherwise, the website may not
+ *    rebuild if there are changes in the mapped files
+ *
  */
 export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     // Code doc reference files

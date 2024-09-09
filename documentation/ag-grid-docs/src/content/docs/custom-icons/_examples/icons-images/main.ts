@@ -42,7 +42,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     sideBar: true,
     enableCharts: true,
-    enableRangeSelection: true,
+    selection: { mode: 'cell' },
 };
 
 // setup the grid after the page has finished loading

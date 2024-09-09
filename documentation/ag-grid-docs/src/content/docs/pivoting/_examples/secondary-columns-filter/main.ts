@@ -27,8 +27,11 @@ const gridOptions: GridOptions<IOlympicData> = {
     ],
     defaultColDef: {
         flex: 1,
-        minWidth: 150,
+        minWidth: 130,
         floatingFilter: true,
+    },
+    autoGroupColumnDef: {
+        minWidth: 200,
     },
     pivotMode: true,
 };

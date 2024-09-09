@@ -8,6 +8,7 @@ import {
     GridReadyEvent,
     ICellRendererParams,
     ModuleRegistry,
+    SelectionOptions,
 } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -63,7 +64,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                             style="height: 100%;"
                             [class]="themeClass"
                             [defaultColDef]="defaultColDef"
-                            rowSelection="multiple"
+                            [selection]="selection"
                             [rowDragMultiRow]="true"
                             [getRowId]="getRowId"
                             [rowDragManaged]="true"
@@ -109,6 +110,12 @@ export class AppComponent {
         flex: 1,
         minWidth: 100,
         filter: true,
+    };
+
+    selection: SelectionOptions = {
+        mode: 'multiRow',
+        checkboxes: false,
+        headerCheckbox: false,
     };
 
     leftColumns: ColDef[] = [

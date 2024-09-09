@@ -55,6 +55,11 @@ const dateFormatter = (params) => {
     });
 };
 
+const selection = {
+    mode: 'multiRow',
+    headerCheckbox: false,
+};
+
 // Create new GridExample component
 const GridExample = () => {
     // Row Data: The data to be displayed.
@@ -65,7 +70,6 @@ const GridExample = () => {
         {
             field: 'mission',
             width: 150,
-            checkboxSelection: true,
         },
         {
             field: 'company',
@@ -122,7 +126,7 @@ const GridExample = () => {
                 columnDefs={colDefs}
                 defaultColDef={defaultColDef}
                 pagination={true}
-                rowSelection="multiple"
+                selection={selection}
                 onSelectionChanged={(event) => console.log('Row Selected!')}
                 onCellValueChanged={(event) => console.log(`New Cell Value: ${event.value}`)}
             />

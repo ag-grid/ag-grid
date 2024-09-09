@@ -189,7 +189,7 @@ export const tabStyleQuartz =
 export const tabStyleMaterial =
     /*#__PURE__*/
     tabStyleBase.createVariant('material')
-        .usePart(primaryColor)
+        .with(primaryColor)
         .overrideParams({
             tabBarBackgroundColor: {
                 ref: 'chromeBackgroundColor',

@@ -94,6 +94,12 @@ const filterData = (filterModel, data) => {
     return resultOfFilter;
 };
 
+const selection = {
+    mode: 'multiRow',
+    checkboxes: false,
+    headerCheckbox: false,
+};
+
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
@@ -202,7 +208,7 @@ const GridExample = () => {
                 <AgGridReact
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    rowSelection={'multiple'}
+                    selection={selection}
                     rowModelType={'infinite'}
                     cacheBlockSize={100}
                     cacheOverflowSize={2}

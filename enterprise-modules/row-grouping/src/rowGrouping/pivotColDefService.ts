@@ -170,60 +170,63 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
     }
 
     private addExpandablePivotGroups(pivotColumnGroupDefs: (ColDef | ColGroupDef)[], pivotColumnDefs: ColDef[]) {
-        if (this.gos.get('suppressExpandablePivotGroups') || this.gos.get('pivotColumnGroupTotals')) {
+        const isSuppressExpand = this.gos.get('suppressExpandablePivotGroups');
+        if (isSuppressExpand || this.gos.get('pivotColumnGroupTotals')) {
             return;
         }
 
         const recursivelyAddSubTotals = (
-            groupDef: ColGroupDef | ColDef,
+            def: ColGroupDef | ColDef,
             currentPivotColumnDefs: ColDef[],
             acc: Map<string, string[]>
         ) => {
-            const group = groupDef as ColGroupDef;
-
-            if (group.children) {
+            if ('children' in def) {
                 const childAcc = new Map();
 
-                group.children.forEach((grp: ColDef | ColGroupDef) => {
+                def.children.forEach((grp: ColDef | ColGroupDef) => {
                     recursivelyAddSubTotals(grp, currentPivotColumnDefs, childAcc);
                 });
 
-                const firstGroup = !group.children.some((child) => (child as ColGroupDef).children);
+                const leafGroup = !def.children.some((child) => (child as ColGroupDef).children);
 
                 this.funcColsService.getValueColumns().forEach((valueColumn) => {
                     const columnName: string | null = this.columnNameService.getDisplayNameForColumn(
                         valueColumn,
                         'header'
                     );
-                    const totalColDef = this.createColDef(valueColumn, columnName, groupDef.pivotKeys);
+                    const totalColDef = this.createColDef(valueColumn, columnName, def.pivotKeys);
                     totalColDef.pivotTotalColumnIds = childAcc.get(valueColumn.getColId());
 
-                    totalColDef.columnGroupShow = 'closed';
+                    totalColDef.columnGroupShow = !isSuppressExpand ? 'closed' : 'open';
 
                     totalColDef.aggFunc = valueColumn.getAggFunc();
 
-                    if (!firstGroup) {
+                    if (!leafGroup) {
                         // add total colDef to group and pivot colDefs array
-                        const children = (groupDef as ColGroupDef).children;
+                        const children = def.children;
                         children.push(totalColDef);
                         currentPivotColumnDefs.push(totalColDef);
                     }
                 });
 
                 this.merge(acc, childAcc);
+
+                return;
+            }
+
+            // check that value column exists, i.e. aggFunc is supplied
+            if (!def.pivotValueColumn) {
+                return;
+            }
+
+            const pivotValueColId = def.pivotValueColumn.getColId();
+
+            const exists = acc.has(pivotValueColId);
+            if (exists) {
+                const arr = acc.get(pivotValueColId)!;
+                arr.push(def.colId!);
             } else {
-                const def: ColDef = groupDef as ColDef;
-
-                // check that value column exists, i.e. aggFunc is supplied
-                if (!def.pivotValueColumn) {
-                    return;
-                }
-
-                const pivotValueColId = def.pivotValueColumn.getColId();
-
-                const arr = acc.has(pivotValueColId) ? acc.get(pivotValueColId) : [];
-                arr!.push(def.colId!);
-                acc.set(pivotValueColId, arr!);
+                acc.set(pivotValueColId, [def.colId!]);
             }
         };
 
@@ -306,71 +309,42 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         const insertAfter = this.gos.get('pivotRowTotals') === 'after';
 
         const valueColumns = this.funcColsService.getValueColumns();
-        // order of row group totals depends on position
-        const valueCols = insertAfter ? valueColumns.slice() : valueColumns.slice().reverse();
+        const valueCols = valueColumns.slice();
 
+        if (insertAfter) {
+            // order of row group totals depends on position
+            valueCols.reverse();
+        }
+
+        const isCreateTotalGroups = valueCols.length > 1 || !this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
         for (let i = 0; i < valueCols.length; i++) {
             const valueCol = valueCols[i];
 
-            let colIds: any[] = [];
-            pivotColumnGroupDefs.forEach((groupDef: ColGroupDef | ColDef) => {
-                colIds = colIds.concat(this.extractColIdsForValueColumn(groupDef, valueCol));
-            });
+            const columnName: string | null = this.columnNameService.getDisplayNameForColumn(valueCol, 'header');
+            const colDef = this.createColDef(valueCol, columnName, []);
 
-            const withGroup = valueCols.length > 1 || !this.gos.get('removePivotHeaderRowWhenSingleValueColumn');
-            this.createRowGroupTotal(pivotColumnGroupDefs, pivotColumnDefs, valueCol, colIds, insertAfter, withGroup);
-        }
-    }
+            const colIds: string[] = [];
+            for (let i = 0; i < pivotColumnDefs.length; i++) {
+                const colDef = pivotColumnDefs[i];
+                if (colDef.pivotValueColumn === valueCol) {
+                    colIds.push(colDef.colId!);
+                }
+            }
 
-    private extractColIdsForValueColumn(groupDef: ColGroupDef | ColDef, valueColumn: AgColumn): string[] {
-        const group = groupDef as ColGroupDef;
-        if (!group.children) {
-            const colDef = group as ColDef;
-            return colDef.pivotValueColumn === valueColumn && colDef.colId ? [colDef.colId] : [];
-        }
-
-        let colIds: string[] = [];
-        group.children.forEach((grp: ColDef | ColGroupDef) => {
-            this.extractColIdsForValueColumn(grp, valueColumn);
-            const childColIds = this.extractColIdsForValueColumn(grp, valueColumn);
-            colIds = colIds.concat(childColIds);
-        });
-
-        return colIds;
-    }
-
-    private createRowGroupTotal(
-        parentChildren: (ColGroupDef | ColDef)[],
-        pivotColumnDefs: ColDef[],
-        valueColumn: AgColumn,
-        colIds: string[],
-        insertAfter: boolean,
-        addGroup: boolean
-    ): void {
-        const measureColumns = this.funcColsService.getValueColumns();
-
-        let colDef: ColDef;
-
-        if (measureColumns.length === 0) {
-            colDef = this.createColDef(null, '-', []);
-        } else {
-            const columnName: string | null = this.columnNameService.getDisplayNameForColumn(valueColumn, 'header');
-            colDef = this.createColDef(valueColumn, columnName, []);
             colDef.pivotTotalColumnIds = colIds;
+            colDef.colId = PIVOT_ROW_TOTAL_PREFIX + colDef.colId;
+
+            const valueGroup: ColGroupDef | ColDef = isCreateTotalGroups
+                ? {
+                      children: [colDef],
+                      pivotKeys: [],
+                      groupId: `${PIVOT_ROW_TOTAL_PREFIX}_pivotGroup_${valueCol.getColId()}`,
+                  }
+                : colDef;
+
+            pivotColumnDefs.push(colDef);
+            insertAfter ? pivotColumnGroupDefs.push(valueGroup) : pivotColumnGroupDefs.unshift(valueGroup);
         }
-
-        colDef.colId = PIVOT_ROW_TOTAL_PREFIX + colDef.colId;
-        pivotColumnDefs.push(colDef);
-
-        const valueGroup: ColGroupDef | ColDef = addGroup
-            ? {
-                  children: [colDef],
-                  pivotKeys: [],
-                  groupId: `${PIVOT_ROW_TOTAL_PREFIX}_pivotGroup_${valueColumn.getColId()}`,
-              }
-            : colDef;
-
-        insertAfter ? parentChildren.push(valueGroup) : parentChildren.unshift(valueGroup);
     }
 
     private createColDef(

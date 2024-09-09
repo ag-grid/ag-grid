@@ -59,11 +59,6 @@ const groupColumn = {
     headerName: 'Group',
     width: 250,
     field: 'name',
-    headerCheckboxSelection: true,
-    headerCheckboxSelectionFilteredOnly: true,
-    cellRendererParams: {
-        checkbox: true,
-    },
 };
 
 function currencyCssFunc(params) {
@@ -648,12 +643,12 @@ const ExampleInner = ({ darkMode }) => {
             enableCharts: true,
             undoRedoCellEditing: true,
             undoRedoCellEditingLimit: 50,
-            suppressClearOnFillReduction: false,
             quickFilterText: null,
             autoGroupColumnDef: groupColumn,
             selection: {
                 mode: 'multiRow',
                 groupSelects: 'descendants',
+                selectAll: 'filtered',
                 suppressClickSelection: true,
             },
             sideBar: {

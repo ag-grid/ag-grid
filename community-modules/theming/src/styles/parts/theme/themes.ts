@@ -5,25 +5,25 @@ import { iconSetAlpine, iconSetMaterial, iconSetQuartzRegular } from '../icon-se
 import { inputStyleBordered, inputStyleUnderlined } from '../input-style/input-styles';
 import { tabStyleMaterial, tabStyleQuartz, tabStyleRolodex } from '../tab-style/tab-styles';
 
-const createThemeWithDefaultWidgets = (name: string) => createTheme(name).usePart(checkboxStyleDefault);
+const createThemeWithDefaultWidgets = (name: string) => createTheme(name).with(checkboxStyleDefault);
 
 // prettier-ignore
 export const themeQuartz =
     /*#__PURE__*/
     createThemeWithDefaultWidgets('quartz')
-    .usePart(colorSchemeLightNeutral)
-    .usePart(iconSetQuartzRegular)
-    .usePart(tabStyleQuartz)
-    .usePart(inputStyleBordered);
+    .with(colorSchemeLightNeutral)
+    .with(iconSetQuartzRegular)
+    .with(tabStyleQuartz)
+    .with(inputStyleBordered);
 
 // prettier-ignore
 export const themeBalham =
     /*#__PURE__*/
     createThemeWithDefaultWidgets('balham')
-        .usePart(colorSchemeLightCold)
-        .usePart(iconSetAlpine)
-        .usePart(tabStyleRolodex)
-        .usePart(inputStyleBordered)
+        .with(colorSchemeLightCold)
+        .with(iconSetAlpine)
+        .with(tabStyleRolodex)
+        .with(inputStyleBordered)
         .overrideParams({
             gridSize: 4,
             borderRadius: 2,
@@ -70,9 +70,9 @@ export const themeBalham =
 export const themeMaterial =
     /*#__PURE__*/
     createThemeWithDefaultWidgets('material')
-        .usePart(iconSetMaterial)
-        .usePart(tabStyleMaterial)
-        .usePart(inputStyleUnderlined)
+        .with(iconSetMaterial)
+        .with(tabStyleMaterial)
+        .with(inputStyleUnderlined)
         .overrideParams({
             gridSize: 9,
             iconSize: 18,
