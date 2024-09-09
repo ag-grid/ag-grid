@@ -32,20 +32,50 @@ export abstract class CartesianChartProxy<
         params: UpdateParams,
         commonChartOptions: AgCartesianChartOptions
     ): AgCartesianAxisOptions[];
+
     protected abstract getSeries(params: UpdateParams): AgCartesianSeriesOptions[];
 
     protected getUpdateOptions(
         params: UpdateParams,
         commonChartOptions: AgCartesianChartOptions
     ): AgCartesianChartOptions {
-        const axes = this.getAxes(params, commonChartOptions);
+        const axes = this.getLocalAxes(params, commonChartOptions);
+        const data = this.getData(params, axes);
+        const series = this.getLocalSeries(params);
 
         return {
             ...commonChartOptions,
-            data: this.getData(params, axes),
+            data,
             axes,
-            series: this.getSeries(params),
+            series,
         };
+    }
+
+    private getLocalAxes(params: UpdateParams, commonChartOptions: AgCartesianChartOptions): AgCartesianAxisOptions[] {
+        const axes = this.getAxes(params, commonChartOptions);
+        const numberAxis = axes[1];
+
+        // Add a default label formatter to show '%' for normalized charts if none is provided
+
+        if (this.isNormalized() && !numberAxis.label?.formatter) {
+            numberAxis.label = { ...numberAxis.label, formatter: (params) => Math.round(params.value) + '%' };
+        }
+
+        return axes;
+    }
+
+    private getLocalSeries(params: UpdateParams): AgCartesianSeriesOptions[] {
+        const series = this.getSeries(params);
+
+        return series.map((s) => {
+            return {
+                ...s,
+                ...(this.isNormalized() && {
+                    normalizedTo: 100,
+                }),
+                type: this.standaloneChartType,
+            } as AgCartesianSeriesOptions;
+        });
     }
 
     protected getData(params: UpdateParams, axes: AgCartesianAxisOptions[]): any[] {
@@ -76,6 +106,10 @@ export abstract class CartesianChartProxy<
             return 'number';
         }
         return 'category';
+    }
+
+    protected isNormalized() {
+        return false;
     }
 
     private isXAxisOfType<T>(

@@ -23,11 +23,6 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
                 position: this.isHorizontal() ? 'bottom' : 'left',
             },
         ];
-        // Add a default label formatter to show '%' for normalized charts if none is provided
-        if (this.isNormalised()) {
-            const numberAxis = axes[1];
-            numberAxis.label = { ...numberAxis.label, formatter: (params) => Math.round(params.value) + '%' };
-        }
 
         return axes;
     }
@@ -40,11 +35,10 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
                     type: this.standaloneChartType,
                     direction: this.isHorizontal() ? 'horizontal' : 'vertical',
                     stacked: this.crossFiltering || isStacked(this.chartType),
-                    normalizedTo: this.isNormalised() ? 100 : undefined,
                     xKey: category.id,
                     xName: category.name,
                     yKey: f.colId,
-                    yFilterKey: `${f.colId}Filter`,
+                    ...(this.crossFiltering && { yFilter: `${f.colId}Filter` }),
                     yName: f.displayName,
                 }) as AgBarSeriesOptions
         );
@@ -52,7 +46,7 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
         return series;
     }
 
-    private isNormalised() {
+    protected override isNormalized() {
         const normalisedCharts = ['normalizedColumn', 'normalizedBar'];
         return _includes(normalisedCharts, this.chartType);
     }

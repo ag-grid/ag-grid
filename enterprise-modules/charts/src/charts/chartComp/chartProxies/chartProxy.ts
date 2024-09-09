@@ -127,7 +127,8 @@ export abstract class ChartProxy<
                 },
             },
             listeners: {
-                // XXX: restore once we figure out why this gets two calls instead of one.
+                // XXX: restore once we figure out why this gets two calls instead of one, when used
+                // at the chart level rather than at the series level
                 // seriesNodeClick: (params: any) => {
                 //     this.dispatchCrossFilterEvent(params);
                 // },
