@@ -18,10 +18,10 @@ interface IDragAndDropImageComponent {
    // do it here
    destroy?(): void;
 
-   // Mandatory - Gets called every time the grid needs to updated the label of the Drag Image.
+   // Mandatory - Gets called every time the grid needs to update the label of the Drag Image.
    setLabel(label: string): void;
 
-    // Mandatory - Gets called every time the grid needs to updated the icon of the Drag Image.
+    // Mandatory - Gets called every time the grid needs to update the icon of the Drag Image.
    setIcon(icon: string | null, shake: boolean): void;
 }
 ```
