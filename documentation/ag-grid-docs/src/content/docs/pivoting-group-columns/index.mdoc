@@ -5,12 +5,10 @@ enterprise: true
 
 Pivot by more than one column to display multiple column groups.
 
-## Pivot Column Groups
-
 Multiple group columns will be shown in the grid when there is more than one active pivot column. These columns can be collapsed,
 expanded or fixed as described in the sections below:
 
-### Customising Group Definitions
+## Customising Group Definitions
 
 Pivot Result Column Group definitions can be configured by using the `processPivotResultColGroupDef` grid option.
 
@@ -31,7 +29,7 @@ const gridOptions = {
 }
 ```
 
-### Ordering Groups
+## Ordering Groups
 
 The pivot result groups are initially displayed in alphabetical order, however, you can change this by providing a `pivotComparator` function to the pivoted columns definition.
 
@@ -56,16 +54,7 @@ const gridOptions = {
 }
 ```
 
-### Group Totals
-
-When pivoting by multiple columns the grid will automatically insert a total column representing the total for each aggregation for that group level.
-These columns are by default only displayed when the column group is closed.
-
-The example below demonstrates that when collapsed, group totals are displayed for each sport. When expanded, these are hidden and instead display the break-down per year.
-
-{% gridExampleRunner title="Expandable Pivot Column Groups" name="expandable-pivot-column-groups" /%}
-
-### Expanded by Default
+## Expanded by Default
 
 Pivot Column Groups can be configured to expand by default, down to a given depth. This depth can be configured using the `pivotDefaultExpanded` grid option.
 
@@ -80,7 +69,7 @@ const gridOptions = {
 }
 ```
 
-### Prevent Expanding Groups
+## Prevent Expanding Groups
 
 When using multiple pivot columns, groups become expandable by default. To prevent this and instead always show all columns, set the grid option `suppressExpandablePivotGroups=true`.
 
@@ -94,7 +83,7 @@ const gridOptions = {
 }
 ```
 
-### Hide Group with Single Value Column
+## Hide Group with Single Value Column
 
 When pivoting with only one aggregated column, it can simplify the grid to omit the groups with only one child.
 Enabling the grid option `removePivotHeaderRowWhenSingleValueColumn=true`, when set to `true` will instead skip the group and
@@ -115,21 +104,6 @@ const gridOptions = {
 };
 ```
 
-## Row Totals
+## Next Up
 
-It is possible to include [Group Totals](./pivoting/#group-totals) for the entire grid, to show the total aggregation for each value column. This can be configured
-by setting the grid option `pivotRowTotals` to `'before'` or `'after'` (determining the inserted total columns position in the grid).
-
-{% gridExampleRunner title="Pivot Row Totals" name="row-totals" /%}
-
-The example above demonstrates the following configuration for adding an additional `Gold` row total at the start of the grid:
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        // ...other column defs
-        { field: 'gold', aggFunc: 'sum' },
-    ],
-    pivotMode: true,
-    pivotRowTotals: 'before',
-}
-```
+Display the total aggregation of rows and columns when pivoting with [Pivot Totals](./pivoting-totals/).

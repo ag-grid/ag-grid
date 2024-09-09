@@ -956,13 +956,13 @@
         "pivotDefaultExpanded": {
             "more": {
                 "name": "Expand Pivot Column Groups by Default",
-                "url": "./pivoting/#expanded-by-default"
+                "url": "./pivoting-group-columns/#expanded-by-default"
             }
         },
         "pivotRowTotals": {
             "more": {
                 "name": "Pivot Row Totals",
-                "url": "./pivoting/#row-totals"
+                "url": "./pivoting-totals/#row-totals"
             }
         },
         "pivotSuppressAutoColumn": {
@@ -971,25 +971,25 @@
         "pivotMaxGeneratedColumns": {
             "more": {
                 "name": "Pivot Max Generated Columns",
-                "url": "./pivoting/#prevent-extreme-column-generation"
+                "url": "./pivoting-result-columns/#preventing-extreme-column-generation"
             }
         },
         "processPivotResultColDef": {
             "more": {
                 "name": "Pivot Result Column Definitions",
-                "url": "./pivoting/#column-definitions"
+                "url": "./pivoting-result-columns/#column-definitions"
             }
         },
         "processPivotResultColGroupDef": {
             "more": {
                 "name": "Pivot Result Column Group Definitions",
-                "url": "./pivoting/#customising-group-definitions"
+                "url": "./pivoting-group-columns/#customising-group-definitions"
             }
         },
         "suppressExpandablePivotGroups": {
             "more": {
                 "name": "Prevent Expanding Pivot Column Groups",
-                "url": "./pivoting/#prevent-expanding-groups"
+                "url": "./pivoting-group-columns/#prevent-expanding-groups"
             }
         },
         "functionsReadOnly": {
@@ -1038,7 +1038,7 @@
         "removePivotHeaderRowWhenSingleValueColumn": {
             "more": {
                 "name": "Hiding Repeated Value Column Labels",
-                "url": "./pivoting/#hide-group-with-single-value-column"
+                "url": "./pivoting-group-columns/#hide-group-with-single-value-column"
             }
         }
     },
