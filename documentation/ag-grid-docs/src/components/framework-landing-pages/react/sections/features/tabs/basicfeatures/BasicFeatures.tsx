@@ -53,7 +53,7 @@ const BasicFeatures: React.FC = () => {
                         <h5 className={styles.featureHeading}>100s of Features</h5>
                         <span className={styles.featureDetail}>
                             Enable complex features with single properties, including:{' '}
-                            <a href={urlWithBaseUrl('./react-data-grid/row-sorting#sorting')}>Sorting</a>,{' '}
+                            <a href={urlWithBaseUrl('./react-data-grid/row-sorting/#sorting')}>Sorting</a>,{' '}
                             <a href={urlWithBaseUrl('./react-data-grid/filtering/')}>Filtering</a>,{' '}
                             <a href={urlWithBaseUrl('./react-data-grid/cell-editing/')}>Cell Editing</a>,{' '}
                             <a href={urlWithBaseUrl('./react-data-grid/csv-export/')}>CSV Export</a>,{' '}
