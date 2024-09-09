@@ -25,22 +25,6 @@ type EventHandlers<TEventKey extends string, TEvent = any> = { [K in TEventKey]?
 
 type AgEventHandlers = { [K in AgEventType]?: (event: AgEventTypeParams[K]) => void };
 
-// const ALL_BEANS: Record<number, any> = {};
-// setInterval(() => {
-//     const perType: any = {};
-//     let total = 0;
-//     Object.entries(ALL_BEANS).forEach(([key, value]: [string, any]) => {
-//         if (value) {
-//             const type = value.constructor.name;
-//             perType[type] = (perType[type] || 0) + value.destroyFunctions.length;
-//             total += value.destroyFunctions.length;
-//         }
-//     });
-//     console.log('BEAN_STUB', perType, total);
-// }, 3_000);
-
-// let nextBeanId = 0;
-
 export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     implements BaseBean<BeanCollection>, Bean, IEventEmitter<EventOrDestroyed<TEventType>>
 {
@@ -58,11 +42,6 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     protected eventService: EventService;
     protected gos: GridOptionsService;
     protected localeService: LocaleService;
-    // private beanID = nextBeanId++;
-
-    // constructor() {
-    //     ALL_BEANS[this.beanID] = this;
-    // }
 
     public preWireBeans(beans: BeanCollection): void {
         this.frameworkOverrides = beans.frameworkOverrides;
@@ -106,7 +85,6 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
         // cast destroy type as we do not want to expose destroy event type to the dispatchLocalEvent method
         // as no one else should be firing destroyed at the bean stub.
         this.dispatchLocalEvent({ type: 'destroyed' } as { type: BeanStubEvent } as any);
-        // ALL_BEANS[this.beanID] = undefined;
     }
 
     // The typing of AgEventListener<any, any, any> is not ideal, but it's the best we can do at the moment to enable
