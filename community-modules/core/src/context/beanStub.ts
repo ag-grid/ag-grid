@@ -72,10 +72,6 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     }
 
     public destroy(): void {
-        if (this.destroyed) {
-            return;
-        }
-
         for (let i = 0; i < this.destroyFunctions.length; i++) {
             this.destroyFunctions[i]();
         }
