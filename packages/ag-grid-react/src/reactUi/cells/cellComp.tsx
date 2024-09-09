@@ -231,7 +231,10 @@ const CellComp = ({
                         cellCtrl.focusCell(true);
                     });
                 } else {
-                    cellCtrl.cellEditorAttached();
+                    // need to ensure that render has completed
+                    setTimeout(() => {
+                        cellCtrl.cellEditorAttached();
+                    });
                 }
             }
         },
