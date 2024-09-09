@@ -1,7 +1,7 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, IStatusPanel, StatusPanelDef } from '@ag-grid-community/core';
+import { ColDef, IStatusPanel, SelectionOptions, StatusPanelDef } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact, getInstance } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -20,6 +20,12 @@ export interface IClickableStatusBar extends IStatusPanel {
     setVisible(visible: boolean): void;
     isVisible(): boolean;
 }
+
+const selection: SelectionOptions = {
+    mode: 'multiRow',
+    checkboxes: false,
+    headerCheckbox: false,
+};
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
@@ -103,8 +109,7 @@ const GridExample = () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    enableRangeSelection={true}
-                    rowSelection={'multiple'}
+                    selection={selection}
                     statusBar={statusBar}
                 />
             </div>

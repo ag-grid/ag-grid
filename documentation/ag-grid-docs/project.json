@@ -12,6 +12,11 @@
         "production",
         "!{projectRoot}/vitest.config.mjs",
         "{workspaceRoot}/external/ag-website-shared/**",
+        "{workspaceRoot}/community-modules/*/dist/**/*.{cjs,js,map,css,scss}",
+        "{workspaceRoot}/community-modules/react/src/**/*.{cjs,js,map,css,scss}",
+        "{workspaceRoot}/enterprise-modules/*/dist/**/*.{cjs,js,map,css,scss}",
+        "{workspaceRoot}/node_modules/ag-charts-community/dist/**/*.{cjs,js,map}",
+        "{workspaceRoot}/node_modules/ag-charts-enterprise/dist/**/*.{cjs,js,map}",
         { "env": "PUBLIC_PACKAGE_VERSION" }
       ],
       "cache": true,

@@ -35,7 +35,7 @@ const gridOptions: GridOptions = {
         { field: 'temp', chartDataType: 'series', valueParser: numberParser },
     ],
     defaultColDef: { flex: 1 },
-    enableRangeSelection: true,
+    selection: { mode: 'cell' },
     popupParent: document.body,
     enableCharts: true,
     chartThemeOverrides: {

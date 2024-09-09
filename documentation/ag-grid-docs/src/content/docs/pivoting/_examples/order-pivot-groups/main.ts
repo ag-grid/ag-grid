@@ -9,33 +9,19 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'country', rowGroup: true, enableRowGroup: true },
-        {
-            field: 'year',
-            pivot: true,
-            enablePivot: true,
-            pivotComparator: ReversedYearPivotComparator,
-        },
-        { field: 'date' },
-        { field: 'sport' },
+        { field: 'country', rowGroup: true },
+        { field: 'sport', pivot: true, pivotComparator: (a: string, b: string) => b.localeCompare(a) },
         { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
-        { field: 'bronze', aggFunc: 'sum' },
     ],
     defaultColDef: {
         flex: 1,
-        minWidth: 150,
-        filter: true,
+        minWidth: 130,
     },
     autoGroupColumnDef: {
-        minWidth: 250,
+        minWidth: 200,
     },
     pivotMode: true,
 };
-
-function ReversedYearPivotComparator(a: string, b: string) {
-    return Number(b) - Number(a);
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

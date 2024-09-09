@@ -7,6 +7,7 @@ import {
     ICellRendererParams,
     ModuleRegistry,
     SelectionChangedEvent,
+    SelectionOptions,
     ValueFormatterParams,
 } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -109,7 +110,7 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
                 [columnDefs]="colDefs"
                 [defaultColDef]="defaultColDef"
                 [pagination]="true"
-                [rowSelection]="'multiple'"
+                [selection]="selection"
                 (gridReady)="onGridReady($event)"
                 (cellValueChanged)="onCellValueChanged($event)"
                 (selectionChanged)="onSelectionChanged($event)"
@@ -140,7 +141,6 @@ export class AppComponent {
         {
             field: 'mission',
             width: 150,
-            checkboxSelection: true,
         },
         {
             field: 'company',
@@ -169,6 +169,11 @@ export class AppComponent {
         },
         { field: 'rocket' },
     ];
+
+    selection: SelectionOptions = {
+        mode: 'multiRow',
+        headerCheckbox: false,
+    };
 
     // Default Column Definitions: Apply configuration across all columns
     defaultColDef: ColDef = {

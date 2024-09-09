@@ -1,7 +1,7 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { GridRows, TestGridsManager, flushFakeTimers } from '../../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 
 const getDataPath = (data: any) => data.orgHierarchy;
@@ -28,8 +28,6 @@ describe('ag-grid tree expanded state', () => {
         const originalRowData = getOrgHierarchyData();
         let yooCounter = 0;
 
-        vitest.useFakeTimers({ shouldAdvanceTime: true });
-
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'jobTitle' }, { field: 'employmentType' }],
             autoGroupColumnDef: {
@@ -44,24 +42,22 @@ describe('ag-grid tree expanded state', () => {
             getDataPath,
             onRowGroupOpened: ({ data }) => {
                 if (!data) return;
-                setTimeout(() => {
-                    const oldEntries = api.getGridOption('rowData')!;
-                    const yoo = `yoo-${++yooCounter}`;
-                    const newEntries = [
-                        ...(data.orgHierarchy.length < 3 ? oldEntries : oldEntries.filter((b) => b.id !== data.id)),
-                        {
-                            ...data,
-                            id: yoo,
-                            orgHierarchy: [...(data?.orgHierarchy ?? []), yoo],
-                        },
-                    ];
+                const oldEntries = api.getGridOption('rowData') ?? [];
+                const yoo = `yoo-${++yooCounter}`;
+                const newEntries = [
+                    ...(data.orgHierarchy.length < 3 ? oldEntries : oldEntries.filter((b) => b.id !== data.id)),
+                    {
+                        ...data,
+                        id: yoo,
+                        orgHierarchy: [...(data?.orgHierarchy ?? []), yoo],
+                    },
+                ];
 
-                    api.setGridOption('rowData', newEntries);
-                }, 1);
+                api.setGridOption('rowData', newEntries);
             },
         });
 
-        await flushFakeTimers();
+        await asyncSetTimeout(1);
 
         await new GridRows(api, '', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
@@ -79,12 +75,10 @@ describe('ag-grid tree expanded state', () => {
             · · · └── "Joel Cooper" LEAF hidden id:11
         `);
 
-        vitest.useFakeTimers({ shouldAdvanceTime: true });
+        api.getRowNode('0')!.setExpanded(true, undefined, true);
+        api.getRowNode('1')!.setExpanded(true, undefined, true);
 
-        api.getRowNode('0')!.setExpanded(true);
-        api.getRowNode('1')!.setExpanded(true);
-
-        await flushFakeTimers();
+        await asyncSetTimeout(1);
 
         await new GridRows(api, '', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID
@@ -104,12 +98,10 @@ describe('ag-grid tree expanded state', () => {
             · └── yoo-1 LEAF id:yoo-1
         `);
 
-        vitest.useFakeTimers({ shouldAdvanceTime: true });
+        api.getRowNode('7')!.setExpanded(true, undefined, true);
+        api.getRowNode('2')!.setExpanded(true, undefined, true);
 
-        api.getRowNode('7')!.setExpanded(true);
-        api.getRowNode('2')!.setExpanded(true);
-
-        await flushFakeTimers();
+        await asyncSetTimeout(1);
 
         await new GridRows(api, '', gridRowsOptions).check(`
             ROOT id:ROOT_NODE_ID

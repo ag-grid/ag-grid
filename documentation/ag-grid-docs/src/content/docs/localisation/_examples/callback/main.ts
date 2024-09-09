@@ -114,7 +114,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     pagination: true,
     paginationPageSize: 500,
     paginationPageSizeSelector: [100, 500, 1000],
-    enableRangeSelection: true,
+    selection: { mode: 'cell' },
     enableCharts: true,
     getLocaleText: (params: GetLocaleTextParams) => {
         switch (params.key) {

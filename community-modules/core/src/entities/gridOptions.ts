@@ -707,6 +707,10 @@ export interface GridOptions<TData = any> {
      */
     dragAndDropImageComponent?: any;
     /**
+     * Customise the parameters provided to the Drag and Drop Image Component.
+     */
+    dragAndDropImageComponentParams?: any;
+    /**
      *
      * A list of grids to treat as Aligned Grids.
      * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
@@ -949,7 +953,6 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to omit the value Column header when there is only a single value column.
      * @default false
-     * @initial
      */
     removePivotHeaderRowWhenSingleValueColumn?: boolean;
     // *** Rendering *** //
@@ -1807,11 +1810,11 @@ export interface GridOptions<TData = any> {
      */
     initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams<TData>) => number;
     /**
-     * Callback to be used with pivoting, to allow changing the second column definition.
+     * Callback for the mutation of the generated pivot result column definitions
      */
     processPivotResultColDef?: (colDef: ColDef<TData>) => void;
     /**
-     * Callback to be used with pivoting, to allow changing the second column group definition.
+     * Callback for the mutation of the generated pivot result column group definitions
      */
     processPivotResultColGroupDef?: (colGroupDef: ColGroupDef<TData>) => void;
     /**

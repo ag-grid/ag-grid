@@ -15,6 +15,12 @@ import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, StatusBarModule, RangeSelectionModule]);
 
+const selection = {
+    mode: 'multiRow',
+    checkboxes: false,
+    headerCheckbox: false,
+};
+
 const GridExample = () => {
     const gridRef = useRef();
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -92,8 +98,7 @@ const GridExample = () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    enableRangeSelection={true}
-                    rowSelection={'multiple'}
+                    selection={selection}
                     statusBar={statusBar}
                 />
             </div>

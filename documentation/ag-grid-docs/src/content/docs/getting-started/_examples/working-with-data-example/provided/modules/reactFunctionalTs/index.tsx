@@ -1,7 +1,7 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ModuleRegistry, SelectionOptions } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -11,6 +11,12 @@ import { createRoot } from 'react-dom/client';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const gridDiv = document.querySelector('#myGrid');
+
+const selection: SelectionOptions = {
+    mode: 'multiRow',
+    suppressClickSelection: true,
+    headerCheckbox: false,
+};
 
 const GridExample = () => {
     const [rowData, setRowData] = useState([
@@ -55,7 +61,6 @@ const GridExample = () => {
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         {
             field: 'make',
-            checkboxSelection: true,
             editable: true,
             cellEditor: 'agSelectCellEditor',
             cellEditorParams: {
@@ -108,8 +113,7 @@ const GridExample = () => {
                 rowData={rowData}
                 columnDefs={columnDefs}
                 defaultColDef={defaultColDef}
-                rowSelection="multiple"
-                suppressRowClickSelection={true}
+                selection={selection}
                 pagination={true}
                 paginationPageSize={10}
                 paginationPageSizeSelector={[10, 25, 50]}

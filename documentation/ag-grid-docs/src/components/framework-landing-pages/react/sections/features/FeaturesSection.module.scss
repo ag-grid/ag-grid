@@ -1,0 +1,83 @@
+@use 'design-system' as *;
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
+        align-items: unset;
+    }
+}
+
+.tabContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing-size-4;
+    background: var(--color-brand-200);
+    border-radius: var(--radius-4xl);
+    padding: $spacing-size-1;
+    margin-bottom: $spacing-size-12;
+    width: auto;
+
+    #{$selector-darkmode} & {
+        background: var(--color-bg-secondary);
+    }
+}
+
+.tab {
+    width: 150px;
+    height: 50px;
+    color: var(--color-fg-primary);
+    border-radius: var(--radius-4xl);
+    border: none;
+    appearance: none;
+    background-color: transparent;
+    box-shadow: none;
+    font-weight: var(--text-regular);
+}
+
+.activeTab {
+    width: 150px;
+    height: 50px;
+    border-radius: var(--radius-4xl);
+    background: white;
+    color: var(--color-brand-600);
+    border: none;
+    box-shadow: var(--shadow-lg);
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-fg-secondary);
+    }
+}
+
+.buttonContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: $spacing-size-2;
+}
+
+.featureNavButton {
+    appearance: none;
+    padding: 0;
+    text-align: left;
+    font-weight: var(--text-regular);
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.featureNavIcon {
+    fill: var(--color-fg-primary);
+
+    &:hover {
+        cursor: pointer;
+        fill: var(--color-util-brand-400);
+    }
+}
+
+.featureNavIconDisabled {
+    fill: var(--color-fg-disabled);
+}

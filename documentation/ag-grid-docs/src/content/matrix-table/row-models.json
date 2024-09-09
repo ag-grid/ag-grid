@@ -91,7 +91,7 @@
         "viewport": false
     },
     {
-        "feature": "[Header Checkbox Selection](./row-selection-multi-row/#bulk-selection)",
+        "feature": "[Header Checkbox Selection](./row-selection-multi-row/#selecting-all-rows)",
         "clientSide": true,
         "infinite": false,
         "serverSide": true,

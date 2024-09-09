@@ -32,9 +32,8 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     columnDefs: getColumnDefs(),
     rowModelType: 'infinite',
-    selection: { mode: 'multiRow', headerCheckbox: false },
+    selection: { mode: 'multiRow', headerCheckbox: false, suppressClickSelection: true },
     maxBlocksInCache: 2,
-    suppressRowClickSelection: true,
     getRowId: (params: GetRowIdParams) => {
         return params.data.a;
     },

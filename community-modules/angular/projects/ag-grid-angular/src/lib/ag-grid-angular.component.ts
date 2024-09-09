@@ -753,6 +753,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public dragAndDropImageComponent: any = undefined;
+    /** Customise the parameters provided to the Drag and Drop Image Component.
+     */
+    @Input() public dragAndDropImageComponentParams: any = undefined;
     /**
      * A list of grids to treat as Aligned Grids.
      * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
@@ -944,7 +947,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressAggFilteredOnly: boolean | undefined = undefined;
     /** Set to `true` to omit the value Column header when there is only a single value column.
      * @default false
-     * @initial
      */
     @Input() public removePivotHeaderRowWhenSingleValueColumn: boolean | undefined = undefined;
     /** Set to `false` to disable Row Animation which is enabled by default.
@@ -1591,10 +1593,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public initialGroupOrderComparator:
         | ((params: InitialGroupOrderComparatorParams<TData>) => number)
         | undefined = undefined;
-    /** Callback to be used with pivoting, to allow changing the second column definition.
+    /** Callback for the mutation of the generated pivot result column definitions
      */
     @Input() public processPivotResultColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
-    /** Callback to be used with pivoting, to allow changing the second column group definition.
+    /** Callback for the mutation of the generated pivot result column group definitions
      */
     @Input() public processPivotResultColGroupDef: ((colGroupDef: ColGroupDef<TData>) => void) | undefined = undefined;
     /** Callback to be used when working with Tree Data when `treeData = true`.

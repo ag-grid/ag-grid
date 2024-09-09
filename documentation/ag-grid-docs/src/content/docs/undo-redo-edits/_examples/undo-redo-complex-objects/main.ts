@@ -3,8 +3,6 @@ import {
     CellValueChangedEvent,
     GridApi,
     GridOptions,
-    ICellEditorParams,
-    ProcessCellForExportParams,
     ValueFormatterParams,
     ValueGetterParams,
     ValueParserParams,
@@ -42,8 +40,12 @@ const gridOptions: GridOptions = {
         enableCellChangeFlash: true,
     },
     rowData: getRows(),
-    enableRangeSelection: true,
-    enableFillHandle: true,
+    selection: {
+        mode: 'cell',
+        handle: {
+            mode: 'fill',
+        },
+    },
     undoRedoCellEditing: true,
     undoRedoCellEditingLimit: 5,
     onFirstDataRendered: onFirstDataRendered,

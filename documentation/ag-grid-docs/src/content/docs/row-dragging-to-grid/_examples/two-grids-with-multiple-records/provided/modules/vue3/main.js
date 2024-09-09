@@ -29,8 +29,6 @@ const VueExample = {
                     <label for="deselect">Only Deselect Source Rows</label>
                     <input type="radio" id="none" name="radio">
                     <label for="none">None</label>
-                    <input type="checkbox" id="toggleCheck" checked ref="eSelectCheckbox" @change="checkboxSelectChange()">
-                    <label for="toggleCheck">Checkbox Select</label>
                     <span class="input-group-button">
                         <button type="button" class="btn btn-default reset" style="margin-left: 5px;" @click="reset()">
                             <i class="fas fa-redo" style="margin-right: 5px;"></i>Reset
@@ -46,9 +44,8 @@ const VueExample = {
                                 style="height: 100%;"
                                 :class="themeClass"
                                 :defaultColDef="defaultColDef"
-                                rowSelection="multiple"
+                                :selection="selection"
                                 :rowDragMultiRow="true"
-                                :suppressRowClickSelection="true"
                                 :getRowId="getRowId"
                                 :rowDragManaged="true"
                                 :suppressMoveWhenRowDragging="true"
@@ -93,6 +90,10 @@ const VueExample = {
                 minWidth: 100,
                 filter: true,
             },
+            selection: {
+                mode: 'multiRow',
+                suppressClickSelection: true,
+            },
             leftColumns: [
                 {
                     rowDrag: true,
@@ -105,14 +106,6 @@ const VueExample = {
                         }
                         return params.rowNode.data.athlete;
                     },
-                },
-                {
-                    colId: 'checkbox',
-                    maxWidth: 50,
-                    checkboxSelection: true,
-                    suppressHeaderMenuButton: true,
-                    suppressHeaderFilterButton: true,
-                    headerCheckboxSelection: true,
                 },
                 { field: 'athlete' },
                 { field: 'sport' },
@@ -175,17 +168,7 @@ const VueExample = {
         reset() {
             this.$refs.eMoveRadio.checked = true;
 
-            if (!this.$refs.eSelectCheckbox.checked) {
-                this.$refs.eSelectCheckbox.click();
-            }
-
             this.loadGrids();
-        },
-
-        checkboxSelectChange() {
-            const checked = this.$refs.eSelectCheckbox.checked;
-            this.api.setColumnsVisible(['checkbox'], checked);
-            this.leftApi.setGridOption('suppressRowClickSelection', checked);
         },
 
         onGridReady(params, side) {
