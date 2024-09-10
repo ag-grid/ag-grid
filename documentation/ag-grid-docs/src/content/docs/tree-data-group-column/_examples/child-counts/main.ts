@@ -33,7 +33,6 @@ const gridOptions: GridOptions = {
     autoGroupColumnDef: {
         headerName: 'File Explorer',
         minWidth: 150,
-        filter: 'agTextColumnFilter',
     },
     rowData: getData(),
     treeData: true,

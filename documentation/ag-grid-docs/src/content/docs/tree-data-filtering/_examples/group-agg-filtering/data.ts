@@ -1,81 +1,86 @@
-export function getData(): any[] {
-    // specify the data
-    var rowData = [
-        {
-            id: 1,
-            filePath: ['Documents'],
-            size: 20,
-        },
-        {
-            id: 2,
-            filePath: ['Documents', 'txt'],
-        },
-        {
-            id: 3,
-            filePath: ['Documents', 'txt', 'notes.txt'],
-            dateModified: 'May 21 2017 01:50:00 PM',
-            size: 14.7,
-        },
-        {
-            id: 4,
-            filePath: ['Documents', 'pdf'],
-        },
-        {
-            id: 5,
-            filePath: ['Documents', 'pdf', 'book.pdf'],
-            dateModified: 'May 20 2017 01:50:00 PM',
-            size: 2.1,
-        },
-        {
-            id: 6,
-            filePath: ['Documents', 'pdf', 'cv.pdf'],
-            dateModified: 'May 20 2016 11:50:00 PM',
-            size: 2.4,
-        },
-        {
-            id: 7,
-            filePath: ['Documents', 'xls'],
-        },
-        {
-            id: 8,
-            filePath: ['Documents', 'xls', 'accounts.xls'],
-            dateModified: 'Aug 12 2016 10:50:00 AM',
-            size: 4.3,
-        },
-        {
-            id: 9,
-            filePath: ['Documents', 'stuff'],
-        },
-        {
-            id: 10,
-            filePath: ['Documents', 'stuff', 'xyz.txt'],
-            dateModified: 'Jan 17 2016 08:03:00 PM',
-            size: 1.1,
-        },
-        {
-            id: 11,
-            filePath: ['Music', 'mp3', 'pop'],
-            dateModified: 'Sep 11 2016 08:03:00 PM',
-            size: 14.3,
-        },
-        {
-            id: 12,
-            filePath: ['temp.txt'],
-            dateModified: 'Aug 12 2016 10:50:00 PM',
-            size: 101,
-        },
-        {
-            id: 13,
-            filePath: ['Music', 'mp3', 'pop', 'theme.mp3'],
-            dateModified: 'Aug 12 2016 10:50:00 PM',
-            size: 101,
-        },
-        {
-            id: 14,
-            filePath: ['Music', 'mp3', 'jazz'],
-            dateModified: 'Aug 12 2016 10:50:00 PM',
-            size: 101,
-        },
-    ];
-    return rowData;
+const files = [
+    { path: ['Desktop', 'ProjectAlpha', 'Proposal.docx'], size: 512000, created: '2023-07-10', modified: '2023-08-01' },
+    {
+        path: ['Desktop', 'ProjectAlpha', 'Timeline.xlsx'],
+        size: 1048576,
+        created: '2023-07-12',
+        modified: '2023-08-03',
+    },
+    { path: ['Desktop', 'ToDoList.txt'], size: 51200, created: '2023-08-05', modified: '2023-08-10' },
+    { path: ['Desktop', 'MeetingNotes_August.pdf'], size: 460800, created: '2023-08-15', modified: '2023-08-15' },
+    { path: ['Documents', 'Work', 'ProjectAlpha'] },
+    {
+        path: ['Documents', 'Work', 'ProjectAlpha', 'Proposal.docx'],
+        size: 512000,
+        created: '2023-07-10',
+        modified: '2023-08-01',
+    },
+    {
+        path: ['Documents', 'Work', 'ProjectAlpha', 'Timeline.xlsx'],
+        size: 1048576,
+        created: '2023-07-12',
+        modified: '2023-08-03',
+    },
+    {
+        path: ['Documents', 'Work', 'ProjectBeta', 'Report.pdf'],
+        size: 1024000,
+        created: '2023-06-22',
+        modified: '2023-07-15',
+    },
+    {
+        path: ['Documents', 'Work', 'ProjectBeta', 'Budget.xlsx'],
+        size: 1048576,
+        created: '2023-06-25',
+        modified: '2023-07-18',
+    },
+    {
+        path: ['Documents', 'Work', 'Meetings', 'TeamMeeting_August.pdf'],
+        size: 512000,
+        created: '2023-08-20',
+        modified: '2023-08-21',
+    },
+    {
+        path: ['Documents', 'Work', 'Meetings', 'ClientMeeting_July.pdf'],
+        size: 1048576,
+        created: '2023-07-15',
+        modified: '2023-07-16',
+    },
+    {
+        path: ['Documents', 'Personal', 'Taxes', '2022.pdf'],
+        size: 1024000,
+        created: '2023-04-10',
+        modified: '2023-04-10',
+    },
+    {
+        path: ['Documents', 'Personal', 'Taxes', '2021.pdf'],
+        size: 1048576,
+        created: '2022-04-05',
+        modified: '2022-04-06',
+    },
+    {
+        path: ['Documents', 'Personal', 'Taxes', '2020.pdf'],
+        size: 1024000,
+        created: '2021-04-03',
+        modified: '2021-04-03',
+    },
+    { path: ['Pictures', 'Vacation2019', 'Beach.jpg'], size: 1048576, created: '2019-07-10', modified: '2019-07-12' },
+    {
+        path: ['Pictures', 'Vacation2019', 'Mountain.png'],
+        size: 2048000,
+        created: '2019-07-11',
+        modified: '2019-07-13',
+    },
+    { path: ['Pictures', 'Family', 'Birthday2022.jpg'], size: 3072000, created: '2022-12-15', modified: '2022-12-20' },
+    { path: ['Pictures', 'Family', 'Christmas2021.png'], size: 2048000, created: '2021-12-25', modified: '2021-12-26' },
+    { path: ['Videos', 'Vacation2019', 'Beach.mov'], size: 4194304, created: '2019-07-10', modified: '2019-07-12' },
+    { path: ['Videos', 'Vacation2019', 'Hiking.mp4'], size: 4194304, created: '2019-07-15', modified: '2019-07-16' },
+    { path: ['Videos', 'Family', 'Birthday2022.mp4'], size: 6291456, created: '2022-12-15', modified: '2022-12-20' },
+    { path: ['Videos', 'Family', 'Christmas2021.mov'], size: 6291456, created: '2021-12-25', modified: '2021-12-26' },
+    { path: ['Downloads', 'SoftwareInstaller.exe'], size: 2097152, created: '2023-08-01', modified: '2023-08-01' },
+    { path: ['Downloads', 'Receipt_OnlineStore.pdf'], size: 1048576, created: '2023-08-05', modified: '2023-08-05' },
+    { path: ['Downloads', 'Ebook.pdf'], size: 1048576, created: '2023-08-08', modified: '2023-08-08' },
+];
+
+export function getData() {
+    return files;
 }

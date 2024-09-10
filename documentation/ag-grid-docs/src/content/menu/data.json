@@ -1095,7 +1095,7 @@
                             },
                             {
                                 "title": "Filtering",
-                                "path": "tree-data-opening-groups",
+                                "path": "tree-data-filtering",
                                 "isEnterprise": true
                             }
                         ]
