@@ -59,6 +59,7 @@
     position: relative;
     table-layout: fixed;
     width: 100%;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-border-primary), var(--color-bg-primary) 30%);
 
     @container (max-width: #{$breakpoint-table-small}) {
         display: block;
@@ -217,6 +218,9 @@
     font-variant-ligatures: none;
     font-optical-sizing: auto;
     font-weight: 400;
+    span {
+        opacity: 0.6;
+    }
 }
 
 a.metaValue {

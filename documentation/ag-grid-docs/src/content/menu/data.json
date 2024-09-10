@@ -718,10 +718,6 @@
                         "title": "Selection",
                         "items": [
                             {
-                                "title": "Overview",
-                                "path": "selection-overview"
-                            },
-                            {
                                 "title": "Row Selection",
                                 "path": "row-selection",
                                 "items": [
@@ -1040,6 +1036,21 @@
                             {
                                 "title": "Overview",
                                 "path": "pivoting",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Pivot Result Columns",
+                                "path": "pivoting-result-columns",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Pivot Group Columns",
+                                "path": "pivoting-group-columns",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Pivot Totals",
+                                "path": "pivoting-totals",
                                 "isEnterprise": true
                             }
                         ]

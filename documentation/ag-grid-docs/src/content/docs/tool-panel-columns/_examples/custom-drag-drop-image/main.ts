@@ -2,6 +2,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import type { GridApi, GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
@@ -11,6 +12,7 @@ import { CustomDragAndDropImage } from './customDragAndDropImage_typescript';
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ColumnsToolPanelModule,
+    FiltersToolPanelModule,
     MenuModule,
     RowGroupingModule,
     SetFilterModule,

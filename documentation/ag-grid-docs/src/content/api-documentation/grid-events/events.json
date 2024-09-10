@@ -76,11 +76,7 @@
     },
     "selection": {
         "meta": {
-            "displayName": "Selection",
-            "page": {
-                "name": "Selection Overview",
-                "url": "./selection-overview/"
-            }
+            "displayName": "Selection"
         },
         "headerFocused": {},
         "cellClicked": {},

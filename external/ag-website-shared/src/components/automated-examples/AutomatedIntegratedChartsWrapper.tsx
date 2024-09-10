@@ -37,7 +37,7 @@ export const AutomatedIntegratedChartsWrapper: FunctionComponent<Props> = ({ chi
 
     return (
         <section className={styles.automatedIntegratedChartsOuter}>
-            <div className={classNames('layout-max-width-small', styles.homepageExample)}>
+            <div className={styles.homepageExample}>
                 <div className={styles.automatedIntegratedCharts}>
                     <AutomatedIntegratedChartsWithPackages
                         automatedExampleManager={automatedExampleManager}

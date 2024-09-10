@@ -11,7 +11,13 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-    columnDefs: [{ field: 'athlete' }, { field: 'sport' }, { field: 'year', maxWidth: 120 }],
+    columnDefs: [
+        { field: 'athlete', minWidth: 300 },
+        { field: 'country', minWidth: 200 },
+        { field: 'sport', minWidth: 200 },
+        { field: 'year' },
+        { field: 'date', minWidth: 200 },
+    ],
     defaultColDef: {
         flex: 1,
         minWidth: 100,
@@ -19,10 +25,10 @@ const gridOptions: GridOptions<IOlympicData> = {
     selection: { mode: 'multiRow' },
     controlsColDef: {
         sortable: true,
-        width: 100,
-        maxWidth: 100,
+        width: 120,
+        maxWidth: 120,
         suppressHeaderMenuButton: false,
-        headerTooltip: 'Click checkbox to select all rows',
+        pinned: 'left',
     },
     onFirstDataRendered: (params) => {
         const nodesToSelect: IRowNode[] = [];

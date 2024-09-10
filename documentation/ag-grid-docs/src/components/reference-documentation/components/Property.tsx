@@ -275,7 +275,7 @@ export const Property: FunctionComponent<{
                                 )}
 
                                 {isInitial && (
-                                    <div className={classnames(styles.metaItem)}>
+                                    <div className={classnames(styles.metaItem, styles.initialItem)}>
                                         <a
                                             className={classnames(styles.metaValue)}
                                             href={urlWithPrefix({
@@ -299,11 +299,6 @@ export const Property: FunctionComponent<{
                                 {isObject && (
                                     <div>
                                         See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.
-                                    </div>
-                                )}
-                                {isInitial && config.showInitialDescription && (
-                                    <div className={styles.description}>
-                                        This property will only be read on initialisation.
                                     </div>
                                 )}
 

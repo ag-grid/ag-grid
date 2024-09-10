@@ -38,6 +38,10 @@ const gridOptions = {
 
 {% gridExampleRunner title="Disabling Checkboxes" name="removing-selection-checkboxes" /%}
 
+{% note %}
+You may also pass a function to `selection.checkboxes` to dynamically enabled and disable checkboxes for given rows.
+{% /note %}
+
 ## Configure Selectable Rows
 
 It is possible to specify which rows can be selected via the `selection.isRowSelectable` callback function.
@@ -114,7 +118,6 @@ Note that deselection is still possible when checkboxes are enabled by clicking 
 Here you can find a full list of configuration options available in `'singleRow'` mode.
 
 {% interfaceDocumentation interfaceName="SingleRowSelectionOptions" config={"description":""} /%}
-
 
 ## Next up
 

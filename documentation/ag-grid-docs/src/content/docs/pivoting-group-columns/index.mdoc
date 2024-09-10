@@ -1,0 +1,111 @@
+---
+title: "Pivot Column Groups"
+enterprise: true
+---
+
+Pivot by more than one column to display multiple column groups.
+
+Multiple column groups will be shown in the grid when there is more than one active pivot column. These column groups can be collapsed,
+expanded or fixed.
+
+{% gridExampleRunner title="Column Group Summary Example" name="column-group-summary"  /%}
+
+## Customising Group Definitions
+
+Pivot Result Column Group definitions can be configured by using the `processPivotResultColGroupDef` grid option.
+
+{% apiDocumentation source="grid-options/properties.json" section="rowPivoting" names=["processPivotResultColGroupDef"] /%}
+
+In the example below, the `processPivotResultColGroupDef` callback is used to apply a class to the group header cells,
+which is subsequently used to style them with a golden background.
+
+{% gridExampleRunner title="Column Group Definitions Example" name="column-group-definitions-example"  /%}
+
+The example above demonstrates the following configuration for applying a class to the group header cells:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    pivotMode: true,
+    processPivotResultColGroupDef: (colDef) => {
+        colDef.headerClass = 'pivot-gold'; // the params are mutated directly, not returned
+    },
+}
+```
+
+## Ordering Groups
+
+The pivot result groups are initially displayed in alphabetical order, however, you can change this by providing a `pivotComparator` function to the pivoted columns definition.
+
+{% apiDocumentation source="column-properties/properties.json" section="pivoting" names=["pivotComparator"] /%}
+
+In the example below, note that a `pivotComparator` has been supplied to the `sport` column, and the groups are instead sorted in reversed alphabetical order.
+
+{% gridExampleRunner title="Ordering Pivot Groups" name="order-pivot-groups" /%}
+
+The example above demonstrates the following configuration for modifying the resulting order of groups:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        // ...other column definitions
+        {
+            field: 'sport',
+            pivot: true,
+            pivotComparator: (a, b) => b.localeCompare(a),
+        },
+    ],
+    pivotMode: true,
+}
+```
+
+## Expanded by Default
+
+Pivot Column Groups can be configured to expand by default, down to a given depth. This depth can be configured using the `pivotDefaultExpanded` grid option.
+
+The following example demonstrates `pivotDefaultExpanded` being used to expand the first pivot group level by default. Providing `-1` will expand all pivot group levels by default.
+
+{% gridExampleRunner title="Open Pivot Group By Default" name="open-pivot-group-by-default" /%}
+
+The example above demonstrates the following configuration for expanding pivot groups by default:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    pivotDefaultExpanded: 1,
+}
+```
+
+## Prevent Expanding Groups
+
+When using multiple pivot columns, groups become expandable by default. To prevent this and instead always show all columns, set the grid option `suppressExpandablePivotGroups=true`.
+
+{% gridExampleRunner title="Fixed Pivot Column Groups" name="fixed-pivot-column-groups" /%}
+
+The example above demonstrates the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    pivotMode: true,
+    suppressExpandablePivotGroups: true,
+}
+```
+
+## Hide Group with Single Value Column
+
+When pivoting with only one aggregated column, it can simplify the grid to omit the groups with only one child.
+Enabling the grid option `removePivotHeaderRowWhenSingleValueColumn=true`, when set to `true` will instead skip the group and
+use the pivot keys to label the pivot result column instead.
+
+{% gridExampleRunner title="Hiding Repeated Column Labels" name="hidden-single-value-column-header" /%}
+
+The example above demonstrates the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroup: true },
+        { field: 'sport', pivot: true },
+        { field: 'gold', aggFunc: 'sum' },
+    ],
+    pivotMode: true,
+    removePivotHeaderRowWhenSingleValueColumn: true,
+};
+```
+
+## Next Up
+
+Display the total aggregation of rows and columns when pivoting with [Pivot Totals](./pivoting-totals/).
