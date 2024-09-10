@@ -623,7 +623,9 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         source: SelectionEventSourceType
     ): void {
         if (!Array.isArray(state)) {
-            return;
+            return _errorOnce(
+                'Invalid selection state. When using client-side row model, the state must conform to `string[]`.'
+            );
         }
         const rowIds = new Set(state);
         const nodes: RowNode[] = [];
