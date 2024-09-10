@@ -41,7 +41,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
     public postConstruct(): void {
         this.hasAdvancedFilterParent = !!this.gos.get('advancedFilterParent');
 
-        this.ctrlsService.whenReady(() => this.setAdvancedFilterComp());
+        this.ctrlsService.whenReady(this, () => this.setAdvancedFilterComp());
 
         this.addManagedEventListeners({
             advancedFilterEnabledChanged: ({ enabled }) => this.onEnabledChanged(enabled),
@@ -59,6 +59,11 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
     }
 
     public setupHeaderComp(eCompToInsertBefore: HTMLElement): void {
+        if (this.eHeaderComp) {
+            this.eHeaderComp?.getGui().remove();
+            this.destroyBean(this.eHeaderComp);
+        }
+
         this.eHeaderComp = this.createManagedBean(
             new AdvancedFilterHeaderComp(this.enabled && !this.hasAdvancedFilterParent)
         );

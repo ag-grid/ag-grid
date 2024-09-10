@@ -8,7 +8,7 @@ import type {
     ICellRendererComp,
     UserCompDetails,
 } from 'ag-grid-community';
-import { CssClassManager, _removeFromParent } from 'ag-grid-community';
+import { CssClassManager, _EmptyBean, _removeFromParent } from 'ag-grid-community';
 import type { MutableRefObject } from 'react';
 import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
@@ -179,6 +179,7 @@ const CellComp = ({
 }) => {
     const { context } = useContext(BeansContext);
     const { colIdSanitised, instanceId } = cellCtrl;
+    const compBean = useRef<_EmptyBean>();
 
     // Only provide an initial state when not using a Cell Renderer so that we do not display a raw value before the cell renderer is created.
     const [renderDetails, setRenderDetails] = useState<RenderDetails | undefined>(() =>
@@ -205,13 +206,13 @@ const CellComp = ({
     const jsCellRendererRef = useRef<ICellRendererComp>();
     const cellEditorRef = useRef<ICellEditor>();
 
-    const eCellWrapper = useRef<HTMLDivElement>();
+    const eCellWrapper = useRef<HTMLDivElement | null>();
     const cellWrapperDestroyFuncs = useRef<(() => void)[]>([]);
 
     // when setting the ref, we also update the state item to force a re-render
-    const eCellValue = useRef<HTMLDivElement>();
+    const eCellValue = useRef<HTMLDivElement | null>();
     const [cellValueVersion, setCellValueVersion] = useState(0);
-    const setCellValueRef = useCallback((ref: HTMLDivElement) => {
+    const setCellValueRef = useCallback((ref: HTMLDivElement | null) => {
         eCellValue.current = ref;
         setCellValueVersion((v) => v + 1);
     }, []);
@@ -333,10 +334,10 @@ const CellComp = ({
 
     // tool widgets effect
     const setCellWrapperRef = useCallback(
-        (ref: HTMLDivElement) => {
-            eCellWrapper.current = ref;
+        (eRef: HTMLDivElement | null) => {
+            eCellWrapper.current = eRef;
 
-            if (!eCellWrapper.current) {
+            if (!eRef) {
                 cellWrapperDestroyFuncs.current.forEach((f) => f());
                 cellWrapperDestroyFuncs.current = [];
                 return;
@@ -345,7 +346,7 @@ const CellComp = ({
             const addComp = (comp: Component | undefined) => {
                 if (comp) {
                     const eGui = comp.getGui();
-                    eCellWrapper.current?.insertAdjacentElement('afterbegin', eGui);
+                    eRef.insertAdjacentElement('afterbegin', eGui);
                     cellWrapperDestroyFuncs.current.push(() => {
                         context.destroyBean(comp);
                         _removeFromParent(eGui);
@@ -370,14 +371,14 @@ const CellComp = ({
         [cellCtrl, context, includeDndSource, includeRowDrag, includeSelection]
     );
 
-    const setRef = useCallback((ref: HTMLDivElement | null) => {
-        eGui.current = ref;
-        if (!eGui.current || !cellCtrl) {
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
+        if (!eRef || !cellCtrl) {
             // We do NOT add a check for if the cellCtrl is destroyed as when there are lots of updates React
             // can get behind our internal state and call this function after the cellCtrl has been destroyed.
             // If we were to shortcut here then cell values will flash in the first column of the grid as they will
             // not have the correct cell position / styles applied as that is set via setComp.
-            cellCtrl?.unsetComp();
             return;
         }
 
@@ -442,7 +443,7 @@ const CellComp = ({
         };
 
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;
-        cellCtrl.setComp(compProxy, eGui.current, cellWrapperOrUndefined, printLayout, editingRow);
+        cellCtrl.setComp(compProxy, eRef, cellWrapperOrUndefined, printLayout, editingRow, compBean.current);
     }, []);
 
     const reactCellRendererStateless = useMemo(() => {

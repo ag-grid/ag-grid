@@ -4,7 +4,7 @@ import type {
     IHeaderFilterCellComp,
     UserCompDetails,
 } from 'ag-grid-community';
-import { AgPromise } from 'ag-grid-community';
+import { AgPromise, _EmptyBean } from 'ag-grid-community';
 import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { CustomContext } from '../../shared/customComp/customContext';
@@ -29,6 +29,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails | null>();
     const [, setRenderKey] = useState<number>(1);
 
+    const compBean = useRef<_EmptyBean>();
     const eGui = useRef<HTMLDivElement | null>(null);
     const eFloatingFilterBody = useRef<HTMLDivElement>(null);
     const eButtonWrapper = useRef<HTMLDivElement>(null);
@@ -46,9 +47,10 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
         userCompResolve.current && userCompResolve.current(value);
     };
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGui.current = e;
-        if (!eGui.current) {
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
+        if (!eRef) {
             return;
         }
 
@@ -73,7 +75,7 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
             setMenuIcon: (eIcon) => eButtonShowMainFilter.current?.appendChild(eIcon),
         };
 
-        ctrl.setComp(compProxy, eGui.current, eButtonShowMainFilter.current!, eFloatingFilterBody.current!);
+        ctrl.setComp(compProxy, eRef, eButtonShowMainFilter.current!, eFloatingFilterBody.current!, compBean.current);
     }, []);
 
     // js comps

@@ -4,6 +4,7 @@ import type {
     IHeaderGroupComp,
     UserCompDetails,
 } from '@ag-grid-community/core';
+import { _EmptyBean } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { BeansContext } from '../beansContext';
@@ -20,14 +21,16 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
     const colId = useMemo(() => ctrl.getColId(), []);
 
+    const compBean = useRef<_EmptyBean>();
     const eGui = useRef<HTMLDivElement | null>(null);
     const eResize = useRef<HTMLDivElement>(null);
     const eHeaderCompWrapper = useRef<HTMLDivElement>(null);
     const userCompRef = useRef<IHeaderGroupComp>();
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGui.current = e;
-        if (!eGui.current) {
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
+        if (!eRef) {
             return;
         }
         const compProxy: IHeaderGroupCellComp = {
@@ -46,7 +49,7 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
             getUserCompInstance: () => userCompRef.current || undefined,
         };
 
-        ctrl.setComp(compProxy, eGui.current, eResize.current!, eHeaderCompWrapper.current!);
+        ctrl.setComp(compProxy, eRef, eResize.current!, eHeaderCompWrapper.current!, compBean.current);
     }, []);
 
     // js comps

@@ -1,3 +1,4 @@
+import { setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
@@ -76,8 +77,9 @@ export class HeaderRowCtrl extends BeanStub {
      * @param comp Proxy to the actual component
      * @param initCompState Should the component be initialised with the current state of the controller. Default: true
      */
-    public setComp(comp: IHeaderRowComp, initCompState: boolean = true): void {
+    public setComp(comp: IHeaderRowComp, compBean: BeanStub | undefined, initCompState: boolean = true): void {
         this.comp = comp;
+        compBean = setupCompBean(this, this.beans.context, compBean);
 
         if (initCompState) {
             this.onRowHeightChanged();
@@ -86,7 +88,7 @@ export class HeaderRowCtrl extends BeanStub {
         // width is managed directly regardless of framework and so is not included in initCompState
         this.setWidth();
 
-        this.addEventListeners();
+        this.addEventListeners(compBean);
     }
 
     public getHeaderRowClass(): string {
@@ -96,9 +98,9 @@ export class HeaderRowCtrl extends BeanStub {
         return this.rowIndex + 1;
     }
 
-    private addEventListeners(): void {
+    private addEventListeners(compBean: BeanStub): void {
         const onHeightChanged = this.onRowHeightChanged.bind(this);
-        this.addManagedEventListeners({
+        compBean.addManagedEventListeners({
             columnResized: this.onColumnResized.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             virtualColumnsChanged: (params) => this.onVirtualColumnsChanged(params.afterScroll),
@@ -109,10 +111,10 @@ export class HeaderRowCtrl extends BeanStub {
         });
 
         // when print layout changes, it changes what columns are in what section
-        this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedPropertyListener('ensureDomOrder', (e) => (this.isEnsureDomOrder = e.currentValue));
+        compBean.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
+        compBean.addManagedPropertyListener('ensureDomOrder', (e) => (this.isEnsureDomOrder = e.currentValue));
 
-        this.addManagedPropertyListeners(
+        compBean.addManagedPropertyListeners(
             [
                 'headerHeight',
                 'pivotHeaderHeight',
@@ -379,11 +381,9 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     public override destroy(): void {
-        if (this.headerCellCtrls) {
-            this.headerCellCtrls.forEach((ctrl) => {
-                this.destroyBean(ctrl);
-            });
-        }
+        this.headerCellCtrls?.forEach((ctrl) => {
+            this.destroyBean(ctrl);
+        });
         this.headerCellCtrls = undefined;
         super.destroy();
     }

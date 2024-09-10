@@ -1,5 +1,6 @@
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
+import type { BeanCollection } from './context/context';
 import type { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
 import type { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
 import type { GridBodyCtrl } from './gridBodyComp/gridBodyCtrl';
@@ -47,80 +48,108 @@ interface ReadyParams {
 
 type CtrlType = keyof ReadyParams;
 
-export class CtrlsService extends BeanStub implements NamedBean {
+type BeanDestroyFunc = Pick<BeanStub<any>, 'addDestroyFunc'>;
+
+export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     beanName = 'ctrlsService' as const;
 
-    private params: ReadyParams = {} as ReadyParams;
+    private params: ReadyParams = {
+        gridCtrl: undefined!,
+        gridBodyCtrl: undefined!,
+
+        center: undefined!,
+        left: undefined!,
+        right: undefined!,
+
+        bottomCenter: undefined!,
+        bottomLeft: undefined!,
+        bottomRight: undefined!,
+
+        topCenter: undefined!,
+        topLeft: undefined!,
+        topRight: undefined!,
+
+        stickyTopCenter: undefined!,
+        stickyTopLeft: undefined!,
+        stickyTopRight: undefined!,
+
+        stickyBottomCenter: undefined!,
+        stickyBottomLeft: undefined!,
+        stickyBottomRight: undefined!,
+
+        fakeHScrollComp: undefined!,
+        fakeVScrollComp: undefined!,
+        gridHeaderCtrl: undefined!,
+
+        centerHeader: undefined!,
+        leftHeader: undefined!,
+        rightHeader: undefined!,
+    };
     private ready = false;
     private readyCallbacks: ((p: ReadyParams) => void)[] = [];
 
-    private checkReady(): void {
-        const params = this.params;
-        this.ready =
-            params.gridCtrl != null &&
-            params.gridBodyCtrl != null &&
-            params.center != null &&
-            params.left != null &&
-            params.right != null &&
-            params.bottomCenter != null &&
-            params.bottomLeft != null &&
-            params.bottomRight != null &&
-            params.topCenter != null &&
-            params.topLeft != null &&
-            params.topRight != null &&
-            params.stickyTopCenter != null &&
-            params.stickyTopLeft != null &&
-            params.stickyTopRight != null &&
-            params.stickyBottomCenter != null &&
-            params.stickyBottomLeft != null &&
-            params.stickyBottomRight != null &&
-            params.centerHeader != null &&
-            params.leftHeader != null &&
-            params.rightHeader != null &&
-            params.fakeHScrollComp != null &&
-            params.fakeVScrollComp != null &&
-            params.gridHeaderCtrl != null;
+    private runReadyCallbacksAsync = false;
 
-        if (this.ready) {
-            this.readyCallbacks.forEach((c) => c(params));
-            this.readyCallbacks.length = 0;
-        }
+    public wireBeans(beans: BeanCollection) {
+        // With React 19 StrictMode, ctrlService can be ready twice.
+        // The first time after the first render cycle, and the second time after the second render cycle which is only done in StrictMode.
+        // By making the local events async, we effectively debounce the first ready event until after the second render cycle has completed.
+        // This means that the ready logic across the grid will run against the currently rendered components and controllers.
+        // We make this async only for React 19 as StrictMode in React 19 double fires ref callbacks whereas previous versions of React do not.
+        this.runReadyCallbacksAsync = beans.frameworkOverrides.runWhenReadyAsync?.() ?? false;
     }
 
-    public whenReady(callback: (p: ReadyParams) => void): void {
+    public postConstruct() {
+        this.addEventListener(
+            'ready',
+            () => {
+                this.updateReady();
+                if (this.ready) {
+                    this.readyCallbacks.forEach((c) => c(this.params));
+                    this.readyCallbacks.length = 0;
+                }
+            },
+            this.runReadyCallbacksAsync
+        );
+    }
+    private updateReady(): void {
+        this.ready = Object.values(this.params).every((ctrl: BeanStub<any> | undefined) => {
+            return ctrl?.isAlive() ?? false;
+        });
+    }
+
+    public whenReady(caller: BeanDestroyFunc, callback: (p: ReadyParams) => void): void {
         if (this.ready) {
             callback(this.params);
         } else {
             this.readyCallbacks.push(callback);
         }
+        caller.addDestroyFunc(() => {
+            // remove the callback if the caller is destroyed so that we don't call it against a destroyed component
+            const index = this.readyCallbacks.indexOf(callback);
+            if (index >= 0) {
+                this.readyCallbacks.splice(index, 1);
+            }
+        });
     }
 
     public register<K extends CtrlType, T extends ReadyParams[K]>(ctrlType: K, ctrl: T): void {
         this.params[ctrlType] = ctrl;
-        this.checkReady();
-    }
-
-    public registerHeaderContainer(ctrl: HeaderRowContainerCtrl, pinned: ColumnPinnedType): void {
-        const params = this.params;
-        switch (pinned) {
-            case 'left':
-                params.leftHeader = ctrl;
-                break;
-            case 'right':
-                params.rightHeader = ctrl;
-                break;
-            default:
-                params.centerHeader = ctrl;
-                break;
+        this.updateReady();
+        if (this.ready) {
+            this.dispatchLocalEvent({ type: 'ready' });
         }
-        this.checkReady();
+
+        ctrl.addDestroyFunc(() => {
+            // Ensure ready is false when a controller is destroyed
+            // We do not clear them as a lot of code still runs during destroy logic which may need access to the controllers
+            // NOTE: This is not ideal and we should look to stop logic using controllers during destroy
+            this.updateReady();
+        });
     }
 
     public get<K extends CtrlType>(ctrlType: K): ReadyParams[K] {
         return this.params[ctrlType];
-    }
-    public getParams(): Readonly<ReadyParams> {
-        return this.params;
     }
 
     public getGridBodyCtrl(): GridBodyCtrl {

@@ -54,7 +54,7 @@ import { ReactComponent } from '../shared/reactComponent';
 import { BeansContext } from './beansContext';
 import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
-import { CssClasses, runWithoutFlushSync } from './utils';
+import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
 
 export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     const apiRef = useRef<GridApi<TData>>();
@@ -64,6 +64,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     const whenReadyFuncs = useRef<(() => void)[]>([]);
     const prevProps = useRef<AgGridReactProps<any>>(props);
     const frameworkOverridesRef = useRef<ReactFrameworkOverrides>();
+    const gridIdRef = useRef<string | undefined>();
 
     const ready = useRef<boolean>(false);
 
@@ -72,12 +73,11 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     // Hook to enable Portals to be displayed via the PortalManager
     const [, setPortalRefresher] = useState(0);
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGui.current = e;
-        if (!eGui.current) {
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        if (!eRef) {
             destroyFuncs.current.forEach((f) => f());
             destroyFuncs.current.length = 0;
-
             return;
         }
 
@@ -133,41 +133,57 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             });
 
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
-            const ctrlsService = context.getBean('ctrlsService');
-            ctrlsService.whenReady(() => {
-                if (context.isDestroyed()) {
-                    return;
-                }
+            context.getBean('ctrlsService').whenReady(
+                {
+                    addDestroyFunc: (func) => {
+                        destroyFuncs.current.push(func);
+                    },
+                },
+                () => {
+                    if (context.isDestroyed()) {
+                        return;
+                    }
 
-                const api = apiRef.current;
-                if (api) {
-                    if (props.setGridApi) {
-                        props.setGridApi(api);
+                    const api = apiRef.current;
+                    if (api) {
+                        props.setGridApi?.(api);
                     }
                 }
-            });
+            );
         };
 
         // this callback adds to ctrlsService.whenReady(), just like above, however because whenReady() executes
         // funcs in the order they were received, we know adding items here will be AFTER the grid has set columns
         // and data. this is because GridCoreCreator sets these between calling createUiCallback and acceptChangesCallback
         const acceptChangesCallback = (context: Context) => {
-            const ctrlsService = context.getBean('ctrlsService');
-            ctrlsService.whenReady(() => {
-                whenReadyFuncs.current.forEach((f) => f());
-                whenReadyFuncs.current.length = 0;
-                ready.current = true;
-            });
+            context.getBean('ctrlsService').whenReady(
+                {
+                    addDestroyFunc: (func) => {
+                        destroyFuncs.current.push(func);
+                    },
+                },
+                () => {
+                    whenReadyFuncs.current.forEach((f) => f());
+                    whenReadyFuncs.current.length = 0;
+                    ready.current = true;
+                }
+            );
         };
 
         const gridCoreCreator = new GridCoreCreator();
+        // We ensure that the gridId is stable even in StrictMode
+        mergedGridOps.gridId ??= gridIdRef.current;
         apiRef.current = gridCoreCreator.create(
-            eGui.current,
+            eRef,
             mergedGridOps,
             createUiCallback,
             acceptChangesCallback,
             gridParams
         );
+        destroyFuncs.current.push(() => {
+            apiRef.current = undefined;
+        });
+        gridIdRef.current = apiRef.current.getGridId();
     }, []);
 
     const style = useMemo(() => {
@@ -310,14 +326,12 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
         );
     }
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGuiRef.current = e;
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGuiRef.current = eRef;
 
-        if (!eGuiRef.current) {
-            context.destroyBean(ctrlRef.current);
-            if (resizeObserverDestroyFunc.current) {
-                resizeObserverDestroyFunc.current();
-            }
+        if (!eRef) {
+            ctrlRef.current = context.destroyBean(ctrlRef.current);
+            resizeObserverDestroyFunc.current?.();
             return;
         }
 
@@ -367,7 +381,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
                 }
             };
 
-            resizeObserverDestroyFunc.current = resizeObserverService.observeResize(eGuiRef.current, checkRowSizeFunc);
+            resizeObserverDestroyFunc.current = resizeObserverService.observeResize(eRef, checkRowSizeFunc);
             checkRowSizeFunc();
         }
     }, []);
@@ -443,5 +457,10 @@ class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
 
     shouldQueueUpdates(): boolean {
         return this.queueUpdates;
+    }
+
+    runWhenReadyAsync(): boolean {
+        // We make this async only for React 19 as StrictMode in React 19 double fires ref callbacks whereas previous versions of React do not.
+        return isReact19();
     }
 }

@@ -156,7 +156,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private dataFirstRenderedFired = false;
 
     public postConstruct(): void {
-        this.ctrlsService.whenReady((p) => {
+        this.ctrlsService.whenReady(this, (p) => {
             this.gridBodyCtrl = p.gridBodyCtrl;
             this.initialise();
         });
@@ -993,13 +993,13 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     public override destroy(): void {
-        this.removeAllRowComps();
+        this.removeAllRowComps(true);
         super.destroy();
     }
 
-    private removeAllRowComps(): void {
+    private removeAllRowComps(suppressAnimation: boolean = false): void {
         const rowIndexesToRemove = Object.keys(this.rowCtrlsByRowIndex);
-        this.removeRowCtrls(rowIndexesToRemove);
+        this.removeRowCtrls(rowIndexesToRemove, suppressAnimation);
 
         if (this.stickyRowFeature) {
             this.stickyRowFeature.destroyStickyCtrls();

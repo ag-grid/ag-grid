@@ -53,7 +53,7 @@ export class RowComp extends Component {
             refreshFullWidth: (getUpdatedParams) => this.fullWidthCellRenderer?.refresh?.(getUpdatedParams()) ?? false,
         };
 
-        ctrl.setComp(compProxy, this.getGui(), containerType);
+        ctrl.setComp(compProxy, this.getGui(), containerType, undefined);
         this.addDestroyFunc(() => {
             ctrl.unsetComp(containerType);
         });
