@@ -359,7 +359,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/angular/scrolling-performance/', to: '/angular-data-grid/scrolling-performance/' },
     { from: '/documentation/angular/scrolling-scenarios/', to: '/angular-data-grid/scrolling-performance/' },
     { from: '/documentation/angular/security/', to: '/angular-data-grid/security/' },
-    { from: '/documentation/angular/selection-overview/', to: '/angular-data-grid/selection-overview/' },
+    { from: '/documentation/angular/selection-overview/', to: '/angular-data-grid/row-selection/' },
     {
         from: '/documentation/angular/server-side-model-changing-columns/',
         to: '/angular-data-grid/server-side-model-changing-columns/',
@@ -683,7 +683,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/javascript/scrolling-performance/', to: '/javascript-data-grid/scrolling-performance/' },
     { from: '/documentation/javascript/scrolling-scenarios/', to: '/javascript-data-grid/scrolling-performance/' },
     { from: '/documentation/javascript/security/', to: '/javascript-data-grid/security/' },
-    { from: '/documentation/javascript/selection-overview/', to: '/javascript-data-grid/selection-overview/' },
+    { from: '/documentation/javascript/selection-overview/', to: '/javascript-data-grid/row-selection/' },
     { from: '/documentation/javascript/selection/', to: '/javascript-data-grid/row-selection/' },
     { from: '/documentation/javascript/selection/', to: '/javascript-data-grid/row-selection/' },
     {
@@ -966,7 +966,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/react/scrolling-performance/', to: '/react-data-grid/scrolling-performance/' },
     { from: '/documentation/react/scrolling-scenarios/', to: '/react-data-grid/scrolling-performance/' },
     { from: '/documentation/react/security/', to: '/react-data-grid/security/' },
-    { from: '/documentation/react/selection-overview/', to: '/react-data-grid/selection-overview/' },
+    { from: '/documentation/react/selection-overview/', to: '/react-data-grid/row-selection/' },
     {
         from: '/documentation/react/server-side-model-changing-columns/',
         to: '/react-data-grid/server-side-model-changing-columns/',
@@ -1207,7 +1207,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/vue/scrolling-performance/', to: '/vue-data-grid/scrolling-performance/' },
     { from: '/documentation/vue/scrolling-scenarios/', to: '/vue-data-grid/scrolling-performance/' },
     { from: '/documentation/vue/security/', to: '/vue-data-grid/security/' },
-    { from: '/documentation/vue/selection-overview/', to: '/vue-data-grid/selection-overview/' },
+    { from: '/documentation/vue/selection-overview/', to: '/vue-data-grid/row-selection/' },
     {
         from: '/documentation/vue/server-side-model-changing-columns/',
         to: '/vue-data-grid/server-side-model-changing-columns/',
@@ -1431,7 +1431,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/javascript-grid-rxjs/', to: '/javascript-data-grid/data-update/' },
     { from: '/javascript-grid-scrolling-scenarios/', to: '/javascript-data-grid/scrolling-performance/' },
     { from: '/javascript-grid-security/', to: '/javascript-data-grid/security/' },
-    { from: '/javascript-grid-selection-overview/', to: '/javascript-data-grid/selection-overview/' },
+    { from: '/javascript-grid-selection-overview/', to: '/javascript-data-grid/row-selection/' },
     { from: '/javascript-grid-selection/', to: '/javascript-data-grid/row-selection/' },
     {
         from: '/javascript-grid-server-side-model-changing-columns/',
@@ -1665,7 +1665,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/javascript-grid/scrolling-performance/', to: '/javascript-data-grid/scrolling-performance/' },
     { from: '/javascript-grid/scrolling-scenarios/', to: '/javascript-data-grid/scrolling-performance/' },
     { from: '/javascript-grid/security/', to: '/javascript-data-grid/security/' },
-    { from: '/javascript-grid/selection-overview/', to: '/javascript-data-grid/selection-overview/' },
+    { from: '/javascript-grid/selection-overview/', to: '/javascript-data-grid/row-selection/' },
     { from: '/javascript-grid/server-side-model/', to: '/javascript-data-grid/server-side-model/' },
     {
         from: '/javascript-grid/server-side-model-changing-columns/',
@@ -1918,7 +1918,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-grid/scrolling-performance/', to: '/angular-data-grid/scrolling-performance/' },
     { from: '/angular-grid/scrolling-scenarios/', to: '/angular-data-grid/scrolling-performance/' },
     { from: '/angular-grid/security/', to: '/angular-data-grid/security/' },
-    { from: '/angular-grid/selection-overview/', to: '/angular-data-grid/selection-overview/' },
+    { from: '/angular-grid/selection-overview/', to: '/angular-data-grid/row-selection/' },
     { from: '/angular-grid/server-side-model/', to: '/angular-data-grid/server-side-model/' },
     {
         from: '/angular-grid/server-side-model-changing-columns/',
@@ -2147,7 +2147,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-grid/scrolling-performance/', to: '/react-data-grid/scrolling-performance/' },
     { from: '/react-grid/scrolling-scenarios/', to: '/react-data-grid/scrolling-performance/' },
     { from: '/react-grid/security/', to: '/react-data-grid/security/' },
-    { from: '/react-grid/selection-overview/', to: '/react-data-grid/selection-overview/' },
+    { from: '/react-grid/selection-overview/', to: '/react-data-grid/row-selection/' },
     { from: '/react-grid/server-side-model/', to: '/react-data-grid/server-side-model/' },
     {
         from: '/react-grid/server-side-model-changing-columns/',
@@ -2361,7 +2361,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/vue-grid/scrolling-performance/', to: '/vue-data-grid/scrolling-performance/' },
     { from: '/vue-grid/scrolling-scenarios/', to: '/vue-data-grid/scrolling-performance/' },
     { from: '/vue-grid/security/', to: '/vue-data-grid/security/' },
-    { from: '/vue-grid/selection-overview/', to: '/vue-data-grid/selection-overview/' },
+    { from: '/vue-grid/selection-overview/', to: '/vue-data-grid/row-selection/' },
     { from: '/vue-grid/server-side-model/', to: '/vue-data-grid/server-side-model/' },
     { from: '/vue-grid/server-side-model-changing-columns/', to: '/vue-data-grid/server-side-model-changing-columns/' },
     { from: '/vue-grid/server-side-model-datasource/', to: '/vue-data-grid/server-side-model-datasource/' },
@@ -2703,4 +2703,9 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-data-grid/range-selection-fill-handle', to: '/angular-data-grid/cell-selection-fill-handle' },
     { from: '/react-data-grid/range-selection-fill-handle', to: '/react-data-grid/cell-selection-fill-handle' },
     { from: '/vue-data-grid/range-selection-fill-handle', to: '/vue-data-grid/cell-selection-fill-handle' },
+
+    { from: '/javascript-data-grid/selection-overview', to: '/javascript-data-grid/row-selection' },
+    { from: '/angular-data-grid/selection-overview', to: '/angular-data-grid/row-selection' },
+    { from: '/react-data-grid/selection-overview', to: '/react-data-grid/row-selection' },
+    { from: '/vue-data-grid/selection-overview', to: '/vue-data-grid/row-selection' },
 ];
