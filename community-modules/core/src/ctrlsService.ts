@@ -53,7 +53,38 @@ type BeanDestroyFunc = Pick<BeanStub<any>, 'addDestroyFunc'>;
 export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     beanName = 'ctrlsService' as const;
 
-    private params: ReadyParams = {} as ReadyParams;
+    private params: ReadyParams = {
+        gridCtrl: undefined!,
+        gridBodyCtrl: undefined!,
+
+        center: undefined!,
+        left: undefined!,
+        right: undefined!,
+
+        bottomCenter: undefined!,
+        bottomLeft: undefined!,
+        bottomRight: undefined!,
+
+        topCenter: undefined!,
+        topLeft: undefined!,
+        topRight: undefined!,
+
+        stickyTopCenter: undefined!,
+        stickyTopLeft: undefined!,
+        stickyTopRight: undefined!,
+
+        stickyBottomCenter: undefined!,
+        stickyBottomLeft: undefined!,
+        stickyBottomRight: undefined!,
+
+        fakeHScrollComp: undefined!,
+        fakeVScrollComp: undefined!,
+        gridHeaderCtrl: undefined!,
+
+        centerHeader: undefined!,
+        leftHeader: undefined!,
+        rightHeader: undefined!,
+    };
     private ready = false;
     private readyCallbacks: ((p: ReadyParams) => void)[] = [];
 
