@@ -55,7 +55,7 @@ const gridOptions: GridOptions = {
     },
 };
 
-function onCheckboxChanged() {
+function toggleFilter() {
     const checkbox = document.querySelector<HTMLInputElement>('#excludeChildrenWhenTreeDataFiltering')!;
     gridApi.setGridOption('excludeChildrenWhenTreeDataFiltering', checkbox.checked);
 }
