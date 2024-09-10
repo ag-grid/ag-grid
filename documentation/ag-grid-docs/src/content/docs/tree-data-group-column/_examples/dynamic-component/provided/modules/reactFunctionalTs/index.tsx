@@ -1,6 +1,7 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { CellDoubleClickedEvent, CellKeyDownEvent, ColDef } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -9,8 +10,8 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import CustomGroupCellRenderer from './customGroupCellRenderer.jsx';
-import { getData } from './data.jsx';
+import CustomGroupCellRenderer from './customGroupCellRenderer';
+import { getData } from './data';
 import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
@@ -18,7 +19,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
-    const [columnDefs, setColumnDefs] = useState([
+    const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         { field: 'created' },
         { field: 'modified' },
         {
@@ -35,26 +36,36 @@ const GridExample = () => {
             },
         },
     ]);
-    const getDataPath = useCallback((data) => data.path, []);
-    const autoGroupColumnDef = useMemo(() => {
+    const autoGroupColumnDef = useMemo<ColDef>(() => {
         return {
-            cellRenderer: CustomGroupCellRenderer,
+            cellRendererSelector: (params) => {
+                if (params.node.level === 0) {
+                    return {
+                        component: 'agGroupCellRenderer',
+                    };
+                }
+                return {
+                    component: CustomGroupCellRenderer,
+                };
+            },
         };
     }, []);
-    const defaultColDef = useMemo(() => {
+    const defaultColDef = useMemo<ColDef>(() => {
         return {
             flex: 1,
             minWidth: 120,
         };
     }, []);
 
-    const onCellDoubleClicked = useCallback((params) => {
+    const getDataPath = useCallback((data: any) => data.path, []);
+
+    const onCellDoubleClicked = useCallback((params: CellDoubleClickedEvent) => {
         if (params.colDef.showRowGroup) {
             params.node.setExpanded(!params.node.expanded);
         }
     }, []);
 
-    const onCellKeyDown = useCallback((params) => {
+    const onCellKeyDown = useCallback((params: CellKeyDownEvent) => {
         if (!('colDef' in params)) {
             return;
         }
@@ -74,7 +85,7 @@ const GridExample = () => {
             <div
                 style={gridStyle}
                 className={
-                    /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                    /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
                     'ag-theme-quartz' /** DARK MODE END **/
                 }
             >
@@ -94,7 +105,7 @@ const GridExample = () => {
     );
 };
 
-const root = createRoot(document.getElementById('root'));
+const root = createRoot(document.getElementById('root')!);
 root.render(
     <StrictMode>
         <GridExample />

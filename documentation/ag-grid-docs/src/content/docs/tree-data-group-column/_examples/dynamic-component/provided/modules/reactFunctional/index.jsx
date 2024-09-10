@@ -38,7 +38,16 @@ const GridExample = () => {
     const getDataPath = useCallback((data) => data.path, []);
     const autoGroupColumnDef = useMemo(() => {
         return {
-            cellRenderer: CustomGroupCellRenderer,
+            cellRendererSelector: (params) => {
+                if (params.node.level === 0) {
+                    return {
+                        component: 'agGroupCellRenderer',
+                    };
+                }
+                return {
+                    component: CustomGroupCellRenderer,
+                };
+            },
         };
     }, []);
     const defaultColDef = useMemo(() => {

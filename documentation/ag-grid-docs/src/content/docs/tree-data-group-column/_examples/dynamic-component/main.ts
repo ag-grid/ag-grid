@@ -1,54 +1,87 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import {
+    CellDoubleClickedEvent,
+    CellKeyDownEvent,
+    ColDef,
+    GridApi,
+    GridOptions,
+    createGrid,
+} from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
+import { CustomGroupCellRenderer } from './customGroupCellRenderer_typescript';
 import { getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
+const columnDefs: ColDef[] = [
+    { field: 'created' },
+    { field: 'modified' },
+    {
+        field: 'size',
+        aggFunc: 'sum',
+        valueFormatter: (params) => {
+            const sizeInKb = params.value / 1024;
+
+            if (sizeInKb > 1024) {
+                return `${+(sizeInKb / 1024).toFixed(2)} MB`;
+            } else {
+                return `${+sizeInKb.toFixed(2)} KB`;
+            }
+        },
+    },
+];
+
+const autoGroupColumnDef: ColDef = {
+    cellRendererSelector: (params) => {
+        if (params.node.level === 0) {
+            return {
+                component: 'agGroupCellRenderer',
+            };
+        }
+        return {
+            component: CustomGroupCellRenderer,
+        };
+    },
+};
+
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-    columnDefs: [
-        { field: 'created' },
-        { field: 'modified' },
-        {
-            field: 'size',
-            aggFunc: 'sum',
-            valueFormatter: (params) => {
-                const sizeInKb = params.value / 1024;
-
-                if (sizeInKb > 1024) {
-                    return `${+(sizeInKb / 1024).toFixed(2)} MB`;
-                } else {
-                    return `${+sizeInKb.toFixed(2)} KB`;
-                }
-            },
-        },
-    ],
+    treeData: true,
+    getDataPath: (data) => data.path,
+    columnDefs: columnDefs,
+    autoGroupColumnDef: autoGroupColumnDef,
     defaultColDef: {
         flex: 1,
+        minWidth: 120,
     },
-    autoGroupColumnDef: {
-        headerName: 'My Group',
-        minWidth: 220,
-        cellRendererParams: {
-            checkbox: true,
-        },
-    },
-    rowData: getData(),
-    treeData: true,
     groupDefaultExpanded: -1,
-    getDataPath: (data) => data.path,
+    rowData: getData(),
+    onCellDoubleClicked: (params: CellDoubleClickedEvent<IOlympicData, any>) => {
+        if (params.colDef.showRowGroup) {
+            params.node.setExpanded(!params.node.expanded);
+        }
+    },
+    onCellKeyDown: (params: CellKeyDownEvent<IOlympicData, any>) => {
+        if (!('colDef' in params)) {
+            return;
+        }
+        if (!(params.event instanceof KeyboardEvent)) {
+            return;
+        }
+        if (params.event.code !== 'Enter') {
+            return;
+        }
+        if (params.colDef.showRowGroup) {
+            params.node.setExpanded(!params.node.expanded);
+        }
+    },
 };
 
-// wait for the document to be loaded, otherwise
-// AG Grid will not find the div in the document.
+// setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    // lookup the container we want the Grid to use
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-
-    // create the grid passing in the div to use together with the columns & data we want to use
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });
