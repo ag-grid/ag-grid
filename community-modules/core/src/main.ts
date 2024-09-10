@@ -39,6 +39,7 @@ export { IRenderStatusService } from './interfaces/renderStatusService';
 
 // components
 export { ComponentUtil, _combineAttributesAndGridOptions, _processOnChange } from './components/componentUtil';
+export { EmptyBean as _EmptyBean } from './components/emptyBean';
 export { ComponentSelector, AgComponentSelector, RefPlaceholder, ComponentEvent } from './widgets/component';
 
 export { UserComponentRegistry } from './components/framework/userComponentRegistry';

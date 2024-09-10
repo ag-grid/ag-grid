@@ -1,31 +1,66 @@
 import { createTheme } from '../../../Theme';
 import { checkboxStyleDefault } from '../checkbox-style/checkbox-styles';
-import { colorSchemeLightCold, colorSchemeLightNeutral } from '../color-scheme/color-schemes';
-import { iconSetAlpine, iconSetMaterial, iconSetQuartzRegular } from '../icon-set/icon-sets';
-import { inputStyleBordered, inputStyleUnderlined } from '../input-style/input-styles';
-import { tabStyleMaterial, tabStyleQuartz, tabStyleRolodex } from '../tab-style/tab-styles';
+import { colorSchemeLight, colorSchemeLightCold } from '../color-scheme/color-schemes';
+import { iconSetAlpine, iconSetQuartzRegular } from '../icon-set/icon-sets';
+import { inputStyleBordered } from '../input-style/input-styles';
+import { tabStyleAlpine, tabStyleQuartz, tabStyleRolodex } from '../tab-style/tab-styles';
 
-const createThemeWithDefaultWidgets = (name: string) => createTheme(name).usePart(checkboxStyleDefault);
+const createThemeWithDefaultWidgets = (name: string) => createTheme(name).with(checkboxStyleDefault);
 
-// prettier-ignore
 export const themeQuartz =
     /*#__PURE__*/
     createThemeWithDefaultWidgets('quartz')
-    .usePart(colorSchemeLightNeutral)
-    .usePart(iconSetQuartzRegular)
-    .usePart(tabStyleQuartz)
-    .usePart(inputStyleBordered);
+        .with(colorSchemeLight)
+        .with(iconSetQuartzRegular)
+        .with(tabStyleQuartz)
+        .with(inputStyleBordered)
+        .withParams({
+            fontFamily: [
+                { googleFont: 'IBM Plex Sans' },
+                '-apple-system',
+                'BlinkMacSystemFont',
+                'Segoe UI',
+                'Roboto',
+                'Oxygen-Sans',
+                'Ubuntu',
+            ],
+        });
 
-// prettier-ignore
+export const themeAlpine =
+    /*#__PURE__*/
+    createThemeWithDefaultWidgets('alpine')
+        .with(colorSchemeLight)
+        .with(iconSetAlpine)
+        .with(tabStyleAlpine)
+        .with(inputStyleBordered)
+        .withParams({
+            accentColor: '#2196f3',
+            selectedRowBackgroundColor: {
+                ref: 'accentColor',
+                mix: 0.3,
+            },
+            inputFocusBorder: {
+                color: { ref: 'accentColor', mix: 0.4 },
+            },
+            fontSize: 13,
+            dataFontSize: 14,
+            headerFontWeight: 700,
+            borderRadius: 3,
+            wrapperBorderRadius: 3,
+            tabSelectedUnderlineColor: { ref: 'accentColor' },
+            tabSelectedBorderWidth: 2,
+            tabSelectedUnderlineTransitionDuration: 0.3,
+        });
+
 export const themeBalham =
     /*#__PURE__*/
     createThemeWithDefaultWidgets('balham')
-        .usePart(colorSchemeLightCold)
-        .usePart(iconSetAlpine)
-        .usePart(tabStyleRolodex)
-        .usePart(inputStyleBordered)
-        .overrideParams({
-            gridSize: 4,
+        .with(colorSchemeLightCold)
+        .with(iconSetAlpine)
+        .with(tabStyleRolodex)
+        .with(inputStyleBordered)
+        .withParams({
+            spacing: 4,
             borderRadius: 2,
             wrapperBorderRadius: 2,
             headerColumnResizeHandleColor: 'transparent',
@@ -39,81 +74,57 @@ export const themeBalham =
                 ref: 'foregroundColor',
                 mix: 0.5,
             },
-            fontFamily: [
-                '-apple-system',
-                'BlinkMacSystemFont',
-                'Segoe UI',
-                { googleFont: 'Roboto' },
-                'Oxygen-Sans',
-                'Ubuntu',
-                'Cantarell',
-                'Helvetica Neue',
-                'sans-serif'
-            ],
             fontSize: 12,
-            headerFontWeight: 'bold'
-        })
-        .addCss(
-            `
-            .ag-filter-toolpanel-group-level-0-header {
-                background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 7%);
-                border-top: 1px solid var(--ag-border-color);
-            }
-        `
-        );
+            headerFontWeight: 'bold',
+        });
 
-// - [ ]
-// - [ ] Hide all borders except those between rows and columns
-// - [ ] Hide tab borders and show underlines
-// - [ ] Roboto font
-
-export const themeMaterial =
-    /*#__PURE__*/
-    createThemeWithDefaultWidgets('material')
-        .usePart(iconSetMaterial)
-        .usePart(tabStyleMaterial)
-        .usePart(inputStyleUnderlined)
-        .overrideParams({
-            gridSize: 9,
-            iconSize: 18,
-            borderRadius: 0,
-            wrapperBorderRadius: 0,
-            wrapperBorder: false,
-            sidePanelBorder: false,
-            sideButtonSelectedBorder: false,
-            headerColumnResizeHandleColor: 'none',
-            headerBackgroundColor: {
-                ref: 'backgroundColor',
-            },
-            rangeSelectionBackgroundColor: {
-                ref: 'primaryColor',
-                mix: 0.2,
-            },
-            rangeSelectionBorderColor: {
-                ref: 'primaryColor',
-            },
-            fontFamily: [
-                { googleFont: 'Roboto' },
-                '-apple-system',
-                'BlinkMacSystemFont',
-                'Segoe UI',
-                'Oxygen-Sans',
-                'Ubuntu',
-                'Cantarell',
-                'Helvetica Neue',
-                'sans-serif',
-            ],
-            inputFocusBorder: {
-                style: 'solid',
-                width: 2,
-                color: { ref: 'primaryColor' },
-            },
-            headerFontWeight: 600,
-        })
-        .addCss(
-            `
-            .ag-filter-toolpanel-group-level-0-header, .ag-column-drop-horizontal {
-                background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 7%);
-            }
-        `
-        );
+// export const themeMaterial =
+//     /*#__PURE__*/
+//     createThemeWithDefaultWidgets('material')
+//         .with(iconSetMaterial)
+//         .with(tabStyleMaterial)
+//         .with(inputStyleUnderlined)
+//         .withParams({
+//             spacing: 9,
+//             iconSize: 18,
+//             borderRadius: 0,
+//             wrapperBorderRadius: 0,
+//             wrapperBorder: false,
+//             sidePanelBorder: false,
+//             sideButtonSelectedBorder: false,
+//             headerColumnResizeHandleColor: 'none',
+//             headerBackgroundColor: {
+//                 ref: 'backgroundColor',
+//             },
+//             rangeSelectionBackgroundColor: {
+//                 ref: 'primaryColor',
+//                 mix: 0.2,
+//             },
+//             rangeSelectionBorderColor: {
+//                 ref: 'primaryColor',
+//             },
+//             fontFamily: [
+//                 { googleFont: 'Roboto' },
+//                 '-apple-system',
+//                 'BlinkMacSystemFont',
+//                 'Segoe UI',
+//                 'Oxygen-Sans',
+//                 'Ubuntu',
+//                 'Cantarell',
+//                 'Helvetica Neue',
+//                 'sans-serif',
+//             ],
+//             inputFocusBorder: {
+//                 style: 'solid',
+//                 width: 2,
+//                 color: { ref: 'primaryColor' },
+//             },
+//             headerFontWeight: 600,
+//         })
+//         .withCSS(
+//             `
+//             .ag-filter-toolpanel-group-level-0-header, .ag-column-drop-horizontal {
+//                 background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 7%);
+//             }
+//         `
+//         );

@@ -29,8 +29,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
     }
 
     public init(params: ICheckboxCellRendererParams): void {
-        this.params = params;
-        this.updateCheckbox(params);
+        this.refresh(params);
         const inputEl = this.eCheckbox.getInputElement();
         inputEl.setAttribute('tabindex', '-1');
         _setAriaLive(inputEl, 'polite');
@@ -139,5 +138,10 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             newValue: isSelected,
             valueChanged,
         });
+
+        if (!valueChanged) {
+            // need to reset to original
+            this.updateCheckbox(this.params);
+        }
     }
 }

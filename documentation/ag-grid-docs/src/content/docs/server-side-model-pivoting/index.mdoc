@@ -120,7 +120,7 @@ The example below demonstrates this, note the following:
 {% gridExampleRunner title="Supplying Pivot Result Fields" name="supplying_pivot_result_fields"  exampleHeight=605 /%}
 
 {% note %}
-When using managed columns, you can use [Pivot Callbacks](./pivoting/#column-definitions) to customise the pivot result column definitions.
+When using managed columns, you can use [Pivot Callbacks](./pivoting-result-columns/#column-definitions) to customise the pivot result column definitions.
 {% /note %}
 
 ### Creating Pivot Result Columns (Advanced)
@@ -196,7 +196,7 @@ The example below demonstrates server-side Pivoting with multiple row groups whe
 * Rows are grouped by **Country** and **Sport** with `rowGroup=true` defined on their column definitions.
 * The **Gold**, **Silver** and **Bronze** value columns have `aggFunc='sum'` defined on their column definitions.
 * The `pivotCols` and `pivotMode` properties in the request are used by the server to perform pivoting.
-* New column group definitions created from the `pivotFields` are returned from the server and supplied to the grid using `api.setPivotResultColumns(pivotColDefs)`.
+* New column group definitions are generated from the `pivotResultFields` provided by the success callback.
 * Open the browser's dev console to view the request supplied to the datasource.
 
 {% gridExampleRunner title="Pivot Column Groups" name="pivot-column-groups"  exampleHeight=610 /%}

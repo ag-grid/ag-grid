@@ -123,9 +123,6 @@ function createCrossFilterThemeOverrides(
                 delay: 500,
             },
             legend,
-            listeners: {
-                click: (e: any) => chartProxyParams.crossFilterCallback(e, true),
-            },
         },
     };
 }

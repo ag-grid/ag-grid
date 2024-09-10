@@ -5,4 +5,4 @@ import { iconSetAlpineCSS } from './GENERATED-icon-set-alpine';
 export const iconSetAlpine =
     /*#__PURE__*/
     createPart({feature: 'iconSet', variant: 'alpine'})
-        .addCss(iconSetAlpineCSS);
+        .withCSS(iconSetAlpineCSS);

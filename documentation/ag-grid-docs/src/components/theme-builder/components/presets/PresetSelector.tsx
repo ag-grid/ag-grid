@@ -37,10 +37,10 @@ const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
         if (wrapper) {
             let theme = themeQuartz;
             if (preset.params) {
-                theme = theme.overrideParams(preset.params);
+                theme = theme.withParams(preset.params);
             }
             for (const part of preset.parts || []) {
-                theme = theme.usePart(part);
+                theme = theme.with(part);
             }
             wrapper.style.setProperty('--page-background-color', preset.pageBackgroundColor);
             theme.startUse({ container: wrapper, loadThemeGoogleFonts: true });

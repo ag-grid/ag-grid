@@ -269,6 +269,20 @@
                             {
                                 "title": "Sass",
                                 "path": "global-style-customisation-sass"
+                            },
+                            {
+                                "title": "Theming API",
+                                "path": "theming",
+                                "items": [
+                                    {
+                                        "title": "Extending with CSS",
+                                        "path": "theming-css"
+                                    },
+                                    {
+                                        "title": "Migration",
+                                        "path": "theming-migration"
+                                    }
+                                ]
                             }
                         ]
                     },
@@ -718,10 +732,6 @@
                         "title": "Selection",
                         "items": [
                             {
-                                "title": "Overview",
-                                "path": "selection-overview"
-                            },
-                            {
                                 "title": "Row Selection",
                                 "path": "row-selection",
                                 "items": [
@@ -1040,6 +1050,21 @@
                             {
                                 "title": "Overview",
                                 "path": "pivoting",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Pivot Result Columns",
+                                "path": "pivoting-result-columns",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Pivot Group Columns",
+                                "path": "pivoting-group-columns",
+                                "isEnterprise": true
+                            },
+                            {
+                                "title": "Pivot Totals",
+                                "path": "pivoting-totals",
                                 "isEnterprise": true
                             }
                         ]

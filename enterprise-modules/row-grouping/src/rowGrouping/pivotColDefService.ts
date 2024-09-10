@@ -306,13 +306,13 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             return;
         }
 
-        const insertAfter = this.gos.get('pivotRowTotals') === 'after';
+        const insertAtEnd = this.gos.get('pivotRowTotals') === 'after';
 
         const valueColumns = this.funcColsService.getValueColumns();
         const valueCols = valueColumns.slice();
 
-        if (insertAfter) {
-            // order of row group totals depends on position
+        if (!insertAtEnd) {
+            // if inserting before, we use unshift to insert at the start, so reverse the order to maintain the order of value cols
             valueCols.reverse();
         }
 
@@ -343,7 +343,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                 : colDef;
 
             pivotColumnDefs.push(colDef);
-            insertAfter ? pivotColumnGroupDefs.push(valueGroup) : pivotColumnGroupDefs.unshift(valueGroup);
+            insertAtEnd ? pivotColumnGroupDefs.push(valueGroup) : pivotColumnGroupDefs.unshift(valueGroup);
         }
     }
 

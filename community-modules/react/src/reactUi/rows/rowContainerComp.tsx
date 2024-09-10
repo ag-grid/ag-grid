@@ -19,7 +19,7 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
     const prevRowCtrlsRef = useRef<RowCtrl[]>([]);
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>(() => []);
     const domOrderRef = useRef<boolean>(false);
-    const rowContainerCtrlRef = useRef<RowContainerCtrl | null>();
+    const rowContainerCtrlRef = useRef<RowContainerCtrl>();
 
     const viewportClasses = useMemo(() => classesList(containerOptions.viewport), [containerOptions]);
     const containerClasses = useMemo(() => classesList(containerOptions.container), [containerOptions]);
@@ -46,8 +46,7 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
 
     const setRef = useCallback(() => {
         if (areElementsRemoved()) {
-            context.destroyBean(rowContainerCtrlRef.current);
-            rowContainerCtrlRef.current = null;
+            rowContainerCtrlRef.current = context.destroyBean(rowContainerCtrlRef.current);
         }
         if (areElementsReady()) {
             const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
@@ -103,14 +102,14 @@ const RowContainerComp = ({ name }: { name: RowContainerName }) => {
     }, [areElementsReady, areElementsRemoved]);
 
     const setContainerRef = useCallback(
-        (e: HTMLDivElement) => {
+        (e: HTMLDivElement | null) => {
             eContainer.current = e;
             setRef();
         },
         [setRef]
     );
     const setViewportRef = useCallback(
-        (e: HTMLDivElement) => {
+        (e: HTMLDivElement | null) => {
             eViewport.current = e;
             setRef();
         },

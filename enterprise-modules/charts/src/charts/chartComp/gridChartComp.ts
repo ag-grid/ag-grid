@@ -25,7 +25,6 @@ import {
 import { AgDialog } from '@ag-grid-enterprise/core';
 import type { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
 
-import type { CrossFilteringContext } from '../chartService';
 import { ChartController, DEFAULT_THEMES } from './chartController';
 import { AreaChartProxy } from './chartProxies/cartesian/areaChartProxy';
 import { BarChartProxy } from './chartProxies/cartesian/barChartProxy';
@@ -67,12 +66,12 @@ export interface GridChartParams {
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
     crossFiltering?: boolean;
-    crossFilteringContext: CrossFilteringContext;
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes?: SeriesChartType[];
-    crossFilteringResetCallback?: () => void;
 }
+
+export const CROSS_FILTERING_CHARTS = ['bar', 'column', 'pie', 'donut', 'doughnut'];
 
 export class GridChartComp extends Component {
     private crossFilterService: ChartCrossFilterService;
@@ -122,10 +121,13 @@ export class GridChartComp extends Component {
     }
 
     public postConstruct(): void {
+        const chartType = getCanonicalChartType(this.params.chartType);
+
         const modelParams: ChartModelParams = {
             ...this.params,
-            chartType: getCanonicalChartType(this.params.chartType),
+            chartType,
             chartThemeName: this.getThemeName(),
+            showFilteredDataOnly: !_includes(CROSS_FILTERING_CHARTS, chartType),
         };
 
         const isRtl = this.gos.get('enableRtl');
@@ -167,15 +169,6 @@ export class GridChartComp extends Component {
             chartInstance = this.chartProxy.destroy({ keepChartInstance: true });
         }
 
-        const crossFilterCallback = (event: any, reset: boolean) => {
-            const ctx = this.params.crossFilteringContext;
-            ctx.lastSelectedChartId = reset ? '' : this.chartController.getChartId();
-            if (reset) {
-                this.params.crossFilteringResetCallback!();
-            }
-            this.crossFilterService.filter(event, reset);
-        };
-
         const chartType = this.chartController.getChartType();
         const chartProxyParams: ChartProxyParams = {
             chartType,
@@ -187,7 +180,7 @@ export class GridChartComp extends Component {
             getExtraPaddingDirections: () => this.chartMenu?.getExtraPaddingDirections() ?? [],
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             crossFiltering: this.params.crossFiltering ?? false,
-            crossFilterCallback,
+            crossFilterService: this.crossFilterService,
             parentElement: this.eChart,
             grouping: this.chartController.isGrouping(),
             chartThemeToRestore: this.params.chartThemeName,
@@ -330,10 +323,13 @@ export class GridChartComp extends Component {
             this.chartMenuService.hideAdvancedSettings();
             const lastFocusedCell = this.focusService.getFocusedCell();
             setTimeout(() => {
-                if (lastFocusedCell) {
-                    this.focusService.setFocusedCell({ ...lastFocusedCell, forceBrowserFocus: true });
-                } else {
-                    this.focusService.focusGridInnerElement();
+                if (this.focusService.isAlive()) {
+                    // focus Service may have been destroyed if both grid and chart destroyed together
+                    if (lastFocusedCell) {
+                        this.focusService.setFocusedCell({ ...lastFocusedCell, forceBrowserFocus: true });
+                    } else {
+                        this.focusService.focusGridInnerElement();
+                    }
                 }
             });
         });
@@ -519,10 +515,6 @@ export class GridChartComp extends Component {
 
     public getUnderlyingChart() {
         return this.chartProxy.getChartRef();
-    }
-
-    public crossFilteringReset(): void {
-        this.chartProxy.crossFilteringReset();
     }
 
     private setActiveChartCellRange(focusEvent: FocusEvent): void {

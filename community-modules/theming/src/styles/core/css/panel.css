@@ -22,13 +22,13 @@
     color: var(--ag-header-text-color);
     background-color: var(--ag-panel-title-bar-background-color);
     height: var(--ag-header-height);
-    padding: var(--ag-grid-size) var(--ag-cell-horizontal-padding);
+    padding: var(--ag-spacing) var(--ag-cell-horizontal-padding);
     border-bottom: var(--ag-panel-title-bar-border);
 }
 
 .ag-panel-title-bar-button {
-    margin-left: calc(var(--ag-grid-size) * 2);
-    margin-right: var(--ag-grid-size);
+    margin-left: calc(var(--ag-spacing) * 2);
+    margin-right: var(--ag-spacing);
 }
 
 .ag-panel-title-bar-title {

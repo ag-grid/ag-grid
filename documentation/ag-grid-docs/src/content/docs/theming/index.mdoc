@@ -1,0 +1,284 @@
+---
+title: "Theming API"
+---
+
+Control the look and feel of the grid
+
+The Theming API is a new Javascript API for styling the grid. In a future release it will become the primary way to style the grid. You can choose from our built in themes, mix and match elements of different themes, and create themes visually using the [Theme Builder](/theme-builder).
+
+{% note %}
+Users of the grid prior to v32.2 may be familiar with applying themes by importing our CSS files. The Theming API is an alternative to this technique, and the two can not be combined on the same page. For more information see [Migrating to Theming API](./theming-migration/).
+{% /note %}
+
+Themes are JavaScript objects, provided to grid instances using the `theme` grid option.
+
+## Built in themes
+
+ * Quartz - Our default theme, with high contrast and generous padding.
+ * Balham - A more traditional theme modelled after a spreadsheet application.
+ * Alpine - The default theme before Quartz. We recommend quartz for new projects; this theme is intended for applications already using Alpine and migrating to the Theming API.
+
+### Example: applying a built in theme
+
+You can import one of the built-in themes from our NPM packages. Where to import the themes from depends on how your build is set up:
+
+* If using [modules](./modules/), import themes from `@ag-grid-community/theming`
+* If using our all-in-one packages like `ag-grid-community` and `ag-grid-charts-enterprise`, import themes from that package
+{% if isFramework("javascript") %}
+* If using the browser-ready UMD bundle without a build step, themes are available from the global `agGrid` object.
+{% /if %}
+
+```js
+import { themeQuartz } from '@ag-grid-community/theming';
+
+{% if isFramework("javascript") %}
+const gridOptions = {
+    theme: themeQuartz,
+    // load the IBM Plex Sans font used by default in the Quartz theme
+    loadThemeGoogleFonts: true,
+    ...
+}
+
+// Or for UMD bundle users:
+const gridOptions = {
+    theme: agGrid.themeQuartz,
+    loadThemeGoogleFonts: true,
+    ...
+}
+{% /if %}
+{% if isFramework("react") %}
+<AgGridReact
+    theme={theme}
+    // load the IBM Plex Sans font used by default in the Quartz theme
+    loadThemeGoogleFonts
+    ...
+/>
+{% /if %}
+{% if isFramework("vue") %}
+// in template
+<ag-grid-vue
+    :theme="theme"
+    // load the IBM Plex Sans font used by default in the Quartz theme
+    :loadThemeGoogleFonts="true"
+    ...
+></ag-grid-vue>
+
+// in component setup hook
+setup() {
+    return {
+        theme: themeQuartz,
+        ...
+    };
+}
+{% /if %}
+{% if isFramework("angular") %}
+// in template
+<ag-grid-angular
+    [theme]="themeQuartz"
+    // load the IBM Plex Sans font used by default in the Quartz theme
+    [loadThemeGoogleFonts]: true,
+/>
+
+// in component class
+public theme = themeQuartz;
+{% /if %}
+```
+
+{% gridExampleRunner title="Theming API" name="basic" /%}
+
+## Customising themes
+
+There are two main building blocks for themes:
+
+**Parts** are interchangeable units of style. By swapping out parts you can change the look of individual components (e.g. text inputs) without affecting other styles.
+
+**Parameters** are values that change the appearance of parts. Some are very general, for example `accentColor` changes the color used across many components to highlight interactive elements. Others are very specific, such as `cellHorizontalPadding` which only affects grid cells.
+
+Our built-in themes are simply preset collections of parts and parameters. The same building blocks are available for you to create your own themes and parts.
+
+### Setting parameter values
+
+Themes are immutable, and have methods that generate new modified themes.
+
+The `theme.withParams()` method generates a new theme with different default values for its params.
+
+```js
+const myTheme = themeQuartz.withParams({ accentColor: 'red' });
+```
+
+Under the hood, theme parameters are implemented using CSS custom properties (variables), and `withParams()` sets _default_ values for these, so you can override them in your application stylesheets. However using the API provides validation, typescript autocompletion, and an [extended syntax for defining CSS values](#extended-syntax-for-css-values).
+
+### Finding theme parameters
+
+There are many parameters available, and several ways of finding the right one to use:
+
+1. **[Theme Builder](/theme-builder/)** - In the "Advanced" section of the Theme Builder you can search for parameters and view documentation
+2. **TypeScript auto-complete** - When an editor with TypeScript language support, you can see all available parameters with inline documentation.
+3. **Dev tools** - When inspecting an element in the grid, the styles panel shows the CSS custom properties that are being used. A custom property `var(--ag-column-border)` corresponds to the theme parameter `columnBorder`.
+
+### Extended syntax for CSS values
+
+```js
+const myTheme = themeQuartz.withParams({
+    // All parameters take CSS string values, so any valid CSS value can be used.
+    // This includes CSS functions like `rgba(100, 0, 0, 0.5)` or `var(--myVar)`.
+    accentColor: 'red',
+
+    // All parameters accept reference values. These must refer to another
+    // parameter of the same type.
+    headerBackgroundColor: { ref: 'accentColor' },
+
+    // References to color parameters can specify a `mix` property that blends
+    // the color on top of another.
+    rowHoverColor: { ref: 'accentColor', mix: 0.5, onto: 'backgroundColor' },
+
+    // The `onto` property is optional, omitting it produces a semi-transparent color
+    rowHoverColor: { ref: 'accentColor', mix: 0.5 },
+
+    // Numeric values can omit the units, and this will be interpreted as pixels for
+    // dimensions or seconds for time durations.
+    rowHeight: 4,
+
+    // Numeric values also accept a `calc` shorthand. These are converted to CSS calc
+    // expressions, mapping parameter names to the appropriate CSS custom property.
+    // Note that `-` is a valid character in CSS identifiers, so if you use it as an
+    // operator then spaces are required around it.
+    rowHeight: { calc: '4 * spacing - 2px' }, // -> 'calc(4 * var(--ag-spacing) - 2px)'
+
+    // Border values accept a boolean shorthand for showing or hiding the border.
+    wrapperBorder: false, // no border
+    wrapperBorder: true, // 1px solid border with color set by `borderColor`
+
+    // Border values also accept an object shorthand with 3 optional properties:
+    wrapperBorder: {
+        width: 2,        // default 1
+        style: 'dashed', // default "solid"
+        color: 'blue',   // default { ref: 'borderColor' }
+    }
+
+    // Shadow values accept an object shorthand with 5 optional properties
+    popupShadow: {
+        offsetX: { ref: 'spacing' },      // default 0
+        offsetY: { calc: 'spacing * 2' }, // default 0
+        radius: 6,                        // default 0
+        spread: 3,                        // default 0
+        color: 'pink',                    // default { ref: 'foregroundColor' }
+    }
+
+    // Font family values accept an array of font names. The first one available on the
+    // host system is used.
+    fontFamily: ['Arial', 'sans-serif'],
+
+    // Font family values also accept a syntax for loading Google fonts, which can be
+    // used alone or in an array.
+    // NOTE: To prevent potential licensing and privacy implications of accidentally
+    //       loading Google fonts, you must set the `loadThemeGoogleFonts` grid option
+    //       to true. A warning will be logged to the console if this option is unset.
+    headerFontFamily: [
+        { googleFont: 'IBM Plex Sans' },
+        'sans-serif'
+    ],
+
+    // Image values accept two shorthands image data:
+    // `url` can load a network image or embed a PNG if converted to a data: URL
+    checkboxCheckedShapeImage: { url: 'https://example.com/my-image.png' },
+    // `svg` takes SVG source code as a string
+    checkboxCheckedShapeImage: { svg: '<svg> ... SVG string ... </svg>' },
+});
+```
+
+### Swapping theme parts
+
+Theme parts are interchangeable units of style. Each part has an associated feature, and a theme can only have one part for a given feature, so for example adding a `colorScheme` part will remove any existing `colorScheme` part.
+
+The `theme.with(...)` method generates a new theme with the specified part:
+
+```js
+import { themeQuartz, colorSchemeDark, iconSetMaterial } from '@ag-grid-community/theming';
+
+// with() returns a new theme and calls can be chained
+const myTheme = themeQuartz
+    .with(iconSetMaterial)
+    .with(colorSchemeDark);
+```
+
+This example demonstrates mixing and matching any built in theme, icon set, and color scheme:
+
+{% gridExampleRunner title="Theming API" name="configuring-theme-parts" /%}
+
+### Full list of parts
+
+The following parts are available:
+
+* Color schemes:
+    * `colorSchemeLight` - neutral light scheme
+    * `colorSchemeLightCold` - light scheme with subtle cold tint used by Balham theme
+    * `colorSchemeLightWarm` - light scheme with subtle warm tint
+    * `colorSchemeDark` - neutral dark scheme
+    * `colorSchemeDarkBlue` - our preferred dark scheme used on this website
+    * `colorSchemeDarkWarm` - dark scheme with subtle warm tint
+* Icon sets:
+    * `iconSetQuartz` - our default icon set
+    * `iconSetAlpine` - the icon set used by the Alpine theme
+    * `iconSetMaterial` - the Material Design icon set
+* Checkbox style:
+    * `checkboxStyleDefault` - checkbox style used by our themes. There is only one style provided which is configurable through parameters. It being a part allows you to replace it with your own checkbox styles if desired.
+* Input style:
+    * `inputStyleBase` - unstyled inputs with many parameters to configure their appearance
+    * `inputStyleBordered` - inputs with a border around them
+    * `inputStyleUnderlined` - inputs with a line underneath them as used in Material Design
+* Tab styles:
+    * `tabStyleBase` - unstyled tabs with many parameters to configure their appearance
+    * `tabStyleQuartz` - tabs styled as per the Quartz theme
+    * `tabStyleMaterial` - tabs styled as per the Material theme
+    * `tabStyleAlpine` - tabs styled as per the Alpine theme
+    * `tabStyleRolodex` - tabs designed to imitate paper cards, as used by the Balham theme
+
+## Creating your own themes
+
+The `createTheme` function creates a new theme containing core grid styles but no parts. If you're going to change most of the parts anyway, starting from a new theme will reduce the bundle size compared to starting with a built-in theme.
+
+```js
+import { createTheme, inputStyleUnderlined } from '@ag-grid-community/theming';
+
+const myCustomTheme = createTheme('myCustomTheme')
+    .with(inputStyleUnderlined)
+    .withParams({ accentColor: 'red', foregroundColor: '#660000' });
+```
+
+TODO: example running the above
+
+## Creating your own parts
+
+The `createPart` function creates an empty part.
+
+Parts have the following methods:
+
+```js
+import { createPart } from '@ag-grid-community/theming';
+
+const myCheckboxStyle = createPart({ feature: 'checkboxStyle', variant: 'myCheckboxStyle' })
+    // Add some CSS to this part.
+    .withCSS(`
+        .ag-checkbox-input {
+            box-shadow: 0 0 5px var(--ag-checkbox-glow-color);
+        }
+    `)
+    // Declare parameters added by the custom CSS
+    .withAdditionalParams({
+        checkboxGlowColor: 'red'
+    })
+    // If you want to provide new default values for parameters already defined
+    // by the grid, use withParams which provides TypeScript checking
+    .withParams({ accentColor: 'red' })
+    ;
+```
+
+TODO: example running the above code
+
+## Multiple grids
+
+Each grid on the page can have its own theme. In the example below, 3 themes are used by 4 grids. The bottom two grids share a theme (Balham) and use CSS custom properties to achieve different header colours:
+
+{% gridExampleRunner title="Theming API" name="multiple-grids" /%}
+

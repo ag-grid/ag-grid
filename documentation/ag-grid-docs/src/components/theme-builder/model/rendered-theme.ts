@@ -23,7 +23,7 @@ const renderedThemeInfoAtom = atom((get): RenderedThemeInfo => {
         const part = get(feature.selectedPartAtom).part;
         if (part !== feature.defaultPart.part) {
             usedParts.push(part);
-            theme = theme.usePart(part);
+            theme = theme.with(part);
         }
     }
 
@@ -32,7 +32,7 @@ const renderedThemeInfoAtom = atom((get): RenderedThemeInfo => {
             .filter((param) => enabledAdvancedParams.has(param.property) || !param.onlyEditableAsAdvancedParam)
             .map((param) => [param.property, get(param.valueAtom)])
     );
-    theme = theme.overrideParams(overriddenParams);
+    theme = theme.withParams(overriddenParams);
 
     // globally install the theme CSS, because form widgets use reinterpretCSSValue
     // which requires that the CSS variable values are available

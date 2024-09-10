@@ -5,7 +5,7 @@ import type {
     IHeaderCellComp,
     UserCompDetails,
 } from 'ag-grid-community';
-import { CssClassManager, _removeAriaSort, _setAriaSort } from 'ag-grid-community';
+import { CssClassManager, _EmptyBean, _removeAriaSort, _setAriaSort } from 'ag-grid-community';
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { BeansContext } from '../beansContext';
@@ -19,6 +19,7 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
     const colId = isAlive ? ctrl.getColId() : undefined;
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
 
+    const compBean = useRef<_EmptyBean>();
     const eGui = useRef<HTMLDivElement | null>(null);
     const eResize = useRef<HTMLDivElement>(null);
     const eHeaderCompWrapper = useRef<HTMLDivElement>(null);
@@ -28,9 +29,10 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
     if (isAlive && !cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);
     }
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGui.current = e;
-        if (!eGui.current || !isAlive) {
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
+        if (!eRef || !isAlive) {
             return;
         }
 
@@ -50,10 +52,11 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
             getUserCompInstance: () => userCompRef.current || undefined,
         };
 
-        ctrl.setComp(compProxy, eGui.current, eResize.current!, eHeaderCompWrapper.current!);
+        ctrl.setComp(compProxy, eRef, eResize.current!, eHeaderCompWrapper.current!, compBean.current);
 
         const selectAllGui = ctrl.getSelectAllGui();
         eResize.current?.insertAdjacentElement('afterend', selectAllGui);
+        compBean.current!.addDestroyFunc(() => selectAllGui.remove());
     }, []);
 
     // js comps

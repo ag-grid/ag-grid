@@ -12,17 +12,19 @@ const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
     const { context } = useContext(BeansContext);
     const eGui = useRef<HTMLDivElement | null>(null);
     const eCenterContainer = useRef<HTMLDivElement>(null);
-    const headerRowCtrlRef = useRef<HeaderRowContainerCtrl | null>(null);
+    const headerRowCtrlRef = useRef<HeaderRowContainerCtrl>();
 
     const pinnedLeft = pinned === 'left';
     const pinnedRight = pinned === 'right';
     const centre = !pinnedLeft && !pinnedRight;
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGui.current = e;
-        if (!eGui.current) {
-            context.destroyBean(headerRowCtrlRef.current);
-            headerRowCtrlRef.current = null;
+    const setRef = useCallback((eRef: HTMLDivElement) => {
+        eGui.current = eRef;
+        headerRowCtrlRef.current = eRef
+            ? context.createBean(new HeaderRowContainerCtrl(pinned))
+            : context.destroyBean(headerRowCtrlRef.current);
+
+        if (!eRef) {
             return;
         }
 
@@ -52,8 +54,7 @@ const HeaderRowContainerComp = ({ pinned }: { pinned: ColumnPinnedType }) => {
             },
         };
 
-        headerRowCtrlRef.current = context.createBean(new HeaderRowContainerCtrl(pinned));
-        headerRowCtrlRef.current.setComp(compProxy, eGui.current);
+        headerRowCtrlRef.current!.setComp(compProxy, eGui.current);
     }, []);
 
     const className = !displayed ? 'ag-hidden' : '';

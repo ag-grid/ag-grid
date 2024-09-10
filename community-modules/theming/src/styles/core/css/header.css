@@ -112,7 +112,7 @@
     flex: 1 1 auto;
     align-self: stretch;
     align-items: center;
-    gap: var(--ag-grid-size);
+    gap: var(--ag-spacing);
 }
 
 .ag-header-cell-label {
@@ -217,8 +217,8 @@
         background-color: var(--ag-header-column-resize-handle-color);
 
         .ag-header-cell.ag-header-span-height & {
-            height: calc(100% - calc(var(--ag-grid-size) * 4));
-            top: calc(var(--ag-grid-size) * 2);
+            height: calc(100% - calc(var(--ag-spacing) * 4));
+            top: calc(var(--ag-spacing) * 2);
         }
     }
 }

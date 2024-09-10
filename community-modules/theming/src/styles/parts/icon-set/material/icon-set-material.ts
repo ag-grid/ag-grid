@@ -5,4 +5,4 @@ import { iconSetMaterialCSS } from './GENERATED-icon-set-material';
 export const iconSetMaterial =
     /*#__PURE__*/
     createPart({feature: 'iconSet', variant: 'material'})
-        .addCss(iconSetMaterialCSS);
+        .withCSS(iconSetMaterialCSS);

@@ -1,0 +1,141 @@
+@use 'design-system' as *;
+
+.headingContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: $spacing-size-12;
+    padding: 0px $spacing-size-32;
+    gap: $spacing-size-8;
+}
+
+.heading {
+    font-size: 48px;
+    font-weight: var(--text-bold);
+}
+
+.subHeading {
+    font-size: var(--text-fs-lg);
+    text-align: center;
+}
+
+.columnContainer {
+    display: flex;
+    justify-content: space-between;
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        flex-direction: column;
+    }
+}
+
+.column {
+    width: var(--layout-width-2-4);
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        width: 100%;
+    }
+}
+
+.buttonContainer {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+}
+
+.buttonTitleContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.buttonTitle {
+    font-size: var(--text-fs-xl);
+    font-weight: var(--text-bold);
+}
+
+.buttonIcon {
+    padding: $spacing-size-2;
+    fill: var(--color-fg-primary);
+}
+
+.buttonDetail {
+    margin: $spacing-size-24 0px;
+}
+
+.buttonFooter {
+    display: flex;
+    margin-top: $spacing-size-4;
+    justify-content: flex-end;
+    gap: $spacing-size-4;
+}
+
+.secondaryCta {
+    color: var(--color-util-brand-400);
+}
+
+.button {
+    background: #fdfefe;
+    padding: $spacing-size-4;
+    border: 1px solid #dde0e7;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+
+    #{$selector-darkmode} & {
+        background-color: var(--color-bg-secondary);
+        border: 1px solid var(--color-bg-disabled_subtle);
+    }
+}
+
+.imageContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    border-radius: var(--radius-xl);
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        display: none;
+    }
+
+    a {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.imageTitle {
+    width: 100%;
+    background: var(--color-util-gray-200);
+    text-align: center;
+    padding: $spacing-size-1;
+    border-top-right-radius: var(--radius-xl);
+    border-top-left-radius: var(--radius-xl);
+}
+
+.stackedImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    border-bottom-right-radius: var(--radius-xl);
+    border-bottom-left-radius: var(--radius-xl);
+}
+
+.newTabIcon {
+    padding: $spacing-size-2;
+    fill: var(--color-brand-500);
+
+    #{$selector-darkmode} & {
+        fill: var(--color-brand-200);
+    }
+}
+
+.communityCta {
+    display: flex;
+    justify-content: center;
+    margin-top: $spacing-size-16;
+}

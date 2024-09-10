@@ -7,7 +7,7 @@ import type {
     RowStyle,
     UserCompDetails,
 } from 'ag-grid-community';
-import { CssClassManager } from 'ag-grid-community';
+import { CssClassManager, _EmptyBean } from 'ag-grid-community';
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { BeansContext } from '../beansContext';
@@ -17,6 +17,7 @@ import { agFlushSync, getNextValueIfDifferent, isComponentStateless } from '../u
 
 const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: RowContainerType }) => {
     const { context, gos } = useContext(BeansContext);
+    const compBean = useRef<_EmptyBean>();
 
     const domOrderRef = useRef<boolean>(rowCtrl.getDomOrder());
     const isFullWidth = rowCtrl.isFullWidth();
@@ -56,13 +57,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     // child) after the fullWidthCompDetails is set.
     // I think this looping could be avoided if we use a ref Callback instead of useRef,
     useEffect(() => {
-        if (autoHeightSetup.current) {
-            return;
-        }
-        if (!fullWidthCompDetails) {
-            return;
-        }
-        if (autoHeightSetupAttempt > 10) {
+        if (autoHeightSetup.current || !fullWidthCompDetails || autoHeightSetupAttempt > 10) {
             return;
         }
 
@@ -79,10 +74,11 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
     if (!cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);
     }
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGui.current = e;
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
 
-        if (!eGui.current) {
+        if (!eRef) {
             rowCtrl.unsetComp(containerType);
             return;
         }
@@ -137,7 +133,7 @@ const RowComp = ({ rowCtrl, containerType }: { rowCtrl: RowCtrl; containerType: 
                 }
             },
         };
-        rowCtrl.setComp(compProxy, eGui.current, containerType);
+        rowCtrl.setComp(compProxy, eRef, containerType, compBean.current);
     }, []);
 
     useLayoutEffect(

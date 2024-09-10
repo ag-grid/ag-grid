@@ -93,7 +93,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
-        this.ctrlsService.whenReady((p) => {
+        this.ctrlsService.whenReady(this, (p) => {
             const gridBodyCon = p.gridBodyCtrl;
             this.autoScrollService = new AutoScrollService({
                 scrollContainer: gridBodyCon.getBodyViewportElement(),
@@ -329,12 +329,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             }
         }
 
-        this.dragAndDropService.addDropTarget({
+        const dropTarget: DropTarget = {
             isInterestedIn: (type: DragSourceType) => type === DragSourceType.RowDrag,
             getIconName: () => 'move',
             external: true,
             ...(processedParams as any),
-        });
+        };
+        this.dragAndDropService.addDropTarget(dropTarget);
+        this.addDestroyFunc(() => this.dragAndDropService.removeDropTarget(dropTarget));
     }
 
     public getRowDropZone(events?: RowDropZoneEvents): RowDropZoneParams {

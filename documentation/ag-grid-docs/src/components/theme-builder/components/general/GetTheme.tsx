@@ -28,7 +28,7 @@ const GetThemeDialog = () => {
         <DownloadThemeWrapper>
             <Paragraph>
                 Copy the code below into your application to use this theme. See the{' '}
-                <a href="/react-data-grid/theming-api/" target="_blank">
+                <a href="/react-data-grid/theming/" target="_blank">
                     Theming API documentation
                 </a>{' '}
                 for more information.
@@ -77,10 +77,10 @@ const renderThemeCodeSample = ({ overriddenParams, usedParts }: RenderedThemeInf
     code += `const myTheme = themeQuartz\n`;
     for (const part of usedParts) {
         const partImport = camelCase(part.id);
-        code += `\t.usePart(${partImport})\n`;
+        code += `\t.with(${partImport})\n`;
         imports.push(partImport);
     }
-    code += `\t.overrideParams(${paramsJSON.replaceAll('\n', '\n\t')})\n`;
+    code += `\t.withParams(${paramsJSON.replaceAll('\n', '\n\t')})\n`;
     code += `;\n`;
     code = `import { ${imports.join(', ')} } from '@ag-grid-community/theming';\n\n${code}`;
 
@@ -88,7 +88,7 @@ const renderThemeCodeSample = ({ overriddenParams, usedParts }: RenderedThemeInf
 };
 
 const CodeWrapper = styled('div')`
-    user-select: all;
+    user-select: text;
 
     .code {
         max-height: 500px;

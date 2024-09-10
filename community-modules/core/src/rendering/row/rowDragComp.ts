@@ -59,7 +59,9 @@ export class RowDragComp extends Component {
     }
 
     public setDragElement(dragElement: HTMLElement, dragStartPixels?: number) {
-        this.setTemplateFromElement(dragElement);
+        // We set suppressDataRefValidation as the drag element could contain AG Grid comps with data references
+        // that are not part of this row dragger's context. Maybe this should just setGui and not setTemplateFromElement?
+        this.setTemplateFromElement(dragElement, undefined, undefined, true);
         this.addDragSource(dragStartPixels);
     }
 
