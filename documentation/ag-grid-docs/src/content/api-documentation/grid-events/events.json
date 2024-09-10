@@ -345,7 +345,6 @@
         "gridColumnsChanged": {},
         "displayedColumnsChanged": {},
         "virtualColumnsChanged": {},
-        "columnEverythingChanged": {},
         "columnHeaderMouseOver": {},
         "columnHeaderMouseLeave": {},
         "columnHeaderClicked": {},

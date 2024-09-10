@@ -2,7 +2,7 @@ import { AgGridAngular } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { ColDef } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
-import { themeBalham, themeMaterial, themeQuartz } from '@ag-grid-community/theming';
+import { applyCustomProperties, themeBalham, themeMaterial, themeQuartz } from '@ag-grid-community/theming';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -73,8 +73,8 @@ export class AppComponent {
     @ViewChild('grid4', { static: false }) grid4!: ElementRef;
 
     ngAfterViewInit(): void {
-        themeQuartz.applyCustomProperties({ headerBackgroundColor: '#33cc3344' }, this.grid3.nativeElement);
-        themeQuartz.applyCustomProperties({ headerBackgroundColor: '#cc222244' }, this.grid4.nativeElement);
+        applyCustomProperties({ headerBackgroundColor: '#33cc3344' }, this.grid3.nativeElement);
+        applyCustomProperties({ headerBackgroundColor: '#cc222244' }, this.grid4.nativeElement);
     }
 
     columnDefs: ColDef[] = [{ field: 'make' }, { field: 'model' }, { field: 'price' }];

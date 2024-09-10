@@ -40,7 +40,7 @@ const SelectButton = ({ preset, scrollerRef }: SelectButtonProps) => {
                 theme = theme.overrideParams(preset.params);
             }
             for (const part of preset.parts || []) {
-                theme = theme.usePart(part);
+                theme = theme.with(part);
             }
             wrapper.style.setProperty('--page-background-color', preset.pageBackgroundColor);
             theme.startUse({ container: wrapper, loadThemeGoogleFonts: true });

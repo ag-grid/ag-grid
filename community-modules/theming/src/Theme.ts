@@ -2,6 +2,7 @@ import { type GridTheme, type GridThemeUseArgs, _warnOnce } from '@ag-grid-commu
 import { _errorOnce } from '@ag-grid-community/core';
 
 import type { Part } from './Part';
+import { getCustomProperties } from './custom-properties';
 import { type CoreParams, coreCSS, coreDefaults } from './styles/core/core-css';
 import { paramValueToCss } from './theme-types';
 import { type CssFragment } from './theme-types';
@@ -17,7 +18,7 @@ export type Theme<TParams = unknown> = GridTheme & {
      * Add one or more dependent part. The part will replace any existing part
      * of the same feature
      */
-    usePart<TPartParams>(part: Part<TPartParams>): Theme<TParams & TPartParams>;
+    with<TPartParams>(part: Part<TPartParams>): Theme<TParams & TPartParams>;
 
     /**
      * Provide new values for theme params. You may only provide values for
@@ -42,18 +43,6 @@ export type Theme<TParams = unknown> = GridTheme & {
      * values and any overrides provided
      */
     getParams(): Record<string, unknown>;
-
-    /**
-     * Set theme params as custom properties on an element.
-     *
-     * e.g. theme.applyCustomProperties({ gridSize: 4 }, document.body) is
-     * equivalent to document.body.style.setProperty('--ag-grid-size', '4px');
-     *
-     * This method is equivalent to the global applyCustomProperties function,
-     * except that it provides typescript validation of the params object, only
-     * permitting values that are supported by the current theme.
-     */
-    applyCustomProperties(params: Partial<TParams>, el: HTMLElement): void;
 };
 
 export const createTheme = (id: string): Theme<CoreParams> => /*#__PURE__*/ new ThemeImpl(id, [], {}, []);
@@ -70,7 +59,7 @@ class ThemeImpl<TParams = unknown> implements Theme {
         readonly css: ReadonlyArray<CssFragment> = []
     ) {}
 
-    usePart<TPartParams>(part: Part<TPartParams>): Theme<TParams & TPartParams> {
+    with<TPartParams>(part: Part<TPartParams>): Theme<TParams & TPartParams> {
         return new ThemeImpl<TParams & TPartParams>(
             this.id,
             this.dependencies.concat(part as any),
@@ -101,12 +90,6 @@ class ThemeImpl<TParams = unknown> implements Theme {
         return this._getCSSChunks()
             .map((chunk) => chunk.css)
             .join('\n\n');
-    }
-
-    applyCustomProperties(params: Partial<TParams>, el: HTMLElement): void {
-        for (const [key, value] of getCustomProperties(params)) {
-            el.style.setProperty(key, value);
-        }
     }
 
     private useCount = 0;
@@ -364,22 +347,4 @@ type ThemeCssChunk = {
 
 type AnnotatedStyleElement = HTMLStyleElement & {
     _agTextContent?: string;
-};
-
-const getCustomProperties = (params: Record<string, unknown>): Array<[string, string]> => {
-    const result: Array<[string, string]> = [];
-    for (const [key, value] of Object.entries(params)) {
-        const rendered = paramValueToCss(key, value);
-        if (rendered === false) {
-            _errorOnce(`Invalid value for param ${key} - ${describeValue(value)}`);
-        } else {
-            result.push([paramToVariableName(key), rendered]);
-        }
-    }
-    return result;
-};
-
-const describeValue = (value: any): string => {
-    if (value == null) return String(value);
-    return `${typeof value} ${value}`;
 };
