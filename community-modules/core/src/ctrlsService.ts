@@ -65,7 +65,7 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         // By making the local events async, we effectively debounce the first ready event until after the second render cycle has completed.
         // This means that the ready logic across the grid will run against the currently rendered components and controllers.
         // We make this async only for React 19 as StrictMode in React 19 double fires ref callbacks whereas previous versions of React do not.
-        this.runReadyCallbacksAsync = beans.frameworkOverrides.initGridAsync?.() ?? false;
+        this.runReadyCallbacksAsync = beans.frameworkOverrides.runWhenReadyAsync?.() ?? false;
     }
 
     public postConstruct() {
@@ -82,31 +82,9 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         );
     }
     private updateReady(): void {
-        const params = this.params;
-        this.ready =
-            params.gridCtrl?.isAlive() &&
-            params.gridBodyCtrl?.isAlive() &&
-            params.center?.isAlive() &&
-            params.left?.isAlive() &&
-            params.right?.isAlive() &&
-            params.bottomCenter?.isAlive() &&
-            params.bottomLeft?.isAlive() &&
-            params.bottomRight?.isAlive() &&
-            params.topCenter?.isAlive() &&
-            params.topLeft?.isAlive() &&
-            params.topRight?.isAlive() &&
-            params.stickyTopCenter?.isAlive() &&
-            params.stickyTopLeft?.isAlive() &&
-            params.stickyTopRight?.isAlive() &&
-            params.stickyBottomCenter?.isAlive() &&
-            params.stickyBottomLeft?.isAlive() &&
-            params.stickyBottomRight?.isAlive() &&
-            params.centerHeader?.isAlive() &&
-            params.leftHeader?.isAlive() &&
-            params.rightHeader?.isAlive() &&
-            params.fakeHScrollComp?.isAlive() &&
-            params.fakeVScrollComp?.isAlive() &&
-            params.gridHeaderCtrl?.isAlive();
+        this.ready = Object.values(this.params).every((ctrl: BeanStub<any> | undefined) => {
+            return ctrl?.isAlive() ?? false;
+        });
     }
 
     public whenReady(caller: BeanDestroyFunc, callback: (p: ReadyParams) => void): void {

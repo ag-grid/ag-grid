@@ -74,12 +74,8 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             advancedFilterEnabledChanged: onDisplayedColsChanged,
         });
 
-        let headerType: 'centerHeader' | 'leftHeader' | 'rightHeader' = 'centerHeader';
-        if (this.pinned === 'left') {
-            headerType = 'leftHeader';
-        } else if (this.pinned === 'right') {
-            headerType = 'rightHeader';
-        }
+        const headerType: 'centerHeader' | 'leftHeader' | 'rightHeader' =
+            `${typeof this.pinned === 'string' ? this.pinned : 'center'}Header`;
         this.ctrlsService.register(headerType, this);
 
         if (this.columnModel.isReady()) {
