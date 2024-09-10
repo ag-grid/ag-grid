@@ -1,6 +1,6 @@
 import type { ColDef, ColGroupDef } from '@ag-grid-community/core';
 
-import { ToolPanelColDefService } from './toolPanelColDefService';
+import { mergeLeafPathTrees } from './sideBarUtils';
 
 function createChild(colId: string): ColDef {
     return {
@@ -15,18 +15,12 @@ function createGroup(groupId: string, children: (ColDef | ColGroupDef)[]): ColGr
     };
 }
 
-describe('ToolPanelColDefService', () => {
-    let toolPanelColDefService: ToolPanelColDefService;
-
-    beforeEach(() => {
-        toolPanelColDefService = new ToolPanelColDefService();
-    });
-
+describe('side bar utils', () => {
     describe('mergeLeafPathTrees', () => {
         describe('single level of groups', () => {
             it('with split children', () => {
                 expect(
-                    toolPanelColDefService.mergeLeafPathTrees([
+                    mergeLeafPathTrees([
                         createGroup('0', [createChild('a')]),
                         createChild('b'),
                         createGroup('0', [createChild('c')]),
@@ -43,7 +37,7 @@ describe('ToolPanelColDefService', () => {
         describe('multiple levels of groups', () => {
             it('with split children and un-split at start', () => {
                 expect(
-                    toolPanelColDefService.mergeLeafPathTrees([
+                    mergeLeafPathTrees([
                         createGroup('0', [createGroup('1', [createChild('a')])]),
                         createGroup('0', [createGroup('1', [createChild('b')])]),
                         createGroup('0', [createChild('c')]),
@@ -59,7 +53,7 @@ describe('ToolPanelColDefService', () => {
             });
             it('with split children and un-split at end', () => {
                 expect(
-                    toolPanelColDefService.mergeLeafPathTrees([
+                    mergeLeafPathTrees([
                         createGroup('0', [createGroup('1', [createChild('a')])]),
                         createGroup('0', [createChild('b')]),
                         createGroup('0', [createGroup('1', [createChild('c')])]),
