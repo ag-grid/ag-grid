@@ -336,6 +336,10 @@ export function _getHideDisabledCheckboxes(selection: SelectionOptions): boolean
     return (selection?.mode !== 'cell' && selection?.hideDisabledCheckboxes) ?? false;
 }
 
+export function _isUsingNewSelectionAPI(gos: GridOptionsService): boolean {
+    return gos.get('selection') !== undefined;
+}
+
 export function _getSuppressMultiRanges(gos: GridOptionsService): boolean {
     const selection = gos.get('selection');
     const useNewAPI = selection !== undefined;

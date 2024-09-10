@@ -11,6 +11,7 @@ import {
     BeanStub,
     _errorOnce,
     _isMultiRowSelection,
+    _isUsingNewSelectionAPI,
     _last,
     _warnOnce,
     isSelectionUIEvent,
@@ -83,7 +84,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         }
 
         const isSelectingMultipleRows = newState.selectAll || newState.toggledNodes.size > 1;
-        if (!_isMultiRowSelection(this.gos) && isSelectingMultipleRows) {
+        if (_isUsingNewSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos) && isSelectingMultipleRows) {
             return _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
         }
 
