@@ -7,7 +7,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
     standalone: true,
     imports: [NgClass],
     template: `
-        <div class="my-custom-drag-and-drop-cover">
+        <div #eImage class="my-custom-drag-and-drop-cover">
             <i #eIcon class="fas fa-2x"></i>
             <div #eLabel></div>
         </div>
@@ -15,7 +15,6 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
     styles: [
         `
             .my-custom-drag-and-drop-cover {
-                background-color: blue;
                 padding: 2rem;
                 color: white !important;
                 cursor: move;
@@ -28,13 +27,18 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
     ],
 })
 export class CustomDragAndDropImage implements IDragAndDropImageAngularComponent {
-    public params!: IDragAndDropImageParams;
+    public params!: IDragAndDropImageParams & { accentColour: string };
 
+    @ViewChild('eImage', { read: ElementRef }) public eImage!: ElementRef;
     @ViewChild('eIcon', { read: ElementRef }) public eIcon!: ElementRef;
     @ViewChild('eLabel', { read: ElementRef }) public eLabel!: ElementRef;
 
-    agInit(params: IDragAndDropImageParams): void {
+    agInit(params: IDragAndDropImageParams & { accentColour: string }): void {
         this.params = params;
+    }
+
+    ngAfterViewInit() {
+        this.eImage.nativeElement.style.setProperty('background-color', this.params.accentColour);
     }
 
     setLabel(label: string) {
@@ -42,11 +46,26 @@ export class CustomDragAndDropImage implements IDragAndDropImageAngularComponent
     }
 
     setIcon(icon: string) {
-        const { nativeElement } = this.eIcon;
+        const { eIcon, params } = this;
+        const { nativeElement } = eIcon;
+        const { dragSource } = params;
+
+        if (!nativeElement || !dragSource) {
+            return;
+        }
+
+        if (!icon) {
+            icon = dragSource.getDefaultIconName ? dragSource.getDefaultIconName() : 'notAllowed';
+        }
+
+        if (icon === 'hide' && params.api.getGridOption('suppressDragLeaveHidesColumns')) {
+            return;
+        }
 
         nativeElement.classList.toggle('fa-hand-point-left', icon === 'left');
         nativeElement.classList.toggle('fa-hand-point-right', icon === 'right');
         nativeElement.classList.toggle('fa-ban', icon === 'notAllowed');
+        nativeElement.classList.toggle('fa-mask', icon === 'hide');
         nativeElement.classList.toggle('fa-thumbtack', icon === 'pinned');
         nativeElement.classList.toggle('fa-walking', icon === 'move');
         nativeElement.classList.toggle('fa-layer-group', icon === 'group');

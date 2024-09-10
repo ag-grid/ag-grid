@@ -45,6 +45,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     sideBar: true,
     rowGroupPanelShow: 'always',
     dragAndDropImageComponent: CustomDragAndDropImage,
+    dragAndDropImageComponentParams: {
+        accentColour: 'SlateGray',
+    },
 };
 
 // setup the grid after the page has finished loading

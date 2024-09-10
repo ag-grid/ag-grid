@@ -39,7 +39,7 @@ import React, {
 import GroupCellRenderer from '../reactUi/cellRenderer/groupCellRenderer';
 import { CellRendererComponentWrapper } from '../shared/customComp/cellRendererComponentWrapper';
 import { DateComponentWrapper } from '../shared/customComp/dateComponentWrapper';
-import { DragAndDropImageComponentWrapper } from '../shared/customComp/dragAndDropComponentWrapper';
+import { DragAndDropImageComponentWrapper } from '../shared/customComp/dragAndDropImageComponentWrapper';
 import { FilterComponentWrapper } from '../shared/customComp/filterComponentWrapper';
 import { FloatingFilterComponentWrapper } from '../shared/customComp/floatingFilterComponentWrapper';
 import { LoadingOverlayComponentWrapper } from '../shared/customComp/loadingOverlayComponentWrapper';

@@ -193,7 +193,10 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     private dragSource: DragSource | null;
     private dragging: boolean;
 
-    private dragAndDropImageComponent: DragAndDropImageComponent | null;
+    private dragAndDropImageComp: {
+        promise: AgPromise<DragAndDropImageComponent>;
+        comp?: DragAndDropImageComponent;
+    } | null;
     private dragAndDropImageParent: HTMLElement | ShadowRoot;
 
     private dropTargets: DropTarget[] = [];
@@ -215,7 +218,12 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     }
 
     public getDragAndDropImageComponent(): DragAndDropImageComponent | null {
-        return this.dragAndDropImageComponent;
+        const { dragAndDropImageComp } = this;
+        if (!dragAndDropImageComp || !dragAndDropImageComp.comp) {
+            return null;
+        }
+
+        return dragAndDropImageComp.comp;
     }
 
     public removeDragSource(dragSource: DragSource): void {
@@ -305,6 +313,19 @@ export class DragAndDropService extends BeanStub implements NamedBean {
                 this.dragSource?.onGridEnter?.(this.dragItem);
             }
             this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
+
+            if (dropTarget && this.dragAndDropImageComp) {
+                const { comp, promise } = this.dragAndDropImageComp;
+                if (comp) {
+                    comp.setIcon(dropTarget.getIconName ? dropTarget.getIconName() : null);
+                } else {
+                    promise.then((resolvedComponent) => {
+                        if (resolvedComponent) {
+                            resolvedComponent.setIcon(dropTarget.getIconName ? dropTarget.getIconName() : null);
+                        }
+                    });
+                }
+            }
 
             this.lastDropTarget = dropTarget;
         } else if (dropTarget && dropTarget.onDragging) {
@@ -411,8 +432,6 @@ export class DragAndDropService extends BeanStub implements NamedBean {
 
             dropTarget.onDragEnter(dragEnterEvent);
         }
-
-        this.dragAndDropImageComponent?.setIcon(dropTarget.getIconName ? dropTarget.getIconName() : null);
     }
 
     private leaveLastTargetIfExists(
@@ -437,7 +456,11 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             this.lastDropTarget.onDragLeave(dragLeaveEvent);
         }
 
-        this.dragAndDropImageComponent?.setIcon(null);
+        const dragAndDropImageComponent = this.getDragAndDropImageComponent();
+
+        if (dragAndDropImageComponent) {
+            dragAndDropImageComponent.setIcon(null);
+        }
     }
 
     public addDropTarget(dropTarget: DropTarget) {
@@ -516,7 +539,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     }
 
     private positionDragAndDropImageComp(event: MouseEvent): void {
-        const dragAndDropImageComponent = this.dragAndDropImageComponent;
+        const dragAndDropImageComponent = this.getDragAndDropImageComponent();
 
         if (!dragAndDropImageComponent) {
             return;
@@ -569,15 +592,18 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     }
 
     private removeDragAndDropImageComponent(): void {
-        if (this.dragAndDropImageComponent) {
-            const eGui = this.dragAndDropImageComponent.getGui();
-            if (this.dragAndDropImageParent) {
-                this.dragAndDropImageParent.removeChild(eGui);
+        if (this.dragAndDropImageComp) {
+            const { comp } = this.dragAndDropImageComp;
+            if (comp) {
+                const eGui = comp.getGui();
+                if (this.dragAndDropImageParent) {
+                    this.dragAndDropImageParent.removeChild(eGui);
+                }
+                this.destroyBean(comp);
             }
-            this.destroyBean(this.dragAndDropImageComponent);
         }
 
-        this.dragAndDropImageComponent = null;
+        this.dragAndDropImageComp = null;
     }
 
     private createDragAndDropImageComponent(): void {
@@ -592,21 +618,24 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         });
 
         const promise: AgPromise<DragAndDropImageComponent> = userCompDetails.newAgStackInstance();
+        this.dragAndDropImageComp = {
+            promise,
+        };
 
         promise.then((comp) => {
             if (!comp || !this.isAlive()) {
                 return;
             }
 
-            this.dragAndDropImageComponent = comp;
-            this.processDragAndDropImageComponent();
+            this.processDragAndDropImageComponent(comp);
+            this.dragAndDropImageComp!.comp = comp;
         });
     }
 
-    private processDragAndDropImageComponent(): void {
-        const { dragAndDropImageComponent, dragSource, mouseEventService, environment } = this;
+    private processDragAndDropImageComponent(dragAndDropImageComponent: DragAndDropImageComponent): void {
+        const { dragSource, mouseEventService, environment } = this;
 
-        if (!dragAndDropImageComponent || !dragSource) {
+        if (!dragSource) {
             return;
         }
         const eGui = dragAndDropImageComponent.getGui();

@@ -10,13 +10,15 @@ export class CustomDragAndDropImage {
     private eIcon!: HTMLElement;
     private eLabel!: HTMLElement;
 
-    init(params: IDragAndDropImageParams) {
+    init(params: IDragAndDropImageParams & { accentColour: string }) {
         this.params = params;
         const div = document.createElement('div');
         const eLabel = (this.eLabel = document.createElement('div'));
         const eIcon = (this.eIcon = document.createElement('i'));
 
         this.eGui = div;
+
+        div.style.setProperty('background-color', params.accentColour);
 
         div.appendChild(eIcon);
         div.appendChild(eLabel);
@@ -33,15 +35,25 @@ export class CustomDragAndDropImage {
     }
 
     setIcon(icon: string) {
-        const { eIcon } = this;
+        const { eIcon, params } = this;
+        const { dragSource } = params;
 
-        if (!eIcon) {
+        if (!eIcon || !dragSource) {
+            return;
+        }
+
+        if (!icon) {
+            icon = dragSource.getDefaultIconName ? dragSource.getDefaultIconName() : 'notAllowed';
+        }
+
+        if (icon === 'hide' && params.api.getGridOption('suppressDragLeaveHidesColumns')) {
             return;
         }
 
         eIcon.classList.toggle('fa-hand-point-left', icon === 'left');
         eIcon.classList.toggle('fa-hand-point-right', icon === 'right');
         eIcon.classList.toggle('fa-ban', icon === 'notAllowed');
+        eIcon.classList.toggle('fa-mask', icon === 'hide');
         eIcon.classList.toggle('fa-thumbtack', icon === 'pinned');
         eIcon.classList.toggle('fa-walking', icon === 'move');
         eIcon.classList.toggle('fa-layer-group', icon === 'group');

@@ -25,6 +25,9 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: true,
     },
     dragAndDropImageComponent: CustomDragAndDropImage,
+    dragAndDropImageComponentParams: {
+        accentColour: 'SlateGray',
+    },
 };
 
 // setup the grid after the page has finished loading
