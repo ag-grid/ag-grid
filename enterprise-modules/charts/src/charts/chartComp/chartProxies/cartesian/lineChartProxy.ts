@@ -31,6 +31,7 @@ export class LineChartProxy extends CartesianChartProxy<'line'> {
                     xName: category.name,
                     yKey: f.colId,
                     yName: f.displayName,
+                    stacked: ['normalizedLine', 'stackedLine'].includes(this.chartType),
                 }) as AgLineSeriesOptions
         );
 

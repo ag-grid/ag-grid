@@ -224,6 +224,8 @@ export class ChartTranslationService extends BeanStub implements NamedBean {
         normalizedBarFull: '100% Stacked Bar',
         stackedAreaFull: 'Stacked Area',
         normalizedAreaFull: '100% Stacked Area',
+        stackedLineFull: 'Stacked Line',
+        normalizedLineFull: '100% Stacked Line',
         customCombo: 'Custom Combination',
 
         // menu items

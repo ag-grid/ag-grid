@@ -78,7 +78,11 @@ const miniChartMapping: MiniChartMenuMapping = {
         donut: { range: true, pivot: true, enterprise: false, icon: MiniDonut },
         doughnut: { range: true, pivot: true, enterprise: false, icon: MiniDonut },
     },
-    lineGroup: { line: { range: true, pivot: true, enterprise: false, icon: MiniLine } },
+    lineGroup: {
+        line: { range: true, pivot: true, enterprise: false, icon: MiniLine },
+        stackedLine: { range: true, pivot: true, enterprise: false, icon: MiniLine },
+        normalizedLine: { range: true, pivot: true, enterprise: false, icon: MiniLine },
+    },
     scatterGroup: {
         scatter: { range: true, pivot: true, enterprise: false, icon: MiniScatter },
         bubble: { range: true, pivot: true, enterprise: false, icon: MiniBubble },
@@ -120,7 +124,7 @@ const DEFAULT_CHART_GROUPS: ChartGroupsDef = {
     columnGroup: ['column', 'stackedColumn', 'normalizedColumn'],
     barGroup: ['bar', 'stackedBar', 'normalizedBar'],
     pieGroup: ['pie', 'donut'],
-    lineGroup: ['line'],
+    lineGroup: ['line', 'stackedLine', 'normalizedLine'],
     scatterGroup: ['scatter', 'bubble'],
     areaGroup: ['area', 'stackedArea', 'normalizedArea'],
     polarGroup: ['radarLine', 'radarArea', 'nightingale', 'radialColumn', 'radialBar'],
