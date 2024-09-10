@@ -1401,16 +1401,16 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "loadThemeGoogleFonts": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "suppressStickyTotalRow": {
     "typeName": "boolean | 'grand' | 'group'",
     "typesToInclude": []
   },
   "maintainColumnOrder": {
     "typeName": "boolean | 'all' | 'primaryColumns' | 'pivotResultColumns' | 'none'",
+    "typesToInclude": []
+  },
+  "loadThemeGoogleFonts": {
+    "typeName": "boolean",
     "typesToInclude": []
   }
 }
