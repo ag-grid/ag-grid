@@ -55,10 +55,10 @@ const gridOptions: GridOptions = {
     },
 };
 
-const onCheckboxChanged = () => {
+function toggleCheckbox() {
     const checkbox = document.querySelector<HTMLInputElement>('#suppressAggFilteredOnly')!;
     gridApi.setGridOption('suppressAggFilteredOnly', checkbox.checked);
-};
+}
 
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
