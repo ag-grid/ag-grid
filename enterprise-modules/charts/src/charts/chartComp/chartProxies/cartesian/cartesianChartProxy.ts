@@ -73,7 +73,6 @@ export abstract class CartesianChartProxy<
                 ...(this.isNormalized() && {
                     normalizedTo: 100,
                 }),
-                type: this.standaloneChartType,
             } as AgCartesianSeriesOptions;
         });
     }
