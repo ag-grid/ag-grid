@@ -152,7 +152,7 @@ blockquote:where(:not(:last-child)) {
             color: var(--color-brand-300);
         }
 
-        :global(a):hover {
+        :global(a):not(:global(.button)):hover {
             color: var(--color-fg-primary);
             text-decoration-color: var(--color-brand-300);
         }

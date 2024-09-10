@@ -147,7 +147,7 @@ export abstract class ChartProxy<
         const chart = (this.getChartRef() as any).chart;
 
         const series = (chart?.series as any[]).find((s) => s.id === seriesId);
-        const node = series?.nodeData.find((node: any) => node.itemId === itemId);
+        const node = series?.nodeData?.find((node: any) => node.itemId === itemId);
         const datum = node?.datum ?? {};
         const crossFilteringKey = this.getCrossFilterKey();
 

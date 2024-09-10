@@ -1,6 +1,5 @@
 import { createAutomatedExampleManager } from '@ag-website-shared/components/automated-examples/lib/createAutomatedExampleManager';
 import styles from '@pages-styles/homepage.module.scss';
-import classNames from 'classnames';
 import { useEffect, useMemo, useState } from 'react';
 import type { FunctionComponent, ReactNode } from 'react';
 
