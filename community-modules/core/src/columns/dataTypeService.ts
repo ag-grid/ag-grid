@@ -305,23 +305,20 @@ export class DataTypeService extends BeanStub implements NamedBean {
                             }
                         }
                     }
+
+                    // by default don't use value formatter for agg func as type may have changed
+                    return undefined as any;
                 }
 
-                // we don't want to double format the value
-                // as this is already formatted by using the valueFormatter as the keyCreator
-                if (!this.gos.get('suppressGroupMaintainValueType')) {
+                if (this.gos.get('suppressGroupMaintainValueType') && !this.gos.get('treeData')) {
+                    // we don't want to double format the value
+                    // as this is already formatted by using the valueFormatter as the keyCreator
                     return undefined as any;
                 }
             } else if (this.groupHideOpenParents && params.column.isRowGroupActive()) {
                 // `groupHideOpenParents` passes leaf values in the group column, so need to format still.
                 // If it's not a string, we know it hasn't been formatted. Otherwise check the data type matcher.
-                if (typeof params.value !== 'string' || dataTypeDefinition.dataTypeMatcher?.(params.value)) {
-                    return dataTypeDefinition.valueFormatter!(params);
-                }
-
-                // we don't want to double format the value
-                // as this is already formatted by using the valueFormatter as the keyCreator
-                if (!this.gos.get('suppressGroupMaintainValueType')) {
+                if (typeof params.value === 'string' && !dataTypeDefinition.dataTypeMatcher?.(params.value)) {
                     return undefined as any;
                 }
             }
