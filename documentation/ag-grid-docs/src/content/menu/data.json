@@ -269,6 +269,20 @@
                             {
                                 "title": "Sass",
                                 "path": "global-style-customisation-sass"
+                            },
+                            {
+                                "title": "Theming API",
+                                "path": "theming",
+                                "items": [
+                                    {
+                                        "title": "Extending with CSS",
+                                        "path": "theming-css"
+                                    },
+                                    {
+                                        "title": "Migration",
+                                        "path": "theming-migration"
+                                    }
+                                ]
                             }
                         ]
                     },

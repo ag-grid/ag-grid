@@ -10,12 +10,12 @@ export type InputStyleParams = {
     inputBackgroundColor: ColorValue;
 
     /**
-     * Border around text inputs. By default the border is drawn all around the input, when using Material Design inputs the border is drawn underneath
+     * Border around text inputs (or underneath, if using the underlined input style)
      */
     inputBorder: BorderValue;
 
     /**
-     * Corner radius of the border around text inputs
+     * Corner radius of text inputs
      */
     inputBorderRadius: LengthValue;
 
@@ -25,7 +25,7 @@ export type InputStyleParams = {
     inputDisabledBackgroundColor: ColorValue;
 
     /**
-     * Border around disabled text inputs. By default the border is drawn all around the input, when using Material Design inputs the border is drawn underneath
+     * Border around disabled text inputs (or underneath, if using the underlined input style)
      */
     inputDisabledBorder: BorderValue;
 
@@ -40,7 +40,7 @@ export type InputStyleParams = {
     inputFocusBackgroundColor: ColorValue;
 
     /**
-     * Border around focussed text inputs. By default the border is drawn all around the input, when using Material Design inputs the border is drawn underneath
+     * Border around focussed text inputs (or underneath, if using the underlined input style)
      */
     inputFocusBorder: BorderValue;
 
@@ -65,7 +65,7 @@ export type InputStyleParams = {
     inputInvalidBackgroundColor: ColorValue;
 
     /**
-     * Border around text inputs in an invalid state. By default the border is drawn all around the input, when using Material Design inputs the border is drawn underneath
+     * Border around text inputs in an invalid state (or underneath, if using the underlined input style)
      */
     inputInvalidBorder: BorderValue;
 
@@ -89,7 +89,7 @@ export type InputStyleParams = {
 export const inputStyleBase =
     /*#__PURE__*/
     createPart({feature: 'inputStyle', variant: 'base'})
-        .addParams<InputStyleParams>({
+        .withAdditionalParams<InputStyleParams>({
             inputBackgroundColor: 'transparent',
             inputBorder: false,
             inputBorderRadius: 0,
@@ -98,7 +98,7 @@ export const inputStyleBase =
             },
             inputPaddingStart: 0,
             inputHeight: {
-                calc: 'max(iconSize, fontSize) + gridSize * 2',
+                calc: 'max(iconSize, fontSize) + spacing * 2',
             },
             inputFocusBackgroundColor: {
                 ref: 'inputBackgroundColor',
@@ -129,13 +129,13 @@ export const inputStyleBase =
                 ref: 'inputTextColor',
             },
         })
-        .addCss(inputStyleBaseCSS);
+        .withCSS(inputStyleBaseCSS);
 
 // prettier-ignore
 export const inputStyleBordered =
     /*#__PURE__*/
     inputStyleBase.createVariant('bordered')
-        .overrideParams({
+        .withParams({
             inputBackgroundColor: {
                 ref: 'backgroundColor',
             },
@@ -144,7 +144,7 @@ export const inputStyleBordered =
                 ref: 'borderRadius',
             },
             inputPaddingStart: {
-                ref: 'gridSize',
+                ref: 'spacing',
             },
             inputFocusBorder: {
                 color: { ref: 'accentColor' },
@@ -170,7 +170,7 @@ export const inputStyleBordered =
 export const inputStyleUnderlined =
     /*#__PURE__*/
     inputStyleBase.createVariant('underlined')
-        .overrideParams({
+        .withParams({
             inputBorder: {
                 width: 2,
                 color: {
@@ -179,7 +179,7 @@ export const inputStyleUnderlined =
                 },
             },
             inputPaddingStart: {
-                ref: 'gridSize',
+                ref: 'spacing',
             },
             inputFocusBorder: 'solid 2px var(--ag-accent-color)',
             inputDisabledTextColor: {
@@ -195,4 +195,4 @@ export const inputStyleUnderlined =
                 },
             },
         })
-        .addCss(inputStyleUnderlinedCSS);
+        .withCSS(inputStyleUnderlinedCSS);

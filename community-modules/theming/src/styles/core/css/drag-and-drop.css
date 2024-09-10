@@ -8,7 +8,7 @@
     max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
-    transform: translateY(calc(var(--ag-grid-size) * 2));
+    transform: translateY(calc(var(--ag-spacing) * 2));
 
     background-color: var(--ag-drag-ghost-background-color);
     color: var(--ag-text-color);

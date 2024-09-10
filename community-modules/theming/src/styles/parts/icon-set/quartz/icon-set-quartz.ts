@@ -5,22 +5,22 @@ import { getQuartzIconsCss } from './quartz-icon-data';
 export const iconSetQuartz = (args: { strokeWidth?: number } = {}) =>
     /*#__PURE__*/
     createPart({feature: 'iconSet', variant: 'quartz'})
-        .addCss(() => getQuartzIconsCss(args));
+        .withCSS(() => getQuartzIconsCss(args));
 
 // prettier-ignore
 export const iconSetQuartzLight =
     /*#__PURE__*/
     createPart({feature: 'iconSet', variant: 'quartzLight'})
-        .addCss(() => getQuartzIconsCss({ strokeWidth: 1 }));
+        .withCSS(() => getQuartzIconsCss({ strokeWidth: 1 }));
 
 // prettier-ignore
 export const iconSetQuartzRegular =
     /*#__PURE__*/
     createPart({feature: 'iconSet', variant: 'quartzRegular'})
-        .addCss(getQuartzIconsCss);
+        .withCSS(getQuartzIconsCss);
 
 // prettier-ignore
 export const iconSetQuartzBold =
     /*#__PURE__*/
     createPart({feature: 'iconSet', variant: 'quartzBold'})
-        .addCss(() => getQuartzIconsCss({ strokeWidth: 2 }));
+        .withCSS(() => getQuartzIconsCss({ strokeWidth: 2 }));

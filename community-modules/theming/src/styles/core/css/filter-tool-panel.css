@@ -19,7 +19,7 @@
 }
 
 .ag-filter-toolpanel-header {
-    height: calc(var(--ag-grid-size) * 6);
+    height: calc(var(--ag-spacing) * 6);
 
     &:focus-visible {
         border-radius: var(--ag-border-radius);
@@ -29,7 +29,7 @@
 
 .ag-filter-toolpanel-header,
 .ag-filter-toolpanel-search {
-    padding: 0 var(--ag-grid-size);
+    padding: 0 var(--ag-spacing);
 }
 
 .ag-filter-toolpanel-group:not(.ag-has-filter) > .ag-group-title-bar .ag-filter-toolpanel-group-instance-header-icon {
@@ -37,36 +37,36 @@
 }
 
 .ag-filter-toolpanel-group-level-0-header {
-    height: calc(var(--ag-grid-size) * 8);
+    height: calc(var(--ag-spacing) * 8);
 }
 
 .ag-filter-toolpanel-group-item {
-    margin-top: calc(var(--ag-grid-size) * 0.5);
-    margin-bottom: calc(var(--ag-grid-size) * 0.5);
+    margin-top: calc(var(--ag-spacing) * 0.5);
+    margin-bottom: calc(var(--ag-spacing) * 0.5);
 }
 
 .ag-filter-toolpanel-search {
     margin-top: var(--ag-widget-container-vertical-padding);
-    margin-bottom: var(--ag-grid-size);
+    margin-bottom: var(--ag-spacing);
 }
 
 .ag-filter-toolpanel-search-input {
     flex-grow: 1;
-    height: calc(var(--ag-grid-size) * 4);
+    height: calc(var(--ag-spacing) * 4);
 }
 
 .ag-filter-toolpanel-group-title-bar-icon {
-    margin-right: var(--ag-grid-size);
+    margin-right: var(--ag-spacing);
 }
 
 .ag-filter-toolpanel-expand {
-    margin-right: var(--ag-grid-size);
+    margin-right: var(--ag-spacing);
     cursor: pointer;
 }
 
 .ag-filter-toolpanel-group-title-bar,
 .ag-filter-toolpanel-instance-header {
-    padding-left: calc(var(--ag-grid-size) + var(--ag-filter-tool-panel-group-indent) * var(--ag-indentation-level));
+    padding-left: calc(var(--ag-spacing) + var(--ag-filter-tool-panel-group-indent) * var(--ag-indentation-level));
 }
 
 .ag-filter-toolpanel-instance-body {
@@ -75,7 +75,7 @@
 
 .ag-filter-toolpanel-group-instance-header-icon,
 .ag-filter-toolpanel-instance-header-icon {
-    margin-left: var(--ag-grid-size);
+    margin-left: var(--ag-spacing);
 }
 
 .ag-filter-toolpanel-instance-filter {
@@ -88,8 +88,8 @@
 
 .ag-filter-toolpanel-header {
     height: initial;
-    padding-top: var(--ag-grid-size);
-    padding-bottom: var(--ag-grid-size);
+    padding-top: var(--ag-spacing);
+    padding-bottom: var(--ag-spacing);
 }
 
 .ag-filter-toolpanel-group-item {

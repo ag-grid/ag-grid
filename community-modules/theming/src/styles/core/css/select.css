@@ -5,7 +5,7 @@
 
     .ag-picker-field-wrapper {
         padding-left: calc(var(--ag-cell-horizontal-padding) / 2);
-        padding-right: var(--ag-grid-size);
+        padding-right: var(--ag-spacing);
         cursor: default;
     }
 

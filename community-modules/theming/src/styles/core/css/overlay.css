@@ -31,5 +31,5 @@
     background: var(--ag-background-color);
     border-radius: var(--ag-border-radius);
     box-shadow: var(--ag-popup-shadow);
-    padding: var(--ag-grid-size);
+    padding: var(--ag-spacing);
 }

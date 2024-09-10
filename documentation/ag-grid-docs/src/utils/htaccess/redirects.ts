@@ -2708,4 +2708,9 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-data-grid/selection-overview', to: '/angular-data-grid/row-selection' },
     { from: '/react-data-grid/selection-overview', to: '/react-data-grid/row-selection' },
     { from: '/vue-data-grid/selection-overview', to: '/vue-data-grid/row-selection' },
+
+    { from: '/javascript-data-grid/applying-theme-builder-styling-grid', to: '/javascript-data-grid/theming' },
+    { from: '/angular-data-grid/applying-theme-builder-styling-grid', to: '/angular-data-grid/theming' },
+    { from: '/react-data-grid/applying-theme-builder-styling-grid', to: '/react-data-grid/theming' },
+    { from: '/vue-data-grid/applying-theme-builder-styling-grid', to: '/vue-data-grid/theming' },
 ];

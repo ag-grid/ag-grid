@@ -9,10 +9,10 @@ import { memoize, titleCase } from './utils';
 const partsByFeatureName: Record<string, Part<any>[] | undefined> = {
     colorScheme: [
         themes.colorSchemeLightCold,
-        themes.colorSchemeLightNeutral,
+        themes.colorSchemeLight,
         themes.colorSchemeLightWarm,
         themes.colorSchemeDarkBlue,
-        themes.colorSchemeDarkNeutral,
+        themes.colorSchemeDark,
         themes.colorSchemeDarkWarm,
     ],
     iconSet: [

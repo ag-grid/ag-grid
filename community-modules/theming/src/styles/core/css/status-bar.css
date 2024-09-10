@@ -3,8 +3,8 @@
     justify-content: space-between;
     overflow: hidden;
     border-top: var(--ag-footer-row-border);
-    padding-right: calc(var(--ag-grid-size) * 4);
-    padding-left: calc(var(--ag-grid-size) * 4);
+    padding-right: calc(var(--ag-spacing) * 4);
+    padding-left: calc(var(--ag-spacing) * 4);
     line-height: 1.5;
 }
 
@@ -33,8 +33,8 @@
 }
 
 .ag-status-name-value {
-    margin-left: var(--ag-grid-size);
-    margin-right: var(--ag-grid-size);
+    margin-left: var(--ag-spacing);
+    margin-right: var(--ag-spacing);
     padding-top: var(--ag-widget-container-vertical-padding);
     padding-bottom: var(--ag-widget-container-vertical-padding);
 }

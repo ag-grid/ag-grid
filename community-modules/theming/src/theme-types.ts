@@ -29,8 +29,12 @@ export const getParamType = memoize((param: string): ParamType => {
     //
     if (/Color$/.test(param)) return 'color';
     if (/Scale?$/.test(param)) return 'scale';
-    if (/(Padding|Spacing|Size|Width|Height|Radius|Indent|Start|End|Top|Bottom|Horizontal|Vertical)$/.test(param))
+    if (
+        param === 'spacing' ||
+        /(Padding|Spacing|Size|Width|Height|Radius|Indent|Start|End|Top|Bottom|Horizontal|Vertical)$/.test(param)
+    ) {
         return 'length';
+    }
     if (/Border$/.test(param)) return 'border';
     if (/BorderStyle$/.test(param)) return 'borderStyle';
     if (/Shadow$/.test(param)) return 'shadow';
@@ -43,21 +47,23 @@ export const getParamType = memoize((param: string): ParamType => {
 });
 
 type ColorParam = CoreParamWithSuffix<'Color'>;
-type LengthParam = CoreParamWithSuffix<
-    | 'Padding'
-    | 'Spacing'
-    | 'Size'
-    | 'Width'
-    | 'Height'
-    | 'Radius'
-    | 'Indent'
-    | 'Start'
-    | 'End'
-    | 'Top'
-    | 'Bottom'
-    | 'Horizontal'
-    | 'Vertical'
->;
+type LengthParam =
+    | 'spacing'
+    | CoreParamWithSuffix<
+          | 'Padding'
+          | 'Spacing'
+          | 'Size'
+          | 'Width'
+          | 'Height'
+          | 'Radius'
+          | 'Indent'
+          | 'Start'
+          | 'End'
+          | 'Top'
+          | 'Bottom'
+          | 'Horizontal'
+          | 'Vertical'
+      >;
 type BorderParam = CoreParamWithSuffix<'Border'>;
 type ShadowParam = CoreParamWithSuffix<'Shadow'>;
 type ImageParam = CoreParamWithSuffix<'Image'>;
@@ -130,7 +136,7 @@ const colorSchemeValueToCss = literalToCSS;
  *
  * - `4` -> "4px" (a plain JavaScript number will be given pixel units)
  * - `{ref: "foo"}` -> use the same value as the `foo` param (`ref` must be a valid param name)
- * - `{calc: "foo + bar * 2"}` -> Use a dynamically calculated expression. You can use param names like gridSize and fontSize in the expression, as well as built-in CSS math functions like `min(gridSize, fontSize)`
+ * - `{calc: "foo + bar * 2"}` -> Use a dynamically calculated expression. You can use param names like spacing and fontSize in the expression, as well as built-in CSS math functions like `min(spacing, fontSize)`
  */
 export type LengthValue =
     | number
@@ -138,9 +144,8 @@ export type LengthValue =
     | {
           /**
            * An expression that can include param names and maths, e.g.
-           * "gridSize * 2". NOTE: this is converted into a CSS calc expression.
-           * The rules of CSS calc require a space between operators and
-           * variables, so "gridSize*2" is invalid.
+           * "spacing * 2". NOTE: In CSS the `-` character is valid in variable
+           * names, so leave a space around it.
            */
           calc: string;
       }
@@ -152,9 +157,11 @@ const lengthValueToCss = (value: LengthValue): string | false => {
     if (typeof value === 'string') return value;
     if (typeof value === 'number') return `${value}px`;
     if ('calc' in value) {
+        // ensure a space around operators other than `-` (which can be part of an identifier)
+        const valueWithSpaces = value.calc.replace(/ ?[*/+] ?/g, ' $& ');
         // convert param names to variable expressions, e.g. "fooBar" -> "var(--ag-foo-bar)",
         // ignoring words that are part of function names "fooBar()" or variables "--fooBar"
-        return `calc(${value.calc.replace(/(?<!(\w|--[\w-]*))([a-z][a-z0-9]*\b)(?!\s*\()/gi, (p) => ` ${paramToVariableExpression(p)} `)})`;
+        return `calc(${valueWithSpaces.replace(/(?<!(\w|--[\w-]*))([a-z][a-z0-9]*\b)(?!\s*\()/gi, (p) => ` ${paramToVariableExpression(p)} `)})`;
     }
     if ('ref' in value) return paramToVariableExpression(value.ref);
     return false;

@@ -1,15 +1,15 @@
 import { createPart } from '../../../Part';
 
 // prettier-ignore
-export const colorSchemeLightNeutral =
+export const colorSchemeLight =
     /*#__PURE__*/
-    createPart({feature: 'colorScheme', variant: 'lightNeutral'});
+    createPart({feature: 'colorScheme', variant: 'light'});
 
 // prettier-ignore
 export const colorSchemeLightWarm =
     /*#__PURE__*/
     createPart({feature: 'colorScheme', variant: 'lightWarm'})
-        .overrideParams({
+        .withParams({
             foregroundColor: '#000000de',
             borderColor: '#60300026',
             chromeBackgroundColor: '#60300005',
@@ -19,17 +19,17 @@ export const colorSchemeLightWarm =
 export const colorSchemeLightCold =
     /*#__PURE__*/
     createPart({feature: 'colorScheme', variant: 'lightCold'})
-        .overrideParams({
+        .withParams({
             foregroundColor: '#000',
             backgroundColor: '#fff',
             chromeBackgroundColor: '#f3f8f8',
         });
 
 // prettier-ignore
-export const colorSchemeDarkNeutral =
+export const colorSchemeDark =
     /*#__PURE__*/
-    createPart({feature: 'colorScheme', variant: 'darkNeutral'})
-        .overrideParams({
+    createPart({feature: 'colorScheme', variant: 'dark'})
+        .withParams({
             backgroundColor: 'hsl(217, 0%, 17%)',
             foregroundColor: '#FFF',
             chromeBackgroundColor: {
@@ -44,7 +44,7 @@ export const colorSchemeDarkNeutral =
 export const colorSchemeDarkWarm =
     /*#__PURE__*/
     createPart({feature: 'colorScheme', variant: 'darkWarm'})
-        .overrideParams({
+        .withParams({
             backgroundColor: 'hsl(29, 10%, 17%)',
             foregroundColor: '#FFF',
             chromeBackgroundColor: {
@@ -59,7 +59,7 @@ export const colorSchemeDarkWarm =
 export const colorSchemeDarkBlue =
     /*#__PURE__*/
     createPart({feature: 'colorScheme', variant: 'darkBlue'})
-        .overrideParams({
+        .withParams({
             backgroundColor: '#1f2836',
             foregroundColor: '#FFF',
             chromeBackgroundColor: {

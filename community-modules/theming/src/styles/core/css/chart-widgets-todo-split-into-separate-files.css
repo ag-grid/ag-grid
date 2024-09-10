@@ -141,7 +141,7 @@
 
 .ag-slider-field,
 .ag-angle-select-field {
-    margin-right: calc(var(--ag-grid-size) * 2);
+    margin-right: calc(var(--ag-spacing) * 2);
 }
 
 .ag-angle-select-parent-circle {
@@ -171,7 +171,7 @@
     border: var(--ag-input-border);
     border-radius: 5px;
     background-color: var(--ag-background-color);
-    min-height: max(var(--ag-list-item-height), calc(var(--ag-grid-size) * 4));
+    min-height: max(var(--ag-list-item-height), calc(var(--ag-spacing) * 4));
 
     &:disabled {
         opacity: 0.5;
@@ -194,8 +194,8 @@
 
 .ag-color-picker {
     .ag-picker-field-wrapper {
-        padding-left: var(--ag-grid-size);
-        padding-right: var(--ag-grid-size);
+        padding-left: var(--ag-spacing);
+        padding-right: var(--ag-spacing);
     }
 
     .ag-picker-field-display {
@@ -208,11 +208,11 @@
 
 .ag-color-picker-color,
 .ag-color-picker-value {
-    margin-right: var(--ag-grid-size);
+    margin-right: var(--ag-spacing);
 }
 
 .ag-color-panel {
-    padding: var(--ag-grid-size);
+    padding: var(--ag-spacing);
 }
 
 .ag-spectrum-dragger {
@@ -246,8 +246,8 @@
 }
 
 .ag-recent-colors {
-    margin-left: var(--ag-grid-size);
-    margin-right: var(--ag-grid-size);
+    margin-left: var(--ag-spacing);
+    margin-right: var(--ag-spacing);
     margin-bottom: 2px;
 }
 
@@ -312,12 +312,12 @@
 
 .ag-color-input {
     & input[class^='ag-'][type='text'].ag-input-field-input {
-        padding-left: calc(var(--ag-icon-size) + (var(--ag-grid-size) * 2));
+        padding-left: calc(var(--ag-icon-size) + (var(--ag-spacing) * 2));
     }
 
     .ag-color-input-color {
         position: absolute;
-        margin-left: var(--ag-grid-size);
+        margin-left: var(--ag-spacing);
     }
 }
 

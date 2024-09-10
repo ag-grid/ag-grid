@@ -24,13 +24,13 @@
 
 .ag-label {
     white-space: nowrap;
-    margin-right: var(--ag-grid-size);
+    margin-right: var(--ag-spacing);
 }
 
 .ag-label-align-top .ag-label {
-    margin-bottom: calc(var(--ag-grid-size) * 0.5);
+    margin-bottom: calc(var(--ag-spacing) * 0.5);
 }
 
 .ag-label-align-right .ag-label {
-    margin-left: var(--ag-grid-size);
+    margin-left: var(--ag-spacing);
 }

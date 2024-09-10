@@ -1,7 +1,7 @@
-import type { Theme, themeMaterial, themeQuartz } from '@ag-grid-community/theming';
+import type { Theme, themeQuartz } from '@ag-grid-community/theming';
 
 type ThemeParams<T> = T extends Theme<infer U> ? keyof U : never;
-type AllThemeParams = ThemeParams<typeof themeQuartz> | ThemeParams<typeof themeMaterial>;
+type AllThemeParams = ThemeParams<typeof themeQuartz>;
 
 const docs: Record<AllThemeParams, string> = {
     backgroundColor:
@@ -29,11 +29,10 @@ const docs: Record<AllThemeParams, string> = {
         'Horizontal borders between the grid and rows that are pinned to the top or bottom and the rest of the grid',
     sidePanelBorder:
         'Borders between the grid and side panels including the column and filter tool bars, and chart settings',
-    sideButtonSelectedBorder: 'Border around the selected sidebar button on the side panel',
-    sideButtonSelectedBackgroundColor: 'Background color of the selected sidebar button on the side panel',
     sideBarBackgroundColor:
         'Background color for non-data areas of the grid. Headers, tool panels and menus use this color by default.',
     fontFamily: 'Font family used for all text.',
+    dataFontSize: 'Font size for data in grid rows',
     chromeBackgroundColor:
         'Background color for non-data areas of the grid. Headers, tool panels and menus use this color by default.',
     headerBackgroundColor: 'Background color for header and header-like.',
@@ -79,7 +78,7 @@ const docs: Record<AllThemeParams, string> = {
         'Color to temporarily apply to cell data when its value decreases in an agAnimateShowChangeCellRenderer cell',
     valueChangeValueHighlightBackgroundColor:
         'Background color to apply when a cell value changes and enableCellChangeFlash is enabled',
-    gridSize:
+    spacing:
         'Amount of spacing around and inside UI elements. All padding and margins in the grid are defined as a multiple of this value.',
     cellHorizontalPadding: 'Padding at the start and end of grid cells and header cells.',
     cellHorizontalPaddingScale: 'Multiply the cell horizontal padding by a number, e.g. 1.5 to increase by 50%',
@@ -175,9 +174,6 @@ const docs: Record<AllThemeParams, string> = {
     filterToolPanelGroupIndent: 'How much to indent child columns in the filters tool panel relative to their parent',
     iconButtonHoverBackgroundColor: 'Background color of clickable icons when hovered',
     iconSize: 'The size of square icons and icon-buttons',
-
-    primaryColor:
-        'Application primary color as defined to the Material Design specification. Only used by Material theme parts.',
 
     //
     // TABS
