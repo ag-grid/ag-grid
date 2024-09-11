@@ -143,6 +143,9 @@
     }
 }
 
+/* the sticky containers need at least one 1px height so we can set the
+scrollLeft position when there are no rows within, otherwise scrollLeft will
+always be 0 and then making a row sticky causes the grid to scroll. */
 .ag-sticky-top-container,
 .ag-sticky-bottom-container {
     min-height: 1px;
@@ -507,6 +510,11 @@
     overflow: hidden;
     height: 0px;
     background-color: var(--ag-background-color);
+}
+
+.ag-sticky-bottom {
+    box-sizing: content-box !important;
+    border-top: var(--ag-row-border);
 }
 
 .ag-pinned-left-sticky-top,
