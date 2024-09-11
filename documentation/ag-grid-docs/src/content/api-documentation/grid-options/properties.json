@@ -956,7 +956,7 @@
         "pivotDefaultExpanded": {
             "more": {
                 "name": "Expand Pivot Column Groups by Default",
-                "url": "./pivoting-group-columns/#expanded-by-default"
+                "url": "./pivoting-column-groups/#expanded-by-default"
             }
         },
         "pivotRowTotals": {
@@ -983,13 +983,13 @@
         "processPivotResultColGroupDef": {
             "more": {
                 "name": "Pivot Result Column Group Definitions",
-                "url": "./pivoting-group-columns/#customising-group-definitions"
+                "url": "./pivoting-column-groups/#customising-group-definitions"
             }
         },
         "suppressExpandablePivotGroups": {
             "more": {
                 "name": "Prevent Expanding Pivot Column Groups",
-                "url": "./pivoting-group-columns/#prevent-expanding-groups"
+                "url": "./pivoting-column-groups/#prevent-expanding-groups"
             }
         },
         "functionsReadOnly": {
@@ -1038,7 +1038,7 @@
         "removePivotHeaderRowWhenSingleValueColumn": {
             "more": {
                 "name": "Hiding Repeated Value Column Labels",
-                "url": "./pivoting-group-columns/#hide-group-with-single-value-column"
+                "url": "./pivoting-column-groups/#hide-group-with-single-value-column"
             }
         }
     },

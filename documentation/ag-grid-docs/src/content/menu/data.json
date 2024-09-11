@@ -1035,16 +1035,6 @@
                         ]
                     },
                     {
-                        "title": "Tree Data",
-                        "items": [
-                            {
-                                "title": "Overview",
-                                "path": "tree-data",
-                                "isEnterprise": true
-                            }
-                        ]
-                    },
-                    {
                         "title": "Pivoting",
                         "items": [
                             {
@@ -1058,13 +1048,23 @@
                                 "isEnterprise": true
                             },
                             {
-                                "title": "Pivot Group Columns",
-                                "path": "pivoting-group-columns",
+                                "title": "Pivot Column Groups",
+                                "path": "pivoting-column-groups",
                                 "isEnterprise": true
                             },
                             {
                                 "title": "Pivot Totals",
                                 "path": "pivoting-totals",
+                                "isEnterprise": true
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Tree Data",
+                        "items": [
+                            {
+                                "title": "Overview",
+                                "path": "tree-data",
                                 "isEnterprise": true
                             }
                         ]
