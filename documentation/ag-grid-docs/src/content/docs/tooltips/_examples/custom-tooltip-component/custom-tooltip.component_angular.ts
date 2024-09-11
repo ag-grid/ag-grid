@@ -12,8 +12,6 @@ import { Component } from '@angular/core';
         `
             :host {
                 position: absolute;
-                width: 150px;
-                height: 70px;
                 pointer-events: none;
                 transition: opacity 1s;
             }
