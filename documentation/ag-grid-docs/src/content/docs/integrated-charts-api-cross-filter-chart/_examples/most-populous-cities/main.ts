@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, createGrid } from '@ag-grid-community/core';
+import type { FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
+import { createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
@@ -46,6 +47,7 @@ const gridOptions: GridOptions = {
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
     createColumnChart(params.api);
     createBubbleChart(params.api);
+    createScatterChart(params.api);
 }
 
 function createColumnChart(api: GridApi) {
@@ -97,6 +99,27 @@ function createBubbleChart(api: GridApi) {
             },
         },
         chartContainer: document.querySelector('#bubbleChart') as any,
+    });
+}
+
+function createScatterChart(api: GridApi) {
+    api.createCrossFilterChart({
+        chartType: 'scatter',
+        cellRange: {
+            columns: ['longitude', 'latitude'],
+        },
+        chartThemeOverrides: {
+            common: {
+                title: {
+                    enabled: true,
+                    text: 'Latitude vs Longitude of Most Populous Cities',
+                },
+                legend: {
+                    enabled: false,
+                },
+            },
+        },
+        chartContainer: document.querySelector('#scatterChart') as any,
     });
 }
 

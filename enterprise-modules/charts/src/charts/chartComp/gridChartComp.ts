@@ -71,7 +71,17 @@ export interface GridChartParams {
     seriesChartTypes?: SeriesChartType[];
 }
 
-export const CROSS_FILTERING_CHARTS = ['bar', 'column', 'pie', 'donut', 'doughnut'];
+export const CROSS_FILTERING_CHARTS = [
+    'bar',
+    'column',
+    'pie',
+    'donut',
+    'doughnut',
+    'line',
+    'area',
+    'scatter',
+    'bubble',
+];
 
 export class GridChartComp extends Component {
     private crossFilterService: ChartCrossFilterService;

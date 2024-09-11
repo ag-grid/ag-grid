@@ -204,7 +204,6 @@ export class ChartDataModel extends BeanStub {
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
             crossFiltering: this.crossFiltering,
-            crossFilteringZeroValue: _includes(['pie', 'donut', 'doughnut'], this.chartType) ? 0 : undefined,
             valueCols: this.getSelectedValueCols(),
             startRow,
             endRow,
