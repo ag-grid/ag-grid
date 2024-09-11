@@ -3,6 +3,7 @@
 @import './css/group.css';
 @import './css/popup.css';
 @import './css/grid-layout.css';
+@import './css/pinned-columns.css';
 @import './css/grid-borders.css';
 @import './css/inputs.css';
 
@@ -17,7 +18,6 @@
 @import './css/header.css';
 @import './css/menu.css';
 @import './css/panel.css';
-@import './css/pinned-columns.css';
 @import './css/print.css';
 @import './css/select.css';
 @import './css/rich-select.css';
