@@ -12,7 +12,7 @@ to be overridden.
 
 {% gridExampleRunner title="Group Column Configuration" name="group-column" /%}
 
-The example above sets different header text, a minimum width, and adds checkboxes to each cell the following configuration:
+The example above sets different header text, a minimum width, and adds checkboxes to each Group Column cell the following configuration:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -75,7 +75,7 @@ the `cellRenderer` property in the `autoGroupColumnDef` grid option.
 
 The below example provides a custom cell renderer which:
 * Uses a custom icon to represent the groups expanded state
-* Responds to row expanded to update if the group is expanded or collapsed from another source
+* Responds to row expansion events to update if the group is expanded or collapsed from another source
 * Cleans up all event listeners when it's destroyed
 
 {% gridExampleRunner title="Custom Component" name="custom-component" /%}
