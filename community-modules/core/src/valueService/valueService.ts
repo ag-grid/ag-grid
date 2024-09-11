@@ -70,7 +70,7 @@ export class ValueService extends BeanStub implements NamedBean {
      * Use this function to get a displayable cell value.
      * This hides values in expanded group rows which are instead displayed by the footer row.
      */
-    public getValueForDisplay(column: AgColumn, node: RowNode) {
+    public getValueForDisplay(column: AgColumn, node: IRowNode) {
         // when in pivot mode, leafGroups cannot be expanded
         const lockedClosedGroup = node.leafGroup && this.columnModel.isPivotMode();
         const isOpenGroup = node.group && node.expanded && !node.footer && !lockedClosedGroup;
