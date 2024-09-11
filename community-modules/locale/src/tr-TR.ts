@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_TR = {
     excelExport: 'Excel Olarak Dışa Aktar',
     columnFilter: 'Sütun Filtresi',
     columnChooser: 'Sütunları Seç',
+    chooseColumns: 'Sütunları Seç',
     sortAscending: 'Artan Sıralı',
     sortDescending: 'Azalan Sıralı',
     sortUnSort: 'Sıralamayı Temizle',

@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_GR = {
     excelExport: 'Εξαγωγή σε Excel',
     columnFilter: 'Φίλτρο Στηλών',
     columnChooser: 'Επιλογή Στηλών',
+    chooseColumns: 'Επιλογή Στηλών',
     sortAscending: 'Επιλογή Αύξουσας Ταξινόμησης',
     sortDescending: 'Επιλογή Φθίνουσας Ταξινόμησης',
     sortUnSort: 'Καθαρισμός Ταξινόμησης',

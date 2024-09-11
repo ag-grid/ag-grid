@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_RO = {
     excelExport: 'Exportă Excel',
     columnFilter: 'Filtru de Coloană',
     columnChooser: 'Alege Coloane',
+    chooseColumns: 'Alege Coloane',
     sortAscending: 'Sortare Ascendentă',
     sortDescending: 'Sortare Descendentă',
     sortUnSort: 'Șterge Sortarea',

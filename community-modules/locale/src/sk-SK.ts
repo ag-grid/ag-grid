@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_SK = {
     excelExport: 'Export do Excelu',
     columnFilter: 'Filter stĺpca',
     columnChooser: 'Výber stĺpcov',
+    chooseColumns: 'Výber stĺpcov',
     sortAscending: 'Zoradiť vzostupne',
     sortDescending: 'Zoradiť zostupne',
     sortUnSort: 'Zrušiť zoradenie',

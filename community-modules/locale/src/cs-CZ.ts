@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_CZ = {
     excelExport: 'Export Excel',
     columnFilter: 'Filtr sloupce',
     columnChooser: 'Vybrat sloupce',
+    chooseColumns: 'Vybrat sloupce',
     sortAscending: 'Třídit vzestupně',
     sortDescending: 'Třídit sestupně',
     sortUnSort: 'Zrušit třídění',

@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_HU = {
     excelExport: 'Excel exportálás',
     columnFilter: 'Oszlopszűrés',
     columnChooser: 'Oszlopok kiválasztása',
+    chooseColumns: 'Oszlopok kiválasztása',
     sortAscending: 'Rendezés növekvő sorrendben',
     sortDescending: 'Rendezés csökkenő sorrendben',
     sortUnSort: 'Rendezés törlése',

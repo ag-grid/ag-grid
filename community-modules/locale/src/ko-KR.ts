@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_KR = {
     excelExport: 'Excel 내보내기',
     columnFilter: '열 필터',
     columnChooser: '열 선택',
+    chooseColumns: '열 선택',
     sortAscending: '오름차순 정렬',
     sortDescending: '내림차순 정렬',
     sortUnSort: '정렬 해제',
