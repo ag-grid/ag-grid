@@ -5,7 +5,13 @@ import type { RowSelectionOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
 import { isSelectionUIEvent } from '../events';
-import { _getGroupSelectsDescendants, _getRowSelectionMode, _isClientSideRowModel } from '../gridOptionsUtils';
+import {
+    _getGroupSelectsDescendants,
+    _getRowSelectionMode,
+    _isClientSideRowModel,
+    _isMultiRowSelection,
+    _isUsingNewSelectionAPI,
+} from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService, ISetNodesSelectedParams } from '../interfaces/iSelectionService';
@@ -595,6 +601,9 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         justFiltered?: boolean;
         justCurrentPage?: boolean;
     }) {
+        if (_isUsingNewSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
+            return _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
+        }
         this.validateSelectAllType();
 
         const { source, justFiltered, justCurrentPage } = params;

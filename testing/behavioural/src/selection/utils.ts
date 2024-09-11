@@ -1,4 +1,4 @@
-import type { GridApi } from '@ag-grid-community/core';
+import type { GridApi, IRowNode } from '@ag-grid-community/core';
 
 export function getRowByIndex(index: number): HTMLElement | null {
     return document.getElementById('myGrid')!.querySelector(`[row-index=${index}]`);
@@ -45,4 +45,14 @@ export function assertSelectedRowsByIndex(indices: number[], api: GridApi) {
     const actual = new Set(api.getSelectedNodes().map((n) => n.rowIndex));
     const expected = new Set(indices);
     expect(actual).toEqual(expected);
+}
+
+export function assertSelectedRowNodes(nodes: IRowNode[], api: GridApi) {
+    const selectedNodes = api.getSelectedNodes();
+
+    expect(selectedNodes).toHaveLength(nodes.length);
+
+    for (let i = 0; i < nodes.length; i++) {
+        expect(selectedNodes[i]).toBe(nodes[i]);
+    }
 }
