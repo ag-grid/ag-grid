@@ -393,13 +393,14 @@ export class PropertyKeys {
         'suppressServerSideFullWidthLoadingRow',
         'suppressAdvancedFilterEval',
         'loading',
+        'maintainColumnOrder',
+        'enableStrictPivotColumnOrder',
         'suppressSetFilterByDefault',
     ];
 
     // If property does not fit above, i.e union that should not be coerced.
     public static OTHER_PROPERTIES: GridOptionKey[] = [
         'suppressStickyTotalRow',
-        'maintainColumnOrder',
         // needs avoid coercion to boolean so that we can warn if it's unset
         'loadThemeGoogleFonts',
     ];

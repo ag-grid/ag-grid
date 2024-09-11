@@ -177,6 +177,7 @@ export const AG_GRID_LOCALE_IT = {
     excelExport: 'Esporta Excel',
     columnFilter: 'Filtro Colonna',
     columnChooser: 'Scegli Colonne',
+    chooseColumns: 'Scegli Colonne',
     sortAscending: 'Ordina in modo Ascendente',
     sortDescending: 'Ordina in modo Discendente',
     sortUnSort: 'Annulla Ordinamento',

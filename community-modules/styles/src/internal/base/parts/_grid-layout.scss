@@ -30,7 +30,7 @@
         );
     }
 
-    .ag-pivot-leaf-group {
+    .ag-row:not(.ag-row-level-0) .ag-pivot-leaf-group {
         margin-left: var(--ag-row-group-indent-size);
     }
 

@@ -343,10 +343,16 @@ export interface GridOptions<TData = any> {
     /**
      * Keeps the order of Columns maintained after new Column Definitions are updated.
      *
-     * The use of boolean values with `maintainColumnOrder` have been deprecated as of v32.2.0
-     * @default 'pivotResultColumns'
+     * @default false
      */
-    maintainColumnOrder?: boolean | 'all' | 'primaryColumns' | 'pivotResultColumns' | 'none';
+    maintainColumnOrder?: boolean;
+
+    /**
+     * Resets pivot column order when impacted by filters, data or configuration changes
+     *
+     * @default false
+     */
+    enableStrictPivotColumnOrder?: boolean;
     /**
      * If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer.
      * @default false

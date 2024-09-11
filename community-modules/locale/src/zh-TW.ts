@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_TW = {
     excelExport: '匯出 Excel',
     columnFilter: '列過濾器',
     columnChooser: '選擇列',
+    chooseColumns: '選擇列',
     sortAscending: '升序排列',
     sortDescending: '降序排列',
     sortUnSort: '清除排列',

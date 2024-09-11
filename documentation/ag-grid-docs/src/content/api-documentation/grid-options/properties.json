@@ -191,8 +191,13 @@
             "more": {
                 "name": "Maintain Column Order",
                 "url": "./column-updating-definitions/#maintain-column-order"
-            },
-            "type": "'all' | 'primaryColumns' | 'pivotResultColumns' | 'none'"
+            }
+        },
+        "enableStrictPivotColumnOrder": {
+            "more": {
+                "name": "Pivoting - Changing Data, Filters, and Configurations",
+                "url": "./pivoting-column-groups/#changing-data-filters-and-configurations"
+            }
         },
         "suppressFieldDotNotation": {
             "more": {

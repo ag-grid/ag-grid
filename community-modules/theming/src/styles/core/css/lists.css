@@ -46,7 +46,7 @@
     left: 0;
     right: 0;
     height: 1px;
-    background-color: var(--ag-range-selection-border-color);
+    background-color: var(--ag-accent-color);
 }
 
 .ag-item-highlight-top::after {

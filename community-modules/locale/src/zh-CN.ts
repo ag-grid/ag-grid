@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_CN = {
     excelExport: '导出为Excel',
     columnFilter: '列过滤',
     columnChooser: '选择列',
+    chooseColumns: '选择列',
     sortAscending: '升序排列',
     sortDescending: '降序排列',
     sortUnSort: '清除排序',

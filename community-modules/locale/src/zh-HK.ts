@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_HK = {
     excelExport: '匯出為 Excel',
     columnFilter: '列篩選器',
     columnChooser: '選擇列',
+    chooseColumns: '選擇列',
     sortAscending: '升序排序',
     sortDescending: '降序排序',
     sortUnSort: '清除排序',
