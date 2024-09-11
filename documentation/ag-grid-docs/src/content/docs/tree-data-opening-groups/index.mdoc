@@ -27,11 +27,17 @@ To granularly determine which groups should be expanded by default, use the `isG
 
 {% gridExampleRunner title="Open by Default" name="open-by-default" /%}
 
-The example above uses the following configuration to expand only the '1' groups by default:
+The example above uses the following configuration to expand the `ProjectBeta` groups by default:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    isGroupOpenByDefault: params => params.key === '1',
+    isGroupOpenByDefault: (params) => {
+        return (
+            (params.level === 0 && params.key === 'Documents') ||
+            (params.level === 1 && params.key === 'Work') ||
+            (params.level === 2 && params.key === 'ProjectBeta')
+        );
+    }
 }
 ```
 
@@ -66,9 +72,9 @@ const expandTopLevel = () => {
   });
 }
 
-const expandOneNode = () => {
+const expandProjectAlpha = () => {
   gridApi.forEachNode((node) => {
-    if (node.id === "-") {
+    if (node.key === 'ProjectAlpha') {
       gridApi.setRowNodeExpanded(node, true, true);
     }
   });
@@ -80,17 +86,6 @@ const expandOneNode = () => {
 When expanding a group the vertical scroll does not change, which can result in the child rows not being visible.
 You can use the `ensureIndexVisible()` function on the API to ensure the index is visible, scrolling the table if needed.
 
-{% gridExampleRunner title="Row Group Scroll" name="row-group-scroll" /%}
+In the example below, if you expand a group at the bottom, the grid will scroll so all the children of the group are visible.
 
-The example above demonstrates how to scroll the grid to ensure the last child row is visible when expanding a group:
-
-```{% frameworkTransform=true %}
-const expandAndScroll = () => {
-  gridApi.forEachNode((node) => {
-    if (node.key === 'United States') {
-      gridApi.setRowNodeExpanded(node, true);
-      gridApi.ensureIndexVisible(node.rowIndex, 'bottom');
-    }
-  });
-}
-```
+{% gridExampleRunner title="Row Group Scroll" name="row-group-scroll" exampleHeight=261 /%}

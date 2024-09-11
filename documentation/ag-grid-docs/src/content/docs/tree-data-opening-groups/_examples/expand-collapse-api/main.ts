@@ -11,17 +11,39 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true, hide: true },
-        { field: 'year', rowGroup: true, hide: true },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
+        { field: 'created' },
+        { field: 'modified' },
+        {
+            field: 'size',
+            aggFunc: 'sum',
+            valueFormatter: (params) => {
+                const sizeInKb = params.value / 1024;
+
+                if (sizeInKb > 1024) {
+                    return `${+(sizeInKb / 1024).toFixed(2)} MB`;
+                } else {
+                    return `${+sizeInKb.toFixed(2)} KB`;
+                }
+            },
+        },
     ],
     defaultColDef: {
         flex: 1,
+        minWidth: 100,
+        filter: true,
+    },
+    autoGroupColumnDef: {
+        headerName: 'File Explorer',
         minWidth: 150,
+        filter: 'agTextColumnFilter',
+
+        cellRendererParams: {
+            suppressCount: true,
+        },
     },
     rowData: getData(),
+    treeData: true,
+    getDataPath: (data) => data.path,
 };
 
 function expandAll() {
@@ -32,17 +54,18 @@ function collapseAll() {
     gridApi!.collapseAll();
 }
 
-function expandCountries() {
+const expandTopLevel = () => {
     gridApi!.forEachNode((node) => {
         if (node.level === 0) {
-            gridApi!.setRowNodeExpanded(node, true);
+            gridApi.setRowNodeExpanded(node, true);
         }
     });
-}
+};
 
-function expandAustralia2000() {
+// Expands all nodes that have key 'ProjectAlpha' and their parents
+function expandProjectAlpha() {
     gridApi!.forEachNode((node) => {
-        if (node.key === '2000' && node.parent && node.parent.key === 'Australia') {
+        if (node.key === 'ProjectAlpha') {
             gridApi!.setRowNodeExpanded(node, true, true);
         }
     });

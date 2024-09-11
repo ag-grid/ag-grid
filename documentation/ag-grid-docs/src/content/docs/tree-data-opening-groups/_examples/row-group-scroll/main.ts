@@ -3,30 +3,49 @@ import { ColDef, GridApi, GridOptions, RowGroupOpenedEvent, createGrid } from '@
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
+import { getData } from './data';
+
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
-const columnDefs: ColDef[] = [
-    { field: 'athlete', width: 150, rowGroupIndex: 0 },
-    { field: 'age', width: 90, rowGroupIndex: 1 },
-    { field: 'country', width: 120, rowGroupIndex: 2 },
-    { field: 'year', width: 90 },
-    { field: 'date', width: 110, rowGroupIndex: 2 },
-];
+let gridApi: GridApi;
 
-let gridApi: GridApi<IOlympicData>;
+const gridOptions: GridOptions = {
+    columnDefs: [
+        { field: 'created' },
+        { field: 'modified' },
+        {
+            field: 'size',
+            aggFunc: 'sum',
+            valueFormatter: (params) => {
+                const sizeInKb = params.value / 1024;
 
-const gridOptions: GridOptions<IOlympicData> = {
-    columnDefs: columnDefs,
-    rowData: null,
-    animateRows: false,
-    groupDisplayType: 'groupRows',
-    onRowGroupOpened: onRowGroupOpened,
+                if (sizeInKb > 1024) {
+                    return `${+(sizeInKb / 1024).toFixed(2)} MB`;
+                } else {
+                    return `${+sizeInKb.toFixed(2)} KB`;
+                }
+            },
+        },
+    ],
     defaultColDef: {
-        editable: true,
-        filter: true,
         flex: 1,
         minWidth: 100,
+        filter: true,
     },
+    autoGroupColumnDef: {
+        headerName: 'File Explorer',
+        minWidth: 150,
+        filter: 'agTextColumnFilter',
+
+        cellRendererParams: {
+            suppressCount: true,
+        },
+    },
+    rowData: getData(),
+    treeData: true,
+    getDataPath: (data) => data.path,
+    animateRows: false,
+    onRowGroupOpened: onRowGroupOpened,
 };
 
 function onRowGroupOpened(event: RowGroupOpenedEvent<IOlympicData>) {
@@ -41,8 +60,4 @@ function onRowGroupOpened(event: RowGroupOpenedEvent<IOlympicData>) {
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-
-    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then((response) => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 });
