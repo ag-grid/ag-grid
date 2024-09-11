@@ -45,42 +45,6 @@ const gridOptions = {
 Row keys are not always unique, so it is recommended to instead use the node ID or data path to identify the row.
 {% /note %}
 
-## Expanding via API
-
-The grid exposes a number of API methods to expand or collapse groups programmatically.
-
-{% apiDocumentation source="grid-api/api.json" section="rowGroupsCols" names=["expandAll", "collapseAll"] /%}
-
-Or to instead change a single rows state, call `api.setRowNodeExpanded(rowNode, boolean)`.
-
-{% apiDocumentation source="grid-api/api.json" section="rowGroupsCols" names=["setRowNodeExpanded"] /%}
-
-{% gridExampleRunner title="Expand / Collapse Groups via API" name="expand-collapse-api" /%}
-
-The example above demonstrates the following configuration of several functions which expand or collapse groups via the API:
-
-```
-const expandAll = () => gridApi.expandAll();
-
-const collapseAll = () => gridApi.collapseAll();
-
-const expandTopLevel = () => {
-  gridApi.forEachNode((node) => {
-    if (node.level === 0) {
-      gridApi.setRowNodeExpanded(node, true);
-    }
-  });
-}
-
-const expandProjectAlpha = () => {
-  gridApi.forEachNode((node) => {
-    if (node.key === 'ProjectAlpha') {
-      gridApi.setRowNodeExpanded(node, true, true);
-    }
-  });
-}
-```
-
 ## Scrolling Child Rows into View
 
 When expanding a group the vertical scroll does not change, which can result in the child rows not being visible.
@@ -89,3 +53,26 @@ You can use the `ensureIndexVisible()` function on the API to ensure the index i
 In the example below, if you expand a group at the bottom, the grid will scroll so all the children of the group are visible.
 
 {% gridExampleRunner title="Row Group Scroll" name="row-group-scroll" exampleHeight=261 /%}
+
+## API
+
+The grid exposes API methods to expand or collapse groups programmatically.
+{% apiDocumentation source="grid-api/api.json" section="rowGroupsCols" names=["setRowNodeExpanded", "expandAll", "collapseAll"] /%}
+
+### Expanding Hierarchy to a Row
+
+When expanding rows via the API, the `setRowNodeExpanded` function can be used to expand a specific row as well as all of its ancestors.
+
+{% gridExampleRunner title="Expand to Row" name="expand-collapse-api" /%}
+
+The example above uses [Row IDs](./row-ids/#row-ids) to demonstrate the following configuration to expand all of the 'Proposal.docx' rows ancestors:
+
+```
+const expandToRow = () => {
+  const node = gridApi.getRowNode('Proposal.docx');
+  if (node) {
+      gridApi.setRowNodeExpanded(node, true, true);
+  }
+}
+```
+

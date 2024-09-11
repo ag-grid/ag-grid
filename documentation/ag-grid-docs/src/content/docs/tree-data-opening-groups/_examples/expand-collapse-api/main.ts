@@ -44,32 +44,14 @@ const gridOptions: GridOptions = {
     rowData: getData(),
     treeData: true,
     getDataPath: (data) => data.path,
-};
-
-function expandAll() {
-    gridApi!.expandAll();
-}
-
-function collapseAll() {
-    gridApi!.collapseAll();
-}
-
-const expandTopLevel = () => {
-    gridApi!.forEachNode((node) => {
-        if (node.level === 0) {
-            gridApi.setRowNodeExpanded(node, true);
+    getRowId: (params) => params.data.path[params.data.path.length - 1],
+    onGridReady: () => {
+        const node = gridApi.getRowNode('Proposal.docx');
+        if (node) {
+            gridApi.setRowNodeExpanded(node, true, true);
         }
-    });
+    },
 };
-
-// Expands all nodes that have key 'ProjectAlpha' and their parents
-function expandProjectAlpha() {
-    gridApi!.forEachNode((node) => {
-        if (node.key === 'ProjectAlpha') {
-            gridApi!.setRowNodeExpanded(node, true, true);
-        }
-    });
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
