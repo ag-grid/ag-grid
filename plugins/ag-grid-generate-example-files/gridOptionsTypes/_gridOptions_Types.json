@@ -1401,6 +1401,10 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
+  "suppressSetFilterByDefault": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
   "suppressStickyTotalRow": {
     "typeName": "boolean | 'grand' | 'group'",
     "typesToInclude": []

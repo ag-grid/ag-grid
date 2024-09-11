@@ -263,6 +263,7 @@ export const GRID_OPTION_DEFAULTS = {
     pivotMaxGeneratedColumns: -1,
     columnMenu: 'new',
     reactiveCustomComponents: true,
+    suppressSetFilterByDefault: false,
 } as const;
 /**
  * Used simply to type check the default grid options.

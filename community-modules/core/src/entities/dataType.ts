@@ -1,3 +1,5 @@
+import type { Column } from '../interfaces/iColumn';
+import type { IRowNode } from '../interfaces/iRowNode';
 import type { BaseColDefOptionalDataParams, ValueFormatterParams, ValueParserParams } from './colDef';
 
 export type ValueParserLiteParams<TData, TValue> = Omit<ValueParserParams<TData, TValue>, 'data' | 'node' | 'oldValue'>;
@@ -134,3 +136,5 @@ export type CoreDataTypeDefinition<TData = any> =
     | Omit<DateDataTypeDefinition<TData>, 'extendsDataType'>
     | Omit<DateStringDataTypeDefinition<TData>, 'extendsDataType'>
     | Omit<ObjectDataTypeDefinition<TData, any>, 'extendsDataType'>;
+
+export type DataTypeFormatValueFunc = (params: { column: Column; node: IRowNode | null; value: any }) => string;

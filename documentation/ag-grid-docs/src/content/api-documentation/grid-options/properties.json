@@ -523,6 +523,12 @@
                 "url": "./tree-data/#tree-data-filtering"
             }
         },
+        "suppressSetFilterByDefault": {
+            "more": {
+                "name": "Suppress Set Filter by Default",
+                "url": "./filter-set/#suppress-set-filter-by-default"
+            }
+        },
         "enableAdvancedFilter": {
             "more": {
                 "name": "Advanced Filter",

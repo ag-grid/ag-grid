@@ -6,6 +6,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
+import type { CoreDataTypeDefinition, DataTypeFormatValueFunc } from '../entities/dataType';
 import type { RowNode } from '../entities/rowNode';
 import type { FilterChangedEvent, FilterChangedEventSourceType } from '../events';
 import { _getGroupAggFiltering } from '../gridOptionsUtils';
@@ -421,5 +422,13 @@ export class FilterManager extends BeanStub implements NamedBean {
             return Promise.resolve();
         }
         return this.columnFilterService?.setColumnFilterModel(key, model) ?? Promise.resolve();
+    }
+
+    public setColDefPropertiesForDataType(
+        colDef: ColDef,
+        dataTypeDefinition: CoreDataTypeDefinition,
+        formatValue: DataTypeFormatValueFunc
+    ): void {
+        this.columnFilterService?.setColDefPropertiesForDataType(colDef, dataTypeDefinition, formatValue);
     }
 }
