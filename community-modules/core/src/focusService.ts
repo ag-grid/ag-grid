@@ -93,8 +93,8 @@ export class FocusService extends BeanStub implements NamedBean {
 
     private static removeKeyboardModeEvents(doc: Document): void {
         if (this.instanceCount > 0) return;
-        doc.addEventListener('keydown', FocusService.toggleKeyboardMode);
-        doc.addEventListener('mousedown', FocusService.toggleKeyboardMode);
+        doc.removeEventListener('keydown', FocusService.toggleKeyboardMode);
+        doc.removeEventListener('mousedown', FocusService.toggleKeyboardMode);
     }
 
     private static toggleKeyboardMode(event: KeyboardEvent | MouseEvent | TouchEvent): void {
@@ -113,10 +113,6 @@ export class FocusService extends BeanStub implements NamedBean {
         }
 
         FocusService.keyboardModeActive = isKeyboardEvent;
-    }
-
-    private static unregisterGridCompController(doc: Document): void {
-        FocusService.removeKeyboardModeEvents(doc);
     }
 
     public postConstruct(): void {
@@ -143,7 +139,7 @@ export class FocusService extends BeanStub implements NamedBean {
         FocusService.instanceCount++;
         this.addDestroyFunc(() => {
             FocusService.instanceCount--;
-            FocusService.unregisterGridCompController(eDocument);
+            FocusService.removeKeyboardModeEvents(eDocument);
         });
     }
 
