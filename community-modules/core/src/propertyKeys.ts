@@ -116,6 +116,7 @@ export const INITIAL_GRID_OPTION_KEYS = {
     getRowId: true,
     reactiveCustomComponents: true,
     columnMenu: true,
+    suppressSetFilterByDefault: true,
 };
 
 type InitialGridOptionKey = keyof typeof INITIAL_GRID_OPTION_KEYS;
@@ -394,6 +395,7 @@ export class PropertyKeys {
         'loading',
         'maintainColumnOrder',
         'enableStrictPivotColumnOrder',
+        'suppressSetFilterByDefault',
     ];
 
     // If property does not fit above, i.e union that should not be coerced.
