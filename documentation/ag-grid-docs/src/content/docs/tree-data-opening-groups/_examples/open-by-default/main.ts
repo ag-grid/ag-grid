@@ -34,7 +34,7 @@ const gridOptions: GridOptions = {
     },
     autoGroupColumnDef: {
         headerName: 'File Explorer',
-        minWidth: 150,
+        minWidth: 280,
         filter: 'agTextColumnFilter',
 
         cellRendererParams: {

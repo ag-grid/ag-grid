@@ -32,7 +32,7 @@ const gridOptions: GridOptions = {
     },
     autoGroupColumnDef: {
         headerName: 'File Explorer',
-        minWidth: 150,
+        minWidth: 270,
     },
     rowData: getData(),
     treeData: true,

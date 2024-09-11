@@ -32,7 +32,7 @@ const gridOptions: GridOptions = {
     },
     autoGroupColumnDef: {
         headerName: 'My Group',
-        minWidth: 220,
+        minWidth: 340,
         cellRendererParams: {
             checkbox: true,
         },
