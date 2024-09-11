@@ -13,7 +13,7 @@
     "test": {
       "executor": "@nx/vite:test",
       "options": {
-        "config": "{projectRoot}/vitest.config.js",
+        "config": "{projectRoot}/vitest.config.ts",
         "reporters": ["default"]
       }
     }
