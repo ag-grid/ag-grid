@@ -971,7 +971,7 @@
         "pivotMaxGeneratedColumns": {
             "more": {
                 "name": "Pivot Max Generated Columns",
-                "url": "./pivoting-result-columns/#preventing-extreme-column-generation"
+                "url": "./pivoting-result-columns/#limiting-column-generation"
             }
         },
         "processPivotResultColDef": {
