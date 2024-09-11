@@ -19,11 +19,8 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'country', rowGroup: true, filter: true },
-        { field: 'year', pivot: true, filter: true },
-        { field: 'sport', filter: true },
+        { field: 'sport', pivot: true, filter: true },
         { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
-        { field: 'bronze', aggFunc: 'sum' },
     ],
     defaultColDef: {
         flex: 1,
@@ -31,11 +28,14 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     pivotMode: true,
     sideBar: 'filters',
+    onGridReady: (params) => {
+        const filtersToolPanel = params.api.getToolPanelInstance('filters');
+        if (filtersToolPanel) {
+            // expands 'year' and 'sport' filters in the Filters Tool Panel
+            filtersToolPanel.expandFilters(['sport']);
+        }
+    },
 };
-
-function reset() {
-    gridApi!.setFilterModel(null);
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

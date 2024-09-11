@@ -21,7 +21,7 @@ which is subsequently used to style them with a golden background.
 
 {% gridExampleRunner title="Column Group Definitions Example" name="column-group-definitions-example"  /%}
 
-The example above demonstrates the following configuration for applying a class to the group header cells:
+This demonstrates the following configuration for applying a class to the group header cells:
 ```{% frameworkTransform=true %}
 const gridOptions = {
     pivotMode: true,
@@ -41,7 +41,7 @@ In the example below, note that a `pivotComparator` has been supplied to the `sp
 
 {% gridExampleRunner title="Ordering Pivot Groups" name="order-pivot-groups" /%}
 
-The example above demonstrates the following configuration for modifying the resulting order of groups:
+This demonstrates the following configuration for modifying the resulting order of groups:
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
@@ -74,11 +74,27 @@ const gridOptions = {
 }
 ```
 
+## Filtering Pivoted Columns
+
+When pivoting is active, filters can be applied to columns defined within the column definitions by using
+the [Filters Tool Panel](./tool-panel-filters/) and the [Filter API](./grid-api/#reference-filter).
+
+In the example below, applying a filter to the `Sport` column (which has been pivoted) impacts the generated pivot column groups,
+instead of the grid rows or cell values.
+
+{% gridExampleRunner title="Filtering Pivoted Columns" name="filter-pivoted-columns" /%}
+
+{% note %}
+When filtering a pivoted column, the resulting pivot result column group is removed from the grid. If the filter is subsequently removed, the column group will be re-added to the end of grid.
+
+To configure this behaviour, refer to the section for [Changing Data, Filters, and Configurations](./pivoting-column-groups/#changing-data-filters-and-configurations).
+{% /note %}
+
 ## Expanded by Default
 
 Pivot Column Groups can be configured to expand by default, down to a given depth. This depth can be configured using the `pivotDefaultExpanded` grid option.
 
-The following example demonstrates `pivotDefaultExpanded` being used to expand the first pivot group level by default. Providing `-1` will expand all pivot group levels by default.
+The example below demonstrates `pivotDefaultExpanded` being used to expand the first pivot group level by default. Providing `-1` will expand all pivot group levels by default.
 
 {% gridExampleRunner title="Open Pivot Group By Default" name="open-pivot-group-by-default" /%}
 
