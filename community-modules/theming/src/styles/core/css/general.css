@@ -607,7 +607,7 @@
     }
 
     .ag-select {
-        padding-top: var(--ag-grid-size);
+        padding-top: var(--ag-spacing);
     }
 
     .ag-picker-field-wrapper {

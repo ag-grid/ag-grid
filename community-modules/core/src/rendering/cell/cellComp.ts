@@ -110,7 +110,7 @@ export class CellComp extends Component implements TooltipParentComp {
             getParentOfValue: () => this.getParentOfValue(),
         };
 
-        cellCtrl.setComp(compProxy, this.getGui(), this.eCellWrapper, printLayout, editingRow);
+        cellCtrl.setComp(compProxy, this.getGui(), this.eCellWrapper, printLayout, editingRow, undefined);
     }
 
     private getParentOfValue(): HTMLElement {
@@ -564,8 +564,6 @@ export class CellComp extends Component implements TooltipParentComp {
 
         this.destroyEditorAndRenderer();
         this.removeControls();
-
-        this.cellCtrl.unsetComp();
 
         super.destroy();
     }

@@ -38,11 +38,9 @@ import type { AgColumn } from './agColumn';
  * added explicitly to this list. Take care when adding or renaming private properties
  * of `RowNode`.
  */
-const IGNORED_SIBLING_PROPERTIES = new Set<keyof RowNode | 'localEventService'>([
-    'localEventService',
-    '__objectId',
-    'sticky',
-]);
+const IGNORED_SIBLING_PROPERTIES = new Set<
+    keyof RowNode | 'localEventService' | '__autoHeights' | 'checkAutoHeightsDebounced'
+>(['localEventService', '__objectId', 'sticky', '__autoHeights', 'checkAutoHeightsDebounced']);
 
 /**
  * This is used only when using tree data.

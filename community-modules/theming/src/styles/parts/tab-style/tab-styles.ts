@@ -1,6 +1,5 @@
 import { createPart } from '../../../Part';
 import type { BorderValue, ColorValue, DurationValue, LengthValue } from '../../../theme-types';
-import { primaryColor } from '../theme/primary-color';
 import { tabStyleBaseCSS } from './GENERATED-tab-style-base';
 import { tabStyleRolodexCSS } from './GENERATED-tab-style-rolodex';
 
@@ -76,7 +75,7 @@ export type TabStyleParams = {
     tabSelectedUnderlineColor: ColorValue;
 
     /**
-     * Duration of the fade in/out transition for the line drawn under selected tabs
+     * Duration in seconds of the fade in/out transition for the line drawn under selected tabs
      */
     tabSelectedUnderlineTransitionDuration: DurationValue;
 
@@ -109,7 +108,7 @@ export type TabStyleParams = {
 export const tabStyleBase =
     /*#__PURE__*/
     createPart({feature: 'tabStyle', variant: 'base'})
-        .addParams<TabStyleParams>({
+        .withAdditionalParams<TabStyleParams>({
             tabBarBackgroundColor: 'transparent',
             tabBarHorizontalPadding: 0,
             tabBarTopPadding: 0,
@@ -119,13 +118,13 @@ export const tabStyleBase =
                 ref: 'textColor',
             },
             tabHorizontalPadding: {
-                ref: 'gridSize',
+                ref: 'spacing',
             },
             tabTopPadding: {
-                ref: 'gridSize',
+                ref: 'spacing',
             },
             tabBottomPadding: {
-                ref: 'gridSize',
+                ref: 'spacing',
             },
             tabSpacing: '0',
 
@@ -149,7 +148,7 @@ export const tabStyleBase =
             tabSelectedUnderlineTransitionDuration: '0',
             tabBarBorder: false,
         })
-        .addCss(tabStyleBaseCSS);
+        .withCSS(tabStyleBaseCSS);
 
 /**
  * Tabs styled for the Quartz theme
@@ -158,7 +157,7 @@ export const tabStyleBase =
 export const tabStyleQuartz =
     /*#__PURE__*/
     tabStyleBase.createVariant('quartz')
-        .overrideParams({
+        .withParams({
             tabBarBorder: true,
             tabBarBackgroundColor: {
                 ref: 'foregroundColor',
@@ -189,8 +188,7 @@ export const tabStyleQuartz =
 export const tabStyleMaterial =
     /*#__PURE__*/
     tabStyleBase.createVariant('material')
-        .with(primaryColor)
-        .overrideParams({
+        .withParams({
             tabBarBackgroundColor: {
                 ref: 'chromeBackgroundColor',
             },
@@ -208,7 +206,7 @@ export const tabStyleMaterial =
 export const tabStyleAlpine =
     /*#__PURE__*/
     tabStyleBase.createVariant('alpine')
-        .overrideParams({
+        .withParams({
             tabBarBorder: true,
             tabBarBackgroundColor: {
                 ref: 'chromeBackgroundColor',
@@ -234,26 +232,26 @@ export const tabStyleAlpine =
 export const tabStyleRolodex =
     /*#__PURE__*/
     tabStyleBase.createVariant('rolodex')
-        .overrideParams({
+        .withParams({
             tabBarBackgroundColor: {
                 ref: 'chromeBackgroundColor',
             },
             tabBarHorizontalPadding: {
-                ref: 'gridSize',
+                ref: 'spacing',
             },
             tabBarTopPadding: {
-                ref: 'gridSize',
+                ref: 'spacing',
             },
             tabBarBorder: true,
-            tabHorizontalPadding: { calc: 'gridSize * 2' },
+            tabHorizontalPadding: { calc: 'spacing * 2' },
             tabTopPadding: {
-                ref: 'gridSize',
+                ref: 'spacing',
             },
             tabBottomPadding: {
-                ref: 'gridSize',
+                ref: 'spacing',
             },
             tabSpacing: {
-                ref: 'gridSize',
+                ref: 'spacing',
             },
             tabSelectedBorderColor: {
                 ref: 'borderColor',
@@ -262,4 +260,4 @@ export const tabStyleRolodex =
                 ref: 'backgroundColor',
             },
         })
-        .addCss(tabStyleRolodexCSS);
+        .withCSS(tabStyleRolodexCSS);

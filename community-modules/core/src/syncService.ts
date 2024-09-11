@@ -31,7 +31,7 @@ export class SyncService extends BeanStub implements NamedBean {
 
     public start(): void {
         // we wait until the UI has finished initialising before setting in columns and rows
-        this.ctrlsService.whenReady(() => {
+        this.ctrlsService.whenReady(this, () => {
             const columnDefs = this.gos.get('columnDefs');
             if (columnDefs) {
                 this.setColumnsAndData(columnDefs);
@@ -48,17 +48,13 @@ export class SyncService extends BeanStub implements NamedBean {
     }
 
     private gridReady(): void {
-        this.dispatchGridReadyEvent();
+        this.eventService.dispatchEvent({
+            type: 'gridReady',
+        });
         const isEnterprise = this.gos.isModuleRegistered(ModuleNames.EnterpriseCoreModule);
         if (this.gos.get('debug')) {
             _log(`initialised successfully, enterprise = ${isEnterprise}`);
         }
-    }
-
-    private dispatchGridReadyEvent(): void {
-        this.eventService.dispatchEvent({
-            type: 'gridReady',
-        });
     }
 
     private setColumnDefs(event: PropertyValueChangedEvent<'columnDefs'>): void {

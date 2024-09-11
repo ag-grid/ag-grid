@@ -265,7 +265,12 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     private setModelAndRefresh(values: SetFilterModelValue | null): AgPromise<void> {
         return this.valueModel
-            ? this.valueModel.setModel(values).then(() => this.checkAndRefreshVirtualList())
+            ? this.valueModel.setModel(values).then(() => {
+                  if (this.isAlive()) {
+                      // Async values could arrive after the grid has been destroyed
+                      this.checkAndRefreshVirtualList();
+                  }
+              })
             : AgPromise.resolve();
     }
 

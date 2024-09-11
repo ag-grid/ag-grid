@@ -40,7 +40,7 @@ export class HeaderRowComp extends Component {
             setWidth: (width) => (this.getGui().style.width = width),
         };
 
-        this.ctrl.setComp(compProxy);
+        this.ctrl.setComp(compProxy, undefined);
     }
 
     public override destroy(): void {

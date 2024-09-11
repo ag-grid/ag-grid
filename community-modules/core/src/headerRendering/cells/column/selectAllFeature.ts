@@ -232,8 +232,8 @@ export class SelectAllFeature extends BeanStub {
 
         return (
             result &&
-            this.checkRightRowModelType('headerCheckboxSelection') &&
-            this.checkSelectionType('headerCheckboxSelection')
+            this.checkRightRowModelType(newHeaderCheckbox ? 'headerCheckbox' : 'headerCheckboxSelection') &&
+            this.checkSelectionType(newHeaderCheckbox ? 'headerCheckbox' : 'headerCheckboxSelection')
         );
     }
 

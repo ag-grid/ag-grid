@@ -47,7 +47,7 @@ export class StickyRowFeature extends BeanStub {
     public postConstruct(): void {
         this.isClientSide = _isClientSideRowModel(this.gos);
 
-        this.ctrlsService.whenReady((params) => {
+        this.ctrlsService.whenReady(this, (params) => {
             this.gridBodyCtrl = params.gridBodyCtrl;
         });
 

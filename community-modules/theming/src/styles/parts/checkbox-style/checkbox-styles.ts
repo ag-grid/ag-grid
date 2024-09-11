@@ -73,7 +73,7 @@ export type CheckboxStyleParams = {
 export const checkboxStyleDefault =
     /*#__PURE__*/
     createPart({feature: 'checkboxStyle', variant: 'default'})
-        .addParams<CheckboxStyleParams>({
+        .withAdditionalParams<CheckboxStyleParams>({
             checkboxBorderWidth: 1,
             checkboxBorderRadius: {
                 ref: 'borderRadius',
@@ -118,4 +118,4 @@ export const checkboxStyleDefault =
                 svg: '<svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" fill="none"><circle cx="3" cy="3" r="3" fill="#000"/></svg>',
             },
         })
-        .addCss(checkboxStyleDefaultCSS);
+        .withCSS(checkboxStyleDefaultCSS);

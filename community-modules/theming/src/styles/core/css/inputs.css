@@ -36,7 +36,7 @@
     .ag-input-wrapper::before {
         position: absolute;
         display: block;
-        margin-left: var(--ag-grid-size);
+        margin-left: var(--ag-spacing);
         width: 12px;
         height: 12px;
         background-color: currentColor;
@@ -49,6 +49,6 @@
 
     & input.ag-text-field-input,
     & input.ag-number-field-input {
-        padding-left: calc(var(--ag-grid-size) * 1.5 + 12px);
+        padding-left: calc(var(--ag-spacing) * 1.5 + 12px);
     }
 }

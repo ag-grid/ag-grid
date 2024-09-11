@@ -19,10 +19,10 @@ If a selected row doesn’t match the applied filter, it will still be selected 
 
 {% gridExampleRunner title="Click Selection" name="click-selection" /%}
 
-## Bulk Selection
+## Selecting All Rows
 
-There are restrictions on the configuration of bulk selection when using SSRM. Using the `'filtered'` or `'currentPage'` settings for `selection.selectAll` is considered invalid. 
-The grid will behave as though `selection.selectAll = 'all'`, which is the default value. The example below demonstrates this.
+When using SSRM, the `'filtered'` or `'currentPage'` settings for `selection.selectAll` are considered invalid. The grid will behave as though `selection.selectAll = 'all'`, which is the default value. 
+The example below demonstrates this.
 
 {% gridExampleRunner title="Bulk Selection" name="select-all" /%}
 

@@ -1234,7 +1234,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             this.rowDataTransactionBatch = [];
             const waitMillis = this.gos.get('asyncTransactionWaitMillis');
             this.applyAsyncTransactionsTimeout = window.setTimeout(() => {
-                this.executeBatchUpdateRowData();
+                if (this.isAlive()) {
+                    // Handle case where grid is destroyed before timeout is triggered
+                    this.executeBatchUpdateRowData();
+                }
             }, waitMillis);
         }
         this.rowDataTransactionBatch!.push({ rowDataTransaction: rowDataTransaction, callback: callback });

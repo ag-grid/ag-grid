@@ -17,7 +17,7 @@
 .ag-tabs-close-button-wrapper {
     border: 0;
     border-right: solid 1px var(--ag-border-color);
-    padding: var(--ag-grid-size);
+    padding: var(--ag-spacing);
 }
 
 .ag-tabs-close-button {

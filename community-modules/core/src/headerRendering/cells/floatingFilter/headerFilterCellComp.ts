@@ -40,7 +40,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
             setMenuIcon: (eIcon) => this.eButtonShowMainFilter.appendChild(eIcon),
         };
 
-        this.ctrl.setComp(compProxy, eGui, this.eButtonShowMainFilter, this.eFloatingFilterBody);
+        this.ctrl.setComp(compProxy, eGui, this.eButtonShowMainFilter, this.eFloatingFilterBody, undefined);
     }
 
     private setCompDetails(compDetails?: UserCompDetails | null): void {

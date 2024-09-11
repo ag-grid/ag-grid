@@ -38,7 +38,7 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
                     xKey: category.id,
                     xName: category.name,
                     yKey: f.colId,
-                    ...(this.crossFiltering && { yFilter: `${f.colId}Filter` }),
+                    ...(this.crossFiltering && { yFilterKey: `${f.colId}Filter` }),
                     yName: f.displayName,
                 }) as AgBarSeriesOptions
         );

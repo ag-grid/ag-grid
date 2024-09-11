@@ -183,9 +183,14 @@ export type CoreParams = {
     fontFamily: FontFamilyValue;
 
     /**
-     * Default font size for text in the grid
+     * Default font size for text throughout the grid UI
      */
     fontSize: LengthValue;
+
+    /**
+     * Font size for data in grid rows
+     */
+    dataFontSize: LengthValue;
 
     /**
      * Horizontal borders above footer components like the pagination and status bars
@@ -200,7 +205,7 @@ export type CoreParams = {
     /**
      * Amount of spacing around and inside UI elements. All padding and margins in the grid are defined as a multiple of this value.
      */
-    gridSize: LengthValue;
+    spacing: LengthValue;
 
     /**
      * Background color for header and header-like.
@@ -208,7 +213,7 @@ export type CoreParams = {
     headerBackgroundColor: ColorValue;
 
     /**
-     * Duration of the background color transition if headerCellHoverBackgroundColor or headerCellMovingBackgroundColor is set.
+     * Duration in seconds of the background color transition if headerCellHoverBackgroundColor or headerCellMovingBackgroundColor is set.
      */
     headerCellBackgroundTransitionDuration: DurationValue;
 
@@ -463,16 +468,6 @@ export type CoreParams = {
     sideBarPanelWidth: LengthValue;
 
     /**
-     * Background color of the selected sidebar button on the side panel
-     */
-    sideButtonSelectedBackgroundColor: ColorValue;
-
-    /**
-     * Border around the selected sidebar button on the side panel
-     */
-    sideButtonSelectedBorder: BorderValue;
-
-    /**
      * Borders between the grid and side panels including the column and filter tool bars, and chart settings
      */
     sidePanelBorder: BorderValue;
@@ -630,13 +625,15 @@ export const coreDefaults: CoreParams = {
     pinnedRowBorder: true,
     sidePanelBorder: true,
     fontFamily: [
-        { googleFont: 'IBM Plex Sans' },
         '-apple-system',
         'BlinkMacSystemFont',
         'Segoe UI',
         'Roboto',
         'Oxygen-Sans',
         'Ubuntu',
+        'Cantarell',
+        'Helvetica Neue',
+        'sans-serif',
     ],
     chromeBackgroundColor: {
         ref: 'foregroundColor',
@@ -650,6 +647,9 @@ export const coreDefaults: CoreParams = {
     },
     headerFontWeight: 500,
     headerFontSize: {
+        ref: 'fontSize',
+    },
+    dataFontSize: {
         ref: 'fontSize',
     },
     headerTextColor: {
@@ -701,10 +701,10 @@ export const coreDefaults: CoreParams = {
     borderRadius: 4,
     wrapperBorderRadius: 8,
     cellHorizontalPadding: {
-        calc: 'gridSize * 2 * cellHorizontalPaddingScale',
+        calc: 'spacing * 2 * cellHorizontalPaddingScale',
     },
     cellWidgetSpacing: {
-        calc: 'gridSize * 1.5',
+        calc: 'spacing * 1.5',
     },
     cellHorizontalPaddingScale: 1,
     rowGroupIndentSize: {
@@ -713,14 +713,14 @@ export const coreDefaults: CoreParams = {
     valueChangeDeltaUpColor: '#43a047',
     valueChangeDeltaDownColor: '#e53935',
     valueChangeValueHighlightBackgroundColor: '#16a08580',
-    gridSize: 8,
+    spacing: 8,
     fontSize: 14,
     rowHeight: {
-        calc: 'max(iconSize, fontSize) + gridSize * 3.5 * rowVerticalPaddingScale',
+        calc: 'max(iconSize, dataFontSize) + spacing * 3.5 * rowVerticalPaddingScale',
     },
     rowVerticalPaddingScale: 1,
     headerHeight: {
-        calc: 'max(iconSize, fontSize) + gridSize * 4.25 * headerVerticalPaddingScale',
+        calc: 'max(iconSize, dataFontSize) + spacing * 4.25 * headerVerticalPaddingScale',
     },
     headerVerticalPaddingScale: 1,
     popupShadow: {
@@ -749,10 +749,6 @@ export const coreDefaults: CoreParams = {
         color: { ref: 'accentColor', mix: 0.5 },
     },
     sideBarPanelWidth: 250,
-    sideButtonSelectedBorder: true,
-    sideButtonSelectedBackgroundColor: {
-        ref: 'backgroundColor',
-    },
     sideBarBackgroundColor: {
         ref: 'chromeBackgroundColor',
     },
@@ -762,16 +758,16 @@ export const coreDefaults: CoreParams = {
         ref: 'borderColor',
     },
     widgetContainerHorizontalPadding: {
-        calc: 'gridSize * 1.5',
+        calc: 'spacing * 1.5',
     },
     widgetContainerVerticalPadding: {
-        calc: 'gridSize * 1.5',
+        calc: 'spacing * 1.5',
     },
     widgetHorizontalSpacing: {
-        calc: 'gridSize * 1.5',
+        calc: 'spacing * 1.5',
     },
     widgetVerticalSpacing: {
-        ref: 'gridSize',
+        ref: 'spacing',
     },
     listItemHeight: {
         calc: 'iconSize + widgetVerticalSpacing',
@@ -886,14 +882,14 @@ export const coreDefaults: CoreParams = {
     },
     advancedFilterBuilderButtonBarBorder: true,
     advancedFilterBuilderIndentSize: {
-        calc: 'gridSize * 2 + iconSize',
+        calc: 'spacing * 2 + iconSize',
     },
     advancedFilterBuilderJoinPillColor: '#f08e8d',
     advancedFilterBuilderColumnPillColor: '#a6e194',
     advancedFilterBuilderOptionPillColor: '#f3c08b',
     advancedFilterBuilderValuePillColor: '#85c0e4',
     filterToolPanelGroupIndent: {
-        ref: 'gridSize',
+        ref: 'spacing',
     },
     iconButtonHoverBackgroundColor: {
         ref: 'foregroundColor',

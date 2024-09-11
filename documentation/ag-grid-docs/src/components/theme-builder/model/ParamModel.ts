@@ -21,7 +21,7 @@ const nonAdvancedParams = new Set([
     'rowBorder',
     'columnBorder',
     'sidePanelBorder',
-    'gridSize',
+    'spacing',
     'wrapperBorderRadius',
     'borderRadius',
     'headerBackgroundColor',
@@ -71,19 +71,14 @@ export const useParamAtom = <T>(model: ParamModel<T>) => useAtom(model.valueAtom
 
 export const useParam = <T>(model: ParamModel<T>) => useAtomValue(model.valueAtom);
 
-// Suppress properties that we don't want to be discoverable in the theme builder:
-//
-// - sideButton*: set of properties is not well considered, needs rebuilding as a part like tabs
-// - panel*: shouldn't exist as its own element to style, instead style charts and advanced filter builder separately
-// - *Image: trying to edit a `url(data:svg image)` in a text editor doesn't work well
-
-const suppressParamRegex = /^(sideButton.*|panel*|.*Image)$/;
-
 export const allParamModels = memoize(() => {
     const allParams = Array.from(Object.keys(themeQuartz.getParams())) as ThemeParam[];
-    return allParams
-        .sort()
-        .map(ParamModel.for)
-        .filter((param) => !suppressParamRegex.test(param.property))
-        .sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()));
+    return (
+        allParams
+            .sort()
+            .map(ParamModel.for)
+            // trying to edit a `url(data:svg image)` in a text editor doesn't work well
+            .filter((param) => !/Image$/.test(param.property))
+            .sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase()))
+    );
 });

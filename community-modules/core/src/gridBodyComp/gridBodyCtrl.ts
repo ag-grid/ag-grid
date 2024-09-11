@@ -507,6 +507,7 @@ export class GridBodyCtrl extends BeanStub {
     private addRowDragListener(): void {
         this.rowDragFeature = this.createManagedBean(new RowDragFeature(this.eBodyViewport));
         this.dragAndDropService.addDropTarget(this.rowDragFeature);
+        this.addDestroyFunc(() => this.dragAndDropService.removeDropTarget(this.rowDragFeature));
     }
 
     public getRowDragFeature(): RowDragFeature {

@@ -25,7 +25,7 @@ const VueExample = {
             :columnDefs="columnDefs"
             @grid-ready="onGridReady"
             :defaultColDef="defaultColDef"
-            :maintainColumnOrder="true"
+            :maintainColumnOrder="'all'"
             :rowData="rowData"></ag-grid-vue>
       </div>
       </div>

@@ -7,7 +7,7 @@
     justify-content: space-between;
     padding: $spacing-size-5;
 
-    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
         flex-direction: column;
         padding: 0;
     }
@@ -19,7 +19,7 @@
     padding: $spacing-size-5 0px;
     max-width: 48%;
 
-    @media screen and (max-width: $breakpoint-react-landing-page-medium) {
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
         width: 100%;
         max-width: 100%;
         padding: 0;

@@ -6,15 +6,18 @@ import type {
     HeaderRowCtrl,
     IHeaderRowComp,
 } from 'ag-grid-community';
-import { HeaderRowType } from 'ag-grid-community';
-import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
+import { HeaderRowType, _EmptyBean } from 'ag-grid-community';
+import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
+import { BeansContext } from '../beansContext';
 import { agFlushSync, getNextValueIfDifferent } from '../utils';
 import HeaderCellComp from './headerCellComp';
 import HeaderFilterCellComp from './headerFilterCellComp';
 import HeaderGroupCellComp from './headerGroupCellComp';
 
 const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
+    const { context } = useContext(BeansContext);
+
     const { topOffset, rowHeight } = useMemo(() => ctrl.getTopAndHeight(), []);
     const ariaRowIndex = ctrl.getAriaRowIndex();
     const className = ctrl.getHeaderRowClass();
@@ -26,11 +29,13 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
     const prevCellCtrlsRef = useRef<AbstractHeaderCellCtrl[] | null>(null);
     const [cellCtrls, setCellCtrls] = useState<AbstractHeaderCellCtrl[]>(() => ctrl.getHeaderCtrls());
 
+    const compBean = useRef<_EmptyBean>();
     const eGui = useRef<HTMLDivElement | null>(null);
 
-    const setRef = useCallback((e: HTMLDivElement) => {
-        eGui.current = e;
-        if (!e) {
+    const setRef = useCallback((eRef: HTMLDivElement | null) => {
+        eGui.current = eRef;
+        compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
+        if (!eRef) {
             return;
         }
 
@@ -53,7 +58,7 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
             },
         };
 
-        ctrl.setComp(compProxy, false);
+        ctrl.setComp(compProxy, compBean.current, false);
     }, []);
 
     const style = useMemo(

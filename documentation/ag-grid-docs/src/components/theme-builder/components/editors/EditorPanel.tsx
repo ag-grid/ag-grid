@@ -29,7 +29,7 @@ export const EditorPanel = () => {
             <Section heading="Borders & spacing">
                 <ParamEditor param="borderColor" />
                 <BordersEditor />
-                <ParamEditor param="gridSize" label="Spacing" showDocs icon={verticalSpacingIcon} />
+                <ParamEditor param="spacing" showDocs icon={verticalSpacingIcon} />
                 <EvenSplitRow>
                     <ParamEditor
                         param="wrapperBorderRadius"

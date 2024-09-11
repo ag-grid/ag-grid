@@ -232,7 +232,7 @@ export class Environment extends BeanStub implements NamedBean {
             oldGridTheme?.stopUse();
             this.gridTheme = newGridTheme;
             newGridTheme?.startUse({
-                loadThemeGoogleFonts: !!gos.get('loadThemeGoogleFonts'),
+                loadThemeGoogleFonts: gos.get('loadThemeGoogleFonts'),
                 container: this.eGridDiv,
             });
             if (eMeasurementContainer) {

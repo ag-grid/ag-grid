@@ -1,35 +1,26 @@
-import { type GridTheme, type GridThemeUseArgs, _warnOnce } from '@ag-grid-community/core';
-import { _errorOnce } from '@ag-grid-community/core';
+import { type GridTheme, type GridThemeUseArgs, _errorOnce, _warnOnce } from '@ag-grid-community/core';
 
 import type { Part } from './Part';
-import { getCustomProperties } from './custom-properties';
 import { type CoreParams, coreCSS, coreDefaults } from './styles/core/core-css';
-import { paramValueToCss } from './theme-types';
-import { type CssFragment } from './theme-types';
+import { type CssFragment, paramValueToCss } from './theme-types';
 import { paramToVariableName } from './theme-utils';
 
 export type Theme<TParams = unknown> = GridTheme & {
     readonly id: string;
     readonly dependencies: readonly Part[];
     readonly defaults: Partial<TParams>;
-    readonly css: ReadonlyArray<CssFragment>;
 
     /**
-     * Add one or more dependent part. The part will replace any existing part
-     * of the same feature
+     * Return a new theme that uses an theme part. The part will replace any
+     * existing part of the same feature
      */
     with<TPartParams>(part: Part<TPartParams>): Theme<TParams & TPartParams>;
 
     /**
-     * Provide new values for theme params. You may only provide values for
-     * params provided by the part's dependencies.
+     * Return a new theme with different default values for the specified
+     * params.
      */
-    overrideParams(defaults: Partial<TParams>): Theme<TParams>;
-
-    /**
-     * Provide a new fragment of CSS source code.
-     */
-    addCss(css: CssFragment): Theme<TParams>;
+    withParams(defaults: Partial<TParams>): Theme<TParams>;
 
     /**
      * Return the complete rendered CSS for this theme. This can be used at
@@ -45,7 +36,7 @@ export type Theme<TParams = unknown> = GridTheme & {
     getParams(): Record<string, unknown>;
 };
 
-export const createTheme = (id: string): Theme<CoreParams> => /*#__PURE__*/ new ThemeImpl(id, [], {}, []);
+export const createTheme = (id: string): Theme<CoreParams> => /*#__PURE__*/ new ThemeImpl(id, [], {});
 
 const IS_SSR = typeof window !== 'object' || !window || typeof document !== 'object' || window.document !== document;
 let themeClassCounter = 0;
@@ -55,35 +46,25 @@ class ThemeImpl<TParams = unknown> implements Theme {
     constructor(
         readonly id: string,
         readonly dependencies: readonly Part[] = [],
-        readonly defaults: Partial<TParams> = {},
-        readonly css: ReadonlyArray<CssFragment> = []
+        readonly defaults: Partial<TParams> = {}
     ) {}
 
     with<TPartParams>(part: Part<TPartParams>): Theme<TParams & TPartParams> {
         return new ThemeImpl<TParams & TPartParams>(
             this.id,
             this.dependencies.concat(part as any),
-            this.defaults as TParams & TPartParams,
-            this.css
+            this.defaults as TParams & TPartParams
         );
     }
 
-    overrideParams(params: Partial<TParams>): Theme<TParams> {
+    withParams(params: Partial<TParams>): Theme<TParams> {
         const newParams: any = { ...this.defaults };
         for (const [name, value] of Object.entries(params)) {
             if (value != null) {
                 newParams[name] = value;
             }
         }
-        return new ThemeImpl(this.id, this.dependencies, newParams, this.css);
-    }
-
-    addCss(css: CssFragment): Theme<TParams> {
-        return new ThemeImpl(this.id, this.dependencies, this.defaults, this.css.concat(css));
-    }
-
-    addParams<TAdditionalParams>(defaults: TAdditionalParams): Theme<TParams & TAdditionalParams> {
-        return this.overrideParams(defaults as any) as any;
+        return new ThemeImpl(this.id, this.dependencies, newParams);
     }
 
     getCSS(): string {
@@ -161,12 +142,12 @@ class ThemeImpl<TParams = unknown> implements Theme {
         // Core CSS is loaded once per shadow root and shared between themes
         loadPromises.push(installCSS({ css: coreCSS, part: 'core', root }));
 
-        for (const googleFont in getGoogleFontsUsed(this)) {
+        for (const googleFont of getGoogleFontsUsed(this)) {
             if (loadThemeGoogleFonts) {
                 loadGoogleFont(googleFont);
             } else if (loadThemeGoogleFonts == null) {
                 _warnOnce(
-                    `${this.id} uses google font ${googleFont} but no value for loadThemeGoogleFonts was provided. Pass true to load fonts from ${googleFontsDomain} or false to silence this warning.`
+                    `theme uses google font ${googleFont} but no value for loadThemeGoogleFonts was provided. Pass true to load fonts from ${googleFontsDomain} or false to silence this warning.`
                 );
             }
         }
@@ -178,27 +159,24 @@ class ThemeImpl<TParams = unknown> implements Theme {
         return Promise.all(loadPromises);
     }
 
-    private _getFlatUnitsCache?: ThemeUnit[];
-    private _getFlatUnits(): ThemeUnit[] {
+    private _getFlatUnitsCache?: PartOrTheme[];
+    private _getFlatUnits(): PartOrTheme[] {
         if (this._getFlatUnitsCache) return this._getFlatUnitsCache;
 
-        let noFeaturePartCounter = 0;
-        const visit = (part: ThemeUnit, accumulator: Record<string, ThemeUnit>) => {
-            for (const dep of part.dependencies) {
-                visit(dep, accumulator);
-            }
-            const feature = part.feature || 'noFeature-' + String(++noFeaturePartCounter);
-
+        const accumulator: Record<string, PartOrTheme> = {};
+        for (const part of this.dependencies) {
             // remove any existing item before overwriting, so that the newly added
             // part is ordered at the end of the list
-            delete accumulator[feature];
-            accumulator[feature] = part;
-        };
+            delete accumulator[part.feature];
+            accumulator[part.feature] = part;
+        }
+        const flatUnits: PartOrTheme[] = [
+            ...Object.values(accumulator),
+            // add `this` at the end so that CSS and params added to the theme override anything added to parts
+            this,
+        ];
 
-        const accumulator: Record<string, ThemeUnit> = {};
-        visit(this, accumulator);
-
-        return (this._getFlatUnitsCache = Object.values(accumulator));
+        return (this._getFlatUnitsCache = flatUnits);
     }
 
     private _getCssChunksCache?: ThemeCssChunk[];
@@ -210,7 +188,7 @@ class ThemeImpl<TParams = unknown> implements Theme {
         chunks.push(makeVariablesChunk(this));
 
         for (const part of this._getFlatUnits()) {
-            if (part.css.length > 0) {
+            if (part.css && part.css.length > 0) {
                 let css = `/* Part ${part.id} */`;
                 css += part.css.map((p) => (typeof p === 'function' ? p() : p)).join('\n') + '\n';
                 css = `.${this.getCssClass()} {\n\t${css}\n}`;
@@ -222,13 +200,10 @@ class ThemeImpl<TParams = unknown> implements Theme {
     }
 }
 
-// a theme or part
-type ThemeUnit = {
+type PartOrTheme = {
     readonly id: string;
-    readonly feature?: string;
-    readonly dependencies: readonly Part[];
     readonly defaults: Record<string, unknown>;
-    readonly css: ReadonlyArray<CssFragment>;
+    readonly css?: ReadonlyArray<CssFragment>;
 };
 
 const makeVariablesChunk = (theme: Theme): ThemeCssChunk => {
@@ -238,7 +213,7 @@ const makeVariablesChunk = (theme: Theme): ThemeCssChunk => {
     //
     // Simply setting .ag-root-wrapper { --ag-foo: default-value } is not
     // appropriate because it will override any values set on parent
-    // elements. An application should be able to set `--ag-grid-size: 4px`
+    // elements. An application should be able to set `--ag-spacing: 4px`
     // on the document body and have it picked up by all grids on the page.
     //
     // To allow this we capture the application-provided value of --ag-foo
@@ -247,10 +222,17 @@ const makeVariablesChunk = (theme: Theme): ThemeCssChunk => {
     // applying our own default if it is unset.
     let variablesCss = '';
     let inheritanceCss = '';
-    for (const [cssName, cssValue] of getCustomProperties(theme.getParams())) {
-        const inheritedName = cssName.replace('--ag-', '--ag-inherited-');
-        variablesCss += `\t${cssName}: var(${inheritedName}, ${cssValue});\n`;
-        inheritanceCss += `\t${inheritedName}: var(${cssName});\n`;
+
+    for (const [key, value] of Object.entries(theme.getParams())) {
+        const cssValue = paramValueToCss(key, value);
+        if (cssValue === false) {
+            _errorOnce(`Invalid value for param ${key} - ${describeValue(value)}`);
+        } else {
+            const cssName = paramToVariableName(key);
+            const inheritedName = cssName.replace('--ag-', '--ag-inherited-');
+            variablesCss += `\t${cssName}: var(${inheritedName}, ${cssValue});\n`;
+            inheritanceCss += `\t${inheritedName}: var(${cssName});\n`;
+        }
     }
     const rootSelector = `:where(.${theme.getCssClass()})`;
     let css = `${rootSelector} {\n${variablesCss}}\n`;
@@ -269,7 +251,7 @@ const getGoogleFontsUsed = (theme: Theme): string[] =>
         new Set(
             Object.values(theme.getParams())
                 .flat()
-                .filter((value: any) => value?.googleFont)
+                .map((value: any) => value?.googleFont)
                 .filter((value) => typeof value === 'string') as string[]
         )
     ).sort();
@@ -347,4 +329,9 @@ type ThemeCssChunk = {
 
 type AnnotatedStyleElement = HTMLStyleElement & {
     _agTextContent?: string;
+};
+
+const describeValue = (value: any): string => {
+    if (value == null) return String(value);
+    return `${typeof value} ${value}`;
 };

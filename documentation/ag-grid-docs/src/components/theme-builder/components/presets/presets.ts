@@ -54,7 +54,7 @@ export const allPresets: Preset[] = [
             browserColorScheme: 'dark',
             accentColor: '#00A2FF',
             borderColor: '#429356',
-            gridSize: 4,
+            spacing: 4,
             wrapperBorderRadius: 0,
             borderRadius: 0,
             headerBackgroundColor: '#21222C',
@@ -90,7 +90,7 @@ export const allPresets: Preset[] = [
             chromeBackgroundColor: {
                 ref: 'backgroundColor',
             },
-            gridSize: 6,
+            spacing: 6,
             wrapperBorderRadius: 2,
             borderRadius: 2,
             headerBackgroundColor: '#FFFFFF',
@@ -118,7 +118,7 @@ export const allPresets: Preset[] = [
             chromeBackgroundColor: {
                 ref: 'backgroundColor',
             },
-            gridSize: 8,
+            spacing: 8,
             wrapperBorderRadius: 0,
             borderRadius: 20,
             headerBackgroundColor: '#182226',
@@ -144,7 +144,7 @@ export const allPresets: Preset[] = [
             headerTextColor: '#919191',
             foregroundColor: 'rgb(46, 55, 66)',
             fontFamily: { googleFont: 'Arial' },
-            gridSize: 8,
+            spacing: 8,
             wrapperBorderRadius: 0,
             headerFontWeight: 600,
             oddRowBackgroundColor: '#F9FAFB',
@@ -170,7 +170,7 @@ export const allPresets: Preset[] = [
             chromeBackgroundColor: {
                 ref: 'backgroundColor',
             },
-            gridSize: 6,
+            spacing: 6,
             wrapperBorderRadius: 0,
             borderRadius: '0',
             headerBackgroundColor: '#FAD0A3',
@@ -200,7 +200,7 @@ export const allPresets: Preset[] = [
             chromeBackgroundColor: {
                 ref: 'backgroundColor',
             },
-            gridSize: 5,
+            spacing: 5,
             wrapperBorderRadius: 0,
             borderRadius: 0,
             headerBackgroundColor: '#E4DAD1',

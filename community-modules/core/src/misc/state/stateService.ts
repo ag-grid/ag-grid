@@ -109,7 +109,9 @@ export class StateService extends BeanStub implements NamedBean {
 
         this.cachedState = this.getInitialState();
 
-        this.ctrlsService.whenReady(() => this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnGridReady()));
+        this.ctrlsService.whenReady(this, () =>
+            this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnGridReady())
+        );
 
         const [newColumnsLoadedDestroyFunc, rowCountReadyDestroyFunc, firstDataRenderedDestroyFunc] =
             this.addManagedEventListeners({

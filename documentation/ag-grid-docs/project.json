@@ -5,22 +5,17 @@
   "sourceRoot": "{projectRoot}/src",
   "targets": {
     "build": {
-      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "outputs": ["{projectRoot}/dist"],
       "dependsOn": ["generate-doc-references", "generate-examples", "^build"],
       "inputs": [
         "^production",
         "production",
         "!{projectRoot}/vitest.config.mjs",
         "{workspaceRoot}/external/ag-website-shared/**",
-        "{workspaceRoot}/community-modules/*/dist/**/*.{cjs,js,map,css,scss}",
-        "{workspaceRoot}/community-modules/styles/**/*.{cjs,js,map,css,scss}",
-        "{workspaceRoot}/community-modules/react/src/**/*.{cjs,js,map,css,scss}",
-        "{workspaceRoot}/enterprise-modules/*/dist/**/*.{cjs,js,map,css,scss}",
-        "{workspaceRoot}/node_modules/ag-charts-community/dist/**/*.{cjs,js,map}",
-        "{workspaceRoot}/node_modules/ag-charts-enterprise/dist/**/*.{cjs,js,map}",
+        { "externalDependencies": ["ag-charts-community", "ag-charts-enterprise"] },
         { "env": "PUBLIC_PACKAGE_VERSION" }
       ],
-      "cache": false,
+      "cache": true,
       "command": "astro build",
       "options": {
         "cwd": "{projectRoot}",

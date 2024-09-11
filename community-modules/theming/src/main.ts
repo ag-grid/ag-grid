@@ -1,6 +1,5 @@
 export { type Part, createPart } from './Part';
 export { type Theme, createTheme } from './Theme';
-export { applyCustomProperties } from './custom-properties';
 export * from './styles/parts/checkbox-style/checkbox-styles';
 export * from './styles/parts/color-scheme/color-schemes';
 export * from './styles/parts/icon-set/icon-sets';
