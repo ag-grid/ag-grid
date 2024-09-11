@@ -121,6 +121,7 @@
           "while (test \"${BUILD_PACKAGES}\" != \"0\" && test \"${BUILD_FWS}\" != \"0\") ; do nx watch -p ag-grid-angular,ag-grid-react,ag-grid-vue3 -- nx run \\${NX_PROJECT_NAME}:build ; done",
           "while true ; do nx watch -p ag-grid-docs-* -- nx run \\${NX_PROJECT_NAME}:generate; done",
           "while true ; do nx watch -p ag-grid-docs -- {projectRoot}/dev.sh \\${NX_PROJECT_NAME}; done",
+          "while true ; do nx watch -p @ag-grid-community/theming -- nx run \\${NX_PROJECT_NAME}:codegen; done",
           "nx run ag-grid-docs:dev"
         ]
       },
