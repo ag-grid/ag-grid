@@ -167,7 +167,7 @@ describe('Auto Group Column Order', () => {
                 });
             });
 
-            test.each(['all', 'primaryColumns', 'pivotResultColumns', 'none'] as const)(
+            test.each([true, false] as const)(
                 'maintainColumnOrder=%s inserts new auto cols at head',
                 (maintainColumnOrder) => {
                     const columnDefs: (ColDef | ColGroupDef)[] = [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }];
@@ -191,53 +191,47 @@ describe('Auto Group Column Order', () => {
                 }
             );
 
-            test.each(['pivotResultColumns', 'none'] as const)(
-                'maintainColumnOrder=%s resets group column to head when no new cols/change to grouping',
-                (maintainColumnOrder) => {
-                    const columnDefs: (ColDef | ColGroupDef)[] = [
-                        { colId: 'a', rowGroup: true },
-                        { colId: 'b' },
-                        { colId: 'c' },
-                    ];
+            test('maintainColumnOrder=false resets group column to head when no new cols/change to grouping', () => {
+                const columnDefs: (ColDef | ColGroupDef)[] = [
+                    { colId: 'a', rowGroup: true },
+                    { colId: 'b' },
+                    { colId: 'c' },
+                ];
 
-                    const gridApi = gridsManager.createGrid('myGrid', {
-                        columnDefs,
-                        groupDisplayType,
-                        maintainColumnOrder,
-                    });
+                const gridApi = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    groupDisplayType,
+                    maintainColumnOrder: false,
+                });
 
-                    gridApi.moveColumns(['a'], 0);
+                gridApi.moveColumns(['a'], 0);
 
-                    // reorder cols
-                    gridApi.setGridOption('columnDefs', columnDefs);
-                    const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
-                    expect(getColumnOrder(gridApi, 'center')).toEqual([...groupColIds, 'a', 'b', 'c']);
-                }
-            );
+                // reorder cols
+                gridApi.setGridOption('columnDefs', columnDefs);
+                const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+                expect(getColumnOrder(gridApi, 'center')).toEqual([...groupColIds, 'a', 'b', 'c']);
+            });
 
-            test.each(['all', 'primaryColumns'] as const)(
-                'maintainColumnOrder=%s preserves group column position when no new cols/change to grouping',
-                (maintainColumnOrder) => {
-                    const columnDefs: (ColDef | ColGroupDef)[] = [
-                        { colId: 'a', rowGroup: true },
-                        { colId: 'b' },
-                        { colId: 'c' },
-                    ];
+            test('maintainColumnOrder=true preserves group column position when no new cols/change to grouping', () => {
+                const columnDefs: (ColDef | ColGroupDef)[] = [
+                    { colId: 'a', rowGroup: true },
+                    { colId: 'b' },
+                    { colId: 'c' },
+                ];
 
-                    const gridApi = gridsManager.createGrid('myGrid', {
-                        columnDefs,
-                        groupDisplayType,
-                        maintainColumnOrder,
-                    });
+                const gridApi = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    groupDisplayType,
+                    maintainColumnOrder: true,
+                });
 
-                    gridApi.moveColumns(['a'], 0);
+                gridApi.moveColumns(['a'], 0);
 
-                    // reorder cols
-                    gridApi.setGridOption('columnDefs', columnDefs);
-                    const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
-                    expect(getColumnOrder(gridApi, 'center')).toEqual(['a', ...groupColIds, 'b', 'c']);
-                }
-            );
+                // reorder cols
+                gridApi.setGridOption('columnDefs', columnDefs);
+                const groupColIds = getAutoGroupColumnIds(columnDefs, groupDisplayType);
+                expect(getColumnOrder(gridApi, 'center')).toEqual(['a', ...groupColIds, 'b', 'c']);
+            });
 
             test('auto columns can be positioned using gridApi.moveColumns', () => {
                 const columnDefs: (ColDef | ColGroupDef)[] = [

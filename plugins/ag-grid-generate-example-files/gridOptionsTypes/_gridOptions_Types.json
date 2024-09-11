@@ -1401,12 +1401,16 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "suppressStickyTotalRow": {
-    "typeName": "boolean | 'grand' | 'group'",
+  "maintainColumnOrder": {
+    "typeName": "boolean",
     "typesToInclude": []
   },
-  "maintainColumnOrder": {
-    "typeName": "boolean | 'all' | 'primaryColumns' | 'pivotResultColumns' | 'none'",
+  "enableStrictPivotColumnOrder": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
+  "suppressStickyTotalRow": {
+    "typeName": "boolean | 'grand' | 'group'",
     "typesToInclude": []
   },
   "loadThemeGoogleFonts": {

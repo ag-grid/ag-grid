@@ -476,16 +476,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         | undefined = undefined;
     /** Keeps the order of Columns maintained after new Column Definitions are updated.
      *
-     * The use of boolean values with `maintainColumnOrder` have been deprecated as of v32.2.0
-     * @default 'pivotResultColumns'
+     * @default false
      */
-    @Input() public maintainColumnOrder:
-        | boolean
-        | 'all'
-        | 'primaryColumns'
-        | 'pivotResultColumns'
-        | 'none'
-        | undefined = undefined;
+    @Input() public maintainColumnOrder: boolean | undefined = undefined;
+    /** Resets pivot column order when impacted by filters, data or configuration changes
+     *
+     * @default false
+     */
+    @Input() public enableStrictPivotColumnOrder: boolean | undefined = undefined;
     /** If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer.
      * @default false
      */
@@ -2247,5 +2245,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressServerSideFullWidthLoadingRow: boolean | null | '';
     static ngAcceptInputType_suppressAdvancedFilterEval: boolean | null | '';
     static ngAcceptInputType_loading: boolean | null | '';
+    static ngAcceptInputType_maintainColumnOrder: boolean | null | '';
+    static ngAcceptInputType_enableStrictPivotColumnOrder: boolean | null | '';
     // @END@
 }

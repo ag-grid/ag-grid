@@ -41,7 +41,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         initialWidth: 100,
         filter: true,
     },
-    maintainColumnOrder: 'all',
+    maintainColumnOrder: true,
     columnDefs: getColumnDefsA(),
 };
 

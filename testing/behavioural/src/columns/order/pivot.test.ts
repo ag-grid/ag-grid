@@ -205,9 +205,14 @@ describe('pivotMode=true', () => {
             expect(getColumnOrder(gridApi, pinned)).toEqual(expected);
         });
 
-        describe.each(['all', 'pivotResultColumns', 'primaryColumns', 'none'] as const)(
-            'with maintainColumnOrder=%s, when toggling pivot mode, the column order is preserved',
-            (maintainColumnOrder) => {
+        describe.each([
+            [true, true],
+            [true, false],
+            [false, true],
+            [false, false],
+        ] as const)(
+            'with maintainColumnOrder=%s and enableStrictPivotColumnOrder=%s, when toggling pivot mode, the column order is preserved',
+            (maintainColumnOrder, enableStrictPivotColumnOrder) => {
                 // see AG-12671
                 test.skip('auto column order is preserved when leaving and returning to pivot mode', () => {
                     const columnDefs: (ColDef | ColGroupDef)[] = [
@@ -221,6 +226,7 @@ describe('pivotMode=true', () => {
                         rowData,
                         pivotMode: true,
                         maintainColumnOrder,
+                        enableStrictPivotColumnOrder,
                     });
 
                     const groupColIds = getAutoGroupColumnIds(columnDefs, 'singleColumn', true);
@@ -333,7 +339,7 @@ describe('pivotMode=true', () => {
             }
         );
 
-        describe.each(['all', 'pivotResultColumns'] as const)('with maintainColumnOrder=%s', (maintainColumnOrder) => {
+        describe('with enableStrictPivotColumnOrder=false', () => {
             test('new pivot result columns are added at the end when a pivot column filter is removed', () => {
                 const columnDefs: (ColDef | ColGroupDef)[] = [
                     { field: 'a', rowGroup: true },
@@ -348,7 +354,7 @@ describe('pivotMode=true', () => {
                     },
                     rowData,
                     pivotMode: true,
-                    maintainColumnOrder,
+                    enableStrictPivotColumnOrder: false,
                 });
 
                 const groupColIds = getAutoGroupColumnIds(columnDefs, 'singleColumn', true);
@@ -376,7 +382,7 @@ describe('pivotMode=true', () => {
                     columnDefs,
                     rowData,
                     pivotMode: true,
-                    maintainColumnOrder,
+                    enableStrictPivotColumnOrder: false,
                 });
 
                 const groupColIds = getAutoGroupColumnIds(columnDefs, 'singleColumn', true);
@@ -390,7 +396,7 @@ describe('pivotMode=true', () => {
             });
         });
 
-        describe.each(['none', 'primaryColumns'] as const)('with maintainColumnOrder=%s', (maintainColumnOrder) => {
+        describe('with enableStrictPivotColumnOrder=true', () => {
             test('pivot result columns are reset when a pivot column filter is removed', () => {
                 const columnDefs: (ColDef | ColGroupDef)[] = [
                     { field: 'a', rowGroup: true },
@@ -405,7 +411,7 @@ describe('pivotMode=true', () => {
                     },
                     rowData,
                     pivotMode: true,
-                    maintainColumnOrder,
+                    enableStrictPivotColumnOrder: true,
                 });
 
                 const groupColIds = getAutoGroupColumnIds(columnDefs, 'singleColumn', true);
@@ -432,7 +438,7 @@ describe('pivotMode=true', () => {
                     columnDefs,
                     rowData,
                     pivotMode: true,
-                    maintainColumnOrder,
+                    enableStrictPivotColumnOrder: true,
                 });
 
                 const groupColIds = getAutoGroupColumnIds(columnDefs, 'singleColumn', true);

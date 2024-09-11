@@ -37,16 +37,6 @@ const gridOptions = {
 }
 ```
 
-## Ordering Columns
-
-Pivot Result Columns are ordered within their groups based on the order of the value columns, either from the column definitions or user input.
-
-By default, the current column order is preserved when new columns are added by changes in the underlying data or changes in filtering.
-Any new columns will be applied at the end of the grid, however the grid option `maintainColumnOrder` can be set to `'none'` or `'primaryColumns'` to instead prioritise
-strict order over preserving the users order.
-
-Refer to the [Maintain Column Order](./column-updating-definitions/#maintain-column-order) documentation for more information.
-
 ## Filtering
 
 When pivot mode is enabled, you can [Filter](./filtering-overview/) on the pivot result columns by setting the `filter` attribute on your value column.
