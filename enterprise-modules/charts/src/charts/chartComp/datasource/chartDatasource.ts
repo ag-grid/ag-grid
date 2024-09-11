@@ -34,6 +34,7 @@ export interface ChartDatasourceParams {
     grouping: boolean;
     pivoting: boolean;
     crossFiltering: boolean;
+    crossFilteringZeroValue?: number;
     valueCols: AgColumn[];
     startRow: number;
     endRow: number;
@@ -223,7 +224,9 @@ export class ChartDatasource extends BeanStub {
                         value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
 
                     data[colId] = actualValue ?? 0;
-                    data[filteredOutColId] = filteredNodes[rowNode.id as string] ? actualValue : 0;
+                    data[filteredOutColId] = filteredNodes[rowNode.id as string]
+                        ? actualValue
+                        : params.crossFilteringZeroValue;
                 } else {
                     // add data value to value column
                     let value = this.valueService.getValue(col, rowNode);
