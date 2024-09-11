@@ -7,3 +7,18 @@ Customising the grid with CSS
 TODO
 
 This page will contain content similar to the [Global Style / Advanced CSS](./global-style-customisation-css/) page, but in the context of the theming API. There are a few differences, such as not needing to put a `.ag-theme-quartz` class as part of any rule.
+
+
+
+
+
+Under the hood, theme parameters are implemented using CSS custom properties (variables), and `withParams()` sets _default_ values for these, so you can override them in your application stylesheets. See [Customising with CSS](./theming-css/) for more information. However using `withParams()` provides validation, typescript autocompletion, and an 
+
+
+If your application defines CSS custom properties, you can use their values:
+
+```js
+const myTheme = themeQuartz.withParams({
+    accentColor: "var(--brand-color)",
+})
+```

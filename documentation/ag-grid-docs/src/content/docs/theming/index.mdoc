@@ -103,6 +103,14 @@ There are two main building blocks for themes:
 
 Our built-in themes are simply preset collections of parts and parameters. The same building blocks are available for you to create your own themes and parts.
 
+### Finding theme parameters
+
+There are many parameters available, and several ways of finding the right one to use:
+
+1. **[Theme Builder](/theme-builder/)** - In the "Advanced" section of the Theme Builder you can search for parameters and view documentation
+2. **TypeScript auto-complete** - When an editor with TypeScript language support, you can see all available parameters with inline documentation.
+3. **Dev tools** - When inspecting an element in the grid, the styles panel shows the CSS custom properties that are being used. A custom property `var(--ag-column-border)` corresponds to the theme parameter `columnBorder`.
+
 ### Setting parameter values
 
 Themes are immutable, and have methods that generate new modified themes.
@@ -113,26 +121,31 @@ The `theme.withParams()` method generates a new theme with different default val
 const myTheme = themeQuartz.withParams({ accentColor: 'red' });
 ```
 
-Under the hood, theme parameters are implemented using CSS custom properties (variables), and `withParams()` sets _default_ values for these, so you can override them in your application stylesheets. However using the API provides validation, typescript autocompletion, and an [extended syntax for defining CSS values](#extended-syntax-for-css-values).
+All parameters accept string values, which are passed directly to CSS so follow the semantics of the appropriate CSS data type. Parameter names follow a naming convention, so the CSS data type can be determined by the name:
 
-### Finding theme parameters
+| Suffix | Data type |
+|-|-|
+| (anything not defined below) | [CSS length](https://developer.mozilla.org/en-US/docs/Web/CSS/length) e.g. `4px` |
+| Color | [CSS color](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value) e.g. `red`, `#FF0000` |
+| ColorScheme | [CSS color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme) e.g. `light`, `dark` or `inherit` |
+| Scale | A number without units e.g. `4` |
+| Border | [CSS border](https://developer.mozilla.org/en-US/docs/Web/CSS/border) e.g. `solid 1px gray` |
+| BorderStyle | [CSS border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) e.g. `solid`, `dotted` or `dashed` |
+| Shadow | [CSS box-shadow](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow) e.g. `0 0 10px red` |
+| Image | [CSS image](https://developer.mozilla.org/en-US/docs/Web/CSS/image) e.g. `url("https://...")` |
+| FontFamily | [CSS font-family](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) e.g. `"Times New Roman"` |
+| FontWeight | [CSS font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight) e.g. `bold` or `400` |
+| Duration | [CSS time](https://developer.mozilla.org/en-US/docs/Web/CSS/time) e.g. `1.5s` or `1500ms` |
 
-There are many parameters available, and several ways of finding the right one to use:
-
-1. **[Theme Builder](/theme-builder/)** - In the "Advanced" section of the Theme Builder you can search for parameters and view documentation
-2. **TypeScript auto-complete** - When an editor with TypeScript language support, you can see all available parameters with inline documentation.
-3. **Dev tools** - When inspecting an element in the grid, the styles panel shows the CSS custom properties that are being used. A custom property `var(--ag-column-border)` corresponds to the theme parameter `columnBorder`.
+Under the hood, theme parameters are implemented using CSS custom properties (variables), and `withParams()` sets _default_ values for these, so you can override them in your application stylesheets. See [Customising with CSS](./theming-css/) for more information.
 
 ### Extended syntax for CSS values
 
-```js
-const myTheme = themeQuartz.withParams({
-    // All parameters take CSS string values, so any valid CSS value can be used.
-    // This includes CSS functions like `rgba(100, 0, 0, 0.5)` or `var(--myVar)`.
-    accentColor: 'red',
+The `withParams()` method accepts a several shorthands for defining CSS values.
 
-    // All parameters accept reference values. These must refer to another
-    // parameter of the same type.
+```js
+theme.withParams({
+    // 'ref' can be used to alias one parameter to another:
     headerBackgroundColor: { ref: 'accentColor' },
 
     // References to color parameters can specify a `mix` property that blends
@@ -165,11 +178,11 @@ const myTheme = themeQuartz.withParams({
 
     // Shadow values accept an object shorthand with 5 optional properties
     popupShadow: {
-        offsetX: { ref: 'spacing' },      // default 0
-        offsetY: { calc: 'spacing * 2' }, // default 0
-        radius: 6,                        // default 0
-        spread: 3,                        // default 0
-        color: 'pink',                    // default { ref: 'foregroundColor' }
+        offsetX: 10,   // default 0
+        offsetY: 20,   // default 0
+        radius: 6,     // default 0
+        spread: 3,     // default 0
+        color: 'pink', // default { ref: 'foregroundColor' }
     }
 
     // Font family values accept an array of font names. The first one available on the
@@ -186,7 +199,7 @@ const myTheme = themeQuartz.withParams({
         'sans-serif'
     ],
 
-    // Image values accept two shorthands image data:
+    // Image values accept two shorthands for image data:
     // `url` can load a network image or embed a PNG if converted to a data: URL
     checkboxCheckedShapeImage: { url: 'https://example.com/my-image.png' },
     // `svg` takes SVG source code as a string
