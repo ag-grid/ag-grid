@@ -1,9 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { GridApi, GridOptions } from '@ag-grid-community/core';
-import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
-import { ViewportRowModelModule } from '@ag-grid-enterprise/viewport-row-model';
 import type { MockInstance } from 'vitest';
 
 import { TestGridsManager } from '../test-utils';
@@ -14,6 +11,7 @@ import {
     selectRowsByIndex,
     toggleCheckboxByIndex,
     toggleHeaderCheckboxByIndex,
+    wait,
 } from './utils';
 
 describe('Row Selection Grid Options', () => {
@@ -30,10 +28,6 @@ describe('Row Selection Grid Options', () => {
     let consoleErrorSpy: MockInstance;
     let consoleWarnSpy: MockInstance;
 
-    function wait(ms: number): Promise<void> {
-        return new Promise((resolve) => setTimeout(resolve, ms));
-    }
-
     function createGrid(gridOptions: GridOptions): GridApi {
         return gridMgr.createGrid('myGrid', gridOptions);
     }
@@ -45,13 +39,7 @@ describe('Row Selection Grid Options', () => {
     }
 
     const gridMgr = new TestGridsManager({
-        modules: [
-            ClientSideRowModelModule,
-            ServerSideRowModelModule,
-            ViewportRowModelModule,
-            InfiniteRowModelModule,
-            RowGroupingModule,
-        ],
+        modules: [ClientSideRowModelModule, RowGroupingModule],
     });
 
     beforeEach(() => {

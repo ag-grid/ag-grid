@@ -1,6 +1,9 @@
 import type { GridApi, IRowNode } from '@ag-grid-community/core';
 import { _areEqual } from '@ag-grid-community/core';
 
+export function wait(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export function getRowByIndex(index: number): HTMLElement | null {
     return document.getElementById('myGrid')!.querySelector(`[row-index=${index}]`);

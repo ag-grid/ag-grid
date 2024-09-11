@@ -10,7 +10,13 @@ import type {
     ServerSideRowGroupSelectionState,
     ServerSideRowSelectionState,
 } from '@ag-grid-community/core';
-import { BeanStub, _getGroupSelectsDescendants, _getRowSelectionMode, _warnOnce } from '@ag-grid-community/core';
+import {
+    BeanStub,
+    _getGroupSelectsDescendants,
+    _getRowSelectionMode,
+    _isUsingNewSelectionAPI,
+    _warnOnce,
+} from '@ag-grid-community/core';
 
 import { DefaultStrategy } from './selection/strategies/defaultStrategy';
 import { GroupSelectsChildrenStrategy } from './selection/strategies/groupSelectsChildrenStrategy';
@@ -192,6 +198,9 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         justCurrentPage?: boolean | undefined;
     }): void {
         validateSelectionParameters(params);
+        if (_isUsingNewSelectionAPI(this.gos) && _getRowSelectionMode(this.gos) !== 'multiRow') {
+            return _warnOnce("cannot multi select unless selection mode is 'multiRow'");
+        }
 
         this.selectionStrategy.selectAllRowNodes(params);
 
@@ -253,12 +262,17 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
         });
     }
 }
-function validateSelectionParameters(params: {
+function validateSelectionParameters({
+    justCurrentPage,
+    justFiltered,
+}: {
     source: SelectionEventSourceType;
     justFiltered?: boolean | undefined;
     justCurrentPage?: boolean | undefined;
 }) {
-    if (params.justCurrentPage || params.justFiltered) {
-        _warnOnce(`selecting just filtered only works when gridOptions.rowModelType='clientSide'`);
+    if (justCurrentPage || justFiltered) {
+        _warnOnce(
+            `selecting just ${justCurrentPage ? 'current page' : 'filtered'} only works when gridOptions.rowModelType='clientSide'`
+        );
     }
 }
