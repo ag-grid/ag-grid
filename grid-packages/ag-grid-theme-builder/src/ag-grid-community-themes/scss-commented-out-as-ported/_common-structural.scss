@@ -210,7 +210,13 @@
   }
 
   .ag-body-viewport,
-  .ag-center-cols-viewport {
+  .ag-center-cols-viewport,
+  .ag-header-viewport,
+  .ag-floating-top-viewport,
+  .ag-floating-bottom-viewport,
+  .ag-sticky-top-viewport,
+  .ag-sticky-bottom-viewport {
+    overflow-x: auto;
     &::-webkit-scrollbar {
       display: none !important;
     }
@@ -220,6 +226,7 @@
 
   .ag-body-viewport {
     display: flex;
+    overflow-x: hidden;
 
     &.ag-layout-normal {
       overflow-y: auto;
@@ -227,10 +234,18 @@
     }
   }
 
+  // the sticky containers need at least one 1px height
+  // so we can set the scrollLeft position when there are
+  // no rows within, otherwise scrollLeft will always be 0
+  // and then making a row sticky causes the grid to scroll.
+  .ag-sticky-top-container,
+  .ag-sticky-bottom-container {
+    min-height: 1px;
+  }
+
   .ag-center-cols-viewport {
     min-height: 100%;
     width: 100%;
-    overflow-x: auto;
   }
 
   .ag-body-horizontal-scroll-viewport {
@@ -450,6 +465,8 @@
     align-items: center;
     position: absolute;
     height: 100%;
+    // without this the ag-header-row becomes scrollable
+    overflow: hidden;
   }
 
   .ag-header-cell.ag-header-active .ag-header-cell-menu-button,
@@ -484,13 +501,16 @@
   .ag-header-group-text {
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .ag-header-cell-text {
     overflow: hidden;
     text-overflow: ellipsis;
     word-break: break-word;
+  }
+
+  .ag-header-group-cell .ag-header-cell-comp-wrapper {
+    display: flex;
   }
 
   .ag-header-cell:not(.ag-header-cell-auto-height) .ag-header-cell-comp-wrapper {
@@ -503,6 +523,7 @@
     width: 100%;
   }
 
+  // wrap header height for Headers and Group Headers
   .ag-header-cell-wrap-text .ag-header-cell-comp-wrapper {
     white-space: normal;
   }
@@ -523,17 +544,17 @@
     // unpinned headers get their rezise handle on the right in normal mode and left in RTL mode
     @include ag.unthemed-rtl(
       (
-        right: -4px,
+        right: -3px,
       )
     );
   }
 
   .ag-pinned-left-header .ag-header-cell-resize {
-    right: -4px; // pinned left headers always have their resize on the right, even in RTL mode
+    right: -3px; // pinned left headers always have their resize on the right, even in RTL mode
   }
 
   .ag-pinned-right-header .ag-header-cell-resize {
-    left: -4px; // pinned right headers always have their resize on the left, even in RTL mode
+    left: -3px; // pinned right headers always have their resize on the left, even in RTL mode
   }
 
   .ag-header-select-all {
@@ -939,12 +960,10 @@
   // */
 
   .ag-dnd-ghost {
-    position: absolute;
     display: inline-flex;
     align-items: center;
     cursor: move;
     white-space: nowrap;
-    z-index: 9999;
   }
 
   // /**
@@ -1072,6 +1091,12 @@
     position: absolute;
     display: flex;
     width: 100%;
+    overflow: hidden;
+    height: 0px;
+  }
+
+  .ag-sticky-bottom {
+    box-sizing: content-box !important;
   }
 
   .ag-pinned-left-sticky-top,
@@ -1540,6 +1565,10 @@
     align-items: center;
     height: 100%;
     width: 100%;
+  }
+
+  .ag-header-group-cell-label,
+  .ag-cell-label-container {
     padding: 5px 0px;
   }
 

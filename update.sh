@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/grid-packages/ag-grid-theme-builder/src/ag-grid-community-themes/scss-commented-out-as-ported"
 
 rm ./*.scss
 rm quartz/*.scss

@@ -414,7 +414,7 @@
   }
 
   ////////////////////////////////////////
-  // Ghost Element (Drag and Drop)
+  // Drag and Drop Image Component (Previously Ghost)
   ////////////////////////////////////////
   .ag-dnd-ghost {
     @include ag.card();
@@ -422,7 +422,7 @@
     text-overflow: ellipsis;
     border: var(--ag-borders-secondary) var(--ag-secondary-border-color);
     color: var(--ag-secondary-foreground-color);
-    height: var(--ag-header-height) !important;
+    height: var(--ag-header-height);
     line-height: var(--ag-header-height);
     margin: 0;
     padding: 0 calc(var(--ag-grid-size) * 2);
@@ -614,7 +614,6 @@
   }
 
   .ag-pill .ag-pill-button:hover {
-    color: var(--ag-active-color);
     cursor: pointer;
   }
 

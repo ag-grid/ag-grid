@@ -23,19 +23,16 @@
     padding-left: calc(var(--ag-indentation-level) * var(--ag-row-group-indent-size));
   }
 
-  .ag-pivot-leaf-group {
-    margin-left: min(
-      var(--ag-row-group-indent-size),
-      calc(var(--ag-row-group-indent-size) * var(--ag-indentation-level))
-    );
-  }
-
   .ag-row-group-leaf-indent {
     @include ag.unthemed-rtl(
       (
         margin-left: var(--ag-row-group-indent-size),
       )
     );
+  }
+
+  .ag-row:not(.ag-row-level-0) .ag-pivot-leaf-group {
+    margin-left: var(--ag-row-group-indent-size);
   }
 
   .ag-value-change-delta {
@@ -80,16 +77,6 @@
     background-color: var(--ag-background-color);
     color: var(--ag-data-color);
     border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
-  }
-
-  .ag-sticky-bottom::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    border-top: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
   }
 
   .ag-row-highlight-above::after,
@@ -283,11 +270,6 @@
 
   .ag-overlay-loading-center {
     @include ag.card();
-  }
-
-  // in auto-height mode with no rows, add padding to prevent grid being too small
-  .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
-    padding-top: 30px;
   }
 
   .ag-skeleton-container {

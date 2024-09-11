@@ -4,7 +4,6 @@
   .ag-chart {
     position: relative;
     display: flex;
-    overflow: hidden;
     width: 100%;
     height: 100%;
   }
@@ -13,13 +12,11 @@
     position: relative;
     display: flex;
     flex: 1 1 auto;
-    overflow: hidden;
   }
 
   .ag-chart-canvas-wrapper {
     position: relative;
     flex: 1 1 auto;
-    overflow: hidden;
   }
 
   .ag-chart-menu {

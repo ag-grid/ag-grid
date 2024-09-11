@@ -76,10 +76,6 @@
     color: color-mix(in srgb, transparent, var(--ag-foreground-color) 95%);
   }
 
-  .ag-menu-option .ag-icon {
-    opacity: 65%;
-  }
-
   .ag-menu-header {
     background-color: var(--ag-control-panel-background-color);
   }
@@ -599,10 +595,6 @@
     }
   }
 
-  .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
-    padding-top: 60px;
-  }
-
   .ag-date-time-list-page-entry-is-current {
     background-color: var(--ag-active-color);
   }
@@ -687,6 +679,19 @@
 
   .ag-details-row {
     padding: calc(var(--ag-grid-size) * 3.75);
+  }
+
+  .ag-list-item-hovered::after {
+    background-color: var(--ag-active-color);
+  }
+
+  .ag-pill .ag-pill-button:hover {
+    color: var(--ag-active-color);
+  }
+
+  .ag-header-highlight-before::after,
+  .ag-header-highlight-after::after {
+    background-color: var(--ag-active-color);
   }
 }
 
