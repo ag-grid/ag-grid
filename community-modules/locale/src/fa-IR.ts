@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_IR = {
     excelExport: 'صادرات اکسل',
     columnFilter: 'فیلتر ستون',
     columnChooser: 'انتخاب ستون‌ها',
+    chooseColumns: 'انتخاب ستون‌ها',
     sortAscending: 'مرتب‌سازی صعودی',
     sortDescending: 'مرتب‌سازی نزولی',
     sortUnSort: 'پاک کردن مرتب‌سازی',

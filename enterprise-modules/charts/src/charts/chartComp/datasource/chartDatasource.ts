@@ -174,7 +174,7 @@ export class ChartDatasource extends BeanStub {
 
                     // when grouping we also need to build up multi category labels for charts
                     if (grouping) {
-                        const valueString = valueObject && valueObject.toString ? String(valueObject.toString()) : '';
+                        const valueString = valueObject?.toString ? String(valueObject.toString()) : '';
 
                         // traverse parents to extract group label path
                         const labels = ChartDatasource.getGroupLabels(rowNode, valueString);

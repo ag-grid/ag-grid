@@ -29,10 +29,12 @@ const gridOptions: GridOptions<IOlympicData> = {
     selection: {
         mode: 'cell',
     },
-    onCellSelectionChanged(e) {
-        console.log(e);
-    },
+    onCellSelectionChanged,
 };
+
+function onCellSelectionChanged(e: unknown) {
+    console.log(e);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

@@ -44,7 +44,7 @@ const GetThemeDialog = () => {
                         if (!copyButtonClicked) {
                             setTimeout(() => {
                                 setCopyButtonClicked(false);
-                            }, 200000);
+                            }, 4000);
                         }
                         setCopyButtonClicked(true);
                         navigator.clipboard.writeText(codeSample);
@@ -73,15 +73,16 @@ const renderThemeCodeSample = ({ overriddenParams, usedParts }: RenderedThemeInf
     const imports = ['themeQuartz'];
     let code = '';
     code += `// to use myTheme in an application, pass it to the theme grid option\n`;
-    const paramsJSON = JSON.stringify(overriddenParams, null, 4);
+    const paramsJS = JSON.stringify(overriddenParams, null, 4)
+        // strip quotes from keys
+        .replaceAll(/^(\s+)"([^"]+)"/gm, '$1$2');
     code += `const myTheme = themeQuartz\n`;
     for (const part of usedParts) {
         const partImport = camelCase(part.id);
         code += `\t.with(${partImport})\n`;
         imports.push(partImport);
     }
-    code += `\t.withParams(${paramsJSON.replaceAll('\n', '\n\t')})\n`;
-    code += `;\n`;
+    code += `\t.withParams(${paramsJS.replaceAll('\n', '\n    ')});\n`;
     code = `import { ${imports.join(', ')} } from '@ag-grid-community/theming';\n\n${code}`;
 
     return code;

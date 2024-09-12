@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_VN = {
     excelExport: 'Xuất Excel',
     columnFilter: 'Bộ Lọc Cột',
     columnChooser: 'Chọn Cột',
+    chooseColumns: 'Chọn Cột',
     sortAscending: 'Sắp Xếp Tăng Dần',
     sortDescending: 'Sắp Xếp Giảm Dần',
     sortUnSort: 'Xóa Sắp Xếp',

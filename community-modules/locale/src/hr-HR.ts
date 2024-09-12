@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_HR = {
     excelExport: 'Izvoz u Excel',
     columnFilter: 'Filter stupca',
     columnChooser: 'Izbor stupaca',
+    chooseColumns: 'Izbor stupaca',
     sortAscending: 'Sortiraj uzlazno',
     sortDescending: 'Sortiraj silazno',
     sortUnSort: 'Očisti sortiranje',

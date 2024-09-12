@@ -3,17 +3,17 @@ title: "Row Selection"
 description: "Configure row selection, checkbox selection, and group selection in the $framework Table. Single row selection, multiple row selection, and multi select with click."
 ---
 
-Configure the grid to allow users to select rows by clicking them.
+Configure the grid to allow users to select rows by clicking them, focusing a row and pressing {% kbd "␣ Space" /%} or via API.
 
 ## Enabling Row Selection
 
-Row selection is configured with the `selection` grid property. Setting `selection.mode` to either `"multiRow"` or `"singleRow"` will allow you to select rows by clicking.
+Row selection is configured with the `selection` grid property. Setting `selection.mode` to either `"multiRow"` or `"singleRow"` will allow you to select rows by clicking, focusing a row and pressing {% kbd "␣ Space" /%} or via the selection API.
 
 {% apiDocumentation source="grid-options/properties.json" section="selection" names=["selection"] /%}
 
 The following example illustrates a basic row selection configuration. Use the select control to choose the default single row or multi-row configuration.
 
-Then see our more detailed documentation: 
+See detailed documentation on the two row selection modes: 
 - [Single Row Selection](./row-selection-single-row)
 - [Multi-Row Selection](./row-selection-multi-row)
 

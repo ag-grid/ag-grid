@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_BG = {
     excelExport: 'Експортиране в Excel',
     columnFilter: 'Филтър на колона',
     columnChooser: 'Избор на колони',
+    chooseColumns: 'Избор на колони',
     sortAscending: 'Сортиране във възходящ ред',
     sortDescending: 'Сортиране в низходящ ред',
     sortUnSort: 'Изчистване на сортирането',

@@ -26,7 +26,7 @@ export function getCellValue<TValue = any>(beans: BeanCollection, params: GetCel
         return null;
     }
 
-    const value = beans.valueService.getValue(column, rowNode);
+    const value = beans.valueService.getValueForDisplay(column, rowNode);
 
     if (useFormatter) {
         const formattedValue = beans.valueService.formatValue(column, rowNode, value);

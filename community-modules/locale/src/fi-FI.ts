@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_FI = {
     excelExport: 'Vie Excel-muodossa',
     columnFilter: 'Sarakkeen suodatus',
     columnChooser: 'Valitse sarakkeet',
+    chooseColumns: 'Valitse sarakkeet',
     sortAscending: 'Lajittele nousevasti',
     sortDescending: 'Lajittele laskevasti',
     sortUnSort: 'Tyhjennä lajittelu',

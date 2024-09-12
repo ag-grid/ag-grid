@@ -68,9 +68,7 @@ class ThemeImpl<TParams = unknown> implements Theme {
     }
 
     getCSS(): string {
-        return this._getCSSChunks()
-            .map((chunk) => chunk.css)
-            .join('\n\n');
+        return [coreCSS, ...this._getCSSChunks().map((chunk) => chunk.css)].join('\n\n');
     }
 
     private useCount = 0;

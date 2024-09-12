@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_UA = {
     excelExport: 'Експорт Excel',
     columnFilter: 'Фільтр Стовпців',
     columnChooser: 'Вибрати Стовпці',
+    chooseColumns: 'Вибрати Стовпці',
     sortAscending: 'Сортувати за Зростанням',
     sortDescending: 'Сортувати за Спаданням',
     sortUnSort: 'Очистити Сортування',

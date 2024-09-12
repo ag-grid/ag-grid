@@ -29,9 +29,10 @@ You can import one of the built-in themes from our NPM packages. Where to import
 {% /if %}
 
 ```js
+{% if isFramework("javascript") %}
+// If using NPM and a build step, import the theme from the appropriate package
 import { themeQuartz } from '@ag-grid-community/theming';
 
-{% if isFramework("javascript") %}
 const gridOptions = {
     theme: themeQuartz,
     // load the IBM Plex Sans font used by default in the Quartz theme
@@ -47,6 +48,8 @@ const gridOptions = {
 }
 {% /if %}
 {% if isFramework("react") %}
+import { themeQuartz } from '@ag-grid-community/theming';
+
 <AgGridReact
     theme={theme}
     // load the IBM Plex Sans font used by default in the Quartz theme
@@ -55,6 +58,8 @@ const gridOptions = {
 />
 {% /if %}
 {% if isFramework("vue") %}
+import { themeQuartz } from '@ag-grid-community/theming';
+
 // in template
 <ag-grid-vue
     :theme="theme"
@@ -72,11 +77,13 @@ setup() {
 }
 {% /if %}
 {% if isFramework("angular") %}
+import { themeQuartz } from '@ag-grid-community/theming';
+
 // in template
 <ag-grid-angular
     [theme]="themeQuartz"
     // load the IBM Plex Sans font used by default in the Quartz theme
-    [loadThemeGoogleFonts]: true,
+    loadThemeGoogleFonts
 />
 
 // in component class

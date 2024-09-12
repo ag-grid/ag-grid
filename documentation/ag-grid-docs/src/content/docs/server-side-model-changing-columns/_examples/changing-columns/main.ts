@@ -56,7 +56,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     autoGroupColumnDef: {
         minWidth: 200,
     },
-    maintainColumnOrder: 'all',
+    maintainColumnOrder: true,
     // use the server-side row model
     rowModelType: 'serverSide',
 

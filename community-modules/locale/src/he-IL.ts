@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_IL = {
     excelExport: 'ייצוא Excel',
     columnFilter: 'סינון עמודה',
     columnChooser: 'בחר עמודות',
+    chooseColumns: 'בחר עמודות',
     sortAscending: 'מיין בסדר עולה',
     sortDescending: 'מיין בסדר יורד',
     sortUnSort: 'נקה מיון',

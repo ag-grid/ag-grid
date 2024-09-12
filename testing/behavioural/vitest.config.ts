@@ -25,7 +25,7 @@ if (TESTS_USE_ORIGINAL_SOURCE_CODE) {
 }
 
 export default defineConfig({
-    plugins: [pluginReact()],
+    plugins: [pluginReact() as any],
     test: {
         globals: true,
         environment: 'jsdom',
@@ -37,10 +37,10 @@ export default defineConfig({
     clearScreen: false,
 });
 
-async function loadSourceCodeAliases(modulesDirectories) {
+async function loadSourceCodeAliases(modulesDirectories: string[]) {
     const processedPaths = new Set();
-    const processSourceDirectory = async (name, level) => {
-        let promises = [];
+    const processSourceDirectory = async (name: string, level: number) => {
+        const promises: Promise<void>[] = [];
         const modulePath = path.resolve(name);
         if (!processedPaths.has(modulePath)) {
             processedPaths.add(modulePath);
@@ -53,7 +53,7 @@ async function loadSourceCodeAliases(modulesDirectories) {
                         if (!(packageJson.name in resolveAlias)) {
                             const mainFiles = ['src/index.ts', 'src/index.tsx', 'src/main.ts', 'src/main.tsx'];
                             for (const mainFile of mainFiles) {
-                                let mainTsPath = path.resolve(modulePath, dir.name, mainFile);
+                                const mainTsPath = path.resolve(modulePath, dir.name, mainFile);
                                 if (existsSync(mainTsPath)) {
                                     resolveAlias[packageJson.name] = mainTsPath;
                                     break;

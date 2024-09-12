@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_PK = {
     excelExport: 'Excel ایکسپورٹ',
     columnFilter: 'کالم فلٹر',
     columnChooser: 'کالمز کا انتخاب کریں',
+    chooseColumns: 'کالمز کا انتخاب کریں',
     sortAscending: 'آروہیبھک ترتیب',
     sortDescending: 'زوال پذیر ترتیب',
     sortUnSort: 'ترتیب مٹائیں',

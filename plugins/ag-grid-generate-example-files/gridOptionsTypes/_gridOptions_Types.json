@@ -1401,7 +1401,15 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "loadThemeGoogleFonts": {
+  "maintainColumnOrder": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
+  "enableStrictPivotColumnOrder": {
+    "typeName": "boolean",
+    "typesToInclude": []
+  },
+  "suppressSetFilterByDefault": {
     "typeName": "boolean",
     "typesToInclude": []
   },
@@ -1409,8 +1417,8 @@
     "typeName": "boolean | 'grand' | 'group'",
     "typesToInclude": []
   },
-  "maintainColumnOrder": {
-    "typeName": "boolean | 'all' | 'primaryColumns' | 'pivotResultColumns' | 'none'",
+  "loadThemeGoogleFonts": {
+    "typeName": "boolean",
     "typesToInclude": []
   }
 }

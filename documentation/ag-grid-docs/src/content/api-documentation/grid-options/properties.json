@@ -191,8 +191,13 @@
             "more": {
                 "name": "Maintain Column Order",
                 "url": "./column-updating-definitions/#maintain-column-order"
-            },
-            "type": "'all' | 'primaryColumns' | 'pivotResultColumns' | 'none'"
+            }
+        },
+        "enableStrictPivotColumnOrder": {
+            "more": {
+                "name": "Pivoting - Changing Data, Filters, and Configurations",
+                "url": "./pivoting-column-groups/#changing-data-filters-and-configurations"
+            }
         },
         "suppressFieldDotNotation": {
             "more": {
@@ -521,6 +526,12 @@
             "more": {
                 "name": "Tree Data Filtering",
                 "url": "./tree-data/#tree-data-filtering"
+            }
+        },
+        "suppressSetFilterByDefault": {
+            "more": {
+                "name": "Suppress Set Filter by Default",
+                "url": "./filter-set/#suppress-set-filter-by-default"
             }
         },
         "enableAdvancedFilter": {
@@ -956,7 +967,7 @@
         "pivotDefaultExpanded": {
             "more": {
                 "name": "Expand Pivot Column Groups by Default",
-                "url": "./pivoting-group-columns/#expanded-by-default"
+                "url": "./pivoting-column-groups/#expanded-by-default"
             }
         },
         "pivotRowTotals": {
@@ -971,7 +982,7 @@
         "pivotMaxGeneratedColumns": {
             "more": {
                 "name": "Pivot Max Generated Columns",
-                "url": "./pivoting-result-columns/#preventing-extreme-column-generation"
+                "url": "./pivoting-result-columns/#limiting-column-generation"
             }
         },
         "processPivotResultColDef": {
@@ -983,13 +994,13 @@
         "processPivotResultColGroupDef": {
             "more": {
                 "name": "Pivot Result Column Group Definitions",
-                "url": "./pivoting-group-columns/#customising-group-definitions"
+                "url": "./pivoting-column-groups/#customising-group-definitions"
             }
         },
         "suppressExpandablePivotGroups": {
             "more": {
                 "name": "Prevent Expanding Pivot Column Groups",
-                "url": "./pivoting-group-columns/#prevent-expanding-groups"
+                "url": "./pivoting-column-groups/#prevent-expanding-groups"
             }
         },
         "functionsReadOnly": {
@@ -1038,7 +1049,7 @@
         "removePivotHeaderRowWhenSingleValueColumn": {
             "more": {
                 "name": "Hiding Repeated Value Column Labels",
-                "url": "./pivoting-group-columns/#hide-group-with-single-value-column"
+                "url": "./pivoting-column-groups/#hide-group-with-single-value-column"
             }
         }
     },
@@ -1623,8 +1634,10 @@
             "addNestedFields": true
         },
         "controlsColDef": {
-            "name": "Controls Column Definition",
-            "url": "./row-selection-single-row/#customising-the-checkbox-column"
+            "more": {
+                "name": "Controls Column Definition",
+                "url": "./row-selection-single-row/#customising-the-checkbox-column"
+            }
         },
         "suppressCellFocus": {
             "more": {

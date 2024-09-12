@@ -176,6 +176,7 @@ export const AG_GRID_LOCALE_JP = {
     excelExport: 'Excelエクスポート',
     columnFilter: '列フィルター',
     columnChooser: '列の選択',
+    chooseColumns: '列の選択',
     sortAscending: '昇順で並べ替え',
     sortDescending: '降順で並べ替え',
     sortUnSort: 'ソート解除',

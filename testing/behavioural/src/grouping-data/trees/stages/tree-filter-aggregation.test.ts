@@ -45,6 +45,7 @@ describe('ag-grid tree aggregation and filter', () => {
             rowData,
             getRowId: (params) => params.data.id,
             getDataPath: (data: any) => data.path,
+            groupSuppressBlankHeader: true,
         });
 
         const gridRowsOptions: GridRowsOptions = {

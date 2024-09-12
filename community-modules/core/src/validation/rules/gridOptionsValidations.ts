@@ -107,7 +107,8 @@ export const GRID_OPTION_DEFAULTS = {
     suppressClipboardPaste: false,
     suppressClipboardApi: false,
     suppressCutToClipboard: false,
-    maintainColumnOrder: 'pivotResultColumns',
+    maintainColumnOrder: false,
+    enableStrictPivotColumnOrder: false,
     suppressFieldDotNotation: false,
     allowDragFromColumnsToolPanel: false,
     suppressMovableColumns: false,
@@ -263,6 +264,7 @@ export const GRID_OPTION_DEFAULTS = {
     pivotMaxGeneratedColumns: -1,
     columnMenu: 'new',
     reactiveCustomComponents: true,
+    suppressSetFilterByDefault: false,
 } as const;
 /**
  * Used simply to type check the default grid options.
@@ -387,16 +389,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
             if (!values.length) {
                 return `'paginationPageSizeSelector' cannot be an empty array.
                     If you want to hide the page size selector, set paginationPageSizeSelector to false.`;
-            }
-            return null;
-        },
-    },
-    maintainColumnOrder: {
-        validate: (options) => {
-            const value = options.maintainColumnOrder;
-            if (typeof value === 'boolean') {
-                return `As of v32.2.0, the use of boolean values with 'maintainColumnOrder' is deprecated.
-                    Please use 'primaryColumns', 'pivotResultColumns', 'all' or 'none' instead.`;
             }
             return null;
         },

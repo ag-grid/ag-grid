@@ -24,7 +24,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: true,
     },
     columnDefs: columnDefs,
-    maintainColumnOrder: 'all',
+    maintainColumnOrder: true,
 };
 
 function onBtNoGroups() {

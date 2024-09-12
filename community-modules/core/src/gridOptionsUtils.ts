@@ -22,6 +22,7 @@ import type {
 import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
+import { ModuleNames } from './modules/moduleNames';
 import { _warnOnce } from './utils/function';
 import { _exists, _missing } from './utils/generic';
 
@@ -54,31 +55,10 @@ export function _isGetRowHeightFunction(gos: GridOptionsService): boolean {
 }
 
 export function _shouldMaintainColumnOrder(gos: GridOptionsService, isPivotColumns: boolean): boolean {
-    let maintainColumnOrder = gos.get('maintainColumnOrder');
-
-    // boolean is deprecated setting, deprecated in v32.2.0
-    if (maintainColumnOrder === true) {
-        maintainColumnOrder = 'all';
-    } else if (maintainColumnOrder === false) {
-        maintainColumnOrder = 'pivotResultColumns';
+    if (isPivotColumns) {
+        return !gos.get('enableStrictPivotColumnOrder');
     }
-
-    if (maintainColumnOrder === 'none') {
-        return false;
-    }
-
-    if (maintainColumnOrder === 'all') {
-        return true;
-    }
-
-    if (maintainColumnOrder === 'pivotResultColumns') {
-        return isPivotColumns;
-    }
-
-    if (maintainColumnOrder === 'primaryColumns') {
-        return !isPivotColumns;
-    }
-    return false;
+    return gos.get('maintainColumnOrder');
 }
 
 export function _getRowHeightForNode(
@@ -521,4 +501,8 @@ export function _getGroupSelection(gos: GridOptionsService): GroupSelectionMode 
 export function _getGroupSelectsDescendants(gos: GridOptionsService): boolean {
     const groupSelection = _getGroupSelection(gos);
     return groupSelection === 'descendants' || groupSelection === 'filteredDescendants';
+}
+
+export function _isSetFilterByDefault(gos: GridOptionsService): boolean {
+    return gos.isModuleRegistered(ModuleNames.SetFilterModule) && !gos.get('suppressSetFilterByDefault');
 }

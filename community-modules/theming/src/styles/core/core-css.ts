@@ -638,6 +638,7 @@ export const coreDefaults: CoreParams = {
     chromeBackgroundColor: {
         ref: 'foregroundColor',
         mix: 0.02,
+        onto: 'backgroundColor',
     },
     headerBackgroundColor: {
         ref: 'chromeBackgroundColor',
@@ -716,11 +717,11 @@ export const coreDefaults: CoreParams = {
     spacing: 8,
     fontSize: 14,
     rowHeight: {
-        calc: 'max(iconSize, dataFontSize) + spacing * 3.5 * rowVerticalPaddingScale',
+        calc: 'max(iconSize, dataFontSize) + spacing * 3.25 * rowVerticalPaddingScale',
     },
     rowVerticalPaddingScale: 1,
     headerHeight: {
-        calc: 'max(iconSize, dataFontSize) + spacing * 4.25 * headerVerticalPaddingScale',
+        calc: 'max(iconSize, dataFontSize) + spacing * 4 * headerVerticalPaddingScale',
     },
     headerVerticalPaddingScale: 1,
     popupShadow: {

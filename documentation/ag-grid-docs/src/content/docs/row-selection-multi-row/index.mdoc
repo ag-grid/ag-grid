@@ -29,7 +29,7 @@ This behaviour also applies when [Checkbox Selection](#checkbox-selection) is en
 
 ## Removing Selection Checkboxes
 
-To prevent any checkboxes from being rendered in rows, set `selection.checkboxes` to `false`. 
+To prevent any row selection checkboxes from being rendered in rows, set `selection.checkboxes` to `false`. 
 To prevent the header checkbox from being rendered, set `selection.headerCheckbox` to `false`.
 Setting both to `false` will disable the checkbox column.
 
@@ -46,14 +46,14 @@ const gridOptions = {
 {% gridExampleRunner title="Checkbox Selection" name="checkbox-selection" /%}
 
 {% note %}
-You may pass a function to `selection.checkboxes` to dynamically enabled and disable checkboxes for given rows.
+You may pass a function to `selection.checkboxes` to dynamically enable or disable checkboxes for given rows.
 {% /note %}
 
 ## Configure Selectable Rows
 
 It is possible to specify which rows can be selected via the `selection.isRowSelectable` callback function.
 
-For instance if we only wanted to allow rows where the 'year' property is less than 2004, we could implement the following:
+For instance if we only wanted to allow selection for rows where the 'year' property is less than 2004, we could implement the following:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -63,6 +63,8 @@ const gridOptions = {
     }
 }
 ```
+
+Rows for which `isRowSelectable` returns `false` cannot be selected at all, whether using the UI or the API.
 
 {% gridExampleRunner title="Checkbox Selection: Hiding Disabled Checkboxes" name="checkbox-selection-disable-checkboxes" /%}
 
@@ -121,7 +123,7 @@ const gridOptions = {
 
 ## Prevent Click Selection & Deselection
 
-The `selection.suppressClickSelection` property configures whether a rows selection state will be impacted when the row is clicked, or when {% kbd "␣ Space" /%} is pressed while the row is focused.
+The `selection.suppressClickSelection` property configures whether a row's selection state will be impacted when the row is clicked, or when {% kbd "␣ Space" /%} is pressed while the row is focused.
 
 {% interfaceDocumentation interfaceName="MultiRowSelectionOptions" names=["suppressClickSelection"] config={"description": ""}/%}
 
@@ -198,7 +200,7 @@ Click multiple rows in the example below without pressing any keyboard keys to e
 
 ## API Reference
 
-Here you can find a full list of configuration options available in `'multiRow'` mode.
+See the full list of configuration options available in `'multiRow'` mode.
 
 {% interfaceDocumentation interfaceName="MultiRowSelectionOptions" config={"description":""} /%}
 

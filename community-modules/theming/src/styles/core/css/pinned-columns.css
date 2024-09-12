@@ -64,11 +64,11 @@
 .ag-pinned-left-header .ag-header-cell-resize {
     /* pinned left headers always have their resize on the right, even in RTL mode */
     /*rtl:ignore*/
-    right: -4px;
+    right: -3px;
 }
 
 .ag-pinned-right-header .ag-header-cell-resize {
     /* pinned right headers always have their resize on the left, even in RTL mode */
     /*rtl:ignore*/
-    left: -4px;
+    left: -3px;
 }
