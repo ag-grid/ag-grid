@@ -7,8 +7,7 @@
 }
 
 #barChart,
-#bubbleChart,
-#scatterChart {
+#bubbleChart {
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -20,8 +19,7 @@
     height: 400px;
 }
 
-#bubbleChart,
-#scatterChart {
+#bubbleChart {
     height: 300px;
 }
 

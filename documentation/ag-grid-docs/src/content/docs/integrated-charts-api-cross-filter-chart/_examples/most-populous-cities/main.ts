@@ -47,7 +47,6 @@ const gridOptions: GridOptions = {
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
     createColumnChart(params.api);
     createBubbleChart(params.api);
-    createScatterChart(params.api);
 }
 
 function createColumnChart(api: GridApi) {
@@ -99,27 +98,6 @@ function createBubbleChart(api: GridApi) {
             },
         },
         chartContainer: document.querySelector('#bubbleChart') as any,
-    });
-}
-
-function createScatterChart(api: GridApi) {
-    api.createCrossFilterChart({
-        chartType: 'scatter',
-        cellRange: {
-            columns: ['longitude', 'latitude'],
-        },
-        chartThemeOverrides: {
-            common: {
-                title: {
-                    enabled: true,
-                    text: 'Latitude vs Longitude of Most Populous Cities',
-                },
-                legend: {
-                    enabled: false,
-                },
-            },
-        },
-        chartContainer: document.querySelector('#scatterChart') as any,
     });
 }
 
