@@ -18,14 +18,9 @@
       "executor": "nx:run-script",
       "cache": true,
       "options": {
-        "script": "codegen:dev"
+        "script": "codegen:prod"
       },
-      "outputs": ["{projectRoot}/**/GENERATED-*.ts"],
-      "configurations": {
-        "production": {
-          "script": "codegen:prod"
-        }
-      }
+      "outputs": ["{projectRoot}/**/GENERATED-*.ts"]
     },
     "build:types": {
       "executor": "@nx/js:tsc",
