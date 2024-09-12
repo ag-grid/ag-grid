@@ -27,7 +27,23 @@ ModuleRegistry.registerModules([
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-    columnDefs: [{ field: 'employmentType' }],
+    columnDefs: [
+        { field: 'created' },
+        { field: 'modified' },
+        {
+            field: 'size',
+            aggFunc: 'sum',
+            valueFormatter: (params) => {
+                const sizeInKb = params.value / 1024;
+
+                if (sizeInKb > 1024) {
+                    return `${+(sizeInKb / 1024).toFixed(2)} MB`;
+                } else {
+                    return `${+sizeInKb.toFixed(2)} KB`;
+                }
+            },
+        },
+    ],
     defaultColDef: {
         flex: 1,
         minWidth: 200,
