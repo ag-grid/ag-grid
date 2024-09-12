@@ -32,6 +32,7 @@ export class AreaChartProxy extends CartesianChartProxy<'area'> {
                     xKey: category.id,
                     xName: category.name,
                     yKey: f.colId,
+                    ...(this.crossFiltering && { yFilterKey: `${f.colId}Filter` }),
                     yName: f.displayName,
                     stacked: ['normalizedArea', 'stackedArea'].includes(this.chartType),
                 }) as AgAreaSeriesOptions
