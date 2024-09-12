@@ -1133,7 +1133,7 @@ export interface GridOptions<TData = any> {
     /**
      * When `true`, if you select a group, the children of the group will also be selected.
      * @default false
-     * @deprecated v32.1 Use `selection.groupSelects` instead
+     * @deprecated v32.2 Use `selection.groupSelects` instead
      */
     groupSelectsChildren?: boolean;
     /**
@@ -1192,7 +1192,7 @@ export interface GridOptions<TData = any> {
     /**
      * If using `groupSelectsChildren`, then only the children that pass the current filter will get selected.
      * @default false
-     * @deprecated v32.1 Use `selection.groupSelects` instead
+     * @deprecated v32.2 Use `selection.groupSelects` instead
      */
     groupSelectsFiltered?: boolean;
     /**
@@ -1473,25 +1473,25 @@ export interface GridOptions<TData = any> {
     // *** Selection *** //
     /**
      * Type of Row Selection: `single`, `multiple`.
-     * @deprecated v32.1 Instead, set `selection.mode` to `'singleRow'` or `'multiRow'`
+     * @deprecated v32.2 Instead, set `selection.mode` to `'singleRow'` or `'multiRow'`
      */
     rowSelection?: 'single' | 'multiple';
     /**
      * Set to `true` to allow multiple rows to be selected using single click.
      * @default false
-     * @deprecated v32.1 Use `selection.enableMultiSelectWithClick` instead
+     * @deprecated v32.2 Use `selection.enableMultiSelectWithClick` instead
      */
     rowMultiSelectWithClick?: boolean;
     /**
      * If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
      * @default false
-     * @deprecated v32.1 Use `selection.suppressDeselection` instead
+     * @deprecated v32.2 Use `selection.suppressDeselection` instead
      */
     suppressRowDeselection?: boolean;
     /**
      * If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.
      * @default false
-     * @deprecated v32.1 Use `selection.suppressClickSelection` instead
+     * @deprecated v32.2 Use `selection.suppressClickSelection` instead
      */
     suppressRowClickSelection?: boolean;
     /**
@@ -1518,7 +1518,7 @@ export interface GridOptions<TData = any> {
     /**
      * If `true`, only a single range can be selected.
      * @default false
-     * @deprecated v32.1 Use `selection.suppressMultiRanges` instead
+     * @deprecated v32.2 Use `selection.suppressMultiRanges` instead
      */
     suppressMultiRangeSelection?: boolean;
     /**
@@ -1531,31 +1531,31 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to enable Range Selection.
      * @default false
-     * @deprecated v32.1 Use `selection.mode = 'cell'` instead
+     * @deprecated v32.2 Use `selection.mode = 'cell'` instead
      */
     enableRangeSelection?: boolean;
     /**
      * Set to `true` to enable the Range Handle.
      * @default false
-     * @deprecated v32.1 Use `selection.handle` instead
+     * @deprecated v32.2 Use `selection.handle` instead
      */
     enableRangeHandle?: boolean;
     /**
      * Set to `true` to enable the Fill Handle.
      * @default false
-     * @deprecated v32.1 Use `selection.handle` instead
+     * @deprecated v32.2 Use `selection.handle` instead
      */
     enableFillHandle?: boolean;
     /**
      * Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical.
      * @default 'xy'
-     * @deprecated v32.1 Use `selection.handle.direction` instead
+     * @deprecated v32.2 Use `selection.handle.direction` instead
      */
     fillHandleDirection?: 'x' | 'y' | 'xy';
     /**
      * Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle.
      * @default false
-     * @deprecated v32.1 Use `selection.suppressClearOnFillReduction` instead
+     * @deprecated v32.2 Use `selection.suppressClearOnFillReduction` instead
      */
     suppressClearOnFillReduction?: boolean;
 
@@ -1887,7 +1887,7 @@ export interface GridOptions<TData = any> {
     processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
     /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
-     * @deprecated v32.1 Use `selection.isRowSelectable` instead
+     * @deprecated v32.2 Use `selection.isRowSelectable` instead
      */
     isRowSelectable?: IsRowSelectable<TData>;
     /**
