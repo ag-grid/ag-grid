@@ -12,7 +12,9 @@
                 "url": "./status-bar/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["IStatusPanelComp"],
+                "exclude": [
+                    "IStatusPanelComp"
+                ],
                 "include": []
             }
         },
@@ -22,7 +24,9 @@
                 "url": "./side-bar/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["IToolPanelComp"],
+                "exclude": [
+                    "IToolPanelComp"
+                ],
                 "include": []
             }
         },
@@ -525,7 +529,7 @@
         "excludeChildrenWhenTreeDataFiltering": {
             "more": {
                 "name": "Tree Data Filtering",
-                "url": "./tree-data/#tree-data-filtering"
+                "url": "./tree-data-filtering/#exclude-children-when-filtering"
             }
         },
         "suppressSetFilterByDefault": {
@@ -592,7 +596,9 @@
                 "url": "./integrated-charts-customisation/#custom-chart-themes"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["AgChartThemeDefinition"]
+                "exclude": [
+                    "AgChartThemeDefinition"
+                ]
             }
         },
         "chartThemeOverrides": {
@@ -601,7 +607,9 @@
                 "url": "./integrated-charts-customisation/#overriding-themes"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["AgChartThemeOverrides"]
+                "exclude": [
+                    "AgChartThemeOverrides"
+                ]
             }
         },
         "chartToolPanelsDef": {
@@ -1577,7 +1585,9 @@
             },
             "interfaceHierarchyOverrides": {
                 "exclude": [],
-                "include": ["IViewportDatasourceParams"]
+                "include": [
+                    "IViewportDatasourceParams"
+                ]
             }
         },
         "viewportRowModelPageSize": {

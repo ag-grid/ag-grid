@@ -1,0 +1,119 @@
+---
+title: "Tree Data - Group Column"
+enterprise: true
+---
+Customise the generated group column when using Tree Data.
+
+## Group Column Configuration
+
+When using Tree Data, the grid will automatically generate a group column to display the hierarchy.
+This column can be configured by using the `autoGroupColumnDef` grid option, allowing any [Column Property](./column-definitions/)
+to be overridden.
+
+{% gridExampleRunner title="Group Column Configuration" name="group-column" /%}
+
+The example above sets different header text, a minimum width, and adds checkboxes to each Group Column cell the following configuration:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoGroupColumnDef: {
+        headerName: 'My Group',
+        minWidth: 220,
+        cellRendererParams: {
+            checkbox: true,
+        }
+    },
+}
+```
+
+## Displayed Values
+
+The Group Column cells are populated by the path keys as a default. As these keys must be unique, it can be preferable to display a different value.
+This can be overridden by providing a `field` or `valueGetter` in the `autoGroupColumnDef` grid option.
+
+{% gridExampleRunner title="Displayed Values" name="duplicate-paths" exampleHeight=250 /%}
+
+The above example uses the following configuration to show two 'Bob Stevens' working within the same team, where the path is comprised of unique employee IDs:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    treeData: true,
+    rowData: [
+        { employeeId: '1', name: 'Alice Johnson', path: ['1'] },
+        { employeeId: '2', name: 'Bob Stevens', path: ['1', '2'] },
+        { employeeId: '3', name: 'Bob Stevens', path: ['1', '3'] },
+        { employeeId: '4', name: 'Jessica Adams', path: ['1', '4'] },
+    ],
+    getDataPath: data => data.path,
+    autoGroupColumnDef: {
+        field: 'name', // display the name instead of the path key
+    },
+}
+```
+
+## Group Cell Component
+
+The grid uses the `agGroupCellRenderer` component to render the group column cells.
+
+### Child Row Counts
+
+When showing child counts with Tree Data, the child count is a count of all descendants, including groups.
+
+{% gridExampleRunner title="Child Counts" name="child-counts" exampleHeight=320 /%}
+
+Note how in the example above, the `Desktop` row has a child count of 5, of which one of is the `ProjectAlpha` [Filler Group](./tree-data-hierarchy/#filler-groups) row.
+
+### Default Component Options
+
+The options configurable on the `agGroupCellRenderer` via the column definition `cellRendererParams` are:
+
+{% interfaceDocumentation interfaceName="IGroupCellRendererParams" overrideSrc="group-cell-renderer/group-cell-renderer.json" /%}
+
+### Custom Component
+
+Where the default `agGroupCellRenderer` does not meet your requirements, you can provide a custom cell renderer component, via
+the `cellRenderer` property in the `autoGroupColumnDef` grid option.
+
+The below example provides a custom cell renderer which:
+* Uses a custom icon to represent the groups expanded state
+* Responds to row expansion events to update if the group is expanded or collapsed from another source
+* Cleans up all event listeners when it's destroyed
+
+{% gridExampleRunner title="Custom Component" name="custom-component" /%}
+
+The example above supplies a custom cell renderer via the `cellRenderer` property in the `autoGroupColumnDef`:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoGroupColumnDef: {
+        cellRenderer: CellRenderer,
+    },
+}
+```
+
+### Dynamic Component Selection
+
+Where it may be more appropriate to have two different renderers in the same column, you can instead use the `cellRendererSelector` property in the `autoGroupColumnDef` grid option.
+
+{% apiDocumentation source="column-properties/properties.json" section="styling" names=["cellRendererSelector"] /%}
+
+The example below extends the [Custom Component](./tree-data-group-column/#custom-component) example to use a different renderer based on the rows level:
+
+{% gridExampleRunner title="Dynamic Component Selection" name="dynamic-component" /%}
+
+The example above uses the following configuration to display the default cell renderer for root level groups, and the custom renderer for all others:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    cellRendererSelector: (params) => {
+        if (params.node.level === 0) {
+            return {
+                component: 'agGroupCellRenderer',
+            };
+        }
+        return {
+            component: CustomGroupCellRenderer,
+        };
+    },
+}
+```
+
+## Next Up
+Continue to the next section to learn how to [Expand Row Groups](./tree-data-opening-groups/).
