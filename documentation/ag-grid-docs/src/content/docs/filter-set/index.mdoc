@@ -50,6 +50,21 @@ Set Filters are configured though the `filterParams` attribute of the column def
 
 {% interfaceDocumentation interfaceName="ISetFilterParams" overrideSrc="filter-set/set-filter-params.json" config={"description":"", "sortAlphabetically":true} /%}
 
+### Updating Set Filter Parameters
+
+When new column definitions are set with updated Set Filter parameters, the Set Filter will update to reflect these. For certain filter parameters, changing the parameter will invalidate the filter model. This will cause the filter to be reset.
+
+The following filter parameters will reset the Set Filter - `treeList`, `treeListPathGetter`, `caseSensitive`, `comparator`, and `excelMode`.
+
+Additionally, a few column definition properties will also reset the Set Filter - `filterValueGetter`, `keyCreator` (unless specified in both the old and new filter parameters), and `valueFormatter` (if no `keyCreator` and the [Cell Data Type](./cell-data-types/#pre-defined-cell-data-types) is not `'number'` or `'text'`).
+
+{% if isFramework("javascript", "angular", "vue") %}
+For the parameters above which are functions, define them as constants outside of the column definition to avoid resetting the Set Filter when passing new column definitions.
+{% /if %}
+{% if isFramework("react") %}
+For the parameters above which are functions, memoize the individual functions (e.g. define them via `useCallback` outside of the column definition) to avoid resetting the Set Filter when passing new column definitions.
+{% /if %}
+
 ## Next Up
 
 Continue to the next section to learn about the [Filter List](./filter-set-filter-list/).
