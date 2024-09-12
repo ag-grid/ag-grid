@@ -41,15 +41,14 @@ The following example demonstrates how the Set Filter can be enabled. Note the f
 
 {% gridExampleRunner title="Enabling Set Filters" name="enabling-set-filters"  exampleHeight=565 /%}
 
+## Suppress Set Filter by Default
+
+When `filter = true`, the Set Filter is used for AG Grid Enterprise by default. To use the [Text Filter](./filter-text/), [Number Filter](./filter-number/) or [Date Filter](./filter-date/) instead based on the [Cell Data Type](./cell-data-types/) (as in AG Grid Community), set the grid option `suppressSetFilterByDefault = true`.
 ## Set Filter Parameters
 
 Set Filters are configured though the `filterParams` attribute of the column definition (`ISetFilterParams` interface):
 
 {% interfaceDocumentation interfaceName="ISetFilterParams" overrideSrc="filter-set/set-filter-params.json" config={"description":"", "sortAlphabetically":true} /%}
-
-## Suppress Set Filter by Default
-
-When `filter = true`, the Set Filter is used for AG Grid Enterprise by default. To use the [Text Filter](./filter-text/), [Number Filter](./filter-number/) or [Date Filter](./filter-date/) instead based on the [Cell Data Type](./cell-data-types/) (as in AG Grid Community), set the grid option `suppressSetFilterByDefault = true`.
 
 ## Next Up
 
