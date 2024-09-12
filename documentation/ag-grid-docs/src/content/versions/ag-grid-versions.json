@@ -1,5 +1,28 @@
 [
     {
+        "version": "32.2.0",
+        "date": "September 17th 2024",
+        "landingPageHighlight": "To be added",
+        "highlights": [
+            {
+                "text": "React 19 Support"
+            },
+            {
+                "text": "Custom Drag & Drop Image"
+            },
+            {
+                "text": "Deferred Column Moving Mode"
+            },
+            {
+                "text": "Theming API"
+            },
+            {
+                "text": "Custom React/Vue Components as Icons"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-32-2"
+    },
+    {
         "version": "32.1.0",
         "date": "August 8th 2024",
         "landingPageHighlight": "New SSRM, Column Group & Excel Export Features",
