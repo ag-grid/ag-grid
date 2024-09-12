@@ -418,13 +418,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                     if (!column || !column.isCellEditable(rowNode)) {
                         continue;
                     }
-                    const emptyValue =
-                        this.valueService.parseValue(
-                            column,
-                            rowNode,
-                            '',
-                            this.valueService.getValueForDisplay(column, rowNode)
-                        ) ?? null;
+                    const emptyValue = this.valueService.getDeleteValue(column, rowNode);
                     rowNode.setDataValue(column, emptyValue, cellEventSource);
                 }
             });

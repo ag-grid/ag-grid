@@ -168,24 +168,31 @@ export class ValueService extends BeanStub implements NamedBean {
 
     public parseValue(column: AgColumn, rowNode: IRowNode | null, newValue: any, oldValue: any): any {
         const colDef = column.getColDef();
-        const params: ValueParserParams = this.gos.addGridCommonParams({
-            node: rowNode,
-            data: rowNode?.data,
-            oldValue,
-            newValue,
-            colDef,
-            column,
-        });
 
         const valueParser = colDef.valueParser;
 
         if (_exists(valueParser)) {
+            const params: ValueParserParams = this.gos.addGridCommonParams({
+                node: rowNode,
+                data: rowNode?.data,
+                oldValue,
+                newValue,
+                colDef,
+                column,
+            });
             if (typeof valueParser === 'function') {
                 return valueParser(params);
             }
             return this.expressionService.evaluate(valueParser, params);
         }
         return newValue;
+    }
+
+    public getDeleteValue(column: AgColumn, rowNode: IRowNode): any {
+        if (_exists(column.getColDef().valueParser)) {
+            return this.parseValue(column, rowNode, '', this.getValueForDisplay(column, rowNode)) ?? null;
+        }
+        return null;
     }
 
     public formatValue(
