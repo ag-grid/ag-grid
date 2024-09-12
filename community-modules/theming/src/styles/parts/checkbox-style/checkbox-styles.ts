@@ -72,7 +72,7 @@ export type CheckboxStyleParams = {
 // prettier-ignore
 export const checkboxStyleDefault =
     /*#__PURE__*/
-    createPart({feature: 'checkboxStyle', variant: 'default'})
+    createPart('checkboxStyle', 'default')
         .withAdditionalParams<CheckboxStyleParams>({
             checkboxBorderWidth: 1,
             checkboxBorderRadius: {

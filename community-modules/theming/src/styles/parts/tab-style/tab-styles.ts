@@ -107,7 +107,7 @@ export type TabStyleParams = {
 // prettier-ignore
 export const tabStyleBase =
     /*#__PURE__*/
-    createPart({feature: 'tabStyle', variant: 'base'})
+    createPart('tabStyle', 'base')
         .withAdditionalParams<TabStyleParams>({
             tabBarBackgroundColor: 'transparent',
             tabBarHorizontalPadding: 0,

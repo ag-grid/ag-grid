@@ -10,20 +10,18 @@ export type Part<TParams = unknown> = {
     readonly css: ReadonlyArray<CssFragment>;
 
     /**
-     * Provide new values for theme params. You may only provide values for
-     * params provided by the part's dependencies.
+     * Return a new Part new different default values for core grid params.
      */
     withParams(defaults: Partial<TParams>): Part<TParams>;
 
     /**
-     * Create a new theme part with additional params. Unlike `withParams`,
-     * this can be used to declare that this param adds support for new params
-     * not already in the parts dependencies
+     * Return a new part with additional params. Unlike `withParams`, this can
+     * be used to add support for params used by the part's own CSS.
      */
     withAdditionalParams<TAdditionalParams>(defaults: TAdditionalParams): Part<TParams & TAdditionalParams>;
 
     /**
-     * Provide a new fragment of CSS source code.
+     * Return a new Part with additional CSS.
      */
     withCSS(css: CssFragment): Part<TParams>;
 
@@ -33,12 +31,8 @@ export type Part<TParams = unknown> = {
     createVariant(variant: string): Part<TParams>;
 };
 
-export type CreatePartArgs = {
-    feature: Feature;
-    variant: string;
-};
-
-export const createPart = ({ feature, variant }: CreatePartArgs): Part<CoreParams> =>
+let customPartCounter = 0;
+export const createPart = (feature: Feature, variant: string = `customPart${++customPartCounter}`): Part<CoreParams> =>
     /*#__PURE__*/ new PartImpl(feature, variant);
 
 class PartImpl<TParams = unknown> implements Part<TParams> {

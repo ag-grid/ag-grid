@@ -3,12 +3,12 @@ import { createPart } from '../../../Part';
 // prettier-ignore
 export const colorSchemeLight =
     /*#__PURE__*/
-    createPart({feature: 'colorScheme', variant: 'light'});
+    createPart('colorScheme', 'light');
 
 // prettier-ignore
 export const colorSchemeLightWarm =
     /*#__PURE__*/
-    createPart({feature: 'colorScheme', variant: 'lightWarm'})
+    createPart('colorScheme', 'lightWarm')
         .withParams({
             foregroundColor: '#000000de',
             borderColor: '#60300026',
@@ -18,7 +18,7 @@ export const colorSchemeLightWarm =
 // prettier-ignore
 export const colorSchemeLightCold =
     /*#__PURE__*/
-    createPart({feature: 'colorScheme', variant: 'lightCold'})
+    createPart('colorScheme', 'lightCold')
         .withParams({
             foregroundColor: '#000',
             backgroundColor: '#fff',
@@ -28,7 +28,7 @@ export const colorSchemeLightCold =
 // prettier-ignore
 export const colorSchemeDark =
     /*#__PURE__*/
-    createPart({feature: 'colorScheme', variant: 'dark'})
+    createPart('colorScheme', 'dark')
         .withParams({
             backgroundColor: 'hsl(217, 0%, 17%)',
             foregroundColor: '#FFF',
@@ -43,7 +43,7 @@ export const colorSchemeDark =
 // prettier-ignore
 export const colorSchemeDarkWarm =
     /*#__PURE__*/
-    createPart({feature: 'colorScheme', variant: 'darkWarm'})
+    createPart('colorScheme', 'darkWarm')
         .withParams({
             backgroundColor: 'hsl(29, 10%, 17%)',
             foregroundColor: '#FFF',
@@ -58,7 +58,7 @@ export const colorSchemeDarkWarm =
 // prettier-ignore
 export const colorSchemeDarkBlue =
     /*#__PURE__*/
-    createPart({feature: 'colorScheme', variant: 'darkBlue'})
+    createPart('colorScheme', 'darkBlue')
         .withParams({
             backgroundColor: '#1f2836',
             foregroundColor: '#FFF',
