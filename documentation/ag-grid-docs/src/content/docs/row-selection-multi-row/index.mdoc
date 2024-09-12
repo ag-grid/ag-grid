@@ -64,6 +64,8 @@ const gridOptions = {
 }
 ```
 
+Rows for which `isRowSelectable` returns `false` cannot be selected at all, whether using the UI or the API.
+
 {% gridExampleRunner title="Checkbox Selection: Hiding Disabled Checkboxes" name="checkbox-selection-disable-checkboxes" /%}
 
 Note that this example uses `hideDisabledCheckboxes` to hide disabled checkboxes, which can be toggled on or off.
