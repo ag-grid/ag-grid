@@ -80,7 +80,7 @@ The below example provides a custom cell renderer which:
 
 {% gridExampleRunner title="Custom Component" name="custom-component" /%}
 
-The example above supplies a custom cell renderer via the `cellRenderer` property in the `autoGroupColumnDef`:
+This demonstrates supplying a custom cell renderer via the `cellRenderer` property in the `autoGroupColumnDef`:
 ```{% frameworkTransform=true %}
 const gridOptions = {
     autoGroupColumnDef: {
@@ -99,7 +99,7 @@ The example below extends the [Custom Component](./tree-data-group-column/#custo
 
 {% gridExampleRunner title="Dynamic Component Selection" name="dynamic-component" /%}
 
-The example above uses the following configuration to display the default cell renderer for root level groups, and the custom renderer for all others:
+This uses the following configuration to display the default cell renderer for root level groups, and the custom renderer for all others:
 ```{% frameworkTransform=true %}
 const gridOptions = {
     cellRendererSelector: (params) => {

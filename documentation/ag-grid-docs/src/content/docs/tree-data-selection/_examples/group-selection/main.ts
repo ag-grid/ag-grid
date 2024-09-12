@@ -63,6 +63,14 @@ function getGroupSelectsValue(): GroupSelectionMode {
     return (document.querySelector<HTMLSelectElement>('#input-group-selection-mode')?.value as any) ?? 'self';
 }
 
+function onSelectionModeChange() {
+    gridApi.setGridOption('selection', {
+        mode: 'multiRow',
+        suppressClickSelection: true,
+        groupSelects: getGroupSelectsValue(),
+    });
+}
+
 function onQuickFilterChanged() {
     gridApi.setGridOption('quickFilterText', document.querySelector<HTMLInputElement>('#input-quick-filter')?.value);
 }
