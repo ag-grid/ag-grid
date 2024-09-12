@@ -1,10 +1,17 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import type { RowSelectionOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
 import { isSelectionUIEvent } from '../events';
-import { _getGroupSelectsDescendants, _isClientSideRowModel, _isMultiRowSelection } from '../gridOptionsUtils';
+import {
+    _getGroupSelectsDescendants,
+    _getRowSelectionMode,
+    _isClientSideRowModel,
+    _isMultiRowSelection,
+    _isUsingNewSelectionAPI,
+} from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService, ISetNodesSelectedParams } from '../interfaces/iSelectionService';
@@ -31,20 +38,20 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     private selectionCtx: RowRangeSelectionContext = new RowRangeSelectionContext();
 
     private groupSelectsChildren: boolean;
-    private isMultiSelect: boolean = false;
+    private rowSelectionMode?: RowSelectionOptions['mode'] = undefined;
 
     public postConstruct(): void {
         const { gos, rowModel, onRowSelected } = this;
         this.selectionCtx.init(rowModel);
-        this.isMultiSelect = _isMultiRowSelection(gos);
+        this.rowSelectionMode = _getRowSelectionMode(gos);
         this.groupSelectsChildren = _getGroupSelectsDescendants(gos);
         this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection', 'selection'], () => {
             const groupSelectsChildren = _getGroupSelectsDescendants(gos);
-            const multiSelect = _isMultiRowSelection(gos);
+            const selectionMode = _getRowSelectionMode(gos);
 
-            if (groupSelectsChildren !== this.groupSelectsChildren || multiSelect !== this.isMultiSelect) {
+            if (groupSelectsChildren !== this.groupSelectsChildren || selectionMode !== this.rowSelectionMode) {
                 this.groupSelectsChildren = groupSelectsChildren;
-                this.isMultiSelect = multiSelect;
+                this.rowSelectionMode = selectionMode;
                 this.deselectAllRowNodes({ source: 'api' });
             }
         });
@@ -56,6 +63,10 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         super.destroy();
         this.resetNodes();
         this.selectionCtx.reset();
+    }
+
+    private isMultiSelect(): boolean {
+        return this.rowSelectionMode === 'multiRow';
     }
 
     /**
@@ -79,7 +90,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
         if (nodes.length === 0) return 0;
 
-        if (nodes.length > 1 && !this.isMultiSelect) {
+        if (nodes.length > 1 && !this.isMultiSelect()) {
             _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
             return 0;
         }
@@ -100,7 +111,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
             const node = filteredNodes[0];
             const newSelectionValue = this.overrideSelectionValue(newValue, source);
 
-            if (!this.isMultiSelect) {
+            if (!this.isMultiSelect()) {
                 // let the normal selection logic handle this
             } else if (this.selectionCtx.isInRange(node)) {
                 const partition = this.selectionCtx.truncate(node);
@@ -156,7 +167,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
 
         // clear other nodes if not doing multi select
         if (!suppressFinishActions) {
-            const clearOtherNodes = newValue && (clearSelection || !this.isMultiSelect);
+            const clearOtherNodes = newValue && (clearSelection || !this.isMultiSelect());
             if (clearOtherNodes) {
                 updatedCount += this.clearOtherNodes(filteredNodes[0], source);
             }
@@ -590,6 +601,9 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         justFiltered?: boolean;
         justCurrentPage?: boolean;
     }) {
+        if (_isUsingNewSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
+            return _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
+        }
         this.validateSelectAllType();
 
         const { source, justFiltered, justCurrentPage } = params;
@@ -623,7 +637,9 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         source: SelectionEventSourceType
     ): void {
         if (!Array.isArray(state)) {
-            return;
+            return _errorOnce(
+                'Invalid selection state. When using client-side row model, the state must conform to `string[]`.'
+            );
         }
         const rowIds = new Set(state);
         const nodes: RowNode[] = [];

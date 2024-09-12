@@ -43,6 +43,15 @@ export interface ChartModelParams {
     seriesGroupType?: SeriesGroupType;
 }
 
+export const CROSS_FILTERING_ZERO_VALUE_CHART_TYPES: ChartType[] = [
+    'line',
+    'pie',
+    'donut',
+    'doughnut',
+    'scatter',
+    'bubble',
+];
+
 export class ChartDataModel extends BeanStub {
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
@@ -204,7 +213,7 @@ export class ChartDataModel extends BeanStub {
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
             crossFiltering: this.crossFiltering,
-            crossFilteringZeroValue: _includes(['pie', 'donut', 'doughnut'], this.chartType) ? 0 : undefined,
+            crossFilteringZeroValue: _includes(CROSS_FILTERING_ZERO_VALUE_CHART_TYPES, this.chartType) ? 0 : undefined,
             valueCols: this.getSelectedValueCols(),
             startRow,
             endRow,

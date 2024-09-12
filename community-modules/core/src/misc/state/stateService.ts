@@ -11,7 +11,12 @@ import type { CtrlsService } from '../../ctrlsService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { FilterManager } from '../../filter/filterManager';
 import type { FocusService } from '../../focusService';
-import { _isCellSelectionEnabled, _isClientSideRowModel } from '../../gridOptionsUtils';
+import {
+    _getSuppressMultiRanges,
+    _isCellSelectionEnabled,
+    _isClientSideRowModel,
+    _isUsingNewSelectionAPI,
+} from '../../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../../interfaces/IRangeService';
 import type { AdvancedFilterModel } from '../../interfaces/advancedFilterModel';
 import type {
@@ -43,7 +48,7 @@ import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } fr
 import type { PaginationService } from '../../pagination/paginationService';
 import type { ColumnAnimationService } from '../../rendering/columnAnimationService';
 import type { SortModelItem } from '../../sortController';
-import { _debounce } from '../../utils/function';
+import { _debounce, _warnOnce } from '../../utils/function';
 import { _jsonEquals } from '../../utils/generic';
 import { migrateGridStateModel } from './stateModelMigration';
 
@@ -593,14 +598,17 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setCellSelectionState(cellSelectionState: CellSelectionState): void {
-        if (!_isCellSelectionEnabled(this.gos) || !this.rangeService) {
+        const { gos, rangeService, columnModel, visibleColsService } = this;
+
+        if (!_isCellSelectionEnabled(gos) || !rangeService) {
             return;
         }
+
         const cellRanges: CellRange[] = [];
         cellSelectionState.cellRanges.forEach((cellRange) => {
             const columns: AgColumn[] = [];
             cellRange.colIds.forEach((colId) => {
-                const column = this.columnModel.getCol(colId);
+                const column = columnModel.getCol(colId);
                 if (column) {
                     columns.push(column);
                 }
@@ -608,10 +616,10 @@ export class StateService extends BeanStub implements NamedBean {
             if (!columns.length) {
                 return;
             }
-            let startColumn = this.columnModel.getCol(cellRange.startColId);
+            let startColumn = columnModel.getCol(cellRange.startColId);
             if (!startColumn) {
                 // find the first remaining column
-                const allColumns = this.visibleColsService.getAllCols();
+                const allColumns = visibleColsService.getAllCols();
                 const columnSet = new Set(columns);
                 startColumn = allColumns.find((column) => columnSet.has(column))!;
             }
@@ -621,7 +629,12 @@ export class StateService extends BeanStub implements NamedBean {
                 startColumn,
             });
         });
-        this.rangeService.setCellRanges(cellRanges);
+
+        if (_isUsingNewSelectionAPI(gos) && _getSuppressMultiRanges(gos) && cellRanges.length > 1) {
+            return _warnOnce('cannot add multiple ranges when `selection.suppressMultiRanges = true`');
+        }
+
+        rangeService.setCellRanges(cellRanges);
     }
 
     private getScrollState(): ScrollState | undefined {

@@ -36,7 +36,14 @@ export type Theme<TParams = unknown> = GridTheme & {
     getParams(): Record<string, unknown>;
 };
 
-export const createTheme = (id: string): Theme<CoreParams> => /*#__PURE__*/ new ThemeImpl(id, [], {});
+let customThemeCounter = 0;
+/**
+ * Create a custom theme containing core grid styles but no parts.
+ *
+ * @param id optional an identifier for debugging, if omitted one will be generated
+ */
+export const createTheme = (id: string = `customTheme${++customThemeCounter}`): Theme<CoreParams> =>
+    /*#__PURE__*/ new ThemeImpl(id, [], {});
 
 const IS_SSR = typeof window !== 'object' || !window || typeof document !== 'object' || window.document !== document;
 let themeClassCounter = 0;

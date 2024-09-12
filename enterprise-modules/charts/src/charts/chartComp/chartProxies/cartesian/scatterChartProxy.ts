@@ -8,6 +8,7 @@ interface SeriesDefinition {
     xField: FieldDefinition;
     yField: FieldDefinition;
     sizeField?: FieldDefinition;
+    filterField?: FieldDefinition;
 }
 
 export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'> {
@@ -47,6 +48,11 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                     sizeName: seriesDefinition!.sizeField.displayName ?? '',
                     labelKey: labelFieldDefinition ? labelFieldDefinition.id : seriesDefinition!.yField.colId,
                     labelName: labelFieldDefinition ? labelFieldDefinition.name : undefined,
+                    ...(this.crossFiltering && {
+                        xFilterKey: `${seriesDefinition!.xField.colId}Filter`,
+                        yFilterKey: `${seriesDefinition!.yField.colId}Filter`,
+                        sizeFilterKey: `${seriesDefinition!.sizeField.colId}Filter`,
+                    }),
                 };
                 return opts;
             }
@@ -60,6 +66,10 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                 title: `${seriesDefinition!.yField.displayName} vs ${seriesDefinition!.xField.displayName}`,
                 labelKey: labelFieldDefinition ? labelFieldDefinition.id : seriesDefinition!.yField.colId,
                 labelName: labelFieldDefinition ? labelFieldDefinition.name : undefined,
+                ...(this.crossFiltering && {
+                    xFilterKey: `${seriesDefinition!.xField.colId}Filter`,
+                    yFilterKey: `${seriesDefinition!.yField.colId}Filter`,
+                }),
             };
             return opts;
         });

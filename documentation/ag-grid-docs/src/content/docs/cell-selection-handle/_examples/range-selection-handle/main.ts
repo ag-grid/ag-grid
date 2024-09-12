@@ -24,7 +24,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selection: { mode: 'cell', handle: true },
+    selection: { mode: 'cell', handle: { mode: 'range' } },
 };
 
 // setup the grid after the page has finished loading
