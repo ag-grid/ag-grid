@@ -52,7 +52,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                         xFilterKey: `${seriesDefinition!.xField.colId}Filter`,
                         yFilterKey: `${seriesDefinition!.yField.colId}Filter`,
                         sizeFilterKey: `${seriesDefinition!.sizeField.colId}Filter`,
-                    })
+                    }),
                 };
                 return opts;
             }
@@ -69,7 +69,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                 ...(this.crossFiltering && {
                     xFilterKey: `${seriesDefinition!.xField.colId}Filter`,
                     yFilterKey: `${seriesDefinition!.yField.colId}Filter`,
-                })
+                }),
             };
             return opts;
         });
