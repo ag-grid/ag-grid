@@ -636,6 +636,7 @@ export {
     _isCellSelectionEnabled,
     _getSuppressMultiRanges,
     _getRowSelectionMode,
+    _isUsingNewSelectionAPI,
 } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
 export { EventService } from './eventService';
