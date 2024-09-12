@@ -1634,8 +1634,10 @@
             "addNestedFields": true
         },
         "controlsColDef": {
-            "name": "Controls Column Definition",
-            "url": "./row-selection-single-row/#customising-the-checkbox-column"
+            "more": {
+                "name": "Controls Column Definition",
+                "url": "./row-selection-single-row/#customising-the-checkbox-column"
+            }
         },
         "suppressCellFocus": {
             "more": {

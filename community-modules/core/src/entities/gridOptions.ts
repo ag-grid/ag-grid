@@ -2610,7 +2610,7 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
      */
     hideDisabledCheckboxes?: boolean;
     /**
-     * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
+     * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row non-selectable.
      */
     isRowSelectable?: IsRowSelectable<TData>;
     /**
