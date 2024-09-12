@@ -775,15 +775,23 @@ export interface _PaginationGridApi {
     /** Returns the 0-based index of the page which is showing. */
     paginationGetCurrentPage(): number;
 
-    /** Returns the total number of pages. */
+    /** @deprecated v32.2 Use paginationGetPageCount instead. */
     paginationGetTotalPages(): number;
 
+    /** Returns the number of pages. */
+    paginationGetPageCount(): number;
+
     /**
-     * Returns the total number of pageable rows, as impacted by `gridOptions.paginateChildRows: true`.
+     * @deprecated v32.2 Use `paginationGetRootRowCount` instead.
+     **/
+    paginationGetRowCount(): number;
+
+    /**
+     * Returns the number of pageable rows, as impacted by `gridOptions.paginateChildRows: true`.
      *
      * It is recommended to instead use `gridApi.getDisplayedRowCount()` if not using pagination, or if `gridOption.paginateChildRows=true`.
      **/
-    paginationGetRowCount(): number;
+    paginationGetRootRowCount(): number;
 
     /** Navigates to the next page. */
     paginationGoToNextPage(): void;

@@ -11,13 +11,20 @@ export function paginationGetPageSize(beans: BeanCollection): number {
 export function paginationGetCurrentPage(beans: BeanCollection): number {
     return beans.paginationService?.getCurrentPage() ?? 0;
 }
-
-export function paginationGetTotalPages(beans: BeanCollection): number {
+export function paginationGetPageCount(beans: BeanCollection): number {
     return beans.paginationService?.getTotalPages() ?? 1;
 }
+/** @deprecated v32.2 */
+export function paginationGetTotalPages(beans: BeanCollection): number {
+    return paginationGetPageCount(beans);
+}
 
-export function paginationGetRowCount(beans: BeanCollection): number {
+export function paginationGetRootRowCount(beans: BeanCollection): number {
     return beans.paginationService ? beans.paginationService.getMasterRowCount() : beans.rowModel.getRowCount();
+}
+/** @deprecated v32.2 */
+export function paginationGetRowCount(beans: BeanCollection): number {
+    return paginationGetRootRowCount(beans);
 }
 
 export function paginationGoToNextPage(beans: BeanCollection): void {
