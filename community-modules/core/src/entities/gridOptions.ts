@@ -2556,9 +2556,8 @@ export interface CellSelectionOptions<TData = any> {
     suppressMultiRanges?: boolean;
     /**
      * Determine the selection handle behaviour. Can be used to configure the range handle and the fill handle.
-     * Set to `true` to enable the range handle with default configuration.
      */
-    handle?: boolean | RangeHandleOptions | FillHandleOptions<TData>;
+    handle?: RangeHandleOptions | FillHandleOptions<TData>;
 }
 
 /**
