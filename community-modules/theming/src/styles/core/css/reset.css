@@ -10,9 +10,7 @@
         outline: none;
     }
 
-    &:where(button),
-    &:where(input),
-    &:where(textarea) {
+    &:where(button) {
         border: none;
         padding: 0;
         margin: 0;

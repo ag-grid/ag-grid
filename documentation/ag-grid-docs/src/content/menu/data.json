@@ -272,7 +272,7 @@
                             },
                             {
                                 "title": "Theming API",
-                                "path": "theming",
+                                "path": "theming-api",
                                 "items": [
                                     {
                                         "title": "Extending with CSS",

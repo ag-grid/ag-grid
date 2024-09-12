@@ -91,7 +91,7 @@ public theme = themeQuartz;
 {% /if %}
 ```
 
-{% gridExampleRunner title="Theming API" name="basic" /%}
+{% gridExampleRunner title="Basic Theming API Example" name="basic" /%}
 
 ## Customising themes
 
@@ -120,7 +120,7 @@ Under the hood, theme parameters are implemented using CSS custom properties (va
 There are many parameters available, and several ways of finding the right one to use:
 
 1. **[Theme Builder](/theme-builder/)** - In the "Advanced" section of the Theme Builder you can search for parameters and view documentation
-2. **TypeScript auto-complete** - When an editor with TypeScript language support, you can see all available parameters with inline documentation.
+2. **TypeScript auto-complete** - When using an editor with TypeScript language support, you can see all available parameters with inline documentation.
 3. **Dev tools** - When inspecting an element in the grid, the styles panel shows the CSS custom properties that are being used. A custom property `var(--ag-column-border)` corresponds to the theme parameter `columnBorder`.
 
 ### Extended syntax for CSS values
@@ -211,7 +211,7 @@ const myTheme = themeQuartz
 
 This example demonstrates mixing and matching any built in theme, icon set, and color scheme:
 
-{% gridExampleRunner title="Theming API" name="configuring-theme-parts" /%}
+{% gridExampleRunner title="Configuring Theme Parts" name="configuring-theme-parts" /%}
 
 ### Full list of parts
 
@@ -241,19 +241,26 @@ The following parts are available:
     * `tabStyleAlpine` - tabs styled as per the Alpine theme
     * `tabStyleRolodex` - tabs designed to imitate paper cards, as used by the Balham theme
 
-## Creating your own themes
+## Creating themes from scratch
 
 The `createTheme` function creates a new theme containing core grid styles but no parts. If you're going to change most of the parts anyway, starting from a new theme will reduce the bundle size compared to starting with a built-in theme.
 
 ```js
-import { createTheme, inputStyleUnderlined } from '@ag-grid-community/theming';
+import { createTheme, iconSetMaterial } from '@ag-grid-community/theming';
 
-const myCustomTheme = createTheme('myCustomTheme')
-    .with(inputStyleUnderlined)
-    .withParams({ accentColor: 'red', foregroundColor: '#660000' });
+const myCustomTheme = createTheme()
+    .with(iconSetMaterial)
+    .withParams({
+        accentColor: 'red',
+        foregroundColor: '#660000',
+        iconSize: 18,
+    });
 ```
 
-TODO: example running the above
+Note that the checkboxes and text editors in the example below (double click on a cell to edit it) are using the default styles from your web browser, because the parts containing their styles have not been added. This is useful if your application does not contain these features, or if you want a clean base upon which to apply your own checkbox styles. 
+
+{% gridExampleRunner title="Creating a Theme From Scratch" name="creating-themes" /%}
+
 
 ## Creating your own parts
 
@@ -287,5 +294,5 @@ TODO: example running the above code
 
 Each grid on the page can have its own theme. In the example below, 3 themes are used by 4 grids. The bottom two grids share a theme (Balham) and use CSS custom properties to achieve different header colours:
 
-{% gridExampleRunner title="Theming API" name="multiple-grids" /%}
+{% gridExampleRunner title="Multiple Grids" name="multiple-grids" /%}
 
