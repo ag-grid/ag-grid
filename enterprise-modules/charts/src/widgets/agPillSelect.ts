@@ -1,4 +1,4 @@
-import type { DragItem, DraggingEvent, DropTarget, ListOption } from '@ag-grid-community/core';
+import type { DragAndDropIcon, DragItem, DraggingEvent, DropTarget, ListOption } from '@ag-grid-community/core';
 import {
     AgSelect,
     Component,
@@ -256,7 +256,7 @@ class PillSelectDropZonePanel<TValue> extends PillDropZonePanel<PillSelectDragCo
         return this.model.getValues();
     }
 
-    protected getIconName(): string {
+    protected getIconName(): DragAndDropIcon {
         return this.isPotentialDndItems() ? 'move' : 'notAllowed';
     }
 

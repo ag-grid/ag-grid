@@ -177,7 +177,7 @@ export function validateApiFunction<TFunctionName extends ApiFunctionName>(
                 _errorOnce(
                     `api.${functionName} can only be called when gridOptions.rowModelType is ${rowModels.join(' or ')}`
                 );
-                return undefined;
+                return undefined as any;
             }
             return apiFunction.apply(apiFunction, args);
         };

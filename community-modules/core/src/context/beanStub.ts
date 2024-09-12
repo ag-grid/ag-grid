@@ -178,7 +178,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
      * as opposed to being cleaned up only when the GridOptionsService is destroyed.
      */
     private setupGridOptionListener<K extends keyof GridOptions>(
-        event: keyof GridOptions,
+        event: K,
         listener: PropertyValueChangedListener<K>
     ): () => null {
         this.gos.addPropertyEventListener(event, listener);

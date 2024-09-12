@@ -292,7 +292,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.removeDragAndDropImageComponent();
     }
 
-    private onDragging(mouseEvent: MouseEvent, fromNudge: boolean): void {
+    private onDragging(mouseEvent: MouseEvent, fromNudge: boolean = false): void {
         const hDirection = this.getHorizontalDirection(mouseEvent);
         const vDirection = this.getVerticalDirection(mouseEvent);
 

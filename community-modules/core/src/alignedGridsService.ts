@@ -122,7 +122,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         this.consuming = false;
     }
 
-    private fireColumnEvent(columnEvent: ColumnEvent): void {
+    private fireColumnEvent(columnEvent: ColumnEvent | ColumnGroupOpenedEvent): void {
         this.fireEvent({
             type: 'alignedGridColumn',
             event: columnEvent,

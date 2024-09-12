@@ -9,7 +9,7 @@ import type { CellPosition } from '../entities/cellPositionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { RowPosition } from '../entities/rowPositionUtils';
 import type { Environment } from '../environment';
-import type { BodyScrollEvent, CellFocusedEvent, ModelUpdatedEvent } from '../events';
+import type { BodyScrollEvent, CellFocusedEvent, PaginationChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import {
@@ -168,7 +168,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             pinnedRowDataChanged: this.onPinnedRowDataChanged.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
             bodyScroll: this.onBodyScroll.bind(this),
-            bodyHeightChanged: this.redraw.bind(this),
+            bodyHeightChanged: this.redraw.bind(this, {}),
         });
 
         this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], () => this.onDomLayoutChanged());
@@ -428,7 +428,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.removeRowCtrls(rowIndexesToRemove);
     }
 
-    private onPageLoaded(event: ModelUpdatedEvent): void {
+    private onPageLoaded(event: PaginationChangedEvent): void {
         const params: RefreshViewParams = {
             recycleRows: event.keepRenderedRows,
             animate: event.animate,
