@@ -7,13 +7,15 @@ When working with cell selection, it can be useful to have a handle inside the l
 
 ## Enabling the Range Handle
 
-To enable the Range Handle, set `selection.handle` to `true` in the `gridOptions`. 
+To enable the Range Handle, set `selection.handle` to `{ mode: 'range' }` in the `gridOptions`. 
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     selection: {
         mode: 'cell',
-        handle: true,
+        handle: { 
+            mode: 'range',
+        }
     }
 }
 ```

@@ -366,9 +366,7 @@ export function _isRangeHandleEnabled(gos: GridOptionsService): boolean {
         return gos.get('enableRangeHandle');
     }
 
-    return selection.mode === 'cell'
-        ? selection.handle === true || (selection.handle ? selection.handle.mode === 'range' : false)
-        : false;
+    return selection.mode === 'cell' ? selection.handle?.mode === 'range' : false;
 }
 
 export function _isFillHandleEnabled(gos: GridOptionsService): boolean {
@@ -379,11 +377,7 @@ export function _isFillHandleEnabled(gos: GridOptionsService): boolean {
         return gos.get('enableFillHandle');
     }
 
-    return selection.mode === 'cell'
-        ? typeof selection.handle === 'object'
-            ? selection.handle.mode === 'fill'
-            : false
-        : false;
+    return selection.mode === 'cell' ? selection.handle?.mode === 'fill' : false;
 }
 
 export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | undefined {
@@ -399,9 +393,7 @@ export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | und
         };
     }
 
-    return selection.mode === 'cell' && typeof selection.handle === 'object' && selection.handle.mode === 'fill'
-        ? selection.handle
-        : undefined;
+    return selection.mode === 'cell' && selection.handle?.mode === 'fill' ? selection.handle : undefined;
 }
 
 function _getSuppressClickSelection(
