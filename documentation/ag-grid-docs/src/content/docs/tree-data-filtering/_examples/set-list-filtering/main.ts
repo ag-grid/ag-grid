@@ -1,13 +1,28 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import {
+    GetRowIdParams,
+    GridApi,
+    GridOptions,
+    ISetFilterParams,
+    KeyCreatorParams,
+    ValueFormatterParams,
+    createGrid,
+} from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 
 import { getData } from './data';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule, RowGroupingModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ColumnsToolPanelModule,
+    FiltersToolPanelModule,
+    MenuModule,
+    SetFilterModule,
+]);
 
 let gridApi: GridApi;
 
@@ -18,6 +33,18 @@ const gridOptions: GridOptions = {
         {
             field: 'size',
             aggFunc: 'sum',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                valueFormatter: (params) => {
+                    const sizeInKb = params.value / 1024;
+
+                    if (sizeInKb > 1024) {
+                        return `${+(sizeInKb / 1024).toFixed(2)} MB`;
+                    } else {
+                        return `${+sizeInKb.toFixed(2)} KB`;
+                    }
+                },
+            },
             valueFormatter: (params) => {
                 const sizeInKb = params.value / 1024;
 
@@ -31,27 +58,18 @@ const gridOptions: GridOptions = {
     ],
     defaultColDef: {
         flex: 1,
-        minWidth: 100,
+        minWidth: 200,
     },
     autoGroupColumnDef: {
-        headerName: 'File Explorer',
-        minWidth: 280,
-        cellRenderer: 'agGroupCellRenderer',
         cellRendererParams: {
             suppressCount: true,
         },
     },
-    selection: {
-        hideDisabledCheckboxes: true,
-        mode: 'multiRow',
-        groupSelects: 'descendants',
-        suppressClickSelection: true,
-        checkboxes: (params) => !!params.node.group,
-    },
-    suppressAggFuncInHeader: true,
-    rowData: getData(),
     treeData: true,
-    getDataPath: (data) => data.path,
+    groupDefaultExpanded: -1,
+    groupAggFiltering: true,
+    getDataPath: (data: any) => data.path,
+    rowData: getData(),
 };
 
 // setup the grid after the page has finished loading

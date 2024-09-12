@@ -47,10 +47,11 @@ const gridOptions: GridOptions = {
     getDataPath: (data) => data.path,
     selection: {
         mode: 'multiRow',
-        groupSelects: 'self',
         suppressClickSelection: true,
         checkboxes: false,
+        headerCheckbox: false,
     },
+    groupDefaultExpanded: -1,
     suppressAggFuncInHeader: true,
 };
 

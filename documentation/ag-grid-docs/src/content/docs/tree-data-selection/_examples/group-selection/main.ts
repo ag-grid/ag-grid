@@ -46,6 +46,7 @@ const gridOptions: GridOptions = {
         groupSelects: 'self',
         suppressClickSelection: true,
     },
+    groupDefaultExpanded: -1,
     suppressAggFuncInHeader: true,
     rowData: getData(),
     treeData: true,
@@ -60,14 +61,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function getGroupSelectsValue(): GroupSelectionMode {
     return (document.querySelector<HTMLSelectElement>('#input-group-selection-mode')?.value as any) ?? 'self';
-}
-
-function onSelectionModeChange() {
-    gridApi.setGridOption('selection', {
-        mode: 'multiRow',
-        suppressClickSelection: true,
-        groupSelects: getGroupSelectsValue(),
-    });
 }
 
 function onQuickFilterChanged() {

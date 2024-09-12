@@ -5,7 +5,7 @@ enterprise: true
 Filtering can be applied to Tree Data to reduce the range of displayed data.
 
 ## Filtering
-By default, when filtering is applied to a group, the group will be included if any of its children pass the filter.
+By default, when a parent row passes a [Filter](./filtering-overview/), the children will also be displayed.
 
 The example below applies a filter to the group column for 'ProjectAlpha', note that two 'ProjectAlpha' groups are displayed
 alongside all of their children.
@@ -27,7 +27,7 @@ const gridOptions = {
 }
 ```
 
-## Ignore Filters for Aggregated Values
+## Ignore Filters when Aggregating Values
 
 When using Tree Data and filters, the aggregates are only calculated from the rows which pass the filter. This can be changed by enabling the grid option `suppressAggFilteredOnly`.
 
@@ -72,11 +72,17 @@ For further information, refer to the [Tree Filter](./filter-set-tree-list/) doc
 
 ### Set Filter
 
-The Set Filter can be used with Tree Data, and will list all unique leaf values across each level of the group hierarchy.
+The [Set Filter](./filter-set/) can be used with Tree Data, and will list all unique values across each level of the group hierarchy.
+
+The example below demonstrates the Set Filter available on the Size column.
 
 {% gridExampleRunner title="Set List" name="set-list-filtering" /%}
 
 {% note %}
-When using the Set Filter with Tree Data, it only applies to leaf rows by default. To have the set filter also list and apply to group
-level nodes, set the grid option `groupAggFiltering: true`.
+When using the Set Filter with [Aggregations](./aggregation) the set filter options can change when applying filters.
+
+To prevent this it is advised that you [Enable Group Aggregation Filtering](./aggregation-filtering/#filtering-group-aggregations).
 {% /note %}
+
+## Next Up
+Continue to the next section to learn how to provide a [Row Hierarchy](./tree-data-hierarchy/).
