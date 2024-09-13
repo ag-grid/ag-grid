@@ -76,7 +76,7 @@ const VueExample = {
     setup(props) {
         return {
             theme: myCustomTheme,
-            selection: { mode: 'multiRow', checkbox: true },
+            selection: { mode: 'multiRow', checkboxes: true },
             initialState: {
                 rowSelection: ['1', '2', '3'],
             },
