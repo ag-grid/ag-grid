@@ -4,7 +4,6 @@ import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
 import { CellNavigationService } from './cellNavigationService';
 import { ColumnApplyStateService } from './columns/columnApplyStateService';
-import { ColumnAutosizeService } from './columns/columnAutosizeService';
 import { ColumnDefFactory } from './columns/columnDefFactory';
 import { ColumnEventDispatcher } from './columns/columnEventDispatcher';
 import { ColumnFactory } from './columns/columnFactory';
