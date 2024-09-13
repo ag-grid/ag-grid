@@ -11,6 +11,7 @@ export class FilterComponentWrapper
     private readonly onModelChange = (model: any) => this.updateModel(model);
     private readonly onUiChange = () => this.sourceParams.filterChangedCallback();
     private expectingNewMethods = true;
+    private hasBeenActive = false;
 
     public isFilterActive(): boolean {
         return this.model != null;
@@ -27,6 +28,7 @@ export class FilterComponentWrapper
     public setModel(model: any): AgPromise<void> {
         this.expectingNewMethods = true;
         this.model = model;
+        this.hasBeenActive ||= this.isFilterActive();
         return this.refreshProps();
     }
 
@@ -44,8 +46,13 @@ export class FilterComponentWrapper
         // filtering is run after the component's `doesFilterPass` receives the new `model`.
         // However, if `doesFilterPass` is using a state variable derived from `model` (via effect),
         // it won't have updated in time when filtering runs.
-        // We catch this use case here, and re-run filtering
-        if (this.expectingNewMethods === false && this.providedMethods?.doesFilterPass !== methods?.doesFilterPass) {
+        // We catch this use case here, and re-run filtering.
+        // If the filter has never been active, we don't need to do this
+        if (
+            this.expectingNewMethods === false &&
+            this.hasBeenActive &&
+            this.providedMethods?.doesFilterPass !== methods?.doesFilterPass
+        ) {
             setTimeout(() => {
                 this.sourceParams.filterChangedCallback();
             });
