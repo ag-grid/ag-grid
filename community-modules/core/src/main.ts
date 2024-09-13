@@ -880,6 +880,7 @@ export {
 export { IWatermark } from './interfaces/iWatermark';
 
 export { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
+export { ConsoleService } from './validation/consoleReporting/consoleService';
 
 // utils
 export {

@@ -7,6 +7,8 @@ import { _warnOnce } from '../utils/function';
 import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
 import { validateApiFunction } from './apiFunctionValidator';
+import type { ConsoleID } from './consoleReporting/consoleMappings';
+import { getConsoleMessage } from './consoleReporting/consoleMappings';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import type { OptionsValidation, OptionsValidator, RequiredOptions } from './validationTypes';
 
@@ -199,5 +201,10 @@ export class ValidationService extends BeanStub implements NamedBean {
             const url = this.getFrameworkOverrides().getDocLink(docsUrl);
             _warnOnce(`to see all the valid ${containerName} properties please check: ${url}`);
         }
+    }
+
+    public warnOnce(id: ConsoleID, ...args: any[]): void {
+        const message = getConsoleMessage(id, ...args);
+        _warnOnce(message);
     }
 }

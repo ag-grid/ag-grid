@@ -80,6 +80,7 @@ import { SyncService } from './syncService';
 import { _errorOnce, _warnOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
+import { ConsoleService } from './validation/consoleReporting/consoleService';
 import { ChangeDetectionService } from './valueService/changeDetectionService';
 import { ExpressionService } from './valueService/expressionService';
 import { ValueCache } from './valueService/valueCache';
@@ -444,6 +445,7 @@ export class GridCoreCreator {
 
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
         const beans: SingletonBean[] = [
+            ConsoleService,
             RowPositionUtils,
             CellPositionUtils,
             HeaderPositionUtils,

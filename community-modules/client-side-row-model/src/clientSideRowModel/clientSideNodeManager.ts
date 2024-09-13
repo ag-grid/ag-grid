@@ -1,5 +1,6 @@
 import type {
     BeanCollection,
+    ConsoleService,
     EventService,
     FuncColsService,
     GridOptionsService,
@@ -53,6 +54,7 @@ export class ClientSideNodeManager {
     private eventService: EventService;
     private funcColsService: FuncColsService;
     private selectionService: ISelectionService;
+    private consoleService: ConsoleService;
     private beans: BeanCollection;
 
     private nextId = 0;
@@ -76,6 +78,7 @@ export class ClientSideNodeManager {
         this.eventService = eventService;
         this.funcColsService = funcColsService;
         this.beans = beans;
+        this.consoleService = beans.consoleService;
         this.selectionService = selectionService;
 
         this.rootNode.group = true;
@@ -98,7 +101,7 @@ export class ClientSideNodeManager {
 
     public setRowData(rowData: any[]): RowNode[] | undefined {
         if (typeof rowData === 'string') {
-            _warnOnce('rowData must be an array.');
+            this.consoleService.warnOnce(1);
             return;
         }
         this.rowCountReady = true;
