@@ -24,16 +24,26 @@ export type Part<TParams = unknown> = {
      * Return a new Part with additional CSS.
      */
     withCSS(css: CssFragment): Part<TParams>;
-
-    /**
-     * Create a new part variant copying data from this part
-     */
-    createVariant(variant: string): Part<TParams>;
 };
 
+export const createPartVariant = <T>(part: Part<T>, variant: string): Part<T> =>
+    new PartImpl(part.feature, variant, part.defaults, part.css);
+
+// string & {} used to preserve auto-complete from string union but allow any string
+// eslint-disable-next-line @typescript-eslint/ban-types
+type AnyString = string & {};
+
 let customPartCounter = 0;
-export const createPart = (feature: Feature, variant: string = `customPart${++customPartCounter}`): Part<CoreParams> =>
-    /*#__PURE__*/ new PartImpl(feature, variant);
+/**
+ * Create a new empty part.
+ *
+ * @param feature an The part feature, e.g. 'iconSet'. Adding a part to a theme will remove any existing part with the same feature.
+ * @param variant an optional identifier for debugging, if omitted one will be generated
+ */
+export const createPart = (
+    feature: Feature | AnyString,
+    variant: string = `customPart${++customPartCounter}`
+): Part<CoreParams> => /*#__PURE__*/ new PartImpl(feature, variant);
 
 class PartImpl<TParams = unknown> implements Part<TParams> {
     constructor(
@@ -63,9 +73,5 @@ class PartImpl<TParams = unknown> implements Part<TParams> {
 
     withCSS(css: CssFragment): Part<TParams> {
         return new PartImpl(this.feature, this.variant, this.defaults, this.css.concat(css));
-    }
-
-    createVariant(variant: string): Part<TParams> {
-        return new PartImpl(this.feature, variant, this.defaults, this.css);
     }
 }

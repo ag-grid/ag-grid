@@ -34,8 +34,8 @@ export type Theme<TParams = unknown> = GridTheme & {
     getCSS(): string;
 
     /**
-     * Return the params used to render the theme, taking into account default
-     * values and any overrides provided
+     * Return the params used to render the theme, including the default values
+     * and any overrides supplied by parts and `withParams` calls.
      */
     getParams(): Record<string, unknown>;
 };
@@ -44,7 +44,7 @@ let customThemeCounter = 0;
 /**
  * Create a custom theme containing core grid styles but no parts.
  *
- * @param id optional an identifier for debugging, if omitted one will be generated
+ * @param id an optional identifier for debugging, if omitted one will be generated
  */
 export const createTheme = (id: string = `customTheme${++customThemeCounter}`): Theme<CoreParams> =>
     /*#__PURE__*/ new ThemeImpl(id, [], {});
