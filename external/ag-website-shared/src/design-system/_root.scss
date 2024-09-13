@@ -163,7 +163,7 @@
     --color-fg-disabled: var(--color-gray-400);
     --color-fg-placeholder: var(--color-gray-500);
     --color-fg-white: var(--color-white);
-    --color-fg-code: #e83e8d; // TODO, review & replace color
+    --color-fg-code: #f91274;
 
     // Text colors
     --color-text-primary: var(--color-gray-600);
@@ -296,7 +296,7 @@ html[data-dark-mode='true'] {
     --color-fg-disabled: var(--color-gray-500);
     --color-fg-placeholder: var(--color-gray-400);
     --color-fg-white: var(--color-white);
-    --color-fg-code: #f64f76; // TODO, review & replace color
+    --color-fg-code: #ff537b;
 
     // Text colors
     --color-text-primary: color-mix(in srgb, var(--color-gray-400), var(--color-fg-primary) 20%);
