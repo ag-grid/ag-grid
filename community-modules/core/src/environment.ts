@@ -226,7 +226,7 @@ export class Environment extends BeanStub implements NamedBean {
     }
 
     private handleThemeGridOptionChange(): void {
-        const { gos, eMeasurementContainer, gridTheme: oldGridTheme, ancestorThemeClasses } = this;
+        const { gos, eMeasurementContainer, gridTheme: oldGridTheme } = this;
         const newGridTheme = gos.get('theme') || null;
         if (newGridTheme !== oldGridTheme) {
             oldGridTheme?.stopUse();
@@ -239,12 +239,6 @@ export class Environment extends BeanStub implements NamedBean {
                 this.applyThemeClasses(eMeasurementContainer);
             }
             this.fireGridStylesChangedEvent('themeChanged');
-        }
-        const [legacyClass] = ancestorThemeClasses;
-        if (newGridTheme && legacyClass) {
-            _errorOnce(
-                `a theme grid option has been provided in addition to setting class="${legacyClass}" on a parent element. Do not use both methods to set the theme.`
-            );
         }
     }
 
