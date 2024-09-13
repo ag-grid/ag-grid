@@ -20,6 +20,12 @@ export class AreaChartProxy extends CartesianChartProxy<'area'> {
             },
         ];
 
+        // Add a default label formatter to show '%' for normalized charts if none is provided
+        if (this.isNormalised()) {
+            const numberAxis = axes[1];
+            numberAxis.label = { ...numberAxis.label, formatter: (params) => Math.round(params.value) + '%' };
+        }
+
         return axes;
     }
 
@@ -33,14 +39,15 @@ export class AreaChartProxy extends CartesianChartProxy<'area'> {
                     xName: category.name,
                     yKey: f.colId,
                     yName: f.displayName,
+                    normalizedTo: this.chartType === 'normalizedArea' ? 100 : undefined,
                     stacked: ['normalizedArea', 'stackedArea'].includes(this.chartType),
                 }) as AgAreaSeriesOptions
         );
 
-        return series;
+        return this.crossFiltering ? this.extractLineAreaCrossFilterSeries(series, params) : series;
     }
 
-    protected override isNormalized() {
-        return this.chartType === 'normalizedArea';
+    private isNormalised() {
+        return !this.crossFiltering && this.chartType === 'normalizedArea';
     }
 }

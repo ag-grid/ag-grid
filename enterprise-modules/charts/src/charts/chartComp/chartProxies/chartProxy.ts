@@ -1,6 +1,5 @@
 import type { ChartType, SeriesChartType, SeriesGroupType } from '@ag-grid-community/core';
 import type {
-    AgCartesianSeriesOptions,
     AgChartInstance,
     AgChartOptions,
     AgChartTheme,
@@ -8,15 +7,10 @@ import type {
     AgChartThemePalette,
     AgCommonThemeableChartOptions,
     AgCrosshairOptions,
-    AgFlowProportionSeriesOptions,
-    AgHierarchySeriesOptions,
-    AgPolarSeriesOptions,
-    AgSeriesListeners,
-    AgTopologySeriesOptions,
 } from 'ag-charts-community';
 import { AgCharts, _ModuleSupport, _Theme } from 'ag-charts-community';
 
-import type { ChartCrossFilterService } from '../services/chartCrossFilterService';
+import type { CrossFilteringContext } from '../../chartService';
 import { deproxy } from '../utils/integration';
 import { get } from '../utils/object';
 import type { ChartSeriesType } from '../utils/seriesTypeMapper';
@@ -35,22 +29,15 @@ export interface ChartProxyParams {
     getExtraPaddingDirections: () => ExtraPaddingDirection[];
     apiChartThemeOverrides?: AgChartThemeOverrides;
     crossFiltering: boolean;
+    crossFilterCallback: (event: any, reset?: boolean) => void;
     chartThemeToRestore?: string;
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes: SeriesChartType[];
-    crossFilterService: ChartCrossFilterService;
     translate: (toTranslate: string, defaultText?: string) => string;
 }
 
 export type ExtraPaddingDirection = 'top' | 'right' | 'bottom' | 'left';
-
-export type AgChartSeriesOptions =
-    | AgCartesianSeriesOptions
-    | AgPolarSeriesOptions
-    | AgHierarchySeriesOptions
-    | AgTopologySeriesOptions
-    | AgFlowProportionSeriesOptions;
 
 export interface FieldDefinition {
     colId: string;
@@ -68,6 +55,7 @@ export interface UpdateParams {
     }[];
     fields: FieldDefinition[];
     chartId?: string;
+    getCrossFilteringContext: () => CrossFilteringContext;
     seriesChartTypes: SeriesChartType[];
     updatedOverrides?: AgChartThemeOverrides;
     seriesGroupType?: SeriesGroupType;
@@ -83,7 +71,7 @@ export abstract class ChartProxy<
 
     protected readonly chart: AgChartInstance;
     protected readonly crossFiltering: boolean;
-    protected readonly crossFilterService: ChartCrossFilterService;
+    protected readonly crossFilterCallback: (event: any, reset?: boolean) => void;
 
     protected clearThemeOverrides = false;
 
@@ -92,7 +80,7 @@ export abstract class ChartProxy<
         this.chart = chartProxyParams.chartInstance!;
         this.chartType = chartProxyParams.chartType;
         this.crossFiltering = chartProxyParams.crossFiltering;
-        this.crossFilterService = chartProxyParams.crossFilterService;
+        this.crossFilterCallback = chartProxyParams.crossFilterCallback;
         this.standaloneChartType = getSeriesType(this.chartType) as TSeries;
 
         if (this.chart == null) {
@@ -110,58 +98,7 @@ export abstract class ChartProxy<
     }
 
     public update(params: UpdateParams): void {
-        const updatedOptions: AgChartOptions = this.getUpdateOptions(
-            params,
-            this.getCommonChartOptions(params.updatedOverrides)
-        );
-
-        this.getChartRef().update({
-            ...updatedOptions,
-            series: this.addSeriesListeners(updatedOptions.series as AgChartSeriesOptions[]),
-            legend: {
-                toggleSeries: !this.crossFiltering,
-                listeners: {
-                    legendItemClick: (event: any) => {
-                        if (this.crossFiltering) {
-                            this.dispatchCrossFilterEvent(this.mapLegendEventToSeriesEvent(event));
-                        }
-                    },
-                },
-            },
-            listeners: {
-                // XXX: restore once we figure out why this gets two calls instead of one, when used
-                // at the chart level rather than at the series level
-                // seriesNodeClick: (params: any) => {
-                //     this.dispatchCrossFilterEvent(params);
-                // },
-            },
-        } as AgChartOptions);
-    }
-
-    private mapLegendEventToSeriesEvent(event: any) {
-        const { seriesId, itemId } = event;
-        const chart = (this.getChartRef() as any).chart;
-
-        const series = (chart?.series as any[]).find((s) => s.id === seriesId);
-        const node = series?.nodeData.find((node: any) => node.itemId === itemId);
-        const datum = node?.datum ?? {};
-        const crossFilteringKey = this.getCrossFilterKey();
-
-        const params = {
-            event,
-            datum,
-            seriesId,
-            [crossFilteringKey]: series.properties[crossFilteringKey],
-        };
-
-        return params;
-    }
-
-    private dispatchCrossFilterEvent(params: any) {
-        if (!(params.event.metaKey || params.event.ctrlKey)) {
-            this.crossFilterService.reset();
-        }
-        this.crossFilterService.filter(params);
+        this.getChartRef().update(this.getUpdateOptions(params, this.getCommonChartOptions(params.updatedOverrides)));
     }
 
     public updateThemeOverrides(themeOverrides: AgChartThemeOverrides): void {
@@ -174,21 +111,6 @@ export abstract class ChartProxy<
 
     public getChartRef() {
         return this.chart;
-    }
-
-    protected getCrossFilterKey() {
-        return 'xKey';
-    }
-
-    private addSeriesListeners(series: AgChartSeriesOptions[]): AgChartSeriesOptions[] {
-        return series.map((s: any) => ({
-            ...s,
-            listeners: {
-                nodeClick: (params: any) => {
-                    this.dispatchCrossFilterEvent(params);
-                },
-            } as AgSeriesListeners<any>,
-        }));
     }
 
     public downloadChart(dimensions?: { width: number; height: number }, fileName?: string, fileFormat?: string) {

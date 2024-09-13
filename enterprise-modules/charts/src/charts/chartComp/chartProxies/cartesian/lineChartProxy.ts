@@ -34,6 +34,6 @@ export class LineChartProxy extends CartesianChartProxy<'line'> {
                 }) as AgLineSeriesOptions
         );
 
-        return series;
+        return this.crossFiltering ? this.extractLineAreaCrossFilterSeries(series, params) : series;
     }
 }
