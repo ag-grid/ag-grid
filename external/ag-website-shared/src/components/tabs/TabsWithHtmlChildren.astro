@@ -7,13 +7,14 @@ import styles from './Tabs.module.scss';
 interface Props {
     tabItemIdPrefix?: string;
     headerLinks?: TabHeaderLink[];
+    snippetTabs: Boolean;
 }
 
 const html = await Astro.slots.render('default');
 // Extract tabs data so that the tab nav items can be rendered at build time
 const tabsData = extractTabsData(html);
 
-const { tabItemIdPrefix, headerLinks } = Astro.props as Props;
+const { tabItemIdPrefix, headerLinks, snippetTabs } = Astro.props as Props;
 ---
 
 <tabs-with-html-children data-tabs-data={JSON.stringify(tabsData)} data-tab-Item-id-prefix={tabItemIdPrefix}>
@@ -46,7 +47,7 @@ const { tabItemIdPrefix, headerLinks } = Astro.props as Props;
                 )
             }
         </header>
-        <div class="tabs-content" role="tabpanel">
+        <div class:list={['tabs-content', snippetTabs ? styles.snippetTabs : '']} role="tabpanel">
             <Fragment set:html={html} />
         </div>
     </div>

@@ -70,13 +70,13 @@
     }
 
     pre:global(.code) {
-        max-width: calc(100vw - var(--layout-horizontal-margins) * 2);
         margin-top: 0;
         margin-bottom: $spacing-size-2;
     }
 }
 
 .propertyRow {
+    position: relative;
     display: flex;
     gap: $spacing-size-4;
     width: 100%;
@@ -120,13 +120,23 @@
         box-sizing: border-box;
         min-width: calc(50% - $spacing-size-2);
     }
+
+    &.expandedChildProps::after {
+        content: '';
+        position: absolute;
+        top: $spacing-size-10;
+        bottom: 0;
+        left: $spacing-size-2;
+        width: 1px;
+        background-color: var(--color-util-gray-300);
+        pointer-events: none;
+    }
 }
 
 .leftColumn {
     display: flex;
     flex-direction: column;
     gap: $spacing-size-2;
-    padding-left: calc(var(--nested-path-depth, 0) * $spacing-size-2);
 
     @container (max-width: #{$breakpoint-table-small}) {
         width: 100%;
@@ -139,33 +149,69 @@
     gap: $spacing-size-4;
 
     @container (max-width: #{$breakpoint-table-small}) {
+        margin-top: $spacing-size-3;
         width: 100%;
-        padding-left: calc(var(--nested-path-depth, 0) * $spacing-size-2);
+
+        .expandedChildProps & {
+            padding-left: $spacing-size-6;
+        }
     }
 }
 
 .name {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     --parent-properties-color: var(--color-fg-secondary);
     --parent-properties-font-weight: var(--text-regular);
 
-    color: var(--color-fg-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    display: flex;
+    align-items: center;
+    gap: $spacing-size-2;
     position: relative;
-    display: inline-block;
-    margin-top: 0;
     padding-right: $spacing-size-2;
     font-family: var(--text-monospace-font-family);
     font-size: 15px;
     line-height: var(--text-lh-xs);
     font-weight: 700;
-    margin-bottom: 0;
-    display: flex;
-    flex-direction: row;
+    color: var(--color-fg-primary);
+
+    &:hover .linkIcon {
+        opacity: 0.5;
+    }
+
+    .linkIcon {
+        margin-left: 0;
+
+        &:hover {
+            opacity: 1;
+        }
+
+        svg {
+            width: $spacing-size-4;
+            height: $spacing-size-4;
+        }
+    }
 
     @container (min-width: #{$breakpoint-table-small}) {
         font-size: 15px;
     }
+}
+
+.propNameChevron {
+    --icon-size: 15px;
+
+    position: relative;
+    top: -1px;
+    transition: transform 0.33s ease-in-out;
+
+    .expandedChildProps & {
+        transform: rotate(90deg);
+    }
+}
+
+.propNameExpander {
+    cursor: pointer;
 }
 
 .parentProperties {
@@ -180,6 +226,10 @@
     gap: $spacing-size-3;
     align-items: center;
     flex-wrap: wrap;
+
+    .expandedChildProps & {
+        margin-left: $spacing-size-6;
+    }
 }
 
 .metaRow {
@@ -205,6 +255,10 @@
     padding-left: 8px;
     padding-right: 8px;
     border-radius: var(--radius-sm);
+
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-fg-code), var(--color-bg-primary) 90%);
+    }
 }
 
 .defaultValue {
@@ -219,9 +273,14 @@
     font-variant-ligatures: none;
     font-optical-sizing: auto;
     font-weight: 400;
-    span {
-        opacity: 0.6;
+
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-gray-700) 75%, var(--color-gray-800) 66%) !important;
     }
+}
+
+.defaultLabel {
+    opacity: 0.6;
 }
 
 a.metaValue {
@@ -249,45 +308,24 @@ a.metaValue {
     }
 }
 
-.isExpanded svg {
-    transform: rotate(180deg);
+.childButton {
+    svg {
+        transition: transform 0.33s ease-in-out;
+    }
+
+    &:hover svg {
+        fill: var(--color-link-hover) !important;
+    }
+
+    &.isExpanded svg {
+        transform: rotate(90deg);
+    }
 }
 
-.childButton {
-    color: color-mix(in srgb, var(--color-fg-secondary), var(--color-bg-primary) 20%);
-    font-weight: var(--text-regular);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: $spacing-size-2;
+.childChevron {
+    --icon-size: 15px !important;
 
-    .childButtonName {
-        font-family: var(--text-monospace-font-family);
-        font-weight: var(--text-semibold);
-        font-size: var(--text-fs-sm);
-    }
-
-    &:hover {
-        color: var(--color-text-primary);
-    }
-
-    &::before {
-        content: '';
-        display: inline-block;
-        width: 0px;
-        height: 0px;
-        border-style: solid;
-        border-width: 0 6px 8px 6px;
-        border-color: transparent transparent color-mix(in srgb, var(--color-fg-secondary), var(--color-bg-primary) 50%)
-            transparent;
-        transform: rotate(90deg);
-        transition: transform 0.25s ease-in-out;
-    }
-
-    &.isExpanded::before {
-        transform: rotate(180deg);
-        transition: transform 0.25s ease-in-out;
-    }
+    fill: var(--color-link) !important;
 }
 
 button.seeMore {
@@ -386,8 +424,54 @@ button.seeMore {
     }
 }
 
+.childPropsList {
+    position: relative;
+    padding-left: $spacing-size-6;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: $spacing-size-2;
+        width: 1px;
+        background-color: var(--color-util-gray-300);
+        pointer-events: none;
+    }
+
+    .rightColumn {
+        @container (min-width: #{$breakpoint-table-small}) {
+            padding-left: calc($spacing-size-4 * var(--nested-path-depth));
+        }
+    }
+}
+
 .isChildProp {
-    border-top: 1px dashed var(--color-util-gray-200);
+    position: relative;
+    border-top: 1px dashed var(--color-util-gray-200) !important;
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        pointer-events: none;
+    }
+
+    &::before {
+        top: $spacing-size-6 + $spacing-size-1;
+        left: -$spacing-size-4;
+        width: $spacing-size-3;
+        height: 1px;
+        background-color: var(--color-util-gray-300);
+    }
+
+    &:last-child::after {
+        top: $spacing-size-6 + $spacing-size-1 + 1px;
+        bottom: 0;
+        left: -$spacing-size-5;
+        width: $spacing-size-2;
+        background-color: var(--color-bg-primary);
+    }
 }
 
 @container (max-width: #{$breakpoint-table-small}) {
