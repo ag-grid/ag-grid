@@ -1,6 +1,5 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import tools from '@ag-website-shared/content/community/tools-extensions.json';
-import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useState } from 'react';
 
