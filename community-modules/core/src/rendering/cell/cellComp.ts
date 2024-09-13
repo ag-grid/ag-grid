@@ -13,6 +13,7 @@ import { _warnOnce } from '../../utils/function';
 import { _missing } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import { Component } from '../../widgets/component';
+import type { PopupPositionParams } from '../../widgets/popupService';
 import type { TooltipParentComp } from '../../widgets/tooltipStateManager';
 import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';
 import type { CheckboxSelectionComponent } from './../checkboxSelectionComponent';
@@ -518,7 +519,7 @@ export class CellComp extends Component implements TooltipParentComp {
             position != null ? position : cellEditor.getPopupPosition?.() ?? 'over';
         const isRtl = this.beans.gos.get('enableRtl');
 
-        const positionParams = {
+        const positionParams: PopupPositionParams & { type: string; eventSource: HTMLElement } = {
             ePopup: ePopupGui,
             column: this.column,
             rowNode: this.rowNode,

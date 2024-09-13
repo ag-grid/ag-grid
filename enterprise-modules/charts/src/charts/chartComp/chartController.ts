@@ -62,7 +62,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
                 this.rangeService.setCellRanges([]);
             }
         }
-        const listener = this.updateForGridChange.bind(this);
+        const listener = this.updateForGridChange.bind(this, {});
         this.addManagedEventListeners({
             cellSelectionChanged: (event) => {
                 if (event.id && event.id === this.model.chartId) {

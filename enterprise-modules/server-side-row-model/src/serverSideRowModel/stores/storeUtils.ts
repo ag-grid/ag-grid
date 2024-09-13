@@ -6,6 +6,7 @@ import type {
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
     IServerSideStore,
+    LoadSuccessParams,
     NamedBean,
     RowNode,
     RowNodeBlock,
@@ -33,7 +34,7 @@ export class StoreUtils extends BeanStub implements NamedBean {
         storeParams: SSRMParams;
         parentNode: RowNode;
         parentBlock: RowNodeBlock;
-        success: () => void;
+        success: (params: LoadSuccessParams) => void;
         fail: () => void;
         startRow?: number;
         endRow?: number;

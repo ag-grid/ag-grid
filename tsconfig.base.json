@@ -13,6 +13,7 @@
     "module": "commonjs",
     "lib": ["ES2022", "DOM"],
     "skipLibCheck": true,
+    "strictBindCallApply": true,
     "skipDefaultLibCheck": true,
     "baseUrl": "./",
     "strictNullChecks": true,

@@ -190,7 +190,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
 
         // if doing column virtualisation, then we filter based on the viewport.
         const inViewportCallback = this.isColumnVirtualisationSuppressed()
-            ? null
+            ? undefined
             : this.isColumnInRowViewport.bind(this);
         const displayedColumnsCenter = this.visibleColsService.getColsCenter();
 

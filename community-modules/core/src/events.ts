@@ -1108,7 +1108,7 @@ export interface RichSelectListRowSelectedEvent<TData = any, TContext = any>
 
 export interface AlignedGridColumnEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'alignedGridColumn', TData, TContext> {
-    event: ColumnEvent<any>;
+    event: ColumnEvent<any> | ColumnGroupOpenedEvent;
 }
 
 export interface AlignedGridScrollEvent<TData = any, TContext = any>
