@@ -67,6 +67,7 @@ const HeaderLinks = ({
                     ? urlWithPrefix({
                           url: path,
                           framework,
+                          trailingSlash: true,
                       })
                     : url;
 
