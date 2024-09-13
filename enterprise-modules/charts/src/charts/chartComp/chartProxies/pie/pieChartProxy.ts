@@ -56,7 +56,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
                     type: this.standaloneChartType as AgPieSeriesOptions['type'],
                     angleKey: f.colId,
                     angleName: f.displayName!,
-                    ...(this.crossFiltering && { angleFilterKey: `${f.colId}Filter` }),
+                    ...(this.crossFiltering && { angleFilter: `${f.colId}Filter` }),
                     sectorLabelKey: f.colId,
                     calloutLabelName: category.name,
                     calloutLabelKey: category.id,
