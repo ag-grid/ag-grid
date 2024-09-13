@@ -226,13 +226,7 @@ export class GridBodyScrollFeature extends BeanStub {
         }
         const newScrollLeft = _getScrollLeft(this.getViewportForSource(source), this.enableRtl);
 
-        // we do Math.round() rather than Math.floor(), to mirror how scroll values are applied.
-        // eg if a scale is applied (ie user has zoomed the browser), then applying scroll=200
-        // could result in 199.88, which then floor(199.88) = 199, however round(199.88) = 200.
-        // initially Math.floor() was used, however this caused (almost) infinite loop with aligned grids,
-        // as the scroll would move 1px at at time bouncing from one grid to the next (eg one grid would cause
-        // scroll to 200px, the next to 199px, then the first back to 198px and so on).
-        this.doHorizontalScroll(Math.round(newScrollLeft));
+        this.doHorizontalScroll(newScrollLeft);
         this.resetLastHScrollDebounced();
     }
 
