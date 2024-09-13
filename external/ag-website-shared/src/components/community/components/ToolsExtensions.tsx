@@ -21,7 +21,6 @@ const frameworks = [
 ];
 
 const ToolsExtensions = ({ limit = -1 }) => {
-    const [darkMode] = useDarkmode();
     const applyLimit = (arr) => arr?.slice(0, limit == -1 ? tools.length : limit);
     const filterFrameworks = (framework) => {
         const filter = framework ? tools.filter((item) => item.frameworks?.includes(framework)) : tools;
