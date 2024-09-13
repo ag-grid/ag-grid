@@ -344,11 +344,6 @@ export class ChartDatasource extends BeanStub {
             );
         }
 
-        // clean up temporary data before passing to charts
-        dataAggregated.forEach((groupItem) => {
-            delete groupItem.__children;
-        });
-
         return dataAggregated;
     }
 
