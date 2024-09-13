@@ -1173,10 +1173,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.pivotStage?.execute({ rowNode: this.rootNode, changedPath: changedPath });
     }
 
-    public getNodeManager(): ClientSideNodeManager {
-        return this.nodeManager;
-    }
-
     public getRowNode(id: string): RowNode | undefined {
         // although id is typed a string, this could be called by the user, and they could have passed a number
         const idIsGroup = typeof id == 'string' && id.indexOf(RowNode.ID_PREFIX_ROW_GROUP) == 0;
@@ -1196,6 +1192,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         return this.nodeManager.getRowNode(id);
+    }
+
+    public setImmutableRowData(rowData: any[]): void {
+        const updateRowDataResult = this.nodeManager.setImmutableRowData(rowData);
+        if (updateRowDataResult) {
+            const { rowNodeTransaction, rowsInserted, rowsOrderChanged } = updateRowDataResult;
+            this.commonUpdateRowData([rowNodeTransaction], rowsInserted || rowsOrderChanged);
+        }
     }
 
     // rows: the rows to put into the model
@@ -1303,17 +1307,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     /**
-     * Used to apply generated transaction
-     */
-    public afterImmutableDataChange(rowNodeTransaction: RowNodeTransaction, rowNodesOrderChanged: boolean): void {
-        this.commonUpdateRowData([rowNodeTransaction], rowNodesOrderChanged);
-    }
-
-    /**
      * Common to:
      * - executeBatchUpdateRowData (batch transactions)
      * - updateRowData (single transaction)
-     * - afterImmutableDataChange (generated transaction)
+     * - setImmutableRowData (generated transaction)
      *
      * @param rowNodeTrans - the transactions to apply
      * @param orderChanged - whether the order of the rows has changed, either via generated transaction or user provided addIndex
