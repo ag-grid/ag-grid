@@ -47,7 +47,7 @@ const { tabItemIdPrefix, headerLinks, snippetTabs } = Astro.props as Props;
                 )
             }
         </header>
-        <div class:list={['tabs-content', snippetTabs ? styles.snippetTabs : '']} role="tabpanel">
+        <div class:list={['tabs-content', { [styles.snippetTabs]: snippetTabs }]} role="tabpanel">
             <Fragment set:html={html} />
         </div>
     </div>
