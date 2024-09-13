@@ -24,6 +24,9 @@
 @use './parts/advanced-filter';
 
 @mixin general-styles() {
+    body {
+        --ag-legacy-styles-loaded: 'true';
+    }
     @include icons.output();
     @include base-variables.output();
     @include root.output();

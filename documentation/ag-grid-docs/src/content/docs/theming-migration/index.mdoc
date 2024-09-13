@@ -4,3 +4,21 @@ title: "Migrating to the Theming API"
 
 Migrating to the Theming API
 
+Before v32.2, themes were imported as CSS files in our NPM modules. For the purposes of this guide we'll call those the legacy themes. This guide covers migrating from legacy themes to the Theming API.
+
+### 1. Remove legacy CSS imports
+
+Legacy CSS files include 
+
+Applications import the legacy CSS files either through JS (`import 'ag-grid.css';`)
+
+Applications not using the Theming API import `ag-grid.css` and `ag-grid-{theme-name}.css` from our NPM packages. These files are incompatible with the Theming API and and just be removed. This means that it is not possible to mix grids using the Theming API and grids using the CSS files on the same page.
+
+### Convert any css custom properties you are using to the new names
+
+
+### Explicit theme names are no longer required
+
+In the v32
+
+List of changesd

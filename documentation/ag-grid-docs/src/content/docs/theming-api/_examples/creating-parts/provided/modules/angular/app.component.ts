@@ -15,7 +15,8 @@ const myCheckboxStyle = createPart('checkboxStyle')
         `
         .ag-checkbox-input-wrapper {
             border-radius: 4px;
-            /* --ag-checkbox-glow-color is a new property added below */
+            /* Parts' CSS can use new parameters - define support
+               for them using withAdditionalParams below */
             box-shadow: 0 0 5px 4px var(--ag-checkbox-glow-color);
             width: 16px;
             height: 16px;
