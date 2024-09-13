@@ -15,7 +15,7 @@ import type { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
-    private columnMoveService: ColumnMoveService;
+    private columnMoveService?: ColumnMoveService;
     private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
@@ -115,7 +115,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         });
 
         if (targetIndex != null) {
-            this.columnMoveService.moveColumns(currentColumns, targetIndex, 'toolPanelUi');
+            this.columnMoveService?.moveColumns(currentColumns, targetIndex, 'toolPanelUi');
         }
     }
 

@@ -1,4 +1,5 @@
 import type { _ColumnGridApi } from '../api/gridApi';
+import { ColumnMoveService } from '../columnMove/columnMoveService';
 import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import {
@@ -52,6 +53,12 @@ export const DataTypeModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/data-type',
     beans: [DataTypeService],
+});
+
+export const ColumnMoveModule = _defineModule({
+    version: VERSION,
+    moduleName: '@ag-grid-community/column-move',
+    beans: [ColumnMoveService],
 });
 
 export const ColumnApiModule = _defineModule<_ColumnGridApi<any>>({

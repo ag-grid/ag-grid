@@ -19,7 +19,7 @@ export {
     ColumnStateParams,
     ApplyColumnStateParams,
 } from './columns/columnApplyStateService';
-export { ColumnMoveService } from './columns/columnMoveService';
+export { ColumnMoveService } from './columnMove/columnMoveService';
 export { ColumnNameService } from './columns/columnNameService';
 export { IShowRowGroupColsService, IColumnDropZonesService } from './interfaces/iShowRowGroupColsService';
 export { PivotResultColsService } from './columns/pivotResultColsService';
@@ -36,6 +36,7 @@ export {
     SizeColumnsToFitGridStrategy,
 } from './interfaces/autoSizeStrategy';
 export { IRenderStatusService } from './interfaces/renderStatusService';
+export { ColumnMoveModule } from './columns/columnModule';
 
 // components
 export { ComponentUtil, _combineAttributesAndGridOptions, _processOnChange } from './components/componentUtil';
@@ -274,8 +275,6 @@ export {
 } from './gridBodyComp/rowContainer/rowContainerCtrl';
 
 // headerRendering
-export { BodyDropPivotTarget } from './headerRendering/columnDrag/bodyDropPivotTarget';
-export { BodyDropTarget } from './headerRendering/columnDrag/bodyDropTarget';
 export { _getHeaderClassesFromColDef, _getToolPanelClassesFromColDef } from './headerRendering/cells/cssClassApplier';
 export { HeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerComp';
 export { GridHeaderComp } from './headerRendering/gridHeaderComp';
@@ -293,7 +292,6 @@ export {
 } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 export { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerCtrl';
 export { HorizontalResizeService } from './headerRendering/common/horizontalResizeService';
-export { MoveColumnFeature } from './headerRendering/columnDrag/moveColumnFeature';
 export { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 
 // misc

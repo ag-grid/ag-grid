@@ -1,3 +1,4 @@
+import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, Context } from '../context/context';
@@ -38,7 +39,6 @@ import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColumnFactory } from './columnFactory';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnGroupStateService } from './columnGroupStateService';
-import type { ColumnMoveService } from './columnMoveService';
 import type { ColumnSizeService } from './columnSizeService';
 import { GROUP_AUTO_COLUMN_ID, isColumnControlsCol } from './columnUtils';
 import { destroyColumnTree, getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
@@ -79,7 +79,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private columnApplyStateService: ColumnApplyStateService;
     private columnGroupStateService: ColumnGroupStateService;
     private eventDispatcher: ColumnEventDispatcher;
-    private columnMoveService: ColumnMoveService;
     private columnAutosizeService: ColumnAutosizeService;
     private funcColsService: FuncColsService;
     private quickFilterService?: QuickFilterService;
@@ -102,7 +101,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.columnApplyStateService = beans.columnApplyStateService;
         this.columnGroupStateService = beans.columnGroupStateService;
         this.eventDispatcher = beans.columnEventDispatcher;
-        this.columnMoveService = beans.columnMoveService;
         this.columnAutosizeService = beans.columnAutosizeService;
         this.funcColsService = beans.funcColsService;
         this.quickFilterService = beans.quickFilterService;
@@ -688,9 +686,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
         // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
         // is less sexy for the code here, but it keeps consistency.
-        newOrder = this.columnMoveService.placeLockedColumns(newOrder);
+        newOrder = placeLockedColumns(newOrder, this.gos);
 
-        if (!this.columnMoveService.doesMovePassMarryChildren(newOrder)) {
+        if (!doesMovePassMarryChildren(newOrder, this.getColTree())) {
             _warnOnce(
                 'Applying column order broke a group where columns should be married together. Applying new order has been discarded.'
             );
@@ -753,7 +751,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private positionLockedCols(): void {
-        this.cols.list = this.columnMoveService.placeLockedColumns(this.cols.list);
+        this.cols.list = placeLockedColumns(this.cols.list, this.gos);
     }
 
     private saveColOrder(): void {

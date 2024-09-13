@@ -1,6 +1,6 @@
 import { AlignedGridsModule } from './alignedGridsModule';
 import { CommunityApiModule } from './api/apiModule';
-import { DataTypeModule } from './columns/columnModule';
+import { ColumnMoveModule, DataTypeModule } from './columns/columnModule';
 import { EditModule } from './edit/editModule';
 import { FilterModule } from './filter/filterModule';
 import { _defineModule } from './interfaces/iModule';
@@ -34,5 +34,6 @@ export const CommunityFeaturesModule = _defineModule({
         AlignedGridsModule,
         PaginationModule,
         CommunityApiModule,
+        ColumnMoveModule,
     ],
 });

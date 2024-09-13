@@ -11,7 +11,6 @@ import { ColumnFactory } from './columns/columnFactory';
 import { ColumnGetStateService } from './columns/columnGetStateService';
 import { ColumnGroupStateService } from './columns/columnGroupStateService';
 import { ColumnModel } from './columns/columnModel';
-import { ColumnMoveService } from './columns/columnMoveService';
 import { ColumnNameService } from './columns/columnNameService';
 import { ColumnSizeService } from './columns/columnSizeService';
 import { ColumnViewportService } from './columns/columnViewportService';
@@ -504,7 +503,6 @@ export class GridCoreCreator {
             MenuService,
             ColumnApplyStateService,
             ColumnEventDispatcher,
-            ColumnMoveService,
             ColumnAutosizeService,
             ColumnGetStateService,
             ColumnGroupStateService,
