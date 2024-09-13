@@ -4,25 +4,21 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { AbstractColDef, ColDef, HeaderLocation, HeaderValueGetterParams, IAggFunc } from '../entities/colDef';
+import type { AbstractColDef, ColDef, HeaderLocation, HeaderValueGetterParams } from '../entities/colDef';
+import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import { _warnOnce } from '../utils/function';
-import { _exists } from '../utils/generic';
 import { _camelCaseToHumanText } from '../utils/string';
 import type { ExpressionService } from '../valueService/expressionService';
-import type { ColumnModel } from './columnModel';
-import type { FuncColsService } from './funcColsService';
 
 export class ColumnNameService extends BeanStub implements NamedBean {
     beanName = 'columnNameService' as const;
 
     private expressionService: ExpressionService;
-    private funcColsService: FuncColsService;
-    private columnModel: ColumnModel;
+    private aggColumnNameService?: IAggColumnNameService;
 
     public wireBeans(beans: BeanCollection) {
         this.expressionService = beans.expressionService;
-        this.funcColsService = beans.funcColsService;
-        this.columnModel = beans.columnModel;
+        this.aggColumnNameService = beans.aggColumnNameService;
     }
 
     public getDisplayNameForColumn(
@@ -36,8 +32,8 @@ export class ColumnNameService extends BeanStub implements NamedBean {
 
         const headerName: string | null = this.getHeaderName(column.getColDef(), column, null, null, location);
 
-        if (includeAggFunc) {
-            return this.wrapHeaderNameWithAggFunc(column, headerName);
+        if (includeAggFunc && this.aggColumnNameService) {
+            return this.aggColumnNameService.getHeaderName(column, headerName);
         }
 
         return headerName;
@@ -96,49 +92,5 @@ export class ColumnNameService extends BeanStub implements NamedBean {
         }
 
         return '';
-    }
-
-    private wrapHeaderNameWithAggFunc(column: AgColumn, headerName: string | null): string | null {
-        if (this.gos.get('suppressAggFuncInHeader')) {
-            return headerName;
-        }
-
-        // only columns with aggregation active can have aggregations
-        const pivotValueColumn = column.getColDef().pivotValueColumn;
-        const pivotActiveOnThisColumn = _exists(pivotValueColumn);
-        let aggFunc: string | IAggFunc | null | undefined = null;
-        let aggFuncFound: boolean;
-
-        // otherwise we have a measure that is active, and we are doing aggregation on it
-        if (pivotActiveOnThisColumn) {
-            const valueColumns = this.funcColsService.getValueColumns();
-            const isCollapsedHeaderEnabled =
-                this.gos.get('removePivotHeaderRowWhenSingleValueColumn') && valueColumns.length === 1;
-            const isTotalColumn = column.getColDef().pivotTotalColumnIds !== undefined;
-            if (isCollapsedHeaderEnabled && !isTotalColumn) {
-                return headerName; // Skip decorating the header - in this case the label is the pivot key, not the value col
-            }
-            aggFunc = pivotValueColumn ? pivotValueColumn.getAggFunc() : null;
-            aggFuncFound = true;
-        } else {
-            const measureActive = column.isValueActive();
-            const aggregationPresent = this.columnModel.isPivotMode() || !this.funcColsService.isRowGroupEmpty();
-
-            if (measureActive && aggregationPresent) {
-                aggFunc = column.getAggFunc();
-                aggFuncFound = true;
-            } else {
-                aggFuncFound = false;
-            }
-        }
-
-        if (aggFuncFound) {
-            const aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'func';
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
-            const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
-            return `${aggFuncStringTranslated}(${headerName})`;
-        }
-
-        return headerName;
     }
 }

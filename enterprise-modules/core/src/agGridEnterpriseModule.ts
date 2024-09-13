@@ -1,5 +1,6 @@
 import { ModuleNames, _defineModule } from '@ag-grid-community/core';
 
+import { AggregationModule } from './aggregation/aggregationModule';
 import { GridLicenseManager as LicenseManager } from './license/gridLicenseManager';
 import { VERSION } from './version';
 import { AgMenuItemRenderer } from './widgets/agMenuItemRenderer';
@@ -16,4 +17,5 @@ export const EnterpriseCoreModule = _defineModule({
             classImp: AgMenuItemRenderer,
         },
     ],
+    dependantModules: [AggregationModule],
 });

@@ -54,6 +54,7 @@ import type { HorizontalResizeService } from '../headerRendering/common/horizont
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
+import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
@@ -293,6 +294,7 @@ export interface CoreBeanCollection {
     statusBarService?: IStatusBarService;
     chartService?: IChartService;
     selectableService: SelectableService;
+    aggColumnNameService?: IAggColumnNameService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -327,6 +329,7 @@ export type BeanName =
     | 'advancedSettingsMenuFactory'
     | 'aggFuncService'
     | 'agComponentUtils'
+    | 'aggColumnNameService'
     | 'aggregationStage'
     | 'alignedGridsService'
     | 'animationFrameService'
