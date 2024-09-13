@@ -525,7 +525,7 @@
         "excludeChildrenWhenTreeDataFiltering": {
             "more": {
                 "name": "Tree Data Filtering",
-                "url": "./tree-data/#tree-data-filtering"
+                "url": "./tree-data-filtering/#exclude-children-when-filtering"
             }
         },
         "suppressSetFilterByDefault": {

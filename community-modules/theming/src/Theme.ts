@@ -13,12 +13,16 @@ export type Theme<TParams = unknown> = GridTheme & {
     /**
      * Return a new theme that uses an theme part. The part will replace any
      * existing part of the same feature
+     *
+     * @param part a part, or a no-arg function that returns a part
      */
-    with<TPartParams>(part: Part<TPartParams>): Theme<TParams & TPartParams>;
+    withPart<TPartParams>(part: Part<TPartParams> | (() => Part<TPartParams>)): Theme<TParams & TPartParams>;
 
     /**
      * Return a new theme with different default values for the specified
      * params.
+     *
+     * @param defaults an object containing params e.g. {spacing: 10}
      */
     withParams(defaults: Partial<TParams>): Theme<TParams>;
 
@@ -56,10 +60,13 @@ class ThemeImpl<TParams = unknown> implements Theme {
         readonly defaults: Partial<TParams> = {}
     ) {}
 
-    with<TPartParams>(part: Part<TPartParams>): Theme<TParams & TPartParams> {
+    withPart<TPartParams>(part: Part<TPartParams> | (() => Part<TPartParams>)): Theme<TParams & TPartParams> {
+        if (typeof part === 'function') {
+            part = part();
+        }
         return new ThemeImpl<TParams & TPartParams>(
             this.id,
-            this.dependencies.concat(part as any),
+            this.dependencies.concat(part),
             this.defaults as TParams & TPartParams
         );
     }
@@ -134,6 +141,11 @@ class ThemeImpl<TParams = unknown> implements Theme {
             // Remove the CSS from @ag-grid-community/styles that is
             // automatically injected by the UMD bundle
             uninstallThemeCSS('legacy', document.head);
+
+            const legacyStylesLoaded = getComputedStyle(document.body).getPropertyValue('--ag-legacy-styles-loaded');
+            if (legacyStylesLoaded) {
+                _errorOnce('both Theming API and the ag-grid.css are used on the same page, styling will be incorrect');
+            }
         }
 
         let root = container.getRootNode() as HTMLElement;

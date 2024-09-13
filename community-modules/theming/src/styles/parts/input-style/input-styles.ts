@@ -88,7 +88,7 @@ export type InputStyleParams = {
 // prettier-ignore
 export const inputStyleBase =
     /*#__PURE__*/
-    createPart({feature: 'inputStyle', variant: 'base'})
+    createPart('inputStyle', 'base')
         .withAdditionalParams<InputStyleParams>({
             inputBackgroundColor: 'transparent',
             inputBorder: false,

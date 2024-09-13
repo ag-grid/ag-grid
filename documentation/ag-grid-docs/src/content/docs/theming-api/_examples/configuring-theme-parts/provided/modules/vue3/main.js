@@ -9,9 +9,9 @@ import {
     colorSchemeLightWarm,
     iconSetAlpine,
     iconSetMaterial,
+    iconSetQuartz,
     iconSetQuartzBold,
     iconSetQuartzLight,
-    iconSetQuartzRegular,
     themeAlpine,
     themeBalham,
     themeQuartz,
@@ -75,14 +75,7 @@ const VueExample = {
             baseThemes: [themeQuartz, themeBalham, themeAlpine],
 
             iconSet,
-            iconSets: [
-                null,
-                iconSetQuartzLight,
-                iconSetQuartzRegular,
-                iconSetQuartzBold,
-                iconSetAlpine,
-                iconSetMaterial,
-            ],
+            iconSets: [null, iconSetQuartzLight, iconSetQuartz, iconSetQuartzBold, iconSetAlpine, iconSetMaterial],
 
             colorSchemes: [
                 null,
@@ -98,10 +91,10 @@ const VueExample = {
             theme: computed(() => {
                 let theme = baseTheme.value;
                 if (colorScheme.value) {
-                    theme = theme.with(colorScheme.value);
+                    theme = theme.withPart(colorScheme.value);
                 }
                 if (iconSet.value) {
-                    theme = theme.with(iconSet.value);
+                    theme = theme.withPart(iconSet.value);
                 }
                 return theme;
             }),

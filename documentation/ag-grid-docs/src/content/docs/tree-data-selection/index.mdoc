@@ -1,0 +1,57 @@
+---
+title: "Tree Data - Tree Selection"
+enterprise: true
+---
+Row Selection can allow users to select rows in a tree structure.
+
+## Selecting Descendants
+
+When using [Multiple Row Selection](./row-selection-multi-row/) with a tree structure, the grid can be configured to impact descendant and
+ancestor rows when a row is selected.
+
+To enable hierarchical selection, set the `selection.groupSelects` option to one of the following values:
+
+- `'self'`: Selecting a parent row has no additional side effects.
+- `'descendants'`: Selecting a parent row will select all of its descendants.
+- `'filteredDescendants'`: Selecting a parent row will select all of its descendants that pass the filter.
+
+{% gridExampleRunner title="Group Selection" name="group-selection" /%}
+
+The example above demonstrates the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: {
+        mode: 'multiple',
+        groupSelects: 'descendants',
+    },
+}
+```
+
+## Checkboxes in Group Cells
+
+When using [Row Selection](./row-selection/) with Tree Data, the grid can be configured to render checkboxes in the group cell, to
+the right of the expand/collapse chevron.
+
+This can be configured on the [Group Column Definition](./tree-data-group-column/#group-column-configuration) by setting the `cellRendererParams.checkbox` option to `true`.
+
+{% gridExampleRunner title="Group Cell Checkboxes" name="group-cell-checkboxes" /%}
+
+The example above demonstrates the following configuration to render checkboxes in the group cell, and [Removes the Default Checkboxes](./row-selection-single-row/#removing-selection-checkboxes):
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoGroupColumnDef: {
+        cellRendererParams: {
+            checkbox: true,
+        },
+    },
+    selection: {
+        mode: 'multiRow',
+        checkboxes: false,
+        headerCheckbox: false,
+    },
+}
+```
+
+## Next Up
+Continue to the next section to learn how to configure [Filtering](./tree-data-filtering/).

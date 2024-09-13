@@ -132,7 +132,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
         this.setupDropTarget();
 
-        this.positionableFeature = new PositionableFeature(this.getGui(), { minHeight: 100 });
+        this.positionableFeature = new PositionableFeature(this.getGui());
         this.createManagedBean(this.positionableFeature);
 
         this.refreshGui();

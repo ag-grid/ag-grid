@@ -1,19 +1,19 @@
 import { createTheme } from '../../../Theme';
 import { checkboxStyleDefault } from '../checkbox-style/checkbox-styles';
 import { colorSchemeLight, colorSchemeLightCold } from '../color-scheme/color-schemes';
-import { iconSetAlpine, iconSetQuartzRegular } from '../icon-set/icon-sets';
+import { iconSetAlpine, iconSetQuartz } from '../icon-set/icon-sets';
 import { inputStyleBordered } from '../input-style/input-styles';
 import { tabStyleAlpine, tabStyleQuartz, tabStyleRolodex } from '../tab-style/tab-styles';
 
-const createThemeWithDefaultWidgets = (name: string) => createTheme(name).with(checkboxStyleDefault);
+const createThemeWithDefaultWidgets = (name: string) => createTheme(name).withPart(checkboxStyleDefault);
 
 export const themeQuartz =
     /*#__PURE__*/
     createThemeWithDefaultWidgets('quartz')
-        .with(colorSchemeLight)
-        .with(iconSetQuartzRegular)
-        .with(tabStyleQuartz)
-        .with(inputStyleBordered)
+        .withPart(colorSchemeLight)
+        .withPart(iconSetQuartz)
+        .withPart(tabStyleQuartz)
+        .withPart(() => inputStyleBordered)
         .withParams({
             fontFamily: [
                 { googleFont: 'IBM Plex Sans' },
@@ -29,10 +29,10 @@ export const themeQuartz =
 export const themeAlpine =
     /*#__PURE__*/
     createThemeWithDefaultWidgets('alpine')
-        .with(colorSchemeLight)
-        .with(iconSetAlpine)
-        .with(tabStyleAlpine)
-        .with(inputStyleBordered)
+        .withPart(colorSchemeLight)
+        .withPart(iconSetAlpine)
+        .withPart(tabStyleAlpine)
+        .withPart(inputStyleBordered)
         .withParams({
             accentColor: '#2196f3',
             selectedRowBackgroundColor: {
@@ -55,10 +55,10 @@ export const themeAlpine =
 export const themeBalham =
     /*#__PURE__*/
     createThemeWithDefaultWidgets('balham')
-        .with(colorSchemeLightCold)
-        .with(iconSetAlpine)
-        .with(tabStyleRolodex)
-        .with(inputStyleBordered)
+        .withPart(colorSchemeLightCold)
+        .withPart(iconSetAlpine)
+        .withPart(tabStyleRolodex)
+        .withPart(inputStyleBordered)
         .withParams({
             spacing: 4,
             borderRadius: 2,
@@ -81,9 +81,9 @@ export const themeBalham =
 // export const themeMaterial =
 //     /*#__PURE__*/
 //     createThemeWithDefaultWidgets('material')
-//         .with(iconSetMaterial)
-//         .with(tabStyleMaterial)
-//         .with(inputStyleUnderlined)
+//         .withPart(iconSetMaterial)
+//         .withPart(tabStyleMaterial)
+//         .withPart(inputStyleUnderlined)
 //         .withParams({
 //             spacing: 9,
 //             iconSize: 18,
