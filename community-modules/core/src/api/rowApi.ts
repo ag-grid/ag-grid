@@ -70,6 +70,10 @@ export function getDisplayedRowCount(beans: BeanCollection): number {
     return beans.rowModel.getRowCount();
 }
 
+export function getTopLevelRowCount(beans: BeanCollection): number {
+    return beans.rowModel.getTopLevelRowCount();
+}
+
 /** @deprecated v31.1 */
 export function getModel(beans: BeanCollection): IRowModel {
     return beans.rowModel;

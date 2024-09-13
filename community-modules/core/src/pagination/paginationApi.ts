@@ -19,12 +19,9 @@ export function paginationGetTotalPages(beans: BeanCollection): number {
     return paginationGetPageCount(beans);
 }
 
-export function paginationGetRootRowCount(beans: BeanCollection): number {
-    return beans.paginationService ? beans.paginationService.getMasterRowCount() : beans.rowModel.getRowCount();
-}
 /** @deprecated v32.2 */
 export function paginationGetRowCount(beans: BeanCollection): number {
-    return paginationGetRootRowCount(beans);
+    return beans.paginationService ? beans.paginationService.getMasterRowCount() : beans.rowModel.getRowCount();
 }
 
 export function paginationGoToNextPage(beans: BeanCollection): void {

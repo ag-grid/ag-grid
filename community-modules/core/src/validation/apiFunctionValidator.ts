@@ -154,8 +154,8 @@ const deprecatedFunctions: {
     },
     paginationGetRowCount: {
         version: 'v32.2',
-        old: 'paginationGetRowCount()',
-        new: 'paginationGetRootRowCount()',
+        message:
+            '`paginationGetRowCount` is deprecated, use `getTopLevelRowCount`, or if `paginateChildRows: true` use `getDisplayedRowCount`',
     },
     paginationGetTotalPages: {
         version: 'v32.2',

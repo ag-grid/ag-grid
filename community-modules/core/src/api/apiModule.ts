@@ -45,6 +45,7 @@ import {
     getModel,
     getRenderedNodes,
     getRowNode,
+    getTopLevelRowCount,
     redrawRows,
     setRowNodeExpanded,
 } from './rowApi';
@@ -113,6 +114,7 @@ export const RowApiModule = _defineModule<_RowGridApi<any>>({
         getLastDisplayedRowIndex,
         getDisplayedRowAtIndex,
         getDisplayedRowCount,
+        getTopLevelRowCount,
         getModel,
     },
 });
