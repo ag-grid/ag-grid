@@ -59,7 +59,7 @@ const myCheckboxStyle = createPart('checkboxStyle')
     // by the grid, use withParams which provides TypeScript checking
     .withParams({ accentColor: 'red' });
 
-const myCustomTheme = createTheme().with(myCheckboxStyle);
+const myCustomTheme = createTheme().withPart(myCheckboxStyle);
 
 const GridExample = () => {
     return (

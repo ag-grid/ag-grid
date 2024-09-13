@@ -13,9 +13,9 @@ import {
     colorSchemeLightWarm,
     iconSetAlpine,
     iconSetMaterial,
+    iconSetQuartz,
     iconSetQuartzBold,
     iconSetQuartzLight,
-    iconSetQuartzRegular,
     themeAlpine,
     themeBalham,
     themeQuartz,
@@ -45,7 +45,7 @@ const colorSchemes = [
 ];
 let colorScheme = colorSchemes[0];
 
-const iconSets = [null, iconSetQuartzLight, iconSetQuartzRegular, iconSetQuartzBold, iconSetAlpine, iconSetMaterial];
+const iconSets = [null, iconSetQuartzLight, iconSetQuartz, iconSetQuartzBold, iconSetAlpine, iconSetMaterial];
 let iconSet = iconSets[0];
 
 const columnDefs: ColDef[] = [{ field: 'make' }, { field: 'model' }, { field: 'price' }];
@@ -96,10 +96,10 @@ function setColorScheme(id: string) {
 function buildTheme() {
     let theme = baseTheme;
     if (iconSet) {
-        theme = baseTheme.with(iconSet);
+        theme = baseTheme.withPart(iconSet);
     }
     if (colorScheme) {
-        theme = baseTheme.with(colorScheme);
+        theme = baseTheme.withPart(colorScheme);
     }
     return theme;
 }

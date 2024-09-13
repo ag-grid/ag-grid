@@ -23,7 +23,7 @@ const renderedThemeInfoAtom = atom((get): RenderedThemeInfo => {
         const part = get(feature.selectedPartAtom).part;
         if (part !== feature.defaultPart.part) {
             usedParts.push(part);
-            theme = theme.with(part);
+            theme = theme.withPart(part);
         }
     }
 

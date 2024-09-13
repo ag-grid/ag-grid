@@ -201,15 +201,15 @@ const myTheme = themeQuartz.withParams({
 
 Theme parts are interchangeable units of style. Each part has an associated feature, and a theme can only have one part for a given feature, so for example adding a `colorScheme` part will remove any existing `colorScheme` part.
 
-The `theme.with(...)` method generates a new theme with the specified part:
+The `theme.withPart(...)` method generates a new theme with the specified part:
 
 ```js
 import { themeQuartz, colorSchemeDark, iconSetMaterial } from '@ag-grid-community/theming';
 
-// with() returns a new theme and calls can be chained
+// withPart() returns a new theme and calls can be chained
 const myTheme = themeQuartz
-    .with(iconSetMaterial)
-    .with(colorSchemeDark);
+    .withPart(iconSetMaterial)
+    .withPart(colorSchemeDark);
 ```
 
 This example demonstrates mixing and matching any built in theme, icon set, and color scheme:
@@ -229,7 +229,8 @@ The following parts are available:
     * `colorSchemeDarkWarm` - dark scheme with subtle warm tint
 * Icon sets:
     * `iconSetQuartz` - our default icon set
-        * `iconSetQuartzLight` and `iconSetQuartzBold` lighter and bolder versions of the Quartz icons.
+        * `iconSetQuartz({strokeWidth: number})` you can call iconSetQuartz as a function to provide a custom stroke width (the default is 1.5)
+        * `iconSetQuartzLight` and `iconSetQuartzBold` preset lighter and bolder versions of the Quartz icons.
     * `iconSetAlpine` - the icon set used by the Alpine theme
     * `iconSetMaterial` - the Material Design icon set
 * Checkbox style:
@@ -253,7 +254,7 @@ The `createTheme` function creates a new theme containing core grid styles but n
 import { createTheme, iconSetMaterial } from '@ag-grid-community/theming';
 
 const myCustomTheme = createTheme()
-    .with(iconSetMaterial)
+    .withPart(iconSetMaterial)
     .withParams({
         accentColor: 'red',
         foregroundColor: '#660000',
@@ -312,9 +313,9 @@ const myCheckboxStyle = createPart('checkboxStyle')
     .withParams({ accentColor: 'red' });
 
 // Use your part in built-in theme
-const quartzWithMyCheckboxes = themeQuartz.with(myCheckboxStyle);
+const quartzWithMyCheckboxes = themeQuartz.withPart(myCheckboxStyle);
 // Or in a theme you build from scratch
-const myCustomTheme = createTheme().with(myCheckboxStyle);
+const myCustomTheme = createTheme().withPart(myCheckboxStyle);
 ```
 
 {% gridExampleRunner title="Creating Parts" name="creating-parts" /%}

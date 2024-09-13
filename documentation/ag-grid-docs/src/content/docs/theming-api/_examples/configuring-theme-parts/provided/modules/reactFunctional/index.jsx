@@ -12,9 +12,9 @@ import {
     colorSchemeLightWarm,
     iconSetAlpine,
     iconSetMaterial,
+    iconSetQuartz,
     iconSetQuartzBold,
     iconSetQuartzLight,
-    iconSetQuartzRegular,
     themeAlpine,
     themeBalham,
     themeQuartz,
@@ -42,7 +42,7 @@ const colorSchemes = [
     colorSchemeDarkWarm,
     colorSchemeDarkBlue,
 ];
-const iconSets = [null, iconSetQuartzLight, iconSetQuartzRegular, iconSetQuartzBold, iconSetAlpine, iconSetMaterial];
+const iconSets = [null, iconSetQuartzLight, iconSetQuartz, iconSetQuartzBold, iconSetAlpine, iconSetMaterial];
 
 const GridExample = () => {
     const [baseTheme, setBaseTheme] = useState(baseThemes[0]);
@@ -52,10 +52,10 @@ const GridExample = () => {
     const theme = useMemo(() => {
         let theme = baseTheme;
         if (colorScheme) {
-            theme = theme.with(colorScheme);
+            theme = theme.withPart(colorScheme);
         }
         if (iconSet) {
-            theme = theme.with(iconSet);
+            theme = theme.withPart(iconSet);
         }
         return theme;
     }, [baseTheme, colorScheme, iconSet]);

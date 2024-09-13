@@ -1,5 +1,3 @@
-import { iconSetAlpine } from './alpine/icon-set-alpine';
-import { iconSetMaterial } from './material/icon-set-material';
-import { iconSetQuartzBold, iconSetQuartzLight, iconSetQuartzRegular } from './quartz/icon-set-quartz';
-
-export { iconSetAlpine, iconSetMaterial, iconSetQuartzBold, iconSetQuartzLight, iconSetQuartzRegular };
+export { iconSetAlpine } from './alpine/icon-set-alpine';
+export { iconSetMaterial } from './material/icon-set-material';
+export { iconSetQuartz, iconSetQuartzBold, iconSetQuartzLight, iconSetQuartzRegular } from './quartz/icon-set-quartz';
