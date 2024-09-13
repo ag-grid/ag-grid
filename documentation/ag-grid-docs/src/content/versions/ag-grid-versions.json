@@ -2,7 +2,7 @@
     {
         "version": "32.2.0",
         "date": "September 17th 2024",
-        "landingPageHighlight": "To be added",
+        "landingPageHighlight": "React 19 Support, new Theming API & Custom Drag & Drop Image",
         "highlights": [
             {
                 "text": "React 19 Support"
