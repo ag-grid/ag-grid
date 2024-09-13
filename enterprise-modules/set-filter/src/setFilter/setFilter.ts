@@ -208,18 +208,18 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             return false;
         }
 
+        const oldParams = this.setFilterParams;
+
         // Those params have a large impact and should trigger a reload when they change.
         const paramsThatForceReload: (keyof SetFilterParams<any, V>)[] = [
             'treeList',
-            'treeListFormatter',
             'treeListPathGetter',
             'caseSensitive',
             'comparator',
-            'suppressSelectAll',
             'excelMode',
         ];
 
-        if (paramsThatForceReload.some((param) => params[param] !== this.setFilterParams?.[param])) {
+        if (paramsThatForceReload.some((param) => params[param] !== oldParams?.[param])) {
             return false;
         }
 
@@ -231,11 +231,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.updateSetFilterOnParamsChange(params);
         this.updateMiniFilter();
 
-        if (
-            params.cellRenderer !== this.setFilterParams?.cellRenderer ||
-            params.valueFormatter !== this.setFilterParams?.valueFormatter
-        ) {
-            this.checkAndRefreshVirtualList();
+        if (params.suppressSelectAll !== oldParams?.suppressSelectAll) {
+            this.createVirtualListModel(params);
         }
 
         this.valueModel?.updateOnParamsChange(params).then(() => {
@@ -549,18 +546,25 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         ) => this.updateSetListItem(item, component);
         virtualList.setComponentUpdater(componentUpdater);
 
-        let model: VirtualListModel;
+        this.createVirtualListModel(this.setFilterParams);
+    }
 
-        if (this.setFilterParams.suppressSelectAll) {
+    private createVirtualListModel(params: SetFilterParams<any, V>): void {
+        if (!this.valueModel) {
+            return;
+        }
+
+        let model: VirtualListModel;
+        if (params.suppressSelectAll) {
             model = new ModelWrapper(this.valueModel);
         } else {
             model = new ModelWrapperWithSelectAll(this.valueModel, () => this.isSelectAllSelected());
         }
-        if (isTree) {
+        if (params.treeList) {
             model = new TreeModelWrapper(model);
         }
 
-        virtualList.setModel(model);
+        this.virtualList?.setModel(model);
     }
 
     private getSelectAllLabel(): string {
