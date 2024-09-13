@@ -505,7 +505,6 @@ export class GridCoreCreator {
             ColumnApplyStateService,
             ColumnEventDispatcher,
             ColumnMoveService,
-            ColumnAutosizeService,
             ColumnGetStateService,
             ColumnGroupStateService,
             ColumnSizeService,

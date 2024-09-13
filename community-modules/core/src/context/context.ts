@@ -232,7 +232,7 @@ export interface CoreBeanCollection {
     columnDefFactory: ColumnDefFactory;
     columnGroupStateService: ColumnGroupStateService;
     columnEventDispatcher: ColumnEventDispatcher;
-    columnAutosizeService: ColumnAutosizeService;
+    columnAutosizeService?: ColumnAutosizeService;
     funcColsService: FuncColsService;
     quickFilterService?: QuickFilterService;
     showRowGroupColsService?: IShowRowGroupColsService;

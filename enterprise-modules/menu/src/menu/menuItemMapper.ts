@@ -35,7 +35,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private chartMenuItemMapper: ChartMenuItemMapper;
     private menuService: MenuService;
     private sortController: SortController;
-    private columnAutosizeService: ColumnAutosizeService;
+    private columnAutosizeService?: ColumnAutosizeService;
     private expansionService: IExpansionService;
     private clipboardService?: IClipboardService;
     private aggFuncService?: IAggFuncService;
@@ -153,12 +153,12 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             case 'autoSizeThis':
                 return {
                     name: localeTextFunc('autosizeThisColumn', 'Autosize This Column'),
-                    action: () => this.columnAutosizeService.autoSizeColumn(column, source, skipHeaderOnAutoSize),
+                    action: () => this.columnAutosizeService?.autoSizeColumn(column, source, skipHeaderOnAutoSize),
                 };
             case 'autoSizeAll':
                 return {
                     name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
-                    action: () => this.columnAutosizeService.autoSizeAllColumns(source, skipHeaderOnAutoSize),
+                    action: () => this.columnAutosizeService?.autoSizeAllColumns(source, skipHeaderOnAutoSize),
                 };
             case 'rowGroup':
                 return {

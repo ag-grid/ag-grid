@@ -32,7 +32,6 @@ import { _warnOnce } from '../utils/function';
 import { _missingOrEmpty } from '../utils/generic';
 import type { ValueCache } from '../valueService/valueCache';
 import type { ColumnApplyStateService, ColumnState } from './columnApplyStateService';
-import type { ColumnAutosizeService } from './columnAutosizeService';
 import type { ColumnDefFactory } from './columnDefFactory';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColumnFactory } from './columnFactory';
@@ -80,7 +79,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private columnGroupStateService: ColumnGroupStateService;
     private eventDispatcher: ColumnEventDispatcher;
     private columnMoveService: ColumnMoveService;
-    private columnAutosizeService: ColumnAutosizeService;
     private funcColsService: FuncColsService;
     private quickFilterService?: QuickFilterService;
     private showRowGroupColsService?: IShowRowGroupColsService;
@@ -103,7 +101,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.columnGroupStateService = beans.columnGroupStateService;
         this.eventDispatcher = beans.columnEventDispatcher;
         this.columnMoveService = beans.columnMoveService;
-        this.columnAutosizeService = beans.columnAutosizeService;
         this.funcColsService = beans.funcColsService;
         this.quickFilterService = beans.quickFilterService;
         this.showRowGroupColsService = beans.showRowGroupColsService;
@@ -174,7 +171,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('pivotMode', (event) =>
             this.setPivotMode(this.gos.get('pivotMode'), convertSourceType(event.source))
         );
-        this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered() });
     }
 
     // called from SyncService, when grid has finished initialising
@@ -1056,27 +1052,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
     public getPivotGroupHeaderHeight(): number {
         return this.gos.get('pivotGroupHeaderHeight') ?? this.getGroupHeaderHeight();
-    }
-
-    private onFirstDataRendered(): void {
-        const autoSizeStrategy = this.gos.get('autoSizeStrategy');
-        if (autoSizeStrategy?.type !== 'fitCellContents') {
-            return;
-        }
-
-        const { colIds: columns, skipHeader } = autoSizeStrategy;
-        // ensure render has finished
-        setTimeout(() => {
-            if (columns) {
-                this.columnAutosizeService.autoSizeCols({
-                    colKeys: columns,
-                    skipHeader,
-                    source: 'autosizeColumns',
-                });
-            } else {
-                this.columnAutosizeService.autoSizeAllColumns('autosizeColumns', skipHeader);
-            }
-        });
     }
 
     private onAutoGroupColumnDefChanged(source: ColumnEventType) {

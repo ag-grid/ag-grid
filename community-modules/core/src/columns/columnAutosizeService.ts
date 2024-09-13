@@ -9,6 +9,7 @@ import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/h
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
+import { TouchListener } from '../widgets/touchListener';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
@@ -33,6 +34,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.eventDispatcher = beans.columnEventDispatcher;
         this.ctrlsService = beans.ctrlsService;
         this.renderStatusService = beans.renderStatusService as IRenderStatusService;
+    }
+
+    public postConstruct(): void {
+        this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered() });
     }
 
     public autoSizeCols(params: {
@@ -178,6 +183,56 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.autoSizeCols({ colKeys: allDisplayedColumns, skipHeader, source });
     }
 
+    public addColumnAutosize(element: HTMLElement, column: AgColumn): () => void {
+        const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
+
+        const autoSizeColListener = () => {
+            this.autoSizeColumn(column, 'uiColumnResized', skipHeaderOnAutoSize);
+        };
+
+        element.addEventListener('dblclick', autoSizeColListener);
+        const touchListener: TouchListener = new TouchListener(element);
+        touchListener.addEventListener('doubleTap', autoSizeColListener);
+
+        return () => {
+            element.removeEventListener('dblclick', autoSizeColListener);
+            touchListener.removeEventListener('doubleTap', autoSizeColListener);
+            touchListener.destroy();
+        };
+    }
+
+    public addColumnGroupResize(element: HTMLElement, columnGroup: AgColumnGroup, callback: () => void): () => void {
+        const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
+
+        const listener = () => {
+            // get list of all the column keys we are responsible for
+            const keys: string[] = [];
+            const leafCols = columnGroup.getDisplayedLeafColumns();
+
+            leafCols.forEach((column) => {
+                // not all cols in the group may be participating with auto-resize
+                if (!column.getColDef().suppressAutoSize) {
+                    keys.push(column.getColId());
+                }
+            });
+
+            if (keys.length > 0) {
+                this.autoSizeCols({
+                    colKeys: keys,
+                    skipHeader: skipHeaderOnAutoSize,
+                    stopAtGroup: columnGroup,
+                    source: 'uiColumnResized',
+                });
+            }
+
+            callback();
+        };
+
+        element.addEventListener('dblclick', listener);
+
+        return () => element.removeEventListener('dblclick', listener);
+    }
+
     // returns the width we can set to this col, taking into consideration min and max widths
     private normaliseColumnWidth(column: AgColumn, newWidth: number): number {
         const minWidth = column.getMinWidth();
@@ -192,5 +247,26 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
 
         return newWidth;
+    }
+
+    private onFirstDataRendered(): void {
+        const autoSizeStrategy = this.gos.get('autoSizeStrategy');
+        if (autoSizeStrategy?.type !== 'fitCellContents') {
+            return;
+        }
+
+        const { colIds: columns, skipHeader } = autoSizeStrategy;
+        // ensure render has finished
+        setTimeout(() => {
+            if (columns) {
+                this.autoSizeCols({
+                    colKeys: columns,
+                    skipHeader,
+                    source: 'autosizeColumns',
+                });
+            } else {
+                this.autoSizeAllColumns('autosizeColumns', skipHeader);
+            }
+        });
     }
 }

@@ -211,13 +211,13 @@ export function getAllDisplayedColumnGroups(beans: BeanCollection): (Column | Co
 
 /** @deprecated v31.1 */
 export function autoSizeColumn(beans: BeanCollection, key: string | ColDef | Column, skipHeader?: boolean): void {
-    return beans.columnAutosizeService.autoSizeCols({ colKeys: [key], skipHeader: skipHeader, source: 'api' });
+    return beans.columnAutosizeService?.autoSizeCols({ colKeys: [key], skipHeader: skipHeader, source: 'api' });
 }
 
 export function autoSizeColumns(beans: BeanCollection, keys: (string | ColDef | Column)[], skipHeader?: boolean): void {
-    beans.columnAutosizeService.autoSizeCols({ colKeys: keys, skipHeader: skipHeader, source: 'api' });
+    beans.columnAutosizeService?.autoSizeCols({ colKeys: keys, skipHeader: skipHeader, source: 'api' });
 }
 
 export function autoSizeAllColumns(beans: BeanCollection, skipHeader?: boolean): void {
-    beans.columnAutosizeService.autoSizeAllColumns('api', skipHeader);
+    beans.columnAutosizeService?.autoSizeAllColumns('api', skipHeader);
 }

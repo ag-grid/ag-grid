@@ -7,7 +7,6 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
 import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import { _getInnerWidth, _setDisplayed } from '../../../utils/dom';
-import { TouchListener } from '../../../widgets/touchListener';
 import type { HorizontalResizeService } from '../../common/horizontalResizeService';
 import type { IHeaderResizeFeature } from '../abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
@@ -17,7 +16,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private pinnedWidthService: PinnedWidthService;
     private ctrlsService: CtrlsService;
     private columnSizeService: ColumnSizeService;
-    private columnAutosizeService: ColumnAutosizeService;
+    private columnAutosizeService?: ColumnAutosizeService;
 
     public wireBeans(beans: BeanCollection) {
         this.horizontalResizeService = beans.horizontalResizeService;
@@ -74,22 +73,8 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
             });
             destroyResizeFuncs.push(finishedWithResizeFunc);
 
-            if (canAutosize) {
-                const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
-
-                const autoSizeColListener = () => {
-                    this.columnAutosizeService.autoSizeColumn(this.column, 'uiColumnResized', skipHeaderOnAutoSize);
-                };
-
-                this.eResize.addEventListener('dblclick', autoSizeColListener);
-                const touchListener: TouchListener = new TouchListener(this.eResize);
-                touchListener.addEventListener('doubleTap', autoSizeColListener);
-
-                destroyResizeFuncs.push(() => {
-                    this.eResize.removeEventListener('dblclick', autoSizeColListener);
-                    touchListener.removeEventListener('doubleTap', autoSizeColListener);
-                    touchListener.destroy();
-                });
+            if (canAutosize && this.columnAutosizeService) {
+                destroyResizeFuncs.push(this.columnAutosizeService.addColumnAutosize(this.eResize, this.column));
             }
         };
 

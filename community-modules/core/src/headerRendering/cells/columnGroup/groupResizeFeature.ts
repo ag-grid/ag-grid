@@ -25,7 +25,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     private autoWidthCalculator: AutoWidthCalculator;
     private visibleColsService: VisibleColsService;
     private columnSizeService: ColumnSizeService;
-    private columnAutosizeService: ColumnAutosizeService;
+    private columnAutosizeService?: ColumnAutosizeService;
 
     public wireBeans(beans: BeanCollection) {
         this.horizontalResizeService = beans.horizontalResizeService;
@@ -77,32 +77,12 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
 
         this.addDestroyFunc(finishedWithResizeFunc);
 
-        if (!this.gos.get('suppressAutoSize')) {
-            const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
-
-            this.eResize.addEventListener('dblclick', () => {
-                // get list of all the column keys we are responsible for
-                const keys: string[] = [];
-                const leafCols = this.columnGroup.getDisplayedLeafColumns();
-
-                leafCols.forEach((column) => {
-                    // not all cols in the group may be participating with auto-resize
-                    if (!column.getColDef().suppressAutoSize) {
-                        keys.push(column.getColId());
-                    }
-                });
-
-                if (keys.length > 0) {
-                    this.columnAutosizeService.autoSizeCols({
-                        colKeys: keys,
-                        skipHeader: skipHeaderOnAutoSize,
-                        stopAtGroup: this.columnGroup,
-                        source: 'uiColumnResized',
-                    });
-                }
-
-                this.resizeLeafColumnsToFit('uiColumnResized');
-            });
+        if (!this.gos.get('suppressAutoSize') && this.columnAutosizeService) {
+            this.addDestroyFunc(
+                this.columnAutosizeService.addColumnGroupResize(this.eResize, this.columnGroup, () =>
+                    this.resizeLeafColumnsToFit('uiColumnResized')
+                )
+            );
         }
     }
 
