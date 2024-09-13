@@ -134,12 +134,6 @@ export abstract class ChartProxy<
                 // seriesNodeClick: (params: any) => {
                 //     this.dispatchCrossFilterEvent(params);
                 // },
-                click: () => {
-                    if (this.crossFiltering) {
-                        // Clicking on the chart background clears the filters
-                        this.crossFilterService.reset();
-                    }
-                },
             },
         } as AgChartOptions);
     }
