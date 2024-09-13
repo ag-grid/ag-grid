@@ -47,6 +47,7 @@ import {
     sizeColumnsToFit,
 } from './columnApi';
 import { ColumnAutosizeService } from './columnAutosizeService';
+import { ControlsColService } from './controlsColService';
 import { DataTypeService } from './dataTypeService';
 
 export const DataTypeModule = _defineModule({
@@ -59,6 +60,12 @@ export const ColumnAutosizeModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/column-autosize',
     beans: [ColumnAutosizeService],
+});
+
+export const ControlsColumnModule = _defineModule({
+    version: VERSION,
+    moduleName: '@ag-grid-community/controls-column',
+    beans: [ControlsColService],
 });
 
 export const ColumnApiModule = _defineModule<_ColumnGridApi<any>>({

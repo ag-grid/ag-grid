@@ -15,7 +15,7 @@ import type { ColumnMoveService } from '../columns/columnMoveService';
 import type { ColumnNameService } from '../columns/columnNameService';
 import type { ColumnSizeService } from '../columns/columnSizeService';
 import type { ColumnViewportService } from '../columns/columnViewportService';
-import type { IControlsColService } from '../columns/controlsColService';
+import type { ControlsColService } from '../columns/controlsColService';
 import type { DataTypeService } from '../columns/dataTypeService';
 import type { FuncColsService } from '../columns/funcColsService';
 import type { PivotResultColsService } from '../columns/pivotResultColsService';
@@ -229,7 +229,7 @@ export interface CoreBeanCollection {
     columnFactory: ColumnFactory;
     pivotResultColsService: PivotResultColsService;
     autoColService?: IAutoColService;
-    controlsColService?: IControlsColService;
+    controlsColService?: ControlsColService;
     columnDefFactory: ColumnDefFactory;
     columnGroupStateService: ColumnGroupStateService;
     columnEventDispatcher: ColumnEventDispatcher;

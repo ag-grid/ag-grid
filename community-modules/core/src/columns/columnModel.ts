@@ -39,10 +39,10 @@ import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnGroupStateService } from './columnGroupStateService';
 import type { ColumnMoveService } from './columnMoveService';
 import type { ColumnSizeService } from './columnSizeService';
-import { GROUP_AUTO_COLUMN_ID, isColumnControlsCol } from './columnUtils';
+import { GROUP_AUTO_COLUMN_ID } from './columnUtils';
 import { destroyColumnTree, getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
-import type { IControlsColService } from './controlsColService';
+import type { ControlsColService } from './controlsColService';
 import type { FuncColsService } from './funcColsService';
 import type { PivotResultColsService } from './pivotResultColsService';
 import type { VisibleColsService } from './visibleColsService';
@@ -72,7 +72,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private pivotResultColsService: PivotResultColsService;
     private columnAnimationService: ColumnAnimationService;
     private autoColService?: IAutoColService;
-    private controlsColService?: IControlsColService;
+    private controlsColService?: ControlsColService;
     private valueCache: ValueCache;
     private columnDefFactory: ColumnDefFactory;
     private columnApplyStateService: ColumnApplyStateService;
@@ -411,19 +411,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
             map: {},
         };
 
-        function sortControlsColsFirst(a: AgColumn, b: AgColumn): number {
-            const isAControl = isColumnControlsCol(a);
-            const isBControl = isColumnControlsCol(b);
-            if (isAControl && !isBControl) {
-                return -1;
-            }
-            if (!isAControl && isBControl) {
-                return 1;
-            }
-            return 0;
-        }
-        this.lastOrder?.sort(sortControlsColsFirst);
-        this.lastPivotOrder?.sort(sortControlsColsFirst);
+        this.controlsColService?.sortControlsColsFirst(this.lastOrder);
+        this.controlsColService?.sortControlsColsFirst(this.lastPivotOrder);
     }
 
     private addControlsCols(): void {
