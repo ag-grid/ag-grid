@@ -111,7 +111,7 @@ export function _includes<T>(array: T[], value: T): boolean {
 }
 
 export function _flatten<T>(arrayOfArrays: (T | T[])[]): T[] {
-    return arrayOfArrays.flatMap((t) => t);
+    return arrayOfArrays?.flatMap((t) => t) ?? [];
 }
 
 export function _pushAll<T>(target: T[], source: T[]): void {
