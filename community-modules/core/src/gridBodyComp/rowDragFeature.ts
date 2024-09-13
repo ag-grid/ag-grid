@@ -44,6 +44,32 @@ export interface RowDropZoneEvents {
     onDragCancel?: (params: RowDragCancelEvent) => void;
 }
 
+/** We actually have a different interface if we are passing params out of the grid and
+ * directly into another grid. These internal params just work directly off the DraggingEvent.
+ * However, we don't want to expose these to the user, so we have a different interface for
+ * them called RowDropZoneParams which works with RowDragEvents.
+ */
+interface InternalRowDropZoneEvents {
+    /** Callback function that will be executed when the rowDrag enters the target. */
+    onDragEnter?: (params: DraggingEvent) => void;
+    /** Callback function that will be executed when the rowDrag leaves the target */
+    onDragLeave?: (params: DraggingEvent) => void;
+    /**
+     * Callback function that will be executed when the rowDrag is dragged inside the target.
+     * Note: this gets called multiple times.
+     */
+    onDragging?: (params: DraggingEvent) => void;
+    /** Callback function that will be executed when the rowDrag drops rows within the target. */
+    onDragStop?: (params: DraggingEvent) => void;
+    onDragCancel?: (params: DraggingEvent) => void;
+}
+interface InternalRowDropZoneParams extends InternalRowDropZoneEvents {
+    /** A callback method that returns the DropZone HTMLElement. */
+    getContainer: () => HTMLElement;
+    /** internal flag for identifying params from the grid. */
+    fromGrid?: boolean;
+}
+
 export interface RowDropZoneParams extends RowDropZoneEvents {
     /** A callback method that returns the DropZone HTMLElement. */
     getContainer: () => HTMLElement;
@@ -347,8 +373,9 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const onDragStop = this.onDragStop.bind(this);
         const onDragCancel = this.onDragCancel.bind(this);
 
+        let params: InternalRowDropZoneParams;
         if (!events) {
-            return {
+            params = {
                 getContainer,
                 onDragEnter,
                 onDragLeave,
@@ -356,43 +383,45 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 onDragStop,
                 onDragCancel,
                 /* @private */ fromGrid: true,
-            } as RowDropZoneParams;
+            };
+        } else {
+            params = {
+                getContainer,
+                onDragEnter: events.onDragEnter
+                    ? (e) => {
+                          onDragEnter(e);
+                          events.onDragEnter!(this.draggingToRowDragEvent('rowDragEnter', e));
+                      }
+                    : onDragEnter,
+                onDragLeave: events.onDragLeave
+                    ? (e) => {
+                          onDragLeave(e);
+                          events.onDragLeave!(this.draggingToRowDragEvent('rowDragLeave', e));
+                      }
+                    : onDragLeave,
+                onDragging: events.onDragging
+                    ? (e) => {
+                          onDragging(e);
+                          events.onDragging!(this.draggingToRowDragEvent('rowDragMove', e));
+                      }
+                    : onDragging,
+                onDragStop: events.onDragStop
+                    ? (e) => {
+                          onDragStop(e);
+                          events.onDragStop!(this.draggingToRowDragEvent('rowDragEnd', e));
+                      }
+                    : onDragStop,
+                onDragCancel: events.onDragCancel
+                    ? (e) => {
+                          onDragCancel(e);
+                          events.onDragCancel!(this.draggingToRowDragEvent('rowDragCancel', e));
+                      }
+                    : onDragCancel,
+                fromGrid: true /* @private */,
+            };
         }
-
-        return {
-            getContainer,
-            onDragEnter: events.onDragEnter
-                ? (e) => {
-                      onDragEnter(e);
-                      events.onDragEnter!(this.draggingToRowDragEvent('rowDragEnter', e as any));
-                  }
-                : onDragEnter,
-            onDragLeave: events.onDragLeave
-                ? (e) => {
-                      onDragLeave(e);
-                      events.onDragLeave!(this.draggingToRowDragEvent('rowDragLeave', e as any));
-                  }
-                : onDragLeave,
-            onDragging: events.onDragging
-                ? (e) => {
-                      onDragging(e);
-                      events.onDragging!(this.draggingToRowDragEvent('rowDragMove', e as any));
-                  }
-                : onDragging,
-            onDragStop: events.onDragStop
-                ? (e) => {
-                      onDragStop(e);
-                      events.onDragStop!(this.draggingToRowDragEvent('rowDragEnd', e as any));
-                  }
-                : onDragStop,
-            onDragCancel: events.onDragCancel
-                ? (e) => {
-                      onDragCancel(e);
-                      events.onDragCancel!(this.draggingToRowDragEvent('rowDragCancel', e as any));
-                  }
-                : onDragCancel,
-            fromGrid: true /* @private */,
-        } as RowDropZoneParams;
+        // Cast to RowDropZoneParams to hide the internal properties
+        return params as RowDropZoneParams;
     }
 
     private draggingToRowDragEvent<T extends RowDragEventType>(type: T, draggingEvent: DraggingEvent): RowDragEvent<T> {
