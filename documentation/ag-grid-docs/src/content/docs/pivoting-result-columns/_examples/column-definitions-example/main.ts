@@ -26,7 +26,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     pivotMode: true,
     processPivotResultColDef: (colDef) => {
         if (typeof colDef.cellStyle === 'object') {
-            colDef.cellStyle.color = 'red';
+            colDef.cellStyle.color = '#696FA2';
         }
     },
 };
