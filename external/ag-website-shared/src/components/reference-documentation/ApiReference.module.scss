@@ -70,6 +70,7 @@
     }
 
     pre:global(.code) {
+        max-width: calc(100vw - var(--layout-horizontal-margins) * 2);
         margin-top: 0;
         margin-bottom: $spacing-size-2;
     }
