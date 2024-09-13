@@ -12,7 +12,9 @@ import {
     RowNode,
     _cloneObject,
     _errorOnce,
+    _exists,
     _getRowIdCallback,
+    _iterateObject,
     _missingOrEmpty,
     _warnOnce,
 } from '@ag-grid-community/core';
@@ -44,6 +46,9 @@ export interface ClientSideNodeManagerUpdateRowDataResult {
 
     /** True if at least one row was inserted (and not just appended) */
     rowsInserted: boolean;
+
+    /** True if the order of root.allLeafChildren has changed */
+    rowsOrderChanged: boolean;
 }
 
 export class ClientSideNodeManager {
@@ -88,15 +93,11 @@ export class ClientSideNodeManager {
         this.rootNode.childrenAfterFilter = [];
     }
 
-    public getCopyOfNodesMap(): { [id: string]: RowNode } {
-        return _cloneObject(this.allNodesMap);
-    }
-
     public getRowNode(id: string): RowNode | undefined {
         return this.allNodesMap[id];
     }
 
-    public setRowData(rowData: any[]): RowNode[] | undefined {
+    public setRowData(rowData: any[]): void {
         if (typeof rowData === 'string') {
             _warnOnce('rowData must be an array.');
             return;
@@ -140,6 +141,75 @@ export class ClientSideNodeManager {
         }
     }
 
+    public setImmutableRowData<TData>(rowData: TData[]): ClientSideNodeManagerUpdateRowDataResult | null {
+        // convert the setRowData data into a transaction object by working out adds, removes and updates
+
+        const rowDataTransaction = this.createTransactionForRowData(rowData);
+        if (!rowDataTransaction) {
+            return null; // no transaction to apply
+        }
+
+        // Apply the transaction
+        const result = this.updateRowData(rowDataTransaction);
+
+        // If true, we will not apply the new order specified in the rowData, but keep the old order.
+        const suppressSortOrder = this.gos.get('suppressMaintainUnsortedOrder');
+        if (!suppressSortOrder) {
+            // we need to reorder the nodes to match the new data order
+            result.rowsOrderChanged = this.updateRowOrderFromRowData(rowData);
+        }
+
+        return result;
+    }
+
+    /** Converts the setRowData() command to a transaction */
+    private createTransactionForRowData<TData>(rowData: TData[]): RowDataTransaction | null {
+        const getRowIdFunc = _getRowIdCallback(this.gos);
+        if (getRowIdFunc == null) {
+            _errorOnce('ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
+            return null;
+        }
+
+        // get a map of the existing data, that we are going to modify as we find rows to not delete
+        const existingNodesMap: { [id: string]: RowNode | undefined } = _cloneObject(this.allNodesMap);
+
+        const remove: TData[] = [];
+        const update: TData[] = [];
+        const add: TData[] = [];
+
+        if (_exists(rowData)) {
+            // split all the new data in the following:
+            // if new, push to 'add'
+            // if update, push to 'update'
+            // if not changed, do not include in the transaction
+            rowData.forEach((data: TData) => {
+                const id = getRowIdFunc({ data, level: 0 });
+                const existingNode = existingNodesMap[id];
+
+                if (existingNode) {
+                    const dataHasChanged = existingNode.data !== data;
+                    if (dataHasChanged) {
+                        update.push(data);
+                    }
+                    // otherwise, if data not changed, we just don't include it anywhere, as it's not a delta
+
+                    existingNodesMap[id] = undefined; // remove from list, so we know the item is not to be removed
+                } else {
+                    add.push(data);
+                }
+            });
+        }
+
+        // at this point, all rows that are left, should be removed
+        _iterateObject(existingNodesMap, (id, rowNode) => {
+            if (rowNode) {
+                remove.push(rowNode.data);
+            }
+        });
+
+        return { remove, update, add };
+    }
+
     public updateRowData(rowDataTran: RowDataTransaction): ClientSideNodeManagerUpdateRowDataResult {
         this.rowCountReady = true;
         this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
@@ -147,6 +217,7 @@ export class ClientSideNodeManager {
         const updateRowDataResult: ClientSideNodeManagerUpdateRowDataResult = {
             rowNodeTransaction: { remove: [], update: [], add: [] },
             rowsInserted: false,
+            rowsOrderChanged: false,
         };
 
         const nodesToUnselect: RowNode[] = [];
@@ -166,7 +237,7 @@ export class ClientSideNodeManager {
      * Time complexity is O(n) where n is the number of rows/rowData
      * @returns true if the order changed, otherwise false
      */
-    public updateRowOrderFromRowData<TData>(rowData: TData[]): boolean {
+    private updateRowOrderFromRowData<TData>(rowData: TData[]): boolean {
         const rows = this.rootNode.allLeafChildren;
         const rowsLength = rows?.length ?? 0;
         const rowsOutOfOrder = new Map<TData, ClientSideNodeManagerRowNode>();
