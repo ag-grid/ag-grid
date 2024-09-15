@@ -11,9 +11,9 @@ import {
     colorSchemeLightWarm,
     iconSetAlpine,
     iconSetMaterial,
+    iconSetQuartz,
     iconSetQuartzBold,
     iconSetQuartzLight,
-    iconSetQuartzRegular,
     themeAlpine,
     themeBalham,
     themeQuartz,
@@ -64,7 +64,7 @@ ModuleRegistry.registerModules([
                     [rowData]="rowData"
                     [theme]="theme"
                     loadThemeGoogleFonts
-                    sideBar
+                    [sideBar]="true"
                 />
             </div>
         </div>
@@ -85,16 +85,16 @@ export class AppComponent {
     ];
     colorScheme = null;
 
-    iconSets = [null, iconSetQuartzLight, iconSetQuartzRegular, iconSetQuartzBold, iconSetAlpine, iconSetMaterial];
+    iconSets = [null, iconSetQuartzLight, iconSetQuartz, iconSetQuartzBold, iconSetAlpine, iconSetMaterial];
     iconSet = null;
 
     get theme() {
         let theme = this.baseTheme;
         if (this.iconSet) {
-            theme = theme.with(this.iconSet);
+            theme = theme.withPart(this.iconSet);
         }
         if (this.colorScheme) {
-            theme = theme.with(this.colorScheme);
+            theme = theme.withPart(this.colorScheme);
         }
         return theme;
     }

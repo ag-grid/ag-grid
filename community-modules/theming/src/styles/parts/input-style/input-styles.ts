@@ -1,4 +1,4 @@
-import { createPart } from '../../../Part';
+import { createPart, createPartVariant } from '../../../Part';
 import type { BorderValue, ColorValue, LengthValue, ShadowValue } from '../../../theme-types';
 import { inputStyleBaseCSS } from './GENERATED-input-style-base';
 import { inputStyleUnderlinedCSS } from './GENERATED-input-style-underlined';
@@ -88,7 +88,7 @@ export type InputStyleParams = {
 // prettier-ignore
 export const inputStyleBase =
     /*#__PURE__*/
-    createPart({feature: 'inputStyle', variant: 'base'})
+    createPart('inputStyle', 'base')
         .withAdditionalParams<InputStyleParams>({
             inputBackgroundColor: 'transparent',
             inputBorder: false,
@@ -134,7 +134,7 @@ export const inputStyleBase =
 // prettier-ignore
 export const inputStyleBordered =
     /*#__PURE__*/
-    inputStyleBase.createVariant('bordered')
+    createPartVariant(inputStyleBase, 'bordered')
         .withParams({
             inputBackgroundColor: {
                 ref: 'backgroundColor',
@@ -169,7 +169,7 @@ export const inputStyleBordered =
 // prettier-ignore
 export const inputStyleUnderlined =
     /*#__PURE__*/
-    inputStyleBase.createVariant('underlined')
+    createPartVariant(inputStyleBase, 'underlined')
         .withParams({
             inputBorder: {
                 width: 2,

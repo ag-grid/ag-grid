@@ -4,7 +4,8 @@ ag-grid-angular {
 }
 
 .ag-root-wrapper,
-.ag-popup {
+.ag-popup,
+.ag-dnd-ghost {
     line-height: normal;
     cursor: default;
     white-space: normal;

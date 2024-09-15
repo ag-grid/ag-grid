@@ -69,6 +69,16 @@
     gap: $spacing-size-4;
 }
 
+.primaryCta {
+    color: var(--color-white);
+    background: var(--color-brand-700);
+    align-content: center;
+
+    &:hover {
+        color: var(--color-white);
+    }
+}
+
 .secondaryCta {
     color: var(--color-util-brand-400);
 }

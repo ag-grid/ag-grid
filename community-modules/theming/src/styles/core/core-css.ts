@@ -682,7 +682,7 @@ export const coreDefaults: CoreParams = {
     },
     rowHoverColor: {
         ref: 'accentColor',
-        mix: 0.12,
+        mix: 0.08,
     },
     columnHoverColor: {
         ref: 'accentColor',
@@ -690,7 +690,7 @@ export const coreDefaults: CoreParams = {
     },
     selectedRowBackgroundColor: {
         ref: 'accentColor',
-        mix: 0.08,
+        mix: 0.12,
     },
     modalOverlayBackgroundColor: {
         ref: 'backgroundColor',

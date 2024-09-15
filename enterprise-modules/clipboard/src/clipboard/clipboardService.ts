@@ -821,9 +821,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         if (!column.isCellEditable(rowNode)) {
             return;
         }
-        const emptyValue =
-            this.valueService.parseValue(column, rowNode, '', this.valueService.getValueForDisplay(column, rowNode)) ??
-            null;
+        const emptyValue = this.valueService.getDeleteValue(column, rowNode);
         rowNode.setDataValue(column, emptyValue, 'clipboardService');
     }
 

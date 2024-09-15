@@ -1,5 +1,6 @@
 import type {
     BeanCollection,
+    DragAndDropIcon,
     DragAndDropService,
     DragItem,
     DragSourceType,
@@ -73,7 +74,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     protected abstract isItemDroppable(item: TItem, draggingEvent: DraggingEvent): boolean;
     protected abstract updateItems(items: TItem[]): void;
     protected abstract getExistingItems(): TItem[];
-    protected abstract getIconName(): string;
+    protected abstract getIconName(): DragAndDropIcon;
     protected abstract getAriaLabel(): string;
     protected abstract createPillComponent(
         item: TItem,
@@ -131,7 +132,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
 
         this.setupDropTarget();
 
-        this.positionableFeature = new PositionableFeature(this.getGui(), { minHeight: 100 });
+        this.positionableFeature = new PositionableFeature(this.getGui());
         this.createManagedBean(this.positionableFeature);
 
         this.refreshGui();

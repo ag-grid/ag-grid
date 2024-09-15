@@ -1484,8 +1484,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Whether to load supported theme fonts from the Google Fonts server.
      *
      * - `true` -> load fonts automatically if your theme uses them
-     * - `false` -> do not load fonts, you must either load them from Google Fonts
-     *   yourself or download them and serve them from your app
+     * - `false` -> do not load fonts. You must load them from Google Fonts yourself or download
+     *              them and serve them from your app, otherwise a fallback font will be used.
      */
     @Input() public loadThemeGoogleFonts: boolean | undefined = undefined;
     /** For customising the context menu.

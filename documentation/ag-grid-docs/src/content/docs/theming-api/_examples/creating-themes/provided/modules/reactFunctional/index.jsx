@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const myCustomTheme = createTheme().with(iconSetMaterial).withParams({
+const myCustomTheme = createTheme().withPart(iconSetMaterial).withParams({
     accentColor: 'red',
     foregroundColor: '#660000',
     iconSize: 18,

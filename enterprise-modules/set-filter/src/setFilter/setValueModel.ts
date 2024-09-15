@@ -238,7 +238,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
 
     public updateOnParamsChange(filterParams: SetFilterParams<any, V>): AgPromise<void> {
         return new AgPromise<void>((resolve) => {
-            const { values, textFormatter, suppressSorting } = filterParams;
+            const { values, textFormatter, suppressSorting, treeListFormatter } = filterParams;
 
             const currentProvidedValues = this.providedValues;
             const currentSuppressSorting = this.suppressSorting;
@@ -248,6 +248,10 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
 
             this.suppressSorting = suppressSorting || false;
             this.providedValues = values ?? null;
+
+            if (this.displayValueModel instanceof TreeSetDisplayValueModel) {
+                this.displayValueModel.updateOnParamsChange(treeListFormatter);
+            }
 
             // Rebuild values when values or their sort order changes
             if (this.providedValues !== currentProvidedValues || this.suppressSorting !== currentSuppressSorting) {

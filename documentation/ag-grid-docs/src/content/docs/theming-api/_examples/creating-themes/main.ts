@@ -8,7 +8,7 @@ import { createTheme, iconSetMaterial } from '@ag-grid-community/theming';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const myCustomTheme = createTheme().with(iconSetMaterial).withParams({
+const myCustomTheme = createTheme().withPart(iconSetMaterial).withParams({
     accentColor: 'red',
     foregroundColor: '#660000',
     iconSize: 18,

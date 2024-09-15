@@ -1,0 +1,85 @@
+---
+title: "Tree Data - Filtering"
+enterprise: true
+---
+Filtering can be applied to Tree Data to reduce the range of displayed data.
+
+## Filtering
+By default, when a parent row passes a [Filter](./filtering-overview/), the children will also be displayed.
+
+The example below applies a filter to the group column for 'ProjectAlpha', note that two 'ProjectAlpha' groups are displayed
+alongside all of their children.
+
+{% gridExampleRunner title="Filtering" name="filtering-simple" /%}
+
+## Exclude Children when Filtering
+To omit children when a parent row passes a filter, set `excludeChildrenWhenTreeDataFiltering` to `true` in the grid options.
+
+The example below applies a default filter to the group column for 'ProjectAlpha', note that only one 'ProjectAlpha' group passes
+the filter instead of two - this is because the `Desktop -> ProjectAlpha` group is a [Filler Group](./tree-data-hierarchy/#filler-groups).
+
+{% gridExampleRunner title="Exclude Children when Filtering" name="filtering-exclude-children" /%}
+
+This demonstrates the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    excludeChildrenWhenTreeDataFiltering: true,
+}
+```
+
+## Ignore Filters when Aggregating Values
+
+When using Tree Data and filters, the aggregates are only calculated from the rows which pass the filter. This can be changed by enabling the grid option `suppressAggFilteredOnly`.
+
+The example below has a filter applied resulting in only one of the `Documents` children being displayed. Note that when the `suppressAggFilteredOnly` option is toggled on, the `Documents` group aggregation will display the sum of all children, regardless of the filter.
+
+{% gridExampleRunner title="Aggregated Values Based on Pre-Filtered Data" name="group-agg-filtering" exampleHeight=250 /%}
+
+This demonstrates the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    suppressAggFilteredOnly: true,
+}
+```
+
+## Filter Components
+### Tree Filter
+
+The [Tree Filter](./filter-set-tree-list) is a version of the [Set Filter](./filter-set/) that is designed to work with hierarchical data, by displaying
+the set filter in a tree structure that matches the data.
+
+The example below demonstrates the Tree Filter available on the Group column:
+
+{% gridExampleRunner title="Tree List" name="tree-list-filtering" /%}
+
+This demonstrates the following configuration to enable the Tree List Filter, note that a `keyCreator` must be
+used to convert each path into a unique string:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoGroupColumnDef: {
+        filter: 'agSetColumnFilter',
+        filterParams: {
+            treeList: true,
+            keyCreator: (params) => (params.value ? params.value.join('#') : null),
+        },
+    },
+}
+```
+
+For further information, refer to the [Tree Filter](./filter-set-tree-list/) documentation.
+
+
+### Set Filter
+
+The [Set Filter](./filter-set/) can be used with Tree Data, and will list all unique values across each level of the group hierarchy.
+
+The example below demonstrates the Set Filter available on the Size column.
+
+{% gridExampleRunner title="Set List" name="set-list-filtering" /%}
+
+{% note %}
+When using the Set Filter with [Aggregations](./aggregation) the set filter options can change when applying filters.
+
+To prevent this it is advised that you [Enable Group Aggregation Filtering](./aggregation-filtering/#filtering-group-aggregations).
+{% /note %}

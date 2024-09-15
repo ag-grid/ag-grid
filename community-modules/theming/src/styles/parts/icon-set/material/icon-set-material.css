@@ -5,6 +5,7 @@
     height: var(--ag-icon-size);
     background-color: currentColor;
     mask-size: contain;
+    mask-image: linear-gradient(#0000, #0000);
 }
 
 .ag-icon-aggregation::before {

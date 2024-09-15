@@ -62,7 +62,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
                 this.rangeService.setCellRanges([]);
             }
         }
-        const listener = this.updateForGridChange.bind(this);
+        const listener = this.updateForGridChange.bind(this, {});
         this.addManagedEventListeners({
             cellSelectionChanged: (event) => {
                 if (event.id && event.id === this.model.chartId) {
@@ -197,6 +197,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             })),
             fields,
             chartId: this.getChartId(),
+            getCrossFilteringContext: () => ({ lastSelectedChartId: 'xxx' }), //this.params.crossFilteringContext, //TODO
             seriesChartTypes: this.getSeriesChartTypes(),
             updatedOverrides: updatedOverrides,
             seriesGroupType: this.model.seriesGroupType,

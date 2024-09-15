@@ -125,7 +125,7 @@ const CHARTS_ICON_MAP = {
     chartsIcicle: CarbonIcon.ChartClusterBar,
     chartsFunnel: CarbonIcon.Filter,
     chartsPyramid: CarbonIcon.UpToTop,
-    chartsBullet: CarbonIcon.ChartBullet,
+    chartsLinearGauge: CarbonIcon.ChartBullet,
     chartsMap: CarbonIcon.Plan,
     chartsCandlestick: CarbonIcon.ChartCandlestick,
     chartsOHLC: CarbonIcon.ChartHighLow,

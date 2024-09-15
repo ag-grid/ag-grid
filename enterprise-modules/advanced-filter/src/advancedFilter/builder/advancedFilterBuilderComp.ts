@@ -310,7 +310,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     private createItemComponent(
         item: AdvancedFilterBuilderItem,
         focusWrapper: HTMLElement
-    ): Component<AdvancedFilterBuilderEvents> {
+    ): AdvancedFilterBuilderItemComp | AdvancedFilterBuilderItemAddComp {
         const itemComp = this.createBean(
             item.filterModel
                 ? new AdvancedFilterBuilderItemComp(item, this.dragFeature, focusWrapper)

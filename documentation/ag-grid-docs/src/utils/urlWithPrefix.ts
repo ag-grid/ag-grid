@@ -8,10 +8,12 @@ export const urlWithPrefix = ({
     url = '',
     framework,
     siteBaseUrl = SITE_BASE_URL,
+    trailingSlash,
 }: {
     url: string;
     framework?: Framework;
     siteBaseUrl?: string;
+    trailingSlash?: boolean;
 }): string => {
     let path = url;
     if (url.startsWith('./')) {
@@ -27,6 +29,10 @@ export const urlWithPrefix = ({
         } else {
             throw new Error(errorMessage);
         }
+    }
+
+    if (trailingSlash && !path.includes('#')) {
+        path = path + '/';
     }
 
     return path;

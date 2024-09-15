@@ -10,36 +10,40 @@ export type Part<TParams = unknown> = {
     readonly css: ReadonlyArray<CssFragment>;
 
     /**
-     * Provide new values for theme params. You may only provide values for
-     * params provided by the part's dependencies.
+     * Return a new Part new different default values for core grid params.
      */
     withParams(defaults: Partial<TParams>): Part<TParams>;
 
     /**
-     * Create a new theme part with additional params. Unlike `withParams`,
-     * this can be used to declare that this param adds support for new params
-     * not already in the parts dependencies
+     * Return a new part with additional params. Unlike `withParams`, this can
+     * be used to add support for params used by the part's own CSS.
      */
     withAdditionalParams<TAdditionalParams>(defaults: TAdditionalParams): Part<TParams & TAdditionalParams>;
 
     /**
-     * Provide a new fragment of CSS source code.
+     * Return a new Part with additional CSS.
      */
     withCSS(css: CssFragment): Part<TParams>;
-
-    /**
-     * Create a new part variant copying data from this part
-     */
-    createVariant(variant: string): Part<TParams>;
 };
 
-export type CreatePartArgs = {
-    feature: Feature;
-    variant: string;
-};
+export const createPartVariant = <T>(part: Part<T>, variant: string): Part<T> =>
+    new PartImpl(part.feature, variant, part.defaults, part.css);
 
-export const createPart = ({ feature, variant }: CreatePartArgs): Part<CoreParams> =>
-    /*#__PURE__*/ new PartImpl(feature, variant);
+// string & {} used to preserve auto-complete from string union but allow any string
+// eslint-disable-next-line @typescript-eslint/ban-types
+type AnyString = string & {};
+
+let customPartCounter = 0;
+/**
+ * Create a new empty part.
+ *
+ * @param feature an The part feature, e.g. 'iconSet'. Adding a part to a theme will remove any existing part with the same feature.
+ * @param variant an optional identifier for debugging, if omitted one will be generated
+ */
+export const createPart = (
+    feature: Feature | AnyString,
+    variant: string = `customPart${++customPartCounter}`
+): Part<CoreParams> => /*#__PURE__*/ new PartImpl(feature, variant);
 
 class PartImpl<TParams = unknown> implements Part<TParams> {
     constructor(
@@ -69,9 +73,5 @@ class PartImpl<TParams = unknown> implements Part<TParams> {
 
     withCSS(css: CssFragment): Part<TParams> {
         return new PartImpl(this.feature, this.variant, this.defaults, this.css.concat(css));
-    }
-
-    createVariant(variant: string): Part<TParams> {
-        return new PartImpl(this.feature, variant, this.defaults, this.css);
     }
 }

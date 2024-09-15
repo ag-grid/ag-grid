@@ -3,8 +3,10 @@
     color: var(--color-fg-primary);
 }
 
-.icon svg {
+.copyToClipboardIcon {
     fill: var(--color-fg-secondary);
+    width: var(--icon-size);
+    height: var(--icon-size);
     padding: 6px;
 
     &:hover {

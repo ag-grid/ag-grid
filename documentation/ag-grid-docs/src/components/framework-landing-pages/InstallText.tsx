@@ -19,8 +19,8 @@ const InstallText = () => {
             <span ref={installTextRef} className={styles.installText}>
                 $ npm install ag-grid-react
             </span>
-            <span className={`${styles.icon} plausible-event-name=react-table-copy-cta`} onClick={copyToClipboard}>
-                <Icon svgClasses={styles.icon} name={isCopied ? 'tick' : 'copy'} />
+            <span className={`plausible-event-name=react-table-copy-cta`} onClick={copyToClipboard}>
+                <Icon svgClasses={styles.copyToClipboardIcon} name={isCopied ? 'tick' : 'copy'} />
             </span>
         </>
     );

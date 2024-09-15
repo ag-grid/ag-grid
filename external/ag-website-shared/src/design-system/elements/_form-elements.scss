@@ -286,7 +286,7 @@ input[type='range']#{$selector-exclude-grid} {
         margin-top: math.div(-6em, 16);
         border-radius: 50%;
         border: none;
-        background-color: var(--color-input-bg-checked);
+        background-color: var(--color-link);
         transition: background-color $transition-default-timing;
     }
 
