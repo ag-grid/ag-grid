@@ -29,7 +29,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     autoGroupColumnDef: {
         minWidth: 200,
     },
-    sideBar: true,
+    sideBar: 'columns',
     pivotMode: true,
 };
 
