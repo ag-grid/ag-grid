@@ -5,19 +5,24 @@
         "landingPageHighlight": "React 19 Support, new Theming API & Custom Drag & Drop Image",
         "highlights": [
             {
-                "text": "React 19 Support"
+                "text": "React 19 Support",
+                "path": "./compatibility"
             },
             {
-                "text": "Custom Drag & Drop Image"
+                "text": "New Theming API",
+                "path": "./theming-api"
             },
             {
-                "text": "Deferred Column Moving Mode"
+                "text": "Updated Selection API",
+                "path": "./row-selection"
             },
             {
-                "text": "Theming API"
+                "text": "Custom Drag & Drop Image",
+                "path": "./row-dragging/#custom-drag-and-drop-image"
             },
             {
-                "text": "Custom React/Vue Components as Icons"
+                "text": "Deferred Column Moving Mode",
+                "path": "./column-moving/#suppress-move-when-dragging"
             }
         ],
         "notesPath": "./upgrading-to-ag-grid-32-2"

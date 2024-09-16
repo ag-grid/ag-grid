@@ -40,15 +40,27 @@ See the [Codemods](./codemods/) documentation for more details.
 
 ### Events 
 
-`columnEverythingChanged` - deprecated, use `displayedColumnsChanged` which is fired at the same time, or one of the more specific [Column Events](./column-state/#column-events).
+- `columnEverythingChanged` - deprecated, use `displayedColumnsChanged` which is fired at the same time, or one of the more specific [Column Events](./column-state/#column-events).
+
+- `rangeDeleteStart` - deprecated, use `cellSelectionDeleteStart` instead.
+
+- `rangeDeleteEnd` - deprecated, use `cellSelectionDeleteEnd` instead.
+
+- `rangeSelectionChanged` - deprecated, use `cellSelectionChanged` instead.
 
 ### Grid API 
 
-`getInfiniteRowCount` - deprecated, use `getDisplayedRowCount` instead.
+- `getInfiniteRowCount` - deprecated, use `getDisplayedRowCount` instead.
+
+- `clearRangeSelection` - deprecated, use `clearCellSelection` method instead.
 
 ### Grid Options
 
 `suppressBrowserResizeObserver` - deprecated without replacement.
+
+### Grid State Object Fields
+
+`rangeSelection` - deprecated, when setting this manually use `cellSelection` field instead.
 
 ### Row Nodes 
 
