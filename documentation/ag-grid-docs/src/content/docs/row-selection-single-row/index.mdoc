@@ -66,16 +66,16 @@ Rows for which `isRowSelectable` returns `false` cannot be selected at all, whet
 Note this example uses `hideDisabledCheckboxes` to hide disabled checkboxes, which can be toggled on or off.
 
 ## Customising the Checkbox Column
-The checkbox column may be customised in a similar way to any other column, by specifying its column definition in the `controlsColDef` grid option.
+The checkbox column may be customised in a similar way to any other column, by specifying its column definition in the `selectionColumnDef` grid option.
 
-{% apiDocumentation source="grid-options/properties.json" section="selection" names=["controlsColDef"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="selection" names=["selectionColumnDef"] /%}
 
-The `ControlsColDef` allows for a great deal of customisation, including custom renderers, sorting, tooltips and more.
+The `SelectionColumnDef` allows for a great deal of customisation, including custom renderers, sorting, tooltips and more.
 The example below demonstrates allowing sorting using the default sort order (selected first) via the header menu, changing the default width of the column, and adding some header tooltip text.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    controlsColDef: {
+    selectionColumnDef: {
         sortable: true,
         width: 100,
         maxWidth: 100,
