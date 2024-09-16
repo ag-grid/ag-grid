@@ -18,8 +18,8 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'country', rowGroup: true },
-        { field: 'gold', aggFunc: 'sum' },
+        { field: 'country', rowGroup: true, enableRowGroup: true },
+        { field: 'gold', aggFunc: 'sum', enableValue: true },
         { field: 'sport', enablePivot: true },
     ],
     defaultColDef: {
