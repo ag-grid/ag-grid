@@ -28,7 +28,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     paginationAutoPageSize: true,
     selection: {
         mode: 'multiRow',
-        suppressClickSelection: true,
+        suppressClickSelection: 'suppressSelection',
         selectAll: 'all',
     },
 };
