@@ -1,4 +1,4 @@
-import { addTrailingSlash } from './addTrailingSlash';
+import { addTrailingSlash } from '@ag-website-shared/utils/addTrailingSlash';
 
 describe('addTrailingSlash', () => {
     test.each`

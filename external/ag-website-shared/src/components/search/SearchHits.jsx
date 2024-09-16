@@ -1,5 +1,5 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { addTrailingSlash } from '@utils/addTrailingSlash';
+import { addTrailingSlash } from '@ag-website-shared/utils/addTrailingSlash';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { ChevronRight } from 'lucide-react';
 import React, { useEffect, useRef } from 'react';

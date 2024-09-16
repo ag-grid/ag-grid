@@ -1,10 +1,9 @@
 import type { Framework } from '@ag-grid-types';
+import { isExternalLink } from '@ag-website-shared/utils/isExternalLink';
 import { SITE_BASE_URL } from '@constants';
 import { getFrameworkPath } from '@features/docs/utils/urlPaths';
 import { getIsDev } from '@utils/env';
 import { pathJoin } from '@utils/pathJoin';
-
-import { isExternalLink } from './isExternalLink';
 
 export const urlWithPrefix = ({
     url = '',
