@@ -26,7 +26,7 @@ Applications import the legacy CSS files either through JS (`import 'ag-grid-com
 
 #### Key changes
 
- * `--ag-grid-size` -> `--ag-spacing`
+ * `--ag-grid-size` -> `--ag-spacing` spacing works a little bit differently from the old "grid size". It controls the padding around elements, whereas grid size controlled their size. So setting spacing to `0` will result in a grid with no padding, whereas setting grid size to `0` would have resulted in zero-height rows.
  * `--ag-active-color`, `--ag-alpine-active-color`, `--ag-balham-active-color`, `--ag-material-accent-color` -> use `accentColor`
  * `--ag-borders*` -> there has been a reworking of border parameters, see the Theming API docs for the new list of border parameters.
  * `--ag-row-border-color`, `--ag-row-border-style`, `--ag-row-border-width` -> replaced with `rowBorder`
@@ -70,7 +70,9 @@ While developing the Theming API we took the opportunity to rename many of our p
  * `--ag-quartz-icon-active-color` -> this was used to apply an outline to focussed icons, now all focussed elements throughout the grid use `focusShadow`
  * `--ag-quartz-icon-hover-color` -> `iconButtonHoverColor`
 
-#### Removed with no replacement, use CSS rules to achieve the same effect
+#### Properties removed with no replacement, use CSS rules to achieve the same effect
+
+These properties were either outdated, confusing to use, or provided no benefit over using CSS rules.
 
  * `--ag-borders-side-button`
  * `--ag-tab-min-width`
@@ -100,8 +102,8 @@ Legacy themes were applied by adding a class name e.g. `ag-theme-quartz` to the 
 
 /* Valid in Theming API only: */
 body {
-    /* set vars on `body` to affect all grids on the page
-       regardless of the theme they use */
+    /* set vars on `body` to affect all grids on the page regardless of the theme they
+       use. You can also use a different selector to affect only specific grids. */
     --ag-foreground-color: red;
 }
 .ag-header-cell {
