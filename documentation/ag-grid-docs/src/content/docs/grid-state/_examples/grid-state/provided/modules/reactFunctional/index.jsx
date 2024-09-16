@@ -49,10 +49,13 @@ const GridExample = () => {
             enableValue: true,
         };
     }, []);
-    const selection = useMemo(() => ({
-        mode: 'multiRow',
-        suppressClickSelection: true,
-    }));
+    const selection = useMemo(
+        () => ({
+            mode: 'multiRow',
+            suppressClickSelection: true,
+        }),
+        []
+    );
     const [initialState, setInitialState] = useState();
     const [currentState, setCurrentState] = useState();
     const [gridVisible, setGridVisible] = useState(true);
