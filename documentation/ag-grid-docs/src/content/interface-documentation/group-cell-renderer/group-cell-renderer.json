@@ -1,7 +1,5 @@
 {
-    "_config_": {
-        "description": ""
-    },
+    "_config_": {},
     "IGroupCellRendererParams": {
         "checkbox": {
             "interfaceHierarchyOverrides": {
