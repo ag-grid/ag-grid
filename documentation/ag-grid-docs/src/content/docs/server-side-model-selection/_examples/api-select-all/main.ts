@@ -66,7 +66,6 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
 
     selection: {
         mode: 'multiRow',
-        suppressClickSelection: true,
     },
 
     suppressAggFuncInHeader: true,

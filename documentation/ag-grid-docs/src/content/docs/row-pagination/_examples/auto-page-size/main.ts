@@ -32,7 +32,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     selection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
-        suppressClickSelection: true,
     },
     columnDefs,
     paginationAutoPageSize: true,

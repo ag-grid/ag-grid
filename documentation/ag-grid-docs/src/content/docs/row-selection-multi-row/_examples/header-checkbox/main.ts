@@ -28,7 +28,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     paginationAutoPageSize: true,
     selection: {
         mode: 'multiRow',
-        suppressClickSelection: true,
         selectAll: 'all',
     },
 };
@@ -42,7 +41,6 @@ function updateSelectAllMode() {
 
     gridApi.setGridOption('selection', {
         mode: 'multiRow',
-        suppressClickSelection: true,
         selectAll: selectAll as 'all' | 'filtered' | 'currentPage',
     });
 }

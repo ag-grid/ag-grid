@@ -84,7 +84,6 @@ const leftGridOptions: GridOptions = {
     },
     selection: {
         mode: 'multiRow',
-        suppressClickSelection: true,
     },
     rowDragMultiRow: true,
     getRowId: (params: GetRowIdParams) => {

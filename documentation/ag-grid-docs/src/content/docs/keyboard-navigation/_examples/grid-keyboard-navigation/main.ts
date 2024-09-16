@@ -66,7 +66,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs,
     selection: {
         mode: 'multiRow',
-        suppressClickSelection: true,
     },
     defaultColDef: {
         editable: true,

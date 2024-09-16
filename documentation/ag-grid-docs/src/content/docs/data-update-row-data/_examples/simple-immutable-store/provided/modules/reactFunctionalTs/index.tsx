@@ -88,7 +88,6 @@ const selection: SelectionOptions = {
     mode: 'multiRow',
     groupSelects: 'descendants',
     headerCheckbox: false,
-    suppressClickSelection: true,
 };
 
 const GridExample = () => {

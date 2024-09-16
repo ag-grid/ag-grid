@@ -87,7 +87,6 @@ const gridOptions: GridOptions = {
     selection: {
         mode: 'multiRow',
         headerCheckbox: false,
-        suppressClickSelection: true,
     },
     pagination: true,
     paginationPageSize: 10,

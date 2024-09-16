@@ -246,7 +246,6 @@ const gridOptions: GridOptions = {
     selection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
-        suppressClickSelection: true,
         selectAll: 'filtered',
     },
     quickFilterText: undefined,
