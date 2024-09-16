@@ -60,7 +60,7 @@ To prevent this from happening, you can set the `pivotMaxGeneratedColumns` optio
 exceeding this value, it halts column generation, clears the view, and fires the `onPivotMaxColumnsExceeded` event to allow your
 application to intervene.
 
-{% gridExampleRunner title="Extreme Pivot Handling" name="extreme-pivot" /%}
+{% gridExampleRunner title="Extreme Pivot Handling" name="extreme-pivot" exampleHeight=600 /%}
 
 In the example above, pivoting by the `Athlete` column will instead trigger the `pivotMaxColumnsExceeded` event, which logs an error in the browser console.
 
