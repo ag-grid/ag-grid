@@ -3,18 +3,12 @@ import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
+import { getData } from './data';
+
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 let gridApi: GridApi;
 
-const rowData = [
-    { agg: 1, pivotValue: 6 },
-    { agg: 1, pivotValue: 1 },
-    { agg: 1, pivotValue: 3 },
-    { agg: 1, pivotValue: 2 },
-    { agg: 1, pivotValue: 5 },
-    { agg: 1, pivotValue: 4 },
-];
 let count = 0;
 
 const gridOptions: GridOptions = {
@@ -34,6 +28,7 @@ const gridOptions: GridOptions = {
     onGridReady: () => {
         setInterval(() => {
             count += 1;
+            const rowData = getData();
             gridApi.setGridOption('rowData', rowData.slice(0, (count % rowData.length) + 1));
         }, 1000);
     },
