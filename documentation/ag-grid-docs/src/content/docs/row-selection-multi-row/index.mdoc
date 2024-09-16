@@ -122,6 +122,10 @@ const gridOptions = {
 
 {% gridExampleRunner title="Customising Checkbox Column" name="customise-checkbox-column" /%}
 
+{% note %}
+The checkbox column has a default `maxWidth` set. To make the column resizable (when setting `resizable: true`), or to set a `width`/`initialWidth`, the max width must also be overridden.
+{% /note %}
+
 ## Enable Click Selection & Deselection
 
 The `selection.enableClickSelection` property configures whether a row's selection state will be impacted when the row is clicked, or when {% kbd "␣ Space" /%} is pressed while the row is focused.
