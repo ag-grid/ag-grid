@@ -1513,7 +1513,7 @@ export interface GridOptions<TData = any> {
      *
      * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features such as editing, pivoting and grouping.
      */
-    selectionColumnDef?: SelectionColDef;
+    selectionColumnDef?: SelectionColumnDef;
 
     /**
      * If `true`, only a single range can be selected.
@@ -2653,7 +2653,7 @@ export interface MultiRowSelectionOptions<TData = any> extends CommonRowSelectio
 }
 
 /** Subset of ColDef allowing for customisation of the Controls column, currently used for checkbox selection */
-export type SelectionColDef = Pick<
+export type SelectionColumnDef = Pick<
     ColDef,
     | 'icons'
     | 'suppressNavigable'

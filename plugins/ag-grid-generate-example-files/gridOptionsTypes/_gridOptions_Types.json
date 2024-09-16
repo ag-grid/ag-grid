@@ -248,9 +248,9 @@
     ]
   },
   "selectionColumnDef": {
-    "typeName": "SelectionColDef",
+    "typeName": "SelectionColumnDef",
     "typesToInclude": [
-      "SelectionColDef"
+      "SelectionColumnDef"
     ]
   },
   "rowSelection": {

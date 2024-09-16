@@ -772,7 +772,7 @@ export {
     SelectionOptions,
     GroupSelectionMode,
     SelectAllMode,
-    SelectionColDef,
+    SelectionColumnDef,
     CellSelectionOptions,
     RowSelectionOptions,
     GridTheme,
