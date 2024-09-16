@@ -248,7 +248,7 @@ div.divider:nth-of-type(4n) {
     color: var(--color-brand-500);
 
     #{$selector-darkmode} & {
-        color: var(--color-brand-400);
+        color: var(--color-button-primary-bg);
         background: var(--color-bg-primary);
         border: 2px solid var(--color-bg-secondary);
     }
@@ -284,7 +284,7 @@ div.divider:nth-of-type(4n) {
     }
 
     #{$selector-darkmode} & {
-        fill: white;
+        fill: var(--color-button-primary-bg) !important;
     }
 }
 
@@ -339,13 +339,14 @@ div.divider:nth-of-type(4n) {
 }
 
 .heroSectioncta1 {
-    color: var(--color-white);
-    background: var(--color-brand-700);
+    color: var(--color-bg-primary);
+    background: var(--color-button-primary-bg);
     align-content: center;
     padding-bottom: 6px;
 
     &:hover {
-        color: var(--color-white);
+        color: var(--color-bg-primary) !important;
+        background: var(--color-button-primary-bg-hover);
     }
 }
 
