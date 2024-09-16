@@ -1727,7 +1727,7 @@ export interface GridOptions<TData = any> {
      */
     processGroupHeaderForClipboard?: (params: ProcessGroupHeaderForExportParams<TData>) => any;
     /**
-     * Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid.
+     * Allows you to process cells from the clipboard. Handy if for example you have number fields and want to block non-numbers from getting into the grid.
      */
     processCellFromClipboard?: (params: ProcessCellForExportParams<TData>) => any;
     /**
