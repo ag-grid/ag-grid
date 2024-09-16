@@ -12,9 +12,9 @@ import {
     colorSchemeLightWarm,
     iconSetAlpine,
     iconSetMaterial,
-    iconSetQuartz,
     iconSetQuartzBold,
     iconSetQuartzLight,
+    iconSetQuartzRegular,
     themeAlpine,
     themeBalham,
     themeQuartz,
@@ -42,7 +42,7 @@ const colorSchemes = [
     colorSchemeDarkWarm,
     colorSchemeDarkBlue,
 ];
-const iconSets = [null, iconSetQuartzLight, iconSetQuartz, iconSetQuartzBold, iconSetAlpine, iconSetMaterial];
+const iconSets = [null, iconSetQuartzLight, iconSetQuartzRegular, iconSetQuartzBold, iconSetAlpine, iconSetMaterial];
 
 const GridExample = () => {
     const [baseTheme, setBaseTheme] = useState(baseThemes[0]);
@@ -87,7 +87,11 @@ type PartSelectorProps<T extends { id: string } | null> = {
     setValue: (value: T) => void;
 };
 
-const PartSelector = <T extends { id: string } | null>({ options, value, setValue }: PartSelectorProps<T>) => (
+const PartSelector = <T extends { id: string; variant?: string } | null>({
+    options,
+    value,
+    setValue,
+}: PartSelectorProps<T>) => (
     <select
         onChange={(e) => setValue(options.find((t) => t?.id === e.currentTarget.value)! || null)}
         style={{ marginRight: 16 }}
@@ -95,7 +99,7 @@ const PartSelector = <T extends { id: string } | null>({ options, value, setValu
     >
         {options.map((option, i) => (
             <option key={i} value={option?.id}>
-                {option?.id.replace(/^.*\//, '') || '(unchanged)'}
+                {option?.variant || option?.id || '(unchanged)'}
             </option>
         ))}
     </select>
