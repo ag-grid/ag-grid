@@ -1349,7 +1349,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressRowDeselection: boolean | undefined = undefined;
     /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.
      * @default false
-     * @deprecated v32.2 Use `selection.suppressClickSelection` instead
+     * @deprecated v32.2 Use `selection.enableClickSelection` instead
      */
     @Input() public suppressRowClickSelection: boolean | undefined = undefined;
     /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels.
