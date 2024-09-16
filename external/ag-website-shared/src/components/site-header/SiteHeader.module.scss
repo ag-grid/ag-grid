@@ -91,6 +91,11 @@ button.mobileNavButton {
         --color-icon: var(--color-button-primary-fg);
         fill: var(--color-button-primary-fg);
 
+        #{$selector-darkmode} & {
+            --color-icon: var(--color-fg-white);
+            fill: var(--color-fg-white);
+        }
+
         margin-left: $spacing-size-1;
         margin-right: -$spacing-size-1;
     }
@@ -105,6 +110,7 @@ button.mobileNavButton {
 
     #{$selector-darkmode} & {
         background-color: rgba(255, 255, 255, 0.1);
+        color: var(--color-fg-white);
 
         &:hover {
             background-color: rgba(255, 255, 255, 0.19);
