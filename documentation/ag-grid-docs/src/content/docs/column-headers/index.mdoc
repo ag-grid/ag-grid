@@ -196,7 +196,7 @@ The example below demonstrates refreshing of the headers. Note the following:
 * Each column is configured to use a custom Header Component.
 * The Header Component logs to the console when its lifecycle methods/functions are called.
 * Toggling between 'Upper Header Names' and 'Lower Header Names' causes the Header Component to refresh.
-* Toggling between 'Filter On' and 'Filter Off' causes the Header Component to refresh. {% if isFramework("react") %}The Header Component returns `false` which results in the component getting destroyed and recreated.{% /if %}
+* Toggling between 'Filter On' and 'Filter Off' causes the Header Component to refresh. {% if not(isFramework("react")) %}The Header Component returns `false` which results in the component getting destroyed and recreated.{% /if %}
 * Toggling between 'Resize On' and 'Resize Off' causes the Header Component to refresh. However there is no change to the Header Component as it doesn't depend on resize - the resize UI is provided by the grid.
 
 {% gridExampleRunner title="Refresh Headers" name="refresh-headers" /%}
