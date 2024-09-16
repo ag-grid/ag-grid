@@ -266,6 +266,8 @@ div.divider:nth-of-type(4n) {
 
     @media screen and (max-width: $breakpoint-landing-page-medium) {
         font-size: var(--text-fs-sm);
+        text-align: center;
+        padding: $spacing-size-1 $spacing-size-2;
     }
 
     #{$selector-darkmode} & {
@@ -347,6 +349,10 @@ div.divider:nth-of-type(4n) {
     &:hover {
         color: var(--color-bg-primary) !important;
         background: var(--color-button-primary-bg-hover);
+    }
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        text-align: center;
     }
 }
 
