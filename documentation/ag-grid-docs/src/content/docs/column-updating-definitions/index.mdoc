@@ -180,26 +180,6 @@ information to the console, so best open the example in a new tab and observe th
 
 {% gridExampleRunner title="Column Events" name="column-events" /%}
 
-## Refreshing Headers
-
-If you are creating your own [Header Components](./column-headers/) then you will need to be aware of
-how Header Components are refreshed.
-
-All Header Components that still exist after the new Column Definitions are applied (in other words, the Column still
-exists after the update, it was not removed) will have its `refresh` method called.
-
-It is up to the Header Component to update based on any changes it may find in the Column Definition.
-
-The example below demonstrates refreshing of the headers. Note the following:
-
-* Each column is configured to use a custom Header Component.
-* The Header Component logs to the console when its lifecycle methods/functions are called.
-* Toggling between 'Upper Header Names' and 'Lower Header Names' causes the Header Component to refresh.
-* Toggling between 'Filter On' and 'Filter Off' causes the Header Component to refresh. For frameworks where possible, the Header Component returns `false` which results in the component getting destroyed and recreated.
-* Toggling between 'Resize On' and 'Resize Off' causes the Header Component to refresh. However there is no change to the Header Component as it doesn't depend on resize - the resize UI is provided by the grid.
-
-{% gridExampleRunner title="Refresh Headers" name="refresh-headers" /%}
-
 ## Column Definition Retrieval
 
 There will be times where you'll want to retrieve the current Column Definition in order to perhaps persist them, or
