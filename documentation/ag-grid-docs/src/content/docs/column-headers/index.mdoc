@@ -36,12 +36,11 @@ As you can see in the example below, if you change any of the header heights, th
 
 The column header row can have its height set automatically based on the content of the header cells. This is most useful when used together with [Custom Header Components](./column-headers/#custom-component/) or when using the `wrapHeaderText` column property.
 
-To enable this, set `autoHeaderHeight=true` on the column definition you want to adjust the header height for. If more than one column has this property enabled, then the header row will be sized to the maximum of these
-column's header cells so no content overflows.
+To enable this, set `autoHeaderHeight=true` on the column definition you want to adjust the header height for. If more than one column has this property enabled, then the header row will be sized to the maximum of these columns' header cells so no content overflows.
 
 The example below demonstrates using the `autoHeaderHeight` property in conjunction with the `wrapHeaderText` property, so that long column names are fully displayed.
 
-* Note that the long column header names wrap onto another line
+* Note that the long column header names wrap onto another line.
 * Try making a column smaller by dragging the resize handle on the column header, observe that the header will expand so the full header content is still visible.
 
 {% note %}
@@ -58,7 +57,7 @@ By default the grid uses the provided Header Component. To use a Custom Header C
 {% partial file="./_column-def-javascript.mdoc" /%}
 {% partial file="./_column-def-vue.mdoc" /%}
 
-See [Registering Components](./components/) for an overview of registering componnets.
+See [Registering Components](./components/) for an overview of registering components.
 
 
 ## Provided Component
@@ -91,18 +90,18 @@ When you provide your own template, everything should work as expected as long a
 | `eLabel` | The container where there is going to be an onClick mouse listener to trigger the sort. |
 | `eText` | The text displayed on the column. |
 | `eFilter` | The container with the icon that will appear if the user filters this column (only used when `columnMenu = 'legacy'` or `suppressHeaderFilterButton = true`). |
-| `eSortOrder` | In case of sorting on multiple columns, this shows the index that represents the position of this column in the order. |
-| `eSortAsc` | In case of sorting ascending the data in the column, this shows the associated icon. |
-| `eSortDesc` | In case of sorting descending the data in the column, this shows the descending icon. |
-| `eSortNone` | In case of no sort being applied, this shows the associated icon. Note this icon by default is empty. |
+| `eSortOrder` | If multiple columns are sorted, this shows the index that represents the position of this column in the order. |
+| `eSortAsc` | If the column is sorted ascending, this shows the ascending icon. |
+| `eSortDesc` | If the column is sorted descending, this shows the descending icon. |
+| `eSortNone` | If no sort is applied, this shows the no sort icon. Note this icon by default is empty. |
 
 The `data-ref` parameters are used by the grid to identify elements to add functionality to. If you leave an element out of your template, the functionality will not be added. For example if you do not specify `eLabel` then the column will not react to click events for sorting.
 
 {% note %}
-Templates are not meant to let you configure icons. If you are looking to change the icons, check our [icon docs](./custom-icons/).
+Templates are not meant to let you configure icons. If you are looking to change the icons, see [Custom Icons](./custom-icons/) for more information.
 {% /note %}
 
-Set the template using `colDef.headerComponentParams`. Set on the grid options `defaultColDef` to set for all Columns.
+Set the template using `colDef.headerComponentParams`. Set on the `defaultColDef` grid option to set for all Columns.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -141,9 +140,9 @@ Note that specifying your own templates is compatible with other configurations:
 Column Headers by default use the Provided Header Component. The default can be overridden with Custom Header Component. This example shows a Custom Header Component. Note the following:
 
 * Column moving and resizing works without custom logic.
-* Use of `suppressHeaderFilterButton=true` to suppress the filter menu.
-* Use of `sortable=false` to suppress sorting.
-* Configurable menu icon.
+* `suppressHeaderFilterButton=true` is used to suppress the filter menu.
+* `sortable=false` is used to suppress sorting.
+* The menu icon is configurable.
 
 {% gridExampleRunner title="Header component" name="header-component" /%}
 
@@ -197,18 +196,18 @@ The Custom Header Component is responsible for the following:
 
 ### Sorting
 
-How you interact with the user for sorting (eg do you listen for mouse clicks?) is up to you. The grid helps you by providing column state and events for getting and setting the sort.
+How you interact with the user for sorting (e.g. listening for mouse clicks) is up to you. The grid helps you by providing column state and events for getting and setting the sort.
 
 After the user requests a sort, you should call ONE of the following:
 
 {% if isFramework("javascript", "angular", "vue") %}
-1. `params.progressSort(multiSort):` Call this method to progress the sort on the column to the next stage. This uses the grid logic to determine the next sort stage (eg 'descending' normally follows 'ascending').
-1. `params.setSort(direction, multiSort):` Use this to set to sort to a specific state. Use this if you don't want to use the grids logic for working out the next sort state.
+1. `params.progressSort(multiSort)`: Call this method to progress the sort on the column to the next stage. This uses the grid logic to determine the next sort stage (eg 'descending' normally follows 'ascending').
+1. `params.setSort(direction, multiSort)`: If you don't want to use the grid's logic for working out the next sort state, use this to set the sort to a specific state.
 {% /if %}
 
 {% if isFramework("react") %}
-1. `props.progressSort(multiSort):` Call this method to progress the sort on the column to the next stage. This uses the grid logic to determine the next sort stage (eg 'descending' normally follows 'ascending').
-1. `props.setSort(direction, multiSort):` Use this to set to sort to a specific state. Use this if you don't want to use the grids logic for working out the next sort state.
+1. `props.progressSort(multiSort)`: Call this method to progress the sort on the column to the next stage. This uses the grid logic to determine the next sort stage (eg 'descending' normally follows 'ascending').
+1. `props.setSort(direction, multiSort)`: If you don't want to use the grid's logic for working out the next sort state, use this to set the sort to a specific state.
 {% /if %}
 
 {% if isFramework("javascript") %}
@@ -258,23 +257,23 @@ onSortDescClicked(event) {
 // option 1) tell the grid when you want to progress the sorting
 onSortClicked(event) {
      // in this example, we do multi sort if Shift key is pressed
-    this.props.progressSort(event.shiftKey);
+    props.progressSort(event.shiftKey);
 };
 
 // or option 2) tell the grid when you want to set the sort explicitly
 // button that always sorts ASCENDING
 onSortAscClicked(event) {
-    this.props.setSort('asc', event.shiftKey);
+    props.setSort('asc', event.shiftKey);
 };
 
 // button that always sorts DESCENDING
 onSortDescClicked(event) {
-    this.props.setSort('desc', event.shiftKey);
+    props.setSort('desc', event.shiftKey);
 };
 ```
 {% /if %}
 
-To know when a column's sort state has changed (eg when to update your icons), you should listen for `sortChanged` event on the column.
+To know when a column's sort state has changed (e.g. when to update your icons), you should listen for the `sortChanged` event on the column.
 
 ```js
 // listen to the column for sort events
@@ -284,7 +283,7 @@ column.addEventListener('sortChanged', function() {
    var sort = column.getSort();
    console.log('sort state of column is ' + sort); // prints one of ['asc',desc',null]
 
-   // then do what you need, eg set relevant icons visible
+   // then do what you need, e.g. set relevant icons visible
    var sortingAscending = sort==='asc';
    var sortingDescending = sort==='desc';
    var notSorting = !sortingAscending && !sortingDescending;
@@ -296,7 +295,7 @@ column.addEventListener('sortChanged', function() {
 
 ### Filtering
 
-The header doesn't normally initiate filtering. If it does, use the standard grid API to set the filter. The header will typically display icons when the filter is applied. To know when to show a filter icon, listen to the column for filterChanged events.
+The header doesn't normally initiate filtering. If it does, use the standard grid API to set the filter. The header will typically display icons when the filter is applied. To know when to show a filter icon, listen to the column for `filterChanged` events.
 
 ```js
 // listen to the column for filter events
@@ -339,7 +338,7 @@ onMenuClicked() {
 {% if isFramework("react") %}
 ```js
 onMenuClicked() {
-    this.props.showColumnMenu(refButton.current);
+    props.showColumnMenu(refButton.current);
 });
 ```
 {% /if %}
