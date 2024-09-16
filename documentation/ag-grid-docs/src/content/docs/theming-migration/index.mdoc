@@ -87,10 +87,10 @@ While developing the Theming API we took the opportunity to rename many of our p
 
 ### 3. [optional] Remove ag-theme-* classes and update CSS rules that target them
 
-Legacy themes were applied by adding a class name e.g. `ag-theme-quartz` to the wrapper element of the grid. Any CSS custom rules had t include this class name in order to override the styles defined in the theme. This is no longer required, but still works. You may take the opportunity to simplify your styles:
+Legacy themes were applied by adding a class name e.g. `ag-theme-quartz` to the wrapper element of the grid. Any CSS custom rules had to include this class name in order to override the styles defined in the theme. This is no longer required, but still works. You may take the opportunity to simplify your styles:
 
 ```css
-// Required in legacy CSS themes, still works with Theming API
+/* Required in legacy CSS themes, still works with Theming API */
 .ag-theme-quartz {
     --ag-foreground-color: red;
 }
@@ -98,9 +98,10 @@ Legacy themes were applied by adding a class name e.g. `ag-theme-quartz` to the 
     font-style: italic;
 }
 
-// Valid in Theming API only:
+/* Valid in Theming API only: */
 body {
-    // set vars on `body` to affect all grids on the page regardless of the theme they use
+    /* set vars on `body` to affect all grids on the page
+       regardless of the theme they use */
     --ag-foreground-color: red;
 }
 .ag-header-cell {
