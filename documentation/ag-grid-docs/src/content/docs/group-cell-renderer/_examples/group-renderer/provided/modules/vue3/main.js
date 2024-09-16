@@ -110,6 +110,8 @@ const VueExample = {
             headerCheckbox: false,
             groupSelects: 'descendants',
             suppressClickSelection: true,
+            headerCheckbox: false,
+            checkboxes: false,
         };
     },
     methods: {
