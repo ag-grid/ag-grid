@@ -51,7 +51,7 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     fillOperation: { version: '32.2', message: 'Use `selection.handle.setFillValue` instead.' },
     suppressRowClickSelection: {
         version: '32.2',
-        message: 'Use `selection.suppressClickSelection` instead.',
+        message: 'Use `selection.enableClickSelection` instead.',
     },
     suppressRowDeselection: { version: '32.2', message: 'Use `selection.suppressDeselection` instead.' },
     rowMultiSelectWithClick: {

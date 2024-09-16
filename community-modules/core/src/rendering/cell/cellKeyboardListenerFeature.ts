@@ -4,8 +4,8 @@ import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import {
+    _getEnableDeselection,
     _getGroupSelection,
-    _getSuppressDeselection,
     _isCellSelectionEnabled,
     _isRowSelection,
 } from '../../gridOptionsUtils';
@@ -183,7 +183,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (!this.cellCtrl.isEditing() && _isRowSelection(gos)) {
             const currentSelection = this.rowNode.isSelected();
             const newSelection = !currentSelection;
-            if (newSelection || !_getSuppressDeselection(gos)) {
+            if (newSelection || _getEnableDeselection(gos)) {
                 const groupSelectsFiltered = _getGroupSelection(gos) === 'filteredDescendants';
                 const updatedCount = this.rowNode.setSelectedParams({
                     newValue: newSelection,

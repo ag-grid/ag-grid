@@ -1491,7 +1491,7 @@ export interface GridOptions<TData = any> {
     /**
      * If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.
      * @default false
-     * @deprecated v32.2 Use `selection.suppressClickSelection` instead
+     * @deprecated v32.2 Use `selection.enableClickSelection` instead
      */
     suppressRowClickSelection?: boolean;
     /**
@@ -2597,10 +2597,10 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
      * Modifies the selection behaviour when clicking a row, or pressing `Space` while focusing a row.
      * @default false
      */
-    suppressClickSelection?: boolean | 'suppressDeselection' | 'suppressSelection';
+    enableClickSelection?: boolean | 'enableDeselection' | 'enableSelection';
     /**
      * Set to `true` or return `true` from the callback to render a selection checkbox.
-     * @default false
+     * @default true
      */
     checkboxes?: boolean | CheckboxSelectionCallback<TData, TValue>;
     /**
@@ -2642,7 +2642,7 @@ export interface MultiRowSelectionOptions<TData = any> extends CommonRowSelectio
     selectAll?: SelectAllMode;
     /**
      * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
-     * @default false
+     * @default true
      */
     headerCheckbox?: boolean;
     /**

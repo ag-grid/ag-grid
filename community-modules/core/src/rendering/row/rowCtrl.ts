@@ -12,11 +12,11 @@ import type { CellFocusedEvent, RowEvent, VirtualRowRemovedEvent } from '../../e
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import {
     _getActiveDomElement,
+    _getEnableDeselection,
     _getEnableMultiSelectWithClick,
+    _getEnableSelection,
     _getGroupSelectsDescendants,
     _getRowHeightForNode,
-    _getSuppressDeselection,
-    _getSuppressSelection,
     _isAnimateRows,
     _isCellSelectionEnabled,
     _isClientSideRowModel,
@@ -1121,14 +1121,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             // so return if it's a group row
             (groupSelectsChildren && this.rowNode.group) ||
             this.isRowSelectionBlocked() ||
-            // if click selection suppressed, do nothing
-            _getSuppressSelection(gos)
+            // if click selection disabled, do nothing
+            !_getEnableSelection(gos)
         ) {
             return;
         }
 
         const multiSelectOnClick = _getEnableMultiSelectWithClick(gos);
-        const rowDeselectionWithCtrl = !_getSuppressDeselection(gos);
+        const rowDeselectionWithCtrl = _getEnableDeselection(gos);
         const source = 'rowClicked';
 
         if (this.rowNode.isSelected()) {
@@ -1458,7 +1458,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         const selected = this.rowNode.isSelected()!;
-        if (selected && _getSuppressDeselection(this.gos)) {
+        if (selected && !_getEnableDeselection(this.gos)) {
             return;
         }
 
