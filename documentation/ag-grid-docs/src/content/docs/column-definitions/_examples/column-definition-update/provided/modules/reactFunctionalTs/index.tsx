@@ -56,7 +56,13 @@ const GridExample = () => {
                     <button onClick={onBtUpdateHeaders}>Update Header Names</button>
                     <button onClick={onBtRestoreHeaders}>Restore Original Column Definitions</button>
                 </div>
-                <div style={gridStyle} className={'ag-theme-quartz-dark'}>
+                <div
+                    style={gridStyle}
+                    className={
+                        /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                        'ag-theme-quartz' /** DARK MODE END **/
+                    }
+                >
                     <AgGridReact<IOlympicData>
                         ref={gridRef}
                         rowData={rowData}
