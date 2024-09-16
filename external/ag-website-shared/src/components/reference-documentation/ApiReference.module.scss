@@ -70,8 +70,12 @@
     }
 
     pre:global(.code) {
-        margin-top: 0;
+        max-width: calc(100vw - var(--layout-horizontal-margins) * 2);
         margin-bottom: $spacing-size-2;
+
+        @container (min-width: #{$breakpoint-table-small}) {
+            margin-top: 0;
+        }
     }
 }
 
