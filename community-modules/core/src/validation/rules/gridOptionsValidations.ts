@@ -398,7 +398,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     defaultColDef: () => COL_DEF_VALIDATORS,
     defaultColGroupDef: () => COL_DEF_VALIDATORS,
     autoGroupColumnDef: () => COL_DEF_VALIDATORS,
-    controlsColDef: () => COL_DEF_VALIDATORS,
+    selectionColumnDef: () => COL_DEF_VALIDATORS,
 
     selection: () => SELECTION_VALIDATORS,
 });

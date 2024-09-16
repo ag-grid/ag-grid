@@ -101,16 +101,16 @@ See [Row Grouping - Selecting Groups](./grouping-row-selection) for more on this
 {% /note %}
 
 ## Customising the Checkbox Column
-The checkbox column may be customised in a similar way to any other column, by specifying its column definition in the `controlsColDef` grid option.
+The checkbox column may be customised in a similar way to any other column, by specifying its column definition in the `selectionColumnDef` grid option.
 
-{% apiDocumentation source="grid-options/properties.json" section="selection" names=["controlsColDef"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="selection" names=["selectionColumnDef"] /%}
 
-The `ControlsColDef` allows for a great deal of customisation, including custom renderers, sorting, tooltips and more.
+The `SelectionColumnDef` allows for a great deal of customisation, including custom renderers, sorting, tooltips and more.
 The example below demonstrates allowing sorting using the default sort order (selected first) via the header, changing the default width of the column, and pinning it to the left.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    controlsColDef: {
+    selectionColumnDef: {
         sortable: true,
         width: 120,
         maxWidth: 120,

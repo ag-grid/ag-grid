@@ -287,7 +287,7 @@ const isUseMemoProp = (propName) =>
         'chartThemeOverrides',
         'chartToolPanelsDef',
         'columnTypes',
-        'controlsColDef',
+        'selectionColumnDef',
         'customChartThemes',
         'dataTypeDefinitions',
         'defaultColDef',
