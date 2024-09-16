@@ -114,10 +114,12 @@ export function getProperties({
         });
 
     const interfaceDeclaration = getInterfaceWithGenericParams(interfaceName, interfaceData.meta);
-    const description =
-        config.description == null
-            ? `Properties available on the \`${interfaceDeclaration}\` interface.`
-            : config.description;
+
+    let description = overrides?._config_?.description ?? (config as any).description;
+    if (description == null) {
+        description = `Properties available on the \`${interfaceDeclaration}\` interface.`;
+    }
+
     const meta = {
         displayName: interfaceName,
         description,
