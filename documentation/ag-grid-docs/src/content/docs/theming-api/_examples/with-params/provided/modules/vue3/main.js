@@ -6,6 +6,11 @@ import { createApp } from 'vue';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
+const myTheme = themeQuartz.withParams({
+    spacing: 12,
+    accentColor: 'red',
+});
+
 const VueExample = {
     template: `
         <ag-grid-vue
@@ -22,7 +27,7 @@ const VueExample = {
     },
     setup(props) {
         return {
-            theme: themeQuartz,
+            theme: myTheme,
             columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'price' }],
             defaultColDef: {
                 editable: true,
