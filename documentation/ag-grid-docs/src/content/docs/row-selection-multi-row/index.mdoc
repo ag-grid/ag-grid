@@ -21,8 +21,8 @@ The following example illustrates a basic multi-row selection configuration.
 
 {% gridExampleRunner title="Enabling Row Selection" name="enabling-row-selection" /%}
 
-Click checkboxes to select or deselect a row. Alternatively, hold {% kbd "^ Ctrl" /%} and then click to add or remove rows from the selection. 
-Users can hold {% kbd "⇧ Shift" /%} and then click to add a range of adjacent rows to the selection.
+Click checkboxes to select or deselect a row. Alternatively, you can do this via the keyboard by focusing the row and pressing the {% kbd "␣ Space" /%} key.
+Users can hold {% kbd "⇧ Shift" /%} and then click a checkbox to add a range of adjacent rows to the selection.
 
 Ranges of rows can be selected by holding down {% kbd "⇧ Shift" /%} while clicking on rows. 
 This behaviour also applies when [Checkbox Selection](#checkbox-selection) is enabled, and in [Group Selection](./grouping-row-selection).
@@ -31,7 +31,7 @@ This behaviour also applies when [Checkbox Selection](#checkbox-selection) is en
 
 To prevent any row selection checkboxes from being rendered in rows, set `selection.checkboxes` to `false`. 
 To prevent the header checkbox from being rendered, set `selection.headerCheckbox` to `false`.
-Setting both to `false` will disable the checkbox column.
+Setting both to `false` will disable the checkbox column. You will also need to enable click selection by setting `enableClickSelection: true`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -39,6 +39,7 @@ const gridOptions = {
         mode: 'singleRow',
         checkboxes: false,
         headerCheckbox: false,
+        enableClickSelection: true,
     }
 }
 ```
@@ -179,7 +180,7 @@ Clicking the header checkbox, however, will select all rows even if their checkb
 
 In certain circumstances, especially in the context of touchscreen devices, users may want to select multiple rows without having to use the {% kbd "^ Ctrl" /%} and {% kbd "⇧ Shift" /%} keys.
 
-This can be accomplished by setting the `selection.enableMultiSelectWithClick` flag to `true`.
+This can be accomplished by setting the `selection.enableMultiSelectWithClick` flag to `true`. You will also need to set `enableClickSelection` to `true`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -188,6 +189,7 @@ const gridOptions = {
         checkboxes: false,
         headerCheckbox: false,
         enableMultiSelectWithClick: true,
+        enableClickSelection: true,
     },
 }
 ```

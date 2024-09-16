@@ -43,8 +43,8 @@ document.addEventListener('DOMContentLoaded', function () {
         .then((data: IOlympicData[]) => gridApi.setGridOption('rowData', data));
 });
 
-function onEnableSupressClickSelection() {
-    const value = document.querySelector<HTMLSelectElement>('#select-suppress')?.value;
+function onEnableClickSelection() {
+    const value = document.querySelector<HTMLSelectElement>('#select-enable')?.value;
 
     gridApi.setGridOption('selection', {
         mode: 'singleRow',
