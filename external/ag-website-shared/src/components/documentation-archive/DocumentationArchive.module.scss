@@ -33,20 +33,18 @@
         }
     }
 
-    td:first-child {
-        padding-left: $spacing-size-4;
-    }
-
-    td:last-child {
-        padding-right: $spacing-size-4;
-    }
-
-    padding-right: $spacing-size-2;
-
     td {
         padding-top: $spacing-size-4;
         padding-bottom: $spacing-size-4;
         vertical-align: middle;
+
+        &:first-child {
+            padding-left: $spacing-size-4;
+        }
+
+        &:last-child {
+            padding-right: $spacing-size-4;
+        }
 
         &:nth-child(n + 3) {
             text-align: right;
