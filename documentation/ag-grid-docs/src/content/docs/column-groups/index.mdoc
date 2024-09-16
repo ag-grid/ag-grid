@@ -33,8 +33,8 @@ const gridOptions = {
 
 Set the attribute `columnGroupShow` on the group's children to set the expand and collapse policy as follows:
 
-* **`open`:** The child is only shown when the group is 'open'.
-* **`closed`:** The child is only shown when the group is 'closed'.
+* **`'open'`:** The child is only shown when the group is open.
+* **`'closed'`:** The child is only shown when the group is closed.
 * **`null`, `undefined`:** The child is always shown.
 
 See [Group Column Properties](./column-properties/#reference-columnGroups) for all available properties.
@@ -59,7 +59,7 @@ The example below demonstrates a grid with many column group header levels. Note
 
 * The API is used to open and close groups. To do this, you will need to provide your groups with an ID during the definition, or look up the groups ID via the API (as an ID is generated if you don't provide one).
 * The `colDef.openByDefault` property is set on the E and F groups, resulting in these groups appearing as open by default.
-* Uses `defaultColGroupDef` and `defaultColDef` to apply a class to some of the headers. Using this technique, you can apply style to any of the header sections.
+* `defaultColGroupDef` and `defaultColDef` are used to apply a class to some of the headers. Using this technique, you can apply style to any of the header sections.
 
 {% gridExampleRunner title="Advanced Grouping" name="advanced-grouping"  exampleHeight=680 /%}
 
