@@ -31,10 +31,10 @@ const gridOptions = {
 }
 ```
 
-Set the attribute `columnGroupShow` on groups children to set the expand and collapse policy as follows:
+Set the attribute `columnGroupShow` on the group's children to set the expand and collapse policy as follows:
 
-* **`open`:** The child is only shown when the group is open.
-* **`closed`:** The child is only shown when the group is closed.
+* **`'open'`:** The child is only shown when the group is open.
+* **`'closed'`:** The child is only shown when the group is closed.
 * **`null`, `undefined`:** The child is always shown.
 
 See [Group Column Properties](./column-properties/#reference-columnGroups) for all available properties.
@@ -57,9 +57,9 @@ const gridOptions = {
 
 The example below demonstrates a grid with many column group header levels. Note the following:
 
-* Using the API to open and close groups. To do this, you will need to provide your groups with an ID during the definition, or look up the groups ID via the API (as an ID is generated if you don't provide one).
-* Demonstrates `colDef.openByDefault` property, where it sets this on E and F groups, resulting in these groups appearing as open by default.
-* Uses `defaultColGroupDef` and `defaultColDef` to apply a class to some of the headers. Using this technique, you can apply style to any of the header sections.
+* The API is used to open and close groups. To do this, you will need to provide your groups with an ID during the definition, or look up the groups ID via the API (as an ID is generated if you don't provide one).
+* The `colDef.openByDefault` property is set on the E and F groups, resulting in these groups appearing as open by default.
+* `defaultColGroupDef` and `defaultColDef` are used to apply a class to some of the headers. Using this technique, you can apply style to any of the header sections.
 
 {% gridExampleRunner title="Advanced Grouping" name="advanced-grouping"  exampleHeight=680 /%}
 
@@ -90,10 +90,10 @@ If you grab the group resize bar, it resizes each child in the group evenly dist
 
 ## Auto Header Height
 
-The column groups header row can have its height set automatically based on the content of the group header cells. This is most useful when using the `wrapHeaderText` column group property.
+The header row for the column groups can have its height set automatically based on the content of the group header cells. This is most useful when using the `wrapHeaderText` column group property.
 
 To enable this, set `autoHeaderHeight=true` on the column group definition you want to adjust the height for. If more than one column group has this property enabled, then the header row will be sized to the maximum of these
-column group's header cells to avoid content overflow.
+column groups' header cells to avoid content overflow.
 
 The example below demonstrates using the `autoHeaderHeight` property in conjunction with the `wrapHeaderText` property, so that long column group names are fully displayed.
 
@@ -208,7 +208,7 @@ By default the grid uses the provided Header Group Component. To use a Custom Gr
 {% partial file="./_column-def-javascript.mdoc" /%}
 {% partial file="./_column-def-vue.mdoc" /%}
 
-See [Registering Components](./components/) for an overview of registering componnets.
+See [Registering Components](./components/) for an overview of registering components.
 
 ## Custom Group Component
 

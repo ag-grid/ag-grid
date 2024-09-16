@@ -257,18 +257,18 @@ onSortDescClicked(event) {
 // option 1) tell the grid when you want to progress the sorting
 onSortClicked(event) {
      // in this example, we do multi sort if Shift key is pressed
-    this.props.progressSort(event.shiftKey);
+    props.progressSort(event.shiftKey);
 };
 
 // or option 2) tell the grid when you want to set the sort explicitly
 // button that always sorts ASCENDING
 onSortAscClicked(event) {
-    this.props.setSort('asc', event.shiftKey);
+    props.setSort('asc', event.shiftKey);
 };
 
 // button that always sorts DESCENDING
 onSortDescClicked(event) {
-    this.props.setSort('desc', event.shiftKey);
+    props.setSort('desc', event.shiftKey);
 };
 ```
 {% /if %}
@@ -338,7 +338,7 @@ onMenuClicked() {
 {% if isFramework("react") %}
 ```js
 onMenuClicked() {
-    this.props.showColumnMenu(refButton.current);
+    props.showColumnMenu(refButton.current);
 });
 ```
 {% /if %}
