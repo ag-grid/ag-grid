@@ -75,7 +75,6 @@ const VueExample = {
         });
         const selection = ref({
             mode: 'multiRow',
-            suppressClickSelection: true,
         });
         const rowData = ref(null);
         const gridVisible = ref(true);

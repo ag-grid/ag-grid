@@ -29,7 +29,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     selection: {
         mode: 'multiRow',
-        suppressClickSelection: true,
         headerCheckbox: false,
     },
     onGridReady: (params: GridReadyEvent) => {

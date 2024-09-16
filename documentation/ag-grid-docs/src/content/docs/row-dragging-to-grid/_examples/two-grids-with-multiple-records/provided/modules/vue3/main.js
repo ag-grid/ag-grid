@@ -92,7 +92,6 @@ const VueExample = {
             },
             selection: {
                 mode: 'multiRow',
-                suppressClickSelection: true,
             },
             leftColumns: [
                 {

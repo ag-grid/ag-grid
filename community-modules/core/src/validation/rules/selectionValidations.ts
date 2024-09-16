@@ -13,7 +13,7 @@ type KeysOfUnion<T> = T extends T ? keyof T : never;
 
 const selectionPropertyMap: Record<KeysOfUnion<SelectionOptions>, undefined> = {
     mode: undefined,
-    suppressClickSelection: undefined,
+    enableClickSelection: undefined,
     suppressMultiRanges: undefined,
     hideDisabledCheckboxes: undefined,
     checkboxes: undefined,
