@@ -138,6 +138,20 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([2], api);
             });
 
+            test('enableClickSelection="enableDeselection" allows deselection via clicking', () => {
+                const api = createGrid({
+                    columnDefs,
+                    rowData,
+                    selection: { mode: 'multiRow', enableClickSelection: 'enableDeselection' },
+                });
+
+                toggleCheckboxByIndex(2);
+                assertSelectedRowsByIndex([2], api);
+
+                clickRowByIndex(2, { ctrlKey: true });
+                assertSelectedRowsByIndex([], api);
+            });
+
             test('un-selectable row cannot be selected', () => {
                 const api = createGrid({
                     columnDefs,

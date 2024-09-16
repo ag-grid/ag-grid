@@ -1109,6 +1109,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
         const isShiftKey = mouseEvent.shiftKey;
 
+        const isSelected = this.rowNode.isSelected();
+
         // we do not allow selecting the group by clicking, when groupSelectChildren, as the logic to
         // handle this is broken. to observe, change the logic below and allow groups to be selected.
         // you will see the group gets selected, then all children get selected, then the grid unselects
@@ -1122,7 +1124,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             (groupSelectsChildren && this.rowNode.group) ||
             this.isRowSelectionBlocked() ||
             // if click selection disabled, do nothing
-            !_getEnableSelection(gos)
+            (!_getEnableSelection(gos) && !isSelected) ||
+            // if click deselection disabled, do nothing
+            (!_getEnableDeselection(gos) && isSelected)
         ) {
             return;
         }
@@ -1131,7 +1135,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const rowDeselectionWithCtrl = _getEnableDeselection(gos);
         const source = 'rowClicked';
 
-        if (this.rowNode.isSelected()) {
+        if (isSelected) {
             if (multiSelectOnClick) {
                 this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent, source });
             } else if (isMultiKey) {
