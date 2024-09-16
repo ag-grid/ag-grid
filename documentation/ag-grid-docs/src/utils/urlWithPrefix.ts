@@ -4,9 +4,7 @@ import { getFrameworkPath } from '@features/docs/utils/urlPaths';
 import { getIsDev } from '@utils/env';
 import { pathJoin } from '@utils/pathJoin';
 
-const isExternalLink = (url: string) => {
-    return url.startsWith('http') || url.startsWith('mailto');
-};
+import { isExternalLink } from './isExternalLink';
 
 export const urlWithPrefix = ({
     url = '',
