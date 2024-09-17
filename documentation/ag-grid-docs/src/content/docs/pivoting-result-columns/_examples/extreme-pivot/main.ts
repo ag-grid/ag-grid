@@ -34,7 +34,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 200,
     },
     pivotMode: true,
-    sideBar: true,
+    sideBar: 'columns',
     pivotMaxGeneratedColumns: 1000,
     onPivotMaxColumnsExceeded: () => {
         console.error(

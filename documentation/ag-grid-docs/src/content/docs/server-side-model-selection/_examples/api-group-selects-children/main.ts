@@ -76,7 +76,6 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
     // allow multiple row selections
     selection: {
         mode: 'multiRow',
-        suppressClickSelection: true,
         groupSelects: 'descendants',
     },
     rowGroupPanelShow: 'always',

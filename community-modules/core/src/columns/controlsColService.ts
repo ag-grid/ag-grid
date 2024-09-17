@@ -27,7 +27,7 @@ export class ControlsColService extends BeanStub implements NamedBean, IControls
         const headerCheckbox = _getHeaderCheckbox(so);
 
         if (checkboxes || headerCheckbox) {
-            const controlsColDef = this.gos.get('controlsColDef');
+            const selectionColumnDef = this.gos.get('selectionColumnDef');
             const enableRTL = this.gos.get('enableRtl');
             const colDef: ColDef = {
                 // overridable properties
@@ -45,7 +45,7 @@ export class ControlsColService extends BeanStub implements NamedBean, IControls
                 editable: false,
                 suppressFillHandle: true,
                 // overrides
-                ...controlsColDef,
+                ...selectionColumnDef,
                 // non-overridable properties
                 colId: `${CONTROLS_COLUMN_ID_PREFIX}`,
             };

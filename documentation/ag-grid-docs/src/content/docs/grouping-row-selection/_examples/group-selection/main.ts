@@ -33,7 +33,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     selection: {
         mode: 'multiRow',
         groupSelects: 'self',
-        suppressClickSelection: true,
     },
     suppressAggFuncInHeader: true,
 };
@@ -55,7 +54,6 @@ function getGroupSelectsValue(): GroupSelectionMode {
 function onSelectionModeChange() {
     gridApi.setGridOption('selection', {
         mode: 'multiRow',
-        suppressClickSelection: true,
         groupSelects: getGroupSelectsValue(),
     });
 }

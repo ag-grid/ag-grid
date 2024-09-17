@@ -49,7 +49,6 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
 
     selection: {
         mode: 'multiRow',
-        suppressClickSelection: true,
         selectAll: 'all',
     },
 
@@ -104,7 +103,6 @@ document.addEventListener('DOMContentLoaded', function () {
 function onSelectAllChanged() {
     gridApi.setGridOption('selection', {
         mode: 'multiRow',
-        suppressClickSelection: true,
         selectAll: document.querySelector<HTMLSelectElement>('#input-select-all')!.value as any,
     });
 }

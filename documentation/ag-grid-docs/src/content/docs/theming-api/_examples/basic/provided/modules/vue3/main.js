@@ -2,7 +2,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { themeQuartz } from '@ag-grid-community/theming';
 import { AgGridVue } from '@ag-grid-community/vue3';
-import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
+import { createApp } from 'vue';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 

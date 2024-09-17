@@ -61,7 +61,6 @@ const GridExample = () => {
     const selection = useMemo<SelectionOptions>(
         () => ({
             mode: 'multiRow',
-            suppressClickSelection: true,
         }),
         []
     );

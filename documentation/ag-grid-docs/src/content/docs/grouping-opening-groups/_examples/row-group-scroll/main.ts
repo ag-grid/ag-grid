@@ -30,11 +30,13 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function onRowGroupOpened(event: RowGroupOpenedEvent<IOlympicData>) {
-    var rowNodeIndex = event.node.rowIndex!;
-    // factor in child nodes so we can scroll to correct position
-    var childCount = event.node.childrenAfterSort ? event.node.childrenAfterSort.length : 0;
-    var newIndex = rowNodeIndex + childCount;
-    gridApi!.ensureIndexVisible(newIndex);
+    if (event.expanded) {
+        var rowNodeIndex = event.node.rowIndex!;
+        // factor in child nodes so we can scroll to correct position
+        var childCount = event.node.childrenAfterSort ? event.node.childrenAfterSort.length : 0;
+        var newIndex = rowNodeIndex + childCount;
+        gridApi!.ensureIndexVisible(newIndex);
+    }
 }
 
 // setup the grid after the page has finished loading

@@ -246,7 +246,6 @@ const gridOptions: GridOptions = {
     selection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
-        suppressClickSelection: true,
         selectAll: 'filtered',
     },
     quickFilterText: undefined,
@@ -267,7 +266,7 @@ function getContextMenuItems(params: GetContextMenuItemsParams): (string | MenuI
     const result: (string | MenuItemDef)[] = params.defaultItems!.splice(0);
     result.push({
         name: 'Custom Menu Item',
-        icon: '<img src="https://www.ag-grid.com/examples-assets/lab.png" style="width: 14px;" />',
+        icon: '<img src="https://www.ag-grid.com/example-assets/lab.png" style="width: 14px;" />',
         //shortcut: 'Alt + M',
         action: () => {
             const value = params.value ? params.value : '<empty>';

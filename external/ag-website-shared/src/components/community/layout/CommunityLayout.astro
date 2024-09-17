@@ -10,7 +10,7 @@ interface Props {
     pageTitle: string;
 }
 
-const { title, description, pageTitle, pageDescription } = Astro.props as Props;
+const { title, description, pageTitle } = Astro.props as Props;
 ---
 
 <Layout showSearchBar={true} showDocsNav={false} title={title} description={description}>

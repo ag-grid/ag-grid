@@ -17,7 +17,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
     selection: { mode: 'singleRow' },
-    controlsColDef: {
+    selectionColumnDef: {
         sortable: true,
         width: 100,
         maxWidth: 100,

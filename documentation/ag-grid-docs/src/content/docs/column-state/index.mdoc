@@ -22,7 +22,7 @@ the state.
 
 The full list of stateful attributes of Columns are represented by the `ColumnStateParams` interface:
 
-{% interfaceDocumentation interfaceName="ColumnStateParams" /%}
+{% interfaceDocumentation interfaceName="ColumnStateParams" config={ "description": "" } /%}
 
 This section details how such state items can be manipulated without having to update Column Definitions.
 
@@ -36,7 +36,7 @@ There are two API methods provided for getting and setting Column State. `api.ge
 column state and `api.applyColumnState(params)` sets the column state.
 
 ```{% frameworkTransform=true %}
-// save the column's state
+// save the column state
 const savedState = api.getColumnState();
 
 // restore the column state
@@ -46,8 +46,8 @@ api.applyColumnState({ state: savedState });
 The example below demonstrates saving and restoring column state. Try the following:
 
 1. Click 'Save State' to save the Column State.
-1. Change some column state e.g. resize columns, move columns around, apply column sorting or row grouping etc.
-1. Click 'Restore State' and the column's state is set back to where it was when you clicked 'Save State'.
+1. Change some column state, e.g. resize columns, move columns around, apply column sorting or row grouping, etc.
+1. Click 'Restore State' and the column state is set back to where it was when you clicked 'Save State'.
 1. Click 'Reset State' and the state will go back to what was defined in the Column Definitions.
 
 {% gridExampleRunner title="Save and Apply State" name="save-apply-state" /%}
@@ -75,7 +75,7 @@ the following rules apply:
 
 * If `params.defaultState` is not provided, then any additional Columns in the grid will not be updated.
 
-Combining these rules together leaves for flexible fine grained state control. Take the following code snippets as
+Combining these rules together allows flexible fine-grained state control. Take the following code snippets as
 examples:
 
 ```{% frameworkTransform=true %}
@@ -137,7 +137,7 @@ The example below shows some fine grained access to Column State.
 ### Saving Partial State
 
 Using the techniques above, it is possible to save and restore a subset of the parameters in the state.
-The example below demonstrates this by selectively saving and restoring a) sort state and
+The example below demonstrates this by selectively saving and restoring a) sort state, and
 b) column visibility and order state.
 
 Note that when saving and restoring Sort state, other state attributes (width, row group, column order etc)

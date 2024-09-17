@@ -17,7 +17,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     selection: {
         mode: 'multiRow',
-        suppressClickSelection: true,
         checkboxes: (params) => params.data?.year === 2012,
     },
     onFirstDataRendered: (params) => {

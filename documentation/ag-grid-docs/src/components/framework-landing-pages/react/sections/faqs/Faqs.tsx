@@ -1,4 +1,5 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import React, { useState } from 'react';
 
 import styles from './Faqs.module.scss';
@@ -16,14 +17,14 @@ const Faqs: React.FC = () => {
     const secondColumnFaqs = faqs.slice(midIndex);
 
     const linkMap = {
-        'AG Grid Community': 'https://www.ag-grid.com/react-data-grid/getting-started/',
-        'AG Grid Enterprise': 'https://www.ag-grid.com/license-pricing/',
-        'React Charts': 'https://www.ag-grid.com/charts/react/quick-start/',
-        'AG Charts': 'https://www.ag-grid.com/charts/',
-        'AG Grid licence': 'https://www.ag-grid.com/license-pricing/',
-        'Pricing page': 'https://www.ag-grid.com/license-pricing/',
-        themes: 'https://www.ag-grid.com/react-data-grid/themes/',
-        'Theme Builder': 'https://www.ag-grid.com/theme-builder/',
+        'AG Grid Community': './react-data-grid/getting-started/',
+        'AG Grid Enterprise': './license-pricing/',
+        'React Charts': './charts/react/quick-start/',
+        'AG Charts': './charts/',
+        'AG Grid licence': './license-pricing/',
+        'Pricing page': './license-pricing/',
+        themes: './react-data-grid/themes/',
+        'Theme Builder': './theme-builder/',
     };
 
     // Function to update FAQ json with links
@@ -36,7 +37,7 @@ const Faqs: React.FC = () => {
             if (parts.length > 1) {
                 elements.push(parts.shift());
                 elements.push(
-                    <a href={url} target="_blank" rel="noopener noreferrer" key={url}>
+                    <a href={urlWithBaseUrl(url)} target="_blank" rel="noopener noreferrer" key={url}>
                         {term}
                     </a>
                 );

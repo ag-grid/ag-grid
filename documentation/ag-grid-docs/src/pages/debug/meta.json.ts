@@ -1,3 +1,5 @@
+import { SITE_BASE_URL, SITE_URL, agGridVersion } from '@constants';
+import { getIsArchive, getIsDev, getIsProduction, getIsStaging } from '@utils/env';
 import { execSync } from 'child_process';
 
 export async function GET() {
@@ -13,6 +15,19 @@ export async function GET() {
             hash,
             shortHash,
             date: gitDate,
+        },
+        versions: {
+            grid: agGridVersion,
+        },
+        site: {
+            baseUrl: SITE_BASE_URL,
+            siteUrl: SITE_URL,
+        },
+        env: {
+            isDev: getIsDev(),
+            isStaging: getIsStaging(),
+            isProduction: getIsProduction(),
+            isArchive: getIsArchive(),
         },
     };
 
