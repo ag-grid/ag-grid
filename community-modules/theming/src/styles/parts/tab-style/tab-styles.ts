@@ -1,4 +1,4 @@
-import { createPart } from '../../../Part';
+import { createPart, createPartVariant } from '../../../Part';
 import type { BorderValue, ColorValue, DurationValue, LengthValue } from '../../../theme-types';
 import { tabStyleBaseCSS } from './GENERATED-tab-style-base';
 import { tabStyleRolodexCSS } from './GENERATED-tab-style-rolodex';
@@ -156,7 +156,7 @@ export const tabStyleBase =
 // prettier-ignore
 export const tabStyleQuartz =
     /*#__PURE__*/
-    tabStyleBase.createVariant('quartz')
+    createPartVariant(tabStyleBase, 'quartz')
         .withParams({
             tabBarBorder: true,
             tabBarBackgroundColor: {
@@ -187,7 +187,7 @@ export const tabStyleQuartz =
 // prettier-ignore
 export const tabStyleMaterial =
     /*#__PURE__*/
-    tabStyleBase.createVariant('material')
+    createPartVariant(tabStyleBase, 'material')
         .withParams({
             tabBarBackgroundColor: {
                 ref: 'chromeBackgroundColor',
@@ -205,7 +205,7 @@ export const tabStyleMaterial =
 // prettier-ignore
 export const tabStyleAlpine =
     /*#__PURE__*/
-    tabStyleBase.createVariant('alpine')
+    createPartVariant(tabStyleBase, 'alpine')
         .withParams({
             tabBarBorder: true,
             tabBarBackgroundColor: {
@@ -231,7 +231,7 @@ export const tabStyleAlpine =
 // prettier-ignore
 export const tabStyleRolodex =
     /*#__PURE__*/
-    tabStyleBase.createVariant('rolodex')
+    createPartVariant(tabStyleBase, 'rolodex')
         .withParams({
             tabBarBackgroundColor: {
                 ref: 'chromeBackgroundColor',

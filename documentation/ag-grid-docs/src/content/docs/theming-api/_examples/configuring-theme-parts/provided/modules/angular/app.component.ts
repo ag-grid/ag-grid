@@ -64,7 +64,7 @@ ModuleRegistry.registerModules([
                     [rowData]="rowData"
                     [theme]="theme"
                     loadThemeGoogleFonts
-                    sideBar
+                    [sideBar]="true"
                 />
             </div>
         </div>

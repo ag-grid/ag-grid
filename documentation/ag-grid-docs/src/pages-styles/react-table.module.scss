@@ -206,7 +206,6 @@ div.divider:nth-of-type(4n) {
     justify-content: center;
     gap: $spacing-size-8;
     max-width: 100%;
-    overflow-x: hidden;
 }
 
 .heroSectionheadingContainer {
@@ -275,10 +274,10 @@ div.divider:nth-of-type(4n) {
 }
 
 .heroSectionfeatureArrow {
-    height: 16px;
-    width: 16px;
-    margin-left: $spacing-size-2;
-    fill: var(--color-brand-500);
+    height: 16px !important;
+    width: 16px !important;
+    margin-left: $spacing-size-2 !important;
+    fill: var(--color-brand-500) !important;
 
     @media screen and (max-width: $breakpoint-landing-page-medium) {
         margin-left: 0;
@@ -343,6 +342,7 @@ div.divider:nth-of-type(4n) {
     color: var(--color-white);
     background: var(--color-brand-700);
     align-content: center;
+    padding-bottom: 6px;
 
     &:hover {
         color: var(--color-white);
@@ -376,16 +376,6 @@ div.divider:nth-of-type(4n) {
     color: var(--color-fg-primary);
 }
 
-.heroSectionicon svg {
-    fill: var(--color-gray-900);
-    padding: 6px;
-
-    &:hover {
-        cursor: pointer;
-        fill: var(--color-util-brand-400);
-    }
-}
-
 .heroSectiondemoContainer {
     display: flex;
     flex-direction: column;
@@ -411,8 +401,8 @@ div.divider:nth-of-type(4n) {
 }
 
 .heroSectiondemosArrow {
-    height: 16px;
-    width: 16px;
+    height: 16px !important;
+    width: 16px !important;
     margin-left: $spacing-size-2 !important;
     fill: var(--color-link) !important;
 }

@@ -14,6 +14,9 @@ export const tabs: Schema<Config, Render> = {
         headerLinks: {
             type: Array,
         },
+        snippetTabs: {
+            type: Boolean,
+        },
     },
 };
 

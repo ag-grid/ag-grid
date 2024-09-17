@@ -38,13 +38,19 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     constructor(
         private readonly formatter: TextFormatter,
         private readonly treeListPathGetter?: (value: V | null) => string[] | null,
-        private readonly treeListFormatter?: (
+        private treeListFormatter?: (
             pathKey: string | null,
             level: number,
             parentPathKeys: (string | null)[]
         ) => string,
         private readonly treeDataOrGrouping?: boolean
     ) {}
+
+    public updateOnParamsChange(
+        treeListFormatter?: (pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string
+    ) {
+        this.treeListFormatter = treeListFormatter;
+    }
 
     public updateDisplayedValuesToAllAvailable(
         getValue: (key: string | null) => V | null,
