@@ -282,20 +282,22 @@ const isUseStateProp = (propName) => ['columnDefs', 'rowData'].includes(propName
 
 const isUseMemoProp = (propName) =>
     [
+        'aggFuncs',
         'autoGroupColumnDef',
+        'chartThemeOverrides',
+        'chartToolPanelsDef',
         'columnTypes',
+        'selectionColumnDef',
+        'customChartThemes',
         'dataTypeDefinitions',
         'defaultColDef',
         'defaultColGroupDef',
         'defaultExcelExportParams',
-        'sideBar',
-        'statusBar',
-        'aggFuncs',
         'excelStyles',
         'popupParent',
-        'chartToolPanelsDef',
-        'customChartThemes',
-        'chartThemeOverrides',
+        'selection',
+        'sideBar',
+        'statusBar',
     ].includes(propName);
 
 // removes a tab spacing from the beginning of each line after first

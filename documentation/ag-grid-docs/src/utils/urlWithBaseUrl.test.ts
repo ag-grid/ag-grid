@@ -8,7 +8,7 @@ describe('urlWithBaseUrl', () => {
         ${'./docs'}              | ${'/docs'}
         ${'./docs/path'}         | ${'/docs/path'}
         ${'/gallery'}            | ${'/gallery'}
-        ${'/gallery/'}           | ${'/gallery'}
+        ${'/gallery/'}           | ${'/gallery/'}
         ${'https://youtube.com'} | ${'https://youtube.com'}
     `('$url (empty siteBaseUrl) -> $expected', ({ url, expected }) => {
         const siteBaseUrl = '';
@@ -22,7 +22,7 @@ describe('urlWithBaseUrl', () => {
         ${'./docs'}              | ${'/ag-charts/docs'}
         ${'./docs/path'}         | ${'/ag-charts/docs/path'}
         ${'/gallery'}            | ${'/ag-charts/gallery'}
-        ${'/gallery/'}           | ${'/ag-charts/gallery'}
+        ${'/gallery/'}           | ${'/ag-charts/gallery/'}
         ${'https://youtube.com'} | ${'https://youtube.com'}
     `('$url (siteBaseUrl: /ag-charts) -> $expected', ({ url, expected }) => {
         const siteBaseUrl = '/ag-charts';
@@ -36,7 +36,7 @@ describe('urlWithBaseUrl', () => {
         ${'./docs'}              | ${'/ag-charts/docs'}
         ${'./docs/path'}         | ${'/ag-charts/docs/path'}
         ${'/gallery'}            | ${'/ag-charts/gallery'}
-        ${'/gallery/'}           | ${'/ag-charts/gallery'}
+        ${'/gallery/'}           | ${'/ag-charts/gallery/'}
         ${'https://youtube.com'} | ${'https://youtube.com'}
     `('$url (siteBaseUrl: /ag-charts/) -> $expected', ({ url, expected }) => {
         const siteBaseUrl = '/ag-charts/';

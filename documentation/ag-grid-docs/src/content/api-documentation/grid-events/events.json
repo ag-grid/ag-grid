@@ -233,13 +233,13 @@
         "cellSelectionDeleteStart": {
             "more": {
                 "name": "Delete Cell Selection",
-                "url": "./cell-selection/#reference--cellSelectionDeleteStart"
+                "url": "./cell-selection-api-reference/#reference-editing-cellSelectionDeleteStart"
             }
         },
         "cellSelectionDeleteEnd": {
             "more": {
                 "name": "Delete Cell Selection",
-                "url": "./cell-selection/#reference--cellSelectionDeleteEnd"
+                "url": "./cell-selection-api-reference/#reference-editing-cellSelectionDeleteEnd"
             }
         }
     },

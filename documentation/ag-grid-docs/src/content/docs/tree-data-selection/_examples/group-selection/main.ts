@@ -44,7 +44,6 @@ const gridOptions: GridOptions = {
     selection: {
         mode: 'multiRow',
         groupSelects: 'self',
-        suppressClickSelection: true,
     },
     groupDefaultExpanded: -1,
     suppressAggFuncInHeader: true,
@@ -66,7 +65,6 @@ function getGroupSelectsValue(): GroupSelectionMode {
 function onSelectionModeChange() {
     gridApi.setGridOption('selection', {
         mode: 'multiRow',
-        suppressClickSelection: true,
         groupSelects: getGroupSelectsValue(),
     });
 }

@@ -86,13 +86,13 @@ group columns where the group is open for that column.
 
 ## Hide Open Parents
 
-Depending on your preference, you may wish to hide parent rows when they are open. This gives the impression to the user that the children takes the place of the parent row. This feature only makes sense when groups are in different columns. To turn this feature on set `groupHideOpenParents=true`.
+Depending on your preference, you may wish to hide parent rows when they are open. This gives the impression to the user that the children take the place of the parent row. This feature only makes sense when groups are in different columns. To turn this feature on set `groupHideOpenParents=true`.
 
-Below shows examples of this. Notice that each group row has [aggregated values](./aggregation/) which are explained in a documentation page of their own. When the group is closed, the group row shows the aggregated result. When the group is open, the group row is removed and in its place the child rows are displayed. To allow closing the group again, the group column knows to display the parent group in the group column only (so you can click on the icon to close the group).
+This is demonstrated in the example below. Notice that each group row has [aggregated values](./aggregation/). When the group is closed, the group row shows the aggregated result. When the group is open, the group row is removed and in its place the child rows are displayed. The group column still displays the parent group in the group column, to allow users to close the group by clicking the chevron.
 
-The example below demonstrates hiding open parents using auto group columns. To help demonstrate, the grid is configured to shade the rows different colors for the different group levels, so when you open a group, you can see the background change indicating that the group row is no longer displayed, instead the children are in it's place.
+The grid in the example below is configured to colour the rows differently for each group level. When a group is opened, the row colour changes to reflect the fact that the parent group row has been replaced by its child rows.
 
-Filter is achieved for each column by providing a `filterValueGetter` for the `autoGroupColumnDef`. The filterValueGetter returns the value of the grouped column - eg for Country, it will filter on Country.
+Filter is enabled for each column by providing a `filterValueGetter` for the `autoGroupColumnDef`. The filterValueGetter returns the value of the grouped column - eg for Country, it will filter on Country.
 
 {% note %}
 When `groupHideOpenParents=true` the Grid automatically disables Group Rows Sticky, see: [suppressGroupRowsSticky](./grid-options/#reference-rowGrouping-suppressGroupRowsSticky).

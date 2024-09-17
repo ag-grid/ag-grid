@@ -3,7 +3,7 @@ import type { GridApi, GridOptions } from '@ag-grid-community/core';
 import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
 
 import { TestGridsManager } from '../test-utils';
-import { assertSelectedRowNodes, assertSelectedRowsByIndex, wait } from './utils';
+import { assertSelectedRowNodes, assertSelectedRowsByIndex } from './utils';
 
 describe('Row Selection Grid API', () => {
     const gridMgr = new TestGridsManager({
@@ -12,6 +12,10 @@ describe('Row Selection Grid API', () => {
 
     function createGrid(go: GridOptions): GridApi {
         return gridMgr.createGrid('myGrid', go);
+    }
+
+    function waitForFirstRender(api: GridApi): Promise<void> {
+        return new Promise((resolve) => api.addEventListener('firstDataRendered', () => resolve()));
     }
 
     beforeEach(() => {
@@ -136,7 +140,7 @@ describe('Row Selection Grid API', () => {
                         },
                     });
 
-                    await wait(10);
+                    await waitForFirstRender(api);
                     assertSelectedRowNodes([], api);
 
                     api.selectAll();
@@ -161,7 +165,7 @@ describe('Row Selection Grid API', () => {
                         selection: { mode: 'singleRow' },
                     });
 
-                    await wait(10);
+                    await waitForFirstRender(api);
                     const nodes = api.getRenderedNodes();
                     const toSelect = [nodes[3]];
                     api.setNodesSelected({ nodes: toSelect, newValue: true });
@@ -184,7 +188,7 @@ describe('Row Selection Grid API', () => {
                         selection: { mode: 'singleRow' },
                     });
 
-                    await wait(10);
+                    await waitForFirstRender(api);
                     const nodes = api.getRenderedNodes();
                     const toSelect = [nodes[0], nodes[3], nodes[1]];
                     api.setNodesSelected({ nodes: toSelect, newValue: true });
@@ -250,7 +254,7 @@ describe('Row Selection Grid API', () => {
                         selection: { mode: 'multiRow' },
                     });
 
-                    await wait(10);
+                    await waitForFirstRender(api);
                     const nodes = api.getRenderedNodes();
                     const toSelect = [nodes[3]];
                     api.setNodesSelected({ nodes: toSelect, newValue: true });
@@ -273,7 +277,7 @@ describe('Row Selection Grid API', () => {
                         selection: { mode: 'multiRow' },
                     });
 
-                    await wait(10);
+                    await waitForFirstRender(api);
                     const nodes = api.getRenderedNodes();
                     const toSelect = [nodes[5], nodes[4], nodes[2]];
                     api.setNodesSelected({ nodes: toSelect, newValue: true });

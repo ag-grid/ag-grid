@@ -27,6 +27,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     selection: {
         mode: 'singleRow',
         checkboxes: false,
+        enableClickSelection: true,
     },
     initialState: {
         rowSelection: ['2'],

@@ -13,10 +13,10 @@ to specifically customise pivot result columns using the `processPivotResultColD
 
 {% apiDocumentation source="grid-options/properties.json" section="rowPivoting" names=["processPivotResultColDef"] /%}
 
-In the example below, the `Gold` column has `cellStyle: { backgroundColor: 'gold' }` applied, this is then inherited by the pivot result columns,
-making all of the `sum(Gold)` columns have a gold background. Note that the `Silver` column does not have this background so neither do the `sum(Silver)` columns.
+In the example below, the `Gold` column has `cellStyle: { backgroundColor: '#f2e2879e' }` applied, this is then inherited by the pivot result columns,
+causing all of the `sum(Gold)` columns to have a gold background. Note that the `Silver` column does not have this background so neither do the `sum(Silver)` columns.
 
-The grid option `processPivotResultColDef` is then also used, which sets the text colour of all the pivot result columns to red.
+The grid option `processPivotResultColDef` is then also used, which sets the text colour of all the pivot result columns to '#696FA2'.
 
 {% gridExampleRunner title="Column Definitions Example" name="column-definitions-example"  /%}
 
@@ -26,7 +26,7 @@ This uses the following configuration to both inherit and modify column definiti
 const gridOptions = {
     columnDefs: [
         // ...other column definitions
-        { field: 'gold', aggFunc: 'sum', cellStyle: { backgroundColor: 'gold' } },
+        { field: 'gold', aggFunc: 'sum', cellStyle: { backgroundColor: '#f2e2879e' } },
         { field: 'silver', aggFunc: 'sum', cellStyle: {} },
     ],
     pivotMode: true,
@@ -60,7 +60,7 @@ To prevent this from happening, you can set the `pivotMaxGeneratedColumns` optio
 exceeding this value, it halts column generation, clears the view, and fires the `onPivotMaxColumnsExceeded` event to allow your
 application to intervene.
 
-{% gridExampleRunner title="Extreme Pivot Handling" name="extreme-pivot" /%}
+{% gridExampleRunner title="Extreme Pivot Handling" name="extreme-pivot" exampleHeight=600 /%}
 
 In the example above, pivoting by the `Athlete` column will instead trigger the `pivotMaxColumnsExceeded` event, which logs an error in the browser console.
 

@@ -377,6 +377,7 @@ body {
         max-width: 12em;
         margin-left: auto;
         margin-right: auto;
+        font-weight: var(--text-light);
 
         @media screen and (min-width: $breakpoint-sponsorship-large) {
             margin-left: unset;
@@ -394,12 +395,9 @@ body {
 .project {
     --icon-size: #{$spacing-size-16};
 
-    display: grid;
-    grid-template-columns: var(--icon-size) auto;
-    grid-template-rows: $spacing-size-8 auto;
-    grid-template-areas:
-        'icon name'
-        'icon link';
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: min(100%, 25em);
     gap: 0 $spacing-size-4;
 

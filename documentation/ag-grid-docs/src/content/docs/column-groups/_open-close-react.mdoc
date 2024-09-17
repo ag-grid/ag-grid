@@ -4,7 +4,7 @@ Not all column groups can open and close, so you should display open / close fea
 
 {% if isFramework("react") %}
 ```js
-const showExpandableIcons = this.props.columnGroup.isExpandable()
+const showExpandableIcons = props.columnGroup.isExpandable()
 ```
 {% /if %}
 
@@ -14,20 +14,20 @@ To check if a column group is open or closed, check the `isExpanded()` method on
 
 {% if isFramework("react") %}
 ```js
-const groupIsOpen = this.props.columnGroup.isExpanded();
+const groupIsOpen = props.columnGroup.isExpanded();
 ```
 {% /if %}
 
 {% if isFramework("react") %}
-To open / close a column group, use the `this.props.setExpanded(boolean)` method.
+To open / close a column group, use the `props.setExpanded(boolean)` method.
 {% /if %}
 
 {% if isFramework("react") %}
 ```js
 // this code toggles the expanded state
-const oldValue = this.props.columnGroup.isExpanded();
+const oldValue = props.columnGroup.isExpanded();
 const newValue = !oldValue;
-this.props.setExpanded(newValue);
+props.setExpanded(newValue);
 ```
 {% /if %}
 
@@ -38,7 +38,7 @@ To know if a group is expanded or collapsed, listen for the `expandedChanged` ev
 {% if isFramework("react") %}
 ```js
 // get a reference to the original column group
-const columnGroup = this.props.columnGroup.getProvidedColumnGroup();
+const columnGroup = props.columnGroup.getProvidedColumnGroup();
 // create listener
 const listener = () => { console.log('group was opened or closed'); };
 // add listener
