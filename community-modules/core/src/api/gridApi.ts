@@ -1,5 +1,4 @@
 import type { ApplyColumnStateParams, ColumnState } from '../columns/columnApplyStateService';
-import type { ISizeColumnsToFitParams } from '../columns/columnSizeService';
 import type { CellPosition } from '../entities/cellPositionUtils';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from '../entities/colDef';
 import type { ChartRef, GridOptions } from '../entities/gridOptions';
@@ -27,6 +26,7 @@ import type {
 import type { CellRange, CellRangeParams } from '../interfaces/IRangeService';
 import type { ServerSideGroupLevelState } from '../interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
+import type { ISizeColumnsToFitParams } from '../interfaces/autoSize';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState } from '../interfaces/gridState';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';

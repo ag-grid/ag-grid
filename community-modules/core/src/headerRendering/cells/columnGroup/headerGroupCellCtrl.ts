@@ -1,3 +1,4 @@
+import type { GroupResizeFeature } from '../../../columnResize/groupResizeFeature';
 import { setupCompBean } from '../../../components/emptyBean';
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
@@ -23,7 +24,6 @@ import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCell
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
 import { HoverFeature } from '../hoverFeature';
-import { GroupResizeFeature } from './groupResizeFeature';
 import { GroupWidthFeature } from './groupWidthFeature';
 import type { IHeaderGroupComp, IHeaderGroupParams } from './headerGroupComp';
 
@@ -81,7 +81,13 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         compBean.createManagedBean(new HoverFeature(leafCols, eGui));
         compBean.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
         compBean.createManagedBean(new GroupWidthFeature(comp, this.column));
-        this.resizeFeature = compBean.createManagedBean(new GroupResizeFeature(comp, eResize, pinned, this.column));
+        if (this.beans.columnResizeService) {
+            this.resizeFeature = compBean.createManagedBean(
+                this.beans.columnResizeService.createGroupResizeFeature(comp, eResize, pinned, this.column)
+            );
+        } else {
+            comp.setResizableDisplayed(false);
+        }
 
         compBean.createManagedBean(
             new ManagedFocusFeature(eGui, {

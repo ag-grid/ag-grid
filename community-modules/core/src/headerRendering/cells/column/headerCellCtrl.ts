@@ -1,3 +1,4 @@
+import type { ResizeFeature } from '../../../columnResize/resizeFeature';
 import { setupCompBean } from '../../../components/emptyBean';
 import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { HorizontalDirection } from '../../../constants/direction';
@@ -13,6 +14,7 @@ import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { ColumnSortState } from '../../../utils/aria';
 import { _getAriaSortState } from '../../../utils/aria';
+import { _setDisplayed } from '../../../utils/dom';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { ITooltipFeatureCtrl } from '../../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../../widgets/tooltipFeature';
@@ -25,7 +27,6 @@ import { _getHeaderClassesFromColDef } from '../cssClassApplier';
 import { HoverFeature } from '../hoverFeature';
 import type { IHeader, IHeaderParams } from './headerComp';
 import { HeaderComp } from './headerComp';
-import { ResizeFeature } from './resizeFeature';
 import { SelectAllFeature } from './selectAllFeature';
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
@@ -94,9 +95,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.setupUserComp(compBean);
         this.refreshAria();
 
-        this.resizeFeature = compBean.createManagedBean(
-            new ResizeFeature(this.getPinned(), this.column, eResize, comp, this)
-        );
+        if (this.beans.columnResizeService) {
+            this.resizeFeature = compBean.createManagedBean(
+                this.beans.columnResizeService.createResizeFeature(this.getPinned(), this.column, eResize, comp, this)
+            );
+        } else {
+            _setDisplayed(eResize, false);
+        }
         compBean.createManagedBean(new HoverFeature([this.column], eGui));
         compBean.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
         compBean.createManagedBean(
@@ -139,22 +144,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {
-        if (!this.column.isResizable()) {
-            return;
-        }
-
-        const actualWidth = this.column.getActualWidth();
-        const minWidth = this.column.getMinWidth();
-        const maxWidth = this.column.getMaxWidth();
-
-        const newWidth = Math.min(Math.max(actualWidth + delta, minWidth), maxWidth);
-
-        this.beans.columnSizeService.setColumnWidths(
-            [{ key: this.column, newWidth }],
-            shiftKey,
-            true,
-            'uiColumnResized'
-        );
+        this.beans.columnResizeService?.resizeHeader(this.column, delta, shiftKey);
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {

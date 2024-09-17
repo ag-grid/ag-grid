@@ -1,5 +1,5 @@
+import type { ColumnFlexService } from '../columns/columnFlexService';
 import type { ColumnModel } from '../columns/columnModel';
-import type { ColumnSizeService } from '../columns/columnSizeService';
 import type { ColumnViewportService } from '../columns/columnViewportService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
@@ -22,7 +22,7 @@ export class ViewportSizeFeature extends BeanStub {
     private pinnedWidthService: PinnedWidthService;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
-    private columnSizeService: ColumnSizeService;
+    private columnFlexService: ColumnFlexService;
     private scrollVisibleService: ScrollVisibleService;
     private columnViewportService: ColumnViewportService;
 
@@ -31,7 +31,7 @@ export class ViewportSizeFeature extends BeanStub {
         this.pinnedWidthService = beans.pinnedWidthService;
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
-        this.columnSizeService = beans.columnSizeService;
+        this.columnFlexService = beans.columnFlexService;
         this.scrollVisibleService = beans.scrollVisibleService;
         this.columnViewportService = beans.columnViewportService;
     }
@@ -82,7 +82,7 @@ export class ViewportSizeFeature extends BeanStub {
 
             if (newWidth !== this.centerWidth) {
                 this.centerWidth = newWidth;
-                this.columnSizeService.refreshFlexedColumns({
+                this.columnFlexService.refreshFlexedColumns({
                     viewportWidth: this.centerWidth,
                     updateBodyWidths: true,
                     fireResizedEvent: true,

@@ -1,7 +1,7 @@
 import type { GridApi } from './api/gridApi';
+import type { ColumnResizeService } from './columnResize/columnResizeService';
 import type { ColumnApplyStateService } from './columns/columnApplyStateService';
 import type { ColumnModel } from './columns/columnModel';
-import type { ColumnSizeService } from './columns/columnSizeService';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
@@ -25,13 +25,13 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
     beanName = 'alignedGridsService' as const;
 
     private columnModel: ColumnModel;
-    private columnSizeService: ColumnSizeService;
+    private columnResizeService?: ColumnResizeService;
     private ctrlsService: CtrlsService;
     private columnApplyStateService: ColumnApplyStateService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
-        this.columnSizeService = beans.columnSizeService;
+        this.columnResizeService = beans.columnResizeService;
         this.ctrlsService = beans.ctrlsService;
         this.columnApplyStateService = beans.columnApplyStateService;
     }
@@ -228,7 +228,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         // in time, all the methods below should use the column ids, it's a more generic way
         // of handling columns, and also allows for single or multi column events
         const masterColumns = this.getMasterColumns(colEvent);
-        const { columnApplyStateService, columnSizeService, ctrlsService } = this;
+        const { columnApplyStateService, columnResizeService, ctrlsService } = this;
         switch (colEvent.type) {
             case 'columnMoved':
                 // when the user moves columns via applyColumnState, we can't depend on moving specific columns
@@ -278,7 +278,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                         delete columnWidths[col.getId()];
                     }
                 });
-                columnSizeService.setColumnWidths(
+                columnResizeService?.setColumnWidths(
                     Object.values(columnWidths),
                     false,
                     resizedEvent.finished,

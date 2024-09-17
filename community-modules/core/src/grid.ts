@@ -7,12 +7,12 @@ import { ColumnApplyStateService } from './columns/columnApplyStateService';
 import { ColumnDefFactory } from './columns/columnDefFactory';
 import { ColumnEventDispatcher } from './columns/columnEventDispatcher';
 import { ColumnFactory } from './columns/columnFactory';
+import { ColumnFlexService } from './columns/columnFlexService';
 import { ColumnGetStateService } from './columns/columnGetStateService';
 import { ColumnGroupStateService } from './columns/columnGroupStateService';
 import { ColumnModel } from './columns/columnModel';
 import { ColumnMoveService } from './columns/columnMoveService';
 import { ColumnNameService } from './columns/columnNameService';
-import { ColumnSizeService } from './columns/columnSizeService';
 import { ColumnViewportService } from './columns/columnViewportService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
@@ -505,7 +505,7 @@ export class GridCoreCreator {
             ColumnMoveService,
             ColumnGetStateService,
             ColumnGroupStateService,
-            ColumnSizeService,
+            ColumnFlexService,
             FuncColsService,
             ColumnNameService,
             ColumnViewportService,

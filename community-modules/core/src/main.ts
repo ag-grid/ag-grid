@@ -24,7 +24,6 @@ export { ColumnNameService } from './columns/columnNameService';
 export { IAggColumnNameService } from './interfaces/iAggColumnNameService';
 export { IShowRowGroupColsService, IColumnDropZonesService } from './interfaces/iShowRowGroupColsService';
 export { PivotResultColsService } from './columns/pivotResultColsService';
-export { ColumnSizeService, IColumnLimit, ISizeColumnsToFitParams } from './columns/columnSizeService';
 export { ColumnKeyCreator } from './columns/columnKeyCreator';
 export { VisibleColsService } from './columns/visibleColsService';
 export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
@@ -35,7 +34,9 @@ export {
     SizeColumnsToContentStrategy,
     SizeColumnsToFitProvidedWidthStrategy,
     SizeColumnsToFitGridStrategy,
-} from './interfaces/autoSizeStrategy';
+    IColumnLimit,
+    ISizeColumnsToFitParams,
+} from './interfaces/autoSize';
 export { IRenderStatusService } from './interfaces/renderStatusService';
 
 // components

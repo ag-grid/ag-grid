@@ -11,8 +11,8 @@ import type { ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
 import { _last, _removeAllFromUnorderedArray } from '../utils/array';
 import { _exists } from '../utils/generic';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
+import type { ColumnFlexService } from './columnFlexService';
 import type { ColumnModel } from './columnModel';
-import type { ColumnSizeService } from './columnSizeService';
 import { getWidthOfColsInList } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
@@ -22,13 +22,13 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     beanName = 'visibleColsService' as const;
 
     private columnModel: ColumnModel;
-    private columnSizeService: ColumnSizeService;
+    private columnFlexService: ColumnFlexService;
     private columnViewportService: ColumnViewportService;
     private eventDispatcher: ColumnEventDispatcher;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
-        this.columnSizeService = beans.columnSizeService;
+        this.columnFlexService = beans.columnFlexService;
         this.columnViewportService = beans.columnViewportService;
         this.eventDispatcher = beans.columnEventDispatcher;
     }
@@ -75,7 +75,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.joinCols();
         this.setLeftValues(source);
         this.autoHeightCols = this.allCols.filter((col) => col.isAutoHeight());
-        this.columnSizeService.refreshFlexedColumns();
+        this.columnFlexService.refreshFlexedColumns();
         this.updateBodyWidths();
         this.columnViewportService.checkViewportColumns(false);
         this.setFirstRightAndLastLeftPinned(source);

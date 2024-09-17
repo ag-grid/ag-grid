@@ -1,4 +1,5 @@
 import type { _ColumnGridApi } from '../api/gridApi';
+import { ColumnResizeService } from '../columnResize/columnResizeService';
 import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import {
@@ -66,6 +67,12 @@ export const ControlsColumnModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/controls-column',
     beans: [ControlsColService],
+});
+
+export const ColumnResizeModule = _defineModule({
+    version: VERSION,
+    moduleName: '@ag-grid-community/column-resize',
+    beans: [ColumnResizeService],
 });
 
 export const ColumnApiModule = _defineModule<_ColumnGridApi<any>>({

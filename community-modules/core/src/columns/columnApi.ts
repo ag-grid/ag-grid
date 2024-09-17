@@ -4,9 +4,9 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef, HeaderLocation } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
+import type { ISizeColumnsToFitParams } from '../interfaces/autoSize';
 import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from '../interfaces/iColumn';
 import type { ApplyColumnStateParams, ColumnState } from './columnApplyStateService';
-import type { ISizeColumnsToFitParams } from './columnSizeService';
 
 export function getColumnDef<TValue = any, TData = any>(
     beans: BeanCollection,
@@ -25,9 +25,9 @@ export function getColumnDefs<TData = any>(beans: BeanCollection): (ColDef<TData
 
 export function sizeColumnsToFit(beans: BeanCollection, paramsOrGridWidth?: ISizeColumnsToFitParams | number) {
     if (typeof paramsOrGridWidth === 'number') {
-        beans.columnSizeService.sizeColumnsToFit(paramsOrGridWidth, 'api');
+        beans.columnAutosizeService?.sizeColumnsToFit(paramsOrGridWidth, 'api');
     } else {
-        beans.ctrlsService.getGridBodyCtrl().sizeColumnsToFit(paramsOrGridWidth);
+        beans.columnAutosizeService?.sizeColumnsToFitGridBody(paramsOrGridWidth);
     }
 }
 
@@ -181,7 +181,7 @@ export function setColumnWidth(
     finished: boolean = true,
     source: ColumnEventType = 'api'
 ): void {
-    beans.columnSizeService.setColumnWidths([{ key, newWidth }], false, finished, source);
+    beans.columnResizeService?.setColumnWidths([{ key, newWidth }], false, finished, source);
 }
 
 export function setColumnWidths(
@@ -190,7 +190,7 @@ export function setColumnWidths(
     finished: boolean = true,
     source: ColumnEventType = 'api'
 ): void {
-    beans.columnSizeService.setColumnWidths(columnWidths, false, finished, source);
+    beans.columnResizeService?.setColumnWidths(columnWidths, false, finished, source);
 }
 
 export function getLeftDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] {

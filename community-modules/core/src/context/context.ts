@@ -3,17 +3,18 @@ import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
 import type { RowModelHelperService } from '../api/rowModelHelperService';
 import type { CellNavigationService } from '../cellNavigationService';
+import type { ColumnResizeService } from '../columnResize/columnResizeService';
 import type { ColumnApplyStateService } from '../columns/columnApplyStateService';
 import type { ColumnAutosizeService } from '../columns/columnAutosizeService';
 import type { ColumnDefFactory } from '../columns/columnDefFactory';
 import type { ColumnEventDispatcher } from '../columns/columnEventDispatcher';
 import type { ColumnFactory } from '../columns/columnFactory';
+import type { ColumnFlexService } from '../columns/columnFlexService';
 import type { ColumnGetStateService } from '../columns/columnGetStateService';
 import type { ColumnGroupStateService } from '../columns/columnGroupStateService';
 import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnMoveService } from '../columns/columnMoveService';
 import type { ColumnNameService } from '../columns/columnNameService';
-import type { ColumnSizeService } from '../columns/columnSizeService';
 import type { ColumnViewportService } from '../columns/columnViewportService';
 import type { ControlsColService } from '../columns/controlsColService';
 import type { DataTypeService } from '../columns/dataTypeService';
@@ -74,6 +75,7 @@ import type { IServerSideTransactionManager } from '../interfaces/iServerSideRow
 import type { IColumnDropZonesService, IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IStatusBarService } from '../interfaces/iStatusBarService';
+import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { LocaleService } from '../localeService';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEventService';
@@ -189,7 +191,8 @@ export interface CoreBeanCollection {
     columnNameService: ColumnNameService;
     visibleColsService: VisibleColsService;
     columnMoveService: ColumnMoveService;
-    columnSizeService: ColumnSizeService;
+    columnFlexService: ColumnFlexService;
+    columnResizeService?: ColumnResizeService;
     headerNavigationService: HeaderNavigationService;
     navigationService: NavigationService;
     columnAnimationService: ColumnAnimationService;
@@ -295,6 +298,7 @@ export interface CoreBeanCollection {
     chartService?: IChartService;
     selectableService: SelectableService;
     aggColumnNameService?: IAggColumnNameService;
+    renderStatusService?: IRenderStatusService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -361,8 +365,9 @@ export type BeanName =
     | 'columnEditorFactory'
     | 'columnEventDispatcher'
     | 'columnFilterService'
+    | 'columnFlexService'
     | 'columnGetStateService'
-    | 'columnSizeService'
+    | 'columnResizeService'
     | 'columnFactory'
     | 'columnAnimationService'
     | 'columnHoverService'

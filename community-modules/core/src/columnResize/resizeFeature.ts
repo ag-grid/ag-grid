@@ -1,28 +1,28 @@
-import type { ColumnAutosizeService } from '../../../columns/columnAutosizeService';
-import type { ColumnSizeService } from '../../../columns/columnSizeService';
-import { BeanStub } from '../../../context/beanStub';
-import type { BeanCollection } from '../../../context/context';
-import type { CtrlsService } from '../../../ctrlsService';
-import type { AgColumn } from '../../../entities/agColumn';
-import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
-import type { ColumnPinnedType } from '../../../interfaces/iColumn';
-import { _getInnerWidth, _setDisplayed } from '../../../utils/dom';
-import type { HorizontalResizeService } from '../../common/horizontalResizeService';
-import type { IHeaderResizeFeature } from '../abstractCell/abstractHeaderCellCtrl';
-import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
+import type { ColumnAutosizeService } from '../columns/columnAutosizeService';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
+import type { PinnedWidthService } from '../gridBodyComp/pinnedWidthService';
+import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
+import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
+import type { HorizontalResizeService } from '../headerRendering/common/horizontalResizeService';
+import type { ColumnPinnedType } from '../interfaces/iColumn';
+import { _getInnerWidth, _setDisplayed } from '../utils/dom';
+import type { ColumnResizeService } from './columnResizeService';
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private horizontalResizeService: HorizontalResizeService;
     private pinnedWidthService: PinnedWidthService;
     private ctrlsService: CtrlsService;
-    private columnSizeService: ColumnSizeService;
+    private columnResizeService?: ColumnResizeService;
     private columnAutosizeService?: ColumnAutosizeService;
 
     public wireBeans(beans: BeanCollection) {
         this.horizontalResizeService = beans.horizontalResizeService;
         this.pinnedWidthService = beans.pinnedWidthService;
         this.ctrlsService = beans.ctrlsService;
-        this.columnSizeService = beans.columnSizeService;
+        this.columnResizeService = beans.columnResizeService;
         this.columnAutosizeService = beans.columnAutosizeService;
     }
 
@@ -120,7 +120,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
         this.lastResizeAmount = resizeAmountNormalised;
 
-        this.columnSizeService.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, 'uiColumnResized');
+        this.columnResizeService?.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, 'uiColumnResized');
 
         if (finished) {
             this.toggleColumnResizing(false);

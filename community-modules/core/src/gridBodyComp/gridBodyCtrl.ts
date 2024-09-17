@@ -1,5 +1,4 @@
 import type { ColumnModel } from '../columns/columnModel';
-import type { ColumnSizeService, ISizeColumnsToFitParams } from '../columns/columnSizeService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
@@ -17,8 +16,7 @@ import type { RowRenderer } from '../rendering/rowRenderer';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import { _getTabIndex, _isIOSUserAgent, _isInvisibleScrollbar } from '../utils/browser';
-import { _getInnerWidth, _isElementChildOfClass, _isVerticalScrollShowing } from '../utils/dom';
-import { _warnOnce } from '../utils/function';
+import { _isElementChildOfClass, _isVerticalScrollShowing } from '../utils/dom';
 import type { PopupService } from '../widgets/popupService';
 import type { LongTapEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
@@ -62,7 +60,6 @@ export class GridBodyCtrl extends BeanStub {
     private rowContainerHeightService: RowContainerHeightService;
     private ctrlsService: CtrlsService;
     private columnModel: ColumnModel;
-    private columnSizeService: ColumnSizeService;
     private scrollVisibleService: ScrollVisibleService;
     private menuService: MenuService;
     private headerNavigationService: HeaderNavigationService;
@@ -80,7 +77,6 @@ export class GridBodyCtrl extends BeanStub {
         this.rowContainerHeightService = beans.rowContainerHeightService;
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;
-        this.columnSizeService = beans.columnSizeService;
         this.scrollVisibleService = beans.scrollVisibleService;
         this.menuService = beans.menuService;
         this.headerNavigationService = beans.headerNavigationService;
@@ -588,41 +584,6 @@ export class GridBodyCtrl extends BeanStub {
         const height = pinnedBottomHeight + scrollbarWidth;
 
         this.comp.setStickyBottomBottom(`${height}px`);
-    }
-
-    // method will call itself if no available width. this covers if the grid
-    // isn't visible, but is just about to be visible.
-    public sizeColumnsToFit(params?: ISizeColumnsToFitParams, nextTimeout?: number) {
-        const removeScrollWidth = this.isVerticalScrollShowing();
-        const scrollWidthToRemove = removeScrollWidth ? this.scrollVisibleService.getScrollbarWidth() : 0;
-        // bodyViewportWidth should be calculated from eGridBody, not eBodyViewport
-        // because we change the width of the bodyViewport to hide the real browser scrollbar
-        const bodyViewportWidth = _getInnerWidth(this.eGridBody);
-        const availableWidth = bodyViewportWidth - scrollWidthToRemove;
-
-        if (availableWidth > 0) {
-            this.columnSizeService.sizeColumnsToFit(availableWidth, 'sizeColumnsToFit', false, params);
-            return;
-        }
-
-        if (nextTimeout === undefined) {
-            window.setTimeout(() => {
-                this.sizeColumnsToFit(params, 100);
-            }, 0);
-        } else if (nextTimeout === 100) {
-            window.setTimeout(() => {
-                this.sizeColumnsToFit(params, 500);
-            }, 100);
-        } else if (nextTimeout === 500) {
-            window.setTimeout(() => {
-                this.sizeColumnsToFit(params, -1);
-            }, 500);
-        } else {
-            _warnOnce(
-                'tried to call sizeColumnsToFit() but the grid is coming back with ' +
-                    'zero width, maybe the grid is not visible yet on the screen?'
-            );
-        }
     }
 
     // + rangeService

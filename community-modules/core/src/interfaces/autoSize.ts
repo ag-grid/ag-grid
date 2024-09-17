@@ -1,3 +1,23 @@
+import type { Column } from './iColumn';
+
+export interface IColumnLimit {
+    /** Selector for the column to which these dimension limits will apply */
+    key: Column | string;
+    /** Defines a minimum width for this column (does not override the column minimum width) */
+    minWidth?: number;
+    /** Defines a maximum width for this column (does not override the column maximum width) */
+    maxWidth?: number;
+}
+
+export interface ISizeColumnsToFitParams {
+    /** Defines a default minimum width for every column (does not override the column minimum width) */
+    defaultMinWidth?: number;
+    /** Defines a default maximum width for every column (does not override the column maximum width) */
+    defaultMaxWidth?: number;
+    /** Provides a minimum and/or maximum width to specific columns */
+    columnLimits?: IColumnLimit[];
+}
+
 /** Limit a column width when auto-sizing to fit grid width. */
 export interface SizeColumnsToFitGridColumnLimits {
     colId: string;

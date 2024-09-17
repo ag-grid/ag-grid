@@ -32,13 +32,13 @@ import { _warnOnce } from '../utils/function';
 import { _missingOrEmpty } from '../utils/generic';
 import type { ValueCache } from '../valueService/valueCache';
 import type { ColumnApplyStateService, ColumnState } from './columnApplyStateService';
+import type { ColumnAutosizeService } from './columnAutosizeService';
 import type { ColumnDefFactory } from './columnDefFactory';
 import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColumnFactory } from './columnFactory';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnGroupStateService } from './columnGroupStateService';
 import type { ColumnMoveService } from './columnMoveService';
-import type { ColumnSizeService } from './columnSizeService';
 import { GROUP_AUTO_COLUMN_ID } from './columnUtils';
 import { destroyColumnTree, getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
@@ -66,7 +66,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private context: Context;
     private ctrlsService: CtrlsService;
     private columnFactory: ColumnFactory;
-    private columnSizeService: ColumnSizeService;
+    private columnAutosizeService?: ColumnAutosizeService;
     private visibleColsService: VisibleColsService;
     private columnViewportService: ColumnViewportService;
     private pivotResultColsService: PivotResultColsService;
@@ -88,7 +88,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.context = beans.context;
         this.ctrlsService = beans.ctrlsService;
         this.columnFactory = beans.columnFactory;
-        this.columnSizeService = beans.columnSizeService;
+        this.columnAutosizeService = beans.columnAutosizeService;
         this.visibleColsService = beans.visibleColsService;
         this.columnViewportService = beans.columnViewportService;
         this.pivotResultColsService = beans.pivotResultColsService;
@@ -222,7 +222,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         this.eventDispatcher.newColumnsLoaded(source);
         if (source === 'gridInitializing') {
-            this.columnSizeService.applyAutosizeStrategy();
+            this.columnAutosizeService?.applyAutosizeStrategy();
         }
     }
 
