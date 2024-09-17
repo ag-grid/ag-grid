@@ -101,6 +101,8 @@ export class ClientSideNodeManager {
 
     public setRowData(rowData: any[]): RowNode[] | undefined {
         if (typeof rowData === 'string') {
+            this.consoleService.warnOnce(22, 'f');
+            this.consoleService.warnOnce(2, 's', 'd');
             this.consoleService.warnOnce(1);
             return;
         }

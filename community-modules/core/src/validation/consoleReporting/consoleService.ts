@@ -1,9 +1,9 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import { _warnOnce } from '../../utils/function';
+import { _errorOnce, _warnOnce } from '../../utils/function';
 import type { ValidationService } from '../validationService';
-import type { ConsoleID } from './consoleMappings';
+import type { ConsoleID, ConsoleMessageParams } from './consoleMappings';
 
 const detail = 'Include ValidationModule to see the full message.';
 
@@ -20,11 +20,15 @@ export class ConsoleService extends BeanStub implements NamedBean {
         this.validationService = beans.validationService;
     }
 
-    public warnOnce(id: ConsoleID, ...args: any[]): void {
-        if (this.validationService) {
-            this.validationService.warnOnce(id, ...args);
-        } else {
-            _warnOnce('Warning Id: ' + id + ' ' + detail);
-        }
+    public warnOnce<TId extends ConsoleID>(id: TId, ...args: ConsoleMessageParams<TId>): void {
+        _warnOnce(this.getLogMessage(id, ...args));
+    }
+
+    public errorOnce<TId extends ConsoleID>(id: TId, ...args: ConsoleMessageParams<TId>): void {
+        _errorOnce(this.getLogMessage(id, ...args));
+    }
+
+    private getLogMessage<TId extends ConsoleID>(id: TId, ...args: ConsoleMessageParams<TId>): string {
+        return `${id} ${this.validationService?.getConsoleMessage(id, ...args) ?? args?.join(' ') + '\n' + detail}`;
     }
 }

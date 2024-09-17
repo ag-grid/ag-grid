@@ -7,7 +7,7 @@ import { _warnOnce } from '../utils/function';
 import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
 import { validateApiFunction } from './apiFunctionValidator';
-import type { ConsoleID } from './consoleReporting/consoleMappings';
+import type { ConsoleID, ConsoleMessageParams } from './consoleReporting/consoleMappings';
 import { getConsoleMessage } from './consoleReporting/consoleMappings';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import type { OptionsValidation, OptionsValidator, RequiredOptions } from './validationTypes';
@@ -203,8 +203,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
     }
 
-    public warnOnce(id: ConsoleID, ...args: any[]): void {
-        const message = getConsoleMessage(id, ...args);
-        _warnOnce(message);
+    public getConsoleMessage<TId extends ConsoleID>(id: TId, ...args: ConsoleMessageParams<TId>): string {
+        return getConsoleMessage(id, ...args);
     }
 }
