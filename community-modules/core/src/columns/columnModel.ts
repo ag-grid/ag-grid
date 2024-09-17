@@ -34,7 +34,7 @@ import type { ValueCache } from '../valueService/valueCache';
 import type { ColumnApplyStateService, ColumnState } from './columnApplyStateService';
 import type { ColumnAutosizeService } from './columnAutosizeService';
 import type { ColumnDefFactory } from './columnDefFactory';
-import type { ColumnEventDispatcher } from './columnEventDispatcher';
+import { dispatchColumnPinnedEvent } from './columnEventUtils';
 import type { ColumnFactory } from './columnFactory';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnGroupStateService } from './columnGroupStateService';
@@ -77,7 +77,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private columnDefFactory: ColumnDefFactory;
     private columnApplyStateService: ColumnApplyStateService;
     private columnGroupStateService: ColumnGroupStateService;
-    private eventDispatcher: ColumnEventDispatcher;
     private columnMoveService: ColumnMoveService;
     private funcColsService: FuncColsService;
     private quickFilterService?: QuickFilterService;
@@ -99,7 +98,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.columnDefFactory = beans.columnDefFactory;
         this.columnApplyStateService = beans.columnApplyStateService;
         this.columnGroupStateService = beans.columnGroupStateService;
-        this.eventDispatcher = beans.columnEventDispatcher;
         this.columnMoveService = beans.columnMoveService;
         this.funcColsService = beans.funcColsService;
         this.quickFilterService = beans.quickFilterService;
@@ -210,7 +208,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
         // in case applications use it
-        this.eventDispatcher.everythingChanged(source);
+        this.eventService.dispatchEvent({
+            type: 'columnEverythingChanged',
+            source,
+        });
 
         // Row Models react to all of these events as well as new columns loaded,
         // this flag instructs row model to ignore these events to reduce refreshes.
@@ -220,7 +221,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.changeEventsDispatching = false;
         }
 
-        this.eventDispatcher.newColumnsLoaded(source);
+        this.eventService.dispatchEvent({
+            type: 'newColumnsLoaded',
+            source,
+        });
+
         if (source === 'gridInitializing') {
             this.columnAutosizeService?.applyAutosizeStrategy();
         }
@@ -269,7 +274,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const dispatchChangedEvent = !_areEqual(prevColTree, this.cols.tree);
         if (dispatchChangedEvent) {
-            this.eventDispatcher.gridColumns();
+            this.eventService.dispatchEvent({
+                type: 'gridColumnsChanged',
+            });
         }
     }
 
@@ -488,7 +495,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         if (updatedCols.length) {
             this.visibleColsService.refresh(source);
-            this.eventDispatcher.columnPinned(updatedCols, source);
+            dispatchColumnPinnedEvent(this.eventService, updatedCols, source);
         }
 
         this.columnAnimationService.finish();
@@ -828,7 +835,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.refreshCols(false);
         this.visibleColsService.refresh(source);
 
-        this.eventDispatcher.pivotModeChanged();
+        this.eventService.dispatchEvent({
+            type: 'columnPivotModeChanged',
+        });
     }
 
     private isPivotSettingAllowed(pivot: boolean): boolean {
@@ -959,9 +968,18 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         if (changed) {
             if (col.isColumn) {
-                this.eventDispatcher.headerHeight(col);
+                this.eventService.dispatchEvent({
+                    type: 'columnHeaderHeightChanged',
+                    column: col,
+                    columns: [col],
+                    source: 'autosizeColumnHeaderHeight',
+                });
             } else {
-                this.eventDispatcher.groupHeaderHeight(col);
+                this.eventService.dispatchEvent({
+                    type: 'columnGroupHeaderHeightChanged',
+                    columnGroup: col,
+                    source: 'autosizeColumnGroupHeaderHeight',
+                });
             }
         }
     }

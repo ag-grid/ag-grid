@@ -10,7 +10,6 @@ import type { ColumnEventType } from '../events';
 import type { ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
 import { _last, _removeAllFromUnorderedArray } from '../utils/array';
 import { _exists } from '../utils/generic';
-import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColumnFlexService } from './columnFlexService';
 import type { ColumnModel } from './columnModel';
 import { getWidthOfColsInList } from './columnUtils';
@@ -24,13 +23,11 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     private columnModel: ColumnModel;
     private columnFlexService: ColumnFlexService;
     private columnViewportService: ColumnViewportService;
-    private eventDispatcher: ColumnEventDispatcher;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.columnFlexService = beans.columnFlexService;
         this.columnViewportService = beans.columnViewportService;
-        this.eventDispatcher = beans.columnEventDispatcher;
     }
 
     // tree of columns to be displayed for each section
@@ -80,7 +77,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.columnViewportService.checkViewportColumns(false);
         this.setFirstRightAndLastLeftPinned(source);
 
-        this.eventDispatcher.visibleCols(source);
+        this.eventService.dispatchEvent({
+            type: 'displayedColumnsChanged',
+            source,
+        });
     }
 
     // after setColumnWidth or updateGroupsAndPresentedCols

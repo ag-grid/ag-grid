@@ -5,7 +5,6 @@ import type { ApiFunctionName } from './api/iApiFunction';
 import { CellNavigationService } from './cellNavigationService';
 import { ColumnApplyStateService } from './columns/columnApplyStateService';
 import { ColumnDefFactory } from './columns/columnDefFactory';
-import { ColumnEventDispatcher } from './columns/columnEventDispatcher';
 import { ColumnFactory } from './columns/columnFactory';
 import { ColumnFlexService } from './columns/columnFlexService';
 import { ColumnGetStateService } from './columns/columnGetStateService';
@@ -501,7 +500,6 @@ export class GridCoreCreator {
             AriaAnnouncementService,
             MenuService,
             ColumnApplyStateService,
-            ColumnEventDispatcher,
             ColumnMoveService,
             ColumnGetStateService,
             ColumnGroupStateService,

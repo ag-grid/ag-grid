@@ -15,7 +15,7 @@ import { _removeFromArray } from '../utils/array';
 import { _getInnerWidth } from '../utils/dom';
 import { _warnOnce } from '../utils/function';
 import { TouchListener } from '../widgets/touchListener';
-import type { ColumnEventDispatcher } from './columnEventDispatcher';
+import { dispatchColumnResizedEvent } from './columnEventUtils';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
 import { getWidthOfColsInList } from './columnUtils';
 import type { VisibleColsService } from './visibleColsService';
@@ -27,7 +27,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private visibleColsService: VisibleColsService;
     private animationFrameService: AnimationFrameService;
     private autoWidthCalculator: AutoWidthCalculator;
-    private eventDispatcher: ColumnEventDispatcher;
     private ctrlsService: CtrlsService;
     private renderStatusService?: IRenderStatusService;
     private scrollVisibleService: ScrollVisibleService;
@@ -39,7 +38,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.visibleColsService = beans.visibleColsService;
         this.animationFrameService = beans.animationFrameService;
         this.autoWidthCalculator = beans.autoWidthCalculator;
-        this.eventDispatcher = beans.columnEventDispatcher;
         this.ctrlsService = beans.ctrlsService;
         this.renderStatusService = beans.renderStatusService;
         this.scrollVisibleService = beans.scrollVisibleService;
@@ -136,7 +134,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             this.autoSizeColumnGroupsByColumns(colKeys, source, stopAtGroup);
         }
 
-        this.eventDispatcher.columnResized(columnsAutosized, true, 'autosizeColumns');
+        dispatchColumnResizedEvent(this.eventService, columnsAutosized, true, 'autosizeColumns');
     }
 
     public autoSizeColumn(key: Maybe<ColKey>, source: ColumnEventType, skipHeader?: boolean): void {
@@ -412,7 +410,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.eventDispatcher.columnResized(colsToDispatchEventFor, true, source);
+        dispatchColumnResizedEvent(this.eventService, colsToDispatchEventFor, true, source);
     }
 
     public applyAutosizeStrategy(): void {

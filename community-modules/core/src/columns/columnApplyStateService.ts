@@ -11,7 +11,12 @@ import type { SortController } from '../sortController';
 import { _areEqual, _removeFromArray } from '../utils/array';
 import { _warnOnce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
-import type { ColumnEventDispatcher } from './columnEventDispatcher';
+import {
+    dispatchColumnChangedEvent,
+    dispatchColumnPinnedEvent,
+    dispatchColumnResizedEvent,
+    dispatchColumnVisibleEvent,
+} from './columnEventUtils';
 import type { ColumnGetStateService } from './columnGetStateService';
 import type { ColumnModel } from './columnModel';
 import { GROUP_AUTO_COLUMN_ID, getColumnsFromTree } from './columnUtils';
@@ -71,7 +76,6 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
     beanName = 'columnApplyStateService' as const;
 
     private columnModel: ColumnModel;
-    private eventDispatcher: ColumnEventDispatcher;
     private sortController: SortController;
     private columnGetStateService: ColumnGetStateService;
     private funcColsService: FuncColsService;
@@ -81,7 +85,6 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
-        this.eventDispatcher = beans.columnEventDispatcher;
         this.sortController = beans.sortController;
         this.columnGetStateService = beans.columnGetStateService;
         this.funcColsService = beans.funcColsService;
@@ -201,7 +204,10 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
 
             this.orderLiveColsLikeState(params);
             this.visibleColsService.refresh(source);
-            this.eventDispatcher.everythingChanged(source);
+            this.eventService.dispatchEvent({
+                type: 'columnEverythingChanged',
+                source,
+            });
 
             dispatchEventsFunc(); // Will trigger pivot result col changes if pivoting modified
             return { unmatchedAndAutoStates, unmatchedCount };
@@ -596,17 +602,17 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
             };
             const changedValues = getChangedColumns(valueChangePredicate);
             if (changedValues.length > 0) {
-                this.eventDispatcher.columnChanged('columnValueChanged', changedValues, source);
+                dispatchColumnChangedEvent(this.eventService, 'columnValueChanged', changedValues, source);
             }
 
             const resizeChangePredicate = (cs: ColumnState, c: AgColumn) => cs.width != c.getActualWidth();
-            this.eventDispatcher.columnResized(getChangedColumns(resizeChangePredicate), true, source);
+            dispatchColumnResizedEvent(this.eventService, getChangedColumns(resizeChangePredicate), true, source);
 
             const pinnedChangePredicate = (cs: ColumnState, c: AgColumn) => cs.pinned != c.getPinned();
-            this.eventDispatcher.columnPinned(getChangedColumns(pinnedChangePredicate), source);
+            dispatchColumnPinnedEvent(this.eventService, getChangedColumns(pinnedChangePredicate), source);
 
             const visibilityChangePredicate = (cs: ColumnState, c: AgColumn) => cs.hide == c.isVisible();
-            this.eventDispatcher.columnVisible(getChangedColumns(visibilityChangePredicate), source);
+            dispatchColumnVisibleEvent(this.eventService, getChangedColumns(visibilityChangePredicate), source);
 
             const sortChangePredicate = (cs: ColumnState, c: AgColumn) =>
                 cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
@@ -657,7 +663,13 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.eventDispatcher.columnMoved({ movedColumns, source, finished: true });
+        this.eventService.dispatchEvent({
+            type: 'columnMoved',
+            columns: movedColumns,
+            column: movedColumns.length === 1 ? movedColumns[0] : null,
+            finished: true,
+            source,
+        });
     }
 }
 

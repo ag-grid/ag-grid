@@ -7,7 +7,6 @@ import type { ColumnResizeService } from '../columnResize/columnResizeService';
 import type { ColumnApplyStateService } from '../columns/columnApplyStateService';
 import type { ColumnAutosizeService } from '../columns/columnAutosizeService';
 import type { ColumnDefFactory } from '../columns/columnDefFactory';
-import type { ColumnEventDispatcher } from '../columns/columnEventDispatcher';
 import type { ColumnFactory } from '../columns/columnFactory';
 import type { ColumnFlexService } from '../columns/columnFlexService';
 import type { ColumnGetStateService } from '../columns/columnGetStateService';
@@ -235,7 +234,6 @@ export interface CoreBeanCollection {
     controlsColService?: ControlsColService;
     columnDefFactory: ColumnDefFactory;
     columnGroupStateService: ColumnGroupStateService;
-    columnEventDispatcher: ColumnEventDispatcher;
     columnAutosizeService?: ColumnAutosizeService;
     funcColsService: FuncColsService;
     quickFilterService?: QuickFilterService;
@@ -363,7 +361,6 @@ export type BeanName =
     | 'columnDefFactory'
     | 'columnDropZonesService'
     | 'columnEditorFactory'
-    | 'columnEventDispatcher'
     | 'columnFilterService'
     | 'columnFlexService'
     | 'columnGetStateService'

@@ -5,7 +5,6 @@ import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
-import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnModel } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
@@ -15,13 +14,11 @@ export class ColumnGroupStateService extends BeanStub implements NamedBean {
 
     private columnModel: ColumnModel;
     private columnAnimationService: ColumnAnimationService;
-    private eventDispatcher: ColumnEventDispatcher;
     private visibleColsService: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.columnAnimationService = beans.columnAnimationService;
-        this.eventDispatcher = beans.columnEventDispatcher;
         this.visibleColsService = beans.visibleColsService;
     }
 
@@ -95,7 +92,11 @@ export class ColumnGroupStateService extends BeanStub implements NamedBean {
         this.visibleColsService.refresh(source, true);
 
         if (impactedGroups.length) {
-            this.eventDispatcher.groupOpened(impactedGroups);
+            this.eventService.dispatchEvent({
+                type: 'columnGroupOpened',
+                columnGroup: impactedGroups.length === 1 ? impactedGroups[0] : undefined,
+                columnGroups: impactedGroups,
+            });
         }
 
         this.columnAnimationService.finish();

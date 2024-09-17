@@ -4,17 +4,15 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColumnEventType } from '../events';
 import { _removeFromUnorderedArray } from '../utils/array';
-import type { ColumnEventDispatcher } from './columnEventDispatcher';
+import { dispatchColumnResizedEvent } from './columnEventUtils';
 import type { VisibleColsService } from './visibleColsService';
 
 export class ColumnFlexService extends BeanStub implements NamedBean {
     beanName = 'columnFlexService' as const;
 
-    private eventDispatcher: ColumnEventDispatcher;
     private visibleColsService: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.eventDispatcher = beans.columnEventDispatcher;
         this.visibleColsService = beans.visibleColsService;
     }
 
@@ -152,7 +150,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
         }
 
         if (params.fireResizedEvent) {
-            this.eventDispatcher.columnResized(changedColumns, true, source, flexingColumns);
+            dispatchColumnResizedEvent(this.eventService, changedColumns, true, source, flexingColumns);
         }
 
         return flexingColumns;

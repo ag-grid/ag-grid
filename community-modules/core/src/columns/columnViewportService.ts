@@ -7,7 +7,6 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import { _exists } from '../utils/generic';
-import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColumnModel } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
 
@@ -16,12 +15,10 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
 
     private visibleColsService: VisibleColsService;
     private columnModel: ColumnModel;
-    private eventDispatcher: ColumnEventDispatcher;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleColsService = beans.visibleColsService;
         this.columnModel = beans.columnModel;
-        this.eventDispatcher = beans.columnEventDispatcher;
     }
 
     // cols in center that are in the viewport
@@ -208,7 +205,10 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     public checkViewportColumns(afterScroll: boolean = false): void {
         const viewportColumnsChanged = this.extractViewport();
         if (viewportColumnsChanged) {
-            this.eventDispatcher.virtualColumnsChanged(afterScroll);
+            this.eventService.dispatchEvent({
+                type: 'virtualColumnsChanged',
+                afterScroll,
+            });
         }
     }
 

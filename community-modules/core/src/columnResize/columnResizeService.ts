@@ -1,4 +1,4 @@
-import type { ColumnEventDispatcher } from '../columns/columnEventDispatcher';
+import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
 import type { ColumnFlexService } from '../columns/columnFlexService';
 import type { ColKey, ColumnModel } from '../columns/columnModel';
 import type { ColumnViewportService } from '../columns/columnViewportService';
@@ -27,14 +27,12 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
 
     private columnModel: ColumnModel;
     private columnViewportService: ColumnViewportService;
-    private eventDispatcher: ColumnEventDispatcher;
     private visibleColsService: VisibleColsService;
     private columnFlexService: ColumnFlexService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.columnViewportService = beans.columnViewportService;
-        this.eventDispatcher = beans.columnEventDispatcher;
         this.visibleColsService = beans.visibleColsService;
         this.columnFlexService = beans.columnFlexService;
     }
@@ -115,7 +113,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
             // even though we are not going to resize beyond min/max size, we still need to dispatch event when finished
             if (finished) {
                 const columns = resizeSets && resizeSets.length > 0 ? resizeSets[0].columns : null;
-                this.eventDispatcher.columnResized(columns, finished, source);
+                dispatchColumnResizedEvent(this.eventService, columns, finished, source);
             }
 
             return; // don't resize!
@@ -240,7 +238,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         const colsForEvent = allResizedCols.concat(flexedCols);
 
         if (atLeastOneColChanged || finished) {
-            this.eventDispatcher.columnResized(colsForEvent, finished, source, flexedCols);
+            dispatchColumnResizedEvent(this.eventService, colsForEvent, finished, source, flexedCols);
         }
     }
 

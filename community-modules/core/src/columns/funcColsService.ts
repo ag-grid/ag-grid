@@ -3,12 +3,13 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, IAggFunc } from '../entities/colDef';
-import type { ColumnEventType } from '../events';
+import type { ColumnEvent, ColumnEventType } from '../events';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _removeFromArray } from '../utils/array';
 import { _attrToBoolean, _attrToNumber, _exists, _missingOrEmpty } from '../utils/generic';
 import type { ColumnState, ModifyColumnsNoEventsCallbacks } from './columnApplyStateService';
-import type { ColumnEventDispatcher } from './columnEventDispatcher';
+import { dispatchColumnChangedEvent } from './columnEventUtils';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
 
@@ -16,13 +17,11 @@ export class FuncColsService extends BeanStub implements NamedBean {
     beanName = 'funcColsService' as const;
 
     private columnModel: ColumnModel;
-    private eventDispatcher: ColumnEventDispatcher;
     private aggFuncService?: IAggFuncService;
     private visibleColsService: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
-        this.eventDispatcher = beans.columnEventDispatcher;
         this.aggFuncService = beans.aggFuncService;
         this.visibleColsService = beans.visibleColsService;
     }
@@ -84,7 +83,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
         column.setAggFunc(aggFunc);
 
-        this.eventDispatcher.columnChanged('columnValueChanged', [column], source);
+        dispatchColumnChangedEvent(this.eventService, 'columnValueChanged', [column], source);
     }
 
     public setRowGroupColumns(colKeys: ColKey[], source: ColumnEventType): void {
@@ -236,7 +235,12 @@ export class FuncColsService extends BeanStub implements NamedBean {
         this.rowGroupCols.splice(fromIndex, 1);
         this.rowGroupCols.splice(toIndex, 0, column);
 
-        this.eventDispatcher.rowGroupChanged(impactedColumns, source);
+        this.eventService.dispatchEvent({
+            type: 'columnRowGroupChanged',
+            columns: impactedColumns,
+            column: impactedColumns.length === 1 ? impactedColumns[0] : null,
+            source,
+        });
     }
 
     private setColList(
@@ -296,7 +300,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
         this.visibleColsService.refresh(source);
 
-        this.eventDispatcher.columnChanged(eventName, [...changes.keys()], source);
+        dispatchColumnChangedEvent(this.eventService, eventName, [...changes.keys()], source);
     }
 
     private updateColList(
@@ -356,7 +360,13 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
         this.visibleColsService.refresh(source);
 
-        this.eventDispatcher.genericColumnEvent(eventType, Array.from(updatedCols), source);
+        const eventColumns = Array.from(updatedCols);
+        this.eventService.dispatchEvent({
+            type: eventType,
+            columns: eventColumns,
+            column: eventColumns.length === 1 ? eventColumns[0] : null,
+            source,
+        } as WithoutGridCommon<ColumnEvent>);
     }
 
     public extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {
