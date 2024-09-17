@@ -56,6 +56,7 @@ import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRang
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IAutoColService } from '../interfaces/iAutoColService';
+import type { IClientSideNodeManager } from '../interfaces/iClientSideNodeManager';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IColumnChooserFactory } from '../interfaces/iColumnChooserFactory';
 import type { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
@@ -293,6 +294,8 @@ export interface CoreBeanCollection {
     statusBarService?: IStatusBarService;
     chartService?: IChartService;
     selectableService: SelectableService;
+    clientSideNodeManager?: IClientSideNodeManager;
+    clientSideTreeNodeManager?: IClientSideNodeManager;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -481,4 +484,6 @@ export type BeanName =
     | 'valueCache'
     | 'valueService'
     | 'validationLogger'
-    | 'validationService';
+    | 'validationService'
+    | 'clientSideNodeManager'
+    | 'clientSideTreeNodeManager';

@@ -40,7 +40,7 @@ import {
     _removeFromArray,
 } from '@ag-grid-community/core';
 
-import { ClientSideNodeManager } from './clientSideNodeManager';
+import type { AbstractClientSideNodeManager } from '../clientSideNodeManager/abstractClientSideNodeManager';
 
 enum RecursionType {
     Normal,
@@ -112,7 +112,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     // top most node of the tree. the children are the user provided data.
     private rootNode: RowNode;
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
-    private nodeManager: ClientSideNodeManager;
+    private nodeManager: AbstractClientSideNodeManager<any>;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
     private lastHighlightedRow: RowNode | null;
     private applyAsyncTransactionsTimeout: number | undefined;
@@ -156,14 +156,19 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.addPropertyListeners();
 
         this.rootNode = new RowNode(this.beans);
-        this.nodeManager = new ClientSideNodeManager(
-            this.rootNode,
-            this.gos,
-            this.eventService,
-            this.funcColsService,
-            this.selectionService,
-            this.beans
-        );
+        this.initRowManager();
+    }
+
+    private initRowManager(): void {
+        const nodeManager: AbstractClientSideNodeManager<any> = this.beans
+            .clientSideNodeManager! as AbstractClientSideNodeManager<any>;
+
+        // TODO: here we will select the correct node manager based on the grid options
+
+        if (this.nodeManager !== nodeManager) {
+            this.nodeManager = nodeManager;
+            nodeManager.initRootNode(this.rootNode);
+        }
     }
 
     private addPropertyListeners() {
@@ -1156,7 +1161,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             this.rootNode.updateHasChildren();
         }
 
-        if (this.nodeManager.isRowCountReady()) {
+        if (this.nodeManager.rowCountReady) {
             // only if row data has been set
             this.rowCountReady = true;
             this.eventService.dispatchEventOnce({
