@@ -7,12 +7,12 @@ export const EmptyState = () => {
                 <img
                     className={styles.lightImage}
                     alt="Theme builder preview animation"
-                    src="/theme-builder/theme-builder.gif"
+                    src="/theme-builder/theme-builder.png"
                 ></img>
                 <img
                     className={styles.darkImage}
                     alt="Theme builder preview animation"
-                    src="/theme-builder/theme-builder-dark.gif"
+                    src="/theme-builder/theme-builder-dark.png"
                 ></img>
                 <h2 className={styles.headingEmpty}>Sorry, Theme Builder isn't available on smaller devices</h2>
                 <p className={styles.paragraphyEmpty}>
