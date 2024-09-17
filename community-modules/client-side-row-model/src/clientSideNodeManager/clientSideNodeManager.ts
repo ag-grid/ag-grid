@@ -1,4 +1,9 @@
-import type { IClientSideNodeManager, NamedBean, RowDataTransaction } from '@ag-grid-community/core';
+import type {
+    ClientSideNodeManagerUpdateRowDataResult,
+    IClientSideNodeManager,
+    NamedBean,
+    RowDataTransaction,
+} from '@ag-grid-community/core';
 import {
     RowNode,
     _cloneObject,
@@ -10,7 +15,6 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import type { ClientSideNodeManagerUpdateRowDataResult } from './abstractClientSideNodeManager';
 import { AbstractClientSideNodeManager } from './abstractClientSideNodeManager';
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
