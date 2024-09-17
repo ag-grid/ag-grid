@@ -29,7 +29,7 @@ export const WelcomeModal = () => {
                     ></img>
                     <img
                         className={welcomeStyles.darkImage}
-                        src={urlWithBaseUrl('/theme-builder/theme-builder-dark.gif')}
+                        src={urlWithBaseUrl('/theme-builder/theme-builder-dark.png')}
                     ></img>
                     <div className={styles.contentModal}>
                         <Dialog.Title className={styles.title}>Welcome to Theme Builder</Dialog.Title>
