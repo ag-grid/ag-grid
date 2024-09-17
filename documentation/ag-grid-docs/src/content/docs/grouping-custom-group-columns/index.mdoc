@@ -90,14 +90,13 @@ Adding leaf nodes data can also be achieved even if you provide your own group c
 
 * The first column shows the Country group only. The `filterValueGetter` is configured to return the country so that country is used for filtering.
 * The second columns shows Year (for group levels) and Athlete (for leaf levels). Because the field is set, the filter will use the field value for filtering.
-* This is an example of a case where not using auto group columns lets us add custom different behaviour to each of the grouping columns.
+* This is an example of a case where not using auto group columns lets us add custom behaviour to each of the grouping columns.
 
 {% gridExampleRunner title="Adding Values To Leaf Nodes for Groups" name="adding-values-to-leaf-nodes-for-groups"  exampleHeight=515 /%}
 
 {% note %}
-Remember these examples are achieving the same that you can achieve with
-the auto groups columns, but their configuration is not as straight forward. We are keeping this for edge cases
-and for backwards compatibility for when we only supported this style of configuration.
+Note that you can achieve this with auto groups columns, with much simpler configuration.
+The above approach exists to provide for edge cases and backwards compatibility.
 {% /note %}
 
 ## Next Up

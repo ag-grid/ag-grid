@@ -45,19 +45,28 @@
         border: none;
         box-shadow: none;
         padding: $spacing-size-1 $spacing-size-4;
+        border: 2px solid transparent;
         transition:
             background-color 0.2s,
             opacity 0.2s;
-        transition: background-color 0.3s ease;
+        transition:
+            background-color 0.3s ease,
+            border-color 0.3s ease;
         border-radius: var(--radius-4xl);
 
         &:hover {
             background-color: var(--color-util-brand-100);
             color: var(--color-text-secondary);
+
+            #{$selector-darkmode} & {
+                background-color: transparent;
+                color: var(--color-link);
+            }
         }
 
         .filterIcon {
             --icon-size: 32px;
+
             fill: var(--color-fg-primary);
             margin-right: $spacing-size-2;
             padding: 4px;
@@ -72,7 +81,9 @@
             object-fit: contain;
 
             &.invert {
-                filter: invert(1);
+                #{$selector-darkmode} & {
+                    filter: invert(1);
+                }
             }
         }
 
@@ -81,6 +92,12 @@
             padding: 0px 0px 0px 0x;
             background-color: var(--color-util-brand-100);
             border-radius: var(--radius-4xl);
+
+            #{$selector-darkmode} & {
+                color: var(--color-link);
+                background-color: transparent;
+                border: 2px solid var(--color-link);
+            }
         }
     }
 }

@@ -78,6 +78,7 @@
     gap: var(--ag-spacing);
     align-items: center;
     white-space: nowrap;
+    cursor: pointer;
 
     padding: calc(var(--ag-spacing) * 3) 0;
     width: 100%;

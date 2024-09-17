@@ -194,10 +194,10 @@ const { data: examples } = await getEntry('react-landing-page', 'examples');
                                             <p>{card.content}</p>
                                         </div>
                                         <div class={styles.examplesSectioncardCta}>
-                                            <a href={card.demo} target="_blank">
+                                            <a href={urlWithBaseUrl(card.demo)} target="_blank">
                                                 Live Demo
                                             </a>
-                                            <a href={card.docs} target="_blank">
+                                            <a href={urlWithBaseUrl(card.docs)} target="_blank">
                                                 Docs
                                             </a>
                                         </div>

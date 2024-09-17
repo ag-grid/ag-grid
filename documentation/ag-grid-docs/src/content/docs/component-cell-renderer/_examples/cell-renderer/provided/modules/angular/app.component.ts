@@ -89,7 +89,9 @@ export class IconRenderer implements ICellRenderer {
     `,
 })
 export class AppComponent {
-    themeClass = 'ag-theme-quartz';
+    themeClass =
+        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
+        'ag-theme-quartz' /** DARK MODE END **/;
 
     private gridApi!: GridApi;
 

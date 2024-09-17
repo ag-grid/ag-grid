@@ -92,7 +92,6 @@ export class AppComponent {
     };
     public selection: SelectionOptions = {
         mode: 'multiRow',
-        suppressClickSelection: true,
     };
     public rowData?: IOlympicData[];
     public gridVisible = true;

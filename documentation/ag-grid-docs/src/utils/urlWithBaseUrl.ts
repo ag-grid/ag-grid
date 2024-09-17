@@ -2,6 +2,7 @@ import { SITE_BASE_URL } from '../constants';
 import { pathJoin } from './pathJoin';
 
 export const urlWithBaseUrl = (url: string = '', siteBaseUrl: string = SITE_BASE_URL) => {
+    const urlHasTrailingSlash = url.endsWith('/');
     let path = url;
     if (url.startsWith('./')) {
         path = pathJoin('/', siteBaseUrl, url.slice('./'.length));
@@ -9,6 +10,10 @@ export const urlWithBaseUrl = (url: string = '', siteBaseUrl: string = SITE_BASE
         path = pathJoin('/', siteBaseUrl, url);
     } else if (!url.startsWith('http')) {
         path = pathJoin('/', siteBaseUrl, url);
+    }
+
+    if (urlHasTrailingSlash) {
+        path = path + '/';
     }
 
     return path;

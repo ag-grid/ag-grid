@@ -2,6 +2,14 @@
 title: "Cell Text Selection"
 ---
 
-If you want to use a regular text selection as if the grid were a regular table, set  `enableCellTextSelection=true` and `ensureDomOrder=true` in the gridOptions.
+The grid can be configured to allow simple text selection.
 
 {% imageCaption imagePath="resources/cellTextSelection.png" alt="Cell Text Selection" centered=true width="35rem" /%}
+
+## Enabling Cell Text Selection
+
+To enable text selection as if the grid were a regular table, set the grid option `enableCellTextSelection = true`.  For the selection to work correctly, the order of the rows within the DOM must much what is displayed by setting the grid option `ensureDomOrder = true`.
+
+{% gridExampleRunner title="Cell Text Selection" name="cell-text-selection" /%}
+
+When `enableCellTextSelection` is set to `true`, the default [Clipboard](./clipboard/) behaviour is disabled, and only the selected text is copied.

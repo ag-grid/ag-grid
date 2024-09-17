@@ -1,6 +1,5 @@
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import tools from '@ag-website-shared/content/community/tools-extensions.json';
-import { useDarkmode } from '@utils/hooks/useDarkmode';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { useState } from 'react';
 
@@ -21,7 +20,6 @@ const frameworks = [
 ];
 
 const ToolsExtensions = ({ limit = -1 }) => {
-    const [darkMode] = useDarkmode();
     const applyLimit = (arr) => arr?.slice(0, limit == -1 ? tools.length : limit);
     const filterFrameworks = (framework) => {
         const filter = framework ? tools.filter((item) => item.frameworks?.includes(framework)) : tools;
@@ -69,7 +67,7 @@ const ToolsExtensions = ({ limit = -1 }) => {
                                 onClick={() => filterFrameworks(framework)}
                             >
                                 <img
-                                    className={framework === 'Rust' && darkMode ? styles.invert : ''}
+                                    className={framework === 'Rust' && styles.invert}
                                     src={urlWithBaseUrl(`/community/frameworks/${framework.toLowerCase()}.svg`)}
                                     alt={`${framework}`}
                                 />

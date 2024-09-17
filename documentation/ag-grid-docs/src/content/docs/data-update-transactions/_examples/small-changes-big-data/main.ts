@@ -200,7 +200,6 @@ const gridOptions: GridOptions = {
     selection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
-        suppressClickSelection: true,
         headerCheckbox: false,
     },
     autoGroupColumnDef: {

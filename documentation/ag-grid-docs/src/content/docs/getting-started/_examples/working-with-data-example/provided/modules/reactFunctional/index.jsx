@@ -14,7 +14,6 @@ const gridDiv = document.querySelector('#myGrid');
 
 const selection = {
     mode: 'multiRow',
-    suppressClickSelection: true,
     headerCheckbox: false,
 };
 

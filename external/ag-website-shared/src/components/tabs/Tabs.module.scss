@@ -5,6 +5,19 @@
     margin-bottom: $spacing-size-4;
 }
 
+.snippetTabs {
+    padding: 0;
+
+    :global(.code) {
+        margin: 0;
+        border: none;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 3px;
+        border-bottom-left-radius: 3px;
+        border-top-left-radius: 0;
+    }
+}
+
 .hasHeading {
     padding-top: $spacing-size-2;
 }

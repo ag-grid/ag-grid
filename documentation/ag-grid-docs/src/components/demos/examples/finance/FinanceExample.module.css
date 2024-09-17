@@ -18,7 +18,7 @@
     margin: var(--layout-grid-margin);
 }
 
-:global(.ag-theme-quartz-dark) {
+:global(.ag-theme-quartz-dark .ag-row) {
     --ag-row-hover-color: #323a46;
 }
 

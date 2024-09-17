@@ -118,7 +118,6 @@ export class AppComponent {
 
     selection: SelectionOptions = {
         mode: 'multiRow',
-        suppressClickSelection: true,
     };
 
     leftColumns: ColDef[] = [
