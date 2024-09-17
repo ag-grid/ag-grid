@@ -596,7 +596,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const columnViewportService = this.beans.columnViewportService;
         const presentedColsService = this.beans.visibleColsService;
         if (this.printLayout) {
-            this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, presentedColsService.getAllCols());
+            this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, presentedColsService.allCols);
             this.leftCellCtrls = { list: [], map: {} };
             this.rightCellCtrls = { list: [], map: {} };
         } else {
@@ -629,7 +629,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (mightWantToKeepCell) {
             const column = cellCtrl.getColumn();
-            const displayedColumns = this.beans.visibleColsService.getAllCols();
+            const displayedColumns = this.beans.visibleColsService.allCols;
             const cellStillDisplayed = displayedColumns.indexOf(column as AgColumn) >= 0;
             return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
         }
@@ -1054,13 +1054,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const { visibleColsService } = this.beans;
         switch (fullWidthRowGui?.containerType) {
             case 'center':
-                return visibleColsService.getCenterCols()[0];
+                return visibleColsService.centerCols[0];
             case 'left':
-                return visibleColsService.getLeftCols()[0];
+                return visibleColsService.leftCols[0];
             case 'right':
-                return visibleColsService.getRightCols()[0];
+                return visibleColsService.rightCols[0];
             default:
-                return visibleColsService.getAllCols()[0];
+                return visibleColsService.allCols[0];
         }
     }
 

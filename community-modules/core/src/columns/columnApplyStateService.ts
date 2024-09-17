@@ -123,8 +123,8 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
             const unmatchedAndAutoStates: ColumnState[] = [];
             let unmatchedCount = 0;
 
-            const previousRowGroupCols = this.funcColsService.getRowGroupColumns().slice();
-            const previousPivotCols = this.funcColsService.getPivotColumns().slice();
+            const previousRowGroupCols = this.funcColsService.rowGroupCols.slice();
+            const previousPivotCols = this.funcColsService.pivotCols.slice();
 
             states.forEach((state: ColumnState) => {
                 const colId = state.colId || '';
@@ -506,9 +506,9 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
     // b) apply new column definitions (so changes from old cols)
     public compareColumnStatesAndDispatchEvents(source: ColumnEventType): () => void {
         const startState = {
-            rowGroupColumns: this.funcColsService.getRowGroupColumns().slice(),
-            pivotColumns: this.funcColsService.getPivotColumns().slice(),
-            valueColumns: this.funcColsService.getValueColumns().slice(),
+            rowGroupColumns: this.funcColsService.rowGroupCols.slice(),
+            pivotColumns: this.funcColsService.pivotCols.slice(),
+            valueColumns: this.funcColsService.valueCols.slice(),
         };
 
         const columnStateBefore = this.columnGetStateService.getColumnState();
@@ -574,14 +574,14 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
             dispatchWhenListsDifferent(
                 'columnRowGroupChanged',
                 startState.rowGroupColumns,
-                this.funcColsService.getRowGroupColumns(),
+                this.funcColsService.rowGroupCols,
                 columnIdMapper
             );
 
             dispatchWhenListsDifferent(
                 'columnPivotChanged',
                 startState.pivotColumns,
-                this.funcColsService.getPivotColumns(),
+                this.funcColsService.pivotCols,
                 columnIdMapper
             );
 

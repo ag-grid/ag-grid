@@ -141,19 +141,19 @@ export function getAllGridColumns(beans: BeanCollection): Column[] {
 }
 
 export function getDisplayedLeftColumns(beans: BeanCollection): Column[] {
-    return beans.visibleColsService.getLeftCols();
+    return beans.visibleColsService.leftCols;
 }
 
 export function getDisplayedCenterColumns(beans: BeanCollection): Column[] {
-    return beans.visibleColsService.getCenterCols();
+    return beans.visibleColsService.centerCols;
 }
 
 export function getDisplayedRightColumns(beans: BeanCollection): Column[] {
-    return beans.visibleColsService.getRightCols();
+    return beans.visibleColsService.rightCols;
 }
 
 export function getAllDisplayedColumns(beans: BeanCollection): Column[] {
-    return beans.visibleColsService.getAllCols();
+    return beans.visibleColsService.allCols;
 }
 
 export function getAllDisplayedVirtualColumns(beans: BeanCollection): Column[] {
@@ -194,15 +194,15 @@ export function setColumnWidths(
 }
 
 export function getLeftDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] {
-    return beans.visibleColsService.getTreeLeft();
+    return beans.visibleColsService.treeLeft;
 }
 
 export function getCenterDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] {
-    return beans.visibleColsService.getTreeCenter();
+    return beans.visibleColsService.treeCenter;
 }
 
 export function getRightDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] {
-    return beans.visibleColsService.getTreeRight();
+    return beans.visibleColsService.treeRight;
 }
 
 export function getAllDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] | null {

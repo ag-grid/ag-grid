@@ -135,7 +135,7 @@ export class GridCtrl extends BeanStub {
 
         if (nextIndex === 0) {
             if (indexWithFocus > 0) {
-                const allColumns = this.visibleColsService.getAllCols();
+                const allColumns = this.visibleColsService.allCols;
                 const lastColumn = _last(allColumns);
                 if (this.focusService.focusGridView(lastColumn, true)) {
                     return true;
@@ -154,7 +154,7 @@ export class GridCtrl extends BeanStub {
         }
 
         const focusableContainers = this.getFocusableContainers();
-        const allColumns = this.visibleColsService.getAllCols();
+        const allColumns = this.visibleColsService.allCols;
 
         if (fromBottom) {
             if (focusableContainers.length > 1) {

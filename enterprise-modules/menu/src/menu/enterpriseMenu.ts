@@ -287,7 +287,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         const restoreFocusParams = {
             column,
             headerPosition: this.focusService.getFocusedHeader(),
-            columnIndex: this.visibleColsService.getAllCols().indexOf(column as AgColumn),
+            columnIndex: this.visibleColsService.allCols.indexOf(column as AgColumn),
             eventSource,
         };
         const menu = this.createMenu(column, columnGroup, restoreFocusParams, restrictToTabs, eventSource);

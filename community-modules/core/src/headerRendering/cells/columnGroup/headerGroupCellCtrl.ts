@@ -509,7 +509,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         allColumnsOriginalOrder.forEach((column) => (visibleState[column.getId()] = column.isVisible()));
 
         const allColumnsCurrentOrder: AgColumn[] = [];
-        this.beans.visibleColsService.getAllCols().forEach((column) => {
+        this.beans.visibleColsService.allCols.forEach((column) => {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
                 allColumnsCurrentOrder.push(column);
                 _removeFromArray(allColumnsOriginalOrder, column);

@@ -129,8 +129,8 @@ export class ViewportSizeFeature extends BeanStub {
             return [];
         }
 
-        const pinnedLeftColumns = [...this.visibleColsService.getLeftCols()];
-        const pinnedRightColumns = [...this.visibleColsService.getRightCols()];
+        const pinnedLeftColumns = [...this.visibleColsService.leftCols];
+        const pinnedRightColumns = [...this.visibleColsService.rightCols];
 
         let indexRight = 0;
         let indexLeft = 0;

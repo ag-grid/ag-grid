@@ -330,7 +330,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 rowEnd = pinnedRowModel.getPinnedBottomRowCount() - 1;
             }
 
-            const allDisplayedColumns = this.visibleColsService.getAllCols();
+            const allDisplayedColumns = this.visibleColsService.allCols;
             if (_missingOrEmpty(allDisplayedColumns)) {
                 return;
             }

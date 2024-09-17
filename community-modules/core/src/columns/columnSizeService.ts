@@ -311,7 +311,7 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
         // A "flexing column" is one that has a 'flex' value set and is not currently being constrained by its
         // minWidth or maxWidth rules.
 
-        const displayedCenterCols = this.visibleColsService.getCenterCols();
+        const displayedCenterCols = this.visibleColsService.centerCols;
 
         let flexAfterDisplayIndex = -1;
         if (params.resizingCols) {
@@ -445,7 +445,7 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
         }
 
         // avoid divide by zero
-        const allDisplayedColumns = this.visibleColsService.getAllCols();
+        const allDisplayedColumns = this.visibleColsService.allCols;
 
         const doColumnsAlreadyFit = gridWidth === getWidthOfColsInList(allDisplayedColumns);
         if (gridWidth <= 0 || !allDisplayedColumns.length || doColumnsAlreadyFit) {

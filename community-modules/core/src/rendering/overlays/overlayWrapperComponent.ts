@@ -56,7 +56,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
         let isFocused = false;
         if (e.shiftKey) {
-            isFocused = this.focusService.focusGridView(_last(this.visibleColsService.getAllCols()), true, false);
+            isFocused = this.focusService.focusGridView(_last(this.visibleColsService.allCols), true, false);
         } else {
             isFocused = this.focusService.focusNextGridCoreContainer(false);
         }

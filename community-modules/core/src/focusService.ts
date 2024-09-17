@@ -539,7 +539,7 @@ export class FocusService extends BeanStub implements NamedBean {
             return true;
         }
 
-        let firstColumn: AgColumn | AgColumnGroup = this.visibleColsService.getAllCols()[0];
+        let firstColumn: AgColumn | AgColumnGroup = this.visibleColsService.allCols[0];
         if (!firstColumn) {
             return false;
         }
@@ -562,7 +562,7 @@ export class FocusService extends BeanStub implements NamedBean {
         }
 
         const headerRowIndex = this.headerNavigationService.getHeaderRowCount() - 1;
-        const column = _last(this.visibleColsService.getAllCols());
+        const column = _last(this.visibleColsService.allCols);
 
         return this.focusHeaderPosition({
             headerPosition: { headerRowIndex, column },
@@ -817,8 +817,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
     public focusNextFromAdvancedFilter(backwards?: boolean, forceFirstColumn?: boolean): boolean {
         const column =
-            (forceFirstColumn ? undefined : this.advancedFilterFocusColumn) ??
-            this.visibleColsService.getAllCols()?.[0];
+            (forceFirstColumn ? undefined : this.advancedFilterFocusColumn) ?? this.visibleColsService.allCols?.[0];
         if (backwards) {
             return this.focusHeaderPosition({
                 headerPosition: {

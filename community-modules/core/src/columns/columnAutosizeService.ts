@@ -179,7 +179,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        const allDisplayedColumns = this.visibleColsService.getAllCols();
+        const allDisplayedColumns = this.visibleColsService.allCols;
         this.autoSizeCols({ colKeys: allDisplayedColumns, skipHeader, source });
     }
 

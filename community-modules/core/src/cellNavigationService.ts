@@ -62,7 +62,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             rowIndex = upKey ? this.pageBoundsService.getFirstRow() : this.pageBoundsService.getLastRow();
             column = focusedCell.column as AgColumn;
         } else {
-            const allColumns = this.visibleColsService.getAllCols();
+            const allColumns = this.visibleColsService.allCols;
             const isRtl = this.gos.get('enableRtl');
             rowIndex = focusedCell.rowIndex;
             column = leftKey !== isRtl ? allColumns[0] : _last(allColumns);
@@ -373,7 +373,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     }
 
     public getNextTabbedCellForwards(gridCell: CellPosition): CellPosition | null {
-        const displayedColumns = this.visibleColsService.getAllCols();
+        const displayedColumns = this.visibleColsService.allCols;
 
         let newRowIndex: number | null = gridCell.rowIndex;
         let newFloating: string | null | undefined = gridCell.rowPinned;
@@ -404,7 +404,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     }
 
     public getNextTabbedCellBackwards(gridCell: CellPosition): CellPosition | null {
-        const displayedColumns = this.visibleColsService.getAllCols();
+        const displayedColumns = this.visibleColsService.allCols;
 
         let newRowIndex: number | null = gridCell.rowIndex;
         let newFloating: string | null | undefined = gridCell.rowPinned;

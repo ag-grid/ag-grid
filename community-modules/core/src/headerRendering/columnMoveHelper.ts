@@ -132,7 +132,7 @@ export function getBestColumnMoveIndexFromXPosition(
     // Remember what that move would look like in terms of displayed cols
     // keep going with further moves until we find a different result in displayed output
     // In this way potentialMoves contains all potential moves over 'hidden' columns
-    const displayedCols = visibleColsService.getAllCols();
+    const displayedCols = visibleColsService.allCols;
 
     const potentialMoves: { move: number; fragCount: number }[] = [];
     let targetOrder: AgColumn[] | null = null;
@@ -227,11 +227,11 @@ function groupFragCount(columns: AgColumn[]): number {
 function getDisplayedColumns(visibleColsService: VisibleColsService, type: ColumnPinnedType): AgColumn[] {
     switch (type) {
         case 'left':
-            return visibleColsService.getLeftCols();
+            return visibleColsService.leftCols;
         case 'right':
-            return visibleColsService.getRightCols();
+            return visibleColsService.rightCols;
         default:
-            return visibleColsService.getCenterCols();
+            return visibleColsService.centerCols;
     }
 }
 

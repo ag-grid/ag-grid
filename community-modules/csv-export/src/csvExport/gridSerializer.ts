@@ -374,7 +374,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         if (allColumns && !isPivotMode) {
             columnsToExport = this.columnModel.getCols();
         } else {
-            columnsToExport = this.visibleColsService.getAllCols();
+            columnsToExport = this.visibleColsService.allCols;
         }
 
         if (skipRowGroups && !isTreeData) {

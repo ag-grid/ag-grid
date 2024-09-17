@@ -309,7 +309,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // show columns we are aggregating on
 
         const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.isShowingPivotResult();
-        const valueColumns = this.funcColsService.getValueColumns();
+        const valueColumns = this.funcColsService.valueCols;
 
         const res = this.cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
@@ -344,7 +344,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // of the group column in this instance.
         const suppressAutoColumn = this.pivotMode ? this.gos.get('pivotSuppressAutoColumn') : this.isSuppressAutoCol();
 
-        const rowGroupCols = this.funcColsService.getRowGroupColumns();
+        const rowGroupCols = this.funcColsService.rowGroupCols;
 
         const groupingActive = rowGroupCols.length > 0 || this.gos.get('treeData');
 
@@ -534,7 +534,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return true;
         }
 
-        const rowGroupCols = this.funcColsService.getRowGroupColumns();
+        const rowGroupCols = this.funcColsService.rowGroupCols;
         const colIndex = rowGroupCols.findIndex((groupCol) => groupCol.getColId() === column.getColId());
         return groupLockGroupColumns > colIndex;
     }
@@ -762,8 +762,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
             cols.sort((a, b) => this.cols.list.indexOf(a) - this.cols.list.indexOf(b));
         }
 
-        const rowGroupColumns = this.funcColsService.getRowGroupColumns();
-        const pivotColumns = this.funcColsService.getPivotColumns();
+        const rowGroupColumns = this.funcColsService.rowGroupCols;
+        const pivotColumns = this.funcColsService.pivotCols;
 
         return this.columnDefFactory.buildColumnDefs(cols, rowGroupColumns, pivotColumns);
     }
@@ -842,7 +842,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     // + clientSideRowModel
     public isPivotActive(): boolean {
-        const pivotColumns = this.funcColsService.getPivotColumns();
+        const pivotColumns = this.funcColsService.pivotCols;
         return this.pivotMode && !_missingOrEmpty(pivotColumns);
     }
 
@@ -1018,7 +1018,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.isPivotMode() ? this.getPivotHeaderHeight() : this.getHeaderHeight()
         ) as number;
 
-        const allDisplayedCols = this.visibleColsService.getAllCols();
+        const allDisplayedCols = this.visibleColsService.allCols;
 
         const displayedHeights = allDisplayedCols
             .filter((col) => col.isAutoHeaderHeight())
