@@ -25,7 +25,7 @@ export const WelcomeModal = () => {
                 <Dialog.Content className={styles.content}>
                     <img
                         className={welcomeStyles.lightImage}
-                        src={urlWithBaseUrl('/theme-builder/theme-builder.gif')}
+                        src={urlWithBaseUrl('/theme-builder/theme-builder.png')}
                     ></img>
                     <img
                         className={welcomeStyles.darkImage}
