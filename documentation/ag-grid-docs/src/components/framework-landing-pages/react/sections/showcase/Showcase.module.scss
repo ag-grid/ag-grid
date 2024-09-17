@@ -55,7 +55,7 @@
 
 .buttonIcon {
     padding: $spacing-size-2;
-    fill: var(--color-fg-primary);
+    fill: var(--color-fg-primary) !important;
 }
 
 .buttonDetail {
@@ -67,6 +67,17 @@
     margin-top: $spacing-size-4;
     justify-content: flex-end;
     gap: $spacing-size-4;
+}
+
+.primaryCta {
+    color: var(--color-bg-primary);
+    background: var(--color-button-primary-bg);
+    align-content: center;
+
+    &:hover {
+        color: var(--color-bg-primary) !important;
+        background: var(--color-button-primary-bg-hover);
+    }
 }
 
 .secondaryCta {

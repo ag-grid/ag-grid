@@ -1633,9 +1633,9 @@
             },
             "addNestedFields": true
         },
-        "controlsColDef": {
+        "selectionColumnDef": {
             "more": {
-                "name": "Controls Column Definition",
+                "name": "Selection Column Definition",
                 "url": "./row-selection-single-row/#customising-the-checkbox-column"
             }
         },

@@ -38,19 +38,9 @@ export interface ChartModelParams {
     suppressChartRanges?: boolean;
     unlinkChart?: boolean;
     crossFiltering?: boolean;
-    showFilteredDataOnly?: boolean;
     seriesChartTypes?: SeriesChartType[];
     seriesGroupType?: SeriesGroupType;
 }
-
-export const CROSS_FILTERING_ZERO_VALUE_CHART_TYPES: ChartType[] = [
-    'line',
-    'pie',
-    'donut',
-    'doughnut',
-    'scatter',
-    'bubble',
-];
 
 export class ChartDataModel extends BeanStub {
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
@@ -99,8 +89,6 @@ export class ChartDataModel extends BeanStub {
 
     public seriesGroupType?: SeriesGroupType;
 
-    private showFilteredDataOnly: boolean;
-
     public constructor(params: ChartModelParams) {
         super();
 
@@ -121,7 +109,6 @@ export class ChartDataModel extends BeanStub {
             unlinkChart,
             crossFiltering,
             seriesGroupType,
-            showFilteredDataOnly,
         } = params;
         this.chartType = chartType;
         this.pivotChart = pivotChart ?? false;
@@ -134,7 +121,6 @@ export class ChartDataModel extends BeanStub {
         this.unlinked = !!unlinkChart;
         this.crossFiltering = !!crossFiltering;
         this.seriesGroupType = seriesGroupType;
-        this.showFilteredDataOnly = !!showFilteredDataOnly;
     }
 
     public postConstruct(): void {
@@ -213,14 +199,13 @@ export class ChartDataModel extends BeanStub {
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
             crossFiltering: this.crossFiltering,
-            crossFilteringZeroValue: _includes(CROSS_FILTERING_ZERO_VALUE_CHART_TYPES, this.chartType) ? 0 : undefined,
             valueCols: this.getSelectedValueCols(),
             startRow,
             endRow,
             isScatter: _includes(['scatter', 'bubble'], this.chartType),
         };
 
-        const { chartData, columnNames, groupChartData } = this.datasource.getData(params, this.showFilteredDataOnly);
+        const { chartData, columnNames, groupChartData } = this.datasource.getData(params);
 
         this.chartData = chartData;
         this.groupChartData = groupChartData;

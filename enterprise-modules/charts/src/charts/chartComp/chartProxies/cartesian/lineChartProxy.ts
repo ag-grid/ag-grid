@@ -30,11 +30,10 @@ export class LineChartProxy extends CartesianChartProxy<'line'> {
                     xKey: category.id,
                     xName: category.name,
                     yKey: f.colId,
-                    ...(this.crossFiltering && { yFilterKey: `${f.colId}Filter` }),
                     yName: f.displayName,
                 }) as AgLineSeriesOptions
         );
 
-        return series;
+        return this.crossFiltering ? this.extractLineAreaCrossFilterSeries(series, params) : series;
     }
 }

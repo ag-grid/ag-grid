@@ -5,11 +5,11 @@ description: "Update Row Data inside the $framework Data Grid by updating the ro
 
 Update the Row Data inside the grid by updating the `rowData` grid property.
 
-The example below shows the data with two sets of data. Clicking the buttons toggles between the data sets. Some rows are common between the dataset, however if any row is selected (by clicking the row), the selection is lost between row updates as row ids are not provided.
+The example below shows the grid with two sets of data. Clicking the buttons toggles between the data sets. Some rows are common between the dataset, however if any row is selected (by clicking the row), the selection is lost between row updates as row ids are not provided.
 
 {% gridExampleRunner title="Simple Row Data" name="simple-row-data" /%}
 
-The example below is identical to the above except [Row IDs](./row-ids/) are provided via the `getRowId()` callback. This results in Row Selection being maintained across Row Data changes (assuming the Row exists in both sets) and the HTML is not redrawn from scratch, resulting in [Row Animations](./row-animation/).
+The example below is identical to the above except [Row IDs](./row-ids/) are provided via the `getRowId()` callback. This results in [Row Selection](./row-selection/) being maintained across Row Data changes (assuming the Row exists in both sets) and the HTML is not redrawn from scratch, resulting in [Row Animations](./row-animation/).
 
 {% gridExampleRunner title="Simple Row ID" name="simple-row-id" /%}
 
@@ -17,15 +17,15 @@ Providing [Row IDs](./row-ids/) allows the grid to work optimally in a few areas
 
 | Function | Row IDs Missing | Row IDs Provided |
 | ----------------------------- | ------------------------- | ------------------------ |
-| Row Selection | Row Selection lost | Row Selection maintained |
-| Row Grouping | Row Groups re-created, all open groups closed | Groups kept / updated, open groups stay open |
-| Row Refresh | All rows destroyed from the DOM and recreated, flicker may occur | Only changed rows are updated in the DOM |
-| Row Animation | No row animation | Moved rows animate to new position |
-| Flashing Cells | No flashing available, all cells are created from scratch | Changed values can be flashed to show change |
+| [Row Selection](./row-selection/) | Row Selection lost | Row Selection maintained |
+| [Row Grouping](./grouping/) | Row Groups re-created, all open groups closed | Groups kept / updated, open groups stay open |
+| [Row Refresh](./view-refresh/) | All rows destroyed from the DOM and recreated, flicker may occur | Only changed rows are updated in the DOM |
+| [Row Animation](./row-animation/) | No row animation | Moved rows animate to new position |
+| [Flashing Cells](./change-cell-renderers/#flashing-cells) | No flashing available, all cells are created from scratch | Changed values can be flashed to show change |
 
 ## Controlling Row Position
 
-The example below shows controlling the grid rows, including its order, by updating the Row Data.
+The example below demonstrates controlling the grid rows, including their order, by updating the Row Data.
 
 The example keeps a list of records to mimic data in a "store". Each time the user does an update, the data in the store is copied, so that when Row Data is given to the grid, the grid is presented with different Row Data. This is equivalent to refreshing data from a server, or using an Immutable Data store on the client.
 

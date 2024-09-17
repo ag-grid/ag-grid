@@ -50,7 +50,6 @@ import type {
     ColumnVisibleEvent,
     ComponentStateChangedEvent,
     ContextMenuVisibleChangedEvent,
-    ControlsColDef,
     CsvExportParams,
     CutEndEvent,
     CutStartEvent,
@@ -152,6 +151,7 @@ import type {
     RowStyle,
     RowValueChangedEvent,
     SelectionChangedEvent,
+    SelectionColumnDef,
     SelectionOptions,
     SendToClipboardParams,
     ServerSideGroupLevelParams,
@@ -1349,7 +1349,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressRowDeselection: boolean | undefined = undefined;
     /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.
      * @default false
-     * @deprecated v32.2 Use `selection.suppressClickSelection` instead
+     * @deprecated v32.2 Use `selection.enableClickSelection` instead
      */
     @Input() public suppressRowClickSelection: boolean | undefined = undefined;
     /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels.
@@ -1363,11 +1363,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Selection options object representing the new selection API. If this value is set all other selection related grid options will be ignored.
      */
     @Input() public selection: SelectionOptions | undefined = undefined;
-    /** Configure the control column, used for displaying checkboxes.
+    /** Configure the selection column, used for displaying checkboxes.
      *
      * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features such as editing, pivoting and grouping.
      */
-    @Input() public controlsColDef: ControlsColDef | undefined = undefined;
+    @Input() public selectionColumnDef: SelectionColumnDef | undefined = undefined;
     /** If `true`, only a single range can be selected.
      * @default false
      * @deprecated v32.2 Use `selection.suppressMultiRanges` instead
@@ -1517,7 +1517,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public processGroupHeaderForClipboard:
         | ((params: ProcessGroupHeaderForExportParams<TData>) => any)
         | undefined = undefined;
-    /** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid.
+    /** Allows you to process cells from the clipboard. Handy if for example you have number fields and want to block non-numbers from getting into the grid.
      */
     @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams<TData>) => any) | undefined =
         undefined;

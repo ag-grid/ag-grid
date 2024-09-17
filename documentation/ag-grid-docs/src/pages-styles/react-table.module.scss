@@ -206,7 +206,6 @@ div.divider:nth-of-type(4n) {
     justify-content: center;
     gap: $spacing-size-8;
     max-width: 100%;
-    overflow-x: hidden;
 }
 
 .heroSectionheadingContainer {
@@ -249,7 +248,7 @@ div.divider:nth-of-type(4n) {
     color: var(--color-brand-500);
 
     #{$selector-darkmode} & {
-        color: var(--color-brand-400);
+        color: var(--color-button-primary-bg);
         background: var(--color-bg-primary);
         border: 2px solid var(--color-bg-secondary);
     }
@@ -267,6 +266,8 @@ div.divider:nth-of-type(4n) {
 
     @media screen and (max-width: $breakpoint-landing-page-medium) {
         font-size: var(--text-fs-sm);
+        text-align: center;
+        padding: $spacing-size-1 $spacing-size-2;
     }
 
     #{$selector-darkmode} & {
@@ -275,17 +276,17 @@ div.divider:nth-of-type(4n) {
 }
 
 .heroSectionfeatureArrow {
-    height: 16px;
-    width: 16px;
-    margin-left: $spacing-size-2;
-    fill: var(--color-brand-500);
+    height: 16px !important;
+    width: 16px !important;
+    margin-left: $spacing-size-2 !important;
+    fill: var(--color-brand-500) !important;
 
     @media screen and (max-width: $breakpoint-landing-page-medium) {
         margin-left: 0;
     }
 
     #{$selector-darkmode} & {
-        fill: white;
+        fill: var(--color-button-primary-bg) !important;
     }
 }
 
@@ -340,12 +341,18 @@ div.divider:nth-of-type(4n) {
 }
 
 .heroSectioncta1 {
-    color: var(--color-white);
-    background: var(--color-brand-700);
+    color: var(--color-bg-primary);
+    background: var(--color-button-primary-bg);
     align-content: center;
+    padding-bottom: 6px;
 
     &:hover {
-        color: var(--color-white);
+        color: var(--color-bg-primary) !important;
+        background: var(--color-button-primary-bg-hover);
+    }
+
+    @media screen and (max-width: $breakpoint-landing-page-medium) {
+        text-align: center;
     }
 }
 
@@ -376,16 +383,6 @@ div.divider:nth-of-type(4n) {
     color: var(--color-fg-primary);
 }
 
-.heroSectionicon svg {
-    fill: var(--color-gray-900);
-    padding: 6px;
-
-    &:hover {
-        cursor: pointer;
-        fill: var(--color-util-brand-400);
-    }
-}
-
 .heroSectiondemoContainer {
     display: flex;
     flex-direction: column;
@@ -411,8 +408,8 @@ div.divider:nth-of-type(4n) {
 }
 
 .heroSectiondemosArrow {
-    height: 16px;
-    width: 16px;
+    height: 16px !important;
+    width: 16px !important;
     margin-left: $spacing-size-2 !important;
     fill: var(--color-link) !important;
 }

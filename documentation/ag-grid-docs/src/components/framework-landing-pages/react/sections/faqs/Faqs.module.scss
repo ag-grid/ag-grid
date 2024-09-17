@@ -53,7 +53,7 @@
 }
 
 .expandIcon {
-    fill: var(--color-fg-secondary);
+    fill: var(--color-fg-secondary) !important;
     padding: $spacing-size-2;
     transition: transform 0.3s ease;
 }

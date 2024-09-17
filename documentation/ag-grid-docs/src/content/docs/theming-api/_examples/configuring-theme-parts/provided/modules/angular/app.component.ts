@@ -11,9 +11,9 @@ import {
     colorSchemeLightWarm,
     iconSetAlpine,
     iconSetMaterial,
-    iconSetQuartz,
     iconSetQuartzBold,
     iconSetQuartzLight,
+    iconSetQuartzRegular,
     themeAlpine,
     themeBalham,
     themeQuartz,
@@ -64,7 +64,7 @@ ModuleRegistry.registerModules([
                     [rowData]="rowData"
                     [theme]="theme"
                     loadThemeGoogleFonts
-                    sideBar
+                    [sideBar]="true"
                 />
             </div>
         </div>
@@ -85,7 +85,7 @@ export class AppComponent {
     ];
     colorScheme = null;
 
-    iconSets = [null, iconSetQuartzLight, iconSetQuartz, iconSetQuartzBold, iconSetAlpine, iconSetMaterial];
+    iconSets = [null, iconSetQuartzLight, iconSetQuartzRegular, iconSetQuartzBold, iconSetAlpine, iconSetMaterial];
     iconSet = null;
 
     get theme() {

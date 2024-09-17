@@ -1491,7 +1491,7 @@ export interface GridOptions<TData = any> {
     /**
      * If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.
      * @default false
-     * @deprecated v32.2 Use `selection.suppressClickSelection` instead
+     * @deprecated v32.2 Use `selection.enableClickSelection` instead
      */
     suppressRowClickSelection?: boolean;
     /**
@@ -1509,11 +1509,11 @@ export interface GridOptions<TData = any> {
      */
     selection?: SelectionOptions;
     /**
-     * Configure the control column, used for displaying checkboxes.
+     * Configure the selection column, used for displaying checkboxes.
      *
      * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features such as editing, pivoting and grouping.
      */
-    controlsColDef?: ControlsColDef;
+    selectionColumnDef?: SelectionColumnDef;
 
     /**
      * If `true`, only a single range can be selected.
@@ -1727,7 +1727,7 @@ export interface GridOptions<TData = any> {
      */
     processGroupHeaderForClipboard?: (params: ProcessGroupHeaderForExportParams<TData>) => any;
     /**
-     * Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid.
+     * Allows you to process cells from the clipboard. Handy if for example you have number fields and want to block non-numbers from getting into the grid.
      */
     processCellFromClipboard?: (params: ProcessCellForExportParams<TData>) => any;
     /**
@@ -2597,10 +2597,10 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
      * Modifies the selection behaviour when clicking a row, or pressing `Space` while focusing a row.
      * @default false
      */
-    suppressClickSelection?: boolean | 'suppressDeselection' | 'suppressSelection';
+    enableClickSelection?: boolean | 'enableDeselection' | 'enableSelection';
     /**
      * Set to `true` or return `true` from the callback to render a selection checkbox.
-     * @default false
+     * @default true
      */
     checkboxes?: boolean | CheckboxSelectionCallback<TData, TValue>;
     /**
@@ -2642,7 +2642,7 @@ export interface MultiRowSelectionOptions<TData = any> extends CommonRowSelectio
     selectAll?: SelectAllMode;
     /**
      * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
-     * @default false
+     * @default true
      */
     headerCheckbox?: boolean;
     /**
@@ -2653,7 +2653,7 @@ export interface MultiRowSelectionOptions<TData = any> extends CommonRowSelectio
 }
 
 /** Subset of ColDef allowing for customisation of the Controls column, currently used for checkbox selection */
-export type ControlsColDef = Pick<
+export type SelectionColumnDef = Pick<
     ColDef,
     | 'icons'
     | 'suppressNavigable'

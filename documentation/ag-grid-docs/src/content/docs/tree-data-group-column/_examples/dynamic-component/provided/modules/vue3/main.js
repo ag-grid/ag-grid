@@ -76,7 +76,7 @@ const VueExample = {
                     };
                 }
                 return {
-                    component: CustomGroupCellRenderer,
+                    component: 'CustomGroupCellRenderer',
                 };
             },
         };

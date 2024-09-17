@@ -268,7 +268,7 @@ export const Property: FunctionComponent<{
                                 {formattedDefaultValue != null && (
                                     <div className={styles.metaItem}>
                                         <span className={classnames(styles.metaValue, styles.defaultValue)}>
-                                            <span>default: </span>
+                                            <span className={styles.defaultLabel}>default: </span>
                                             {formattedDefaultValue}
                                         </span>
                                     </div>
