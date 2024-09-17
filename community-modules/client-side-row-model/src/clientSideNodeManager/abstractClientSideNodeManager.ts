@@ -1,24 +1,12 @@
 import type {
     BeanCollection,
+    ClientSideNodeManagerUpdateRowDataResult,
     IClientSideNodeManager,
     RowDataTransaction,
     RowNode,
-    RowNodeTransaction,
     SelectionEventSourceType,
 } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
-
-/** Result of ClientSideNodeManager.updateRowData method */
-export interface ClientSideNodeManagerUpdateRowDataResult<TData> {
-    /** The RowNodeTransaction containing all the removals, updates and additions */
-    rowNodeTransaction: RowNodeTransaction<TData>;
-
-    /** True if at least one row was inserted (and not just appended) */
-    rowsInserted: boolean;
-
-    /** True if the order of root.allLeafChildren has changed */
-    rowsOrderChanged: boolean;
-}
 
 export abstract class AbstractClientSideNodeManager<TData = any>
     extends BeanStub
