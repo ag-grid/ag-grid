@@ -10,19 +10,23 @@ describe('urlWithPrefix', () => {
         ${'/gallery'}            | ${'react'}      | ${'/ag-charts/gallery/'}
         ${'/with-slash/'}        | ${'javascript'} | ${'/ag-charts/with-slash/'}
         ${'https://youtube.com'} | ${'react'}      | ${'https://youtube.com'}
+        ${'./someImage.png'}     | ${'javascript'} | ${'/ag-charts/javascript-data-grid/someImage.png'}
+        ${'/someImage.png'}      | ${'javascript'} | ${'/ag-charts/someImage.png'}
     `('returns $expected for url $url, framework $framework siteBaseUrl /ag-charts', ({ url, framework, expected }) => {
         const siteBaseUrl = '/ag-charts';
         expect(urlWithPrefix({ url, framework, siteBaseUrl })).toBe(expected);
     });
 
     test.each`
-        url                | framework       | expected
-        ${'./docs'}        | ${'javascript'} | ${'/ag-charts/javascript-data-grid/docs'}
-        ${'./with-slash/'} | ${'javascript'} | ${'/ag-charts/javascript-data-grid/with-slash/'}
-        ${'./docs'}        | ${'react'}      | ${'/ag-charts/react-data-grid/docs'}
-        ${'./docs/path'}   | ${'react'}      | ${'/ag-charts/react-data-grid/docs/path'}
-        ${'/gallery'}      | ${'react'}      | ${'/ag-charts/gallery'}
-        ${'/with-slash/'}  | ${'javascript'} | ${'/ag-charts/with-slash/'}
+        url                  | framework       | expected
+        ${'./docs'}          | ${'javascript'} | ${'/ag-charts/javascript-data-grid/docs'}
+        ${'./with-slash/'}   | ${'javascript'} | ${'/ag-charts/javascript-data-grid/with-slash/'}
+        ${'./docs'}          | ${'react'}      | ${'/ag-charts/react-data-grid/docs'}
+        ${'./docs/path'}     | ${'react'}      | ${'/ag-charts/react-data-grid/docs/path'}
+        ${'/gallery'}        | ${'react'}      | ${'/ag-charts/gallery'}
+        ${'/with-slash/'}    | ${'javascript'} | ${'/ag-charts/with-slash/'}
+        ${'./someImage.png'} | ${'javascript'} | ${'/ag-charts/javascript-data-grid/someImage.png'}
+        ${'/someImage.png'}  | ${'javascript'} | ${'/ag-charts/someImage.png'}
     `(
         'returns without trailing slash in $expected for url $url, framework $framework siteBaseUrl /ag-charts',
         ({ url, framework, expected }) => {
