@@ -152,7 +152,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public shouldPreventRowMove(): boolean {
-        const rowGroupCols = this.funcColsService.getRowGroupColumns();
+        const rowGroupCols = this.funcColsService.rowGroupCols;
         if (rowGroupCols.length) {
             return true;
         }

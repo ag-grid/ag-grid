@@ -106,7 +106,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
         const allowPinning = !column.getColDef().lockPinned;
 
-        const rowGroupCount = this.funcColsService.getRowGroupColumns().length;
+        const rowGroupCount = this.funcColsService.rowGroupCols.length;
         const doingGrouping = rowGroupCount > 0;
 
         const allowValue = column.isAllowValue();

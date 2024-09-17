@@ -121,7 +121,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 const colDef = column.getColDef();
                 const isFullWidth = colDef == null || colDef.showRowGroup === true;
 
-                return isFullWidth || colDef.showRowGroup === this.funcColsService.getRowGroupColumns()[0].getId();
+                return isFullWidth || colDef.showRowGroup === this.funcColsService.rowGroupCols[0].getId();
             }
         }
 

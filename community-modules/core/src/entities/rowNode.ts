@@ -568,7 +568,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             return;
         }
 
-        const displayedAutoHeightCols = this.beans.visibleColsService.getAllAutoHeightCols();
+        const displayedAutoHeightCols = this.beans.visibleColsService.autoHeightCols;
         displayedAutoHeightCols.forEach((col) => {
             let cellHeight = autoHeights[col.getId()];
 

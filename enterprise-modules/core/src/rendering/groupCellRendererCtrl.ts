@@ -120,9 +120,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             const showingFooterTotal =
                 params.node.footer &&
                 params.node.rowGroupIndex ===
-                    this.funcColsService
-                        .getRowGroupColumns()
-                        .findIndex((c) => c.getColId() === params.colDef?.showRowGroup);
+                    this.funcColsService.rowGroupCols.findIndex((c) => c.getColId() === params.colDef?.showRowGroup);
             // if we're always showing a group value
             const isAlwaysShowing = this.gos.get('groupDisplayType') != 'multipleColumns' || this.gos.get('treeData');
             // if the cell is populated with a parent value due to `showOpenedGroup`
@@ -133,9 +131,9 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
                     (!params.node.group ||
                         (params.node.rowGroupIndex != null &&
                             params.node.rowGroupIndex >
-                                this.funcColsService
-                                    .getRowGroupColumns()
-                                    .findIndex((c) => c.getColId() === params.colDef?.showRowGroup))));
+                                this.funcColsService.rowGroupCols.findIndex(
+                                    (c) => c.getColId() === params.colDef?.showRowGroup
+                                ))));
             // not showing a leaf value (field/valueGetter)
             const leafWithValues = !node.group && (this.params.colDef?.field || this.params.colDef?.valueGetter);
             // doesn't have expand/collapse chevron
@@ -224,7 +222,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return true;
         }
 
-        const rowGroupCols = this.funcColsService.getRowGroupColumns();
+        const rowGroupCols = this.funcColsService.rowGroupCols;
         // this is a sanity check, rowGroupCols should always be present
         if (!rowGroupCols || rowGroupCols.length === 0) {
             return true;

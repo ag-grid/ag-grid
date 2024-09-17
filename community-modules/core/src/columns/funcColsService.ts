@@ -27,9 +27,9 @@ export class FuncColsService extends BeanStub implements NamedBean {
         this.visibleColsService = beans.visibleColsService;
     }
 
-    private rowGroupCols: AgColumn[] = [];
-    private valueCols: AgColumn[] = [];
-    private pivotCols: AgColumn[] = [];
+    public rowGroupCols: AgColumn[] = [];
+    public valueCols: AgColumn[] = [];
+    public pivotCols: AgColumn[] = [];
 
     public getModifyColumnsNoEventsCallbacks(): ModifyColumnsNoEventsCallbacks {
         return {
@@ -62,21 +62,6 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
     public sortPivotColumns(compareFn?: (a: AgColumn, b: AgColumn) => number): void {
         this.pivotCols.sort(compareFn);
-    }
-
-    // + rowController
-    public getValueColumns(): AgColumn[] {
-        return this.valueCols ? this.valueCols : [];
-    }
-
-    // + rowController
-    public getPivotColumns(): AgColumn[] {
-        return this.pivotCols ? this.pivotCols : [];
-    }
-
-    // + toolPanel
-    public getRowGroupColumns(): AgColumn[] {
-        return this.rowGroupCols ? this.rowGroupCols : [];
     }
 
     public isRowGroupEmpty(): boolean {

@@ -184,10 +184,10 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         disabled:
                             this.gos.get('functionsReadOnly') ||
                             lockedGroups === -1 ||
-                            lockedGroups >= this.funcColsService.getRowGroupColumns().length,
+                            lockedGroups >= this.funcColsService.rowGroupCols.length,
                         action: () =>
                             this.funcColsService.setRowGroupColumns(
-                                this.funcColsService.getRowGroupColumns().slice(0, lockedGroups),
+                                this.funcColsService.rowGroupCols.slice(0, lockedGroups),
                                 source
                             ),
                         icon: icon,

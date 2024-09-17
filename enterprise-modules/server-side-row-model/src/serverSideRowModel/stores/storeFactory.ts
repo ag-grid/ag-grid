@@ -116,8 +116,8 @@ export class StoreFactory extends BeanStub implements NamedBean {
         const params: WithoutGridCommon<GetServerSideGroupLevelParamsParams> = {
             level: parentNode.level + 1,
             parentRowNode: parentNode.level >= 0 ? parentNode : undefined,
-            rowGroupColumns: this.funcColsService.getRowGroupColumns(),
-            pivotColumns: this.funcColsService.getPivotColumns(),
+            rowGroupColumns: this.funcColsService.rowGroupCols,
+            pivotColumns: this.funcColsService.pivotCols,
             pivotMode: this.columnModel.isPivotMode(),
         };
 

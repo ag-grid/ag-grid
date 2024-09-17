@@ -467,7 +467,7 @@ export class ClientSideNodeManager {
             }
 
             if (setExpanded) {
-                const rowGroupColumns = this.funcColsService.getRowGroupColumns();
+                const rowGroupColumns = this.funcColsService.rowGroupCols;
                 const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
 
                 // need to take row group into account when determining level

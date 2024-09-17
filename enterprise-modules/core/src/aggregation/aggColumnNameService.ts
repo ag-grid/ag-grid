@@ -33,7 +33,7 @@ export class AggColumnNameService extends BeanStub implements NamedBean, IAggCol
 
         // otherwise we have a measure that is active, and we are doing aggregation on it
         if (pivotActiveOnThisColumn) {
-            const valueColumns = this.funcColsService.getValueColumns();
+            const valueColumns = this.funcColsService.valueCols;
             const isCollapsedHeaderEnabled =
                 this.gos.get('removePivotHeaderRowWhenSingleValueColumn') && valueColumns.length === 1;
             const isTotalColumn = column.getColDef().pivotTotalColumnIds !== undefined;

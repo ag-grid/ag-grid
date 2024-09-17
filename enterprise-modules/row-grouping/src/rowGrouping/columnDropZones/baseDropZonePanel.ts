@@ -55,7 +55,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
 
     protected override minimumAllowedNewInsertIndex(): number {
         const numberOfLockedCols = this.gos.get('groupLockGroupColumns');
-        const numberOfGroupCols = this.funcColsService.getRowGroupColumns().length;
+        const numberOfGroupCols = this.funcColsService.rowGroupCols.length;
         if (numberOfLockedCols === -1) {
             return numberOfGroupCols;
         }

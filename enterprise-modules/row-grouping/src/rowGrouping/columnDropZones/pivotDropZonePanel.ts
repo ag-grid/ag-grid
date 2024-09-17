@@ -96,6 +96,6 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.funcColsService.getPivotColumns();
+        return this.funcColsService.pivotCols;
     }
 }

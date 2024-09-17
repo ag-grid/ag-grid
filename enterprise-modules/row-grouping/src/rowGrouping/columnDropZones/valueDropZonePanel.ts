@@ -59,6 +59,6 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.funcColsService.getValueColumns();
+        return this.funcColsService.valueCols;
     }
 }

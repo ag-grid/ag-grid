@@ -117,7 +117,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         if (!this.usingTreeData && this.groupLevel) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field!;
-            this.rowGroupColumn = this.funcColsService.getRowGroupColumns()[this.level];
+            this.rowGroupColumn = this.funcColsService.rowGroupCols[this.level];
         }
 
         let initialRowCount = 1;
