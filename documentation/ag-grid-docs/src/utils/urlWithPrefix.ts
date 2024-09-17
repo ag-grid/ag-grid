@@ -5,6 +5,8 @@ import { getFrameworkPath } from '@features/docs/utils/urlPaths';
 import { getIsDev } from '@utils/env';
 import { pathJoin } from '@utils/pathJoin';
 
+import { getFileExtension } from './client/getFileExtension';
+
 export const urlWithPrefix = ({
     url = '',
     framework,
@@ -18,6 +20,7 @@ export const urlWithPrefix = ({
 }): string => {
     let path = url;
     const urlHasTrailingSlash = url.endsWith('/');
+    const hasFileExt = Boolean(getFileExtension(url));
     if (url.startsWith('./')) {
         const frameworkPath = getFrameworkPath(framework!);
         path = pathJoin('/', siteBaseUrl, frameworkPath, url.slice('./'.length));
@@ -33,7 +36,7 @@ export const urlWithPrefix = ({
         }
     }
 
-    if ((trailingSlash || urlHasTrailingSlash) && !path.includes('#') && !isExternalLink(url)) {
+    if ((trailingSlash || urlHasTrailingSlash) && !path.includes('#') && !isExternalLink(url) && !hasFileExt) {
         path = path + '/';
     }
 
