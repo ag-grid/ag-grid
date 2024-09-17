@@ -139,29 +139,6 @@ export class ClientSideNodeManager<TData>
         return result;
     }
 
-    public override updateRowData(
-        rowDataTran: RowDataTransaction<TData>
-    ): ClientSideNodeManagerUpdateRowDataResult<TData> {
-        this.rowCountReady = true;
-        this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
-
-        const updateRowDataResult: ClientSideNodeManagerUpdateRowDataResult<TData> = {
-            rowNodeTransaction: { remove: [], update: [], add: [] },
-            rowsInserted: false,
-            rowsOrderChanged: false,
-        };
-
-        const nodesToUnselect: RowNode[] = [];
-
-        this.executeRemove(rowDataTran, updateRowDataResult, nodesToUnselect);
-        this.executeUpdate(rowDataTran, updateRowDataResult, nodesToUnselect);
-        this.executeAdd(rowDataTran, updateRowDataResult);
-
-        this.updateSelection(nodesToUnselect, 'rowDataChanged');
-
-        return updateRowDataResult;
-    }
-
     /** Converts the setRowData() command to a transaction */
     private createTransactionForRowData(rowData: TData[]): RowDataTransaction<TData> | null {
         const getRowIdFunc = _getRowIdCallback(this.gos);
@@ -208,6 +185,29 @@ export class ClientSideNodeManager<TData>
         });
 
         return { remove, update, add };
+    }
+
+    public override updateRowData(
+        rowDataTran: RowDataTransaction<TData>
+    ): ClientSideNodeManagerUpdateRowDataResult<TData> {
+        this.rowCountReady = true;
+        this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
+
+        const updateRowDataResult: ClientSideNodeManagerUpdateRowDataResult<TData> = {
+            rowNodeTransaction: { remove: [], update: [], add: [] },
+            rowsInserted: false,
+            rowsOrderChanged: false,
+        };
+
+        const nodesToUnselect: RowNode[] = [];
+
+        this.executeRemove(rowDataTran, updateRowDataResult, nodesToUnselect);
+        this.executeUpdate(rowDataTran, updateRowDataResult, nodesToUnselect);
+        this.executeAdd(rowDataTran, updateRowDataResult);
+
+        this.updateSelection(nodesToUnselect, 'rowDataChanged');
+
+        return updateRowDataResult;
     }
 
     /**
