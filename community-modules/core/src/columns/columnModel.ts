@@ -402,10 +402,17 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private createControlsCols(): void {
-        destroyColumnTree(this.context, this.controlsCols?.tree);
-        this.controlsCols = null;
+        if (!this.controlsColService) {
+            destroyColumnTree(this.context, this.controlsCols?.tree);
+            this.controlsCols = null;
+        }
 
         const list = this.controlsColService?.createControlsCols() ?? [];
+        const areSame = areColIdsEqual(list, this.controlsCols?.list ?? []);
+
+        if (areSame) {
+            return;
+        }
 
         const [tree, treeDepth] = this.columnFactory.balanceTreeForAutoCols(list, this.cols.tree);
         this.controlsCols = {
