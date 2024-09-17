@@ -12,9 +12,9 @@ import {
     colorSchemeLightWarm,
     iconSetAlpine,
     iconSetMaterial,
-    iconSetQuartz,
     iconSetQuartzBold,
     iconSetQuartzLight,
+    iconSetQuartzRegular,
     themeAlpine,
     themeBalham,
     themeQuartz,
@@ -42,7 +42,7 @@ const colorSchemes = [
     colorSchemeDarkWarm,
     colorSchemeDarkBlue,
 ];
-const iconSets = [null, iconSetQuartzLight, iconSetQuartz, iconSetQuartzBold, iconSetAlpine, iconSetMaterial];
+const iconSets = [null, iconSetQuartzLight, iconSetQuartzRegular, iconSetQuartzBold, iconSetAlpine, iconSetMaterial];
 
 const GridExample = () => {
     const [baseTheme, setBaseTheme] = useState(baseThemes[0]);
@@ -89,7 +89,7 @@ const PartSelector = ({ options, value, setValue }) => (
     >
         {options.map((option, i) => (
             <option key={i} value={option?.id}>
-                {option?.id.replace(/^.*\//, '') || '(unchanged)'}
+                {option?.variant || option?.id || '(unchanged)'}
             </option>
         ))}
     </select>

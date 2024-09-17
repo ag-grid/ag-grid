@@ -25,9 +25,9 @@ export function getHeaderCheckboxByIndex(index: number): HTMLElement | null {
         .querySelector('input[type=checkbox]');
 }
 
-export function selectRowsByIndex(indices: number[], api?: GridApi): void {
+export function selectRowsByIndex(indices: number[], click: boolean, api?: GridApi): void {
     for (const i of indices) {
-        clickRowByIndex(i, { ctrlKey: true });
+        click ? clickRowByIndex(i, { ctrlKey: true }) : toggleCheckboxByIndex(i);
     }
     if (api !== undefined) {
         assertSelectedRowsByIndex(indices, api);

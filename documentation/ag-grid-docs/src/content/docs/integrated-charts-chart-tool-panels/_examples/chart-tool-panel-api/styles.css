@@ -4,12 +4,10 @@
     height: 100%;
 }
 
-#myGrid {
-    flex: 1;
-}
-
-.my-chart {
-    flex: 1;
+#contents {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 60% 40%;
 }
 
 #buttons {

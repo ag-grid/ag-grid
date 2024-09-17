@@ -10,7 +10,7 @@ export class NodeManager extends BeanStub implements NamedBean {
         const id = rowNode.id!;
         if (this.rowNodes[id]) {
             _warnOnce(
-                `Duplicate node id ${rowNode.id}. Row ID's are provided via the getRowId() callback. Please modify the getRowId() callback code to provide unique row id values.`
+                `Duplicate node id ${rowNode.id}. Row IDs are provided via the getRowId() callback. Please modify the getRowId() callback code to provide unique row id values.`
             );
             _warnOnce('first instance', this.rowNodes[id]!.data);
             _warnOnce('second instance', rowNode.data);

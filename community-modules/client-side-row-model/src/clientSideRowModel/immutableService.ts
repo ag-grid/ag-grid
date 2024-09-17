@@ -42,7 +42,7 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
     public isActive(): boolean {
         const getRowIdProvided = this.gos.exists('getRowId');
         // this property is a backwards compatibility property, for those who want
-        // the old behaviour of Row ID's but NOT Immutable Data.
+        // the old behaviour of Row IDs but NOT Immutable Data.
         const resetRowDataOnUpdate = this.gos.get('resetRowDataOnUpdate');
 
         if (resetRowDataOnUpdate) {

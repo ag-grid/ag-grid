@@ -150,7 +150,13 @@ export class Environment extends BeanStub implements NamedBean {
         if (!container) {
             container = this.eMeasurementContainer = document.createElement('div');
             container.className = 'ag-measurement-container';
-            this.applyThemeClasses(container);
+            if (this.gos.get('theme')) {
+                // Avoid setting a theme class in legacy theme (non Theming API)
+                // mode, because Sass styles don't support custom property
+                // inheritance, so setting a theme class here resets the custom
+                // properties defined on the grid's wrapper element
+                this.applyThemeClasses(container);
+            }
             this.eGridDiv.appendChild(container);
         }
 

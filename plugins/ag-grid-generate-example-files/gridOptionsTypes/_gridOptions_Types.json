@@ -247,10 +247,10 @@
       "SelectionOptions"
     ]
   },
-  "controlsColDef": {
-    "typeName": "ControlsColDef",
+  "selectionColumnDef": {
+    "typeName": "SelectionColumnDef",
     "typesToInclude": [
-      "ControlsColDef"
+      "SelectionColumnDef"
     ]
   },
   "rowSelection": {

@@ -19,6 +19,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         mode: 'multiRow',
         checkboxes: false,
         headerCheckbox: false,
+        enableClickSelection: true,
     },
 };
 

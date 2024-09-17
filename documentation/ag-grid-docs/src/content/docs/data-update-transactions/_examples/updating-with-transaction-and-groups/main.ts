@@ -51,7 +51,6 @@ const gridOptions: GridOptions = {
     rowData: getData(),
     selection: {
         mode: 'multiRow',
-        suppressClickSelection: true,
         groupSelects: 'descendants',
         checkboxes: false,
         headerCheckbox: false,

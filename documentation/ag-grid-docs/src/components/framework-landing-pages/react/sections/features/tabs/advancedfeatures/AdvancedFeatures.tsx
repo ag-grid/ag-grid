@@ -29,12 +29,12 @@ const AdvancedFeatures: React.FC = () => {
                         <h5 className={styles.featureHeading}>Advanced Features</h5>
                         <span className={styles.featureDetail}>
                             <a href={urlWithBaseUrl('./react-data-grid/integrated-charts/')}>Build charts</a> directly
-                            from your react table. Perform data analysis with{' '}
-                            <a href={urlWithBaseUrl('./react-data-grid/grouping/')}>row grouping</a>,{' '}
-                            <a href={urlWithBaseUrl('./react-data-grid/pivoting/')}>pivoting</a> and{' '}
-                            <a href={urlWithBaseUrl('./react-data-grid/master-detail/')}>master/detail</a> features.
+                            from your React Table. Perform data analysis with{' '}
+                            <a href={urlWithBaseUrl('./react-data-grid/grouping/')}>Row Grouping</a>,{' '}
+                            <a href={urlWithBaseUrl('./react-data-grid/pivoting/')}>Pivoting</a> and{' '}
+                            <a href={urlWithBaseUrl('./react-data-grid/master-detail/')}>Master/Detail</a> features.
                             Access all features from our{' '}
-                            <a href={urlWithBaseUrl('./react-data-grid/side-bar/')}>accessory panels</a>.
+                            <a href={urlWithBaseUrl('./react-data-grid/side-bar/')}>Accessory Panels</a>.
                         </span>
                     </div>
                     <div className={styles.feature}>

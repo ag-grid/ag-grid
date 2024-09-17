@@ -293,19 +293,19 @@
         "getCellRanges": {
             "more": {
                 "name": "getCellRanges",
-                "url": "./cell-selection/#reference--getCellRanges"
+                "url": "./cell-selection-api-reference/#reference-selection-getCellRanges"
             }
         },
         "addCellRange": {
             "more": {
                 "name": "addCellRange",
-                "url": "./cell-selection/#reference--addCellRange"
+                "url": "./cell-selection-api-reference/#reference-selection-addCellRange"
             }
         },
         "clearCellSelection": {
             "more": {
                 "name": "clearCellSelection",
-                "url": "./cell-selection/#reference--clearCellSelection"
+                "url": "./cell-selection-api-reference/#reference-selection-clearCellSelection"
             }
         }
     },

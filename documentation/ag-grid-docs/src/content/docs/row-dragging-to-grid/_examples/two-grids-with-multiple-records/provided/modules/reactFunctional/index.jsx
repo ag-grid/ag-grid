@@ -68,7 +68,6 @@ const defaultColDef = {
 
 const selection = {
     mode: 'multiRow',
-    suppressClickSelection: true,
 };
 
 const GridExample = () => {
