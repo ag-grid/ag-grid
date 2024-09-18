@@ -247,7 +247,10 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         const padding = node.footer ? 1 : 0;
         const currentRow = _last(this.rows);
 
-        currentRow.outlineLevel = node.level + padding;
+        // Excel only supports up to 7 levels of outline
+        const outlineLevel = Math.min(node.level + padding, 7);
+
+        currentRow.outlineLevel = outlineLevel;
 
         if (rowGroupExpandState === 'expanded') {
             return;
