@@ -1,6 +1,6 @@
-type SimpleRedirectRule = { from: string; to: string };
-type RedirectMatchRule = { fromPattern: string; to: string };
-type Redirect = SimpleRedirectRule | RedirectMatchRule;
+export type SimpleRedirectRule = { from: string; to: string };
+export type RedirectMatchRule = { fromPattern: string; to: string };
+export type Redirect = SimpleRedirectRule | RedirectMatchRule;
 
 /**
  * Where this file lives

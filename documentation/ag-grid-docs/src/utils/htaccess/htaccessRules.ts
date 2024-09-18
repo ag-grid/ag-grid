@@ -1,3 +1,4 @@
+import { urlWithBaseUrl } from '../urlWithBaseUrl';
 import { SITE_301_REDIRECTS } from './redirects';
 
 const modExpiresRules = `
@@ -109,7 +110,9 @@ ${SITE_301_REDIRECTS.map((redirect) => {
         console.warn('Missing `from` in redirect', redirect);
         return;
     }
-    return from ? `    Redirect 301 ${from} ${to}` : `    RedirectMatch 301 "${fromPattern}" "${to}"`;
+    return from
+        ? `    Redirect 301 ${urlWithBaseUrl(from)} ${urlWithBaseUrl(to)}`
+        : `    RedirectMatch 301 "${fromPattern}" "${urlWithBaseUrl(to)}"`;
 })
     .filter(Boolean)
     .join('\n')}
