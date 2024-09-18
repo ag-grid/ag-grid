@@ -151,6 +151,8 @@ export class ChartTranslationService extends BeanStub implements NamedBean {
         pieTooltip: 'Pie',
         donutTooltip: 'Donut',
         lineTooltip: 'Line',
+        stackedLineTooltip: 'Stacked',
+        normalizedLineTooltip: '100% Stacked',
         groupedAreaTooltip: 'Area',
         stackedAreaTooltip: 'Stacked',
         normalizedAreaTooltip: '100% Stacked',
@@ -224,6 +226,8 @@ export class ChartTranslationService extends BeanStub implements NamedBean {
         normalizedBarFull: '100% Stacked Bar',
         stackedAreaFull: 'Stacked Area',
         normalizedAreaFull: '100% Stacked Area',
+        stackedLineFull: 'Stacked Line',
+        normalizedLineFull: '100% Stacked Line',
         customCombo: 'Custom Combination',
 
         // menu items

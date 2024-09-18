@@ -3,7 +3,7 @@ export interface ChartGroupsDef {
     columnGroup?: ('column' | 'stackedColumn' | 'normalizedColumn')[];
     barGroup?: ('bar' | 'stackedBar' | 'normalizedBar')[];
     pieGroup?: ('pie' | 'donut' | 'doughnut')[];
-    lineGroup?: 'line'[];
+    lineGroup?: ('line' | 'stackedLine' | 'normalizedLine')[];
     scatterGroup?: ('scatter' | 'bubble')[];
     areaGroup?: ('area' | 'stackedArea' | 'normalizedArea')[];
     combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[];
@@ -98,6 +98,8 @@ export class ChartMappings {
         stackedBar: 'bar',
         normalizedBar: 'bar',
         line: 'line',
+        stackedLine: 'line',
+        normalizedLine: 'line',
         scatter: 'scatter',
         bubble: 'bubble',
         pie: 'pie',

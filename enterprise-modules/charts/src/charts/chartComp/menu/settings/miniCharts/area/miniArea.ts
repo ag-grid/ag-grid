@@ -2,12 +2,8 @@ import type { ChartType } from '@ag-grid-community/core';
 import { _Scene } from 'ag-charts-community';
 
 import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { ICoordinate } from '../miniChartApi';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
-
-export interface ICoordinate {
-    x: number;
-    y: number;
-}
 
 export class MiniArea extends MiniChartWithAxes {
     static chartType: ChartType = 'area';

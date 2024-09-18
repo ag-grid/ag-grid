@@ -3,8 +3,8 @@ import { _Scene } from 'ag-charts-community';
 
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
 import type { ThemeTemplateParameters } from '../../miniChartsContainer';
+import type { ICoordinate } from '../miniChartApi';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
-import type { ICoordinate } from './miniArea';
 
 export class MiniStackedArea extends MiniChartWithAxes {
     static chartType: ChartType = 'stackedArea';
