@@ -156,7 +156,7 @@ export class SelectAllFeature extends BeanStub {
             this.headerCellCtrl.setAriaDescriptionProperty('selectAll', `${ariaLabel} (${ariaStatus})`);
         }
 
-        this.cbSelectAll.setInputAriaLabel(`${ariaLabel} (${ariaStatus})`);
+        this.cbSelectAll.setInputAriaLabel(translate('ariaHeaderSelection', 'Column with Header Selection'));
         this.headerCellCtrl.announceAriaDescription();
     }
 
