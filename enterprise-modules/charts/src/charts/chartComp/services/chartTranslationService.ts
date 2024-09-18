@@ -151,6 +151,8 @@ export class ChartTranslationService extends BeanStub implements NamedBean {
         pieTooltip: 'Pie',
         donutTooltip: 'Donut',
         lineTooltip: 'Line',
+        stackedLineTooltip: 'Stacked',
+        normalizedLineTooltip: '100% Stacked',
         groupedAreaTooltip: 'Area',
         stackedAreaTooltip: 'Stacked',
         normalizedAreaTooltip: '100% Stacked',

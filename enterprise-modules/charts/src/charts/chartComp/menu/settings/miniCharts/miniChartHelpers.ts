@@ -1,5 +1,7 @@
 import { _Scene } from 'ag-charts-community';
 
+import type { DomainRange } from './miniChartApi';
+
 export interface CreateColumnRectsParams {
     stacked: boolean;
     root: _Scene.Group;
@@ -46,13 +48,20 @@ export function createColumnRects(params: CreateColumnRectsParams) {
     return createBars(params.data, xScale, yScale);
 }
 
-export function createLinePaths(root: _Scene.Group, data: number[][], size: number, padding: number): _Scene.Path[] {
+export function createLinePaths(
+    root: _Scene.Group,
+    data: number[][],
+    size: number,
+    padding: number,
+    xDomain: DomainRange,
+    yDomain: DomainRange
+): _Scene.Path[] {
     const xScale = new _Scene.LinearScale();
-    xScale.domain = [0, 4];
+    xScale.domain = xDomain;
     xScale.range = [padding, size - padding];
 
     const yScale = new _Scene.LinearScale();
-    yScale.domain = [0, 10];
+    yScale.domain = yDomain;
     yScale.range = [size - padding, padding];
 
     const lines: _Scene.Path[] = data.map((series) => {

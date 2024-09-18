@@ -22,6 +22,7 @@ import {
     MiniNormalizedArea,
     MiniNormalizedBar,
     MiniNormalizedColumn,
+    MiniNormalizedLine,
     MiniPie,
     MiniRadarArea,
     MiniRadarLine,
@@ -33,6 +34,7 @@ import {
     MiniStackedArea,
     MiniStackedBar,
     MiniStackedColumn,
+    MiniStackedLine,
     MiniSunburst,
     MiniTreemap,
     MiniWaterfall,
@@ -80,8 +82,8 @@ const miniChartMapping: MiniChartMenuMapping = {
     },
     lineGroup: {
         line: { range: true, pivot: true, enterprise: false, icon: MiniLine },
-        stackedLine: { range: true, pivot: true, enterprise: false, icon: MiniLine },
-        normalizedLine: { range: true, pivot: true, enterprise: false, icon: MiniLine },
+        stackedLine: { range: true, pivot: true, enterprise: false, icon: MiniStackedLine },
+        normalizedLine: { range: true, pivot: true, enterprise: false, icon: MiniNormalizedLine },
     },
     scatterGroup: {
         scatter: { range: true, pivot: true, enterprise: false, icon: MiniScatter },
