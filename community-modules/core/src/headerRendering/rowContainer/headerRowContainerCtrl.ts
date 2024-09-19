@@ -1,3 +1,4 @@
+import type { ColumnMoveService } from '../../columnMove/columnMoveService';
 import type { ColumnModel } from '../../columns/columnModel';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -13,7 +14,6 @@ import type { PinnedWidthService } from '../../gridBodyComp/pinnedWidthService';
 import type { ScrollVisibleService } from '../../gridBodyComp/scrollVisibleService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { NumberSequence } from '../../utils/numberSequence';
-import { BodyDropTarget } from '../columnDrag/bodyDropTarget';
 import type { HeaderPosition } from '../common/headerPosition';
 import { HeaderRowType } from '../row/headerRowComp';
 import { HeaderRowCtrl } from '../row/headerRowCtrl';
@@ -33,6 +33,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     private columnModel: ColumnModel;
     private focusService: FocusService;
     private filterManager?: FilterManager;
+    private columnMoveService?: ColumnMoveService;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
@@ -41,6 +42,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         this.columnModel = beans.columnModel;
         this.focusService = beans.focusService;
         this.filterManager = beans.filterManager;
+        this.columnMoveService = beans.columnMoveService;
     }
 
     private pinned: ColumnPinnedType;
@@ -253,8 +255,10 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     private setupDragAndDrop(dropContainer: HTMLElement): void {
-        const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
-        this.createManagedBean(bodyDropTarget);
+        const bodyDropTarget = this.columnMoveService?.createBodyDropTarget(this.pinned, dropContainer);
+        if (bodyDropTarget) {
+            this.createManagedBean(bodyDropTarget);
+        }
     }
 
     private restoreFocusOnHeader(position: HeaderPosition | null): void {

@@ -1,6 +1,12 @@
 import { AlignedGridsModule } from './alignedGridsModule';
 import { CommunityApiModule } from './api/apiModule';
-import { ColumnAutosizeModule, ColumnResizeModule, ControlsColumnModule, DataTypeModule } from './columns/columnModule';
+import {
+    ColumnAutosizeModule,
+    ColumnMoveModule,
+    ColumnResizeModule,
+    ControlsColumnModule,
+    DataTypeModule,
+} from './columns/columnModule';
 import { DragAndDropModule, RowDragModule } from './dragAndDrop/dragModule';
 import { EditModule } from './edit/editModule';
 import { FilterModule } from './filter/filterModule';
@@ -35,6 +41,7 @@ export const CommunityFeaturesModule = _defineModule({
         AlignedGridsModule,
         PaginationModule,
         CommunityApiModule,
+        ColumnMoveModule,
         ColumnAutosizeModule,
         ControlsColumnModule,
         ColumnResizeModule,

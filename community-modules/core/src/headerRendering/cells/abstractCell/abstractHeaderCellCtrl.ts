@@ -75,7 +75,6 @@ export abstract class AbstractHeaderCellCtrl<
     protected dragSource: DragSource | null = null;
 
     protected abstract resizeHeader(delta: number, shiftKey: boolean): void;
-    protected abstract moveHeader(direction: HorizontalDirection): void;
 
     constructor(columnGroupChild: AgColumn | AgColumnGroup, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super();
@@ -287,6 +286,10 @@ export abstract class AbstractHeaderCellCtrl<
         } else {
             this.moveHeader(direction);
         }
+    }
+
+    protected moveHeader(hDirection: HorizontalDirection): void {
+        this.beans.columnMoveService?.moveHeader(hDirection, this.eGui, this.column, this.getPinned(), this);
     }
 
     private getViewportAdjustedResizeDiff(e: KeyboardEvent): number {

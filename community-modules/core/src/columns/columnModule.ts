@@ -1,6 +1,7 @@
 import type { _ColumnGridApi } from '../api/gridApi';
+import { ColumnMoveService } from '../columnMove/columnMoveService';
 import { ColumnResizeService } from '../columnResize/columnResizeService';
-import { HorizontalResizeModule } from '../dragAndDrop/dragModule';
+import { DragAndDropModule, HorizontalResizeModule } from '../dragAndDrop/dragModule';
 import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import {
@@ -56,6 +57,13 @@ export const DataTypeModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/data-type',
     beans: [DataTypeService],
+});
+
+export const ColumnMoveModule = _defineModule({
+    version: VERSION,
+    moduleName: '@ag-grid-community/column-move',
+    beans: [ColumnMoveService],
+    dependantModules: [DragAndDropModule],
 });
 
 export const ColumnAutosizeModule = _defineModule({

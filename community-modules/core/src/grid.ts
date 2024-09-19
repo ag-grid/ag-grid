@@ -10,7 +10,6 @@ import { ColumnFlexService } from './columns/columnFlexService';
 import { ColumnGetStateService } from './columns/columnGetStateService';
 import { ColumnGroupStateService } from './columns/columnGroupStateService';
 import { ColumnModel } from './columns/columnModel';
-import { ColumnMoveService } from './columns/columnMoveService';
 import { ColumnNameService } from './columns/columnNameService';
 import { ColumnViewportService } from './columns/columnViewportService';
 import { FuncColsService } from './columns/funcColsService';
@@ -494,7 +493,6 @@ export class GridCoreCreator {
             AriaAnnouncementService,
             MenuService,
             ColumnApplyStateService,
-            ColumnMoveService,
             ColumnGetStateService,
             ColumnGroupStateService,
             ColumnFlexService,
