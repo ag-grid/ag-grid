@@ -1,5 +1,11 @@
 import type { _RowGroupingGridApi } from '@ag-grid-community/core';
-import { ModuleNames, _ColumnFilterModule, _FloatingFilterModule, _defineModule } from '@ag-grid-community/core';
+import {
+    ModuleNames,
+    StickyRowModule,
+    _ColumnFilterModule,
+    _FloatingFilterModule,
+    _defineModule,
+} from '@ag-grid-community/core';
 import { EnterpriseCoreModule, GroupCellRenderer, GroupCellRendererCtrl } from '@ag-grid-enterprise/core';
 
 import { AggFuncService } from './rowGrouping/aggFuncService';
@@ -124,5 +130,11 @@ export const GroupFloatingFilterModule = _defineModule({
 export const RowGroupingModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.RowGroupingModule,
-    dependantModules: [RowGroupingCoreModule, RowGroupingApiModule, GroupFilterModule, GroupFloatingFilterModule],
+    dependantModules: [
+        RowGroupingCoreModule,
+        RowGroupingApiModule,
+        GroupFilterModule,
+        GroupFloatingFilterModule,
+        StickyRowModule,
+    ],
 });

@@ -352,6 +352,7 @@ export {
     GroupCheckboxSelectionCallback,
     GroupCheckboxSelectionCallbackParams,
 } from './interfaces/groupCellRenderer';
+export { StickyRowModule } from './rendering/features/stickyRowModule';
 
 // status bar components
 export {

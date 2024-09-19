@@ -92,6 +92,7 @@ import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementServi
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { ColumnHoverService } from '../rendering/columnHoverService';
+import type { StickyRowService } from '../rendering/features/stickyRowService';
 import type { OverlayService } from '../rendering/overlays/overlayService';
 import type { RowCssClassCalculator } from '../rendering/row/rowCssClassCalculator';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
@@ -299,6 +300,7 @@ export interface CoreBeanCollection {
     aggColumnNameService?: IAggColumnNameService;
     renderStatusService?: IRenderStatusService;
     rowDragService?: RowDragService;
+    stickyRowService?: StickyRowService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -479,6 +481,7 @@ export type BeanName =
     | 'ssrmTransactionManager'
     | 'stateService'
     | 'statusBarService'
+    | 'stickyRowService'
     | 'stylingService'
     | 'syncService'
     | 'templateService'

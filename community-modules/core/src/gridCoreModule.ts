@@ -12,6 +12,7 @@ import { StateModule } from './misc/state/stateModule';
 import { ModuleNames } from './modules/moduleNames';
 import { PaginationModule } from './pagination/paginationModule';
 import { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
+import { StickyRowModule } from './rendering/features/stickyRowModule';
 import { ValidationService } from './validation/validationService';
 import { VERSION } from './version';
 
@@ -46,5 +47,6 @@ export const CommunityFeaturesModule = _defineModule({
         DragAndDropModule,
         RowDragModule,
         PinnedRowModule,
+        StickyRowModule,
     ],
 });
