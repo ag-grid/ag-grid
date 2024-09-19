@@ -1,6 +1,7 @@
+import { _last } from '@ag-grid-community/core';
 import { _Scene } from 'ag-charts-community';
 
-import type { DomainRange } from './miniChartApi';
+import type { CommandSegment } from './miniChartApi';
 
 export interface CreateColumnRectsParams {
     stacked: boolean;
@@ -48,7 +49,7 @@ export function createColumnRects(params: CreateColumnRectsParams) {
     return createBars(params.data, xScale, yScale);
 }
 
-export function prepareScene(data: number[][], size: number, padding: number) {
+export function prepareLinearScene(data: number[][], size: number, padding: number) {
     const xDomain = [0, data[0].length - 1];
     const yDomain = data.reduce(
         (acc, curr) => {
@@ -81,29 +82,85 @@ export function prepareScene(data: number[][], size: number, padding: number) {
     return { xScale, yScale };
 }
 
+export function createPathCommands(
+    data: number[][],
+    xScale: _Scene.LinearScale,
+    yScale: _Scene.LinearScale
+): CommandSegment[][] {
+    return data.map((series) =>
+        series.map((datum: number, i: number) => [
+            i > 0 ? 'lineTo' : 'moveTo',
+            xScale.convert(i),
+            yScale.convert(datum),
+        ])
+    );
+}
+
+export function createPath(commands: CommandSegment[]): _Scene.Path {
+    const path = new _Scene.Path();
+    commands.forEach(([command, x, y]: CommandSegment) => path.path[command](x, y));
+    return path;
+}
+
+export function createAreaPathCommands(
+    commands: CommandSegment[][],
+    yScale: _Scene.LinearScale,
+    stacked: boolean
+): CommandSegment[][] {
+    return commands.map((pathCommands: CommandSegment[], index, all) => {
+        const closingPath = stacked
+            ? closePathViaPreviousSeries(all, index, yScale)
+            : closePathViaOrigin(pathCommands, yScale);
+
+        // reverse path to maintain CW winding order
+        const closingPathCommands: CommandSegment[] = [...closingPath]
+            .reverse()
+            .map(([_, x, y]: CommandSegment) => ['lineTo', x, y]);
+
+        const first: CommandSegment = pathCommands[0];
+        const last = _last(closingPathCommands);
+
+        // close the path if needed
+        if (first[1] !== last[1] || first[2] !== last[2]) {
+            closingPathCommands.push(['lineTo', first[1], first[2]]);
+        }
+
+        return [...pathCommands, ...closingPathCommands] as CommandSegment[];
+    });
+}
+
+export function closePathViaPreviousSeries(all: CommandSegment[][], index: number, yScale: _Scene.LinearScale) {
+    if (index === 0) {
+        return closePathViaOrigin(all[index], yScale);
+    }
+    return [...all[index - 1]];
+}
+
+export function closePathViaOrigin(pathCommands: CommandSegment[], yScale: _Scene.LinearScale) {
+    return pathCommands.map(([c, x]) => [c, x, yScale.convert(0)]);
+}
+
 export function createLinePaths(root: _Scene.Group, data: number[][], size: number, padding: number): _Scene.Path[] {
-    const { xScale, yScale } = prepareScene(data, size, padding);
+    const { xScale, yScale } = prepareLinearScene(data, size, padding);
 
-    const lines: _Scene.Path[] = data.map((series) => {
-        const line = new _Scene.Path();
-        line.strokeWidth = 3;
-        line.lineCap = 'round';
-        line.fill = undefined;
-        series.forEach((datum: number, i: number) => {
-            line.path[i > 0 ? 'lineTo' : 'moveTo'](xScale.convert(i), yScale.convert(datum));
-        });
+    const pathCommands = createPathCommands(data, xScale, yScale);
 
-        return line;
+    const paths: _Scene.Path[] = pathCommands.map((commands) => {
+        const path = createPath(commands);
+        path.strokeWidth = 3;
+        path.lineCap = 'round';
+        path.fill = undefined;
+        return path;
     });
 
-    const linesGroup = new _Scene.Group();
-    linesGroup.setClipRectInGroupCoordinateSpace(
+    const pathsGroup = new _Scene.Group();
+    pathsGroup.setClipRectInGroupCoordinateSpace(
         new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2)
     );
-    linesGroup.append(lines);
-    root.append(linesGroup);
+    pathsGroup.append(paths);
+    root.append(pathsGroup);
 
-    return lines;
+    return paths;
 }
 
 export function createAreaPaths(
@@ -111,32 +168,33 @@ export function createAreaPaths(
     data: number[][],
     size: number,
     padding: number,
-    xDomain: DomainRange,
-    yDomain: DomainRange
+    stacked = false
 ): _Scene.Path[] {
-    const xScale = new _Scene.LinearScale();
-    xScale.domain = xDomain;
-    xScale.range = [padding, size - padding];
+    const { xScale, yScale } = prepareLinearScene(data, size, padding);
 
-    const yScale = new _Scene.LinearScale();
-    yScale.domain = yDomain;
-    yScale.range = [size - padding, padding];
+    const pathCommands = createAreaPathCommands(createPathCommands(data, xScale, yScale), yScale, stacked);
 
-    const areas: _Scene.Path[] = data.map((series) => {
-        const area = new _Scene.Path();
-        area.strokeWidth = 1;
-        area.strokeOpacity = 0.75;
-        area.fillOpacity = 0.7;
-        series.forEach((datum: number, i: number) => {
-            area.path[i > 0 ? 'lineTo' : 'moveTo'](xScale.convert(i), yScale.convert(datum));
-        });
+    const areasGroup = new _Scene.Group();
+    areasGroup.setClipRectInGroupCoordinateSpace(
+        new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2)
+    );
 
-        return area;
-    });
+    const paths: _Scene.Path[] = pathCommands.map((commands) => createPath(commands));
+    areasGroup.append(paths);
+    root.append(areasGroup);
 
-    root.append(areas);
+    return paths;
+}
 
-    return areas;
+export function stackData(data: number[][]): number[][] {
+    return data.map((stack, sindex, array) =>
+        stack.map((_y, i) => array.slice(0, sindex + 1).reduce((p, c) => p + c[i], 0))
+    );
+}
+
+export function normalizeStackData(data: number[][]): number[][] {
+    const colSum = data.map((_, index) => data.reduce((acc, cur) => Math.max(acc, cur[index]), 0));
+    return data.map((stack) => stack.map((y, index) => (y / colSum[index]) * 19));
 }
 
 export function createPolarPaths(

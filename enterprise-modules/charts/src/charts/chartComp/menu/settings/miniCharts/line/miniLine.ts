@@ -11,7 +11,7 @@ export class MiniLine extends MiniChartWithAxes {
 
     protected lines: _Scene.Path[];
 
-    protected static data = [
+    static readonly data = [
         [1, 3, 5],
         [2, 6, 4],
         [5, 3, 1],
