@@ -10,6 +10,7 @@ import type {
     ColumnModel,
     CtrlsService,
     DragService,
+    ICellRangeFeature,
     IRangeService,
     IRowModel,
     NamedBean,
@@ -41,6 +42,7 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
+import { CellRangeFeature } from './cellRangeFeature';
 import { DragListenerFeature } from './dragListenerFeature';
 
 export class RangeService extends BeanStub implements NamedBean, IRangeService {
@@ -993,5 +995,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     public createDragListenerFeature(eContainer: HTMLElement): BeanStub {
         return new DragListenerFeature(eContainer);
+    }
+
+    public createCellRangeFeature(beans: BeanCollection, ctrl: CellCtrl): ICellRangeFeature {
+        return new CellRangeFeature(beans, ctrl);
     }
 }

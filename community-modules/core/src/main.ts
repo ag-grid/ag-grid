@@ -515,6 +515,7 @@ export {
     ClearCellRangeParams,
     PartialCellRange,
 } from './interfaces/IRangeService';
+export { ICellRangeFeature } from './interfaces/iCellRangeFeature';
 export {
     IChartService,
     ChartDownloadParams,

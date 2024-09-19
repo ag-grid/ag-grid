@@ -19,6 +19,7 @@ import {
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
+import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import { _setAriaColIndex } from '../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize } from '../../utils/dom';
@@ -37,7 +38,6 @@ import { CellCustomStyleFeature } from './cellCustomStyleFeature';
 import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
 import { CellMouseListenerFeature } from './cellMouseListenerFeature';
 import { CellPositionFeature } from './cellPositionFeature';
-import { CellRangeFeature } from './cellRangeFeature';
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -95,7 +95,7 @@ export class CellCtrl extends BeanStub {
     private value: any;
     private valueFormatted: any;
 
-    private cellRangeFeature: CellRangeFeature | undefined = undefined;
+    private cellRangeFeature: ICellRangeFeature | undefined = undefined;
     private cellPositionFeature: CellPositionFeature | undefined = undefined;
     private cellCustomStyleFeature: CellCustomStyleFeature | undefined = undefined;
     private tooltipFeature: TooltipFeature | undefined = undefined;
@@ -164,7 +164,7 @@ export class CellCtrl extends BeanStub {
 
         const cellSelectionEnabled = this.beans.rangeService && _isCellSelectionEnabled(this.beans.gos);
         if (cellSelectionEnabled) {
-            this.cellRangeFeature = new CellRangeFeature(this.beans, this);
+            this.cellRangeFeature = this.beans.rangeService!.createCellRangeFeature(this.beans, this);
         }
     }
     private removeFeatures(): void {
