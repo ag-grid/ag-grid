@@ -3,7 +3,6 @@ import type { _Scene } from 'ag-charts-community';
 
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
 import type { ThemeTemplateParameters } from '../../miniChartsContainer';
-import type { DomainRange } from '../miniChartApi';
 import { createLinePaths } from '../miniChartHelpers';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
@@ -12,10 +11,10 @@ export class MiniLine extends MiniChartWithAxes {
 
     protected lines: _Scene.Path[];
 
-    protected static data = [
-        [6, 7, 8, 5, 6],
-        [4, 6, 3, 4, 4],
-        [2, 3, 4, 8, 7],
+    static readonly data = [
+        [1, 3, 5],
+        [2, 6, 4],
+        [5, 3, 1],
     ];
 
     constructor(
@@ -25,13 +24,11 @@ export class MiniLine extends MiniChartWithAxes {
         _themeTemplateParameters: ThemeTemplateParameters,
         _isCustomTheme: boolean,
         data: number[][] = MiniLine.data,
-        tooltipName: ChartTranslationKey = 'stackedLineTooltip',
-        xDomain: DomainRange = [0, 4],
-        yDomain: DomainRange = [1, 9]
+        tooltipName: ChartTranslationKey = 'stackedLineTooltip'
     ) {
         super(container, tooltipName);
 
-        this.lines = createLinePaths(this.root, data, this.size, this.padding, xDomain, yDomain);
+        this.lines = createLinePaths(this.root, data, this.size, this.padding);
 
         this.updateColors(fills, strokes);
     }
