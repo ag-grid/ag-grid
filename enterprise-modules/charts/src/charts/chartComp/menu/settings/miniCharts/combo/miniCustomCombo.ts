@@ -33,7 +33,7 @@ export class MiniCustomCombo extends MiniChart {
 
         root.append(this.columns);
 
-        this.lines = createLinePaths(root, lineData, size, padding, [0, 4], [0, 10]);
+        this.lines = createLinePaths(root, lineData, size, padding);
 
         const axisStroke = 'grey';
         const axisOvershoot = 3;

@@ -48,14 +48,28 @@ export function createColumnRects(params: CreateColumnRectsParams) {
     return createBars(params.data, xScale, yScale);
 }
 
-export function createLinePaths(
-    root: _Scene.Group,
-    data: number[][],
-    size: number,
-    padding: number,
-    xDomain: DomainRange,
-    yDomain: DomainRange
-): _Scene.Path[] {
+export function prepareScene(data: number[][], size: number, padding: number) {
+    const xDomain = [0, data[0].length - 1];
+    const yDomain = data.reduce(
+        (acc, curr) => {
+            curr.forEach((datum) => {
+                if (datum < acc[0]) {
+                    acc[0] = datum;
+                }
+
+                if (datum > acc[1]) {
+                    acc[1] = datum;
+                }
+            });
+
+            return acc;
+        },
+        [Infinity, -Infinity]
+    );
+
+    yDomain[0]--;
+    yDomain[yDomain.length - 1]++;
+
     const xScale = new _Scene.LinearScale();
     xScale.domain = xDomain;
     xScale.range = [padding, size - padding];
@@ -63,6 +77,12 @@ export function createLinePaths(
     const yScale = new _Scene.LinearScale();
     yScale.domain = yDomain;
     yScale.range = [size - padding, padding];
+
+    return { xScale, yScale };
+}
+
+export function createLinePaths(root: _Scene.Group, data: number[][], size: number, padding: number): _Scene.Path[] {
+    const { xScale, yScale } = prepareScene(data, size, padding);
 
     const lines: _Scene.Path[] = data.map((series) => {
         const line = new _Scene.Path();
@@ -84,6 +104,39 @@ export function createLinePaths(
     root.append(linesGroup);
 
     return lines;
+}
+
+export function createAreaPaths(
+    root: _Scene.Group,
+    data: number[][],
+    size: number,
+    padding: number,
+    xDomain: DomainRange,
+    yDomain: DomainRange
+): _Scene.Path[] {
+    const xScale = new _Scene.LinearScale();
+    xScale.domain = xDomain;
+    xScale.range = [padding, size - padding];
+
+    const yScale = new _Scene.LinearScale();
+    yScale.domain = yDomain;
+    yScale.range = [size - padding, padding];
+
+    const areas: _Scene.Path[] = data.map((series) => {
+        const area = new _Scene.Path();
+        area.strokeWidth = 1;
+        area.strokeOpacity = 0.75;
+        area.fillOpacity = 0.7;
+        series.forEach((datum: number, i: number) => {
+            area.path[i > 0 ? 'lineTo' : 'moveTo'](xScale.convert(i), yScale.convert(datum));
+        });
+
+        return area;
+    });
+
+    root.append(areas);
+
+    return areas;
 }
 
 export function createPolarPaths(

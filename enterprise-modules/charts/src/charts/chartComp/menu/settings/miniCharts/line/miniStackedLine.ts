@@ -3,7 +3,6 @@ import { _Scene } from 'ag-charts-community';
 
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
 import type { ThemeTemplateParameters } from '../../miniChartsContainer';
-import type { DomainRange } from '../miniChartApi';
 import { MiniLine } from './miniLine';
 
 export class MiniStackedLine extends MiniLine {
@@ -20,10 +19,8 @@ export class MiniStackedLine extends MiniLine {
         _themeTemplateParameters: ThemeTemplateParameters,
         _isCustomTheme: boolean,
         data: number[][] = MiniStackedLine.data,
-        tooltipName: ChartTranslationKey = 'stackedLineTooltip',
-        xDomain: DomainRange = [0, 4],
-        yDomain: DomainRange = [3, 20]
+        tooltipName: ChartTranslationKey = 'stackedLineTooltip'
     ) {
-        super(container, fills, strokes, _themeTemplateParameters, _isCustomTheme, data, tooltipName, xDomain, yDomain);
+        super(container, fills, strokes, _themeTemplateParameters, _isCustomTheme, data, tooltipName);
     }
 }

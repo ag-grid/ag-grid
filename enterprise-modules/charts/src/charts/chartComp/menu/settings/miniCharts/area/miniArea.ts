@@ -11,8 +11,8 @@ export class MiniArea extends MiniChartWithAxes {
 
     static readonly data = [
         [1, 3, 5],
-        [2, 6, 4],
-        [5, 3, 1],
+        // [2, 6, 4],
+        // [5, 3, 1],
     ];
 
     constructor(

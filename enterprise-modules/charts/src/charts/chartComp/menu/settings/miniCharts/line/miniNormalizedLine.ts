@@ -2,7 +2,6 @@ import type { ChartType } from '@ag-grid-community/core';
 
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
 import type { ThemeTemplateParameters } from '../../miniChartsContainer';
-import type { DomainRange } from '../miniChartApi';
 import { MiniLine } from './miniLine';
 import { MiniStackedLine } from './miniStackedLine';
 
@@ -20,10 +19,8 @@ export class MiniNormalizedLine extends MiniLine {
         themeTemplateParameters: ThemeTemplateParameters,
         isCustomTheme: boolean,
         data: number[][] = MiniNormalizedLine.data,
-        tooltipName: ChartTranslationKey = 'normalizedLineTooltip',
-        xDomain: DomainRange = [0, 4],
-        yDomain: DomainRange = [3, 20]
+        tooltipName: ChartTranslationKey = 'normalizedLineTooltip'
     ) {
-        super(container, fills, strokes, themeTemplateParameters, isCustomTheme, data, tooltipName, xDomain, yDomain);
+        super(container, fills, strokes, themeTemplateParameters, isCustomTheme, data, tooltipName);
     }
 }
