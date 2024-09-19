@@ -25,8 +25,6 @@ import { Context } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import { CtrlsFactory } from './ctrlsFactory';
 import { CtrlsService } from './ctrlsService';
-import { DragAndDropService } from './dragAndDrop/dragAndDropService';
-import { DragService } from './dragAndDrop/dragService';
 import { CellPositionUtils } from './entities/cellPositionUtils';
 import type { GridOptions } from './entities/gridOptions';
 import { RowNodeEventThrottle } from './entities/rowNodeEventThrottle';
@@ -45,7 +43,6 @@ import { GridOptionsService, getCoercedGridOptions } from './gridOptionsService'
 import { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
 import { HeaderPositionUtils } from './headerRendering/common/headerPosition';
-import { HorizontalResizeService } from './headerRendering/common/horizontalResizeService';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { Module } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
@@ -452,10 +449,8 @@ export class GridCoreCreator {
             ResizeObserverService,
             UserComponentFactory,
             RowContainerHeightService,
-            HorizontalResizeService,
             LocaleService,
             PinnedRowModel,
-            DragService,
             VisibleColsService,
             EventService,
             GridOptionsService,
@@ -473,7 +468,6 @@ export class GridCoreCreator {
             ValueService,
             AutoWidthCalculator,
             StandardMenuFactory,
-            DragAndDropService,
             FocusService,
             MouseEventService,
             Environment,

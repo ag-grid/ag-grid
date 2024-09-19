@@ -45,7 +45,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected focusService: FocusService;
     protected userComponentFactory: UserComponentFactory;
     protected ctrlsService: CtrlsService;
-    protected dragAndDropService: DragAndDropService;
+    protected dragAndDropService?: DragAndDropService;
     protected menuService: MenuService;
 
     public wireBeans(beans: BeanCollection) {
@@ -394,7 +394,7 @@ export abstract class AbstractHeaderCellCtrl<
 
     protected removeDragSource(): void {
         if (this.dragSource) {
-            this.dragAndDropService.removeDragSource(this.dragSource);
+            this.dragAndDropService?.removeDragSource(this.dragSource);
             this.dragSource = null;
         }
     }

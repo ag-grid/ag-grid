@@ -2,11 +2,11 @@ import type { ColumnAutosizeService } from '../columns/columnAutosizeService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
+import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeService';
 import type { AgColumn } from '../entities/agColumn';
 import type { PinnedWidthService } from '../gridBodyComp/pinnedWidthService';
 import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
-import type { HorizontalResizeService } from '../headerRendering/common/horizontalResizeService';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import { _getInnerWidth, _setDisplayed } from '../utils/dom';
 import type { ColumnResizeService } from './columnResizeService';
@@ -19,7 +19,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private columnAutosizeService?: ColumnAutosizeService;
 
     public wireBeans(beans: BeanCollection) {
-        this.horizontalResizeService = beans.horizontalResizeService;
+        this.horizontalResizeService = beans.horizontalResizeService!;
         this.pinnedWidthService = beans.pinnedWidthService;
         this.ctrlsService = beans.ctrlsService;
         this.columnResizeService = beans.columnResizeService;

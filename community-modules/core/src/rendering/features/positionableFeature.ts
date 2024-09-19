@@ -62,7 +62,7 @@ export type PositionableFeatureEvent = 'resize';
 export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
     protected popupService: PopupService;
     private resizeObserverService: ResizeObserverService;
-    private dragService: DragService;
+    private dragService?: DragService;
 
     public wireBeans(beans: BeanCollection): void {
         this.popupService = beans.popupService;
@@ -224,10 +224,10 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
         };
 
         if (movable) {
-            this.dragService.addDragSource(params);
+            this.dragService?.addDragSource(params);
             this.moveElementDragListener = params;
         } else {
-            this.dragService.removeDragSource(params);
+            this.dragService?.removeDragSource(params);
             this.moveElementDragListener = undefined;
         }
     }
@@ -273,7 +273,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
 
             if (isSideResizable || (!this.isAlive() && !isSideResizable)) {
                 if (isSideResizable) {
-                    this.dragService.addDragSource(params);
+                    this.dragService?.addDragSource(params);
                     this.resizeListeners.push(params);
                     resizerEl!.style.pointerEvents = 'all';
                 } else {
@@ -899,7 +899,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
     private clearResizeListeners(): void {
         while (this.resizeListeners.length) {
             const params = this.resizeListeners.pop()!;
-            this.dragService.removeDragSource(params);
+            this.dragService?.removeDragSource(params);
         }
     }
 
@@ -907,7 +907,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
         super.destroy();
 
         if (this.moveElementDragListener) {
-            this.dragService.removeDragSource(this.moveElementDragListener);
+            this.dragService?.removeDragSource(this.moveElementDragListener);
         }
 
         this.constrainSizeToAvailableHeight(false);

@@ -1,4 +1,5 @@
 import type { ApplyColumnStateParams, ColumnState } from '../columns/columnApplyStateService';
+import type { RowDropZoneEvents, RowDropZoneParams } from '../dragAndDrop/rowDragFeature';
 import type { CellPosition } from '../entities/cellPositionUtils';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from '../entities/colDef';
 import type { ChartRef, GridOptions } from '../entities/gridOptions';
@@ -11,7 +12,6 @@ import type {
     FilterChangedEventSourceType,
     SelectionEventSourceType,
 } from '../events';
-import type { RowDropZoneEvents, RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
 import type {
     ChartDownloadParams,
     ChartModel,
@@ -652,7 +652,7 @@ export interface _DragGridApi {
     removeRowDropZone(params: RowDropZoneParams): void;
 
     /** Returns the `RowDropZoneParams` to be used by another grid's `addRowDropZone` method. */
-    getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams;
+    getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams | undefined;
 }
 
 export interface _EditGridApi<TData> {

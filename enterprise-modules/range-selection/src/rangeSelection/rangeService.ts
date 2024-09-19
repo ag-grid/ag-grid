@@ -41,6 +41,8 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
+import { DragListenerFeature } from './dragListenerFeature';
+
 export class RangeService extends BeanStub implements NamedBean, IRangeService {
     beanName = 'rangeService' as const;
 
@@ -57,7 +59,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
-        this.dragService = beans.dragService;
+        this.dragService = beans.dragService!;
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
         this.cellNavigationService = beans.cellNavigationService;
@@ -987,5 +989,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
 
         return columns;
+    }
+
+    public createDragListenerFeature(eContainer: HTMLElement): BeanStub {
+        return new DragListenerFeature(eContainer);
     }
 }

@@ -4,8 +4,6 @@ import { VerticalDirection } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { DragAndDropIcon, DragAndDropService, DraggingEvent, DropTarget } from '../dragAndDrop/dragAndDropService';
-import { DragSourceType } from '../dragAndDrop/dragAndDropService';
 import type { RowNode } from '../entities/rowNode';
 import type {
     RowDragCancelEvent,
@@ -17,6 +15,7 @@ import type {
 } from '../events';
 import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
+import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
@@ -27,7 +26,8 @@ import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { SortController } from '../sortController';
 import { _last } from '../utils/array';
 import { _warnOnce } from '../utils/function';
-import type { MouseEventService } from './mouseEventService';
+import type { DragAndDropIcon, DragAndDropService, DraggingEvent, DropTarget } from './dragAndDropService';
+import { DragSourceType } from './dragAndDropService';
 
 export interface RowDropZoneEvents {
     /** Callback function that will be executed when the rowDrag enters the target. */
@@ -91,7 +91,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.dragAndDropService = beans.dragAndDropService;
+        this.dragAndDropService = beans.dragAndDropService!;
         this.rowModel = beans.rowModel;
         this.pageBoundsService = beans.pageBoundsService;
         this.focusService = beans.focusService;

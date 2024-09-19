@@ -2,12 +2,12 @@ import type { ColumnAutosizeService } from '../columns/columnAutosizeService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeService';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { IHeaderGroupCellComp } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
-import type { HorizontalResizeService } from '../headerRendering/common/horizontalResizeService';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import type { ColumnResizeService, ColumnResizeSet } from './columnResizeService';
@@ -28,7 +28,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     private columnAutosizeService?: ColumnAutosizeService;
 
     public wireBeans(beans: BeanCollection) {
-        this.horizontalResizeService = beans.horizontalResizeService;
+        this.horizontalResizeService = beans.horizontalResizeService!;
         this.autoWidthCalculator = beans.autoWidthCalculator;
         this.visibleColsService = beans.visibleColsService;
         this.columnResizeService = beans.columnResizeService;

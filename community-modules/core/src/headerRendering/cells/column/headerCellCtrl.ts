@@ -425,7 +425,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             },
         });
 
-        dragAndDropService.addDragSource(dragSource, true);
+        dragAndDropService!.addDragSource(dragSource, true);
     }
 
     private createDragItem(column: AgColumn): DragItem {

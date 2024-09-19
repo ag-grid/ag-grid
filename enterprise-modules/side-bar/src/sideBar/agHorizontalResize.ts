@@ -5,7 +5,7 @@ export class AgHorizontalResize extends Component {
     private horizontalResizeService: HorizontalResizeService;
 
     public wireBeans(beans: BeanCollection) {
-        this.horizontalResizeService = beans.horizontalResizeService;
+        this.horizontalResizeService = beans.horizontalResizeService!;
     }
 
     private startingWidth: number;

@@ -35,7 +35,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
         this.columnMoveService = beans.columnMoveService;
-        this.dragAndDropService = beans.dragAndDropService;
+        this.dragAndDropService = beans.dragAndDropService!;
         this.ctrlsService = beans.ctrlsService;
     }
 

@@ -1,4 +1,5 @@
 import type { Bean } from '../context/bean';
+import type { BeanStub } from '../context/beanStub';
 import type { CellPosition } from '../entities/cellPositionUtils';
 import type { RowPosition } from '../entities/rowPositionUtils';
 import type { Column } from '../interfaces/iColumn';
@@ -35,6 +36,7 @@ export interface IRangeService {
     ): PartialCellRange | undefined;
     setCellRanges(cellRanges: CellRange[]): void;
     clearCellRangeCellValues(params: ClearCellRangeParams): void;
+    createDragListenerFeature(eContainer: HTMLElement): BeanStub;
 }
 
 export interface ISelectionHandle extends Bean {

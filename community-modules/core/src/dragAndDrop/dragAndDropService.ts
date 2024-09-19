@@ -7,7 +7,6 @@ import type { CtrlsService } from '../ctrlsService';
 import type { IAggFunc } from '../entities/colDef';
 import type { Environment } from '../environment';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
-import type { RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
 import { _getDocument, _getRootNode } from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
@@ -19,6 +18,7 @@ import { _isFunction, _warnOnce } from '../utils/function';
 import type { AgPromise } from '../utils/promise';
 import type { DragAndDropImageComponent } from './dragAndDropImageComponent';
 import type { DragListenerParams, DragService } from './dragService';
+import type { RowDropZoneParams } from './rowDragFeature';
 
 export interface DragItem<TValue = any> {
     /**
@@ -180,7 +180,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
-        this.dragService = beans.dragService;
+        this.dragService = beans.dragService!;
         this.mouseEventService = beans.mouseEventService;
         this.environment = beans.environment;
         this.userComponentFactory = beans.userComponentFactory;
@@ -690,5 +690,16 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         } else {
             targetEl.appendChild(eGui);
         }
+    }
+
+    public registerGridDropTarget(elementFn: () => HTMLElement, ctrl: BeanStub): void {
+        // this drop target is just used to see if the drop event is inside the grid
+        const dropTarget: DropTarget = {
+            getContainer: elementFn,
+            isInterestedIn: (type) => type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel,
+            getIconName: () => 'notAllowed',
+        };
+        this.addDropTarget(dropTarget);
+        ctrl.addDestroyFunc(() => this.removeDropTarget(dropTarget));
     }
 }

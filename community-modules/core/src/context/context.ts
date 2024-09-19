@@ -29,6 +29,8 @@ import type { CtrlsFactory } from '../ctrlsFactory';
 import type { CtrlsService } from '../ctrlsService';
 import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import type { DragService } from '../dragAndDrop/dragService';
+import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeService';
+import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { EditService } from '../edit/editService';
 import type { RowEditService } from '../edit/rowEditService';
 import type { CellPositionUtils } from '../entities/cellPositionUtils';
@@ -50,7 +52,6 @@ import type { GridDestroyService } from '../gridDestroyService';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
 import type { HeaderPositionUtils } from '../headerRendering/common/headerPosition';
-import type { HorizontalResizeService } from '../headerRendering/common/horizontalResizeService';
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
@@ -202,8 +203,8 @@ export interface CoreBeanCollection {
     userComponentFactory: UserComponentFactory;
     userComponentRegistry: UserComponentRegistry;
     animationFrameService: AnimationFrameService;
-    dragService: DragService;
-    dragAndDropService: DragAndDropService;
+    dragService?: DragService;
+    dragAndDropService?: DragAndDropService;
     sortController: SortController;
     columnFilterService?: ColumnFilterService;
     filterManager?: FilterManager;
@@ -263,7 +264,7 @@ export interface CoreBeanCollection {
     componentMetadataProvider: ComponentMetadataProvider;
     agComponentUtils: AgComponentUtils;
     frameworkComponentWrapper: FrameworkComponentWrapper;
-    horizontalResizeService: HorizontalResizeService;
+    horizontalResizeService?: HorizontalResizeService;
     filterMenuFactory: IMenuFactory;
     enterpriseMenuFactory?: IMenuFactory;
     contextMenuFactory?: IContextMenuFactory;
@@ -297,6 +298,7 @@ export interface CoreBeanCollection {
     selectableService: SelectableService;
     aggColumnNameService?: IAggColumnNameService;
     renderStatusService?: IRenderStatusService;
+    rowDragService?: RowDragService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -446,6 +448,7 @@ export type BeanName =
     | 'renderStatusService'
     | 'rowContainerHeightService'
     | 'rowCssClassCalculator'
+    | 'rowDragService'
     | 'rowEditService'
     | 'rowModel'
     | 'rowNodeBlockLoader'

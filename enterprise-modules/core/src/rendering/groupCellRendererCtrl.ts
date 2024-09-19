@@ -9,6 +9,7 @@ import type {
     IGroupCellRenderer,
     IGroupCellRendererCtrl,
     IRowNode,
+    RowDragService,
     RowNode,
     UserCompDetails,
     UserComponentFactory,
@@ -19,7 +20,6 @@ import {
     BeanStub,
     CheckboxSelectionComponent,
     KeyCode,
-    RowDragComp,
     _cloneObject,
     _createIconNoSpan,
     _getGrandTotalRow,
@@ -40,6 +40,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     private userComponentFactory: UserComponentFactory;
     private ctrlsService: CtrlsService;
     private funcColsService: FuncColsService;
+    private rowDragService?: RowDragService;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionService = beans.expressionService;
@@ -700,11 +701,11 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     }
 
     private addFullWidthRowDraggerIfNeeded(): void {
-        if (!this.params.fullWidth || !this.params.rowDrag) {
+        if (!this.params.fullWidth || !this.params.rowDrag || !this.rowDragService) {
             return;
         }
 
-        const rowDragComp = new RowDragComp(() => this.params.value, this.params.node as RowNode);
+        const rowDragComp = this.rowDragService.createRowDragComp(() => this.params.value, this.params.node as RowNode);
         this.createManagedBean(rowDragComp);
 
         this.eGui.insertAdjacentElement('afterbegin', rowDragComp.getGui());

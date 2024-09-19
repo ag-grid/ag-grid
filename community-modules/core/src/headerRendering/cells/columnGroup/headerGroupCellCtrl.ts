@@ -502,7 +502,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             },
         });
 
-        dragAndDropService.addDragSource(dragSource, true);
+        dragAndDropService!.addDragSource(dragSource, true);
     }
 
     // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,

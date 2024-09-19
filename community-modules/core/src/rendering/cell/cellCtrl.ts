@@ -14,7 +14,6 @@ import {
     _getDocument,
     _getRowHeightForNode,
     _isCellSelectionEnabled,
-    _isClientSideRowModel,
     _setDomData,
 } from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
@@ -23,7 +22,6 @@ import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import { _setAriaColIndex } from '../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize } from '../../utils/dom';
-import { _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _getValueUsingField } from '../../utils/object';
 import { _escapeString } from '../../utils/string';
@@ -33,7 +31,7 @@ import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellR
 import { CheckboxSelectionComponent } from '../checkboxSelectionComponent';
 import { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
-import { RowDragComp } from '../row/rowDragComp';
+import type { RowDragComp } from '../row/rowDragComp';
 import type { FlashCellsParams } from '../rowRenderer';
 import { CellCustomStyleFeature } from './cellCustomStyleFeature';
 import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
@@ -1116,32 +1114,17 @@ export class CellCtrl extends BeanStub {
         dragStartPixels?: number,
         suppressVisibilityChange?: boolean
     ): RowDragComp | undefined {
-        const pagination = this.beans.gos.get('pagination');
-        const rowDragManaged = this.beans.gos.get('rowDragManaged');
-        const clientSideRowModelActive = _isClientSideRowModel(this.beans.gos);
-
-        if (rowDragManaged) {
-            // row dragging only available in default row model
-            if (!clientSideRowModelActive) {
-                _warnOnce('managed row dragging is only allowed in the Client Side Row Model');
-                return;
-            }
-
-            if (pagination) {
-                _warnOnce('managed row dragging is not possible when doing pagination');
-                return;
-            }
-        }
-
-        // otherwise (normal case) we are creating a RowDraggingComp for the first time
-        const rowDragComp = new RowDragComp(
-            () => this.value,
+        const rowDragComp = this.beans.rowDragService?.createRowDragCompForCell(
             this.rowNode,
             this.column,
+            () => this.value,
             customElement,
             dragStartPixels,
             suppressVisibilityChange
         );
+        if (!rowDragComp) {
+            return undefined;
+        }
         this.beans.context.createBean(rowDragComp);
 
         return rowDragComp;

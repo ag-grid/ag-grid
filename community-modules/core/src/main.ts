@@ -107,9 +107,12 @@ export {
     DraggingEvent,
     DragAndDropIcon,
 } from './dragAndDrop/dragAndDropService';
-export { RowDropZoneParams, RowDropZoneEvents } from './gridBodyComp/rowDragFeature';
+export { RowDropZoneParams, RowDropZoneEvents } from './dragAndDrop/rowDragFeature';
+export { RowDragService } from './dragAndDrop/rowDragService';
 export { DragService, DragListenerParams } from './dragAndDrop/dragService';
-export { IRowDragItem, RowDragComp } from './rendering/row/rowDragComp';
+export { IRowDragItem } from './rendering/row/rowDragComp';
+export { HorizontalResizeService } from './dragAndDrop/horizontalResizeService';
+export { DragModule, HorizontalResizeModule, DragAndDropModule } from './dragAndDrop/dragModule';
 
 // entities
 export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroupShowType } from './interfaces/iColumn';
@@ -294,7 +297,6 @@ export {
     IAbstractHeaderCellComp,
 } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 export { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerCtrl';
-export { HorizontalResizeService } from './headerRendering/common/horizontalResizeService';
 export { MoveColumnFeature } from './headerRendering/columnDrag/moveColumnFeature';
 export { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 

@@ -1,5 +1,5 @@
 import type { _SideBarGridApi } from '@ag-grid-community/core';
-import { ModuleNames, _defineModule } from '@ag-grid-community/core';
+import { HorizontalResizeModule, ModuleNames, _defineModule } from '@ag-grid-community/core';
 import { EnterpriseCoreModule } from '@ag-grid-enterprise/core';
 
 import { ToolPanelColDefService } from './sideBar/common/toolPanelColDefService';
@@ -22,7 +22,7 @@ export const SideBarCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.SideBarModule}-core`,
     beans: [ToolPanelColDefService, SideBarService],
-    dependantModules: [EnterpriseCoreModule],
+    dependantModules: [EnterpriseCoreModule, HorizontalResizeModule],
 });
 
 export const SideBarApiModule = _defineModule<_SideBarGridApi<any>>({

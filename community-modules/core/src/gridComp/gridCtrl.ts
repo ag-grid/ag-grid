@@ -1,8 +1,6 @@
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { DropTarget } from '../dragAndDrop/dragAndDropService';
-import { DragSourceType } from '../dragAndDrop/dragAndDropService';
 import type { CssVariablesChanged } from '../events';
 import type { FocusService } from '../focusService';
 import { _getActiveDomElement } from '../gridOptionsUtils';
@@ -57,14 +55,7 @@ export class GridCtrl extends BeanStub {
 
         const { dragAndDropService, mouseEventService, ctrlsService, resizeObserverService } = this.beans;
 
-        // this drop target is just used to see if the drop event is inside the grid
-        const dropTarget: DropTarget = {
-            getContainer: () => this.eGui,
-            isInterestedIn: (type) => type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel,
-            getIconName: () => 'notAllowed',
-        };
-        dragAndDropService.addDropTarget(dropTarget);
-        this.addDestroyFunc(() => dragAndDropService.removeDropTarget(dropTarget));
+        dragAndDropService?.registerGridDropTarget(() => this.eGui, this);
 
         mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);
 
