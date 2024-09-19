@@ -172,7 +172,7 @@ export class HeaderPositionUtils extends BeanStub implements NamedBean {
     }
 
     public findColAtEdgeForHeaderRow(level: number, position: 'start' | 'end'): HeaderPosition | undefined {
-        const displayedColumns = this.visibleColsService.getAllCols();
+        const displayedColumns = this.visibleColsService.allCols;
         const column = displayedColumns[position === 'start' ? 0 : displayedColumns.length - 1];
 
         if (!column) {

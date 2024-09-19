@@ -50,7 +50,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
     }
 
     public getAllDisplayedColumns(): AgColumn[] {
-        return this.visibleColsService.getAllCols();
+        return this.visibleColsService.allCols;
     }
 
     public getColDisplayName(col: AgColumn, includePath?: boolean): string | null {
@@ -75,7 +75,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
     }
 
     public getRowGroupColumns(): AgColumn[] {
-        return this.funcColsService.getRowGroupColumns();
+        return this.funcColsService.rowGroupCols;
     }
 
     public getGroupDisplayColumns(): AgColumn[] {

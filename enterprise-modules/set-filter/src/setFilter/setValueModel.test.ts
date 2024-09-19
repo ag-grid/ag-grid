@@ -86,8 +86,8 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
     gos.addGridCommonParams.mockImplementation((params) => params as any);
     gos.get.mockImplementation((prop) => (prop === 'rowModelType' ? 'clientSide' : undefined));
 
-    const funcColsService = mock<FuncColsService>('getRowGroupColumns');
-    funcColsService.getRowGroupColumns.mockImplementation(() => []);
+    const funcColsService = mock<FuncColsService>();
+    funcColsService.rowGroupCols = [];
 
     return new SetValueModel<string>({
         filterParams: svmParams,

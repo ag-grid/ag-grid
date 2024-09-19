@@ -4,18 +4,15 @@ import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
 import { CellNavigationService } from './cellNavigationService';
 import { ColumnApplyStateService } from './columns/columnApplyStateService';
-import { ColumnAutosizeService } from './columns/columnAutosizeService';
 import { ColumnDefFactory } from './columns/columnDefFactory';
-import { ColumnEventDispatcher } from './columns/columnEventDispatcher';
 import { ColumnFactory } from './columns/columnFactory';
+import { ColumnFlexService } from './columns/columnFlexService';
 import { ColumnGetStateService } from './columns/columnGetStateService';
 import { ColumnGroupStateService } from './columns/columnGroupStateService';
 import { ColumnModel } from './columns/columnModel';
 import { ColumnMoveService } from './columns/columnMoveService';
 import { ColumnNameService } from './columns/columnNameService';
-import { ColumnSizeService } from './columns/columnSizeService';
 import { ColumnViewportService } from './columns/columnViewportService';
-import { ControlsColService } from './columns/controlsColService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
 import { VisibleColsService } from './columns/visibleColsService';
@@ -503,17 +500,14 @@ export class GridCoreCreator {
             AriaAnnouncementService,
             MenuService,
             ColumnApplyStateService,
-            ColumnEventDispatcher,
             ColumnMoveService,
-            ColumnAutosizeService,
             ColumnGetStateService,
             ColumnGroupStateService,
-            ColumnSizeService,
+            ColumnFlexService,
             FuncColsService,
             ColumnNameService,
             ColumnViewportService,
             PivotResultColsService,
-            ControlsColService,
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => (module.beans ? module.beans : []));

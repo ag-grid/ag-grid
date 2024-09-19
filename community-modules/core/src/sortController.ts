@@ -197,7 +197,7 @@ export class SortController extends BeanStub implements NamedBean {
             });
         }
 
-        const sortedRowGroupCols = this.funcColsService.getRowGroupColumns().filter((col) => !!col.getSort());
+        const sortedRowGroupCols = this.funcColsService.rowGroupCols.filter((col) => !!col.getSort());
 
         // when both cols are missing sortIndex, we use the position of the col in all cols list.
         // this means if colDefs only have sort, but no sortIndex, we deterministically pick which

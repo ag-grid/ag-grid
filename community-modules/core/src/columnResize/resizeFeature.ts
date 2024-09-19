@@ -1,29 +1,28 @@
-import type { ColumnAutosizeService } from '../../../columns/columnAutosizeService';
-import type { ColumnSizeService } from '../../../columns/columnSizeService';
-import { BeanStub } from '../../../context/beanStub';
-import type { BeanCollection } from '../../../context/context';
-import type { CtrlsService } from '../../../ctrlsService';
-import type { AgColumn } from '../../../entities/agColumn';
-import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
-import type { ColumnPinnedType } from '../../../interfaces/iColumn';
-import { _getInnerWidth, _setDisplayed } from '../../../utils/dom';
-import { TouchListener } from '../../../widgets/touchListener';
-import type { HorizontalResizeService } from '../../common/horizontalResizeService';
-import type { IHeaderResizeFeature } from '../abstractCell/abstractHeaderCellCtrl';
-import type { HeaderCellCtrl, IHeaderCellComp } from './headerCellCtrl';
+import type { ColumnAutosizeService } from '../columns/columnAutosizeService';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
+import type { PinnedWidthService } from '../gridBodyComp/pinnedWidthService';
+import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
+import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
+import type { HorizontalResizeService } from '../headerRendering/common/horizontalResizeService';
+import type { ColumnPinnedType } from '../interfaces/iColumn';
+import { _getInnerWidth, _setDisplayed } from '../utils/dom';
+import type { ColumnResizeService } from './columnResizeService';
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private horizontalResizeService: HorizontalResizeService;
     private pinnedWidthService: PinnedWidthService;
     private ctrlsService: CtrlsService;
-    private columnSizeService: ColumnSizeService;
-    private columnAutosizeService: ColumnAutosizeService;
+    private columnResizeService?: ColumnResizeService;
+    private columnAutosizeService?: ColumnAutosizeService;
 
     public wireBeans(beans: BeanCollection) {
         this.horizontalResizeService = beans.horizontalResizeService;
         this.pinnedWidthService = beans.pinnedWidthService;
         this.ctrlsService = beans.ctrlsService;
-        this.columnSizeService = beans.columnSizeService;
+        this.columnResizeService = beans.columnResizeService;
         this.columnAutosizeService = beans.columnAutosizeService;
     }
 
@@ -74,22 +73,8 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
             });
             destroyResizeFuncs.push(finishedWithResizeFunc);
 
-            if (canAutosize) {
-                const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
-
-                const autoSizeColListener = () => {
-                    this.columnAutosizeService.autoSizeColumn(this.column, 'uiColumnResized', skipHeaderOnAutoSize);
-                };
-
-                this.eResize.addEventListener('dblclick', autoSizeColListener);
-                const touchListener: TouchListener = new TouchListener(this.eResize);
-                touchListener.addEventListener('doubleTap', autoSizeColListener);
-
-                destroyResizeFuncs.push(() => {
-                    this.eResize.removeEventListener('dblclick', autoSizeColListener);
-                    touchListener.removeEventListener('doubleTap', autoSizeColListener);
-                    touchListener.destroy();
-                });
+            if (canAutosize && this.columnAutosizeService) {
+                destroyResizeFuncs.push(this.columnAutosizeService.addColumnAutosize(this.eResize, this.column));
             }
         };
 
@@ -135,7 +120,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
         this.lastResizeAmount = resizeAmountNormalised;
 
-        this.columnSizeService.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, 'uiColumnResized');
+        this.columnResizeService?.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, 'uiColumnResized');
 
         if (finished) {
             this.toggleColumnResizing(false);

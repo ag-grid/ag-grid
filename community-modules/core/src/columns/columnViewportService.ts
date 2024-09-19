@@ -7,7 +7,6 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import { _exists } from '../utils/generic';
-import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import type { ColumnModel } from './columnModel';
 import type { VisibleColsService } from './visibleColsService';
 
@@ -16,12 +15,10 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
 
     private visibleColsService: VisibleColsService;
     private columnModel: ColumnModel;
-    private eventDispatcher: ColumnEventDispatcher;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleColsService = beans.visibleColsService;
         this.columnModel = beans.columnModel;
-        this.eventDispatcher = beans.columnEventDispatcher;
     }
 
     // cols in center that are in the viewport
@@ -51,7 +48,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     }
 
     public setScrollPosition(scrollWidth: number, scrollPosition: number, afterScroll: boolean = false): void {
-        const bodyWidthDirty = this.visibleColsService.isBodyWidthDirty();
+        const bodyWidthDirty = this.visibleColsService.isBodyWidthDirty;
 
         const noChange = scrollWidth === this.scrollWidth && scrollPosition === this.scrollPosition && !bodyWidthDirty;
         if (noChange) {
@@ -63,7 +60,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
         // we need to call setVirtualViewportLeftAndRight() at least once after the body width changes,
         // as the viewport can stay the same, but in RTL, if body width changes, we need to work out the
         // virtual columns again
-        this.visibleColsService.setBodyWidthDirty();
+        this.visibleColsService.isBodyWidthDirty = true;
 
         if (this.gos.get('enableRtl')) {
             const bodyWidth = this.visibleColsService.getBodyContainerWidth();
@@ -98,7 +95,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     }
 
     private extractViewportColumns(): void {
-        const displayedColumnsCenter = this.visibleColsService.getCenterCols();
+        const displayedColumnsCenter = this.visibleColsService.centerCols;
         if (this.isColumnVirtualisationSuppressed()) {
             // no virtualisation, so don't filter
             this.colsWithinViewport = displayedColumnsCenter;
@@ -167,8 +164,8 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
 
     // used by Grid API only
     public getViewportColumns(): AgColumn[] {
-        const leftCols = this.visibleColsService.getLeftCols();
-        const rightCols = this.visibleColsService.getRightCols();
+        const leftCols = this.visibleColsService.leftCols;
+        const rightCols = this.visibleColsService.rightCols;
         const res = this.colsWithinViewport.concat(leftCols).concat(rightCols);
         return res;
     }
@@ -192,7 +189,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
         const inViewportCallback = this.isColumnVirtualisationSuppressed()
             ? undefined
             : this.isColumnInRowViewport.bind(this);
-        const displayedColumnsCenter = this.visibleColsService.getColsCenter();
+        const displayedColumnsCenter = this.visibleColsService.centerCols;
 
         return this.visibleColsService.getColsForRow(
             rowNode,
@@ -208,7 +205,10 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     public checkViewportColumns(afterScroll: boolean = false): void {
         const viewportColumnsChanged = this.extractViewport();
         if (viewportColumnsChanged) {
-            this.eventDispatcher.virtualColumnsChanged(afterScroll);
+            this.eventService.dispatchEvent({
+                type: 'virtualColumnsChanged',
+                afterScroll,
+            });
         }
     }
 
@@ -222,8 +222,8 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
         // for easy lookup when building the groups.
         const renderedColIds: { [key: string]: boolean } = {};
 
-        const renderedColsLeft = this.visibleColsService.getLeftCols();
-        const renderedColsRight = this.visibleColsService.getRightCols();
+        const renderedColsLeft = this.visibleColsService.leftCols;
+        const renderedColsRight = this.visibleColsService.rightCols;
         const allRenderedCols = this.headerColsWithinViewport.concat(renderedColsLeft).concat(renderedColsRight);
 
         allRenderedCols.forEach((col) => (renderedColIds[col.getId()] = true));
@@ -264,9 +264,9 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
             return returnValue;
         };
 
-        testGroup(this.visibleColsService.getTreeLeft(), this.rowsOfHeadersToRenderLeft, 0);
-        testGroup(this.visibleColsService.getTreeRight(), this.rowsOfHeadersToRenderRight, 0);
-        testGroup(this.visibleColsService.getTreeCenter(), this.rowsOfHeadersToRenderCenter, 0);
+        testGroup(this.visibleColsService.treeLeft, this.rowsOfHeadersToRenderLeft, 0);
+        testGroup(this.visibleColsService.treeRight, this.rowsOfHeadersToRenderRight, 0);
+        testGroup(this.visibleColsService.treeCenter, this.rowsOfHeadersToRenderCenter, 0);
     }
 
     private extractViewport(): boolean {

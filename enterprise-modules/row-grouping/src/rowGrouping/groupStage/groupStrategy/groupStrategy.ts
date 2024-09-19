@@ -125,7 +125,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
         const { rowNode, changedPath, rowNodeTransactions, rowNodesOrderChanged } = params;
 
-        const groupedCols = this.funcColsService.getRowGroupColumns();
+        const groupedCols = this.funcColsService.rowGroupCols;
 
         const details: GroupingDetails = {
             expandByDefault: this.gos.get('groupDefaultExpanded'),

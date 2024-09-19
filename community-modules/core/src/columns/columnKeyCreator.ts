@@ -20,14 +20,8 @@ export class ColumnKeyCreator {
         let count = 0;
 
         while (true) {
-            let idToTry: string | number;
-            if (colId) {
-                idToTry = colId;
-                if (count !== 0) {
-                    idToTry += '_' + count;
-                }
-            } else if (colField) {
-                idToTry = colField;
+            let idToTry: string | number | null | undefined = colId ?? colField;
+            if (idToTry) {
                 if (count !== 0) {
                     idToTry += '_' + count;
                 }

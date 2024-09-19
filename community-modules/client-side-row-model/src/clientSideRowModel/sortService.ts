@@ -64,7 +64,7 @@ export class SortService extends BeanStub implements NamedBean {
             const skipSortingGroups =
                 groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
             if (skipSortingGroups) {
-                const nextGroup = this.funcColsService.getRowGroupColumns()?.[rowNode.level + 1];
+                const nextGroup = this.funcColsService.rowGroupCols?.[rowNode.level + 1];
                 // if the sort is null, then sort was explicitly removed, so remove sort from this group.
                 const wasSortExplicitlyRemoved = nextGroup?.getSort() === null;
 

@@ -75,7 +75,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
     }
 
     private executePivotOn(changedPath: ChangedPath): void {
-        const numberOfAggregationColumns = this.funcColsService.getValueColumns().length ?? 1;
+        const numberOfAggregationColumns = this.funcColsService.valueCols.length ?? 1;
 
         // As unique values creates one column per aggregation column, divide max columns by number of aggregation columns
         // to get the max number of unique values.
@@ -101,7 +101,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
 
         const uniqueValuesChanged = this.setUniqueValues(uniqueValues);
 
-        const aggregationColumns = this.funcColsService.getValueColumns();
+        const aggregationColumns = this.funcColsService.valueCols;
         const aggregationColumnsHash = aggregationColumns
             .map((column) => `${column.getId()}-${column.getColDef().headerName}`)
             .join('#');
@@ -112,10 +112,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         this.aggregationColumnsHashLastTime = aggregationColumnsHash;
         this.aggregationFuncsHashLastTime = aggregationFuncsHash;
 
-        const groupColumnsHash = this.funcColsService
-            .getRowGroupColumns()
-            .map((column) => column.getId())
-            .join('#');
+        const groupColumnsHash = this.funcColsService.rowGroupCols.map((column) => column.getId()).join('#');
         const groupColumnsChanged = groupColumnsHash !== this.groupColumnsHashLastTime;
         this.groupColumnsHashLastTime = groupColumnsHash;
 
@@ -200,7 +197,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
     }
 
     private bucketRowNode(rowNode: RowNode, uniqueValues: any): void {
-        const pivotColumns = this.funcColsService.getPivotColumns();
+        const pivotColumns = this.funcColsService.pivotCols;
 
         if (pivotColumns.length === 0) {
             rowNode.childrenMapped = null;

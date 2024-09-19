@@ -8,7 +8,6 @@ import type { ColumnEventType } from '../events';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { _moveInArray } from '../utils/array';
 import { _warnOnce } from '../utils/function';
-import type { ColumnEventDispatcher } from './columnEventDispatcher';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColKey, ColumnModel } from './columnModel';
 
@@ -22,12 +21,10 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
 
     private columnModel: ColumnModel;
     private columnAnimationService: ColumnAnimationService;
-    private eventDispatcher: ColumnEventDispatcher;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.columnAnimationService = beans.columnAnimationService;
-        this.eventDispatcher = beans.columnEventDispatcher;
     }
 
     public moveColumnByIndex(fromIndex: number, toIndex: number, source: ColumnEventType): void {
@@ -63,7 +60,14 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
 
         if (this.doesMovePassRules(movedColumns, toIndex)) {
             this.columnModel.moveInCols(movedColumns, toIndex, source);
-            this.eventDispatcher.columnMoved({ movedColumns, source, toIndex, finished });
+            this.eventService.dispatchEvent({
+                type: 'columnMoved',
+                columns: movedColumns,
+                column: movedColumns.length === 1 ? movedColumns[0] : null,
+                toIndex,
+                finished,
+                source,
+            });
         }
 
         this.columnAnimationService.finish();

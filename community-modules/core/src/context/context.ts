@@ -3,19 +3,19 @@ import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
 import type { RowModelHelperService } from '../api/rowModelHelperService';
 import type { CellNavigationService } from '../cellNavigationService';
+import type { ColumnResizeService } from '../columnResize/columnResizeService';
 import type { ColumnApplyStateService } from '../columns/columnApplyStateService';
 import type { ColumnAutosizeService } from '../columns/columnAutosizeService';
 import type { ColumnDefFactory } from '../columns/columnDefFactory';
-import type { ColumnEventDispatcher } from '../columns/columnEventDispatcher';
 import type { ColumnFactory } from '../columns/columnFactory';
+import type { ColumnFlexService } from '../columns/columnFlexService';
 import type { ColumnGetStateService } from '../columns/columnGetStateService';
 import type { ColumnGroupStateService } from '../columns/columnGroupStateService';
 import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnMoveService } from '../columns/columnMoveService';
 import type { ColumnNameService } from '../columns/columnNameService';
-import type { ColumnSizeService } from '../columns/columnSizeService';
 import type { ColumnViewportService } from '../columns/columnViewportService';
-import type { IControlsColService } from '../columns/controlsColService';
+import type { ControlsColService } from '../columns/controlsColService';
 import type { DataTypeService } from '../columns/dataTypeService';
 import type { FuncColsService } from '../columns/funcColsService';
 import type { PivotResultColsService } from '../columns/pivotResultColsService';
@@ -54,6 +54,7 @@ import type { HorizontalResizeService } from '../headerRendering/common/horizont
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
+import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
@@ -73,6 +74,7 @@ import type { IServerSideTransactionManager } from '../interfaces/iServerSideRow
 import type { IColumnDropZonesService, IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IStatusBarService } from '../interfaces/iStatusBarService';
+import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { LocaleService } from '../localeService';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEventService';
@@ -188,7 +190,8 @@ export interface CoreBeanCollection {
     columnNameService: ColumnNameService;
     visibleColsService: VisibleColsService;
     columnMoveService: ColumnMoveService;
-    columnSizeService: ColumnSizeService;
+    columnFlexService: ColumnFlexService;
+    columnResizeService?: ColumnResizeService;
     headerNavigationService: HeaderNavigationService;
     navigationService: NavigationService;
     columnAnimationService: ColumnAnimationService;
@@ -228,11 +231,10 @@ export interface CoreBeanCollection {
     columnFactory: ColumnFactory;
     pivotResultColsService: PivotResultColsService;
     autoColService?: IAutoColService;
-    controlsColService?: IControlsColService;
+    controlsColService?: ControlsColService;
     columnDefFactory: ColumnDefFactory;
     columnGroupStateService: ColumnGroupStateService;
-    columnEventDispatcher: ColumnEventDispatcher;
-    columnAutosizeService: ColumnAutosizeService;
+    columnAutosizeService?: ColumnAutosizeService;
     funcColsService: FuncColsService;
     quickFilterService?: QuickFilterService;
     showRowGroupColsService?: IShowRowGroupColsService;
@@ -293,6 +295,8 @@ export interface CoreBeanCollection {
     statusBarService?: IStatusBarService;
     chartService?: IChartService;
     selectableService: SelectableService;
+    aggColumnNameService?: IAggColumnNameService;
+    renderStatusService?: IRenderStatusService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -327,6 +331,7 @@ export type BeanName =
     | 'advancedSettingsMenuFactory'
     | 'aggFuncService'
     | 'agComponentUtils'
+    | 'aggColumnNameService'
     | 'aggregationStage'
     | 'alignedGridsService'
     | 'animationFrameService'
@@ -356,10 +361,10 @@ export type BeanName =
     | 'columnDefFactory'
     | 'columnDropZonesService'
     | 'columnEditorFactory'
-    | 'columnEventDispatcher'
     | 'columnFilterService'
+    | 'columnFlexService'
     | 'columnGetStateService'
-    | 'columnSizeService'
+    | 'columnResizeService'
     | 'columnFactory'
     | 'columnAnimationService'
     | 'columnHoverService'

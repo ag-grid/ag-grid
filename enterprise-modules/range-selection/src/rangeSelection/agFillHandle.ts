@@ -481,7 +481,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             if (initialColumn === currentColumn) {
                 return;
             }
-            const displayedColumns = this.visibleColsService.getAllCols();
+            const displayedColumns = this.visibleColsService.allCols;
             const initialIndex = displayedColumns.indexOf(initialColumn);
             const currentIndex = displayedColumns.indexOf(currentColumn);
 
@@ -582,7 +582,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     }
 
     private extendHorizontal(initialPosition: CellPosition, endPosition: CellPosition, isMovingLeft?: boolean) {
-        const allCols = this.visibleColsService.getAllCols();
+        const allCols = this.visibleColsService.allCols;
         const startCol = allCols.indexOf((isMovingLeft ? endPosition.column : initialPosition.column) as AgColumn);
         const endCol = allCols.indexOf(
             (isMovingLeft ? this.getCellRange().columns[0] : endPosition.column) as AgColumn
@@ -631,7 +631,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     }
 
     private reduceHorizontal(initialPosition: CellPosition, endPosition: CellPosition) {
-        const allCols = this.visibleColsService.getAllCols();
+        const allCols = this.visibleColsService.allCols;
         const startCol = allCols.indexOf(endPosition.column as AgColumn);
         const endCol = allCols.indexOf(initialPosition.column as AgColumn);
 

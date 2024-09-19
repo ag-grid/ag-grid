@@ -619,7 +619,7 @@ export class StateService extends BeanStub implements NamedBean {
             let startColumn = columnModel.getCol(cellRange.startColId);
             if (!startColumn) {
                 // find the first remaining column
-                const allColumns = visibleColsService.getAllCols();
+                const allColumns = visibleColsService.allCols;
                 const columnSet = new Set(columns);
                 startColumn = allColumns.find((column) => columnSet.has(column))!;
             }

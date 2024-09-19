@@ -60,6 +60,6 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getExistingItems(): AgColumn[] {
-        return this.funcColsService.getRowGroupColumns();
+        return this.funcColsService.rowGroupCols;
     }
 }

@@ -93,7 +93,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (!usingTreeData && this.group) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field!;
-            this.rowGroupColumn = this.funcColsService.getRowGroupColumns()[this.level];
+            this.rowGroupColumn = this.funcColsService.rowGroupCols[this.level];
         }
     }
 

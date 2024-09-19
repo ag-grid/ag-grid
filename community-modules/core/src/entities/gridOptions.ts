@@ -108,7 +108,7 @@ import type {
     SizeColumnsToContentStrategy,
     SizeColumnsToFitGridStrategy,
     SizeColumnsToFitProvidedWidthStrategy,
-} from '../interfaces/autoSizeStrategy';
+} from '../interfaces/autoSize';
 import type {
     CsvExportParams,
     ProcessCellForExportParams,

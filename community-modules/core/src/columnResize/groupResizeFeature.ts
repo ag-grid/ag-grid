@@ -1,16 +1,16 @@
-import type { ColumnAutosizeService } from '../../../columns/columnAutosizeService';
-import type { ColumnResizeSet, ColumnSizeService } from '../../../columns/columnSizeService';
-import type { VisibleColsService } from '../../../columns/visibleColsService';
-import { BeanStub } from '../../../context/beanStub';
-import type { BeanCollection } from '../../../context/context';
-import type { AgColumn } from '../../../entities/agColumn';
-import type { AgColumnGroup } from '../../../entities/agColumnGroup';
-import type { ColumnEventType } from '../../../events';
-import type { ColumnPinnedType } from '../../../interfaces/iColumn';
-import type { AutoWidthCalculator } from '../../../rendering/autoWidthCalculator';
-import type { HorizontalResizeService } from '../../common/horizontalResizeService';
-import type { IHeaderResizeFeature } from '../abstractCell/abstractHeaderCellCtrl';
-import type { IHeaderGroupCellComp } from './headerGroupCellCtrl';
+import type { ColumnAutosizeService } from '../columns/columnAutosizeService';
+import type { VisibleColsService } from '../columns/visibleColsService';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
+import type { ColumnEventType } from '../events';
+import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
+import type { IHeaderGroupCellComp } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
+import type { HorizontalResizeService } from '../headerRendering/common/horizontalResizeService';
+import type { ColumnPinnedType } from '../interfaces/iColumn';
+import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
+import type { ColumnResizeService, ColumnResizeSet } from './columnResizeService';
 
 interface ColumnSizeAndRatios {
     columnsToResize: AgColumn[];
@@ -24,14 +24,14 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     private horizontalResizeService: HorizontalResizeService;
     private autoWidthCalculator: AutoWidthCalculator;
     private visibleColsService: VisibleColsService;
-    private columnSizeService: ColumnSizeService;
-    private columnAutosizeService: ColumnAutosizeService;
+    private columnResizeService?: ColumnResizeService;
+    private columnAutosizeService?: ColumnAutosizeService;
 
     public wireBeans(beans: BeanCollection) {
         this.horizontalResizeService = beans.horizontalResizeService;
         this.autoWidthCalculator = beans.autoWidthCalculator;
         this.visibleColsService = beans.visibleColsService;
-        this.columnSizeService = beans.columnSizeService;
+        this.columnResizeService = beans.columnResizeService;
         this.columnAutosizeService = beans.columnAutosizeService;
     }
 
@@ -77,32 +77,12 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
 
         this.addDestroyFunc(finishedWithResizeFunc);
 
-        if (!this.gos.get('suppressAutoSize')) {
-            const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
-
-            this.eResize.addEventListener('dblclick', () => {
-                // get list of all the column keys we are responsible for
-                const keys: string[] = [];
-                const leafCols = this.columnGroup.getDisplayedLeafColumns();
-
-                leafCols.forEach((column) => {
-                    // not all cols in the group may be participating with auto-resize
-                    if (!column.getColDef().suppressAutoSize) {
-                        keys.push(column.getColId());
-                    }
-                });
-
-                if (keys.length > 0) {
-                    this.columnAutosizeService.autoSizeCols({
-                        colKeys: keys,
-                        skipHeader: skipHeaderOnAutoSize,
-                        stopAtGroup: this.columnGroup,
-                        source: 'uiColumnResized',
-                    });
-                }
-
-                this.resizeLeafColumnsToFit('uiColumnResized');
-            });
+        if (!this.gos.get('suppressAutoSize') && this.columnAutosizeService) {
+            this.addDestroyFunc(
+                this.columnAutosizeService.addColumnGroupResize(this.eResize, this.columnGroup, () =>
+                    this.resizeLeafColumnsToFit('uiColumnResized')
+                )
+            );
         }
     }
 
@@ -238,7 +218,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             });
         }
 
-        this.columnSizeService.resizeColumnSets({
+        this.columnResizeService?.resizeColumnSets({
             resizeSets,
             finished,
             source: source,

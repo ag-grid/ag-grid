@@ -34,8 +34,8 @@ export class ColumnGetStateService extends BeanStub implements NamedBean {
     }
 
     private createStateItemFromColumn(column: AgColumn): ColumnState {
-        const rowGorupColumns = this.funcColsService.getRowGroupColumns();
-        const pivotColumns = this.funcColsService.getPivotColumns();
+        const rowGorupColumns = this.funcColsService.rowGroupCols;
+        const pivotColumns = this.funcColsService.pivotCols;
 
         const rowGroupIndex = column.isRowGroupActive() ? rowGorupColumns.indexOf(column) : null;
         const pivotIndex = column.isPivotActive() ? pivotColumns.indexOf(column) : null;

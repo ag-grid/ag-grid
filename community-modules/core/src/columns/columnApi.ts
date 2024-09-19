@@ -4,9 +4,9 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef, HeaderLocation } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
+import type { ISizeColumnsToFitParams } from '../interfaces/autoSize';
 import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from '../interfaces/iColumn';
 import type { ApplyColumnStateParams, ColumnState } from './columnApplyStateService';
-import type { ISizeColumnsToFitParams } from './columnSizeService';
 
 export function getColumnDef<TValue = any, TData = any>(
     beans: BeanCollection,
@@ -25,9 +25,9 @@ export function getColumnDefs<TData = any>(beans: BeanCollection): (ColDef<TData
 
 export function sizeColumnsToFit(beans: BeanCollection, paramsOrGridWidth?: ISizeColumnsToFitParams | number) {
     if (typeof paramsOrGridWidth === 'number') {
-        beans.columnSizeService.sizeColumnsToFit(paramsOrGridWidth, 'api');
+        beans.columnAutosizeService?.sizeColumnsToFit(paramsOrGridWidth, 'api');
     } else {
-        beans.ctrlsService.getGridBodyCtrl().sizeColumnsToFit(paramsOrGridWidth);
+        beans.columnAutosizeService?.sizeColumnsToFitGridBody(paramsOrGridWidth);
     }
 }
 
@@ -141,19 +141,19 @@ export function getAllGridColumns(beans: BeanCollection): Column[] {
 }
 
 export function getDisplayedLeftColumns(beans: BeanCollection): Column[] {
-    return beans.visibleColsService.getLeftCols();
+    return beans.visibleColsService.leftCols;
 }
 
 export function getDisplayedCenterColumns(beans: BeanCollection): Column[] {
-    return beans.visibleColsService.getCenterCols();
+    return beans.visibleColsService.centerCols;
 }
 
 export function getDisplayedRightColumns(beans: BeanCollection): Column[] {
-    return beans.visibleColsService.getRightCols();
+    return beans.visibleColsService.rightCols;
 }
 
 export function getAllDisplayedColumns(beans: BeanCollection): Column[] {
-    return beans.visibleColsService.getAllCols();
+    return beans.visibleColsService.allCols;
 }
 
 export function getAllDisplayedVirtualColumns(beans: BeanCollection): Column[] {
@@ -181,7 +181,7 @@ export function setColumnWidth(
     finished: boolean = true,
     source: ColumnEventType = 'api'
 ): void {
-    beans.columnSizeService.setColumnWidths([{ key, newWidth }], false, finished, source);
+    beans.columnResizeService?.setColumnWidths([{ key, newWidth }], false, finished, source);
 }
 
 export function setColumnWidths(
@@ -190,19 +190,19 @@ export function setColumnWidths(
     finished: boolean = true,
     source: ColumnEventType = 'api'
 ): void {
-    beans.columnSizeService.setColumnWidths(columnWidths, false, finished, source);
+    beans.columnResizeService?.setColumnWidths(columnWidths, false, finished, source);
 }
 
 export function getLeftDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] {
-    return beans.visibleColsService.getTreeLeft();
+    return beans.visibleColsService.treeLeft;
 }
 
 export function getCenterDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] {
-    return beans.visibleColsService.getTreeCenter();
+    return beans.visibleColsService.treeCenter;
 }
 
 export function getRightDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] {
-    return beans.visibleColsService.getTreeRight();
+    return beans.visibleColsService.treeRight;
 }
 
 export function getAllDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] | null {
@@ -211,13 +211,13 @@ export function getAllDisplayedColumnGroups(beans: BeanCollection): (Column | Co
 
 /** @deprecated v31.1 */
 export function autoSizeColumn(beans: BeanCollection, key: string | ColDef | Column, skipHeader?: boolean): void {
-    return beans.columnAutosizeService.autoSizeCols({ colKeys: [key], skipHeader: skipHeader, source: 'api' });
+    return beans.columnAutosizeService?.autoSizeCols({ colKeys: [key], skipHeader: skipHeader, source: 'api' });
 }
 
 export function autoSizeColumns(beans: BeanCollection, keys: (string | ColDef | Column)[], skipHeader?: boolean): void {
-    beans.columnAutosizeService.autoSizeCols({ colKeys: keys, skipHeader: skipHeader, source: 'api' });
+    beans.columnAutosizeService?.autoSizeCols({ colKeys: keys, skipHeader: skipHeader, source: 'api' });
 }
 
 export function autoSizeAllColumns(beans: BeanCollection, skipHeader?: boolean): void {
-    beans.columnAutosizeService.autoSizeAllColumns('api', skipHeader);
+    beans.columnAutosizeService?.autoSizeAllColumns('api', skipHeader);
 }

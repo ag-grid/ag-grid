@@ -3,14 +3,11 @@ import { BeanStub } from '../context/beanStub';
 import { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import { _getCheckboxes, _getHeaderCheckbox } from '../gridOptionsUtils';
-
-export interface IControlsColService {
-    createControlsCols(): AgColumn[];
-}
+import { isColumnControlsCol } from './columnUtils';
 
 export const CONTROLS_COLUMN_ID_PREFIX = 'ag-Grid-ControlsColumn' as const;
 
-export class ControlsColService extends BeanStub implements NamedBean, IControlsColService {
+export class ControlsColService extends BeanStub implements NamedBean {
     beanName = 'controlsColService' as const;
 
     public createControlsCols(): AgColumn[] {
@@ -55,5 +52,23 @@ export class ControlsColService extends BeanStub implements NamedBean, IControls
         }
 
         return [];
+    }
+
+    public sortControlsColsFirst(columns?: AgColumn[] | null): void {
+        if (!columns) {
+            return;
+        }
+        function sortControlsColsFirst(a: AgColumn, b: AgColumn): number {
+            const isAControl = isColumnControlsCol(a);
+            const isBControl = isColumnControlsCol(b);
+            if (isAControl && !isBControl) {
+                return -1;
+            }
+            if (!isAControl && isBControl) {
+                return 1;
+            }
+            return 0;
+        }
+        columns.sort(sortControlsColsFirst);
     }
 }

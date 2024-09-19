@@ -13,7 +13,7 @@ export class ListenerUtils extends BeanStub implements NamedBean {
     }
 
     public isSortingWithValueColumn(changedColumnsInSort: string[]): boolean {
-        const valueColIds = this.funcColsService.getValueColumns().map((col) => col.getColId());
+        const valueColIds = this.funcColsService.valueCols.map((col) => col.getColId());
 
         for (let i = 0; i < changedColumnsInSort.length; i++) {
             if (valueColIds.indexOf(changedColumnsInSort[i]) > -1) {
