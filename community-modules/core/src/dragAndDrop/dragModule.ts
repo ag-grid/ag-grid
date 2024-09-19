@@ -1,6 +1,7 @@
 import type { _DragGridApi } from '../api/gridApi';
 import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
+import { DragAndDropImageComponent } from './dragAndDropImageComponent';
 import { DragAndDropService } from './dragAndDropService';
 import { addRowDropZone, getRowDropZoneParams, removeRowDropZone } from './dragApi';
 import { DragService } from './dragService';
@@ -18,6 +19,12 @@ export const DragAndDropModule = _defineModule({
     moduleName: '@ag-grid-community/drag-and-drop',
     beans: [DragAndDropService],
     dependantModules: [DragModule],
+    userComponents: [
+        {
+            classImp: DragAndDropImageComponent,
+            name: 'agDragAndDropImage',
+        },
+    ],
 });
 
 export const RowDragModule = _defineModule({
