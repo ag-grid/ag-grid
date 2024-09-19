@@ -4,13 +4,11 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { IAggFunc } from '../entities/colDef';
 import type { Environment } from '../environment';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import { _getDocument, _getRootNode } from '../gridOptionsUtils';
-import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
-import type { IRowNode } from '../interfaces/iRowNode';
+import type { DragItem } from '../interfaces/iDragItem';
 import { _flatten, _removeFromArray } from '../utils/array';
 import { _getBodyHeight, _getBodyWidth } from '../utils/browser';
 import { _getElementRectWithOffset } from '../utils/dom';
@@ -19,38 +17,6 @@ import type { AgPromise } from '../utils/promise';
 import type { DragAndDropImageComponent } from './dragAndDropImageComponent';
 import type { DragListenerParams, DragService } from './dragService';
 import type { RowDropZoneParams } from './rowDragFeature';
-
-export interface DragItem<TValue = any> {
-    /**
-     * When dragging a row, this contains the row node being dragged
-     * When dragging multiple rows, this contains the row that started the drag.
-     */
-    rowNode?: IRowNode;
-
-    /** When dragging multiple rows, this contains all rows being dragged */
-    rowNodes?: IRowNode[];
-
-    /** When dragging columns, this contains the columns being dragged */
-    columns?: Column[];
-
-    /** When dragging column groups, this contains the columns in the current group split. */
-    columnsInSplit?: Column[];
-
-    /** When dragging columns, this contains the visible state of the columns */
-    visibleState?: { [key: string]: boolean };
-
-    /** When dragging columns, this contains the pivot state of the columns. This is only populated/used in column tool panel */
-    pivotState?: {
-        [key: string]: {
-            pivot?: boolean;
-            rowGroup?: boolean;
-            aggFunc?: string | IAggFunc | null;
-        };
-    };
-
-    /** Additional state */
-    value?: TValue;
-}
 
 export enum DragSourceType {
     ToolPanel,

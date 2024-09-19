@@ -2,6 +2,7 @@ import { isColumnControlsCol } from '../../columns/columnUtils';
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
+import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellPosition } from '../../entities/cellPositionUtils';
 import type { CellStyle, ColDef } from '../../entities/colDef';
@@ -32,7 +33,6 @@ import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellR
 import { CheckboxSelectionComponent } from '../checkboxSelectionComponent';
 import { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
-import type { RowDragComp } from '../row/rowDragComp';
 import type { FlashCellsParams } from '../rowRenderer';
 import { CellCustomStyleFeature } from './cellCustomStyleFeature';
 import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';

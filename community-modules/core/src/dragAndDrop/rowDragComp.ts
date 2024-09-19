@@ -1,18 +1,14 @@
-import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection } from '../../context/context';
-import type { DragItem, DragSource } from '../../dragAndDrop/dragAndDropService';
-import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
-import type { AgColumn } from '../../entities/agColumn';
-import type { RowNode } from '../../entities/rowNode';
-import type { AgEventType } from '../../eventTypes';
-import { _isFunction, _warnOnce } from '../../utils/function';
-import { _createIconNoSpan } from '../../utils/icon';
-import { Component } from '../../widgets/component';
-
-export interface IRowDragItem extends DragItem {
-    /** The default text that would be applied to this Drag Element */
-    defaultTextValue: string;
-}
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { RowNode } from '../entities/rowNode';
+import type { AgEventType } from '../eventTypes';
+import type { IRowDragItem } from '../interfaces/iRowDragItem';
+import { _isFunction, _warnOnce } from '../utils/function';
+import { _createIconNoSpan } from '../utils/icon';
+import { Component } from '../widgets/component';
+import type { DragSource } from './dragAndDropService';
+import { DragSourceType } from './dragAndDropService';
 
 export class RowDragComp extends Component {
     private dragSource: DragSource | null = null;

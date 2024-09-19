@@ -4,9 +4,9 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import { _isCellSelectionEnabled, _isClientSideRowModel } from '../gridOptionsUtils';
-import { RowDragComp } from '../rendering/row/rowDragComp';
 import { _warnOnce } from '../utils/function';
 import type { DragAndDropService } from './dragAndDropService';
+import { RowDragComp } from './rowDragComp';
 import { RowDragFeature } from './rowDragFeature';
 
 export class RowDragService extends BeanStub implements NamedBean {

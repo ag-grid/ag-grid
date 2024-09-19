@@ -100,15 +100,15 @@ export {
     DragSourceType,
     DropTarget,
     DragSource,
-    DragItem,
     DraggingEvent,
     DragAndDropIcon,
 } from './dragAndDrop/dragAndDropService';
+export { DragItem } from './interfaces/iDragItem';
 export { RowDropZoneParams, RowDropZoneEvents } from './dragAndDrop/rowDragFeature';
 export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { DragService } from './dragAndDrop/dragService';
 export { DragListenerParams } from './dragAndDrop/dragService';
-export { IRowDragItem } from './rendering/row/rowDragComp';
+export { IRowDragItem } from './interfaces/iRowDragItem';
 export type { HorizontalResizeService } from './dragAndDrop/horizontalResizeService';
 export { DragModule, HorizontalResizeModule, DragAndDropModule } from './dragAndDrop/dragModule';
 
