@@ -97,7 +97,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private pageBoundsService: PageBoundsService;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
-    private pinnedRowModel: PinnedRowModel;
+    private pinnedRowModel?: PinnedRowModel;
     private rowModel: IRowModel;
     private focusService: FocusService;
     private beans: BeanCollection;
@@ -491,7 +491,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const { pinnedRowModel, beans, printLayout } = this;
         const rowCtrlMap = Object.fromEntries(rowCtrls.map((ctrl) => [ctrl.getRowNode().id!, ctrl]));
 
-        pinnedRowModel.forEachPinnedRow(floating, (node, i) => {
+        pinnedRowModel?.forEachPinnedRow(floating, (node, i) => {
             const rowCtrl = rowCtrls[i];
             const rowCtrlDoesNotExist =
                 rowCtrl && pinnedRowModel.getPinnedRowById(rowCtrl.getRowNode().id!, floating) === undefined;
@@ -513,7 +513,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
         });
 
         const rowNodeCount =
-            floating === 'top' ? pinnedRowModel.getPinnedTopRowCount() : pinnedRowModel.getPinnedBottomRowCount();
+            (floating === 'top' ? pinnedRowModel?.getPinnedTopRowCount() : pinnedRowModel?.getPinnedBottomRowCount()) ??
+            0;
 
         // Truncate array if rowCtrls is longer than rowNodes
         rowCtrls.length = rowNodeCount;

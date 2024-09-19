@@ -51,7 +51,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
     private cellNavigationService: CellNavigationService;
-    private pinnedRowModel: PinnedRowModel;
+    private pinnedRowModel?: PinnedRowModel;
     private rowPositionUtils: RowPositionUtils;
     private cellPositionUtils: CellPositionUtils;
     private ctrlsService: CtrlsService;
@@ -182,7 +182,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 : cellRange.endRow;
         }
 
-        const rowPinned = this.pinnedRowModel.getPinnedTopRowCount() > 0 ? 'top' : null;
+        const rowPinned = this.pinnedRowModel?.getPinnedTopRowCount() ?? 0 > 0 ? 'top' : null;
 
         return { rowIndex: 0, rowPinned };
     }
@@ -194,7 +194,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 : cellRange.startRow;
         }
 
-        const pinnedBottomRowCount = this.pinnedRowModel.getPinnedBottomRowCount();
+        const pinnedBottomRowCount = this.pinnedRowModel?.getPinnedBottomRowCount() ?? 0;
         const pinnedBottom = pinnedBottomRowCount > 0;
 
         if (pinnedBottom) {

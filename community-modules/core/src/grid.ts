@@ -55,7 +55,6 @@ import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PageBoundsListener } from './pagination/pageBoundsListener';
 import { PageBoundsService } from './pagination/pageBoundsService';
-import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 import { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
 import { AutoWidthCalculator } from './rendering/autoWidthCalculator';
 import { ColumnAnimationService } from './rendering/columnAnimationService';
@@ -449,7 +448,6 @@ export class GridCoreCreator {
             UserComponentFactory,
             RowContainerHeightService,
             LocaleService,
-            PinnedRowModel,
             VisibleColsService,
             EventService,
             GridOptionsService,

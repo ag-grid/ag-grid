@@ -14,6 +14,7 @@ import { _defineModule } from './interfaces/iModule';
 import { StateModule } from './misc/state/stateModule';
 import { ModuleNames } from './modules/moduleNames';
 import { PaginationModule } from './pagination/paginationModule';
+import { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
 import { ValidationService } from './validation/validationService';
 import { VERSION } from './version';
 
@@ -47,5 +48,6 @@ export const CommunityFeaturesModule = _defineModule({
         ColumnResizeModule,
         DragAndDropModule,
         RowDragModule,
+        PinnedRowModule,
     ],
 });

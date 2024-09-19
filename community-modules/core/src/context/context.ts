@@ -247,7 +247,7 @@ export interface CoreBeanCollection {
     stateService?: StateService;
     overlayService: OverlayService;
     columnGetStateService: ColumnGetStateService;
-    pinnedRowModel: PinnedRowModel;
+    pinnedRowModel?: PinnedRowModel;
     menuService: MenuService;
     apiEventService: ApiEventService;
     undoRedoService?: UndoRedoService;

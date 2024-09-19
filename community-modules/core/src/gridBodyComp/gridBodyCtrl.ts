@@ -63,7 +63,7 @@ export class GridBodyCtrl extends BeanStub {
     private menuService: MenuService;
     private headerNavigationService: HeaderNavigationService;
     private rowDragService?: RowDragService;
-    private pinnedRowModel: PinnedRowModel;
+    private pinnedRowModel?: PinnedRowModel;
     private rowRenderer: RowRenderer;
     private popupService: PopupService;
     private mouseEventService: MouseEventService;
@@ -505,8 +505,8 @@ export class GridBodyCtrl extends BeanStub {
     private setFloatingHeights(): void {
         const { pinnedRowModel } = this;
 
-        const floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
-        const floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight();
+        const floatingTopHeight = pinnedRowModel?.getPinnedTopTotalHeight() ?? 0;
+        const floatingBottomHeight = pinnedRowModel?.getPinnedBottomTotalHeight() ?? 0;
         this.comp.setTopHeight(floatingTopHeight);
         this.comp.setBottomHeight(floatingBottomHeight);
         this.comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
@@ -552,7 +552,7 @@ export class GridBodyCtrl extends BeanStub {
     private setStickyTopOffsetTop(): void {
         const headerCtrl = this.ctrlsService.get('gridHeaderCtrl');
         const headerHeight = headerCtrl.getHeaderHeight() + (this.filterManager?.getHeaderHeight() ?? 0);
-        const pinnedTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
+        const pinnedTopHeight = this.pinnedRowModel?.getPinnedTopTotalHeight() ?? 0;
 
         let height = 0;
 
@@ -570,7 +570,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private setStickyBottomOffsetBottom(): void {
-        const pinnedBottomHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
+        const pinnedBottomHeight = this.pinnedRowModel?.getPinnedBottomTotalHeight() ?? 0;
         const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
         const scrollbarWidth = hScrollShowing ? this.scrollVisibleService.getScrollbarWidth() || 0 : 0;
         const height = pinnedBottomHeight + scrollbarWidth;
