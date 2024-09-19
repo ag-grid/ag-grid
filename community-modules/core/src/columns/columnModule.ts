@@ -1,14 +1,8 @@
 import type { _ColumnGridApi } from '../api/gridApi';
-import { ColumnMoveService } from '../columnMove/columnMoveService';
-import { ColumnResizeService } from '../columnResize/columnResizeService';
-import { DragAndDropModule, HorizontalResizeModule } from '../dragAndDrop/dragModule';
 import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import {
     applyColumnState,
-    autoSizeAllColumns,
-    autoSizeColumn,
-    autoSizeColumns,
     getAllDisplayedColumnGroups,
     getAllDisplayedColumns,
     getAllDisplayedVirtualColumns,
@@ -34,22 +28,15 @@ import {
     isPinning,
     isPinningLeft,
     isPinningRight,
-    moveColumn,
-    moveColumnByIndex,
-    moveColumns,
     resetColumnGroupState,
     resetColumnState,
     setColumnGroupOpened,
     setColumnGroupState,
     setColumnPinned,
     setColumnVisible,
-    setColumnWidth,
-    setColumnWidths,
     setColumnsPinned,
     setColumnsVisible,
-    sizeColumnsToFit,
 } from './columnApi';
-import { ColumnAutosizeService } from './columnAutosizeService';
 import { ControlsColService } from './controlsColService';
 import { DataTypeService } from './dataTypeService';
 
@@ -59,30 +46,10 @@ export const DataTypeModule = _defineModule({
     beans: [DataTypeService],
 });
 
-export const ColumnMoveModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/column-move',
-    beans: [ColumnMoveService],
-    dependantModules: [DragAndDropModule],
-});
-
-export const ColumnAutosizeModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/column-autosize',
-    beans: [ColumnAutosizeService],
-});
-
 export const ControlsColumnModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/controls-column',
     beans: [ControlsColService],
-});
-
-export const ColumnResizeModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/column-resize',
-    beans: [ColumnResizeService],
-    dependantModules: [HorizontalResizeModule],
 });
 
 export const ColumnApiModule = _defineModule<_ColumnGridApi<any>>({
@@ -91,7 +58,6 @@ export const ColumnApiModule = _defineModule<_ColumnGridApi<any>>({
     apiFunctions: {
         getColumnDef,
         getColumnDefs,
-        sizeColumnsToFit,
         setColumnGroupOpened,
         getColumnGroup,
         getProvidedColumnGroup,
@@ -120,17 +86,9 @@ export const ColumnApiModule = _defineModule<_ColumnGridApi<any>>({
         getDisplayedRightColumns,
         getAllDisplayedColumns,
         getAllDisplayedVirtualColumns,
-        moveColumn,
-        moveColumnByIndex,
-        moveColumns,
-        setColumnWidth,
-        setColumnWidths,
         getLeftDisplayedColumnGroups,
         getCenterDisplayedColumnGroups,
         getRightDisplayedColumnGroups,
         getAllDisplayedColumnGroups,
-        autoSizeColumn,
-        autoSizeColumns,
-        autoSizeAllColumns,
     },
 });

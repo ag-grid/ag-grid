@@ -1,5 +1,4 @@
 import { ColumnApiModule } from '../columns/columnModule';
-import { DragApiModule } from '../dragAndDrop/dragModule';
 import { _defineModule } from '../interfaces/iModule';
 import { OverlayApiModule } from '../rendering/overlays/overlayModule';
 import { RenderApiModule } from '../rendering/renderModule';
@@ -189,7 +188,6 @@ export const CommunityApiModule = _defineModule({
         RowSelectionApiModule,
         ColumnApiModule,
         RowApiModule,
-        DragApiModule,
         ScrollApiModule,
         OverlayApiModule,
         KeyboardNavigationApiModule,

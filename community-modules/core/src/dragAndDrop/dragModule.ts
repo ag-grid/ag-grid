@@ -27,11 +27,28 @@ export const DragAndDropModule = _defineModule({
     ],
 });
 
+export const RowDragCoreModule = _defineModule({
+    version: VERSION,
+    moduleName: '@ag-grid-community/row-drag-core',
+    beans: [RowDragService],
+    dependantModules: [DragAndDropModule],
+});
+
+export const RowDragApiModule = _defineModule<_DragGridApi>({
+    version: VERSION,
+    moduleName: '@ag-grid-community/row-drag-api',
+    apiFunctions: {
+        addRowDropZone,
+        removeRowDropZone,
+        getRowDropZoneParams,
+    },
+    dependantModules: [RowDragCoreModule],
+});
+
 export const RowDragModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/row-drag',
-    beans: [RowDragService],
-    dependantModules: [DragAndDropModule],
+    dependantModules: [RowDragApiModule],
 });
 
 export const HorizontalResizeModule = _defineModule({
@@ -39,14 +56,4 @@ export const HorizontalResizeModule = _defineModule({
     moduleName: '@ag-grid-community/horizontal-resize',
     beans: [HorizontalResizeService],
     dependantModules: [DragModule],
-});
-
-export const DragApiModule = _defineModule<_DragGridApi>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/drag-api',
-    apiFunctions: {
-        addRowDropZone,
-        removeRowDropZone,
-        getRowDropZoneParams,
-    },
 });

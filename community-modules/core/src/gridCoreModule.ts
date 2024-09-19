@@ -1,12 +1,9 @@
 import { AlignedGridsModule } from './alignedGridsModule';
 import { CommunityApiModule } from './api/apiModule';
-import {
-    ColumnAutosizeModule,
-    ColumnMoveModule,
-    ColumnResizeModule,
-    ControlsColumnModule,
-    DataTypeModule,
-} from './columns/columnModule';
+import { ColumnAutosizeModule } from './columnAutosize/columnAutosizeModule';
+import { ColumnMoveModule } from './columnMove/columnMoveModule';
+import { ColumnResizeModule } from './columnResize/columnResizeModule';
+import { ControlsColumnModule, DataTypeModule } from './columns/columnModule';
 import { DragAndDropModule, RowDragModule } from './dragAndDrop/dragModule';
 import { EditModule } from './edit/editModule';
 import { FilterModule } from './filter/filterModule';

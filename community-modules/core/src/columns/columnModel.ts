@@ -1,3 +1,4 @@
+import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
 import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -33,7 +34,6 @@ import { _warnOnce } from '../utils/function';
 import { _missingOrEmpty } from '../utils/generic';
 import type { ValueCache } from '../valueService/valueCache';
 import type { ColumnApplyStateService, ColumnState } from './columnApplyStateService';
-import type { ColumnAutosizeService } from './columnAutosizeService';
 import type { ColumnDefFactory } from './columnDefFactory';
 import { dispatchColumnPinnedEvent } from './columnEventUtils';
 import type { ColumnFactory } from './columnFactory';

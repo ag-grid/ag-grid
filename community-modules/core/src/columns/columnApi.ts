@@ -3,8 +3,6 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef, HeaderLocation } from '../entities/colDef';
-import type { ColumnEventType } from '../events';
-import type { ISizeColumnsToFitParams } from '../interfaces/autoSize';
 import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from '../interfaces/iColumn';
 import type { ApplyColumnStateParams, ColumnState } from './columnApplyStateService';
 
@@ -21,14 +19,6 @@ export function getColumnDef<TValue = any, TData = any>(
 
 export function getColumnDefs<TData = any>(beans: BeanCollection): (ColDef<TData> | ColGroupDef<TData>)[] | undefined {
     return beans.columnModel.getColumnDefs();
-}
-
-export function sizeColumnsToFit(beans: BeanCollection, paramsOrGridWidth?: ISizeColumnsToFitParams | number) {
-    if (typeof paramsOrGridWidth === 'number') {
-        beans.columnAutosizeService?.sizeColumnsToFit(paramsOrGridWidth, 'api');
-    } else {
-        beans.columnAutosizeService?.sizeColumnsToFitGridBody(paramsOrGridWidth);
-    }
 }
 
 export function setColumnGroupOpened(
@@ -160,39 +150,6 @@ export function getAllDisplayedVirtualColumns(beans: BeanCollection): Column[] {
     return beans.columnViewportService.getViewportColumns();
 }
 
-/** @deprecated v31.1 */
-export function moveColumn(beans: BeanCollection, key: string | ColDef | Column, toIndex: number): void {
-    beans.columnMoveService?.moveColumns([key], toIndex, 'api');
-}
-
-export function moveColumnByIndex(beans: BeanCollection, fromIndex: number, toIndex: number): void {
-    beans.columnMoveService?.moveColumnByIndex(fromIndex, toIndex, 'api');
-}
-
-export function moveColumns(beans: BeanCollection, columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number) {
-    beans.columnMoveService?.moveColumns(columnsToMoveKeys, toIndex, 'api');
-}
-
-/** @deprecated v31.1 */
-export function setColumnWidth(
-    beans: BeanCollection,
-    key: string | ColDef | Column,
-    newWidth: number,
-    finished: boolean = true,
-    source: ColumnEventType = 'api'
-): void {
-    beans.columnResizeService?.setColumnWidths([{ key, newWidth }], false, finished, source);
-}
-
-export function setColumnWidths(
-    beans: BeanCollection,
-    columnWidths: { key: string | ColDef | Column; newWidth: number }[],
-    finished: boolean = true,
-    source: ColumnEventType = 'api'
-): void {
-    beans.columnResizeService?.setColumnWidths(columnWidths, false, finished, source);
-}
-
 export function getLeftDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] {
     return beans.visibleColsService.treeLeft;
 }
@@ -207,17 +164,4 @@ export function getRightDisplayedColumnGroups(beans: BeanCollection): (Column | 
 
 export function getAllDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] | null {
     return beans.visibleColsService.getAllTrees();
-}
-
-/** @deprecated v31.1 */
-export function autoSizeColumn(beans: BeanCollection, key: string | ColDef | Column, skipHeader?: boolean): void {
-    return beans.columnAutosizeService?.autoSizeCols({ colKeys: [key], skipHeader: skipHeader, source: 'api' });
-}
-
-export function autoSizeColumns(beans: BeanCollection, keys: (string | ColDef | Column)[], skipHeader?: boolean): void {
-    beans.columnAutosizeService?.autoSizeCols({ colKeys: keys, skipHeader: skipHeader, source: 'api' });
-}
-
-export function autoSizeAllColumns(beans: BeanCollection, skipHeader?: boolean): void {
-    beans.columnAutosizeService?.autoSizeAllColumns('api', skipHeader);
 }

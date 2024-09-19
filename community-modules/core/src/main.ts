@@ -11,7 +11,7 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 // columns
 export { ColumnFactory } from './columns/columnFactory';
 export { ColumnModel } from './columns/columnModel';
-export type { ColumnAutosizeService } from './columns/columnAutosizeService';
+export type { ColumnAutosizeService } from './columnAutosize/columnAutosizeService';
 export type { FuncColsService } from './columns/funcColsService';
 export type { ColumnApplyStateService } from './columns/columnApplyStateService';
 export { ColumnState, ColumnStateParams, ApplyColumnStateParams } from './columns/columnApplyStateService';
@@ -34,7 +34,7 @@ export {
     ISizeColumnsToFitParams,
 } from './interfaces/autoSize';
 export { IRenderStatusService } from './interfaces/renderStatusService';
-export { ColumnMoveModule } from './columns/columnModule';
+export { ColumnMoveModule } from './columnMove/columnMoveModule';
 
 // components
 export { ComponentUtil, _combineAttributesAndGridOptions, _processOnChange } from './components/componentUtil';

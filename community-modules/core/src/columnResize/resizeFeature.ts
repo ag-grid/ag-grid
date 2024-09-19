@@ -1,4 +1,4 @@
-import type { ColumnAutosizeService } from '../columns/columnAutosizeService';
+import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
