@@ -8,23 +8,44 @@ import type {
 } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
+const ROOT_NODE_ID = 'ROOT_NODE_ID';
+
+/**
+ * This is the type of any row in allLeafChildren and childrenAfterGroup of the ClientSideNodeManager rootNode.
+ * ClientSideNodeManager is allowed to update the sourceRowIndex property of the nodes.
+ */
+export interface ClientSideNodeManagerRowNode<TData> extends RowNode<TData> {
+    sourceRowIndex: number;
+}
+
+/**
+ * This is the type of the root RowNode of the ClientSideNodeManager
+ * ClientSideNodeManager is allowed to update the allLeafChildren and childrenAfterGroup properties of the root node.
+ */
+export interface ClientSideNodeManagerRootNode<TData> extends RowNode<TData> {
+    allLeafChildren: ClientSideNodeManagerRowNode<TData>[] | null;
+    childrenAfterGroup: ClientSideNodeManagerRowNode<TData>[] | null;
+}
+
 export abstract class AbstractClientSideNodeManager<TData = any>
     extends BeanStub
     implements IClientSideNodeManager<TData>
 {
+    public rootNode: ClientSideNodeManagerRootNode<TData>;
     public rowCountReady: boolean = false;
-    protected beans: BeanCollection;
 
-    private readonly nodesById = new Map<string, RowNode<TData>>();
-    private readonly nodesByData = new Map<TData, RowNode<TData>>();
+    protected beans: BeanCollection;
 
     public wireBeans(beans: BeanCollection): void {
         this.beans = beans;
     }
 
-    public abstract initRootNode(rootRowNode: RowNode<TData> | null): void;
+    public override destroy(): void {
+        this.initRootNode(null);
+        super.destroy();
+    }
 
-    public abstract getRowNode(id: string): RowNode<TData> | undefined;
+    public abstract getRowNode(id: string): RowNode | undefined;
 
     public abstract setRowData(rowData: TData[]): void;
 
@@ -33,6 +54,27 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     public abstract updateRowData(
         rowDataTran: RowDataTransaction<TData>
     ): ClientSideNodeManagerUpdateRowDataResult<TData>;
+
+    public initRootNode(rootRowNode: RowNode<TData> | null): void {
+        const rootNode = rootRowNode as ClientSideNodeManagerRootNode<TData>;
+
+        if (this.rootNode) {
+            this.setRowData([]);
+        }
+
+        this.rootNode = rootNode!;
+
+        if (rootNode) {
+            rootNode.group = true;
+            rootNode.level = -1;
+            rootNode.id = ROOT_NODE_ID;
+            rootNode.allLeafChildren = [];
+            rootNode.childrenAfterGroup = [];
+            rootNode.childrenAfterSort = [];
+            rootNode.childrenAfterAggFilter = [];
+            rootNode.childrenAfterFilter = [];
+        }
+    }
 
     protected dispatchRowDataUpdateStartedEvent(rowData?: TData[] | null): void {
         this.eventService.dispatchEvent({

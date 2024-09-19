@@ -15,60 +15,24 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
+import type {
+    ClientSideNodeManagerRootNode,
+    ClientSideNodeManagerRowNode,
+} from '../clientSideNodeManager/abstractClientSideNodeManager';
 import { AbstractClientSideNodeManager } from '../clientSideNodeManager/abstractClientSideNodeManager';
 
-const ROOT_NODE_ID = 'ROOT_NODE_ID';
 const TOP_LEVEL = 0;
 
-/**
- * This is the type of any row in allLeafChildren and childrenAfterGroup of the ClientSideNodeManager rootNode.
- * ClientSideNodeManager is allowed to update the sourceRowIndex property of the nodes.
- */
-interface ClientSideNodeManagerRowNode<TData> extends RowNode<TData> {
-    sourceRowIndex: number;
-}
-
-/**
- * This is the type of the root RowNode of the ClientSideNodeManager
- * ClientSideNodeManager is allowed to update the allLeafChildren and childrenAfterGroup properties of the root node.
- */
-interface ClientSideNodeManagerRootNode<TData> extends RowNode<TData> {
-    allLeafChildren: ClientSideNodeManagerRowNode<TData>[] | null;
-    childrenAfterGroup: ClientSideNodeManagerRowNode<TData>[] | null;
-}
-
-export class ClientSideTreeNodeManager<TData>
+export class ClientSideNodeManager<TData>
     extends AbstractClientSideNodeManager<TData>
     implements IClientSideNodeManager<TData>, NamedBean
 {
-    beanName = 'clientSideTreeNodeManager' as const;
+    beanName = 'clientSideNodeManager' as const;
 
-    private rootNode: ClientSideNodeManagerRootNode<TData>;
+    private allNodesMap: { [id: string]: RowNode } = {};
 
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
-    private allNodesMap: { [id: string]: RowNode } = {};
     private nextId = 0;
-
-    public initRootNode(rootRowNode: RowNode<TData> | null): void {
-        const rootNode = rootRowNode as ClientSideNodeManagerRootNode<TData>;
-
-        if (this.rootNode) {
-            this.setRowData([]);
-        }
-
-        this.rootNode = rootNode!;
-
-        if (rootNode) {
-            rootNode.group = true;
-            rootNode.level = -1;
-            rootNode.id = ROOT_NODE_ID;
-            rootNode.allLeafChildren = [];
-            rootNode.childrenAfterGroup = [];
-            rootNode.childrenAfterSort = [];
-            rootNode.childrenAfterAggFilter = [];
-            rootNode.childrenAfterFilter = [];
-        }
-    }
 
     public getRowNode(id: string): RowNode | undefined {
         return this.allNodesMap[id];
@@ -139,29 +103,6 @@ export class ClientSideTreeNodeManager<TData>
         return result;
     }
 
-    public override updateRowData(
-        rowDataTran: RowDataTransaction<TData>
-    ): ClientSideNodeManagerUpdateRowDataResult<TData> {
-        this.rowCountReady = true;
-        this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
-
-        const updateRowDataResult: ClientSideNodeManagerUpdateRowDataResult<TData> = {
-            rowNodeTransaction: { remove: [], update: [], add: [] },
-            rowsInserted: false,
-            rowsOrderChanged: false,
-        };
-
-        const nodesToUnselect: RowNode[] = [];
-
-        this.executeRemove(rowDataTran, updateRowDataResult, nodesToUnselect);
-        this.executeUpdate(rowDataTran, updateRowDataResult, nodesToUnselect);
-        this.executeAdd(rowDataTran, updateRowDataResult);
-
-        this.updateSelection(nodesToUnselect, 'rowDataChanged');
-
-        return updateRowDataResult;
-    }
-
     /** Converts the setRowData() command to a transaction */
     private createTransactionForRowData(rowData: TData[]): RowDataTransaction<TData> | null {
         const getRowIdFunc = _getRowIdCallback(this.gos);
@@ -208,6 +149,29 @@ export class ClientSideTreeNodeManager<TData>
         });
 
         return { remove, update, add };
+    }
+
+    public override updateRowData(
+        rowDataTran: RowDataTransaction<TData>
+    ): ClientSideNodeManagerUpdateRowDataResult<TData> {
+        this.rowCountReady = true;
+        this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
+
+        const updateRowDataResult: ClientSideNodeManagerUpdateRowDataResult<TData> = {
+            rowNodeTransaction: { remove: [], update: [], add: [] },
+            rowsInserted: false,
+            rowsOrderChanged: false,
+        };
+
+        const nodesToUnselect: RowNode[] = [];
+
+        this.executeRemove(rowDataTran, updateRowDataResult, nodesToUnselect);
+        this.executeUpdate(rowDataTran, updateRowDataResult, nodesToUnselect);
+        this.executeAdd(rowDataTran, updateRowDataResult);
+
+        this.updateSelection(nodesToUnselect, 'rowDataChanged');
+
+        return updateRowDataResult;
     }
 
     /**
