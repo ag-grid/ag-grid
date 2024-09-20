@@ -351,7 +351,7 @@ export class ColumnFactory extends BeanStub implements NamedBean {
         }
 
         // width - we only set width if column is not flexing
-        const noFlexThisCol = column.getFlex() <= 0;
+        const noFlexThisCol = column.getFlex() != null;
         if (noFlexThisCol) {
             // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
             const width = _attrToNumber(colDef.width);
