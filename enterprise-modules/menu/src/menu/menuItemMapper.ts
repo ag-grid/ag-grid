@@ -36,7 +36,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private menuService: MenuService;
     private sortController?: SortController;
     private columnAutosizeService?: ColumnAutosizeService;
-    private expansionService: IExpansionService;
+    private expansionService?: IExpansionService;
     private clipboardService?: IClipboardService;
     private aggFuncService?: IAggFuncService;
     private csvCreator?: ICsvCreator;
@@ -232,12 +232,12 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             case 'expandAll':
                 return {
                     name: localeTextFunc('expandAll', 'Expand All Row Groups'),
-                    action: () => this.expansionService.expandAll(true),
+                    action: () => this.expansionService?.expandAll(true),
                 };
             case 'contractAll':
                 return {
                     name: localeTextFunc('collapseAll', 'Collapse All Row Groups'),
-                    action: () => this.expansionService.expandAll(false),
+                    action: () => this.expansionService?.expandAll(false),
                 };
             case 'copy':
                 if (this.gos.assertModuleRegistered(ModuleNames.ClipboardModule, 'Copy from Menu')) {

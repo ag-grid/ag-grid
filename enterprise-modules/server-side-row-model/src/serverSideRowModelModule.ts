@@ -51,10 +51,25 @@ export const ServerSideRowModelCoreModule = _defineModule({
         StoreFactory,
         ListenerUtils,
         ServerSideSelectionService,
-        ServerSideExpansionService,
         LazyBlockLoadingService,
     ],
     dependantModules: [EnterpriseCoreModule, _RowNodeBlockModule],
+});
+
+export const ServerSideRowModelRowSelectionModule = _defineModule({
+    version: VERSION,
+    moduleName: `${ModuleNames.ServerSideRowModelModule}-row-selection`,
+    rowModel: 'serverSide',
+    beans: [ServerSideSelectionService],
+    dependantModules: [ServerSideRowModelCoreModule],
+});
+
+export const ServerSideRowModelRowGroupingModule = _defineModule({
+    version: VERSION,
+    moduleName: `${ModuleNames.ServerSideRowModelModule}-row-grouping`,
+    rowModel: 'serverSide',
+    beans: [ServerSideExpansionService],
+    dependantModules: [ServerSideRowModelCoreModule],
 });
 
 export const ServerSideRowModelSortModule = _defineModule({
@@ -86,5 +101,11 @@ export const ServerSideRowModelApiModule = _defineModule<_ServerSideRowModelGrid
 export const ServerSideRowModelModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.ServerSideRowModelModule,
-    dependantModules: [ServerSideRowModelCoreModule, ServerSideRowModelApiModule, ServerSideRowModelSortModule],
+    dependantModules: [
+        ServerSideRowModelCoreModule,
+        ServerSideRowModelApiModule,
+        ServerSideRowModelRowSelectionModule,
+        ServerSideRowModelSortModule,
+        ServerSideRowModelRowGroupingModule,
+    ],
 });

@@ -48,7 +48,6 @@ import type { RowModelType } from './interfaces/iRowModel';
 import { LocaleService } from './localeService';
 import { AnimationFrameService } from './misc/animationFrameService';
 import { ApiEventService } from './misc/apiEventService';
-import { ExpansionService } from './misc/expansionService';
 import { MenuService } from './misc/menuService';
 import { ResizeObserverService } from './misc/resizeObserverService';
 import { ModuleNames } from './modules/moduleNames';
@@ -478,7 +477,6 @@ export class GridCoreCreator {
             CtrlsFactory,
             SyncService,
             OverlayService,
-            ExpansionService,
             ApiEventService,
             AriaAnnouncementService,
             MenuService,

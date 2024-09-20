@@ -42,6 +42,7 @@ import type {
 } from '../../interfaces/gridState';
 import type { IExpansionService } from '../../interfaces/iExpansionService';
 import type { FilterModel } from '../../interfaces/iFilter';
+import type { IRowModel } from '../../interfaces/iRowModel';
 import type { ISelectionService } from '../../interfaces/iSelectionService';
 import type { ISideBarService } from '../../interfaces/iSideBar';
 import type { SortModelItem } from '../../interfaces/iSortModelItem';
@@ -65,11 +66,12 @@ export class StateService extends BeanStub implements NamedBean {
     private columnGetStateService: ColumnGetStateService;
     private paginationService?: PaginationService;
     private selectionService?: ISelectionService;
-    private expansionService: IExpansionService;
+    private expansionService?: IExpansionService;
     private columnAnimationService: ColumnAnimationService;
     private columnApplyStateService: ColumnApplyStateService;
     private sideBarService?: ISideBarService;
     private rangeService?: IRangeService;
+    private rowModel: IRowModel;
 
     public wireBeans(beans: BeanCollection): void {
         this.filterManager = beans.filterManager;
@@ -87,6 +89,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.columnApplyStateService = beans.columnApplyStateService;
         this.sideBarService = beans.sideBarService;
         this.rangeService = beans.rangeService;
+        this.rowModel = beans.rowModel;
     }
 
     private isClientSideRowModel: boolean;
@@ -747,7 +750,16 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getRowGroupExpansionState(): RowGroupExpansionState | undefined {
-        const expandedRowGroups = this.expansionService.getExpandedRows();
+        if (!this.expansionService) {
+            return undefined;
+        }
+
+        const expandedRowGroups: string[] = [];
+        this.rowModel.forEachNode(({ expanded, id }) => {
+            if (expanded && id) {
+                expandedRowGroups.push(id);
+            }
+        });
         return expandedRowGroups.length
             ? {
                   expandedRowGroupIds: expandedRowGroups,
@@ -756,7 +768,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setRowGroupExpansionState(rowGroupExpansionState: RowGroupExpansionState): void {
-        this.expansionService.expandRows(rowGroupExpansionState.expandedRowGroupIds);
+        this.expansionService?.expandRows(rowGroupExpansionState.expandedRowGroupIds);
     }
 
     private updateColumnState(features: (keyof GridState)[]): void {

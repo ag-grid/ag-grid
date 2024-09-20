@@ -292,7 +292,6 @@ export type { ResizeObserverService } from './misc/resizeObserverService';
 export { IImmutableService } from './interfaces/iImmutableService';
 export type { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
-export { ExpansionService } from './misc/expansionService';
 export type { MenuService } from './misc/menuService';
 export { IContextMenuParams } from './misc/menuService';
 

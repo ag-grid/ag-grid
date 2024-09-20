@@ -279,7 +279,7 @@ export interface CoreBeanCollection {
     rowModelHelperService?: RowModelHelperService;
     detailGridApiService?: IDetailGridApiService;
     gridDestroyService: GridDestroyService;
-    expansionService: IExpansionService;
+    expansionService?: IExpansionService;
     sideBarService?: ISideBarService;
     ssrmTransactionManager?: IServerSideTransactionManager;
     columnChooserFactory?: IColumnChooserFactory;

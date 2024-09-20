@@ -21,7 +21,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
 
     private valueCache: ValueCache;
     private serverSideRowModel: ServerSideRowModel;
-    private selectionService: ServerSideSelectionService;
+    private selectionService?: ServerSideSelectionService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueCache = beans.valueCache;
@@ -140,7 +140,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
             return { status: ServerSideTransactionResultStatus.StoreNotStarted };
         } else if (res) {
             this.valueCache.onDataChanged();
-            if (res.remove) {
+            if (res.remove && this.selectionService) {
                 const removedRowIds = res.remove.map((row) => row.id!);
                 this.selectionService.deleteSelectionStateFromParent(transaction.route || [], removedRowIds);
             }
