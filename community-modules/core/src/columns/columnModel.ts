@@ -380,7 +380,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         destroyPrevious();
-        const [tree, treeDepth] = this.columnFactory.balanceTreeForAutoCols(list, this.cols?.tree);
+        const [tree, treeDepth] = this.columnFactory.balanceTreeForAutoCols(list, this.cols.tree);
         this.autoCols = {
             list,
             tree,
@@ -402,18 +402,28 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private createControlsCols(): void {
-        if (!this.controlsColService) {
+        const destroyCollection = () => {
             destroyColumnTree(this.context, this.controlsCols?.tree);
             this.controlsCols = null;
+        };
+
+        if (!this.controlsColService) {
+            destroyCollection();
         }
+
+        // the new tree dept will equal the current tree dept of cols
+        const newTreeDepth = this.cols.treeDepth;
+        const oldTreeDepth = this.controlsCols?.treeDepth ?? -1;
+        const treeDeptSame = oldTreeDepth == newTreeDepth;
 
         const list = this.controlsColService?.createControlsCols() ?? [];
         const areSame = areColIdsEqual(list, this.controlsCols?.list ?? []);
 
-        if (areSame) {
+        if (areSame && treeDeptSame) {
             return;
         }
 
+        destroyCollection();
         const [tree, treeDepth] = this.columnFactory.balanceTreeForAutoCols(list, this.cols.tree);
         this.controlsCols = {
             list,
@@ -422,19 +432,17 @@ export class ColumnModel extends BeanStub implements NamedBean {
             map: {},
         };
 
-        function sortControlsColsFirst(a: AgColumn, b: AgColumn): number {
-            const isAControl = isColumnControlsCol(a);
-            const isBControl = isColumnControlsCol(b);
-            if (isAControl && !isBControl) {
-                return -1;
+        const putControlscolsFirstInList = (cols: AgColumn[] | null): AgColumn[] | null => {
+            if (!cols) {
+                return null;
             }
-            if (!isAControl && isBControl) {
-                return 1;
-            }
-            return 0;
-        }
-        this.lastOrder?.sort(sortControlsColsFirst);
-        this.lastPivotOrder?.sort(sortControlsColsFirst);
+            // we use colId, and not instance, to remove old controlsCols
+            const colsFiltered = cols.filter((col) => !isColumnControlsCol(col));
+            return [...list, ...colsFiltered];
+        };
+
+        this.lastOrder = putControlscolsFirstInList(this.lastOrder);
+        this.lastPivotOrder = putControlscolsFirstInList(this.lastPivotOrder);
     }
 
     private addControlsCols(): void {
