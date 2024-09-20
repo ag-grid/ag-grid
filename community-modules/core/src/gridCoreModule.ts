@@ -1,4 +1,4 @@
-import { AlignedGridsModule } from './alignedGridsModule';
+import { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
 import { CommunityApiModule } from './api/apiModule';
 import { ColumnAutosizeModule } from './columnAutosize/columnAutosizeModule';
 import { ColumnMoveModule } from './columnMove/columnMoveModule';
@@ -7,12 +7,19 @@ import { ControlsColumnModule, DataTypeModule } from './columns/columnModule';
 import { DragAndDropModule, RowDragModule } from './dragAndDrop/dragModule';
 import { EditModule } from './edit/editModule';
 import { FilterModule } from './filter/filterModule';
+import { ColumnGroupHeaderModule, ColumnHeaderModule } from './headerRendering/cells/headerModule';
 import { _defineModule } from './interfaces/iModule';
 import { StateModule } from './misc/state/stateModule';
 import { ModuleNames } from './modules/moduleNames';
 import { PaginationModule } from './pagination/paginationModule';
 import { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
+import {
+    AnimateShowChangeCellRendererModule,
+    AnimateSlideCellRendererModule,
+    CheckboxCellRendererModule,
+} from './rendering/cellRenderers/cellRendererModule';
 import { StickyRowModule } from './rendering/features/stickyRowModule';
+import { OverlayModule } from './rendering/overlays/overlayModule';
 import { RowSelectionModule } from './selection/rowSelectionModule';
 import { SortModule } from './sort/sortModule';
 import { ValidationService } from './validation/validationService';
@@ -55,5 +62,11 @@ export const CommunityFeaturesModule = _defineModule({
         SortModule,
         ValueCacheModule,
         ExpressionModule,
+        AnimateShowChangeCellRendererModule,
+        AnimateSlideCellRendererModule,
+        CheckboxCellRendererModule,
+        ColumnHeaderModule,
+        ColumnGroupHeaderModule,
+        OverlayModule,
     ],
 });

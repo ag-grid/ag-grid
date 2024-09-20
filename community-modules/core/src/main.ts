@@ -329,8 +329,6 @@ export {
     ICellRendererParams,
     ISetFilterCellRendererParams,
 } from './rendering/cellRenderers/iCellRenderer';
-export { AnimateShowChangeCellRenderer } from './rendering/cellRenderers/animateShowChangeCellRenderer';
-export { AnimateSlideCellRenderer } from './rendering/cellRenderers/animateSlideCellRenderer';
 export {
     GroupCellRendererParams,
     IGroupCellRenderer,
@@ -408,7 +406,7 @@ export {
     ILoadingCellRenderer,
     ILoadingCellRendererComp,
     ILoadingCellRendererParams,
-} from './rendering/cellRenderers/loadingCellRenderer';
+} from './interfaces/iLoadingCellRenderer';
 export { CssClassManager } from './rendering/cssClassManager';
 export { CheckboxCellRenderer, ICheckboxCellRendererParams } from './rendering/cellRenderers/checkboxCellRenderer';
 

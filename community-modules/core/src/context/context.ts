@@ -1,4 +1,4 @@
-import type { AlignedGridsService } from '../alignedGridsService';
+import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
 import type { RowModelHelperService } from '../api/rowModelHelperService';

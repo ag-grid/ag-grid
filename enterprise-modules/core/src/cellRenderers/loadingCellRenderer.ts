@@ -1,11 +1,5 @@
-import type { IComponent } from '../../interfaces/iComponent';
-import { _createIconNoSpan } from '../../utils/icon';
-import { Component, RefPlaceholder } from '../../widgets/component';
-import type { ICellRendererParams } from './iCellRenderer';
-
-export interface ILoadingCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, TContext> {}
-export interface ILoadingCellRenderer {}
-export interface ILoadingCellRendererComp extends ILoadingCellRenderer, IComponent<ILoadingCellRendererParams> {}
+import type { ILoadingCellRendererComp, ILoadingCellRendererParams } from '@ag-grid-community/core';
+import { Component, RefPlaceholder, _createIconNoSpan } from '@ag-grid-community/core';
 
 export class LoadingCellRenderer extends Component implements ILoadingCellRendererComp {
     private readonly eLoadingIcon: HTMLElement = RefPlaceholder;
