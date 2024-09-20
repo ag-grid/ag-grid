@@ -28,12 +28,12 @@ const minifiedLog = (errorNum: number, ...args: ErrorParams<any>) => {
 export function _warnOnce1<
     TId extends ErrorId | null = null,
     TShowMessageAtCallLocation = TId extends ErrorId ? ErrorMap[TId] : null,
->(id: _NoInfer<TId>, ...args: any[]) {
+>(id: _NoInfer<TId>, ...args: ErrorParams<TId>) {
     getMsgOrDefault(warnLog, id!, ...(args as any));
 }
 export function _errorOnce1<
     TId extends ErrorId | null = null,
     TShowMessageAtCallLocation = TId extends ErrorId ? ErrorMap[TId] : null,
->(id: _NoInfer<TId>, ...args: any[]) {
+>(id: _NoInfer<TId>, ...args: ErrorParams<TId>) {
     getMsgOrDefault(errorLog, id!, ...(args as any));
 }

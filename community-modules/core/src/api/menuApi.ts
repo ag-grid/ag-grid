@@ -1,6 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import type { Column } from '../interfaces/iColumn';
-import { _errorOnce } from '../utils/function';
+import type { _ErrorType } from '../validation/errorMessages/errorText';
+import { _errorOnce1 } from '../validation/logging';
 
 /** @deprecated v31.1 */
 export function showColumnMenuAfterButtonClick(
@@ -29,7 +30,7 @@ export function showColumnMenuAfterMouseClick(
         column = beans.columnModel.getColDefCol(colKey);
     }
     if (!column) {
-        _errorOnce(`column '${colKey}' not found`);
+        _errorOnce1<_ErrorType.NoColumnFoundForKey>(12);
         return;
     }
     beans.menuService.showColumnMenu({
@@ -42,7 +43,7 @@ export function showColumnMenuAfterMouseClick(
 export function showColumnMenu(beans: BeanCollection, colKey: string | Column): void {
     const column = beans.columnModel.getCol(colKey);
     if (!column) {
-        _errorOnce(`column '${colKey}' not found`);
+        _errorOnce1<_ErrorType.NoColumnFoundForKey>(12);
         return;
     }
     beans.menuService.showColumnMenu({

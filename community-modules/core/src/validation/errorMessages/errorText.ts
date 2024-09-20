@@ -33,13 +33,30 @@ const errorMap = {
         `No value for ${variable.cssName}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${variable.defaultValue} will be used and updated when styles load.` as const,
     [10 as e.InvalidCSRMStep]: (step: ClientSideRowModelStep | undefined, stepsMapped: string[]) =>
         `Invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}` as const,
-    [11]: () => 'No row data provided' as const,
+    [11 as e.NoGridOptions]: () => 'No gridOptions provided to createGrid' as const,
+    [12 as e.NoColumnFoundForKey]: (colKey: string) => `column '${colKey}' not found` as const,
+    [13 as e.NoRowIndexOnRowNode]: () =>
+        'Could not find rowIndex, this means tasks are being executed on a rowNode that has been removed from the grid.' as const,
+    [14 as e.RowIdCannotStartWithGroupPrefix]: (groupPrefix: string) =>
+        `Row IDs cannot start with ${groupPrefix}, this is a reserved prefix for AG Grid's row grouping feature.` as const,
+    [15 as e.InvalidExpressionType]: (expression: any) =>
+        ['value should be either a string or a function', expression] as const,
+    [16 as e.InvalidExpressionEvaluation]: (expression: string, params: any, e: any) =>
+        [
+            'Processing of the expression failed',
+            'Expression = ',
+            expression,
+            'Params = ',
+            params,
+            'Exception = ',
+            e,
+        ] as const,
 } as const;
 
 export type ErrorMap = typeof errorMap;
 export type ErrorId = keyof ErrorMap;
 
-export type ErrorParams<TId extends ErrorId> = TId extends ErrorId ? Parameters<ErrorMap[TId]> : [never];
+export type ErrorParams<TId extends ErrorId | null> = TId extends ErrorId ? Parameters<ErrorMap[TId]> : [never];
 
 export function getError<TId extends ErrorId>(errorId: TId, ...args: ErrorParams<TId>): any[] {
     const msgOrFunc: ErrorMap[TId] = errorMap[errorId];
