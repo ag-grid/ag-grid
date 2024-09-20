@@ -1,0 +1,10 @@
+export type RowDataNotAString = 1;
+export type DuplicateRowNode = 2;
+export type NoResetHeightWithAutoHeight = 3;
+export type NotFoundRowId = 4;
+export type NotFoundDataItem = 5;
+export type GroupHideOpenParentsOnlyForShowRowGroup = 6;
+export type PivotingNotSupportedAlignedGrids = 7;
+export type UnknownKeyNavigation = 8;
+export type NoValueForVariable = 9;
+export type InvalidCSRMStep = 10;

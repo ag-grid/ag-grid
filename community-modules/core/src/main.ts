@@ -298,7 +298,6 @@ export { StandardMenuFactory } from './headerRendering/cells/column/standardMenu
 
 // misc
 export { ResizeObserverService } from './misc/resizeObserverService';
-export { IImmutableService } from './interfaces/iImmutableService';
 export { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
 export { ExpansionService } from './misc/expansionService';
@@ -608,6 +607,7 @@ export { CommunityMenuApiModule as _CommunityMenuApiModule } from './api/apiModu
 export { AgEventType, AgPublicEventType } from './eventTypes';
 export { FocusService } from './focusService';
 export { GridOptionsService, PropertyChangedEvent } from './gridOptionsService';
+export { GridOptionOrDefault as _GridOptionOrDefault } from './gridOptionsDefaults';
 export {
     _getRowIdCallback,
     _getRowHeightForNode,
@@ -880,7 +880,8 @@ export {
 export { IWatermark } from './interfaces/iWatermark';
 
 export { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
-export { ConsoleService } from './validation/consoleReporting/consoleService';
+export { _warnOnce1, _errorOnce1 } from './validation/consoleReporting/logSvc';
+export type { _ErrorType } from './validation/consoleReporting/logSvc';
 
 // utils
 export {

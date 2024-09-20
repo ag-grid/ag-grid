@@ -19,7 +19,9 @@ import type {
 } from './events';
 import type { AlignedGrid } from './interfaces/iAlignedGrid';
 import type { WithoutGridCommon } from './interfaces/iCommon';
-import { _errorOnce, _warnOnce } from './utils/function';
+import { _errorOnce } from './utils/function';
+import type { _ErrorType } from './validation/consoleReporting/logSvc';
+import { _warnOnce1 } from './validation/consoleReporting/logSvc';
 
 export class AlignedGridsService extends BeanStub implements NamedBean {
     beanName = 'alignedGridsService' as const;
@@ -183,10 +185,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 case 'columnPivotChanged':
                     // we cannot support pivoting with aligned grids as the columns will be out of sync as the
                     // grids will have columns created based on the row data of the grid.
-                    _warnOnce(
-                        'pivoting is not supported with aligned grids. ' +
-                            'You can only use one of these features at a time in a grid.'
-                    );
+                    _warnOnce1<_ErrorType.PivotingNotSupportedAlignedGrids>(7);
                     break;
             }
         });

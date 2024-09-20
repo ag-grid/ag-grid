@@ -100,7 +100,6 @@ import type { SortController } from '../sortController';
 import type { StylingService } from '../styling/stylingService';
 import type { SyncService } from '../syncService';
 import type { UndoRedoService } from '../undoRedo/undoRedoService';
-import type { ConsoleService } from '../validation/consoleReporting/consoleService';
 import type { ValidationService } from '../validation/validationService';
 import type { ExpressionService } from '../valueService/expressionService';
 import type { ValueCache } from '../valueService/valueCache';
@@ -222,7 +221,6 @@ export interface CoreBeanCollection {
     rangeService?: IRangeService;
     selectionHandleFactory: ISelectionHandleFactory;
     validationService?: ValidationService;
-    consoleService: ConsoleService;
     gridApi: GridApi;
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
@@ -374,7 +372,7 @@ export type BeanName =
     | 'columnGroupStateService'
     | 'columnApplyStateService'
     | 'columnUtils'
-    | 'consoleService'
+    | 'logSvc'
     | 'pivotResultColsService'
     | 'componentMetadataProvider'
     | 'context'
