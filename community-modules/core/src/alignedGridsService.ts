@@ -20,8 +20,8 @@ import type {
 import type { AlignedGrid } from './interfaces/iAlignedGrid';
 import type { WithoutGridCommon } from './interfaces/iCommon';
 import { _errorOnce } from './utils/function';
-import type { _ErrorType } from './validation/consoleReporting/logSvc';
-import { _warnOnce1 } from './validation/consoleReporting/logSvc';
+import type { _ErrorType } from './validation/errorMessages/errorText';
+import { _warnOnce1 } from './validation/logging';
 
 export class AlignedGridsService extends BeanStub implements NamedBean {
     beanName = 'alignedGridsService' as const;

@@ -880,8 +880,8 @@ export {
 export { IWatermark } from './interfaces/iWatermark';
 
 export { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
-export { _warnOnce1, _errorOnce1 } from './validation/consoleReporting/logSvc';
-export type { _ErrorType } from './validation/consoleReporting/logSvc';
+export { _warnOnce1, _errorOnce1 } from './validation/logging';
+export type { _ErrorType } from './validation/errorMessages/errorText';
 
 // utils
 export {

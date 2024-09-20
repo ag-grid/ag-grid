@@ -3,8 +3,8 @@ import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { GridTheme } from './entities/gridOptions';
 import type { ResizeObserverService } from './misc/resizeObserverService';
-import type { _ErrorType } from './validation/consoleReporting/logSvc';
-import { _warnOnce1 } from './validation/consoleReporting/logSvc';
+import type { _ErrorType } from './validation/errorMessages/errorText';
+import { _warnOnce1 } from './validation/logging';
 
 const ROW_HEIGHT: Variable = {
     cssName: '--ag-row-height',

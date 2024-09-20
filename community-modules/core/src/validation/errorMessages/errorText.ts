@@ -1,6 +1,7 @@
 import type { ClientSideRowModelStep } from '../../interfaces/iClientSideRowModel';
-import type * as e from './errorCodeTypes';
+import type * as e from './errorTypeIds';
 
+export type * as _ErrorType from './errorTypeIds';
 /**
  * NOTES on setting console messages:
  * 1. The message is a function that returns either a string or an array of any type.
@@ -10,7 +11,7 @@ import type * as e from './errorCodeTypes';
  *    This enables easy finding references of errors and also makes it clearer what the error is when reading the code.
  *    However, as it is just a type it does not add any bundle size.
  */
-const consoleMessages = {
+const errorMap = {
     [1 as e.RowDataNotAString]: () => '`rowData` must be an array' as const,
     [2 as e.DuplicateRowNode]: (nodeId: string | undefined) =>
         `Duplicate node id '${nodeId}' detected from getRowId callback, this could cause issues in your grid.` as const,
@@ -32,27 +33,25 @@ const consoleMessages = {
         `No value for ${variable.cssName}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${variable.defaultValue} will be used and updated when styles load.` as const,
     [10 as e.InvalidCSRMStep]: (step: ClientSideRowModelStep | undefined, stepsMapped: string[]) =>
         `Invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}` as const,
+    [11]: () => 'No row data provided' as const,
 } as const;
 
-export type ConsoleID = keyof typeof consoleMessages;
-export type ConsoleMessages = typeof consoleMessages;
+export type ErrorMap = typeof errorMap;
+export type ErrorId = keyof ErrorMap;
 
-export type ConsoleMessageParams<TId extends ConsoleID> = TId extends keyof ConsoleMessages
-    ? Parameters<ConsoleMessages[TId]>
-    : [never];
+export type ErrorParams<TId extends ErrorId> = TId extends ErrorId ? Parameters<ErrorMap[TId]> : [never];
 
-export function getConsoleMessage<TId extends ConsoleID>(consoleID: TId, ...args: ConsoleMessageParams<TId>): any[] {
-    const msgOrFunc: ConsoleMessages[TId] = consoleMessages[consoleID];
+export function getError<TId extends ErrorId>(errorId: TId, ...args: ErrorParams<TId>): any[] {
+    const msgOrFunc: ErrorMap[TId] = errorMap[errorId];
 
     if (!msgOrFunc) {
-        console.error(`Console Message for ID ${consoleID} not found`);
-        return [''];
+        return [`Missing error text for error id ${errorId}!`];
     }
 
-    const toLog = (msgOrFunc as any)(...args);
-    if (Array.isArray(toLog)) {
-        return toLog;
+    const errorBody = (msgOrFunc as any)(...args);
+    if (Array.isArray(errorBody)) {
+        return errorBody;
     } else {
-        return [toLog];
+        return [errorBody];
     }
 }

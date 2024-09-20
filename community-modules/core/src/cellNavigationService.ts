@@ -16,8 +16,8 @@ import type { RowCtrl } from './rendering/row/rowCtrl';
 import type { RowRenderer } from './rendering/rowRenderer';
 import { _last } from './utils/array';
 import { _missing } from './utils/generic';
-import type { _ErrorType } from './validation/consoleReporting/logSvc';
-import { _warnOnce1 } from './validation/consoleReporting/logSvc';
+import type { _ErrorType } from './validation/errorMessages/errorText';
+import { _warnOnce1 } from './validation/logging';
 
 export class CellNavigationService extends BeanStub implements NamedBean {
     beanName = 'cellNavigationService' as const;

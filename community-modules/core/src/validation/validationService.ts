@@ -7,9 +7,9 @@ import { _warnOnce } from '../utils/function';
 import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
 import { validateApiFunction } from './apiFunctionValidator';
-import type { ConsoleID, ConsoleMessageParams } from './consoleReporting/consoleMappings';
-import { getConsoleMessage } from './consoleReporting/consoleMappings';
-import { provideValidationServiceLogger } from './consoleReporting/logSvc';
+import type { ErrorId, ErrorParams } from './errorMessages/errorText';
+import { getError } from './errorMessages/errorText';
+import { provideValidationServiceLogger } from './logging';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import type { DependentValues, OptionsValidation, OptionsValidator, RequiredOptions } from './validationTypes';
 
@@ -214,7 +214,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
     }
 
-    public getConsoleMessage<TId extends ConsoleID>(id: TId, ...args: ConsoleMessageParams<TId>): any[] {
-        return getConsoleMessage(id, ...args);
+    public getConsoleMessage<TId extends ErrorId>(id: TId, ...args: ErrorParams<TId>): any[] {
+        return getError(id, ...args);
     }
 }

@@ -26,7 +26,7 @@ export const CommunityFeaturesModule = _defineModule({
     moduleName: '@ag-grid-community/core-community-features',
     dependantModules: [
         GridCoreModule,
-        ValidationsModule,
+        // ValidationsModule,
         EditModule,
         FilterModule,
         StateModule,
