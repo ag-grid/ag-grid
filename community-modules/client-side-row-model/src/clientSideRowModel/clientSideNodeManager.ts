@@ -1,6 +1,5 @@
 import type {
     BeanCollection,
-    ConsoleService,
     EventService,
     FuncColsService,
     GridOptionsService,
@@ -8,14 +7,16 @@ import type {
     RowDataTransaction,
     RowNodeTransaction,
     SelectionEventSourceType,
+    _ErrorType,
+    _GridOptionOrDefault,
 } from '@ag-grid-community/core';
 import {
     RowNode,
     _cloneObject,
-    _errorOnce,
+    _errorOnce1,
     _getRowIdCallback,
     _missingOrEmpty,
-    _warnOnce,
+    _warnOnce1,
 } from '@ag-grid-community/core';
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
@@ -47,6 +48,23 @@ export interface ClientSideNodeManagerUpdateRowDataResult {
     rowsInserted: boolean;
 }
 
+interface GridOptionsConfig {
+    treeData: _GridOptionOrDefault<'treeData'>;
+    masterDetail: _GridOptionOrDefault<'masterDetail'>;
+    isRowMaster: _GridOptionOrDefault<'isRowMaster'>;
+    groupDefaultExpanded: _GridOptionOrDefault<'groupDefaultExpanded'>;
+    getRowId: ReturnType<typeof _getRowIdCallback>;
+}
+function getMasterRowConfig(gos: GridOptionsService): GridOptionsConfig {
+    return {
+        treeData: gos.get('treeData'),
+        masterDetail: gos.get('masterDetail'),
+        isRowMaster: gos.get('isRowMaster'),
+        groupDefaultExpanded: gos.get('groupDefaultExpanded'),
+        getRowId: _getRowIdCallback(gos),
+    };
+}
+
 export class ClientSideNodeManager {
     private readonly rootNode: ClientSideNodeManagerRootNode;
 
@@ -54,7 +72,6 @@ export class ClientSideNodeManager {
     private eventService: EventService;
     private funcColsService: FuncColsService;
     private selectionService: ISelectionService;
-    private consoleService: ConsoleService;
     private beans: BeanCollection;
 
     private nextId = 0;
@@ -78,7 +95,6 @@ export class ClientSideNodeManager {
         this.eventService = eventService;
         this.funcColsService = funcColsService;
         this.beans = beans;
-        this.consoleService = beans.consoleService;
         this.selectionService = selectionService;
 
         this.rootNode.group = true;
@@ -101,9 +117,7 @@ export class ClientSideNodeManager {
 
     public setRowData(rowData: any[]): RowNode[] | undefined {
         if (typeof rowData === 'string') {
-            this.consoleService.warnOnce(22, 'f');
-            this.consoleService.warnOnce(2, 's', 'd');
-            this.consoleService.warnOnce(1);
+            _warnOnce1<_ErrorType.RowDataNotAString>(1);
             return;
         }
         this.rowCountReady = true;
@@ -122,13 +136,15 @@ export class ClientSideNodeManager {
 
         this.nextId = 0;
         this.allNodesMap = {};
+        // Read config once to avoid multiple calls within loops
+        const config = getMasterRowConfig(this.gos);
 
         if (rowData) {
             // we use rootNode as the parent, however if using ag-grid-enterprise, the grouping stage
             // sets the parent node on each row (even if we are not grouping). so setting parent node
             // here is for benefit of ag-grid-community users
             rootNode.allLeafChildren = rowData.map((dataItem, index) =>
-                this.createNode(dataItem, this.rootNode, TOP_LEVEL, index)
+                this.createNode(dataItem, this.rootNode, TOP_LEVEL, index, config)
             );
         } else {
             rootNode.allLeafChildren = [];
@@ -155,10 +171,11 @@ export class ClientSideNodeManager {
         };
 
         const nodesToUnselect: RowNode[] = [];
+        const config = getMasterRowConfig(this.gos);
 
-        this.executeRemove(rowDataTran, updateRowDataResult, nodesToUnselect);
-        this.executeUpdate(rowDataTran, updateRowDataResult, nodesToUnselect);
-        this.executeAdd(rowDataTran, updateRowDataResult);
+        this.executeRemove(rowDataTran, updateRowDataResult, nodesToUnselect, config);
+        this.executeUpdate(rowDataTran, updateRowDataResult, nodesToUnselect, config);
+        this.executeAdd(rowDataTran, updateRowDataResult, config);
 
         this.updateSelection(nodesToUnselect, 'rowDataChanged');
 
@@ -242,7 +259,11 @@ export class ClientSideNodeManager {
         }
     }
 
-    private executeAdd(rowDataTran: RowDataTransaction, result: ClientSideNodeManagerUpdateRowDataResult): void {
+    private executeAdd(
+        rowDataTran: RowDataTransaction,
+        result: ClientSideNodeManagerUpdateRowDataResult,
+        config: GridOptionsConfig
+    ): void {
         const add = rowDataTran.add;
         if (_missingOrEmpty(add)) {
             return;
@@ -252,13 +273,13 @@ export class ClientSideNodeManager {
         let addIndex = allLeafChildren.length;
 
         if (typeof rowDataTran.addIndex === 'number') {
-            addIndex = this.sanitizeAddIndex(rowDataTran.addIndex);
+            const allChildrenCount = this.rootNode.allLeafChildren?.length ?? 0;
+            addIndex = sanitizeAddIndex(rowDataTran.addIndex, allChildrenCount);
 
             if (addIndex > 0) {
                 // TODO: this code should not be here, see AG-12602
                 // This was a fix for AG-6231, but is not the correct fix
-                const isTreeData = this.gos.get('treeData');
-                if (isTreeData) {
+                if (config.treeData) {
                     for (let i = 0; i < allLeafChildren.length; i++) {
                         const node = allLeafChildren[i];
                         if (node?.rowIndex == addIndex - 1) {
@@ -272,7 +293,7 @@ export class ClientSideNodeManager {
 
         // create new row nodes for each data item
         const newNodes: RowNode[] = add!.map((item, index) =>
-            this.createNode(item, this.rootNode, TOP_LEVEL, addIndex + index)
+            this.createNode(item, this.rootNode, TOP_LEVEL, addIndex + index, config)
         );
 
         if (addIndex < allLeafChildren.length) {
@@ -305,23 +326,11 @@ export class ClientSideNodeManager {
         result.rowNodeTransaction.add = newNodes;
     }
 
-    private sanitizeAddIndex(addIndex: number): number {
-        const allChildrenCount = this.rootNode.allLeafChildren?.length ?? 0;
-        if (addIndex < 0 || addIndex >= allChildrenCount || Number.isNaN(addIndex)) {
-            return allChildrenCount; // Append. Also for negative values, as it was historically the behavior.
-        }
-
-        // Ensure index is a whole number and not a floating point.
-        // Use case: the user want to add a row in the middle, doing addIndex = array.length / 2.
-        // If the array has an odd number of elements, the addIndex need to be rounded up.
-        // Consider that array.slice does round up internally, but we are setting this value to node.sourceRowIndex.
-        return Math.ceil(addIndex);
-    }
-
     private executeRemove(
         rowDataTran: RowDataTransaction,
         { rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult,
-        nodesToUnselect: RowNode[]
+        nodesToUnselect: RowNode[],
+        config: GridOptionsConfig
     ): void {
         const { remove } = rowDataTran;
 
@@ -332,7 +341,7 @@ export class ClientSideNodeManager {
         const rowIdsRemoved: { [key: string]: boolean } = {};
 
         remove!.forEach((item) => {
-            const rowNode = this.lookupRowNode(item);
+            const rowNode = this.lookupRowNode(item, config.getRowId);
 
             if (!rowNode) {
                 return;
@@ -373,7 +382,8 @@ export class ClientSideNodeManager {
     private executeUpdate(
         rowDataTran: RowDataTransaction,
         { rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult,
-        nodesToUnselect: RowNode[]
+        nodesToUnselect: RowNode[],
+        config: GridOptionsConfig
     ): void {
         const { update } = rowDataTran;
         if (_missingOrEmpty(update)) {
@@ -381,7 +391,7 @@ export class ClientSideNodeManager {
         }
 
         update!.forEach((item) => {
-            const rowNode = this.lookupRowNode(item);
+            const rowNode = this.lookupRowNode(item, config.getRowId);
 
             if (!rowNode) {
                 return;
@@ -392,30 +402,27 @@ export class ClientSideNodeManager {
                 nodesToUnselect.push(rowNode);
             }
 
-            this.setMasterForRow(rowNode, item, TOP_LEVEL, false);
+            setMasterForRow(rowNode, item, TOP_LEVEL, false, config, this.funcColsService);
 
             rowNodeTransaction.update.push(rowNode);
         });
     }
 
-    private lookupRowNode(data: any): RowNode | null {
-        const getRowIdFunc = _getRowIdCallback(this.gos);
-
+    private lookupRowNode(data: any, getRowId: GridOptionsConfig['getRowId']): RowNode | null {
         let rowNode: RowNode | undefined;
-        if (getRowIdFunc) {
+        if (getRowId) {
             // find rowNode using id
-            const id = getRowIdFunc({ data, level: 0 });
+            const id = getRowId({ data, level: 0 });
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                _errorOnce(`could not find row id=${id}, data item was not found for this id`);
+                _errorOnce1<_ErrorType.NotFoundRowId>(4, id);
                 return null;
             }
         } else {
             // find rowNode using object references
             rowNode = this.rootNode.allLeafChildren?.find((node) => node.data === data);
             if (!rowNode) {
-                _errorOnce(`could not find data item as object was not found`, data);
-                _errorOnce(`Consider using getRowId to help the Grid find matching row data`);
+                _errorOnce1<_ErrorType.NotFoundDataItem>(5, data);
                 return null;
             }
         }
@@ -423,12 +430,18 @@ export class ClientSideNodeManager {
         return rowNode || null;
     }
 
-    private createNode(dataItem: any, parent: RowNode, level: number, sourceRowIndex: number): RowNode {
+    private createNode(
+        dataItem: any,
+        parent: RowNode,
+        level: number,
+        sourceRowIndex: number,
+        config: GridOptionsConfig
+    ): RowNode {
         const node: ClientSideNodeManagerRowNode = new RowNode(this.beans);
         node.sourceRowIndex = sourceRowIndex;
 
         node.group = false;
-        this.setMasterForRow(node, dataItem, level, true);
+        setMasterForRow(node, dataItem, level, true, config, this.funcColsService);
 
         if (parent) {
             node.parent = parent;
@@ -437,9 +450,7 @@ export class ClientSideNodeManager {
         node.setDataAndId(dataItem, this.nextId.toString());
 
         if (this.allNodesMap[node.id!]) {
-            _warnOnce(
-                `duplicate node id '${node.id}' detected from getRowId callback, this could cause issues in your grid.`
-            );
+            _warnOnce1<_ErrorType.DuplicateRowNode>(2, node.id);
         }
         this.allNodesMap[node.id!] = node;
 
@@ -447,47 +458,50 @@ export class ClientSideNodeManager {
 
         return node;
     }
+}
 
-    private setMasterForRow(rowNode: RowNode, data: any, level: number, setExpanded: boolean): void {
-        const isTreeData = this.gos.get('treeData');
-        if (isTreeData) {
-            rowNode.setMaster(false);
-            if (setExpanded) {
-                rowNode.expanded = false;
-            }
-        } else {
-            const masterDetail = this.gos.get('masterDetail');
-            // this is the default, for when doing grid data
-            if (masterDetail) {
-                // if we are doing master detail, then the
-                // default is that everything can be a Master Row.
-                const isRowMasterFunc = this.gos.get('isRowMaster');
-                if (isRowMasterFunc) {
-                    rowNode.setMaster(isRowMasterFunc(data));
-                } else {
-                    rowNode.setMaster(true);
-                }
-            } else {
-                rowNode.setMaster(false);
-            }
-
-            if (setExpanded) {
-                const rowGroupColumns = this.funcColsService.getRowGroupColumns();
-                const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
-
-                // need to take row group into account when determining level
-                const masterRowLevel = level + numRowGroupColumns;
-
-                rowNode.expanded = rowNode.master ? this.isExpanded(masterRowLevel) : false;
-            }
-        }
+function sanitizeAddIndex(addIndex: number, allChildrenCount: number): number {
+    if (addIndex < 0 || addIndex >= allChildrenCount || Number.isNaN(addIndex)) {
+        return allChildrenCount; // Append. Also for negative values, as it was historically the behavior.
     }
 
-    private isExpanded(level: any) {
-        const expandByDefault = this.gos.get('groupDefaultExpanded');
-        if (expandByDefault === -1) {
-            return true;
+    // Ensure index is a whole number and not a floating point.
+    // Use case: the user want to add a row in the middle, doing addIndex = array.length / 2.
+    // If the array has an odd number of elements, the addIndex need to be rounded up.
+    // Consider that array.slice does round up internally, but we are setting this value to node.sourceRowIndex.
+    return Math.ceil(addIndex);
+}
+
+function setMasterForRow(
+    rowNode: RowNode,
+    data: any,
+    level: number,
+    setExpanded: boolean,
+    { treeData, masterDetail, isRowMaster, groupDefaultExpanded }: GridOptionsConfig,
+    funcColsService: FuncColsService
+): void {
+    if (treeData) {
+        rowNode.setMaster(false);
+        if (setExpanded) {
+            rowNode.expanded = false;
         }
-        return level < expandByDefault;
+    } else {
+        // this is the default, for when doing grid data
+        let isMaster = false;
+        if (masterDetail) {
+            // if we are doing master detail, then the
+            // default is that everything can be a Master Row unless a callback says otherwise
+            isMaster = isRowMaster ? isRowMaster(data) : true;
+        }
+        rowNode.setMaster(isMaster);
+
+        if (setExpanded) {
+            const numRowGroupColumns = funcColsService.getRowGroupColumns()?.length ?? 0;
+            // need to take row group into account when determining level
+            const masterRowLevel = level + numRowGroupColumns;
+
+            const isExpanded = rowNode.master && (groupDefaultExpanded === -1 || masterRowLevel < groupDefaultExpanded);
+            rowNode.expanded = isExpanded;
+        }
     }
 }
