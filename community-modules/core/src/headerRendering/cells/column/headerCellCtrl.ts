@@ -9,6 +9,7 @@ import type { SortDirection } from '../../../entities/colDef';
 import { _getActiveDomElement } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
+import type { SelectAllFeature } from '../../../selection/selectAllFeature';
 import type { ColumnSortState } from '../../../utils/aria';
 import { _getAriaSortState } from '../../../utils/aria';
 import { _setDisplayed } from '../../../utils/dom';
@@ -22,7 +23,6 @@ import { _getHeaderClassesFromColDef } from '../cssClassApplier';
 import { HoverFeature } from '../hoverFeature';
 import type { IHeader, IHeaderParams } from './headerComp';
 import { HeaderComp } from './headerComp';
-import { SelectAllFeature } from './selectAllFeature';
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
@@ -36,7 +36,7 @@ type RefreshFunction = 'updateSortable' | 'tooltip' | 'headerClasses' | 'wrapTex
 
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgColumn, ResizeFeature> {
     private refreshFunctions: { [key in RefreshFunction]?: () => void } = {};
-    private selectAllFeature: SelectAllFeature;
+    private selectAllFeature?: SelectAllFeature;
 
     private sortable: boolean | null | undefined;
     private displayName: string | null;
@@ -204,19 +204,24 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private setupSelectAll(compBean: BeanStub): void {
-        this.selectAllFeature = compBean.createManagedBean(new SelectAllFeature(this.column));
+        if (!this.beans.selectionService) {
+            return;
+        }
+        this.selectAllFeature = compBean.createManagedBean(
+            this.beans.selectionService.createSelectAllFeature(this.column)
+        );
         this.selectAllFeature.setComp(this);
     }
 
-    public getSelectAllGui(): HTMLElement {
-        return this.selectAllFeature.getCheckboxGui();
+    public getSelectAllGui(): HTMLElement | undefined {
+        return this.selectAllFeature?.getCheckboxGui();
     }
 
     protected override handleKeyDown(e: KeyboardEvent): void {
         super.handleKeyDown(e);
 
         if (e.key === KeyCode.SPACE) {
-            this.selectAllFeature.onSpaceKeyDown(e);
+            this.selectAllFeature?.onSpaceKeyDown(e);
         }
         if (e.key === KeyCode.ENTER) {
             this.onEnterKeyDown(e);

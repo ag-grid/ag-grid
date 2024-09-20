@@ -9,6 +9,7 @@ import type {
     IGroupCellRenderer,
     IGroupCellRendererCtrl,
     IRowNode,
+    ISelectionService,
     RowDragService,
     RowNode,
     UserCompDetails,
@@ -18,7 +19,6 @@ import type {
 } from '@ag-grid-community/core';
 import {
     BeanStub,
-    CheckboxSelectionComponent,
     KeyCode,
     _cloneObject,
     _createIconNoSpan,
@@ -41,6 +41,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     private ctrlsService: CtrlsService;
     private funcColsService: FuncColsService;
     private rowDragService?: RowDragService;
+    private selectionService?: ISelectionService;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionService = beans.expressionService;
@@ -50,6 +51,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         this.userComponentFactory = beans.userComponentFactory;
         this.ctrlsService = beans.ctrlsService;
         this.funcColsService = beans.funcColsService;
+        this.selectionService = beans.selectionService;
     }
 
     private params: GroupCellRendererParams;
@@ -727,10 +729,11 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             // pinned rows cannot be selected
             !rowNode.rowPinned &&
             // details cannot be selected
-            !rowNode.detail;
+            !rowNode.detail &&
+            !!this.selectionService;
 
         if (checkboxNeeded) {
-            const cbSelectionComponent = new CheckboxSelectionComponent();
+            const cbSelectionComponent = this.selectionService!.createCheckboxSelectionComponent();
             this.createBean(cbSelectionComponent);
 
             cbSelectionComponent.init({

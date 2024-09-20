@@ -394,7 +394,6 @@ export {
 
 // rendering
 export { AutoWidthCalculator } from './rendering/autoWidthCalculator';
-export { CheckboxSelectionComponent } from './selection/checkboxSelectionComponent';
 export { CellComp } from './rendering/cell/cellComp';
 export { CellCtrl, ICellComp } from './rendering/cell/cellCtrl';
 export { RowCtrl, IRowComp } from './rendering/row/rowCtrl';
@@ -453,6 +452,7 @@ export { IGetRowsParams, IDatasource } from './interfaces/iDatasource';
 
 // selection
 export { ISelectionContext } from './selection/rowRangeSelectionContext';
+export { BaseSelectionService } from './selection/baseSelectionService';
 
 // styling
 export type { StylingService } from './styling/stylingService';

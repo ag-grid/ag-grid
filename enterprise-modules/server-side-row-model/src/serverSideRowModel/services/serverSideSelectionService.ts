@@ -11,8 +11,7 @@ import type {
     ServerSideRowSelectionState,
 } from '@ag-grid-community/core';
 import {
-    BeanStub,
-    CheckboxSelectionComponent,
+    BaseSelectionService,
     _getGroupSelectsDescendants,
     _getRowSelectionMode,
     _isUsingNewSelectionAPI,
@@ -23,7 +22,7 @@ import { DefaultStrategy } from './selection/strategies/defaultStrategy';
 import { GroupSelectsChildrenStrategy } from './selection/strategies/groupSelectsChildrenStrategy';
 import type { ISelectionStrategy } from './selection/strategies/iSelectionStrategy';
 
-export class ServerSideSelectionService extends BeanStub implements NamedBean, ISelectionService {
+export class ServerSideSelectionService extends BaseSelectionService implements NamedBean, ISelectionService {
     beanName = 'selectionService' as const;
 
     private rowModel: IRowModel;
@@ -254,17 +253,6 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
     // used by CSRM
     public filterFromSelection(): void {
         return;
-    }
-
-    private dispatchSelectionChanged(source: SelectionEventSourceType): void {
-        this.eventService.dispatchEvent({
-            type: 'selectionChanged',
-            source,
-        });
-    }
-
-    public createCheckboxSelectionComponent(): CheckboxSelectionComponent {
-        return new CheckboxSelectionComponent();
     }
 }
 function validateSelectionParameters({

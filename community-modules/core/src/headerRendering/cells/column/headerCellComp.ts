@@ -54,7 +54,9 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         this.ctrl.setComp(compProxy, this.getGui(), this.eResize, this.eHeaderCompWrapper, undefined);
 
         const selectAllGui = this.ctrl.getSelectAllGui();
-        this.eResize.insertAdjacentElement('afterend', selectAllGui);
+        if (selectAllGui) {
+            this.eResize.insertAdjacentElement('afterend', selectAllGui);
+        }
     }
 
     public override destroy(): void {

@@ -1,22 +1,22 @@
-import { isColumnControlsCol } from '../../../columns/columnUtils';
-import { BeanStub } from '../../../context/beanStub';
-import type { BeanCollection } from '../../../context/context';
-import type { AgColumn } from '../../../entities/agColumn';
-import type { SelectionOptions } from '../../../entities/gridOptions';
-import type { SelectionEventSourceType } from '../../../events';
+import { isColumnControlsCol } from '../columns/columnUtils';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { SelectionOptions } from '../entities/gridOptions';
+import type { SelectionEventSourceType } from '../events';
 import {
     _getActiveDomElement,
     _getHeaderCheckbox,
     _isClientSideRowModel,
     _isMultiRowSelection,
     _isServerSideRowModel,
-} from '../../../gridOptionsUtils';
-import type { IRowModel } from '../../../interfaces/iRowModel';
-import type { ISelectionService } from '../../../interfaces/iSelectionService';
-import { _setAriaHidden, _setAriaRole } from '../../../utils/aria';
-import { _warnOnce } from '../../../utils/function';
-import { AgCheckbox } from '../../../widgets/agCheckbox';
-import type { HeaderCellCtrl } from './headerCellCtrl';
+} from '../gridOptionsUtils';
+import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { ISelectionService } from '../interfaces/iSelectionService';
+import { _setAriaHidden, _setAriaRole } from '../utils/aria';
+import { _warnOnce } from '../utils/function';
+import { AgCheckbox } from '../widgets/agCheckbox';
 
 export class SelectAllFeature extends BeanStub {
     private rowModel: IRowModel;

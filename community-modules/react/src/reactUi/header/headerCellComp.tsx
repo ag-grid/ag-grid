@@ -55,8 +55,10 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
         ctrl.setComp(compProxy, eRef, eResize.current!, eHeaderCompWrapper.current!, compBean.current);
 
         const selectAllGui = ctrl.getSelectAllGui();
-        eResize.current?.insertAdjacentElement('afterend', selectAllGui);
-        compBean.current!.addDestroyFunc(() => selectAllGui.remove());
+        if (selectAllGui) {
+            eResize.current?.insertAdjacentElement('afterend', selectAllGui);
+            compBean.current!.addDestroyFunc(() => selectAllGui.remove());
+        }
     }, []);
 
     // js comps
