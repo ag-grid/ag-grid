@@ -1,13 +1,8 @@
-import type {
-    BeanCollection,
-    IRowNodeStage,
-    NamedBean,
-    SelectableService,
-    StageExecuteParams,
-} from '@ag-grid-community/core';
+import type { BeanCollection, IRowNodeStage, NamedBean, StageExecuteParams } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
 import { GroupStrategy } from './groupStrategy/groupStrategy';
+import type { SelectableService } from './selectableService';
 import { TreeStrategy } from './treeStrategy/treeStrategy';
 
 export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
@@ -17,7 +12,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     private strategy: GroupStrategy | TreeStrategy | undefined;
 
     public wireBeans(beans: BeanCollection) {
-        this.selectableService = beans.selectableService;
+        this.selectableService = beans.selectableService as SelectableService;
     }
 
     public execute(params: StageExecuteParams): void {

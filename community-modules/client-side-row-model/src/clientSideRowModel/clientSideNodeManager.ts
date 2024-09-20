@@ -52,7 +52,7 @@ export class ClientSideNodeManager {
     private gos: GridOptionsService;
     private eventService: EventService;
     private funcColsService: FuncColsService;
-    private selectionService: ISelectionService;
+    private selectionService?: ISelectionService;
     private beans: BeanCollection;
 
     private nextId = 0;
@@ -68,7 +68,7 @@ export class ClientSideNodeManager {
         gos: GridOptionsService,
         eventService: EventService,
         funcColsService: FuncColsService,
-        selectionService: ISelectionService,
+        selectionService: ISelectionService | undefined,
         beans: BeanCollection
     ) {
         this.rootNode = rootNode;
@@ -215,7 +215,7 @@ export class ClientSideNodeManager {
     private updateSelection(nodesToUnselect: RowNode[], source: SelectionEventSourceType): void {
         const selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
-            this.selectionService.setNodesSelected({
+            this.selectionService?.setNodesSelected({
                 newValue: false,
                 nodes: nodesToUnselect,
                 suppressFinishActions: true,
@@ -227,7 +227,7 @@ export class ClientSideNodeManager {
         // a new node was inserted, so a parent that was previously selected (as all
         // children were selected) should not be tri-state (as new one unselected against
         // all other selected children).
-        this.selectionService.updateGroupsFromChildrenSelections(source);
+        this.selectionService?.updateGroupsFromChildrenSelections(source);
 
         if (selectionChanged) {
             this.eventService.dispatchEvent({

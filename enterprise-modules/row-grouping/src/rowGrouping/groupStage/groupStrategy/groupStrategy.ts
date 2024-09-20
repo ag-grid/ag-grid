@@ -59,7 +59,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
     private funcColsService: FuncColsService;
     private valueService: ValueService;
     private beans: BeanCollection;
-    private selectionService: ISelectionService;
+    private selectionService?: ISelectionService;
     private showRowGroupColsService: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection) {
@@ -430,7 +430,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
         }
 
         // groups are about to get disposed, so need to deselect any that are selected
-        this.selectionService.filterFromSelection((node: RowNode) => node && !node.group);
+        this.selectionService?.filterFromSelection((node: RowNode) => node && !node.group);
 
         const { groupedCols } = details;
         const rootNode: GroupRow = details.rootNode;

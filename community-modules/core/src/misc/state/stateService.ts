@@ -64,7 +64,7 @@ export class StateService extends BeanStub implements NamedBean {
     private columnGroupStateService: ColumnGroupStateService;
     private columnGetStateService: ColumnGetStateService;
     private paginationService?: PaginationService;
-    private selectionService: ISelectionService;
+    private selectionService?: ISelectionService;
     private expansionService: IExpansionService;
     private columnAnimationService: ColumnAnimationService;
     private columnApplyStateService: ColumnApplyStateService;
@@ -727,6 +727,9 @@ export class StateService extends BeanStub implements NamedBean {
         | ServerSideRowSelectionState
         | ServerSideRowGroupSelectionState
         | undefined {
+        if (!this.selectionService) {
+            return undefined;
+        }
         const selectionState = this.selectionService.getSelectionState();
         const noSelections =
             !selectionState ||
@@ -740,7 +743,7 @@ export class StateService extends BeanStub implements NamedBean {
     private setRowSelectionState(
         rowSelectionState: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState
     ): void {
-        this.selectionService.setSelectionState(rowSelectionState, 'gridInitializing');
+        this.selectionService?.setSelectionState(rowSelectionState, 'gridInitializing');
     }
 
     private getRowGroupExpansionState(): RowGroupExpansionState | undefined {

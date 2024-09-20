@@ -12,6 +12,7 @@ import type {
 } from '@ag-grid-community/core';
 import {
     BeanStub,
+    CheckboxSelectionComponent,
     _getGroupSelectsDescendants,
     _getRowSelectionMode,
     _isUsingNewSelectionAPI,
@@ -260,6 +261,10 @@ export class ServerSideSelectionService extends BeanStub implements NamedBean, I
             type: 'selectionChanged',
             source,
         });
+    }
+
+    public createCheckboxSelectionComponent(): CheckboxSelectionComponent {
+        return new CheckboxSelectionComponent();
     }
 }
 function validateSelectionParameters({

@@ -73,7 +73,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
-    private selectionService: ISelectionService;
+    private selectionService?: ISelectionService;
     private valueCache: ValueCache;
     private environment: Environment;
 
@@ -1134,7 +1134,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
 
             if (_getGroupSelectsDescendants(this.gos)) {
-                const selectionChanged = this.selectionService.updateGroupsFromChildrenSelections(
+                const selectionChanged = this.selectionService?.updateGroupsFromChildrenSelections(
                     'rowGroupChanged',
                     changedPath
                 );
@@ -1204,7 +1204,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // so new rowNodes means the cache is wiped anyway.
 
         // - clears selection, done before we set row data to ensure it isn't readded via `selectionService.syncInOldRowNode`
-        this.selectionService.reset('rowDataChanged');
+        this.selectionService?.reset('rowDataChanged');
 
         this.nodeManager.setRowData(rowData);
 

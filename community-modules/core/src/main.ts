@@ -404,7 +404,7 @@ export {
 
 // rendering
 export { AutoWidthCalculator } from './rendering/autoWidthCalculator';
-export { CheckboxSelectionComponent } from './rendering/checkboxSelectionComponent';
+export { CheckboxSelectionComponent } from './selection/checkboxSelectionComponent';
 export { CellComp } from './rendering/cell/cellComp';
 export { CellCtrl, ICellComp } from './rendering/cell/cellCtrl';
 export { RowCtrl, IRowComp } from './rendering/row/rowCtrl';
@@ -984,6 +984,7 @@ export { Module, ModuleValidationResult, _defineModule } from './interfaces/iMod
 export { ModuleNames } from './modules/moduleNames';
 export { ModuleRegistry } from './modules/moduleRegistry';
 
+export { RowSelectionCoreModule } from './selection/rowSelectionModule';
 export { CommunityFeaturesModule, GridCoreModule } from './gridCoreModule';
 
 //  events

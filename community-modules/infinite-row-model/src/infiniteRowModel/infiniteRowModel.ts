@@ -29,7 +29,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
 
     private filterManager?: FilterManager;
     private sortController: SortController;
-    private selectionService: ISelectionService;
+    private selectionService?: ISelectionService;
     private rowRenderer: RowRenderer;
     private rowNodeBlockLoader: RowNodeBlockLoader;
 
@@ -182,7 +182,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
         const userGeneratingIds = getRowIdFunc != null;
 
         if (!userGeneratingIds) {
-            this.selectionService.reset('rowDataChanged');
+            this.selectionService?.reset('rowDataChanged');
         }
 
         this.resetCache();

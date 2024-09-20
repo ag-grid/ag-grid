@@ -24,7 +24,7 @@ export class SelectAllFeature extends BeanStub {
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
-        this.selectionService = beans.selectionService;
+        this.selectionService = beans.selectionService!;
     }
 
     private cbSelectAllVisible = false;

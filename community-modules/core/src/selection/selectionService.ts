@@ -21,6 +21,7 @@ import { _last } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _errorOnce, _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
+import { CheckboxSelectionComponent } from './checkboxSelectionComponent';
 import { RowRangeSelectionContext } from './rowRangeSelectionContext';
 
 export class SelectionService extends BeanStub implements NamedBean, ISelectionService {
@@ -668,5 +669,9 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
                 `selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`
             );
         }
+    }
+
+    public createCheckboxSelectionComponent(): CheckboxSelectionComponent {
+        return new CheckboxSelectionComponent();
     }
 }

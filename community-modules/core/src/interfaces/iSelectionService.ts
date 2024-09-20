@@ -1,5 +1,6 @@
 import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
+import type { CheckboxSelectionComponent } from '../selection/checkboxSelectionComponent';
 import type { ChangedPath } from '../utils/changedPath';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './selectionState';
 
@@ -36,6 +37,7 @@ export interface ISelectionService {
         justFiltered?: boolean;
         justCurrentPage?: boolean;
     }): void;
+    createCheckboxSelectionComponent(): CheckboxSelectionComponent;
 }
 
 interface INodeSelectionParams {

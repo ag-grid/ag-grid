@@ -99,7 +99,6 @@ import type { RowContainerHeightService } from '../rendering/rowContainerHeightS
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import type { RowNodeSorter } from '../rowNodes/rowNodeSorter';
-import type { SelectableService } from '../rowNodes/selectableService';
 import type { SortController } from '../sortController';
 import type { StylingService } from '../styling/stylingService';
 import type { SyncService } from '../syncService';
@@ -213,7 +212,7 @@ export interface CoreBeanCollection {
     frameworkOverrides: IFrameworkOverrides;
     cellPositionUtils: CellPositionUtils;
     rowPositionUtils: RowPositionUtils;
-    selectionService: ISelectionService;
+    selectionService?: ISelectionService;
     rowCssClassCalculator: RowCssClassCalculator;
     rowModel: IRowModel;
     ctrlsService: CtrlsService;
@@ -296,7 +295,6 @@ export interface CoreBeanCollection {
     pivotColDefService?: IPivotColDefService;
     statusBarService?: IStatusBarService;
     chartService?: IChartService;
-    selectableService: SelectableService;
     aggColumnNameService?: IAggColumnNameService;
     renderStatusService?: IRenderStatusService;
     rowDragService?: RowDragService;

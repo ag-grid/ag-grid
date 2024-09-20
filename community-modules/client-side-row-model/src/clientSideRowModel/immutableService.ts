@@ -22,7 +22,7 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
     beanName = 'immutableService' as const;
 
     private rowModel: IRowModel;
-    private selectionService: ISelectionService;
+    private selectionService?: ISelectionService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
@@ -140,7 +140,7 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
         if (this.isActive()) {
             this.setRowData(rowData);
         } else {
-            this.selectionService.reset('rowDataChanged');
+            this.selectionService?.reset('rowDataChanged');
             this.clientSideRowModel.setRowData(rowData);
         }
     }

@@ -6,6 +6,7 @@ import type { CellStyle } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import { _getActiveDomElement } from '../../gridOptionsUtils';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { _setAriaRole } from '../../utils/aria';
 import { _browserSupportsPreventScroll } from '../../utils/browser';
 import { _addStylesToElement, _clearElement, _removeFromParent } from '../../utils/dom';
@@ -16,7 +17,6 @@ import { Component } from '../../widgets/component';
 import type { PopupPositionParams } from '../../widgets/popupService';
 import type { TooltipParentComp } from '../../widgets/tooltipStateManager';
 import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';
-import type { CheckboxSelectionComponent } from './../checkboxSelectionComponent';
 import type { DndSourceComp } from './../dndSourceComp';
 import type { RowCtrl } from './../row/rowCtrl';
 import type { CellCtrl, ICellComp } from './cellCtrl';
@@ -250,7 +250,9 @@ export class CellComp extends Component implements TooltipParentComp {
         if (this.includeSelection) {
             if (this.checkboxSelectionComp == null) {
                 this.checkboxSelectionComp = this.cellCtrl.createSelectionCheckbox();
-                this.eCellWrapper!.insertBefore(this.checkboxSelectionComp.getGui(), this.eCellValue!);
+                if (this.checkboxSelectionComp) {
+                    this.eCellWrapper!.insertBefore(this.checkboxSelectionComp.getGui(), this.eCellValue!);
+                }
             }
         }
     }
