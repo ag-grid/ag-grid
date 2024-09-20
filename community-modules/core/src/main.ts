@@ -34,7 +34,6 @@ export {
     ISizeColumnsToFitParams,
 } from './interfaces/autoSize';
 export { IRenderStatusService } from './interfaces/renderStatusService';
-export { ColumnMoveModule } from './columnMove/columnMoveModule';
 
 // components
 export { ComponentUtil, _combineAttributesAndGridOptions, _processOnChange } from './components/componentUtil';
@@ -110,7 +109,6 @@ export type { DragService } from './dragAndDrop/dragService';
 export { DragListenerParams } from './dragAndDrop/dragService';
 export { IRowDragItem } from './interfaces/iRowDragItem';
 export type { HorizontalResizeService } from './dragAndDrop/horizontalResizeService';
-export { DragModule, HorizontalResizeModule, DragAndDropModule } from './dragAndDrop/dragModule';
 
 // entities
 export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroupShowType } from './interfaces/iColumn';
@@ -218,12 +216,6 @@ export {
 export { TextFilter } from './filter/provided/text/textFilter';
 export { IDateFilterParams, DateFilterParams, DateFilterModel } from './filter/provided/date/iDateFilter';
 export { DateFilter } from './filter/provided/date/dateFilter';
-export {
-    ColumnFilterModule as _ColumnFilterModule,
-    FilterCoreModule as _FilterCoreModule,
-    FloatingFilterModule as _FloatingFilterModule,
-    ReadOnlyFloatingFilterModule as _ReadOnlyFloatingFilterModule,
-} from './filter/filterModule';
 
 export {
     IFloatingFilter,
@@ -329,7 +321,6 @@ export {
 export { ICellEditorRendererComp, ICellEditorRendererParams } from './interfaces/iCellEditorRenderer';
 
 export { CheckboxCellEditor } from './edit/cellEditors/checkboxCellEditor';
-export { EditCoreModule as _EditCoreModule } from './edit/editModule';
 
 // rendering / cellRenderers
 export {
@@ -352,7 +343,6 @@ export {
     GroupCheckboxSelectionCallback,
     GroupCheckboxSelectionCallbackParams,
 } from './interfaces/groupCellRenderer';
-export { StickyRowModule } from './rendering/features/stickyRowModule';
 
 // status bar components
 export {
@@ -436,7 +426,6 @@ export {
 export { LoadCompleteEvent, LoadSuccessParams } from './rowNodeCache/iRowNodeBlock';
 export { RowNodeBlock } from './rowNodeCache/rowNodeBlock';
 export { RowNodeBlockLoader } from './rowNodeCache/rowNodeBlockLoader';
-export { RowNodeBlockModule as _RowNodeBlockModule } from './rowNodeCache/rowNodeBlockModule';
 export {
     IClientSideRowModel,
     ClientSideRowModelSteps,
@@ -603,11 +592,6 @@ export {
 } from './api/gridApi';
 export { IDetailGridApiService } from './interfaces/iDetailGridApiService';
 export { RowModelHelperService } from './api/rowModelHelperService';
-export {
-    CsrmSsrmSharedApiModule as _CsrmSsrmSharedApiModule,
-    SsrmInfiniteSharedApiModule as _SsrmInfiniteSharedApiModule,
-} from './api/sharedApiModule';
-export { CommunityMenuApiModule as _CommunityMenuApiModule } from './api/apiModule';
 export { AgEventType, AgPublicEventType } from './eventTypes';
 export type { FocusService } from './focusService';
 export type { GridOptionsService } from './gridOptionsService';
@@ -644,7 +628,6 @@ export {
 } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
 export type { EventService } from './eventService';
-export type { SelectableService } from './rowNodes/selectableService';
 export { RowNodeSorter, SortedRowNode, SortOption } from './rowNodes/rowNodeSorter';
 export type { CtrlsService } from './ctrlsService';
 export { GridComp } from './gridComp/gridComp';
@@ -984,7 +967,23 @@ export { Module, ModuleValidationResult, _defineModule } from './interfaces/iMod
 export { ModuleNames } from './modules/moduleNames';
 export { ModuleRegistry } from './modules/moduleRegistry';
 
+export { ColumnMoveModule } from './columnMove/columnMoveModule';
+export { DragModule, HorizontalResizeModule, DragAndDropModule } from './dragAndDrop/dragModule';
+export {
+    ColumnFilterModule as _ColumnFilterModule,
+    FilterCoreModule as _FilterCoreModule,
+    FloatingFilterModule as _FloatingFilterModule,
+    ReadOnlyFloatingFilterModule as _ReadOnlyFloatingFilterModule,
+} from './filter/filterModule';
+export { EditCoreModule as _EditCoreModule } from './edit/editModule';
+export { StickyRowModule } from './rendering/features/stickyRowModule';
+export { RowNodeBlockModule as _RowNodeBlockModule } from './rowNodeCache/rowNodeBlockModule';
 export { RowSelectionCoreModule } from './selection/rowSelectionModule';
+export {
+    CsrmSsrmSharedApiModule as _CsrmSsrmSharedApiModule,
+    SsrmInfiniteSharedApiModule as _SsrmInfiniteSharedApiModule,
+} from './api/sharedApiModule';
+export { CommunityMenuApiModule as _CommunityMenuApiModule } from './api/apiModule';
 export { CommunityFeaturesModule, GridCoreModule } from './gridCoreModule';
 
 //  events
