@@ -241,6 +241,11 @@ export interface _RowGridApi<TData> {
     getDisplayedRowCount(): number;
 
     /**
+     * Returns the number of top level rows. This is equivalent to `getDisplayedRowCount` when all rows are collapsed.
+     **/
+    getTopLevelRowCount(): number;
+
+    /**
      * Returns the row model inside the table.
      * From here you can see the original rows, rows after filter has been applied,
      * rows after aggregation has been applied, and the final set of 'to be displayed' rows.
@@ -775,13 +780,14 @@ export interface _PaginationGridApi {
     /** Returns the 0-based index of the page which is showing. */
     paginationGetCurrentPage(): number;
 
-    /** Returns the total number of pages. */
+    /** @deprecated v32.2 Use paginationGetPageCount instead. */
     paginationGetTotalPages(): number;
 
+    /** Returns the number of pages. */
+    paginationGetPageCount(): number;
+
     /**
-     * Returns the total number of pageable rows, as impacted by `gridOptions.paginateChildRows: true`.
-     *
-     * It is recommended to instead use `gridApi.getDisplayedRowCount()` if not using pagination, or if `gridOption.paginateChildRows=true`.
+     * @deprecated v32.2 Use `getTopLevelRowCount`, or if `paginateChildRows` is true, use `getDisplayedRowCount`.
      **/
     paginationGetRowCount(): number;
 

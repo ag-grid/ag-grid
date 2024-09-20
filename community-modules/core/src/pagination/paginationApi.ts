@@ -11,11 +11,15 @@ export function paginationGetPageSize(beans: BeanCollection): number {
 export function paginationGetCurrentPage(beans: BeanCollection): number {
     return beans.paginationService?.getCurrentPage() ?? 0;
 }
-
-export function paginationGetTotalPages(beans: BeanCollection): number {
+export function paginationGetPageCount(beans: BeanCollection): number {
     return beans.paginationService?.getTotalPages() ?? 1;
 }
+/** @deprecated v32.2 */
+export function paginationGetTotalPages(beans: BeanCollection): number {
+    return paginationGetPageCount(beans);
+}
 
+/** @deprecated v32.2 */
 export function paginationGetRowCount(beans: BeanCollection): number {
     return beans.paginationService ? beans.paginationService.getMasterRowCount() : beans.rowModel.getRowCount();
 }

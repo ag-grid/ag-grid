@@ -152,6 +152,16 @@ const deprecatedFunctions: {
         old: 'getInfiniteRowCount()',
         new: 'getDisplayedRowCount()',
     },
+    paginationGetRowCount: {
+        version: 'v32.2',
+        message:
+            '`paginationGetRowCount` is deprecated, use `getTopLevelRowCount`, or if `paginateChildRows: true` use `getDisplayedRowCount`',
+    },
+    paginationGetTotalPages: {
+        version: 'v32.2',
+        old: 'paginationGetTotalPages()',
+        new: 'paginationGetPageCount()',
+    },
 };
 
 export function validateApiFunction<TFunctionName extends ApiFunctionName>(

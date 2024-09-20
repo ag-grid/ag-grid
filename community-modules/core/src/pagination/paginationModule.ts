@@ -3,6 +3,7 @@ import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import {
     paginationGetCurrentPage,
+    paginationGetPageCount,
     paginationGetPageSize,
     paginationGetRowCount,
     paginationGetTotalPages,
@@ -32,6 +33,7 @@ export const PaginationApiModule = _defineModule<_PaginationGridApi>({
         paginationGetCurrentPage,
         paginationGetTotalPages,
         paginationGetRowCount,
+        paginationGetPageCount,
         paginationGoToNextPage,
         paginationGoToPreviousPage,
         paginationGoToFirstPage,

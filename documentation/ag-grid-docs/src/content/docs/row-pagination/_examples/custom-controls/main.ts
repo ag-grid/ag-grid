@@ -53,13 +53,12 @@ function setText(selector: string, text: any) {
 function onPaginationChanged() {
     console.log('onPaginationPageLoaded');
 
-    // Workaround for bug in events order
     if (gridApi!) {
         setText('#lbLastPageFound', gridApi!.paginationIsLastPageFound());
         setText('#lbPageSize', gridApi!.paginationGetPageSize());
         // we +1 to current page, as pages are zero based
         setText('#lbCurrentPage', gridApi!.paginationGetCurrentPage() + 1);
-        setText('#lbTotalPages', gridApi!.paginationGetTotalPages());
+        setText('#lbTotalPages', gridApi!.paginationGetPageCount());
 
         setLastButtonDisabled(!gridApi!.paginationIsLastPageFound());
     }
