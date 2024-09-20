@@ -9,8 +9,9 @@ import { _iterateObject } from '../utils/object';
 import { validateApiFunction } from './apiFunctionValidator';
 import type { ConsoleID, ConsoleMessageParams } from './consoleReporting/consoleMappings';
 import { getConsoleMessage } from './consoleReporting/consoleMappings';
+import { provideValidationServiceLogger } from './consoleReporting/logSvc';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
-import type { OptionsValidation, OptionsValidator, RequiredOptions } from './validationTypes';
+import type { DependentValues, OptionsValidation, OptionsValidator, RequiredOptions } from './validationTypes';
 
 export class ValidationService extends BeanStub implements NamedBean {
     beanName = 'validationService' as const;
@@ -21,6 +22,7 @@ export class ValidationService extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.beans = beans;
         this.gridOptions = beans.gridOptions;
+        provideValidationServiceLogger(this);
     }
 
     public postConstruct(): void {
@@ -155,22 +157,31 @@ export class ValidationService extends BeanStub implements NamedBean {
         validator: RequiredOptions<T>,
         options: T
     ): string | null {
-        const optionEntries = Object.entries(validator) as [string, any][];
-        const failed = optionEntries.find(([key, value]) => {
+        const optionEntries = Object.entries<DependentValues<T, keyof T>>(validator);
+        const failedOptions = optionEntries.filter(([key, value]) => {
             const gridOptionValue = options[key as keyof T];
-            return !value.includes(gridOptionValue);
+            return !value.required.includes(gridOptionValue);
         });
 
-        if (!failed) {
+        if (failedOptions.length === 0) {
             return null;
         }
 
-        const [failedKey, possibleOptions] = failed;
-        if (possibleOptions.length > 1) {
-            return `'${String(key)}' requires '${failedKey}' to be one of [${possibleOptions.join(', ')}].`;
-        }
-
-        return `'${String(key)}' requires '${failedKey}' to be ${possibleOptions[0]}.`;
+        return failedOptions
+            .map(
+                ([failedKey, possibleOptions]: [string, DependentValues<any, any>]) =>
+                    `'${String(key)}' requires '${failedKey}' to be one of [${possibleOptions.required
+                        .map((o: any) => {
+                            if (o === null) {
+                                return 'null';
+                            } else if (o === undefined) {
+                                return 'undefined';
+                            }
+                            return o;
+                        })
+                        .join(', ')}]. ${possibleOptions.reason ?? ''}`
+            )
+            .join('\n           '); // make multiple messages easier to read
     }
 
     private checkProperties<T extends object>(
@@ -203,7 +214,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
     }
 
-    public getConsoleMessage<TId extends ConsoleID>(id: TId, ...args: ConsoleMessageParams<TId>): string {
+    public getConsoleMessage<TId extends ConsoleID>(id: TId, ...args: ConsoleMessageParams<TId>): any[] {
         return getConsoleMessage(id, ...args);
     }
 }

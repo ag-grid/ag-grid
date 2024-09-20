@@ -37,4 +37,5 @@ export interface OptionsValidation<T extends object> {
 }
 
 // Each property key requires one of the values in the array to also be present.
-export type RequiredOptions<T extends object> = { [K in keyof T]: T[K][] };
+export type DependentValues<T extends object, K extends keyof T> = { required: T[K][]; reason?: string };
+export type RequiredOptions<T extends object> = { [K in keyof T]: DependentValues<T, K> };
