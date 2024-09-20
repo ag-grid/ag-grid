@@ -22,7 +22,7 @@ function getMsgOrDefault<TId extends ErrorId>(logger: LogFn, id: TId, ...args: E
 
 const minifiedLog = (errorNum: number, ...args: ErrorParams<any>) => {
     // work out how to pass args into the link if safe to do so
-    return `visit www.ag-grid.com/error-message?id=${errorNum} for the full message or register the ValidationModule to see the full message in the console.`;
+    return `visit www.ag-grid.com/error-message?id=${errorNum} for the full message or register the ValidationsModule to see the full message in the console.`;
 };
 
 export function _warnOnce1<

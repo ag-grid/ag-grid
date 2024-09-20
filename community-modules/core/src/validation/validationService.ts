@@ -3,9 +3,11 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
+import { _defineModule } from '../interfaces/iModule';
 import { _warnOnce } from '../utils/function';
 import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
+import { VERSION } from '../version';
 import { validateApiFunction } from './apiFunctionValidator';
 import type { ErrorId, ErrorParams } from './errorMessages/errorText';
 import { getError } from './errorMessages/errorText';
@@ -218,3 +220,9 @@ export class ValidationService extends BeanStub implements NamedBean {
         return getError(id, ...args);
     }
 }
+
+export const ValidationsModule = _defineModule({
+    version: VERSION,
+    moduleName: '@ag-grid-community/core-validations',
+    beans: [ValidationService],
+});

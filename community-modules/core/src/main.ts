@@ -881,6 +881,7 @@ export { IWatermark } from './interfaces/iWatermark';
 
 export { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
 export { _warnOnce1, _errorOnce1 } from './validation/logging';
+export { ValidationsModule } from './validation/validationService';
 export type { _ErrorType } from './validation/errorMessages/errorText';
 
 // utils

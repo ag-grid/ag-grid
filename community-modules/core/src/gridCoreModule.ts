@@ -7,7 +7,7 @@ import { _defineModule } from './interfaces/iModule';
 import { StateModule } from './misc/state/stateModule';
 import { ModuleNames } from './modules/moduleNames';
 import { PaginationModule } from './pagination/paginationModule';
-import { ValidationService } from './validation/validationService';
+import { ValidationsModule } from './validation/validationService';
 import { VERSION } from './version';
 
 export const GridCoreModule = {
@@ -15,18 +15,12 @@ export const GridCoreModule = {
     moduleName: ModuleNames.CommunityCoreModule,
 };
 
-export const ValidationsModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/core-validations',
-    beans: [ValidationService],
-});
-
 export const CommunityFeaturesModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/core-community-features',
     dependantModules: [
         GridCoreModule,
-        // ValidationsModule,
+        ValidationsModule,
         EditModule,
         FilterModule,
         StateModule,
