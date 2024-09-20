@@ -256,7 +256,7 @@ function aggAvg(params: IAggFuncParams): {
         },
         // used for sorting
         toNumber: function () {
-            return this.value;
+            return this.value as any;
         },
     };
 }
