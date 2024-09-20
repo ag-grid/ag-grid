@@ -57,11 +57,11 @@ The grid comes with some built in Cell Components that cover some common cell re
 {% partial file="./_component-interface-vue.mdoc" /%}
 
 {% if isFramework("javascript", "angular", "vue") %}
-{% interfaceDocumentation interfaceName="ICellRendererParams" config={"description":""} /%}
+{% interfaceDocumentation interfaceName="ICellRendererParams" /%}
 {% /if %}
 
 {% if isFramework("react") %}
-{% interfaceDocumentation interfaceName="CustomCellRendererProps" config={"description":""} /%}
+{% interfaceDocumentation interfaceName="CustomCellRendererProps" /%}
 {% /if %}
 
 {% partial file="./_params_vue.mdoc" /%}
