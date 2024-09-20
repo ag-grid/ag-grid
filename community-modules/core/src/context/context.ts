@@ -260,7 +260,7 @@ export interface CoreBeanCollection {
     cellNavigationService: CellNavigationService;
     scrollVisibleService: ScrollVisibleService;
     pinnedWidthService: PinnedWidthService;
-    expressionService: ExpressionService;
+    expressionService?: ExpressionService;
     autoWidthCalculator: AutoWidthCalculator;
     componentMetadataProvider: ComponentMetadataProvider;
     agComponentUtils: AgComponentUtils;
