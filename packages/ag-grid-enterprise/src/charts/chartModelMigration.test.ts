@@ -7,7 +7,7 @@ import { heuristicVersionDetection, upgradeChartModel } from './chartModelMigrat
 
 function loadChartModel(name: string): ChartModel {
     return JSON.parse(
-        fs.readFileSync(`${__dirname}/../../test/chart-model-examples/${name}-chart-model.json`).toString()
+        fs.readFileSync(`${__dirname}/../test/chart-model-examples/${name}-chart-model.json`).toString()
     );
 }
 
@@ -88,7 +88,7 @@ describe('chartModelMigration', () => {
     });
 
     describe('heuristicVersionDetection', () => {
-        it.each(SNAPSHOT_NAMES)(`should detect best approximate version for %s ChartModel`, (name) => {
+        it.each(SNAPSHOT_NAMES)(`should detect best approximate version for %s ChartModel`, (name: string) => {
             const { detectedVersion = snapshotVersion(name) } = SNAPSHOT_CASES[name] ?? {};
             const chartModel = loadChartModel(name);
 
