@@ -47,8 +47,8 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private blockUtils: BlockUtils;
     private funcColsService: FuncColsService;
     private rowNodeBlockLoader: RowNodeBlockLoader;
-    private rowNodeSorter: RowNodeSorter;
-    private sortController: SortController;
+    private rowNodeSorter?: RowNodeSorter;
+    private sortController?: SortController;
     private selectionService?: ISelectionService;
     private nodeManager: NodeManager;
     private filterManager?: FilterManager;
@@ -351,9 +351,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private sortRowNodes(): void {
         const serverIsSorting =
             this.storeUtils.isServerSideSortAllLevels() || this.storeUtils.isServerSideSortOnServer();
-        const sortOptions = this.sortController.getSortOptions();
+        const sortOptions = this.sortController?.getSortOptions();
         const noSortApplied = !sortOptions || sortOptions.length == 0;
-        if (serverIsSorting || noSortApplied) {
+        if (serverIsSorting || noSortApplied || !this.rowNodeSorter) {
             this.nodesAfterSort = this.nodesAfterFilter;
             return;
         }

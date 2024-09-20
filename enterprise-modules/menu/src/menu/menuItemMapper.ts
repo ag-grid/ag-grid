@@ -34,7 +34,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private rowPositionUtils: RowPositionUtils;
     private chartMenuItemMapper: ChartMenuItemMapper;
     private menuService: MenuService;
-    private sortController: SortController;
+    private sortController?: SortController;
     private columnAutosizeService?: ColumnAutosizeService;
     private expansionService: IExpansionService;
     private clipboardService?: IClipboardService;
@@ -365,19 +365,19 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 return {
                     name: localeTextFunc('sortAscending', 'Sort Ascending'),
                     icon: _createIconNoSpan('sortAscending', this.gos, null),
-                    action: () => this.sortController.setSortForColumn(column!, 'asc', false, source),
+                    action: () => this.sortController?.setSortForColumn(column!, 'asc', false, source),
                 };
             case 'sortDescending':
                 return {
                     name: localeTextFunc('sortDescending', 'Sort Descending'),
                     icon: _createIconNoSpan('sortDescending', this.gos, null),
-                    action: () => this.sortController.setSortForColumn(column!, 'desc', false, source),
+                    action: () => this.sortController?.setSortForColumn(column!, 'desc', false, source),
                 };
             case 'sortUnSort':
                 return {
                     name: localeTextFunc('sortUnSort', 'Clear Sort'),
                     icon: _createIconNoSpan('sortUnSort', this.gos, null),
-                    action: () => this.sortController.setSortForColumn(column!, null, false, source),
+                    action: () => this.sortController?.setSortForColumn(column!, null, false, source),
                 };
             default: {
                 _warnOnce(`unknown menu item type ${key}`);

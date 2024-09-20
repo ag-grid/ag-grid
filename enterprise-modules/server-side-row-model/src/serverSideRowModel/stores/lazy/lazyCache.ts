@@ -33,8 +33,8 @@ export class LazyCache extends BeanStub {
     private focusService: FocusService;
     private nodeManager: NodeManager;
     private serverSideRowModel: ServerSideRowModel;
-    private rowNodeSorter: RowNodeSorter;
-    private sortController: SortController;
+    private rowNodeSorter?: RowNodeSorter;
+    private sortController?: SortController;
     private lazyBlockLoadingService: LazyBlockLoadingService;
 
     public wireBeans(beans: BeanCollection) {
@@ -1032,9 +1032,9 @@ export class LazyCache extends BeanStub {
      * Client side sorting
      */
     public clientSideSortRows() {
-        const sortOptions = this.sortController.getSortOptions();
+        const sortOptions = this.sortController?.getSortOptions() ?? [];
         const isAnySort = sortOptions.some((opt) => opt.sort != null);
-        if (!isAnySort) {
+        if (!isAnySort || !this.rowNodeSorter) {
             return;
         }
 

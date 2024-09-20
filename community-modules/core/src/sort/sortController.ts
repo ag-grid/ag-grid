@@ -1,23 +1,19 @@
-import type { ColumnModel } from './columns/columnModel';
-import type { FuncColsService } from './columns/funcColsService';
-import type { NamedBean } from './context/bean';
-import { BeanStub } from './context/beanStub';
-import type { BeanCollection } from './context/context';
-import type { AgColumn } from './entities/agColumn';
-import type { SortDirection } from './entities/colDef';
-import type { ColumnEventType, SortChangedEvent } from './events';
-import { _isColumnsSortingCoupledToGroup } from './gridOptionsUtils';
-import type { WithoutGridCommon } from './interfaces/iCommon';
-import type { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
-import type { SortOption } from './rowNodes/rowNodeSorter';
-import { _warnOnce } from './utils/function';
-
-export interface SortModelItem {
-    /** Column Id to apply the sort to. */
-    colId: string;
-    /** Sort direction */
-    sort: 'asc' | 'desc';
-}
+import type { ColumnModel } from '../columns/columnModel';
+import type { FuncColsService } from '../columns/funcColsService';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { SortDirection } from '../entities/colDef';
+import type { ColumnEventType, SortChangedEvent } from '../events';
+import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
+import type { SortModelItem } from '../interfaces/iSortModelItem';
+import type { SortOption } from '../interfaces/iSortOption';
+import { _warnOnce } from '../utils/function';
+import type { Component, ComponentSelector } from '../widgets/component';
+import { SortIndicatorComp, SortIndicatorSelector } from './sortIndicatorComp';
 
 const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
 export class SortController extends BeanStub implements NamedBean {
@@ -36,6 +32,12 @@ export class SortController extends BeanStub implements NamedBean {
     public progressSort(column: AgColumn, multiSort: boolean, source: ColumnEventType): void {
         const nextDirection = this.getNextSortDirection(column);
         this.setSortForColumn(column, nextDirection, multiSort, source);
+    }
+
+    public progressSortFromEvent(column: AgColumn, event: MouseEvent | KeyboardEvent): void {
+        const sortUsingCtrl = this.gos.get('multiSortKey') === 'ctrl';
+        const multiSort = sortUsingCtrl ? event.ctrlKey || event.metaKey : event.shiftKey;
+        this.progressSort(column, multiSort, 'uiColumnSorted');
     }
 
     public setSortForColumn(column: AgColumn, sort: SortDirection, multiSort: boolean, source: ColumnEventType): void {
@@ -304,5 +306,66 @@ export class SortController extends BeanStub implements NamedBean {
 
     public getDisplaySortIndexForColumn(column: AgColumn): number | null | undefined {
         return this.getIndexedSortMap().get(column);
+    }
+
+    public setupHeader(comp: Component, column: AgColumn, clickElement?: HTMLElement): void {
+        let lastMovingChanged = 0;
+
+        // keep track of last time the moving changed flag was set
+        comp.addManagedListeners(column, {
+            movingChanged: () => {
+                lastMovingChanged = new Date().getTime();
+            },
+        });
+
+        // add the event on the header, so when clicked, we do sorting
+        if (clickElement) {
+            comp.addManagedElementListeners(clickElement, {
+                click: (event: MouseEvent) => {
+                    // sometimes when moving a column via dragging, this was also firing a clicked event.
+                    // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076
+                    // this check stops sort if a) column is moving or b) column moved less than 200ms ago (so caters for race condition)
+                    const moving = column.isMoving();
+                    const nowTime = new Date().getTime();
+                    // typically there is <2ms if moving flag was set recently, as it would be done in same VM turn
+                    const movedRecently = nowTime - lastMovingChanged < 50;
+                    const columnMoving = moving || movedRecently;
+
+                    if (!columnMoving) {
+                        this.progressSortFromEvent(column, event);
+                    }
+                },
+            });
+        }
+
+        const onSortingChanged = () => {
+            const sort = column.getSort();
+            comp.addOrRemoveCssClass('ag-header-cell-sorted-asc', sort === 'asc');
+            comp.addOrRemoveCssClass('ag-header-cell-sorted-desc', sort === 'desc');
+            comp.addOrRemoveCssClass('ag-header-cell-sorted-none', !sort);
+
+            if (column.getColDef().showRowGroup) {
+                const sourceColumns = this.funcColsService.getSourceColumnsForGroupColumn(column);
+                // this == is intentional, as it allows null and undefined to match, which are both unsorted states
+                const sortDirectionsMatch = sourceColumns?.every(
+                    (sourceCol) => column.getSort() == sourceCol.getSort()
+                );
+                const isMultiSorting = !sortDirectionsMatch;
+
+                comp.addOrRemoveCssClass('ag-header-cell-sorted-mixed', isMultiSorting);
+            }
+        };
+        comp.addManagedEventListeners({
+            sortChanged: onSortingChanged,
+            columnRowGroupChanged: onSortingChanged,
+        });
+    }
+
+    public createSortIndicator(skipTemplate?: boolean): SortIndicatorComp {
+        return new SortIndicatorComp(skipTemplate);
+    }
+
+    public getSortIndicatorSelector(): ComponentSelector {
+        return SortIndicatorSelector;
     }
 }

@@ -1,4 +1,4 @@
-import { _defineModule } from '@ag-grid-community/core';
+import { SortModule, _defineModule } from '@ag-grid-community/core';
 import { ModuleNames, RowModelHelperService, _CsrmSsrmSharedApiModule } from '@ag-grid-community/core';
 import type { _ClientSideRowModelGridApi } from '@ag-grid-community/core';
 
@@ -19,7 +19,6 @@ import {
 import { FilterStage } from './clientSideRowModel/filterStage';
 import { FlattenStage } from './clientSideRowModel/flattenStage';
 import { ImmutableService } from './clientSideRowModel/immutableService';
-import { SortService } from './clientSideRowModel/sortService';
 import { SortStage } from './clientSideRowModel/sortStage';
 import { VERSION } from './version';
 
@@ -27,7 +26,15 @@ export const ClientSideRowModelCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.ClientSideRowModelModule}-core`,
     rowModel: 'clientSide',
-    beans: [ClientSideRowModel, FilterStage, SortStage, FlattenStage, SortService, ImmutableService],
+    beans: [ClientSideRowModel, FilterStage, FlattenStage, ImmutableService],
+});
+
+export const ClientSideRowModelSortModule = _defineModule({
+    version: VERSION,
+    moduleName: `${ModuleNames.ClientSideRowModelModule}-sort`,
+    rowModel: 'clientSide',
+    beans: [SortStage],
+    dependantModules: [ClientSideRowModelCoreModule, SortModule],
 });
 
 export const ClientSideRowModelApiModule = _defineModule<_ClientSideRowModelGridApi<any>>({
@@ -53,5 +60,5 @@ export const ClientSideRowModelApiModule = _defineModule<_ClientSideRowModelGrid
 export const ClientSideRowModelModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.ClientSideRowModelModule,
-    dependantModules: [ClientSideRowModelCoreModule, ClientSideRowModelApiModule],
+    dependantModules: [ClientSideRowModelCoreModule, ClientSideRowModelApiModule, ClientSideRowModelSortModule],
 });

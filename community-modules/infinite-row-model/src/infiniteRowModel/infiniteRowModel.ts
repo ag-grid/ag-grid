@@ -28,7 +28,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
     beanName = 'rowModel' as const;
 
     private filterManager?: FilterManager;
-    private sortController: SortController;
+    private sortController?: SortController;
     private selectionService?: ISelectionService;
     private rowRenderer: RowRenderer;
     private rowNodeBlockLoader: RowNodeBlockLoader;
@@ -139,7 +139,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
     }
 
     private isSortModelDifferent(): boolean {
-        return !_jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
+        return !_jsonEquals(this.cacheParams.sortModel, this.sortController?.getSortModel() ?? []);
     }
 
     public getType(): RowModelType {
@@ -211,7 +211,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
 
             // sort and filter model
             filterModel: this.filterManager?.getFilterModel() ?? {},
-            sortModel: this.sortController.getSortModel(),
+            sortModel: this.sortController?.getSortModel() ?? [],
 
             rowNodeBlockLoader: this.rowNodeBlockLoader,
 

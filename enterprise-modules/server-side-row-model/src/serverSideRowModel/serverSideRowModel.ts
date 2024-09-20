@@ -64,7 +64,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     private pivotResultColsService: PivotResultColsService;
     private funcColsService: FuncColsService;
     private filterManager?: FilterManager;
-    private sortController: SortController;
+    private sortController?: SortController;
     private rowRenderer: RowRenderer;
     private nodeManager: NodeManager;
     private storeFactory: StoreFactory;
@@ -243,7 +243,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             return allColsUnchanged && !missingCols;
         };
 
-        const sortModelDifferent = !_jsonEquals(this.storeParams.sortModel, this.sortController.getSortModel());
+        const sortModelDifferent = !_jsonEquals(this.storeParams.sortModel, this.sortController?.getSortModel() ?? []);
         const rowGroupDifferent = !areColsSame({
             oldCols: this.storeParams.rowGroupCols,
             newCols: rowGroupColumnVos,
@@ -404,7 +404,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             filterModel: this.filterManager?.isAdvancedFilterEnabled()
                 ? this.filterManager?.getAdvancedFilterModel()
                 : this.filterManager?.getFilterModel() ?? {},
-            sortModel: this.sortController.getSortModel(),
+            sortModel: this.sortController?.getSortModel() ?? [],
 
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),

@@ -7,7 +7,7 @@ import type { ColumnEvent, ColumnEventType } from '../events';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
-import type { SortController } from '../sortController';
+import type { SortController } from '../sort/sortController';
 import { _areEqual, _removeFromArray } from '../utils/array';
 import { _warnOnce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
@@ -76,7 +76,7 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
     beanName = 'columnApplyStateService' as const;
 
     private columnModel: ColumnModel;
-    private sortController: SortController;
+    private sortController?: SortController;
     private columnGetStateService: ColumnGetStateService;
     private funcColsService: FuncColsService;
     private visibleColsService: VisibleColsService;
@@ -618,7 +618,7 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
                 cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
             const changedColumns = getChangedColumns(sortChangePredicate);
             if (changedColumns.length > 0) {
-                this.sortController.dispatchSortChangedEvents(source, changedColumns);
+                this.sortController?.dispatchSortChangedEvents(source, changedColumns);
             }
 
             // special handling for moved column events

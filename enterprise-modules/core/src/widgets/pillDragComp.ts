@@ -43,8 +43,8 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         private dragSourceDropTarget: DropTarget,
         private ghost: boolean,
         private horizontal: boolean,
-        private template?: string,
-        private agComponents?: ComponentSelector[]
+        protected template?: string,
+        protected agComponents?: ComponentSelector[]
     ) {
         super();
     }

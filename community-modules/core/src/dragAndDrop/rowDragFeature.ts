@@ -23,7 +23,7 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import { RowHighlightPosition } from '../interfaces/iRowNode';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
-import type { SortController } from '../sortController';
+import type { SortController } from '../sort/sortController';
 import { _last } from '../utils/array';
 import { _warnOnce } from '../utils/function';
 import type { DragAndDropIcon, DragAndDropService, DraggingEvent, DropTarget } from './dragAndDropService';
@@ -82,7 +82,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private rowModel: IRowModel;
     private pageBoundsService: PageBoundsService;
     private focusService: FocusService;
-    private sortController: SortController;
+    private sortController?: SortController;
     private filterManager?: FilterManager;
     private selectionService?: ISelectionService;
     private mouseEventService: MouseEventService;
@@ -160,7 +160,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         if (isFilterPresent) {
             return true;
         }
-        const isSortActive = this.sortController.isSortActive();
+        const isSortActive = this.sortController?.isSortActive();
         if (isSortActive) {
             return true;
         }

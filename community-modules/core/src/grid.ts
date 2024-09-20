@@ -63,8 +63,6 @@ import { OverlayService } from './rendering/overlays/overlayService';
 import { RowCssClassCalculator } from './rendering/row/rowCssClassCalculator';
 import { RowContainerHeightService } from './rendering/rowContainerHeightService';
 import { RowRenderer } from './rendering/rowRenderer';
-import { RowNodeSorter } from './rowNodes/rowNodeSorter';
-import { SortController } from './sortController';
 import { StylingService } from './styling/stylingService';
 import { SyncService } from './syncService';
 import { _errorOnce, _warnOnce } from './utils/function';
@@ -468,14 +466,12 @@ export class GridCoreCreator {
             CellNavigationService,
             StylingService,
             ScrollVisibleService,
-            SortController,
             ColumnHoverService,
             ColumnAnimationService,
             ChangeDetectionService,
             AnimationFrameService,
             ColumnDefFactory,
             RowCssClassCalculator,
-            RowNodeSorter,
             CtrlsService,
             PinnedWidthService,
             RowNodeEventThrottle,
