@@ -4,18 +4,27 @@ import type {
     ChangedPath,
     ColumnModel,
     FuncColsService,
+    GridOptionsService,
     IRowNode,
     IShowRowGroupColsService,
     NamedBean,
-    PostSortRowsParams,
     RowNode,
     RowNodeSorter,
     RowNodeTransaction,
     SortOption,
     SortedRowNode,
-    WithoutGridCommon,
+    _ErrorType,
 } from '@ag-grid-community/core';
-import { BeanStub, _errorOnce, _missing, _warnOnce } from '@ag-grid-community/core';
+import { BeanStub, _errorOnce1, _missing } from '@ag-grid-community/core';
+
+function getConfig(gos: GridOptionsService) {
+    return {
+        groupMaintainOrder: gos.get('groupMaintainOrder'),
+        postSortRows: gos.getCallback('postSortRows'),
+        groupHideOpenParents: gos.get('groupHideOpenParents'),
+        treeData: gos.get('treeData'),
+    };
+}
 
 export class SortService extends BeanStub implements NamedBean {
     beanName = 'sortService' as const;
@@ -40,7 +49,7 @@ export class SortService extends BeanStub implements NamedBean {
         changedPath: ChangedPath | undefined,
         sortContainsGroupColumns: boolean
     ): void {
-        const groupMaintainOrder = this.gos.get('groupMaintainOrder');
+        const { groupHideOpenParents, groupMaintainOrder, postSortRows, treeData } = getConfig(this.gos);
         const groupColumnsPresent = this.columnModel.getCols().some((c) => c.isRowGroupActive());
 
         let allDirtyNodes: { [key: string]: true } = {};
@@ -49,11 +58,10 @@ export class SortService extends BeanStub implements NamedBean {
         }
 
         const isPivotMode = this.columnModel.isPivotMode();
-        const postSortFunc = this.gos.getCallback('postSortRows');
 
         const callback = (rowNode: RowNode) => {
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
-            this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterAggFilter, true);
+            this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterAggFilter, true, groupHideOpenParents);
 
             // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
             const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;
@@ -94,17 +102,14 @@ export class SortService extends BeanStub implements NamedBean {
 
             this.updateChildIndexes(rowNode);
 
-            if (postSortFunc) {
-                const params: WithoutGridCommon<PostSortRowsParams> = { nodes: rowNode.childrenAfterSort };
-                postSortFunc(params);
-            }
+            postSortRows?.({ nodes: rowNode.childrenAfterSort });
         };
 
         if (changedPath) {
             changedPath.forEachChangedNodeDepthFirst(callback);
         }
 
-        this.updateGroupDataForHideOpenParents(changedPath);
+        this.updateGroupDataForHideOpenParents(changedPath, groupHideOpenParents, treeData);
     }
 
     private calculateDirtyNodes(rowNodeTransactions?: RowNodeTransaction[] | null): { [nodeId: string]: true } {
@@ -217,21 +222,18 @@ export class SortService extends BeanStub implements NamedBean {
         }
     }
 
-    private updateGroupDataForHideOpenParents(changedPath?: ChangedPath) {
-        if (!this.gos.get('groupHideOpenParents')) {
+    private updateGroupDataForHideOpenParents(
+        changedPath: ChangedPath | undefined,
+        groupHideOpenParents: boolean,
+        isTreeData: boolean
+    ): void {
+        if (!groupHideOpenParents || isTreeData) {
             return;
-        }
-
-        if (this.gos.get('treeData')) {
-            _warnOnce(
-                `The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them.`
-            );
-            return false;
         }
 
         // recurse breadth first over group nodes after sort to 'pull down' group data to child groups
         const callback = (rowNode: RowNode) => {
-            this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterSort, false);
+            this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterSort, false, groupHideOpenParents);
             rowNode.childrenAfterSort!.forEach((child) => {
                 if (child.hasChildren()) {
                     callback(child);
@@ -244,8 +246,12 @@ export class SortService extends BeanStub implements NamedBean {
         }
     }
 
-    private pullDownGroupDataForHideOpenParents(rowNodes: RowNode[] | null, clearOperation: boolean) {
-        if (!this.gos.get('groupHideOpenParents') || _missing(rowNodes)) {
+    private pullDownGroupDataForHideOpenParents(
+        rowNodes: RowNode[] | null,
+        clearOperation: boolean,
+        groupHideOpenParents: boolean
+    ) {
+        if (!groupHideOpenParents || _missing(rowNodes)) {
             return;
         }
 
@@ -254,9 +260,7 @@ export class SortService extends BeanStub implements NamedBean {
             groupDisplayCols.forEach((groupDisplayCol) => {
                 const showRowGroup = groupDisplayCol.getColDef().showRowGroup;
                 if (typeof showRowGroup !== 'string') {
-                    _errorOnce(
-                        'groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup'
-                    );
+                    _errorOnce1<_ErrorType.GroupHideOpenParentsOnlyForShowRowGroup>(6);
                     return;
                 }
 

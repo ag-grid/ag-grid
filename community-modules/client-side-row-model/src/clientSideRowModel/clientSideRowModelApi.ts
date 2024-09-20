@@ -1,11 +1,12 @@
+import { _warnOnce1 } from '@ag-grid-community/core';
 import type {
     BeanCollection,
     ClientSideRowModelStep,
     IRowNode,
     RowDataTransaction,
     RowNodeTransaction,
+    _ErrorType,
 } from '@ag-grid-community/core';
-import { _warnOnce } from '@ag-grid-community/core';
 
 export function onGroupExpandedOrCollapsed(beans: BeanCollection): void {
     beans.expansionService.onGroupExpandedOrCollapsed();
@@ -42,7 +43,7 @@ export function forEachNodeAfterFilterAndSort<TData = any>(
 
 export function resetRowHeights(beans: BeanCollection): void {
     if (beans.columnModel.isAutoRowHeightActive()) {
-        _warnOnce('calling gridApi.resetRowHeights() makes no sense when using Auto Row Height.');
+        _warnOnce1<_ErrorType.NoResetHeightWithAutoHeight>(3);
         return;
     }
     beans.rowModelHelperService?.getClientSideRowModel()?.resetRowHeights();

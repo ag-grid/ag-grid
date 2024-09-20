@@ -1,24 +1,16 @@
 import type {
     BeanCollection,
-    IImmutableService,
     IRowModel,
     ISelectionService,
     NamedBean,
     RowDataTransaction,
     RowNode,
 } from '@ag-grid-community/core';
-import {
-    BeanStub,
-    _errorOnce,
-    _exists,
-    _getRowIdCallback,
-    _isClientSideRowModel,
-    _iterateObject,
-} from '@ag-grid-community/core';
+import { BeanStub, _exists, _getRowIdCallback, _isClientSideRowModel, _iterateObject } from '@ag-grid-community/core';
 
 import type { ClientSideRowModel } from './clientSideRowModel';
 
-export class ImmutableService extends BeanStub implements NamedBean, IImmutableService {
+export class ImmutableService extends BeanStub implements NamedBean {
     beanName = 'immutableService' as const;
 
     private rowModel: IRowModel;
@@ -51,7 +43,7 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
         return getRowIdProvided;
     }
 
-    public setRowData<TData>(rowData: TData[]): void {
+    private setRowData<TData>(rowData: TData[]): void {
         // convert the setRowData data into a transaction object by working out adds, removes and updates
 
         const rowDataTransaction = this.createTransactionForRowData(rowData);
@@ -78,16 +70,7 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
 
     /** Converts the setRowData() command to a transaction */
     private createTransactionForRowData<TData>(rowData: TData[]): RowDataTransaction | null {
-        if (!_isClientSideRowModel(this.gos)) {
-            _errorOnce('ImmutableService only works with ClientSideRowModel');
-            return null;
-        }
-
-        const getRowIdFunc = _getRowIdCallback(this.gos);
-        if (getRowIdFunc == null) {
-            _errorOnce('ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
-            return null;
-        }
+        const getRowIdFunc = _getRowIdCallback(this.gos)!;
 
         // get a map of the existing data, that we are going to modify as we find rows to not delete
         const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel

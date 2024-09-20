@@ -17,6 +17,7 @@ import type {
     RowModelType,
     RowNodeTransaction,
     ValueCache,
+    _ErrorType,
 } from '@ag-grid-community/core';
 import {
     BeanStub,
@@ -25,7 +26,7 @@ import {
     RowHighlightPosition,
     RowNode,
     _debounce,
-    _errorOnce,
+    _errorOnce1,
     _exists,
     _getGrandTotalRow,
     _getGroupSelectsDescendants,
@@ -681,7 +682,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (_missing(paramsStep)) {
-            _errorOnce(`invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}`);
+            _errorOnce1<_ErrorType.InvalidCSRMStep>(10, step, stepsMapped);
             return undefined;
         }
         const animate = !this.gos.get('suppressAnimationFrame');
@@ -824,11 +825,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
 
         return result;
-    }
-
-    // eslint-disable-next-line
-    public setDatasource(datasource: any): void {
-        _errorOnce('should never call setDatasource on clientSideRowController');
     }
 
     public getTopLevelNodes(): RowNode[] | null {
