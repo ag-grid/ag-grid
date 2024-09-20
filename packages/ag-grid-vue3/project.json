@@ -4,9 +4,15 @@
   "sourceRoot": "packages/ag-grid-vue3/src",
   "projectType": "library",
   "targets": {
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
     "build": {
       "executor": "nx:noop",
-      "dependsOn": ["build:types", "build:package", "build:copy-source"],
+      "dependsOn": ["build:types", "build:package"],
       "inputs": [],
       "outputs": [],
       "configurations": {
@@ -14,17 +20,9 @@
         "production": {}
       }
     },
-    "build:copy-source": {
-      "dependsOn": ["@ag-grid-community/vue3:build"],
-      "cache": true,
-      "command": "npx gulp copy-from-module-source",
-      "options": {
-        "cwd": "packages/ag-grid-vue3"
-      }
-    },
     "build:types": {
       "executor": "@nx/js:tsc",
-      "dependsOn": ["ag-grid-community:build:types", "build:copy-source"],
+      "dependsOn": ["^build:types"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -52,7 +50,7 @@
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["ag-grid-community:build:types", "build:copy-source"],
+      "dependsOn": ["^build"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -121,7 +119,14 @@
         "production": {},
         "archive": {}
       }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/ag-grid-vue3/jest.config.js"
+      }
     }
   },
-  "tags": ["package:community", "package:framework", "package", "community", "framework"]
+  "tags": ["module:community", "module:framework", "module", "community", "framework"]
 }

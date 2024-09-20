@@ -8,11 +8,11 @@
       "executor": "nx:noop",
       "inputs": [],
       "outputs": [],
-      "dependsOn": ["build:types", "build:package", "build:umd", "build:copy-styles"]
+      "dependsOn": ["build:types", "theming:codegen", "build:package", "build:copy-styles"]
     },
     "build:umd": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build", "@ag-grid-community/core:build", "build:copy-styles"],
+      "dependsOn": ["^build", "build:copy-styles"],
       "inputs": [
         "tsDefaults",
         {
@@ -38,16 +38,44 @@
       }
     },
     "build:types": {
+      "executor": "@nx/js:tsc",
       "dependsOn": ["^build:types"],
-      "command": "npx gulp copy-from-module-source && cp main.d.ts.src dist/types/main.d.ts",
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+        }
+      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "cwd": "packages/ag-grid-community"
+        "outputPath": "packages/ag-grid-community/dist/types",
+        "main": "packages/ag-grid-community/src/main.ts",
+        "tsConfig": "packages/ag-grid-community/tsconfig.types.json",
+        "compiler": "tsc"
       },
-      "cache": true
+      "configurations": {
+        "watch": {
+          "tsConfig": "packages/ag-grid-community/tsconfig.types.watch.json"
+        },
+        "production": {}
+      }
+    },
+    "theming:codegen": {
+      "executor": "nx:run-script",
+      "cache": true,
+      "options": {
+        "script": "codegen:prod"
+      },
+      "outputs": ["{projectRoot}/**/GENERATED-*.ts"]
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build", "@ag-grid-community/core:build"],
+      "dependsOn": ["^build"],
       "inputs": [
         "tsDefaults",
         {
@@ -74,6 +102,19 @@
           "sourcemap": false
         },
         "sizing": { "metafile": true }
+      }
+    },
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/ag-grid-community/jest.config.js"
       }
     },
     "pack": {

@@ -8,11 +8,11 @@
       "executor": "nx:noop",
       "inputs": [],
       "outputs": [],
-      "dependsOn": ["build:types", "build:package", "build:umd", "build:copy-styles"]
+      "dependsOn": ["build:types", "build:package", "build:copy-styles"]
     },
     "build:umd": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build", "@ag-grid-community/core:build", "build:copy-styles"],
+      "dependsOn": ["^build", "build:copy-styles"],
       "inputs": [
         "tsDefaults",
         {
@@ -39,16 +39,36 @@
       }
     },
     "build:types": {
+      "executor": "@nx/js:tsc",
       "dependsOn": ["^build:types"],
-      "command": "npx gulp copy-from-module-source && cp main.d.ts.src dist/types/main.d.ts",
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+        }
+      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "cwd": "packages/ag-grid-enterprise"
+        "outputPath": "packages/ag-grid-enterprise/dist/types",
+        "main": "packages/ag-grid-enterprise/src/main.ts",
+        "tsConfig": "packages/ag-grid-enterprise/tsconfig.types.json",
+        "compiler": "tsc"
       },
-      "cache": true
+      "configurations": {
+        "watch": {
+          "tsConfig": "packages/ag-grid-enterprise/tsconfig.types.watch.json"
+        },
+        "production": {}
+      }
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build", "@ag-grid-community/core:build"],
+      "dependsOn": ["^build"],
       "inputs": [
         "tsDefaults",
         {
@@ -61,7 +81,6 @@
         "outputPath": "packages/ag-grid-enterprise/dist/package",
         "main": "packages/ag-grid-enterprise/src/main.ts",
         "tsConfig": "packages/ag-grid-enterprise/tsconfig.lib.json",
-        "external": ["ag-grid-community"],
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
         "target": "es2020",

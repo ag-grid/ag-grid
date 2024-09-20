@@ -1,5 +1,19 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 // @START_IMPORTS@
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnDestroy,
+    Output,
+    ViewContainerRef,
+    ViewEncapsulation,
+} from '@angular/core';
+import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
+
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterModel,
@@ -182,19 +196,6 @@ import type {
 // @END_IMPORTS@
 import type { GridApi, GridOptions, GridParams, Module } from 'ag-grid-community';
 import { _combineAttributesAndGridOptions, _processOnChange, createGrid } from 'ag-grid-community';
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnDestroy,
-    Output,
-    ViewContainerRef,
-    ViewEncapsulation,
-} from '@angular/core';
-import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
 import { AngularFrameworkComponentWrapper } from './angularFrameworkComponentWrapper';
 import { AngularFrameworkOverrides } from './angularFrameworkOverrides';

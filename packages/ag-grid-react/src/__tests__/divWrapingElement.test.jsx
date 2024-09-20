@@ -1,4 +1,5 @@
 // noinspection ES6UnusedImports
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { mount } from 'enzyme';
 import React, { Component } from 'react';
 
@@ -59,6 +60,7 @@ class GridWithNoComponentContainerSpecified extends Component {
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
+                    modules={[ClientSideRowModelModule]}
                     componentWrappingElement="div"
                 />
             </div>

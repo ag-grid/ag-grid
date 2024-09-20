@@ -1,4 +1,5 @@
 // noinspection ES6UnusedImports
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { mount } from 'enzyme';
 import React, { Component } from 'react';
 
@@ -98,8 +99,9 @@ class App extends Component {
                         suppressReactUi={true}
                         columnDefs={this.state.columnDefs}
                         rowData={this.state.rowData}
+                        modules={[ClientSideRowModelModule]}
                         onGridReady={this.onGridReady}
-                    ></AgGridReact>
+                    />
                 </div>
             </div>
         );

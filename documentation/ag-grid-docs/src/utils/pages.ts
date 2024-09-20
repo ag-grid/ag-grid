@@ -56,48 +56,19 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     'reference/row-node.AUTO.json': 'dist/documentation/reference/row-node.AUTO.json',
 
     // Community modules
-    '@ag-grid-community/core/dist/**': 'community-modules/core/dist/**/*.{cjs,js,map}',
-    '@ag-grid-community/client-side-row-model/dist/**':
-        'community-modules/client-side-row-model/dist/**/*.{cjs,js,map}',
-    '@ag-grid-community/csv-export/dist/**': 'community-modules/csv-export/dist/**/*.{cjs,js,map}',
-    '@ag-grid-community/infinite-row-model/dist/**': 'community-modules/infinite-row-model/dist/**/*.{cjs,js,map}',
-    '@ag-grid-community/theming/dist/**': 'community-modules/theming/dist/**/*.{cjs,js,map}',
     '@ag-grid-community/locale/dist/**': 'community-modules/locale/dist/**/*.{cjs,js,map}',
     '@ag-grid-community/styles/**': 'community-modules/styles/**/*.{css,scss}',
-
-    // Enterprise modules
-    '@ag-grid-enterprise/advanced-filter/dist/**': 'enterprise-modules/advanced-filter/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/charts/dist/**': 'enterprise-modules/charts/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/charts-enterprise/dist/**': 'enterprise-modules/charts-enterprise/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/clipboard/dist/**': 'enterprise-modules/clipboard/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/column-tool-panel/dist/**': 'enterprise-modules/column-tool-panel/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/core/dist/**': 'enterprise-modules/core/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/excel-export/dist/**': 'enterprise-modules/excel-export/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/filter-tool-panel/dist/**': 'enterprise-modules/filter-tool-panel/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/master-detail/dist/**': 'enterprise-modules/master-detail/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/menu/dist/**': 'enterprise-modules/menu/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/multi-filter/dist/**': 'enterprise-modules/multi-filter/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/range-selection/dist/**': 'enterprise-modules/range-selection/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/rich-select/dist/**': 'enterprise-modules/rich-select/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/row-grouping/dist/**': 'enterprise-modules/row-grouping/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/server-side-row-model/dist/**':
-        'enterprise-modules/server-side-row-model/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/set-filter/dist/**': 'enterprise-modules/set-filter/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/side-bar/dist/**': 'enterprise-modules/side-bar/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/sparklines/dist/**': 'enterprise-modules/sparklines/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/status-bar/dist/**': 'enterprise-modules/status-bar/dist/**/*.{cjs,js,map}',
-    '@ag-grid-enterprise/viewport-row-model/dist/**': 'enterprise-modules/viewport-row-model/dist/**/*.{cjs,js,map}',
 
     // Charts modules
     'ag-charts-community/dist/**': 'node_modules/ag-charts-community/dist/**/*.{cjs,js,map}',
     'ag-charts-enterprise/dist/**': 'node_modules/ag-charts-enterprise/dist/**/*.{cjs,js,map}',
 
     // Framework libraries
-    '@ag-grid-community/react/dist/**': 'community-modules/react/dist/**/*.{cjs,mjs,js,map}',
-    '@ag-grid-community/react/src/**': 'community-modules/react/src/**/*.{tsx,ts}',
-    '@ag-grid-community/angular/fesm2022/ag-grid-community-angular.mjs':
-        'community-modules/angular/dist/ag-grid-angular/fesm2022/ag-grid-community-angular.mjs',
-    '@ag-grid-community/vue3/dist/**': 'community-modules/vue3/dist/**/*.{cjs,mjs,js,map}',
+    'ag-grid-react/dist/**': 'packages/ag-grid-react/dist/**/*.{cjs,mjs,js,map}',
+    'ag-grid-react/src/**': 'packages/ag-grid-react/src/**/*.{tsx,ts}',
+    'ag-grid-angular/fesm2022/ag-grid-community-angular.mjs':
+        'packages/ag-grid-angular/dist/ag-grid-angular/fesm2022/ag-grid-community-angular.mjs',
+    'ag-grid-vue3/dist/**': 'packages/ag-grid-vue3/dist/**/*.{cjs,mjs,js,map}',
 
     // TODO: Dynamically map files
     // '@ag-grid-community': {
@@ -115,8 +86,8 @@ if (USE_PACKAGES) {
     FILES_PATH_MAP['ag-grid-community/dist/**'] = `packages/ag-grid-community/dist/**/*.{cjs,js,map}`;
     FILES_PATH_MAP['ag-grid-enterprise/styles/**'] = `packages/ag-grid-enterprise/styles/**/*.css`;
     FILES_PATH_MAP[`ag-grid-enterprise/dist/**`] = `packages/ag-grid-enterprise/dist/**/*.{cjs,js,map}`;
-    FILES_PATH_MAP['ag-grid-charts-enterprise/styles/**'] = `packages/ag-grid-charts-enterprise/styles/**/*.css`;
-    FILES_PATH_MAP[`ag-grid-charts-enterprise/dist/**`] = `packages/ag-grid-charts-enterprise/dist/**/*.{cjs,js,map}`;
+    FILES_PATH_MAP['ag-grid-charts-enterprise/styles/**'] = `packages/ag-grid-enterprise/styles/**/*.css`;
+    FILES_PATH_MAP[`ag-grid-charts-enterprise/dist/**`] = `packages/ag-grid-enterprise/dist/**/*.{cjs,js,map}`;
     FILES_PATH_MAP['ag-grid-react/dist/**'] = `packages/ag-grid-react/dist/**/*.{cjs,js,map}`;
     FILES_PATH_MAP['ag-grid-angular/fesm2022/ag-grid-angular.mjs'] =
         'packages/ag-grid-angular/dist/ag-grid-angular/fesm2022/ag-grid-angular.mjs';

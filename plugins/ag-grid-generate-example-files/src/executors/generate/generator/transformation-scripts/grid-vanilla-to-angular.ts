@@ -83,7 +83,7 @@ function addModuleImports(
     const propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
     bImports.push({
-        module: `'@ag-grid-community/core'`,
+        module: `'ag-grid-community'`,
         isNamespaced: false,
         imports: [...propertyInterfaces, 'GridReadyEvent', 'GridApi'],
     });

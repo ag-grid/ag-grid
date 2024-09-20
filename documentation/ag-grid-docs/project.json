@@ -121,12 +121,10 @@
       "executor": "ag-grid-generate-code-reference-files:generate",
       "dependsOn": ["ag-grid-generate-code-reference-files:build"],
       "inputs": [
-        "{workspaceRoot}/community-modules/core/src/**/*.ts",
-        "{workspaceRoot}/community-modules/angular/projects/ag-grid-angular/src/lib/**/*.ts",
-        "{workspaceRoot}/community-modules/react/src/shared/**/*.ts",
-        "{workspaceRoot}/enterprise-modules/set-filter/src/**/*.ts",
-        "{workspaceRoot}/enterprise-modules/filter-tool-panel/src/**/*.ts",
-        "{workspaceRoot}/enterprise-modules/multi-filter/src/**/*.ts",
+        "{workspaceRoot}/packages/ag-grid-community/src/**/*.ts",
+        "{workspaceRoot}/packages/ag-grid-angular/projects/ag-grid-angular/src/lib/**/*.ts",
+        "{workspaceRoot}/packages/ag-grid-react/src/shared/**/*.ts",
+        "{workspaceRoot}/packages/ag-grid-enterprise/src/**/*.ts",
         { "dependentTasksOutputFiles": "**/*", "transitive": false },
         {
           "externalDependencies": ["npm:typescript"]
@@ -156,36 +154,8 @@
     }
   },
   "implicitDependencies": [
-    "community-modules/core",
-    "community-modules/client-side-row-model",
-    "community-modules/styles",
-    "community-modules/csv-export",
-    "community-modules/infinite-row-model",
-    "community-modules/theming",
-    "community-modules/angular",
-    "community-modules/react",
-    "community-modules/vue3",
-    "enterprise-modules/core",
-    "enterprise-modules/advanced-filter",
-    "enterprise-modules/charts",
-    "enterprise-modules/charts-enterprise",
-    "enterprise-modules/clipboard",
-    "enterprise-modules/column-tool-panel",
-    "enterprise-modules/excel-export",
-    "enterprise-modules/filter-tool-panel",
-    "enterprise-modules/master-detail",
-    "enterprise-modules/menu",
-    "enterprise-modules/multi-filter",
-    "enterprise-modules/range-selection",
-    "enterprise-modules/rich-select",
-    "enterprise-modules/row-grouping",
-    "enterprise-modules/server-side-row-model",
-    "enterprise-modules/set-filter",
-    "enterprise-modules/side-bar",
-    "enterprise-modules/sparklines",
-    "enterprise-modules/viewport-row-model",
-    "enterprise-modules/status-bar",
-    "packages/ag-grid-community"
+    "packages/ag-grid-community",
+    "packages/ag-grid-enterprise"
   ],
   "tags": ["website"]
 }

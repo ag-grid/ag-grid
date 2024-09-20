@@ -21,7 +21,7 @@ const resolveAlias = {};
 const TESTS_USE_ORIGINAL_SOURCE_CODE = process.env.TESTS_USE_ORIGINAL_SOURCE_CODE !== 'false';
 
 if (TESTS_USE_ORIGINAL_SOURCE_CODE) {
-    await loadSourceCodeAliases(['community-modules', 'enterprise-modules', 'packages']); // Load the projects source code
+    await loadSourceCodeAliases(['packages']); // Load the projects source code
 }
 
 export default defineConfig({

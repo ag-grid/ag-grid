@@ -1,5 +1,7 @@
 ag-grid-react.iml
 
+typings/
+
 module.tgz
 
 react-app-env.d.ts
@@ -8,5 +10,3 @@ cypress/integration/ag-grid-react.min.js
 cypress/integration/ag-grid-community.min.js
 .nyc_output
 coverage
-
-package-lock.json

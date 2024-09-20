@@ -2,7 +2,7 @@
  * Used for umd bundles with styles
  */
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
+import { CommunityFeaturesModule, ModuleRegistry } from 'ag-grid-community';
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -67,9 +67,9 @@ ModuleRegistry.__registerModules(
     undefined
 );
 
-export * from '@ag-grid-community/core';
+export * from 'ag-grid-community';
 export * from '@ag-grid-community/theming';
-export * from '@ag-grid-enterprise/core';
+export * from './main';
 export * from '@ag-grid-enterprise/advanced-filter';
 export * from '@ag-grid-enterprise/charts';
 export * from '@ag-grid-enterprise/clipboard';

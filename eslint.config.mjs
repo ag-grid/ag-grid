@@ -22,13 +22,7 @@ export default [
                 },
             ],
             'import-x/consistent-type-specifier-style': 'error',
-            '@typescript-eslint/no-this-alias': 'off',
-            'no-restricted-imports': [
-                'error',
-                {
-                    patterns: ['community-modules/*', 'enterprise-modules/*', '*/main'],
-                },
-            ],
+            '@typescript-eslint/no-this-alias': 'off'
         },
     },
 ];

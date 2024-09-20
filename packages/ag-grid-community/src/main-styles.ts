@@ -1,10 +1,10 @@
 /*
  * Used for umd bundles with styles
  */
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
-import { CsvExportModule } from '@ag-grid-community/csv-export';
-import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
+import { ClientSideRowModelModule } from './clientSideRowModelModule';
+import { CommunityFeaturesModule, ModuleRegistry } from './main';
+import { CsvExportModule } from './csvExportModule';
+import { InfiniteRowModelModule } from './infiniteRowModelModule';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine-no-font.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
@@ -26,8 +26,8 @@ ModuleRegistry.__registerModules(
     undefined
 );
 
-export * from '@ag-grid-community/core';
-export * from '@ag-grid-community/client-side-row-model';
-export * from '@ag-grid-community/csv-export';
-export * from '@ag-grid-community/infinite-row-model';
-export * from '@ag-grid-community/theming';
+// export * from '@ag-grid-community/core';
+// export * from '@ag-grid-community/client-side-row-model';
+// export * from '@ag-grid-community/csv-export';
+// export * from '@ag-grid-community/infinite-row-model';
+// export * from '@ag-grid-community/theming';

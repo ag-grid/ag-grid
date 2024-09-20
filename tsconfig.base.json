@@ -22,11 +22,8 @@
     "noUnusedLocals": false,
     "noImplicitOverride": true,
     "paths": {
-      "@ag-grid-community/client-side-row-model": ["community-modules/client-side-row-model/src/main.ts"],
-      "@ag-grid-community/core": ["community-modules/core/src/main.ts"],
-      "@ag-grid-enterprise/core": ["enterprise-modules/core/src/main.ts"],
-      "@ag-grid-enterprise/side-bar": ["enterprise-modules/side-bar/src/main.ts"],
-      "@ag-grid-enterprise/status-bar": ["enterprise-modules/status-bar/src/main.ts"]
+      "ag-grid-community": ["packages/ag-grid-community/src/main.ts"],
+      "ag-grid-enterprise": ["packages/ag-grid-enterprise/src/main.ts"],
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -33,23 +33,21 @@ export default async function (options: ExecutorOptions) {
 
 async function generateFile(options: ExecutorOptions) {
     const workspaceRoot = process.cwd();
-    const gridOpsFile = workspaceRoot + '/community-modules/core/src/entities/gridOptions.ts';
-    const colDefFile = workspaceRoot + '/community-modules/core/src/entities/colDef.ts';
-    const filterFile = workspaceRoot + '/community-modules/core/src/interfaces/iFilter.ts';
-    const gridApiFile = workspaceRoot + '/community-modules/core/src/api/gridApi.ts';
-    const columnFile = workspaceRoot + '/community-modules/core/src/interfaces/iColumn.ts';
-    const rowNodeFile = workspaceRoot + '/community-modules/core/src/interfaces/iRowNode.ts';
+    const gridOpsFile = workspaceRoot + '/packages/ag-grid-community/src/entities/gridOptions.ts';
+    const colDefFile = workspaceRoot + '/packages/ag-grid-community/src/entities/colDef.ts';
+    const filterFile = workspaceRoot + '/packages/ag-grid-community/src/interfaces/iFilter.ts';
+    const gridApiFile = workspaceRoot + '/packages/ag-grid-community/src/api/gridApi.ts';
+    const columnFile = workspaceRoot + '/packages/ag-grid-community/src/interfaces/iColumn.ts';
+    const rowNodeFile = workspaceRoot + '/packages/ag-grid-community/src/interfaces/iRowNode.ts';
 
     const distFolder = workspaceRoot + '/' + options.output;
 
     // Matches the inputs in generate-doc-references task
     const INTERFACE_GLOBS = [
-        ...inputGlob(workspaceRoot + '/community-modules/core/src'),
-        ...inputGlob(workspaceRoot + '/community-modules/angular/projects/ag-grid-angular/src/lib'),
-        ...inputGlob(workspaceRoot + '/community-modules/react/src/shared'),
-        ...inputGlob(workspaceRoot + '/grid-enterprise-modules/set-filter/src'),
-        ...inputGlob(workspaceRoot + '/grid-enterprise-modules/filter-tool-panel/src'),
-        ...inputGlob(workspaceRoot + '/grid-enterprise-modules/multi-filter/src'),
+        ...inputGlob(workspaceRoot + '/packages/ag-grid-community/src'),
+        ...inputGlob(workspaceRoot + '/packages/ag-grid-angular/projects/ag-grid-angular/src/lib'),
+        ...inputGlob(workspaceRoot + '/packages/ag-grid-react/src/shared'),
+        ...inputGlob(workspaceRoot + '/packages/ag-grid-enterprise/src')
     ];
 
     const generateMetaFiles = async () => {

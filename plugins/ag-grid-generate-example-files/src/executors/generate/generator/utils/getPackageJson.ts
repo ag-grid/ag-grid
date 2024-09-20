@@ -16,8 +16,8 @@ interface Params {
     importType: 'modules' | 'packages';
 }
 
-function getPackageJsonVersion(packageName: string, isEnterprise: boolean) {
-    const path = `${process.cwd()}/${isEnterprise ? 'enterprise' : 'community'}-modules/${packageName}/package.json`;
+function getPackageJsonVersion(packageName: string, isModule: boolean = false) {
+    const path = isModule? `${process.cwd()}/community-modules/${packageName}/package.json` : `${process.cwd()}/packages/${packageName}/package.json`;
     const packageJsonStr = readFileSync(path, 'utf-8');
     const packageJson = JSON.parse(packageJsonStr);
     return '^' + packageJson.version;
@@ -62,11 +62,11 @@ function addPackageJson(isEnterprise, isLocale, framework, importType) {
         addDependency('@types/react-dom', '18');
     }
 
-    const agGridVersion = getPackageJsonVersion('core', false);
-    const agGridEnterpriseVersion = getPackageJsonVersion('core', true);
-    const agGridReactVersion = getPackageJsonVersion('react', false);
-    const agGridAngularVersion = getPackageJsonVersion('angular', false);
-    const agGridLocaleVersion = getPackageJsonVersion('locale', false);
+    const agGridVersion = getPackageJsonVersion('ag-grid-community');
+    const agGridEnterpriseVersion = getPackageJsonVersion('ag-grid-enterprise');
+    const agGridReactVersion = getPackageJsonVersion('ag-grid-react');
+    const agGridAngularVersion = getPackageJsonVersion('ag-grid-angular');
+    const agGridLocaleVersion = getPackageJsonVersion('locale', true);
 
     if (isLocale) {
         addDependency('@ag-grid-community/locale', agGridLocaleVersion);
