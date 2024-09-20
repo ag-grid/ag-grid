@@ -153,7 +153,7 @@
       }
     },
     "clean": {
-      "command": "rimraf dist/ 'community-modules/*/dist/' 'community-modules/styles/*.css' 'enterprise-modules/*/dist/' 'packages/*/dist/' 'documentation/*/dist/' 'community-modules/locale/umd/'"
+      "command": "rimraf dist/ 'packages/*/dist/' 'documentation/*/dist/' 'community-modules/locale/umd/'"
     },
     "generate-examples": {
       "executor": "nx:noop",
