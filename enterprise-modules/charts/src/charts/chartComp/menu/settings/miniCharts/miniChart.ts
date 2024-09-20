@@ -32,7 +32,7 @@ export abstract class MiniChart extends Component {
 
         scene.canvas.element.classList.add(CANVAS_CLASS);
         scene.setRoot(this.root);
-        scene.setContainer(container);
+        container.appendChild(scene.canvas.element);
 
         this.scene = scene;
     }

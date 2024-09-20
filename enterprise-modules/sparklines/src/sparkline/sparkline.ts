@@ -154,7 +154,7 @@ export abstract class Sparkline {
 
         // set scene properties
         scene.setRoot(root);
-        scene.setContainer(element);
+        element.appendChild(scene.canvas.element);
 
         this.resizeAndSetDimensions(this.width, this.height);
 
