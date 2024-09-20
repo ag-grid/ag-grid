@@ -321,7 +321,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         const oldData = this.data;
 
         this.data = data;
-        this.beans.valueCache.onDataChanged();
+        this.beans.valueCache?.onDataChanged();
         this.updateDataOnDetailNode();
         this.checkRowSelectable();
         this.resetQuickFilterAggregateText();

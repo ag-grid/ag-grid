@@ -16,6 +16,7 @@ import { StickyRowModule } from './rendering/features/stickyRowModule';
 import { RowSelectionModule } from './selection/rowSelectionModule';
 import { SortModule } from './sort/sortModule';
 import { ValidationService } from './validation/validationService';
+import { ValueCacheModule } from './valueService/valueModule';
 import { VERSION } from './version';
 
 export const GridCoreModule = {
@@ -52,5 +53,6 @@ export const CommunityFeaturesModule = _defineModule({
         StickyRowModule,
         RowSelectionModule,
         SortModule,
+        ValueCacheModule,
     ],
 });

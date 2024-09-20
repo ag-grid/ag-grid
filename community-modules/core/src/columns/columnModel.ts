@@ -72,7 +72,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private columnAnimationService: ColumnAnimationService;
     private autoColService?: IAutoColService;
     private controlsColService?: ControlsColService;
-    private valueCache: ValueCache;
+    private valueCache?: ValueCache;
     private columnDefFactory: ColumnDefFactory;
     private columnApplyStateService: ColumnApplyStateService;
     private columnGroupStateService: ColumnGroupStateService;
@@ -178,7 +178,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         // always invalidate cache on changing columns, as the column id's for the new columns
         // could overlap with the old id's, so the cache would return old values for new columns.
-        this.valueCache.expire();
+        this.valueCache?.expire();
 
         const oldCols = this.colDefCols?.list;
         const oldTree = this.colDefCols?.tree;

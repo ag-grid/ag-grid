@@ -76,7 +76,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
     private selectionService?: ISelectionService;
-    private valueCache: ValueCache;
+    private valueCache?: ValueCache;
     private environment: Environment;
     private groupHideOpenParentsService?: IGroupHideOpenParentsService;
 
@@ -1272,7 +1272,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private executeBatchUpdateRowData(): void {
-        this.valueCache.onDataChanged();
+        this.valueCache?.onDataChanged();
 
         const callbackFuncsBound: ((...args: any[]) => any)[] = [];
         const rowNodeTrans: RowNodeTransaction[] = [];
@@ -1314,7 +1314,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * Called by gridApi & rowDragFeature
      */
     public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction | null {
-        this.valueCache.onDataChanged();
+        this.valueCache?.onDataChanged();
 
         const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(rowDataTran);
 

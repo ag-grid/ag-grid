@@ -26,7 +26,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
     private expressionService: ExpressionService;
     private columnModel: ColumnModel;
-    private valueCache: ValueCache;
+    private valueCache?: ValueCache;
     private dataTypeService?: DataTypeService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -44,6 +44,14 @@ export class ValueService extends BeanStub implements NamedBean {
 
     private isSsrm = false;
 
+    private executeValueGetter: (
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        valueGetter: string | Function,
+        data: any,
+        column: AgColumn,
+        rowNode: IRowNode
+    ) => any;
+
     public postConstruct(): void {
         if (!this.initialised) {
             this.init();
@@ -51,6 +59,9 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     private init(): void {
+        this.executeValueGetter = this.valueCache
+            ? this.executeValueGetterWithValueCache.bind(this)
+            : this.executeValueGetterWithoutValueCache.bind(this);
         this.isSsrm = _isServerSideRowModel(this.gos);
         this.cellExpressions = this.gos.get('enableCellExpressions');
         this.isTreeData = this.gos.get('treeData');
@@ -336,7 +347,7 @@ export class ValueService extends BeanStub implements NamedBean {
         // reset quick filter on this row
         rowNode.resetQuickFilterAggregateText();
 
-        this.valueCache.onDataChanged();
+        this.valueCache?.onDataChanged();
 
         const savedValue = this.getValue(column, rowNode);
 
@@ -433,7 +444,7 @@ export class ValueService extends BeanStub implements NamedBean {
         return this.expressionService.evaluate(valueGetter, params);
     }
 
-    private executeValueGetter(
+    private executeValueGetterWithValueCache(
         // eslint-disable-next-line @typescript-eslint/ban-types
         valueGetter: string | Function,
         data: any,
@@ -443,12 +454,27 @@ export class ValueService extends BeanStub implements NamedBean {
         const colId = column.getColId();
 
         // if inside the same turn, just return back the value we got last time
-        const valueFromCache = this.valueCache.getValue(rowNode as RowNode, colId);
+        const valueFromCache = this.valueCache!.getValue(rowNode as RowNode, colId);
 
         if (valueFromCache !== undefined) {
             return valueFromCache;
         }
 
+        const result = this.executeValueGetterWithoutValueCache(valueGetter, data, column, rowNode);
+
+        // if a turn is active, store the value in case the grid asks for it again
+        this.valueCache!.setValue(rowNode as RowNode, colId, result);
+
+        return result;
+    }
+
+    private executeValueGetterWithoutValueCache(
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        valueGetter: string | Function,
+        data: any,
+        column: AgColumn,
+        rowNode: IRowNode
+    ): any {
         const params: ValueGetterParams = this.gos.addGridCommonParams({
             data: data,
             node: rowNode,
@@ -463,9 +489,6 @@ export class ValueService extends BeanStub implements NamedBean {
         } else {
             result = this.expressionService.evaluate(valueGetter, params);
         }
-
-        // if a turn is active, store the value in case the grid asks for it again
-        this.valueCache.setValue(rowNode as RowNode, colId, result);
 
         return result;
     }

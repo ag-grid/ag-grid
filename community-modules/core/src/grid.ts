@@ -69,7 +69,6 @@ import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
 import { ChangeDetectionService } from './valueService/changeDetectionService';
 import { ExpressionService } from './valueService/expressionService';
-import { ValueCache } from './valueService/valueCache';
 import { ValueService } from './valueService/valueService';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 import { PopupService } from './widgets/popupService';
@@ -455,7 +454,6 @@ export class GridCoreCreator {
             ExpressionService,
             ColumnFactory,
             NavigationService,
-            ValueCache,
             ValueService,
             AutoWidthCalculator,
             StandardMenuFactory,
