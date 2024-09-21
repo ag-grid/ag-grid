@@ -37,6 +37,18 @@ export interface ISizeColumnsToFitParams {
     columnLimits?: IColumnLimit[];
 }
 
+type FlexItem = {
+    col: AgColumn;
+    isFlex: boolean;
+    flex: number;
+    min: number;
+    max: number;
+    initialSize: number;
+    targetSize: number;
+    frozenSize?: number;
+    violationType?: 'min' | 'max';
+};
+
 export class ColumnSizeService extends BeanStub implements NamedBean {
     beanName = 'columnSizeService' as const;
 
@@ -301,6 +313,7 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
         if (params.viewportWidth != null) {
             this.flexViewportWidth = params.viewportWidth;
         }
+
         const totalSpace = this.flexViewportWidth;
 
         if (!totalSpace) {
@@ -311,24 +324,13 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
         // of the flex spec, simplified because we only support flex growing not
         // shrinking, and don't support flex-basis.
         // https://www.w3.org/TR/css-flexbox-1/#resolve-flexible-lengths
-
-        type FlexItem = {
-            col: AgColumn;
-            isFlex: boolean;
-            flex: number;
-            min: number;
-            max: number;
-            initialSize: number;
-            targetSize: number;
-            frozenSize?: number;
-            violationType?: 'min' | 'max';
-        };
-
         let hasFlexItems = false;
         const items = this.visibleColsService.getCenterCols().map((col): FlexItem => {
             const flex = col.getFlex();
             const isFlex = flex != null;
+
             hasFlexItems ||= isFlex;
+
             return {
                 col,
                 isFlex,
@@ -340,7 +342,9 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
             };
         });
 
-        if (!hasFlexItems) return [];
+        if (!hasFlexItems) {
+            return [];
+        }
 
         let unfrozenItemCount = items.length;
         let unfrozenFlex = items.reduce((acc, item) => acc + item.flex, 0);
@@ -375,15 +379,22 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
             let lastUnfrozenItem: FlexItem | undefined;
             let actualLeft = 0;
             let idealRight = 0;
+
             for (const item of items) {
-                if (isFrozen(item)) continue;
+                if (isFrozen(item)) {
+                    continue;
+                }
+
                 lastUnfrozenItem = item;
                 idealRight += spaceToFill * (item.flex / unfrozenFlex);
+
                 const idealSize = idealRight - actualLeft;
                 const roundedSize = Math.round(idealSize);
+
                 item.targetSize = roundedSize;
                 actualLeft += roundedSize;
             }
+
             if (lastUnfrozenItem) {
                 // Correct cumulative rounding errors: adjust the size of the
                 // last item to fill any remaining space
@@ -397,12 +408,17 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
             // min violation.
             let totalViolation = 0;
             for (const item of items) {
-                if (isFrozen(item)) continue;
+                if (isFrozen(item)) {
+                    continue;
+                }
+
                 const unclampedSize = item.targetSize;
                 const clampedSize = Math.min(Math.max(unclampedSize, item.min), item.max);
+
                 totalViolation += clampedSize - unclampedSize;
                 item.violationType =
                     clampedSize === unclampedSize ? undefined : clampedSize < unclampedSize ? 'max' : 'min';
+
                 item.targetSize = clampedSize;
             }
 
@@ -413,8 +429,12 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
             //     - Positive, Freeze all the items with min violations
             //     - Negative, Freeze all the items with max violations
             const freezeType = totalViolation === 0 ? 'all' : totalViolation > 0 ? 'min' : 'max';
+
             for (const item of items) {
-                if (isFrozen(item)) continue;
+                if (isFrozen(item)) {
+                    continue;
+                }
+
                 if (freezeType === 'all' || item.violationType === freezeType) {
                     freeze(item, item.targetSize);
                 }
@@ -436,6 +456,7 @@ export class ColumnSizeService extends BeanStub implements NamedBean {
         if (params.fireResizedEvent) {
             const changedColumns = items.filter((item) => item.initialSize !== item.frozenSize).map((item) => item.col);
             const flexingColumns = items.filter((item) => item.flex).map((item) => item.col);
+
             this.eventDispatcher.columnResized(changedColumns, true, source, flexingColumns);
         }
 
