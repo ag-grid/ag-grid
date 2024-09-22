@@ -2,7 +2,7 @@ import type { AstroIntegrationLogger } from 'astro';
 import { existsSync } from 'node:fs';
 import path from 'path';
 
-import { SITE_301_REDIRECTS } from './redirects';
+import { IGNORE_PAGES, REDIRECTS_FILE, SITE_301_REDIRECTS } from './redirects';
 
 type SuccessResult = {
     type: 'success';
@@ -20,8 +20,6 @@ type ErrorResult = {
 };
 
 type Result = SuccessResult | IgnoredResult | ErrorResult;
-
-const IGNORE_PAGES = ['/ecommerce/', '/ag-grid-jobs-board'];
 
 const getSuccess = (results: Result[]) => results.filter(({ type }) => type === 'success');
 const getIgnored = (results: Result[]) => results.filter(({ type }) => type === 'ignored');
@@ -96,8 +94,6 @@ export function redirectsChecker({ buildDir, logger }: { buildDir: string; logge
         .forEach((line) => logger.info(line));
     const errorResults = getErrors(results);
     if (errorResults.length) {
-        throw new Error(
-            `Redirect target/s not found. Fix them in 'documentation/ag-grid-docs/src/utils/htaccess/redirects.ts'.\n${getErrorOutput(results)}`
-        );
+        throw new Error(`Redirect target/s not found. Fix them in '${REDIRECTS_FILE}'.\n${getErrorOutput(results)}`);
     }
 }

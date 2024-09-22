@@ -308,7 +308,6 @@ const gridOptions: GridOptions = {
         mode: 'multiRow',
         groupSelects: 'descendants',
         headerCheckbox: false,
-        suppressClickSelection: true,
     },
     rowData: globalRowData,
     suppressAggFuncInHeader: true,

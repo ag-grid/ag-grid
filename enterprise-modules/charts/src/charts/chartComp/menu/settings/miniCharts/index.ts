@@ -10,6 +10,8 @@ export * from './pie/miniPie';
 export * from './pie/miniDonut';
 
 export * from './line/miniLine';
+export * from './line/miniStackedLine';
+export * from './line/miniNormalizedLine';
 
 export * from './scatter/miniScatter';
 export * from './scatter/miniBubble';

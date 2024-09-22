@@ -77,7 +77,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     suppressExpandablePivotGroups: true,
     aggFuncs: true,
     suppressAggFuncInHeader: true,
-    removePivotHeaderRowWhenSingleValueColumn: true,
     allowShowChangeAfterFilter: true,
     ensureDomOrder: true,
     enableRtl: true,
@@ -196,7 +195,7 @@ export class PropertyKeys {
         'initialState',
         'autoSizeStrategy',
         'selection',
-        'controlsColDef',
+        'selectionColumnDef',
     ];
 
     public static ARRAY_PROPERTIES: KeysOfType<any[]>[] = [

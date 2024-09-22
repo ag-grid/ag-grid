@@ -36,7 +36,7 @@ const gridOptions: GridOptions<IAccount> = {
     masterDetail: true,
     detailCellRendererParams: {
         detailGridOptions: {
-            selection: { mode: 'multiRow', headerCheckbox: false, suppressClickSelection: true },
+            selection: { mode: 'multiRow', headerCheckbox: false },
             pagination: true,
             paginationAutoPageSize: true,
             columnDefs: [

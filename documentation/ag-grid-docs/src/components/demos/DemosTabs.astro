@@ -7,7 +7,7 @@ const { activeTab } = Astro.props;
 
 <div class={styles.tabs}>
     <div class:list={[styles.tabItem, activeTab === 'complete' && styles.activeTab]}>
-        <a href={urlWithBaseUrl(`/example`)}>
+        <a href={urlWithBaseUrl(`/example/`)}>
             <img
                 class:list={[styles.showcaseImg, styles.showcaseImgLight]}
                 src={urlWithBaseUrl(`/example/performance.png`)}
@@ -23,7 +23,7 @@ const { activeTab } = Astro.props;
     </div>
 
     <div class:list={[styles.tabItem, activeTab === 'finance' && styles.activeTab]}>
-        <a href={urlWithBaseUrl(`/example-finance`)}>
+        <a href={urlWithBaseUrl(`/example-finance/`)}>
             <img
                 class:list={[styles.showcaseImg, styles.showcaseImgLight]}
                 src={urlWithBaseUrl(`/example/finance.png`)}
@@ -39,7 +39,7 @@ const { activeTab } = Astro.props;
     </div>
 
     <div class:list={[styles.tabItem, activeTab === 'crm' && styles.activeTab]}>
-        <a href={urlWithBaseUrl(`/example-hr`)}>
+        <a href={urlWithBaseUrl(`/example-hr/`)}>
             <img
                 class:list={[styles.showcaseImg, styles.showcaseImgLight]}
                 src={urlWithBaseUrl(`/example/hr.png`)}
@@ -55,7 +55,7 @@ const { activeTab } = Astro.props;
     </div>
 
     <div class:list={[styles.tabItem, activeTab === 'inventory' && styles.activeTab]}>
-        <a href={urlWithBaseUrl(`/example-inventory`)}>
+        <a href={urlWithBaseUrl(`/example-inventory/`)}>
             <img
                 class:list={[styles.showcaseImg, styles.showcaseImgLight]}
                 src={urlWithBaseUrl(`/example/inventory.png`)}

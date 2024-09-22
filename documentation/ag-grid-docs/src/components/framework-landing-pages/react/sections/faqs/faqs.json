@@ -33,7 +33,7 @@
     },
     {
         "question": "What is an AG Grid licence?",
-        "answer": "An AG Grid licence is required for using AG Grid Enterprise. Try it for free, or request a trail licence at info@ag-grid.com to remove the watermark & console messages."
+        "answer": "An AG Grid licence is required to use AG Grid Enterprise in production. Try it for free, or request a trial licence at info@ag-grid.com to remove the watermark & console messages."
     },
     {
         "question": "How much does AG Grid cost?",

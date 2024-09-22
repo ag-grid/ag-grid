@@ -38,6 +38,14 @@
         padding-bottom: $spacing-size-4;
         vertical-align: middle;
 
+        &:first-child {
+            padding-left: $spacing-size-4;
+        }
+
+        &:last-child {
+            padding-right: $spacing-size-4;
+        }
+
         &:nth-child(n + 3) {
             text-align: right;
         }

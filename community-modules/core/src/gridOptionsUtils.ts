@@ -396,9 +396,7 @@ export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | und
     return selection.mode === 'cell' && selection.handle?.mode === 'fill' ? selection.handle : undefined;
 }
 
-function _getSuppressClickSelection(
-    gos: GridOptionsService
-): NonNullable<RowSelectionOptions['suppressClickSelection']> {
+function _getEnableClickSelection(gos: GridOptionsService): NonNullable<RowSelectionOptions['enableClickSelection']> {
     const selection = gos.get('selection');
     const useNewAPI = selection !== undefined;
 
@@ -407,27 +405,27 @@ function _getSuppressClickSelection(
         const suppressRowDeselection = gos.get('suppressRowDeselection');
 
         if (suppressRowClickSelection && suppressRowDeselection) {
-            return true;
-        } else if (suppressRowClickSelection) {
-            return 'suppressSelection';
-        } else if (suppressRowDeselection) {
-            return 'suppressDeselection';
-        } else {
             return false;
+        } else if (suppressRowClickSelection) {
+            return 'enableDeselection';
+        } else if (suppressRowDeselection) {
+            return 'enableSelection';
+        } else {
+            return true;
         }
     }
 
-    return selection?.mode !== 'cell' ? selection?.suppressClickSelection ?? false : false;
+    return selection?.mode !== 'cell' ? selection?.enableClickSelection ?? false : false;
 }
 
-export function _getSuppressSelection(gos: GridOptionsService): boolean {
-    const suppressClickSelection = _getSuppressClickSelection(gos);
-    return suppressClickSelection === true || suppressClickSelection === 'suppressSelection';
+export function _getEnableSelection(gos: GridOptionsService): boolean {
+    const enableClickSelection = _getEnableClickSelection(gos);
+    return enableClickSelection === true || enableClickSelection === 'enableSelection';
 }
 
-export function _getSuppressDeselection(gos: GridOptionsService): boolean {
-    const suppressClickSelection = _getSuppressClickSelection(gos);
-    return suppressClickSelection === true || suppressClickSelection === 'suppressDeselection';
+export function _getEnableDeselection(gos: GridOptionsService): boolean {
+    const enableClickSelection = _getEnableClickSelection(gos);
+    return enableClickSelection === true || enableClickSelection === 'enableDeselection';
 }
 
 export function _getIsRowSelectable(gos: GridOptionsService): IsRowSelectable | undefined {

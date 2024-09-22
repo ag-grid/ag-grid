@@ -701,7 +701,13 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     minWidth?: number;
     /** Maximum width in pixels for the cell. */
     maxWidth?: number;
-    /** Used instead of `width` when the goal is to fill the remaining empty space of the grid. */
+    /**
+     * Equivalent to `flex-grow` in CSS. When `flex` is set on one or more
+     * columns, any `width` value is ignored and instead the remaining free
+     * space in the grid is divided among flex columns in proportion to their
+     * flex value, so a column with `flex: 2` will be twice the size as one with
+     * `flex: 1`.
+     */
     flex?: number;
     /**
      * Same as `flex`, except only applied when creating a new column. Not applied when updating column definitions.

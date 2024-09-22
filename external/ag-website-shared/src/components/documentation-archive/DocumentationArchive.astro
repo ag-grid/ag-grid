@@ -12,14 +12,6 @@ interface Props {
 
 const { site, versionsData } = Astro.props as Props;
 
-const removeDay = (date: string) => {
-    const splitDate = date.split(' ');
-
-    if (splitDate.length < 3) return date;
-
-    return `${splitDate[0]} ${splitDate[2]}`;
-};
-
 const getVersionType = (version: string) => {
     const [_, minor, patch] = version.split('.');
 
@@ -72,7 +64,7 @@ const getChangelogUrl = (version: string) => {
                     <tr>
                         <td class="text-base text-monospace text-semibold">{version}</td>
 
-                        <td>{removeDay(date)}</td>
+                        <td>{date}</td>
 
                         <td>
                             <span class={isMajor(version) ? styles.major : undefined}>

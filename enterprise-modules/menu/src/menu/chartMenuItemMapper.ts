@@ -169,6 +169,8 @@ export type PivotMenuOptionName =
     | 'pivotPie'
     | 'pivotDonut'
     | 'pivotLineChart'
+    | 'pivotStackedLine'
+    | 'pivotNormalizedLine'
     | 'pivotXYChart'
     | 'pivotScatter'
     | 'pivotBubble'
@@ -243,7 +245,15 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
                         getMenuItem('donut', 'Donut&lrm;', 'donut', 'pivotDonut'),
                     ],
                 },
-                getMenuItem('line', 'Line&lrm;', 'line', 'pivotLineChart'),
+                {
+                    _key: 'pivotLineChart',
+                    name: localeTextFunc('lineChart', 'Line'),
+                    subMenu: [
+                        getMenuItem('line', 'Line&lrm;', 'line', 'pivotLineChart'),
+                        getMenuItem('stackedLine', 'Stacked&lrm;', 'stackedLine', 'pivotStackedLine'),
+                        getMenuItem('normalizedLine', '100% Stacked&lrm;', 'normalizedLine', 'pivotNormalizedLine'),
+                    ],
+                },
                 {
                     _key: 'pivotXYChart',
                     name: localeTextFunc('xyChart', 'X Y (Scatter)'),
@@ -312,6 +322,8 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
             lineGroup: {
                 _key: 'pivotLineChart',
                 line: 'pivotLineChart',
+                stackedLine: 'pivotLineChart',
+                normalizedLine: 'pivotLineChart',
             },
             scatterGroup: {
                 _key: 'pivotXYChart',
@@ -365,6 +377,8 @@ export type RangeMenuOptionName =
     | 'rangePie'
     | 'rangeDonut'
     | 'rangeLineChart'
+    | 'rangeStackedLine'
+    | 'rangeNormalizedLine'
     | 'rangeXYChart'
     | 'rangeScatter'
     | 'rangeBubble'
@@ -547,6 +561,8 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
             lineGroup: {
                 _key: 'rangeLineChart',
                 line: 'rangeLineChart',
+                stackedLine: 'rangeStackedLine',
+                normalizedLine: 'rangeNormalizedLine',
             },
             scatterGroup: {
                 _key: 'rangeXYChart',
