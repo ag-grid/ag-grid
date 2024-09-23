@@ -41,8 +41,8 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                 yKey: seriesDefinition!.yField.colId,
                 yName: seriesDefinition!.yField.displayName ?? undefined,
                 title: `${seriesDefinition!.yField.displayName} vs ${seriesDefinition!.xField.displayName}`,
-                labelKey: labelFieldDefinition ? labelFieldDefinition.id : seriesDefinition!.yField.colId,
-                labelName: labelFieldDefinition ? labelFieldDefinition.name : undefined,
+                labelKey: labelFieldDefinition?.id ?? seriesDefinition!.yField.colId,
+                labelName: labelFieldDefinition?.name,
             };
 
             if (seriesDefinition?.sizeField) {
@@ -111,11 +111,13 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                 fill,
                 stroke,
                 domain: markerDomain,
+                xKey: filteredOutKey(series.xKey),
+                yKey: filteredOutKey(series.yKey),
                 highlightStyle: { item: { fill: 'yellow' } },
-                listeners: {
-                    ...series.listeners,
-                    nodeClick: this.crossFilterCallback,
-                },
+                // listeners: {
+                //     ...series.listeners,
+                //     nodeClick: this.crossFilterCallback,
+                // },
             };
         };
 

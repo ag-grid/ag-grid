@@ -36,7 +36,12 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
             return;
         }
 
-        const colId = ChartCrossFilterService.extractFilterColId(event);
+        let colId = ChartCrossFilterService.extractFilterColId(event);
+
+        if (colId.endsWith('Filter')) {
+            colId = colId.replace('Filter', '');
+        }
+
         if (this.isValidColumnFilter(colId)) {
             // update filters based on current chart selections
             this.updateFilters(filterModel, event, colId);

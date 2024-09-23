@@ -45,7 +45,7 @@ export interface ChartModelParams {
     seriesGroupType?: SeriesGroupType;
 }
 
-export const CROSS_FILTERING_ZERO_VALUE_CHART_TYPES: ChartType[] = ['pie', 'donut', 'doughnut', 'scatter', 'bubble'];
+export const CROSS_FILTERING_ZERO_VALUE_CHART_TYPES: ChartType[] = ['pie', 'donut', 'doughnut'];
 
 export const CROSS_FILTER_IS_HIGHLIGHT: ChartType[] = ['line', 'area'];
 
