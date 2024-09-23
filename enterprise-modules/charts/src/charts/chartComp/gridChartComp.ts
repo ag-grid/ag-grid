@@ -263,6 +263,8 @@ export class GridChartComp extends Component {
             case 'normalizedArea':
                 return new AreaChartProxy(chartProxyParams);
             case 'line':
+            case 'stackedLine':
+            case 'normalizedLine':
                 return new LineChartProxy(chartProxyParams);
             case 'scatter':
             case 'bubble':

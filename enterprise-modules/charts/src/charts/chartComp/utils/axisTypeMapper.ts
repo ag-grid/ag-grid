@@ -15,6 +15,8 @@ export function getLegacyAxisType(chartType: ChartType): [AgCartesianAxisType, A
         case 'stackedColumn':
         case 'normalizedColumn':
         case 'line':
+        case 'stackedLine':
+        case 'normalizedLine':
         case 'area':
         case 'stackedArea':
         case 'normalizedArea':
