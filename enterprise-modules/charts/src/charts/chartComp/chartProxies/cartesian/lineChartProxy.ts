@@ -4,6 +4,9 @@ import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 import type { CartesianChartTypes } from './cartesianChartProxy';
 
+const CROSS_FILTER_MARKER_FILL_OPACITY_FACTOR = 0.25;
+const CROSS_FILTER_MARKER_STROKE_OPACITY_FACTOR = 0.125;
+
 export class LineChartProxy<T extends CartesianChartTypes = 'line'> extends CartesianChartProxy<T> {
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -63,10 +66,14 @@ export class LineChartProxy<T extends CartesianChartTypes = 'line'> extends Cart
                 }),
             };
             if (this.standaloneChartType === 'area') {
-                (s as AgAreaSeriesOptions).fillOpacity = this.crossFilteringDeselectedPoints() ? 0.3 : 1;
+                (s as AgAreaSeriesOptions).fillOpacity = this.crossFilteringDeselectedPoints()
+                    ? CROSS_FILTER_MARKER_FILL_OPACITY_FACTOR
+                    : 1;
             }
             if (this.standaloneChartType === 'line') {
-                (s as AgLineSeriesOptions).strokeOpacity = this.crossFilteringDeselectedPoints() ? 0.3 : 1;
+                (s as AgLineSeriesOptions).strokeOpacity = this.crossFilteringDeselectedPoints()
+                    ? CROSS_FILTER_MARKER_STROKE_OPACITY_FACTOR
+                    : 1;
             }
 
             return s;

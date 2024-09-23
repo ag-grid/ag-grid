@@ -39,6 +39,8 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
         let colId = ChartCrossFilterService.extractFilterColId(event);
 
         if (colId.endsWith('Filter')) {
+            // remove 'Filter' suffix if present - this handles the area/line chart
+            // highlighting rather than filtering behaviour
             colId = colId.replace('Filter', '');
         }
 

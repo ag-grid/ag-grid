@@ -55,6 +55,8 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
                     sectorLabelKey: f.colId,
                     calloutLabelName: category.name,
                     calloutLabelKey: category.id,
+                    calloutLabel: { enabled: false }, // hide labels on primary series
+                    highlightStyle: { item: { fill: undefined } },
                     ...(this.crossFiltering && {
                         angleFilterKey: `${f.colId}Filter`,
                         listeners: {
