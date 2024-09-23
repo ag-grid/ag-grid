@@ -4,8 +4,8 @@ export interface ChartGroupsDef {
     barGroup?: ('bar' | 'stackedBar' | 'normalizedBar')[];
     pieGroup?: ('pie' | 'donut' | 'doughnut')[];
     lineGroup?: ('line' | 'stackedLine' | 'normalizedLine')[];
-    scatterGroup?: ('scatter' | 'bubble')[];
     areaGroup?: ('area' | 'stackedArea' | 'normalizedArea')[];
+    scatterGroup?: ('scatter' | 'bubble')[];
     combinationGroup?: ('columnLineCombo' | 'areaColumnCombo' | 'customCombo')[];
 
     // enterprise chart groups
