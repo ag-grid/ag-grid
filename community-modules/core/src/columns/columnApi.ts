@@ -162,15 +162,15 @@ export function getAllDisplayedVirtualColumns(beans: BeanCollection): Column[] {
 
 /** @deprecated v31.1 */
 export function moveColumn(beans: BeanCollection, key: string | ColDef | Column, toIndex: number): void {
-    beans.columnMoveService.moveColumns([key], toIndex, 'api');
+    beans.columnMoveService?.moveColumns([key], toIndex, 'api');
 }
 
 export function moveColumnByIndex(beans: BeanCollection, fromIndex: number, toIndex: number): void {
-    beans.columnMoveService.moveColumnByIndex(fromIndex, toIndex, 'api');
+    beans.columnMoveService?.moveColumnByIndex(fromIndex, toIndex, 'api');
 }
 
 export function moveColumns(beans: BeanCollection, columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number) {
-    beans.columnMoveService.moveColumns(columnsToMoveKeys, toIndex, 'api');
+    beans.columnMoveService?.moveColumns(columnsToMoveKeys, toIndex, 'api');
 }
 
 /** @deprecated v31.1 */

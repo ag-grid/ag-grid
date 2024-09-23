@@ -1,5 +1,4 @@
 import type { ColumnModel } from '../../columns/columnModel';
-import type { ColumnMoveService } from '../../columns/columnMoveService';
 import type { VisibleColsService } from '../../columns/visibleColsService';
 import { HorizontalDirection } from '../../constants/direction';
 import { BeanStub } from '../../context/beanStub';
@@ -14,8 +13,9 @@ import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { ColumnHighlightPosition } from '../../interfaces/iColumn';
 import { _last } from '../../utils/array';
 import { _exists, _missing } from '../../utils/generic';
-import { attemptMoveColumns, getBestColumnMoveIndexFromXPosition, normaliseX } from '../columnMoveHelper';
-import type { ColumnMoveParams } from '../columnMoveHelper';
+import type { ColumnMoveService } from '../columnMoveService';
+import type { ColumnMoveParams } from '../internalColumnMoveUtils';
+import { attemptMoveColumns, getBestColumnMoveIndexFromXPosition, normaliseX } from '../internalColumnMoveUtils';
 import type { DropListener } from './bodyDropTarget';
 
 const MOVE_FAIL_THRESHOLD = 7;
@@ -34,7 +34,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
-        this.columnMoveService = beans.columnMoveService;
+        this.columnMoveService = beans.columnMoveService!;
         this.dragAndDropService = beans.dragAndDropService;
         this.ctrlsService = beans.ctrlsService;
     }
