@@ -1,4 +1,4 @@
-import { type Part, type Theme, themeQuartz } from '@ag-grid-community/theming';
+import { type Part, type Theme, _asThemeImpl, themeQuartz } from '@ag-grid-community/theming';
 import { atom, useAtomValue } from 'jotai';
 
 import { allParamModels } from './ParamModel';
@@ -38,7 +38,7 @@ const renderedThemeInfoAtom = atom((get): RenderedThemeInfo => {
     // which requires that the CSS variable values are available
     setCurrentThemeCssClass(theme.getCssClass());
     const stylesheet = new CSSStyleSheet();
-    stylesheet.replaceSync(theme.getCSS());
+    stylesheet.replaceSync(_asThemeImpl(theme).getCSS());
     document.adoptedStyleSheets = [stylesheet];
 
     return {
@@ -48,6 +48,6 @@ const renderedThemeInfoAtom = atom((get): RenderedThemeInfo => {
     };
 });
 
-export const useRenderedTheme = () => useAtomValue(renderedThemeInfoAtom).theme;
+export const useRenderedTheme = () => _asThemeImpl(useAtomValue(renderedThemeInfoAtom).theme);
 
 export const useRenderedThemeInfo = () => useAtomValue(renderedThemeInfoAtom);

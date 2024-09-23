@@ -1,7 +1,7 @@
-import { type Theme, paramValueToCss } from '@ag-grid-community/theming';
+import { paramValueToCss } from '@ag-grid-community/theming';
 import type { ParamModel } from '@components/theme-builder/model/ParamModel';
 import { useRenderedTheme } from '@components/theme-builder/model/rendered-theme';
-import { cssValueIsValid, reinterpretCSSValue } from '@components/theme-builder/model/utils';
+import { type ThemeImpl, cssValueIsValid, reinterpretCSSValue } from '@components/theme-builder/model/utils';
 import { useEffect, useRef, useState } from 'react';
 
 import { Input } from './Input';
@@ -48,8 +48,8 @@ export const CssValueEditor = ({ param, value, onChange }: ValueEditorProps<unkn
     );
 };
 
-const getEditorValue = (theme: Theme, param: ParamModel<unknown>): string => {
-    const paramValue = theme.getParams()[param.property];
+const getEditorValue = (theme: ThemeImpl, param: ParamModel<unknown>): string => {
+    const paramValue = theme.getParams().getValues()[param.property];
     let cssValue = paramValueToCss(param.property, paramValue) || '';
     const reinterpreted = reinterpretCSSValue(cssValue, param.type);
     if (reinterpreted) {

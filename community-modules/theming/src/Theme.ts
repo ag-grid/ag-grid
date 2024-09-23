@@ -1,14 +1,13 @@
 import { type GridTheme, type GridThemeUseArgs, _errorOnce, _warnOnce } from '@ag-grid-community/core';
 
-import type { Part } from './Part';
+import { Params } from './Params';
+import { type Part, asPartImpl } from './Part';
 import { type CoreParams, coreCSS, coreDefaults } from './styles/core/core-css';
 import { type CssFragment, paramValueToCss } from './theme-types';
 import { paramToVariableName } from './theme-utils';
 
 export type Theme<TParams = unknown> = GridTheme & {
     readonly id: string;
-    readonly dependencies: readonly Part[];
-    readonly defaults: Partial<TParams>;
 
     /**
      * Return a new theme that uses an theme part. The part will replace any
@@ -24,20 +23,7 @@ export type Theme<TParams = unknown> = GridTheme & {
      *
      * @param defaults an object containing params e.g. {spacing: 10}
      */
-    withParams(defaults: Partial<TParams>): Theme<TParams>;
-
-    /**
-     * Return the complete rendered CSS for this theme. This can be used at
-     * build time to generate CSS if your application requires that CSS be
-     * served from a static file.
-     */
-    getCSS(): string;
-
-    /**
-     * Return the params used to render the theme, including the default values
-     * and any overrides supplied by parts and `withParams` calls.
-     */
-    getParams(): Record<string, unknown>;
+    withParams(defaults: Partial<TParams>, mode?: string): Theme<TParams>;
 };
 
 let customThemeCounter = 0;
@@ -47,7 +33,7 @@ let customThemeCounter = 0;
  * @param id an optional identifier for debugging, if omitted one will be generated
  */
 export const createTheme = (id: string = `customTheme${++customThemeCounter}`): Theme<CoreParams> =>
-    /*#__PURE__*/ new ThemeImpl(id, [], {});
+    /*#__PURE__*/ new ThemeImpl(id);
 
 const IS_SSR = typeof window !== 'object' || !window || typeof document !== 'object' || window.document !== document;
 let themeClassCounter = 0;
@@ -57,28 +43,18 @@ class ThemeImpl<TParams = unknown> implements Theme {
     constructor(
         readonly id: string,
         readonly dependencies: readonly Part[] = [],
-        readonly defaults: Partial<TParams> = {}
+        readonly params: Params = new Params()
     ) {}
 
     withPart<TPartParams>(part: Part<TPartParams> | (() => Part<TPartParams>)): Theme<TParams & TPartParams> {
         if (typeof part === 'function') {
             part = part();
         }
-        return new ThemeImpl<TParams & TPartParams>(
-            this.id,
-            this.dependencies.concat(part),
-            this.defaults as TParams & TPartParams
-        );
+        return new ThemeImpl<TParams & TPartParams>(this.id, this.dependencies.concat(part), this.params);
     }
 
-    withParams(params: Partial<TParams>): Theme<TParams> {
-        const newParams: any = { ...this.defaults };
-        for (const [name, value] of Object.entries(params)) {
-            if (value != null) {
-                newParams[name] = value;
-            }
-        }
-        return new ThemeImpl(this.id, this.dependencies, newParams);
+    withParams(params: Partial<TParams>, mode?: string): Theme<TParams> {
+        return new ThemeImpl(this.id, this.dependencies, this.params.withParams(params, mode));
     }
 
     getCSS(): string {
@@ -115,18 +91,13 @@ class ThemeImpl<TParams = unknown> implements Theme {
         return this._cssClass;
     }
 
-    private _getParamsCache?: Record<string, unknown>;
-    public getParams(): Record<string, unknown> {
+    private _getParamsCache?: Params;
+    public getParams(): Params {
         if (this._getParamsCache) return this._getParamsCache;
 
-        const mergedParams: any = { ...coreDefaults };
+        const mergedParams = new Params().withParams(coreDefaults);
         for (const part of this._getFlatUnits()) {
-            for (const [param, value] of Object.entries(part.defaults)) {
-                const partParamValue = value != null ? value : (coreDefaults as any)[param];
-                if (partParamValue != null) {
-                    mergedParams[param] = partParamValue;
-                }
-            }
+            mergedParams.mutateMergeWith(part.params);
         }
 
         return (this._getParamsCache = mergedParams);
@@ -182,10 +153,11 @@ class ThemeImpl<TParams = unknown> implements Theme {
 
         const accumulator: Record<string, PartOrTheme> = {};
         for (const part of this.dependencies) {
+            const partImpl = asPartImpl(part);
             // remove any existing item before overwriting, so that the newly added
             // part is ordered at the end of the list
-            delete accumulator[part.feature];
-            accumulator[part.feature] = part;
+            delete accumulator[partImpl.feature];
+            accumulator[partImpl.feature] = partImpl;
         }
         const flatUnits: PartOrTheme[] = [
             ...Object.values(accumulator),
@@ -217,13 +189,23 @@ class ThemeImpl<TParams = unknown> implements Theme {
     }
 }
 
+export const asThemeImpl = (theme: Theme): ThemeImpl => {
+    if (theme instanceof ThemeImpl) {
+        return theme;
+    }
+    throw new Error(
+        'expected theme to be an object created by createTheme' +
+            (theme && typeof theme === 'object' ? '' : `, got ${theme}`)
+    );
+};
+
 type PartOrTheme = {
     readonly id: string;
-    readonly defaults: Record<string, unknown>;
+    readonly params: Params;
     readonly css?: ReadonlyArray<CssFragment>;
 };
 
-const makeVariablesChunk = (theme: Theme): ThemeCssChunk => {
+const makeVariablesChunk = (themeArg: Theme): ThemeCssChunk => {
     // Ensure that every variable has a value set on root elements ("root"
     // elements are those containing grid UI, e.g. ag-root-wrapper and
     // ag-popup)
@@ -240,15 +222,30 @@ const makeVariablesChunk = (theme: Theme): ThemeCssChunk => {
     let variablesCss = '';
     let inheritanceCss = '';
 
-    for (const [key, value] of Object.entries(theme.getParams())) {
-        const cssValue = paramValueToCss(key, value);
-        if (cssValue === false) {
-            _errorOnce(`Invalid value for param ${key} - ${describeValue(value)}`);
-        } else {
-            const cssName = paramToVariableName(key);
-            const inheritedName = cssName.replace('--ag-', '--ag-inherited-');
-            variablesCss += `\t${cssName}: var(${inheritedName}, ${cssValue});\n`;
-            inheritanceCss += `\t${inheritedName}: var(${cssName});\n`;
+    const theme = asThemeImpl(themeArg);
+    const params = theme.getParams();
+    // always put default mode first to that more specific color schemes can override it
+    const modes = ['default', ...params.getModes().filter((mode) => mode !== 'default')];
+    for (const mode of modes) {
+        if (mode !== 'default') {
+            const wrapPrefix = `:where([data-ag-theme-mode="${CSS.escape(mode)}"]) & {\n`;
+            variablesCss += wrapPrefix;
+            inheritanceCss += wrapPrefix;
+        }
+        for (const [key, value] of Object.entries(params.getValues(mode))) {
+            const cssValue = paramValueToCss(key, value);
+            if (cssValue === false) {
+                _errorOnce(`Invalid value for param ${key} - ${describeValue(value)}`);
+            } else {
+                const cssName = paramToVariableName(key);
+                const inheritedName = cssName.replace('--ag-', '--ag-inherited-');
+                variablesCss += `\t${cssName}: var(${inheritedName}, ${cssValue});\n`;
+                inheritanceCss += `\t${inheritedName}: var(${cssName});\n`;
+            }
+        }
+        if (mode !== 'default') {
+            variablesCss += '}\n';
+            inheritanceCss += '}\n';
         }
     }
     const rootSelector = `:where(.${theme.getCssClass()})`;
@@ -263,10 +260,13 @@ const makeVariablesChunk = (theme: Theme): ThemeCssChunk => {
     };
 };
 
-const getGoogleFontsUsed = (theme: Theme): string[] =>
+const getGoogleFontsUsed = (theme: ThemeImpl): string[] =>
     Array.from(
         new Set(
-            Object.values(theme.getParams())
+            theme
+                .getParams()
+                .getModes()
+                .flatMap((mode) => Object.values(theme.getParams().getValues(mode)))
                 .flat()
                 .map((value: any) => value?.googleFont)
                 .filter((value) => typeof value === 'string') as string[]
