@@ -37,7 +37,7 @@ let latestUpdateId = 0;
  * Generates a random number between min and max
  */
 function randomBetween(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return Math.floor(pRandom() * (max - min + 1)) + min;
 }
 
 // build up the test data
@@ -61,8 +61,8 @@ function createRowData() {
 }
 
 function createTradeRecord(product, portfolio, book, batch) {
-    var current = Math.floor(Math.random() * 10000) + (Math.random() < 0.45 ? 500 : 19000);
-    var previous = current + (Math.random() < 0.5 ? 500 : 19000);
+    var current = Math.floor(pRandom() * 10000) + (pRandom() < 0.45 ? 500 : 19000);
+    var previous = current + (pRandom() < 0.5 ? 500 : 19000);
 
     return {
         product: product,
@@ -71,8 +71,8 @@ function createTradeRecord(product, portfolio, book, batch) {
         trade: ++nextTradeId,
         submitterID: randomBetween(10, 1000),
         submitterDealID: randomBetween(10, 1000),
-        dealType: Math.random() < 0.2 ? 'Physical' : 'Financial',
-        bidFlag: Math.random() < 0.5 ? 'Buy' : 'Sell',
+        dealType: pRandom() < 0.2 ? 'Physical' : 'Financial',
+        bidFlag: pRandom() < 0.5 ? 'Buy' : 'Sell',
         current: current,
         previous: previous,
         pl1: randomBetween(10000, 30000),
@@ -89,10 +89,10 @@ function updateSomeItems(updateCount) {
         if (globalRowData.length === 0) {
             continue;
         }
-        var indexToUpdate = Math.floor(Math.random() * globalRowData.length);
+        var indexToUpdate = Math.floor(pRandom() * globalRowData.length);
         var itemToUpdate = globalRowData[indexToUpdate];
 
-        var field = VALUE_FIELDS[Math.floor(Math.random() * VALUE_FIELDS.length)];
+        var field = VALUE_FIELDS[Math.floor(pRandom() * VALUE_FIELDS.length)];
         itemToUpdate[field] += randomBetween(-8000, 8200);
 
         itemsToUpdate.push(itemToUpdate);
@@ -138,3 +138,16 @@ self.addEventListener('message', function (e) {
         startUpdates(latestUpdateId);
     }
 });
+
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();
