@@ -1676,6 +1676,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public isRowMaster: IsRowMaster<TData> | undefined = undefined;
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression.
+     *
+     * @deprecated v32.2 Use `selection.handle.setFillValue` instead
      */
     @Input() public fillOperation: ((params: FillOperationParams<TData>) => any) | undefined = undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.

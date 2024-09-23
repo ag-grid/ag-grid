@@ -1,10 +1,14 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { GridApi, GridOptions } from '@ag-grid-community/core';
+import type { MockInstance } from 'vitest';
 
 import { TestGridsManager } from '../test-utils';
 import { assertSelectedRowNodes, assertSelectedRowsByIndex } from './utils';
 
 describe('Row Selection Grid API', () => {
+    let consoleErrorSpy: MockInstance;
+    let consoleWarnSpy: MockInstance;
+
     const gridMgr = new TestGridsManager({
         modules: [ClientSideRowModelModule],
     });
@@ -15,10 +19,16 @@ describe('Row Selection Grid API', () => {
 
     beforeEach(() => {
         gridMgr.reset();
+
+        consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
     });
 
     afterEach(() => {
         gridMgr.reset();
+
+        consoleErrorSpy.mockRestore();
+        consoleWarnSpy.mockRestore();
     });
 
     const columnDefs = [{ field: 'sport' }];
