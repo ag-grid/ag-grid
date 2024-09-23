@@ -11,6 +11,7 @@ import {
     isExternalVueFile,
 } from './grid-vanilla-to-vue-common';
 import {
+    addAllCommunityFeatureModule,
     addBindingImports,
     addEnterprisePackage,
     addLicenseManager,
@@ -292,17 +293,8 @@ function getModuleImports(
     addRelativeImports(bindings, imports, 'js');
 
     if (bindings.moduleRegistration) {
-        imports.push(bindings.moduleRegistration);
+        imports.push(addAllCommunityFeatureModule(bindings.moduleRegistration));
     }
-
-    // if (bindings.moduleRegistration) {
-    //     bindings.imports.forEach((importStatement) => {
-    //         if (importStatement.imports.some((m) => m.includes('Module'))) {
-    //             imports.push(`import { ${importStatement.imports.join(', ')} } from ${importStatement.module};`);
-    //         }
-    //     });
-    //     imports.push(bindings.moduleRegistration);
-    // }
 
     return imports;
 }

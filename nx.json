@@ -19,7 +19,8 @@
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "defaultExcludes": [
-      "!{projectRoot}/.eslintrc.json",
+      "buildOutputExcludes",
+      "!{projectRoot}/.eslintrc.*",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
       "!{projectRoot}/**/test/**",
       "!{projectRoot}/**/__image_snapshots__/**",

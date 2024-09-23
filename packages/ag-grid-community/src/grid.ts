@@ -36,7 +36,6 @@ import { NavigationService } from './gridBodyComp/navigationService';
 import { PinnedWidthService } from './gridBodyComp/pinnedWidthService';
 import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridComp } from './gridComp/gridComp';
-import { CommunityFeaturesModule } from './gridCoreModule';
 import { GridDestroyService } from './gridDestroyService';
 import { GridOptionsService, getCoercedGridOptions } from './gridOptionsService';
 import { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
@@ -333,11 +332,11 @@ export class GridCoreCreator {
             }
         };
 
-        addModule(
-            !!passedViaConstructor?.length || !ModuleRegistry.__isPackageBased(),
-            CommunityFeaturesModule,
-            undefined
-        );
+        // addModule(
+        //     !!passedViaConstructor?.length || !ModuleRegistry.__isPackageBased(),
+        //     CommunityFeaturesModule,
+        //     undefined
+        // );
 
         if (passedViaConstructor) {
             passedViaConstructor.forEach((m) => addModule(true, m, gridId));

@@ -994,7 +994,7 @@ export {
     CsrmSsrmSharedApiModule as _CsrmSsrmSharedApiModule,
     SsrmInfiniteSharedApiModule as _SsrmInfiniteSharedApiModule,
 } from './api/sharedApiModule';
-export { CommunityMenuApiModule as _CommunityMenuApiModule } from './api/apiModule';
+export { CommunityMenuApiModule as _CommunityMenuApiModule, CommunityApiModule } from './api/apiModule';
 export { CommunityFeaturesModule, GridCoreModule } from './gridCoreModule';
 export { SortModule } from './sort/sortModule';
 export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
