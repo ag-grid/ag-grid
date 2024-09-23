@@ -106,46 +106,24 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         }
     }
 
-    protected setMasterForRow(rowNode: RowNode<TData>, data: TData, level: number, setExpanded: boolean): void {
-        const isTreeData = this.gos.get('treeData');
-        if (isTreeData) {
-            rowNode.setMaster(false);
-            if (setExpanded) {
-                rowNode.expanded = false;
-            }
-        } else {
-            const masterDetail = this.gos.get('masterDetail');
-            // this is the default, for when doing grid data
-            if (masterDetail) {
-                // if we are doing master detail, then the
-                // default is that everything can be a Master Row.
-                const isRowMasterFunc = this.gos.get('isRowMaster');
-                if (isRowMasterFunc) {
-                    rowNode.setMaster(isRowMasterFunc(data));
-                } else {
-                    rowNode.setMaster(true);
-                }
-            } else {
-                rowNode.setMaster(false);
-            }
-
-            if (setExpanded) {
-                const rowGroupColumns = this.beans.funcColsService.getRowGroupColumns();
-                const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
-
-                // need to take row group into account when determining level
-                const masterRowLevel = level + numRowGroupColumns;
-
-                rowNode.expanded = rowNode.master ? this.isExpanded(masterRowLevel) : false;
-            }
-        }
-    }
-
     protected isExpanded(level: number): boolean {
         const expandByDefault = this.gos.get('groupDefaultExpanded');
         if (expandByDefault === -1) {
             return true;
         }
         return level < expandByDefault;
+    }
+
+    protected sanitizeAddIndex(addIndex: number): number {
+        const allChildrenCount = this.rootNode.allLeafChildren?.length ?? 0;
+        if (addIndex < 0 || addIndex >= allChildrenCount || Number.isNaN(addIndex)) {
+            return allChildrenCount; // Append. Also for negative values, as it was historically the behavior.
+        }
+
+        // Ensure index is a whole number and not a floating point.
+        // Use case: the user want to add a row in the middle, doing addIndex = array.length / 2.
+        // If the array has an odd number of elements, the addIndex need to be rounded up.
+        // Consider that array.slice does round up internally, but we are setting this value to node.sourceRowIndex.
+        return Math.ceil(addIndex);
     }
 }
