@@ -499,6 +499,7 @@ export function addBindingImports(
     convertToPackage: boolean,
     ignoreTsImports: boolean
 ) {
+    convertToPackage = true;
     const workingImports = {};
     const namespacedImports = [];
 
@@ -544,7 +545,7 @@ export function addBindingImports(
 
         if (convertToPackage && k.includes('ag-grid')) {
             // Remove module related imports
-            unique = unique.filter((i) => !i.includes('Module') || i == 'AgGridModule');
+            // unique = unique.filter((i) => !i.includes('Module') || i == 'AgGridModule');
             hasEnterpriseModules = hasEnterpriseModules || k.includes('enterprise');
         }
         if (unique.length > 0 || v.namedImport) {
@@ -583,7 +584,8 @@ export function addRelativeImports(bindings: ParsedBindings, imports: string[], 
 }
 
 export function removeModuleRegistration(code: string) {
-    return code.replace(/ModuleRegistry\.registerModules(.|\n)*?]\)(;?)/g, '');
+    return code;
+    //return code.replace(/ModuleRegistry\.registerModules(.|\n)*?]\)(;?)/g, '');
 }
 
 export function handleRowGenericInterface(fileTxt: string, tData: string): string {

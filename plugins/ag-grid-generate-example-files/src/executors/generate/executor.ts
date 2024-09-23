@@ -266,15 +266,15 @@ export async function generateFiles(options: ExecutorOptions) {
 async function convertModulesToPackages(fileContent: any, isDev: boolean, internalFramework: InternalFramework) {
     const isEnterprise = fileContent.includes('-enterprise');
 
-    fileContent = removeModuleRegistration(fileContent);
-    // Remove the original import statements that contain modules
-    fileContent = fileContent
-        // Remove module import statements
-        .replace(/import[\s\n]*\{[^}]*\w+Module\b[^}]*\}[\s\n]*from\s*.*ag-grid.*\n/g, '')
-        // Remove ModuleRegistry import if by itself
-        .replace(/import ((.|\n)[^{,]*?ModuleRegistry(.|\n)*?)from.*\n/g, '')
-        // Remove if ModuleRegistry is with other imports
-        .replace(/ModuleRegistry(,)?/g, '');
+    // fileContent = removeModuleRegistration(fileContent);
+    // // Remove the original import statements that contain modules
+    // fileContent = fileContent
+    //     // Remove module import statements
+    //     .replace(/import[\s\n]*\{[^}]*\w+Module\b[^}]*\}[\s\n]*from\s*.*ag-grid.*\n/g, '')
+    //     // Remove ModuleRegistry import if by itself
+    //     .replace(/import ((.|\n)[^{,]*?ModuleRegistry(.|\n)*?)from.*\n/g, '')
+    //     // Remove if ModuleRegistry is with other imports
+    //     .replace(/ModuleRegistry(,)?/g, '');
 
     fileContent = convertModuleToPackageImports(fileContent);
 
