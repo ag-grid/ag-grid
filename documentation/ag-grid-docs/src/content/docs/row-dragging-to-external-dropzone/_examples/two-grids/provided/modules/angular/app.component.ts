@@ -1,20 +1,14 @@
-import { AgGridAngular } from '@ag-grid-community/angular';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
-    ColDef,
-    GetRowIdParams,
-    GridApi,
-    GridReadyEvent,
-    ModuleRegistry,
-    RowDropZoneParams,
-} from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { Component, ViewChild } from '@angular/core';
 
+import { AgGridAngular } from 'ag-grid-angular';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ColDef, GetRowIdParams, GridApi, GridReadyEvent, ModuleRegistry, RowDropZoneParams } from 'ag-grid-community';
+
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 @Component({
     standalone: true,

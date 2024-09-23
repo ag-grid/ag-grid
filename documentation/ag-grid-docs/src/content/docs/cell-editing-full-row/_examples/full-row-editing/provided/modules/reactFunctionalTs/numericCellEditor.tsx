@@ -1,5 +1,6 @@
-import { CustomCellEditorProps, useGridCellEditor } from '@ag-grid-community/react';
 import React, { memo, useCallback, useEffect, useRef } from 'react';
+
+import { CustomCellEditorProps, useGridCellEditor } from 'ag-grid-react';
 
 export default memo(({ value, onValueChange, eventKey, cellStartedEdit }: CustomCellEditorProps) => {
     const refInput = useRef<HTMLInputElement>(null);

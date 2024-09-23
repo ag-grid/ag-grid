@@ -1,18 +1,19 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, ModuleRegistry, ValueParserParams } from '@ag-grid-community/core';
-import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ColDef, ModuleRegistry, ValueParserParams } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
+import { AgGridReact, CustomCellRendererProps } from 'ag-grid-react';
 
 import { getData } from './data';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule, RowGroupingModule]);
 
 const COUNTRY_CODES: Record<string, string> = {
     Ireland: 'ie',

@@ -1,13 +1,14 @@
-import { AgGridAngular, ICellRendererAngularComp } from '@ag-grid-community/angular';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, ICellRendererParams, ValueGetterParams } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { Component } from '@angular/core';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ColDef, ICellRendererParams, ValueGetterParams } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 @Component({
     standalone: true,
