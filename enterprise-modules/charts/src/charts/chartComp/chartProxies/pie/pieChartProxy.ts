@@ -5,7 +5,6 @@ import type {
     AgPolarSeriesOptions,
 } from 'ag-charts-community';
 
-import { changeOpacity } from '../../utils/color';
 import type { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
 
@@ -32,7 +31,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
     protected getUpdateOptions(params: UpdateParams, commonChartOptions: AgPolarChartOptions): AgPolarChartOptions {
         return {
             ...commonChartOptions,
-            data: this.crossFiltering ? this.getCrossFilterData(params) : params.data,
+            data: params.data,
             series: this.getSeries(params),
         };
     }
@@ -90,19 +89,6 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
         );
 
         return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
-    }
-
-    private getCrossFilterData(params: UpdateParams) {
-        const colId = params.fields[0].colId;
-        const filteredOutColId = `${colId}Filter`;
-
-        return params.data.map((d) => {
-            // const total = d[colId] + d[filteredOutColId];
-            // d[`${colId}-total`] = total;
-            // d[filteredOutColId] = 1; // normalise to 1
-            // d[colId] = d[colId] / total; // fraction of 1
-            return d;
-        });
     }
 
     private extractCrossFilterSeries(series: (AgPieSeriesOptions | AgDonutSeriesOptions)[]) {

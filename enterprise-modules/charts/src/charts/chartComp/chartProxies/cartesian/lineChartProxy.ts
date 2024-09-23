@@ -34,7 +34,7 @@ export class LineChartProxy<T extends CartesianChartTypes = 'line'> extends Cart
                     xName: category.name,
                     yKey: f.colId,
                     yName: f.displayName,
-                    ...(this.crossFiltering && !selectionSource && { yFilterKey: `${f.colId}Filter` }),
+                    ...(this.crossFiltering && !selectionSource && { yKey: `${f.colId}Filter` }),
                 }) as AgLineSeriesOptions
         );
 
@@ -47,14 +47,6 @@ export class LineChartProxy<T extends CartesianChartTypes = 'line'> extends Cart
     ) {
         const [category] = params.categories;
 
-        // const getYKey = (yKey: string) => {
-        //     if (this.standaloneChartType === 'area') {
-        //         const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
-        //         return lastSelectedChartId === params.chartId ? yKey + 'Filter' : yKey;
-        //     }
-        //     return yKey + 'Filter';
-        // };
-
         return series.map((s) => {
             s.listeners = {
                 nodeClick: (e: any) => {
@@ -65,13 +57,10 @@ export class LineChartProxy<T extends CartesianChartTypes = 'line'> extends Cart
                 },
             };
             s.marker = {
-                itemStyler: (p) => {
-                    const value = p.datum[category.id];
-                    return {
-                        fill: p.highlighted ? 'yellow' : p.fill,
-                        size: p.highlighted ? 14 : this.crossFilteringPointSelected(value) ? 8 : 0,
-                    };
-                },
+                itemStyler: (p) => ({
+                    fill: p.highlighted ? 'yellow' : p.fill,
+                    size: p.highlighted ? 14 : this.crossFilteringPointSelected(p.datum[category.id]) ? 8 : 0,
+                }),
             };
             if (this.standaloneChartType === 'area') {
                 (s as AgAreaSeriesOptions).fillOpacity = this.crossFilteringDeselectedPoints() ? 0.3 : 1;

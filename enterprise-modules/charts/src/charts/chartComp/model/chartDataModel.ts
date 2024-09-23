@@ -45,16 +45,9 @@ export interface ChartModelParams {
     seriesGroupType?: SeriesGroupType;
 }
 
-export const CROSS_FILTERING_ZERO_VALUE_CHART_TYPES: ChartType[] = [
-    'line',
-    'pie',
-    'donut',
-    'doughnut',
-    'scatter',
-    'bubble',
-];
+export const CROSS_FILTERING_ZERO_VALUE_CHART_TYPES: ChartType[] = ['pie', 'donut', 'doughnut', 'scatter', 'bubble'];
 
-export const CROSS_FILTER_IS_HIGHLIGHT: ChartType[] = ['area'];
+export const CROSS_FILTER_IS_HIGHLIGHT: ChartType[] = ['line', 'area'];
 
 export class ChartDataModel extends BeanStub {
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';

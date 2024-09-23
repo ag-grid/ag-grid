@@ -197,10 +197,10 @@ export abstract class CartesianChartProxy<TSeries extends CartesianChartTypes> e
 
             const pointSelected = this.crossFilteringPointSelected(value);
             if (this.standaloneChartType === 'area' && lastSelectedChartId === params.chartId) {
-                d[`${colId}-total`] = pointSelected ? d[colId] : d[colId] + d[filteredOutColId];
+                d[`${colId}`] = pointSelected ? d[colId] : 0;
             }
             if (this.standaloneChartType === 'line') {
-                d[`${colId}-total`] = pointSelected ? d[colId] : d[colId] + d[filteredOutColId];
+                d[`${colId}Filter`] = pointSelected ? d[colId] : d[colId] + d[filteredOutColId];
             }
 
             return d;
