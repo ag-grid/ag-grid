@@ -259,7 +259,7 @@ export interface CoreBeanCollection {
     expressionService?: ExpressionService;
     autoWidthCalculator: AutoWidthCalculator;
     componentMetadataProvider: ComponentMetadataProvider;
-    agComponentUtils: AgComponentUtils;
+    agComponentUtils?: AgComponentUtils;
     frameworkComponentWrapper: FrameworkComponentWrapper;
     horizontalResizeService?: HorizontalResizeService;
     filterMenuFactory: IMenuFactory;

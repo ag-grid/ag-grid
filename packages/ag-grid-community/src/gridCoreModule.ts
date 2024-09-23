@@ -4,6 +4,7 @@ import { ColumnAutosizeModule } from './columnAutosize/columnAutosizeModule';
 import { ColumnMoveModule } from './columnMove/columnMoveModule';
 import { ColumnResizeModule } from './columnResize/columnResizeModule';
 import { ControlsColumnModule, DataTypeModule } from './columns/columnModule';
+import { CellRendererFunctionModule } from './components/framework/cellRendererFunctionModule';
 import { DragAndDropModule, RowDragModule } from './dragAndDrop/dragModule';
 import { EditModule } from './edit/editModule';
 import { FilterModule } from './filter/filterModule';
@@ -68,5 +69,6 @@ export const CommunityFeaturesModule = _defineModule({
         ColumnHeaderModule,
         ColumnGroupHeaderModule,
         OverlayModule,
+        CellRendererFunctionModule
     ],
 });

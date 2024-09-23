@@ -4,7 +4,7 @@ import type { BeanCollection } from '../../context/context';
 import type { IComponent } from '../../interfaces/iComponent';
 import type { ICellRendererComp, ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
 import { _loadTemplate } from '../../utils/dom';
-import type { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
+import type { ComponentMetadataProvider } from './componentMetadataProvider';
 
 export class AgComponentUtils extends BeanStub implements NamedBean {
     beanName = 'agComponentUtils' as const;
@@ -16,14 +16,10 @@ export class AgComponentUtils extends BeanStub implements NamedBean {
     }
 
     public adaptFunction(propertyName: string, jsCompFunc: any): any {
-        const metadata: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
-        if (metadata && metadata.functionAdapter) {
-            return metadata.functionAdapter(jsCompFunc);
-        }
-        return null;
+        return this.componentMetadataProvider.retrieve(propertyName)?.adaptFunction ? this.adaptCellRendererFunction(jsCompFunc) : null;
     }
 
-    public adaptCellRendererFunction(callback: any): { new (): IComponent<ICellRendererParams> } {
+    private adaptCellRendererFunction(callback: any): { new (): IComponent<ICellRendererParams> } {
         class Adapter implements ICellRendererComp {
             private eGui: HTMLElement;
 
@@ -51,12 +47,5 @@ export class AgComponentUtils extends BeanStub implements NamedBean {
         }
 
         return Adapter;
-    }
-
-    public doesImplementIComponent(candidate: any): boolean {
-        if (!candidate) {
-            return false;
-        }
-        return (candidate as any).prototype && 'getGui' in (candidate as any).prototype;
     }
 }

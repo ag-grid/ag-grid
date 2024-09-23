@@ -15,7 +15,6 @@ import { ColumnViewportService } from './columns/columnViewportService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
 import { VisibleColsService } from './columns/visibleColsService';
-import { AgComponentUtils } from './components/framework/agComponentUtils';
 import { ComponentMetadataProvider } from './components/framework/componentMetadataProvider';
 import { UserComponentFactory } from './components/framework/userComponentFactory';
 import { UserComponentRegistry } from './components/framework/userComponentRegistry';
@@ -430,7 +429,6 @@ export class GridCoreCreator {
             GridDestroyService,
             ApiFunctionService,
             UserComponentRegistry,
-            AgComponentUtils,
             ComponentMetadataProvider,
             ResizeObserverService,
             UserComponentFactory,
