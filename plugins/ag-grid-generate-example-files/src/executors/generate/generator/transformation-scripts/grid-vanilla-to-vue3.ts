@@ -11,6 +11,7 @@ import {
     isExternalVueFile,
 } from './grid-vanilla-to-vue-common';
 import {
+    addBindingImports,
     addEnterprisePackage,
     addLicenseManager,
     addRelativeImports,
@@ -275,19 +276,33 @@ function getModuleImports(
         allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
+    const bImports = [...(bindings.imports || [])];
+    bImports.push({
+        module: `'ag-grid-community'`,
+        isNamespaced: false,
+        imports: [],
+    });
+    if (bImports.length > 0) {
+        addBindingImports(bImports, imports, true, true);
+    }
+
     if (componentFileNames) {
         imports.push(...componentFileNames.map((componentFileName) => getImport(componentFileName, 'Vue', '')));
     }
     addRelativeImports(bindings, imports, 'js');
 
     if (bindings.moduleRegistration) {
-        bindings.imports.forEach((importStatement) => {
-            if (importStatement.imports.some((m) => m.includes('Module'))) {
-                imports.push(`import { ${importStatement.imports.join(', ')} } from ${importStatement.module};`);
-            }
-        });
         imports.push(bindings.moduleRegistration);
     }
+
+    // if (bindings.moduleRegistration) {
+    //     bindings.imports.forEach((importStatement) => {
+    //         if (importStatement.imports.some((m) => m.includes('Module'))) {
+    //             imports.push(`import { ${importStatement.imports.join(', ')} } from ${importStatement.module};`);
+    //         }
+    //     });
+    //     imports.push(bindings.moduleRegistration);
+    // }
 
     return imports;
 }
@@ -319,6 +334,16 @@ function getPackageImports(
 
     if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
+    }
+
+    const bImports = [...(bindings.imports || [])];
+    bImports.push({
+        module: `'ag-grid-community'`,
+        isNamespaced: false,
+        imports: [],
+    });
+    if (bImports.length > 0) {
+        addBindingImports(bImports, imports, true, true);
     }
 
     if (componentFileNames) {
