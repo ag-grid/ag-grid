@@ -20,7 +20,8 @@ import type {
     ClientSideNodeManagerRowNode,
 } from '../clientSideNodeManager/abstractClientSideNodeManager';
 import { AbstractClientSideNodeManager } from '../clientSideNodeManager/abstractClientSideNodeManager';
-import { type DataFieldGetter, makeFieldPathGetter } from './fieldAccess';
+import { makeFieldPathGetter } from './fieldAccess';
+import type { DataFieldGetter } from './fieldAccess';
 
 const TOP_LEVEL = 0;
 
