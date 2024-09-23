@@ -16,7 +16,14 @@ export function setRowNodeExpanded(
     expandParents?: boolean,
     forceSync?: boolean
 ): void {
-    beans.expansionService.setRowNodeExpanded(rowNode, expanded, expandParents, forceSync);
+    if (rowNode) {
+        // expand all parents recursively, except root node.
+        if (expandParents && rowNode.parent && rowNode.parent.level !== -1) {
+            setRowNodeExpanded(beans, rowNode.parent, expanded, expandParents, forceSync);
+        }
+
+        rowNode.setExpanded(expanded, undefined, forceSync);
+    }
 }
 
 export function getRowNode<TData = any>(beans: BeanCollection, id: string): IRowNode<TData> | undefined {

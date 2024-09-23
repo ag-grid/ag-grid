@@ -1,5 +1,6 @@
 import type { _ColumnGridApi } from '../api/gridApi';
 import { _defineModule } from '../interfaces/iModule';
+import { CheckboxCellRendererModule } from '../rendering/cellRenderers/cellRendererModule';
 import { VERSION } from '../version';
 import {
     applyColumnState,
@@ -44,6 +45,7 @@ export const DataTypeModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/data-type',
     beans: [DataTypeService],
+    dependantModules: [CheckboxCellRendererModule],
 });
 
 export const ControlsColumnModule = _defineModule({

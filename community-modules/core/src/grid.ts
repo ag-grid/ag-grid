@@ -48,7 +48,6 @@ import type { RowModelType } from './interfaces/iRowModel';
 import { LocaleService } from './localeService';
 import { AnimationFrameService } from './misc/animationFrameService';
 import { ApiEventService } from './misc/apiEventService';
-import { ExpansionService } from './misc/expansionService';
 import { MenuService } from './misc/menuService';
 import { ResizeObserverService } from './misc/resizeObserverService';
 import { ModuleNames } from './modules/moduleNames';
@@ -69,8 +68,6 @@ import { _errorOnce, _warnOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
 import { ChangeDetectionService } from './valueService/changeDetectionService';
-import { ExpressionService } from './valueService/expressionService';
-import { ValueCache } from './valueService/valueCache';
 import { ValueService } from './valueService/valueService';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 import { PopupService } from './widgets/popupService';
@@ -453,10 +450,8 @@ export class GridCoreCreator {
             PageBoundsService,
             PageBoundsListener,
             RowRenderer,
-            ExpressionService,
             ColumnFactory,
             NavigationService,
-            ValueCache,
             ValueService,
             AutoWidthCalculator,
             StandardMenuFactory,
@@ -478,7 +473,6 @@ export class GridCoreCreator {
             CtrlsFactory,
             SyncService,
             OverlayService,
-            ExpansionService,
             ApiEventService,
             AriaAnnouncementService,
             MenuService,

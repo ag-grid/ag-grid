@@ -34,7 +34,7 @@ import {
 } from '@ag-grid-community/core';
 
 export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendererCtrl {
-    private expressionService: ExpressionService;
+    private expressionService?: ExpressionService;
     private valueService: ValueService;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
@@ -377,7 +377,9 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             if (typeof footerValueGetter === 'function') {
                 footerValue = footerValueGetter(paramsClone);
             } else if (typeof footerValueGetter === 'string') {
-                footerValue = this.expressionService.evaluate(footerValueGetter, paramsClone);
+                footerValue = this.expressionService
+                    ? this.expressionService.evaluate(footerValueGetter, paramsClone)
+                    : '';
             } else {
                 _warnOnce('footerValueGetter should be either a function or a string (expression)');
             }

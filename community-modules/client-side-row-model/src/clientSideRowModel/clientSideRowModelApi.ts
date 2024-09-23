@@ -8,7 +8,7 @@ import type {
 import { _warnOnce } from '@ag-grid-community/core';
 
 export function onGroupExpandedOrCollapsed(beans: BeanCollection): void {
-    beans.expansionService.onGroupExpandedOrCollapsed();
+    beans.expansionService?.onGroupExpandedOrCollapsed();
 }
 
 export function refreshClientSideRowModel(beans: BeanCollection, step?: ClientSideRowModelStep): void {

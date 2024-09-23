@@ -13,7 +13,7 @@ import type { ExpressionService } from '../valueService/expressionService';
 export class ColumnNameService extends BeanStub implements NamedBean {
     beanName = 'columnNameService' as const;
 
-    private expressionService: ExpressionService;
+    private expressionService?: ExpressionService;
     private aggColumnNameService?: IAggColumnNameService;
 
     public wireBeans(beans: BeanCollection) {
@@ -81,7 +81,7 @@ export class ColumnNameService extends BeanStub implements NamedBean {
                 return headerValueGetter(params);
             } else if (typeof headerValueGetter === 'string') {
                 // valueGetter is an expression, so execute the expression
-                return this.expressionService.evaluate(headerValueGetter, params);
+                return this.expressionService?.evaluate(headerValueGetter, params) ?? null;
             }
             _warnOnce('headerValueGetter must be a function or a string');
             return '';

@@ -1,7 +1,5 @@
-import { _getDocument } from '../../gridOptionsUtils';
-import { _setAriaLabel, _setAriaLabelledBy } from '../../utils/aria';
-import { Component } from '../../widgets/component';
-import type { ILoadingCellRendererComp, ILoadingCellRendererParams } from './loadingCellRenderer';
+import type { ILoadingCellRendererComp, ILoadingCellRendererParams } from '@ag-grid-community/core';
+import { Component, _getDocument, _setAriaLabel, _setAriaLabelledBy } from '@ag-grid-community/core';
 
 export class SkeletonCellRenderer extends Component implements ILoadingCellRendererComp {
     constructor() {

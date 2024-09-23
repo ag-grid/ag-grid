@@ -8,7 +8,7 @@ import type { ExpressionService } from '../valueService/expressionService';
 export class StylingService extends BeanStub implements NamedBean {
     beanName = 'stylingService' as const;
 
-    private expressionService: ExpressionService;
+    private expressionService?: ExpressionService;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionService = beans.expressionService;
@@ -55,7 +55,7 @@ export class StylingService extends BeanStub implements NamedBean {
                 let resultOfRule: any;
 
                 if (typeof rule === 'string') {
-                    resultOfRule = this.expressionService.evaluate(rule, params);
+                    resultOfRule = this.expressionService ? this.expressionService.evaluate(rule, params) : true;
                 } else if (typeof rule === 'function') {
                     resultOfRule = rule(params);
                 }

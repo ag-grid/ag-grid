@@ -6,7 +6,7 @@ import { _escapeString } from '../utils/string';
 import type { GetCellValueParams } from './gridApi';
 
 export function expireValueCache(beans: BeanCollection): void {
-    beans.valueCache.expire();
+    beans.valueCache?.expire();
 }
 
 /** @deprecated v31.1 */

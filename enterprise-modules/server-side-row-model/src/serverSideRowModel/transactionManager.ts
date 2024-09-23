@@ -19,9 +19,9 @@ interface AsyncTransactionWrapper {
 export class TransactionManager extends BeanStub implements NamedBean, IServerSideTransactionManager {
     beanName = 'ssrmTransactionManager' as const;
 
-    private valueCache: ValueCache;
+    private valueCache?: ValueCache;
     private serverSideRowModel: ServerSideRowModel;
-    private selectionService: ServerSideSelectionService;
+    private selectionService?: ServerSideSelectionService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueCache = beans.valueCache;
@@ -109,7 +109,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
         this.asyncTransactions = transactionsToRetry;
 
         if (atLeastOneTransactionApplied) {
-            this.valueCache.onDataChanged();
+            this.valueCache?.onDataChanged();
             this.eventService.dispatchEvent({ type: 'storeUpdated' });
         }
 
@@ -139,8 +139,8 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
         if (!hasStarted) {
             return { status: ServerSideTransactionResultStatus.StoreNotStarted };
         } else if (res) {
-            this.valueCache.onDataChanged();
-            if (res.remove) {
+            this.valueCache?.onDataChanged();
+            if (res.remove && this.selectionService) {
                 const removedRowIds = res.remove.map((row) => row.id!);
                 this.selectionService.deleteSelectionStateFromParent(transaction.route || [], removedRowIds);
             }

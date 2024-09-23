@@ -1,13 +1,13 @@
-import type { GridApi } from './api/gridApi';
-import type { ColumnResizeService } from './columnResize/columnResizeService';
-import type { ColumnApplyStateService } from './columns/columnApplyStateService';
-import type { ColumnModel } from './columns/columnModel';
-import type { NamedBean } from './context/bean';
-import { BeanStub } from './context/beanStub';
-import type { BeanCollection } from './context/context';
-import type { CtrlsService } from './ctrlsService';
-import type { AgColumn } from './entities/agColumn';
-import type { AgProvidedColumnGroup } from './entities/agProvidedColumnGroup';
+import type { GridApi } from '../api/gridApi';
+import type { ColumnResizeService } from '../columnResize/columnResizeService';
+import type { ColumnApplyStateService } from '../columns/columnApplyStateService';
+import type { ColumnModel } from '../columns/columnModel';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type {
     AgEvent,
     AlignedGridColumnEvent,
@@ -16,10 +16,10 @@ import type {
     ColumnEvent,
     ColumnGroupOpenedEvent,
     ColumnResizedEvent,
-} from './events';
-import type { AlignedGrid } from './interfaces/iAlignedGrid';
-import type { WithoutGridCommon } from './interfaces/iCommon';
-import { _errorOnce, _warnOnce } from './utils/function';
+} from '../events';
+import type { AlignedGrid } from '../interfaces/iAlignedGrid';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import { _errorOnce, _warnOnce } from '../utils/function';
 
 export class AlignedGridsService extends BeanStub implements NamedBean {
     beanName = 'alignedGridsService' as const;

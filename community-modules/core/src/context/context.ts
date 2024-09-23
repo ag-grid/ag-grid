@@ -1,4 +1,4 @@
-import type { AlignedGridsService } from '../alignedGridsService';
+import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
 import type { RowModelHelperService } from '../api/rowModelHelperService';
@@ -218,7 +218,7 @@ export interface CoreBeanCollection {
     rowModel: IRowModel;
     ctrlsService: CtrlsService;
     ctrlsFactory: CtrlsFactory;
-    valueCache: ValueCache;
+    valueCache?: ValueCache;
     rowNodeEventThrottle: RowNodeEventThrottle;
     localeService: LocaleService;
     syncService: SyncService;
@@ -260,7 +260,7 @@ export interface CoreBeanCollection {
     cellNavigationService: CellNavigationService;
     scrollVisibleService: ScrollVisibleService;
     pinnedWidthService: PinnedWidthService;
-    expressionService: ExpressionService;
+    expressionService?: ExpressionService;
     autoWidthCalculator: AutoWidthCalculator;
     componentMetadataProvider: ComponentMetadataProvider;
     agComponentUtils: AgComponentUtils;
@@ -279,7 +279,7 @@ export interface CoreBeanCollection {
     rowModelHelperService?: RowModelHelperService;
     detailGridApiService?: IDetailGridApiService;
     gridDestroyService: GridDestroyService;
-    expansionService: IExpansionService;
+    expansionService?: IExpansionService;
     sideBarService?: ISideBarService;
     ssrmTransactionManager?: IServerSideTransactionManager;
     columnChooserFactory?: IColumnChooserFactory;
