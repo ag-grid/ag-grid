@@ -21,7 +21,7 @@ export class PersonFilter implements IFilterComp {
             '<div><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Full name search..."/></div>' +
             '<div style="margin-top: 20px; width: 200px;">This filter does partial word search on multiple words, eg "mich phel" still brings back Michael Phelps.</div>' +
             '<div style="margin-top: 20px; width: 200px;">Just to iterate anything can go in here, here is an image:</div>' +
-            '<div><img src="https://www.ag-grid.com/images/ag-logos/png-logos/AG-Grid-Logo_Light-Theme_238_70.png" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey; background-color: white;"/></div>' +
+            '<div><img src="https://www.ag-grid.com/example-assets/ag-grid-logo.png" style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey; background-color: white;"/></div>' +
             '</div>';
         const listener = (event: any) => {
             this.filterText = event.target.value;

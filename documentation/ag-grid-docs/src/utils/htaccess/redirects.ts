@@ -1,6 +1,15 @@
-type SimpleRedirectRule = { from: string; to: string };
-type RedirectMatchRule = { fromPattern: string; to: string };
-type Redirect = SimpleRedirectRule | RedirectMatchRule;
+export type SimpleRedirectRule = { from: string; to: string };
+export type RedirectMatchRule = { fromPattern: string; to: string };
+export type Redirect = SimpleRedirectRule | RedirectMatchRule;
+
+/**
+ * Where this file lives
+ *
+ * Useful for debugging
+ */
+export const REDIRECTS_FILE = 'documentation/ag-grid-docs/src/utils/htaccess/redirects.ts';
+
+export const IGNORE_PAGES = ['/ecommerce/', '/ag-grid-jobs-board'];
 
 export const SITE_301_REDIRECTS: Redirect[] = [
     // Redirect pipeline and changelog to new gatsby components (instead of old php ones)

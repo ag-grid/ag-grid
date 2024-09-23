@@ -198,6 +198,8 @@ export function getFullChartNameTranslationKey(chartType: ChartType): ChartTrans
         case 'groupedBar':
         case 'stackedBar':
         case 'normalizedBar':
+        case 'stackedLine':
+        case 'normalizedLine':
         case 'stackedArea':
         case 'normalizedArea':
             return `${chartType}Full`;

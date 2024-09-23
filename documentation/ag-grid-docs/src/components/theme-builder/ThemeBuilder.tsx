@@ -3,7 +3,6 @@ import { useLayoutEffect, useMemo, useState } from 'react';
 
 import { LoadFontFamilyMenuFonts } from './components/editors/FontFamilyValueEditor';
 import { RootContainer } from './components/general/RootContainer';
-import { WelcomeModal } from './components/general/WelcomeModal';
 import { applyPreset, darkModePreset, lightModePreset } from './components/presets/presets';
 import { allParamModels } from './model/ParamModel';
 import { allFeatureModels } from './model/PartModel';
@@ -42,7 +41,6 @@ export const ThemeBuilder = () => {
         <Provider store={store}>
             <LoadFontFamilyMenuFonts />
             {initialised && <RootContainer />}
-            <WelcomeModal />
         </Provider>
     );
 };

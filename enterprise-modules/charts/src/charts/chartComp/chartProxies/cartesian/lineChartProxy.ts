@@ -1,3 +1,4 @@
+import { _includes } from '@ag-grid-community/core';
 import type { AgCartesianAxisOptions, AgLineSeriesOptions } from 'ag-charts-community';
 
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
@@ -23,6 +24,8 @@ export class LineChartProxy extends CartesianChartProxy<'line'> {
 
     protected override getSeries(params: UpdateParams) {
         const [category] = params.categories;
+        const stacked = ['normalizedLine', 'stackedLine'].includes(this.chartType);
+
         const series: AgLineSeriesOptions[] = params.fields.map(
             (f) =>
                 ({
@@ -31,9 +34,16 @@ export class LineChartProxy extends CartesianChartProxy<'line'> {
                     xName: category.name,
                     yKey: f.colId,
                     yName: f.displayName,
+                    normalizedTo: stacked && this.isNormalised() ? 100 : undefined,
+                    stacked,
                 }) as AgLineSeriesOptions
         );
 
         return this.crossFiltering ? this.extractLineAreaCrossFilterSeries(series, params) : series;
+    }
+
+    private isNormalised() {
+        const normalisedCharts = ['normalizedLine'];
+        return !this.crossFiltering && _includes(normalisedCharts, this.chartType);
     }
 }

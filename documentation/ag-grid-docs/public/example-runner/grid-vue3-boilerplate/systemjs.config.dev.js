@@ -32,7 +32,7 @@
             // vue class component
             'vue-class-component': 'npm:vue-class-component@^8.0.0-beta.3/dist/vue-class-component.cjs.js',
 
-            app: appLocation + 'app',
+            app: appLocation,
             // systemJsMap comes from index.html
             ...systemJsMap,
         },
