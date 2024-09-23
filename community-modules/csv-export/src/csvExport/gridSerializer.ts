@@ -49,8 +49,8 @@ export class GridSerializer extends BeanStub implements NamedBean {
     private rowModel: IRowModel;
     private pinnedRowModel?: PinnedRowModel;
     private selectionService?: ISelectionService;
-    private rowNodeSorter: RowNodeSorter;
-    private sortController: SortController;
+    private rowNodeSorter?: RowNodeSorter;
+    private sortController?: SortController;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleColsService = beans.visibleColsService;
@@ -297,6 +297,9 @@ export class GridSerializer extends BeanStub implements NamedBean {
     }
 
     private replicateSortedOrder(rows: RowNode[]) {
+        if (!this.sortController || !this.rowNodeSorter) {
+            return;
+        }
         const sortOptions = this.sortController.getSortOptions();
         const compareNodes = (rowA: RowNode, rowB: RowNode): number => {
             if (rowA.rowIndex != null && rowB.rowIndex != null) {
@@ -308,7 +311,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
             // if the level is the same, compare these nodes, or their parents
             if (rowA.level === rowB.level) {
                 if (rowA.parent?.id === rowB.parent?.id) {
-                    return this.rowNodeSorter.compareRowNodes(
+                    return this.rowNodeSorter!.compareRowNodes(
                         sortOptions,
                         {
                             rowNode: rowA,

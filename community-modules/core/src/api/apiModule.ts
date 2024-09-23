@@ -14,7 +14,6 @@ import type {
     _KeyboardNavigationGridApi,
     _RowGridApi,
     _ScrollGridApi,
-    _SortGridApi,
 } from './gridApi';
 import {
     clearFocusedCell,
@@ -52,7 +51,6 @@ import {
     getHorizontalPixelRange,
     getVerticalPixelRange,
 } from './scrollApi';
-import { onSortChanged } from './sortApi';
 
 export const CoreApiModule = _defineModule<_CoreGridApi>({
     version: VERSION,
@@ -144,14 +142,6 @@ export const CommunityMenuApiModule = _defineModule<_CommunityMenuGridApi>({
     },
 });
 
-export const SortApiModule = _defineModule<_SortGridApi>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/sort-api',
-    apiFunctions: {
-        onSortChanged,
-    },
-});
-
 export const CommunityApiModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/api',
@@ -166,6 +156,5 @@ export const CommunityApiModule = _defineModule({
         RenderApiModule,
         CellApiModule,
         CommunityMenuApiModule,
-        SortApiModule,
     ],
 });

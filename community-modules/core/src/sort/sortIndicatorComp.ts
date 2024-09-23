@@ -1,11 +1,11 @@
-import type { BeanCollection } from '../../../context/context';
-import type { AgColumn } from '../../../entities/agColumn';
-import { _isColumnsSortingCoupledToGroup } from '../../../gridOptionsUtils';
-import type { SortController } from '../../../sortController';
-import { _clearElement, _setDisplayed } from '../../../utils/dom';
-import { _createIconNoSpan } from '../../../utils/icon';
-import type { ComponentSelector } from '../../../widgets/component';
-import { Component, RefPlaceholder } from '../../../widgets/component';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
+import { _clearElement, _setDisplayed } from '../utils/dom';
+import { _createIconNoSpan } from '../utils/icon';
+import type { ComponentSelector } from '../widgets/component';
+import { Component, RefPlaceholder } from '../widgets/component';
+import type { SortController } from './sortController';
 
 function makeSpan(dataRefSuffix: string, classSuffix: string) {
     return /* html */ `<span data-ref="eSort${dataRefSuffix}" class="ag-sort-indicator-icon ag-sort-${classSuffix} ag-hidden" aria-hidden="true"></span>`;
@@ -22,7 +22,7 @@ export class SortIndicatorComp extends Component {
     private sortController: SortController;
 
     public wireBeans(beans: BeanCollection): void {
-        this.sortController = beans.sortController;
+        this.sortController = beans.sortController!;
     }
 
     private eSortOrder: HTMLElement = RefPlaceholder;

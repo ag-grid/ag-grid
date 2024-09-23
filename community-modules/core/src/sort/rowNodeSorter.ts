@@ -5,15 +5,10 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import { _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
-import type { Column } from '../interfaces/iColumn';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
+import type { SortOption } from '../interfaces/iSortOption';
 import { _defaultComparator } from '../utils/generic';
 import type { ValueService } from '../valueService/valueService';
-
-export interface SortOption {
-    sort: 'asc' | 'desc';
-    column: Column;
-}
 
 export interface SortedRowNode {
     currentPos: number;

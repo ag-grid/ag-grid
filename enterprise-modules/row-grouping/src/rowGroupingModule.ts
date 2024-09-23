@@ -15,6 +15,7 @@ import { ColumnDropZoneService } from './rowGrouping/columnDropZones/columnDropZ
 import { FilterAggregatesStage } from './rowGrouping/filterAggregatesStage';
 import { GroupFilter } from './rowGrouping/groupFilter/groupFilter';
 import { GroupFloatingFilterComp } from './rowGrouping/groupFilter/groupFloatingFilter';
+import { GroupHideOpenParentsService } from './rowGrouping/groupHideOpenParentsService';
 import { GroupStage } from './rowGrouping/groupStage/groupStage';
 import { SelectableService } from './rowGrouping/groupStage/selectableService';
 import { PivotColDefService } from './rowGrouping/pivotColDefService';
@@ -64,6 +65,7 @@ export const RowGroupingCoreModule = _defineModule({
         AutoColService,
         ShowRowGroupColsService,
         ColumnDropZoneService,
+        GroupHideOpenParentsService,
     ],
     userComponents: [
         {

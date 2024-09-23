@@ -2,12 +2,12 @@
 // so the data is read to be be converted to JSON and thrown
 // over the wire
 import type { LoadSuccessParams } from '../rowNodeCache/iRowNodeBlock';
-import type { SortModelItem } from '../sortController';
 import type { AdvancedFilterModel } from './advancedFilterModel';
 import type { ColumnVO } from './iColumnVO';
 import type { AgGridCommon } from './iCommon';
 import type { FilterModel } from './iFilter';
 import type { IRowNode } from './iRowNode';
+import type { SortModelItem } from './iSortModelItem';
 
 export interface IServerSideGetRowsRequest {
     /** First row requested or undefined for all rows. */

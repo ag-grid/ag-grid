@@ -66,6 +66,7 @@ import type { IDetailGridApiService } from '../interfaces/iDetailGridApiService'
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
 import type { IExpansionService } from '../interfaces/iExpansionService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import type { IGroupHideOpenParentsService } from '../interfaces/iGroupHideOpenParentsService';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -98,8 +99,8 @@ import type { RowCssClassCalculator } from '../rendering/row/rowCssClassCalculat
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
-import type { RowNodeSorter } from '../rowNodes/rowNodeSorter';
-import type { SortController } from '../sortController';
+import type { RowNodeSorter } from '../sort/rowNodeSorter';
+import type { SortController } from '../sort/sortController';
 import type { StylingService } from '../styling/stylingService';
 import type { SyncService } from '../syncService';
 import type { UndoRedoService } from '../undoRedo/undoRedoService';
@@ -205,7 +206,7 @@ export interface CoreBeanCollection {
     animationFrameService: AnimationFrameService;
     dragService?: DragService;
     dragAndDropService?: DragAndDropService;
-    sortController: SortController;
+    sortController?: SortController;
     columnFilterService?: ColumnFilterService;
     filterManager?: FilterManager;
     rowContainerHeightService: RowContainerHeightService;
@@ -291,7 +292,7 @@ export interface CoreBeanCollection {
     aggregationStage?: IRowNodeStage;
     pivotStage?: IRowNodeStage;
     filterAggregatesStage?: IRowNodeStage;
-    rowNodeSorter: RowNodeSorter;
+    rowNodeSorter?: RowNodeSorter;
     pivotColDefService?: IPivotColDefService;
     statusBarService?: IStatusBarService;
     chartService?: IChartService;
@@ -299,6 +300,7 @@ export interface CoreBeanCollection {
     renderStatusService?: IRenderStatusService;
     rowDragService?: RowDragService;
     stickyRowService?: StickyRowService;
+    groupHideOpenParentsService?: IGroupHideOpenParentsService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -417,6 +419,7 @@ export type BeanName =
     | 'gos'
     | 'gridOptionsWrapper'
     | 'gridSerializer'
+    | 'groupHideOpenParentsService'
     | 'groupStage'
     | 'headerNavigationService'
     | 'headerPositionUtils'
@@ -465,7 +468,6 @@ export type BeanName =
     | 'showRowGroupColsService'
     | 'sideBarService'
     | 'sortController'
-    | 'sortService'
     | 'sortStage'
     | 'sparklineTooltipSingleton'
     | 'ssrmBlockUtils'

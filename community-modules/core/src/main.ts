@@ -276,7 +276,7 @@ export { GridHeaderCtrl, IGridHeaderComp } from './headerRendering/gridHeaderCtr
 export { HeaderRowComp, HeaderRowType } from './headerRendering/row/headerRowComp';
 export { HeaderRowCtrl, IHeaderRowComp } from './headerRendering/row/headerRowCtrl';
 export { HeaderCellCtrl, IHeaderCellComp } from './headerRendering/cells/column/headerCellCtrl';
-export { SortIndicatorComp, SortIndicatorSelector } from './headerRendering/cells/column/sortIndicatorComp';
+export type { SortIndicatorComp } from './sort/sortIndicatorComp';
 export { IHeaderFilterCellComp } from './headerRendering/cells/floatingFilter/iHeaderFilterCellComp';
 export { HeaderFilterCellCtrl } from './headerRendering/cells/floatingFilter/headerFilterCellCtrl';
 export { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -432,6 +432,7 @@ export {
     RefreshModelParams,
 } from './interfaces/iClientSideRowModel';
 export { IInfiniteRowModel } from './interfaces/iInfiniteRowModel';
+export { IGroupHideOpenParentsService } from './interfaces/iGroupHideOpenParentsService';
 
 export { ColumnVO } from './interfaces/iColumnVO';
 
@@ -628,11 +629,14 @@ export {
 } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
 export type { EventService } from './eventService';
-export { RowNodeSorter, SortedRowNode, SortOption } from './rowNodes/rowNodeSorter';
+export type { RowNodeSorter } from './sort/rowNodeSorter';
+export { SortedRowNode } from './sort/rowNodeSorter';
+export { SortOption } from './interfaces/iSortOption';
 export type { CtrlsService } from './ctrlsService';
 export { GridComp } from './gridComp/gridComp';
 export { GridCtrl, IGridComp } from './gridComp/gridCtrl';
-export { SortController, SortModelItem } from './sortController';
+export type { SortController } from './sort/sortController';
+export { SortModelItem } from './interfaces/iSortModelItem';
 export type { LocaleService } from './localeService';
 export type { ValueService } from './valueService/valueService';
 export type { ValueCache } from './valueService/valueCache';
@@ -985,6 +989,7 @@ export {
 } from './api/sharedApiModule';
 export { CommunityMenuApiModule as _CommunityMenuApiModule } from './api/apiModule';
 export { CommunityFeaturesModule, GridCoreModule } from './gridCoreModule';
+export { SortModule } from './sort/sortModule';
 
 //  events
 export * from './events';

@@ -53,8 +53,8 @@ export class ChartDatasource extends BeanStub {
     private pivotResultColsService: PivotResultColsService;
     private valueService: ValueService;
     private columnModel: ColumnModel;
-    private rowNodeSorter: RowNodeSorter;
-    private sortController: SortController;
+    private rowNodeSorter?: RowNodeSorter;
+    private sortController?: SortController;
     private aggregationStage?: IRowNodeStage & IAggregationStage;
 
     public wireBeans(beans: BeanCollection): void {
@@ -417,9 +417,10 @@ export class ChartDatasource extends BeanStub {
     }
 
     private sortRowNodes(rowNodes: RowNode[]): RowNode[] {
-        const sortOptions = this.sortController.getSortOptions();
-        const noSort = !sortOptions || sortOptions.length == 0;
-        if (noSort) return rowNodes;
+        const sortOptions = this.sortController?.getSortOptions();
+        if (!sortOptions || sortOptions.length == 0 || !this.rowNodeSorter) {
+            return rowNodes;
+        }
         return this.rowNodeSorter.doFullSort(rowNodes, sortOptions);
     }
 }

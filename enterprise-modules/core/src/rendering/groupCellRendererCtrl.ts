@@ -8,6 +8,7 @@ import type {
     GroupCellRendererParams,
     IGroupCellRenderer,
     IGroupCellRendererCtrl,
+    IGroupHideOpenParentsService,
     IRowNode,
     ISelectionService,
     RowDragService,
@@ -42,6 +43,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     private funcColsService: FuncColsService;
     private rowDragService?: RowDragService;
     private selectionService?: ISelectionService;
+    private groupHideOpenParentsService?: IGroupHideOpenParentsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionService = beans.expressionService;
@@ -52,6 +54,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         this.ctrlsService = beans.ctrlsService;
         this.funcColsService = beans.funcColsService;
         this.selectionService = beans.selectionService;
+        this.groupHideOpenParentsService = beans.groupHideOpenParentsService;
     }
 
     private params: GroupCellRendererParams;
@@ -285,43 +288,9 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     }
 
     private setupShowingValueForOpenedParent(): void {
-        // note - this code depends on sortService.updateGroupDataForHiddenOpenParents, where group data
-        // is updated to reflect the dragged down parents
-        const rowNode = this.params.node;
-        const column = this.params.column as AgColumn;
-
-        if (!this.gos.get('groupHideOpenParents')) {
-            this.showingValueForOpenedParent = false;
-            return;
-        }
-
-        // hideOpenParents means rowNode.groupData can have data for the group this column is displaying, even though
-        // this rowNode isn't grouping by the column we are displaying
-
-        // if no groupData at all, we are not showing a parent value
-        if (!rowNode.groupData) {
-            this.showingValueForOpenedParent = false;
-            return;
-        }
-
-        // this is the normal case, in that we are showing a group for which this column is configured. note that
-        // this means the Row Group is closed (if it was open, we would not be displaying it)
-        const showingGroupNode = rowNode.rowGroupColumn != null;
-        if (showingGroupNode) {
-            const keyOfGroupingColumn = rowNode.rowGroupColumn!.getId();
-            const configuredToShowThisGroupLevel = column.isRowGroupDisplayed(keyOfGroupingColumn);
-            // if showing group as normal, we didn't take group info from parent
-            if (configuredToShowThisGroupLevel) {
-                this.showingValueForOpenedParent = false;
-                return;
-            }
-        }
-
-        // see if we are showing a Group Value for the Displayed Group. if we are showing a group value, and this Row Node
-        // is not grouping by this Displayed Group, we must of gotten the value from a parent node
-        const valPresent = rowNode.groupData[column.getId()] != null;
-
-        this.showingValueForOpenedParent = valPresent;
+        this.showingValueForOpenedParent =
+            this.groupHideOpenParentsService?.isShowingValueForOpenedParent(this.params.node, this.params.column!) ??
+            false;
     }
 
     private addValueElement(): void {

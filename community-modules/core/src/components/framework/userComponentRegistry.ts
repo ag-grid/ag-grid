@@ -2,7 +2,6 @@ import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { UserComponentName } from '../../context/context';
 import { HeaderComp } from '../../headerRendering/cells/column/headerComp';
-import { SortIndicatorComp } from '../../headerRendering/cells/column/sortIndicatorComp';
 import { HeaderGroupComp } from '../../headerRendering/cells/columnGroup/headerGroupComp';
 import { ModuleNames } from '../../modules/moduleNames';
 import { AnimateShowChangeCellRenderer } from '../../rendering/cellRenderers/animateShowChangeCellRenderer';
@@ -24,7 +23,6 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
         //header
         agColumnHeader: HeaderComp,
         agColumnGroupHeader: HeaderGroupComp,
-        agSortIndicator: SortIndicatorComp,
 
         // renderers
         agAnimateShowChangeCellRenderer: AnimateShowChangeCellRenderer,

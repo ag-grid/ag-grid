@@ -1,4 +1,4 @@
-import type { SortModelItem } from '../sortController';
+import type { SortModelItem } from './iSortModelItem';
 
 /** Datasource used by both PaginationController and InfiniteRowModel */
 export interface IDatasource {

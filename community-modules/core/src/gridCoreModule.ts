@@ -14,6 +14,7 @@ import { PaginationModule } from './pagination/paginationModule';
 import { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
 import { StickyRowModule } from './rendering/features/stickyRowModule';
 import { RowSelectionModule } from './selection/rowSelectionModule';
+import { SortModule } from './sort/sortModule';
 import { ValidationService } from './validation/validationService';
 import { VERSION } from './version';
 
@@ -50,5 +51,6 @@ export const CommunityFeaturesModule = _defineModule({
         PinnedRowModule,
         StickyRowModule,
         RowSelectionModule,
+        SortModule,
     ],
 });

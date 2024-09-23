@@ -1586,7 +1586,7 @@ export interface GridOptions<TData = any> {
      */
     alwaysMultiSort?: boolean;
     /**
-     * Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key.
+     * Set to `'ctrl'` to have multi sorting by clicking work using the `Ctrl` (or `Command ⌘` for Mac) key.
      */
     multiSortKey?: 'ctrl';
     /**
