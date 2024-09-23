@@ -27,43 +27,43 @@ export function setNodesSelected(
 
     const { nodes, source, newValue } = params;
     const nodesAsRowNode = nodes as RowNode[];
-    beans.selectionService.setNodesSelected({ nodes: nodesAsRowNode, source: source ?? 'api', newValue });
+    beans.selectionService?.setNodesSelected({ nodes: nodesAsRowNode, source: source ?? 'api', newValue });
 }
 
 export function selectAll(beans: BeanCollection, source: SelectionEventSourceType = 'apiSelectAll') {
-    beans.selectionService.selectAllRowNodes({ source });
+    beans.selectionService?.selectAllRowNodes({ source });
 }
 
 export function deselectAll(beans: BeanCollection, source: SelectionEventSourceType = 'apiSelectAll') {
-    beans.selectionService.deselectAllRowNodes({ source });
+    beans.selectionService?.deselectAllRowNodes({ source });
 }
 
 export function selectAllFiltered(beans: BeanCollection, source: SelectionEventSourceType = 'apiSelectAllFiltered') {
-    beans.selectionService.selectAllRowNodes({ source, justFiltered: true });
+    beans.selectionService?.selectAllRowNodes({ source, justFiltered: true });
 }
 
 export function deselectAllFiltered(beans: BeanCollection, source: SelectionEventSourceType = 'apiSelectAllFiltered') {
-    beans.selectionService.deselectAllRowNodes({ source, justFiltered: true });
+    beans.selectionService?.deselectAllRowNodes({ source, justFiltered: true });
 }
 
 export function selectAllOnCurrentPage(
     beans: BeanCollection,
     source: SelectionEventSourceType = 'apiSelectAllCurrentPage'
 ) {
-    beans.selectionService.selectAllRowNodes({ source, justCurrentPage: true });
+    beans.selectionService?.selectAllRowNodes({ source, justCurrentPage: true });
 }
 
 export function deselectAllOnCurrentPage(
     beans: BeanCollection,
     source: SelectionEventSourceType = 'apiSelectAllCurrentPage'
 ) {
-    beans.selectionService.deselectAllRowNodes({ source, justCurrentPage: true });
+    beans.selectionService?.deselectAllRowNodes({ source, justCurrentPage: true });
 }
 
 export function getSelectedNodes<TData = any>(beans: BeanCollection): IRowNode<TData>[] {
-    return beans.selectionService.getSelectedNodes();
+    return beans.selectionService?.getSelectedNodes() ?? [];
 }
 
 export function getSelectedRows<TData = any>(beans: BeanCollection): TData[] {
-    return beans.selectionService.getSelectedRows();
+    return beans.selectionService?.getSelectedRows() ?? [];
 }

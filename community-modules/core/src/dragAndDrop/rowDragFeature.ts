@@ -84,7 +84,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private focusService: FocusService;
     private sortController: SortController;
     private filterManager?: FilterManager;
-    private selectionService: ISelectionService;
+    private selectionService?: ISelectionService;
     private mouseEventService: MouseEventService;
     private ctrlsService: CtrlsService;
     private funcColsService: FuncColsService;
@@ -175,7 +175,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const currentNode = draggingEvent.dragItem.rowNode! as RowNode;
         const isRowDragMultiRow = this.gos.get('rowDragMultiRow');
         if (isRowDragMultiRow) {
-            const selectedNodes = [...this.selectionService.getSelectedNodes()].sort((a, b) => {
+            const selectedNodes = [...(this.selectionService?.getSelectedNodes() ?? [])].sort((a, b) => {
                 if (a.rowIndex == null || b.rowIndex == null) {
                     return 0;
                 }

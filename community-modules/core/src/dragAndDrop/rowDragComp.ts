@@ -67,7 +67,7 @@ export class RowDragComp extends Component {
             return [this.rowNode];
         }
 
-        const selection = this.beans.selectionService.getSelectedNodes();
+        const selection = this.beans.selectionService?.getSelectedNodes() ?? [];
 
         return selection.indexOf(this.rowNode) !== -1 ? selection : [this.rowNode];
     }

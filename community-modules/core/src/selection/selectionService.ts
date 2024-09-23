@@ -1,5 +1,4 @@
 import type { NamedBean } from '../context/bean';
-import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { RowSelectionOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
@@ -21,9 +20,10 @@ import { _last } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _errorOnce, _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
+import { BaseSelectionService } from './baseSelectionService';
 import { RowRangeSelectionContext } from './rowRangeSelectionContext';
 
-export class SelectionService extends BeanStub implements NamedBean, ISelectionService {
+export class SelectionService extends BaseSelectionService implements NamedBean, ISelectionService {
     beanName = 'selectionService' as const;
 
     private rowModel: IRowModel;
@@ -651,13 +651,6 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         this.setNodesSelected({
             newValue: true,
             nodes,
-            source,
-        });
-    }
-
-    private dispatchSelectionChanged(source: SelectionEventSourceType): void {
-        this.eventService.dispatchEvent({
-            type: 'selectionChanged',
             source,
         });
     }

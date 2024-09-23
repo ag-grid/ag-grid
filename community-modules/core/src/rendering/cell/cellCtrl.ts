@@ -22,6 +22,7 @@ import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
+import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { _setAriaColIndex } from '../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize } from '../../utils/dom';
 import { _exists, _makeNull } from '../../utils/generic';
@@ -30,7 +31,6 @@ import { _escapeString } from '../../utils/string';
 import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../widgets/tooltipFeature';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
-import { CheckboxSelectionComponent } from '../checkboxSelectionComponent';
 import { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { FlashCellsParams } from '../rowRenderer';
@@ -1070,8 +1070,11 @@ export class CellCtrl extends BeanStub {
         super.destroy();
     }
 
-    public createSelectionCheckbox(): CheckboxSelectionComponent {
-        const cbSelectionComponent = new CheckboxSelectionComponent();
+    public createSelectionCheckbox(): CheckboxSelectionComponent | undefined {
+        const cbSelectionComponent = this.beans.selectionService?.createCheckboxSelectionComponent();
+        if (!cbSelectionComponent) {
+            return undefined;
+        }
 
         this.beans.context.createBean(cbSelectionComponent);
         cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column });

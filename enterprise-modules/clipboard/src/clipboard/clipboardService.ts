@@ -81,7 +81,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     beanName = 'clipboardService' as const;
 
     private csvCreator: ICsvCreator;
-    private selectionService: ISelectionService;
+    private selectionService?: ISelectionService;
     private rowModel: IRowModel;
     private ctrlsService: CtrlsService;
     private valueService: ValueService;
@@ -772,7 +772,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private shouldCopyRows(selection?: SelectionOptions) {
-        if (this.selectionService.isEmpty()) {
+        if (this.selectionService?.isEmpty() ?? true) {
             return false;
         }
 
@@ -807,7 +807,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private clearSelectedRows(): void {
-        const selected = this.selectionService.getSelectedNodes();
+        const selected = this.selectionService?.getSelectedNodes() ?? [];
         const columns = this.visibleColsService.allCols;
 
         for (const row of selected) {
@@ -1028,7 +1028,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         });
 
         this.copyDataToClipboard(data);
-        const rowNodes = this.selectionService.getSelectedNodes() || [];
+        const rowNodes = this.selectionService?.getSelectedNodes() || [];
         this.dispatchFlashCells(this.getCellsToFlashFromRowNodes(rowNodes));
     }
 

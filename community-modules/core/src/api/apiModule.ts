@@ -13,7 +13,6 @@ import type {
     _EventGridApi,
     _KeyboardNavigationGridApi,
     _RowGridApi,
-    _RowSelectionGridApi,
     _ScrollGridApi,
     _SortGridApi,
 } from './gridApi';
@@ -47,17 +46,6 @@ import {
     setRowNodeExpanded,
 } from './rowApi';
 import {
-    deselectAll,
-    deselectAllFiltered,
-    deselectAllOnCurrentPage,
-    getSelectedNodes,
-    getSelectedRows,
-    selectAll,
-    selectAllFiltered,
-    selectAllOnCurrentPage,
-    setNodesSelected,
-} from './rowSelectionApi';
-import {
     ensureColumnVisible,
     ensureIndexVisible,
     ensureNodeVisible,
@@ -76,22 +64,6 @@ export const CoreApiModule = _defineModule<_CoreGridApi>({
         getGridOption,
         setGridOption,
         updateGridOptions,
-    },
-});
-
-export const RowSelectionApiModule = _defineModule<_RowSelectionGridApi>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/row-selection-api',
-    apiFunctions: {
-        setNodesSelected,
-        selectAll,
-        deselectAll,
-        selectAllFiltered,
-        deselectAllFiltered,
-        selectAllOnCurrentPage,
-        deselectAllOnCurrentPage,
-        getSelectedNodes,
-        getSelectedRows,
     },
 });
 
@@ -185,7 +157,6 @@ export const CommunityApiModule = _defineModule({
     moduleName: '@ag-grid-community/api',
     dependantModules: [
         CoreApiModule,
-        RowSelectionApiModule,
         ColumnApiModule,
         RowApiModule,
         ScrollApiModule,

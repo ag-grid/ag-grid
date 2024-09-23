@@ -16,6 +16,7 @@ import { FilterAggregatesStage } from './rowGrouping/filterAggregatesStage';
 import { GroupFilter } from './rowGrouping/groupFilter/groupFilter';
 import { GroupFloatingFilterComp } from './rowGrouping/groupFilter/groupFloatingFilter';
 import { GroupStage } from './rowGrouping/groupStage/groupStage';
+import { SelectableService } from './rowGrouping/groupStage/selectableService';
 import { PivotColDefService } from './rowGrouping/pivotColDefService';
 import { PivotStage } from './rowGrouping/pivotStage';
 import {
@@ -78,6 +79,13 @@ export const RowGroupingCoreModule = _defineModule({
     dependantModules: [EnterpriseCoreModule],
 });
 
+export const RowGroupingSelectionModule = _defineModule({
+    version: VERSION,
+    moduleName: `${ModuleNames.RowGroupingModule}-selection`,
+    beans: [SelectableService],
+    dependantModules: [RowGroupingCoreModule],
+});
+
 export const RowGroupingApiModule = _defineModule<_RowGroupingGridApi<any>>({
     version: VERSION,
     moduleName: `${ModuleNames.RowGroupingModule}-api`,
@@ -135,6 +143,7 @@ export const RowGroupingModule = _defineModule({
         RowGroupingApiModule,
         GroupFilterModule,
         GroupFloatingFilterModule,
+        RowGroupingSelectionModule,
         StickyRowModule,
     ],
 });

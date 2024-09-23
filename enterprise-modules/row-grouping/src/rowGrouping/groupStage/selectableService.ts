@@ -1,18 +1,19 @@
-import type { NamedBean } from '../context/bean';
-import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
-import type { RowNode } from '../entities/rowNode';
+import type {
+    BeanCollection,
+    IClientSideRowModel,
+    IRowModel,
+    ISelectionService,
+    NamedBean,
+    RowNode,
+} from '@ag-grid-community/core';
 import {
+    BeanStub,
+    ChangedPath,
     _getGroupSelectsDescendants,
     _getIsRowSelectable,
     _getRowSelectionMode,
     _isClientSideRowModel,
-} from '../gridOptionsUtils';
-import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import type { IRowModel } from '../interfaces/iRowModel';
-import type { ISelectionService } from '../interfaces/iSelectionService';
-import { SelectionService } from '../selection/selectionService';
-import { ChangedPath } from '../utils/changedPath';
+} from '@ag-grid-community/core';
 
 export class SelectableService extends BeanStub implements NamedBean {
     beanName = 'selectableService' as const;
@@ -22,7 +23,7 @@ export class SelectableService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
-        this.selectionService = beans.selectionService;
+        this.selectionService = beans.selectionService!;
     }
 
     public postConstruct() {
@@ -90,7 +91,7 @@ export class SelectableService extends BeanStub implements NamedBean {
         }
 
         // if csrm and group selects children, update the groups after deselecting leaf nodes.
-        if (isCsrmGroupSelectsChildren && this.selectionService instanceof SelectionService) {
+        if (isCsrmGroupSelectsChildren) {
             this.selectionService.updateGroupsFromChildrenSelections('selectableChanged');
         }
     }

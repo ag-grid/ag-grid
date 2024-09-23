@@ -49,7 +49,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private rowNodeBlockLoader: RowNodeBlockLoader;
     private rowNodeSorter: RowNodeSorter;
     private sortController: SortController;
-    private selectionService: ISelectionService;
+    private selectionService?: ISelectionService;
     private nodeManager: NodeManager;
     private filterManager?: FilterManager;
     private transactionManager: IServerSideTransactionManager;
@@ -638,6 +638,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private updateSelection(nodesToUnselect: RowNode[]): void {
+        if (!this.selectionService) {
+            return;
+        }
         const selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
             this.selectionService.setNodesSelected({

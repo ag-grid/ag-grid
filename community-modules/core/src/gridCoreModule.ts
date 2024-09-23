@@ -13,6 +13,7 @@ import { ModuleNames } from './modules/moduleNames';
 import { PaginationModule } from './pagination/paginationModule';
 import { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
 import { StickyRowModule } from './rendering/features/stickyRowModule';
+import { RowSelectionModule } from './selection/rowSelectionModule';
 import { ValidationService } from './validation/validationService';
 import { VERSION } from './version';
 
@@ -48,5 +49,6 @@ export const CommunityFeaturesModule = _defineModule({
         RowDragModule,
         PinnedRowModule,
         StickyRowModule,
+        RowSelectionModule,
     ],
 });

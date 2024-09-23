@@ -64,8 +64,6 @@ import { RowCssClassCalculator } from './rendering/row/rowCssClassCalculator';
 import { RowContainerHeightService } from './rendering/rowContainerHeightService';
 import { RowRenderer } from './rendering/rowRenderer';
 import { RowNodeSorter } from './rowNodes/rowNodeSorter';
-import { SelectableService } from './rowNodes/selectableService';
-import { SelectionService } from './selection/selectionService';
 import { SortController } from './sortController';
 import { StylingService } from './styling/stylingService';
 import { SyncService } from './syncService';
@@ -452,7 +450,6 @@ export class GridCoreCreator {
             EventService,
             GridOptionsService,
             PopupService,
-            SelectionService,
             ColumnModel,
             HeaderNavigationService,
             PageBoundsService,
@@ -474,7 +471,6 @@ export class GridCoreCreator {
             SortController,
             ColumnHoverService,
             ColumnAnimationService,
-            SelectableService,
             ChangeDetectionService,
             AnimationFrameService,
             ColumnDefFactory,

@@ -34,7 +34,7 @@ import { LazyCache } from './lazyCache';
 export class LazyStore extends BeanStub implements IServerSideStore {
     private blockUtils: BlockUtils;
     private storeUtils: StoreUtils;
-    private selectionService: ISelectionService;
+    private selectionService?: ISelectionService;
     private funcColsService: FuncColsService;
 
     public wireBeans(beans: BeanCollection) {
@@ -189,6 +189,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     }
 
     private updateSelectionAfterTransaction(updatedNodes?: RowNode[], removedNodes?: RowNode[]) {
+        if (!this.selectionService) {
+            return;
+        }
         const nodesToDeselect: RowNode[] = [];
         updatedNodes?.forEach((node) => {
             if (node.isSelected() && !node.selectable) {
