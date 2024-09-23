@@ -1002,3 +1002,4 @@ export * from './clientSideRowModelModule';
 export * from './csvExportModule';
 export * from './gridCoreModule';
 export * from './infiniteRowModelModule';
+export * from './api/apiModule';
