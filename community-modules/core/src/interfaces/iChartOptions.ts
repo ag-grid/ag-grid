@@ -87,8 +87,46 @@ export interface SeriesChartType {
     secondaryAxis?: boolean;
 }
 
+export type ChartType =
+    | 'column'
+    | 'groupedColumn'
+    | 'stackedColumn'
+    | 'normalizedColumn'
+    | 'bar'
+    | 'groupedBar'
+    | 'stackedBar'
+    | 'normalizedBar'
+    | 'line'
+    | 'stackedLine'
+    | 'normalizedLine'
+    | 'scatter'
+    | 'bubble'
+    | 'pie'
+    | 'donut'
+    | 'doughnut'
+    | 'area'
+    | 'stackedArea'
+    | 'normalizedArea'
+    | 'histogram'
+    | 'radarLine'
+    | 'radarArea'
+    | 'nightingale'
+    | 'radialColumn'
+    | 'radialBar'
+    | 'sunburst'
+    | 'rangeBar'
+    | 'rangeArea'
+    | 'boxPlot'
+    | 'treemap'
+    | 'sunburst'
+    | 'heatmap'
+    | 'waterfall'
+    | 'columnLineCombo'
+    | 'areaColumnCombo'
+    | 'customCombo';
+
 export class ChartMappings {
-    public static readonly CHART_TYPE_TO_SERIES_TYPE = {
+    public static readonly CHART_TYPE_TO_SERIES_TYPE: Partial<Record<ChartType, string>> = {
         column: 'bar',
         groupedColumn: 'bar',
         stackedColumn: 'bar',
@@ -127,9 +165,5 @@ export class ChartMappings {
 
     public static readonly SERIES_GROUP_TYPES = ['grouped', 'stacked', 'normalized'] as const;
 }
-
-export type ChartType =
-    | keyof typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE
-    | (typeof ChartMappings.COMBO_CHART_TYPES)[number];
 
 export type SeriesGroupType = (typeof ChartMappings.SERIES_GROUP_TYPES)[number];
