@@ -4,18 +4,14 @@ import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
 import { CellNavigationService } from './cellNavigationService';
 import { ColumnApplyStateService } from './columns/columnApplyStateService';
-import { ColumnAutosizeService } from './columns/columnAutosizeService';
 import { ColumnDefFactory } from './columns/columnDefFactory';
-import { ColumnEventDispatcher } from './columns/columnEventDispatcher';
 import { ColumnFactory } from './columns/columnFactory';
+import { ColumnFlexService } from './columns/columnFlexService';
 import { ColumnGetStateService } from './columns/columnGetStateService';
 import { ColumnGroupStateService } from './columns/columnGroupStateService';
 import { ColumnModel } from './columns/columnModel';
-import { ColumnMoveService } from './columns/columnMoveService';
 import { ColumnNameService } from './columns/columnNameService';
-import { ColumnSizeService } from './columns/columnSizeService';
 import { ColumnViewportService } from './columns/columnViewportService';
-import { ControlsColService } from './columns/controlsColService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
 import { VisibleColsService } from './columns/visibleColsService';
@@ -28,8 +24,6 @@ import { Context } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import { CtrlsFactory } from './ctrlsFactory';
 import { CtrlsService } from './ctrlsService';
-import { DragAndDropService } from './dragAndDrop/dragAndDropService';
-import { DragService } from './dragAndDrop/dragService';
 import { CellPositionUtils } from './entities/cellPositionUtils';
 import type { GridOptions } from './entities/gridOptions';
 import { RowNodeEventThrottle } from './entities/rowNodeEventThrottle';
@@ -48,21 +42,18 @@ import { GridOptionsService, getCoercedGridOptions } from './gridOptionsService'
 import { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
 import { HeaderPositionUtils } from './headerRendering/common/headerPosition';
-import { HorizontalResizeService } from './headerRendering/common/horizontalResizeService';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { Module } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { LocaleService } from './localeService';
 import { AnimationFrameService } from './misc/animationFrameService';
 import { ApiEventService } from './misc/apiEventService';
-import { ExpansionService } from './misc/expansionService';
 import { MenuService } from './misc/menuService';
 import { ResizeObserverService } from './misc/resizeObserverService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PageBoundsListener } from './pagination/pageBoundsListener';
 import { PageBoundsService } from './pagination/pageBoundsService';
-import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 import { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
 import { AutoWidthCalculator } from './rendering/autoWidthCalculator';
 import { ColumnAnimationService } from './rendering/columnAnimationService';
@@ -71,18 +62,12 @@ import { OverlayService } from './rendering/overlays/overlayService';
 import { RowCssClassCalculator } from './rendering/row/rowCssClassCalculator';
 import { RowContainerHeightService } from './rendering/rowContainerHeightService';
 import { RowRenderer } from './rendering/rowRenderer';
-import { RowNodeSorter } from './rowNodes/rowNodeSorter';
-import { SelectableService } from './rowNodes/selectableService';
-import { SelectionService } from './selection/selectionService';
-import { SortController } from './sortController';
 import { StylingService } from './styling/stylingService';
 import { SyncService } from './syncService';
 import { _errorOnce, _warnOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
 import { ChangeDetectionService } from './valueService/changeDetectionService';
-import { ExpressionService } from './valueService/expressionService';
-import { ValueCache } from './valueService/valueCache';
 import { ValueService } from './valueService/valueService';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 import { PopupService } from './widgets/popupService';
@@ -455,65 +440,50 @@ export class GridCoreCreator {
             ResizeObserverService,
             UserComponentFactory,
             RowContainerHeightService,
-            HorizontalResizeService,
             LocaleService,
-            PinnedRowModel,
-            DragService,
             VisibleColsService,
             EventService,
             GridOptionsService,
             PopupService,
-            SelectionService,
             ColumnModel,
             HeaderNavigationService,
             PageBoundsService,
             PageBoundsListener,
             RowRenderer,
-            ExpressionService,
             ColumnFactory,
             NavigationService,
-            ValueCache,
             ValueService,
             AutoWidthCalculator,
             StandardMenuFactory,
-            DragAndDropService,
             FocusService,
             MouseEventService,
             Environment,
             CellNavigationService,
             StylingService,
             ScrollVisibleService,
-            SortController,
             ColumnHoverService,
             ColumnAnimationService,
-            SelectableService,
             ChangeDetectionService,
             AnimationFrameService,
             ColumnDefFactory,
             RowCssClassCalculator,
-            RowNodeSorter,
             CtrlsService,
             PinnedWidthService,
             RowNodeEventThrottle,
             CtrlsFactory,
             SyncService,
             OverlayService,
-            ExpansionService,
             ApiEventService,
             AriaAnnouncementService,
             MenuService,
             ColumnApplyStateService,
-            ColumnEventDispatcher,
-            ColumnMoveService,
-            ColumnAutosizeService,
             ColumnGetStateService,
             ColumnGroupStateService,
-            ColumnSizeService,
+            ColumnFlexService,
             FuncColsService,
             ColumnNameService,
             ColumnViewportService,
             PivotResultColsService,
-            ControlsColService,
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => (module.beans ? module.beans : []));

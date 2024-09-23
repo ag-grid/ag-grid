@@ -81,7 +81,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     beanName = 'clipboardService' as const;
 
     private csvCreator: ICsvCreator;
-    private selectionService: ISelectionService;
+    private selectionService?: ISelectionService;
     private rowModel: IRowModel;
     private ctrlsService: CtrlsService;
     private valueService: ValueService;
@@ -772,7 +772,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private shouldCopyRows(selection?: SelectionOptions) {
-        if (this.selectionService.isEmpty()) {
+        if (this.selectionService?.isEmpty() ?? true) {
             return false;
         }
 
@@ -807,8 +807,8 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private clearSelectedRows(): void {
-        const selected = this.selectionService.getSelectedNodes();
-        const columns = this.visibleColsService.getAllCols();
+        const selected = this.selectionService?.getSelectedNodes() ?? [];
+        const columns = this.visibleColsService.allCols;
 
         for (const row of selected) {
             for (const col of columns) {
@@ -910,7 +910,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             Object.assign(allCellsToFlash, cellsToFlash);
         });
 
-        const allColumns = this.visibleColsService.getAllCols();
+        const allColumns = this.visibleColsService.allCols;
         const exportedColumns = Array.from(columnsSet) as AgColumn[];
 
         exportedColumns.sort((a, b) => {
@@ -979,7 +979,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private getCellsToFlashFromRowNodes(rowNodes: RowNode[]): CellsToFlashType {
-        const allDisplayedColumns = this.visibleColsService.getAllCols();
+        const allDisplayedColumns = this.visibleColsService.allCols;
         const cellsToFlash: CellsToFlashType = {};
         for (let i = 0; i < rowNodes.length; i++) {
             const { rowIndex, rowPinned } = rowNodes[i];
@@ -1028,7 +1028,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         });
 
         this.copyDataToClipboard(data);
-        const rowNodes = this.selectionService.getSelectedNodes() || [];
+        const rowNodes = this.selectionService?.getSelectedNodes() || [];
         this.dispatchFlashCells(this.getCellsToFlashFromRowNodes(rowNodes));
     }
 
@@ -1093,7 +1093,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             let column = node.rowGroupColumn as AgColumn;
 
             if (!column && node.footer && node.level === -1) {
-                column = this.funcColsService.getRowGroupColumns()[0];
+                column = this.funcColsService.rowGroupCols[0];
             }
             return processCellForClipboard({
                 value,

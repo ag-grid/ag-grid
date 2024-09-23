@@ -1,9 +1,12 @@
 import type { Bean } from '../context/bean';
+import type { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
 import type { CellPosition } from '../entities/cellPositionUtils';
 import type { RowPosition } from '../entities/rowPositionUtils';
 import type { Column } from '../interfaces/iColumn';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
+import type { ICellRangeFeature } from './iCellRangeFeature';
 
 export interface IRangeService {
     isEmpty(): boolean;
@@ -35,6 +38,8 @@ export interface IRangeService {
     ): PartialCellRange | undefined;
     setCellRanges(cellRanges: CellRange[]): void;
     clearCellRangeCellValues(params: ClearCellRangeParams): void;
+    createDragListenerFeature(eContainer: HTMLElement): BeanStub;
+    createCellRangeFeature(beans: BeanCollection, ctrl: CellCtrl): ICellRangeFeature;
 }
 
 export interface ISelectionHandle extends Bean {

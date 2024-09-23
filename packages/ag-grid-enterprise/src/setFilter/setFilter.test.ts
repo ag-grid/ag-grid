@@ -67,8 +67,8 @@
 //     gridOptionsService = mock<GridOptionsService>('get', 'addPropertyEventListener');
 //     gridOptionsService.get.mockImplementation((prop) => (prop === 'rowModelType' ? 'clientSide' : undefined));
 //
-//     funcColsService = mock<FuncColsService>('getRowGroupColumns');
-//     funcColsService.getRowGroupColumns.mockImplementation(() => []);
+//     funcColsService = mock<FuncColsService>();
+//     funcColsService.rowGroupCols = [];
 //
 //     virtualList = mock<VirtualList>('refresh');
 //

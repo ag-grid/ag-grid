@@ -55,7 +55,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     private headerNavigationService: HeaderNavigationService;
     private rowPositionUtils: RowPositionUtils;
     private cellNavigationService: CellNavigationService;
-    private pinnedRowModel: PinnedRowModel;
+    private pinnedRowModel?: PinnedRowModel;
     private scrollVisibleService: ScrollVisibleService;
     private rangeService?: IRangeService;
 
@@ -380,7 +380,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     // same cell into view (which means either scroll all the way up, or all the way down).
     private onHomeOrEndKey(key: string): void {
         const homeKey = key === KeyCode.PAGE_HOME;
-        const allColumns: AgColumn[] = this.visibleColsService.getAllCols();
+        const allColumns: AgColumn[] = this.visibleColsService.allCols;
         const columnToSelect = homeKey ? allColumns[0] : _last(allColumns);
         const scrollIndex = homeKey ? this.pageBoundsService.getFirstRow() : this.pageBoundsService.getLastRow();
 
@@ -582,7 +582,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     // returns null if no navigation should be performed
     private moveToNextCellNotEditing(previousCell: CellCtrl | RowCtrl, backwards: boolean): boolean | null {
-        const displayedColumns = this.visibleColsService.getAllCols();
+        const displayedColumns = this.visibleColsService.allCols;
         let cellPos: CellPosition;
 
         if (previousCell instanceof RowCtrl) {
@@ -743,11 +743,11 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     private lookupRowNodeForCell(cell: CellPosition) {
         if (cell.rowPinned === 'top') {
-            return this.pinnedRowModel.getPinnedTopRow(cell.rowIndex);
+            return this.pinnedRowModel?.getPinnedTopRow(cell.rowIndex);
         }
 
         if (cell.rowPinned === 'bottom') {
-            return this.pinnedRowModel.getPinnedBottomRow(cell.rowIndex);
+            return this.pinnedRowModel?.getPinnedBottomRow(cell.rowIndex);
         }
 
         return this.rowModel.getRow(cell.rowIndex);
@@ -865,7 +865,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     public tryToFocusFullWidthRow(position: CellPosition | RowPosition, backwards?: boolean): boolean {
-        const displayedColumns = this.visibleColsService.getAllCols();
+        const displayedColumns = this.visibleColsService.allCols;
         const rowComp = this.rowRenderer.getRowByPosition(position);
         if (!rowComp || !rowComp.isFullWidth()) {
             return false;

@@ -13,7 +13,7 @@ import { _warnOnce } from 'ag-grid-community';
 export function getServerSideSelectionState(
     beans: BeanCollection
 ): IServerSideSelectionState | IServerSideGroupSelectionState | null {
-    return beans.selectionService.getSelectionState() as
+    return (beans.selectionService?.getSelectionState() ?? null) as
         | IServerSideSelectionState
         | IServerSideGroupSelectionState
         | null;
@@ -23,7 +23,7 @@ export function setServerSideSelectionState(
     beans: BeanCollection,
     state: IServerSideSelectionState | IServerSideGroupSelectionState
 ) {
-    beans.selectionService.setSelectionState(state, 'api');
+    beans.selectionService?.setSelectionState(state, 'api');
 }
 
 export function applyServerSideTransaction(

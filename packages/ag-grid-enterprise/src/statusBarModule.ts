@@ -1,5 +1,5 @@
 import type { _StatusBarGridApi } from 'ag-grid-community';
-import { ModuleNames, _defineModule } from 'ag-grid-community';
+import { ModuleNames, RowSelectionCoreModule, _defineModule } from 'ag-grid-community';
 import { EnterpriseCoreModule } from './main';
 
 import { AggregationComp } from './statusBar/providedPanels/aggregationComp';
@@ -17,12 +17,18 @@ export const StatusBarCoreModule = _defineModule({
     beans: [StatusBarService],
     userComponents: [
         { name: 'agAggregationComponent', classImp: AggregationComp },
-        { name: 'agSelectedRowCountComponent', classImp: SelectedRowsComp },
         { name: 'agTotalRowCountComponent', classImp: TotalRowsComp },
         { name: 'agFilteredRowCountComponent', classImp: FilteredRowsComp },
         { name: 'agTotalAndFilteredRowCountComponent', classImp: TotalAndFilteredRowsComp },
     ],
     dependantModules: [EnterpriseCoreModule],
+});
+
+export const StatusBarSelectionModule = _defineModule({
+    version: VERSION,
+    moduleName: `${ModuleNames.StatusBarModule}-selection`,
+    userComponents: [{ name: 'agSelectedRowCountComponent', classImp: SelectedRowsComp }],
+    dependantModules: [StatusBarCoreModule, RowSelectionCoreModule],
 });
 
 export const StatusBarApiModule = _defineModule<_StatusBarGridApi>({
@@ -37,5 +43,5 @@ export const StatusBarApiModule = _defineModule<_StatusBarGridApi>({
 export const StatusBarModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.StatusBarModule,
-    dependantModules: [StatusBarCoreModule, StatusBarApiModule],
+    dependantModules: [StatusBarCoreModule, StatusBarApiModule, StatusBarSelectionModule],
 });

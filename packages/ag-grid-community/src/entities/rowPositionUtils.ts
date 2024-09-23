@@ -21,7 +21,7 @@ export class RowPositionUtils extends BeanStub implements NamedBean {
     beanName = 'rowPositionUtils' as const;
 
     private rowModel: IRowModel;
-    private pinnedRowModel: PinnedRowModel;
+    private pinnedRowModel?: PinnedRowModel;
     private pageBoundsService: PageBoundsService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -34,12 +34,12 @@ export class RowPositionUtils extends BeanStub implements NamedBean {
         let rowIndex = 0;
         let rowPinned: RowPinnedType;
 
-        if (this.pinnedRowModel.getPinnedTopRowCount()) {
+        if (this.pinnedRowModel?.getPinnedTopRowCount()) {
             rowPinned = 'top';
         } else if (this.rowModel.getRowCount()) {
             rowPinned = null;
             rowIndex = this.pageBoundsService.getFirstRow();
-        } else if (this.pinnedRowModel.getPinnedBottomRowCount()) {
+        } else if (this.pinnedRowModel?.getPinnedBottomRowCount()) {
             rowPinned = 'bottom';
         }
 
@@ -50,8 +50,8 @@ export class RowPositionUtils extends BeanStub implements NamedBean {
         let rowIndex;
         let rowPinned: RowPinnedType = null;
 
-        const pinnedBottomCount = this.pinnedRowModel.getPinnedBottomRowCount();
-        const pinnedTopCount = this.pinnedRowModel.getPinnedTopRowCount();
+        const pinnedBottomCount = this.pinnedRowModel?.getPinnedBottomRowCount();
+        const pinnedTopCount = this.pinnedRowModel?.getPinnedTopRowCount();
 
         if (pinnedBottomCount) {
             rowPinned = 'bottom';
@@ -70,9 +70,9 @@ export class RowPositionUtils extends BeanStub implements NamedBean {
     public getRowNode(gridRow: RowPosition): RowNode | undefined {
         switch (gridRow.rowPinned) {
             case 'top':
-                return this.pinnedRowModel.getPinnedTopRow(gridRow.rowIndex);
+                return this.pinnedRowModel?.getPinnedTopRow(gridRow.rowIndex);
             case 'bottom':
-                return this.pinnedRowModel.getPinnedBottomRow(gridRow.rowIndex);
+                return this.pinnedRowModel?.getPinnedBottomRow(gridRow.rowIndex);
             default:
                 return this.rowModel.getRow(gridRow.rowIndex);
         }

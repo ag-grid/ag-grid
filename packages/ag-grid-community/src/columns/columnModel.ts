@@ -1,3 +1,5 @@
+import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
+import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, Context } from '../context/context';
@@ -32,18 +34,15 @@ import { _warnOnce } from '../utils/function';
 import { _missingOrEmpty } from '../utils/generic';
 import type { ValueCache } from '../valueService/valueCache';
 import type { ColumnApplyStateService, ColumnState } from './columnApplyStateService';
-import type { ColumnAutosizeService } from './columnAutosizeService';
 import type { ColumnDefFactory } from './columnDefFactory';
-import type { ColumnEventDispatcher } from './columnEventDispatcher';
+import { dispatchColumnPinnedEvent } from './columnEventUtils';
 import type { ColumnFactory } from './columnFactory';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnGroupStateService } from './columnGroupStateService';
-import type { ColumnMoveService } from './columnMoveService';
-import type { ColumnSizeService } from './columnSizeService';
-import { GROUP_AUTO_COLUMN_ID, isColumnControlsCol } from './columnUtils';
+import { GROUP_AUTO_COLUMN_ID } from './columnUtils';
 import { destroyColumnTree, getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
-import type { IControlsColService } from './controlsColService';
+import type { ControlsColService } from './controlsColService';
 import type { FuncColsService } from './funcColsService';
 import type { PivotResultColsService } from './pivotResultColsService';
 import type { VisibleColsService } from './visibleColsService';
@@ -67,20 +66,17 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private context: Context;
     private ctrlsService: CtrlsService;
     private columnFactory: ColumnFactory;
-    private columnSizeService: ColumnSizeService;
     private visibleColsService: VisibleColsService;
     private columnViewportService: ColumnViewportService;
     private pivotResultColsService: PivotResultColsService;
     private columnAnimationService: ColumnAnimationService;
     private autoColService?: IAutoColService;
-    private controlsColService?: IControlsColService;
-    private valueCache: ValueCache;
+    private controlsColService?: ControlsColService;
+    private valueCache?: ValueCache;
     private columnDefFactory: ColumnDefFactory;
     private columnApplyStateService: ColumnApplyStateService;
     private columnGroupStateService: ColumnGroupStateService;
-    private eventDispatcher: ColumnEventDispatcher;
-    private columnMoveService: ColumnMoveService;
-    private columnAutosizeService: ColumnAutosizeService;
+    private columnAutosizeService?: ColumnAutosizeService;
     private funcColsService: FuncColsService;
     private quickFilterService?: QuickFilterService;
     private showRowGroupColsService?: IShowRowGroupColsService;
@@ -90,7 +86,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.context = beans.context;
         this.ctrlsService = beans.ctrlsService;
         this.columnFactory = beans.columnFactory;
-        this.columnSizeService = beans.columnSizeService;
         this.visibleColsService = beans.visibleColsService;
         this.columnViewportService = beans.columnViewportService;
         this.pivotResultColsService = beans.pivotResultColsService;
@@ -101,8 +96,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.columnDefFactory = beans.columnDefFactory;
         this.columnApplyStateService = beans.columnApplyStateService;
         this.columnGroupStateService = beans.columnGroupStateService;
-        this.eventDispatcher = beans.columnEventDispatcher;
-        this.columnMoveService = beans.columnMoveService;
         this.columnAutosizeService = beans.columnAutosizeService;
         this.funcColsService = beans.funcColsService;
         this.quickFilterService = beans.quickFilterService;
@@ -174,7 +167,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('pivotMode', (event) =>
             this.setPivotMode(this.gos.get('pivotMode'), convertSourceType(event.source))
         );
-        this.addManagedEventListeners({ firstDataRendered: () => this.onFirstDataRendered() });
     }
 
     // called from SyncService, when grid has finished initialising
@@ -186,7 +178,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         // always invalidate cache on changing columns, as the column id's for the new columns
         // could overlap with the old id's, so the cache would return old values for new columns.
-        this.valueCache.expire();
+        this.valueCache?.expire();
 
         const oldCols = this.colDefCols?.list;
         const oldTree = this.colDefCols?.tree;
@@ -214,7 +206,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
         // in case applications use it
-        this.eventDispatcher.everythingChanged(source);
+        this.eventService.dispatchEvent({
+            type: 'columnEverythingChanged',
+            source,
+        });
 
         // Row Models react to all of these events as well as new columns loaded,
         // this flag instructs row model to ignore these events to reduce refreshes.
@@ -224,9 +219,13 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.changeEventsDispatching = false;
         }
 
-        this.eventDispatcher.newColumnsLoaded(source);
+        this.eventService.dispatchEvent({
+            type: 'newColumnsLoaded',
+            source,
+        });
+
         if (source === 'gridInitializing') {
-            this.columnSizeService.applyAutosizeStrategy();
+            this.columnAutosizeService?.applyAutosizeStrategy();
         }
     }
 
@@ -273,7 +272,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const dispatchChangedEvent = !_areEqual(prevColTree, this.cols.tree);
         if (dispatchChangedEvent) {
-            this.eventDispatcher.gridColumns();
+            this.eventService.dispatchEvent({
+                type: 'gridColumnsChanged',
+            });
         }
     }
 
@@ -313,7 +314,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // show columns we are aggregating on
 
         const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.isShowingPivotResult();
-        const valueColumns = this.funcColsService.getValueColumns();
+        const valueColumns = this.funcColsService.valueCols;
 
         const res = this.cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
@@ -348,7 +349,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // of the group column in this instance.
         const suppressAutoColumn = this.pivotMode ? this.gos.get('pivotSuppressAutoColumn') : this.isSuppressAutoCol();
 
-        const rowGroupCols = this.funcColsService.getRowGroupColumns();
+        const rowGroupCols = this.funcColsService.rowGroupCols;
 
         const groupingActive = rowGroupCols.length > 0 || this.gos.get('treeData');
 
@@ -415,19 +416,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
             map: {},
         };
 
-        function sortControlsColsFirst(a: AgColumn, b: AgColumn): number {
-            const isAControl = isColumnControlsCol(a);
-            const isBControl = isColumnControlsCol(b);
-            if (isAControl && !isBControl) {
-                return -1;
-            }
-            if (!isAControl && isBControl) {
-                return 1;
-            }
-            return 0;
-        }
-        this.lastOrder?.sort(sortControlsColsFirst);
-        this.lastPivotOrder?.sort(sortControlsColsFirst);
+        this.controlsColService?.sortControlsColsFirst(this.lastOrder);
+        this.controlsColService?.sortControlsColsFirst(this.lastPivotOrder);
     }
 
     private addControlsCols(): void {
@@ -503,7 +493,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         if (updatedCols.length) {
             this.visibleColsService.refresh(source);
-            this.eventDispatcher.columnPinned(updatedCols, source);
+            dispatchColumnPinnedEvent(this.eventService, updatedCols, source);
         }
 
         this.columnAnimationService.finish();
@@ -549,7 +539,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return true;
         }
 
-        const rowGroupCols = this.funcColsService.getRowGroupColumns();
+        const rowGroupCols = this.funcColsService.rowGroupCols;
         const colIndex = rowGroupCols.findIndex((groupCol) => groupCol.getColId() === column.getColId());
         return groupLockGroupColumns > colIndex;
     }
@@ -688,9 +678,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
         // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
         // is less sexy for the code here, but it keeps consistency.
-        newOrder = this.columnMoveService.placeLockedColumns(newOrder);
+        newOrder = placeLockedColumns(newOrder, this.gos);
 
-        if (!this.columnMoveService.doesMovePassMarryChildren(newOrder)) {
+        if (!doesMovePassMarryChildren(newOrder, this.getColTree())) {
             _warnOnce(
                 'Applying column order broke a group where columns should be married together. Applying new order has been discarded.'
             );
@@ -753,7 +743,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private positionLockedCols(): void {
-        this.cols.list = this.columnMoveService.placeLockedColumns(this.cols.list);
+        this.cols.list = placeLockedColumns(this.cols.list, this.gos);
     }
 
     private saveColOrder(): void {
@@ -777,8 +767,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
             cols.sort((a, b) => this.cols.list.indexOf(a) - this.cols.list.indexOf(b));
         }
 
-        const rowGroupColumns = this.funcColsService.getRowGroupColumns();
-        const pivotColumns = this.funcColsService.getPivotColumns();
+        const rowGroupColumns = this.funcColsService.rowGroupCols;
+        const pivotColumns = this.funcColsService.pivotCols;
 
         return this.columnDefFactory.buildColumnDefs(cols, rowGroupColumns, pivotColumns);
     }
@@ -843,7 +833,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.refreshCols(false);
         this.visibleColsService.refresh(source);
 
-        this.eventDispatcher.pivotModeChanged();
+        this.eventService.dispatchEvent({
+            type: 'columnPivotModeChanged',
+        });
     }
 
     private isPivotSettingAllowed(pivot: boolean): boolean {
@@ -857,7 +849,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     // + clientSideRowModel
     public isPivotActive(): boolean {
-        const pivotColumns = this.funcColsService.getPivotColumns();
+        const pivotColumns = this.funcColsService.pivotCols;
         return this.pivotMode && !_missingOrEmpty(pivotColumns);
     }
 
@@ -974,9 +966,18 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         if (changed) {
             if (col.isColumn) {
-                this.eventDispatcher.headerHeight(col);
+                this.eventService.dispatchEvent({
+                    type: 'columnHeaderHeightChanged',
+                    column: col,
+                    columns: [col],
+                    source: 'autosizeColumnHeaderHeight',
+                });
             } else {
-                this.eventDispatcher.groupHeaderHeight(col);
+                this.eventService.dispatchEvent({
+                    type: 'columnGroupHeaderHeightChanged',
+                    columnGroup: col,
+                    source: 'autosizeColumnGroupHeaderHeight',
+                });
             }
         }
     }
@@ -1033,7 +1034,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.isPivotMode() ? this.getPivotHeaderHeight() : this.getHeaderHeight()
         ) as number;
 
-        const allDisplayedCols = this.visibleColsService.getAllCols();
+        const allDisplayedCols = this.visibleColsService.allCols;
 
         const displayedHeights = allDisplayedCols
             .filter((col) => col.isAutoHeaderHeight())
@@ -1056,27 +1057,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
     public getPivotGroupHeaderHeight(): number {
         return this.gos.get('pivotGroupHeaderHeight') ?? this.getGroupHeaderHeight();
-    }
-
-    private onFirstDataRendered(): void {
-        const autoSizeStrategy = this.gos.get('autoSizeStrategy');
-        if (autoSizeStrategy?.type !== 'fitCellContents') {
-            return;
-        }
-
-        const { colIds: columns, skipHeader } = autoSizeStrategy;
-        // ensure render has finished
-        setTimeout(() => {
-            if (columns) {
-                this.columnAutosizeService.autoSizeCols({
-                    colKeys: columns,
-                    skipHeader,
-                    source: 'autosizeColumns',
-                });
-            } else {
-                this.columnAutosizeService.autoSizeAllColumns('autosizeColumns', skipHeader);
-            }
-        });
     }
 
     private onAutoGroupColumnDefChanged(source: ColumnEventType) {

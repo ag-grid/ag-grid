@@ -2,6 +2,7 @@ import { isColumnControlsCol } from '../../columns/columnUtils';
 import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
+import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellPosition } from '../../entities/cellPositionUtils';
 import type { CellStyle, ColDef } from '../../entities/colDef';
@@ -14,32 +15,29 @@ import {
     _getDocument,
     _getRowHeightForNode,
     _isCellSelectionEnabled,
-    _isClientSideRowModel,
     _setDomData,
 } from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
+import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
+import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { _setAriaColIndex } from '../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize } from '../../utils/dom';
-import { _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _getValueUsingField } from '../../utils/object';
 import { _escapeString } from '../../utils/string';
 import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../widgets/tooltipFeature';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
-import { CheckboxSelectionComponent } from '../checkboxSelectionComponent';
 import { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
-import { RowDragComp } from '../row/rowDragComp';
 import type { FlashCellsParams } from '../rowRenderer';
 import { CellCustomStyleFeature } from './cellCustomStyleFeature';
 import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
 import { CellMouseListenerFeature } from './cellMouseListenerFeature';
 import { CellPositionFeature } from './cellPositionFeature';
-import { CellRangeFeature } from './cellRangeFeature';
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -97,7 +95,7 @@ export class CellCtrl extends BeanStub {
     private value: any;
     private valueFormatted: any;
 
-    private cellRangeFeature: CellRangeFeature | undefined = undefined;
+    private cellRangeFeature: ICellRangeFeature | undefined = undefined;
     private cellPositionFeature: CellPositionFeature | undefined = undefined;
     private cellCustomStyleFeature: CellCustomStyleFeature | undefined = undefined;
     private tooltipFeature: TooltipFeature | undefined = undefined;
@@ -166,7 +164,7 @@ export class CellCtrl extends BeanStub {
 
         const cellSelectionEnabled = this.beans.rangeService && _isCellSelectionEnabled(this.beans.gos);
         if (cellSelectionEnabled) {
-            this.cellRangeFeature = new CellRangeFeature(this.beans, this);
+            this.cellRangeFeature = this.beans.rangeService!.createCellRangeFeature(this.beans, this);
         }
     }
     private removeFeatures(): void {
@@ -1072,8 +1070,11 @@ export class CellCtrl extends BeanStub {
         super.destroy();
     }
 
-    public createSelectionCheckbox(): CheckboxSelectionComponent {
-        const cbSelectionComponent = new CheckboxSelectionComponent();
+    public createSelectionCheckbox(): CheckboxSelectionComponent | undefined {
+        const cbSelectionComponent = this.beans.selectionService?.createCheckboxSelectionComponent();
+        if (!cbSelectionComponent) {
+            return undefined;
+        }
 
         this.beans.context.createBean(cbSelectionComponent);
         cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column });
@@ -1116,32 +1117,17 @@ export class CellCtrl extends BeanStub {
         dragStartPixels?: number,
         suppressVisibilityChange?: boolean
     ): RowDragComp | undefined {
-        const pagination = this.beans.gos.get('pagination');
-        const rowDragManaged = this.beans.gos.get('rowDragManaged');
-        const clientSideRowModelActive = _isClientSideRowModel(this.beans.gos);
-
-        if (rowDragManaged) {
-            // row dragging only available in default row model
-            if (!clientSideRowModelActive) {
-                _warnOnce('managed row dragging is only allowed in the Client Side Row Model');
-                return;
-            }
-
-            if (pagination) {
-                _warnOnce('managed row dragging is not possible when doing pagination');
-                return;
-            }
-        }
-
-        // otherwise (normal case) we are creating a RowDraggingComp for the first time
-        const rowDragComp = new RowDragComp(
-            () => this.value,
+        const rowDragComp = this.beans.rowDragService?.createRowDragCompForCell(
             this.rowNode,
             this.column,
+            () => this.value,
             customElement,
             dragStartPixels,
             suppressVisibilityChange
         );
+        if (!rowDragComp) {
+            return undefined;
+        }
         this.beans.context.createBean(rowDragComp);
 
         return rowDragComp;

@@ -323,8 +323,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         const isGroupCol = newParams.column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
         this.treeDataTreeList = this.gos.get('treeData') && !!newParams.treeList && isGroupCol;
         this.getDataPath = this.gos.get('getDataPath');
-        this.groupingTreeList =
-            !!this.funcColsService.getRowGroupColumns().length && !!newParams.treeList && isGroupCol;
+        this.groupingTreeList = !!this.funcColsService.rowGroupCols.length && !!newParams.treeList && isGroupCol;
         this.createKey = this.generateCreateKey(keyCreator, this.treeDataTreeList || this.groupingTreeList);
     };
 
@@ -971,9 +970,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private doesFilterPassForGrouping(node: IRowNode): boolean {
-        const dataPath = this.funcColsService
-            .getRowGroupColumns()
-            .map((groupCol) => this.valueService.getKeyForNode(groupCol, node));
+        const dataPath = this.funcColsService.rowGroupCols.map((groupCol) =>
+            this.valueService.getKeyForNode(groupCol, node)
+        );
         dataPath.push(this.getValueFromNode(node));
         return this.isInAppliedModel(
             this.createKey(processDataPath(dataPath, false, this.gos.get('groupAllowUnbalanced')) as any) as any

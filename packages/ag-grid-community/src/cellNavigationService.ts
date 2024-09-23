@@ -24,7 +24,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     private visibleColsService: VisibleColsService;
     private rowModel: IRowModel;
     private rowRenderer: RowRenderer;
-    private pinnedRowModel: PinnedRowModel;
+    private pinnedRowModel?: PinnedRowModel;
     private paginationService?: PaginationService;
     private pageBoundsService: PageBoundsService;
 
@@ -62,7 +62,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             rowIndex = upKey ? this.pageBoundsService.getFirstRow() : this.pageBoundsService.getLastRow();
             column = focusedCell.column as AgColumn;
         } else {
-            const allColumns = this.visibleColsService.getAllCols();
+            const allColumns = this.visibleColsService.allCols;
             const isRtl = this.gos.get('enableRtl');
             rowIndex = focusedCell.rowIndex;
             column = leftKey !== isRtl ? allColumns[0] : _last(allColumns);
@@ -128,10 +128,10 @@ export class CellNavigationService extends BeanStub implements NamedBean {
 
         switch (gridCell.rowPinned) {
             case 'top':
-                rowNode = this.pinnedRowModel.getPinnedTopRow(gridCell.rowIndex);
+                rowNode = this.pinnedRowModel?.getPinnedTopRow(gridCell.rowIndex);
                 break;
             case 'bottom':
-                rowNode = this.pinnedRowModel.getPinnedBottomRow(gridCell.rowIndex);
+                rowNode = this.pinnedRowModel?.getPinnedBottomRow(gridCell.rowIndex);
                 break;
             default:
                 rowNode = this.rowModel.getRow(gridCell.rowIndex);
@@ -198,14 +198,14 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                         return { rowIndex: this.pageBoundsService.getFirstRow(), rowPinned: null } as RowPosition;
                     }
 
-                    if (this.pinnedRowModel.isRowsToRender('bottom')) {
+                    if (this.pinnedRowModel?.isRowsToRender('bottom')) {
                         return { rowIndex: 0, rowPinned: 'bottom' } as RowPosition;
                     }
 
                     return null;
                 default:
                     // if in the main body, then try pinned bottom, otherwise return nothing
-                    if (this.pinnedRowModel.isRowsToRender('bottom')) {
+                    if (this.pinnedRowModel?.isRowsToRender('bottom')) {
                         return { rowIndex: 0, rowPinned: 'bottom' } as RowPosition;
                     }
                     return null;
@@ -276,12 +276,12 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         const index = rowPosition.rowIndex;
 
         if (pinned === 'top') {
-            const lastTopIndex = this.pinnedRowModel.getPinnedTopRowCount() - 1;
+            const lastTopIndex = this.pinnedRowModel?.getPinnedTopRowCount() ?? 0 - 1;
             return lastTopIndex <= index;
         }
 
         if (pinned === 'bottom') {
-            const lastBottomIndex = this.pinnedRowModel.getPinnedBottomRowCount() - 1;
+            const lastBottomIndex = this.pinnedRowModel?.getPinnedBottomRowCount() ?? 0 - 1;
             return lastBottomIndex <= index;
         }
 
@@ -303,7 +303,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             }
 
             if (!pinned) {
-                if (this.pinnedRowModel.isRowsToRender('top')) {
+                if (this.pinnedRowModel?.isRowsToRender('top')) {
                     return this.getLastFloatingTopRow();
                 }
                 return null;
@@ -314,7 +314,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                 return this.getLastBodyCell();
             }
 
-            if (this.pinnedRowModel.isRowsToRender('top')) {
+            if (this.pinnedRowModel?.isRowsToRender('top')) {
                 return this.getLastFloatingTopRow();
             }
 
@@ -359,7 +359,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     }
 
     private getLastFloatingTopRow(): RowPosition {
-        const lastFloatingRow = this.pinnedRowModel.getPinnedTopRowCount() - 1;
+        const lastFloatingRow = this.pinnedRowModel?.getPinnedTopRowCount() ?? 0 - 1;
 
         return { rowIndex: lastFloatingRow, rowPinned: 'top' } as RowPosition;
     }
@@ -373,7 +373,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     }
 
     public getNextTabbedCellForwards(gridCell: CellPosition): CellPosition | null {
-        const displayedColumns = this.visibleColsService.getAllCols();
+        const displayedColumns = this.visibleColsService.allCols;
 
         let newRowIndex: number | null = gridCell.rowIndex;
         let newFloating: string | null | undefined = gridCell.rowPinned;
@@ -404,7 +404,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     }
 
     public getNextTabbedCellBackwards(gridCell: CellPosition): CellPosition | null {
-        const displayedColumns = this.visibleColsService.getAllCols();
+        const displayedColumns = this.visibleColsService.allCols;
 
         let newRowIndex: number | null = gridCell.rowIndex;
         let newFloating: string | null | undefined = gridCell.rowPinned;

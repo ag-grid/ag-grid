@@ -8,7 +8,7 @@ import type {
 import { _warnOnce } from '../main';
 
 export function onGroupExpandedOrCollapsed(beans: BeanCollection): void {
-    beans.expansionService.onGroupExpandedOrCollapsed();
+    beans.expansionService?.onGroupExpandedOrCollapsed();
 }
 
 export function refreshClientSideRowModel(beans: BeanCollection, step?: ClientSideRowModelStep): void {
@@ -74,5 +74,5 @@ export function flushAsyncTransactions(beans: BeanCollection): void {
 }
 
 export function getBestCostNodeSelection<TData = any>(beans: BeanCollection): IRowNode<TData>[] | undefined {
-    return beans.selectionService.getBestCostNodeSelection();
+    return beans.selectionService?.getBestCostNodeSelection();
 }

@@ -1,5 +1,5 @@
 import type { _RowGroupingGridApi } from 'ag-grid-community';
-import { ModuleNames, _ColumnFilterModule, _FloatingFilterModule, _defineModule } from 'ag-grid-community';
+import { ModuleNames, StickyRowModule, _ColumnFilterModule, _FloatingFilterModule, _defineModule } from 'ag-grid-community';
 import { EnterpriseCoreModule, GroupCellRenderer, GroupCellRendererCtrl } from './main';
 
 import { AggFuncService } from './rowGrouping/aggFuncService';
@@ -9,7 +9,9 @@ import { ColumnDropZoneService } from './rowGrouping/columnDropZones/columnDropZ
 import { FilterAggregatesStage } from './rowGrouping/filterAggregatesStage';
 import { GroupFilter } from './rowGrouping/groupFilter/groupFilter';
 import { GroupFloatingFilterComp } from './rowGrouping/groupFilter/groupFloatingFilter';
+import { GroupHideOpenParentsService } from './rowGrouping/groupHideOpenParentsService';
 import { GroupStage } from './rowGrouping/groupStage/groupStage';
+import { SelectableService } from './rowGrouping/groupStage/selectableService';
 import { PivotColDefService } from './rowGrouping/pivotColDefService';
 import { PivotStage } from './rowGrouping/pivotStage';
 import {
@@ -57,6 +59,7 @@ export const RowGroupingCoreModule = _defineModule({
         AutoColService,
         ShowRowGroupColsService,
         ColumnDropZoneService,
+        GroupHideOpenParentsService,
     ],
     userComponents: [
         {
@@ -70,6 +73,13 @@ export const RowGroupingCoreModule = _defineModule({
     ],
     controllers: [{ name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl }],
     dependantModules: [EnterpriseCoreModule],
+});
+
+export const RowGroupingSelectionModule = _defineModule({
+    version: VERSION,
+    moduleName: `${ModuleNames.RowGroupingModule}-selection`,
+    beans: [SelectableService],
+    dependantModules: [RowGroupingCoreModule],
 });
 
 export const RowGroupingApiModule = _defineModule<_RowGroupingGridApi<any>>({
@@ -124,5 +134,12 @@ export const GroupFloatingFilterModule = _defineModule({
 export const RowGroupingModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.RowGroupingModule,
-    dependantModules: [RowGroupingCoreModule, RowGroupingApiModule, GroupFilterModule, GroupFloatingFilterModule],
+    dependantModules: [
+        RowGroupingCoreModule,
+        RowGroupingApiModule,
+        GroupFilterModule,
+        GroupFloatingFilterModule,
+        RowGroupingSelectionModule,
+        StickyRowModule,
+    ],
 });

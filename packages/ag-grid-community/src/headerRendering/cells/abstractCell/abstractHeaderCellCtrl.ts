@@ -45,7 +45,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected focusService: FocusService;
     protected userComponentFactory: UserComponentFactory;
     protected ctrlsService: CtrlsService;
-    protected dragAndDropService: DragAndDropService;
+    protected dragAndDropService?: DragAndDropService;
     protected menuService: MenuService;
 
     public wireBeans(beans: BeanCollection) {
@@ -75,7 +75,6 @@ export abstract class AbstractHeaderCellCtrl<
     protected dragSource: DragSource | null = null;
 
     protected abstract resizeHeader(delta: number, shiftKey: boolean): void;
-    protected abstract moveHeader(direction: HorizontalDirection): void;
 
     constructor(columnGroupChild: AgColumn | AgColumnGroup, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
         super();
@@ -289,6 +288,10 @@ export abstract class AbstractHeaderCellCtrl<
         }
     }
 
+    protected moveHeader(hDirection: HorizontalDirection): void {
+        this.beans.columnMoveService?.moveHeader(hDirection, this.eGui, this.column, this.getPinned(), this);
+    }
+
     private getViewportAdjustedResizeDiff(e: KeyboardEvent): number {
         let diff = this.getResizeDiff(e);
 
@@ -394,7 +397,7 @@ export abstract class AbstractHeaderCellCtrl<
 
     protected removeDragSource(): void {
         if (this.dragSource) {
-            this.dragAndDropService.removeDragSource(this.dragSource);
+            this.dragAndDropService?.removeDragSource(this.dragSource);
             this.dragSource = null;
         }
     }

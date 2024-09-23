@@ -1,3 +1,4 @@
+import { BeanStub } from 'ag-grid-community';
 import type {
     BeanCollection,
     IExpansionService,
@@ -6,24 +7,21 @@ import type {
     RowNode,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { ExpansionService } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 
-export class ServerSideExpansionService extends ExpansionService implements NamedBean, IExpansionService {
-    override beanName = 'expansionService' as const;
+export class ServerSideExpansionService extends BeanStub implements NamedBean, IExpansionService {
+    beanName = 'expansionService' as const;
 
     private serverSideRowModel: ServerSideRowModel;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
     }
 
     private queuedRowIds: Set<string> = new Set();
 
-    public override postConstruct(): void {
-        super.postConstruct();
+    public postConstruct(): void {
         this.addManagedEventListeners({
             columnRowGroupChanged: () => {
                 this.queuedRowIds.clear();
@@ -59,7 +57,7 @@ export class ServerSideExpansionService extends ExpansionService implements Name
         }
     }
 
-    public override expandRows(rowIds: string[]): void {
+    public expandRows(rowIds: string[]): void {
         rowIds.forEach((rowId) => {
             const rowNode = this.serverSideRowModel.getRowNode(rowId);
             if (rowNode) {
@@ -70,11 +68,11 @@ export class ServerSideExpansionService extends ExpansionService implements Name
         });
     }
 
-    public override expandAll(value: boolean): void {
+    public expandAll(value: boolean): void {
         this.serverSideRowModel.expandAll(value);
     }
 
-    public override onGroupExpandedOrCollapsed(): void {
+    public onGroupExpandedOrCollapsed(): void {
         // do nothing
     }
 }

@@ -321,7 +321,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         const oldData = this.data;
 
         this.data = data;
-        this.beans.valueCache.onDataChanged();
+        this.beans.valueCache?.onDataChanged();
         this.updateDataOnDetailNode();
         this.checkRowSelectable();
         this.resetQuickFilterAggregateText();
@@ -396,7 +396,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.updateDataOnDetailNode();
         this.setId(id);
         this.checkRowSelectable();
-        this.beans.selectionService.syncInRowNode(this, oldNode);
+        this.beans.selectionService?.syncInRowNode(this, oldNode);
 
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, false);
 
@@ -568,7 +568,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             return;
         }
 
-        const displayedAutoHeightCols = this.beans.visibleColsService.getAllAutoHeightCols();
+        const displayedAutoHeightCols = this.beans.visibleColsService.autoHeightCols;
         displayedAutoHeightCols.forEach((col) => {
             let cellHeight = autoHeights[col.getId()];
 
@@ -971,6 +971,9 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
     // this is for internal use only. To make calling code more readable, this is the same method as setSelected except it takes names parameters
     public setSelectedParams(params: SetSelectedParams & { event?: Event }): number {
+        if (!this.beans.selectionService) {
+            return 0;
+        }
         if (this.rowPinned) {
             _warnOnce('cannot select pinned rows');
             return 0;

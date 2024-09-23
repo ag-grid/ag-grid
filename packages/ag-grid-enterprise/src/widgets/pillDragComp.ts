@@ -22,7 +22,7 @@ import {
 
 export type PillDragCompEvent = 'columnRemove';
 export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
-    private dragAndDropService: DragAndDropService;
+    private dragAndDropService?: DragAndDropService;
 
     public wireBeans(beans: BeanCollection) {
         this.dragAndDropService = beans.dragAndDropService;
@@ -43,8 +43,8 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         private dragSourceDropTarget: DropTarget,
         private ghost: boolean,
         private horizontal: boolean,
-        private template?: string,
-        private agComponents?: ComponentSelector[]
+        protected template?: string,
+        protected agComponents?: ComponentSelector[]
     ) {
         super();
     }
@@ -145,8 +145,8 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
             dragItemName: this.getDisplayName(),
         };
 
-        dragAndDropService.addDragSource(dragSource, true);
-        this.addDestroyFunc(() => dragAndDropService.removeDragSource(dragSource));
+        dragAndDropService?.addDragSource(dragSource, true);
+        this.addDestroyFunc(() => dragAndDropService?.removeDragSource(dragSource));
     }
 
     protected setupComponents(): void {

@@ -2,6 +2,7 @@ import type { _ServerSideRowModelGridApi } from 'ag-grid-community';
 import {
     ModuleNames,
     RowModelHelperService,
+    SortModule,
     _CsrmSsrmSharedApiModule,
     _RowNodeBlockModule,
     _SsrmInfiniteSharedApiModule,
@@ -42,7 +43,6 @@ export const ServerSideRowModelCoreModule = _defineModule({
     beans: [
         ServerSideRowModel,
         ExpandListener,
-        SortListener,
         StoreUtils,
         BlockUtils,
         NodeManager,
@@ -51,10 +51,33 @@ export const ServerSideRowModelCoreModule = _defineModule({
         StoreFactory,
         ListenerUtils,
         ServerSideSelectionService,
-        ServerSideExpansionService,
         LazyBlockLoadingService,
     ],
     dependantModules: [EnterpriseCoreModule, _RowNodeBlockModule],
+});
+
+export const ServerSideRowModelRowSelectionModule = _defineModule({
+    version: VERSION,
+    moduleName: `${ModuleNames.ServerSideRowModelModule}-row-selection`,
+    rowModel: 'serverSide',
+    beans: [ServerSideSelectionService],
+    dependantModules: [ServerSideRowModelCoreModule],
+});
+
+export const ServerSideRowModelRowGroupingModule = _defineModule({
+    version: VERSION,
+    moduleName: `${ModuleNames.ServerSideRowModelModule}-row-grouping`,
+    rowModel: 'serverSide',
+    beans: [ServerSideExpansionService],
+    dependantModules: [ServerSideRowModelCoreModule],
+});
+
+export const ServerSideRowModelSortModule = _defineModule({
+    version: VERSION,
+    moduleName: `${ModuleNames.ServerSideRowModelModule}-sort`,
+    rowModel: 'serverSide',
+    beans: [SortListener],
+    dependantModules: [ServerSideRowModelCoreModule, SortModule],
 });
 
 export const ServerSideRowModelApiModule = _defineModule<_ServerSideRowModelGridApi>({
@@ -78,5 +101,11 @@ export const ServerSideRowModelApiModule = _defineModule<_ServerSideRowModelGrid
 export const ServerSideRowModelModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.ServerSideRowModelModule,
-    dependantModules: [ServerSideRowModelCoreModule, ServerSideRowModelApiModule],
+    dependantModules: [
+        ServerSideRowModelCoreModule,
+        ServerSideRowModelApiModule,
+        ServerSideRowModelRowSelectionModule,
+        ServerSideRowModelSortModule,
+        ServerSideRowModelRowGroupingModule,
+    ],
 });

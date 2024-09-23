@@ -8,6 +8,7 @@ import type {
     FuncColsService,
     GridOptions,
     IClientSideRowModel,
+    IGroupHideOpenParentsService,
     IRowNodeStage,
     ISelectionService,
     NamedBean,
@@ -41,6 +42,7 @@ import {
 } from '../main';
 
 import { ClientSideNodeManager } from './clientSideNodeManager';
+import { updateRowNodeAfterSort } from './sortStage';
 
 enum RecursionType {
     Normal,
@@ -73,13 +75,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
-    private selectionService: ISelectionService;
-    private valueCache: ValueCache;
+    private selectionService?: ISelectionService;
+    private valueCache?: ValueCache;
     private environment: Environment;
+    private groupHideOpenParentsService?: IGroupHideOpenParentsService;
 
     // standard stages
     private filterStage: IRowNodeStage;
-    private sortStage: IRowNodeStage;
+    private sortStage?: IRowNodeStage;
     private flattenStage: IRowNodeStage;
 
     // enterprise stages
@@ -96,6 +99,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.selectionService = beans.selectionService;
         this.valueCache = beans.valueCache;
         this.environment = beans.environment;
+        this.groupHideOpenParentsService = beans.groupHideOpenParentsService;
 
         this.filterStage = beans.filterStage!;
         this.sortStage = beans.sortStage!;
@@ -1104,11 +1108,28 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private doSort(rowNodeTransactions: RowNodeTransaction[] | undefined, changedPath: ChangedPath) {
-        this.sortStage.execute({
-            rowNode: this.rootNode,
-            rowNodeTransactions: rowNodeTransactions,
-            changedPath: changedPath,
-        });
+        if (this.sortStage) {
+            this.sortStage.execute({
+                rowNode: this.rootNode,
+                rowNodeTransactions: rowNodeTransactions,
+                changedPath: changedPath,
+            });
+        } else {
+            changedPath.forEachChangedNodeDepthFirst((rowNode) => {
+                // this needs to run before sorting
+                this.groupHideOpenParentsService?.pullDownGroupDataForHideOpenParents(
+                    rowNode.childrenAfterAggFilter,
+                    true
+                );
+
+                rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
+
+                updateRowNodeAfterSort(rowNode);
+            });
+        }
+
+        // this needs to run after sorting
+        this.groupHideOpenParentsService?.updateGroupDataForHideOpenParents(changedPath);
     }
 
     private doRowGrouping(
@@ -1134,7 +1155,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
 
             if (_getGroupSelectsDescendants(this.gos)) {
-                const selectionChanged = this.selectionService.updateGroupsFromChildrenSelections(
+                const selectionChanged = this.selectionService?.updateGroupsFromChildrenSelections(
                     'rowGroupChanged',
                     changedPath
                 );
@@ -1204,7 +1225,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // so new rowNodes means the cache is wiped anyway.
 
         // - clears selection, done before we set row data to ensure it isn't readded via `selectionService.syncInOldRowNode`
-        this.selectionService.reset('rowDataChanged');
+        this.selectionService?.reset('rowDataChanged');
 
         this.nodeManager.setRowData(rowData);
 
@@ -1251,7 +1272,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private executeBatchUpdateRowData(): void {
-        this.valueCache.onDataChanged();
+        this.valueCache?.onDataChanged();
 
         const callbackFuncsBound: ((...args: any[]) => any)[] = [];
         const rowNodeTrans: RowNodeTransaction[] = [];
@@ -1293,7 +1314,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * Called by gridApi & rowDragFeature
      */
     public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction | null {
-        this.valueCache.onDataChanged();
+        this.valueCache?.onDataChanged();
 
         const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(rowDataTran);
 

@@ -1,18 +1,18 @@
 import type { BeanCollection } from '../context/context';
-import type { RowDropZoneEvents, RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
+import type { RowDropZoneEvents, RowDropZoneParams } from './rowDragFeature';
 
 export function addRowDropZone(beans: BeanCollection, params: RowDropZoneParams): void {
-    beans.ctrlsService.getGridBodyCtrl().getRowDragFeature().addRowDropZone(params);
+    beans.rowDragService?.getRowDragFeature()?.addRowDropZone(params);
 }
 
 export function removeRowDropZone(beans: BeanCollection, params: RowDropZoneParams): void {
-    const activeDropTarget = beans.dragAndDropService.findExternalZone(params);
+    const activeDropTarget = beans.dragAndDropService?.findExternalZone(params);
 
     if (activeDropTarget) {
-        beans.dragAndDropService.removeDropTarget(activeDropTarget);
+        beans.dragAndDropService?.removeDropTarget(activeDropTarget);
     }
 }
 
-export function getRowDropZoneParams(beans: BeanCollection, events?: RowDropZoneEvents): RowDropZoneParams {
-    return beans.ctrlsService.getGridBodyCtrl().getRowDragFeature().getRowDropZone(events);
+export function getRowDropZoneParams(beans: BeanCollection, events?: RowDropZoneEvents): RowDropZoneParams | undefined {
+    return beans.rowDragService?.getRowDragFeature()?.getRowDropZone(events);
 }

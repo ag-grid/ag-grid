@@ -60,7 +60,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         // and there is no cleanup to be done (as value columns don't change between transactions or change
         // detections). if no value columns and no changed path, means we have to go through all nodes in
         // case we need to clean up agg data from before.
-        const noValueColumns = _missingOrEmpty(this.funcColsService.getValueColumns());
+        const noValueColumns = _missingOrEmpty(this.funcColsService.valueCols);
         const noUserAgg = !this.gos.getCallback('getGroupRowAgg');
         const changedPathActive = params.changedPath && params.changedPath.isActive();
         if (noValueColumns && noUserAgg && changedPathActive) {
@@ -75,8 +75,8 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
     private createAggDetails(params: StageExecuteParams): AggregationDetails {
         const pivotActive = this.columnModel.isPivotActive();
 
-        const measureColumns = this.funcColsService.getValueColumns();
-        const pivotColumns = pivotActive ? this.funcColsService.getPivotColumns() : [];
+        const measureColumns = this.funcColsService.valueCols;
+        const pivotColumns = pivotActive ? this.funcColsService.pivotCols : [];
 
         const aggDetails: AggregationDetails = {
             alwaysAggregateAtRootLevel: this.gos.get('alwaysAggregateAtRootLevel'),

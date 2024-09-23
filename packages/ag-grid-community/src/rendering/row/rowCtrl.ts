@@ -18,7 +18,6 @@ import {
     _getGroupSelectsDescendants,
     _getRowHeightForNode,
     _isAnimateRows,
-    _isCellSelectionEnabled,
     _isClientSideRowModel,
     _isDomLayout,
     _isGetRowHeightFunction,
@@ -44,12 +43,12 @@ import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _executeNextVMTurn, _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
+import type { Component } from '../../widgets/component';
 import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../widgets/tooltipFeature';
 import { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { RowCssClassCalculatorParams } from './rowCssClassCalculator';
-import { RowDragComp } from './rowDragComp';
 
 type RowType = 'Normal' | 'FullWidth' | 'FullWidthLoading' | 'FullWidthGroup' | 'FullWidthDetail';
 
@@ -129,7 +128,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         fullWidth: false,
     };
 
-    private rowDragComps: RowDragComp[] = [];
+    private rowDragComps: Component[] = [];
 
     private readonly useAnimationFrameForCreate: boolean;
 
@@ -369,21 +368,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private addRowDraggerToRow(gui: RowGui) {
-        if (_isCellSelectionEnabled(this.gos)) {
-            _warnOnce(
-                "Setting `rowDragEntireRow: true` in the gridOptions doesn't work with `selection.mode = 'cell'`"
-            );
+        const rowDragComp = this.beans.rowDragService?.createRowDragCompForRow(this.rowNode, gui.element);
+        if (!rowDragComp) {
             return;
         }
-        const translate = this.beans.localeService.getLocaleTextFunc();
-        const rowDragComp = new RowDragComp(
-            () => `1 ${translate('rowDragRow', 'row')}`,
-            this.rowNode,
-            undefined,
-            gui.element,
-            undefined,
-            true
-        );
         const rowDragBean = this.createBean(rowDragComp, this.beans.context);
         this.rowDragComps.push(rowDragBean);
         gui.compBean.addDestroyFunc(() => {
@@ -596,7 +584,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const columnViewportService = this.beans.columnViewportService;
         const presentedColsService = this.beans.visibleColsService;
         if (this.printLayout) {
-            this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, presentedColsService.getAllCols());
+            this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, presentedColsService.allCols);
             this.leftCellCtrls = { list: [], map: {} };
             this.rightCellCtrls = { list: [], map: {} };
         } else {
@@ -629,7 +617,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (mightWantToKeepCell) {
             const column = cellCtrl.getColumn();
-            const displayedColumns = this.beans.visibleColsService.getAllCols();
+            const displayedColumns = this.beans.visibleColsService.allCols;
             const cellStillDisplayed = displayedColumns.indexOf(column as AgColumn) >= 0;
             return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
         }
@@ -1054,13 +1042,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const { visibleColsService } = this.beans;
         switch (fullWidthRowGui?.containerType) {
             case 'center':
-                return visibleColsService.getCenterCols()[0];
+                return visibleColsService.centerCols[0];
             case 'left':
-                return visibleColsService.getLeftCols()[0];
+                return visibleColsService.leftCols[0];
             case 'right':
-                return visibleColsService.getRightCols()[0];
+                return visibleColsService.rightCols[0];
             default:
-                return visibleColsService.getAllCols()[0];
+                return visibleColsService.allCols[0];
         }
     }
 
@@ -1260,11 +1248,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         value: string = '',
         suppressVisibilityChange?: boolean
     ): void {
-        if (!this.isFullWidth()) {
+        if (!this.beans.rowDragService || !this.isFullWidth()) {
             return;
         }
 
-        const rowDragComp = new RowDragComp(
+        const rowDragComp = this.beans.rowDragService.createRowDragComp(
             () => value,
             this.rowNode,
             undefined,
@@ -1504,7 +1492,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 // if hover turned off, we don't add the class. we do this here so that if the application
                 // toggles this property mid way, we remove the hover form the last row, but we stop
                 // adding hovers from that point onwards. Also, do not highlight while dragging elements around.
-                if (!beans.dragService.isDragging() && !gos.get('suppressRowHoverHighlight')) {
+                if (!beans.dragService?.isDragging() && !gos.get('suppressRowHoverHighlight')) {
                     element.classList.add('ag-row-hover');
                     rowNode.setHovered(true);
                 }

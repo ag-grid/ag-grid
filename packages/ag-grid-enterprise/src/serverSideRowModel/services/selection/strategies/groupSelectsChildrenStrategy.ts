@@ -39,7 +39,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         this.rowModel = beans.rowModel;
         this.funcColsService = beans.funcColsService;
         this.filterManager = beans.filterManager;
-        this.selectionService = beans.selectionService;
+        this.selectionService = beans.selectionService!;
     }
 
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
@@ -62,7 +62,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 nodeId,
             };
 
-            if (treeData || level <= this.funcColsService.getRowGroupColumns().length) {
+            if (treeData || level <= this.funcColsService.rowGroupCols.length) {
                 normalisedState.selectAllChildren = state.selectAllChildren;
             }
 

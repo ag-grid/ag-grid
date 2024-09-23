@@ -34,9 +34,9 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private rowPositionUtils: RowPositionUtils;
     private chartMenuItemMapper: ChartMenuItemMapper;
     private menuService: MenuService;
-    private sortController: SortController;
-    private columnAutosizeService: ColumnAutosizeService;
-    private expansionService: IExpansionService;
+    private sortController?: SortController;
+    private columnAutosizeService?: ColumnAutosizeService;
+    private expansionService?: IExpansionService;
     private clipboardService?: IClipboardService;
     private aggFuncService?: IAggFuncService;
     private csvCreator?: ICsvCreator;
@@ -153,12 +153,12 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             case 'autoSizeThis':
                 return {
                     name: localeTextFunc('autosizeThisColumn', 'Autosize This Column'),
-                    action: () => this.columnAutosizeService.autoSizeColumn(column, source, skipHeaderOnAutoSize),
+                    action: () => this.columnAutosizeService?.autoSizeColumn(column, source, skipHeaderOnAutoSize),
                 };
             case 'autoSizeAll':
                 return {
                     name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
-                    action: () => this.columnAutosizeService.autoSizeAllColumns(source, skipHeaderOnAutoSize),
+                    action: () => this.columnAutosizeService?.autoSizeAllColumns(source, skipHeaderOnAutoSize),
                 };
             case 'rowGroup':
                 return {
@@ -184,10 +184,10 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         disabled:
                             this.gos.get('functionsReadOnly') ||
                             lockedGroups === -1 ||
-                            lockedGroups >= this.funcColsService.getRowGroupColumns().length,
+                            lockedGroups >= this.funcColsService.rowGroupCols.length,
                         action: () =>
                             this.funcColsService.setRowGroupColumns(
-                                this.funcColsService.getRowGroupColumns().slice(0, lockedGroups),
+                                this.funcColsService.rowGroupCols.slice(0, lockedGroups),
                                 source
                             ),
                         icon: icon,
@@ -232,12 +232,12 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             case 'expandAll':
                 return {
                     name: localeTextFunc('expandAll', 'Expand All Row Groups'),
-                    action: () => this.expansionService.expandAll(true),
+                    action: () => this.expansionService?.expandAll(true),
                 };
             case 'contractAll':
                 return {
                     name: localeTextFunc('collapseAll', 'Collapse All Row Groups'),
-                    action: () => this.expansionService.expandAll(false),
+                    action: () => this.expansionService?.expandAll(false),
                 };
             case 'copy':
                 if (this.gos.assertModuleRegistered(ModuleNames.ClipboardModule, 'Copy from Menu')) {
@@ -365,19 +365,19 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 return {
                     name: localeTextFunc('sortAscending', 'Sort Ascending'),
                     icon: _createIconNoSpan('sortAscending', this.gos, null),
-                    action: () => this.sortController.setSortForColumn(column!, 'asc', false, source),
+                    action: () => this.sortController?.setSortForColumn(column!, 'asc', false, source),
                 };
             case 'sortDescending':
                 return {
                     name: localeTextFunc('sortDescending', 'Sort Descending'),
                     icon: _createIconNoSpan('sortDescending', this.gos, null),
-                    action: () => this.sortController.setSortForColumn(column!, 'desc', false, source),
+                    action: () => this.sortController?.setSortForColumn(column!, 'desc', false, source),
                 };
             case 'sortUnSort':
                 return {
                     name: localeTextFunc('sortUnSort', 'Clear Sort'),
                     icon: _createIconNoSpan('sortUnSort', this.gos, null),
-                    action: () => this.sortController.setSortForColumn(column!, null, false, source),
+                    action: () => this.sortController?.setSortForColumn(column!, null, false, source),
                 };
             default: {
                 _warnOnce(`unknown menu item type ${key}`);

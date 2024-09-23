@@ -56,7 +56,7 @@ export class ClientSideValuesExtractor<V> {
         const existingFormattedKeys = this.extractExistingFormattedKeys(existingValues);
         const formattedKeys: Set<string | null> = new Set();
         const treeData = this.treeData && !!this.getDataPath;
-        const groupedCols = this.funcColsService.getRowGroupColumns();
+        const groupedCols = this.funcColsService.rowGroupCols;
 
         const addValue = (unformattedKey: string | null, value: V | null | undefined) => {
             const formattedKey = this.caseFormat(unformattedKey);

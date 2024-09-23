@@ -11,7 +11,7 @@ import type { ScrollVisibleService } from './scrollVisibleService';
 
 export class FakeHScrollComp extends AbstractFakeScrollComp {
     private visibleColsService: VisibleColsService;
-    private pinnedRowModel: PinnedRowModel;
+    private pinnedRowModel?: PinnedRowModel;
     private ctrlsService: CtrlsService;
     private scrollVisibleService: ScrollVisibleService;
 
@@ -82,7 +82,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         if (!this.invisibleScrollbar) {
             return;
         }
-        const bottomPinnedHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
+        const bottomPinnedHeight = this.pinnedRowModel?.getPinnedBottomTotalHeight() ?? 0;
 
         this.getGui().style.bottom = `${bottomPinnedHeight}px`;
     }

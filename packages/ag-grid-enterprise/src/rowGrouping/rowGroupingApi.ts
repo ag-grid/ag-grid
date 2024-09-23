@@ -44,7 +44,7 @@ export function setValueColumns(beans: BeanCollection, colKeys: (string | ColDef
 }
 
 export function getValueColumns(beans: BeanCollection): Column[] {
-    return beans.funcColsService.getValueColumns();
+    return beans.funcColsService.valueCols;
 }
 
 /** @deprecated v31.1 */
@@ -92,7 +92,7 @@ export function moveRowGroupColumn(beans: BeanCollection, fromIndex: number, toI
 }
 
 export function getRowGroupColumns(beans: BeanCollection): Column[] {
-    return beans.funcColsService.getRowGroupColumns();
+    return beans.funcColsService.rowGroupCols;
 }
 
 export function setPivotColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {
@@ -118,7 +118,7 @@ export function addPivotColumns(beans: BeanCollection, colKeys: (string | ColDef
 }
 
 export function getPivotColumns(beans: BeanCollection): Column[] {
-    return beans.funcColsService.getPivotColumns();
+    return beans.funcColsService.pivotCols;
 }
 
 export function setPivotResultColumns(beans: BeanCollection, colDefs: (ColDef | ColGroupDef)[] | null): void {

@@ -108,7 +108,7 @@ import type {
     SizeColumnsToContentStrategy,
     SizeColumnsToFitGridStrategy,
     SizeColumnsToFitProvidedWidthStrategy,
-} from '../interfaces/autoSizeStrategy';
+} from '../interfaces/autoSize';
 import type {
     CsvExportParams,
     ProcessCellForExportParams,
@@ -156,6 +156,8 @@ import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
+import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
+import type { IRowDragItem } from '../interfaces/iRowDragItem';
 import type { RowModelType } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { IServerSideDatasource } from '../interfaces/iServerSideDatasource';
@@ -163,8 +165,6 @@ import type { SideBarDef } from '../interfaces/iSideBar';
 import type { StatusPanelDef } from '../interfaces/iStatusPanel';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { MenuItemDef } from '../interfaces/menuItem';
-import type { ILoadingCellRendererParams } from '../rendering/cellRenderers/loadingCellRenderer';
-import type { IRowDragItem } from '../rendering/row/rowDragComp';
 import type { CellPosition } from './cellPositionUtils';
 import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
@@ -1586,7 +1586,7 @@ export interface GridOptions<TData = any> {
      */
     alwaysMultiSort?: boolean;
     /**
-     * Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key.
+     * Set to `'ctrl'` to have multi sorting by clicking work using the `Ctrl` (or `Command ⌘` for Mac) key.
      */
     multiSortKey?: 'ctrl';
     /**

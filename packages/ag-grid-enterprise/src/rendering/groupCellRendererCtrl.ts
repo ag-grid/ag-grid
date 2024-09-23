@@ -8,7 +8,10 @@ import type {
     GroupCellRendererParams,
     IGroupCellRenderer,
     IGroupCellRendererCtrl,
+    IGroupHideOpenParentsService,
     IRowNode,
+    ISelectionService,
+    RowDragService,
     RowNode,
     UserCompDetails,
     UserComponentFactory,
@@ -17,9 +20,7 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    CheckboxSelectionComponent,
     KeyCode,
-    RowDragComp,
     _cloneObject,
     _createIconNoSpan,
     _getGrandTotalRow,
@@ -33,13 +34,16 @@ import {
 } from 'ag-grid-community';
 
 export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendererCtrl {
-    private expressionService: ExpressionService;
+    private expressionService?: ExpressionService;
     private valueService: ValueService;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
     private userComponentFactory: UserComponentFactory;
     private ctrlsService: CtrlsService;
     private funcColsService: FuncColsService;
+    private rowDragService?: RowDragService;
+    private selectionService?: ISelectionService;
+    private groupHideOpenParentsService?: IGroupHideOpenParentsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionService = beans.expressionService;
@@ -49,6 +53,8 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         this.userComponentFactory = beans.userComponentFactory;
         this.ctrlsService = beans.ctrlsService;
         this.funcColsService = beans.funcColsService;
+        this.selectionService = beans.selectionService;
+        this.groupHideOpenParentsService = beans.groupHideOpenParentsService;
     }
 
     private params: GroupCellRendererParams;
@@ -120,9 +126,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             const showingFooterTotal =
                 params.node.footer &&
                 params.node.rowGroupIndex ===
-                    this.funcColsService
-                        .getRowGroupColumns()
-                        .findIndex((c) => c.getColId() === params.colDef?.showRowGroup);
+                    this.funcColsService.rowGroupCols.findIndex((c) => c.getColId() === params.colDef?.showRowGroup);
             // if we're always showing a group value
             const isAlwaysShowing = this.gos.get('groupDisplayType') != 'multipleColumns' || this.gos.get('treeData');
             // if the cell is populated with a parent value due to `showOpenedGroup`
@@ -133,9 +137,9 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
                     (!params.node.group ||
                         (params.node.rowGroupIndex != null &&
                             params.node.rowGroupIndex >
-                                this.funcColsService
-                                    .getRowGroupColumns()
-                                    .findIndex((c) => c.getColId() === params.colDef?.showRowGroup))));
+                                this.funcColsService.rowGroupCols.findIndex(
+                                    (c) => c.getColId() === params.colDef?.showRowGroup
+                                ))));
             // not showing a leaf value (field/valueGetter)
             const leafWithValues = !node.group && (this.params.colDef?.field || this.params.colDef?.valueGetter);
             // doesn't have expand/collapse chevron
@@ -224,7 +228,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return true;
         }
 
-        const rowGroupCols = this.funcColsService.getRowGroupColumns();
+        const rowGroupCols = this.funcColsService.rowGroupCols;
         // this is a sanity check, rowGroupCols should always be present
         if (!rowGroupCols || rowGroupCols.length === 0) {
             return true;
@@ -284,43 +288,9 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     }
 
     private setupShowingValueForOpenedParent(): void {
-        // note - this code depends on sortService.updateGroupDataForHiddenOpenParents, where group data
-        // is updated to reflect the dragged down parents
-        const rowNode = this.params.node;
-        const column = this.params.column as AgColumn;
-
-        if (!this.gos.get('groupHideOpenParents')) {
-            this.showingValueForOpenedParent = false;
-            return;
-        }
-
-        // hideOpenParents means rowNode.groupData can have data for the group this column is displaying, even though
-        // this rowNode isn't grouping by the column we are displaying
-
-        // if no groupData at all, we are not showing a parent value
-        if (!rowNode.groupData) {
-            this.showingValueForOpenedParent = false;
-            return;
-        }
-
-        // this is the normal case, in that we are showing a group for which this column is configured. note that
-        // this means the Row Group is closed (if it was open, we would not be displaying it)
-        const showingGroupNode = rowNode.rowGroupColumn != null;
-        if (showingGroupNode) {
-            const keyOfGroupingColumn = rowNode.rowGroupColumn!.getId();
-            const configuredToShowThisGroupLevel = column.isRowGroupDisplayed(keyOfGroupingColumn);
-            // if showing group as normal, we didn't take group info from parent
-            if (configuredToShowThisGroupLevel) {
-                this.showingValueForOpenedParent = false;
-                return;
-            }
-        }
-
-        // see if we are showing a Group Value for the Displayed Group. if we are showing a group value, and this Row Node
-        // is not grouping by this Displayed Group, we must of gotten the value from a parent node
-        const valPresent = rowNode.groupData[column.getId()] != null;
-
-        this.showingValueForOpenedParent = valPresent;
+        this.showingValueForOpenedParent =
+            this.groupHideOpenParentsService?.isShowingValueForOpenedParent(this.params.node, this.params.column!) ??
+            false;
     }
 
     private addValueElement(): void {
@@ -407,7 +377,9 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             if (typeof footerValueGetter === 'function') {
                 footerValue = footerValueGetter(paramsClone);
             } else if (typeof footerValueGetter === 'string') {
-                footerValue = this.expressionService.evaluate(footerValueGetter, paramsClone);
+                footerValue = this.expressionService
+                    ? this.expressionService.evaluate(footerValueGetter, paramsClone)
+                    : '';
             } else {
                 _warnOnce('footerValueGetter should be either a function or a string (expression)');
             }
@@ -702,11 +674,11 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     }
 
     private addFullWidthRowDraggerIfNeeded(): void {
-        if (!this.params.fullWidth || !this.params.rowDrag) {
+        if (!this.params.fullWidth || !this.params.rowDrag || !this.rowDragService) {
             return;
         }
 
-        const rowDragComp = new RowDragComp(() => this.params.value, this.params.node as RowNode);
+        const rowDragComp = this.rowDragService.createRowDragComp(() => this.params.value, this.params.node as RowNode);
         this.createManagedBean(rowDragComp);
 
         this.eGui.insertAdjacentElement('afterbegin', rowDragComp.getGui());
@@ -728,10 +700,11 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             // pinned rows cannot be selected
             !rowNode.rowPinned &&
             // details cannot be selected
-            !rowNode.detail;
+            !rowNode.detail &&
+            !!this.selectionService;
 
         if (checkboxNeeded) {
-            const cbSelectionComponent = new CheckboxSelectionComponent();
+            const cbSelectionComponent = this.selectionService!.createCheckboxSelectionComponent();
             this.createBean(cbSelectionComponent);
 
             cbSelectionComponent.init({

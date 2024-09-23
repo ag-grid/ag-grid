@@ -42,7 +42,7 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
             if (isString) {
                 this.showRowGroupColsMap[showRowGroup] = col;
             } else {
-                const rowGroupCols = this.funcColsService.getRowGroupColumns();
+                const rowGroupCols = this.funcColsService.rowGroupCols;
                 rowGroupCols.forEach((rowGroupCol) => {
                     this.showRowGroupColsMap[rowGroupCol.getId()] = col;
                 });
