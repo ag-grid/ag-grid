@@ -572,9 +572,9 @@ export function addBindingImports(
             imports.push(fullImportStr);
         }
     });
-    if (hasEnterpriseModules && convertToPackage) {
-        imports.push(`import '${getEnterprisePackageName()}';`);
-    }
+    // if (hasEnterpriseModules && convertToPackage) {
+    //     imports.push(`import '${getEnterprisePackageName()}';`);
+    // }
 }
 
 export const usesThemingApi = (bindings: ParsedBindings) =>
