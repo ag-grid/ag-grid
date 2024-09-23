@@ -13,7 +13,7 @@
 //     SetFilterParams,
 //     ValueService,
 // } from 'ag-grid-community';
-// import type { VirtualList } from '../main';
+// import type { VirtualList } from '../widgets/virtualList';
 //
 // import { mock } from '../test-utils/mock';
 // import { SetFilter } from './setFilter';

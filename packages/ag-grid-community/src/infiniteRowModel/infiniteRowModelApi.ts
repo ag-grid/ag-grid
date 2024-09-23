@@ -1,4 +1,4 @@
-import type { BeanCollection } from '../main';
+import type { BeanCollection } from '../context/context';
 
 export function refreshInfiniteCache(beans: BeanCollection): void {
     beans.rowModelHelperService?.getInfiniteRowModel()?.refreshCache();

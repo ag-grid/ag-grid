@@ -1,26 +1,19 @@
-import type {
-    BeanCollection,
-    FilterManager,
-    IDatasource,
-    IInfiniteRowModel,
-    ISelectionService,
-    NamedBean,
-    RowBounds,
-    RowModelType,
-    RowNode,
-    RowNodeBlockLoader,
-    RowRenderer,
-    SortController,
-} from '../main';
-import {
-    BeanStub,
-    NumberSequence,
-    _getRowHeightAsNumber,
-    _getRowIdCallback,
-    _jsonEquals,
-    _warnOnce,
-} from '../main';
-
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { RowNode } from '../entities/rowNode';
+import type { FilterManager } from '../filter/filterManager';
+import { _getRowHeightAsNumber, _getRowIdCallback } from '../gridOptionsUtils';
+import type { IDatasource } from '../interfaces/iDatasource';
+import type { IInfiniteRowModel } from '../interfaces/iInfiniteRowModel';
+import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
+import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { RowRenderer } from '../rendering/rowRenderer';
+import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
+import type { SortController } from '../sort/sortController';
+import { _warnOnce } from '../utils/function';
+import { _jsonEquals } from '../utils/generic';
+import { NumberSequence } from '../utils/numberSequence';
 import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
 

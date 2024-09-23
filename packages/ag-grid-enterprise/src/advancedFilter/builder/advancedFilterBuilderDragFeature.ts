@@ -1,11 +1,12 @@
 import type { AgEvent } from 'ag-grid-community';
 import { BeanStub, DragSourceType } from 'ag-grid-community';
-import { VirtualListDragFeature } from '../../main';
-import type { VirtualList, VirtualListDragItem } from '../../main';
 
 import type { AdvancedFilterBuilderComp } from './advancedFilterBuilderComp';
 import type { AdvancedFilterBuilderItemComp } from './advancedFilterBuilderItemComp';
 import type { AdvancedFilterBuilderItem } from './iAdvancedFilterBuilder';
+import type { VirtualListDragItem } from '../../features/iVirtualListDragFeature';
+import { VirtualListDragFeature } from '../../features/virtualListDragFeature';
+import type { VirtualList } from '../../widgets/virtualList';
 
 export interface AdvancedFilterBuilderDragStartedEvent extends AgEvent<'advancedFilterBuilderDragStarted'> {
     item: AdvancedFilterBuilderItem;

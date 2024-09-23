@@ -1,14 +1,15 @@
-import type {
-    BeanCollection,
-    FocusService,
-    IDatasource,
-    RowNode,
-    RowNodeBlockLoader,
-    RowRenderer,
-    SortModelItem,
-} from '../main';
-import { BeanStub, NumberSequence, _exists, _getAllValuesInObject, _log } from '../main';
-
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { RowNode } from '../entities/rowNode';
+import type { FocusService } from '../focusService';
+import type { IDatasource } from '../interfaces/iDatasource';
+import type { SortModelItem } from '../interfaces/iSortModelItem';
+import type { RowRenderer } from '../rendering/rowRenderer';
+import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
+import { _log } from '../utils/function';
+import { _exists } from '../utils/generic';
+import { NumberSequence } from '../utils/numberSequence';
+import { _getAllValuesInObject } from '../utils/object';
 import { InfiniteBlock } from './infiniteBlock';
 
 export interface InfiniteCacheParams {

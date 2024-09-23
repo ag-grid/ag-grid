@@ -1,13 +1,13 @@
 import type { AgInputTextFieldParams, BeanCollection } from 'ag-grid-community';
 import { AgInputTextField, Component } from 'ag-grid-community';
 
-import type { AgSliderParams } from '../../../../../charts-widgets/agSlider';
-import { AgSlider } from '../../../../../charts-widgets/agSlider';
 import type { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import type { FontPanelParams } from '../fontPanel';
 import { FontPanel } from '../fontPanel';
+import type { AgSliderParams } from '../../../../widgets/agSlider';
+import { AgSlider } from '../../../../widgets/agSlider';
 
 export class TitlePanel extends Component {
     protected chartTranslationService: ChartTranslationService;

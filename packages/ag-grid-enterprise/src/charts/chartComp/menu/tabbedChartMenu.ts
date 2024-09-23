@@ -1,13 +1,13 @@
 import type { BeanCollection, ChartToolPanelMenuOptions } from 'ag-grid-community';
 import { AgPromise, Component } from 'ag-grid-community';
-import type { TabbedItem } from '../../../main';
-import { TabbedLayout } from '../../../main';
 
 import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 import type { ChartMenuContext } from './chartMenuContext';
 import { ChartDataPanel } from './data/chartDataPanel';
 import { FormatPanel } from './format/formatPanel';
 import { ChartSettingsPanel } from './settings/chartSettingsPanel';
+import type { TabbedItem } from '../../../widgets/iTabbedLayout';
+import { TabbedLayout } from '../../../widgets/tabbedLayout';
 
 export type TabbedChartMenuEvent = 'closed';
 export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {

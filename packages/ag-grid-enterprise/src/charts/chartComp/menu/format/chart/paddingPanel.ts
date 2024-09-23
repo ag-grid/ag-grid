@@ -1,15 +1,15 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { Component, RefPlaceholder } from 'ag-grid-community';
-import type { AgGroupComponentParams } from '../../../../../main';
-import { AgGroupComponentSelector } from '../../../../../main';
 import type { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-community';
 
-import type { AgSlider } from '../../../../../charts-widgets/agSlider';
-import { AgSliderSelector } from '../../../../../charts-widgets/agSlider';
 import type { ChartController } from '../../../chartController';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartThemeOverridesSeriesType } from '../../../utils/seriesTypeMapper';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import type { AgGroupComponentParams} from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import type { AgSlider} from '../../../../widgets/agSlider';
+import { AgSliderSelector } from '../../../../widgets/agSlider';
 
 export class PaddingPanel extends Component {
     private readonly paddingTopSlider: AgSlider = RefPlaceholder;

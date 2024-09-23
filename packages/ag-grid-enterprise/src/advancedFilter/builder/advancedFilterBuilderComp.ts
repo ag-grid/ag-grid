@@ -6,8 +6,6 @@ import type {
     JoinAdvancedFilterModel,
 } from 'ag-grid-community';
 import { Component, RefPlaceholder, TooltipFeature, _exists, _setDisabled } from 'ag-grid-community';
-import { VirtualList } from '../../main';
-import type { VirtualListDragItem } from '../../main';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import type { AdvancedFilterService } from '../advancedFilterService';
@@ -21,6 +19,8 @@ import type {
     AdvancedFilterBuilderMoveEvent,
     AdvancedFilterBuilderRemoveEvent,
 } from './iAdvancedFilterBuilder';
+import type { VirtualListDragItem } from '../../features/iVirtualListDragFeature';
+import { VirtualList } from '../../widgets/virtualList';
 
 export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEvents> {
     private filterManager?: FilterManager;

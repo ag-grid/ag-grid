@@ -1,21 +1,13 @@
-import type {
-    BeanCollection,
-    ColumnModel,
-    GetGroupIncludeFooterParams,
-    IRowNodeStage,
-    NamedBean,
-    StageExecuteParams,
-    WithoutGridCommon,
-} from '../main';
-import {
-    BeanStub,
-    RowNode,
-    _exists,
-    _getGrandTotalRow,
-    _getGroupTotalRowCallback,
-    _isGroupMultiAutoColumn,
-    _missingOrEmpty,
-} from '../main';
+import type { ColumnModel } from '../columns/columnModel';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import { RowNode } from '../entities/rowNode';
+import { _isGroupMultiAutoColumn, _getGrandTotalRow, _getGroupTotalRowCallback } from '../gridOptionsUtils';
+import type { GetGroupIncludeFooterParams } from '../interfaces/iCallbackParams';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
+import { _missingOrEmpty, _exists } from '../utils/generic';
 
 interface FlattenDetails {
     hideOpenParents: boolean;

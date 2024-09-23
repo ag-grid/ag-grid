@@ -1,4 +1,4 @@
-import { _warnOnce } from '../main';
+import { _warnOnce } from '../utils/function';
 
 export class Downloader {
     public static download(fileName: string, content: Blob) {

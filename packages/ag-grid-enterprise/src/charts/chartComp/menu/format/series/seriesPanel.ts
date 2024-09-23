@@ -7,12 +7,8 @@ import {
     _errorOnce,
     _removeFromParent,
 } from 'ag-grid-community';
-import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../main';
-import { AgGroupComponentSelector } from '../../../../../main';
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
 
-import { AgColorPicker } from '../../../../../charts-widgets/agColorPicker';
-import { AgSlider } from '../../../../../charts-widgets/agSlider';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartSeriesType } from '../../../utils/seriesTypeMapper';
 import { getSeriesType, isPieChartSeries } from '../../../utils/seriesTypeMapper';
@@ -28,6 +24,10 @@ import { getShapeSelectOptions } from './seriesUtils';
 import { ShadowPanel } from './shadowPanel';
 import { TileSpacingPanel } from './tileSpacingPanel';
 import { WhiskersPanel } from './whiskersPanel';
+import type { AgGroupComponent, AgGroupComponentParams} from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import { AgColorPicker } from '../../../../widgets/agColorPicker';
+import { AgSlider } from '../../../../widgets/agSlider';
 
 const tooltips = 'tooltips';
 const strokeWidth = 'strokeWidth';

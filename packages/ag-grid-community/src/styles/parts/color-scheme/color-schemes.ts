@@ -1,4 +1,4 @@
-import { createPart } from '../../../Part';
+import { createPart } from '../../Part';
 
 // prettier-ignore
 export const colorSchemeLight =

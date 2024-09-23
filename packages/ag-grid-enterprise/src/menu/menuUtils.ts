@@ -9,7 +9,7 @@ import type {
     VisibleColsService,
 } from 'ag-grid-community';
 import { BeanStub, _getActiveDomElement, _isNothingFocused, _isVisible, _last } from 'ag-grid-community';
-import type { CloseMenuEvent } from '../main';
+import type { CloseMenuEvent } from '../widgets/agMenuItemComponent';
 
 export interface MenuRestoreFocusParams {
     column: AgColumn | undefined;

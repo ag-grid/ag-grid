@@ -9,9 +9,9 @@ import type {
     NamedBean,
 } from 'ag-grid-community';
 import { BeanStub, _isClientSideRowModel, _removeRepeatsFromArray } from 'ag-grid-community';
-import { AgMenuList } from '../main';
 
 import type { MenuItemMapper } from './menuItemMapper';
+import { AgMenuList } from '../widgets/agMenuList';
 
 const MENU_ITEM_SEPARATOR = 'separator';
 

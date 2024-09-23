@@ -1,21 +1,17 @@
-import type {
-    BeanCollection,
-    EventService,
-    FuncColsService,
-    GridOptionsService,
-    ISelectionService,
-    RowDataTransaction,
-    RowNodeTransaction,
-    SelectionEventSourceType,
-} from '../main';
-import {
-    RowNode,
-    _cloneObject,
-    _errorOnce,
-    _getRowIdCallback,
-    _missingOrEmpty,
-    _warnOnce,
-} from '../main';
+import type { FuncColsService } from '../columns/funcColsService';
+import type { BeanCollection } from '../context/context';
+import { RowNode } from '../entities/rowNode';
+import type { EventService } from '../eventService';
+import type { SelectionEventSourceType } from '../events';
+import type { GridOptionsService } from '../gridOptionsService';
+import { _getRowIdCallback } from '../gridOptionsUtils';
+import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
+import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
+import { _warnOnce, _errorOnce } from '../utils/function';
+import { _missingOrEmpty } from '../utils/generic';
+import { _cloneObject } from '../utils/object';
+
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
 const TOP_LEVEL = 0;

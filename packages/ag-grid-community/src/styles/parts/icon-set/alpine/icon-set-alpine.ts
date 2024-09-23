@@ -1,4 +1,4 @@
-import { createPart } from '../../../../Part';
+import { createPart } from '../../../Part';
 import { iconSetAlpineCSS } from './GENERATED-icon-set-alpine';
 
 // prettier-ignore

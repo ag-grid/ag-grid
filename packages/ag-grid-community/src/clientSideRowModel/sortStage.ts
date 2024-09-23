@@ -1,23 +1,21 @@
-import type {
-    BeanCollection,
-    ChangedPath,
-    ColumnModel,
-    FuncColsService,
-    IGroupHideOpenParentsService,
-    IRowNode,
-    IRowNodeStage,
-    NamedBean,
-    PostSortRowsParams,
-    RowNode,
-    RowNodeSorter,
-    RowNodeTransaction,
-    SortController,
-    SortOption,
-    SortedRowNode,
-    StageExecuteParams,
-    WithoutGridCommon,
-} from '../main';
-import { BeanStub, _exists, _isColumnsSortingCoupledToGroup, _missing } from '../main';
+import type { ColumnModel } from '../columns/columnModel';
+import type { FuncColsService } from '../columns/funcColsService';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { RowNode } from '../entities/rowNode';
+import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
+import type { PostSortRowsParams } from '../interfaces/iCallbackParams';
+import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IGroupHideOpenParentsService } from '../interfaces/iGroupHideOpenParentsService';
+import type { IRowNode } from '../interfaces/iRowNode';
+import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
+import type { SortOption } from '../interfaces/iSortOption';
+import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
+import type { RowNodeSorter, SortedRowNode } from '../sort/rowNodeSorter';
+import type { SortController } from '../sort/sortController';
+import type { ChangedPath } from '../utils/changedPath';
+import { _missing, _exists } from '../utils/generic';
 
 function updateChildIndexes(rowNode: RowNode): void {
     if (_missing(rowNode.childrenAfterSort)) {

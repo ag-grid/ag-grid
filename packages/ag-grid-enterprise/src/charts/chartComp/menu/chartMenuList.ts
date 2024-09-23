@@ -7,12 +7,12 @@ import type {
     PopupService,
 } from 'ag-grid-community';
 import { BeanStub, Component, RefPlaceholder, _createIconNoSpan, _isNothingFocused } from 'ag-grid-community';
-import { AgMenuList } from '../../../main';
 
 import type { ChartController } from '../chartController';
 import type { ChartMenuService } from '../services/chartMenuService';
 import type { ChartTranslationService } from '../services/chartTranslationService';
 import type { ChartMenuContext } from './chartMenuContext';
+import { AgMenuList } from '../../../widgets/agMenuList';
 
 export class ChartMenuListFactory extends BeanStub implements NamedBean {
     beanName = 'chartMenuListFactory' as const;

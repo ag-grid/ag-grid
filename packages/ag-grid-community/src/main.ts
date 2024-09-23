@@ -963,6 +963,16 @@ export * from './interfaces/iChartOptions';
 // sparklines
 export * from './interfaces/iSparklineCellRendererParams';
 
+// csv export
+export { BaseCreator } from './csvExport/baseCreator';
+export { BaseGridSerializingSession } from './csvExport/sessions/baseGridSerializingSession';
+export { CsvCreator } from './csvExport/csvCreator';
+export { Downloader } from './csvExport/downloader';
+export { GridSerializer, RowType } from './csvExport/gridSerializer';
+export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from './csvExport/interfaces';
+export { XmlFactory } from './csvExport/xmlFactory';
+export { ZipContainer } from './csvExport/zipContainer/zipContainer';
+
 // modules
 export { Module, ModuleValidationResult, _defineModule } from './interfaces/iModule';
 export { ModuleNames } from './modules/moduleNames';
@@ -987,25 +997,21 @@ export {
 export { CommunityMenuApiModule as _CommunityMenuApiModule } from './api/apiModule';
 export { CommunityFeaturesModule, GridCoreModule } from './gridCoreModule';
 export { SortModule } from './sort/sortModule';
+export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
+export { ClientSideRowModelModule, ClientSideRowModelCoreModule } from './clientSideRowModel/clientSideRowModelModule';
+export { CsvExportModule, CsvExportCoreModule as _CsvExportCoreModule } from './csvExport/csvExportModule';
+export { InfiniteRowModelModule } from './infiniteRowModel/infiniteRowModelModule';
 
 //  events
 export * from './events';
 
 // theming
-export { type Part, createPart } from './Part';
-export { type Theme, createTheme } from './Theme';
+export { type Part, createPart } from './styles/Part';
+export { type Theme, createTheme } from './styles/Theme';
 export * from './styles/parts/checkbox-style/checkbox-styles';
 export * from './styles/parts/color-scheme/color-schemes';
 export * from './styles/parts/icon-set/icon-sets';
 export * from './styles/parts/input-style/input-styles';
 export * from './styles/parts/tab-style/tab-styles';
 export * from './styles/parts/theme/themes';
-export * from './theme-types';
-
-export * from './csvExport/main'
-
-export * from './alignedGrids/alignedGridsModule';
-export * from './clientSideRowModelModule';
-export * from './csvExportModule';
-export * from './gridCoreModule';
-export * from './infiniteRowModelModule';
+export * from './styles/theme-types';

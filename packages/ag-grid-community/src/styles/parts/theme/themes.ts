@@ -1,4 +1,4 @@
-import { createTheme } from '../../../Theme';
+import { createTheme } from '../../Theme';
 import { checkboxStyleDefault } from '../checkbox-style/checkbox-styles';
 import { colorSchemeLight, colorSchemeLightCold } from '../color-scheme/color-schemes';
 import { iconSetAlpine, iconSetQuartz } from '../icon-set/icon-sets';

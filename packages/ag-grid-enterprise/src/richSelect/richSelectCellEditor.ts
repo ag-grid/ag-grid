@@ -7,7 +7,8 @@ import type {
     RichSelectParams,
 } from 'ag-grid-community';
 import { PopupComponent, _missing, _warnOnce } from 'ag-grid-community';
-import { AgRichSelect } from '../main';
+
+import { AgRichSelect } from '../widgets/agRichSelect';
 
 export class RichSelectCellEditor<TData = any, TValue = any> extends PopupComponent implements ICellEditor<TValue> {
     private params: RichCellEditorParams<TData, TValue>;

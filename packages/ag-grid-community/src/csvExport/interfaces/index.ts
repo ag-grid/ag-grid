@@ -1,18 +1,12 @@
-import type {
-    AgColumn,
-    ColumnGroup,
-    ColumnModel,
-    ColumnNameService,
-    FuncColsService,
-    GridOptionsService,
-    ProcessCellForExportParams,
-    ProcessGroupHeaderForExportParams,
-    ProcessHeaderForExportParams,
-    ProcessRowGroupForExportParams,
-    RowNode,
-    ValueService,
-} from '../../main';
-
+import type { ColumnModel } from '../../columns/columnModel';
+import type { ColumnNameService } from '../../columns/columnNameService';
+import type { FuncColsService } from '../../columns/funcColsService';
+import type { AgColumn } from '../../entities/agColumn';
+import type { RowNode } from '../../entities/rowNode';
+import type { GridOptionsService } from '../../gridOptionsService';
+import type { ProcessCellForExportParams, ProcessHeaderForExportParams, ProcessGroupHeaderForExportParams, ProcessRowGroupForExportParams } from '../../interfaces/exportParams';
+import type { ColumnGroup } from '../../interfaces/iColumn';
+import type { ValueService } from '../../valueService/valueService';
 import type { GridSerializer } from '../gridSerializer';
 
 export interface BaseCreatorBeans {

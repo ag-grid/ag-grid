@@ -23,11 +23,11 @@ import {
     _isNothingFocused,
     _missingOrEmpty,
 } from 'ag-grid-community';
-import type { CloseMenuEvent } from '../main';
-import { AgMenuList } from '../main';
 
 import type { MenuItemMapper } from './menuItemMapper';
 import type { MenuUtils } from './menuUtils';
+import type { CloseMenuEvent } from '../widgets/agMenuItemComponent';
+import { AgMenuList } from '../widgets/agMenuList';
 
 const CSS_MENU = 'ag-menu';
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';

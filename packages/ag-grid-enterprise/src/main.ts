@@ -1,4 +1,3 @@
-export { EnterpriseCoreModule } from './agGridEnterpriseModule';
 export { GridLicenseManager as LicenseManager } from './license/gridLicenseManager';
 export { ILicenseManager } from './license/shared/licenseManager';
 
@@ -26,24 +25,29 @@ export { TabbedLayout } from './widgets/tabbedLayout';
 export { GroupCellRenderer } from './rendering/groupCellRenderer';
 export { GroupCellRendererCtrl } from './rendering/groupCellRendererCtrl';
 
-export * from './advancedFilterModule';
-export * from './columnsToolPanelModule';
-export * from './gridChartsEnterpriseModule';
-export * from './menuModule';
-export * from './richSelectModule';
-export * from './setFilterModule';
-export * from './statusBarModule';
-export * from './agGridEnterpriseModule';
-export * from './excelExportModule';
-export * from './gridChartsModule';
-export * from './multiFilterModule';
-export * from './rowGroupingModule';
-export * from './sideBarModule';
-export * from './viewportRowModelModule';
-export * from './clipboardModule';
-export * from './filtersToolPanelModule';
-export * from './masterDetailModule';
-export * from './rangeSelectionModule';
-export * from './serverSideRowModelModule';
-export * from './sparklinesModule';
+export { getMultipleSheetsAsExcel, exportMultipleSheetsAsExcel } from './excelExport/excelCreator';
 
+export { MultiFilter } from './multiFilter/multiFilter';
+
+export { SetFilter } from './setFilter/setFilter';
+
+export { EnterpriseCoreModule } from './agGridEnterpriseModule';
+export { AdvancedFilterModule } from './advancedFilter/advancedFilterModule';
+export { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule';
+export { GridChartsModule } from './charts-enterprise/gridChartsEnterpriseModule';
+export { MenuModule } from './menu/menuModule';
+export { RichSelectModule } from './richSelect/richSelectModule';
+export { SetFilterModule } from './setFilter/setFilterModule';
+export { StatusBarModule } from './statusBar/statusBarModule';
+export { ExcelExportModule } from './excelExport/excelExportModule';
+// export { GridChartsModule } from './charts/gridChartsModule';
+export { MultiFilterModule } from './multiFilter/multiFilterModule';
+export { RowGroupingModule } from './rowGrouping/rowGroupingModule';
+export { SideBarModule } from './sideBar/sideBarModule';
+export { ViewportRowModelModule } from './viewportRowModel/viewportRowModelModule';
+export { ClipboardModule } from './clipboard/clipboardModule';
+export { FiltersToolPanelModule } from './filterToolPanel/filtersToolPanelModule';
+export { MasterDetailModule } from './masterDetail/masterDetailModule';
+export { RangeSelectionModule } from './rangeSelection/rangeSelectionModule';
+export { ServerSideRowModelModule } from './serverSideRowModel/serverSideRowModelModule';
+export { SparklinesModule } from './sparkline/sparklinesModule';

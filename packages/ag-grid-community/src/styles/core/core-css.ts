@@ -9,7 +9,7 @@ import type {
     LengthValue,
     ScaleValue,
     ShadowValue,
-} from '../../theme-types';
+} from '../theme-types';
 
 export { coreCSS } from './GENERATED-core';
 

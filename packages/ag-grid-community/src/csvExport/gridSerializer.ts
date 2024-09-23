@@ -1,35 +1,26 @@
-import type {
-    AgColumn,
-    AgColumnGroup,
-    BeanCollection,
-    ColumnModel,
-    ColumnNameService,
-    ExportParams,
-    IClientSideRowModel,
-    IRowModel,
-    ISelectionService,
-    IServerSideRowModel,
-    NamedBean,
-    PinnedRowModel,
-    ProcessGroupHeaderForExportParams,
-    RowNode,
-    RowNodeSorter,
-    ShouldRowBeSkippedParams,
-    SortController,
-    VisibleColsService,
-} from '../main';
-import {
-    BeanStub,
-    GroupInstanceIdCreator,
-    _compose,
-    _isClientSideRowModel,
-    _isServerSideRowModel,
-    _last,
-    isColumnControlsCol,
-    isColumnGroup,
-    isColumnGroupAutoCol,
-} from '../main';
-
+import type { ColumnModel } from '../columns/columnModel';
+import type { ColumnNameService } from '../columns/columnNameService';
+import { isColumnGroupAutoCol, isColumnControlsCol } from '../columns/columnUtils';
+import { GroupInstanceIdCreator } from '../columns/groupInstanceIdCreator';
+import type { VisibleColsService } from '../columns/visibleColsService';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup} from '../entities/agColumnGroup';
+import { isColumnGroup } from '../entities/agColumnGroup';
+import type { RowNode } from '../entities/rowNode';
+import { _isClientSideRowModel, _isServerSideRowModel } from '../gridOptionsUtils';
+import type { ProcessGroupHeaderForExportParams, ExportParams, ShouldRowBeSkippedParams } from '../interfaces/exportParams';
+import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
+import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import type { RowNodeSorter } from '../sort/rowNodeSorter';
+import type { SortController } from '../sort/sortController';
+import { _last } from '../utils/array';
+import { _compose } from '../utils/function';
 import type { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from './interfaces';
 
 type ProcessGroupHeaderCallback = (params: ProcessGroupHeaderForExportParams) => string;

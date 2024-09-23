@@ -19,9 +19,10 @@ import {
     RefPlaceholder,
     _loadTemplate,
 } from 'ag-grid-community';
-import { PillDragComp, VirtualList } from '../../main';
 
 import type { TDropZone } from './baseDropZonePanel';
+import { PillDragComp } from '../../widgets/pillDragComp';
+import { VirtualList } from '../../widgets/virtualList';
 
 export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     private popupService: PopupService;

@@ -19,10 +19,8 @@ import {
     _warnOnce,
     isProvidedColumnGroup,
 } from 'ag-grid-community';
-import { VirtualList } from '../main';
-import type { VirtualListModel } from '../main';
-import type { ToolPanelColDefService } from '../sideBar/common/toolPanelColDefService';
 
+import type { ToolPanelColDefService } from '../sideBar/common/toolPanelColDefService';
 import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
 import type { ToolPanelColumnCompParams } from './columnToolPanel';
@@ -30,6 +28,8 @@ import type { ModelItemUtils } from './modelItemUtils';
 import { PrimaryColsListPanelItemDragFeature } from './primaryColsListPanelItemDragFeature';
 import { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
+import type { VirtualListModel } from '../widgets/iVirtualList';
+import { VirtualList } from '../widgets/virtualList';
 
 class UIColumnModel implements VirtualListModel {
     private readonly items: ColumnModelItem[];

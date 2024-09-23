@@ -1,46 +1,27 @@
-import type {
-    BeanCollection,
-    ClientSideRowModelStep,
-    ColumnModel,
-    CssVariablesChanged,
-    Environment,
-    FilterChangedEvent,
-    FuncColsService,
-    GridOptions,
-    IClientSideRowModel,
-    IGroupHideOpenParentsService,
-    IRowNodeStage,
-    ISelectionService,
-    NamedBean,
-    RefreshModelParams,
-    RowBounds,
-    RowDataTransaction,
-    RowModelType,
-    RowNodeTransaction,
-    ValueCache,
-} from '../main';
-import {
-    BeanStub,
-    ChangedPath,
-    ClientSideRowModelSteps,
-    RowHighlightPosition,
-    RowNode,
-    _debounce,
-    _errorOnce,
-    _exists,
-    _getGrandTotalRow,
-    _getGroupSelectsDescendants,
-    _getGroupTotalRowCallback,
-    _getRowHeightForNode,
-    _insertIntoArray,
-    _isAnimateRows,
-    _isDomLayout,
-    _last,
-    _missing,
-    _missingOrEmpty,
-    _removeFromArray,
-} from '../main';
-
+import type { ColumnModel } from '../columns/columnModel';
+import type { FuncColsService } from '../columns/funcColsService';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { GridOptions } from '../entities/gridOptions';
+import { RowNode } from '../entities/rowNode';
+import type { Environment } from '../environment';
+import type { FilterChangedEvent, CssVariablesChanged } from '../events';
+import { _getRowHeightForNode, _isDomLayout, _isAnimateRows, _getGroupSelectsDescendants, _getGrandTotalRow, _getGroupTotalRowCallback } from '../gridOptionsUtils';
+import type { IClientSideRowModel, RefreshModelParams, ClientSideRowModelStep } from '../interfaces/iClientSideRowModel';
+import { ClientSideRowModelSteps } from '../interfaces/iClientSideRowModel';
+import type { IGroupHideOpenParentsService } from '../interfaces/iGroupHideOpenParentsService';
+import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
+import { RowHighlightPosition } from '../interfaces/iRowNode';
+import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
+import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
+import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
+import { _removeFromArray, _insertIntoArray, _last } from '../utils/array';
+import { ChangedPath } from '../utils/changedPath';
+import { _debounce, _errorOnce } from '../utils/function';
+import { _missing, _missingOrEmpty, _exists } from '../utils/generic';
+import type { ValueCache } from '../valueService/valueCache';
 import { ClientSideNodeManager } from './clientSideNodeManager';
 import { updateRowNodeAfterSort } from './sortStage';
 

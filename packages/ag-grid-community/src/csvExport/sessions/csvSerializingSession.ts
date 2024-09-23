@@ -1,6 +1,8 @@
-import { _warnOnce } from '../../main';
-import type { AgColumn, AgColumnGroup, CsvCustomContent, RowNode } from '../../main';
-
+import type { AgColumn } from '../../entities/agColumn';
+import type { AgColumnGroup } from '../../entities/agColumnGroup';
+import type { RowNode } from '../../entities/rowNode';
+import type { CsvCustomContent } from '../../interfaces/exportParams';
+import { _warnOnce } from '../../utils/function';
 import type { CsvSerializingParams, RowAccumulator, RowSpanningAccumulator } from '../interfaces';
 import { BaseGridSerializingSession } from './baseGridSerializingSession';
 

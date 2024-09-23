@@ -9,7 +9,7 @@ import type {
 } from 'ag-grid-community';
 import { _makeNull, _toStringOrNull } from 'ag-grid-community';
 
-import { mock } from '../test-utils/mock';
+import { mock } from './test-utils/mock';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 
 type ValueType = string | number | boolean | Date;

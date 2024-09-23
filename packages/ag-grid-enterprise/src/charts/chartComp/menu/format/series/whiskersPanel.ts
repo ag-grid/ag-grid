@@ -1,12 +1,12 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
-import type { AgGroupComponentParams } from '../../../../../main';
-import { AgGroupComponentSelector } from '../../../../../main';
 
-import { AgColorPickerSelector } from '../../../../../charts-widgets/agColorPicker';
-import { AgSliderSelector } from '../../../../../charts-widgets/agSlider';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import type { AgGroupComponentParams} from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
+import { AgSliderSelector } from '../../../../widgets/agSlider';
 
 export class WhiskersPanel extends Component {
     private chartTranslationService: ChartTranslationService;

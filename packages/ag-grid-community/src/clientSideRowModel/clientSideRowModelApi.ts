@@ -1,11 +1,10 @@
-import type {
-    BeanCollection,
-    ClientSideRowModelStep,
-    IRowNode,
-    RowDataTransaction,
-    RowNodeTransaction,
-} from '../main';
-import { _warnOnce } from '../main';
+import type { BeanCollection } from '../context/context';
+import type { ClientSideRowModelStep } from '../interfaces/iClientSideRowModel';
+import type { IRowNode } from '../interfaces/iRowNode';
+import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
+import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
+import { _warnOnce } from '../utils/function';
+
 
 export function onGroupExpandedOrCollapsed(beans: BeanCollection): void {
     beans.expansionService?.onGroupExpandedOrCollapsed();

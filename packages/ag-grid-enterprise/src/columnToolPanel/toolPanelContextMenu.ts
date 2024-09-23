@@ -10,7 +10,7 @@ import type {
     PopupService,
 } from 'ag-grid-community';
 import { Component, _createIconNoSpan, isColumn, isProvidedColumnGroup } from 'ag-grid-community';
-import { AgMenuList } from '../main';
+import { AgMenuList } from '../widgets/agMenuList';
 
 type MenuItemName = 'rowGroup' | 'value' | 'pivot';
 

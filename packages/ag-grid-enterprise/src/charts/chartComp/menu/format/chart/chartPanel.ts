@@ -1,12 +1,12 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { Component, RefPlaceholder } from 'ag-grid-community';
-import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../main';
-import { AgGroupComponentSelector } from '../../../../../main';
 
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { FormatPanelOptions } from '../formatPanel';
 import { BackgroundPanel } from './backgroundPanel';
 import { PaddingPanel } from './paddingPanel';
+import type { AgGroupComponent, AgGroupComponentParams} from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
 
 export class ChartPanel extends Component {
     private chartTranslationService: ChartTranslationService;

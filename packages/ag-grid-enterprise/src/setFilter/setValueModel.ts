@@ -27,7 +27,7 @@ import {
     _warnOnce,
 } from 'ag-grid-community';
 
-import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
+import { ClientSideValuesExtractor } from './clientSideValueExtractor';
 import { SetValueModelFilteringKeys } from './filteringKeys';
 import { FlatSetDisplayValueModel } from './flatSetDisplayValueModel';
 import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';

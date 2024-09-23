@@ -1,13 +1,13 @@
 import type { AgSelectParams, BeanCollection, ListOption } from 'ag-grid-community';
 import { AgSelect, Component } from 'ag-grid-community';
-import type { AgGroupComponent } from '../../../../main';
 
-import type { AgPillSelectChangeParams } from '../../../../charts-widgets/agPillSelect';
-import { AgPillSelect } from '../../../../charts-widgets/agPillSelect';
 import type { ChartController } from '../../chartController';
 import type { ColState } from '../../model/chartDataModel';
 import { ChartDataModel } from '../../model/chartDataModel';
 import type { ChartTranslationKey, ChartTranslationService } from '../../services/chartTranslationService';
+import type { AgGroupComponent } from '../../../../widgets/agGroupComponent';
+import type { AgPillSelectChangeParams } from '../../../widgets/agPillSelect';
+import { AgPillSelect } from '../../../widgets/agPillSelect';
 
 export abstract class DragDataPanel extends Component {
     protected chartTranslationService: ChartTranslationService;
