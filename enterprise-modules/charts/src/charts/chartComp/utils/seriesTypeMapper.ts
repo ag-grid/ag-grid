@@ -22,7 +22,9 @@ interface SeriesParams {
     canSwitchDirection?: boolean;
 }
 
-const SERIES_TYPES: { [key in ChartSeriesType]: SeriesParams } = {
+type SeriesTypeParams = Partial<{ [key in ChartSeriesType]: SeriesParams }>;
+
+const SERIES_TYPES: SeriesTypeParams = {
     area: {
         isCartesian: true,
         canInvert: true,
@@ -153,7 +155,7 @@ export function getCanonicalChartType(chartType: ChartType): Exclude<ChartType, 
 }
 
 export function getSeriesTypeIfExists(chartType: ChartType): ChartSeriesType | undefined {
-    return ChartMappings.CHART_TYPE_TO_SERIES_TYPE[chartType as keyof typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE];
+    return ChartMappings.CHART_TYPE_TO_SERIES_TYPE[chartType] as ChartSeriesType | undefined;
 }
 
 export function getSeriesType(chartType: ChartType): ChartSeriesType {
