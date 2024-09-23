@@ -271,9 +271,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             if (arePropertiesImpacted(resetProps)) {
                 let newRowData: any[] | null | undefined;
                 if (rowDataChanged) {
-                    newRowData = this.gos.get('rowData');
-                }
-                if (!Array.isArray(newRowData)) {
+                    newRowData = this.gos.get('rowData') ?? [];
+                } else {
                     newRowData = this.rootNode.allLeafChildren?.map((child) => child.data) ?? [];
                 }
                 if (arePropertiesImpacted(initRowManagerProps)) {
