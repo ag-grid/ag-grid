@@ -188,6 +188,24 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
+            test('row-click interaction with multiple selected rows', () => {
+                const api = createGrid({
+                    columnDefs,
+                    rowData,
+                    selection: {
+                        mode: 'multiRow',
+                    },
+                });
+
+                // Select two rows by toggling checkboxes
+                selectRowsByIndex([2, 3], false, api);
+
+                clickRowByIndex(3);
+
+                // Both rows should still be selected
+                assertSelectedRowsByIndex([2, 3], api);
+            });
+
             describe('Range selection behaviour', () => {
                 test('CTRL-click and CMD-click selects multiple rows', () => {
                     const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
