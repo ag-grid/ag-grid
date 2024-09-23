@@ -3,10 +3,10 @@ import type { ICellEditorParams } from '../interfaces/iCellEditor';
 import type { Column, ColumnGroup, ColumnGroupShowType, ProvidedColumnGroup } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IFilterDef } from '../interfaces/iFilter';
+import type { IRowDragItem } from '../interfaces/iRowDragItem';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { MenuItemDef } from '../interfaces/menuItem';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
-import type { IRowDragItem } from '../rendering/row/rowDragComp';
 import type { ITooltipParams } from '../rendering/tooltipComponent';
 import type { GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
 

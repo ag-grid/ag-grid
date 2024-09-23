@@ -19,7 +19,6 @@ import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';
 import type { CheckboxSelectionComponent } from './../checkboxSelectionComponent';
 import type { DndSourceComp } from './../dndSourceComp';
 import type { RowCtrl } from './../row/rowCtrl';
-import type { RowDragComp } from './../row/rowDragComp';
 import type { CellCtrl, ICellComp } from './cellCtrl';
 
 export class CellComp extends Component implements TooltipParentComp {
@@ -39,7 +38,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private checkboxSelectionComp: CheckboxSelectionComponent | undefined;
     private dndSourceComp: DndSourceComp | undefined;
-    private rowDraggingComp: RowDragComp | undefined;
+    private rowDraggingComp: Component | undefined;
 
     private hideEditorPopup: ((...args: any[]) => any) | null | undefined;
     private cellEditorPopupWrapper: PopupEditorWrapper | undefined;

@@ -47,7 +47,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
     private rowModel: IRowModel;
-    private pinnedRowModel: PinnedRowModel;
+    private pinnedRowModel?: PinnedRowModel;
     private selectionService: ISelectionService;
     private rowNodeSorter: RowNodeSorter;
     private sortController: SortController;
@@ -228,10 +228,10 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     // only pinnedTop rows, other models are processed by `processRows` and `processPinnedBottomsRows`
                     .filter((position) => position.rowPinned === 'top')
                     .sort((a, b) => a.rowIndex - b.rowIndex)
-                    .map((position) => this.pinnedRowModel.getPinnedTopRow(position.rowIndex))
+                    .map((position) => this.pinnedRowModel?.getPinnedTopRow(position.rowIndex))
                     .forEach(processRow);
             } else {
-                this.pinnedRowModel.forEachPinnedRow('top', processRow);
+                this.pinnedRowModel?.forEachPinnedRow('top', processRow);
             }
             return gridSerializingSession;
         };
@@ -347,10 +347,10 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     // only pinnedBottom rows, other models are processed by `processRows` and `processPinnedTopRows`
                     .filter((position) => position.rowPinned === 'bottom')
                     .sort((a, b) => a.rowIndex - b.rowIndex)
-                    .map((position) => this.pinnedRowModel.getPinnedBottomRow(position.rowIndex))
+                    .map((position) => this.pinnedRowModel?.getPinnedBottomRow(position.rowIndex))
                     .forEach(processRow);
             } else {
-                this.pinnedRowModel.forEachPinnedRow('bottom', processRow);
+                this.pinnedRowModel?.forEachPinnedRow('bottom', processRow);
             }
             return gridSerializingSession;
         };

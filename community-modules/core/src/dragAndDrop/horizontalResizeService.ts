@@ -1,8 +1,8 @@
-import type { NamedBean } from '../../context/bean';
-import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection } from '../../context/context';
-import type { CtrlsService } from '../../ctrlsService';
-import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { DragListenerParams, DragService } from './dragService';
 
 export interface HorizontalResizeParams {
     eResizeBar: HTMLElement;
@@ -19,7 +19,7 @@ export class HorizontalResizeService extends BeanStub implements NamedBean {
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.dragService = beans.dragService;
+        this.dragService = beans.dragService!;
         this.ctrlsService = beans.ctrlsService;
     }
 

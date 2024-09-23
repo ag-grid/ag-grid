@@ -1,7 +1,5 @@
 import { ColumnApiModule } from '../columns/columnModule';
-import { DragApiModule } from '../dragAndDrop/dragModule';
 import { _defineModule } from '../interfaces/iModule';
-import { PinnedRowApiModule } from '../pinnedRowModel/pinnedRowModule';
 import { OverlayApiModule } from '../rendering/overlays/overlayModule';
 import { RenderApiModule } from '../rendering/renderModule';
 import { VERSION } from '../version';
@@ -187,11 +185,9 @@ export const CommunityApiModule = _defineModule({
     moduleName: '@ag-grid-community/api',
     dependantModules: [
         CoreApiModule,
-        PinnedRowApiModule,
         RowSelectionApiModule,
         ColumnApiModule,
         RowApiModule,
-        DragApiModule,
         ScrollApiModule,
         OverlayApiModule,
         KeyboardNavigationApiModule,

@@ -40,7 +40,7 @@ type PillState = 'notDragging' | 'newItemsIn' | 'rearrangeItems';
 
 export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem> extends Component {
     private focusService: FocusService;
-    private dragAndDropService: DragAndDropService;
+    private dragAndDropService?: DragAndDropService;
 
     public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
@@ -202,7 +202,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             isInterestedIn: this.isInterestedIn.bind(this),
         };
 
-        this.dragAndDropService.addDropTarget(this.dropTarget);
+        this.dragAndDropService?.addDropTarget(this.dropTarget);
     }
 
     protected minimumAllowedNewInsertIndex(): number {

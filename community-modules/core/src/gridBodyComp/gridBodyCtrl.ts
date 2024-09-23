@@ -2,7 +2,7 @@ import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
+import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { Environment } from '../environment';
 import type { FilterManager } from '../filter/filterManager';
 import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
@@ -23,7 +23,6 @@ import { TouchListener } from '../widgets/touchListener';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
 import type { MouseEventService } from './mouseEventService';
 import { _getRowContainerOptions } from './rowContainer/rowContainerCtrl';
-import { RowDragFeature } from './rowDragFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 export type RowAnimationCssClasses = 'ag-row-animation' | 'ag-row-no-animation';
@@ -63,8 +62,8 @@ export class GridBodyCtrl extends BeanStub {
     private scrollVisibleService: ScrollVisibleService;
     private menuService: MenuService;
     private headerNavigationService: HeaderNavigationService;
-    private dragAndDropService: DragAndDropService;
-    private pinnedRowModel: PinnedRowModel;
+    private rowDragService?: RowDragService;
+    private pinnedRowModel?: PinnedRowModel;
     private rowRenderer: RowRenderer;
     private popupService: PopupService;
     private mouseEventService: MouseEventService;
@@ -80,7 +79,7 @@ export class GridBodyCtrl extends BeanStub {
         this.scrollVisibleService = beans.scrollVisibleService;
         this.menuService = beans.menuService;
         this.headerNavigationService = beans.headerNavigationService;
-        this.dragAndDropService = beans.dragAndDropService;
+        this.rowDragService = beans.rowDragService;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.rowRenderer = beans.rowRenderer;
         this.popupService = beans.popupService;
@@ -107,7 +106,6 @@ export class GridBodyCtrl extends BeanStub {
     private stickyBottomHeight: number = 0;
 
     private bodyScrollFeature: GridBodyScrollFeature;
-    private rowDragFeature: RowDragFeature;
 
     public getScrollFeature(): GridBodyScrollFeature {
         return this.bodyScrollFeature;
@@ -501,20 +499,14 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addRowDragListener(): void {
-        this.rowDragFeature = this.createManagedBean(new RowDragFeature(this.eBodyViewport));
-        this.dragAndDropService.addDropTarget(this.rowDragFeature);
-        this.addDestroyFunc(() => this.dragAndDropService.removeDropTarget(this.rowDragFeature));
-    }
-
-    public getRowDragFeature(): RowDragFeature {
-        return this.rowDragFeature;
+        this.rowDragService?.setupRowDrag(this.eBodyViewport, this);
     }
 
     private setFloatingHeights(): void {
         const { pinnedRowModel } = this;
 
-        const floatingTopHeight = pinnedRowModel.getPinnedTopTotalHeight();
-        const floatingBottomHeight = pinnedRowModel.getPinnedBottomTotalHeight();
+        const floatingTopHeight = pinnedRowModel?.getPinnedTopTotalHeight() ?? 0;
+        const floatingBottomHeight = pinnedRowModel?.getPinnedBottomTotalHeight() ?? 0;
         this.comp.setTopHeight(floatingTopHeight);
         this.comp.setBottomHeight(floatingBottomHeight);
         this.comp.setTopDisplay(floatingTopHeight ? 'inherit' : 'none');
@@ -560,7 +552,7 @@ export class GridBodyCtrl extends BeanStub {
     private setStickyTopOffsetTop(): void {
         const headerCtrl = this.ctrlsService.get('gridHeaderCtrl');
         const headerHeight = headerCtrl.getHeaderHeight() + (this.filterManager?.getHeaderHeight() ?? 0);
-        const pinnedTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
+        const pinnedTopHeight = this.pinnedRowModel?.getPinnedTopTotalHeight() ?? 0;
 
         let height = 0;
 
@@ -578,7 +570,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private setStickyBottomOffsetBottom(): void {
-        const pinnedBottomHeight = this.pinnedRowModel.getPinnedBottomTotalHeight();
+        const pinnedBottomHeight = this.pinnedRowModel?.getPinnedBottomTotalHeight() ?? 0;
         const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
         const scrollbarWidth = hScrollShowing ? this.scrollVisibleService.getScrollbarWidth() || 0 : 0;
         const height = pinnedBottomHeight + scrollbarWidth;

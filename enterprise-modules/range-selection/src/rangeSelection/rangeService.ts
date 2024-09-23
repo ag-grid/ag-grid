@@ -10,6 +10,7 @@ import type {
     ColumnModel,
     CtrlsService,
     DragService,
+    ICellRangeFeature,
     IRangeService,
     IRowModel,
     NamedBean,
@@ -41,6 +42,9 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
+import { CellRangeFeature } from './cellRangeFeature';
+import { DragListenerFeature } from './dragListenerFeature';
+
 export class RangeService extends BeanStub implements NamedBean, IRangeService {
     beanName = 'rangeService' as const;
 
@@ -49,7 +53,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
     private cellNavigationService: CellNavigationService;
-    private pinnedRowModel: PinnedRowModel;
+    private pinnedRowModel?: PinnedRowModel;
     private rowPositionUtils: RowPositionUtils;
     private cellPositionUtils: CellPositionUtils;
     private ctrlsService: CtrlsService;
@@ -57,7 +61,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
-        this.dragService = beans.dragService;
+        this.dragService = beans.dragService!;
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
         this.cellNavigationService = beans.cellNavigationService;
@@ -180,7 +184,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 : cellRange.endRow;
         }
 
-        const rowPinned = this.pinnedRowModel.getPinnedTopRowCount() > 0 ? 'top' : null;
+        const rowPinned = this.pinnedRowModel?.getPinnedTopRowCount() ?? 0 > 0 ? 'top' : null;
 
         return { rowIndex: 0, rowPinned };
     }
@@ -192,7 +196,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 : cellRange.startRow;
         }
 
-        const pinnedBottomRowCount = this.pinnedRowModel.getPinnedBottomRowCount();
+        const pinnedBottomRowCount = this.pinnedRowModel?.getPinnedBottomRowCount() ?? 0;
         const pinnedBottom = pinnedBottomRowCount > 0;
 
         if (pinnedBottom) {
@@ -987,5 +991,13 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
 
         return columns;
+    }
+
+    public createDragListenerFeature(eContainer: HTMLElement): BeanStub {
+        return new DragListenerFeature(eContainer);
+    }
+
+    public createCellRangeFeature(beans: BeanCollection, ctrl: CellCtrl): ICellRangeFeature {
+        return new CellRangeFeature(beans, ctrl);
     }
 }

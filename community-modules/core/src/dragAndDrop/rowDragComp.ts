@@ -1,18 +1,14 @@
-import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection } from '../../context/context';
-import type { DragItem, DragSource } from '../../dragAndDrop/dragAndDropService';
-import { DragSourceType } from '../../dragAndDrop/dragAndDropService';
-import type { AgColumn } from '../../entities/agColumn';
-import type { RowNode } from '../../entities/rowNode';
-import type { AgEventType } from '../../eventTypes';
-import { _isFunction, _warnOnce } from '../../utils/function';
-import { _createIconNoSpan } from '../../utils/icon';
-import { Component } from '../../widgets/component';
-
-export interface IRowDragItem extends DragItem {
-    /** The default text that would be applied to this Drag Element */
-    defaultTextValue: string;
-}
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { RowNode } from '../entities/rowNode';
+import type { AgEventType } from '../eventTypes';
+import type { IRowDragItem } from '../interfaces/iRowDragItem';
+import { _isFunction, _warnOnce } from '../utils/function';
+import { _createIconNoSpan } from '../utils/icon';
+import { Component } from '../widgets/component';
+import type { DragSource } from './dragAndDropService';
+import { DragSourceType } from './dragAndDropService';
 
 export class RowDragComp extends Component {
     private dragSource: DragSource | null = null;
@@ -146,7 +142,7 @@ export class RowDragComp extends Component {
             dragSourceDomDataKey: this.gos.getDomDataKey(),
         };
 
-        this.beans.dragAndDropService.addDragSource(this.dragSource, true);
+        this.beans.dragAndDropService!.addDragSource(this.dragSource, true);
     }
 
     public override destroy(): void {
@@ -160,7 +156,7 @@ export class RowDragComp extends Component {
             return;
         }
 
-        this.beans.dragAndDropService.removeDragSource(this.dragSource);
+        this.beans.dragAndDropService!.removeDragSource(this.dragSource);
         this.dragSource = null;
     }
 
@@ -284,11 +280,10 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
 
     private workOutVisibility(): void {
         // only show the drag if both sort and filter are not present
-        const gridBodyCon = this.beans.ctrlsService.getGridBodyCtrl();
-        const rowDragFeature = gridBodyCon.getRowDragFeature();
+        const rowDragFeature = this.beans.rowDragService!.getRowDragFeature();
         const shouldPreventRowMove = rowDragFeature && rowDragFeature.shouldPreventRowMove();
         const suppressRowDrag = this.gos.get('suppressRowDrag');
-        const hasExternalDropZones = this.beans.dragAndDropService.hasExternalDropZones();
+        const hasExternalDropZones = this.beans.dragAndDropService!.hasExternalDropZones();
         const neverDisplayed = (shouldPreventRowMove && !hasExternalDropZones) || suppressRowDrag;
 
         this.setDisplayedOrVisible(neverDisplayed);

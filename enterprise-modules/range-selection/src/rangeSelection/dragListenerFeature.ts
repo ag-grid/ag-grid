@@ -1,16 +1,13 @@
-import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection } from '../../context/context';
-import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
-import { _isCellSelectionEnabled } from '../../gridOptionsUtils';
-import type { IRangeService } from '../../interfaces/IRangeService';
+import type { BeanCollection, DragListenerParams, DragService, IRangeService } from '@ag-grid-community/core';
+import { BeanStub, _isCellSelectionEnabled } from '@ag-grid-community/core';
 
 export class DragListenerFeature extends BeanStub {
     private dragService: DragService;
-    private rangeService?: IRangeService;
+    private rangeService: IRangeService;
 
     public wireBeans(beans: BeanCollection) {
-        this.dragService = beans.dragService;
-        this.rangeService = beans.rangeService;
+        this.dragService = beans.dragService!;
+        this.rangeService = beans.rangeService!;
     }
 
     private eContainer: HTMLElement;
@@ -23,10 +20,6 @@ export class DragListenerFeature extends BeanStub {
     private params: DragListenerParams;
 
     public postConstruct(): void {
-        if (!this.rangeService) {
-            return;
-        }
-
         this.params = {
             eElement: this.eContainer,
             onDragStart: this.rangeService.onDragStart.bind(this.rangeService),

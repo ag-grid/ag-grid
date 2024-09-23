@@ -1,3 +1,7 @@
+import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
+import type { ColKey, ColumnModel, Maybe } from '../columns/columnModel';
+import { getWidthOfColsInList } from '../columns/columnUtils';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -15,10 +19,6 @@ import { _removeFromArray } from '../utils/array';
 import { _getInnerWidth } from '../utils/dom';
 import { _warnOnce } from '../utils/function';
 import { TouchListener } from '../widgets/touchListener';
-import { dispatchColumnResizedEvent } from './columnEventUtils';
-import type { ColKey, ColumnModel, Maybe } from './columnModel';
-import { getWidthOfColsInList } from './columnUtils';
-import type { VisibleColsService } from './visibleColsService';
 
 export class ColumnAutosizeService extends BeanStub implements NamedBean {
     beanName = 'columnAutosizeService' as const;

@@ -3,16 +3,16 @@ import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
 import type { RowModelHelperService } from '../api/rowModelHelperService';
 import type { CellNavigationService } from '../cellNavigationService';
+import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
+import type { ColumnMoveService } from '../columnMove/columnMoveService';
 import type { ColumnResizeService } from '../columnResize/columnResizeService';
 import type { ColumnApplyStateService } from '../columns/columnApplyStateService';
-import type { ColumnAutosizeService } from '../columns/columnAutosizeService';
 import type { ColumnDefFactory } from '../columns/columnDefFactory';
 import type { ColumnFactory } from '../columns/columnFactory';
 import type { ColumnFlexService } from '../columns/columnFlexService';
 import type { ColumnGetStateService } from '../columns/columnGetStateService';
 import type { ColumnGroupStateService } from '../columns/columnGroupStateService';
 import type { ColumnModel } from '../columns/columnModel';
-import type { ColumnMoveService } from '../columns/columnMoveService';
 import type { ColumnNameService } from '../columns/columnNameService';
 import type { ColumnViewportService } from '../columns/columnViewportService';
 import type { ControlsColService } from '../columns/controlsColService';
@@ -29,6 +29,8 @@ import type { CtrlsFactory } from '../ctrlsFactory';
 import type { CtrlsService } from '../ctrlsService';
 import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import type { DragService } from '../dragAndDrop/dragService';
+import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeService';
+import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { EditService } from '../edit/editService';
 import type { RowEditService } from '../edit/rowEditService';
 import type { CellPositionUtils } from '../entities/cellPositionUtils';
@@ -50,7 +52,6 @@ import type { GridDestroyService } from '../gridDestroyService';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
 import type { HeaderPositionUtils } from '../headerRendering/common/headerPosition';
-import type { HorizontalResizeService } from '../headerRendering/common/horizontalResizeService';
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
@@ -91,6 +92,7 @@ import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementServi
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { ColumnHoverService } from '../rendering/columnHoverService';
+import type { StickyRowService } from '../rendering/features/stickyRowService';
 import type { OverlayService } from '../rendering/overlays/overlayService';
 import type { RowCssClassCalculator } from '../rendering/row/rowCssClassCalculator';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
@@ -189,7 +191,7 @@ export interface CoreBeanCollection {
     columnViewportService: ColumnViewportService;
     columnNameService: ColumnNameService;
     visibleColsService: VisibleColsService;
-    columnMoveService: ColumnMoveService;
+    columnMoveService?: ColumnMoveService;
     columnFlexService: ColumnFlexService;
     columnResizeService?: ColumnResizeService;
     headerNavigationService: HeaderNavigationService;
@@ -202,8 +204,8 @@ export interface CoreBeanCollection {
     userComponentFactory: UserComponentFactory;
     userComponentRegistry: UserComponentRegistry;
     animationFrameService: AnimationFrameService;
-    dragService: DragService;
-    dragAndDropService: DragAndDropService;
+    dragService?: DragService;
+    dragAndDropService?: DragAndDropService;
     sortController: SortController;
     columnFilterService?: ColumnFilterService;
     filterManager?: FilterManager;
@@ -246,7 +248,7 @@ export interface CoreBeanCollection {
     stateService?: StateService;
     overlayService: OverlayService;
     columnGetStateService: ColumnGetStateService;
-    pinnedRowModel: PinnedRowModel;
+    pinnedRowModel?: PinnedRowModel;
     menuService: MenuService;
     apiEventService: ApiEventService;
     undoRedoService?: UndoRedoService;
@@ -263,7 +265,7 @@ export interface CoreBeanCollection {
     componentMetadataProvider: ComponentMetadataProvider;
     agComponentUtils: AgComponentUtils;
     frameworkComponentWrapper: FrameworkComponentWrapper;
-    horizontalResizeService: HorizontalResizeService;
+    horizontalResizeService?: HorizontalResizeService;
     filterMenuFactory: IMenuFactory;
     enterpriseMenuFactory?: IMenuFactory;
     contextMenuFactory?: IContextMenuFactory;
@@ -297,6 +299,8 @@ export interface CoreBeanCollection {
     selectableService: SelectableService;
     aggColumnNameService?: IAggColumnNameService;
     renderStatusService?: IRenderStatusService;
+    rowDragService?: RowDragService;
+    stickyRowService?: StickyRowService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -446,6 +450,7 @@ export type BeanName =
     | 'renderStatusService'
     | 'rowContainerHeightService'
     | 'rowCssClassCalculator'
+    | 'rowDragService'
     | 'rowEditService'
     | 'rowModel'
     | 'rowNodeBlockLoader'
@@ -476,6 +481,7 @@ export type BeanName =
     | 'ssrmTransactionManager'
     | 'stateService'
     | 'statusBarService'
+    | 'stickyRowService'
     | 'stylingService'
     | 'syncService'
     | 'templateService'

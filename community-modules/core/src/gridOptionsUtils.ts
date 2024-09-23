@@ -358,28 +358,6 @@ export function _isCellSelectionEnabled(gos: GridOptionsService): boolean {
     return useNewAPI ? selection.mode === 'cell' : gos.get('enableRangeSelection');
 }
 
-export function _isRangeHandleEnabled(gos: GridOptionsService): boolean {
-    const selection = gos.get('selection');
-    const useNewAPI = selection !== undefined;
-
-    if (!useNewAPI) {
-        return gos.get('enableRangeHandle');
-    }
-
-    return selection.mode === 'cell' ? selection.handle?.mode === 'range' : false;
-}
-
-export function _isFillHandleEnabled(gos: GridOptionsService): boolean {
-    const selection = gos.get('selection');
-    const useNewAPI = selection !== undefined;
-
-    if (!useNewAPI) {
-        return gos.get('enableFillHandle');
-    }
-
-    return selection.mode === 'cell' ? selection.handle?.mode === 'fill' : false;
-}
-
 export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | undefined {
     const selection = gos.get('selection');
     const useNewAPI = selection !== undefined;

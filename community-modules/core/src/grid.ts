@@ -10,7 +10,6 @@ import { ColumnFlexService } from './columns/columnFlexService';
 import { ColumnGetStateService } from './columns/columnGetStateService';
 import { ColumnGroupStateService } from './columns/columnGroupStateService';
 import { ColumnModel } from './columns/columnModel';
-import { ColumnMoveService } from './columns/columnMoveService';
 import { ColumnNameService } from './columns/columnNameService';
 import { ColumnViewportService } from './columns/columnViewportService';
 import { FuncColsService } from './columns/funcColsService';
@@ -25,8 +24,6 @@ import { Context } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import { CtrlsFactory } from './ctrlsFactory';
 import { CtrlsService } from './ctrlsService';
-import { DragAndDropService } from './dragAndDrop/dragAndDropService';
-import { DragService } from './dragAndDrop/dragService';
 import { CellPositionUtils } from './entities/cellPositionUtils';
 import type { GridOptions } from './entities/gridOptions';
 import { RowNodeEventThrottle } from './entities/rowNodeEventThrottle';
@@ -45,7 +42,6 @@ import { GridOptionsService, getCoercedGridOptions } from './gridOptionsService'
 import { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
 import { HeaderPositionUtils } from './headerRendering/common/headerPosition';
-import { HorizontalResizeService } from './headerRendering/common/horizontalResizeService';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { Module } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
@@ -59,7 +55,6 @@ import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PageBoundsListener } from './pagination/pageBoundsListener';
 import { PageBoundsService } from './pagination/pageBoundsService';
-import { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 import { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
 import { AutoWidthCalculator } from './rendering/autoWidthCalculator';
 import { ColumnAnimationService } from './rendering/columnAnimationService';
@@ -452,10 +447,7 @@ export class GridCoreCreator {
             ResizeObserverService,
             UserComponentFactory,
             RowContainerHeightService,
-            HorizontalResizeService,
             LocaleService,
-            PinnedRowModel,
-            DragService,
             VisibleColsService,
             EventService,
             GridOptionsService,
@@ -473,7 +465,6 @@ export class GridCoreCreator {
             ValueService,
             AutoWidthCalculator,
             StandardMenuFactory,
-            DragAndDropService,
             FocusService,
             MouseEventService,
             Environment,
@@ -500,7 +491,6 @@ export class GridCoreCreator {
             AriaAnnouncementService,
             MenuService,
             ColumnApplyStateService,
-            ColumnMoveService,
             ColumnGetStateService,
             ColumnGroupStateService,
             ColumnFlexService,

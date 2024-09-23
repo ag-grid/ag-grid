@@ -40,7 +40,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private undoRedoService?: UndoRedoService;
     private visibleColsService: VisibleColsService;
     private rowModel: IRowModel;
-    private pinnedRowModel: PinnedRowModel;
+    private pinnedRowModel?: PinnedRowModel;
     private rangeService?: IRangeService;
     private clipboardService?: IClipboardService;
 
@@ -314,8 +314,8 @@ export class RowContainerEventsFeature extends BeanStub {
 
         if (rangeService && rowModel.isRowsToRender()) {
             const [isEmptyPinnedTop, isEmptyPinnedBottom] = [
-                pinnedRowModel.isEmpty('top'),
-                pinnedRowModel.isEmpty('bottom'),
+                pinnedRowModel?.isEmpty('top') ?? true,
+                pinnedRowModel?.isEmpty('bottom') ?? true,
             ];
 
             const floatingStart: RowPinnedType = isEmptyPinnedTop ? null : 'top';
@@ -327,7 +327,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 rowEnd = rowModel.getRowCount() - 1;
             } else {
                 floatingEnd = 'bottom';
-                rowEnd = pinnedRowModel.getPinnedBottomRowCount() - 1;
+                rowEnd = pinnedRowModel?.getPinnedBottomRowCount() ?? 0 - 1;
             }
 
             const allDisplayedColumns = this.visibleColsService.allCols;

@@ -1,12 +1,22 @@
-import type { BeanCollection } from '../../context/context';
-import type { AgColumn } from '../../entities/agColumn';
-import { _isFillHandleEnabled, _isRangeHandleEnabled } from '../../gridOptionsUtils';
-import type { IRangeService, ISelectionHandle, ISelectionHandleFactory } from '../../interfaces/IRangeService';
-import { CellRangeType, SelectionHandleType } from '../../interfaces/IRangeService';
-import { _setAriaSelected } from '../../utils/aria';
-import { _includes, _last } from '../../utils/array';
-import { _missing } from '../../utils/generic';
-import type { CellCtrl, ICellComp } from './cellCtrl';
+import type {
+    AgColumn,
+    BeanCollection,
+    CellCtrl,
+    GridOptionsService,
+    ICellComp,
+    ICellRangeFeature,
+    IRangeService,
+    ISelectionHandle,
+    ISelectionHandleFactory,
+} from '@ag-grid-community/core';
+import {
+    CellRangeType,
+    SelectionHandleType,
+    _includes,
+    _last,
+    _missing,
+    _setAriaSelected,
+} from '@ag-grid-community/core';
 
 const CSS_CELL_RANGE_SELECTED = 'ag-cell-range-selected';
 const CSS_CELL_RANGE_CHART = 'ag-cell-range-chart';
@@ -18,7 +28,29 @@ const CSS_CELL_RANGE_RIGHT = 'ag-cell-range-right';
 const CSS_CELL_RANGE_BOTTOM = 'ag-cell-range-bottom';
 const CSS_CELL_RANGE_LEFT = 'ag-cell-range-left';
 
-export class CellRangeFeature {
+function _isRangeHandleEnabled(gos: GridOptionsService): boolean {
+    const selection = gos.get('selection');
+    const useNewAPI = selection !== undefined;
+
+    if (!useNewAPI) {
+        return gos.get('enableRangeHandle');
+    }
+
+    return selection.mode === 'cell' ? selection.handle?.mode === 'range' : false;
+}
+
+function _isFillHandleEnabled(gos: GridOptionsService): boolean {
+    const selection = gos.get('selection');
+    const useNewAPI = selection !== undefined;
+
+    if (!useNewAPI) {
+        return gos.get('enableFillHandle');
+    }
+
+    return selection.mode === 'cell' ? selection.handle?.mode === 'fill' : false;
+}
+
+export class CellRangeFeature implements ICellRangeFeature {
     private beans: BeanCollection;
     private rangeService: IRangeService;
     private selectionHandleFactory: ISelectionHandleFactory;

@@ -74,8 +74,10 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     // empty abstract method
     protected resizeHeader(): void {}
-    // empty abstract method
-    protected moveHeader(): void {}
+
+    protected override moveHeader(): void {
+        // doesn't support move
+    }
 
     private setupActive(): void {
         const colDef = this.column.getColDef();

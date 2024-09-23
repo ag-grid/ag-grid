@@ -1,12 +1,18 @@
 import { AlignedGridsModule } from './alignedGridsModule';
 import { CommunityApiModule } from './api/apiModule';
-import { ColumnAutosizeModule, ColumnResizeModule, ControlsColumnModule, DataTypeModule } from './columns/columnModule';
+import { ColumnAutosizeModule } from './columnAutosize/columnAutosizeModule';
+import { ColumnMoveModule } from './columnMove/columnMoveModule';
+import { ColumnResizeModule } from './columnResize/columnResizeModule';
+import { ControlsColumnModule, DataTypeModule } from './columns/columnModule';
+import { DragAndDropModule, RowDragModule } from './dragAndDrop/dragModule';
 import { EditModule } from './edit/editModule';
 import { FilterModule } from './filter/filterModule';
 import { _defineModule } from './interfaces/iModule';
 import { StateModule } from './misc/state/stateModule';
 import { ModuleNames } from './modules/moduleNames';
 import { PaginationModule } from './pagination/paginationModule';
+import { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
+import { StickyRowModule } from './rendering/features/stickyRowModule';
 import { ValidationService } from './validation/validationService';
 import { VERSION } from './version';
 
@@ -34,8 +40,13 @@ export const CommunityFeaturesModule = _defineModule({
         AlignedGridsModule,
         PaginationModule,
         CommunityApiModule,
+        ColumnMoveModule,
         ColumnAutosizeModule,
         ControlsColumnModule,
         ColumnResizeModule,
+        DragAndDropModule,
+        RowDragModule,
+        PinnedRowModule,
+        StickyRowModule,
     ],
 });

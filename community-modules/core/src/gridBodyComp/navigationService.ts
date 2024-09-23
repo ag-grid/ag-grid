@@ -55,7 +55,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     private headerNavigationService: HeaderNavigationService;
     private rowPositionUtils: RowPositionUtils;
     private cellNavigationService: CellNavigationService;
-    private pinnedRowModel: PinnedRowModel;
+    private pinnedRowModel?: PinnedRowModel;
     private scrollVisibleService: ScrollVisibleService;
     private rangeService?: IRangeService;
 
@@ -743,11 +743,11 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     private lookupRowNodeForCell(cell: CellPosition) {
         if (cell.rowPinned === 'top') {
-            return this.pinnedRowModel.getPinnedTopRow(cell.rowIndex);
+            return this.pinnedRowModel?.getPinnedTopRow(cell.rowIndex);
         }
 
         if (cell.rowPinned === 'bottom') {
-            return this.pinnedRowModel.getPinnedBottomRow(cell.rowIndex);
+            return this.pinnedRowModel?.getPinnedBottomRow(cell.rowIndex);
         }
 
         return this.rowModel.getRow(cell.rowIndex);
