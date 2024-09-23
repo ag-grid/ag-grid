@@ -1,17 +1,12 @@
 /**
  * Automated Integrated Charts demo
  */
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
-import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { SideBarModule } from '@ag-grid-enterprise/side-bar';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid } from 'ag-grid-community';
+import { ClipboardModule, GridChartsModule, MenuModule, RowGroupingModule, SideBarModule } from 'ag-grid-enterprise';
 
 import type { AutomatedExample } from '../../types.d';
-import { createAutomatedIntegratedChartsWithCreateGrid } from './createAutomatedIntegratedChartsWithCreateGrid';
 import type { CreateAutomatedIntegratedChartsParams } from './createAutomatedIntegratedChartsWithCreateGrid';
+import { createAutomatedIntegratedChartsWithCreateGrid } from './createAutomatedIntegratedChartsWithCreateGrid';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
