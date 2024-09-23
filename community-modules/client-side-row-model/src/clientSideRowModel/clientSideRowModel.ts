@@ -1232,8 +1232,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (typeof rowData === 'string') {
             _warnOnce('rowData must be an array.');
         } else {
-            this.nodeManager.setRowData(rowData);
             this.rowNodesCountReady = true;
+            this.nodeManager.setRowData(rowData);
         }
 
         if (this.hasStarted) {
@@ -1286,8 +1286,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         let orderChanged = false;
         this.rowDataTransactionBatch?.forEach((tranItem) => {
-            const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(tranItem.rowDataTransaction);
             this.rowNodesCountReady = true;
+            const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(tranItem.rowDataTransaction);
             if (rowsInserted) {
                 orderChanged = true;
             }
@@ -1324,8 +1324,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction | null {
         this.valueCache.onDataChanged();
 
-        const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(rowDataTran);
         this.rowNodesCountReady = true;
+        const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(rowDataTran);
 
         this.commonUpdateRowData([rowNodeTransaction], rowsInserted);
 
