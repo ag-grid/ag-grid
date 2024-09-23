@@ -2,7 +2,6 @@ import type {
     AgColumn,
     BeanCollection,
     CellPosition,
-    CellPositionUtils,
     ColumnModel,
     CtrlsService,
     FocusService,
@@ -18,6 +17,7 @@ import {
     BeanStub,
     Component,
     ModuleNames,
+    _areCellsEqual,
     _exists,
     _isIOSUserAgent,
     _isNothingFocused,
@@ -251,12 +251,10 @@ export type ContextMenuEvent = 'closeMenu';
 class ContextMenu extends Component<ContextMenuEvent> {
     private focusService: FocusService;
     private menuItemMapper: MenuItemMapper;
-    private cellPositionUtils: CellPositionUtils;
 
     public wireBeans(beans: BeanCollection): void {
         this.focusService = beans.focusService;
         this.menuItemMapper = beans.menuItemMapper as MenuItemMapper;
-        this.cellPositionUtils = beans.cellPositionUtils;
     }
 
     private menuList: AgMenuList | null = null;
@@ -312,7 +310,7 @@ class ContextMenu extends Component<ContextMenuEvent> {
         if (
             currentFocusedCell &&
             this.focusedCell &&
-            this.cellPositionUtils.equals(currentFocusedCell, this.focusedCell)
+            _areCellsEqual(currentFocusedCell, this.focusedCell)
         ) {
             const { rowIndex, rowPinned, column } = this.focusedCell;
 

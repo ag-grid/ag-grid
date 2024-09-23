@@ -3,10 +3,10 @@ import type { UserCompDetails } from '../../components/framework/userComponentFa
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
-import type { CellPosition } from '../../entities/cellPositionUtils';
+import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { RowClassParams, RowStyle } from '../../entities/gridOptions';
 import type { RowNode } from '../../entities/rowNode';
-import type { RowPosition } from '../../entities/rowPositionUtils';
+import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { AgEventType } from '../../eventTypes';
 import type { CellFocusedEvent, RowEvent, VirtualRowRemovedEvent } from '../../events';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';

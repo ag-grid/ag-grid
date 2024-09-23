@@ -1,5 +1,5 @@
-import type { CellPosition } from '../entities/cellPositionUtils';
-import type { HeaderPosition } from '../headerRendering/common/headerPosition';
+import type { CellPosition } from './iCellPosition';
+import type { HeaderPosition } from './iHeaderPosition';
 import type { ChartToolbarMenuItemOptions } from './iChartOptions';
 import type { Column } from './iColumn';
 import type { AgGridCommon } from './iCommon';

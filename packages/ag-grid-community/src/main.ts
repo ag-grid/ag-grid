@@ -675,9 +675,12 @@ export { IAggFuncService } from './interfaces/iAggFuncService';
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from './interfaces/iClipboardService';
 export { IMenuFactory } from './interfaces/iMenuFactory';
 export { IColumnChooserFactory, ShowColumnChooserParams } from './interfaces/iColumnChooserFactory';
-export { CellPosition, CellPositionUtils } from './entities/cellPositionUtils';
-export { RowPosition, RowPositionUtils } from './entities/rowPositionUtils';
-export { HeaderPosition, HeaderPositionUtils } from './headerRendering/common/headerPosition';
+export { _areCellsEqual, _createCellId } from './entities/cellPositionUtils';
+export { CellPosition } from './interfaces/iCellPosition';
+export type { RowPositionUtils } from './entities/rowPositionUtils';
+export { _isRowBefore, _isSameRow } from './entities/rowPositionUtils';
+export { RowPosition } from './interfaces/iRowPosition';
+export { HeaderPosition } from './interfaces/iHeaderPosition';
 export type { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
 export { HeaderNavigationDirection } from './headerRendering/common/headerNavigationService';
 export {

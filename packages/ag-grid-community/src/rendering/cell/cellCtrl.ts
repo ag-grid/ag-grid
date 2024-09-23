@@ -4,10 +4,11 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { AgColumn } from '../../entities/agColumn';
-import type { CellPosition } from '../../entities/cellPositionUtils';
+import type { CellPosition } from '../../interfaces/iCellPosition';
+import { _createCellId } from '../../entities/cellPositionUtils';
 import type { CellStyle, ColDef } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
-import type { RowPosition } from '../../entities/rowPositionUtils';
+import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
 import {
@@ -693,7 +694,7 @@ export class CellCtrl extends BeanStub {
         if (!this.cellComp) {
             return;
         }
-        const cellId = this.beans.cellPositionUtils.createId(this.getCellPosition());
+        const cellId = _createCellId(this.getCellPosition());
         const shouldFlash = event.cells[cellId];
         if (shouldFlash) {
             this.animateCell('highlight');

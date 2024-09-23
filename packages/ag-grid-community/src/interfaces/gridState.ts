@@ -1,4 +1,4 @@
-import type { RowPosition } from '../entities/rowPositionUtils';
+import type { RowPosition } from './iRowPosition';
 import type { CellRangeType } from './IRangeService';
 import type { AdvancedFilterModel } from './advancedFilterModel';
 import type { FilterModel } from './iFilter';

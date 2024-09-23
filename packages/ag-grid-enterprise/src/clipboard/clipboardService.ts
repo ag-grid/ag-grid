@@ -3,7 +3,6 @@ import type {
     BeanCollection,
     CellNavigationService,
     CellPosition,
-    CellPositionUtils,
     CellRange,
     CsvExportParams,
     CtrlsService,
@@ -33,10 +32,12 @@ import type {
 import {
     BeanStub,
     ChangedPath,
+    _createCellId,
     _exists,
     _getActiveDomElement,
     _getDocument,
     _isClientSideRowModel,
+    _isSameRow,
     _last,
     _removeFromArray,
     _warnOnce,
@@ -90,7 +91,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private visibleColsService: VisibleColsService;
     private funcColsService: FuncColsService;
     private cellNavigationService: CellNavigationService;
-    private cellPositionUtils: CellPositionUtils;
     public rowPositionUtils: RowPositionUtils;
     private rangeService?: IRangeService;
 
@@ -105,7 +105,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.visibleColsService = beans.visibleColsService;
         this.funcColsService = beans.funcColsService;
         this.cellNavigationService = beans.cellNavigationService;
-        this.cellPositionUtils = beans.cellPositionUtils;
         this.rowPositionUtils = beans.rowPositionUtils;
         this.rangeService = beans.rangeService;
     }
@@ -431,7 +430,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 }
 
                 const { rowIndex, rowPinned } = currentRow;
-                const cellId = this.cellPositionUtils.createIdFromValues({ rowIndex, column, rowPinned });
+                const cellId = _createCellId({ rowIndex, column, rowPinned });
                 cellsToFlash[cellId] = true;
             });
 
@@ -567,7 +566,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                         }
 
                         const { rowIndex, rowPinned } = currentRow;
-                        const cellId = this.cellPositionUtils.createIdFromValues({ rowIndex, column, rowPinned });
+                        const cellId = _createCellId({ rowIndex, column, rowPinned });
                         cellsToFlash[cellId] = true;
                     });
                 }
@@ -691,7 +690,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         rowNode.setDataValue(column, processedValue, SOURCE_PASTE);
 
         const { rowIndex, rowPinned } = rowNode;
-        const cellId = this.cellPositionUtils.createIdFromValues({ rowIndex: rowIndex!, column, rowPinned });
+        const cellId = _createCellId({ rowIndex: rowIndex!, column, rowPinned });
         cellsToFlash[cellId] = true;
 
         if (changedPath) {
@@ -865,7 +864,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         // that is outside of the grid (eg. sets range rows 0 to 100, but grid has only 20 rows).
         while (!isLastRow && currentRow != null) {
             const rowNode = this.rowPositionUtils.getRowNode(currentRow);
-            isLastRow = this.rowPositionUtils.sameRow(currentRow, lastRow);
+            isLastRow = _isSameRow(currentRow, lastRow);
 
             rowCallback(currentRow, rowNode, range.columns as AgColumn[], rangeIndex++, isLastRow && isLastRange);
 
@@ -966,10 +965,10 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             rowPositions.push(node);
             range.columns.forEach((column) => {
                 const { rowIndex, rowPinned } = node!;
-                const cellId = this.cellPositionUtils.createIdFromValues({ rowIndex, column, rowPinned });
+                const cellId = _createCellId({ rowIndex, column, rowPinned });
                 cellsToFlash[cellId] = true;
             });
-            if (this.rowPositionUtils.sameRow(node, lastRow)) {
+            if (_isSameRow(node, lastRow)) {
                 break;
             }
             node = this.cellNavigationService.getRowBelow(node);
@@ -988,7 +987,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             }
             for (let j = 0; j < allDisplayedColumns.length; j++) {
                 const column = allDisplayedColumns[j];
-                const cellId = this.cellPositionUtils.createIdFromValues({ rowIndex, column, rowPinned });
+                const cellId = _createCellId({ rowIndex, column, rowPinned });
                 cellsToFlash[cellId] = true;
             }
         }
@@ -1003,7 +1002,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             return;
         }
 
-        const cellId = this.cellPositionUtils.createId(focusedCell);
+        const cellId = _createCellId(focusedCell);
         const currentRow: RowPosition = { rowPinned: focusedCell.rowPinned, rowIndex: focusedCell.rowIndex };
         const column = focusedCell.column as AgColumn;
 

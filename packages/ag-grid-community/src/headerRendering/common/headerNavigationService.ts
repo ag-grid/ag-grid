@@ -13,7 +13,7 @@ import { _getDocument } from '../../gridOptionsUtils';
 import type { Column, ColumnGroup } from '../../interfaces/iColumn';
 import { _last } from '../../utils/array';
 import { HeaderRowType } from '../row/headerRowComp';
-import type { HeaderPosition, HeaderPositionUtils } from './headerPosition';
+import type { HeaderPosition } from '../../interfaces/iHeaderPosition';
 
 export enum HeaderNavigationDirection {
     UP,
@@ -22,21 +22,23 @@ export enum HeaderNavigationDirection {
     RIGHT,
 }
 
+interface HeaderFuturePosition extends HeaderPosition {
+    headerRowIndexWithoutSpan?: number;
+}
+
 export class HeaderNavigationService extends BeanStub implements NamedBean {
     beanName = 'headerNavigationService' as const;
 
     private focusService: FocusService;
-    private headerPositionUtils: HeaderPositionUtils;
     private ctrlsService: CtrlsService;
     private columnModel: ColumnModel;
-    private visibleColService: VisibleColsService;
+    private visibleColsService: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.focusService = beans.focusService;
-        this.headerPositionUtils = beans.headerPositionUtils;
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;
-        this.visibleColService = beans.visibleColsService;
+        this.visibleColsService = beans.visibleColsService;
     }
 
     private gridBodyCon: GridBodyCtrl;
@@ -64,7 +66,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         if (typeof colKey === 'string') {
             column = this.columnModel.getCol(colKey);
             if (!column) {
-                column = this.visibleColService.getColumnGroup(colKey);
+                column = this.visibleColsService.getColumnGroup(colKey);
             }
         } else {
             column = colKey as AgColumn | AgColumnGroup;
@@ -129,8 +131,8 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             // eslint-disable-next-line prefer-const
             headerRowIndexWithoutSpan,
         } = isUp
-            ? this.headerPositionUtils.getColumnVisibleParent(column, headerRowIndex)
-            : this.headerPositionUtils.getColumnVisibleChild(column, headerRowIndex);
+            ? this.getColumnVisibleParent(column, headerRowIndex)
+            : this.getColumnVisibleChild(column, headerRowIndex);
 
         let skipColumn = false;
 
@@ -186,10 +188,10 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
 
         if (isLeft !== isRtl) {
             normalisedDirection = 'Before';
-            nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection)!;
+            nextHeader = this.findHeader(focusedHeader, normalisedDirection)!;
         } else {
             normalisedDirection = 'After';
-            nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection)!;
+            nextHeader = this.findHeader(focusedHeader, normalisedDirection)!;
         }
 
         if (nextHeader || !fromTab) {
@@ -227,7 +229,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             if (currentIndex > 0) {
                 nextRowIndex = currentIndex - 1;
                 this.currentHeaderRowWithoutSpan -= 1;
-                nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'end')!;
+                nextPosition = this.findColAtEdgeForHeaderRow(nextRowIndex, 'end')!;
             }
         } else {
             nextRowIndex = currentIndex + 1;
@@ -236,14 +238,14 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             } else {
                 this.setCurrentHeaderRowWithoutSpan(-1);
             }
-            nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'start')!;
+            nextPosition = this.findColAtEdgeForHeaderRow(nextRowIndex, 'start')!;
         }
 
         if (!nextPosition) {
             return false;
         }
 
-        const { column, headerRowIndex } = this.headerPositionUtils.getHeaderIndexToFocus(
+        const { column, headerRowIndex } = this.getHeaderIndexToFocus(
             nextPosition.column as AgColumn,
             nextPosition?.headerRowIndex
         );
@@ -272,5 +274,170 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         }
 
         this.gridBodyCon.getScrollFeature().ensureColumnVisible(columnToScrollTo);
+    }
+
+    public getHeaderIndexToFocus(column: AgColumn | AgColumnGroup, currentIndex: number): HeaderPosition {
+        let nextColumn: AgColumn | undefined;
+
+        if (isColumnGroup(column) && this.isAnyChildSpanningHeaderHeight(column) && column.isPadding()) {
+            const targetColumn: AgColumnGroup = column;
+            nextColumn = targetColumn.getLeafColumns()[0];
+            let col: AgColumn | AgColumnGroup = nextColumn;
+            while (col !== targetColumn) {
+                currentIndex++;
+                col = col.getParent()!;
+            }
+        }
+
+        return {
+            column: nextColumn || column,
+            headerRowIndex: currentIndex,
+        };
+    }
+
+    private findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition | undefined {
+        let nextColumn: AgColumn | AgColumnGroup;
+        let getColMethod: 'getColBefore' | 'getColAfter';
+
+        if (isColumnGroup(focusedHeader.column)) {
+            nextColumn = this.visibleColsService.getGroupAtDirection(focusedHeader.column, direction)!;
+        } else {
+            getColMethod = `getCol${direction}` as any;
+            nextColumn = this.visibleColsService[getColMethod](focusedHeader.column as AgColumn)!;
+        }
+
+        if (!nextColumn) {
+            return;
+        }
+
+        const { headerRowIndex } = focusedHeader;
+
+        if (this.getHeaderRowType(headerRowIndex) !== HeaderRowType.FLOATING_FILTER) {
+            const columnsInPath: (AgColumn | AgColumnGroup)[] = [nextColumn];
+
+            while (nextColumn.getParent()) {
+                nextColumn = nextColumn.getParent()!;
+                columnsInPath.push(nextColumn);
+            }
+
+            nextColumn = columnsInPath[columnsInPath.length - 1 - headerRowIndex];
+        }
+
+        const { column, headerRowIndex: indexToFocus } = this.getHeaderIndexToFocus(nextColumn, headerRowIndex);
+
+        return {
+            column,
+            headerRowIndex: indexToFocus,
+        };
+    }
+
+    private getHeaderRowType(rowIndex: number): HeaderRowType | undefined {
+        const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
+        if (centerHeaderContainer) {
+            return centerHeaderContainer.getRowType(rowIndex);
+        }
+    }
+
+    private isAnyChildSpanningHeaderHeight(columnGroup: AgColumnGroup | null): boolean {
+        if (!columnGroup) {
+            return false;
+        }
+        return columnGroup.getLeafColumns().some((col) => col.isSpanHeaderHeight());
+    }
+
+    private getColumnVisibleParent(currentColumn: AgColumn | AgColumnGroup, currentIndex: number): HeaderFuturePosition {
+        const currentRowType = this.getHeaderRowType(currentIndex);
+        const isFloatingFilter = currentRowType === HeaderRowType.FLOATING_FILTER;
+        const isColumn = currentRowType === HeaderRowType.COLUMN;
+
+        let nextFocusColumn: AgColumn | AgColumnGroup | null = isFloatingFilter
+            ? currentColumn
+            : currentColumn.getParent();
+        let nextRow = currentIndex - 1;
+        let headerRowIndexWithoutSpan: number | undefined = nextRow;
+
+        if (isColumn && this.isAnyChildSpanningHeaderHeight((currentColumn as AgColumn).getParent())) {
+            while (nextFocusColumn && (nextFocusColumn as AgColumnGroup).isPadding()) {
+                nextFocusColumn = nextFocusColumn.getParent();
+                nextRow--;
+            }
+
+            headerRowIndexWithoutSpan = nextRow;
+            if (nextRow < 0) {
+                nextFocusColumn = currentColumn;
+                nextRow = currentIndex;
+                headerRowIndexWithoutSpan = undefined;
+            }
+        }
+
+        return { column: nextFocusColumn!, headerRowIndex: nextRow, headerRowIndexWithoutSpan };
+    }
+
+    private getColumnVisibleChild(
+        column: AgColumn | AgColumnGroup,
+        currentIndex: number,
+        direction: 'Before' | 'After' = 'After'
+    ): HeaderFuturePosition {
+        const currentRowType = this.getHeaderRowType(currentIndex);
+        let nextFocusColumn: AgColumn | AgColumnGroup | null = column;
+        let nextRow = currentIndex + 1;
+        const headerRowIndexWithoutSpan = nextRow;
+
+        if (currentRowType === HeaderRowType.COLUMN_GROUP) {
+            const leafColumns = (column as AgColumnGroup).getDisplayedLeafColumns();
+            const leafColumn = direction === 'After' ? leafColumns[0] : _last(leafColumns);
+            const columnsInTheWay: AgColumnGroup[] = [];
+
+            let currentColumn: AgColumn | AgColumnGroup = leafColumn;
+            while (currentColumn.getParent() !== column) {
+                currentColumn = currentColumn.getParent()!;
+                columnsInTheWay.push(currentColumn);
+            }
+
+            nextFocusColumn = leafColumn;
+            if (leafColumn.isSpanHeaderHeight()) {
+                for (let i = columnsInTheWay.length - 1; i >= 0; i--) {
+                    const colToFocus = columnsInTheWay[i];
+                    if (!colToFocus.isPadding()) {
+                        nextFocusColumn = colToFocus;
+                        break;
+                    }
+                    nextRow++;
+                }
+            } else {
+                nextFocusColumn = _last(columnsInTheWay);
+                if (!nextFocusColumn) {
+                    nextFocusColumn = leafColumn;
+                }
+            }
+        }
+
+        return { column: nextFocusColumn, headerRowIndex: nextRow, headerRowIndexWithoutSpan };
+    }
+
+    private findColAtEdgeForHeaderRow(level: number, position: 'start' | 'end'): HeaderPosition | undefined {
+        const displayedColumns = this.visibleColsService.allCols;
+        const column = displayedColumns[position === 'start' ? 0 : displayedColumns.length - 1];
+
+        if (!column) {
+            return;
+        }
+
+        const childContainer = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned());
+        const type = childContainer?.getRowType(level);
+
+        if (type == HeaderRowType.COLUMN_GROUP) {
+            const columnGroup = this.visibleColsService.getColGroupAtLevel(column, level);
+            return {
+                headerRowIndex: level,
+                column: columnGroup!,
+            };
+        }
+
+        return {
+            // if type==null, means the header level didn't exist
+            headerRowIndex: type == null ? -1 : level,
+            column,
+        };
     }
 }

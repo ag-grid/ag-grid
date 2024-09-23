@@ -13,8 +13,6 @@ import type { GenericBean } from './genericBean';
 const orderedCoreBeans: BeanName[] = [
     // core beans only
     'rowPositionUtils',
-    'cellPositionUtils',
-    'headerPositionUtils',
     'paginationAutoPageSizeService',
     'apiFunctionService',
     'gridApi',

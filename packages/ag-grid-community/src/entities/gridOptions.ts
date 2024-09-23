@@ -102,7 +102,7 @@ import type {
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
 } from '../events';
-import type { HeaderPosition } from '../headerRendering/common/headerPosition';
+import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type {
     SizeColumnsToContentStrategy,
@@ -165,7 +165,7 @@ import type { SideBarDef } from '../interfaces/iSideBar';
 import type { StatusPanelDef } from '../interfaces/iStatusPanel';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { MenuItemDef } from '../interfaces/menuItem';
-import type { CellPosition } from './cellPositionUtils';
+import type { CellPosition } from '../interfaces/iCellPosition';
 import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
 

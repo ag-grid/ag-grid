@@ -7,8 +7,10 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import type { CellPosition } from '../entities/cellPositionUtils';
-import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
+import type { CellPosition } from '../interfaces/iCellPosition';
+import { _isRowBefore  } from '../entities/rowPositionUtils';
+import type { RowPositionUtils } from '../entities/rowPositionUtils';
+import type { RowPosition } from '../interfaces/iRowPosition';
 import type { FocusService } from '../focusService';
 import { _isGroupRowsSticky } from '../gridOptionsUtils';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
@@ -883,7 +885,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
         const fromBelow =
             backwards == null
-                ? currentCellFocused != null && this.rowPositionUtils.before(cellPosition, currentCellFocused)
+                ? currentCellFocused != null && _isRowBefore(cellPosition, currentCellFocused)
                 : backwards;
 
         this.eventService.dispatchEvent({

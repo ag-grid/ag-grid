@@ -1,5 +1,5 @@
 import type { BeanCollection } from '../context/context';
-import type { CellPosition } from '../entities/cellPositionUtils';
+import type { CellPosition } from '../interfaces/iCellPosition';
 import type { Column, ColumnGroup } from '../interfaces/iColumn';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 

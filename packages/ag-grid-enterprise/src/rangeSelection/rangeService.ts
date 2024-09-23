@@ -3,7 +3,6 @@ import type {
     BeanCollection,
     CellNavigationService,
     CellPosition,
-    CellPositionUtils,
     CellRange,
     CellRangeParams,
     ClearCellRangeParams,
@@ -26,6 +25,7 @@ import {
     AutoScrollService,
     BeanStub,
     CellCtrl,
+    _areCellsEqual,
     _areEqual,
     _exists,
     _existsAndNotEmpty,
@@ -34,6 +34,8 @@ import {
     _includes,
     _isCellSelectionEnabled,
     _isDomLayout,
+    _isRowBefore,
+    _isSameRow,
     _isUsingNewSelectionAPI,
     _last,
     _makeNull,
@@ -55,7 +57,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private cellNavigationService: CellNavigationService;
     private pinnedRowModel?: PinnedRowModel;
     private rowPositionUtils: RowPositionUtils;
-    private cellPositionUtils: CellPositionUtils;
     private ctrlsService: CtrlsService;
     private valueService: ValueService;
 
@@ -67,7 +68,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.cellNavigationService = beans.cellNavigationService;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.rowPositionUtils = beans.rowPositionUtils;
-        this.cellPositionUtils = beans.cellPositionUtils;
         this.ctrlsService = beans.ctrlsService;
         this.valueService = beans.valueService;
     }
@@ -179,7 +179,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     public getRangeStartRow(cellRange: PartialCellRange): RowPosition {
         if (cellRange.startRow && cellRange.endRow) {
-            return this.rowPositionUtils.before(cellRange.startRow, cellRange.endRow)
+            return _isRowBefore(cellRange.startRow, cellRange.endRow)
                 ? cellRange.startRow
                 : cellRange.endRow;
         }
@@ -191,7 +191,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     public getRangeEndRow(cellRange: PartialCellRange): RowPosition {
         if (cellRange.startRow && cellRange.endRow) {
-            return this.rowPositionUtils.before(cellRange.startRow, cellRange.endRow)
+            return _isRowBefore(cellRange.startRow, cellRange.endRow)
                 ? cellRange.endRow
                 : cellRange.startRow;
         }
@@ -596,7 +596,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         while (currentRow) {
             callback(currentRow);
 
-            if (this.rowPositionUtils.sameRow(currentRow, bottomRow)) {
+            if (_isSameRow(currentRow, bottomRow)) {
                 break;
             }
             currentRow = this.cellNavigationService.getRowBelow(currentRow);
@@ -638,7 +638,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     private isLastCellOfRange(cellRange: CellRange, cell: CellPosition): boolean {
         const { startRow, endRow } = cellRange;
-        const lastRow = this.rowPositionUtils.before(startRow!, endRow!) ? endRow : startRow;
+        const lastRow = _isRowBefore(startRow!, endRow!) ? endRow : startRow;
         const isLastRow = cell.rowIndex === lastRow!.rowIndex && cell.rowPinned === lastRow!.rowPinned;
         const rangeFirstIndexColumn = cellRange.columns[0];
         const rangeLastIndexColumn = _last(cellRange.columns);
@@ -653,7 +653,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const allColumns = this.visibleColsService.allCols;
         const allPositions = cellRange.columns.map((c: AgColumn) => allColumns.indexOf(c)).sort((a, b) => a - b);
         const { startRow, endRow } = cellRange;
-        const lastRow = this.rowPositionUtils.before(startRow!, endRow!) ? endRow : startRow;
+        const lastRow = _isRowBefore(startRow!, endRow!) ? endRow : startRow;
 
         const isRightColumn = allColumns.indexOf(cell.column as AgColumn) === _last(allPositions);
         const isLastRow =
@@ -684,8 +684,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return true;
         }
 
-        const afterFirstRow = !this.rowPositionUtils.before(thisRow, firstRow);
-        const beforeLastRow = this.rowPositionUtils.before(thisRow, lastRow);
+        const afterFirstRow = !_isRowBefore(thisRow, firstRow);
+        const beforeLastRow = _isRowBefore(thisRow, lastRow);
 
         return afterFirstRow && beforeLastRow;
     }
@@ -770,7 +770,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         if (this.isEmpty()) {
             return;
         }
-        const rowPosUtils = this.rowPositionUtils;
         const lastRange = _last(this.cellRanges);
 
         const intersectionStartRow = this.getRangeStartRow(lastRange);
@@ -788,14 +787,14 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 newRanges.push(range);
                 return;
             }
-            if (rowPosUtils.before(intersectionEndRow, startRow) || rowPosUtils.before(endRow, intersectionStartRow)) {
+            if (_isRowBefore(intersectionEndRow, startRow) || _isRowBefore(endRow, intersectionStartRow)) {
                 // No overlapping rows, retain previous range
                 newRanges.push(range);
                 return;
             }
             const rangeCountBefore = newRanges.length;
             // Top
-            if (rowPosUtils.before(startRow, intersectionStartRow)) {
+            if (_isRowBefore(startRow, intersectionStartRow)) {
                 const top: CellRange = {
                     columns: [...cols],
                     startColumn: lastRange.startColumn,
@@ -817,7 +816,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 newRanges.push(middle);
             }
             // Bottom
-            if (rowPosUtils.before(intersectionEndRow, endRow)) {
+            if (_isRowBefore(intersectionEndRow, endRow)) {
                 newRanges.push({
                     columns: [...cols],
                     startColumn: lastRange.startColumn,
@@ -843,7 +842,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private rowMax(rows: RowPosition[]): RowPosition | undefined {
         let max: RowPosition | undefined;
         rows.forEach((row) => {
-            if (max === undefined || this.rowPositionUtils.before(max, row)) {
+            if (max === undefined || _isRowBefore(max, row)) {
                 max = row;
             }
         });
@@ -853,7 +852,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private rowMin(rows: RowPosition[]): RowPosition | undefined {
         let min: RowPosition | undefined;
         rows.forEach((row) => {
-            if (min === undefined || this.rowPositionUtils.before(row, min)) {
+            if (min === undefined || _isRowBefore(row, min)) {
                 min = row;
             }
         });
@@ -866,7 +865,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         this.cellHasChanged = false;
 
-        if (!cell || (this.lastCellHovered && this.cellPositionUtils.equals(cell, this.lastCellHovered))) {
+        if (!cell || (this.lastCellHovered && _areCellsEqual(cell, this.lastCellHovered))) {
             return;
         }
 

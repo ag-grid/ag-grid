@@ -4,7 +4,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { CoreBeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { CellPosition } from '../entities/cellPositionUtils';
+import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RowNode } from '../entities/rowNode';
 import type { NavigationService } from '../gridBodyComp/navigationService';
 import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../interfaces/iCellEditor';

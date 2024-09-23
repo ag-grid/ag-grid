@@ -6,7 +6,8 @@ import type { BeanCollection } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { AgColumn } from './entities/agColumn';
 import type { AgColumnGroup } from './entities/agColumnGroup';
-import type { CellPosition, CellPositionUtils } from './entities/cellPositionUtils';
+import { _areCellsEqual } from './entities/cellPositionUtils';
+import type { CellPosition } from './interfaces/iCellPosition';
 import type { RowNode } from './entities/rowNode';
 import type { RowPositionUtils } from './entities/rowPositionUtils';
 import type { CellFocusedParams, CommonCellFocusParams } from './events';
@@ -17,7 +18,7 @@ import { _getActiveDomElement, _getDocument, _getDomData } from './gridOptionsUt
 import { AbstractHeaderCellCtrl } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl } from './headerRendering/cells/column/headerCellCtrl';
 import type { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
-import type { HeaderPosition, HeaderPositionUtils } from './headerRendering/common/headerPosition';
+import type { HeaderPosition } from './interfaces/iHeaderPosition';
 import type { IRangeService } from './interfaces/IRangeService';
 import type { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 import type { NavigateToNextHeaderParams, TabToNextHeaderParams } from './interfaces/iCallbackParams';
@@ -42,10 +43,8 @@ export class FocusService extends BeanStub implements NamedBean {
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
     private headerNavigationService: HeaderNavigationService;
-    private headerPositionUtils: HeaderPositionUtils;
     private rowRenderer: RowRenderer;
     private rowPositionUtils: RowPositionUtils;
-    private cellPositionUtils: CellPositionUtils;
     private navigationService: NavigationService;
     private ctrlsService: CtrlsService;
     private filterManager?: FilterManager;
@@ -59,10 +58,8 @@ export class FocusService extends BeanStub implements NamedBean {
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
         this.headerNavigationService = beans.headerNavigationService;
-        this.headerPositionUtils = beans.headerPositionUtils;
         this.rowRenderer = beans.rowRenderer;
         this.rowPositionUtils = beans.rowPositionUtils;
-        this.cellPositionUtils = beans.cellPositionUtils;
         this.navigationService = beans.navigationService;
         this.ctrlsService = beans.ctrlsService;
         this.filterManager = beans.filterManager;
@@ -260,7 +257,7 @@ export class FocusService extends BeanStub implements NamedBean {
             return false;
         }
 
-        return this.cellPositionUtils.equals(cellPosition, this.restoredFocusedCellPosition);
+        return _areCellsEqual(cellPosition, this.restoredFocusedCellPosition);
     }
 
     public setRestoreFocusedCell(cellPosition: CellPosition): void {
@@ -338,7 +335,7 @@ export class FocusService extends BeanStub implements NamedBean {
             return false;
         }
 
-        return this.cellPositionUtils.equals(cellPosition, this.focusedCellPosition);
+        return _areCellsEqual(cellPosition, this.focusedCellPosition);
     }
 
     public isRowNodeFocused(rowNode: RowNode): boolean {
@@ -548,7 +545,7 @@ export class FocusService extends BeanStub implements NamedBean {
             firstColumn = this.visibleColsService.getColGroupAtLevel(firstColumn, 0)!;
         }
 
-        const headerPosition = this.headerPositionUtils.getHeaderIndexToFocus(firstColumn, 0);
+        const headerPosition = this.headerNavigationService.getHeaderIndexToFocus(firstColumn, 0);
 
         return this.focusHeaderPosition({
             headerPosition,

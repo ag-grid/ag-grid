@@ -33,7 +33,6 @@ import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeSer
 import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { EditService } from '../edit/editService';
 import type { RowEditService } from '../edit/rowEditService';
-import type { CellPositionUtils } from '../entities/cellPositionUtils';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNodeEventThrottle } from '../entities/rowNodeEventThrottle';
 import type { RowPositionUtils } from '../entities/rowPositionUtils';
@@ -51,7 +50,6 @@ import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService'
 import type { GridDestroyService } from '../gridDestroyService';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
-import type { HeaderPositionUtils } from '../headerRendering/common/headerPosition';
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
@@ -211,7 +209,6 @@ export interface CoreBeanCollection {
     filterManager?: FilterManager;
     rowContainerHeightService: RowContainerHeightService;
     frameworkOverrides: IFrameworkOverrides;
-    cellPositionUtils: CellPositionUtils;
     rowPositionUtils: RowPositionUtils;
     selectionService?: ISelectionService;
     rowCssClassCalculator: RowCssClassCalculator;
@@ -241,7 +238,6 @@ export interface CoreBeanCollection {
     quickFilterService?: QuickFilterService;
     showRowGroupColsService?: IShowRowGroupColsService;
     columnDropZonesService?: IColumnDropZonesService;
-    headerPositionUtils: HeaderPositionUtils;
     dataTypeService?: DataTypeService;
     globalEventListener: AgGlobalEventListener;
     globalSyncEventListener: AgGlobalEventListener;
@@ -347,7 +343,6 @@ export type BeanName =
     | 'beans'
     | 'cellEditorFactory'
     | 'cellNavigationService'
-    | 'cellPositionUtils'
     | 'cellRendererFactory'
     | 'cellRendererService'
     | 'changeDetectionService'
@@ -422,7 +417,6 @@ export type BeanName =
     | 'groupHideOpenParentsService'
     | 'groupStage'
     | 'headerNavigationService'
-    | 'headerPositionUtils'
     | 'horizontalResizeService'
     | 'immutableService'
     | 'lazyBlockLoadingService'

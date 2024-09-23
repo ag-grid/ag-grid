@@ -13,6 +13,7 @@ import {
     CellRangeType,
     SelectionHandleType,
     _includes,
+    _isSameRow,
     _last,
     _missing,
     _setAriaSelected,
@@ -193,11 +194,11 @@ export class CellRangeFeature implements ICellRangeFeature {
             const startRow = this.rangeService.getRangeStartRow(range);
             const endRow = this.rangeService.getRangeEndRow(range);
 
-            if (!top && this.beans.rowPositionUtils.sameRow(startRow, this.cellCtrl.getCellPosition())) {
+            if (!top && _isSameRow(startRow, this.cellCtrl.getCellPosition())) {
                 top = true;
             }
 
-            if (!bottom && this.beans.rowPositionUtils.sameRow(endRow, this.cellCtrl.getCellPosition())) {
+            if (!bottom && _isSameRow(endRow, this.cellCtrl.getCellPosition())) {
                 bottom = true;
             }
 

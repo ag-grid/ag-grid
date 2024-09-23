@@ -1,4 +1,4 @@
-import type { RowPosition } from '../entities/rowPositionUtils';
+import type { RowPosition } from './iRowPosition';
 import type { Column, ColumnGroup } from './iColumn';
 import type { AgGridCommon } from './iCommon';
 import type { IRowNode } from './iRowNode';

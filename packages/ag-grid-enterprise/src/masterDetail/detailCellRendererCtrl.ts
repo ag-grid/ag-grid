@@ -9,18 +9,15 @@ import type {
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
     RowNode,
-    RowPositionUtils,
 } from 'ag-grid-community';
-import { BeanStub, _missing, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _isSameRow, _missing, _warnOnce } from 'ag-grid-community';
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
-    private rowPositionUtils: RowPositionUtils;
     private focusService: FocusService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
-        this.rowPositionUtils = beans.rowPositionUtils;
         this.environment = beans.environment;
     }
 
@@ -54,7 +51,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         const params = this.params;
         const row = { rowIndex: params.node.rowIndex!, rowPinned: params.node.rowPinned! };
         const eventRow = { rowIndex: e.rowIndex!, rowPinned: e.rowPinned! };
-        const isSameRow = this.rowPositionUtils.sameRow(row, eventRow);
+        const isSameRow = _isSameRow(row, eventRow);
 
         if (!isSameRow) {
             return;

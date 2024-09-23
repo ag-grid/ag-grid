@@ -1,6 +1,6 @@
 import type { ApplyColumnStateParams, ColumnState } from '../columns/columnApplyStateService';
 import type { RowDropZoneEvents, RowDropZoneParams } from '../dragAndDrop/rowDragFeature';
-import type { CellPosition } from '../entities/cellPositionUtils';
+import type { CellPosition } from '../interfaces/iCellPosition';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from '../entities/colDef';
 import type { ChartRef, GridOptions } from '../entities/gridOptions';
 import type { AgPublicEventType } from '../eventTypes';

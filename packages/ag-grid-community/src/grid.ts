@@ -24,7 +24,6 @@ import { Context } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import { CtrlsFactory } from './ctrlsFactory';
 import { CtrlsService } from './ctrlsService';
-import { CellPositionUtils } from './entities/cellPositionUtils';
 import type { GridOptions } from './entities/gridOptions';
 import { RowNodeEventThrottle } from './entities/rowNodeEventThrottle';
 import { RowPositionUtils } from './entities/rowPositionUtils';
@@ -40,7 +39,6 @@ import { GridDestroyService } from './gridDestroyService';
 import { GridOptionsService, getCoercedGridOptions } from './gridOptionsService';
 import { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
-import { HeaderPositionUtils } from './headerRendering/common/headerPosition';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { Module } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
@@ -429,8 +427,6 @@ export class GridCoreCreator {
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
         const beans: SingletonBean[] = [
             RowPositionUtils,
-            CellPositionUtils,
-            HeaderPositionUtils,
             GridDestroyService,
             ApiFunctionService,
             UserComponentRegistry,
