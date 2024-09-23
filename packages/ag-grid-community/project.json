@@ -14,11 +14,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["^build", "build:copy-styles"],
       "inputs": [
-        "tsDefaults",
-        {
-          "dependentTasksOutputFiles": "**/main.cjs.js",
-          "transitive": true
-        }
+        "tsDefaults"
       ],
       "outputs": [],
       "options": {
@@ -77,17 +73,21 @@
       "executor": "@nx/esbuild:esbuild",
       "dependsOn": ["^build"],
       "inputs": [
-        "tsDefaults",
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
         {
-          "dependentTasksOutputFiles": "**/main.cjs.js",
-          "transitive": true
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
         }
       ],
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "packages/ag-grid-community/dist/package",
-        "main": "packages/ag-grid-community/src/main.ts",
-        "tsConfig": "packages/ag-grid-community/tsconfig.lib.json",
+        "outputPath": "{projectRoot}/dist/package",
+        "main": "{projectRoot}/src/main.ts",
+        "tsConfig": "{projectRoot}/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
         "target": "es2020",
@@ -96,12 +96,14 @@
       },
       "configurations": {
         "watch": {
-          "tsConfig": "packages/ag-grid-community/tsconfig.watch.json"
+          "tsConfig": "{projectRoot}/tsconfig.watch.json"
+        },
+        "staging": {
+          "sourcemap": false
         },
         "production": {
           "sourcemap": false
-        },
-        "sizing": { "metafile": true }
+        }
       }
     },
     "lint": {
