@@ -114,6 +114,7 @@ const {
      * Charts robots.txt disallow json url to merge
      */
     CHARTS_ROBOTS_DISALLOW_JSON_URL,
+    WATCH_INTEGRATION = 'true',
 } = dotenvExpand.expand(dotenv).parsed;
 console.log(
     'Astro configuration',
@@ -133,6 +134,7 @@ console.log(
             DISABLE_EXAMPLE_RUNNER,
             CHARTS_SITEMAP_INDEX_URL,
             CHARTS_ROBOTS_DISALLOW_JSON_URL,
+            WATCH_INTEGRATION,
         },
         null,
         2
@@ -147,7 +149,7 @@ export default defineConfig({
         enabled: false,
     },
     vite: {
-        plugins: [mkcert(), svgr(), agHotModuleReload()],
+        plugins: [mkcert(), svgr(), agHotModuleReload(Boolean(WATCH_INTEGRATION))],
         server: {
             https: !['0', 'false'].includes(PUBLIC_HTTPS_SERVER),
         },
