@@ -1,13 +1,10 @@
-import type { IAggFuncParams } from 'ag-grid-community';
-import { GridOptionsService } from 'ag-grid-community';
+import type { IAggFuncParams, GridOptionsService } from 'ag-grid-community';
 
 import { AggFuncService } from './aggFuncService';
+import { mock } from '../test-utils/mock';
 
 function createService(): AggFuncService {
-    const getAggFuncs = jest.fn();
-    const gridOptionsService = new GridOptionsService();
-
-    gridOptionsService.get = getAggFuncs;
+    const gridOptionsService = mock<GridOptionsService>('get');
 
     const service = new AggFuncService() as any;
 

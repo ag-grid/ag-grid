@@ -183,7 +183,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
         allTouchedNodes: { [rowId: string]: true },
         changedPath: ChangedPath,
         sortOptions: SortOption[]
-    ) {
+    ): RowNode[] {
         const unsortedRows = rowNode.childrenAfterAggFilter!;
         const oldSortedRows = rowNode.childrenAfterSort;
         if (!oldSortedRows) {
@@ -218,8 +218,8 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
     }
 
     // Merge two sorted arrays into each other
-    private mergeSortedArrays(sortOptions: SortOption[], arr1: SortedRowNode[], arr2: SortedRowNode[]) {
-        const res = [];
+    private mergeSortedArrays(sortOptions: SortOption[], arr1: SortedRowNode[], arr2: SortedRowNode[]): SortedRowNode[] {
+        const res: SortedRowNode[] = [];
         let i = 0;
         let j = 0;
 

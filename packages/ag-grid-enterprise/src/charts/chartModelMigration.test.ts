@@ -7,7 +7,7 @@ import { heuristicVersionDetection, upgradeChartModel } from './chartModelMigrat
 
 function loadChartModel(name: string): ChartModel {
     return JSON.parse(
-        fs.readFileSync(`${__dirname}/../test/chart-model-examples/${name}-chart-model.json`).toString()
+        fs.readFileSync(`${__dirname}/test/chart-model-examples/${name}-chart-model.json`).toString()
     );
 }
 

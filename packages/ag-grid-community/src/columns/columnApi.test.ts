@@ -4,6 +4,7 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { GridReadyEvent } from '../events';
 import { createGrid } from '../grid';
 import { ClientSideRowModelModule } from '../clientSideRowModel/clientSideRowModelModule';
+import { CommunityFeaturesModule } from '../gridCoreModule';
 
 
 const getColNames = (cols: any[] | undefined) => cols?.map((c) => c.field ?? c.colId) ?? [];
@@ -33,7 +34,7 @@ describe('getColumnDefs', () => {
             },
         };
         createGrid(document.createElement('div'), options, {
-            modules: [ClientSideRowModelModule],
+            modules: [CommunityFeaturesModule, ClientSideRowModelModule],
         });
     });
 
@@ -47,7 +48,7 @@ describe('getColumnDefs', () => {
             },
         };
         createGrid(document.createElement('div'), options, {
-            modules: [ClientSideRowModelModule],
+            modules: [CommunityFeaturesModule, ClientSideRowModelModule],
         });
     });
 });
