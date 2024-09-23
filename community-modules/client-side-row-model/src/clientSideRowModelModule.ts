@@ -19,7 +19,6 @@ import {
 } from './clientSideRowModel/clientSideRowModelApi';
 import { FilterStage } from './clientSideRowModel/filterStage';
 import { FlattenStage } from './clientSideRowModel/flattenStage';
-import { ImmutableService } from './clientSideRowModel/immutableService';
 import { SortService } from './clientSideRowModel/sortService';
 import { SortStage } from './clientSideRowModel/sortStage';
 import { VERSION } from './version';
@@ -28,15 +27,7 @@ export const ClientSideRowModelCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.ClientSideRowModelModule}-core`,
     rowModel: 'clientSide',
-    beans: [
-        ClientSideNodeManager,
-        ClientSideRowModel,
-        FilterStage,
-        SortStage,
-        FlattenStage,
-        SortService,
-        ImmutableService,
-    ],
+    beans: [ClientSideNodeManager, ClientSideRowModel, FilterStage, SortStage, FlattenStage, SortService],
 });
 
 export const ClientSideRowModelApiModule = _defineModule<_ClientSideRowModelGridApi<any>>({

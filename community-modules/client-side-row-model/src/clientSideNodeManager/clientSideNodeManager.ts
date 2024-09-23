@@ -72,13 +72,10 @@ export class ClientSideNodeManager<TData>
         }
     }
 
-    public override setImmutableRowData(rowData: TData[]): ClientSideNodeManagerUpdateRowDataResult<TData> | null {
+    public override setImmutableRowData(rowData: TData[]): ClientSideNodeManagerUpdateRowDataResult<TData> {
         // convert the setRowData data into a transaction object by working out adds, removes and updates
 
         const rowDataTransaction = this.createTransactionForRowData(rowData);
-        if (!rowDataTransaction) {
-            return null; // no transaction to apply
-        }
 
         // Apply the transaction
         const result = this.updateRowData(rowDataTransaction);
@@ -94,12 +91,8 @@ export class ClientSideNodeManager<TData>
     }
 
     /** Converts the setRowData() command to a transaction */
-    private createTransactionForRowData(rowData: TData[]): RowDataTransaction<TData> | null {
-        const getRowIdFunc = _getRowIdCallback(this.gos);
-        if (getRowIdFunc == null) {
-            _errorOnce('ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
-            return null;
-        }
+    private createTransactionForRowData(rowData: TData[]): RowDataTransaction<TData> {
+        const getRowIdFunc = _getRowIdCallback(this.gos)!;
 
         // get a map of the existing data, that we are going to modify as we find rows to not delete
         const existingNodesMap: { [id: string]: RowNode | undefined } = _cloneObject(this.allNodesMap);

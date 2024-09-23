@@ -245,7 +245,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             'groupTotalRow',
         ]);
 
-        const allProps = [
+        const allProps: (keyof GridOptions)[] = [
+            'rowData',
             ...resetProps,
             ...groupStageRefreshProps,
             ...filterStageRefreshProps,
@@ -265,13 +266,27 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             const arePropertiesImpacted = (propSet: Set<keyof GridOptions>) =>
                 properties.some((prop) => propSet.has(prop));
 
+            const rowDataChanged = properties.includes('rowData');
+
             if (arePropertiesImpacted(resetProps)) {
-                const newRowData = this.rootNode.allLeafChildren!.map((child) => child.data);
+                let newRowData: any[] | null | undefined;
+                if (rowDataChanged) {
+                    newRowData = this.gos.get('rowData');
+                } else {
+                    newRowData = this.rootNode.allLeafChildren?.map((child) => child.data);
+                }
                 if (arePropertiesImpacted(initRowManagerProps)) {
                     this.initRowManager();
                 }
-                this.setRowData(newRowData);
+                this.setNewRowData(newRowData ?? []);
                 return;
+            }
+
+            if (rowDataChanged) {
+                const rowData = this.gos.get('rowData');
+                if (rowData) {
+                    this.setRowData(rowData);
+                }
             }
 
             if (arePropertiesImpacted(groupStageRefreshProps)) {
@@ -324,7 +339,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const rowData = this.gos.get('rowData');
         if (rowData) {
             this.shouldSkipSettingDataOnStart = true;
-            this.setRowData(rowData);
+            this.setNewRowData(rowData);
         }
     }
 
@@ -1213,7 +1228,27 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return this.nodeManager.getRowNode(id);
     }
 
-    public setImmutableRowData(rowData: any[]): void {
+    private isImmutableRowDataActive(): boolean {
+        const getRowIdProvided = this.gos.exists('getRowId');
+        // this property is a backwards compatibility property, for those who want
+        // the old behaviour of Row IDs but NOT Immutable Data.
+        const resetRowDataOnUpdate = this.gos.get('resetRowDataOnUpdate');
+
+        if (resetRowDataOnUpdate) {
+            return false;
+        }
+        return getRowIdProvided;
+    }
+
+    private setRowData(rowData: any[]): void {
+        if (this.isImmutableRowDataActive()) {
+            this.setImmutableRowData(rowData);
+        } else {
+            this.setNewRowData(rowData);
+        }
+    }
+
+    private setImmutableRowData(rowData: any[]): void {
         const updateRowDataResult = this.nodeManager.setImmutableRowData(rowData);
         if (updateRowDataResult) {
             const { rowNodeTransaction, rowsInserted, rowsOrderChanged } = updateRowDataResult;
@@ -1222,7 +1257,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     // rows: the rows to put into the model
-    public setRowData(rowData: any[]): void {
+    private setNewRowData(rowData: any[]): void {
         // no need to invalidate cache, as the cache is stored on the rowNode,
         // so new rowNodes means the cache is wiped anyway.
 
