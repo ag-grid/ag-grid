@@ -417,7 +417,6 @@ export type BeanName =
     | 'headerNavigationService'
     | 'headerPositionUtils'
     | 'horizontalResizeService'
-    | 'immutableService'
     | 'lazyBlockLoadingService'
     | 'licenseManager'
     | 'localeService'

@@ -97,7 +97,7 @@ export class ClientSideNodeManager<TData>
     private createTransactionForRowData(rowData: TData[]): RowDataTransaction<TData> | null {
         const getRowIdFunc = _getRowIdCallback(this.gos);
         if (getRowIdFunc == null) {
-            _errorOnce('ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
+            _errorOnce('Transactions requires getRowId() callback to be implemented, your row data needs IDs!');
             return null;
         }
 

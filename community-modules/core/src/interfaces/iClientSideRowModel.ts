@@ -20,7 +20,6 @@ export enum ClientSideRowModelSteps {
 export interface IClientSideRowModel<TData = any> extends IRowModel {
     onRowGroupOpened(): void;
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
-    setRowData(rowData: any[]): void;
     refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void;
     expandOrCollapseAll(expand: boolean): void;
     forEachLeafNode(callback: (node: RowNode, index: number) => void): void;
