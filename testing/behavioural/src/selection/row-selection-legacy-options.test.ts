@@ -153,6 +153,23 @@ describe('Row Selection Legacy Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
+            test('row-click interaction with multiple selected rows', () => {
+                const api = createGrid({
+                    columnDefs: columnDefs.map((c, i) => (i === 0 ? { ...c, checkboxSelection: true } : c)),
+                    rowData,
+                    rowSelection: 'multiple',
+                    suppressRowClickSelection: true,
+                });
+
+                // Select two rows by toggling checkboxes
+                selectRowsByIndex([2, 3], false, api);
+
+                clickRowByIndex(3);
+
+                // Both rows should still be selected
+                assertSelectedRowsByIndex([2, 3], api);
+            });
+
             describe('Range selection behaviour', () => {
                 test('CTRL-click and CMD-click selects multiple rows', () => {
                     const api = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
@@ -167,7 +184,7 @@ describe('Row Selection Legacy Grid Options', () => {
                 test('Single click after multiple selection clears previous selection', () => {
                     const api = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
 
-                    selectRowsByIndex([1, 3, 5], api);
+                    selectRowsByIndex([1, 3, 5], true, api);
 
                     clickRowByIndex(2);
 
@@ -186,7 +203,7 @@ describe('Row Selection Legacy Grid Options', () => {
                 test('SHIFT-click extends range downwards from from last selected row', () => {
                     const api = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
 
-                    selectRowsByIndex([1, 3], api);
+                    selectRowsByIndex([1, 3], true, api);
 
                     clickRowByIndex(5, { shiftKey: true });
 
@@ -196,7 +213,7 @@ describe('Row Selection Legacy Grid Options', () => {
                 test('SHIFT-click extends range upwards from from last selected row', () => {
                     const api = createGrid({ columnDefs, rowData, rowSelection: 'multiple' });
 
-                    selectRowsByIndex([2, 4], api);
+                    selectRowsByIndex([2, 4], true, api);
 
                     clickRowByIndex(1, { shiftKey: true });
 
@@ -339,7 +356,7 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowMultiSelectWithClick: true,
                 });
 
-                selectRowsByIndex([1, 2, 3], api);
+                selectRowsByIndex([1, 2, 3], true, api);
 
                 clickRowByIndex(2);
 
@@ -468,7 +485,7 @@ describe('Row Selection Legacy Grid Options', () => {
                         rowSelection: 'multiple',
                     });
 
-                    selectRowsByIndex([1, 3], api);
+                    selectRowsByIndex([1, 3], true, api);
 
                     toggleCheckboxByIndex(5, { shiftKey: true });
 
@@ -482,7 +499,7 @@ describe('Row Selection Legacy Grid Options', () => {
                         rowSelection: 'multiple',
                     });
 
-                    selectRowsByIndex([2, 4], api);
+                    selectRowsByIndex([2, 4], true, api);
 
                     toggleCheckboxByIndex(1, { shiftKey: true });
 
@@ -715,7 +732,7 @@ describe('Row Selection Legacy Grid Options', () => {
                     rowSelection: 'multiple',
                 });
 
-                selectRowsByIndex([3], api);
+                selectRowsByIndex([3], true, api);
 
                 toggleHeaderCheckboxByIndex(0);
                 assertSelectedRowsByIndex([3, 0, 1, 2, 4, 5, 6], api);
@@ -824,7 +841,7 @@ describe('Row Selection Legacy Grid Options', () => {
                         rowSelection: 'multiple',
                     });
 
-                    selectRowsByIndex([1, 3], api);
+                    selectRowsByIndex([1, 3], true, api);
 
                     toggleCheckboxByIndex(5, { shiftKey: true });
 
@@ -837,7 +854,7 @@ describe('Row Selection Legacy Grid Options', () => {
                         rowSelection: 'multiple',
                     });
 
-                    selectRowsByIndex([2, 4], api);
+                    selectRowsByIndex([2, 4], true, api);
 
                     toggleCheckboxByIndex(1, { shiftKey: true });
 
