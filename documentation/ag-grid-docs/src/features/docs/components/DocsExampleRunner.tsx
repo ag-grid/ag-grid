@@ -7,7 +7,6 @@ import { useStore } from '@nanostores/react';
 import { $internalFramework, $internalFrameworkState } from '@stores/frameworkStore';
 import { $queryClient, defaultQueryOptions } from '@stores/queryClientStore';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
-import { useImportType } from '@utils/hooks/useImportType';
 import { useEffect, useMemo, useState } from 'react';
 
 import {
@@ -33,8 +32,7 @@ interface Props {
 
 const getInternalFramework = (
     docsInternalFramework: InternalFramework,
-    supportedFrameworks: InternalFramework[] | undefined,
-    importType: ImportType
+    supportedFrameworks: InternalFramework[] | undefined
 ): InternalFramework => {
     let internalFramework = docsInternalFramework;
     if (supportedFrameworks && supportedFrameworks.length > 0) {
@@ -55,34 +53,32 @@ const getInternalFramework = (
         }
     }
 
-    if (internalFramework === 'vanilla' && importType === 'modules') {
-        internalFramework = 'typescript';
-    }
+    // if (internalFramework === 'vanilla' && importType === 'modules') {
+    //     internalFramework = 'typescript';
+    // }
     return internalFramework;
 };
 
-const DocsExampleRunnerInner = ({
-    name,
-    title,
-    exampleHeight,
-    typescriptOnly,
-    overrideImportType,
-    pageName,
-    isDev,
-}: Props) => {
+function getImportType(framework: InternalFramework): ImportType {
+    if (framework === 'vanilla') {
+        return 'packages';
+    }
+    return 'modules';
+}
+
+const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pageName, isDev }: Props) => {
     const exampleName = name;
     const id = `example-${name}`;
     const loadingIFrameId = getLoadingIFrameId({ pageName, exampleName: name });
 
     const [supportedFrameworks, setSupportedFrameworks] = useState<InternalFramework[] | undefined>(undefined);
 
-    const storeImportType = useImportType();
-    const importType = overrideImportType ?? storeImportType;
     const storeInternalFramework = useStore($internalFramework);
     const internalFrameworkState = useStore($internalFrameworkState);
     const internalFramework = typescriptOnly
         ? 'typescript'
-        : getInternalFramework(storeInternalFramework, supportedFrameworks, importType);
+        : getInternalFramework(storeInternalFramework, supportedFrameworks);
+    const importType = getImportType(internalFramework);
     const urlConfig: UrlParams = useMemo(
         () => ({ internalFramework, pageName, exampleName, importType }),
         [internalFramework, pageName, exampleName, importType]
@@ -174,7 +170,7 @@ const DocsExampleRunnerInner = ({
             externalLinks={externalLinks}
             loadingIFrameId={loadingIFrameId}
             supportedFrameworks={supportedFrameworks}
-            supportedImportTypes={overrideImportType ? [overrideImportType] : []}
+            supportedImportTypes={[getImportType(internalFramework)]}
         />
     ) : null;
 };

@@ -151,8 +151,7 @@ export async function generateFiles(options: ExecutorOptions) {
         const mainFileName = getMainFileName(internalFramework)!;
         const provideFrameworkFiles = frameworkProvidedExamples[internalFramework];
 
-        const importTypes =
-            internalFramework === 'vanilla' ? (['packages'] as const) : (['modules', 'packages'] as const);
+        const importTypes = internalFramework === 'vanilla' ? (['packages'] as const) : (['modules'] as const);
         for (const importType of importTypes) {
             const packageJson = getPackageJson({
                 isEnterprise,
