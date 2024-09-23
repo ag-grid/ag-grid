@@ -35,18 +35,18 @@ function getModuleImports(
     const imports = [
         "import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';",
         "import { createRoot } from 'react-dom/client';",
-        "import { AgGridReact } from '@ag-grid-community/react';",
+        "import { AgGridReact } from 'ag-grid-react';",
     ];
 
     if (!usesThemingApi(bindings)) {
-        imports.push("import '@ag-grid-community/styles/ag-grid.css';");
+        imports.push("import 'ag-grid-community/styles/ag-grid.css';");
         // to account for the (rare) example that has more than one class...just default to quartz if it does
         // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
         // "source" non dark version
         const theme = bindings.inlineGridStyles.theme
             ? bindings.inlineGridStyles.theme.replace('-dark', '')
             : 'ag-theme-quartz';
-        imports.push(`import '@ag-grid-community/styles/${theme}.css';`);
+        imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
     }
 
     if (allStylesheets && allStylesheets.length > 0) {
