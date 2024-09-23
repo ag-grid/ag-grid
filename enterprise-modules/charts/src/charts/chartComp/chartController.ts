@@ -197,7 +197,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             })),
             fields,
             chartId: this.getChartId(),
-            getCrossFilteringContext: () => ({ lastSelectedChartId: 'xxx' }), //this.params.crossFilteringContext, //TODO
+            getCrossFilteringContext: () => this.model.params.crossFilteringContext!,
             seriesChartTypes: this.getSeriesChartTypes(),
             updatedOverrides: updatedOverrides,
             seriesGroupType: this.model.seriesGroupType,

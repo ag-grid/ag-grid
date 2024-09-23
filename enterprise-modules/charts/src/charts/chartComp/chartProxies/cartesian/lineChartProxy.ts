@@ -24,6 +24,7 @@ export class LineChartProxy<T extends CartesianChartTypes = 'line'> extends Cart
 
     protected override getSeries(params: UpdateParams) {
         const [category] = params.categories;
+        const selectionSource = params.chartId === params.getCrossFilteringContext().lastSelectedChartId;
 
         const series: AgLineSeriesOptions[] = params.fields.map(
             (f) =>
@@ -33,7 +34,7 @@ export class LineChartProxy<T extends CartesianChartTypes = 'line'> extends Cart
                     xName: category.name,
                     yKey: f.colId,
                     yName: f.displayName,
-                    ...(this.crossFiltering && { yFilterKey: `${f.colId}Filter` }),
+                    ...(this.crossFiltering && !selectionSource && { yFilterKey: `${f.colId}Filter` }),
                 }) as AgLineSeriesOptions
         );
 
@@ -46,16 +47,15 @@ export class LineChartProxy<T extends CartesianChartTypes = 'line'> extends Cart
     ) {
         const [category] = params.categories;
 
-        const getYKey = (yKey: string) => {
-            if (this.standaloneChartType === 'area') {
-                const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
-                return lastSelectedChartId === params.chartId ? yKey + '-total' : yKey;
-            }
-            return yKey + '-total';
-        };
+        // const getYKey = (yKey: string) => {
+        //     if (this.standaloneChartType === 'area') {
+        //         const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
+        //         return lastSelectedChartId === params.chartId ? yKey + 'Filter' : yKey;
+        //     }
+        //     return yKey + 'Filter';
+        // };
 
         return series.map((s) => {
-            s.yKey = getYKey(s.yKey!);
             s.listeners = {
                 nodeClick: (e: any) => {
                     const value = e.datum![s.xKey!];
