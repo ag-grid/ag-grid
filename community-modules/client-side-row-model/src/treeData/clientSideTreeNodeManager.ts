@@ -20,31 +20,37 @@ import type {
     ClientSideNodeManagerRowNode,
 } from '../clientSideNodeManager/abstractClientSideNodeManager';
 import { AbstractClientSideNodeManager } from '../clientSideNodeManager/abstractClientSideNodeManager';
+import { type DataFieldGetter, makeFieldPathGetter } from './fieldAccess';
 
 const TOP_LEVEL = 0;
 
-export class ClientSideNodeManager<TData>
+export class ClientSideTreeNodeManager<TData>
     extends AbstractClientSideNodeManager<TData>
     implements IClientSideNodeManager<TData>, NamedBean
 {
-    beanName = 'clientSideNodeManager' as const;
+    beanName = 'clientSideTreeNodeManager' as const;
 
     private allNodesMap: { [id: string]: RowNode } = {};
 
+    private childrenGetter: DataFieldGetter | null = null;
+
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private nextId = 0;
+
+    public override initRootNode(rootRowNode: RowNode<TData>): void {
+        const childrenField = this.gos.get('treeDataChildrenField');
+        if (this.childrenGetter?.path !== childrenField) {
+            this.childrenGetter = makeFieldPathGetter(childrenField);
+        }
+
+        super.initRootNode(rootRowNode);
+    }
 
     public getRowNode(id: string): RowNode | undefined {
         return this.allNodesMap[id];
     }
 
     public override setRowData(rowData: TData[]): void {
-        if (typeof rowData === 'string') {
-            _warnOnce('rowData must be an array.');
-            return;
-        }
-        this.rowCountReady = true;
-
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
         const rootNode = this.rootNode;
@@ -154,7 +160,6 @@ export class ClientSideNodeManager<TData>
     public override updateRowData(
         rowDataTran: RowDataTransaction<TData>
     ): ClientSideNodeManagerUpdateRowDataResult<TData> {
-        this.rowCountReady = true;
         this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
 
         const updateRowDataResult: ClientSideNodeManagerUpdateRowDataResult<TData> = {
@@ -213,10 +218,6 @@ export class ClientSideNodeManager<TData>
             }
         }
         return true; // The order changed
-    }
-
-    public isRowCountReady(): boolean {
-        return this.rowCountReady;
     }
 
     private executeAdd(rowDataTran: RowDataTransaction, result: ClientSideNodeManagerUpdateRowDataResult<TData>): void {

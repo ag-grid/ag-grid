@@ -2,6 +2,8 @@ import type { RowNode } from '../entities/rowNode';
 import type { RowDataTransaction } from './rowDataTransaction';
 import type { RowNodeTransaction } from './rowNodeTransaction';
 
+export type RowDataChildrenGetter<TData = any> = (data: TData | null | undefined) => TData[] | null | undefined;
+
 /** Result of IClientSideNodeManager.updateRowData method */
 export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
     /** The RowNodeTransaction containing all the removals, updates and additions */
@@ -16,6 +18,8 @@ export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
 
 export interface IClientSideNodeManager<TData = any> {
     initRootNode(rootRowNode: RowNode<TData> | null): void;
+
+    clearRootNode(): void;
 
     getRowNode(id: string): RowNode<TData> | undefined;
 

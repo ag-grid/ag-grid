@@ -35,12 +35,6 @@ export class ClientSideNodeManager<TData>
     }
 
     public override setRowData(rowData: TData[]): void {
-        if (typeof rowData === 'string') {
-            _warnOnce('rowData must be an array.');
-            return;
-        }
-        this.rowCountReady = true;
-
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
         const rootNode = this.rootNode;
@@ -150,7 +144,6 @@ export class ClientSideNodeManager<TData>
     public override updateRowData(
         rowDataTran: RowDataTransaction<TData>
     ): ClientSideNodeManagerUpdateRowDataResult<TData> {
-        this.rowCountReady = true;
         this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
 
         const updateRowDataResult: ClientSideNodeManagerUpdateRowDataResult<TData> = {
@@ -209,10 +202,6 @@ export class ClientSideNodeManager<TData>
             }
         }
         return true; // The order changed
-    }
-
-    public isRowCountReady(): boolean {
-        return this.rowCountReady;
     }
 
     private executeAdd(rowDataTran: RowDataTransaction, result: ClientSideNodeManagerUpdateRowDataResult<TData>): void {

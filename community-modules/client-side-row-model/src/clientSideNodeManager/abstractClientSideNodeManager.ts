@@ -32,17 +32,11 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     implements IClientSideNodeManager<TData>
 {
     public rootNode: ClientSideNodeManagerRootNode<TData>;
-    public rowCountReady: boolean = false;
 
     protected beans: BeanCollection;
 
     public wireBeans(beans: BeanCollection): void {
         this.beans = beans;
-    }
-
-    public override destroy(): void {
-        this.initRootNode(null);
-        super.destroy();
     }
 
     public abstract getRowNode(id: string): RowNode | undefined;
@@ -55,14 +49,17 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         rowDataTran: RowDataTransaction<TData>
     ): ClientSideNodeManagerUpdateRowDataResult<TData>;
 
-    public initRootNode(rootRowNode: RowNode<TData> | null): void {
-        const rootNode = rootRowNode as ClientSideNodeManagerRootNode<TData>;
-
+    public clearRootNode(): void {
         if (this.rootNode) {
             this.setRowData([]);
+            this.rootNode = null!;
         }
+    }
 
-        this.rootNode = rootNode!;
+    public initRootNode(rootRowNode: RowNode<TData>): void {
+        const rootNode = rootRowNode as ClientSideNodeManagerRootNode<TData>;
+
+        this.rootNode = rootNode;
 
         if (rootNode) {
             rootNode.group = true;

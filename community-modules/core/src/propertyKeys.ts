@@ -155,6 +155,7 @@ export class PropertyKeys {
         'columnMenu',
         'tooltipShowMode',
         'grandTotalRow',
+        'treeDataChildrenField',
     ];
 
     public static OBJECT_PROPERTIES: KeysLike<object | HTMLElement>[] = [
