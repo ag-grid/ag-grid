@@ -161,9 +161,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const { gos, beans, nodeManager: oldNodeManager } = this;
 
         const childrenField = gos.get('treeDataChildrenField');
+        const treeData = gos.get('treeData');
+
+        const mustUseClientSideTreeNodeManager = childrenField || treeData;
 
         let nodeManager: IClientSideNodeManager<any> | undefined;
-        if (childrenField) {
+        if (mustUseClientSideTreeNodeManager) {
             nodeManager = beans.clientSideTreeNodeManager;
         }
 
@@ -208,9 +211,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         //                       - the application would change these functions, far more likely the functions were
         //                       - non memoised correctly.
 
-        const initRowManagerProps: Set<keyof GridOptions> = new Set(['treeDataChildrenField']);
+        const initRowManagerProps: Set<keyof GridOptions> = new Set(['treeData', 'treeDataChildrenField']);
 
-        const resetProps: Set<keyof GridOptions> = new Set(['treeData', 'masterDetail', ...initRowManagerProps]);
+        const resetProps: Set<keyof GridOptions> = new Set(['masterDetail', ...initRowManagerProps]);
         const groupStageRefreshProps: Set<keyof GridOptions> = new Set([
             'groupDefaultExpanded',
             'groupAllowUnbalanced',

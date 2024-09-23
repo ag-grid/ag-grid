@@ -229,8 +229,9 @@ export class ClientSideTreeNodeManager<TData>
             if (addIndex > 0) {
                 // TODO: this code should not be here, see AG-12602
                 // This was a fix for AG-6231, but is not the correct fix
-                const isTreeData = this.gos.get('treeData');
-                if (isTreeData) {
+                // We enable it only for trees that use getDataPath and not the new children field
+                const getDataPath = !!this.gos.get('getDataPath');
+                if (getDataPath) {
                     for (let i = 0; i < allLeafChildren.length; i++) {
                         const node = allLeafChildren[i];
                         if (node?.rowIndex == addIndex - 1) {
@@ -275,19 +276,6 @@ export class ClientSideTreeNodeManager<TData>
 
         // add new row nodes to the transaction add items
         result.rowNodeTransaction.add = newNodes;
-    }
-
-    private sanitizeAddIndex(addIndex: number): number {
-        const allChildrenCount = this.rootNode.allLeafChildren?.length ?? 0;
-        if (addIndex < 0 || addIndex >= allChildrenCount || Number.isNaN(addIndex)) {
-            return allChildrenCount; // Append. Also for negative values, as it was historically the behavior.
-        }
-
-        // Ensure index is a whole number and not a floating point.
-        // Use case: the user want to add a row in the middle, doing addIndex = array.length / 2.
-        // If the array has an odd number of elements, the addIndex need to be rounded up.
-        // Consider that array.slice does round up internally, but we are setting this value to node.sourceRowIndex.
-        return Math.ceil(addIndex);
     }
 
     private executeRemove(
@@ -364,8 +352,6 @@ export class ClientSideTreeNodeManager<TData>
                 nodesToUnselect.push(rowNode);
             }
 
-            this.setMasterForRow(rowNode, item, TOP_LEVEL, false);
-
             rowNodeTransaction.update.push(rowNode);
         });
     }
@@ -400,7 +386,8 @@ export class ClientSideTreeNodeManager<TData>
         node.sourceRowIndex = sourceRowIndex;
 
         node.group = false;
-        this.setMasterForRow(node, dataItem, level, true);
+        node.master = false;
+        node.expanded = false;
 
         if (parent) {
             node.parent = parent;
