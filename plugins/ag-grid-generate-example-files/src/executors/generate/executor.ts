@@ -9,7 +9,6 @@ import {
     DARK_INTEGRATED_START,
     getIntegratedDarkModeCode,
     getInterfaceFileContents,
-    removeModuleRegistration,
 } from './generator/transformation-scripts/parser-utils';
 import type { ExampleConfig, GeneratedContents, ImportType, InternalFramework } from './generator/types';
 import { FRAMEWORKS, TYPESCRIPT_INTERNAL_FRAMEWORKS } from './generator/types';
@@ -202,7 +201,8 @@ export async function generateFiles(options: ExecutorOptions) {
                 for (const fileName of Object.keys(provideFrameworkFiles)) {
                     if (fileName.endsWith('.css')) {
                         mergedStyleFiles[fileName] = provideFrameworkFiles[fileName];
-                    } else if (importType === 'packages') {
+                    } else {
+                        // if (importType === 'packages')
                         const fileContent = provideFrameworkFiles[fileName];
                         if (fileContent) {
                             provideFrameworkFiles[fileName] = await convertModulesToPackages(

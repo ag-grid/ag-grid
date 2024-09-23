@@ -1,5 +1,6 @@
-import type { CustomLoadingOverlayProps } from '@ag-grid-community/react';
 import React from 'react';
+
+import type { CustomLoadingOverlayProps } from 'ag-grid-react';
 
 export default (props: CustomLoadingOverlayProps & { loadingMessage: string }) => {
     return (

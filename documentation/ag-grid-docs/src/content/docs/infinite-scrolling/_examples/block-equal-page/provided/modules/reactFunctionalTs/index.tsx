@@ -1,15 +1,16 @@
 'use strict';
 
-import { ColDef, GetRowIdParams, GridReadyEvent, IDatasource, ModuleRegistry } from '@ag-grid-community/core';
-import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
-import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+
+import { ColDef, GetRowIdParams, GridReadyEvent, IDatasource, ModuleRegistry } from 'ag-grid-community';
+import { InfiniteRowModelModule } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
+import { AgGridReact, CustomCellRendererProps } from 'ag-grid-react';
 
 import { countries } from './countries';
 import './styles.css';

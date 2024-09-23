@@ -1,15 +1,16 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { CsvExportModule } from '@ag-grid-community/csv-export';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { AgGridVue } from '@ag-grid-community/vue3';
-import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
 import { createApp } from 'vue';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { CsvExportModule } from 'ag-grid-community';
+import { ExcelExportModule, exportMultipleSheetsAsExcel } from 'ag-grid-enterprise';
+import { AgGridVue } from 'ag-grid-vue3';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule, ExcelExportModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule, CsvExportModule, ExcelExportModule]);
 
 const SportRenderer = {
     template: `<i class="far fa-trash-alt" style="cursor: pointer" @click="applyTransaction()"></i>`,

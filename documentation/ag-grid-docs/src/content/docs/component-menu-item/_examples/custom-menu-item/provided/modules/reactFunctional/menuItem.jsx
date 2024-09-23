@@ -1,5 +1,6 @@
-import { useGridMenuItem } from '@ag-grid-community/react';
 import React from 'react';
+
+import { useGridMenuItem } from 'ag-grid-react';
 
 export default ({ name, subMenu, buttonValue }) => {
     useGridMenuItem({

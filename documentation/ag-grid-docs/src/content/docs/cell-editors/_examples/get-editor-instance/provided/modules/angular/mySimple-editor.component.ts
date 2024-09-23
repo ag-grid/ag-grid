@@ -1,7 +1,8 @@
-import { ICellEditorAngularComp } from '@ag-grid-community/angular';
-import { ICellEditorParams } from '@ag-grid-community/core';
 import { AfterViewInit, Component, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
+import { ICellEditorAngularComp } from 'ag-grid-angular';
+import { ICellEditorParams } from 'ag-grid-community';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
