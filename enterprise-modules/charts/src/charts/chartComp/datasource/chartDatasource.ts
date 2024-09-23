@@ -224,14 +224,6 @@ export class ChartDatasource extends BeanStub {
                     const actualValue =
                         value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
 
-                    // if (filteredNodes[rowNode.id as string]) {
-                    //     data[colId] = actualValue;
-                    //     data[filteredOutColId] = params.aggFunc || params.isScatter ? undefined : 0;
-                    // } else {
-                    //     data[colId] = params.aggFunc || params.isScatter ? undefined : 0;
-                    //     data[filteredOutColId] = actualValue;
-                    // }
-
                     data[colId] = actualValue ?? 0;
 
                     if (params.crossFilteringIsHighlight) {
