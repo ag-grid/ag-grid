@@ -293,12 +293,14 @@ export function _isGroupUseEntireRow(gos: GridOptionsService, pivotMode: boolean
     return gos.get('groupDisplayType') === 'groupRows';
 }
 
-export type GetRowIdFuncCallback<TData = any> = (
-    params: WithoutGridCommon<ExtractParamsFromCallback<GetRowIdFunc<TData>>>
-) => ExtractReturnTypeFromCallback<GetRowIdFunc<TData>>;
-
 // AG-9259 Can't use `WrappedCallback<'getRowId', ...>` here because of a strange typescript bug
-export function _getRowIdCallback<TData = any>(gos: GridOptionsService): GetRowIdFuncCallback<TData> | undefined {
+export function _getRowIdCallback<TData = any>(
+    gos: GridOptionsService
+):
+    | ((
+          params: WithoutGridCommon<ExtractParamsFromCallback<GetRowIdFunc<TData>>>
+      ) => ExtractReturnTypeFromCallback<GetRowIdFunc<TData>>)
+    | undefined {
     const getRowId = gos.getCallback('getRowId');
 
     if (getRowId === undefined) {

@@ -613,7 +613,6 @@ export { AgEventType, AgPublicEventType } from './eventTypes';
 export { FocusService } from './focusService';
 export { GridOptionsService, PropertyChangedEvent } from './gridOptionsService';
 export {
-    GetRowIdFuncCallback,
     _getRowIdCallback,
     _getRowHeightForNode,
     _isDomLayout,
