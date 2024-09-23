@@ -115,9 +115,9 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
         return event.xKey || event.calloutLabelKey;
     }
 
-    private isValidColumnFilter(colId: any) {
-        if (colId.indexOf('-filtered-out')) {
-            colId = colId.replace('-filtered-out', '');
+    private isValidColumnFilter(colId: string) {
+        if (colId.endsWith('Filter')) {
+            colId = colId.replace('Filter', '');
         }
 
         const filterType = this.getColumnFilterType(colId);

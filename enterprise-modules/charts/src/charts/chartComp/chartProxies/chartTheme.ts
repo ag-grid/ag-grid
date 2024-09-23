@@ -111,7 +111,7 @@ function createCrossFilterThemeOverrides(
                 const chart = proxy.getChart();
                 chart.series.forEach((s) => {
                     s.toggleSeriesItem(e.itemId, e.enabled);
-                    s.toggleSeriesItem(`${e.itemId}-filtered-out`, e.enabled);
+                    s.toggleSeriesItem(`${e.itemId}Filter`, e.enabled);
                 });
             },
         },

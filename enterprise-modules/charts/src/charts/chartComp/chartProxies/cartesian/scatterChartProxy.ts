@@ -35,24 +35,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
         const labelFieldDefinition = category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : category;
 
         const series = seriesDefinitions.map((seriesDefinition) => {
-            if (seriesDefinition?.sizeField) {
-                const opts: AgBubbleSeriesOptions = {
-                    type: 'bubble',
-                    xKey: seriesDefinition!.xField.colId,
-                    xName: seriesDefinition!.xField.displayName ?? undefined,
-                    yKey: seriesDefinition!.yField.colId,
-                    yName: seriesDefinition!.yField.displayName ?? undefined,
-                    title: `${seriesDefinition!.yField.displayName} vs ${seriesDefinition!.xField.displayName}`,
-                    sizeKey: seriesDefinition!.sizeField.colId,
-                    sizeName: seriesDefinition!.sizeField.displayName ?? '',
-                    labelKey: labelFieldDefinition ? labelFieldDefinition.id : seriesDefinition!.yField.colId,
-                    labelName: labelFieldDefinition ? labelFieldDefinition.name : undefined,
-                };
-                return opts;
-            }
-
-            const opts: AgScatterSeriesOptions = {
-                type: 'scatter',
+            const sharedOptions = {
                 xKey: seriesDefinition!.xField.colId,
                 xName: seriesDefinition!.xField.displayName ?? undefined,
                 yKey: seriesDefinition!.yField.colId,
@@ -60,6 +43,21 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
                 title: `${seriesDefinition!.yField.displayName} vs ${seriesDefinition!.xField.displayName}`,
                 labelKey: labelFieldDefinition ? labelFieldDefinition.id : seriesDefinition!.yField.colId,
                 labelName: labelFieldDefinition ? labelFieldDefinition.name : undefined,
+            };
+
+            if (seriesDefinition?.sizeField) {
+                const opts: AgBubbleSeriesOptions = {
+                    type: 'bubble',
+                    sizeKey: seriesDefinition!.sizeField.colId,
+                    sizeName: seriesDefinition!.sizeField.displayName ?? '',
+                    ...sharedOptions,
+                };
+                return opts;
+            }
+
+            const opts: AgScatterSeriesOptions = {
+                type: 'scatter',
+                ...sharedOptions,
             };
             return opts;
         });
@@ -74,7 +72,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
         const { data } = params;
         const palette = this.getChartPalette();
 
-        const filteredOutKey = (key: string) => `${key}-filtered-out`;
+        const filteredOutKey = (key: string) => `${key}Filter`;
 
         const calcMarkerDomain = (data: any, sizeKey?: string) => {
             const markerDomain: [number, number] = [Infinity, -Infinity];
@@ -121,42 +119,8 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
             };
         };
 
-        const updateFilteredOutSeries = <T extends AgScatterSeriesOptions | AgBubbleSeriesOptions>(series: T): T => {
-            const { yKey, xKey } = series;
-
-            let alteredSizeKey = {};
-            if (series.type === 'bubble') {
-                alteredSizeKey = { sizeKey: filteredOutKey(series.sizeKey!) };
-            }
-
-            return {
-                ...series,
-                ...alteredSizeKey,
-                yKey: filteredOutKey(yKey!),
-                xKey: filteredOutKey(xKey!),
-                fillOpacity: 0.3,
-                strokeOpacity: 0.3,
-                showInLegend: false,
-                listeners: {
-                    ...series.listeners,
-                    nodeClick: (e: any) => {
-                        const value = e.datum[filteredOutKey(xKey!)];
-
-                        // Need to remove the `-filtered-out` suffixes from the event so that
-                        // upstream processing maps the event correctly onto grid column ids.
-                        const filterableEvent = {
-                            ...e,
-                            xKey,
-                            datum: { ...e.datum, [xKey!]: value },
-                        };
-                        this.crossFilterCallback(filterableEvent);
-                    },
-                },
-            };
-        };
-
         const updatedSeries = series.map(updatePrimarySeries);
-        return [...updatedSeries, ...updatedSeries.map(updateFilteredOutSeries)];
+        return [...updatedSeries];
     }
 
     private getSeriesDefinitions(fields: FieldDefinition[], paired: boolean): (SeriesDefinition | null)[] {
