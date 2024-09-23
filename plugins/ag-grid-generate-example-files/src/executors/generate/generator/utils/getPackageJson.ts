@@ -17,14 +17,16 @@ interface Params {
 }
 
 function getPackageJsonVersion(packageName: string, isModule: boolean = false) {
-    const path = isModule? `${process.cwd()}/community-modules/${packageName}/package.json` : `${process.cwd()}/packages/${packageName}/package.json`;
+    const path = isModule
+        ? `${process.cwd()}/community-modules/${packageName}/package.json`
+        : `${process.cwd()}/packages/${packageName}/package.json`;
     const packageJsonStr = readFileSync(path, 'utf-8');
     const packageJson = JSON.parse(packageJsonStr);
     return '^' + packageJson.version;
 }
 
 export function getPackageJson({ isEnterprise, isLocale, internalFramework, importType }: Params) {
-    return addPackageJson(isEnterprise, isLocale, internalFramework, importType);
+    return addPackageJson(isEnterprise, isLocale, internalFramework, 'packages');
 }
 
 /** Used for type checking in plunker, and type checking & dep installation with codesandbox */
