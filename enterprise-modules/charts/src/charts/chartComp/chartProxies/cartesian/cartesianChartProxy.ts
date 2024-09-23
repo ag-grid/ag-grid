@@ -52,8 +52,6 @@ export abstract class CartesianChartProxy<TSeries extends CartesianChartTypes> e
         const data = this.getData(params, axes);
         const series = this.getLocalSeries(params);
 
-        console.warn(this.chartType, data, series);
-
         return {
             ...commonChartOptions,
             data,
