@@ -41,7 +41,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
 
     public abstract getRowNode(id: string): RowNode | undefined;
 
-    public abstract setRowData(rowData: TData[]): void;
+    public abstract setNewRowData(rowData: TData[]): void;
 
     public abstract setImmutableRowData(rowData: TData[]): ClientSideNodeManagerUpdateRowDataResult<TData> | null;
 
@@ -51,7 +51,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
 
     public clearRootNode(): void {
         if (this.rootNode) {
-            this.setRowData([]);
+            this.setNewRowData([]);
             this.rootNode = null!;
         }
     }

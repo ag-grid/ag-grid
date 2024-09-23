@@ -1271,7 +1271,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             _warnOnce('rowData must be an array.');
         } else {
             this.rowNodesCountReady = true;
-            this.nodeManager.setRowData(rowData);
+            this.nodeManager.setNewRowData(rowData);
         }
 
         if (this.hasStarted) {

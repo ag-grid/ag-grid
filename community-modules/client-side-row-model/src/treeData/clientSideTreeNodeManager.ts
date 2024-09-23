@@ -51,7 +51,7 @@ export class ClientSideTreeNodeManager<TData>
         return this.allNodesMap[id];
     }
 
-    public override setRowData(rowData: TData[]): void {
+    public override setNewRowData(rowData: TData[]): void {
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
         const rootNode = this.rootNode;
@@ -151,30 +151,8 @@ export class ClientSideTreeNodeManager<TData>
         return { remove, update, add };
     }
 
-    public override updateRowData(
-        rowDataTran: RowDataTransaction<TData>
-    ): ClientSideNodeManagerUpdateRowDataResult<TData> {
-        this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
-
-        const updateRowDataResult: ClientSideNodeManagerUpdateRowDataResult<TData> = {
-            rowNodeTransaction: { remove: [], update: [], add: [] },
-            rowsInserted: false,
-            rowsOrderChanged: false,
-        };
-
-        const nodesToUnselect: RowNode[] = [];
-
-        this.executeRemove(rowDataTran, updateRowDataResult, nodesToUnselect);
-        this.executeUpdate(rowDataTran, updateRowDataResult, nodesToUnselect);
-        this.executeAdd(rowDataTran, updateRowDataResult);
-
-        this.updateSelection(nodesToUnselect, 'rowDataChanged');
-
-        return updateRowDataResult;
-    }
-
     /**
-     * Used by the immutable service, after updateRowData, after updating with a generated transaction to
+     * Used by setImmutableRowData, after updateRowData, after updating with a generated transaction to
      * apply the order as specified by the the new data. We use sourceRowIndex to determine the order of the rows.
      * Time complexity is O(n) where n is the number of rows/rowData
      * @returns true if the order changed, otherwise false
@@ -212,6 +190,28 @@ export class ClientSideTreeNodeManager<TData>
             }
         }
         return true; // The order changed
+    }
+
+    public override updateRowData(
+        rowDataTran: RowDataTransaction<TData>
+    ): ClientSideNodeManagerUpdateRowDataResult<TData> {
+        this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
+
+        const updateRowDataResult: ClientSideNodeManagerUpdateRowDataResult<TData> = {
+            rowNodeTransaction: { remove: [], update: [], add: [] },
+            rowsInserted: false,
+            rowsOrderChanged: false,
+        };
+
+        const nodesToUnselect: RowNode[] = [];
+
+        this.executeRemove(rowDataTran, updateRowDataResult, nodesToUnselect);
+        this.executeUpdate(rowDataTran, updateRowDataResult, nodesToUnselect);
+        this.executeAdd(rowDataTran, updateRowDataResult);
+
+        this.updateSelection(nodesToUnselect, 'rowDataChanged');
+
+        return updateRowDataResult;
     }
 
     private executeAdd(rowDataTran: RowDataTransaction, result: ClientSideNodeManagerUpdateRowDataResult<TData>): void {

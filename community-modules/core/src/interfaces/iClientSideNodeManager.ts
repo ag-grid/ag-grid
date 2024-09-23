@@ -23,7 +23,7 @@ export interface IClientSideNodeManager<TData = any> {
 
     getRowNode(id: string): RowNode<TData> | undefined;
 
-    setRowData(rowData: TData[]): void;
+    setNewRowData(rowData: TData[]): void;
 
     setImmutableRowData(rowData: TData[]): ClientSideNodeManagerUpdateRowDataResult<TData> | null;
 
