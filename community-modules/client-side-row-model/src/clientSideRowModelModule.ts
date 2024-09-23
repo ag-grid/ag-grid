@@ -2,6 +2,7 @@ import { _defineModule } from '@ag-grid-community/core';
 import { ModuleNames, RowModelHelperService, _CsrmSsrmSharedApiModule } from '@ag-grid-community/core';
 import type { _ClientSideRowModelGridApi } from '@ag-grid-community/core';
 
+import { ClientSideNodeManager } from './clientSideNodeManager/clientSideNodeManager';
 import { ClientSideRowModel } from './clientSideRowModel/clientSideRowModel';
 import {
     applyTransaction,
@@ -27,7 +28,15 @@ export const ClientSideRowModelCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.ClientSideRowModelModule}-core`,
     rowModel: 'clientSide',
-    beans: [ClientSideRowModel, FilterStage, SortStage, FlattenStage, SortService, ImmutableService],
+    beans: [
+        ClientSideNodeManager,
+        ClientSideRowModel,
+        FilterStage,
+        SortStage,
+        FlattenStage,
+        SortService,
+        ImmutableService,
+    ],
 });
 
 export const ClientSideRowModelApiModule = _defineModule<_ClientSideRowModelGridApi<any>>({

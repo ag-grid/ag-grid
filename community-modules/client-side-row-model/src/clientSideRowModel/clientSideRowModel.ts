@@ -5,7 +5,6 @@ import type {
     CssVariablesChanged,
     Environment,
     FilterChangedEvent,
-    FuncColsService,
     GridOptions,
     IClientSideRowModel,
     IRowNodeStage,
@@ -38,9 +37,9 @@ import {
     _missing,
     _missingOrEmpty,
     _removeFromArray,
+    _warnOnce,
 } from '@ag-grid-community/core';
-
-import { ClientSideNodeManager } from './clientSideNodeManager';
+import type { IClientSideNodeManager } from '@ag-grid-community/core';
 
 enum RecursionType {
     Normal,
@@ -72,7 +71,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private beans: BeanCollection;
 
     private columnModel: ColumnModel;
-    private funcColsService: FuncColsService;
     private selectionService: ISelectionService;
     private valueCache: ValueCache;
     private environment: Environment;
@@ -92,7 +90,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.beans = beans;
 
         this.columnModel = beans.columnModel;
-        this.funcColsService = beans.funcColsService;
         this.selectionService = beans.selectionService;
         this.valueCache = beans.valueCache;
         this.environment = beans.environment;
@@ -112,7 +109,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     // top most node of the tree. the children are the user provided data.
     private rootNode: RowNode;
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
-    private nodeManager: ClientSideNodeManager;
+    private nodeManager: IClientSideNodeManager<any>;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
     private lastHighlightedRow: RowNode | null;
     private applyAsyncTransactionsTimeout: number | undefined;
@@ -127,6 +124,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * (which is about to be run by the original call).
      */
     private isRefreshingModel: boolean = false;
+    private rowNodesCountReady: boolean = false;
     private rowCountReady: boolean = false;
 
     public postConstruct(): void {
@@ -156,14 +154,29 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.addPropertyListeners();
 
         this.rootNode = new RowNode(this.beans);
-        this.nodeManager = new ClientSideNodeManager(
-            this.rootNode,
-            this.gos,
-            this.eventService,
-            this.funcColsService,
-            this.selectionService,
-            this.beans
-        );
+        this.initRowManager();
+    }
+
+    private initRowManager(): void {
+        const { gos, beans, nodeManager: oldNodeManager } = this;
+
+        const childrenField = gos.get('treeDataChildrenField');
+
+        let nodeManager: IClientSideNodeManager<any> | undefined;
+        if (childrenField) {
+            nodeManager = beans.clientSideTreeNodeManager;
+        }
+
+        if (!nodeManager) {
+            nodeManager = beans.clientSideNodeManager!;
+        }
+
+        if (oldNodeManager !== nodeManager) {
+            oldNodeManager?.clearRootNode();
+            this.nodeManager = nodeManager;
+        }
+
+        nodeManager.initRootNode(this.rootNode);
     }
 
     private addPropertyListeners() {
@@ -195,7 +208,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         //                       - the application would change these functions, far more likely the functions were
         //                       - non memoised correctly.
 
-        const resetProps: Set<keyof GridOptions> = new Set(['treeData', 'masterDetail']);
+        const initRowManagerProps: Set<keyof GridOptions> = new Set(['treeDataChildrenField']);
+
+        const resetProps: Set<keyof GridOptions> = new Set(['treeData', 'masterDetail', ...initRowManagerProps]);
         const groupStageRefreshProps: Set<keyof GridOptions> = new Set([
             'groupDefaultExpanded',
             'groupAllowUnbalanced',
@@ -251,7 +266,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 properties.some((prop) => propSet.has(prop));
 
             if (arePropertiesImpacted(resetProps)) {
-                this.setRowData(this.rootNode.allLeafChildren!.map((child) => child.data));
+                const newRowData = this.rootNode.allLeafChildren!.map((child) => child.data);
+                if (arePropertiesImpacted(initRowManagerProps)) {
+                    this.initRowManager();
+                }
+                this.setRowData(newRowData);
                 return;
             }
 
@@ -1156,7 +1175,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             this.rootNode.updateHasChildren();
         }
 
-        if (this.nodeManager.isRowCountReady()) {
+        if (this.rowNodesCountReady) {
             // only if row data has been set
             this.rowCountReady = true;
             this.eventService.dispatchEventOnce({
@@ -1210,7 +1229,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // - clears selection, done before we set row data to ensure it isn't readded via `selectionService.syncInOldRowNode`
         this.selectionService.reset('rowDataChanged');
 
-        this.nodeManager.setRowData(rowData);
+        if (typeof rowData === 'string') {
+            _warnOnce('rowData must be an array.');
+        } else {
+            this.nodeManager.setRowData(rowData);
+            this.rowNodesCountReady = true;
+        }
 
         if (this.hasStarted) {
             this.dispatchUpdateEventsAndRefresh();
@@ -1263,6 +1287,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         let orderChanged = false;
         this.rowDataTransactionBatch?.forEach((tranItem) => {
             const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(tranItem.rowDataTransaction);
+            this.rowNodesCountReady = true;
             if (rowsInserted) {
                 orderChanged = true;
             }
@@ -1300,6 +1325,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.valueCache.onDataChanged();
 
         const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(rowDataTran);
+        this.rowNodesCountReady = true;
 
         this.commonUpdateRowData([rowNodeTransaction], rowsInserted);
 

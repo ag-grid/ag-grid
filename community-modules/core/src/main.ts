@@ -442,6 +442,11 @@ export {
     ClientSideRowModelStep,
     RefreshModelParams,
 } from './interfaces/iClientSideRowModel';
+export {
+    RowDataChildrenGetter,
+    IClientSideNodeManager,
+    ClientSideNodeManagerUpdateRowDataResult,
+} from './interfaces/iClientSideNodeManager';
 export { IInfiniteRowModel } from './interfaces/iInfiniteRowModel';
 
 export { ColumnVO } from './interfaces/iColumnVO';
