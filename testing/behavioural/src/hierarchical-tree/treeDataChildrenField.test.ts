@@ -1,15 +1,14 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule, TreeDataModule } from '@ag-grid-community/client-side-row-model';
 import type { GridOptions } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import type { MockInstance } from 'vitest';
 
 import { GridRows, TestGridsManager } from '../test-utils';
 import type { GridRowsOptions } from '../test-utils';
 
 describe('ag-grid treeDataChildrenField', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
-
-    let consoleWarnSpy: MockInstance;
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, TreeDataModule, RowGroupingModule],
+    });
 
     beforeEach(() => {
         gridsManager.reset();
@@ -17,7 +16,6 @@ describe('ag-grid treeDataChildrenField', () => {
 
     afterEach(() => {
         gridsManager.reset();
-        consoleWarnSpy?.mockRestore();
     });
 
     test('ag-grid treeDataChildrenField with plain row data can be switched on and off ', async () => {
