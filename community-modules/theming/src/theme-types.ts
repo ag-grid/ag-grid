@@ -161,7 +161,7 @@ const lengthValueToCss = (value: LengthValue): string | false => {
         const valueWithSpaces = value.calc.replace(/ ?[*/+] ?/g, ' $& ');
         // convert param names to variable expressions, e.g. "fooBar" -> "var(--ag-foo-bar)",
         // ignoring words that are part of function names "fooBar()" or variables "--fooBar"
-        return `calc(${valueWithSpaces.replace(/(?<!(\w|--[\w-]*))([a-z][a-z0-9]*\b)(?!\s*\()/gi, (p) => ` ${paramToVariableExpression(p)} `)})`;
+        return `calc(${valueWithSpaces.replace(/-?[a-z][a-z0-9]*\b(?![-(])/gi, (p) => (p[0] === '-' ? p : ` ${paramToVariableExpression(p)} `))})`;
     }
     if ('ref' in value) return paramToVariableExpression(value.ref);
     return false;
