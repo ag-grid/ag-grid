@@ -38,7 +38,7 @@ import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
 import { ModuleNames } from '../../modules/moduleNames';
 import { _setAriaExpanded, _setAriaRowIndex, _setAriaSelected } from '../../utils/aria';
-import { _addOrRemoveAttribute, _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
+import { _addOrRemoveAttribute, _isElementChildOfClass, _isFocusableFormField, _isVisible, _observeResize } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _executeNextVMTurn, _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
@@ -1186,7 +1186,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             }
         };
 
-        const resizeObserverDestroyFunc = this.beans.resizeObserverService.observeResize(eDetailGui, checkRowSizeFunc);
+        const resizeObserverDestroyFunc = _observeResize(this.gos, eDetailGui, checkRowSizeFunc);
 
         this.addDestroyFunc(resizeObserverDestroyFunc);
 

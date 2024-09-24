@@ -14,7 +14,7 @@ import type { BrandedType } from '../../../interfaces/brandedType';
 import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import type { MenuService } from '../../../misc/menuService';
 import { _setAriaColIndex } from '../../../utils/aria';
-import { _addOrRemoveAttribute, _getElementSize, _getInnerWidth } from '../../../utils/dom';
+import { _addOrRemoveAttribute, _getElementSize, _getInnerWidth, _observeResize } from '../../../utils/dom';
 import { _isUserSuppressingHeaderKeyboardEvent } from '../../../utils/keyboard';
 import { KeyCode } from '../.././../constants/keyCode';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
@@ -135,7 +135,7 @@ export abstract class AbstractHeaderCellCtrl<
         compBean: BeanStub;
     }) {
         const { wrapperElement, checkMeasuringCallback, compBean } = params;
-        const { animationFrameService, resizeObserverService, columnModel, gos } = this.beans;
+        const { animationFrameService, columnModel, gos } = this.beans;
         const measureHeight = (timesCalled: number) => {
             if (!this.isAlive() || !compBean.isAlive()) {
                 return;
@@ -184,7 +184,7 @@ export abstract class AbstractHeaderCellCtrl<
             isMeasuring = true;
             measureHeight(0);
             this.comp.addOrRemoveCssClass('ag-header-cell-auto-height', true);
-            stopResizeObserver = resizeObserverService.observeResize(wrapperElement, () => measureHeight(0));
+            stopResizeObserver = _observeResize(this.gos, wrapperElement, () => measureHeight(0));
         };
 
         const stopMeasuring = () => {

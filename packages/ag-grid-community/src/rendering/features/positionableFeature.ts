@@ -1,8 +1,7 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
-import type { ResizeObserverService } from '../../misc/resizeObserverService';
-import { _getAbsoluteHeight, _getAbsoluteWidth, _isVisible, _setFixedHeight, _setFixedWidth } from '../../utils/dom';
+import { _getAbsoluteHeight, _getAbsoluteWidth, _isVisible, _observeResize, _setFixedHeight, _setFixedWidth } from '../../utils/dom';
 import type { PopupService } from '../../widgets/popupService';
 
 const RESIZE_CONTAINER_STYLE = 'ag-resizer-wrapper';
@@ -61,12 +60,10 @@ interface MappedResizer {
 export type PositionableFeatureEvent = 'resize';
 export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
     protected popupService: PopupService;
-    private resizeObserverService: ResizeObserverService;
     private dragService?: DragService;
 
     public wireBeans(beans: BeanCollection): void {
         this.popupService = beans.popupService;
-        this.resizeObserverService = beans.resizeObserverService;
         this.dragService = beans.dragService;
     }
 
@@ -453,7 +450,8 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
         };
 
         if (constrain) {
-            this.resizeObserverSubscriber = this.resizeObserverService.observeResize(
+            this.resizeObserverSubscriber = _observeResize(
+                this.gos,
                 this.popupService.getPopupParent(),
                 applyMaxHeightToElement
             );

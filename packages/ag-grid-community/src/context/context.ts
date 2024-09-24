@@ -79,7 +79,6 @@ import type { LocaleService } from '../localeService';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEventService';
 import type { MenuService } from '../misc/menuService';
-import type { ResizeObserverService } from '../misc/resizeObserverService';
 import type { StateService } from '../misc/state/stateService';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import type { PageBoundsListener } from '../pagination/pageBoundsListener';
@@ -178,7 +177,6 @@ export type ComponentMeta = NamedClass<UserComponentName> & {
 
 export interface CoreBeanCollection {
     context: Context;
-    resizeObserverService: ResizeObserverService;
     pageBoundsListener: PageBoundsListener;
     gos: GridOptionsService;
     environment: Environment;
@@ -439,7 +437,6 @@ export type BeanName =
     | 'popupService'
     | 'quickFilterService'
     | 'rangeService'
-    | 'resizeObserverService'
     | 'pageBoundsListener'
     | 'pageBoundsService'
     | 'renderStatusService'

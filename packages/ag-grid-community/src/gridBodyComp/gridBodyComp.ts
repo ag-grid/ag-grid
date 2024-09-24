@@ -2,10 +2,10 @@ import type { BeanCollection } from '../context/context';
 import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUtils';
 import { GridHeaderSelector } from '../headerRendering/gridHeaderComp';
 import type { IRangeService } from '../interfaces/IRangeService';
-import type { ResizeObserverService } from '../misc/resizeObserverService';
 import { OverlayWrapperSelector } from '../rendering/overlays/overlayWrapperComponent';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
+import { _observeResize } from '../utils/dom';
 import type { ComponentSelector } from '../widgets/component';
 import { Component, RefPlaceholder } from '../widgets/component';
 import { FakeHScrollSelector } from './fakeHScrollComp';
@@ -45,11 +45,9 @@ const GRID_BODY_TEMPLATE =
     </div>`;
 
 export class GridBodyComp extends Component {
-    private resizeObserverService: ResizeObserverService;
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.resizeObserverService = beans.resizeObserverService;
         this.rangeService = beans.rangeService;
     }
 
@@ -114,7 +112,7 @@ export class GridBodyComp extends Component {
             setAlwaysVerticalScrollClass: (cssClass, on) =>
                 this.eBodyViewport.classList.toggle(CSS_CLASS_FORCE_VERTICAL_SCROLL, on),
             registerBodyViewportResizeListener: (listener) => {
-                const unsubscribeFromResize = this.resizeObserverService.observeResize(this.eBodyViewport, listener);
+                const unsubscribeFromResize = _observeResize(this.gos, this.eBodyViewport, listener);
                 this.addDestroyFunc(() => unsubscribeFromResize());
             },
             setPinnedTopBottomOverflowY: (overflow) =>

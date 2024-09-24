@@ -288,7 +288,6 @@ export { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRenderi
 export type { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 
 // misc
-export type { ResizeObserverService } from './misc/resizeObserverService';
 export { IImmutableService } from './interfaces/iImmutableService';
 export type { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
@@ -932,6 +931,7 @@ export {
     _getInnerHeight,
     _getInnerWidth,
     _isNodeOrElement,
+    _observeResize,
 } from './utils/dom';
 export {
     _getCtrlForEventTarget,

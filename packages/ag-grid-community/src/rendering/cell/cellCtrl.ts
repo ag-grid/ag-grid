@@ -25,7 +25,7 @@ import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { _setAriaColIndex } from '../../utils/aria';
-import { _addOrRemoveAttribute, _getElementSize } from '../../utils/dom';
+import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../utils/dom';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _getValueUsingField } from '../../utils/object';
 import { _escapeString } from '../../utils/string';
@@ -349,7 +349,7 @@ export class CellCtrl extends BeanStub {
         // do once to set size in case size doesn't change, common when cell is blank
         listener();
 
-        const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eCellWrapper, listener);
+        const destroyResizeObserver = _observeResize(this.beans.gos, eCellWrapper, listener);
 
         compBean.addDestroyFunc(() => {
             destroyResizeObserver();

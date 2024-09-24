@@ -19,7 +19,6 @@ const orderedCoreBeans: BeanName[] = [
     'userComponentRegistry',
     'agComponentUtils',
     'componentMetadataProvider',
-    'resizeObserverService',
     'userComponentFactory',
     'rowContainerHeightService',
     'horizontalResizeService',

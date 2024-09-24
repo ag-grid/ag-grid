@@ -45,7 +45,6 @@ import { LocaleService } from './localeService';
 import { AnimationFrameService } from './misc/animationFrameService';
 import { ApiEventService } from './misc/apiEventService';
 import { MenuService } from './misc/menuService';
-import { ResizeObserverService } from './misc/resizeObserverService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PageBoundsListener } from './pagination/pageBoundsListener';
@@ -430,7 +429,6 @@ export class GridCoreCreator {
             ApiFunctionService,
             UserComponentRegistry,
             ComponentMetadataProvider,
-            ResizeObserverService,
             UserComponentFactory,
             RowContainerHeightService,
             LocaleService,

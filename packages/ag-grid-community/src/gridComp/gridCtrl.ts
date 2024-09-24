@@ -9,6 +9,7 @@ import type { IWatermark } from '../interfaces/iWatermark';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import { _last } from '../utils/array';
+import { _observeResize } from '../utils/dom';
 import type { ComponentSelector } from '../widgets/component';
 
 export interface IGridComp extends LayoutView {
@@ -53,7 +54,7 @@ export class GridCtrl extends BeanStub {
 
         this.eGui.setAttribute('grid-id', this.beans.context.getGridId());
 
-        const { dragAndDropService, mouseEventService, ctrlsService, resizeObserverService } = this.beans;
+        const { dragAndDropService, mouseEventService, ctrlsService } = this.beans;
 
         dragAndDropService?.registerGridDropTarget(() => this.eGui, this);
 
@@ -66,7 +67,8 @@ export class GridCtrl extends BeanStub {
         this.updateGridThemeClass();
         this.addManagedEventListeners({ gridStylesChanged: this.handleThemeChange.bind(this) });
 
-        const unsubscribeFromResize = resizeObserverService.observeResize(
+        const unsubscribeFromResize = _observeResize(
+            this.gos,
             this.eGridHostDiv,
             this.onGridSizeChanged.bind(this)
         );

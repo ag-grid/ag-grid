@@ -7,6 +7,7 @@ import {
     FakeVScrollComp,
     GridBodyCtrl,
     OverlayWrapperComponent,
+    _observeResize,
     _setAriaColCount,
     _setAriaRowCount,
 } from 'ag-grid-community';
@@ -24,7 +25,7 @@ interface SectionProperties {
 }
 
 const GridBodyComp = () => {
-    const { context, resizeObserverService } = useContext(BeansContext);
+    const { context, gos } = useContext(BeansContext);
 
     const [rowAnimationClass, setRowAnimationClass] = useState<string>('');
     const [topHeight, setTopHeight] = useState<number>(0);
@@ -137,7 +138,7 @@ const GridBodyComp = () => {
             },
             registerBodyViewportResizeListener: (listener: () => void) => {
                 if (eBodyViewport.current) {
-                    const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current, listener);
+                    const unsubscribeFromResize = _observeResize(gos, eBodyViewport.current, listener);
                     destroyFuncs.current.push(() => unsubscribeFromResize());
                 }
             },

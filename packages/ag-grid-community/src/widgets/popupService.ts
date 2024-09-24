@@ -12,10 +12,9 @@ import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedPar
 import type { PostProcessPopupParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNode } from '../interfaces/iRowNode';
-import type { ResizeObserverService } from '../misc/resizeObserverService';
 import { _setAriaLabel, _setAriaRole } from '../utils/aria';
 import { _last } from '../utils/array';
-import { _getAbsoluteHeight, _getAbsoluteWidth, _getElementRectWithOffset } from '../utils/dom';
+import { _getAbsoluteHeight, _getAbsoluteWidth, _getElementRectWithOffset, _observeResize } from '../utils/dom';
 import { _isElementInEventPath, _isStopPropagationForAgGrid } from '../utils/event';
 import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
@@ -107,12 +106,10 @@ export class PopupService extends BeanStub implements NamedBean {
     beanName = 'popupService' as const;
 
     private ctrlsService: CtrlsService;
-    private resizeObserverService: ResizeObserverService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
-        this.resizeObserverService = beans.resizeObserverService;
         this.environment = beans.environment;
     }
 
@@ -405,7 +402,7 @@ export class PopupService extends BeanStub implements NamedBean {
         if (!skipObserver) {
             // Since rendering popup contents can be asynchronous, use a resize observer to
             // reposition the popup after initial updates to the size of the contents
-            const resizeObserverDestroyFunc = this.resizeObserverService.observeResize(ePopup, () =>
+            const resizeObserverDestroyFunc = _observeResize(this.gos, ePopup, () =>
                 updatePopupPosition(true)
             );
             // Only need to reposition when first open, so can clean up after a bit of time
