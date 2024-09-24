@@ -384,7 +384,7 @@ export class ClientSideNodeManager<TData>
         });
     }
 
-    private setMasterForRow(rowNode: RowNode<TData>, data: TData, level: number, canExpand: boolean): void {
+    private setMasterForRow(rowNode: RowNode<TData>, data: TData, level: number, canExpandOrCollapse: boolean): void {
         const masterDetail = this.gos.get('masterDetail');
         // this is the default, for when doing grid data
         if (masterDetail) {
@@ -400,7 +400,7 @@ export class ClientSideNodeManager<TData>
             rowNode.setMaster(false);
         }
 
-        if (canExpand) {
+        if (canExpandOrCollapse) {
             const rowGroupColumns = this.beans.funcColsService.getRowGroupColumns();
             const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
 
