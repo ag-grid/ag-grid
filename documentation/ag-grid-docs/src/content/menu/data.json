@@ -140,26 +140,47 @@
                         "path": "getting-started"
                     },
                     {
+                        "title": "Key Concepts",
+                        "path": "key-concepts"
+                    },
+                    {
+                        "title": "Installation",
+                        "items": [
+                            {
+                                "title": "Install Specific Modules",
+                                "path": "modules"
+                            },
+                            {
+                                "title": "Install AG Grid Enterprise",
+                                "path": "todo"
+                            },
+                            {
+                                "title": "Install Enterprise Licence Key",
+                                "path": "license-install"
+                            }
+                        ]
+                    },
+                    {
                         "title": "Guides",
                         "items": [
                             {
-                                "title": "Tutorial: My First Grid",
+                                "title": "Building a Basic Grid",
                                 "path": "deep-dive"
                             },
                             {
-                                "title": "Video Tutorials",
-                                "path": "videos"
+                                "title": "Styling a Grid",
+                                "path": "styling-the-grid"
                             },
                             {
-                                "title": "AG Grid Enterprise",
+                                "title": "Community Vs. Enterprise",
                                 "path": "licensing"
                             },
                             {
-                                "title": "Installing Your Licence Key",
-                                "path": "license-install"
+                                "title": "Building an Enterprise Grid",
+                                "path": "building-enterprise-grid"
                             },
                             {
-                                "title": "React Best Practices",
+                                "title": "Best Practices",
                                 "path": "react-hooks",
                                 "frameworks": ["react"]
                             }
@@ -168,10 +189,6 @@
                     {
                         "title": "Build & Tooling",
                         "items": [
-                            {
-                                "title": "Modules",
-                                "path": "modules"
-                            },
                             {
                                 "title": "Testing",
                                 "path": "testing"
@@ -192,11 +209,6 @@
                             {
                                 "title": "Supported Browsers",
                                 "path": "supported-browsers"
-                            },
-                            {
-                                "title": "Installation",
-                                "path": "installation",
-                                "frameworks": ["javascript"]
                             }
                         ]
                     }
