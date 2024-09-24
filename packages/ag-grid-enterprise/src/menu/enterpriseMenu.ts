@@ -68,7 +68,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
     private columnMenuFactory: ColumnMenuFactory;
 
     public wireBeans(beans: BeanCollection) {
-        this.popupService = beans.popupService;
+        this.popupService = beans.popupService!;
         this.focusService = beans.focusService;
         this.ctrlsService = beans.ctrlsService;
         this.visibleColsService = beans.visibleColsService;

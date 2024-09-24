@@ -63,7 +63,7 @@ const MenuItemComponent: ComponentType = {
 };
 
 export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
-    private popupService: PopupService;
+    private popupService?: PopupService;
     private userComponentFactory: UserComponentFactory;
 
     public wireBeans(beans: BeanCollection) {
@@ -219,12 +219,12 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         const { popupService } = this;
         const positionCallback = () => {
             const eventSource = this.eGui!;
-            popupService.positionPopupForMenu({
+            popupService?.positionPopupForMenu({
                 eventSource,
                 ePopup,
             });
             const { column, node } = this.contextParams;
-            popupService.callPostProcessPopup(
+            popupService?.callPostProcessPopup(
                 'subMenu',
                 ePopup,
                 eventSource,
@@ -236,7 +236,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
 
         const translate = this.localeService.getLocaleTextFunc();
 
-        const addPopupRes = popupService.addPopup({
+        const addPopupRes = popupService?.addPopup({
             modal: true,
             eChild: ePopup,
             positionCallback,

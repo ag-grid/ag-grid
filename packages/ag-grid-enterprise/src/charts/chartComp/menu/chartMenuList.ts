@@ -22,7 +22,7 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.popupService = beans.popupService;
+        this.popupService = beans.popupService!;
         this.chartMenuService = beans.chartMenuService as ChartMenuService;
         this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }

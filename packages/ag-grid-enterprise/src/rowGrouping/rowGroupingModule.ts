@@ -1,6 +1,7 @@
 import type { _RowGroupingGridApi } from 'ag-grid-community';
 import {
     ModuleNames,
+    PopupModule,
     StickyRowModule,
     _ColumnFilterModule,
     _FloatingFilterModule,
@@ -80,7 +81,10 @@ export const RowGroupingCoreModule = _defineModule({
         },
     ],
     controllers: [{ name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl }],
-    dependantModules: [EnterpriseCoreModule],
+    dependantModules: [
+        EnterpriseCoreModule,
+        PopupModule, // can be extracted into row group panel module
+    ],
 });
 
 export const RowGroupingSelectionModule = _defineModule({

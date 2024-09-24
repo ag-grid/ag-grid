@@ -1,5 +1,5 @@
 import type { _GridChartsGridApi } from 'ag-grid-community';
-import { DragAndDropModule, ModuleNames, _defineModule } from 'ag-grid-community';
+import { DragAndDropModule, ModuleNames, PopupModule, _defineModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { RangeSelectionModule } from '../rangeSelection/rangeSelectionModule';
@@ -49,7 +49,7 @@ export const GridChartsCoreModule = _defineModule({
             classImp: AgMenuItemRenderer,
         },
     ],
-    dependantModules: [RangeSelectionModule, EnterpriseCoreModule, DragAndDropModule],
+    dependantModules: [RangeSelectionModule, EnterpriseCoreModule, DragAndDropModule, PopupModule],
 });
 
 export const GridChartsApiModule = _defineModule<_GridChartsGridApi>({

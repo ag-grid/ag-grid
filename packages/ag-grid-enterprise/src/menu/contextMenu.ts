@@ -43,7 +43,7 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
     private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.popupService = beans.popupService;
+        this.popupService = beans.popupService!;
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;
         this.menuUtils = beans.menuUtils as MenuUtils;

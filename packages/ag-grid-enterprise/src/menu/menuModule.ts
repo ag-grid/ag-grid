@@ -1,5 +1,5 @@
 import type { _MenuGridApi } from 'ag-grid-community';
-import { ModuleNames, _CommunityMenuApiModule, _defineModule } from 'ag-grid-community';
+import { ModuleNames, PopupModule, _CommunityMenuApiModule, _defineModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
@@ -25,7 +25,7 @@ export const MenuCoreModule = _defineModule({
         ColumnMenuFactory,
         MenuUtils,
     ],
-    dependantModules: [EnterpriseCoreModule],
+    dependantModules: [EnterpriseCoreModule, PopupModule],
     userComponents: [
         {
             name: 'agMenuItem',

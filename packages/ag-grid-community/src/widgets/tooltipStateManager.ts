@@ -30,7 +30,7 @@ const FADE_OUT_TOOLTIP_TIMEOUT = 1000;
 const INTERACTIVE_HIDE_DELAY = 100;
 
 export class TooltipStateManager extends BeanStub {
-    private popupService: PopupService;
+    private popupService?: PopupService;
     private userComponentFactory: UserComponentFactory;
 
     public wireBeans(beans: BeanCollection): void {
@@ -343,7 +343,7 @@ export class TooltipStateManager extends BeanStub {
 
         const translate = this.localeService.getLocaleTextFunc();
 
-        const addPopupRes = this.popupService.addPopup({
+        const addPopupRes = this.popupService?.addPopup({
             eChild: eGui,
             ariaLabel: translate('ariaLabelTooltip', 'Tooltip'),
         });
@@ -439,12 +439,12 @@ export class TooltipStateManager extends BeanStub {
         };
 
         if (this.lastMouseEvent) {
-            this.popupService.positionPopupUnderMouseEvent({
+            this.popupService?.positionPopupUnderMouseEvent({
                 ...params,
                 mouseEvent: this.lastMouseEvent,
             });
         } else {
-            this.popupService.positionPopupByComponent({
+            this.popupService?.positionPopupByComponent({
                 ...params,
                 eventSource: this.parentComp.getGui(),
                 position: 'under',

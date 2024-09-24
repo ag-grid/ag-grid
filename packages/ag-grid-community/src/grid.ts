@@ -65,7 +65,6 @@ import { _mergeDeep } from './utils/object';
 import { ChangeDetectionService } from './valueService/changeDetectionService';
 import { ValueService } from './valueService/valueService';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
-import { PopupService } from './widgets/popupService';
 
 export interface GridParams {
     // INTERNAL - used by Web Components
@@ -435,7 +434,6 @@ export class GridCoreCreator {
             VisibleColsService,
             EventService,
             GridOptionsService,
-            PopupService,
             ColumnModel,
             HeaderNavigationService,
             PageBoundsService,

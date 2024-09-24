@@ -49,7 +49,7 @@ export interface DialogOptions extends PanelOptions {
 }
 
 export class AgDialog extends AgPanel<DialogOptions> implements FocusableContainer {
-    private popupService: PopupService;
+    private popupService?: PopupService;
     private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection) {
@@ -87,7 +87,7 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
 
         if (postProcessPopupParams) {
             const { type, eventSource, column, mouseEvent, rowNode } = postProcessPopupParams;
-            this.popupService.callPostProcessPopup(type, eGui, eventSource, mouseEvent, column, rowNode);
+            this.popupService?.callPostProcessPopup(type, eGui, eventSource, mouseEvent, column, rowNode);
         }
 
         this.tabGuardFeature = this.createManagedBean(new TabGuardFeature(this));
@@ -96,7 +96,7 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
             onFocusIn: () => {
                 const eDocument = _getDocument(this.gos);
                 const { activeElement } = eDocument;
-                const restoreFocus = this.popupService.bringPopupToFront(eGui);
+                const restoreFocus = this.popupService?.bringPopupToFront(eGui);
                 // if popup is brought to front, need to put focus back
                 if (restoreFocus && !_isNothingFocused(this.gos)) {
                     (activeElement as HTMLElement)?.focus?.();
@@ -142,7 +142,7 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
         const { alwaysOnTop, modal, title, afterGuiAttached } = this.config;
         const translate = this.localeService.getLocaleTextFunc();
 
-        const addPopupRes = this.popupService.addPopup({
+        const addPopupRes = this.popupService?.addPopup({
             modal,
             eChild: eGui,
             closeOnEsc: true,

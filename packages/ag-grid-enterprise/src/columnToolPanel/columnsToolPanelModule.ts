@@ -1,4 +1,4 @@
-import { ColumnMoveModule, DragAndDropModule, ModuleNames, _defineModule } from 'ag-grid-community';
+import { ColumnMoveModule, DragAndDropModule, ModuleNames, PopupModule, _defineModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { RowGroupingModule } from '../rowGrouping/rowGroupingModule';
@@ -19,5 +19,12 @@ export const ColumnsToolPanelModule = _defineModule({
             classImp: AgMenuItemRenderer,
         },
     ],
-    dependantModules: [EnterpriseCoreModule, RowGroupingModule, SideBarModule, ColumnMoveModule, DragAndDropModule],
+    dependantModules: [
+        EnterpriseCoreModule,
+        RowGroupingModule,
+        SideBarModule,
+        ColumnMoveModule,
+        DragAndDropModule,
+        PopupModule,
+    ],
 });

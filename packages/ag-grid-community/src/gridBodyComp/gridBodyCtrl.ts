@@ -65,7 +65,7 @@ export class GridBodyCtrl extends BeanStub {
     private rowDragService?: RowDragService;
     private pinnedRowModel?: PinnedRowModel;
     private rowRenderer: RowRenderer;
-    private popupService: PopupService;
+    private popupService?: PopupService;
     private mouseEventService: MouseEventService;
     private rowModel: IRowModel;
     private filterManager?: FilterManager;
@@ -303,8 +303,9 @@ export class GridBodyCtrl extends BeanStub {
                 const popupService = this.popupService;
 
                 clickInsideGrid =
-                    popupService.getActivePopups().some((popup) => popup.contains(elementWithFocus)) ||
-                    popupService.isElementWithinCustomPopup(elementWithFocus);
+                    !!popupService &&
+                    (popupService.getActivePopups().some((popup) => popup.contains(elementWithFocus)) ||
+                        popupService.isElementWithinCustomPopup(elementWithFocus));
             }
 
             if (!clickInsideGrid) {
@@ -481,7 +482,7 @@ export class GridBodyCtrl extends BeanStub {
             return;
         }
 
-        if (this.popupService.hasAnchoredPopup()) {
+        if (this.popupService?.hasAnchoredPopup()) {
             e.preventDefault();
         }
     }

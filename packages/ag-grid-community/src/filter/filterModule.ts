@@ -2,6 +2,7 @@ import type { _ColumnFilterGridApi, _FilterGridApi, _QuickFilterGridApi } from '
 import { HeaderFilterCellCtrl } from '../headerRendering/cells/floatingFilter/headerFilterCellCtrl';
 import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
+import { PopupModule } from '../widgets/popupModule';
 import {
     destroyFilter,
     getColumnFilterInstance,
@@ -47,7 +48,7 @@ export const ColumnFilterModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/column-filter',
     beans: [ColumnFilterService],
-    dependantModules: [FilterCoreModule],
+    dependantModules: [FilterCoreModule, PopupModule],
 });
 
 export const ColumnFilterApiModule = _defineModule<_ColumnFilterGridApi>({

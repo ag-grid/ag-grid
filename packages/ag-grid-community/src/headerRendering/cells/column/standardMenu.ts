@@ -16,7 +16,7 @@ import type { PopupService } from '../../../widgets/popupService';
 export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFactory {
     beanName = 'filterMenuFactory' as const;
 
-    private popupService: PopupService;
+    private popupService?: PopupService;
     private focusService: FocusService;
     private ctrlsService: CtrlsService;
     private menuService: MenuService;
@@ -46,7 +46,7 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
         this.showPopup(
             column,
             (eMenu) => {
-                this.popupService.positionPopupUnderMouseEvent({
+                this.popupService?.positionPopupUnderMouseEvent({
                     column,
                     type: containerType,
                     mouseEvent,
@@ -78,7 +78,7 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
         this.showPopup(
             column,
             (eMenu) => {
-                this.popupService.positionPopupByComponent({
+                this.popupService?.positionPopupByComponent({
                     type: containerType,
                     eventSource,
                     ePopup: eMenu,
@@ -158,7 +158,7 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
                 ? translate('ariaLabelColumnMenu', 'Column Menu')
                 : translate('ariaLabelColumnFilter', 'Column Filter');
 
-        const addPopupRes = this.popupService.addPopup({
+        const addPopupRes = this.popupService?.addPopup({
             modal: true,
             eChild: eMenu,
             closeOnEsc: true,

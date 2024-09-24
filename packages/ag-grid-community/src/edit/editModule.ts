@@ -3,6 +3,7 @@ import type { DefaultProvidedCellEditorParams } from '../interfaces/iCellEditor'
 import { _defineModule } from '../interfaces/iModule';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { VERSION } from '../version';
+import { PopupModule } from '../widgets/popupModule';
 import { CheckboxCellEditor } from './cellEditors/checkboxCellEditor';
 import { DateCellEditor } from './cellEditors/dateCellEditor';
 import { DateStringCellEditor } from './cellEditors/dateStringCellEditor';
@@ -27,6 +28,7 @@ export const EditCoreModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/edit-core',
     beans: [EditService],
+    dependantModules: [PopupModule],
 });
 
 export const EditApiModule = _defineModule<_EditGridApi<any>>({

@@ -489,7 +489,7 @@ export { TabGuardCtrl, ITabGuard, TabGuardClassNames } from './widgets/tabGuardC
 export { TabGuardFeature } from './widgets/tabGuardFeature';
 export { PopupComponent } from './widgets/popupComponent';
 export type { PopupService } from './widgets/popupService';
-export { AgPopup, PopupPositionParams, PopupEventParams } from './widgets/popupService';
+export { PopupPositionParams, PopupEventParams } from './interfaces/iPopup';
 export { TouchListener, TapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
 export { FocusableContainer } from './interfaces/iFocusableContainer';
 
@@ -1010,6 +1010,7 @@ export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
 export { ClientSideRowModelModule, ClientSideRowModelCoreModule } from './clientSideRowModel/clientSideRowModelModule';
 export { CsvExportModule, CsvExportCoreModule as _CsvExportCoreModule } from './csvExport/csvExportModule';
 export { InfiniteRowModelModule } from './infiniteRowModel/infiniteRowModelModule';
+export { PopupModule } from './widgets/popupModule';
 
 //  events
 export * from './events';

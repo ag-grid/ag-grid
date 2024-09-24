@@ -37,7 +37,7 @@ export class ToolPanelContextMenu extends Component {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.funcColsService = beans.funcColsService;
-        this.popupService = beans.popupService;
+        this.popupService = beans.popupService!;
         this.focusService = beans.focusService;
     }
 
