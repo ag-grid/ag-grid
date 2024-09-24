@@ -7,14 +7,13 @@ import {
     _includes,
     _removeFromParent,
 } from 'ag-grid-community';
-import { AgGroupComponentSelector } from '../../../../main';
-import type { AgGroupComponentParams } from '../../../../main';
-import type { AgGroupComponent } from '../../../../main';
 
-import { AgColorPickerSelector } from '../../../../charts-widgets/agColorPicker';
 import type { ChartOptionsProxy } from '../../services/chartOptionsService';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
+import type { AgGroupComponent, AgGroupComponentParams} from '../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../widgets/agGroupComponent';
+import { AgColorPickerSelector } from '../../../widgets/agColorPicker';
 
 interface Font {
     fontFamily?: string;

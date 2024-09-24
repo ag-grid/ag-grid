@@ -1,6 +1,11 @@
-import type { BeanCollection, IGetRowsParams, LoadSuccessParams, NumberSequence } from '../main';
-import { RowNode, RowNodeBlock, _exists, _missing, _warnOnce } from '../main';
-
+import type { BeanCollection } from '../context/context';
+import { RowNode } from '../entities/rowNode';
+import type { IGetRowsParams } from '../interfaces/iDatasource';
+import type { LoadSuccessParams } from '../rowNodeCache/iRowNodeBlock';
+import { RowNodeBlock } from '../rowNodeCache/rowNodeBlock';
+import { _warnOnce } from '../utils/function';
+import { _exists, _missing } from '../utils/generic';
+import type { NumberSequence } from '../utils/numberSequence';
 import type { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
 
 export class InfiniteBlock extends RowNodeBlock {

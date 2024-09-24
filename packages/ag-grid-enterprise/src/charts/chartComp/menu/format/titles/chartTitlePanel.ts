@@ -1,8 +1,8 @@
 import type { AgInputTextFieldParams, BeanCollection } from 'ag-grid-community';
 
-import type { AgSliderParams } from '../../../../../charts-widgets/agSlider';
 import type { ChartMenuService } from '../../../services/chartMenuService';
 import { TitlePanel } from './titlePanel';
+import type { AgSliderParams } from '../../../../widgets/agSlider';
 
 export class ChartTitlePanel extends TitlePanel {
     private chartMenuService: ChartMenuService;

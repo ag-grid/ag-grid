@@ -5,7 +5,6 @@ import type {
     Environment,
 } from 'ag-grid-community';
 import { AgPromise, Component, _warnOnce } from 'ag-grid-community';
-import { AgPanel } from '../../../main';
 
 import type { ChartController } from '../chartController';
 import type { ExtraPaddingDirection } from '../chartProxies/chartProxy';
@@ -14,6 +13,7 @@ import type { ChartMenuContext } from './chartMenuContext';
 import type { ChartMenuListFactory } from './chartMenuList';
 import { ChartToolbar } from './chartToolbar';
 import { TabbedChartMenu } from './tabbedChartMenu';
+import { AgPanel } from '../../../widgets/agPanel';
 
 type ChartToolbarButtons = {
     [key in ChartToolbarMenuItemOptions]: {

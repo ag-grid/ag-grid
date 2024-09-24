@@ -1,5 +1,5 @@
 import type { CellPosition, CellRange } from 'ag-grid-community';
-import { CellRangeType, SelectionHandleType, _last } from 'ag-grid-community';
+import { CellRangeType, SelectionHandleType, _isSameRow, _last } from 'ag-grid-community';
 
 import { AbstractSelectionHandle } from './abstractSelectionHandle';
 
@@ -39,7 +39,7 @@ export class AgRangeHandle extends AbstractSelectionHandle {
             cellRanges[0].type === CellRangeType.DIMENSION &&
             lastRange.type === CellRangeType.VALUE
         ) {
-            const rowChanged = !this.rowPositionUtils.sameRow(
+            const rowChanged = !_isSameRow(
                 this.endPosition,
                 this.rangeService.getRangeEndRow(lastRange)
             );

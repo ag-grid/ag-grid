@@ -1,14 +1,13 @@
-import type {
-    BeanCollection,
-    ClientSideRowModelStep,
-    IRowNode,
-    RowDataTransaction,
-    RowNodeTransaction,
-} from '../main';
-import { _warnOnce } from '../main';
+import type { BeanCollection } from '../context/context';
+import type { ClientSideRowModelStep } from '../interfaces/iClientSideRowModel';
+import type { IRowNode } from '../interfaces/iRowNode';
+import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
+import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
+import { _warnOnce } from '../utils/function';
+
 
 export function onGroupExpandedOrCollapsed(beans: BeanCollection): void {
-    beans.expansionService.onGroupExpandedOrCollapsed();
+    beans.expansionService?.onGroupExpandedOrCollapsed();
 }
 
 export function refreshClientSideRowModel(beans: BeanCollection, step?: ClientSideRowModelStep): void {
@@ -74,5 +73,5 @@ export function flushAsyncTransactions(beans: BeanCollection): void {
 }
 
 export function getBestCostNodeSelection<TData = any>(beans: BeanCollection): IRowNode<TData>[] | undefined {
-    return beans.selectionService.getBestCostNodeSelection();
+    return beans.selectionService?.getBestCostNodeSelection();
 }

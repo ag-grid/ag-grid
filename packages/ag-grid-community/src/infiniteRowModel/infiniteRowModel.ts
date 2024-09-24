@@ -1,26 +1,19 @@
-import type {
-    BeanCollection,
-    FilterManager,
-    IDatasource,
-    IInfiniteRowModel,
-    ISelectionService,
-    NamedBean,
-    RowBounds,
-    RowModelType,
-    RowNode,
-    RowNodeBlockLoader,
-    RowRenderer,
-    SortController,
-} from '../main';
-import {
-    BeanStub,
-    NumberSequence,
-    _getRowHeightAsNumber,
-    _getRowIdCallback,
-    _jsonEquals,
-    _warnOnce,
-} from '../main';
-
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { RowNode } from '../entities/rowNode';
+import type { FilterManager } from '../filter/filterManager';
+import { _getRowHeightAsNumber, _getRowIdCallback } from '../gridOptionsUtils';
+import type { IDatasource } from '../interfaces/iDatasource';
+import type { IInfiniteRowModel } from '../interfaces/iInfiniteRowModel';
+import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
+import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { RowRenderer } from '../rendering/rowRenderer';
+import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
+import type { SortController } from '../sort/sortController';
+import { _warnOnce } from '../utils/function';
+import { _jsonEquals } from '../utils/generic';
+import { NumberSequence } from '../utils/numberSequence';
 import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
 
@@ -28,8 +21,8 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
     beanName = 'rowModel' as const;
 
     private filterManager?: FilterManager;
-    private sortController: SortController;
-    private selectionService: ISelectionService;
+    private sortController?: SortController;
+    private selectionService?: ISelectionService;
     private rowRenderer: RowRenderer;
     private rowNodeBlockLoader: RowNodeBlockLoader;
 
@@ -139,7 +132,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
     }
 
     private isSortModelDifferent(): boolean {
-        return !_jsonEquals(this.cacheParams.sortModel, this.sortController.getSortModel());
+        return !_jsonEquals(this.cacheParams.sortModel, this.sortController?.getSortModel() ?? []);
     }
 
     public getType(): RowModelType {
@@ -182,7 +175,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
         const userGeneratingIds = getRowIdFunc != null;
 
         if (!userGeneratingIds) {
-            this.selectionService.reset('rowDataChanged');
+            this.selectionService?.reset('rowDataChanged');
         }
 
         this.resetCache();
@@ -211,7 +204,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
 
             // sort and filter model
             filterModel: this.filterManager?.getFilterModel() ?? {},
-            sortModel: this.sortController.getSortModel(),
+            sortModel: this.sortController?.getSortModel() ?? [],
 
             rowNodeBlockLoader: this.rowNodeBlockLoader,
 

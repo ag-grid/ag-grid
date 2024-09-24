@@ -3,7 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { DraggingEvent } from '../dragAndDrop/dragAndDropService';
-import type { CellPosition } from '../entities/cellPositionUtils';
+import type { CellPosition } from '../interfaces/iCellPosition';
 import { _isDomLayout } from '../gridOptionsUtils';
 import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { _getCtrlForEventTarget } from '../utils/event';

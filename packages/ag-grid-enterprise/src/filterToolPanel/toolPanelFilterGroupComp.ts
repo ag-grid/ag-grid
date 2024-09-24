@@ -14,10 +14,10 @@ import {
     _createIconNoSpan,
     isProvidedColumnGroup,
 } from 'ag-grid-community';
-import type { AgGroupComponent, AgGroupComponentParams } from '../main';
-import { AgGroupComponentSelector } from '../main';
 
 import { ToolPanelFilterComp } from './toolPanelFilterComp';
+import type { AgGroupComponent, AgGroupComponentParams} from '../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../widgets/agGroupComponent';
 
 export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
 

@@ -1,13 +1,10 @@
-import type {
-    BeanCollection,
-    ChangedPath,
-    FilterManager,
-    IRowNodeStage,
-    NamedBean,
-    RowNode,
-    StageExecuteParams,
-} from '../main';
-import { BeanStub } from '../main';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { RowNode } from '../entities/rowNode';
+import type { FilterManager } from '../filter/filterManager';
+import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
+import type { ChangedPath } from '../utils/changedPath';
 
 export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
     beanName = 'filterStage' as const;

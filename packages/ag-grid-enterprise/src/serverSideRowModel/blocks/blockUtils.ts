@@ -34,7 +34,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     private showRowGroupColsService?: IShowRowGroupColsService;
     private nodeManager: NodeManager;
     private beans: BeanCollection;
-    private expansionService: ServerSideExpansionService;
+    private expansionService?: ServerSideExpansionService;
     private serverSideRowModel: ServerSideRowModel;
     private storeFactory: StoreFactory;
 
@@ -442,6 +442,6 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     public checkOpenByDefault(rowNode: RowNode): void {
-        return this.expansionService.checkOpenByDefault(rowNode);
+        return this.expansionService?.checkOpenByDefault(rowNode);
     }
 }

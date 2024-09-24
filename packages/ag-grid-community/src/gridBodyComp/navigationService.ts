@@ -7,8 +7,10 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import type { CellPosition } from '../entities/cellPositionUtils';
-import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
+import type { CellPosition } from '../interfaces/iCellPosition';
+import { _isRowBefore  } from '../entities/rowPositionUtils';
+import type { RowPositionUtils } from '../entities/rowPositionUtils';
+import type { RowPosition } from '../interfaces/iRowPosition';
 import type { FocusService } from '../focusService';
 import { _isGroupRowsSticky } from '../gridOptionsUtils';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
@@ -55,7 +57,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     private headerNavigationService: HeaderNavigationService;
     private rowPositionUtils: RowPositionUtils;
     private cellNavigationService: CellNavigationService;
-    private pinnedRowModel: PinnedRowModel;
+    private pinnedRowModel?: PinnedRowModel;
     private scrollVisibleService: ScrollVisibleService;
     private rangeService?: IRangeService;
 
@@ -380,7 +382,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     // same cell into view (which means either scroll all the way up, or all the way down).
     private onHomeOrEndKey(key: string): void {
         const homeKey = key === KeyCode.PAGE_HOME;
-        const allColumns: AgColumn[] = this.visibleColsService.getAllCols();
+        const allColumns: AgColumn[] = this.visibleColsService.allCols;
         const columnToSelect = homeKey ? allColumns[0] : _last(allColumns);
         const scrollIndex = homeKey ? this.pageBoundsService.getFirstRow() : this.pageBoundsService.getLastRow();
 
@@ -582,7 +584,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     // returns null if no navigation should be performed
     private moveToNextCellNotEditing(previousCell: CellCtrl | RowCtrl, backwards: boolean): boolean | null {
-        const displayedColumns = this.visibleColsService.getAllCols();
+        const displayedColumns = this.visibleColsService.allCols;
         let cellPos: CellPosition;
 
         if (previousCell instanceof RowCtrl) {
@@ -743,11 +745,11 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     private lookupRowNodeForCell(cell: CellPosition) {
         if (cell.rowPinned === 'top') {
-            return this.pinnedRowModel.getPinnedTopRow(cell.rowIndex);
+            return this.pinnedRowModel?.getPinnedTopRow(cell.rowIndex);
         }
 
         if (cell.rowPinned === 'bottom') {
-            return this.pinnedRowModel.getPinnedBottomRow(cell.rowIndex);
+            return this.pinnedRowModel?.getPinnedBottomRow(cell.rowIndex);
         }
 
         return this.rowModel.getRow(cell.rowIndex);
@@ -865,7 +867,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     public tryToFocusFullWidthRow(position: CellPosition | RowPosition, backwards?: boolean): boolean {
-        const displayedColumns = this.visibleColsService.getAllCols();
+        const displayedColumns = this.visibleColsService.allCols;
         const rowComp = this.rowRenderer.getRowByPosition(position);
         if (!rowComp || !rowComp.isFullWidth()) {
             return false;
@@ -883,7 +885,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
         const fromBelow =
             backwards == null
-                ? currentCellFocused != null && this.rowPositionUtils.before(cellPosition, currentCellFocused)
+                ? currentCellFocused != null && _isRowBefore(cellPosition, currentCellFocused)
                 : backwards;
 
         this.eventService.dispatchEvent({

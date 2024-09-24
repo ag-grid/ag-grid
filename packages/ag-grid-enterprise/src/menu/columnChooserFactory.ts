@@ -10,9 +10,9 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 import { AgPrimaryCols } from '../columnToolPanel/agPrimaryCols';
-import { AgDialog } from '../main';
 
 import type { MenuUtils } from './menuUtils';
+import { AgDialog } from '../widgets/agDialog';
 
 export class ColumnChooserFactory extends BeanStub implements NamedBean, IColumnChooserFactory {
     beanName = 'columnChooserFactory' as const;
@@ -80,7 +80,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean, IColumn
 
         const columnSelectPanel = this.createColumnSelectPanel(this, column, true, chooserParams);
         const translate = this.localeService.getLocaleTextFunc();
-        const columnIndex = this.visibleColsService.getAllCols().indexOf(column as AgColumn);
+        const columnIndex = this.visibleColsService.allCols.indexOf(column as AgColumn);
         const headerPosition = column ? this.focusService.getFocusedHeader() : null;
 
         this.activeColumnChooserDialog = this.createBean(

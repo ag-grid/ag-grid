@@ -9,9 +9,9 @@ import type {
     NamedBean,
 } from 'ag-grid-community';
 import { BeanStub, _isClientSideRowModel, _removeRepeatsFromArray } from 'ag-grid-community';
-import { AgMenuList } from '../main';
 
 import type { MenuItemMapper } from './menuItemMapper';
+import { AgMenuList } from '../widgets/agMenuList';
 
 const MENU_ITEM_SEPARATOR = 'separator';
 
@@ -106,7 +106,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
         const allowPinning = !column.getColDef().lockPinned;
 
-        const rowGroupCount = this.funcColsService.getRowGroupColumns().length;
+        const rowGroupCount = this.funcColsService.rowGroupCols.length;
         const doingGrouping = rowGroupCount > 0;
 
         const allowValue = column.isAllowValue();

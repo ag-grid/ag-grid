@@ -1,12 +1,12 @@
 import type { AgSelectParams, BeanCollection, ListOption } from 'ag-grid-community';
 import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
-import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../main';
-import { AgGroupComponentSelector } from '../../../../../main';
 
-import { AgSlider } from '../../../../../charts-widgets/agSlider';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import { FontPanel } from '../fontPanel';
+import type { AgGroupComponent, AgGroupComponentParams} from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import { AgSlider } from '../../../../widgets/agSlider';
 
 type SeriesItemType = 'positive' | 'negative';
 

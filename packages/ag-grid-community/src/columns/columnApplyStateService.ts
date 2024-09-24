@@ -7,11 +7,16 @@ import type { ColumnEvent, ColumnEventType } from '../events';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
-import type { SortController } from '../sortController';
+import type { SortController } from '../sort/sortController';
 import { _areEqual, _removeFromArray } from '../utils/array';
 import { _warnOnce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
-import type { ColumnEventDispatcher } from './columnEventDispatcher';
+import {
+    dispatchColumnChangedEvent,
+    dispatchColumnPinnedEvent,
+    dispatchColumnResizedEvent,
+    dispatchColumnVisibleEvent,
+} from './columnEventUtils';
 import type { ColumnGetStateService } from './columnGetStateService';
 import type { ColumnModel } from './columnModel';
 import { GROUP_AUTO_COLUMN_ID, getColumnsFromTree } from './columnUtils';
@@ -71,8 +76,7 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
     beanName = 'columnApplyStateService' as const;
 
     private columnModel: ColumnModel;
-    private eventDispatcher: ColumnEventDispatcher;
-    private sortController: SortController;
+    private sortController?: SortController;
     private columnGetStateService: ColumnGetStateService;
     private funcColsService: FuncColsService;
     private visibleColsService: VisibleColsService;
@@ -81,7 +85,6 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
-        this.eventDispatcher = beans.columnEventDispatcher;
         this.sortController = beans.sortController;
         this.columnGetStateService = beans.columnGetStateService;
         this.funcColsService = beans.funcColsService;
@@ -123,8 +126,8 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
             const unmatchedAndAutoStates: ColumnState[] = [];
             let unmatchedCount = 0;
 
-            const previousRowGroupCols = this.funcColsService.getRowGroupColumns().slice();
-            const previousPivotCols = this.funcColsService.getPivotColumns().slice();
+            const previousRowGroupCols = this.funcColsService.rowGroupCols.slice();
+            const previousPivotCols = this.funcColsService.pivotCols.slice();
 
             states.forEach((state: ColumnState) => {
                 const colId = state.colId || '';
@@ -201,7 +204,10 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
 
             this.orderLiveColsLikeState(params);
             this.visibleColsService.refresh(source);
-            this.eventDispatcher.everythingChanged(source);
+            this.eventService.dispatchEvent({
+                type: 'columnEverythingChanged',
+                source,
+            });
 
             dispatchEventsFunc(); // Will trigger pivot result col changes if pivoting modified
             return { unmatchedAndAutoStates, unmatchedCount };
@@ -506,9 +512,9 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
     // b) apply new column definitions (so changes from old cols)
     public compareColumnStatesAndDispatchEvents(source: ColumnEventType): () => void {
         const startState = {
-            rowGroupColumns: this.funcColsService.getRowGroupColumns().slice(),
-            pivotColumns: this.funcColsService.getPivotColumns().slice(),
-            valueColumns: this.funcColsService.getValueColumns().slice(),
+            rowGroupColumns: this.funcColsService.rowGroupCols.slice(),
+            pivotColumns: this.funcColsService.pivotCols.slice(),
+            valueColumns: this.funcColsService.valueCols.slice(),
         };
 
         const columnStateBefore = this.columnGetStateService.getColumnState();
@@ -574,14 +580,14 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
             dispatchWhenListsDifferent(
                 'columnRowGroupChanged',
                 startState.rowGroupColumns,
-                this.funcColsService.getRowGroupColumns(),
+                this.funcColsService.rowGroupCols,
                 columnIdMapper
             );
 
             dispatchWhenListsDifferent(
                 'columnPivotChanged',
                 startState.pivotColumns,
-                this.funcColsService.getPivotColumns(),
+                this.funcColsService.pivotCols,
                 columnIdMapper
             );
 
@@ -596,23 +602,23 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
             };
             const changedValues = getChangedColumns(valueChangePredicate);
             if (changedValues.length > 0) {
-                this.eventDispatcher.columnChanged('columnValueChanged', changedValues, source);
+                dispatchColumnChangedEvent(this.eventService, 'columnValueChanged', changedValues, source);
             }
 
             const resizeChangePredicate = (cs: ColumnState, c: AgColumn) => cs.width != c.getActualWidth();
-            this.eventDispatcher.columnResized(getChangedColumns(resizeChangePredicate), true, source);
+            dispatchColumnResizedEvent(this.eventService, getChangedColumns(resizeChangePredicate), true, source);
 
             const pinnedChangePredicate = (cs: ColumnState, c: AgColumn) => cs.pinned != c.getPinned();
-            this.eventDispatcher.columnPinned(getChangedColumns(pinnedChangePredicate), source);
+            dispatchColumnPinnedEvent(this.eventService, getChangedColumns(pinnedChangePredicate), source);
 
             const visibilityChangePredicate = (cs: ColumnState, c: AgColumn) => cs.hide == c.isVisible();
-            this.eventDispatcher.columnVisible(getChangedColumns(visibilityChangePredicate), source);
+            dispatchColumnVisibleEvent(this.eventService, getChangedColumns(visibilityChangePredicate), source);
 
             const sortChangePredicate = (cs: ColumnState, c: AgColumn) =>
                 cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
             const changedColumns = getChangedColumns(sortChangePredicate);
             if (changedColumns.length > 0) {
-                this.sortController.dispatchSortChangedEvents(source, changedColumns);
+                this.sortController?.dispatchSortChangedEvents(source, changedColumns);
             }
 
             // special handling for moved column events
@@ -657,7 +663,13 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.eventDispatcher.columnMoved({ movedColumns, source, finished: true });
+        this.eventService.dispatchEvent({
+            type: 'columnMoved',
+            columns: movedColumns,
+            column: movedColumns.length === 1 ? movedColumns[0] : null,
+            finished: true,
+            source,
+        });
     }
 }
 

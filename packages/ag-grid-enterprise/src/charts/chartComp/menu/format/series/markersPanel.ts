@@ -1,12 +1,12 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { AgSelectSelector, Component } from 'ag-grid-community';
-import type { AgGroupComponentParams } from '../../../../../main';
-import { AgGroupComponentSelector } from '../../../../../main';
 
-import { AgSliderSelector } from '../../../../../charts-widgets/agSlider';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import { getShapeSelectOptions } from './seriesUtils';
+import type { AgGroupComponentParams} from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import { AgSliderSelector } from '../../../../widgets/agSlider';
 
 export class MarkersPanel extends Component {
     private chartTranslationService: ChartTranslationService;

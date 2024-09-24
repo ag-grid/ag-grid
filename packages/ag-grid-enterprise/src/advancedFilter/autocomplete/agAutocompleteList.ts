@@ -1,9 +1,9 @@
 import type { Component } from 'ag-grid-community';
 import { KeyCode, PopupComponent, RefPlaceholder, _exists, _fuzzySuggestions } from 'ag-grid-community';
-import { VirtualList } from '../../main';
 
 import { AgAutocompleteRow } from './agAutocompleteRow';
 import type { AutocompleteEntry } from './autocompleteParams';
+import { VirtualList } from '../../widgets/virtualList';
 
 export class AgAutocompleteList extends PopupComponent {
     private readonly eList: HTMLElement = RefPlaceholder;

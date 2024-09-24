@@ -11,21 +11,17 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 // columns
 export { ColumnFactory } from './columns/columnFactory';
 export { ColumnModel } from './columns/columnModel';
-export { ColumnAutosizeService } from './columns/columnAutosizeService';
-export { FuncColsService } from './columns/funcColsService';
-export {
-    ColumnApplyStateService,
-    ColumnState,
-    ColumnStateParams,
-    ApplyColumnStateParams,
-} from './columns/columnApplyStateService';
-export { ColumnMoveService } from './columns/columnMoveService';
-export { ColumnNameService } from './columns/columnNameService';
+export type { ColumnAutosizeService } from './columnAutosize/columnAutosizeService';
+export type { FuncColsService } from './columns/funcColsService';
+export type { ColumnApplyStateService } from './columns/columnApplyStateService';
+export { ColumnState, ColumnStateParams, ApplyColumnStateParams } from './columns/columnApplyStateService';
+export type { ColumnMoveService } from './columnMove/columnMoveService';
+export type { ColumnNameService } from './columns/columnNameService';
+export { IAggColumnNameService } from './interfaces/iAggColumnNameService';
 export { IShowRowGroupColsService, IColumnDropZonesService } from './interfaces/iShowRowGroupColsService';
-export { PivotResultColsService } from './columns/pivotResultColsService';
-export { ColumnSizeService, IColumnLimit, ISizeColumnsToFitParams } from './columns/columnSizeService';
+export type { PivotResultColsService } from './columns/pivotResultColsService';
 export { ColumnKeyCreator } from './columns/columnKeyCreator';
-export { VisibleColsService } from './columns/visibleColsService';
+export type { VisibleColsService } from './columns/visibleColsService';
 export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
 export { GROUP_AUTO_COLUMN_ID, isColumnControlsCol, isColumnGroupAutoCol } from './columns/columnUtils';
 export { IAutoColService } from './interfaces/iAutoColService';
@@ -34,7 +30,9 @@ export {
     SizeColumnsToContentStrategy,
     SizeColumnsToFitProvidedWidthStrategy,
     SizeColumnsToFitGridStrategy,
-} from './interfaces/autoSizeStrategy';
+    IColumnLimit,
+    ISizeColumnsToFitParams,
+} from './interfaces/autoSize';
 export { IRenderStatusService } from './interfaces/renderStatusService';
 
 // components
@@ -96,18 +94,21 @@ export {
 } from './interfaces/iExcelCreator';
 
 // dragAndDrop
+export type { DragAndDropService } from './dragAndDrop/dragAndDropService';
 export {
-    DragAndDropService,
     DragSourceType,
     DropTarget,
     DragSource,
-    DragItem,
     DraggingEvent,
     DragAndDropIcon,
 } from './dragAndDrop/dragAndDropService';
-export { RowDropZoneParams, RowDropZoneEvents } from './gridBodyComp/rowDragFeature';
-export { DragService, DragListenerParams } from './dragAndDrop/dragService';
-export { IRowDragItem, RowDragComp } from './rendering/row/rowDragComp';
+export { DragItem } from './interfaces/iDragItem';
+export { RowDropZoneParams, RowDropZoneEvents } from './dragAndDrop/rowDragFeature';
+export type { RowDragService } from './dragAndDrop/rowDragService';
+export type { DragService } from './dragAndDrop/dragService';
+export { DragListenerParams } from './dragAndDrop/dragService';
+export { IRowDragItem } from './interfaces/iRowDragItem';
+export type { HorizontalResizeService } from './dragAndDrop/horizontalResizeService';
 
 // entities
 export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroupShowType } from './interfaces/iColumn';
@@ -168,7 +169,7 @@ export {
     SetFilterValuesFuncParams,
     ISetFilterTreeListTooltipParams,
 } from './interfaces/iSetFilter';
-export { FilterManager } from './filter/filterManager';
+export type { FilterManager } from './filter/filterManager';
 export { FilterRequestSource } from './filter/iColumnFilter';
 export {
     IMultiFilter,
@@ -215,12 +216,6 @@ export {
 export { TextFilter } from './filter/provided/text/textFilter';
 export { IDateFilterParams, DateFilterParams, DateFilterModel } from './filter/provided/date/iDateFilter';
 export { DateFilter } from './filter/provided/date/dateFilter';
-export {
-    ColumnFilterModule as _ColumnFilterModule,
-    FilterCoreModule as _FilterCoreModule,
-    FloatingFilterModule as _FloatingFilterModule,
-    ReadOnlyFloatingFilterModule as _ReadOnlyFloatingFilterModule,
-} from './filter/filterModule';
 
 export {
     IFloatingFilter,
@@ -256,9 +251,9 @@ export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 // gridPanel
 export { GridBodyComp } from './gridBodyComp/gridBodyComp';
 export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from './gridBodyComp/gridBodyCtrl';
-export { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
-export { MouseEventService } from './gridBodyComp/mouseEventService';
-export { NavigationService } from './gridBodyComp/navigationService';
+export type { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
+export type { MouseEventService } from './gridBodyComp/mouseEventService';
+export type { NavigationService } from './gridBodyComp/navigationService';
 export { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
 export { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
 
@@ -274,8 +269,6 @@ export {
 } from './gridBodyComp/rowContainer/rowContainerCtrl';
 
 // headerRendering
-export { BodyDropPivotTarget } from './headerRendering/columnDrag/bodyDropPivotTarget';
-export { BodyDropTarget } from './headerRendering/columnDrag/bodyDropTarget';
 export { _getHeaderClassesFromColDef, _getToolPanelClassesFromColDef } from './headerRendering/cells/cssClassApplier';
 export { HeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerComp';
 export { GridHeaderComp } from './headerRendering/gridHeaderComp';
@@ -283,7 +276,7 @@ export { GridHeaderCtrl, IGridHeaderComp } from './headerRendering/gridHeaderCtr
 export { HeaderRowComp, HeaderRowType } from './headerRendering/row/headerRowComp';
 export { HeaderRowCtrl, IHeaderRowComp } from './headerRendering/row/headerRowCtrl';
 export { HeaderCellCtrl, IHeaderCellComp } from './headerRendering/cells/column/headerCellCtrl';
-export { SortIndicatorComp, SortIndicatorSelector } from './headerRendering/cells/column/sortIndicatorComp';
+export type { SortIndicatorComp } from './sort/sortIndicatorComp';
 export { IHeaderFilterCellComp } from './headerRendering/cells/floatingFilter/iHeaderFilterCellComp';
 export { HeaderFilterCellCtrl } from './headerRendering/cells/floatingFilter/headerFilterCellCtrl';
 export { HeaderGroupCellCtrl, IHeaderGroupCellComp } from './headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -292,17 +285,15 @@ export {
     IAbstractHeaderCellComp,
 } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 export { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerCtrl';
-export { HorizontalResizeService } from './headerRendering/common/horizontalResizeService';
-export { MoveColumnFeature } from './headerRendering/columnDrag/moveColumnFeature';
-export { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
+export type { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 
 // misc
-export { ResizeObserverService } from './misc/resizeObserverService';
+export type { ResizeObserverService } from './misc/resizeObserverService';
 export { IImmutableService } from './interfaces/iImmutableService';
-export { AnimationFrameService } from './misc/animationFrameService';
+export type { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
-export { ExpansionService } from './misc/expansionService';
-export { MenuService, IContextMenuParams } from './misc/menuService';
+export type { MenuService } from './misc/menuService';
+export { IContextMenuParams } from './misc/menuService';
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from './interfaces/iCellEditor';
@@ -329,7 +320,6 @@ export {
 export { ICellEditorRendererComp, ICellEditorRendererParams } from './interfaces/iCellEditorRenderer';
 
 export { CheckboxCellEditor } from './edit/cellEditors/checkboxCellEditor';
-export { EditCoreModule as _EditCoreModule } from './edit/editModule';
 
 // rendering / cellRenderers
 export {
@@ -339,8 +329,6 @@ export {
     ICellRendererParams,
     ISetFilterCellRendererParams,
 } from './rendering/cellRenderers/iCellRenderer';
-export { AnimateShowChangeCellRenderer } from './rendering/cellRenderers/animateShowChangeCellRenderer';
-export { AnimateSlideCellRenderer } from './rendering/cellRenderers/animateSlideCellRenderer';
 export {
     GroupCellRendererParams,
     IGroupCellRenderer,
@@ -403,12 +391,11 @@ export {
 
 // rendering
 export { AutoWidthCalculator } from './rendering/autoWidthCalculator';
-export { CheckboxSelectionComponent } from './rendering/checkboxSelectionComponent';
 export { CellComp } from './rendering/cell/cellComp';
 export { CellCtrl, ICellComp } from './rendering/cell/cellCtrl';
 export { RowCtrl, IRowComp } from './rendering/row/rowCtrl';
+export type { RowRenderer } from './rendering/rowRenderer';
 export {
-    RowRenderer,
     FlashCellsParams,
     GetCellRendererInstancesParams,
     RefreshCellsParams,
@@ -419,12 +406,12 @@ export {
     ILoadingCellRenderer,
     ILoadingCellRendererComp,
     ILoadingCellRendererParams,
-} from './rendering/cellRenderers/loadingCellRenderer';
+} from './interfaces/iLoadingCellRenderer';
 export { CssClassManager } from './rendering/cssClassManager';
 export { CheckboxCellRenderer, ICheckboxCellRendererParams } from './rendering/cellRenderers/checkboxCellRenderer';
 
 // row models
-export { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
+export type { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 export { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 export { RowDataTransaction } from './interfaces/rowDataTransaction';
 export {
@@ -435,7 +422,6 @@ export {
 export { LoadCompleteEvent, LoadSuccessParams } from './rowNodeCache/iRowNodeBlock';
 export { RowNodeBlock } from './rowNodeCache/rowNodeBlock';
 export { RowNodeBlockLoader } from './rowNodeCache/rowNodeBlockLoader';
-export { RowNodeBlockModule as _RowNodeBlockModule } from './rowNodeCache/rowNodeBlockModule';
 export {
     IClientSideRowModel,
     ClientSideRowModelSteps,
@@ -443,6 +429,7 @@ export {
     RefreshModelParams,
 } from './interfaces/iClientSideRowModel';
 export { IInfiniteRowModel } from './interfaces/iInfiniteRowModel';
+export { IGroupHideOpenParentsService } from './interfaces/iGroupHideOpenParentsService';
 
 export { ColumnVO } from './interfaces/iColumnVO';
 
@@ -463,9 +450,10 @@ export { IGetRowsParams, IDatasource } from './interfaces/iDatasource';
 
 // selection
 export { ISelectionContext } from './selection/rowRangeSelectionContext';
+export { BaseSelectionService } from './selection/baseSelectionService';
 
 // styling
-export { StylingService } from './styling/stylingService';
+export type { StylingService } from './styling/stylingService';
 export { UpdateLayoutClassesParams, LayoutCssClasses } from './styling/layoutFeature';
 
 // widgets
@@ -495,7 +483,8 @@ export { TabGuardComp } from './widgets/tabGuardComp';
 export { TabGuardCtrl, ITabGuard, TabGuardClassNames } from './widgets/tabGuardCtrl';
 export { TabGuardFeature } from './widgets/tabGuardFeature';
 export { PopupComponent } from './widgets/popupComponent';
-export { PopupService, AgPopup, PopupPositionParams, PopupEventParams } from './widgets/popupService';
+export type { PopupService } from './widgets/popupService';
+export { AgPopup, PopupPositionParams, PopupEventParams } from './widgets/popupService';
 export { TouchListener, TapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
 export { FocusableContainer } from './interfaces/iFocusableContainer';
 
@@ -514,6 +503,7 @@ export {
     ClearCellRangeParams,
     PartialCellRange,
 } from './interfaces/IRangeService';
+export { ICellRangeFeature } from './interfaces/iCellRangeFeature';
 export {
     IChartService,
     ChartDownloadParams,
@@ -565,7 +555,7 @@ export { ICsvCreator } from './interfaces/iCsvCreator';
 // root
 export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
-export { CellNavigationService } from './cellNavigationService';
+export type { CellNavigationService } from './cellNavigationService';
 export { KeyCode } from './constants/keyCode';
 export { VerticalDirection, HorizontalDirection } from './constants/direction';
 export {
@@ -600,14 +590,10 @@ export {
 } from './api/gridApi';
 export { IDetailGridApiService } from './interfaces/iDetailGridApiService';
 export { RowModelHelperService } from './api/rowModelHelperService';
-export {
-    CsrmSsrmSharedApiModule as _CsrmSsrmSharedApiModule,
-    SsrmInfiniteSharedApiModule as _SsrmInfiniteSharedApiModule,
-} from './api/sharedApiModule';
-export { CommunityMenuApiModule as _CommunityMenuApiModule } from './api/apiModule';
 export { AgEventType, AgPublicEventType } from './eventTypes';
-export { FocusService } from './focusService';
-export { GridOptionsService, PropertyChangedEvent } from './gridOptionsService';
+export type { FocusService } from './focusService';
+export type { GridOptionsService } from './gridOptionsService';
+export { PropertyChangedEvent } from './gridOptionsService';
 export {
     _getRowIdCallback,
     _getRowHeightForNode,
@@ -639,17 +625,19 @@ export {
     _isUsingNewSelectionAPI,
 } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
-export { EventService } from './eventService';
-export { SelectableService } from './rowNodes/selectableService';
-export { RowNodeSorter, SortedRowNode, SortOption } from './rowNodes/rowNodeSorter';
-export { CtrlsService } from './ctrlsService';
+export type { EventService } from './eventService';
+export type { RowNodeSorter } from './sort/rowNodeSorter';
+export { SortedRowNode } from './sort/rowNodeSorter';
+export { SortOption } from './interfaces/iSortOption';
+export type { CtrlsService } from './ctrlsService';
 export { GridComp } from './gridComp/gridComp';
 export { GridCtrl, IGridComp } from './gridComp/gridCtrl';
-export { SortController, SortModelItem } from './sortController';
-export { LocaleService } from './localeService';
-export { ValueService } from './valueService/valueService';
-export { ValueCache } from './valueService/valueCache';
-export { ExpressionService } from './valueService/expressionService';
+export type { SortController } from './sort/sortController';
+export { SortModelItem } from './interfaces/iSortModelItem';
+export type { LocaleService } from './localeService';
+export type { ValueService } from './valueService/valueService';
+export type { ValueCache } from './valueService/valueCache';
+export type { ExpressionService } from './valueService/expressionService';
 
 //state
 export {
@@ -687,10 +675,14 @@ export { IAggFuncService } from './interfaces/iAggFuncService';
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from './interfaces/iClipboardService';
 export { IMenuFactory } from './interfaces/iMenuFactory';
 export { IColumnChooserFactory, ShowColumnChooserParams } from './interfaces/iColumnChooserFactory';
-export { CellPosition, CellPositionUtils } from './entities/cellPositionUtils';
-export { RowPosition, RowPositionUtils } from './entities/rowPositionUtils';
-export { HeaderPosition, HeaderPositionUtils } from './headerRendering/common/headerPosition';
-export { HeaderNavigationService, HeaderNavigationDirection } from './headerRendering/common/headerNavigationService';
+export { _areCellsEqual, _createCellId } from './entities/cellPositionUtils';
+export { CellPosition } from './interfaces/iCellPosition';
+export type { RowPositionUtils } from './entities/rowPositionUtils';
+export { _isRowBefore, _isSameRow } from './entities/rowPositionUtils';
+export { RowPosition } from './interfaces/iRowPosition';
+export { HeaderPosition } from './interfaces/iHeaderPosition';
+export type { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
+export { HeaderNavigationDirection } from './headerRendering/common/headerNavigationService';
 export {
     IAggFunc,
     IAggFuncParams,
@@ -766,7 +758,7 @@ export {
     ValueParserLiteParams,
     BaseCellDataType,
 } from './entities/dataType';
-export { DataTypeService } from './columns/dataTypeService';
+export type { DataTypeService } from './columns/dataTypeService';
 export {
     GridOptions,
     SelectionOptions,
@@ -879,7 +871,7 @@ export {
 } from './interfaces/menuItem';
 export { IWatermark } from './interfaces/iWatermark';
 
-export { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
+export type { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
 
 // utils
 export {
@@ -974,32 +966,55 @@ export * from './interfaces/iChartOptions';
 // sparklines
 export * from './interfaces/iSparklineCellRendererParams';
 
+// csv export
+export { BaseCreator } from './csvExport/baseCreator';
+export { BaseGridSerializingSession } from './csvExport/sessions/baseGridSerializingSession';
+export { CsvCreator } from './csvExport/csvCreator';
+export { Downloader } from './csvExport/downloader';
+export { GridSerializer, RowType } from './csvExport/gridSerializer';
+export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from './csvExport/interfaces';
+export { XmlFactory } from './csvExport/xmlFactory';
+export { ZipContainer } from './csvExport/zipContainer/zipContainer';
+
 // modules
 export { Module, ModuleValidationResult, _defineModule } from './interfaces/iModule';
 export { ModuleNames } from './modules/moduleNames';
 export { ModuleRegistry } from './modules/moduleRegistry';
 
+export { ColumnMoveModule } from './columnMove/columnMoveModule';
+export { DragModule, HorizontalResizeModule, DragAndDropModule } from './dragAndDrop/dragModule';
+export {
+    ColumnFilterModule as _ColumnFilterModule,
+    FilterCoreModule as _FilterCoreModule,
+    FloatingFilterModule as _FloatingFilterModule,
+    ReadOnlyFloatingFilterModule as _ReadOnlyFloatingFilterModule,
+} from './filter/filterModule';
+export { EditCoreModule as _EditCoreModule } from './edit/editModule';
+export { StickyRowModule } from './rendering/features/stickyRowModule';
+export { RowNodeBlockModule as _RowNodeBlockModule } from './rowNodeCache/rowNodeBlockModule';
+export { RowSelectionCoreModule } from './selection/rowSelectionModule';
+export {
+    CsrmSsrmSharedApiModule as _CsrmSsrmSharedApiModule,
+    SsrmInfiniteSharedApiModule as _SsrmInfiniteSharedApiModule,
+} from './api/sharedApiModule';
+export { CommunityMenuApiModule as _CommunityMenuApiModule, CommunityApiModule } from './api/apiModule';
 export { CommunityFeaturesModule, GridCoreModule } from './gridCoreModule';
+export { SortModule } from './sort/sortModule';
+export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
+export { ClientSideRowModelModule, ClientSideRowModelCoreModule } from './clientSideRowModel/clientSideRowModelModule';
+export { CsvExportModule, CsvExportCoreModule as _CsvExportCoreModule } from './csvExport/csvExportModule';
+export { InfiniteRowModelModule } from './infiniteRowModel/infiniteRowModelModule';
 
 //  events
 export * from './events';
 
 // theming
-export { type Part, createPart } from './Part';
-export { type Theme, createTheme } from './Theme';
+export { type Part, createPart } from './styles/Part';
+export { type Theme, createTheme } from './styles/Theme';
 export * from './styles/parts/checkbox-style/checkbox-styles';
 export * from './styles/parts/color-scheme/color-schemes';
 export * from './styles/parts/icon-set/icon-sets';
 export * from './styles/parts/input-style/input-styles';
 export * from './styles/parts/tab-style/tab-styles';
 export * from './styles/parts/theme/themes';
-export * from './theme-types';
-
-export * from './csvExport/main'
-
-export * from './alignedGridsModule';
-export * from './clientSideRowModelModule';
-export * from './csvExportModule';
-export * from './gridCoreModule';
-export * from './infiniteRowModelModule';
-export * from './api/apiModule';
+export * from './styles/theme-types';

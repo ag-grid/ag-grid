@@ -28,8 +28,11 @@ import {
     _loadTemplate,
     _removeFromArray,
 } from 'ag-grid-community';
-import type { MenuItemActivatedEvent } from '../main';
-import { AgGroupComponent, AgMenuItemComponent, AgMenuItemRenderer } from '../main';
+
+import { AgGroupComponent } from '../widgets/agGroupComponent';
+import type { MenuItemActivatedEvent } from '../widgets/agMenuItemComponent';
+import { AgMenuItemComponent } from '../widgets/agMenuItemComponent';
+import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
     private filterManager?: FilterManager;

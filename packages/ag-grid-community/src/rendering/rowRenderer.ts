@@ -5,9 +5,9 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import type { CellPosition } from '../entities/cellPositionUtils';
+import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RowNode } from '../entities/rowNode';
-import type { RowPosition } from '../entities/rowPositionUtils';
+import type { RowPosition } from '../interfaces/iRowPosition';
 import type { Environment } from '../environment';
 import type { BodyScrollEvent, CellFocusedEvent, PaginationChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
@@ -18,10 +18,7 @@ import {
     _getRowHeightAsNumber,
     _isAnimateRows,
     _isCellSelectionEnabled,
-    _isClientSideRowModel,
     _isDomLayout,
-    _isGroupRowsSticky,
-    _isServerSideRowModel,
 } from '../gridOptionsUtils';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type { ICellEditor } from '../interfaces/iCellEditor';
@@ -41,7 +38,8 @@ import { _createArrayOfNumbers } from '../utils/number';
 import { _getAllValuesInObject, _iterateObject } from '../utils/object';
 import { CellCtrl } from './cell/cellCtrl';
 import type { ICellRenderer } from './cellRenderers/iCellRenderer';
-import { StickyRowFeature } from './features/stickyRowFeature';
+import type { StickyRowFeature } from './features/stickyRowFeature';
+import type { StickyRowService } from './features/stickyRowService';
 import type { RowCtrlInstanceId } from './row/rowCtrl';
 import { RowCtrl } from './row/rowCtrl';
 import type { RowContainerHeightService } from './rowContainerHeightService';
@@ -97,13 +95,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private pageBoundsService: PageBoundsService;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
-    private pinnedRowModel: PinnedRowModel;
+    private pinnedRowModel?: PinnedRowModel;
     private rowModel: IRowModel;
     private focusService: FocusService;
     private beans: BeanCollection;
     private rowContainerHeightService: RowContainerHeightService;
     private ctrlsService: CtrlsService;
     private environment: Environment;
+    private stickyRowService?: StickyRowService;
 
     public wireBeans(beans: BeanCollection): void {
         this.animationFrameService = beans.animationFrameService;
@@ -118,6 +117,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.rowContainerHeightService = beans.rowContainerHeightService;
         this.ctrlsService = beans.ctrlsService;
         this.environment = beans.environment;
+        this.stickyRowService = beans.stickyRowService;
     }
 
     private gridBodyCtrl: GridBodyCtrl;
@@ -151,7 +151,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private printLayout: boolean;
     private embedFullWidthRows: boolean;
-    private stickyRowFeature: StickyRowFeature;
+    private stickyRowFeature?: StickyRowFeature;
 
     private dataFirstRenderedFired = false;
 
@@ -200,13 +200,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
             () => this.redrawRows()
         );
 
-        if (_isGroupRowsSticky(this.gos)) {
-            if (_isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos)) {
-                this.stickyRowFeature = this.createManagedBean(
-                    new StickyRowFeature(this.createRowCon.bind(this), this.destroyRowCtrls.bind(this))
-                );
-            }
-        }
+        this.stickyRowFeature = this.stickyRowService?.createStickyRowFeature(
+            this,
+            this.createRowCon.bind(this),
+            this.destroyRowCtrls.bind(this)
+        );
 
         this.registerCellEventListeners();
 
@@ -491,7 +489,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const { pinnedRowModel, beans, printLayout } = this;
         const rowCtrlMap = Object.fromEntries(rowCtrls.map((ctrl) => [ctrl.getRowNode().id!, ctrl]));
 
-        pinnedRowModel.forEachPinnedRow(floating, (node, i) => {
+        pinnedRowModel?.forEachPinnedRow(floating, (node, i) => {
             const rowCtrl = rowCtrls[i];
             const rowCtrlDoesNotExist =
                 rowCtrl && pinnedRowModel.getPinnedRowById(rowCtrl.getRowNode().id!, floating) === undefined;
@@ -513,7 +511,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
         });
 
         const rowNodeCount =
-            floating === 'top' ? pinnedRowModel.getPinnedTopRowCount() : pinnedRowModel.getPinnedBottomRowCount();
+            (floating === 'top' ? pinnedRowModel?.getPinnedTopRowCount() : pinnedRowModel?.getPinnedBottomRowCount()) ??
+            0;
 
         // Truncate array if rowCtrls is longer than rowNodes
         rowCtrls.length = rowNodeCount;
@@ -530,7 +529,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     public redrawRow(rowNode: RowNode, suppressEvent = false) {
         if (rowNode.sticky) {
-            this.stickyRowFeature.refreshStickyNode(rowNode);
+            this.stickyRowFeature?.refreshStickyNode(rowNode);
         } else if (this.cachedRowCtrls?.has(rowNode)) {
             // delete row from cache if it needs redrawn
             // if it's in the cache no updates need fired, as nothing
@@ -767,8 +766,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private getAllRowCtrls(): RowCtrl[] {
-        const stickyTopRowCtrls = (this.stickyRowFeature && this.stickyRowFeature.getStickyTopRowCtrls()) || [];
-        const stickyBottomRowCtrls = (this.stickyRowFeature && this.stickyRowFeature.getStickyBottomRowCtrls()) || [];
+        const stickyTopRowCtrls = this.getStickyTopRowCtrls();
+        const stickyBottomRowCtrls = this.getStickyBottomRowCtrls();
         const res = [...this.topRowCtrls, ...this.bottomRowCtrls, ...stickyTopRowCtrls, ...stickyBottomRowCtrls];
 
         for (const key in this.rowCtrlsByRowIndex) {

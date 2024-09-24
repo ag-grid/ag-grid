@@ -1,11 +1,11 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { AgCheckboxSelector, Component } from 'ag-grid-community';
-import { AgGroupComponentSelector } from '../../../../../main';
-import type { AgGroupComponentParams } from '../../../../../main';
 
-import { AgColorPickerSelector } from '../../../../../charts-widgets/agColorPicker';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import type { AgGroupComponentParams} from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
 
 export class CrosshairPanel extends Component {
     private chartTranslationService: ChartTranslationService;

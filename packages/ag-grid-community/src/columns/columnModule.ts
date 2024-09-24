@@ -1,11 +1,9 @@
 import type { _ColumnGridApi } from '../api/gridApi';
 import { _defineModule } from '../interfaces/iModule';
+import { CheckboxCellRendererModule } from '../rendering/cellRenderers/cellRendererModule';
 import { VERSION } from '../version';
 import {
     applyColumnState,
-    autoSizeAllColumns,
-    autoSizeColumn,
-    autoSizeColumns,
     getAllDisplayedColumnGroups,
     getAllDisplayedColumns,
     getAllDisplayedVirtualColumns,
@@ -31,27 +29,29 @@ import {
     isPinning,
     isPinningLeft,
     isPinningRight,
-    moveColumn,
-    moveColumnByIndex,
-    moveColumns,
     resetColumnGroupState,
     resetColumnState,
     setColumnGroupOpened,
     setColumnGroupState,
     setColumnPinned,
     setColumnVisible,
-    setColumnWidth,
-    setColumnWidths,
     setColumnsPinned,
     setColumnsVisible,
-    sizeColumnsToFit,
 } from './columnApi';
+import { ControlsColService } from './controlsColService';
 import { DataTypeService } from './dataTypeService';
 
 export const DataTypeModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/data-type',
     beans: [DataTypeService],
+    dependantModules: [CheckboxCellRendererModule],
+});
+
+export const ControlsColumnModule = _defineModule({
+    version: VERSION,
+    moduleName: '@ag-grid-community/controls-column',
+    beans: [ControlsColService],
 });
 
 export const ColumnApiModule = _defineModule<_ColumnGridApi<any>>({
@@ -60,7 +60,6 @@ export const ColumnApiModule = _defineModule<_ColumnGridApi<any>>({
     apiFunctions: {
         getColumnDef,
         getColumnDefs,
-        sizeColumnsToFit,
         setColumnGroupOpened,
         getColumnGroup,
         getProvidedColumnGroup,
@@ -89,17 +88,9 @@ export const ColumnApiModule = _defineModule<_ColumnGridApi<any>>({
         getDisplayedRightColumns,
         getAllDisplayedColumns,
         getAllDisplayedVirtualColumns,
-        moveColumn,
-        moveColumnByIndex,
-        moveColumns,
-        setColumnWidth,
-        setColumnWidths,
         getLeftDisplayedColumnGroups,
         getCenterDisplayedColumnGroups,
         getRightDisplayedColumnGroups,
         getAllDisplayedColumnGroups,
-        autoSizeColumn,
-        autoSizeColumns,
-        autoSizeAllColumns,
     },
 });

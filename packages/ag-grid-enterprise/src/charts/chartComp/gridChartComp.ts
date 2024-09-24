@@ -22,7 +22,6 @@ import {
     _setDisplayed,
     _warnOnce,
 } from 'ag-grid-community';
-import { AgDialog } from '../../main';
 import type { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
 
 import type { CrossFilteringContext } from '../chartService';
@@ -52,6 +51,7 @@ import { CHART_TOOL_PANEL_MENU_OPTIONS } from './services/chartMenuService';
 import { ChartOptionsService } from './services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from './services/chartTranslationService';
 import { getCanonicalChartType, getSeriesType, isHierarchical } from './utils/seriesTypeMapper';
+import { AgDialog } from '../../widgets/agDialog';
 
 export interface GridChartParams {
     chartId: string;

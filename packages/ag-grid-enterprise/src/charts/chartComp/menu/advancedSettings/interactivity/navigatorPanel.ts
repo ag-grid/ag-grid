@@ -1,11 +1,11 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { AgCheckboxSelector, Component } from 'ag-grid-community';
-import type { AgGroupComponentParams } from '../../../../../main';
-import { AgGroupComponentSelector } from '../../../../../main';
 
-import { AgSliderSelector } from '../../../../../charts-widgets/agSlider';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import type { AgGroupComponentParams} from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import { AgSliderSelector } from '../../../../widgets/agSlider';
 
 export class NavigatorPanel extends Component {
     private chartTranslationService: ChartTranslationService;

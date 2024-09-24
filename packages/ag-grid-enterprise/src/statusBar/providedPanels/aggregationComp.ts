@@ -4,7 +4,6 @@ import type {
     AggregationStatusPanelParams,
     BeanCollection,
     CellNavigationService,
-    CellPositionUtils,
     IRangeService,
     IStatusPanelComp,
     RowPosition,
@@ -14,9 +13,11 @@ import type {
 import {
     Component,
     RefPlaceholder,
+    _createCellId,
     _exists,
     _formatNumberTwoDecimalPlacesAndCommas,
     _isClientSideRowModel,
+    _isRowBefore,
     _isServerSideRowModel,
     _missing,
     _missingOrEmpty,
@@ -29,14 +30,12 @@ import { AgNameValueSelector } from './agNameValue';
 export class AggregationComp extends Component implements IStatusPanelComp {
     private valueService: ValueService;
     private cellNavigationService: CellNavigationService;
-    private cellPositionUtils: CellPositionUtils;
     private rowPositionUtils: RowPositionUtils;
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection) {
         this.valueService = beans.valueService;
         this.cellNavigationService = beans.cellNavigationService;
-        this.cellPositionUtils = beans.cellPositionUtils;
         this.rowPositionUtils = beans.rowPositionUtils;
         this.rangeService = beans.rangeService;
     }
@@ -156,7 +155,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
                 while (true) {
                     const finishedAllRows =
-                        _missing(currentRow) || !currentRow || this.rowPositionUtils.before(lastRow, currentRow);
+                        _missing(currentRow) || !currentRow || _isRowBefore(lastRow, currentRow);
                     if (finishedAllRows || !currentRow || !cellRange.columns) {
                         break;
                     }
@@ -167,7 +166,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
 
                         // we only want to include each cell once, in case a cell is in multiple ranges
-                        const cellId = this.cellPositionUtils.createId({
+                        const cellId = _createCellId({
                             rowPinned: currentRow.rowPinned,
                             column: col,
                             rowIndex: currentRow.rowIndex,

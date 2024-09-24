@@ -1,11 +1,11 @@
 import type { IAggFunc } from 'ag-grid-community';
 import { AgSelect, AgToggleButton } from 'ag-grid-community';
-import { AgGroupComponent } from '../../../../main';
 
 import type { ChartController } from '../../chartController';
 import type { ColState } from '../../model/chartDataModel';
 import { ChartDataModel } from '../../model/chartDataModel';
 import { DragDataPanel } from './dragDataPanel';
+import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
 
 type AggFuncPreset = 'count' | 'sum' | 'min' | 'max' | 'avg' | 'first' | 'last';
 

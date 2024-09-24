@@ -1,21 +1,17 @@
-import type {
-    BeanCollection,
-    EventService,
-    FuncColsService,
-    GridOptionsService,
-    ISelectionService,
-    RowDataTransaction,
-    RowNodeTransaction,
-    SelectionEventSourceType,
-} from '../main';
-import {
-    RowNode,
-    _cloneObject,
-    _errorOnce,
-    _getRowIdCallback,
-    _missingOrEmpty,
-    _warnOnce,
-} from '../main';
+import type { FuncColsService } from '../columns/funcColsService';
+import type { BeanCollection } from '../context/context';
+import { RowNode } from '../entities/rowNode';
+import type { EventService } from '../eventService';
+import type { SelectionEventSourceType } from '../events';
+import type { GridOptionsService } from '../gridOptionsService';
+import { _getRowIdCallback } from '../gridOptionsUtils';
+import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
+import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
+import { _warnOnce, _errorOnce } from '../utils/function';
+import { _missingOrEmpty } from '../utils/generic';
+import { _cloneObject } from '../utils/object';
+
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
 const TOP_LEVEL = 0;
@@ -52,7 +48,7 @@ export class ClientSideNodeManager {
     private gos: GridOptionsService;
     private eventService: EventService;
     private funcColsService: FuncColsService;
-    private selectionService: ISelectionService;
+    private selectionService?: ISelectionService;
     private beans: BeanCollection;
 
     private nextId = 0;
@@ -68,7 +64,7 @@ export class ClientSideNodeManager {
         gos: GridOptionsService,
         eventService: EventService,
         funcColsService: FuncColsService,
-        selectionService: ISelectionService,
+        selectionService: ISelectionService | undefined,
         beans: BeanCollection
     ) {
         this.rootNode = rootNode;
@@ -215,7 +211,7 @@ export class ClientSideNodeManager {
     private updateSelection(nodesToUnselect: RowNode[], source: SelectionEventSourceType): void {
         const selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
-            this.selectionService.setNodesSelected({
+            this.selectionService?.setNodesSelected({
                 newValue: false,
                 nodes: nodesToUnselect,
                 suppressFinishActions: true,
@@ -227,7 +223,7 @@ export class ClientSideNodeManager {
         // a new node was inserted, so a parent that was previously selected (as all
         // children were selected) should not be tri-state (as new one unselected against
         // all other selected children).
-        this.selectionService.updateGroupsFromChildrenSelections(source);
+        this.selectionService?.updateGroupsFromChildrenSelections(source);
 
         if (selectionChanged) {
             this.eventService.dispatchEvent({
@@ -467,7 +463,7 @@ export class ClientSideNodeManager {
             }
 
             if (setExpanded) {
-                const rowGroupColumns = this.funcColsService.getRowGroupColumns();
+                const rowGroupColumns = this.funcColsService.rowGroupCols;
                 const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
 
                 // need to take row group into account when determining level

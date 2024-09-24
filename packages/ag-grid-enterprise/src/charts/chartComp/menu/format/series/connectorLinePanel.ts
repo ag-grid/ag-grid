@@ -1,13 +1,13 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
-import type { AgGroupComponentParams } from '../../../../../main';
-import { AgGroupComponentSelector } from '../../../../../main';
 
-import { AgColorPickerSelector } from '../../../../../charts-widgets/agColorPicker';
-import type { AgSliderParams } from '../../../../../charts-widgets/agSlider';
-import { AgSliderSelector } from '../../../../../charts-widgets/agSlider';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import { AgGroupComponentSelector  } from '../../../../../widgets/agGroupComponent';
+import type {AgGroupComponentParams} from '../../../../../widgets/agGroupComponent';
+import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
+import type { AgSliderParams } from '../../../../widgets/agSlider';
+import { AgSliderSelector } from '../../../../widgets/agSlider';
 
 export class ConnectorLinePanel extends Component {
     private chartTranslationService: ChartTranslationService;

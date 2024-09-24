@@ -4,8 +4,11 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import type { CellPosition, CellPositionUtils } from '../entities/cellPositionUtils';
-import type { RowPosition, RowPositionUtils } from '../entities/rowPositionUtils';
+import { _areCellsEqual } from '../entities/cellPositionUtils';
+import type { CellPosition } from '../interfaces/iCellPosition';
+import { _isSameRow  } from '../entities/rowPositionUtils';
+import type {RowPositionUtils} from '../entities/rowPositionUtils';
+import type { RowPosition } from '../interfaces/iRowPosition';
 import type { CellValueChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
@@ -19,7 +22,6 @@ export class UndoRedoService extends BeanStub implements NamedBean {
 
     private focusService: FocusService;
     private ctrlsService: CtrlsService;
-    private cellPositionUtils: CellPositionUtils;
     private rowPositionUtils: RowPositionUtils;
     private columnModel: ColumnModel;
     private rangeService?: IRangeService;
@@ -27,7 +29,6 @@ export class UndoRedoService extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.focusService = beans.focusService;
         this.ctrlsService = beans.ctrlsService;
-        this.cellPositionUtils = beans.cellPositionUtils;
         this.rowPositionUtils = beans.rowPositionUtils;
         this.columnModel = beans.columnModel;
         this.rangeService = beans.rangeService;
@@ -90,9 +91,9 @@ export class UndoRedoService extends BeanStub implements NamedBean {
     private onCellValueChanged = (event: CellValueChangedEvent): void => {
         const eventCell: CellPosition = { column: event.column, rowIndex: event.rowIndex!, rowPinned: event.rowPinned };
         const isCellEditing =
-            this.activeCellEdit !== null && this.cellPositionUtils.equals(this.activeCellEdit, eventCell);
+            this.activeCellEdit !== null && _areCellsEqual(this.activeCellEdit, eventCell);
         const isRowEditing =
-            this.activeRowEdit !== null && this.rowPositionUtils.sameRow(this.activeRowEdit, eventCell);
+            this.activeRowEdit !== null && _isSameRow(this.activeRowEdit, eventCell);
 
         const shouldCaptureAction = isCellEditing || isRowEditing || this.isPasting || this.isRangeInAction;
 

@@ -1,5 +1,4 @@
-import { _utf8_encode } from '../../main';
-
+import { _utf8_encode } from '../../utils/string';
 import { deflateLocalFile } from './compress';
 import { convertDate, convertDecToHex, convertTime } from './convert';
 import { getCrcFromCrc32Table } from './crcTable';

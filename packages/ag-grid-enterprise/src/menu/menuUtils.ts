@@ -9,7 +9,7 @@ import type {
     VisibleColsService,
 } from 'ag-grid-community';
 import { BeanStub, _getActiveDomElement, _isNothingFocused, _isVisible, _last } from 'ag-grid-community';
-import type { CloseMenuEvent } from '../main';
+import type { CloseMenuEvent } from '../widgets/agMenuItemComponent';
 
 export interface MenuRestoreFocusParams {
     column: AgColumn | undefined;
@@ -129,7 +129,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
 
         // DO NOT REMOVE `await` from the statement below
         // even though `getAllCols` is a synchronous method, we use `await` to make it async
-        const isColumnStillVisible = await this.visibleColsService.getAllCols().some((col) => col === column);
+        const isColumnStillVisible = await this.visibleColsService.allCols.some((col) => col === column);
 
         if (column && !column.isAlive()) {
             return;
@@ -147,7 +147,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
         // if the focusEl is no longer in the DOM, we try to focus
         // the header that is closest to the previous header position
         else if (headerPosition && columnIndex !== -1) {
-            const allColumns = this.visibleColsService.getAllCols();
+            const allColumns = this.visibleColsService.allCols;
             const columnToFocus = allColumns[columnIndex] || _last(allColumns);
 
             if (columnToFocus) {

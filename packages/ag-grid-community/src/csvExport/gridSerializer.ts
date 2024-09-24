@@ -1,35 +1,26 @@
-import type {
-    AgColumn,
-    AgColumnGroup,
-    BeanCollection,
-    ColumnModel,
-    ColumnNameService,
-    ExportParams,
-    IClientSideRowModel,
-    IRowModel,
-    ISelectionService,
-    IServerSideRowModel,
-    NamedBean,
-    PinnedRowModel,
-    ProcessGroupHeaderForExportParams,
-    RowNode,
-    RowNodeSorter,
-    ShouldRowBeSkippedParams,
-    SortController,
-    VisibleColsService,
-} from '../main';
-import {
-    BeanStub,
-    GroupInstanceIdCreator,
-    _compose,
-    _isClientSideRowModel,
-    _isServerSideRowModel,
-    _last,
-    isColumnControlsCol,
-    isColumnGroup,
-    isColumnGroupAutoCol,
-} from '../main';
-
+import type { ColumnModel } from '../columns/columnModel';
+import type { ColumnNameService } from '../columns/columnNameService';
+import { isColumnGroupAutoCol, isColumnControlsCol } from '../columns/columnUtils';
+import { GroupInstanceIdCreator } from '../columns/groupInstanceIdCreator';
+import type { VisibleColsService } from '../columns/visibleColsService';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup} from '../entities/agColumnGroup';
+import { isColumnGroup } from '../entities/agColumnGroup';
+import type { RowNode } from '../entities/rowNode';
+import { _isClientSideRowModel, _isServerSideRowModel } from '../gridOptionsUtils';
+import type { ProcessGroupHeaderForExportParams, ExportParams, ShouldRowBeSkippedParams } from '../interfaces/exportParams';
+import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
+import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import type { RowNodeSorter } from '../sort/rowNodeSorter';
+import type { SortController } from '../sort/sortController';
+import { _last } from '../utils/array';
+import { _compose } from '../utils/function';
 import type { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from './interfaces';
 
 type ProcessGroupHeaderCallback = (params: ProcessGroupHeaderForExportParams) => string;
@@ -47,10 +38,10 @@ export class GridSerializer extends BeanStub implements NamedBean {
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
     private rowModel: IRowModel;
-    private pinnedRowModel: PinnedRowModel;
-    private selectionService: ISelectionService;
-    private rowNodeSorter: RowNodeSorter;
-    private sortController: SortController;
+    private pinnedRowModel?: PinnedRowModel;
+    private selectionService?: ISelectionService;
+    private rowNodeSorter?: RowNodeSorter;
+    private sortController?: SortController;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleColsService = beans.visibleColsService;
@@ -228,10 +219,10 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     // only pinnedTop rows, other models are processed by `processRows` and `processPinnedBottomsRows`
                     .filter((position) => position.rowPinned === 'top')
                     .sort((a, b) => a.rowIndex - b.rowIndex)
-                    .map((position) => this.pinnedRowModel.getPinnedTopRow(position.rowIndex))
+                    .map((position) => this.pinnedRowModel?.getPinnedTopRow(position.rowIndex))
                     .forEach(processRow);
             } else {
-                this.pinnedRowModel.forEachPinnedRow('top', processRow);
+                this.pinnedRowModel?.forEachPinnedRow('top', processRow);
             }
             return gridSerializingSession;
         };
@@ -273,7 +264,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
                 // onlySelectedNonStandardModel: if user wants selected in non standard row model
                 // (eg viewport) then again RowModel cannot be used, so need to use selected instead.
                 if (params.onlySelectedAllPages || onlySelectedNonStandardModel) {
-                    const selectedNodes = this.selectionService.getSelectedNodes();
+                    const selectedNodes = this.selectionService?.getSelectedNodes() ?? [];
                     this.replicateSortedOrder(selectedNodes);
                     // serialize each node
                     selectedNodes.forEach(processRow);
@@ -297,6 +288,9 @@ export class GridSerializer extends BeanStub implements NamedBean {
     }
 
     private replicateSortedOrder(rows: RowNode[]) {
+        if (!this.sortController || !this.rowNodeSorter) {
+            return;
+        }
         const sortOptions = this.sortController.getSortOptions();
         const compareNodes = (rowA: RowNode, rowB: RowNode): number => {
             if (rowA.rowIndex != null && rowB.rowIndex != null) {
@@ -308,7 +302,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
             // if the level is the same, compare these nodes, or their parents
             if (rowA.level === rowB.level) {
                 if (rowA.parent?.id === rowB.parent?.id) {
-                    return this.rowNodeSorter.compareRowNodes(
+                    return this.rowNodeSorter!.compareRowNodes(
                         sortOptions,
                         {
                             rowNode: rowA,
@@ -347,10 +341,10 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     // only pinnedBottom rows, other models are processed by `processRows` and `processPinnedTopRows`
                     .filter((position) => position.rowPinned === 'bottom')
                     .sort((a, b) => a.rowIndex - b.rowIndex)
-                    .map((position) => this.pinnedRowModel.getPinnedBottomRow(position.rowIndex))
+                    .map((position) => this.pinnedRowModel?.getPinnedBottomRow(position.rowIndex))
                     .forEach(processRow);
             } else {
-                this.pinnedRowModel.forEachPinnedRow('bottom', processRow);
+                this.pinnedRowModel?.forEachPinnedRow('bottom', processRow);
             }
             return gridSerializingSession;
         };
@@ -374,7 +368,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         if (allColumns && !isPivotMode) {
             columnsToExport = this.columnModel.getCols();
         } else {
-            columnsToExport = this.visibleColsService.getAllCols();
+            columnsToExport = this.visibleColsService.allCols;
         }
 
         if (skipRowGroups && !isTreeData) {

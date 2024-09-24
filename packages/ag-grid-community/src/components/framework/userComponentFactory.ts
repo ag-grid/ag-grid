@@ -82,11 +82,18 @@ export interface UserCompDetails {
     newAgStackInstance: () => AgPromise<any>;
 }
 
+function doesImplementIComponent(candidate: any): boolean {
+    if (!candidate) {
+        return false;
+    }
+    return (candidate as any).prototype && 'getGui' in (candidate as any).prototype;
+}
+
 export class UserComponentFactory extends BeanStub implements NamedBean {
     beanName = 'userComponentFactory' as const;
 
     private gridOptions: GridOptions;
-    private agComponentUtils: AgComponentUtils;
+    private agComponentUtils?: AgComponentUtils;
     private componentMetadataProvider: ComponentMetadataProvider;
     private userComponentRegistry: UserComponentRegistry;
     private frameworkComponentWrapper?: FrameworkComponentWrapper;
@@ -267,8 +274,8 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         }
 
         // if we have a comp option, and it's a function, replace it with an object equivalent adaptor
-        if (jsComp && cellRenderer && !this.agComponentUtils.doesImplementIComponent(jsComp)) {
-            jsComp = this.agComponentUtils.adaptFunction(propertyName, jsComp);
+        if (jsComp && cellRenderer && !doesImplementIComponent(jsComp)) {
+            jsComp = this.agComponentUtils?.adaptFunction(propertyName, jsComp);
         }
 
         if (!jsComp && !fwComp) {
@@ -326,7 +333,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
 
         // there are two types of js comps, class based and func based. we can only check for
         // class based, by checking if getGui() exists. no way to differentiate js func based vs eg react func based
-        // const isJsClassComp = (comp: any) => this.agComponentUtils.doesImplementIComponent(comp);
+        // const isJsClassComp = (comp: any) => doesImplementIComponent(comp);
         // const fwActive = this.frameworkComponentWrapper != null;
 
         // pull from defObject if available

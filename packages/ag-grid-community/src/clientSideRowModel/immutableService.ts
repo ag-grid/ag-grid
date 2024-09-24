@@ -1,28 +1,22 @@
-import type {
-    BeanCollection,
-    IImmutableService,
-    IRowModel,
-    ISelectionService,
-    NamedBean,
-    RowDataTransaction,
-    RowNode,
-} from '../main';
-import {
-    BeanStub,
-    _errorOnce,
-    _exists,
-    _getRowIdCallback,
-    _isClientSideRowModel,
-    _iterateObject,
-} from '../main';
-
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { RowNode } from '../entities/rowNode';
+import { _isClientSideRowModel, _getRowIdCallback } from '../gridOptionsUtils';
+import type { IImmutableService } from '../interfaces/iImmutableService';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
+import { _errorOnce } from '../utils/function';
+import { _exists } from '../utils/generic';
+import { _iterateObject } from '../utils/object';
 import type { ClientSideRowModel } from './clientSideRowModel';
 
 export class ImmutableService extends BeanStub implements NamedBean, IImmutableService {
     beanName = 'immutableService' as const;
 
     private rowModel: IRowModel;
-    private selectionService: ISelectionService;
+    private selectionService?: ISelectionService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
@@ -140,7 +134,7 @@ export class ImmutableService extends BeanStub implements NamedBean, IImmutableS
         if (this.isActive()) {
             this.setRowData(rowData);
         } else {
-            this.selectionService.reset('rowDataChanged');
+            this.selectionService?.reset('rowDataChanged');
             this.clientSideRowModel.setRowData(rowData);
         }
     }

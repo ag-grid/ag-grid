@@ -1,6 +1,5 @@
-import { BeanStub } from '../main';
-import type { ExportParams } from '../main';
-
+import { BeanStub } from '../context/beanStub';
+import type { ExportParams } from '../interfaces/exportParams';
 import type { BaseCreatorBeans, GridSerializingSession } from './interfaces';
 
 export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P extends ExportParams<T>> extends BeanStub {

@@ -1,6 +1,6 @@
 import type { ApplyColumnStateParams, ColumnState } from '../columns/columnApplyStateService';
-import type { ISizeColumnsToFitParams } from '../columns/columnSizeService';
-import type { CellPosition } from '../entities/cellPositionUtils';
+import type { RowDropZoneEvents, RowDropZoneParams } from '../dragAndDrop/rowDragFeature';
+import type { CellPosition } from '../interfaces/iCellPosition';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from '../entities/colDef';
 import type { ChartRef, GridOptions } from '../entities/gridOptions';
 import type { AgPublicEventType } from '../eventTypes';
@@ -12,7 +12,6 @@ import type {
     FilterChangedEventSourceType,
     SelectionEventSourceType,
 } from '../events';
-import type { RowDropZoneEvents, RowDropZoneParams } from '../gridBodyComp/rowDragFeature';
 import type {
     ChartDownloadParams,
     ChartModel,
@@ -27,6 +26,7 @@ import type {
 import type { CellRange, CellRangeParams } from '../interfaces/IRangeService';
 import type { ServerSideGroupLevelState } from '../interfaces/IServerSideStore';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
+import type { ISizeColumnsToFitParams } from '../interfaces/autoSize';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState } from '../interfaces/gridState';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
@@ -481,14 +481,7 @@ export interface _SsrmInfiniteSharedGridApi {
     isLastRowIndexKnown(): boolean | undefined;
 }
 
-export interface _ColumnGridApi<TData> {
-    getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null;
-
-    /**
-     * Returns the current column definitions.
-     */
-    getColumnDefs(): (ColDef<TData> | ColGroupDef<TData>)[] | undefined;
-
+export interface _ColumnAutosizeApi {
     /**
      * Adjusts the size of columns to fit the available horizontal space.
      *
@@ -502,6 +495,57 @@ export interface _ColumnGridApi<TData> {
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      **/
     sizeColumnsToFit(paramsOrGridWidth?: ISizeColumnsToFitParams | number): void;
+
+    /** @deprecated v31.1 autoSizeColumn(key) deprecated, please use autoSizeColumns([colKey]) instead. */
+    autoSizeColumn(key: string | ColDef | Column, skipHeader?: boolean): void;
+
+    /**
+     * Auto-sizes columns based on their contents. If inferring cell data types with custom column types
+     * and row data is initially empty or yet to be set,
+     * the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     */
+    autoSizeColumns(keys: (string | ColDef | Column)[], skipHeader?: boolean): void;
+
+    /**
+     * Calls `autoSizeColumns` on all displayed columns. If inferring cell data types with custom column types
+     * and row data is initially empty or yet to be set,
+     * the column sizing will happen asynchronously when row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
+     */
+    autoSizeAllColumns(skipHeader?: boolean): void;
+}
+
+export interface _ColumnResizeApi {
+    /** @deprecated v31.1 setColumnWidths(key, newWidth) deprecated, please use setColumnWidths( [{key: newWidth}] ) instead. */
+    setColumnWidth(key: string | ColDef | Column, newWidth: number, finished?: boolean, source?: ColumnEventType): void;
+
+    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
+    setColumnWidths(
+        columnWidths: { key: string | ColDef | Column; newWidth: number }[],
+        finished?: boolean,
+        source?: ColumnEventType
+    ): void;
+}
+
+export interface _ColumnMoveApi {
+    /** @deprecated v31.1 moveColumn(key, toIndex) deprecated, please use moveColumns([key], toIndex) instead. */
+    moveColumn(key: string | ColDef | Column, toIndex: number): void;
+
+    /** Moves the column at `fromIdex` to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
+    moveColumnByIndex(fromIndex: number, toIndex: number): void;
+
+    /** Moves columns to `toIndex`. The columns are first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
+    moveColumns(columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number): void;
+}
+
+export interface _ColumnGridApi<TData> {
+    getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null;
+
+    /**
+     * Returns the current column definitions.
+     */
+    getColumnDefs(): (ColDef<TData> | ColGroupDef<TData>)[] | undefined;
 
     /** Call this if you want to open or close a column group. */
     setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void;
@@ -593,25 +637,6 @@ export interface _ColumnGridApi<TData> {
     /** Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed. */
     getAllDisplayedVirtualColumns(): Column[];
 
-    /** @deprecated v31.1 moveColumn(key, toIndex) deprecated, please use moveColumns([key], toIndex) instead. */
-    moveColumn(key: string | ColDef | Column, toIndex: number): void;
-
-    /** Moves the column at `fromIdex` to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
-    moveColumnByIndex(fromIndex: number, toIndex: number): void;
-
-    /** Moves columns to `toIndex`. The columns are first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
-    moveColumns(columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number): void;
-
-    /** @deprecated v31.1 setColumnWidths(key, newWidth) deprecated, please use setColumnWidths( [{key: newWidth}] ) instead. */
-    setColumnWidth(key: string | ColDef | Column, newWidth: number, finished?: boolean, source?: ColumnEventType): void;
-
-    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
-    setColumnWidths(
-        columnWidths: { key: string | ColDef | Column; newWidth: number }[],
-        finished?: boolean,
-        source?: ColumnEventType
-    ): void;
-
     /** Same as `getAllDisplayedColumnGroups` but just for the pinned left portion of the grid. */
     getLeftDisplayedColumnGroups(): (Column | ColumnGroup)[];
 
@@ -623,25 +648,6 @@ export interface _ColumnGridApi<TData> {
 
     /** Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom. */
     getAllDisplayedColumnGroups(): (Column | ColumnGroup)[] | null;
-
-    /** @deprecated v31.1 autoSizeColumn(key) deprecated, please use autoSizeColumns([colKey]) instead. */
-    autoSizeColumn(key: string | ColDef | Column, skipHeader?: boolean): void;
-
-    /**
-     * Auto-sizes columns based on their contents. If inferring cell data types with custom column types
-     * and row data is initially empty or yet to be set,
-     * the column sizing will happen asynchronously when row data is added.
-     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
-     */
-    autoSizeColumns(keys: (string | ColDef | Column)[], skipHeader?: boolean): void;
-
-    /**
-     * Calls `autoSizeColumns` on all displayed columns. If inferring cell data types with custom column types
-     * and row data is initially empty or yet to be set,
-     * the column sizing will happen asynchronously when row data is added.
-     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
-     */
-    autoSizeAllColumns(skipHeader?: boolean): void;
 }
 
 export interface _DragGridApi {
@@ -652,7 +658,7 @@ export interface _DragGridApi {
     removeRowDropZone(params: RowDropZoneParams): void;
 
     /** Returns the `RowDropZoneParams` to be used by another grid's `addRowDropZone` method. */
-    getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams;
+    getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams | undefined;
 }
 
 export interface _EditGridApi<TData> {
@@ -1210,6 +1216,9 @@ export interface _CoreModuleGridApi<TData>
         _PinnedRowGridApi,
         _RenderGridApi<TData>,
         _DragGridApi,
+        _ColumnAutosizeApi,
+        _ColumnResizeApi,
+        _ColumnMoveApi,
         _ColumnGridApi<TData>,
         _DragGridApi,
         _EditGridApi<TData>,

@@ -2,16 +2,22 @@ import type {
     BeanCollection,
     CellCtrl,
     CellPosition,
-    CellPositionUtils,
     CellRange,
     CtrlsService,
     DragService,
     ISelectionHandle,
     MouseEventService,
     RowPosition,
-    RowPositionUtils,
 } from 'ag-grid-community';
-import { Component, SelectionHandleType, _isVisible, _last, _setDisplayed } from 'ag-grid-community';
+import {
+    Component,
+    SelectionHandleType,
+    _areCellsEqual,
+    _isRowBefore,
+    _isVisible,
+    _last,
+    _setDisplayed
+} from 'ag-grid-community';
 
 import type { RangeService } from './rangeService';
 
@@ -19,16 +25,12 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     protected dragService: DragService;
     protected rangeService: RangeService;
     protected mouseEventService: MouseEventService;
-    protected rowPositionUtils: RowPositionUtils;
-    protected cellPositionUtils: CellPositionUtils;
     protected ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection) {
-        this.dragService = beans.dragService;
+        this.dragService = beans.dragService!;
         this.rangeService = beans.rangeService as RangeService;
         this.mouseEventService = beans.mouseEventService;
-        this.rowPositionUtils = beans.rowPositionUtils;
-        this.cellPositionUtils = beans.cellPositionUtils;
         this.ctrlsService = beans.ctrlsService;
     }
 
@@ -142,7 +144,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     protected updateValuesOnMove(e: MouseEvent) {
         const cell = this.mouseEventService.getCellPositionForEvent(e);
 
-        if (!cell || (this.lastCellHovered && this.cellPositionUtils.equals(cell, this.lastCellHovered))) {
+        if (!cell || (this.lastCellHovered && _areCellsEqual(cell, this.lastCellHovered))) {
             return;
         }
 
@@ -173,7 +175,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         const end = cellRange.endRow;
 
         if (start && end) {
-            const isBefore = this.rowPositionUtils.before(end, start);
+            const isBefore = _isRowBefore(end, start);
 
             if (isBefore) {
                 this.setRangeStartRow(end);

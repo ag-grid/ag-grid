@@ -47,9 +47,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private blockUtils: BlockUtils;
     private funcColsService: FuncColsService;
     private rowNodeBlockLoader: RowNodeBlockLoader;
-    private rowNodeSorter: RowNodeSorter;
-    private sortController: SortController;
-    private selectionService: ISelectionService;
+    private rowNodeSorter?: RowNodeSorter;
+    private sortController?: SortController;
+    private selectionService?: ISelectionService;
     private nodeManager: NodeManager;
     private filterManager?: FilterManager;
     private transactionManager: IServerSideTransactionManager;
@@ -117,7 +117,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         if (!this.usingTreeData && this.groupLevel) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field!;
-            this.rowGroupColumn = this.funcColsService.getRowGroupColumns()[this.level];
+            this.rowGroupColumn = this.funcColsService.rowGroupCols[this.level];
         }
 
         let initialRowCount = 1;
@@ -351,9 +351,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     private sortRowNodes(): void {
         const serverIsSorting =
             this.storeUtils.isServerSideSortAllLevels() || this.storeUtils.isServerSideSortOnServer();
-        const sortOptions = this.sortController.getSortOptions();
+        const sortOptions = this.sortController?.getSortOptions();
         const noSortApplied = !sortOptions || sortOptions.length == 0;
-        if (serverIsSorting || noSortApplied) {
+        if (serverIsSorting || noSortApplied || !this.rowNodeSorter) {
             this.nodesAfterSort = this.nodesAfterFilter;
             return;
         }
@@ -638,6 +638,9 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private updateSelection(nodesToUnselect: RowNode[]): void {
+        if (!this.selectionService) {
+            return;
+        }
         const selectionChanged = nodesToUnselect.length > 0;
         if (selectionChanged) {
             this.selectionService.setNodesSelected({

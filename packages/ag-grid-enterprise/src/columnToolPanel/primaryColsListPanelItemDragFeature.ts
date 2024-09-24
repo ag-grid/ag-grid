@@ -7,15 +7,16 @@ import type {
     ColumnPanelItemDragStartEvent,
 } from 'ag-grid-community';
 import { BeanStub, DragSourceType, isProvidedColumnGroup } from 'ag-grid-community';
-import { VirtualListDragFeature } from '../main';
-import type { VirtualList, VirtualListDragItem } from '../main';
 
 import type { AgPrimaryColsList } from './agPrimaryColsList';
 import type { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
+import type { VirtualListDragItem } from '../features/iVirtualListDragFeature';
+import { VirtualListDragFeature } from '../features/virtualListDragFeature';
+import type { VirtualList } from '../widgets/virtualList';
 
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
-    private columnMoveService: ColumnMoveService;
+    private columnMoveService?: ColumnMoveService;
     private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
@@ -115,7 +116,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         });
 
         if (targetIndex != null) {
-            this.columnMoveService.moveColumns(currentColumns, targetIndex, 'toolPanelUi');
+            this.columnMoveService?.moveColumns(currentColumns, targetIndex, 'toolPanelUi');
         }
     }
 

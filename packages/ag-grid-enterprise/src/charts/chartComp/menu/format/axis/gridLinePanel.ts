@@ -1,16 +1,16 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
-import type { AgGroupComponentParams } from '../../../../../main';
-import { AgGroupComponentSelector } from '../../../../../main';
 import type { AgAxisGridLineOptions } from 'ag-charts-community';
 
-import type { AgColorPickerParams } from '../../../../../charts-widgets/agColorPicker';
-import { AgColorPickerSelector } from '../../../../../charts-widgets/agColorPicker';
-import type { AgSliderParams } from '../../../../../charts-widgets/agSlider';
-import { AgSliderSelector } from '../../../../../charts-widgets/agSlider';
 import type { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
+import type { AgGroupComponentParams} from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import type { AgColorPickerParams } from '../../../../widgets/agColorPicker';
+import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
+import type { AgSliderParams } from '../../../../widgets/agSlider';
+import { AgSliderSelector } from '../../../../widgets/agSlider';
 
 export class GridLinePanel extends Component {
     private chartTranslationService: ChartTranslationService;

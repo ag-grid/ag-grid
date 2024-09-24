@@ -1,7 +1,5 @@
 import { ColumnApiModule } from '../columns/columnModule';
-import { DragApiModule } from '../dragAndDrop/dragModule';
 import { _defineModule } from '../interfaces/iModule';
-import { PinnedRowApiModule } from '../pinnedRowModel/pinnedRowModule';
 import { OverlayApiModule } from '../rendering/overlays/overlayModule';
 import { RenderApiModule } from '../rendering/renderModule';
 import { VERSION } from '../version';
@@ -15,9 +13,7 @@ import type {
     _EventGridApi,
     _KeyboardNavigationGridApi,
     _RowGridApi,
-    _RowSelectionGridApi,
     _ScrollGridApi,
-    _SortGridApi,
 } from './gridApi';
 import {
     clearFocusedCell,
@@ -49,24 +45,12 @@ import {
     setRowNodeExpanded,
 } from './rowApi';
 import {
-    deselectAll,
-    deselectAllFiltered,
-    deselectAllOnCurrentPage,
-    getSelectedNodes,
-    getSelectedRows,
-    selectAll,
-    selectAllFiltered,
-    selectAllOnCurrentPage,
-    setNodesSelected,
-} from './rowSelectionApi';
-import {
     ensureColumnVisible,
     ensureIndexVisible,
     ensureNodeVisible,
     getHorizontalPixelRange,
     getVerticalPixelRange,
 } from './scrollApi';
-import { onSortChanged } from './sortApi';
 
 export const CoreApiModule = _defineModule<_CoreGridApi>({
     version: VERSION,
@@ -78,22 +62,6 @@ export const CoreApiModule = _defineModule<_CoreGridApi>({
         getGridOption,
         setGridOption,
         updateGridOptions,
-    },
-});
-
-export const RowSelectionApiModule = _defineModule<_RowSelectionGridApi>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/row-selection-api',
-    apiFunctions: {
-        setNodesSelected,
-        selectAll,
-        deselectAll,
-        selectAllFiltered,
-        deselectAllFiltered,
-        selectAllOnCurrentPage,
-        deselectAllOnCurrentPage,
-        getSelectedNodes,
-        getSelectedRows,
     },
 });
 
@@ -174,24 +142,13 @@ export const CommunityMenuApiModule = _defineModule<_CommunityMenuGridApi>({
     },
 });
 
-export const SortApiModule = _defineModule<_SortGridApi>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/sort-api',
-    apiFunctions: {
-        onSortChanged,
-    },
-});
-
 export const CommunityApiModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/api',
     dependantModules: [
         CoreApiModule,
-        PinnedRowApiModule,
-        RowSelectionApiModule,
         ColumnApiModule,
         RowApiModule,
-        DragApiModule,
         ScrollApiModule,
         OverlayApiModule,
         KeyboardNavigationApiModule,
@@ -199,6 +156,5 @@ export const CommunityApiModule = _defineModule({
         RenderApiModule,
         CellApiModule,
         CommunityMenuApiModule,
-        SortApiModule,
     ],
 });

@@ -1,25 +1,16 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection } from '../../context/context';
-import type { IComponent } from '../../interfaces/iComponent';
-import type { AgComponentUtils } from './agComponentUtils';
 
 export interface ComponentMetadata {
     mandatoryMethodList: string[];
     optionalMethodList: string[];
-    functionAdapter?: (callback: any) => { new (): IComponent<any> };
+    adaptFunction?: boolean;
 }
 
 export class ComponentMetadataProvider extends BeanStub implements NamedBean {
     beanName = 'componentMetadataProvider' as const;
 
     private componentMetaData: { [key: string]: ComponentMetadata };
-
-    private agComponentUtils: AgComponentUtils;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.agComponentUtils = beans.agComponentUtils;
-    }
 
     public postConstruct() {
         this.componentMetaData = {
@@ -37,7 +28,7 @@ export class ComponentMetadataProvider extends BeanStub implements NamedBean {
             detailCellRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['refresh'],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils),
+                adaptFunction: true,
             },
             dragAndDropImageComponent: {
                 mandatoryMethodList: ['setIcon', 'setLabel'],
@@ -54,7 +45,7 @@ export class ComponentMetadataProvider extends BeanStub implements NamedBean {
             loadingCellRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: [],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils),
+                adaptFunction: true,
             },
             loadingOverlayComponent: {
                 mandatoryMethodList: [],
@@ -71,7 +62,7 @@ export class ComponentMetadataProvider extends BeanStub implements NamedBean {
             cellRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['refresh', 'afterGuiAttached'],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils),
+                adaptFunction: true,
             },
             cellEditor: {
                 mandatoryMethodList: ['getValue'],
@@ -89,17 +80,17 @@ export class ComponentMetadataProvider extends BeanStub implements NamedBean {
             innerRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['afterGuiAttached'],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils),
+                adaptFunction: true,
             },
             fullWidthCellRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['refresh', 'afterGuiAttached'],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils),
+                adaptFunction: true,
             },
             groupRowRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['afterGuiAttached'],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils),
+                adaptFunction: true,
             },
             filter: {
                 mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],

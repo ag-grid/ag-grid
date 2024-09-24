@@ -1,5 +1,5 @@
-import { createPart } from '../../../Part';
-import type { ColorValue, ImageValue, LengthValue } from '../../../theme-types';
+import { createPart } from '../../Part';
+import type { ColorValue, ImageValue, LengthValue } from '../../theme-types';
 import { checkboxStyleDefaultCSS } from './GENERATED-checkbox-style-default';
 
 export type CheckboxStyleParams = {
