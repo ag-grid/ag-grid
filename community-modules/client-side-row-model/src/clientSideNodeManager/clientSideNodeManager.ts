@@ -384,7 +384,7 @@ export class ClientSideNodeManager<TData>
         });
     }
 
-    protected setMasterForRow(rowNode: RowNode<TData>, data: TData, level: number, canExpand: boolean): void {
+    private setMasterForRow(rowNode: RowNode<TData>, data: TData, level: number, canExpand: boolean): void {
         const masterDetail = this.gos.get('masterDetail');
         // this is the default, for when doing grid data
         if (masterDetail) {
