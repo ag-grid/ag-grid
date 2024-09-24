@@ -8,11 +8,11 @@
       "executor": "nx:noop",
       "inputs": [],
       "outputs": [],
-      "dependsOn": ["build:types", "build:package", "build:copy-styles"]
+      "dependsOn": ["build:types", "build:package", "build:copy-styles", "build:umd"]
     },
     "build:umd": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build", "build:copy-styles"],
+      "dependsOn": ["^build", "build:copy-styles", "build:package"],
       "inputs": [
         "tsDefaults",
         {
@@ -112,7 +112,11 @@
       "options": {
         "cwd": "{projectRoot}",
         "parallel": false,
-        "commands": ["mkdir -p ../../dist/artifacts/{projectRoot}", "yarn pack -f ../../dist/artifacts/{projectRoot}.tgz", "rm -rf ../../dist/artifacts/{projectRoot}"]
+        "commands": [
+          "mkdir -p ../../dist/artifacts/{projectRoot}",
+          "yarn pack -f ../../dist/artifacts/{projectRoot}.tgz",
+          "rm -rf ../../dist/artifacts/{projectRoot}"
+        ]
       }
     },
     "pack:extract": {
@@ -129,7 +133,9 @@
       "dependsOn": ["pack:extract"],
       "inputs": ["allOutputs"],
       "options": {
-        "commands": ["node scripts/package/sanity-check-package.js --allowed-ext css scss -- dist/artifacts/contents/{projectRoot}/package"]
+        "commands": [
+          "node scripts/package/sanity-check-package.js --allowed-ext css scss -- dist/artifacts/contents/{projectRoot}/package"
+        ]
       },
       "configurations": {
         "production": {},
