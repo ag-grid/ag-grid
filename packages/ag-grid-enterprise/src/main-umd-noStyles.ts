@@ -15,7 +15,6 @@ import {
     ColumnsToolPanelModule,
     ExcelExportModule,
     FiltersToolPanelModule,
-    GridChartsModule,
     MasterDetailModule,
     MenuModule,
     MultiFilterModule,
@@ -30,8 +29,9 @@ import {
     ViewportRowModelModule,
 } from './main';
 
+import { GridChartsModule } from './charts/main'
+
 ModuleRegistry.__registerModules(
-    // [CommunityFeaturesModule, ClientSideRowModelModule],
     [
         CommunityFeaturesModule,
         ClientSideRowModelModule,

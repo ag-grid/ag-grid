@@ -44,7 +44,7 @@ import {
     ViewportRowModelModule,
 } from './main';
 
-import { GridChartsModule } from './charts/main'
+import { GridChartsModule } from './charts-enterprise/main'
 
 ModuleRegistry.__registerModules(
     [
@@ -76,4 +76,5 @@ ModuleRegistry.__registerModules(
 );
 
 export * from 'ag-grid-community';
+export * from './charts-enterprise/main'
 export * from './main';
