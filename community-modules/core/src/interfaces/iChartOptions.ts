@@ -125,8 +125,10 @@ export type ChartType =
     | 'areaColumnCombo'
     | 'customCombo';
 
+export type ChartTypeExCombo = Exclude<ChartType, 'columnLineCombo' | 'areaColumnCombo' | 'customCombo'>;
+
 export class ChartMappings {
-    public static readonly CHART_TYPE_TO_SERIES_TYPE: Partial<Record<ChartType, string>> = {
+    public static readonly CHART_TYPE_TO_SERIES_TYPE: Record<ChartTypeExCombo, string> = {
         column: 'bar',
         groupedColumn: 'bar',
         stackedColumn: 'bar',
