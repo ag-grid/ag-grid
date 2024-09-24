@@ -157,7 +157,7 @@ export class GridHeaderCtrl extends BeanStub {
         if (
             this.headerNavigationService.navigateHorizontally(direction, true, e) ||
             (!backwards && this.focusService.focusOverlay(false)) ||
-            this.focusService.focusNextGridCoreContainer(backwards)
+            this.focusService.focusNextGridCoreContainer(backwards, true)
         ) {
             // preventDefault so that the tab key doesn't cause focus to get lost
             e.preventDefault();
