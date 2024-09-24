@@ -1,0 +1,32 @@
+/*
+  Custom Theme
+*/
+
+.ag-theme-quartz, .ag-theme-quartz-dark {
+  --ag-checkbox-checked-color: rgb(126, 46, 132);
+}
+
+/*
+  Row Styles
+*/
+
+.row {
+  font-family: 'Courier New';
+}
+
+.successful-mission:hover {
+  background: green;
+}
+
+.unsucessful-mission:hover {
+  background: red;
+}
+
+/*
+  Cell Styles
+*/
+
+.mission-cell {
+  font-weight: 900;
+  cursor: pointer;
+}

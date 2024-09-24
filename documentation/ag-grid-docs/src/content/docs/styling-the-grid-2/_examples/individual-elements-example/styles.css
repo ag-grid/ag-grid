@@ -1,0 +1,20 @@
+.ag-theme-quartz,
+.ag-theme-quartz-dark {
+    /* Default font size for text in the grid */
+    --ag-font-size: 12px;
+    /* Colour of text and icons in the header */
+    --ag-header-foreground-color: rgb(115, 121, 122);
+    /* Background colour of selected rows in the grid and in dropdown menus */
+    --ag-selected-row-background-color: rgba(187, 139, 76, 0.45);
+    /* colour of the checkbox-unchecked icon that is shown in an unchecked checkbox */
+    --ag-checkbox-unchecked-color: rgb(81, 145, 193);
+    /* The main control for affecting how tightly data and UI elements are packed together */
+    --ag-grid-size: 10px;
+}
+
+.ag-header-cell {
+    font-weight: 600;
+    font-family: 'IBM Plex Sans', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+}
