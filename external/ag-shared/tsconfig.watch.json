@@ -1,8 +1,8 @@
 {
-    "extends": "./tsconfig.lib.json",
-    "compilerOptions": {
-        "strict": true,
-        "noUnusedParameters": false,
-        "noUnusedLocals": false
-    }
+  "extends": "./tsconfig.lib.json",
+  "compilerOptions": {
+    "strict": true,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false
+  }
 }
