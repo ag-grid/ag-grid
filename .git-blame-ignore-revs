@@ -10,3 +10,6 @@ a83be9b0727eedc7745e285521cfc6669178bf74
 # ESLint fix + prettier
 15ed290a986446ed0baebf3ed42ffe3dfa972507
 7c7c14db81b9e1a6899da269f6da4a631d14a0ea
+
+# format after new branch (bundle size reduction) creation and migration
+28c3a6ec3dd3dc4e2f3e628e7d42d122b2e3bdad
