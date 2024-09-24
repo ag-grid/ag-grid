@@ -176,6 +176,7 @@ export {
     ISetFilterTreeListTooltipParams,
 } from './interfaces/iSetFilter';
 export type { FilterManager } from './filter/filterManager';
+export type { FilterValueService } from './filter/filterValueService';
 export { FilterRequestSource } from './filter/iColumnFilter';
 export {
     IMultiFilter,
@@ -994,6 +995,7 @@ export {
     FilterCoreModule as _FilterCoreModule,
     FloatingFilterModule as _FloatingFilterModule,
     ReadOnlyFloatingFilterModule as _ReadOnlyFloatingFilterModule,
+    FilterValueModule,
 } from './filter/filterModule';
 export { EditCoreModule as _EditCoreModule } from './edit/editModule';
 export { StickyRowModule } from './rendering/features/stickyRowModule';

@@ -285,7 +285,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             if (withinInitialRange) {
                 currentValue = this.valueService.getValue(col, rowNode);
                 initialValues.push(currentValue);
-                initialNonAggregatedValues.push(this.valueService.getValue(col, rowNode, undefined, true));
+                initialNonAggregatedValues.push(this.valueService.getValue(col, rowNode, true));
                 initialFormattedValues.push(this.valueService.formatValue(col, rowNode, currentValue));
                 withinInitialRange = updateInitialSet();
             } else {

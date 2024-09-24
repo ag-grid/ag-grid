@@ -7,6 +7,7 @@ import {
     _mergeFilterParamsWithApplicationProvidedParams,
 } from '../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
@@ -30,6 +31,7 @@ import { _cloneObject } from '../utils/object';
 import { AgPromise } from '../utils/promise';
 import type { ValueService } from '../valueService/valueService';
 import type { FilterManager } from './filterManager';
+import type { FilterValueService } from './filterValueService';
 import type { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
 import { getDefaultFloatingFilterType } from './floating/floatingFilterMapper';
 
@@ -62,7 +64,7 @@ const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = [
     'december',
 ];
 
-export class ColumnFilterService extends BeanStub {
+export class ColumnFilterService extends BeanStub implements NamedBean {
     beanName: BeanName = 'columnFilterService';
 
     private valueService: ValueService;
@@ -72,6 +74,7 @@ export class ColumnFilterService extends BeanStub {
     private rowRenderer: RowRenderer;
     private dataTypeService?: DataTypeService;
     private filterManager?: FilterManager;
+    private filterValueService: FilterValueService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueService = beans.valueService;
@@ -81,6 +84,7 @@ export class ColumnFilterService extends BeanStub {
         this.rowRenderer = beans.rowRenderer;
         this.dataTypeService = beans.dataTypeService;
         this.filterManager = beans.filterManager;
+        this.filterValueService = beans.filterValueService!;
     }
 
     private allColumnFilters = new Map<string, FilterWrapper>();
@@ -435,13 +439,13 @@ export class ColumnFilterService extends BeanStub {
     }
 
     private createValueGetter(column: AgColumn): IFilterParams['valueGetter'] {
-        return ({ node }) => this.valueService.getValue(column, node as RowNode, true);
+        return ({ node }) => this.filterValueService.getValue(column, node);
     }
 
     private createGetValue(filterColumn: AgColumn): IFilterParams['getValue'] {
         return (rowNode, column) => {
             const columnToUse = column ? this.columnModel.getCol(column) : filterColumn;
-            return columnToUse ? this.valueService.getValue(columnToUse, rowNode, true) : undefined;
+            return columnToUse ? this.filterValueService.getValue(columnToUse, rowNode) : undefined;
         };
     }
 

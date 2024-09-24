@@ -17,6 +17,7 @@ import {
 import { ColumnFilterService } from './columnFilterService';
 import { isAnyFilterPresent, onFilterChanged } from './filterApi';
 import { FilterManager } from './filterManager';
+import { FilterValueService } from './filterValueService';
 import { ReadOnlyFloatingFilter } from './floating/provided/readOnlyFloatingFilter';
 import { DateFilter } from './provided/date/dateFilter';
 import { DateFloatingFilter } from './provided/date/dateFloatingFilter';
@@ -44,11 +45,17 @@ export const FilterApiModule = _defineModule<_FilterGridApi>({
     dependantModules: [FilterCoreModule],
 });
 
+export const FilterValueModule = _defineModule({
+    version: VERSION,
+    moduleName: '@ag-grid-community/filter-value',
+    beans: [FilterValueService],
+});
+
 export const ColumnFilterModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/column-filter',
     beans: [ColumnFilterService],
-    dependantModules: [FilterCoreModule, PopupModule],
+    dependantModules: [FilterCoreModule, PopupModule, FilterValueModule],
 });
 
 export const ColumnFilterApiModule = _defineModule<_ColumnFilterGridApi>({
@@ -115,7 +122,7 @@ export const QuickFilterCoreModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/quick-filter-core',
     beans: [QuickFilterService],
-    dependantModules: [FilterCoreModule],
+    dependantModules: [FilterCoreModule, FilterValueModule],
 });
 
 export const QuickFilterApiModule = _defineModule<_QuickFilterGridApi>({

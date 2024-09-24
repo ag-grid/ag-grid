@@ -105,10 +105,10 @@ export class ValueService extends BeanStub implements NamedBean {
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
         const ignoreAggData = isOpenGroup && includeFooter;
-        return this.getValue(column, node, false, ignoreAggData);
+        return this.getValue(column, node, ignoreAggData);
     }
 
-    public getValue(column: AgColumn, rowNode?: IRowNode | null, forFilter = false, ignoreAggData = false): any {
+    public getValue(column: AgColumn, rowNode?: IRowNode | null, ignoreAggData = false): any {
         // hack - the grid is getting refreshed before this bean gets initialised, race condition.
         // really should have a way so they get initialised in the right order???
         if (!this.initialised) {
@@ -139,9 +139,7 @@ export class ValueService extends BeanStub implements NamedBean {
             rowNode.field &&
             (column.getColDef().showRowGroup === true || column.getColDef().showRowGroup === rowNode.field);
 
-        if (forFilter && colDef.filterValueGetter) {
-            result = this.executeFilterValueGetter(colDef.filterValueGetter, data, column, rowNode);
-        } else if (this.isTreeData && aggDataExists) {
+        if (this.isTreeData && aggDataExists) {
             result = rowNode.aggData[colId];
         } else if (this.isTreeData && colDef.valueGetter) {
             result = this.executeValueGetter(colDef.valueGetter, data, column, rowNode);
@@ -423,27 +421,6 @@ export class ValueService extends BeanStub implements NamedBean {
         return !valuesAreSame;
     }
 
-    private executeFilterValueGetter(
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        valueGetter: string | Function,
-        data: any,
-        column: AgColumn,
-        rowNode: IRowNode
-    ): any {
-        const params: ValueGetterParams = this.gos.addGridCommonParams({
-            data: data,
-            node: rowNode,
-            column: column,
-            colDef: column.getColDef(),
-            getValue: this.getValueCallback.bind(this, rowNode),
-        });
-
-        if (typeof valueGetter === 'function') {
-            return valueGetter(params);
-        }
-        return this.expressionService?.evaluate(valueGetter, params);
-    }
-
     private executeValueGetterWithValueCache(
         // eslint-disable-next-line @typescript-eslint/ban-types
         valueGetter: string | Function,
@@ -493,7 +470,7 @@ export class ValueService extends BeanStub implements NamedBean {
         return result;
     }
 
-    private getValueCallback(node: IRowNode, field: string | AgColumn): any {
+    public getValueCallback(node: IRowNode, field: string | AgColumn): any {
         const otherColumn = this.columnModel.getColDefCol(field);
 
         if (otherColumn) {

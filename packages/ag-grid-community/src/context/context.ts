@@ -41,6 +41,7 @@ import type { EventService } from '../eventService';
 import type { AgGlobalEventListener } from '../events';
 import type { ColumnFilterService } from '../filter/columnFilterService';
 import type { FilterManager } from '../filter/filterManager';
+import type { FilterValueService } from '../filter/filterValueService';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { FocusService } from '../focusService';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
@@ -295,6 +296,7 @@ export interface CoreBeanCollection {
     rowDragService?: RowDragService;
     stickyRowService?: StickyRowService;
     groupHideOpenParentsService?: IGroupHideOpenParentsService;
+    filterValueService?: FilterValueService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -399,6 +401,7 @@ export type BeanName =
     | 'filterManager'
     | 'filterMenuFactory'
     | 'filterStage'
+    | 'filterValueService'
     | 'flattenStage'
     | 'focusService'
     | 'funcColsService'
