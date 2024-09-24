@@ -24,7 +24,7 @@ export class MiniLine extends MiniChartWithAxes {
         _themeTemplateParameters: ThemeTemplateParameters,
         _isCustomTheme: boolean,
         data: number[][] = MiniLine.data,
-        tooltipName: ChartTranslationKey = 'stackedLineTooltip'
+        tooltipName: ChartTranslationKey = 'lineTooltip'
     ) {
         super(container, tooltipName);
 

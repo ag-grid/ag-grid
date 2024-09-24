@@ -114,10 +114,7 @@
       "inputs": [],
       "options": {
         "parallel": true,
-        "commands": [
-          "node {projectRoot}/../../external/ag-website-shared/scripts/watch/watch.js grid",
-          "nx run ag-grid-docs:dev"
-        ]
+        "commands": ["node external/ag-shared/scripts/watch/watch.js grid", "nx run ag-grid-docs:dev"]
       },
       "configurations": {
         "windows": {
