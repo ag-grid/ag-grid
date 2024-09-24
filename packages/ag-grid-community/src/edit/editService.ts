@@ -1,3 +1,4 @@
+import { _getCellEditorDetails } from '../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
@@ -33,7 +34,7 @@ export class EditService extends BeanStub implements NamedBean {
     ): boolean {
         const editorParams = this.createCellEditorParams(cellCtrl, key, cellStartedEdit);
         const colDef = cellCtrl.getColumn().getColDef();
-        const compDetails = this.userComponentFactory.getCellEditorDetails(colDef, editorParams);
+        const compDetails = _getCellEditorDetails(this.userComponentFactory, colDef, editorParams);
 
         // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
         const popup = compDetails?.popupFromSelector != null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup;
@@ -84,7 +85,7 @@ export class EditService extends BeanStub implements NamedBean {
             const { eventKey, cellStartedEdit } = cellCtrl.getEditCompDetails()!.params;
             const editorParams = this.createCellEditorParams(cellCtrl, eventKey, cellStartedEdit);
             const colDef = cellCtrl.getColumn().getColDef();
-            const compDetails = this.userComponentFactory.getCellEditorDetails(colDef, editorParams);
+            const compDetails = _getCellEditorDetails(this.userComponentFactory, colDef, editorParams);
             cellEditor.refresh(compDetails!.params);
         }
     }

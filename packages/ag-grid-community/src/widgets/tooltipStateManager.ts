@@ -1,3 +1,4 @@
+import { _getTooltipCompDetails } from '../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -288,7 +289,7 @@ export class TooltipStateManager extends BeanStub {
         // we disregard it
         const callback = this.newTooltipComponentCallback.bind(this, this.tooltipInstanceCount);
 
-        const userDetails = this.userComponentFactory.getTooltipCompDetails(params);
+        const userDetails = _getTooltipCompDetails(this.userComponentFactory, params);
         userDetails.newAgStackInstance()!.then(callback);
     }
 

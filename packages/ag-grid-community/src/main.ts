@@ -41,8 +41,14 @@ export { EmptyBean as _EmptyBean } from './components/emptyBean';
 export { ComponentSelector, AgComponentSelector, RefPlaceholder, ComponentEvent } from './widgets/component';
 
 export { UserComponentRegistry } from './components/framework/userComponentRegistry';
-export { UserComponentFactory, UserCompDetails } from './components/framework/userComponentFactory';
-export { ComponentType } from './components/framework/componentTypes';
+export { UserCompDetails, ComponentType } from './interfaces/iUserCompDetails';
+export type { UserComponentFactory } from './components/framework/userComponentFactory';
+export {
+    _getFilterDetails,
+    _getFloatingFilterCompDetails,
+    _getCellRendererDetails,
+    _getEditorRendererDetails,
+} from './components/framework/userCompUtils';
 export { _unwrapUserComp } from './components/framework/unwrapUserComp';
 
 // context

@@ -1,5 +1,10 @@
 import { setupCompBean } from '../../components/emptyBean';
-import type { UserCompDetails } from '../../components/framework/userComponentFactory';
+import {
+    _getFullWidthCellRendererDetails,
+    _getFullWidthDetailCellRendererDetails,
+    _getFullWidthGroupCellRendererDetails,
+    _getFullWidthLoadingCellRendererDetails,
+} from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
@@ -36,9 +41,16 @@ import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import { RowHighlightPosition } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
+import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { ModuleNames } from '../../modules/moduleNames';
 import { _setAriaExpanded, _setAriaRowIndex, _setAriaSelected } from '../../utils/aria';
-import { _addOrRemoveAttribute, _isElementChildOfClass, _isFocusableFormField, _isVisible, _observeResize } from '../../utils/dom';
+import {
+    _addOrRemoveAttribute,
+    _isElementChildOfClass,
+    _isFocusableFormField,
+    _isVisible,
+    _observeResize,
+} from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _executeNextVMTurn, _warnOnce } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
@@ -1214,13 +1226,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const compFactory = this.beans.userComponentFactory;
         switch (this.rowType) {
             case 'FullWidthDetail':
-                return compFactory.getFullWidthDetailCellRendererDetails(params);
+                return _getFullWidthDetailCellRendererDetails(compFactory, params);
             case 'FullWidthGroup':
-                return compFactory.getFullWidthGroupCellRendererDetails(params);
+                return _getFullWidthGroupCellRendererDetails(compFactory, params);
             case 'FullWidthLoading':
-                return compFactory.getFullWidthLoadingCellRendererDetails(params);
+                return _getFullWidthLoadingCellRendererDetails(compFactory, params);
             default:
-                return compFactory.getFullWidthCellRendererDetails(params);
+                return _getFullWidthCellRendererDetails(compFactory, params);
         }
     }
 

@@ -24,6 +24,7 @@ import {
     TabGuardComp,
     _forEachReverse,
     _getActiveDomElement,
+    _getFilterDetails,
     _isNothingFocused,
     _loadTemplate,
     _removeFromArray,
@@ -482,7 +483,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                 doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, filterInstance),
         };
 
-        const compDetails = this.userComponentFactory.getFilterDetails(filterDef, filterParams, 'agTextColumnFilter');
+        const compDetails = _getFilterDetails(this.userComponentFactory, filterDef, filterParams, 'agTextColumnFilter');
         if (!compDetails) {
             return null;
         }

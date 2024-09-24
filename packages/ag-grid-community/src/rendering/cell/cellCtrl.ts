@@ -1,5 +1,5 @@
 import { isColumnControlsCol } from '../../columns/columnUtils';
-import type { UserCompDetails } from '../../components/framework/userComponentFactory';
+import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
@@ -23,6 +23,7 @@ import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
+import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { _setAriaColIndex } from '../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../utils/dom';
@@ -377,13 +378,14 @@ export class CellCtrl extends BeanStub {
         const isSsrmLoading = this.rowNode.stub && this.rowNode.groupData?.[this.column.getId()] == null;
         if (isSsrmLoading) {
             const params = this.createCellRendererParams();
-            compDetails = this.beans.userComponentFactory.getLoadingCellRendererDetails(
+            compDetails = _getLoadingCellRendererDetails(
+                this.beans.userComponentFactory,
                 this.column.getColDef(),
                 params
             );
         } else if (this.isCellRenderer()) {
             const params = this.createCellRendererParams();
-            compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
+            compDetails = _getCellRendererDetails(this.beans.userComponentFactory, this.column.getColDef(), params);
         }
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.cellRangeFeature?.refreshHandle();

@@ -1,6 +1,6 @@
-import type { UserCompDetails } from '../components/framework/userComponentFactory';
 import type { CellRendererSelectorFunc, ColumnFunctionCallbackParams } from '../entities/colDef';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
+import type { UserCompDetails } from './iUserCompDetails';
 
 export interface FooterValueGetterFunc {
     (params: GroupCellRendererParams): any;

@@ -1,6 +1,5 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { DataTypeService } from '../columns/dataTypeService';
-import type { UserCompDetails } from '../components/framework/userComponentFactory';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -14,6 +13,7 @@ import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
+import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import { _warnOnce } from '../utils/function';
 import { _mergeDeep } from '../utils/object';
 import { AgPromise } from '../utils/promise';

@@ -1,6 +1,6 @@
 import type { ResizeFeature } from '../../../columnResize/resizeFeature';
 import { setupCompBean } from '../../../components/emptyBean';
-import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
+import { _getHeaderCompDetails } from '../../../components/framework/userCompUtils';
 import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
@@ -8,6 +8,7 @@ import type { AgColumn } from '../../../entities/agColumn';
 import type { SortDirection } from '../../../entities/colDef';
 import { _getActiveDomElement } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
+import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { SelectAllFeature } from '../../../selection/selectAllFeature';
 import type { ColumnSortState } from '../../../utils/aria';
@@ -155,7 +156,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private lookupUserCompDetails(compBean: BeanStub): UserCompDetails {
         const params = this.createParams(compBean);
         const colDef = this.column.getColDef();
-        return this.userComponentFactory.getHeaderCompDetails(colDef, params)!;
+        return _getHeaderCompDetails(this.userComponentFactory, colDef, params)!;
     }
 
     private createParams(compBean: BeanStub): IHeaderParams {

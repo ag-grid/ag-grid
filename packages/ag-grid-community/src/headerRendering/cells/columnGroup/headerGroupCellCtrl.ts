@@ -1,6 +1,6 @@
 import type { GroupResizeFeature } from '../../../columnResize/groupResizeFeature';
 import { setupCompBean } from '../../../components/emptyBean';
-import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
+import { _getHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
 import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
@@ -9,6 +9,7 @@ import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnEventType } from '../../../events';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { HeaderColumnId } from '../../../interfaces/iColumn';
+import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _last } from '../../../utils/array';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
@@ -201,7 +202,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             },
         });
 
-        const compDetails = this.userComponentFactory.getHeaderGroupCompDetails(params)!;
+        const compDetails = _getHeaderGroupCompDetails(this.userComponentFactory, params)!;
         this.comp.setUserCompDetails(compDetails);
     }
 

@@ -1,5 +1,6 @@
 import type { ColumnModel } from '../../columns/columnModel';
-import type { UserCompDetails, UserComponentFactory } from '../../components/framework/userComponentFactory';
+import { _getLoadingOverlayCompDetails, _getNoRowsOverlayCompDetails } from '../../components/framework/userCompUtils';
+import type { UserComponentFactory } from '../../components/framework/userComponentFactory';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -7,6 +8,7 @@ import type { CtrlsService } from '../../ctrlsService';
 import type { GridOptions } from '../../entities/gridOptions';
 import { _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { IRowModel } from '../../interfaces/iRowModel';
+import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _warnOnce } from '../../utils/function';
 import type { OverlayWrapperComponent } from './overlayWrapperComponent';
 
@@ -149,7 +151,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
         this.state = OverlayServiceState.Loading;
         this.showOverlay(
-            this.userComponentFactory.getLoadingOverlayCompDetails({}),
+            _getLoadingOverlayCompDetails(this.userComponentFactory, {}),
             'ag-overlay-loading-wrapper',
             'loadingOverlayComponentParams'
         );
@@ -163,7 +165,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
         this.state = OverlayServiceState.NoRows;
         this.showOverlay(
-            this.userComponentFactory.getNoRowsOverlayCompDetails({}),
+            _getNoRowsOverlayCompDetails(this.userComponentFactory, {}),
             'ag-overlay-no-rows-wrapper',
             'noRowsOverlayComponentParams'
         );

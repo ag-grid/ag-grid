@@ -1,3 +1,4 @@
+import { _getDateCompDetails } from '../../../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import type { Context } from '../../../context/context';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
@@ -26,7 +27,7 @@ export class DateCompWrapper {
         this.context = context;
         this.eParent = eParent;
 
-        const compDetails = userComponentFactory.getDateCompDetails(dateComponentParams);
+        const compDetails = _getDateCompDetails(userComponentFactory, dateComponentParams);
         const promise = compDetails.newAgStackInstance();
 
         promise!.then((dateComp) => {

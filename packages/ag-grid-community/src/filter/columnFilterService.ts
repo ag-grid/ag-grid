@@ -1,8 +1,12 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { DataTypeService } from '../columns/dataTypeService';
-import { FilterComponent } from '../components/framework/componentTypes';
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
-import type { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
+import {
+    _getFilterDetails,
+    _getFloatingFilterCompDetails,
+    _mergeFilterParamsWithApplicationProvidedParams,
+} from '../components/framework/userCompUtils';
+import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
@@ -18,6 +22,7 @@ import { _getGroupAggFiltering, _isSetFilterByDefault } from '../gridOptionsUtil
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import type { IRowModel } from '../interfaces/iRowModel';
+import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import { _warnOnce } from '../utils/function';
 import { _exists, _jsonEquals } from '../utils/generic';
@@ -524,7 +529,7 @@ export class ColumnFilterService extends BeanStub {
                 this.filterManager ? this.filterManager.doesRowPassOtherFilters(filterInstance, node) : true,
         };
 
-        const compDetails = this.userComponentFactory.getFilterDetails(colDef, params, defaultFilter);
+        const compDetails = _getFilterDetails(this.userComponentFactory, colDef, params, defaultFilter);
         if (!compDetails) {
             return { filterPromise: null, compDetails: null };
         }
@@ -655,9 +660,9 @@ export class ColumnFilterService extends BeanStub {
                     this.filterChangedCallbackFactory(filterInstance as IFilterComp, column)()
                 ),
         };
-        const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(
+        const finalFilterParams = _mergeFilterParamsWithApplicationProvidedParams(
+            this.userComponentFactory,
             colDef,
-            FilterComponent,
             filterParams
         );
 
@@ -678,7 +683,7 @@ export class ColumnFilterService extends BeanStub {
             suppressFilterButton: false, // This one might be overridden from the colDef
         };
 
-        return this.userComponentFactory.getFloatingFilterCompDetails(colDef, params, defaultFloatingFilterType);
+        return _getFloatingFilterCompDetails(this.userComponentFactory, colDef, params, defaultFloatingFilterType);
     }
 
     public getCurrentFloatingFilterParentModel(column: AgColumn): any {
