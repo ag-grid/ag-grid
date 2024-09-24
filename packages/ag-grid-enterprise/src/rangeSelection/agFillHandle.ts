@@ -13,7 +13,15 @@ import type {
     ValueService,
     VisibleColsService,
 } from 'ag-grid-community';
-import { SelectionHandleType, _getFillHandle, _isRowBefore, _isSameRow, _last, _toStringOrNull, _warnOnce } from 'ag-grid-community';
+import {
+    SelectionHandleType,
+    _getFillHandle,
+    _isRowBefore,
+    _isSameRow,
+    _last,
+    _toStringOrNull,
+    _warnOnce,
+} from 'ag-grid-community';
 
 import { AbstractSelectionHandle } from './abstractSelectionHandle';
 import { findLineByLeastSquares } from './utils';
@@ -242,10 +250,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
                 if (isVertical && column) {
                     fillValues(values, column, rowNode, () => {
-                        return !_isSameRow(
-                            currentRow!,
-                            this.isUp ? initialRangeStartRow : initialRangeEndRow
-                        );
+                        return !_isSameRow(currentRow!, this.isUp ? initialRangeStartRow : initialRangeEndRow);
                     });
                 } else if (columns) {
                     withinInitialRange = true;
@@ -571,10 +576,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
                     const cellComp = cell.getComp();
 
-                    cellComp.addOrRemoveCssClass(
-                        'ag-selection-fill-bottom',
-                        _isSameRow(row, endPosition)
-                    );
+                    cellComp.addOrRemoveCssClass('ag-selection-fill-bottom', _isSameRow(row, endPosition));
                 }
             }
             if (isLastRow) {
@@ -612,14 +614,8 @@ export class AgFillHandle extends AbstractSelectionHandle {
                     this.markedCells.push(cell);
                     const cellComp = cell.getComp();
 
-                    cellComp.addOrRemoveCssClass(
-                        'ag-selection-fill-top',
-                        _isSameRow(row, rangeStartRow)
-                    );
-                    cellComp.addOrRemoveCssClass(
-                        'ag-selection-fill-bottom',
-                        _isSameRow(row, rangeEndRow)
-                    );
+                    cellComp.addOrRemoveCssClass('ag-selection-fill-top', _isSameRow(row, rangeStartRow));
+                    cellComp.addOrRemoveCssClass('ag-selection-fill-bottom', _isSameRow(row, rangeEndRow));
                     if (isMovingLeft) {
                         this.isLeft = true;
                         cellComp.addOrRemoveCssClass('ag-selection-fill-left', column === colsToMark[0]);

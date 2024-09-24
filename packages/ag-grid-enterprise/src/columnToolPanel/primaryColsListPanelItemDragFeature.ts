@@ -8,12 +8,12 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, DragSourceType, isProvidedColumnGroup } from 'ag-grid-community';
 
-import type { AgPrimaryColsList } from './agPrimaryColsList';
-import type { ToolPanelColumnComp } from './toolPanelColumnComp';
-import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 import type { VirtualListDragItem } from '../features/iVirtualListDragFeature';
 import { VirtualListDragFeature } from '../features/virtualListDragFeature';
 import type { VirtualList } from '../widgets/virtualList';
+import type { AgPrimaryColsList } from './agPrimaryColsList';
+import type { ToolPanelColumnComp } from './toolPanelColumnComp';
+import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     private columnMoveService?: ColumnMoveService;

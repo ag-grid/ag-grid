@@ -2,9 +2,9 @@ import type { StartEditingCellParams } from '../api/gridApi';
 import { ensureColumnVisible, ensureIndexVisible } from '../api/scrollApi';
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import type { BeanCollection } from '../context/context';
-import type { CellPosition } from '../interfaces/iCellPosition';
 import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { ICellEditor } from '../interfaces/iCellEditor';
+import type { CellPosition } from '../interfaces/iCellPosition';
 import type { GetCellEditorInstancesParams } from '../rendering/rowRenderer';
 import { _warnOnce } from '../utils/function';
 

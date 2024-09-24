@@ -13,9 +13,9 @@ import type {
     SetFilterParams,
     ValueService,
 } from 'ag-grid-community';
-import type { VirtualList } from '../widgets/virtualList';
 
 import { mock } from '../test-utils/mock';
+import type { VirtualList } from '../widgets/virtualList';
 import { SetFilter } from './setFilter';
 import type { SetValueModel } from './setValueModel';
 
@@ -125,69 +125,69 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
 describe('applyModel', () => {
     it('returns false if nothing has changed', () => {
         const setFilter = createSetFilter();
-    
+
         expect(setFilter.applyModel()).toBe(false);
     });
-    
+
     it('returns true if something has changed', () => {
         const setFilter = createSetFilter();
-    
+
         setValueModel.getModel.mockReturnValue(['A']);
-    
+
         expect(setFilter.applyModel()).toBe(true);
     });
-    
+
     it('can apply empty model', () => {
         const setFilter = createSetFilter();
-    
+
         setValueModel.getModel.mockReturnValue([]);
         setFilter.applyModel();
-    
+
         expect((setFilter.getModel() as SetFilterModel).values).toStrictEqual([]);
     });
-    
+
     it.each(['windows', 'mac'])('will not apply model with zero values in %s Excel Mode', (excelMode) => {
         const setFilter = createSetFilter({ excelMode });
-    
+
         setValueModel.getModel.mockReturnValue([]);
         setFilter.applyModel();
-    
+
         expect(setFilter.getModel()).toBeNull();
     });
-    
+
     it.each(['windows', 'mac'])(
         'preserves existing model if new model with zero values applied in %s Excel Mode',
         (excelMode) => {
             const setFilter = createSetFilter({ excelMode });
             const model = ['A', 'B'];
-    
+
             setValueModel.getModel.mockReturnValue(model);
             setFilter.applyModel();
-    
+
             expect((setFilter.getModel() as SetFilterModel).values).toStrictEqual(model);
-    
+
             setValueModel.getModel.mockReturnValue(model);
             setFilter.applyModel();
-    
+
             expect((setFilter.getModel() as SetFilterModel).values).toStrictEqual(model);
         }
     );
-    
+
     it.each(['windows', 'mac'])('can reset model in %s Excel Mode', (excelMode) => {
         const setFilter = createSetFilter({ excelMode });
         const model = ['A', 'B'];
-    
+
         setValueModel.getModel.mockReturnValue(model);
         setFilter.applyModel();
-    
+
         expect((setFilter.getModel() as SetFilterModel).values).toStrictEqual(model);
-    
+
         setValueModel.getModel.mockReturnValue(null);
         setFilter.applyModel();
-    
+
         expect(setFilter.getModel()).toBeNull();
     });
-    
+
     it.each(['windows', 'mac'])(
         'ensures any active filter is removed by selecting all values if all visible values are selected',
         (excelMode) => {
@@ -200,14 +200,14 @@ describe('applyModel', () => {
                 'showAddCurrentSelectionToFilter',
                 'isAddCurrentSelectionToFilterChecked'
             );
-    
+
             const setFilter = createSetFilter({ excelMode });
-    
+
             setValueModel.isEverythingVisibleSelected.mockReturnValue(true);
             setValueModel.getModel.mockReturnValue(null);
-    
+
             setFilter.applyModel();
-    
+
             expect(setValueModel.selectAllMatchingMiniFilter).toBeCalledTimes(1);
         }
     );

@@ -3,10 +3,10 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
+import type { RowPosition } from '../interfaces/iRowPosition';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { _exists } from '../utils/generic';
-import type { RowPosition } from '../interfaces/iRowPosition';
 import type { RowNode } from './rowNode';
 
 // tests if this row selection is before the other row selection

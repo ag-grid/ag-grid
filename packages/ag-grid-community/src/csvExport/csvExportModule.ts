@@ -1,10 +1,10 @@
+import type { _CsvExportGridApi } from '../api/gridApi';
+import { _defineModule } from '../interfaces/iModule';
+import { ModuleNames } from '../modules/moduleNames';
+import { VERSION } from '../version';
 import { CsvCreator } from './csvCreator';
 import { exportDataAsCsv, getDataAsCsv } from './csvExportApi';
 import { GridSerializer } from './gridSerializer';
-import { VERSION } from '../version';
-import { _defineModule } from '../interfaces/iModule';
-import { ModuleNames } from '../modules/moduleNames';
-import type { _CsvExportGridApi } from '../api/gridApi';
 
 export const CsvExportCoreModule = _defineModule({
     version: VERSION,

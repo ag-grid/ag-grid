@@ -1,12 +1,5 @@
 import type { BeanCollection, NamedBean, RowGroupOpenedEvent } from 'ag-grid-community';
-import {
-    BeanStub,
-    RowNode,
-    _exists,
-    _getRowHeightForNode,
-    _isServerSideRowModel,
-    _missing,
-} from 'ag-grid-community';
+import { BeanStub, RowNode, _exists, _getRowHeightForNode, _isServerSideRowModel, _missing } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { StoreFactory } from '../stores/storeFactory';

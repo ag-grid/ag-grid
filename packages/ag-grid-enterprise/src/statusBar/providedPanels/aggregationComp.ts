@@ -154,8 +154,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                 const lastRow = this.rangeService.getRangeEndRow(cellRange);
 
                 while (true) {
-                    const finishedAllRows =
-                        _missing(currentRow) || !currentRow || _isRowBefore(lastRow, currentRow);
+                    const finishedAllRows = _missing(currentRow) || !currentRow || _isRowBefore(lastRow, currentRow);
                     if (finishedAllRows || !currentRow || !cellRange.columns) {
                         break;
                     }

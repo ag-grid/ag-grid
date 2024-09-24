@@ -1,5 +1,6 @@
-import { GROUP_AUTO_COLUMN_ID } from 'ag-grid-community';
 import type { AgChartThemeOverrides, AgHierarchyChartOptions, AgHierarchySeriesOptions } from 'ag-charts-community';
+
+import { GROUP_AUTO_COLUMN_ID } from 'ag-grid-community';
 
 import type { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';

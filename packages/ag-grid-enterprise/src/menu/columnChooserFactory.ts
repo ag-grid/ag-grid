@@ -9,10 +9,10 @@ import type {
     VisibleColsService,
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
-import { AgPrimaryCols } from '../columnToolPanel/agPrimaryCols';
 
-import type { MenuUtils } from './menuUtils';
+import { AgPrimaryCols } from '../columnToolPanel/agPrimaryCols';
 import { AgDialog } from '../widgets/agDialog';
+import type { MenuUtils } from './menuUtils';
 
 export class ColumnChooserFactory extends BeanStub implements NamedBean, IColumnChooserFactory {
     beanName = 'columnChooserFactory' as const;

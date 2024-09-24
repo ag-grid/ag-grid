@@ -1,5 +1,6 @@
-import { _includes } from 'ag-grid-community';
 import type { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-community';
+
+import { _includes } from 'ag-grid-community';
 
 import { hexToRGBA } from '../../utils/color';
 import { isStacked } from '../../utils/seriesTypeMapper';

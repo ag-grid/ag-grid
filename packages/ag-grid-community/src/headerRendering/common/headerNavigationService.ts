@@ -11,9 +11,9 @@ import type { FocusService } from '../../focusService';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
 import { _getDocument } from '../../gridOptionsUtils';
 import type { Column, ColumnGroup } from '../../interfaces/iColumn';
+import type { HeaderPosition } from '../../interfaces/iHeaderPosition';
 import { _last } from '../../utils/array';
 import { HeaderRowType } from '../row/headerRowComp';
-import type { HeaderPosition } from '../../interfaces/iHeaderPosition';
 
 export enum HeaderNavigationDirection {
     UP,
@@ -345,7 +345,10 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         return columnGroup.getLeafColumns().some((col) => col.isSpanHeaderHeight());
     }
 
-    private getColumnVisibleParent(currentColumn: AgColumn | AgColumnGroup, currentIndex: number): HeaderFuturePosition {
+    private getColumnVisibleParent(
+        currentColumn: AgColumn | AgColumnGroup,
+        currentIndex: number
+    ): HeaderFuturePosition {
         const currentRowType = this.getHeaderRowType(currentIndex);
         const isFloatingFilter = currentRowType === HeaderRowType.FLOATING_FILTER;
         const isColumn = currentRowType === HeaderRowType.COLUMN;

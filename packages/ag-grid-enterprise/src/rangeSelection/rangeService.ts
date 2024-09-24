@@ -179,9 +179,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     public getRangeStartRow(cellRange: PartialCellRange): RowPosition {
         if (cellRange.startRow && cellRange.endRow) {
-            return _isRowBefore(cellRange.startRow, cellRange.endRow)
-                ? cellRange.startRow
-                : cellRange.endRow;
+            return _isRowBefore(cellRange.startRow, cellRange.endRow) ? cellRange.startRow : cellRange.endRow;
         }
 
         const rowPinned = this.pinnedRowModel?.getPinnedTopRowCount() ?? 0 > 0 ? 'top' : null;
@@ -191,9 +189,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     public getRangeEndRow(cellRange: PartialCellRange): RowPosition {
         if (cellRange.startRow && cellRange.endRow) {
-            return _isRowBefore(cellRange.startRow, cellRange.endRow)
-                ? cellRange.endRow
-                : cellRange.startRow;
+            return _isRowBefore(cellRange.startRow, cellRange.endRow) ? cellRange.endRow : cellRange.startRow;
         }
 
         const pinnedBottomRowCount = this.pinnedRowModel?.getPinnedBottomRowCount() ?? 0;

@@ -194,13 +194,14 @@ Import the required modules, and register them via the ModuleRegistry.
 ```js
 // Mandatory CSS required by the Data Grid
 // Default Row Model & Module Registry
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ModuleRegistry } from 'ag-grid-community';
 // React Data Grid Component & Module Registry
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 // Optional Theme applied to the Data Grid
 import '@ag-grid-community/styles/ag-theme-quartz.css';
+
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 // Register the RowModel Module
 ModuleRegistry.registerModules([ClientSideRowModelModule]);

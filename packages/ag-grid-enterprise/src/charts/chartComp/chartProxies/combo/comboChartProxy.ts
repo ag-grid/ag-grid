@@ -1,5 +1,6 @@
-import type { ChartType, SeriesChartType } from 'ag-grid-community';
 import type { AgCartesianAxisOptions } from 'ag-charts-community';
+
+import type { ChartType, SeriesChartType } from 'ag-grid-community';
 
 import { getSeriesType } from '../../utils/seriesTypeMapper';
 import { CartesianChartProxy } from '../cartesian/cartesianChartProxy';

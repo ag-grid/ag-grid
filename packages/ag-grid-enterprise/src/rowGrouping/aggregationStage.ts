@@ -15,13 +15,7 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    _errorOnce,
-    _getGrandTotalRow,
-    _getGroupAggFiltering,
-    _missingOrEmpty,
-} from 'ag-grid-community';
+import { BeanStub, _errorOnce, _getGrandTotalRow, _getGroupAggFiltering, _missingOrEmpty } from 'ag-grid-community';
 
 import type { AggFuncService } from './aggFuncService';
 

@@ -3,11 +3,11 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import { RowNode } from '../entities/rowNode';
-import { _isGroupMultiAutoColumn, _getGrandTotalRow, _getGroupTotalRowCallback } from '../gridOptionsUtils';
+import { _getGrandTotalRow, _getGroupTotalRowCallback, _isGroupMultiAutoColumn } from '../gridOptionsUtils';
 import type { GetGroupIncludeFooterParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
-import { _missingOrEmpty, _exists } from '../utils/generic';
+import { _exists, _missingOrEmpty } from '../utils/generic';
 
 interface FlattenDetails {
     hideOpenParents: boolean;

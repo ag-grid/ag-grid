@@ -7,17 +7,11 @@ import type {
     ITooltipParams,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import {
-    Component,
-    RefPlaceholder,
-    _clearElement,
-    _createIconNoSpan,
-    isProvidedColumnGroup,
-} from 'ag-grid-community';
+import { Component, RefPlaceholder, _clearElement, _createIconNoSpan, isProvidedColumnGroup } from 'ag-grid-community';
 
-import { ToolPanelFilterComp } from './toolPanelFilterComp';
-import type { AgGroupComponent, AgGroupComponentParams} from '../widgets/agGroupComponent';
+import type { AgGroupComponent, AgGroupComponentParams } from '../widgets/agGroupComponent';
 import { AgGroupComponentSelector } from '../widgets/agGroupComponent';
+import { ToolPanelFilterComp } from './toolPanelFilterComp';
 
 export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
 

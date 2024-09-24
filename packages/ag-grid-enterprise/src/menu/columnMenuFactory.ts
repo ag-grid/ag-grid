@@ -10,8 +10,8 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _isClientSideRowModel, _removeRepeatsFromArray } from 'ag-grid-community';
 
-import type { MenuItemMapper } from './menuItemMapper';
 import { AgMenuList } from '../widgets/agMenuList';
+import type { MenuItemMapper } from './menuItemMapper';
 
 const MENU_ITEM_SEPARATOR = 'separator';
 

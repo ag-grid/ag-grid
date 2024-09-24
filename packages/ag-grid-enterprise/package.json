@@ -102,5 +102,5 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-canvas-mock": "2.5.1",
     "canvas": "^2.10.2"
- }
+  }
 }

@@ -1,6 +1,9 @@
 import type { _MenuGridApi } from 'ag-grid-community';
 import { ModuleNames, _CommunityMenuApiModule, _defineModule } from 'ag-grid-community';
 
+import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { VERSION } from '../version';
+import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
 import { ColumnChooserFactory } from './columnChooserFactory';
 import { ColumnMenuFactory } from './columnMenuFactory';
@@ -9,9 +12,6 @@ import { EnterpriseMenuFactory } from './enterpriseMenu';
 import { hideColumnChooser, showColumnChooser, showContextMenu } from './menuApi';
 import { MenuItemMapper } from './menuItemMapper';
 import { MenuUtils } from './menuUtils';
-import { VERSION } from '../version';
-import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 
 export const MenuCoreModule = _defineModule({
     version: VERSION,

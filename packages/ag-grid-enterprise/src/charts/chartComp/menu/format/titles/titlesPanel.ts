@@ -1,14 +1,14 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { Component, RefPlaceholder } from 'ag-grid-community';
 
+import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import { isCartesian, isPolar } from '../../../utils/seriesTypeMapper';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import type { FormatPanelOptions } from '../formatPanel';
 import { ChartTitlePanel } from './chartTitlePanel';
 import { TitlePanel } from './titlePanel';
-import type { AgGroupComponent, AgGroupComponentParams} from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
 
 export class TitlesPanel extends Component {
     private chartTranslationService: ChartTranslationService;

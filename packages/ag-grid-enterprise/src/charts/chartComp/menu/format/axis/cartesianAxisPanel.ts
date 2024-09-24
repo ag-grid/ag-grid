@@ -1,3 +1,5 @@
+import type { AgCartesianAxisOptions } from 'ag-charts-community';
+
 import type { AgSelect, AgSelectParams, BeanCollection, ListOption } from 'ag-grid-community';
 import {
     AgCheckbox,
@@ -7,8 +9,14 @@ import {
     _removeFromParent,
     _setDisplayed,
 } from 'ag-grid-community';
-import type { AgCartesianAxisOptions } from 'ag-charts-community';
 
+import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import { AgAngleSelect } from '../../../../widgets/agAngleSelect';
+import type { AgColorPickerParams } from '../../../../widgets/agColorPicker';
+import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
+import type { AgSliderParams } from '../../../../widgets/agSlider';
+import { AgSlider, AgSliderSelector } from '../../../../widgets/agSlider';
 import type { ChartOptionsProxy } from '../../../services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
@@ -17,13 +25,6 @@ import { FontPanel } from '../fontPanel';
 import type { FormatPanelOptions } from '../formatPanel';
 import { AxisTicksPanel } from './axisTicksPanel';
 import { GridLinePanel } from './gridLinePanel';
-import type { AgGroupComponent, AgGroupComponentParams} from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import { AgAngleSelect } from '../../../../widgets/agAngleSelect';
-import type { AgColorPickerParams } from '../../../../widgets/agColorPicker';
-import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
-import type { AgSliderParams} from '../../../../widgets/agSlider';
-import { AgSliderSelector, AgSlider } from '../../../../widgets/agSlider';
 
 const DEFAULT_TIME_AXIS_FORMAT = '%d %B %Y';
 

@@ -1,4 +1,3 @@
-import type { ChartType, SeriesChartType, SeriesGroupType } from 'ag-grid-community';
 import type {
     AgChartInstance,
     AgChartOptions,
@@ -9,6 +8,8 @@ import type {
     AgCrosshairOptions,
 } from 'ag-charts-community';
 import { AgCharts, _ModuleSupport, _Theme } from 'ag-charts-community';
+
+import type { ChartType, SeriesChartType, SeriesGroupType } from 'ag-grid-community';
 
 import type { CrossFilteringContext } from '../../chartService';
 import { deproxy } from '../utils/integration';

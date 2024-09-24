@@ -16,7 +16,7 @@ import {
     _isRowBefore,
     _isVisible,
     _last,
-    _setDisplayed
+    _setDisplayed,
 } from 'ag-grid-community';
 
 import type { RangeService } from './rangeService';

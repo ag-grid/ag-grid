@@ -102,7 +102,6 @@ import type {
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
 } from '../events';
-import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type {
     SizeColumnsToContentStrategy,
@@ -151,11 +150,13 @@ import type {
     TabToNextCellParams,
     TabToNextHeaderParams,
 } from '../interfaces/iCallbackParams';
+import type { CellPosition } from '../interfaces/iCellPosition';
 import type { ChartToolPanelsDef, ChartToolbarMenuItemOptions } from '../interfaces/iChartOptions';
 import type { Column } from '../interfaces/iColumn';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { ExcelExportParams, ExcelStyle } from '../interfaces/iExcelCreator';
+import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { ILoadingCellRendererParams } from '../interfaces/iLoadingCellRenderer';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';
 import type { RowModelType } from '../interfaces/iRowModel';
@@ -165,7 +166,6 @@ import type { SideBarDef } from '../interfaces/iSideBar';
 import type { StatusPanelDef } from '../interfaces/iStatusPanel';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
 import type { MenuItemDef } from '../interfaces/menuItem';
-import type { CellPosition } from '../interfaces/iCellPosition';
 import type { CheckboxSelectionCallback, ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from './colDef';
 import type { DataTypeDefinition } from './dataType';
 

@@ -1,7 +1,8 @@
 // noinspection ES6UnusedImports
-import { ClientSideRowModelModule } from 'ag-grid-community';
 import { mount } from 'enzyme';
 import React, { Component } from 'react';
+
+import { ClientSideRowModelModule } from 'ag-grid-community';
 
 import { AgGridReact } from '../agGridReact';
 import { ensureGridApiHasBeenSet, htmlForSelector, wait } from './utils';

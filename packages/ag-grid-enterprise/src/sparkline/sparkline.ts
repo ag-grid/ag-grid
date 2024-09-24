@@ -1,6 +1,7 @@
+import { _Scale, _Scene, _Util } from 'ag-charts-community';
+
 import { _errorOnce } from 'ag-grid-community';
 import type { HighlightStyleOptions } from 'ag-grid-community';
-import { _Scale, _Scene, _Util } from 'ag-charts-community';
 
 import type { SparklineFactoryOptions } from './agSparkline';
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';

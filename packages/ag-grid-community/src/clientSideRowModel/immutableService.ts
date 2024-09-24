@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
-import { _isClientSideRowModel, _getRowIdCallback } from '../gridOptionsUtils';
+import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IImmutableService } from '../interfaces/iImmutableService';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';

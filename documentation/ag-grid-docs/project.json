@@ -153,9 +153,6 @@
       }
     }
   },
-  "implicitDependencies": [
-    "packages/ag-grid-community",
-    "packages/ag-grid-enterprise"
-  ],
+  "implicitDependencies": ["packages/ag-grid-community", "packages/ag-grid-enterprise"],
   "tags": ["website"]
 }

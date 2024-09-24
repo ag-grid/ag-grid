@@ -1,15 +1,15 @@
 import type { BeanCollection, ListOption } from 'ag-grid-community';
 import { AgSelect, Component, RefPlaceholder } from 'ag-grid-community';
 
+import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponent, AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
+import { AgSlider, AgSliderSelector } from '../../../../widgets/agSlider';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import { getSeriesType, isRadial } from '../../../utils/seriesTypeMapper';
 import type { FontPanelParams } from '../fontPanel';
 import { FontPanel } from '../fontPanel';
 import type { FormatPanelOptions } from '../formatPanel';
-import type { AgGroupComponentParams} from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponent, AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
-import { AgSliderSelector, AgSlider } from '../../../../widgets/agSlider';
 
 export class PolarAxisPanel extends Component {
     private readonly axisGroup: AgGroupComponent = RefPlaceholder;

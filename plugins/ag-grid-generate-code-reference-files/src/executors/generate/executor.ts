@@ -47,7 +47,7 @@ async function generateFile(options: ExecutorOptions) {
         ...inputGlob(workspaceRoot + '/packages/ag-grid-community/src'),
         ...inputGlob(workspaceRoot + '/packages/ag-grid-angular/projects/ag-grid-angular/src/lib'),
         ...inputGlob(workspaceRoot + '/packages/ag-grid-react/src/shared'),
-        ...inputGlob(workspaceRoot + '/packages/ag-grid-enterprise/src')
+        ...inputGlob(workspaceRoot + '/packages/ag-grid-enterprise/src'),
     ];
 
     const generateMetaFiles = async () => {

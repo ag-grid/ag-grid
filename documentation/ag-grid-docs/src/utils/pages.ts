@@ -62,7 +62,7 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     // packages
     'ag-grid-community/styles/**': 'packages/ag-grid-community/styles/**/*.css',
     'ag-grid-community/dist/**': 'packages/ag-grid-community/dist/**/*.{cjs,js,map}',
-    'ag-grid-enterprise/styles/**':'packages/ag-grid-enterprise/styles/**/*.css',
+    'ag-grid-enterprise/styles/**': 'packages/ag-grid-enterprise/styles/**/*.css',
     'ag-grid-enterprise/dist/**': 'packages/ag-grid-enterprise/dist/**/*.{cjs,js,map}',
 
     // Charts modules
@@ -72,9 +72,9 @@ export const FILES_PATH_MAP: Record<string, string | GlobConfig> = {
     // Framework libraries
     'ag-grid-react/dist/**': 'packages/ag-grid-react/dist/**/*.{cjs,mjs,js,map}',
     'ag-grid-react/src/**': 'packages/ag-grid-react/src/**/*.{tsx,ts}',
-    'ag-grid-angular/fesm2022/ag-grid-angular.mjs':'packages/ag-grid-angular/dist/ag-grid-angular/fesm2022/ag-grid-angular.mjs',
+    'ag-grid-angular/fesm2022/ag-grid-angular.mjs':
+        'packages/ag-grid-angular/dist/ag-grid-angular/fesm2022/ag-grid-angular.mjs',
     'ag-grid-vue3/dist/**': 'packages/ag-grid-vue3/dist/**/*.{cjs,mjs,js,map}',
-
 };
 
 type FileKey = keyof typeof FILES_PATH_MAP;

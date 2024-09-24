@@ -1,3 +1,10 @@
+import type { _ClientSideRowModelGridApi } from '../api/gridApi';
+import { RowModelHelperService } from '../api/rowModelHelperService';
+import { CsrmSsrmSharedApiModule } from '../api/sharedApiModule';
+import { _defineModule } from '../interfaces/iModule';
+import { ModuleNames } from '../modules/moduleNames';
+import { SortModule } from '../sort/sortModule';
+import { VERSION } from '../version';
 import { ClientSideRowModel } from './clientSideRowModel';
 import {
     applyTransaction,
@@ -16,13 +23,6 @@ import { FilterStage } from './filterStage';
 import { FlattenStage } from './flattenStage';
 import { ImmutableService } from './immutableService';
 import { SortStage } from './sortStage';
-import { VERSION } from '../version';
-import { _defineModule } from '../interfaces/iModule';
-import { ModuleNames } from '../modules/moduleNames';
-import { SortModule } from '../sort/sortModule';
-import type { _ClientSideRowModelGridApi } from '../api/gridApi';
-import { RowModelHelperService } from '../api/rowModelHelperService';
-import { CsrmSsrmSharedApiModule } from '../api/sharedApiModule';
 
 export const ClientSideRowModelCoreModule = _defineModule({
     version: VERSION,

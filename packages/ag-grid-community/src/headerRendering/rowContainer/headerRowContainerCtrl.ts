@@ -13,8 +13,8 @@ import type { ScrollPartner } from '../../gridBodyComp/gridBodyScrollFeature';
 import type { PinnedWidthService } from '../../gridBodyComp/pinnedWidthService';
 import type { ScrollVisibleService } from '../../gridBodyComp/scrollVisibleService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
-import { NumberSequence } from '../../utils/numberSequence';
 import type { HeaderPosition } from '../../interfaces/iHeaderPosition';
+import { NumberSequence } from '../../utils/numberSequence';
 import { HeaderRowType } from '../row/headerRowComp';
 import { HeaderRowCtrl } from '../row/headerRowCtrl';
 

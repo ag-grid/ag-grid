@@ -1,9 +1,10 @@
-import type { AgPickerFieldParams, ComponentSelector } from 'ag-grid-community';
-import { AgPickerField, _getDocument } from 'ag-grid-community';
 import { _Util } from 'ag-charts-community';
 
-import { AgColorPanel } from './agColorPanel';
+import type { AgPickerFieldParams, ComponentSelector } from 'ag-grid-community';
+import { AgPickerField, _getDocument } from 'ag-grid-community';
+
 import { AgDialog } from '../../widgets/agDialog';
+import { AgColorPanel } from './agColorPanel';
 
 export interface AgColorPickerParams
     extends Omit<AgPickerFieldParams, 'pickerType' | 'pickerAriaLabelKey' | 'pickerAriaLabelValue'> {

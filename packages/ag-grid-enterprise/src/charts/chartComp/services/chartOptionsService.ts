@@ -1,5 +1,3 @@
-import type { ChartType } from 'ag-grid-community';
-import { BeanStub, _errorOnce } from 'ag-grid-community';
 import type {
     AgBaseThemeableChartOptions,
     AgCartesianAxesTheme,
@@ -11,6 +9,9 @@ import type {
     AgPolarAxesTheme,
     AgPolarAxisType,
 } from 'ag-charts-community';
+
+import type { ChartType } from 'ag-grid-community';
+import { BeanStub, _errorOnce } from 'ag-grid-community';
 
 import type { ChartController } from '../chartController';
 import type { AgChartActual, AgChartAxisType } from '../utils/integration';

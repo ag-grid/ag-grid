@@ -11,14 +11,7 @@ import type {
     RowNode,
     SelectionEventSourceType,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    _errorOnce,
-    _isMultiRowSelection,
-    _last,
-    _warnOnce,
-    isSelectionUIEvent,
-} from 'ag-grid-community';
+import { BeanStub, _errorOnce, _isMultiRowSelection, _last, _warnOnce, isSelectionUIEvent } from 'ag-grid-community';
 
 import { ServerSideRowRangeSelectionContext } from '../serverSideRowRangeSelectionContext';
 import type { ISelectionStrategy } from './iSelectionStrategy';

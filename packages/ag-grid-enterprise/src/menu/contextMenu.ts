@@ -24,10 +24,10 @@ import {
     _missingOrEmpty,
 } from 'ag-grid-community';
 
-import type { MenuItemMapper } from './menuItemMapper';
-import type { MenuUtils } from './menuUtils';
 import type { CloseMenuEvent } from '../widgets/agMenuItemComponent';
 import { AgMenuList } from '../widgets/agMenuList';
+import type { MenuItemMapper } from './menuItemMapper';
+import type { MenuUtils } from './menuUtils';
 
 const CSS_MENU = 'ag-menu';
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
@@ -307,11 +307,7 @@ class ContextMenu extends Component<ContextMenuEvent> {
     private restoreFocusedCell(): void {
         const currentFocusedCell = this.focusService.getFocusedCell();
 
-        if (
-            currentFocusedCell &&
-            this.focusedCell &&
-            _areCellsEqual(currentFocusedCell, this.focusedCell)
-        ) {
+        if (currentFocusedCell && this.focusedCell && _areCellsEqual(currentFocusedCell, this.focusedCell)) {
             const { rowIndex, rowPinned, column } = this.focusedCell;
 
             if (_isNothingFocused(this.gos)) {

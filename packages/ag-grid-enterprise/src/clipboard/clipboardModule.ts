@@ -3,6 +3,7 @@ import { ModuleNames, _defineModule } from 'ag-grid-community';
 import { CsvExportModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { VERSION } from '../version';
 import {
     copySelectedRangeDown,
     copySelectedRangeToClipboard,
@@ -12,7 +13,6 @@ import {
     pasteFromClipboard,
 } from './clipboardApi';
 import { ClipboardService } from './clipboardService';
-import { VERSION } from '../version';
 
 export const ClipboardCoreModule = _defineModule({
     version: VERSION,

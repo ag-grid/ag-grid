@@ -33,6 +33,8 @@ import {
     _warnOnce,
 } from 'ag-grid-community';
 
+import type { VirtualListModel } from '../widgets/iVirtualList';
+import { VirtualList } from '../widgets/virtualList';
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { SetFilterDisplayValue } from './iSetDisplayValueModel';
 import type { ISetFilterLocaleText } from './localeText';
@@ -46,8 +48,6 @@ import { SetFilterListItem } from './setFilterListItem';
 import { SetFilterModelFormatter } from './setFilterModelFormatter';
 import { processDataPath } from './setFilterUtils';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
-import type { VirtualListModel } from '../widgets/iVirtualList';
-import { VirtualList } from '../widgets/virtualList';
 
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {

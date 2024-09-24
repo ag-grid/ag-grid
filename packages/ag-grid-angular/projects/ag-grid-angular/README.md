@@ -196,9 +196,10 @@ Import the required modules, and register them via the ModuleRegistry.
 import { AgGridAngular } from '@ag-grid-community/angular';
 // Default Row Model
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { Component } from '@angular/core';
+
 // Column Definition Type Interface & Module Registry
 import { ColDef, ModuleRegistry } from 'ag-grid-community';
-import { Component } from '@angular/core';
 
 // Register the RowModel Module
 ModuleRegistry.registerModules([ClientSideRowModelModule]);

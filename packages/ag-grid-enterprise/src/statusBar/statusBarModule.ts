@@ -1,6 +1,8 @@
 import type { _StatusBarGridApi } from 'ag-grid-community';
 import { ModuleNames, RowSelectionCoreModule, _defineModule } from 'ag-grid-community';
 
+import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { VERSION } from '../version';
 import { AggregationComp } from './providedPanels/aggregationComp';
 import { FilteredRowsComp } from './providedPanels/filteredRowsComp';
 import { SelectedRowsComp } from './providedPanels/selectedRowsComp';
@@ -8,8 +10,6 @@ import { TotalAndFilteredRowsComp } from './providedPanels/totalAndFilteredRowsC
 import { TotalRowsComp } from './providedPanels/totalRowsComp';
 import { getStatusPanel } from './statusBarApi';
 import { StatusBarService } from './statusBarService';
-import { VERSION } from '../version';
-import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 
 export const StatusBarCoreModule = _defineModule({
     version: VERSION,

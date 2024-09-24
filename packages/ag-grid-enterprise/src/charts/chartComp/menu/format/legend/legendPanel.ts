@@ -1,14 +1,14 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { AgCheckbox, AgSelect, Component, RefPlaceholder } from 'ag-grid-community';
 
+import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponent, AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
+import { AgSlider } from '../../../../widgets/agSlider';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 import type { FontPanelParams } from '../fontPanel';
 import { FontPanel } from '../fontPanel';
 import type { FormatPanelOptions } from '../formatPanel';
-import type { AgGroupComponentParams} from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponent, AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
-import { AgSlider } from '../../../../widgets/agSlider';
 
 export class LegendPanel extends Component {
     private chartTranslationService: ChartTranslationService;

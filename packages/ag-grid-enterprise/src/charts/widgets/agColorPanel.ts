@@ -1,5 +1,6 @@
-import { Component, KeyCode, RefPlaceholder, _exists, _setDisplayed } from 'ag-grid-community';
 import { _Util } from 'ag-charts-community';
+
+import { Component, KeyCode, RefPlaceholder, _exists, _setDisplayed } from 'ag-grid-community';
 
 import type { AgColorInput } from './agColorInput';
 import { AgColorInputSelector } from './agColorInput';

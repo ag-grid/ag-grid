@@ -1,10 +1,4 @@
-import type {
-    AgCheckbox,
-    AgInputTextField,
-    BeanCollection,
-    ColumnModel,
-    ComponentSelector,
-} from 'ag-grid-community';
+import type { AgCheckbox, AgInputTextField, BeanCollection, ColumnModel, ComponentSelector } from 'ag-grid-community';
 import {
     AgCheckboxSelector,
     AgInputTextFieldSelector,

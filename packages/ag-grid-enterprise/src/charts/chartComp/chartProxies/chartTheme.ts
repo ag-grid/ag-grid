@@ -1,4 +1,3 @@
-import { _includes, _warnOnce } from 'ag-grid-community';
 import type {
     AgChartLegendClickEvent,
     AgChartTheme,
@@ -7,6 +6,8 @@ import type {
     AgChartThemePalette,
 } from 'ag-charts-community';
 import { _Theme } from 'ag-charts-community';
+
+import { _includes, _warnOnce } from 'ag-grid-community';
 
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
 import { get } from '../utils/object';

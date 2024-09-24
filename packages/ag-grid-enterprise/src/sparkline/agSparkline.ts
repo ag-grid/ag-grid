@@ -1,3 +1,5 @@
+import { _Util } from 'ag-charts-community';
+
 import type {
     CrosshairLineOptions,
     HighlightStyleOptions,
@@ -8,7 +10,6 @@ import type {
     SparklineOptions,
 } from 'ag-grid-community';
 import { _warnOnce } from 'ag-grid-community';
-import { _Util } from 'ag-charts-community';
 
 import { AreaSparkline } from './area/areaSparkline';
 import type { BarColumnLabel } from './bar-column/barColumnSparkline';

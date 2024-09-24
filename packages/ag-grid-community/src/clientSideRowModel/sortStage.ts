@@ -15,7 +15,7 @@ import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { RowNodeSorter, SortedRowNode } from '../sort/rowNodeSorter';
 import type { SortController } from '../sort/sortController';
 import type { ChangedPath } from '../utils/changedPath';
-import { _missing, _exists } from '../utils/generic';
+import { _exists, _missing } from '../utils/generic';
 
 function updateChildIndexes(rowNode: RowNode): void {
     if (_missing(rowNode.childrenAfterSort)) {
@@ -218,7 +218,11 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
     }
 
     // Merge two sorted arrays into each other
-    private mergeSortedArrays(sortOptions: SortOption[], arr1: SortedRowNode[], arr2: SortedRowNode[]): SortedRowNode[] {
+    private mergeSortedArrays(
+        sortOptions: SortOption[],
+        arr1: SortedRowNode[],
+        arr2: SortedRowNode[]
+    ): SortedRowNode[] {
         const res: SortedRowNode[] = [];
         let i = 0;
         let j = 0;

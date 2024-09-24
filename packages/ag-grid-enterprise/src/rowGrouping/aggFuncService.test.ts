@@ -1,7 +1,7 @@
-import type { IAggFuncParams, GridOptionsService } from 'ag-grid-community';
+import type { GridOptionsService, IAggFuncParams } from 'ag-grid-community';
 
-import { AggFuncService } from './aggFuncService';
 import { mock } from '../test-utils/mock';
+import { AggFuncService } from './aggFuncService';
 
 function createService(): AggFuncService {
     const gridOptionsService = mock<GridOptionsService>('get');

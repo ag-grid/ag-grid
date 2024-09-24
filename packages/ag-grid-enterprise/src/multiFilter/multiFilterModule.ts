@@ -1,15 +1,10 @@
-import {
-    ModuleNames,
-    _ColumnFilterModule,
-    _ReadOnlyFloatingFilterModule,
-    _defineModule,
-} from 'ag-grid-community';
+import { ModuleNames, _ColumnFilterModule, _ReadOnlyFloatingFilterModule, _defineModule } from 'ag-grid-community';
 
+import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { VERSION } from '../version';
+import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 import { MultiFilter } from './multiFilter';
 import { MultiFloatingFilterComp } from './multiFloatingFilter';
-import { VERSION } from '../version';
-import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 
 export const MultiFilterCoreModule = _defineModule({
     version: VERSION,

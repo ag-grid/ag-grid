@@ -1,5 +1,6 @@
 import { AgCharts } from 'ag-charts-enterprise';
 import 'ag-charts-enterprise';
+
 import type { ILicenseManager } from '../license/shared/licenseManager';
 import { LicenseManager } from '../license/shared/licenseManager';
 

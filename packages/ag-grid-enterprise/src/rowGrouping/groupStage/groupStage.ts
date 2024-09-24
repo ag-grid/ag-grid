@@ -1,9 +1,4 @@
-import type {
-    BeanCollection,
-    IRowNodeStage,
-    NamedBean,
-    StageExecuteParams,
-} from 'ag-grid-community';
+import type { BeanCollection, IRowNodeStage, NamedBean, StageExecuteParams } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
 import { GroupStrategy } from './groupStrategy/groupStrategy';

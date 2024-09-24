@@ -1,12 +1,12 @@
 import type { Bean } from '../context/bean';
 import type { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { CellPosition } from './iCellPosition';
-import type { RowPosition } from './iRowPosition';
 import type { Column } from '../interfaces/iColumn';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
+import type { CellPosition } from './iCellPosition';
 import type { ICellRangeFeature } from './iCellRangeFeature';
+import type { RowPosition } from './iRowPosition';
 
 export interface IRangeService {
     isEmpty(): boolean;

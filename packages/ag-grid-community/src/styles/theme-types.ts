@@ -1,5 +1,5 @@
-import type {CoreParams} from './core/core-css';
 import { _errorOnce } from '../utils/function';
+import type { CoreParams } from './core/core-css';
 import { clamp, memoize, paramToVariableExpression } from './theme-utils';
 
 export type CssFragment = string | (() => string);

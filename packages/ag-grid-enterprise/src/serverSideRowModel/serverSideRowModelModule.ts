@@ -9,6 +9,8 @@ import {
     _defineModule,
 } from 'ag-grid-community';
 
+import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { VERSION } from '../version';
 import { BlockUtils } from './blocks/blockUtils';
 import { ExpandListener } from './listeners/expandListener';
 import { FilterListener } from './listeners/filterListener';
@@ -33,8 +35,6 @@ import { LazyBlockLoadingService } from './stores/lazy/lazyBlockLoadingService';
 import { StoreFactory } from './stores/storeFactory';
 import { StoreUtils } from './stores/storeUtils';
 import { TransactionManager } from './transactionManager';
-import { VERSION } from '../version';
-import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 
 export const ServerSideRowModelCoreModule = _defineModule({
     version: VERSION,

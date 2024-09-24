@@ -1,8 +1,8 @@
 import type { _ColumnAutosizeApi } from '../api/gridApi';
-import { ColumnAutosizeService } from './columnAutosizeService';
 import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import { autoSizeAllColumns, autoSizeColumn, autoSizeColumns, sizeColumnsToFit } from './columnAutosizeApi';
+import { ColumnAutosizeService } from './columnAutosizeService';
 
 export const ColumnAutosizeCoreModule = _defineModule({
     version: VERSION,

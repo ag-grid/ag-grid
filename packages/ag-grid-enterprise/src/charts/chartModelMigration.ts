@@ -1,5 +1,6 @@
-import type { ChartModel } from 'ag-grid-community';
 import type { AgChartThemeName } from 'ag-charts-community';
+
+import type { ChartModel } from 'ag-grid-community';
 
 // @ts-ignore
 import { VERSION } from '../version';

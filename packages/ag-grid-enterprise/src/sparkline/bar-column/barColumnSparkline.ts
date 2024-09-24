@@ -1,6 +1,7 @@
-import type { ColumnFormat, ColumnFormatterParams } from 'ag-grid-community';
 import type { FontStyle, FontWeight } from 'ag-charts-community';
 import { _Scene, _Util } from 'ag-charts-community';
+
+import type { ColumnFormat, ColumnFormatterParams } from 'ag-grid-community';
 
 import { Label } from '../label/label';
 import type { SeriesNodeDatum } from '../sparkline';

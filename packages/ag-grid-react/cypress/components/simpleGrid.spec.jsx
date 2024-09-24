@@ -1,7 +1,8 @@
 // noinspection ES6UnusedImports
-import { ClientSideRowModelModule } from 'ag-grid-community';
 import { mount } from 'cypress-react-unit-test';
 import React, { useState } from 'react';
+
+import { ClientSideRowModelModule } from 'ag-grid-community';
 
 import { AgGridReact } from '../../lib/agGridReact';
 import { ensureGridApiHasBeenSet } from './utils';

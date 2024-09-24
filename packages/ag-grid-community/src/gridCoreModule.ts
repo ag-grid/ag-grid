@@ -69,6 +69,6 @@ export const CommunityFeaturesModule = _defineModule({
         ColumnHeaderModule,
         ColumnGroupHeaderModule,
         OverlayModule,
-        CellRendererFunctionModule
+        CellRendererFunctionModule,
     ],
 });

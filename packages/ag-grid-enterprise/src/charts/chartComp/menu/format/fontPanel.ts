@@ -8,12 +8,12 @@ import {
     _removeFromParent,
 } from 'ag-grid-community';
 
+import type { AgGroupComponent, AgGroupComponentParams } from '../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../widgets/agGroupComponent';
+import { AgColorPickerSelector } from '../../../widgets/agColorPicker';
 import type { ChartOptionsProxy } from '../../services/chartOptionsService';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
-import type { AgGroupComponent, AgGroupComponentParams} from '../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../widgets/agGroupComponent';
-import { AgColorPickerSelector } from '../../../widgets/agColorPicker';
 
 interface Font {
     fontFamily?: string;

@@ -1,3 +1,6 @@
+import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
+import { VERSION as CHARTS_VERSION, _ModuleSupport } from 'ag-charts-community';
+
 import type {
     BaseCreateChartParams,
     BeanCollection,
@@ -25,8 +28,6 @@ import type {
     VisibleColsService,
 } from 'ag-grid-community';
 import { BeanStub, _warnOnce } from 'ag-grid-community';
-import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
-import { VERSION as CHARTS_VERSION, _ModuleSupport } from 'ag-charts-community';
 
 import { VERSION as GRID_VERSION } from '../version';
 import type { GridChartParams } from './chartComp/gridChartComp';

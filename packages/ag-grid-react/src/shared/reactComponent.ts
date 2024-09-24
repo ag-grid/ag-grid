@@ -1,8 +1,9 @@
-import type { ComponentType, IComponent, WrappableInterface } from 'ag-grid-community';
-import { AgPromise, _warnOnce } from 'ag-grid-community';
 import type { ReactPortal } from 'react';
 import { createElement } from 'react';
 import { createPortal } from 'react-dom';
+
+import type { ComponentType, IComponent, WrappableInterface } from 'ag-grid-community';
+import { AgPromise, _warnOnce } from 'ag-grid-community';
 
 import generateNewKey from './keyGenerator';
 import type { PortalManager } from './portalManager';

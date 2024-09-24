@@ -1,10 +1,10 @@
 import type { BeanCollection, FocusService, NamedBean } from 'ag-grid-community';
 import { BeanStub, TabGuardComp } from 'ag-grid-community';
 
+import { AgDialog } from '../../../../widgets/agDialog';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import type { ChartMenuContext } from '../chartMenuContext';
 import { AdvancedSettingsPanel } from './advancedSettingsPanel';
-import { AgDialog } from '../../../../widgets/agDialog';
 
 export class AdvancedSettingsMenuFactory extends BeanStub implements NamedBean {
     beanName = 'advancedSettingsMenuFactory' as const;

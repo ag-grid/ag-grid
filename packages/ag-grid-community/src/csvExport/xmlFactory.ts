@@ -1,4 +1,4 @@
-import type { HeaderElement, XmlElement, PrefixedXmlAttributes } from '../interfaces/iXmlFactory';
+import type { HeaderElement, PrefixedXmlAttributes, XmlElement } from '../interfaces/iXmlFactory';
 
 const LINE_SEPARATOR = '\r\n';
 

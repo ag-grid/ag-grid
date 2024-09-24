@@ -1,11 +1,11 @@
 import type { BeanCollection, ChartType, SeriesChartType } from 'ag-grid-community';
 import { AgCheckbox, AgSelect, Component, _areEqual, _clearElement } from 'ag-grid-community';
 
+import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
 import type { ChartController } from '../../chartController';
 import type { ColState } from '../../model/chartDataModel';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { getFullChartNameTranslationKey } from '../../utils/seriesTypeMapper';
-import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
 
 export class SeriesChartTypePanel extends Component {
     private chartTranslationService: ChartTranslationService;

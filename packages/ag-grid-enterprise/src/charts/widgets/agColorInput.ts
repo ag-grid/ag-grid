@@ -1,6 +1,7 @@
+import { _Util } from 'ag-charts-community';
+
 import type { AgInputTextFieldParams, BeanCollection, ComponentSelector } from 'ag-grid-community';
 import { AgInputTextField, RefPlaceholder } from 'ag-grid-community';
-import { _Util } from 'ag-charts-community';
 
 import type { ChartTranslationService } from '../chartComp/services/chartTranslationService';
 

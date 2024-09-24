@@ -1,11 +1,11 @@
 import { describe, expect, test } from '@jest/globals';
+
+import { ClientSideRowModelModule } from '../clientSideRowModel/clientSideRowModelModule';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import type { GridReadyEvent } from '../events';
 import { createGrid } from '../grid';
-import { ClientSideRowModelModule } from '../clientSideRowModel/clientSideRowModelModule';
 import { CommunityFeaturesModule } from '../gridCoreModule';
-
 
 const getColNames = (cols: any[] | undefined) => cols?.map((c) => c.field ?? c.colId) ?? [];
 

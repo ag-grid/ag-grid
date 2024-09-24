@@ -1,3 +1,6 @@
+import type { AgChartThemeOverrides } from 'ag-charts-community';
+import { _ModuleSupport } from 'ag-charts-community';
+
 import type {
     ChartParamsCellRange,
     ChartType,
@@ -8,8 +11,6 @@ import type {
     UpdateRangeChartParams,
 } from 'ag-grid-community';
 import { _warnOnce } from 'ag-grid-community';
-import type { AgChartThemeOverrides } from 'ag-charts-community';
-import { _ModuleSupport } from 'ag-charts-community';
 
 import type { CommonCreateChartParams } from '../../chartService';
 import { getCanonicalChartType, getSeriesTypeIfExists, isComboChart, isEnterpriseChartType } from './seriesTypeMapper';

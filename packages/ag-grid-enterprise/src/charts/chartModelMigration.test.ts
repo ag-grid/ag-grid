@@ -1,14 +1,13 @@
-import type { ChartModel } from 'ag-grid-community';
 import { describe, expect, it } from '@jest/globals';
 import * as fs from 'fs';
+
+import type { ChartModel } from 'ag-grid-community';
 
 import { VERSION } from '../version';
 import { heuristicVersionDetection, upgradeChartModel } from './chartModelMigration';
 
 function loadChartModel(name: string): ChartModel {
-    return JSON.parse(
-        fs.readFileSync(`${__dirname}/test/chart-model-examples/${name}-chart-model.json`).toString()
-    );
+    return JSON.parse(fs.readFileSync(`${__dirname}/test/chart-model-examples/${name}-chart-model.json`).toString());
 }
 
 function snapshotVersion(name: string): string {

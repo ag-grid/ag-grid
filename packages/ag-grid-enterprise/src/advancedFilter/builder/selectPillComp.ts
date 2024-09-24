@@ -6,8 +6,8 @@ import {
     _stopPropagationForAgGrid,
 } from 'ag-grid-community';
 
-import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import { AgRichSelect } from '../../widgets/agRichSelect';
+import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 
 export interface SelectPillParams extends RichSelectParams<AutocompleteEntry> {
     getEditorParams: () => { values?: any[] };

@@ -16,7 +16,9 @@ export class AgComponentUtils extends BeanStub implements NamedBean {
     }
 
     public adaptFunction(propertyName: string, jsCompFunc: any): any {
-        return this.componentMetadataProvider.retrieve(propertyName)?.adaptFunction ? this.adaptCellRendererFunction(jsCompFunc) : null;
+        return this.componentMetadataProvider.retrieve(propertyName)?.adaptFunction
+            ? this.adaptCellRendererFunction(jsCompFunc)
+            : null;
     }
 
     private adaptCellRendererFunction(callback: any): { new (): IComponent<ICellRendererParams> } {

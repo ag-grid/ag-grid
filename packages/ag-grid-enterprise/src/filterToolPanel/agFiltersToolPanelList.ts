@@ -19,8 +19,8 @@ import {
     _warnOnce,
     isProvidedColumnGroup,
 } from 'ag-grid-community';
-import type { ToolPanelColDefService } from '../sideBar/common/toolPanelColDefService';
 
+import type { ToolPanelColDefService } from '../sideBar/common/toolPanelColDefService';
 import { EXPAND_STATE } from './agFiltersToolPanelHeader';
 import type { ToolPanelFiltersCompParams } from './filtersToolPanel';
 import { ToolPanelFilterComp } from './toolPanelFilterComp';

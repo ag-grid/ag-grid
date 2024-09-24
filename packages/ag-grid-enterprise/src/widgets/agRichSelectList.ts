@@ -1,11 +1,5 @@
 import type { Component, RichSelectParams } from 'ag-grid-community';
-import {
-    KeyCode,
-    _getDocument,
-    _setAriaActiveDescendant,
-    _setAriaControls,
-    _setAriaLabel,
-} from 'ag-grid-community';
+import { KeyCode, _getDocument, _setAriaActiveDescendant, _setAriaControls, _setAriaLabel } from 'ag-grid-community';
 
 import { RichSelectRow } from './agRichSelectRow';
 import { VirtualList } from './virtualList';

@@ -1,8 +1,8 @@
 import type { CellPosition } from './iCellPosition';
-import type { HeaderPosition } from './iHeaderPosition';
 import type { ChartToolbarMenuItemOptions } from './iChartOptions';
 import type { Column } from './iColumn';
 import type { AgGridCommon } from './iCommon';
+import type { HeaderPosition } from './iHeaderPosition';
 import type { IRowNode, RowPinnedType } from './iRowNode';
 import type { ServerSideTransaction } from './serverSideTransaction';
 

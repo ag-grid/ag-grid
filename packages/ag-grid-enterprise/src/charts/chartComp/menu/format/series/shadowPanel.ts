@@ -1,13 +1,13 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';
 
-import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
-import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
-import type { AgGroupComponentParams} from '../../../../../widgets/agGroupComponent';
+import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
 import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
 import { AgColorPickerSelector } from '../../../../widgets/agColorPicker';
 import type { AgSliderParams } from '../../../../widgets/agSlider';
 import { AgSliderSelector } from '../../../../widgets/agSlider';
+import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
 
 export class ShadowPanel extends Component {
     private chartTranslationService: ChartTranslationService;

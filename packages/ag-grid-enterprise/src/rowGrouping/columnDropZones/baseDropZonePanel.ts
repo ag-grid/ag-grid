@@ -10,9 +10,9 @@ import type {
 } from 'ag-grid-community';
 import { DragSourceType } from 'ag-grid-community';
 
-import { DropZoneColumnComp } from './dropZoneColumnComp';
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';
+import { DropZoneColumnComp } from './dropZoneColumnComp';
 
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 

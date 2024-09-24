@@ -1,10 +1,4 @@
-import type {
-    AgColumn,
-    DragAndDropIcon,
-    DraggingEvent,
-    ITooltipParams,
-    WithoutGridCommon,
-} from 'ag-grid-community';
+import type { AgColumn, DragAndDropIcon, DraggingEvent, ITooltipParams, WithoutGridCommon } from 'ag-grid-community';
 import { _createIconNoSpan } from 'ag-grid-community';
 
 import { BaseDropZonePanel } from './baseDropZonePanel';

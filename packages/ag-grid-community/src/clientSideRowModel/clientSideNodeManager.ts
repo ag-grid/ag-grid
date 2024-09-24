@@ -8,10 +8,9 @@ import { _getRowIdCallback } from '../gridOptionsUtils';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _warnOnce, _errorOnce } from '../utils/function';
+import { _errorOnce, _warnOnce } from '../utils/function';
 import { _missingOrEmpty } from '../utils/generic';
 import { _cloneObject } from '../utils/object';
-
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
 const TOP_LEVEL = 0;

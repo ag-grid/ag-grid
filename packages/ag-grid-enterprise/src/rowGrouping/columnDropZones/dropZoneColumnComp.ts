@@ -12,17 +12,11 @@ import type {
     SortController,
     SortIndicatorComp,
 } from 'ag-grid-community';
-import {
-    Component,
-    DragSourceType,
-    KeyCode,
-    RefPlaceholder,
-    _loadTemplate,
-} from 'ag-grid-community';
+import { Component, DragSourceType, KeyCode, RefPlaceholder, _loadTemplate } from 'ag-grid-community';
 
-import type { TDropZone } from './baseDropZonePanel';
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { VirtualList } from '../../widgets/virtualList';
+import type { TDropZone } from './baseDropZonePanel';
 
 export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     private popupService: PopupService;

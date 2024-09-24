@@ -1,9 +1,9 @@
 import type { _ColumnResizeApi } from '../api/gridApi';
-import { ColumnResizeService } from './columnResizeService';
 import { HorizontalResizeModule } from '../dragAndDrop/dragModule';
 import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import { setColumnWidth, setColumnWidths } from './columnResizeApi';
+import { ColumnResizeService } from './columnResizeService';
 
 export const ColumnResizeCoreModule = _defineModule({
     version: VERSION,

@@ -1,6 +1,8 @@
 import type { _SideBarGridApi } from 'ag-grid-community';
 import { HorizontalResizeModule, ModuleNames, _defineModule } from 'ag-grid-community';
 
+import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { VERSION } from '../version';
 import { ToolPanelColDefService } from './common/toolPanelColDefService';
 import {
     closeToolPanel,
@@ -15,8 +17,6 @@ import {
     setSideBarVisible,
 } from './sideBarApi';
 import { SideBarService } from './sideBarService';
-import { VERSION } from '../version';
-import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 
 export const SideBarCoreModule = _defineModule({
     version: VERSION,

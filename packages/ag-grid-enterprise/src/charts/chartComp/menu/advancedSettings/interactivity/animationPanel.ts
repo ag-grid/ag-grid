@@ -1,10 +1,10 @@
 import type { BeanCollection } from 'ag-grid-community';
 import { AgInputNumberFieldSelector, Component } from 'ag-grid-community';
 
+import type { AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
 import type { ChartTranslationService } from '../../../services/chartTranslationService';
 import type { ChartMenuParamsFactory } from '../../chartMenuParamsFactory';
-import type { AgGroupComponentParams} from '../../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
 
 export class AnimationPanel extends Component {
     private chartTranslationService: ChartTranslationService;

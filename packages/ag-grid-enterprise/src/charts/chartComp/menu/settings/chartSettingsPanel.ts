@@ -1,3 +1,5 @@
+import type { AgChartThemePalette } from 'ag-charts-community';
+
 import {
     Component,
     RefPlaceholder,
@@ -8,7 +10,6 @@ import {
     _setDisplayed,
     _shallowCompare,
 } from 'ag-grid-community';
-import type { AgChartThemePalette } from 'ag-charts-community';
 
 import type { ChartController } from '../../chartController';
 import { isStockTheme } from '../../chartProxies/chartTheme';

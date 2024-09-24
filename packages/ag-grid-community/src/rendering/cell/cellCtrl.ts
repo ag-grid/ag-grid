@@ -4,11 +4,9 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { AgColumn } from '../../entities/agColumn';
-import type { CellPosition } from '../../interfaces/iCellPosition';
 import { _createCellId } from '../../entities/cellPositionUtils';
 import type { CellStyle, ColDef } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
-import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
 import {
@@ -21,8 +19,10 @@ import {
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
+import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
+import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { _setAriaColIndex } from '../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize } from '../../utils/dom';

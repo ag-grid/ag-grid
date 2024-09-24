@@ -1,5 +1,6 @@
-import type { ChartType } from 'ag-grid-community';
 import { _Scene } from 'ag-charts-community';
+
+import type { ChartType } from 'ag-grid-community';
 
 import { accumulateData } from '../miniChartHelpers';
 import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';

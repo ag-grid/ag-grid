@@ -1,5 +1,6 @@
-import { _includes } from 'ag-grid-community';
 import type { AgCartesianAxisOptions, AgLineSeriesOptions } from 'ag-charts-community';
+
+import { _includes } from 'ag-grid-community';
 
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';

@@ -1,6 +1,7 @@
 import type { BeanCollection, ChartGroupsDef, ChartType } from 'ag-grid-community';
 import { Component, KeyCode, _setAriaLabel, _warnOnce } from 'ag-grid-community';
 
+import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
 import type { ChartController } from '../../chartController';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { getFullChartNameTranslationKey } from '../../utils/seriesTypeMapper';
@@ -40,7 +41,6 @@ import {
 } from './miniCharts/index';
 // please leave this as is - we want it to be explicit for build reasons
 import type { MiniChart } from './miniCharts/miniChart';
-import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
 
 export type ThemeTemplateParameters = Map<any, any>;
 

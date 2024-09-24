@@ -5,15 +5,15 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import { _areCellsEqual } from '../entities/cellPositionUtils';
-import type { CellPosition } from '../interfaces/iCellPosition';
-import { _isSameRow  } from '../entities/rowPositionUtils';
-import type {RowPositionUtils} from '../entities/rowPositionUtils';
-import type { RowPosition } from '../interfaces/iRowPosition';
+import { _isSameRow } from '../entities/rowPositionUtils';
+import type { RowPositionUtils } from '../entities/rowPositionUtils';
 import type { CellValueChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import { _isCellSelectionEnabled } from '../gridOptionsUtils';
 import type { CellRange, CellRangeParams, IRangeService } from '../interfaces/IRangeService';
+import type { CellPosition } from '../interfaces/iCellPosition';
+import type { RowPosition } from '../interfaces/iRowPosition';
 import type { CellValueChange, LastFocusedCell } from './iUndoRedo';
 import { RangeUndoRedoAction, UndoRedoAction, UndoRedoStack } from './undoRedoStack';
 
@@ -90,10 +90,8 @@ export class UndoRedoService extends BeanStub implements NamedBean {
 
     private onCellValueChanged = (event: CellValueChangedEvent): void => {
         const eventCell: CellPosition = { column: event.column, rowIndex: event.rowIndex!, rowPinned: event.rowPinned };
-        const isCellEditing =
-            this.activeCellEdit !== null && _areCellsEqual(this.activeCellEdit, eventCell);
-        const isRowEditing =
-            this.activeRowEdit !== null && _isSameRow(this.activeRowEdit, eventCell);
+        const isCellEditing = this.activeCellEdit !== null && _areCellsEqual(this.activeCellEdit, eventCell);
+        const isRowEditing = this.activeRowEdit !== null && _isSameRow(this.activeRowEdit, eventCell);
 
         const shouldCaptureAction = isCellEditing || isRowEditing || this.isPasting || this.isRangeInAction;
 

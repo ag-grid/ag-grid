@@ -1,6 +1,8 @@
 import type { _AdvancedFilterGridApi } from 'ag-grid-community';
 import { DragAndDropModule, ModuleNames, _FilterCoreModule, _defineModule } from 'ag-grid-community';
 
+import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { VERSION } from '../version';
 import {
     getAdvancedFilterModel,
     hideAdvancedFilterBuilder,
@@ -9,8 +11,6 @@ import {
 } from './advancedFilterApi';
 import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import { AdvancedFilterService } from './advancedFilterService';
-import { VERSION } from '../version';
-import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 
 export const AdvancedFilterCoreModule = _defineModule({
     version: VERSION,

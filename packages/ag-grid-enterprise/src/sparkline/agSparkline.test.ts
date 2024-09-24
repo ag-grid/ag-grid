@@ -1,6 +1,7 @@
-import type { ColumnFormat, ColumnFormatterParams, MarkerFormat, MarkerFormatterParams } from 'ag-grid-community';
 import { afterAll, beforeAll, describe, expect, jest, test } from '@jest/globals';
 import 'jest-canvas-mock';
+
+import type { ColumnFormat, ColumnFormatterParams, MarkerFormat, MarkerFormatterParams } from 'ag-grid-community';
 
 import type { SparklineFactoryOptions } from './agSparkline';
 import { AgSparkline } from './agSparkline';

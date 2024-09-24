@@ -31,13 +31,13 @@ import {
     isColumn,
 } from 'ag-grid-community';
 
-import type { ColumnChooserFactory } from './columnChooserFactory';
-import type { ColumnMenuFactory } from './columnMenuFactory';
-import type { MenuRestoreFocusParams, MenuUtils } from './menuUtils';
 import type { CloseMenuEvent } from '../widgets/agMenuItemComponent';
 import type { AgMenuList } from '../widgets/agMenuList';
 import type { TabbedItem } from '../widgets/iTabbedLayout';
 import { TabbedLayout } from '../widgets/tabbedLayout';
+import type { ColumnChooserFactory } from './columnChooserFactory';
+import type { ColumnMenuFactory } from './columnMenuFactory';
+import type { MenuRestoreFocusParams, MenuUtils } from './menuUtils';
 
 export interface TabSelectedEvent extends AgEvent<'tabSelected'> {
     key: string;

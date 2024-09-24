@@ -39,10 +39,7 @@ export class AgRangeHandle extends AbstractSelectionHandle {
             cellRanges[0].type === CellRangeType.DIMENSION &&
             lastRange.type === CellRangeType.VALUE
         ) {
-            const rowChanged = !_isSameRow(
-                this.endPosition,
-                this.rangeService.getRangeEndRow(lastRange)
-            );
+            const rowChanged = !_isSameRow(this.endPosition, this.rangeService.getRangeEndRow(lastRange));
 
             if (rowChanged) {
                 // ensure the dimension range is kept in sync with the value range (which has the handle)

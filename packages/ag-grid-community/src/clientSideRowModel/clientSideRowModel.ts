@@ -6,9 +6,20 @@ import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import type { Environment } from '../environment';
-import type { FilterChangedEvent, CssVariablesChanged } from '../events';
-import { _getRowHeightForNode, _isDomLayout, _isAnimateRows, _getGroupSelectsDescendants, _getGrandTotalRow, _getGroupTotalRowCallback } from '../gridOptionsUtils';
-import type { IClientSideRowModel, RefreshModelParams, ClientSideRowModelStep } from '../interfaces/iClientSideRowModel';
+import type { CssVariablesChanged, FilterChangedEvent } from '../events';
+import {
+    _getGrandTotalRow,
+    _getGroupSelectsDescendants,
+    _getGroupTotalRowCallback,
+    _getRowHeightForNode,
+    _isAnimateRows,
+    _isDomLayout,
+} from '../gridOptionsUtils';
+import type {
+    ClientSideRowModelStep,
+    IClientSideRowModel,
+    RefreshModelParams,
+} from '../interfaces/iClientSideRowModel';
 import { ClientSideRowModelSteps } from '../interfaces/iClientSideRowModel';
 import type { IGroupHideOpenParentsService } from '../interfaces/iGroupHideOpenParentsService';
 import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
@@ -17,10 +28,10 @@ import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _removeFromArray, _insertIntoArray, _last } from '../utils/array';
+import { _insertIntoArray, _last, _removeFromArray } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _debounce, _errorOnce } from '../utils/function';
-import { _missing, _missingOrEmpty, _exists } from '../utils/generic';
+import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
 import type { ValueCache } from '../valueService/valueCache';
 import { ClientSideNodeManager } from './clientSideNodeManager';
 import { updateRowNodeAfterSort } from './sortStage';

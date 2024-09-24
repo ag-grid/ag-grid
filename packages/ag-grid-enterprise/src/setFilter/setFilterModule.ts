@@ -1,9 +1,9 @@
 import { ModuleNames, _ColumnFilterModule, _FloatingFilterModule, _defineModule } from 'ag-grid-community';
 
+import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { VERSION } from '../version';
 import { SetFilter } from './setFilter';
 import { SetFloatingFilterComp } from './setFloatingFilter';
-import { VERSION } from '../version';
-import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 
 export const SetFilterCoreModule = _defineModule({
     version: VERSION,

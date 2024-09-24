@@ -1,3 +1,5 @@
+import type { AgCartesianAxisType } from 'ag-charts-community';
+
 import type {
     AgColumn,
     BeanCollection,
@@ -10,7 +12,6 @@ import type {
     SeriesGroupType,
 } from 'ag-grid-community';
 import { BeanStub, CellRangeType, _includes } from 'ag-grid-community';
-import type { AgCartesianAxisType } from 'ag-charts-community';
 
 import type { ChartDatasourceParams } from '../datasource/chartDatasource';
 import { ChartDatasource } from '../datasource/chartDatasource';

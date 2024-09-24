@@ -1,6 +1,6 @@
 import type { CoreParams } from './core/core-css';
 import type { Feature } from './theme-types';
-import type {CssFragment} from './theme-types';
+import type { CssFragment } from './theme-types';
 
 export type Part<TParams = unknown> = {
     readonly id: string;

@@ -9,11 +9,11 @@ import type {
 } from 'ag-grid-community';
 import { Component, ModuleNames, _clearElement, _last } from 'ag-grid-community';
 
-import { AgPrimaryCols } from './agPrimaryCols';
-import { PivotModePanel } from './pivotModePanel';
 import { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
 import { ValuesDropZonePanel } from '../rowGrouping/columnDropZones/valueDropZonePanel';
+import { AgPrimaryCols } from './agPrimaryCols';
+import { PivotModePanel } from './pivotModePanel';
 
 export interface ToolPanelColumnCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, ColumnToolPanelState>,

@@ -1,6 +1,7 @@
+import type { AgChartThemeOverrides } from 'ag-charts-community';
+
 import type { ChartType } from 'ag-grid-community';
 import { ChartMappings } from 'ag-grid-community';
-import type { AgChartThemeOverrides } from 'ag-charts-community';
 
 import type { ChartTranslationKey } from '../services/chartTranslationService';
 

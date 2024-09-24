@@ -1,12 +1,12 @@
 import type { _InfiniteRowModelGridApi } from '../api/gridApi';
 import { RowModelHelperService } from '../api/rowModelHelperService';
 import { SsrmInfiniteSharedApiModule } from '../api/sharedApiModule';
-import { InfiniteRowModel } from './infiniteRowModel';
-import { getInfiniteRowCount, purgeInfiniteCache, refreshInfiniteCache } from './infiniteRowModelApi';
 import { _defineModule } from '../interfaces/iModule';
 import { ModuleNames } from '../modules/moduleNames';
 import { RowNodeBlockModule } from '../rowNodeCache/rowNodeBlockModule';
 import { VERSION } from '../version';
+import { InfiniteRowModel } from './infiniteRowModel';
+import { getInfiniteRowCount, purgeInfiniteCache, refreshInfiniteCache } from './infiniteRowModelApi';
 
 export const InfiniteRowModelCoreModule = _defineModule({
     version: VERSION,

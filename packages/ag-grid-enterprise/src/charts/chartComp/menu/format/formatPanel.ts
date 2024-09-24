@@ -1,6 +1,7 @@
 import type { ChartFormatPanel, ChartFormatPanelGroup } from 'ag-grid-community';
 import { Component, _warnOnce } from 'ag-grid-community';
 
+import type { AgGroupComponent } from '../../../../widgets/agGroupComponent';
 import type { ChartSeriesType } from '../../utils/seriesTypeMapper';
 import { isCartesian, isPolar } from '../../utils/seriesTypeMapper';
 import type { ChartMenuContext } from '../chartMenuContext';
@@ -12,7 +13,6 @@ import { GroupExpansionFeature } from './groupExpansionFeature';
 import { LegendPanel } from './legend/legendPanel';
 import { SeriesPanel } from './series/seriesPanel';
 import { TitlesPanel } from './titles/titlesPanel';
-import type { AgGroupComponent } from '../../../../widgets/agGroupComponent';
 
 export interface FormatPanelOptions extends ChartMenuContext {
     isExpandedOnInit: boolean;

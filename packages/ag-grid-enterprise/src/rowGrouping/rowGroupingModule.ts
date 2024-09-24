@@ -1,6 +1,16 @@
 import type { _RowGroupingGridApi } from 'ag-grid-community';
-import { ModuleNames, StickyRowModule, _ColumnFilterModule, _FloatingFilterModule, _defineModule } from 'ag-grid-community';
+import {
+    ModuleNames,
+    StickyRowModule,
+    _ColumnFilterModule,
+    _FloatingFilterModule,
+    _defineModule,
+} from 'ag-grid-community';
 
+import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { GroupCellRenderer } from '../rendering/groupCellRenderer';
+import { GroupCellRendererCtrl } from '../rendering/groupCellRendererCtrl';
+import { VERSION } from '../version';
 import { AggFuncService } from './aggFuncService';
 import { AggregationStage } from './aggregationStage';
 import { AutoColService } from './autoColService';
@@ -43,10 +53,6 @@ import {
     setValueColumns,
 } from './rowGroupingApi';
 import { ShowRowGroupColsService } from './showRowGroupColsService';
-import { VERSION } from '../version';
-import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { GroupCellRenderer } from '../rendering/groupCellRenderer';
-import { GroupCellRendererCtrl } from '../rendering/groupCellRendererCtrl';
 
 export const RowGroupingCoreModule = _defineModule({
     version: VERSION,

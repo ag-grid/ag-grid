@@ -1,11 +1,10 @@
-
 import type { GridTheme, GridThemeUseArgs } from '../entities/gridOptions';
 import { _errorOnce, _warnOnce } from '../utils/function';
 import type { Part } from './Part';
-import {  coreCSS, coreDefaults } from './core/core-css';
-import type {CoreParams} from './core/core-css';
-import {  paramValueToCss } from './theme-types';
-import type {CssFragment} from './theme-types';
+import { coreCSS, coreDefaults } from './core/core-css';
+import type { CoreParams } from './core/core-css';
+import { paramValueToCss } from './theme-types';
+import type { CssFragment } from './theme-types';
 import { paramToVariableName } from './theme-utils';
 
 export type Theme<TParams = unknown> = GridTheme & {

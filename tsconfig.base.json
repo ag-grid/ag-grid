@@ -23,7 +23,7 @@
     "noImplicitOverride": true,
     "paths": {
       "ag-grid-community": ["packages/ag-grid-community/src/main.ts"],
-      "ag-grid-enterprise": ["packages/ag-grid-enterprise/src/main.ts"],
+      "ag-grid-enterprise": ["packages/ag-grid-enterprise/src/main.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

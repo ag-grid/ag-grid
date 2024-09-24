@@ -2,6 +2,8 @@ import type { _ExcelExportGridApi } from 'ag-grid-community';
 import { ModuleNames, _defineModule } from 'ag-grid-community';
 import { _CsvExportCoreModule } from 'ag-grid-community';
 
+import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { VERSION } from '../version';
 import { ExcelCreator } from './excelCreator';
 import {
     exportDataAsExcel,
@@ -10,8 +12,6 @@ import {
     getMultipleSheetsAsExcel,
     getSheetDataForExcel,
 } from './excelExportApi';
-import { VERSION } from '../version';
-import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 
 export const ExcelExportCoreModule = _defineModule({
     version: VERSION,

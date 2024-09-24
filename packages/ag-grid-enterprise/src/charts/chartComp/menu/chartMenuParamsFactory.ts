@@ -8,11 +8,11 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
+import type { AgColorPickerParams } from '../../widgets/agColorPicker';
+import type { AgSliderParams } from '../../widgets/agSlider';
 import type { ChartOptionsProxy } from '../services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from '../services/chartTranslationService';
 import type { FontPanelParams } from './format/fontPanel';
-import type { AgColorPickerParams } from '../../widgets/agColorPicker';
-import type { AgSliderParams } from '../../widgets/agSlider';
 
 export class ChartMenuParamsFactory extends BeanStub {
     private chartTranslationService: ChartTranslationService;

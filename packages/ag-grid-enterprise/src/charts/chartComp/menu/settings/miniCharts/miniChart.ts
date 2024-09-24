@@ -1,6 +1,7 @@
+import { _Scene } from 'ag-charts-community';
+
 import type { BeanCollection } from 'ag-grid-community';
 import { Component, _errorOnce } from 'ag-grid-community';
-import { _Scene } from 'ag-charts-community';
 
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 

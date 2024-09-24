@@ -1,11 +1,11 @@
 import type { _RangeSelectionGridApi } from 'ag-grid-community';
 import { ModuleNames, _defineModule } from 'ag-grid-community';
 
+import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { VERSION } from '../version';
 import { addCellRange, clearRangeSelection, getCellRanges } from './rangeSelectionApi';
 import { RangeService } from './rangeService';
 import { SelectionHandleFactory } from './selectionHandleFactory';
-import { VERSION } from '../version';
-import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 
 export const RangeSelectionCoreModule = _defineModule({
     version: VERSION,

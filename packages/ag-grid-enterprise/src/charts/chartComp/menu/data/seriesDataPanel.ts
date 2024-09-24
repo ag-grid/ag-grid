@@ -1,10 +1,10 @@
 import { AgToggleButton } from 'ag-grid-community';
 
+import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
 import type { ChartController } from '../../chartController';
 import type { ColState } from '../../model/chartDataModel';
 import type { ChartOptionsService } from '../../services/chartOptionsService';
 import { DragDataPanel } from './dragDataPanel';
-import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
 
 export class SeriesDataPanel extends DragDataPanel {
     constructor(

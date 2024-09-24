@@ -1,12 +1,12 @@
 import type { BeanCollection, IChartService } from 'ag-grid-community';
 import { AgSelect, ChartMappings, Component, RefPlaceholder } from 'ag-grid-community';
 
+import type { AgGroupComponent, AgGroupComponentParams } from '../../../../widgets/agGroupComponent';
+import { AgGroupComponentSelector } from '../../../../widgets/agGroupComponent';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { canSwitchDirection, getFullChartNameTranslationKey, getSeriesType } from '../../utils/seriesTypeMapper';
 import type { ChartMenuContext } from '../chartMenuContext';
 import { ChartMenuParamsFactory } from '../chartMenuParamsFactory';
-import type { AgGroupComponent, AgGroupComponentParams} from '../../../../widgets/agGroupComponent';
-import { AgGroupComponentSelector } from '../../../../widgets/agGroupComponent';
 
 export class ChartSpecificDataPanel extends Component {
     private chartTranslationService: ChartTranslationService;

@@ -1,17 +1,11 @@
-import type {
-    BeanCollection,
-    CtrlsService,
-    Environment,
-    IAdvancedFilterCtrl,
-    PopupService,
-} from 'ag-grid-community';
+import type { BeanCollection, CtrlsService, Environment, IAdvancedFilterCtrl, PopupService } from 'ag-grid-community';
 import { BeanStub, _getAbsoluteHeight, _getAbsoluteWidth, _removeFromParent } from 'ag-grid-community';
 
+import { AgDialog } from '../widgets/agDialog';
 import { AdvancedFilterComp } from './advancedFilterComp';
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import { AdvancedFilterHeaderComp } from './advancedFilterHeaderComp';
 import { AdvancedFilterBuilderComp } from './builder/advancedFilterBuilderComp';
-import { AgDialog } from '../widgets/agDialog';
 
 export type AdvancedFilterCtrlEvent = 'advancedFilterBuilderClosed';
 export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implements IAdvancedFilterCtrl {

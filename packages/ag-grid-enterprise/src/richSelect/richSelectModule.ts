@@ -1,8 +1,8 @@
 import { ModuleNames, _EditCoreModule, _defineModule } from 'ag-grid-community';
 
-import { RichSelectCellEditor } from './richSelectCellEditor';
-import { VERSION } from '../version';
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { VERSION } from '../version';
+import { RichSelectCellEditor } from './richSelectCellEditor';
 
 export const RichSelectModule = _defineModule({
     version: VERSION,

@@ -1,7 +1,7 @@
-import type { RowPosition } from './iRowPosition';
 import type { CellRangeType } from './IRangeService';
 import type { AdvancedFilterModel } from './advancedFilterModel';
 import type { FilterModel } from './iFilter';
+import type { RowPosition } from './iRowPosition';
 import type { SortModelItem } from './iSortModelItem';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from './selectionState';
 

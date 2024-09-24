@@ -1,7 +1,10 @@
 import type { _GridChartsGridApi } from 'ag-grid-community';
 import { DragAndDropModule, ModuleNames, _defineModule } from 'ag-grid-community';
 
+import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { RangeSelectionModule } from '../rangeSelection/rangeSelectionModule';
+import { VERSION as GRID_VERSION } from '../version';
+import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 import { AdvancedSettingsMenuFactory } from './chartComp/menu/advancedSettings/advancedSettingsMenuFactory';
 import { ChartMenuListFactory } from './chartComp/menu/chartMenuList';
 import { ChartCrossFilterService } from './chartComp/services/chartCrossFilterService';
@@ -22,9 +25,6 @@ import {
     updateChart,
 } from './chartsApi';
 import { validGridChartsVersion } from './utils/validGridChartsVersion';
-import { VERSION as GRID_VERSION } from '../version';
-import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 
 export const GridChartsCoreModule = _defineModule({
     version: GRID_VERSION,

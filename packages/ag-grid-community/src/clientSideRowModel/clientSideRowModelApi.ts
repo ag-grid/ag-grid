@@ -5,7 +5,6 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _warnOnce } from '../utils/function';
 
-
 export function onGroupExpandedOrCollapsed(beans: BeanCollection): void {
     beans.expansionService?.onGroupExpandedOrCollapsed();
 }
