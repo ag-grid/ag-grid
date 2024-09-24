@@ -1,30 +1,32 @@
 /* eslint-disable */
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CsvExportModule } from '@ag-grid-community/csv-export';
-import { AgGridReact } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
-import '@ag-grid-community/styles/ag-theme-balham.css';
-import '@ag-grid-community/styles/ag-theme-material.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
-import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
-import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { SideBarModule } from '@ag-grid-enterprise/side-bar';
-import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
-import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import classnames from 'classnames';
-import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
+
+import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
+import 'ag-grid-community/styles/ag-theme-balham.css';
+import 'ag-grid-community/styles/ag-theme-material.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import {
+    ClipboardModule,
+    ColumnsToolPanelModule,
+    ExcelExportModule,
+    FiltersToolPanelModule,
+    GridChartsModule,
+    MasterDetailModule,
+    MenuModule,
+    MultiFilterModule,
+    RangeSelectionModule,
+    RichSelectModule,
+    RowGroupingModule,
+    SetFilterModule,
+    SideBarModule,
+    SparklinesModule,
+    StatusBarModule,
+} from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
 
 import styles from './Example.module.scss';
 import { Toolbar } from './Toolbar';

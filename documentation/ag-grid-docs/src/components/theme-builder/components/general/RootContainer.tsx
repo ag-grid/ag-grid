@@ -1,7 +1,8 @@
-import type { Theme } from '@ag-grid-community/theming';
 import { logErrorMessageOnce, paramToVariableName } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
+
+import type { Theme } from 'ag-grid-community';
 
 import { useRenderedTheme } from '../../model/rendered-theme';
 import { EditorPanel } from '../editors/EditorPanel';

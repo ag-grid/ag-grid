@@ -1,4 +1,4 @@
-import type { ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core';
+import type { ColDef, ColGroupDef, GridOptions } from 'ag-grid-community';
 
 import { defaultRowData } from './grid-data';
 

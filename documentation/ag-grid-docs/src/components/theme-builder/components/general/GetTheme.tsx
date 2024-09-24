@@ -83,7 +83,7 @@ const renderThemeCodeSample = ({ overriddenParams, usedParts }: RenderedThemeInf
         imports.push(partImport);
     }
     code += `\t.withParams(${paramsJS.replaceAll('\n', '\n    ')});\n`;
-    code = `import { ${imports.join(', ')} } from '@ag-grid-community/theming';\n\n${code}`;
+    code = `import { ${imports.join(', ')} } from 'ag-grid-community';\n\n${code}`;
 
     return code;
 };

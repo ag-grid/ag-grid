@@ -1,8 +1,9 @@
-import { type Theme, paramValueToCss } from '@ag-grid-community/theming';
 import type { ParamModel } from '@components/theme-builder/model/ParamModel';
 import { useRenderedTheme } from '@components/theme-builder/model/rendered-theme';
 import { cssValueIsValid, reinterpretCSSValue } from '@components/theme-builder/model/utils';
 import { useEffect, useRef, useState } from 'react';
+
+import { type Theme, paramValueToCss } from 'ag-grid-community';
 
 import { Input } from './Input';
 import { RGBAColor } from './RGBAColor';
