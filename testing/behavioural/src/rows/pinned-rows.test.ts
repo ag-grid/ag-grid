@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 
 import { TestGridsManager } from '../test-utils';
 

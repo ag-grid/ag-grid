@@ -1,6 +1,6 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions } from '@ag-grid-community/core';
-import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
 import { assertSelectedRowNodes, assertSelectedRowsByIndex } from './utils';

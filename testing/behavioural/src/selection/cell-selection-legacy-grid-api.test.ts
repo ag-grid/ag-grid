@@ -1,6 +1,6 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions } from '@ag-grid-community/core';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { RangeSelectionModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
 import { assertSelectedCellRanges } from './utils';

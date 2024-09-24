@@ -1,4 +1,4 @@
-import type { ColDef, ColGroupDef, Column, GridApi, RowGroupingDisplayType } from '@ag-grid-community/core';
+import type { ColDef, ColGroupDef, Column, GridApi, RowGroupingDisplayType } from 'ag-grid-community';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
 

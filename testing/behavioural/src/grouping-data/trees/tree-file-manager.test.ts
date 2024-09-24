@@ -1,9 +1,9 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridOptions, IRowNode } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import type { GridOptions, IRowNode } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
+import { GridRows, TestGridsManager } from '../../test-utils';
 
 describe('ag-grid tree transactions', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });

@@ -1,6 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridOptions, RowDataTransaction } from '@ag-grid-community/core';
 import type { MockInstance } from 'vitest';
+
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridOptions, RowDataTransaction } from 'ag-grid-community';
 
 import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager, cachedJSONObjects, executeTransactionsAsync } from '../test-utils';

@@ -1,11 +1,11 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import type { AgGridReactProps } from '@ag-grid-community/react';
 import '@testing-library/jest-dom';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
+
+import type { ColDef } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+import type { AgGridReactProps } from 'ag-grid-react';
 
 import { asyncSetTimeout } from '../test-utils';
 

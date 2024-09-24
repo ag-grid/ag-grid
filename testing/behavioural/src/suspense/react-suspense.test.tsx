@@ -1,8 +1,9 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
 import { cleanup, render } from '@testing-library/react';
 import React, { Suspense, act, useState } from 'react';
+
+import { ModuleRegistry } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
 
 describe('React Suspense', () => {
     beforeAll(() => {

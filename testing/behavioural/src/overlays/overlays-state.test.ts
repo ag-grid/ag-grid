@@ -1,5 +1,6 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import type { MockInstance } from 'vitest';
+
+import { ClientSideRowModelModule } from 'ag-grid-community';
 
 import { TestGridsManager } from '../test-utils';
 

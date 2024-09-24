@@ -1,5 +1,5 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../../test-utils';
 import { GridRows, TestGridsManager, cachedJSONObjects, executeTransactionsAsync } from '../../../test-utils';

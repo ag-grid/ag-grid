@@ -1,4 +1,4 @@
-import type { RowNode } from '@ag-grid-community/core';
+import type { RowNode } from 'ag-grid-community';
 
 import type { GridRows } from '../gridRows';
 

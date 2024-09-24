@@ -1,5 +1,6 @@
-import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import type { MockInstance } from 'vitest';
+
+import { InfiniteRowModelModule } from 'ag-grid-community';
 
 import { TestGridsManager } from '../test-utils';
 

@@ -1,5 +1,5 @@
-import type { GridApi, IRowNode } from '@ag-grid-community/core';
-import { _areEqual } from '@ag-grid-community/core';
+import type { GridApi, IRowNode } from 'ag-grid-community';
+import { _areEqual } from 'ag-grid-community';
 
 export function wait(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));

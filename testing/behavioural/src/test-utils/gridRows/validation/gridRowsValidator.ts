@@ -1,5 +1,5 @@
-import { RowNode } from '@ag-grid-community/core';
-import type { IRowNode } from '@ag-grid-community/core';
+import { RowNode } from 'ag-grid-community';
+import type { IRowNode } from 'ag-grid-community';
 
 import { rowIdAndIndexToString } from '../../grid-test-utils';
 import type { GridRows } from '../gridRows';
