@@ -1,7 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { RowSelectionOptions } from '../entities/gridOptions';
+import type { RowSelectionMode } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
 import { isSelectionUIEvent } from '../events';
@@ -38,7 +38,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
     private selectionCtx: RowRangeSelectionContext = new RowRangeSelectionContext();
 
     private groupSelectsChildren: boolean;
-    private rowSelectionMode?: RowSelectionOptions['mode'] = undefined;
+    private rowSelectionMode?: RowSelectionMode = undefined;
 
     public postConstruct(): void {
         const { gos, rowModel, onRowSelected } = this;

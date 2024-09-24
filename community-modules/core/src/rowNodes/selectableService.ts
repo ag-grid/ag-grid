@@ -5,8 +5,8 @@ import type { RowNode } from '../entities/rowNode';
 import {
     _getGroupSelectsDescendants,
     _getIsRowSelectable,
-    _getRowSelectionMode,
     _isClientSideRowModel,
+    _isRowSelection,
 } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -39,7 +39,7 @@ export class SelectableService extends BeanStub implements NamedBean {
     private updateSelectable(skipLeafNodes = false) {
         const { gos } = this;
 
-        const isRowSelecting = _getRowSelectionMode(gos) !== undefined;
+        const isRowSelecting = _isRowSelection(gos);
         const isRowSelectable = _getIsRowSelectable(gos);
 
         if (!isRowSelecting || !isRowSelectable) {

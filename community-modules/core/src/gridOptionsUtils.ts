@@ -5,6 +5,7 @@ import type {
     GroupSelectionMode,
     IsRowSelectable,
     MultiRowSelectionOptions,
+    RowSelectionMode,
     RowSelectionOptions,
     SelectionOptions,
     SingleRowSelectionOptions,
@@ -415,7 +416,9 @@ function _getEnableClickSelection(gos: GridOptionsService): NonNullable<RowSelec
         }
     }
 
-    return selection?.mode !== 'cell' ? selection?.enableClickSelection ?? false : false;
+    return selection.mode === 'singleRow' || selection.mode === 'multiRow'
+        ? selection.enableClickSelection ?? false
+        : false;
 }
 
 export function _getEnableSelection(gos: GridOptionsService): boolean {
@@ -439,7 +442,7 @@ export function _getIsRowSelectable(gos: GridOptionsService): IsRowSelectable | 
     return selection.mode !== 'cell' ? selection.isRowSelectable : undefined;
 }
 
-export function _getRowSelectionMode(gos: GridOptionsService): RowSelectionOptions['mode'] | undefined {
+export function _getRowSelectionMode(gos: GridOptionsService): RowSelectionMode | undefined {
     const selection = gos.get('selection');
     const useNewAPI = selection !== undefined;
 
@@ -458,7 +461,8 @@ export function _getRowSelectionMode(gos: GridOptionsService): RowSelectionOptio
 }
 
 export function _isMultiRowSelection(gos: GridOptionsService): boolean {
-    return _getRowSelectionMode(gos) === 'multiRow';
+    const mode = _getRowSelectionMode(gos);
+    return mode === 'multiRow' || mode === 'multiRowCell';
 }
 
 export function _getEnableMultiSelectWithClick(gos: GridOptionsService): boolean {

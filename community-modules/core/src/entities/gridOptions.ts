@@ -1475,7 +1475,11 @@ export interface GridOptions<TData = any> {
      * Type of Row Selection: `single`, `multiple`.
      * @deprecated v32.2 Instead, set `selection.mode` to `'singleRow'` or `'multiRow'`
      */
-    rowSelection?: 'single' | 'multiple';
+    rowSelection?: 'single' | 'multiple' | RowSelectionOptions<TData>;
+    /**
+     * Confgure cell selection
+     */
+    cellSelection?: CellSelectionOptions<TData>;
     /**
      * Set to `true` to allow multiple rows to be selected using single click.
      * @default false
@@ -1504,10 +1508,6 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     suppressHeaderFocus?: boolean;
-    /**
-     * Selection options object representing the new selection API. If this value is set all other selection related grid options will be ignored.
-     */
-    selection?: SelectionOptions;
     /**
      * Configure the selection column, used for displaying checkboxes.
      *
@@ -2541,11 +2541,6 @@ export interface LoadingCellRendererSelectorResult {
 
 export type DomLayoutType = 'normal' | 'autoHeight' | 'print';
 
-/** Configuration options for selection */
-export type SelectionOptions<TData = any, TValue = any> =
-    | RowSelectionOptions<TData, TValue>
-    | CellSelectionOptions<TData>;
-
 /** Cell selection options */
 export interface CellSelectionOptions<TData = any> {
     mode: 'cell';
@@ -2628,7 +2623,7 @@ export interface SingleRowSelectionOptions<TData = any, TValue = any> extends Co
 /**
  * Determines selection behaviour when multiple rows can be selected at once.
  */
-export interface MultiRowSelectionOptions<TData = any> extends CommonRowSelectionOptions<TData> {
+export interface MultiRowSelectionOptions<TData = any, TValue = any> extends CommonRowSelectionOptions<TData, TValue> {
     mode: 'multiRow';
     /**
      * Determine group selection behaviour
@@ -2724,10 +2719,6 @@ export type GroupSelectionMode = 'self' | 'descendants' | 'filteredDescendants';
  * - When `'filtered'`, selects all rows that satisfy the currently active filter.
  * - When `'currentPage'`, selects all rows that satisfy the currently active filter on the current page.
  */
-export type SelectAllMode =
-    /** selects all rows, regardless of filter and pagination settings */
-    | 'all'
-    /** selects all rows that satisfy the currently active filter */
-    | 'filtered'
-    /** selects all rows that satisfy the currently active filter on the current page */
-    | 'currentPage';
+export type SelectAllMode = 'all' | 'filtered' | 'currentPage';
+
+export type RowSelectionMode = RowSelectionOptions['mode'];
