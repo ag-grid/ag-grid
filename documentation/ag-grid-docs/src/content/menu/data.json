@@ -161,28 +161,32 @@
                         ]
                     },
                     {
-                        "title": "Guides",
+                        "title": "Tutorials",
                         "items": [
                             {
-                                "title": "Building a Basic Grid",
+                                "title": "1. Building a Basic Grid",
                                 "path": "deep-dive"
                             },
                             {
-                                "title": "Styling a Grid",
-                                "path": "styling-the-grid"
+                                "title": "2. Customising the Grid",
+                                "path": "styling-the-grid-2"
                             },
                             {
-                                "title": "Community Vs. Enterprise",
+                                "title": "3. Community vs. Enterprise",
                                 "path": "licensing"
                             },
                             {
-                                "title": "Building an Enterprise Grid",
+                                "title": "4. Building an Enterprise Grid",
                                 "path": "building-enterprise-grid"
                             },
                             {
                                 "title": "Best Practices",
                                 "path": "react-hooks",
                                 "frameworks": ["react"]
+                            },
+                            {
+                                "title": "Video Tutorials",
+                                "path": "videos"
                             }
                         ]
                     },
