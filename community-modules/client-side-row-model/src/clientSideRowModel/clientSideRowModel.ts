@@ -190,8 +190,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         //
         // ** LIST OF NON REACTIVE, NO ARGUMENT
         //
-        // getDataPath, getRowId, isRowMaster -- these are called once for each Node when the Node is created.
-        //                                    -- these are immutable Node properties (ie a Node ID cannot be changed)
+        // getDataPath, getRowId -- these are called once for each Node when the Node is created.
+        //                       -- these are immutable Node properties (ie a Node ID cannot be changed)
+        //
+        // isRowMaster           -- called when masterDetail is true and the Node is created or the property was changed
         //
         // getRowHeight - this is called once when Node is created, if a new getRowHeight function is provided,
         //              - we do not revisit the heights of each node.
