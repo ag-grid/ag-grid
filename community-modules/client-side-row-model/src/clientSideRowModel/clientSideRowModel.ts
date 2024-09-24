@@ -211,10 +211,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         //                       - the application would change these functions, far more likely the functions were
         //                       - non memoised correctly.
 
-        const initRowManagerProps: Set<keyof GridOptions> = new Set(['treeData', 'treeDataChildrenField']);
+        const resetProps: Set<keyof GridOptions> = new Set(['treeData', 'treeDataChildrenField']);
 
-        const resetProps: Set<keyof GridOptions> = new Set(['masterDetail', ...initRowManagerProps]);
         const groupStageRefreshProps: Set<keyof GridOptions> = new Set([
+            'masterDetail',
             'groupDefaultExpanded',
             'groupAllowUnbalanced',
             'initialGroupOrderComparator',
@@ -278,9 +278,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 } else {
                     newRowData = this.rootNode.allLeafChildren?.map((child) => child.data);
                 }
-                if (arePropertiesImpacted(initRowManagerProps)) {
-                    this.initRowManager();
-                }
+                this.initRowManager();
                 this.setNewRowData(newRowData ?? []);
                 return;
             }
@@ -293,6 +291,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
 
             if (arePropertiesImpacted(groupStageRefreshProps)) {
+                if (properties.includes('masterDetail')) {
+                    this.nodeManager.updateRowsMasterDetail?.();
+                }
+
                 this.refreshModel({ step: ClientSideRowModelSteps.EVERYTHING });
                 return;
             }

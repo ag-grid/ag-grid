@@ -375,7 +375,16 @@ export class ClientSideNodeManager<TData>
         return node;
     }
 
-    protected setMasterForRow(rowNode: RowNode<TData>, data: TData, level: number, isNewRow: boolean): void {
+    public updateRowsMasterDetail(): void {
+        this.rootNode.allLeafChildren?.forEach((rowNode) => {
+            const data = rowNode.data;
+            if (data) {
+                this.setMasterForRow(rowNode, data, TOP_LEVEL, true);
+            }
+        });
+    }
+
+    protected setMasterForRow(rowNode: RowNode<TData>, data: TData, level: number, canExpand: boolean): void {
         const masterDetail = this.gos.get('masterDetail');
         // this is the default, for when doing grid data
         if (masterDetail) {
@@ -391,7 +400,7 @@ export class ClientSideNodeManager<TData>
             rowNode.setMaster(false);
         }
 
-        if (isNewRow) {
+        if (canExpand) {
             const rowGroupColumns = this.beans.funcColsService.getRowGroupColumns();
             const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
 
