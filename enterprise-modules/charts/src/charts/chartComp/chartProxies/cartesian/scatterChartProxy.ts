@@ -62,67 +62,18 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
             return opts;
         });
 
-        return this.crossFiltering ? this.extractCrossFilterSeries(series, params) : series;
+        return this.crossFiltering ? this.extractCrossFilterSeries(series) : series;
     }
 
-    private extractCrossFilterSeries(
-        series: (AgScatterSeriesOptions | AgBubbleSeriesOptions)[],
-        params: UpdateParams
-    ): (AgScatterSeriesOptions | AgBubbleSeriesOptions)[] {
-        const { data } = params;
-        const palette = this.getChartPalette();
-
-        const filteredOutKey = (key: string) => `${key}Filter`;
-
-        const calcMarkerDomain = (data: any, sizeKey?: string) => {
-            const markerDomain: [number, number] = [Infinity, -Infinity];
-            if (sizeKey != null) {
-                for (const datum of data) {
-                    const value = datum[sizeKey] ?? datum[filteredOutKey(sizeKey)];
-                    if (value < markerDomain[0]) {
-                        markerDomain[0] = value;
-                    }
-                    if (value > markerDomain[1]) {
-                        markerDomain[1] = value;
-                    }
-                }
-            }
-            if (markerDomain[0] <= markerDomain[1]) {
-                return markerDomain;
-            }
-            return undefined;
-        };
-
-        const updatePrimarySeries = <T extends AgScatterSeriesOptions | AgBubbleSeriesOptions>(
-            series: T,
-            idx: number
-        ): T => {
-            const fill = palette?.fills?.[idx];
-            const stroke = palette?.strokes?.[idx];
-
-            let markerDomain: [number, number] | undefined = undefined;
-            if (series.type === 'bubble') {
-                const { sizeKey } = series;
-                markerDomain = calcMarkerDomain(data, sizeKey);
-            }
-
+    private extractCrossFilterSeries(series: (AgScatterSeriesOptions | AgBubbleSeriesOptions)[]) {
+        return series.map((series) => {
             return {
-                ...series,
-                fill,
-                stroke,
-                domain: markerDomain,
-                xKey: filteredOutKey(series.xKey),
-                yKey: filteredOutKey(series.yKey),
+                xFilterKey: `${series.xKey}Filter`,
+                yFilterKey: `${series.yKey}Filter`,
                 highlightStyle: { item: { fill: 'yellow' } },
-                // listeners: {
-                //     ...series.listeners,
-                //     nodeClick: this.crossFilterCallback,
-                // },
+                ...series,
             };
-        };
-
-        const updatedSeries = series.map(updatePrimarySeries);
-        return [...updatedSeries];
+        });
     }
 
     private getSeriesDefinitions(fields: FieldDefinition[], paired: boolean): (SeriesDefinition | null)[] {
