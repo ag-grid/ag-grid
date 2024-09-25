@@ -32,9 +32,9 @@ export interface AgGroupComponentParams {
 }
 
 export type AgGroupComponentEvent = 'expanded' | 'collapsed' | 'enableChange';
-export type ExpandedChangedEvent = 'expandedChanged';
+export type ExpandedChangedEventType = 'expandedChanged';
 
-interface ExpandChangedEvent extends AgEvent<ExpandedChangedEvent> {
+interface ExpandChangedEvent extends AgEvent<ExpandedChangedEventType> {
     expanded?: boolean;
 }
 
@@ -357,7 +357,7 @@ function getDefaultTitleBarTemplate(params: AgGroupComponentParams) {
         </div>
     `;
 }
-class DefaultTitleBar extends Component<ExpandedChangedEvent> {
+class DefaultTitleBar extends Component<ExpandedChangedEventType> {
     private title: string | undefined;
     private suppressOpenCloseIcons: boolean = false;
     private suppressKeyboardNavigation: boolean = false;
