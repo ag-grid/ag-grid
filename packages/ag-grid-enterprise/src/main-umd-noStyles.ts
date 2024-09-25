@@ -9,6 +9,7 @@ import {
     ModuleRegistry,
 } from 'ag-grid-community';
 
+import { GridChartsModule } from './charts/main';
 import {
     AdvancedFilterModule,
     ClipboardModule,
@@ -28,8 +29,6 @@ import {
     StatusBarModule,
     ViewportRowModelModule,
 } from './main';
-
-import { GridChartsModule } from './charts/main'
 
 ModuleRegistry.__registerModules(
     [

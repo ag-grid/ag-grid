@@ -1,8 +1,9 @@
-import type { GridOptions } from 'ag-grid-community';
-import { MasterDetailModule } from 'ag-grid-enterprise';
 import type { MockInstance } from 'vitest';
 
-import { CommunityFeaturesModule, ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { MasterDetailModule } from 'ag-grid-enterprise';
+
 import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager } from '../test-utils';
 
