@@ -4,7 +4,7 @@ import type { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { ColumnEvent, FilterChangedEvent } from '../../../events';
-import { _getActiveDomElement } from '../../../gridOptionsUtils';
+import { _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _setAriaLabel } from '../../../utils/aria';
@@ -256,8 +256,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private setupFilterButton(): void {
-        this.suppressFilterButton = !this.menuService.isFloatingFilterButtonEnabled(this.column);
-        this.highlightFilterButtonWhenActive = !this.menuService.isLegacyMenuEnabled();
+        this.suppressFilterButton = !this.menuService?.isFloatingFilterButtonEnabled(this.column);
+        this.highlightFilterButtonWhenActive = !_isLegacyMenuEnabled(this.gos);
     }
 
     private setupUserComp(): void {
@@ -281,7 +281,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     private showParentFilter() {
         const eventSource = this.suppressFilterButton ? this.eFloatingFilterBody : this.eButtonShowMainFilter;
-        this.menuService.showFilterMenu({
+        this.menuService?.showFilterMenu({
             column: this.column,
             buttonElement: eventSource,
             containerType: 'floatingFilter',

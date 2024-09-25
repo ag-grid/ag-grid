@@ -30,7 +30,7 @@ export class GridHeaderCtrl extends BeanStub {
     private visibleColsService: VisibleColsService;
     private ctrlsService: CtrlsService;
     private filterManager?: FilterManager;
-    private menuService: MenuService;
+    private menuService?: MenuService;
 
     public wireBeans(beans: BeanCollection) {
         this.animationFrameService = beans.animationFrameService;
@@ -212,7 +212,7 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
-        if ((!mouseEvent && !touchEvent) || !this.menuService.isHeaderContextMenuEnabled()) {
+        if ((!mouseEvent && !touchEvent) || !this.menuService?.isHeaderContextMenuEnabled()) {
             return;
         }
 

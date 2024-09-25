@@ -10,6 +10,7 @@ import type {
     FuncColsService,
     IAggFuncService,
     IClipboardService,
+    IColumnChooserFactory,
     ICsvCreator,
     IExcelCreator,
     IExpansionService,
@@ -41,6 +42,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private aggFuncService?: IAggFuncService;
     private csvCreator?: ICsvCreator;
     private excelCreator?: IExcelCreator;
+    private columnChooserFactory?: IColumnChooserFactory;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
@@ -50,7 +52,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         this.focusService = beans.focusService;
         this.rowPositionUtils = beans.rowPositionUtils;
         this.chartMenuItemMapper = beans.chartMenuItemMapper as ChartMenuItemMapper;
-        this.menuService = beans.menuService;
+        this.menuService = beans.menuService!;
         this.sortController = beans.sortController;
         this.columnAutosizeService = beans.columnAutosizeService;
         this.expansionService = beans.expansionService;
@@ -58,6 +60,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         this.aggFuncService = beans.aggFuncService;
         this.csvCreator = beans.csvCreator;
         this.excelCreator = beans.excelCreator;
+        this.columnChooserFactory = beans.columnChooserFactory;
     }
 
     public mapWithStockItems(
@@ -356,7 +359,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return {
                         name: localeTextFunc('columnChooser', 'Choose Columns'),
                         icon: _createIconNoSpan('columns', this.gos, null),
-                        action: () => this.menuService.showColumnChooser({ column, eventSource: sourceElement() }),
+                        action: () =>
+                            this.columnChooserFactory?.showColumnChooser({ column, eventSource: sourceElement() }),
                     };
                 } else {
                     return null;

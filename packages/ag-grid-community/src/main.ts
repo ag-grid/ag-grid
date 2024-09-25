@@ -292,14 +292,12 @@ export {
     IAbstractHeaderCellComp,
 } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 export { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerCtrl';
-export type { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 
 // misc
 export { IImmutableService } from './interfaces/iImmutableService';
 export type { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
 export type { MenuService } from './misc/menuService';
-export { IContextMenuParams } from './misc/menuService';
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from './interfaces/iCellEditor';
@@ -628,6 +626,8 @@ export {
     _getSuppressMultiRanges,
     _getRowSelectionMode,
     _isUsingNewSelectionAPI,
+    _isLegacyMenuEnabled,
+    _isColumnMenuAnchoringEnabled,
 } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
 export type { EventService } from './eventService';
@@ -841,7 +841,14 @@ export { WithoutGridCommon } from './interfaces/iCommon';
 export { ManagedGridOptionKey, ManagedGridOptions, PropertyKeys } from './propertyKeys';
 export { IPivotColDefService } from './interfaces/iPivotColDefService';
 export { IViewportDatasource, IViewportDatasourceParams } from './interfaces/iViewportDatasource';
-export { IContextMenuFactory } from './interfaces/iContextMenuFactory';
+export {
+    IContextMenuService,
+    ShowContextMenuParams,
+    IContextMenuParams,
+    EventShowContextMenuParams,
+    MouseShowContextMenuParams,
+    TouchShowContextMenuParam,
+} from './interfaces/iContextMenu';
 export { IRowNodeStage, StageExecuteParams } from './interfaces/iRowNodeStage';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
@@ -1012,6 +1019,7 @@ export { ClientSideRowModelModule, ClientSideRowModelCoreModule } from './client
 export { CsvExportModule, CsvExportCoreModule as _CsvExportCoreModule } from './csvExport/csvExportModule';
 export { InfiniteRowModelModule } from './infiniteRowModel/infiniteRowModelModule';
 export { PopupModule } from './widgets/popupModule';
+export { SharedMenuModule } from './misc/sharedMenuModule';
 
 //  events
 export * from './events';

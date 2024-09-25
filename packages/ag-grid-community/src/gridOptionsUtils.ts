@@ -478,3 +478,15 @@ export function _getGroupSelectsDescendants(gos: GridOptionsService): boolean {
 export function _isSetFilterByDefault(gos: GridOptionsService): boolean {
     return gos.isModuleRegistered(ModuleNames.SetFilterModule) && !gos.get('suppressSetFilterByDefault');
 }
+
+export function _isLegacyMenuEnabled(gos: GridOptionsService): boolean {
+    return gos.get('columnMenu') === 'legacy';
+}
+
+export function _isColumnMenuAnchoringEnabled(gos: GridOptionsService): boolean {
+    return !_isLegacyMenuEnabled(gos);
+}
+
+export function _areAdditionalColumnMenuItemsEnabled(gos: GridOptionsService): boolean {
+    return gos.get('columnMenu') === 'new';
+}

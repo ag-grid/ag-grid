@@ -1,6 +1,7 @@
 import type { _ColumnFilterGridApi, _FilterGridApi, _QuickFilterGridApi } from '../api/gridApi';
 import { HeaderFilterCellCtrl } from '../headerRendering/cells/floatingFilter/headerFilterCellCtrl';
 import { _defineModule } from '../interfaces/iModule';
+import { SharedMenuModule } from '../misc/sharedMenuModule';
 import { VERSION } from '../version';
 import { PopupModule } from '../widgets/popupModule';
 import {
@@ -17,6 +18,7 @@ import {
 import { ColumnFilterService } from './columnFilterService';
 import { isAnyFilterPresent, onFilterChanged } from './filterApi';
 import { FilterManager } from './filterManager';
+import { FilterMenuFactory } from './filterMenuFactory';
 import { FilterValueService } from './filterValueService';
 import { ReadOnlyFloatingFilter } from './floating/provided/readOnlyFloatingFilter';
 import { DateFilter } from './provided/date/dateFilter';
@@ -56,6 +58,13 @@ export const ColumnFilterModule = _defineModule({
     moduleName: '@ag-grid-community/column-filter',
     beans: [ColumnFilterService],
     dependantModules: [FilterCoreModule, PopupModule, FilterValueModule],
+});
+
+export const ColumnFilterMenuModule = _defineModule({
+    version: VERSION,
+    moduleName: '@ag-grid-community/column-filter-menu',
+    beans: [FilterMenuFactory],
+    dependantModules: [ColumnFilterModule, PopupModule, SharedMenuModule],
 });
 
 export const ColumnFilterApiModule = _defineModule<_ColumnFilterGridApi>({
@@ -150,5 +159,6 @@ export const FilterModule = _defineModule({
         ReadOnlyFloatingFilterModule,
         QuickFilterModule,
         ColumnFilterApiModule,
+        ColumnFilterMenuModule,
     ],
 });

@@ -36,7 +36,6 @@ import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridComp } from './gridComp/gridComp';
 import { GridDestroyService } from './gridDestroyService';
 import { GridOptionsService, getCoercedGridOptions } from './gridOptionsService';
-import { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { Module } from './interfaces/iModule';
@@ -44,7 +43,6 @@ import type { RowModelType } from './interfaces/iRowModel';
 import { LocaleService } from './localeService';
 import { AnimationFrameService } from './misc/animationFrameService';
 import { ApiEventService } from './misc/apiEventService';
-import { MenuService } from './misc/menuService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PageBoundsListener } from './pagination/pageBoundsListener';
@@ -441,7 +439,6 @@ export class GridCoreCreator {
             ColumnFactory,
             NavigationService,
             ValueService,
-            StandardMenuFactory,
             FocusService,
             MouseEventService,
             Environment,
@@ -462,7 +459,6 @@ export class GridCoreCreator {
             OverlayService,
             ApiEventService,
             AriaAnnouncementService,
-            MenuService,
             ColumnApplyStateService,
             ColumnGetStateService,
             ColumnGroupStateService,

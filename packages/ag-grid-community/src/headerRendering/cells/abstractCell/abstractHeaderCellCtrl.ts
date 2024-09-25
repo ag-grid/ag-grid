@@ -46,7 +46,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected userComponentFactory: UserComponentFactory;
     protected ctrlsService: CtrlsService;
     protected dragAndDropService?: DragAndDropService;
-    protected menuService: MenuService;
+    protected menuService?: MenuService;
 
     public wireBeans(beans: BeanCollection) {
         this.pinnedWidthService = beans.pinnedWidthService;
@@ -411,7 +411,7 @@ export abstract class AbstractHeaderCellCtrl<
         if (this.gos.get('preventDefaultOnContextMenu')) {
             event.preventDefault();
         }
-        if (this.menuService.isHeaderContextMenuEnabled(column)) {
+        if (this.menuService?.isHeaderContextMenuEnabled(column)) {
             this.menuService.showHeaderContextMenu(column, mouseEvent, touchEvent);
         }
 

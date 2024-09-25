@@ -6,7 +6,7 @@ import type { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SortDirection } from '../../../entities/colDef';
-import { _getActiveDomElement } from '../../../gridOptionsUtils';
+import { _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
@@ -165,24 +165,24 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             displayName: this.displayName!,
             enableSorting: this.column.isSortable(),
             enableMenu: this.menuEnabled,
-            enableFilterButton: this.openFilterEnabled && this.menuService.isHeaderFilterButtonEnabled(this.column),
-            enableFilterIcon: !this.openFilterEnabled || this.menuService.isLegacyMenuEnabled(),
+            enableFilterButton: this.openFilterEnabled && !!this.menuService?.isHeaderFilterButtonEnabled(this.column),
+            enableFilterIcon: !this.openFilterEnabled || _isLegacyMenuEnabled(this.gos),
             showColumnMenu: (buttonElement: HTMLElement) => {
-                this.menuService.showColumnMenu({
+                this.menuService?.showColumnMenu({
                     column: this.column,
                     buttonElement,
                     positionBy: 'button',
                 });
             },
             showColumnMenuAfterMouseClick: (mouseEvent: MouseEvent | Touch) => {
-                this.menuService.showColumnMenu({
+                this.menuService?.showColumnMenu({
                     column: this.column,
                     mouseEvent,
                     positionBy: 'mouse',
                 });
             },
             showFilter: (buttonElement: HTMLElement) => {
-                this.menuService.showFilterMenu({
+                this.menuService?.showFilterMenu({
                     column: this.column,
                     buttonElement: buttonElement,
                     containerType: 'columnFilter',
@@ -351,8 +351,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private updateState(): void {
-        this.menuEnabled = this.menuService.isColumnMenuInHeaderEnabled(this.column);
-        this.openFilterEnabled = this.menuService.isFilterMenuInHeaderEnabled(this.column);
+        this.menuEnabled = !!this.menuService?.isColumnMenuInHeaderEnabled(this.column);
+        this.openFilterEnabled = !!this.menuService?.isFilterMenuInHeaderEnabled(this.column);
         this.sortable = this.column.isSortable();
         this.displayName = this.calculateDisplayName();
         this.draggable = this.workOutDraggable();
@@ -569,7 +569,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private refreshAriaFilterButton(): void {
-        if (this.openFilterEnabled && !this.menuService.isLegacyMenuEnabled()) {
+        if (this.openFilterEnabled && !_isLegacyMenuEnabled(this.gos)) {
             const translate = this.localeService.getLocaleTextFunc();
             this.setAriaDescriptionProperty(
                 'filterButton',

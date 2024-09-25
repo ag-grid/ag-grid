@@ -27,6 +27,8 @@ import {
     ModuleNames,
     RefPlaceholder,
     _createIconNoSpan,
+    _isColumnMenuAnchoringEnabled,
+    _isLegacyMenuEnabled,
     _warnOnce,
     isColumn,
 } from 'ag-grid-community';
@@ -74,7 +76,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         this.visibleColsService = beans.visibleColsService;
         this.filterManager = beans.filterManager;
         this.menuUtils = beans.menuUtils as MenuUtils;
-        this.menuService = beans.menuService;
+        this.menuService = beans.menuService!;
         this.columnMenuFactory = beans.columnMenuFactory as ColumnMenuFactory;
     }
 
@@ -145,7 +147,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         const defaultTab: ColumnMenuTab | undefined = filtersOnly ? 'filterMenuTab' : undefined;
         const restrictToTabs = defaultTab ? [defaultTab] : undefined;
 
-        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
+        const isLegacyMenuEnabled = _isLegacyMenuEnabled(this.gos);
         const nudgeX = (isLegacyMenuEnabled ? 9 : 4) * multiplier;
         const nudgeY = isLegacyMenuEnabled ? -23 : 4;
 
@@ -236,7 +238,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             positionCallback(menu);
         }
 
-        if (this.menuService.isColumnMenuAnchoringEnabled()) {
+        if (_isColumnMenuAnchoringEnabled(this.gos)) {
             // if user starts showing / hiding columns, or otherwise move the underlying column
             // for this menu, we want to stop tracking the menu with the column position. otherwise
             // the menu would move as the user is using the columns tab inside the menu.
@@ -310,7 +312,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         restrictToTabs?: ColumnMenuTab[],
         eventSource?: HTMLElement
     ): (EnterpriseColumnMenu & BeanStub<TabbedColumnMenuEvent | ComponentEvent>) | undefined {
-        if (this.menuService.isLegacyMenuEnabled()) {
+        if (_isLegacyMenuEnabled(this.gos)) {
             return this.createBean(
                 new TabbedColumnMenu(column, restoreFocusParams, this.lastSelectedTab, restrictToTabs, eventSource)
             );
@@ -335,14 +337,14 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             switchingTab,
             key: (this.lastSelectedTab ??
                 defaultTab ??
-                (this.menuService.isLegacyMenuEnabled() ? TAB_GENERAL : 'columnMenu')) as any,
+                (_isLegacyMenuEnabled(this.gos) ? TAB_GENERAL : 'columnMenu')) as any,
             column: column ?? null,
             columnGroup: columnGroup ?? null,
         });
     }
 
     public isMenuEnabled(column: AgColumn): boolean {
-        if (!this.menuService.isLegacyMenuEnabled()) {
+        if (!_isLegacyMenuEnabled(this.gos)) {
             return true;
         }
         // Determine whether there are any tabs to show in the menu, given that the filter tab may be hidden

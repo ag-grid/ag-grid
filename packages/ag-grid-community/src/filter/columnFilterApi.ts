@@ -57,7 +57,7 @@ export function showColumnFilter(beans: BeanCollection, colKey: string | Column)
         _errorOnce(`column '${colKey}' not found`);
         return;
     }
-    beans.menuService.showFilterMenu({
+    beans.menuService?.showFilterMenu({
         column,
         containerType: 'columnFilter',
         positionBy: 'auto',

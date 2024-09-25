@@ -1,6 +1,7 @@
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SortDirection } from '../../../entities/colDef';
+import { _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { Column } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
@@ -111,7 +112,7 @@ function getHeaderCompTemplate(includeSortIndicator: boolean): string {
 
 export class HeaderComp extends Component implements IHeaderComp {
     private sortController?: SortController;
-    private menuService: MenuService;
+    private menuService?: MenuService;
 
     public wireBeans(beans: BeanCollection): void {
         this.sortController = beans.sortController;
@@ -268,11 +269,11 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private workOutShowMenu(): boolean {
-        return this.params.enableMenu && this.menuService.isHeaderMenuButtonEnabled();
+        return this.params.enableMenu && !!this.menuService?.isHeaderMenuButtonEnabled();
     }
 
     private shouldSuppressMenuHide(): boolean {
-        return this.menuService.isHeaderMenuButtonAlwaysShowEnabled();
+        return !!this.menuService?.isHeaderMenuButtonAlwaysShowEnabled();
     }
 
     private setMenu(): void {
@@ -288,7 +289,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        const isLegacyMenu = this.menuService.isLegacyMenuEnabled();
+        const isLegacyMenu = _isLegacyMenuEnabled(this.gos);
         this.addInIcon(isLegacyMenu ? 'menu' : 'menuAlt', this.eMenu, this.params.column as AgColumn);
         this.eMenu.classList.toggle('ag-header-menu-icon', !isLegacyMenu);
 
@@ -299,9 +300,9 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     public onMenuKeyboardShortcut(isFilterShortcut: boolean): boolean {
         const column = this.params.column as AgColumn;
-        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
+        const isLegacyMenuEnabled = _isLegacyMenuEnabled(this.gos);
         if (isFilterShortcut && !isLegacyMenuEnabled) {
-            if (this.menuService.isFilterMenuInHeaderEnabled(column)) {
+            if (this.menuService?.isFilterMenuInHeaderEnabled(column)) {
                 this.params.showFilter(this.eFilterButton ?? this.eMenu ?? this.getGui());
                 return true;
             }

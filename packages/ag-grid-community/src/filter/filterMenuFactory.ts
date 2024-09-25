@@ -1,31 +1,29 @@
-import { KeyCode } from '../../../constants/keyCode';
-import type { NamedBean } from '../../../context/bean';
-import { BeanStub } from '../../../context/beanStub';
-import type { BeanCollection } from '../../../context/context';
-import type { CtrlsService } from '../../../ctrlsService';
-import type { AgColumn } from '../../../entities/agColumn';
-import { FilterWrapperComp } from '../../../filter/filterWrapperComp';
-import type { FocusService } from '../../../focusService';
-import type { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
-import type { IMenuFactory } from '../../../interfaces/iMenuFactory';
-import type { MenuService } from '../../../misc/menuService';
-import { _setAriaRole } from '../../../utils/aria';
-import { _isVisible } from '../../../utils/dom';
-import type { PopupService } from '../../../widgets/popupService';
+import { KeyCode } from '../constants/keyCode';
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { CtrlsService } from '../ctrlsService';
+import type { AgColumn } from '../entities/agColumn';
+import type { FocusService } from '../focusService';
+import { _isColumnMenuAnchoringEnabled, _isLegacyMenuEnabled } from '../gridOptionsUtils';
+import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
+import type { IMenuFactory } from '../interfaces/iMenuFactory';
+import { _setAriaRole } from '../utils/aria';
+import { _isVisible } from '../utils/dom';
+import type { PopupService } from '../widgets/popupService';
+import { FilterWrapperComp } from './filterWrapperComp';
 
-export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFactory {
+export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFactory {
     beanName = 'filterMenuFactory' as const;
 
     private popupService?: PopupService;
     private focusService: FocusService;
     private ctrlsService: CtrlsService;
-    private menuService: MenuService;
 
     public wireBeans(beans: BeanCollection): void {
         this.popupService = beans.popupService;
         this.focusService = beans.focusService;
         this.ctrlsService = beans.ctrlsService;
-        this.menuService = beans.menuService;
     }
 
     private hidePopup: () => void;
@@ -55,7 +53,7 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
             },
             containerType,
             mouseEvent.target as HTMLElement,
-            this.menuService.isLegacyMenuEnabled()
+            _isLegacyMenuEnabled(this.gos)
         );
     }
 
@@ -67,7 +65,7 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
-        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
+        const isLegacyMenuEnabled = _isLegacyMenuEnabled(this.gos);
         if (!isLegacyMenuEnabled && this.gos.get('enableRtl')) {
             multiplier = 1;
             alignSide = 'right';
@@ -128,7 +126,7 @@ export class StandardMenuFactory extends BeanStub implements NamedBean, IMenuFac
 
         const afterGuiDetached = () => comp?.afterGuiDetached();
 
-        const anchorToElement = this.menuService.isColumnMenuAnchoringEnabled()
+        const anchorToElement = _isColumnMenuAnchoringEnabled(this.gos)
             ? eventSource ?? this.ctrlsService.getGridBodyCtrl().getGui()
             : undefined;
         const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {

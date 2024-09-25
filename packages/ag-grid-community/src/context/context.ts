@@ -59,7 +59,7 @@ import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IColumnChooserFactory } from '../interfaces/iColumnChooserFactory';
-import type { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
+import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import type { IDetailGridApiService } from '../interfaces/iDetailGridApiService';
 import type { IExcelCreator } from '../interfaces/iExcelCreator';
@@ -244,7 +244,7 @@ export interface CoreBeanCollection {
     overlayService: OverlayService;
     columnGetStateService: ColumnGetStateService;
     pinnedRowModel?: PinnedRowModel;
-    menuService: MenuService;
+    menuService?: MenuService;
     apiEventService: ApiEventService;
     undoRedoService?: UndoRedoService;
     rowNodeBlockLoader?: RowNodeBlockLoader;
@@ -261,9 +261,9 @@ export interface CoreBeanCollection {
     agComponentUtils?: AgComponentUtils;
     frameworkComponentWrapper: FrameworkComponentWrapper;
     horizontalResizeService?: HorizontalResizeService;
-    filterMenuFactory: IMenuFactory;
+    filterMenuFactory?: IMenuFactory;
     enterpriseMenuFactory?: IMenuFactory;
-    contextMenuFactory?: IContextMenuFactory;
+    contextMenuService?: IContextMenuService;
     editService?: EditService;
     rowEditService?: RowEditService;
     alignedGridsService?: AlignedGridsService;
@@ -379,7 +379,7 @@ export type BeanName =
     | 'pivotResultColsService'
     | 'componentMetadataProvider'
     | 'context'
-    | 'contextMenuFactory'
+    | 'contextMenuService'
     | 'controlsColService'
     | 'ctrlsFactory'
     | 'ctrlsService'

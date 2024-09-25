@@ -2,15 +2,14 @@ import type { VisibleColsService } from '../../columns/visibleColsService';
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import type { CtrlsService } from '../../ctrlsService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { FocusService } from '../../focusService';
 import { _getDomData } from '../../gridOptionsUtils';
 import type { IRangeService } from '../../interfaces/IRangeService';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
+import type { IContextMenuService } from '../../interfaces/iContextMenu';
 import type { IRowModel } from '../../interfaces/iRowModel';
 import type { RowPinnedType } from '../../interfaces/iRowNode';
-import type { EventShowContextMenuParams, MenuService } from '../../misc/menuService';
 import type { PinnedRowModel } from '../../pinnedRowModel/pinnedRowModel';
 import { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -24,7 +23,6 @@ import {
     _isUserSuppressingKeyboardEvent,
     _normaliseQwertyAzerty,
 } from '../../utils/keyboard';
-import type { ValueService } from '../../valueService/valueService';
 import type { LongTapEvent } from '../../widgets/touchListener';
 import { TouchListener } from '../../widgets/touchListener';
 import type { MouseEventService } from './../mouseEventService';
@@ -32,9 +30,7 @@ import type { NavigationService } from './../navigationService';
 
 export class RowContainerEventsFeature extends BeanStub {
     private mouseEventService: MouseEventService;
-    private valueService: ValueService;
-    private menuService: MenuService;
-    private ctrlsService: CtrlsService;
+    private contextMenuService?: IContextMenuService;
     private navigationService: NavigationService;
     private focusService: FocusService;
     private undoRedoService?: UndoRedoService;
@@ -46,9 +42,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
     public wireBeans(beans: BeanCollection) {
         this.mouseEventService = beans.mouseEventService;
-        this.valueService = beans.valueService;
-        this.menuService = beans.menuService;
-        this.ctrlsService = beans.ctrlsService;
+        this.contextMenuService = beans.contextMenuService;
         this.navigationService = beans.navigationService;
         this.focusService = beans.focusService;
         this.undoRedoService = beans.undoRedoService;
@@ -97,7 +91,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const cellCtrl = this.mouseEventService.getRenderedCellForEvent(mouseEvent)!;
 
         if (eventName === 'contextmenu') {
-            this.handleContextMenuMouseEvent(mouseEvent, undefined, rowComp, cellCtrl);
+            this.contextMenuService?.handleContextMenuMouseEvent(mouseEvent, undefined, rowComp, cellCtrl);
         } else {
             if (cellCtrl) {
                 cellCtrl.onMouseEvent(eventName, mouseEvent);
@@ -119,7 +113,7 @@ export class RowContainerEventsFeature extends BeanStub {
             const rowComp = this.getRowForEvent(event.touchEvent);
             const cellComp = this.mouseEventService.getRenderedCellForEvent(event.touchEvent)!;
 
-            this.handleContextMenuMouseEvent(undefined, event.touchEvent, rowComp, cellComp);
+            this.contextMenuService?.handleContextMenuMouseEvent(undefined, event.touchEvent, rowComp, cellComp);
         };
 
         this.addManagedListeners(touchListener, { longTap: longTapListener });
@@ -139,36 +133,6 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         return null;
-    }
-
-    private handleContextMenuMouseEvent(
-        mouseEvent: MouseEvent | undefined,
-        touchEvent: TouchEvent | undefined,
-        rowComp: RowCtrl | null,
-        cellCtrl: CellCtrl
-    ) {
-        const rowNode = rowComp ? rowComp.getRowNode() : null;
-        const column = cellCtrl ? cellCtrl.getColumn() : null;
-        let value = null;
-
-        if (column) {
-            const event = mouseEvent ? mouseEvent : touchEvent;
-            cellCtrl.dispatchCellContextMenuEvent(event ?? null);
-            value = this.valueService.getValue(column, rowNode);
-        }
-
-        // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
-        const anchorToElement = cellCtrl ? cellCtrl.getGui() : gridBodyCon.getGridBodyElement();
-
-        this.menuService.showContextMenu({
-            mouseEvent,
-            touchEvent,
-            rowNode,
-            column,
-            value,
-            anchorToElement,
-        } as EventShowContextMenuParams);
     }
 
     private getControlsForEventTarget(target: EventTarget | null): {

@@ -5,18 +5,14 @@ import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import { isColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { RowNode } from '../entities/rowNode';
 import type { FilterManager } from '../filter/filterManager';
+import { _isLegacyMenuEnabled } from '../gridOptionsUtils';
 import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
 import type { Column } from '../interfaces/iColumn';
-import type { IColumnChooserFactory, ShowColumnChooserParams } from '../interfaces/iColumnChooserFactory';
-import type { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
+import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
-import type { RowCtrl } from '../rendering/row/rowCtrl';
-import type { RowRenderer } from '../rendering/rowRenderer';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _warnOnce } from '../utils/function';
-import type { ValueService } from '../valueService/valueService';
 import type { AnimationFrameService } from './animationFrameService';
 
 interface BaseShowColumnMenuParams {
@@ -48,32 +44,6 @@ export type ShowColumnMenuParams = (MouseShowMenuParams | ButtonShowMenuParams |
 export type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams | AutoShowMenuParams) &
     BaseShowFilterMenuParams;
 
-export interface ShowContextMenuParams {
-    /** The `RowNode` associated with the Context Menu */
-    rowNode?: RowNode | null;
-    /** The `Column` associated with the Context Menu */
-    column?: Column | null;
-    /** The value that will be passed to the Context Menu (useful with `getContextMenuItems`). If none is passed, and `RowNode` and `Column` are provided, this will be the respective Cell value */
-    value: any;
-}
-
-interface MouseShowContextMenuParams {
-    mouseEvent: MouseEvent;
-}
-
-interface TouchShowContextMenuParam {
-    touchEvent: TouchEvent;
-}
-
-export type EventShowContextMenuParams = (MouseShowContextMenuParams | TouchShowContextMenuParam) &
-    ShowContextMenuParams;
-export interface IContextMenuParams extends ShowContextMenuParams {
-    /** The x position for the Context Menu, if no value is given and `RowNode` and `Column` are provided, this will default to be middle of the cell, otherwise it will be `0`. */
-    x?: number;
-    /** The y position for the Context Menu, if no value is given and `RowNode` and `Column` are provided, this will default to be middle of the cell, otherwise it will be `0`. */
-    y?: number;
-}
-
 export class MenuService extends BeanStub implements NamedBean {
     beanName = 'menuService' as const;
 
@@ -81,21 +51,15 @@ export class MenuService extends BeanStub implements NamedBean {
     private ctrlsService: CtrlsService;
     private animationFrameService: AnimationFrameService;
     private filterManager?: FilterManager;
-    private valueService: ValueService;
-    private rowRenderer: RowRenderer;
-    private columnChooserFactory?: IColumnChooserFactory;
-    private contextMenuFactory?: IContextMenuFactory;
+    private contextMenuService?: IContextMenuService;
     private enterpriseMenuFactory?: IMenuFactory;
 
     public wireBeans(beans: BeanCollection): void {
-        this.valueService = beans.valueService;
-        this.filterMenuFactory = beans.filterMenuFactory;
+        this.filterMenuFactory = beans.filterMenuFactory!;
         this.ctrlsService = beans.ctrlsService;
         this.animationFrameService = beans.animationFrameService;
         this.filterManager = beans.filterManager;
-        this.rowRenderer = beans.rowRenderer;
-        this.columnChooserFactory = beans.columnChooserFactory;
-        this.contextMenuFactory = beans.contextMenuFactory;
+        this.contextMenuService = beans.contextMenuService;
         this.enterpriseMenuFactory = beans.enterpriseMenuFactory;
     }
 
@@ -111,7 +75,7 @@ export class MenuService extends BeanStub implements NamedBean {
 
     public showFilterMenu(params: ShowFilterMenuParams): void {
         const menuFactory: IMenuFactory =
-            this.enterpriseMenuFactory && this.isLegacyMenuEnabled()
+            this.enterpriseMenuFactory && _isLegacyMenuEnabled(this.gos)
                 ? this.enterpriseMenuFactory
                 : this.filterMenuFactory;
         this.showColumnMenuCommon(menuFactory, params, params.containerType, true);
@@ -125,61 +89,11 @@ export class MenuService extends BeanStub implements NamedBean {
         this.activeMenuFactory.showMenuAfterContextMenuEvent(column, mouseEvent, touchEvent);
     }
 
-    public getContextMenuPosition(rowNode?: RowNode | null, column?: AgColumn | null): { x: number; y: number } {
-        const rowCtrl = this.getRowCtrl(rowNode);
-        const eGui = this.getCellGui(rowCtrl, column);
-
-        if (!eGui) {
-            if (rowCtrl) {
-                return { x: 0, y: rowCtrl.getRowYPosition() };
-            }
-            return { x: 0, y: 0 };
-        }
-
-        const rect = eGui.getBoundingClientRect();
-
-        return {
-            x: rect.x + rect.width / 2,
-            y: rect.y + rect.height / 2,
-        };
-    }
-
-    public showContextMenu(params: EventShowContextMenuParams & { anchorToElement?: HTMLElement }): void {
-        const { rowNode } = params;
-        const column = params.column as AgColumn | null | undefined;
-        let { anchorToElement, value } = params;
-
-        if (rowNode && column && value == null) {
-            value = this.valueService.getValueForDisplay(column, rowNode);
-        }
-
-        if (anchorToElement == null) {
-            anchorToElement = this.getContextMenuAnchorElement(rowNode, column);
-        }
-
-        this.contextMenuFactory?.onContextMenu(
-            (params as MouseShowContextMenuParams).mouseEvent ?? null,
-            (params as TouchShowContextMenuParam).touchEvent ?? null,
-            rowNode ?? null,
-            column ?? null,
-            value,
-            anchorToElement
-        );
-    }
-
-    public showColumnChooser(params: ShowColumnChooserParams): void {
-        this.columnChooserFactory?.showColumnChooser(params);
-    }
-
     public hidePopupMenu(): void {
         // hide the context menu if in enterprise
-        this.contextMenuFactory?.hideActiveMenu();
+        this.contextMenuService?.hideActiveMenu();
         // and hide the column menu always
         this.activeMenuFactory.hideActiveMenu();
-    }
-
-    public hideColumnChooser(): void {
-        this.columnChooserFactory?.hideActiveColumnChooser();
     }
 
     public isColumnMenuInHeaderEnabled(column: AgColumn): boolean {
@@ -188,7 +102,7 @@ export class MenuService extends BeanStub implements NamedBean {
         return (
             !isSuppressMenuButton &&
             this.activeMenuFactory.isMenuEnabled(column) &&
-            (this.isLegacyMenuEnabled() || !!this.enterpriseMenuFactory)
+            (_isLegacyMenuEnabled(this.gos) || !!this.enterpriseMenuFactory)
         );
     }
 
@@ -198,7 +112,7 @@ export class MenuService extends BeanStub implements NamedBean {
 
     public isHeaderContextMenuEnabled(column?: AgColumn | AgProvidedColumnGroup): boolean {
         const colDef = column && isColumn(column) ? column.getColDef() : column?.getColGroupDef();
-        return !colDef?.suppressHeaderContextMenu && this.getColumnMenuType() === 'new';
+        return !colDef?.suppressHeaderContextMenu && this.gos.get('columnMenu') === 'new';
     }
 
     public isHeaderMenuButtonAlwaysShowEnabled(): boolean {
@@ -220,7 +134,7 @@ export class MenuService extends BeanStub implements NamedBean {
     public isHeaderFilterButtonEnabled(column: AgColumn): boolean {
         return (
             this.isFilterMenuInHeaderEnabled(column) &&
-            !this.isLegacyMenuEnabled() &&
+            !_isLegacyMenuEnabled(this.gos) &&
             !this.isFloatingFilterButtonDisplayed(column)
         );
     }
@@ -228,22 +142,10 @@ export class MenuService extends BeanStub implements NamedBean {
     public isFilterMenuItemEnabled(column: AgColumn): boolean {
         return (
             !!this.filterManager?.isFilterAllowed(column) &&
-            !this.isLegacyMenuEnabled() &&
+            !_isLegacyMenuEnabled(this.gos) &&
             !this.isFilterMenuInHeaderEnabled(column) &&
             !this.isFloatingFilterButtonDisplayed(column)
         );
-    }
-
-    public isColumnMenuAnchoringEnabled(): boolean {
-        return !this.isLegacyMenuEnabled();
-    }
-
-    public areAdditionalColumnMenuItemsEnabled(): boolean {
-        return this.getColumnMenuType() === 'new';
-    }
-
-    public isLegacyMenuEnabled(): boolean {
-        return this.getColumnMenuType() === 'legacy';
     }
 
     public isFloatingFilterButtonEnabled(column: AgColumn): boolean {
@@ -259,17 +161,13 @@ export class MenuService extends BeanStub implements NamedBean {
             : !colDef.suppressFloatingFilterButton;
     }
 
-    private getColumnMenuType(): 'legacy' | 'new' {
-        return this.gos.get('columnMenu');
-    }
-
     private isFloatingFilterButtonDisplayed(column: AgColumn): boolean {
         return !!column.getColDef().floatingFilter && this.isFloatingFilterButtonEnabled(column);
     }
 
     private isSuppressMenuHide(): boolean {
         const suppressMenuHide = this.gos.get('suppressMenuHide');
-        if (this.isLegacyMenuEnabled()) {
+        if (_isLegacyMenuEnabled(this.gos)) {
             // default to false for legacy
             return this.gos.exists('suppressMenuHide') ? suppressMenuHide : false;
         }
@@ -309,46 +207,5 @@ export class MenuService extends BeanStub implements NamedBean {
                 }
             });
         }
-    }
-
-    private getRowCtrl(rowNode?: RowNode | null): RowCtrl | undefined {
-        const { rowIndex, rowPinned } = rowNode || {};
-
-        if (rowIndex == null) {
-            return;
-        }
-
-        return this.rowRenderer.getRowByPosition({ rowIndex, rowPinned }) || undefined;
-    }
-
-    private getCellGui(rowCtrl?: RowCtrl, column?: AgColumn | null): HTMLElement | undefined {
-        if (!rowCtrl || !column) {
-            return;
-        }
-
-        const cellCtrl = rowCtrl.getCellCtrl(column);
-
-        return cellCtrl?.getGui() || undefined;
-    }
-
-    private getContextMenuAnchorElement(rowNode?: RowNode | null, column?: AgColumn | null): HTMLElement {
-        const gridBodyEl = this.ctrlsService.getGridBodyCtrl().getGridBodyElement();
-        const rowCtrl = this.getRowCtrl(rowNode);
-
-        if (!rowCtrl) {
-            return gridBodyEl;
-        }
-
-        const cellGui = this.getCellGui(rowCtrl, column);
-
-        if (cellGui) {
-            return cellGui;
-        }
-
-        if (rowCtrl.isFullWidth()) {
-            return rowCtrl.getFullWidthElement() as HTMLElement;
-        }
-
-        return gridBodyEl;
     }
 }

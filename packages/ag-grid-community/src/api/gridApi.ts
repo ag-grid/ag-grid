@@ -35,6 +35,7 @@ import type { ClientSideRowModelStep } from '../interfaces/iClientSideRowModel';
 import type { IClipboardCopyParams, IClipboardCopyRowsParams } from '../interfaces/iClipboardService';
 import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from '../interfaces/iColumn';
 import type { IColumnToolPanel } from '../interfaces/iColumnToolPanel';
+import type { IContextMenuParams } from '../interfaces/iContextMenu';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
@@ -48,7 +49,6 @@ import type { IToolPanel } from '../interfaces/iToolPanel';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { ServerSideTransaction, ServerSideTransactionResult } from '../interfaces/serverSideTransaction';
-import type { IContextMenuParams } from '../misc/menuService';
 import type { ManagedGridOptionKey, ManagedGridOptions } from '../propertyKeys';
 import type { ICellRenderer } from '../rendering/cellRenderers/iCellRenderer';
 import type {

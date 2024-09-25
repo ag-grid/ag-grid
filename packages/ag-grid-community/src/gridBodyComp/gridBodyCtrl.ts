@@ -7,9 +7,9 @@ import type { Environment } from '../environment';
 import type { FilterManager } from '../filter/filterManager';
 import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
+import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { AnimationFrameService } from '../misc/animationFrameService';
-import type { EventShowContextMenuParams, MenuService } from '../misc/menuService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
@@ -60,7 +60,7 @@ export class GridBodyCtrl extends BeanStub {
     private ctrlsService: CtrlsService;
     private columnModel: ColumnModel;
     private scrollVisibleService: ScrollVisibleService;
-    private menuService: MenuService;
+    private contextMenuService?: IContextMenuService;
     private headerNavigationService: HeaderNavigationService;
     private rowDragService?: RowDragService;
     private pinnedRowModel?: PinnedRowModel;
@@ -77,7 +77,7 @@ export class GridBodyCtrl extends BeanStub {
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;
         this.scrollVisibleService = beans.scrollVisibleService;
-        this.menuService = beans.menuService;
+        this.contextMenuService = beans.contextMenuService;
         this.headerNavigationService = beans.headerNavigationService;
         this.rowDragService = beans.rowDragService;
         this.pinnedRowModel = beans.pinnedRowModel;
@@ -451,12 +451,12 @@ export class GridBodyCtrl extends BeanStub {
 
         if (target === this.eBodyViewport || target === this.ctrlsService.get('center').getViewportElement()) {
             // show it
-            this.menuService.showContextMenu({
+            this.contextMenuService?.showContextMenu({
                 mouseEvent,
-                touchEvent,
+                touchEvent: touchEvent!,
                 value: null,
                 anchorToElement: this.eGridBody,
-            } as EventShowContextMenuParams);
+            });
         }
     }
 

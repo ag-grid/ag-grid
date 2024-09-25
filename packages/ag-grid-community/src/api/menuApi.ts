@@ -10,7 +10,7 @@ export function showColumnMenuAfterButtonClick(
 ): void {
     // use grid column so works with pivot mode
     const column = beans.columnModel.getCol(colKey)!;
-    beans.menuService.showColumnMenu({
+    beans.menuService?.showColumnMenu({
         column,
         buttonElement,
         positionBy: 'button',
@@ -32,7 +32,7 @@ export function showColumnMenuAfterMouseClick(
         _errorOnce(`column '${colKey}' not found`);
         return;
     }
-    beans.menuService.showColumnMenu({
+    beans.menuService?.showColumnMenu({
         column,
         mouseEvent,
         positionBy: 'mouse',
@@ -45,12 +45,12 @@ export function showColumnMenu(beans: BeanCollection, colKey: string | Column): 
         _errorOnce(`column '${colKey}' not found`);
         return;
     }
-    beans.menuService.showColumnMenu({
+    beans.menuService?.showColumnMenu({
         column,
         positionBy: 'auto',
     });
 }
 
 export function hidePopupMenu(beans: BeanCollection): void {
-    beans.menuService.hidePopupMenu();
+    beans.menuService?.hidePopupMenu();
 }
