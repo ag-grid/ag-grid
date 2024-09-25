@@ -1,19 +1,20 @@
-import { AgGridAngular } from '@ag-grid-community/angular';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridReadyEvent } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { MenuModule } from '@ag-grid-enterprise/menu';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
+
+import { AgGridAngular } from 'ag-grid-angular';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ExcelExportModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
 
 import { IOlympicData } from './interfaces';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule, MenuModule, ExcelExportModule]);
 
 @Component({
     standalone: true,

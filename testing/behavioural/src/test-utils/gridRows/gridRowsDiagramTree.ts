@@ -1,4 +1,4 @@
-import type { Column, IRowNode, RowNode } from '@ag-grid-community/core';
+import type { Column, IRowNode, RowNode } from 'ag-grid-community';
 
 import { optionalEscapeString, rowIdAndIndexToString, rowIdToString } from '../grid-test-utils';
 import type { GridRows } from './gridRows';

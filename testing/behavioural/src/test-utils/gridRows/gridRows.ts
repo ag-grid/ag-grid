@@ -1,6 +1,7 @@
-import type { Column, GridApi, IRowNode } from '@ag-grid-community/core';
-import type { RowNode } from '@ag-grid-community/core';
 import util from 'util';
+
+import type { Column, GridApi, IRowNode } from 'ag-grid-community';
+import type { RowNode } from 'ag-grid-community';
 
 import { TestGridsManager } from '../testGridsManager';
 import { log, unindentText } from '../utils';

@@ -1,6 +1,7 @@
-import { type FontFamilyValue, paramValueToCss } from '@ag-grid-community/theming';
 import { Select } from '@ag-website-shared/components/select/Select';
 import styled from '@emotion/styled';
+
+import { type FontFamilyValue, paramValueToCss } from 'ag-grid-community';
 
 import type { ValueEditorProps } from './ValueEditorProps';
 

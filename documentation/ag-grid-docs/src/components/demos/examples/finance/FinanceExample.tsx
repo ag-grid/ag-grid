@@ -1,29 +1,32 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import {
+    ClientSideRowModelModule,
     type ColDef,
     type GetRowIdFunc,
     type GetRowIdParams,
+    ModuleRegistry,
     type SelectionOptions,
     type ValueFormatterFunc,
     type ValueGetterParams,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
-import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
-import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+} from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import {
+    AdvancedFilterModule,
+    ColumnsToolPanelModule,
+    ExcelExportModule,
+    FiltersToolPanelModule,
+    GridChartsModule,
+    MenuModule,
+    RangeSelectionModule,
+    RichSelectModule,
+    RowGroupingModule,
+    SetFilterModule,
+    SparklinesModule,
+    StatusBarModule,
+} from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
 
 import styles from './FinanceExample.module.css';
 import { TickerCellRenderer } from './cell-renderers/TickerCellRenderer';

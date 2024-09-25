@@ -1,15 +1,16 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef, GridApi, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { StrictMode, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 const baseDefaultColDef: ColDef = {
     flex: 1,

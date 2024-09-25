@@ -9,7 +9,6 @@ import {
     DARK_INTEGRATED_START,
     getIntegratedDarkModeCode,
     getInterfaceFileContents,
-    removeModuleRegistration,
 } from './generator/transformation-scripts/parser-utils';
 import type { ExampleConfig, GeneratedContents, ImportType, InternalFramework } from './generator/types';
 import { FRAMEWORKS, TYPESCRIPT_INTERNAL_FRAMEWORKS } from './generator/types';
@@ -151,8 +150,7 @@ export async function generateFiles(options: ExecutorOptions) {
         const mainFileName = getMainFileName(internalFramework)!;
         const provideFrameworkFiles = frameworkProvidedExamples[internalFramework];
 
-        const importTypes =
-            internalFramework === 'vanilla' ? (['packages'] as const) : (['modules', 'packages'] as const);
+        const importTypes = internalFramework === 'vanilla' ? (['packages'] as const) : (['modules'] as const);
         for (const importType of importTypes) {
             const packageJson = getPackageJson({
                 isEnterprise,
@@ -203,7 +201,8 @@ export async function generateFiles(options: ExecutorOptions) {
                 for (const fileName of Object.keys(provideFrameworkFiles)) {
                     if (fileName.endsWith('.css')) {
                         mergedStyleFiles[fileName] = provideFrameworkFiles[fileName];
-                    } else if (importType === 'packages') {
+                    } else {
+                        // if (importType === 'packages')
                         const fileContent = provideFrameworkFiles[fileName];
                         if (fileContent) {
                             provideFrameworkFiles[fileName] = await convertModulesToPackages(
@@ -266,15 +265,15 @@ export async function generateFiles(options: ExecutorOptions) {
 async function convertModulesToPackages(fileContent: any, isDev: boolean, internalFramework: InternalFramework) {
     const isEnterprise = fileContent.includes('-enterprise');
 
-    fileContent = removeModuleRegistration(fileContent);
-    // Remove the original import statements that contain modules
-    fileContent = fileContent
-        // Remove module import statements
-        .replace(/import[\s\n]*\{[^}]*\w+Module\b[^}]*\}[\s\n]*from\s*.*ag-grid.*\n/g, '')
-        // Remove ModuleRegistry import if by itself
-        .replace(/import ((.|\n)[^{,]*?ModuleRegistry(.|\n)*?)from.*\n/g, '')
-        // Remove if ModuleRegistry is with other imports
-        .replace(/ModuleRegistry(,)?/g, '');
+    // fileContent = removeModuleRegistration(fileContent);
+    // // Remove the original import statements that contain modules
+    // fileContent = fileContent
+    //     // Remove module import statements
+    //     .replace(/import[\s\n]*\{[^}]*\w+Module\b[^}]*\}[\s\n]*from\s*.*ag-grid.*\n/g, '')
+    //     // Remove ModuleRegistry import if by itself
+    //     .replace(/import ((.|\n)[^{,]*?ModuleRegistry(.|\n)*?)from.*\n/g, '')
+    //     // Remove if ModuleRegistry is with other imports
+    //     .replace(/ModuleRegistry(,)?/g, '');
 
     fileContent = convertModuleToPackageImports(fileContent);
 

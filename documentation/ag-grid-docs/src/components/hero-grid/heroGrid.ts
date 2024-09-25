@@ -1,16 +1,13 @@
 /**
  * Hero Grid demo
  */
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GetRowIdParams, GridApi, GridOptions, GridSizeChangedEvent, ISetFilter } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
 import { createGenerator } from '@utils/grid/generator-utils';
+
+import type { GetRowIdParams, GridApi, GridOptions, GridSizeChangedEvent, ISetFilter } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { ClipboardModule, MenuModule, SetFilterModule, SparklinesModule } from 'ag-grid-enterprise';
 
 import { COLUMN_ID_PRIORITIES, FILTER_ROWS_BREAKPOINT, UPDATE_INTERVAL } from './constants';
 import { columnDefs, generateStockUpdate, generateStocks } from './data';

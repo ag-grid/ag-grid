@@ -2,6 +2,7 @@ import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import { convertTemplate, getImport, toConst, toInput, toMemberWithValue, toOutput } from './angular-utils';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
+    addAllCommunityFeatureModule,
     addBindingImports,
     addGenericInterfaceImport,
     addLicenseManager,
@@ -63,17 +64,17 @@ function addModuleImports(
 ): string[] {
     const { inlineGridStyles, imports: bindingImports, properties } = bindings;
 
-    imports.push("import { AgGridAngular } from '@ag-grid-community/angular';");
+    imports.push("import { AgGridAngular } from 'ag-grid-angular';");
 
     if (!usesThemingApi(bindings)) {
         imports.push('// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273');
-        imports.push("import '@ag-grid-community/styles/ag-grid.css';");
+        imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
         // to account for the (rare) example that has more than one class...just default to quartz if it does
         // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
         // "source" non dark version
         const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
-        imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
+        imports.push(`import "ag-grid-community/styles/${theme}.css";`);
     }
 
     if (allStylesheets && allStylesheets.length > 0) {
@@ -83,7 +84,7 @@ function addModuleImports(
     const propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
     bImports.push({
-        module: `'@ag-grid-community/core'`,
+        module: `'ag-grid-community'`,
         isNamespaced: false,
         imports: [...propertyInterfaces, 'GridReadyEvent', 'GridApi'],
     });
@@ -95,7 +96,7 @@ function addModuleImports(
     }
 
     if (bindings.moduleRegistration) {
-        imports.push(bindings.moduleRegistration);
+        imports.push(addAllCommunityFeatureModule(bindings.moduleRegistration));
     }
 
     return imports;

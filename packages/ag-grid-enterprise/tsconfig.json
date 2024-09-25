@@ -8,6 +8,9 @@
     },
     {
       "path": "./tsconfig.umd.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
     }
   ]
 }

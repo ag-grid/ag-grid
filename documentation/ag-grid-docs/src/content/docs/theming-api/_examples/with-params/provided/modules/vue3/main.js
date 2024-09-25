@@ -1,10 +1,11 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { themeQuartz } from '@ag-grid-community/theming';
-import { AgGridVue } from '@ag-grid-community/vue3';
 import { createApp } from 'vue';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { themeQuartz } from 'ag-grid-community';
+import { AgGridVue } from 'ag-grid-vue3';
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 const myTheme = themeQuartz.withParams({
     spacing: 12,

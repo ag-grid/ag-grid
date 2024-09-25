@@ -257,6 +257,13 @@ export function addEnterprisePackage(imports: any[], bindings: ParsedBindings) {
     }
 }
 
+export function addAllCommunityFeatureModule(moduleRegistration: string) {
+    return moduleRegistration.replace(
+        'ModuleRegistry.registerModules([',
+        'ModuleRegistry.registerModules([CommunityFeaturesModule, '
+    );
+}
+
 export function extractModuleRegistration(srcFile: ts.SourceFile): string {
     for (const statement of srcFile.statements) {
         if (
@@ -499,6 +506,7 @@ export function addBindingImports(
     convertToPackage: boolean,
     ignoreTsImports: boolean
 ) {
+    convertToPackage = true;
     const workingImports = {};
     const namespacedImports = [];
 
@@ -540,12 +548,15 @@ export function addBindingImports(
 
     let hasEnterpriseModules = false;
     Object.entries(workingImports).forEach(([k, v]: [string, { namedImport: string; imports: string[] }]) => {
-        let unique = [...new Set(v.imports)].sort();
+        let unique = [...new Set([...v.imports])].sort();
 
         if (convertToPackage && k.includes('ag-grid')) {
             // Remove module related imports
-            unique = unique.filter((i) => !i.includes('Module') || i == 'AgGridModule');
+            // unique = unique.filter((i) => !i.includes('Module') || i == 'AgGridModule');
             hasEnterpriseModules = hasEnterpriseModules || k.includes('enterprise');
+        }
+        if (!hasEnterpriseModules) {
+            unique.unshift('CommunityFeaturesModule');
         }
         if (unique.length > 0 || v.namedImport) {
             const namedImport = v.namedImport ? v.namedImport : '';
@@ -561,9 +572,9 @@ export function addBindingImports(
             imports.push(fullImportStr);
         }
     });
-    if (hasEnterpriseModules && convertToPackage) {
-        imports.push(`import '${getEnterprisePackageName()}';`);
-    }
+    // if (hasEnterpriseModules && convertToPackage) {
+    //     imports.push(`import '${getEnterprisePackageName()}';`);
+    // }
 }
 
 export const usesThemingApi = (bindings: ParsedBindings) =>
@@ -583,7 +594,8 @@ export function addRelativeImports(bindings: ParsedBindings, imports: string[], 
 }
 
 export function removeModuleRegistration(code: string) {
-    return code.replace(/ModuleRegistry\.registerModules(.|\n)*?]\)(;?)/g, '');
+    return code;
+    //return code.replace(/ModuleRegistry\.registerModules(.|\n)*?]\)(;?)/g, '');
 }
 
 export function handleRowGenericInterface(fileTxt: string, tData: string): string {

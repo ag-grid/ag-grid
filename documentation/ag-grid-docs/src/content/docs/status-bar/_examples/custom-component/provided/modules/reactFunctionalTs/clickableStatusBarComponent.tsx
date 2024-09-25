@@ -1,5 +1,6 @@
-import { CustomStatusPanelProps } from '@ag-grid-community/react';
 import React from 'react';
+
+import { CustomStatusPanelProps } from 'ag-grid-react';
 
 export default (props: CustomStatusPanelProps) => {
     const onClick = () => {

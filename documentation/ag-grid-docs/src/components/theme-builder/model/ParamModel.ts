@@ -1,5 +1,6 @@
-import { type ParamType, _asThemeImpl, getParamType, themeQuartz } from '@ag-grid-community/theming';
 import { useAtom, useAtomValue } from 'jotai';
+
+import { type ParamType, _asThemeImpl, getParamType, themeQuartz } from 'ag-grid-community';
 
 import type { PersistentAtom } from './JSONStorage';
 import { atomWithJSONStorage } from './JSONStorage';

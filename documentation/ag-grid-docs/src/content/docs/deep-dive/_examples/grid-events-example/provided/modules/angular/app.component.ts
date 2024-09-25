@@ -1,5 +1,10 @@
-import { AgGridAngular, ICellRendererAngularComp } from '@ag-grid-community/angular';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Component } from '@angular/core';
+
+import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
 import {
     CellValueChangedEvent,
     ColDef,
@@ -7,13 +12,9 @@ import {
     ICellRendererParams,
     ModuleRegistry,
     ValueFormatterParams,
-} from '@ag-grid-community/core';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component } from '@angular/core';
+} from 'ag-grid-community';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 // Row Data Interface
 interface IRow {

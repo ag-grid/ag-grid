@@ -1,5 +1,6 @@
-import { ComponentUtil, _processOnChange } from 'ag-grid-community';
 import { markRaw, toRaw } from 'vue';
+
+import { ComponentUtil, _processOnChange } from 'ag-grid-community';
 
 export const kebabProperty = (property: string) => {
     return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();

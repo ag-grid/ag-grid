@@ -1,15 +1,17 @@
 /**
  * Automated Row Grouping demo
  */
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef, GridApi, GridOptions, MenuItemDef } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { SideBarModule } from '@ag-grid-enterprise/side-bar';
 import { Easing, Group } from '@tweenjs/tween.js';
+
+import type { ColDef, GridApi, GridOptions, MenuItemDef } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid } from 'ag-grid-community';
+import {
+    GridChartsModule,
+    MenuModule,
+    RangeSelectionModule,
+    RowGroupingModule,
+    SideBarModule,
+} from 'ag-grid-enterprise';
 
 import { CATEGORIES, PORTFOLIOS } from '../../data/constants';
 import { createDataWorker } from '../../data/createDataWorker';

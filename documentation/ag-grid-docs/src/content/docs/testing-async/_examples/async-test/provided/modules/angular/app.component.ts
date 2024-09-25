@@ -1,16 +1,17 @@
-import { AgGridAngular } from '@ag-grid-community/angular';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, ModelUpdatedEvent } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { AgGridAngular } from 'ag-grid-angular';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ColDef, ModelUpdatedEvent } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+
 import { getData } from './data';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 @Component({
     standalone: true,

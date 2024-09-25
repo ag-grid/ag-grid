@@ -11,6 +11,8 @@ import {
     isExternalVueFile,
 } from './grid-vanilla-to-vue-common';
 import {
+    addAllCommunityFeatureModule,
+    addBindingImports,
     addEnterprisePackage,
     addLicenseManager,
     addRelativeImports,
@@ -257,22 +259,32 @@ function getModuleImports(
 
     const imports = [
         "import { createApp, onBeforeMount, ref, shallowRef } from 'vue';",
-        "import { AgGridVue } from '@ag-grid-community/vue3';",
+        "import { AgGridVue } from 'ag-grid-vue3';",
     ];
 
     addLicenseManager(imports, exampleConfig, false);
 
     if (!usesThemingApi(bindings)) {
-        imports.push("import '@ag-grid-community/styles/ag-grid.css';");
+        imports.push("import 'ag-grid-community/styles/ag-grid.css';");
         // to account for the (rare) example that has more than one class...just default to quartz if it does
         // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
         // "source" non dark version
         const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
-        imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
+        imports.push(`import "ag-grid-community/styles/${theme}.css";`);
     }
 
     if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
+    }
+
+    const bImports = [...(bindings.imports || [])];
+    bImports.push({
+        module: `'ag-grid-community'`,
+        isNamespaced: false,
+        imports: [],
+    });
+    if (bImports.length > 0) {
+        addBindingImports(bImports, imports, true, true);
     }
 
     if (componentFileNames) {
@@ -281,12 +293,7 @@ function getModuleImports(
     addRelativeImports(bindings, imports, 'js');
 
     if (bindings.moduleRegistration) {
-        bindings.imports.forEach((importStatement) => {
-            if (importStatement.imports.some((m) => m.includes('Module'))) {
-                imports.push(`import { ${importStatement.imports.join(', ')} } from ${importStatement.module};`);
-            }
-        });
-        imports.push(bindings.moduleRegistration);
+        imports.push(addAllCommunityFeatureModule(bindings.moduleRegistration));
     }
 
     return imports;
@@ -319,6 +326,16 @@ function getPackageImports(
 
     if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
+    }
+
+    const bImports = [...(bindings.imports || [])];
+    bImports.push({
+        module: `'ag-grid-community'`,
+        isNamespaced: false,
+        imports: [],
+    });
+    if (bImports.length > 0) {
+        addBindingImports(bImports, imports, true, true);
     }
 
     if (componentFileNames) {

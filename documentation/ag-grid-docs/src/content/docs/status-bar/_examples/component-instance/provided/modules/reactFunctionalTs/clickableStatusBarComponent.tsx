@@ -1,5 +1,6 @@
-import { CustomStatusPanelProps } from '@ag-grid-community/react';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
+
+import { CustomStatusPanelProps } from 'ag-grid-react';
 
 export default forwardRef((props: CustomStatusPanelProps, ref) => {
     const [visible, setVisible] = useState(true);
