@@ -1633,7 +1633,7 @@
             },
             "addNestedFields": true
         },
-        "rowsSelection": {
+        "rowSelection": {
             "more": {
                 "name": "Row Selection",
                 "url": "./row-selection"
