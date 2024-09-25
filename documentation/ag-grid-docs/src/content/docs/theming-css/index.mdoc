@@ -8,7 +8,7 @@ The [Theming API](./theming-api/) works by generating CSS that is inserted into 
 
 ## Overriding Theme Parameters with Custom Properties
 
-Themes created by the theming API support over a hundred [Theme Parameters](./theming-api/#finding-theme-parameters). CSS can be used to provide default values for these parameters. Values provided in CSS override values provided through the API, meaning that many grids can share the same theme and CSS can be used to create differences between the grids.
+Themes created by the theming API support over a hundred [Theme Parameters](./theming-api/#finding-theme-parameters). The values provided through the theming API are default values, and can be overridden using CSS, meaning that many grids can share the same theme and CSS can be used to create differences between the grids.
 
 The names of the CSS custom properties are prefixed with `--ag-` to avoid conflicts with other custom properties in your application, and use kebab-case:
 
@@ -20,6 +20,8 @@ body {
     --ag-spacing: 4px;
 }
 ```
+
+TODO example here
 
 Values for CSS custom properties are inherited by child elements. The above example sets the variable on the `body` element, so will affect every grid on the page. You can use different selectors to target individual grids or groups of grids.
 
@@ -34,7 +36,7 @@ body {
 }
 ```
 
-## Customising Themes using CSS Rules
+## Custom CSS Rules
 
 Some design effects can't be achieved through CSS variables alone. For example, there is no variable to set the `font-style` on header cells. If you want your column headers to be italic, use regular CSS.
 
@@ -43,6 +45,8 @@ Some design effects can't be achieved through CSS variables alone. For example, 
     font-style: italic;
 }
 ```
+
+TODO example here
 
 The best way to find the right class name to use in a CSS rule is using the browser's developer tools. You will notice that components often have multiple class names, some more general than others. For example, the [row grouping panel](./tool-panel-columns/#example) is a component onto which you can drag columns to group them. The internal name for this is the "column drop" component, and there are two kinds - a horizontal one at the top of the header and a vertical one in the columns tool panel. You can use the class name `ag-column-drop` to target either kind, or `ag-column-drop-vertical` / `ag-column-drop-horizontal` to target one only.
 
