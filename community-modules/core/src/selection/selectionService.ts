@@ -10,7 +10,7 @@ import {
     _getRowSelectionMode,
     _isClientSideRowModel,
     _isMultiRowSelection,
-    _isUsingNewSelectionAPI,
+    _isUsingNewRowSelectionAPI,
 } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -45,7 +45,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         this.selectionCtx.init(rowModel);
         this.rowSelectionMode = _getRowSelectionMode(gos);
         this.groupSelectsChildren = _getGroupSelectsDescendants(gos);
-        this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection', 'selection'], () => {
+        this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], () => {
             const groupSelectsChildren = _getGroupSelectsDescendants(gos);
             const selectionMode = _getRowSelectionMode(gos);
 
@@ -601,7 +601,7 @@ export class SelectionService extends BeanStub implements NamedBean, ISelectionS
         justFiltered?: boolean;
         justCurrentPage?: boolean;
     }) {
-        if (_isUsingNewSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
+        if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
             return _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
         }
         this.validateSelectAllType();

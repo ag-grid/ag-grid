@@ -7,7 +7,7 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { SelectionOptions } from '../entities/gridOptions';
+import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
 import type { ColumnEventType } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
@@ -161,7 +161,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'],
             (event) => this.refreshAll(convertSourceType(event.source))
         );
-        this.addManagedPropertyListener('selection', (event) => {
+        this.addManagedPropertyListener('rowSelection', (event) => {
             this.onSelectionOptionsChanged(event.currentValue, event.previousValue, convertSourceType(event.source));
         });
         this.addManagedPropertyListener('autoGroupColumnDef', (event) =>
@@ -1086,10 +1086,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private onSelectionOptionsChanged(
-        current: SelectionOptions | undefined,
-        prev: SelectionOptions | undefined,
+        current: GridOptions['rowSelection'],
+        prev: GridOptions['rowSelection'],
         source: ColumnEventType
     ) {
+        // Checkbox column is not reactive to changes in legacy selection options
+        if (typeof current === 'string' || typeof prev === 'string') {
+            return;
+        }
+
         const prevCheckbox = prev ? _getCheckboxes(prev) : undefined;
         const currCheckbox = current ? _getCheckboxes(current) : undefined;
         const checkboxHasChanged = prevCheckbox !== currCheckbox;

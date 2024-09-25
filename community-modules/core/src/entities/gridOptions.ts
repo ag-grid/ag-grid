@@ -1472,8 +1472,7 @@ export interface GridOptions<TData = any> {
 
     // *** Selection *** //
     /**
-     * Type of Row Selection: `single`, `multiple`.
-     * @deprecated v32.2 Instead, set `selection.mode` to `'singleRow'` or `'multiRow'`
+     * Use the `RowSelectionOptions` object to configure row selection.
      */
     rowSelection?: 'single' | 'multiple' | RowSelectionOptions<TData>;
     /**

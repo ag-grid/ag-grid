@@ -15,7 +15,7 @@ import {
     _getSuppressMultiRanges,
     _isCellSelectionEnabled,
     _isClientSideRowModel,
-    _isUsingNewSelectionAPI,
+    _isUsingNewCellSelectionAPI,
 } from '../../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../../interfaces/IRangeService';
 import type { AdvancedFilterModel } from '../../interfaces/advancedFilterModel';
@@ -630,7 +630,7 @@ export class StateService extends BeanStub implements NamedBean {
             });
         });
 
-        if (_isUsingNewSelectionAPI(gos) && _getSuppressMultiRanges(gos) && cellRanges.length > 1) {
+        if (_isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && cellRanges.length > 1) {
             return _warnOnce('cannot add multiple ranges when `selection.suppressMultiRanges = true`');
         }
 

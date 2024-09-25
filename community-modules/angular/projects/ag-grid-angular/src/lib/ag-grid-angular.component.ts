@@ -22,6 +22,7 @@ import type {
     CellSelectionChangedEvent,
     CellSelectionDeleteEndEvent,
     CellSelectionDeleteStartEvent,
+    CellSelectionOptions,
     CellValueChangedEvent,
     ChartCreatedEvent,
     ChartDestroyedEvent,
@@ -148,11 +149,11 @@ import type {
     RowHeightParams,
     RowModelType,
     RowSelectedEvent,
+    RowSelectionOptions,
     RowStyle,
     RowValueChangedEvent,
     SelectionChangedEvent,
     SelectionColumnDef,
-    SelectionOptions,
     SendToClipboardParams,
     ServerSideGroupLevelParams,
     SideBarDef,
@@ -1333,10 +1334,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public scrollbarWidth: number | undefined = undefined;
-    /** Type of Row Selection: `single`, `multiple`.
-     * @deprecated v32.2 Instead, set `selection.mode` to `'singleRow'` or `'multiRow'`
+    /** Use the `RowSelectionOptions` object to configure row selection.
      */
-    @Input() public rowSelection: 'single' | 'multiple' | undefined = undefined;
+    @Input() public rowSelection: 'single' | 'multiple' | RowSelectionOptions<TData> | undefined = undefined;
+    /** Confgure cell selection
+     */
+    @Input() public cellSelection: CellSelectionOptions<TData> | undefined = undefined;
     /** Set to `true` to allow multiple rows to be selected using single click.
      * @default false
      * @deprecated v32.2 Use `selection.enableMultiSelectWithClick` instead
@@ -1360,9 +1363,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public suppressHeaderFocus: boolean | undefined = undefined;
-    /** Selection options object representing the new selection API. If this value is set all other selection related grid options will be ignored.
-     */
-    @Input() public selection: SelectionOptions | undefined = undefined;
     /** Configure the selection column, used for displaying checkboxes.
      *
      * Note that due to the nature of this column, this type is a subset of `ColDef`, which does not support several normal column features such as editing, pivoting and grouping.

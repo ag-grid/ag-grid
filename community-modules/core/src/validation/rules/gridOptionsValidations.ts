@@ -3,8 +3,8 @@ import type { GridOptions } from '../../entities/gridOptions';
 import { ModuleNames } from '../../modules/moduleNames';
 import { PropertyKeys } from '../../propertyKeys';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
+import { CELL_SELECTION_VALIDATORS } from './cellSelectionValidations';
 import { COL_DEF_VALIDATORS } from './colDefValidations';
-import { SELECTION_VALIDATORS } from './selectionValidations';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
@@ -400,7 +400,15 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     autoGroupColumnDef: () => COL_DEF_VALIDATORS,
     selectionColumnDef: () => COL_DEF_VALIDATORS,
 
-    selection: () => SELECTION_VALIDATORS,
+    rowSelection: {
+        validate({ rowSelection }) {
+            if (rowSelection && typeof rowSelection === 'string') {
+                return 'As of version 32.2.1, using `rowSelection` with the values "single" or "multiple" has been deprecated. Use the object value instead.';
+            }
+            return null;
+        },
+    },
+    cellSelection: () => CELL_SELECTION_VALIDATORS,
 });
 
 export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({
