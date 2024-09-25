@@ -417,9 +417,12 @@ export class ClientSideNodeManager {
         node.expanded = false;
         node.parent = this.rootNode;
         node.level = 0;
-        node.setDataAndId(dataItem, this.nextId.toString());
 
-        this.beans.detailGridApiService?.setMasterForRow(node, dataItem, true);
+        if (!this.gos.get('treeData')) {
+            this.beans.detailGridApiService?.setMasterForRow(node, dataItem, true);
+        }
+
+        node.setDataAndId(dataItem, this.nextId.toString());
 
         if (this.allNodesMap[node.id!]) {
             _warnOnce(
