@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule, TreeDataModule } from '@ag-grid-community/client-side-row-model';
 import type { RowDataTransaction } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
@@ -10,7 +10,9 @@ const gridRowsOptions: GridRowsOptions = {
 };
 
 describe('ag-grid tree transactions', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
+    });
 
     beforeEach(() => {
         gridsManager.reset();

@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule, TreeDataModule } from '@ag-grid-community/client-side-row-model';
 import type { GridOptions } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import type { MockInstance } from 'vitest';
@@ -11,7 +11,9 @@ import type { RowSnapshot } from '../row-snapshot-test-utils';
 const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree data', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
+    });
 
     let consoleWarnSpy: MockInstance;
 

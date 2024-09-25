@@ -25,11 +25,11 @@ import type { DataFieldGetter } from './fieldAccess';
 
 const TOP_LEVEL = 0;
 
-export class ClientSideTreeNodeManager<TData>
+export class ClientSideChildrenTreeNodeManager<TData>
     extends AbstractClientSideNodeManager<TData>
     implements IClientSideNodeManager<TData>, NamedBean
 {
-    beanName = 'clientSideTreeNodeManager' as const;
+    beanName = 'clientSideChildrenTreeNodeManager' as const;
 
     private allNodesMap: { [id: string]: RowNode } = {};
 
