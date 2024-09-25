@@ -1339,7 +1339,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public rowSelection: 'single' | 'multiple' | RowSelectionOptions<TData> | undefined = undefined;
     /** Confgure cell selection
      */
-    @Input() public cellSelection: CellSelectionOptions<TData> | undefined = undefined;
+    @Input() public cellSelection: boolean | CellSelectionOptions<TData> | undefined = undefined;
     /** Set to `true` to allow multiple rows to be selected using single click.
      * @default false
      * @deprecated v32.2 Use `selection.enableMultiSelectWithClick` instead
