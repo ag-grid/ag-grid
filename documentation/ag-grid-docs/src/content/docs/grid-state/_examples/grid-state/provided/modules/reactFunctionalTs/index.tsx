@@ -7,7 +7,7 @@ import {
     GridReadyEvent,
     GridState,
     ModuleRegistry,
-    SelectionOptions,
+    RowSelectionOptions,
     StateUpdatedEvent,
 } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
@@ -58,7 +58,7 @@ const GridExample = () => {
             enableValue: true,
         };
     }, []);
-    const selection = useMemo<SelectionOptions>(
+    const selection = useMemo<RowSelectionOptions>(
         () => ({
             mode: 'multiRow',
         }),

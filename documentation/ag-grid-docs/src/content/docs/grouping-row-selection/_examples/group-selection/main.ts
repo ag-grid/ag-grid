@@ -52,7 +52,7 @@ function getGroupSelectsValue(): GroupSelectionMode {
 }
 
 function onSelectionModeChange() {
-    gridApi.setGridOption('selection', {
+    gridApi.setGridOption('rowSelection', {
         mode: 'multiRow',
         groupSelects: getGroupSelectsValue(),
     });

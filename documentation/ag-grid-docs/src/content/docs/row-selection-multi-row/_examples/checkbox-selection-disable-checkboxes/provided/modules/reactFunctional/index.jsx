@@ -36,7 +36,7 @@ const GridExample = () => {
     };
 
     function toggleHideCheckbox() {
-        grid.current?.api.setGridOption('selection', {
+        grid.current?.api.setGridOption('rowSelection', {
             mode: 'multiRow',
             isRowSelectable: (node) => (node.data ? node.data.year <= 2004 : false),
             hideDisabledCheckboxes: getCheckboxValue('#toggle-hide-checkbox'),

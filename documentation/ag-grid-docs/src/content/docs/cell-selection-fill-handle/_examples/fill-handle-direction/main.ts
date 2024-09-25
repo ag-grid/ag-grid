@@ -44,8 +44,7 @@ function fillHandleAxis(direction: 'x' | 'y' | 'xy') {
 
     button.classList.add('selected');
 
-    gridApi.setGridOption('selection', {
-        mode: 'cell',
+    gridApi.setGridOption('cellSelection', {
         handle: {
             mode: 'fill',
             direction,

@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { type ColDef, ModuleRegistry, type SelectionOptions } from '@ag-grid-community/core';
+import { type ColDef, ModuleRegistry, type RowSelectionOptions } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -25,7 +25,7 @@ const GridExample = () => {
         []
     );
 
-    const selection = useMemo<SelectionOptions>(
+    const selection = useMemo<RowSelectionOptions>(
         () => ({
             mode: 'multiRow',
             hideDisabledCheckboxes: true,
@@ -42,7 +42,7 @@ const GridExample = () => {
     };
 
     function toggleHideCheckbox() {
-        grid.current?.api.setGridOption('selection', {
+        grid.current?.api.setGridOption('rowSelection', {
             mode: 'multiRow',
             isRowSelectable: (node) => (node.data ? node.data.year <= 2004 : false),
             hideDisabledCheckboxes: getCheckboxValue('#toggle-hide-checkbox'),
