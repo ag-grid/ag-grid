@@ -1474,7 +1474,7 @@ export interface GridOptions<TData = any> {
     /**
      * Use the `RowSelectionOptions` object to configure row selection. The string values `'single'` and `'multiple'` are deprecated.
      */
-    rowSelection?: 'single' | 'multiple' | RowSelectionOptions<TData>;
+    rowSelection?: RowSelectionOptions<TData> | 'single' | 'multiple';
     /**
      * Confgure cell selection
      */

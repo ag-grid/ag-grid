@@ -31,9 +31,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 
     rowSelection: {
         mode: 'multiRow',
-        enableClickSelection: true,
-        checkboxes: false,
-        headerCheckbox: false,
         copySelectedRows: false,
     },
 
@@ -53,9 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
 function toggleCopyRows() {
     gridApi.setGridOption('rowSelection', {
         mode: 'multiRow',
-        enableClickSelection: true,
-        checkboxes: false,
-        headerCheckbox: false,
         copySelectedRows: document.querySelector<HTMLInputElement>('#toggle-copy-rows')?.checked ?? false,
     });
 }
