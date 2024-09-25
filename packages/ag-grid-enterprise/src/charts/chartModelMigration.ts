@@ -373,7 +373,8 @@ function migrateIfBefore(maxVersion: string, model: ChartModel, migration: (m: C
 }
 
 type VersionParts = { major: number; minor: number; patch: number };
-function versionParts(version: string): VersionParts {
+function versionParts(versionRaw: string): VersionParts {
+    const version = versionRaw.includes('-beta') ? versionRaw.replace(/-beta.*/, '') : versionRaw;
     const split = typeof version === 'string' ? version.split('.').map((v) => Number(v)) : [];
     if (split.length !== 3 || split.some((v) => isNaN(v))) {
         throw new Error('AG Grid - Illegal version string: ' + version);
