@@ -190,8 +190,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         //
         // ** LIST OF NON REACTIVE, NO ARGUMENT
         //
-        // getDataPath, getRowId, isRowMaster -- these are called once for each Node when the Node is created.
-        //                                    -- these are immutable Node properties (ie a Node ID cannot be changed)
+        // getDataPath, getRowId -- these are called once for each Node when the Node is created.
+        //                       -- these are immutable Node properties (ie a Node ID cannot be changed)
+        //
+        // isRowMaster           -- called when masterDetail is true and the Node is created or the property was changed
         //
         // getRowHeight - this is called once when Node is created, if a new getRowHeight function is provided,
         //              - we do not revisit the heights of each node.
@@ -211,10 +213,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         //                       - the application would change these functions, far more likely the functions were
         //                       - non memoised correctly.
 
-        const initRowManagerProps: Set<keyof GridOptions> = new Set(['treeData', 'treeDataChildrenField']);
+        const resetProps: Set<keyof GridOptions> = new Set(['treeData', 'treeDataChildrenField']);
 
-        const resetProps: Set<keyof GridOptions> = new Set(['masterDetail', ...initRowManagerProps]);
         const groupStageRefreshProps: Set<keyof GridOptions> = new Set([
+            'masterDetail',
             'groupDefaultExpanded',
             'groupAllowUnbalanced',
             'initialGroupOrderComparator',
@@ -278,9 +280,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 } else {
                     newRowData = this.rootNode.allLeafChildren?.map((child) => child.data);
                 }
-                if (arePropertiesImpacted(initRowManagerProps)) {
-                    this.initRowManager();
-                }
+                this.initRowManager();
                 this.setNewRowData(newRowData ?? []);
                 return;
             }
@@ -293,6 +293,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
 
             if (arePropertiesImpacted(groupStageRefreshProps)) {
+                if (properties.includes('masterDetail')) {
+                    this.nodeManager.updateRowsMasterDetail?.();
+                }
+
                 this.refreshModel({ step: ClientSideRowModelSteps.EVERYTHING });
                 return;
             }

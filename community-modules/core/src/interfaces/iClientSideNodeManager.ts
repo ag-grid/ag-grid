@@ -28,4 +28,6 @@ export interface IClientSideNodeManager<TData = any> {
     setImmutableRowData(rowData: TData[]): ClientSideNodeManagerUpdateRowDataResult<TData> | null;
 
     updateRowData(rowDataTran: RowDataTransaction<TData>): ClientSideNodeManagerUpdateRowDataResult<TData>;
+
+    updateRowsMasterDetail?(): void;
 }
