@@ -260,10 +260,17 @@ export class DragService extends BeanStub implements NamedBean {
             // it would be possible to click a column by the edge, then drag outside of the drop zone
             // in less than 4 pixels and the drag officially starts outside of the header but the header
             // wouldn't be notified of the dragging.
-            this.currentDragParams!.onDragging(startEvent);
+
+            // if currentDragParams is null here, it means that drag has been cancelled.
+            if (!this.currentDragParams) {
+                this.dragging = false;
+                return;
+            }
+
+            this.currentDragParams.onDragging(startEvent);
         }
 
-        this.currentDragParams!.onDragging(currentEvent);
+        this.currentDragParams?.onDragging(currentEvent);
     }
 
     private onTouchMove(touchEvent: TouchEvent, el: Element): void {

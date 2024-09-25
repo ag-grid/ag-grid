@@ -1,4 +1,4 @@
-import { type ParamType, getParamType, themeQuartz } from '@ag-grid-community/theming';
+import { type ParamType, _asThemeImpl, getParamType, themeQuartz } from '@ag-grid-community/theming';
 import { useAtom, useAtomValue } from 'jotai';
 
 import type { PersistentAtom } from './JSONStorage';
@@ -72,7 +72,7 @@ export const useParamAtom = <T>(model: ParamModel<T>) => useAtom(model.valueAtom
 export const useParam = <T>(model: ParamModel<T>) => useAtomValue(model.valueAtom);
 
 export const allParamModels = memoize(() => {
-    const allParams = Array.from(Object.keys(themeQuartz.getParams())) as ThemeParam[];
+    const allParams = Array.from(Object.keys(_asThemeImpl(themeQuartz).getParams().getValues())) as ThemeParam[];
     return (
         allParams
             .sort()

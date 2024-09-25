@@ -1,4 +1,4 @@
-import type { ChartType } from '@ag-grid-community/core';
+import type { ChartType, ChartTypeExCombo } from '@ag-grid-community/core';
 import { ChartMappings } from '@ag-grid-community/core';
 import type { AgChartThemeOverrides } from 'ag-charts-community';
 
@@ -155,7 +155,7 @@ export function getCanonicalChartType(chartType: ChartType): Exclude<ChartType, 
 }
 
 export function getSeriesTypeIfExists(chartType: ChartType): ChartSeriesType | undefined {
-    return ChartMappings.CHART_TYPE_TO_SERIES_TYPE[chartType] as ChartSeriesType | undefined;
+    return ChartMappings.CHART_TYPE_TO_SERIES_TYPE[chartType as ChartTypeExCombo] as ChartSeriesType | undefined;
 }
 
 export function getSeriesType(chartType: ChartType): ChartSeriesType {

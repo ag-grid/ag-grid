@@ -1,5 +1,5 @@
 export { type Part, createPart } from './Part';
-export { type Theme, createTheme } from './Theme';
+export { type Theme, createTheme, asThemeImpl as _asThemeImpl } from './Theme';
 export * from './styles/parts/checkbox-style/checkbox-styles';
 export * from './styles/parts/color-scheme/color-schemes';
 export * from './styles/parts/icon-set/icon-sets';
