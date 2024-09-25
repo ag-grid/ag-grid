@@ -49,3 +49,4 @@ export { MasterDetailModule } from './masterDetail/masterDetailModule';
 export { RangeSelectionModule } from './rangeSelection/rangeSelectionModule';
 export { ServerSideRowModelModule } from './serverSideRowModel/serverSideRowModelModule';
 export { SparklinesModule } from './sparkline/sparklinesModule';
+export { GridChartsModule } from './charts/gridChartsModule';
