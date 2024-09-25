@@ -1336,7 +1336,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public scrollbarWidth: number | undefined = undefined;
     /** Use the `RowSelectionOptions` object to configure row selection. The string values `'single'` and `'multiple'` are deprecated.
      */
-    @Input() public rowSelection: 'single' | 'multiple' | RowSelectionOptions<TData> | undefined = undefined;
+    @Input() public rowSelection: RowSelectionOptions<TData> | 'single' | 'multiple' | undefined = undefined;
     /** Confgure cell selection
      */
     @Input() public cellSelection: boolean | CellSelectionOptions<TData> | undefined = undefined;

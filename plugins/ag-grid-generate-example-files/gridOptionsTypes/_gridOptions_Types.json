@@ -1418,7 +1418,7 @@
     "typesToInclude": []
   },
   "rowSelection": {
-    "typeName": "'single' | 'multiple' | RowSelectionOptions<TData>",
+    "typeName": "RowSelectionOptions<TData> | 'single' | 'multiple'",
     "typesToInclude": [
       "RowSelectionOptions"
     ]
