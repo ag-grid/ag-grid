@@ -31,10 +31,21 @@ const tableFactory: ExcelOOXMLTemplate = {
             },
         }));
 
+        const getLastColumn = (columnLength: number) => {
+            let result = '';
+            let n = columnLength;
+            while (n > 0) {
+                let remainder = (n - 1) % 26;
+                result = String.fromCharCode(65 + remainder) + result;
+                n = Math.floor((n - 1) / 26);
+            }
+            return result;
+        }
+
         const firstRow = headerRowIndex + 1;
         const id: string = (idx + 1).toString();
         const firstCell = `A${firstRow}`;
-        const lastCell = `${String.fromCharCode(64 + columns.length)}${firstRow + rowCount}`;
+        const lastCell = `${getLastColumn(columns.length)}${firstRow + rowCount}`;
         const ref = `${firstCell}:${lastCell}`;
         const displayNameToUse = idx ? `${displayName}_${idx + 1}` : displayName;
 
