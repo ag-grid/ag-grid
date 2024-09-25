@@ -593,7 +593,7 @@ export type CoreParams = {
     wrapperBorderRadius: LengthValue;
 };
 
-export const coreDefaults: CoreParams = {
+export const coreDefaults = (): CoreParams => ({
     backgroundColor: '#FFF',
     foregroundColor: '#181d1f',
     textColor: {
@@ -897,4 +897,4 @@ export const coreDefaults: CoreParams = {
         mix: 0.1,
     },
     rowLoadingSkeletonEffectColor: 'rgba(66, 66, 66, 0.2)',
-};
+});
