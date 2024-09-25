@@ -144,6 +144,10 @@
                         "path": "key-concepts"
                     },
                     {
+                        "title": "Community vs. Enterprise",
+                        "path": "licensing"
+                    },
+                    {
                         "title": "Installation",
                         "items": [
                             {
@@ -152,10 +156,6 @@
                             },
                             {
                                 "title": "Install AG Grid Enterprise",
-                                "path": "todo"
-                            },
-                            {
-                                "title": "Install Enterprise Licence Key",
                                 "path": "license-install"
                             }
                         ]
@@ -168,15 +168,11 @@
                                 "path": "deep-dive"
                             },
                             {
-                                "title": "2. Customising the Grid",
+                                "title": "2. Styling the Grid",
                                 "path": "styling-the-grid-2"
                             },
                             {
-                                "title": "3. Community vs. Enterprise",
-                                "path": "licensing"
-                            },
-                            {
-                                "title": "4. Building an Enterprise Grid",
+                                "title": "3. Building an Enterprise Grid",
                                 "path": "building-enterprise-grid"
                             },
                             {

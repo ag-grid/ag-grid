@@ -1,54 +1,65 @@
 ---
 title: "Community and Enterprise"
-enterprise: true
 ---
 
 {% videoSection id="9t4g5M3CM3o" title="Introducing the AG Grid Figma Design System" %}
 AG Grid comes in two forms: AG Grid Community (free for everyone, including production use - no license required) and AG Grid Enterprise (a license is required).
+
+The following provides an overview of the key features available in AG Grid Community and AG Grid Enterprise:
 {% /videoSection %}
 
-{% flex %}
-    
-{% flex direction="column" %}
-The Enterprise version of AG Grid comes with more features and {% link isExternal=true href="https://ag-grid.zendesk.com/" %}support via Zendesk{% /link %}. The features that are only available in AG Grid Enterprise are marked with the Enterprise icon {% enterpriseIcon /%} as demonstrated in the image to the right.
+## Feature Comparison
 
-See [Pricing](/license-pricing) for a full feature comparison and details on purchasing an AG Grid Enterprise license.
+### Community Features
+- **Data Grid Essentials:** Row and column configurations, sorting, filtering, and pagination.
+- **Data Binding:** Supports various data formats and frameworks, including Angular, React, Vue, and JavaScript.
+- **Cell Rendering:** Custom cell rendering using components or plain JavaScript.
+- **Themes and Styling:** Pre-built themes and CSS customization.
+- **Accessibility Support:** ARIA support and keyboard navigation.
 
-{% /flex %}
+### Enterprise Features
+- **Server-Side Row Model:** Efficiently handle large datasets by loading data on-demand from the server.
+- **Excel Export:** Advanced export options, including styles and formulas.
+- **Pivot Tables & Aggregations:** Built-in pivot and aggregation capabilities for complex data analysis.
+- **Range Selection & Charts:** Select ranges of data and visualize them directly with integrated charts.
+- **Master/Detail View:** Nested grid views for hierarchical data representation.
+- **Row Grouping & Multi-Column Sorting:** Advanced grouping and sorting options for better data organization.
+- **Clipboard Operations:** Enhanced copy and paste functionality, including support for Excel-like behavior.
+- **Tool Panels:** Built-in configuration panels for columns, filters, and more.
+- **Custom Context Menu & Sidebars:** Additional UI elements for enhanced user interaction and customization.
 
-{% imageCaption imagePath="resources/enterprise-features.png" alt="Enterprise Features" minWidth="15rem" width="15rem" maxWidth="15rem" height="10rem" constrained=true enableDarkModeFilter=true /%}
-{% /flex %}
+{% note %}
+For a full feature comparison and details on pricing, see the [AG Grid License and Pricing](/license-pricing) page.
+{% /note %}
+
+## Support and Licensing
+
+### AG Grid Community
+- **License:** Open-source under the MIT license.
+- **Support:** Community-driven support through forums and GitHub.
+- **Use Case:** Suitable for applications that do not require advanced data manipulation or visualization features.
+
+### AG Grid Enterprise
+- **License:** Commercial license required. Available per developer or deployment.
+- **Support:** Priority support with guaranteed response times, bug fixes, and direct access to the AG Grid team.
+- **Use Case:** Ideal for enterprise applications that require advanced data handling, customization, and support.
 
 ## Trial AG Grid Enterprise for Free
 
 It is free to try out AG Grid Enterprise. Please take AG Grid Enterprise for a test run - you do not need to contact us in order to do so. All that we ask when trialing is that you don't use AG Grid Enterprise in a project intended for production.
 
-When you do not have a license key installed then AG Grid Enterprise will display a invalid key watermark. If you would like to remove this watermark so it's not in the way, please send us an e-mail {% link isExternal=true href="mailto: info@ag-grid.com" %}info@ag-grid.com{% /link %} and get a trial license key.
-
-## Support While Trialing
-
-You can access {% link isExternal=true href="https://ag-grid.zendesk.com/" %}Support via Zendesk{% /link %} for help while trialing. Email {% link isExternal=true href="mailto: info@ag-grid.com" %}info@ag-grid.com{% /link %} to get set up with access.
-
-## Setting the License Key
-
-AG Grid checks the license key without making any network calls. The license key is set once for the grid library -
-you do not need to set the license key for each instance of AG Grid that you create as it is set once statically into the AG Grid library.
-You must set the license key before you create an instance of AG Grid or AG Grid will complain upon creation that no license key has been set.
-
-Note that you must pass the key exactly as provided by AG Grid - do not modify the key in any way.
-
-Please refer to [Setting the License Key](./license-install) on how to set the license key, as well as a list of seed projects we provide to help you get started.
+When you do not have a license key installed then AG Grid Enterprise will display a invalid key watermark, as well as an error message in the console.
 
 {% note %}
-If you are distributing your product and including AG Grid Enterprise, we realise that your license key will be
-visible to others. We appreciate that this is happening and just ask that you don't advertise it. Given our
-product is JavaScript, there is little we can do to prevent this.
+If you would like to remove the watermark or access support when trialing AG Grid Enterprise, please send us an e-mail {% link isExternal=true href="mailto: info@ag-grid.com" %}info@ag-grid.com{% /link %} and get a trial license key.
 {% /note %}
 
-## License Key for Grid and Charts
+## Choosing the Right Version
 
-If you have purchased the Enterprise Bundle (licenses for both AG Grid Enterprise and AG Charts Enterprise) then you will have ONE license key.
-This license key will work for both AG Grid Enterprise and AG Charts Enterprise.
+**AG Grid Community** is an excellent choice if you need a robust, feature-rich data grid without the need for advanced enterprise features. It is ideal for developers and organizations looking for a free, open-source solution.
 
-Conversely if you already have a license key for AG Grid Enterprise and want to get a license for AG Charts Enterprise (or vice versa), then you will a replacement license ky to cover both.
+**AG Grid Enterprise** is the preferred option for companies that need advanced functionality, dedicated support, and a flexible licensing model. It is suited for complex applications that demand high performance, extensive customization, and large-scale data handling.
 
+## Next Steps
+
+[Install AG Grid Enterprise](./license-install) to unlock advanced features, or [Get Started with AG Grid Community](./getting-started) to explore the core functionality of the grid.

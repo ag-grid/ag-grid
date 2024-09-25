@@ -25,26 +25,8 @@ This page shows you how to Get Started with AG Grid: A high performance, feature
 {% /videoSection %}
 {% /if %}
 
-{% if isFramework("react") %}
-## Your First React Data Grid
-{% /if %}
-
-{% if isFramework("angular") %}
-## Your First Angular Data Grid
-{% /if %}
-
-{% if isFramework("javascript") %}
-## Your First JavaScript Data Grid
-{% /if %}
-
-{% if isFramework("vue") %}
-## Your First Vue Data Grid
-{% /if %}
-
-Add AG Grid to your application in these steps:
-
 {% if isFramework("react", "angular", "vue") %}
-**1. NPM Install**
+## NPM Install
 {% /if %}
 
 {% if isFramework("react") %}
@@ -73,7 +55,7 @@ npm install ag-grid-vue3
 
 {% if isFramework("javascript") %}
 {% metaTag tags=["createGrid"] /%}
-**1. Provide a Container**
+## Provide a Container
 
 <!-- Create JavaScript -->
 
@@ -92,7 +74,7 @@ Load the AG Grid library and create a blank container div:
 </html>
 ```
 
-**2. Instantiating the JavaScript Data Grid**
+## Instantiating the JavaScript Data Grid
 
 Create the Data Grid inside of your container div using `createGrid`.
 
@@ -105,7 +87,7 @@ const myGridElement = document.querySelector('#myGrid');
 agGrid.createGrid(myGridElement, gridOptions);
 ```
 
-**3. Define Rows and Columns**
+## Define Rows and Columns
 
 ```js
 // Grid Options: Contains all of the Data Grid configurations
@@ -126,7 +108,7 @@ const gridOptions = {
 };
 ```
 
-**4. Styling the JavaScript Data Grid**
+## Styling the JavaScript Data Grid
 
 Add the `ag-theme-quartz` CSS class to your Data Grid container div to apply the Data Grid's theme.
 
@@ -140,7 +122,7 @@ Add the `ag-theme-quartz` CSS class to your Data Grid container div to apply the
 {% metaTag tags=["aggridreact"] /%}
 <!-- Create React -->
 
-**2. Import the React Data Grid**
+## Import the React Data Grid
 
 ```js
 import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
@@ -148,7 +130,7 @@ import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the 
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 ```
 
-**3. Define Rows and Columns**
+## Define Rows and Columns
 
 ```js
 const GridExample = () => {
@@ -172,7 +154,7 @@ const GridExample = () => {
 }
 ```
 
-**4. React Data Grid Component**
+## React Data Grid Component
 
 The `AgGridReact` component is wrapped in a parent container `div`. Style is applied to the parent container.
 Rows and Columns are set as `AgGridReact` component attributes.
@@ -203,7 +185,7 @@ import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
 import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
 ```
 
-**3. Define Rows and Columns**
+## Define Rows and Columns
 
 ```jsx
 @Component({
@@ -232,7 +214,7 @@ export class AppComponent {
 }
 ```
 
-**4. Angular Data Grid Component**
+## Angular Data Grid Component
 
 Rows and Columns are set as `ag-grid-angular` component attributes.
 
@@ -246,7 +228,7 @@ template:
 `
 ```
 
-**5. Styling the Data Grid**
+## Styling the Data Grid
 
 Import the required dependencies into your `styles.css` file.
 
@@ -270,7 +252,7 @@ Add the `class` and `style` props to the `ag-grid-angular` component.
 
 {% if isFramework("vue") %}
 
-**2. Import the Vue Data Grid**
+## Import the Vue Data Grid
 
 ```html
 <template></template>
@@ -291,7 +273,7 @@ export default {
 </script>
 ```
 
-**3. Define Rows and Columns**
+## Define Rows and Columns
 
 ```js
 setup() {
@@ -317,7 +299,7 @@ setup() {
 },
 ```
 
-**4. Vue Data Grid Component**
+## Vue Data Grid Component
 
 Rows and Columns are set as `ag-grid-vue` component attributes. Styling is applied through the class and style attributes.
 
@@ -336,19 +318,19 @@ Rows and Columns are set as `ag-grid-vue` component attributes. Styling is appli
 {% /if %}
 
 {% if isFramework("angular") %}
-**6. Running the Angular Data Grid**
+## Running the Angular Data Grid
 {% /if %}
 
 {% if isFramework("react") %}
-**5. Running the React Data Grid**
+## Running the React Data Grid
 {% /if %}
 
 {% if isFramework("vue") %}
-**5. Running the Vue Data Grid**
+## Running the Vue Data Grid
 {% /if %}
 
 {% if isFramework("javascript") %}
-**5. Running the JavaScript Data Grid**
+## Running the JavaScript Data Grid
 {% /if %}
 
 Below is a live example of the application running. Click `</> Code` to see the code.
@@ -365,8 +347,8 @@ Choose one of the following options to continue your learning journey:
 
 {% button 
   buttons=[
-    { title: "Quick Reference", desc: "Familiar with Data Grids? Browse our Quick Reference to see how AG Grid implements commonly used features, without any fluff.", link: "../key-concepts" }, 
-    { title: "Introductory Tutorial", desc: "New to Data Grids? Follow our beginner tutorial that guides you through creating your first grid and teaches you the key concepts", link: "../deep-dive" }, 
-    { title: "Video Tutorials", desc: "Visual learner? Watch our collection of tutorial videos which cover everything from setup to advanced enterprise features", link: "../videos" }
+    { title: "New to Data Grids?", desc: "Follow our beginner tutorial that guides you through creating your first grid and teaches you the key concepts", link: "../deep-dive" }, 
+    { title: "Experienced Developer?", desc: "Browse our Key Concepts to see how AG Grid implements commonly used features, without any fluff.", link: "../key-concepts" }, 
+    { title: "Visual Learner?", desc: "Watch our collection of tutorial videos which cover everything from setup to advanced enterprise features", link: "../videos" }
   ] 
 /%}
