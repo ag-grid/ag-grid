@@ -160,14 +160,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private initRowManager(): void {
         const { gos, beans, nodeManager: oldNodeManager } = this;
 
-        const childrenField = gos.get('treeDataChildrenField');
         const treeData = gos.get('treeData');
+        const childrenField = gos.get('treeDataChildrenField');
 
-        const mustUseClientSideTreeNodeManager = childrenField || treeData;
+        const isTree = childrenField || treeData;
 
         let nodeManager: IClientSideNodeManager<any> | undefined;
-        if (mustUseClientSideTreeNodeManager) {
-            nodeManager = beans.clientSideTreeNodeManager;
+        if (isTree) {
+            nodeManager = childrenField ? beans.clientSideChildrenTreeNodeManager : beans.clientSidePathTreeNodeManager;
+            if (!nodeManager) {
+                _warnOnce('Tree data requires tree enterprise module to be loaded'); // TODO: improve this warning
+            }
         }
 
         if (!nodeManager) {

@@ -295,7 +295,8 @@ export interface CoreBeanCollection {
     chartService?: IChartService;
     selectableService: SelectableService;
     clientSideNodeManager?: IClientSideNodeManager;
-    clientSideTreeNodeManager?: IClientSideNodeManager;
+    clientSidePathTreeNodeManager?: IClientSideNodeManager;
+    clientSideChildrenTreeNodeManager?: IClientSideNodeManager;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -485,4 +486,5 @@ export type BeanName =
     | 'validationLogger'
     | 'validationService'
     | 'clientSideNodeManager'
-    | 'clientSideTreeNodeManager';
+    | 'clientSidePathTreeNodeManager'
+    | 'clientSideChildrenTreeNodeManager';

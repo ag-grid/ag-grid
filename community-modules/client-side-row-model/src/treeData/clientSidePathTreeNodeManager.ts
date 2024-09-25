@@ -10,16 +10,23 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
-import type { ClientSideNodeManagerRootNode, ClientSideNodeManagerRowNode } from './abstractClientSideNodeManager';
-import { AbstractClientSideNodeManager } from './abstractClientSideNodeManager';
+import type {
+    ClientSideNodeManagerRootNode,
+    ClientSideNodeManagerRowNode,
+} from '../clientSideNodeManager/abstractClientSideNodeManager';
+import { AbstractClientSideTreeNodeManager } from './abstractClientSideTreeNodeManager';
 
 const TOP_LEVEL = 0;
 
-export class ClientSideNodeManager<TData> extends AbstractClientSideNodeManager<TData> implements NamedBean {
-    beanName = 'clientSideNodeManager' as const;
+export class ClientSidePathTreeNodeManager<TData>
+    extends AbstractClientSideTreeNodeManager<TData>
+    implements NamedBean
+{
+    beanName = 'clientSidePathTreeNodeManager' as const;
+
+    private allNodesMap: { [id: string]: RowNode } = {};
 
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
-    private allNodesMap: { [id: string]: RowNode } = {};
     private nextId = 0;
 
     public getRowNode(id: string): RowNode | undefined {
@@ -200,6 +207,22 @@ export class ClientSideNodeManager<TData> extends AbstractClientSideNodeManager<
 
         if (typeof rowDataTran.addIndex === 'number') {
             addIndex = this.sanitizeAddIndex(rowDataTran.addIndex);
+
+            if (addIndex > 0) {
+                // TODO: this code should not be here, see AG-12602
+                // This was a fix for AG-6231, but is not the correct fix
+                // We enable it only for trees that use getDataPath and not the new children field
+                const getDataPath = !!this.gos.get('getDataPath');
+                if (getDataPath) {
+                    for (let i = 0; i < allLeafChildren.length; i++) {
+                        const node = allLeafChildren[i];
+                        if (node?.rowIndex == addIndex - 1) {
+                            addIndex = i + 1;
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         // create new row nodes for each data item
@@ -311,8 +334,6 @@ export class ClientSideNodeManager<TData> extends AbstractClientSideNodeManager<
                 nodesToUnselect.push(rowNode);
             }
 
-            this.setMasterForRow(rowNode, item, TOP_LEVEL, false);
-
             rowNodeTransaction.update.push(rowNode);
         });
     }
@@ -347,7 +368,8 @@ export class ClientSideNodeManager<TData> extends AbstractClientSideNodeManager<
         node.sourceRowIndex = sourceRowIndex;
 
         node.group = false;
-        this.setMasterForRow(node, dataItem, level, true);
+        node.master = false;
+        node.expanded = false;
 
         if (parent) {
             node.parent = parent;
@@ -365,41 +387,5 @@ export class ClientSideNodeManager<TData> extends AbstractClientSideNodeManager<
         this.nextId++;
 
         return node;
-    }
-
-    public updateRowsMasterDetail(): void {
-        this.rootNode.allLeafChildren?.forEach((rowNode) => {
-            const data = rowNode.data;
-            if (data) {
-                this.setMasterForRow(rowNode, data, TOP_LEVEL, true);
-            }
-        });
-    }
-
-    private setMasterForRow(rowNode: RowNode<TData>, data: TData, level: number, canExpandOrCollapse: boolean): void {
-        const masterDetail = this.gos.get('masterDetail');
-        // this is the default, for when doing grid data
-        if (masterDetail) {
-            // if we are doing master detail, then the
-            // default is that everything can be a Master Row.
-            const isRowMasterFunc = this.gos.get('isRowMaster');
-            if (isRowMasterFunc) {
-                rowNode.setMaster(isRowMasterFunc(data));
-            } else {
-                rowNode.setMaster(true);
-            }
-        } else {
-            rowNode.setMaster(false);
-        }
-
-        if (canExpandOrCollapse) {
-            const rowGroupColumns = this.beans.funcColsService.getRowGroupColumns();
-            const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
-
-            // need to take row group into account when determining level
-            const masterRowLevel = level + numRowGroupColumns;
-
-            rowNode.expanded = rowNode.master ? this.isExpanded(masterRowLevel) : false;
-        }
     }
 }
