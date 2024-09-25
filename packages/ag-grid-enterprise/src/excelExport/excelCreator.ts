@@ -231,7 +231,7 @@ export class ExcelCreator
     private columnNameService: ColumnNameService;
     private funcColsService: FuncColsService;
     private valueService: ValueService;
-    private stylingService: StylingService;
+    private stylingService?: StylingService;
 
     private gridSerializer: GridSerializer;
 
@@ -387,7 +387,7 @@ export class ExcelCreator
         });
 
         const colDef = (column as AgColumn).getDefinition();
-        this.stylingService.processAllCellClasses(
+        this.stylingService?.processAllCellClasses(
             colDef,
             this.gos.addGridCommonParams({
                 value,

@@ -29,7 +29,7 @@ export interface RowCssClassCalculatorParams {
 export class RowCssClassCalculator extends BeanStub implements NamedBean {
     beanName = 'rowCssClassCalculator' as const;
 
-    private stylingService: StylingService;
+    private stylingService?: StylingService;
 
     public wireBeans(beans: BeanCollection): void {
         this.stylingService = beans.stylingService;
@@ -173,7 +173,7 @@ export class RowCssClassCalculator extends BeanStub implements NamedBean {
             rowIndex: rowNode.rowIndex!,
         });
 
-        this.stylingService.processClassRules(
+        this.stylingService?.processClassRules(
             undefined,
             this.gos.get('rowClassRules'),
             rowClassParams,

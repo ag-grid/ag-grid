@@ -196,7 +196,7 @@ export interface CoreBeanCollection {
     columnAnimationService: ColumnAnimationService;
     focusService: FocusService;
     popupService?: PopupService;
-    stylingService: StylingService;
+    stylingService?: StylingService;
     columnHoverService: ColumnHoverService;
     userComponentFactory: UserComponentFactory;
     userComponentRegistry: UserComponentRegistry;

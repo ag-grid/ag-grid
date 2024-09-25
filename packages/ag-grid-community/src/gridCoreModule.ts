@@ -23,6 +23,7 @@ import { StickyRowModule } from './rendering/features/stickyRowModule';
 import { OverlayModule } from './rendering/overlays/overlayModule';
 import { RowSelectionModule } from './selection/rowSelectionModule';
 import { SortModule } from './sort/sortModule';
+import { CellStyleModule } from './styling/cellStyleModule';
 import { ValidationService } from './validation/validationService';
 import { ExpressionModule, ValueCacheModule } from './valueService/valueModule';
 import { VERSION } from './version';
@@ -72,5 +73,6 @@ export const CommunityFeaturesModule = _defineModule({
         OverlayModule,
         CellRendererFunctionModule,
         PopupModule,
+        CellStyleModule,
     ],
 });

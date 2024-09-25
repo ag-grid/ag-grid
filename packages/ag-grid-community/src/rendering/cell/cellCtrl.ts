@@ -36,7 +36,7 @@ import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellR
 import { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { FlashCellsParams } from '../rowRenderer';
-import { CellCustomStyleFeature } from './cellCustomStyleFeature';
+import type { CellCustomStyleFeature } from './cellCustomStyleFeature';
 import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
 import { CellMouseListenerFeature } from './cellMouseListenerFeature';
 import { CellPositionFeature } from './cellPositionFeature';
@@ -149,7 +149,7 @@ export class CellCtrl extends BeanStub {
 
     private addFeatures(): void {
         this.cellPositionFeature = new CellPositionFeature(this, this.beans);
-        this.cellCustomStyleFeature = new CellCustomStyleFeature(this, this.beans);
+        this.cellCustomStyleFeature = this.beans.stylingService?.createCellCustomStyleFeature(this, this.beans);
         this.cellMouseListenerFeature = new CellMouseListenerFeature(this, this.beans, this.column);
 
         this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(

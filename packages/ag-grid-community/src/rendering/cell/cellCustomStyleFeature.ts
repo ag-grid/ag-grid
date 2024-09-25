@@ -47,7 +47,7 @@ export class CellCustomStyleFeature extends BeanStub {
             rowIndex: this.rowNode.rowIndex!,
         });
 
-        this.beans.stylingService.processClassRules(
+        this.beans.stylingService!.processClassRules(
             // if current was previous, skip
             cellClassRules === this.cellClassRules ? undefined : this.cellClassRules,
             cellClassRules,
@@ -102,7 +102,7 @@ export class CellCustomStyleFeature extends BeanStub {
             this.staticClasses.forEach((className) => this.cellComp.addOrRemoveCssClass(className, false));
         }
 
-        this.staticClasses = this.beans.stylingService.getStaticCellClasses(colDef, cellClassParams);
+        this.staticClasses = this.beans.stylingService!.getStaticCellClasses(colDef, cellClassParams);
 
         if (this.staticClasses.length) {
             this.staticClasses.forEach((className) => this.cellComp.addOrRemoveCssClass(className, true));

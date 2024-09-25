@@ -3,6 +3,8 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CellClassParams, ColDef } from '../entities/colDef';
 import type { RowClassParams } from '../entities/gridOptions';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
+import { CellCustomStyleFeature } from '../rendering/cell/cellCustomStyleFeature';
 import type { ExpressionService } from '../valueService/expressionService';
 
 export class StylingService extends BeanStub implements NamedBean {
@@ -106,6 +108,10 @@ export class StylingService extends BeanStub implements NamedBean {
         }
 
         return classOrClasses || [];
+    }
+
+    public createCellCustomStyleFeature(ctrl: CellCtrl, beans: BeanCollection): CellCustomStyleFeature {
+        return new CellCustomStyleFeature(ctrl, beans);
     }
 
     private processStaticCellClasses(

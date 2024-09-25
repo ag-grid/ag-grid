@@ -54,7 +54,6 @@ import { OverlayService } from './rendering/overlays/overlayService';
 import { RowCssClassCalculator } from './rendering/row/rowCssClassCalculator';
 import { RowContainerHeightService } from './rendering/rowContainerHeightService';
 import { RowRenderer } from './rendering/rowRenderer';
-import { StylingService } from './styling/stylingService';
 import { SyncService } from './syncService';
 import { _errorOnce, _warnOnce } from './utils/function';
 import { _missing } from './utils/generic';
@@ -443,7 +442,6 @@ export class GridCoreCreator {
             MouseEventService,
             Environment,
             CellNavigationService,
-            StylingService,
             ScrollVisibleService,
             ColumnHoverService,
             ColumnAnimationService,
