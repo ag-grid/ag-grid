@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-generate-example-files",
-  "version": "32.2.0",
+  "version": "32.2.1",
   "private": true,
   "dependencies": {
     "glob": "8.0.3",
