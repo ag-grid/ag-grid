@@ -88,8 +88,21 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
             return area;
         });
 
-        root.append(this.areas);
-        root.append(([] as _Scene.Rect[]).concat.apply([], this.columns));
+        const areaGroup = new _Scene.Group();
+        areaGroup.setClipRectInGroupCoordinateSpace(
+            new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2)
+        );
+
+        const columnGroup = new _Scene.Group();
+        columnGroup.setClipRectInGroupCoordinateSpace(
+            new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2)
+        );
+
+        areaGroup.append(this.areas);
+        columnGroup.append(this.columns);
+
+        root.append(areaGroup);
+        root.append(columnGroup);
 
         this.updateColors(fills, strokes);
     }

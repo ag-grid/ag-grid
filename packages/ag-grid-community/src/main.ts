@@ -1010,7 +1010,7 @@ export * from './events';
 
 // theming
 export { type Part, createPart } from './styles/Part';
-export { type Theme, createTheme } from './styles/Theme';
+export { type Theme, createTheme, asThemeImpl as _asThemeImpl } from './styles/Theme';
 export * from './styles/parts/checkbox-style/checkbox-styles';
 export * from './styles/parts/color-scheme/color-schemes';
 export * from './styles/parts/icon-set/icon-sets';

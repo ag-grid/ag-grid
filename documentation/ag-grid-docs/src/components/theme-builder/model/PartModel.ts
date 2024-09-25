@@ -2,6 +2,7 @@ import { atom, useAtom } from 'jotai';
 
 import type { Part } from 'ag-grid-community';
 import {
+    _asThemeImpl,
     colorSchemeDark,
     colorSchemeDarkBlue,
     colorSchemeDarkWarm,
@@ -49,7 +50,7 @@ const partDocs: Record<string, string | undefined> = {
     inputStyle: 'The appearance of text input fields',
 };
 
-const defaultPartIds = new Set(themeQuartz.dependencies.map((dep) => dep.id));
+const defaultPartIds = new Set(_asThemeImpl(themeQuartz).dependencies.map((dep) => dep.id));
 
 export class FeatureModel {
     readonly label: string;

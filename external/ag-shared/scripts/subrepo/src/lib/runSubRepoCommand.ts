@@ -82,6 +82,8 @@ export function runSubRepoCommand({ command, subRepoFolder, isVerbose }: Subrepo
             exec(`git commit --reuse-message ${subRepoCmdSha}`);
         }
 
-        console.log(`✅ Subrepo ${tc.cyan}${subRepoFolder}${tc.reset} has been ${command}ed and is up to date`);
+        console.log(
+            `✅ Subrepo ${tc.cyan}${subRepoFolder}${tc.reset} has been ${tc.cyan}${command}ed${tc.reset} and is up to date`
+        );
     }
 }

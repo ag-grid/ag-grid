@@ -40,7 +40,7 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
     const theme = useRenderedTheme();
     let editorValue = value;
     if (editorValue == null) {
-        const params = theme.getParams();
+        const params = theme.getParams().getValues();
         if (param.property in params) {
             editorValue = params[param.property];
         } else {

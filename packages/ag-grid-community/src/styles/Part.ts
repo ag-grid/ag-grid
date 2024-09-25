@@ -1,3 +1,4 @@
+import { Params } from './Params';
 import type { CoreParams } from './core/core-css';
 import type { Feature } from './theme-types';
 import type { CssFragment } from './theme-types';
@@ -6,13 +7,11 @@ export type Part<TParams = unknown> = {
     readonly id: string;
     readonly feature: string;
     readonly variant: string;
-    readonly defaults: Partial<TParams>;
-    readonly css: ReadonlyArray<CssFragment>;
 
     /**
      * Return a new Part new different default values for core grid params.
      */
-    withParams(defaults: Partial<TParams>): Part<TParams>;
+    withParams(defaults: Partial<TParams>, mode?: string): Part<TParams>;
 
     /**
      * Return a new part with additional params. Unlike `withParams`, this can
@@ -26,8 +25,20 @@ export type Part<TParams = unknown> = {
     withCSS(css: CssFragment): Part<TParams>;
 };
 
-export const createPartVariant = <T>(part: Part<T>, variant: string): Part<T> =>
-    new PartImpl(part.feature, variant, part.defaults, part.css);
+export const createPartVariant = <T>(part: Part<T>, variant: string): Part<T> => {
+    const partImpl = asPartImpl(part);
+    return new PartImpl(partImpl.feature, variant, partImpl.params, partImpl.css);
+};
+
+export const asPartImpl = (part: Part): PartImpl => {
+    if (part instanceof PartImpl) {
+        return part;
+    }
+    throw new Error(
+        'expected part to be an object created by createPart' +
+            (part && typeof part === 'object' ? '' : `, got ${part}`)
+    );
+};
 
 // string & {} used to preserve auto-complete from string union but allow any string
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -49,7 +60,7 @@ class PartImpl<TParams = unknown> implements Part<TParams> {
     constructor(
         readonly feature: string,
         readonly variant: string,
-        readonly defaults: Partial<TParams> = {},
+        readonly params: Params = new Params(),
         readonly css: ReadonlyArray<CssFragment> = []
     ) {}
 
@@ -57,14 +68,8 @@ class PartImpl<TParams = unknown> implements Part<TParams> {
         return this.feature ? `${this.feature}/${this.variant}` : this.variant;
     }
 
-    withParams(params: Partial<TParams>): Part<TParams> {
-        const newParams: any = { ...this.defaults };
-        for (const [name, value] of Object.entries(params)) {
-            if (value != null) {
-                newParams[name] = value;
-            }
-        }
-        return new PartImpl(this.feature, this.variant, newParams, this.css);
+    withParams(params: Partial<TParams>, mode?: string): Part<TParams> {
+        return new PartImpl(this.feature, this.variant, this.params.withParams(params, mode), this.css);
     }
 
     withAdditionalParams<TAdditionalParams>(defaults: TAdditionalParams): Part<TParams & TAdditionalParams> {
@@ -72,6 +77,6 @@ class PartImpl<TParams = unknown> implements Part<TParams> {
     }
 
     withCSS(css: CssFragment): Part<TParams> {
-        return new PartImpl(this.feature, this.variant, this.defaults, this.css.concat(css));
+        return new PartImpl(this.feature, this.variant, this.params, this.css.concat(css));
     }
 }

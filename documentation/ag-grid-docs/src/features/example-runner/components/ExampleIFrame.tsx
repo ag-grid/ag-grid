@@ -97,6 +97,7 @@ const themes: Record<string, any> = {
 
 const applyExampleDarkMode = (document: Document, darkMode: boolean) => {
     document.documentElement.dataset.colorScheme = darkMode ? 'dark' : 'light';
+    document.documentElement.dataset.agThemeMode = darkMode ? 'dark-blue' : 'light';
     document.documentElement.dataset.defaultTheme = darkMode ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
     injectStylesheet(document);
 

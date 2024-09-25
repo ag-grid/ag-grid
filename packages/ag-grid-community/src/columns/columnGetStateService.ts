@@ -43,7 +43,6 @@ export class ColumnGetStateService extends BeanStub implements NamedBean {
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
         const sort = column.getSort() != null ? column.getSort() : null;
         const sortIndex = column.getSortIndex() != null ? column.getSortIndex() : null;
-        const flex = column.getFlex() != null && column.getFlex() > 0 ? column.getFlex() : null;
 
         const res: ColumnState = {
             colId: column.getColId(),
@@ -57,7 +56,7 @@ export class ColumnGetStateService extends BeanStub implements NamedBean {
             rowGroupIndex,
             pivot: column.isPivotActive(),
             pivotIndex: pivotIndex,
-            flex,
+            flex: column.getFlex() ?? null,
         };
 
         return res;

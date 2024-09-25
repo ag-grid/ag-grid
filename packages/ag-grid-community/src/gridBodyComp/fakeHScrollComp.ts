@@ -120,6 +120,8 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         this.eLeftSpacer.classList.toggle('ag-scroller-corner', leftSpacing <= scrollbarWidth);
     }
 
+    private setScrollVisibleDebounce = 0;
+
     protected setScrollVisible(): void {
         const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
         const invisibleScrollbar = this.invisibleScrollbar;
@@ -128,11 +130,24 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         const adjustedScrollbarWidth = scrollbarWidth === 0 && invisibleScrollbar ? 16 : scrollbarWidth;
         const scrollContainerSize = !isSuppressHorizontalScroll ? adjustedScrollbarWidth : 0;
 
-        this.addOrRemoveCssClass('ag-scrollbar-invisible', invisibleScrollbar);
-        _setFixedHeight(this.getGui(), scrollContainerSize);
-        _setFixedHeight(this.eViewport, scrollContainerSize);
-        _setFixedHeight(this.eContainer, scrollContainerSize);
-        this.setDisplayed(hScrollShowing, { skipAriaHidden: true });
+        // Avoid scrollbars flickering on as we resize the grid. Before showing
+        // a scrollbar, give a little time for the grid to resize, after which a
+        // scrollbar may no longer be required
+        const apply = () => {
+            this.addOrRemoveCssClass('ag-scrollbar-invisible', invisibleScrollbar);
+            _setFixedHeight(this.getGui(), scrollContainerSize);
+            _setFixedHeight(this.eViewport, scrollContainerSize);
+            _setFixedHeight(this.eContainer, scrollContainerSize);
+            this.setDisplayed(hScrollShowing, { skipAriaHidden: true });
+        };
+        clearTimeout(this.setScrollVisibleDebounce);
+        if (!hScrollShowing) {
+            apply();
+        } else {
+            this.setScrollVisibleDebounce = setTimeout(() => {
+                apply();
+            }, 100);
+        }
     }
 
     public getScrollPosition(): number {

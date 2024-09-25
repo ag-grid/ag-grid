@@ -1106,21 +1106,22 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // in the group getting unselected (as all children are unselected). the correct thing would be
         // to change this, so that children of the selected group are not then subsequently un-selected.
         const groupSelectsChildren = _getGroupSelectsDescendants(gos);
+        const rowDeselectionWithCtrl = _getEnableDeselection(gos);
+        const rowClickSelection = _getEnableSelection(gos);
         if (
             // we do not allow selecting groups by clicking (as the click here expands the group), or if it's a detail row,
             // so return if it's a group row
             (groupSelectsChildren && this.rowNode.group) ||
             this.isRowSelectionBlocked() ||
-            // if click selection disabled, do nothing
-            (!_getEnableSelection(gos) && !isSelected) ||
-            // if click deselection disabled, do nothing
-            (!_getEnableDeselection(gos) && isSelected)
+            // if selecting and click selection disabled, do nothing
+            (!rowClickSelection && !isSelected) ||
+            // if deselecting and click deselection disabled, do nothing
+            (!rowDeselectionWithCtrl && isSelected)
         ) {
             return;
         }
 
         const multiSelectOnClick = _getEnableMultiSelectWithClick(gos);
-        const rowDeselectionWithCtrl = _getEnableDeselection(gos);
         const source = 'rowClicked';
 
         if (isSelected) {
@@ -1130,7 +1131,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 if (rowDeselectionWithCtrl) {
                     this.rowNode.setSelectedParams({ newValue: false, event: mouseEvent, source });
                 }
-            } else {
+            } else if (rowClickSelection) {
                 // selected with no multi key, must make sure anything else is unselected
                 this.rowNode.setSelectedParams({
                     newValue: true,

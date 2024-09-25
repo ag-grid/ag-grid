@@ -3,4 +3,4 @@ export interface ICoordinate {
     y: number;
 }
 
-export type DomainRange = [number, number];
+export type CommandSegment = ['lineTo' | 'moveTo', number, number];

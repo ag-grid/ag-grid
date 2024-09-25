@@ -381,7 +381,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         destroyPrevious();
-        const [tree, treeDepth] = this.columnFactory.balanceTreeForAutoCols(list, this.cols?.tree);
+        const [tree, treeDepth] = this.columnFactory.balanceTreeForAutoCols(list, this.cols.tree);
         this.autoCols = {
             list,
             tree,
@@ -403,11 +403,28 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private createControlsCols(): void {
-        destroyColumnTree(this.context, this.controlsCols?.tree);
-        this.controlsCols = null;
+        const destroyCollection = () => {
+            destroyColumnTree(this.context, this.controlsCols?.tree);
+            this.controlsCols = null;
+        };
+
+        if (!this.controlsColService) {
+            destroyCollection();
+        }
+
+        // the new tree dept will equal the current tree dept of cols
+        const newTreeDepth = this.cols.treeDepth;
+        const oldTreeDepth = this.controlsCols?.treeDepth ?? -1;
+        const treeDeptSame = oldTreeDepth == newTreeDepth;
 
         const list = this.controlsColService?.createControlsCols() ?? [];
+        const areSame = areColIdsEqual(list, this.controlsCols?.list ?? []);
 
+        if (areSame && treeDeptSame) {
+            return;
+        }
+
+        destroyCollection();
         const [tree, treeDepth] = this.columnFactory.balanceTreeForAutoCols(list, this.cols.tree);
         this.controlsCols = {
             list,
@@ -416,8 +433,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
             map: {},
         };
 
-        this.controlsColService?.sortControlsColsFirst(this.lastOrder);
-        this.controlsColService?.sortControlsColsFirst(this.lastPivotOrder);
+        this.lastOrder = this.controlsColService?.putControlColsFirstInList(list, this.lastOrder) ?? null;
+        this.lastPivotOrder = this.controlsColService?.putControlColsFirstInList(list, this.lastPivotOrder) ?? null;
     }
 
     private addControlsCols(): void {
