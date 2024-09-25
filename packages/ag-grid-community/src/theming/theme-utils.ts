@@ -14,10 +14,6 @@ export const logErrorMessage = (message: unknown, error?: unknown) => {
     }
 };
 
-export const proportionToPercent = (value: number) => Math.round(Math.max(0, Math.min(1, value)) * 1000) / 10;
-
-export const camelCase = (str: string) => str.replace(/[\W_]+([a-z])/g, (_, letter) => letter.toUpperCase());
-
 export const memoize = <R, A = void>(fn: (arg: A) => R): ((arg: A) => R) => {
     const values = new Map<A, R>();
     return (a) => {

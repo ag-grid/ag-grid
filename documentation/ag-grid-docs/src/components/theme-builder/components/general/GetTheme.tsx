@@ -67,7 +67,7 @@ const GetThemeDialog = () => {
         </DownloadThemeWrapper>
     );
 };
-export const camelCase = (str: string) => str.replace(/[\W_]+([a-z])/g, (_, letter) => letter.toUpperCase());
+
 const renderThemeCodeSample = ({ overriddenParams, usedParts }: RenderedThemeInfo): string => {
     const imports = ['themeQuartz'];
     let code = '';
@@ -86,6 +86,8 @@ const renderThemeCodeSample = ({ overriddenParams, usedParts }: RenderedThemeInf
 
     return code;
 };
+
+const camelCase = (str: string) => str.replace(/[\W_]+([a-z])/g, (_, letter) => letter.toUpperCase());
 
 const CodeWrapper = styled('div')`
     user-select: text;
