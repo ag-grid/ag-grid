@@ -5,7 +5,7 @@ import fs from 'fs/promises';
 import glob from 'glob';
 import { readFileSync } from 'node:fs';
 
-import { SITE_BASE_URL, USE_PACKAGES, USE_PUBLISHED_PACKAGES } from '../constants';
+import { SITE_BASE_URL, USE_PUBLISHED_PACKAGES } from '../constants';
 import { type GlobConfig, createFilePathFinder } from './createFilePathFinder';
 import { pathJoin } from './pathJoin';
 import { urlWithBaseUrl } from './urlWithBaseUrl';

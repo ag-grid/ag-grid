@@ -9,7 +9,7 @@ export default [
     ...tseslint.configs.recommended,
     { plugins: { 'import-x': eslintImportX } },
     {
-        ignores: ['node_modules/', 'dist/'],
+        ignores: ['node_modules/', 'dist/', '.astro/', '**/env.d.ts'],
     },
     {
         rules: {
