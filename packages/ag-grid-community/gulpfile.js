@@ -9,6 +9,7 @@ const copyFromModuleSource = () => {
     return gulp
         .src([
             '../../community-modules/core/dist/types/src/**/*.d.ts',
+            '../../community-modules/theming/dist/types/src/**/*.d.ts',
             '../../community-modules/client-side-row-model/dist/types/src/**/*.d.ts',
             '../../community-modules/csv-export/dist/types/src/**/*.d.ts',
             '../../community-modules/infinite-row-model/dist/types/src/**/*.d.ts',
@@ -16,6 +17,7 @@ const copyFromModuleSource = () => {
             '!**/*Test*',
         ])
         .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
+        .pipe(replace('@ag-grid-community/theming', 'ag-grid-community'))
         .pipe(
             rename(function (path, file) {
                 const workspaceRoot = resolve(__dirname, '../..');

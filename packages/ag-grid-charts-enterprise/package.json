@@ -89,7 +89,6 @@
   "devDependencies": {
     "source-map-loader": "^5.0.0",
     "@ag-grid-community/styles": "32.3.0",
-    "@ag-grid-community/theming": "32.3.0",
     "@ag-grid-enterprise/advanced-filter": "32.3.0",
     "@ag-grid-enterprise/charts-enterprise": "32.3.0",
     "@ag-grid-enterprise/clipboard": "32.3.0",
