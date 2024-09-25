@@ -389,12 +389,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
         },
     },
 
-    columnDefs: () => COL_DEF_VALIDATORS,
-    defaultColDef: () => COL_DEF_VALIDATORS,
-    defaultColGroupDef: () => COL_DEF_VALIDATORS,
-    autoGroupColumnDef: () => COL_DEF_VALIDATORS,
-    selectionColumnDef: () => COL_DEF_VALIDATORS,
-
     rowSelection: {
         validate({ rowSelection }) {
             if (rowSelection && typeof rowSelection === 'string') {
@@ -403,6 +397,15 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
             return null;
         },
     },
+    cellSelection: {
+        module: ModuleNames.RangeSelectionModule,
+    },
+
+    columnDefs: () => COL_DEF_VALIDATORS,
+    defaultColDef: () => COL_DEF_VALIDATORS,
+    defaultColGroupDef: () => COL_DEF_VALIDATORS,
+    autoGroupColumnDef: () => COL_DEF_VALIDATORS,
+    selectionColumnDef: () => COL_DEF_VALIDATORS,
 });
 
 export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({
