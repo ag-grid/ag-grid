@@ -1,6 +1,6 @@
 import type { AgChartThemeOverrides } from 'ag-charts-community';
 
-import type { ChartType } from 'ag-grid-community';
+import type { ChartType, ChartTypeExCombo } from 'ag-grid-community';
 import { ChartMappings } from 'ag-grid-community';
 
 import type { ChartTranslationKey } from '../services/chartTranslationService';
@@ -23,7 +23,9 @@ interface SeriesParams {
     canSwitchDirection?: boolean;
 }
 
-const SERIES_TYPES: { [key in ChartSeriesType]: SeriesParams } = {
+type SeriesTypeParams = Partial<{ [key in ChartSeriesType]: SeriesParams }>;
+
+const SERIES_TYPES: SeriesTypeParams = {
     area: {
         isCartesian: true,
         canInvert: true,
@@ -154,7 +156,7 @@ export function getCanonicalChartType(chartType: ChartType): Exclude<ChartType, 
 }
 
 export function getSeriesTypeIfExists(chartType: ChartType): ChartSeriesType | undefined {
-    return ChartMappings.CHART_TYPE_TO_SERIES_TYPE[chartType as keyof typeof ChartMappings.CHART_TYPE_TO_SERIES_TYPE];
+    return ChartMappings.CHART_TYPE_TO_SERIES_TYPE[chartType as ChartTypeExCombo] as ChartSeriesType | undefined;
 }
 
 export function getSeriesType(chartType: ChartType): ChartSeriesType {

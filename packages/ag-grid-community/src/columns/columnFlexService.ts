@@ -3,9 +3,20 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColumnEventType } from '../events';
-import { _removeFromUnorderedArray } from '../utils/array';
 import { dispatchColumnResizedEvent } from './columnEventUtils';
 import type { VisibleColsService } from './visibleColsService';
+
+type FlexItem = {
+    col: AgColumn;
+    isFlex: boolean;
+    flex: number;
+    min: number;
+    max: number;
+    initialSize: number;
+    targetSize: number;
+    frozenSize?: number;
+    violationType?: 'min' | 'max';
+};
 
 export class ColumnFlexService extends BeanStub implements NamedBean {
     beanName = 'columnFlexService' as const;
@@ -20,7 +31,6 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
 
     public refreshFlexedColumns(
         params: {
-            resizingCols?: AgColumn[];
             skipSetLeft?: boolean;
             viewportWidth?: number;
             source?: ColumnEventType;
@@ -34,112 +44,132 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
             this.flexViewportWidth = params.viewportWidth;
         }
 
-        if (!this.flexViewportWidth) {
+        const totalSpace = this.flexViewportWidth;
+
+        if (!totalSpace) {
             return [];
         }
 
-        // If the grid has left-over space, divide it between flexing columns in proportion to their flex value.
-        // A "flexing column" is one that has a 'flex' value set and is not currently being constrained by its
-        // minWidth or maxWidth rules.
+        // NOTE this is an implementation of the "Resolve Flexible Lengths" part
+        // of the flex spec, simplified because we only support flex growing not
+        // shrinking, and don't support flex-basis.
+        // https://www.w3.org/TR/css-flexbox-1/#resolve-flexible-lengths
+        let hasFlexItems = false;
+        const items = this.visibleColsService.centerCols.map((col): FlexItem => {
+            const flex = col.getFlex();
+            const isFlex = flex != null;
 
-        const displayedCenterCols = this.visibleColsService.centerCols;
+            hasFlexItems ||= isFlex;
 
-        let flexAfterDisplayIndex = -1;
-        if (params.resizingCols) {
-            const allResizingCols = new Set(params.resizingCols);
-            // find the last resizing col, as only cols after this one are affected by the resizing
-            for (let i = displayedCenterCols.length - 1; i >= 0; i--) {
-                if (allResizingCols.has(displayedCenterCols[i])) {
-                    flexAfterDisplayIndex = i;
-                    break;
-                }
-            }
-        }
-
-        // the width of all of the columns for which the width has been determined
-        let knownColumnsWidth = 0;
-
-        let flexingColumns: AgColumn[] = [];
-
-        // store the minimum width of all the flex columns, so we can determine if flex is even possible more quickly
-        let minimumFlexedWidth = 0;
-        let totalFlex = 0;
-        for (let i = 0; i < displayedCenterCols.length; i++) {
-            const isFlex = displayedCenterCols[i].getFlex() && i > flexAfterDisplayIndex;
-            if (isFlex) {
-                flexingColumns.push(displayedCenterCols[i]);
-                totalFlex += displayedCenterCols[i].getFlex();
-                minimumFlexedWidth += displayedCenterCols[i].getMinWidth();
-            } else {
-                knownColumnsWidth += displayedCenterCols[i].getActualWidth();
-            }
-        }
-
-        if (!flexingColumns.length) {
-            return [];
-        }
-
-        let changedColumns: AgColumn[] = [];
-
-        // this is for performance to prevent trying to flex when unnecessary
-        if (knownColumnsWidth + minimumFlexedWidth > this.flexViewportWidth) {
-            // known columns and the minimum width of all the flex cols are too wide for viewport
-            // so don't flex
-            flexingColumns.forEach((col) => col.setActualWidth(col.getMinWidth(), source));
-
-            // No columns should flex, but all have been changed. Swap arrays so events fire properly.
-            // Expensive logic won't execute as flex columns is empty.
-            changedColumns = flexingColumns;
-            flexingColumns = [];
-        }
-
-        const flexingColumnSizes: number[] = [];
-        let spaceForFlexingColumns: number;
-
-        outer: while (true) {
-            spaceForFlexingColumns = this.flexViewportWidth - knownColumnsWidth;
-            const spacePerFlex = spaceForFlexingColumns / totalFlex;
-            for (let i = 0; i < flexingColumns.length; i++) {
-                const col = flexingColumns[i];
-                const widthByFlexRule = spacePerFlex * col.getFlex();
-                let constrainedWidth = 0;
-
-                const minWidth = col.getMinWidth();
-                const maxWidth = col.getMaxWidth();
-
-                if (widthByFlexRule < minWidth) {
-                    constrainedWidth = minWidth;
-                } else if (widthByFlexRule > maxWidth) {
-                    constrainedWidth = maxWidth;
-                }
-
-                if (constrainedWidth) {
-                    // This column is not in fact flexing as it is being constrained to a specific size
-                    // so remove it from the list of flexing columns and start again
-                    col.setActualWidth(constrainedWidth, source);
-                    _removeFromUnorderedArray(flexingColumns, col);
-                    totalFlex -= col.getFlex();
-                    changedColumns.push(col);
-                    knownColumnsWidth += col.getActualWidth();
-                    continue outer;
-                }
-
-                flexingColumnSizes[i] = Math.floor(widthByFlexRule);
-            }
-            break;
-        }
-
-        let remainingSpace = spaceForFlexingColumns;
-        flexingColumns.forEach((col, i) => {
-            const size =
-                i < flexingColumns.length - 1
-                    ? Math.min(flexingColumnSizes[i], remainingSpace)
-                    : // ensure flex columns fill available width by growing the last column to fit available space if there is more available
-                      Math.max(flexingColumnSizes[i], remainingSpace);
-            col.setActualWidth(size, source);
-            changedColumns.push(col);
-            remainingSpace -= flexingColumnSizes[i];
+            return {
+                col,
+                isFlex,
+                flex: Math.max(0, flex ?? 0),
+                initialSize: col.getActualWidth(),
+                min: col.getMinWidth(),
+                max: col.getMaxWidth(),
+                targetSize: 0,
+            };
         });
+
+        if (!hasFlexItems) {
+            return [];
+        }
+
+        let unfrozenItemCount = items.length;
+        let unfrozenFlex = items.reduce((acc, item) => acc + item.flex, 0);
+        let unfrozenSpace = totalSpace;
+
+        const freeze = (item: FlexItem, width: number) => {
+            item.frozenSize = width;
+            item.col.setActualWidth(width, source);
+            unfrozenSpace -= width;
+            unfrozenFlex -= item.flex;
+            unfrozenItemCount -= 1;
+        };
+
+        const isFrozen = (item: FlexItem) => item.frozenSize != null;
+
+        // Freeze inflexible columns
+        for (const item of items) {
+            if (!item.isFlex) {
+                freeze(item, item.initialSize);
+            }
+        }
+
+        // a. Check for flexible items. If all the flex items on the line are
+        // frozen, free space has been distributed; exit this loop.
+        while (unfrozenItemCount > 0) {
+            // b. Calculate the remaining free space as for initial free space,
+            // above. If the sum of the unfrozen flex items’ flex factors is
+            // less than one, multiply the initial free space by this sum.
+            const spaceToFill = Math.round(unfrozenFlex < 1 ? unfrozenSpace * unfrozenFlex : unfrozenSpace);
+
+            // c. Distribute free space proportional to the flex factors.
+            let lastUnfrozenItem: FlexItem | undefined;
+            let actualLeft = 0;
+            let idealRight = 0;
+
+            for (const item of items) {
+                if (isFrozen(item)) {
+                    continue;
+                }
+
+                lastUnfrozenItem = item;
+                idealRight += spaceToFill * (item.flex / unfrozenFlex);
+
+                const idealSize = idealRight - actualLeft;
+                const roundedSize = Math.round(idealSize);
+
+                item.targetSize = roundedSize;
+                actualLeft += roundedSize;
+            }
+
+            if (lastUnfrozenItem) {
+                // Correct cumulative rounding errors: adjust the size of the
+                // last item to fill any remaining space
+                lastUnfrozenItem.targetSize += spaceToFill - actualLeft;
+            }
+
+            // d. Fix min/max violations. Clamp each non-frozen item’s target
+            // main size by its used min and max main sizes... If the item’s
+            // target main size was made smaller by this, it’s a max violation.
+            // If the item’s target main size was made larger by this, it’s a
+            // min violation.
+            let totalViolation = 0;
+            for (const item of items) {
+                if (isFrozen(item)) {
+                    continue;
+                }
+
+                const unclampedSize = item.targetSize;
+                const clampedSize = Math.min(Math.max(unclampedSize, item.min), item.max);
+
+                totalViolation += clampedSize - unclampedSize;
+                item.violationType =
+                    clampedSize === unclampedSize ? undefined : clampedSize < unclampedSize ? 'max' : 'min';
+
+                item.targetSize = clampedSize;
+            }
+
+            // e. Freeze over-flexed items. The total violation is the sum of
+            // the adjustments from the previous step.
+            // If the total violation is:
+            //     - Zero, Freeze all items
+            //     - Positive, Freeze all the items with min violations
+            //     - Negative, Freeze all the items with max violations
+            const freezeType = totalViolation === 0 ? 'all' : totalViolation > 0 ? 'min' : 'max';
+
+            for (const item of items) {
+                if (isFrozen(item)) {
+                    continue;
+                }
+
+                if (freezeType === 'all' || item.violationType === freezeType) {
+                    freeze(item, item.targetSize);
+                }
+            }
+        }
 
         if (!params.skipSetLeft) {
             this.visibleColsService.setLeftValues(source);
@@ -149,10 +179,17 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
             this.visibleColsService.updateBodyWidths();
         }
 
+        const unconstrainedFlexColumns = items
+            .filter((item) => item.isFlex && !item.violationType)
+            .map((item) => item.col);
+
         if (params.fireResizedEvent) {
+            const changedColumns = items.filter((item) => item.initialSize !== item.frozenSize).map((item) => item.col);
+            const flexingColumns = items.filter((item) => item.flex).map((item) => item.col);
+
             dispatchColumnResizedEvent(this.eventService, changedColumns, true, source, flexingColumns);
         }
 
-        return flexingColumns;
+        return unconstrainedFlexColumns;
     }
 }

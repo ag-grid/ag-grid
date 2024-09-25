@@ -10,7 +10,7 @@ import { GridRowsErrors } from './gridRowsErrors';
 import { GridRowsDomValidator } from './validation/gridRowsDomValidator';
 import { GridRowsValidator } from './validation/gridRowsValidator';
 
-export interface GridRowsOptions {
+export interface GridRowsOptions<TData = any> {
     /** If true, selected nodes will be tested. Default is true */
     checkSelectedNodes?: boolean;
 
@@ -28,6 +28,8 @@ export interface GridRowsOptions {
 
     /** If true, the diagram will show hidden rows, like the children of collapsed groups, also if they do not appear in the displayed rows. Default is true */
     printHiddenRows?: boolean;
+
+    errors?: GridRowsErrors<TData>;
 }
 
 export class GridRows<TData = any> {
@@ -37,7 +39,7 @@ export class GridRows<TData = any> {
     public readonly rootRowNodes: RowNode<TData>[];
     public readonly rootRowNode: RowNode<TData> | null;
     public readonly rootAllLeafChildren: RowNode<TData>[];
-    public readonly errors = new GridRowsErrors<TData>();
+    public readonly errors: GridRowsErrors<TData>;
 
     #gridHtmlElement: HTMLElement | null | undefined = undefined;
     #byIdMap: Map<string, RowNode<TData>> | null = null;
@@ -45,16 +47,21 @@ export class GridRows<TData = any> {
     #displayedRowsSet: Set<RowNode<TData>> | null = null;
     #rowsHtmlElements: HTMLElement[] | null = null;
     #rowsHtmlElementsMap: Map<string, HTMLElement> | null = null;
+    readonly #detailGridRows: Map<IRowNode<TData> | GridApi, GridRows<any>>;
 
     public constructor(
         public readonly api: GridApi<TData>,
         public readonly label: string = '',
-        public readonly options: GridRowsOptions = {}
+        public readonly options: GridRowsOptions<TData> = {}
     ) {
+        const errors = options.errors || new GridRowsErrors<TData>();
+        this.errors = errors;
         this.treeData = !!api.getGridOption('treeData');
         const rowNodes: RowNode<TData>[] = [];
         const displayedRows: RowNode<TData>[] = [];
         const rootNodesSet = new Set<RowNode<TData>>();
+        const detailGridRows = new Map<IRowNode<TData> | GridApi, GridRows<any>>();
+        this.#detailGridRows = detailGridRows;
         api.forEachNode((row: RowNode) => {
             rowNodes.push(row);
             const parent = row.parent;
@@ -68,6 +75,19 @@ export class GridRows<TData = any> {
             const row = api.getDisplayedRowAtIndex(i) as RowNode<TData> | undefined;
             if (row) {
                 displayedRows.push(row);
+                if (row.detail) {
+                    const api = row.detailGridInfo?.api;
+                    if (api && !detailGridRows.has(api)) {
+                        const detailGridRow = new GridRows(api, label, {
+                            ...options,
+                            errors,
+                            columns: !!options.columns,
+                        });
+                        detailGridRows.set(row, detailGridRow);
+                        detailGridRows.set(api, detailGridRow);
+                    }
+                }
+
                 const parent = row.parent;
                 if (parent && !parent.parent) {
                     rootNodesSet.add(parent);
@@ -77,6 +97,10 @@ export class GridRows<TData = any> {
         this.rootRowNodes = Array.from(rootNodesSet);
         this.rootRowNode = this.rootRowNodes[0] ?? null;
         this.rootAllLeafChildren = this.rootRowNode?.allLeafChildren ?? [];
+    }
+
+    public getDetailGridRows(row: IRowNode<TData> | GridApi | null | undefined): GridRows<any> | undefined {
+        return row ? this.#detailGridRows.get(row) : undefined;
     }
 
     public get gridHtmlElement(): HTMLElement | null {
@@ -154,10 +178,10 @@ export class GridRows<TData = any> {
     public loadErrors(): this {
         if (!this.errors.validated) {
             this.errors.validated = true;
-            new GridRowsValidator(this).validate();
+            new GridRowsValidator(this.errors).validate(this);
 
             if (this.options.checkDom ?? true) {
-                new GridRowsDomValidator(this).validate();
+                new GridRowsDomValidator(this.errors).validate(this);
             }
         }
         return this;
@@ -213,11 +237,14 @@ export class GridRows<TData = any> {
 
     #makeByIdMap(): Map<string, RowNode<TData>> {
         const map = new Map<string, RowNode<TData>>();
-        const addRow = (row: RowNode<TData>) => {
+        const addRow = (row: RowNode<TData> | null | undefined) => {
             if (row && 'id' in row) {
                 const id = String(row.id);
                 if (!map.has(id)) {
                     map.set(id, row);
+                }
+                if (row.detailNode) {
+                    addRow(row.detailNode);
                 }
             }
         };

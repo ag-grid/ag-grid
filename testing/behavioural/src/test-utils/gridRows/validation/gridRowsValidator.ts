@@ -3,6 +3,7 @@ import type { IRowNode } from 'ag-grid-community';
 
 import { rowIdAndIndexToString } from '../../grid-test-utils';
 import type { GridRows } from '../gridRows';
+import type { GridRowsErrors } from '../gridRowsErrors';
 
 type RowChildrenField =
     | 'childrenAfterGroup'
@@ -19,38 +20,37 @@ interface RowAllLeafs {
 }
 
 export class GridRowsValidator {
-    public readonly errors = this.gridRows.errors;
     public validatedRows = new Set<IRowNode>();
     #allLeafsMap = new Map<IRowNode, RowAllLeafs>();
 
-    public constructor(public readonly gridRows: GridRows) {}
+    public constructor(public readonly errors: GridRowsErrors) {}
 
-    public validate(): this {
-        if (this.gridRows.rootRowNodes.length > 1) {
+    public validate(gridRows: GridRows): this {
+        if (gridRows.rootRowNodes.length > 1) {
             this.errors.default.add(
                 'Found ' +
-                    (this.gridRows.rootRowNodes.length - 1) +
+                    (gridRows.rootRowNodes.length - 1) +
                     ' more root nodes: ' +
-                    this.gridRows.rootRowNodes
+                    gridRows.rootRowNodes
                         .slice(1)
                         .map((n) => rowIdAndIndexToString(n))
                         .join(', ')
             );
         }
-        if (this.gridRows.rootRowNode) {
-            this.validateRootNode(this.gridRows.rootRowNode);
-            this.validateRow(this.gridRows.rootRowNode);
+        if (gridRows.rootRowNode) {
+            this.validateRootNode(gridRows, gridRows.rootRowNode);
+            this.validateRow(gridRows, gridRows.rootRowNode);
         }
-        this.validateRowNodes();
-        this.validateDisplayedRows();
-        if (this.gridRows.options.checkSelectedNodes ?? true) {
-            this.validateSelectedRows();
+        this.validateRowNodes(gridRows);
+        this.validateDisplayedRows(gridRows);
+        if (gridRows.options.checkSelectedNodes ?? true) {
+            this.validateSelectedRows(gridRows);
         }
 
         return this;
     }
 
-    private validateRootNode(root: RowNode): void {
+    private validateRootNode(gridRows: GridRows, root: RowNode): void {
         const rowErrors = this.errors.get(root);
         rowErrors.expectValueEqual('id', root.id, 'ROOT_NODE_ID');
         rowErrors.expectValueEqual('level', root.level, -1);
@@ -58,12 +58,12 @@ export class GridRowsValidator {
         if (root.key) rowErrors.add('Root node has key ' + root.key);
         if (root.rowIndex !== null) rowErrors.add('Root node has rowIndex ' + root.rowIndex);
         if (!Array.isArray(root.allLeafChildren)) rowErrors.add('Root node has no allLeafChildren');
-        if (this.gridRows.isRowDisplayed(root)) rowErrors.add('Root node is displayed');
-        if (this.gridRows.treeData) rowErrors.expectValueEqual('group', root.group, true);
+        if (gridRows.isRowDisplayed(root)) rowErrors.add('Root node is displayed');
+        if (gridRows.treeData) rowErrors.expectValueEqual('group', root.group, true);
     }
 
-    private validateRowNodes(): void {
-        const rowNodes = this.gridRows.rowNodes;
+    private validateRowNodes(gridRows: GridRows): void {
+        const rowNodes = gridRows.rowNodes;
         for (let index = 0; index < rowNodes.length; ++index) {
             const row = rowNodes[index];
             if (!(row instanceof RowNode)) {
@@ -71,14 +71,14 @@ export class GridRowsValidator {
                 continue;
             }
             const rowErrors = this.errors.get(row);
-            const foundIndex = this.gridRows.getIndexInRowNodes(row);
+            const foundIndex = gridRows.getIndexInRowNodes(row);
             if (foundIndex !== index) rowErrors.add(`rowNodes[${index}] is a duplicate of rowNodes[${foundIndex}]`);
             if (row.footer) rowErrors.add(`rowNodes[${index}] is a footer node`);
             if (row.detail) rowErrors.add(`rowNodes[${index}] is a detail node`);
-            this.validateRow(row);
+            this.validateRow(gridRows, row);
         }
 
-        const rootAllLeafChildren = this.gridRows.rootAllLeafChildren;
+        const rootAllLeafChildren = gridRows.rootAllLeafChildren;
         const rootAllLeafChildrenMap = new Map<RowNode, number>();
         for (let index = 0; index < rootAllLeafChildren.length; ++index) {
             const row = rootAllLeafChildren[index];
@@ -98,12 +98,12 @@ export class GridRowsValidator {
             rowErrors.expectValueEqual('sourceRowIndex', row.sourceRowIndex, index);
             if (row.footer) rowErrors.add(`root.allLeafChildren[${index}] is a footer node`);
             if (row.detail) rowErrors.add(`root.allLeafChildren[${index}] is a detail node`);
-            this.validateRow(row);
+            this.validateRow(gridRows, row);
         }
     }
 
-    private validateDisplayedRows() {
-        const displayedRows = this.gridRows.displayedRows;
+    private validateDisplayedRows(gridRows: GridRows): void {
+        const displayedRows = gridRows.displayedRows;
         for (let index = 0; index < displayedRows.length; ++index) {
             const row = displayedRows[index];
             if (!(row instanceof RowNode)) {
@@ -112,7 +112,7 @@ export class GridRowsValidator {
             }
             const rowErrors = this.errors.get(row);
 
-            if (!row.detail && !row.footer && !this.gridRows.isInRowNodes(row)) {
+            if (!row.detail && !row.footer && !gridRows.isInRowNodes(row)) {
                 rowErrors.add(`displayedRows[${index}] is not in rowNodes`);
             }
 
@@ -120,11 +120,11 @@ export class GridRowsValidator {
 
             rowErrors.expectValueEqual('uiLevel', row.uiLevel, this.computeUiLevel(row));
 
-            this.validateRow(row);
+            this.validateRow(gridRows, row);
         }
     }
 
-    private validateRow(row: RowNode): void {
+    private validateRow(gridRows: GridRows, row: RowNode): void {
         if (this.validatedRows.has(row)) {
             return;
         }
@@ -132,22 +132,22 @@ export class GridRowsValidator {
 
         const rowErrors = this.errors.get(row);
 
-        if (this.gridRows.isInRowNodes(row)) {
-            if (row.rowIndex !== null && !this.gridRows.isRowDisplayed(row)) {
+        if (gridRows.isInRowNodes(row)) {
+            if (row.rowIndex !== null && !gridRows.isRowDisplayed(row)) {
                 rowErrors.add(`Not displayed row has rowIndex=${row.rowIndex}`);
             }
         }
 
         if (
             row.parent &&
-            row.parent !== this.gridRows.rootRowNode &&
-            !this.gridRows.isInRowNodes(row.parent) &&
-            !this.gridRows.isDuplicateIdRow(row)
+            row.parent !== gridRows.rootRowNode &&
+            !gridRows.isInRowNodes(row.parent) &&
+            !gridRows.isDuplicateIdRow(row)
         ) {
             rowErrors.add(`Parent ${rowIdAndIndexToString(row.parent)} is not in rowNodes`);
         }
 
-        if (row === this.gridRows.rootRowNode) {
+        if (row === gridRows.rootRowNode) {
             rowErrors.expectValueEqual('childIndex', row.childIndex, undefined);
         }
 
@@ -157,20 +157,48 @@ export class GridRowsValidator {
             );
         }
 
-        const childrenAfterGroupSet = this.validateChildren(row, 'childrenAfterGroup', null);
-        const childrenAfterFilterSet = this.validateChildren(row, 'childrenAfterFilter', childrenAfterGroupSet);
-        const childrenAfterAggFilterSet = this.validateChildren(row, 'childrenAfterAggFilter', childrenAfterFilterSet);
-        this.validateChildren(row, 'childrenAfterSort', childrenAfterAggFilterSet);
-        this.validateChildren(row, 'allLeafChildren', null);
+        const childrenAfterGroupSet = this.validateChildren(gridRows, row, 'childrenAfterGroup', null);
+        const childrenAfterFilterSet = this.validateChildren(
+            gridRows,
+            row,
+            'childrenAfterFilter',
+            childrenAfterGroupSet
+        );
+        const childrenAfterAggFilterSet = this.validateChildren(
+            gridRows,
+            row,
+            'childrenAfterAggFilter',
+            childrenAfterFilterSet
+        );
+        this.validateChildren(gridRows, row, 'childrenAfterSort', childrenAfterAggFilterSet);
+        this.validateChildren(gridRows, row, 'allLeafChildren', null);
 
         if (row.level >= 0) {
-            rowErrors.expectValueEqual('group', row.group, !!row.childrenAfterGroup?.length);
+            rowErrors.expectValueEqual(
+                'group',
+                row.group,
+                // seems that group is undefined for detail rows
+                row.detail ? undefined : !!row.childrenAfterGroup?.length
+            );
         }
 
-        this.verifyLeafs(row);
+        this.verifyLeafs(gridRows, row);
+
+        if (row.detail && gridRows.isRowDisplayed(row)) {
+            const detailGridInfo = row.detailGridInfo;
+            if (!detailGridInfo) {
+                rowErrors.add('detail row is missing detailGridInfo');
+            }
+        }
+
+        const detailGrid = gridRows.getDetailGridRows(row);
+        if (detailGrid) {
+            this.validate(detailGrid);
+        }
     }
 
     private validateChildren(
+        gridRows: GridRows,
         parentRow: RowNode,
         name: RowChildrenField,
         superset: (ReadonlySet<IRowNode> & { readonly name?: string }) | null
@@ -184,8 +212,8 @@ export class GridRowsValidator {
         }
 
         if (!children) {
-            if (this.gridRows.treeData) {
-                if (!this.gridRows.isDuplicateIdRow(parentRow)) {
+            if (gridRows.treeData) {
+                if (!gridRows.isDuplicateIdRow(parentRow)) {
                     this.errors.get(parentRow).add(`${name} is missing`);
                 }
             } else if (parentRow.group && (name === 'childrenAfterGroup' || name === 'allLeafChildren')) {
@@ -216,8 +244,8 @@ export class GridRowsValidator {
             if (superset && !superset.has(child)) {
                 parentErrors.add(`${name}[${index}] ${rowIdAndIndexToString(child)} is not in ${superset.name}`);
             }
-            if (!this.gridRows.isInRowNodes(child) && !this.gridRows.isRowDisplayed(child)) {
-                if (this.gridRows.getById(child.id) === child) {
+            if (!gridRows.isInRowNodes(child) && !gridRows.isRowDisplayed(child)) {
+                if (gridRows.getById(child.id) === child) {
                     parentErrors.add(`${name}[${index}] ${rowIdAndIndexToString(child)} is not in rowNodes`);
                 }
             }
@@ -229,7 +257,7 @@ export class GridRowsValidator {
                     childErrors.expectValueEqual('lastChild', child.lastChild, index === children.length - 1);
                 }
             }
-            this.validateRow(child);
+            this.validateRow(gridRows, child);
         }
         if (duplicates > 0) {
             parentErrors.add(`${name} has ${duplicates} duplicates.`);
@@ -237,13 +265,13 @@ export class GridRowsValidator {
         return set as any;
     }
 
-    private validateSelectedRows() {
-        const selectedRows = this.gridRows.api.getSelectedNodes();
+    private validateSelectedRows(gridRows: GridRows): void {
+        const selectedRows = gridRows.api.getSelectedNodes();
         const selectedRowsSet = new Set();
         let duplicates = 0;
         for (const row of selectedRows) {
             const rowErrors = this.errors.get(row);
-            if (!this.gridRows.isInRowNodes(row) && !this.gridRows.isRowDisplayed(row)) {
+            if (!gridRows.isInRowNodes(row) && !gridRows.isRowDisplayed(row)) {
                 rowErrors.add('Selected node does not exist');
             }
             if (selectedRowsSet.has(row)) {
@@ -286,6 +314,9 @@ export class GridRowsValidator {
             if (parent.footer) {
                 ++level;
             }
+            if (parent.master) {
+                break;
+            }
             parent = parent.parent;
             ++level;
         }
@@ -298,7 +329,7 @@ export class GridRowsValidator {
         return level;
     }
 
-    private verifyLeafs(row: RowNode): RowAllLeafs {
+    private verifyLeafs(gridRows: GridRows, row: RowNode): RowAllLeafs {
         let result = this.#allLeafsMap.get(row);
         if (result !== undefined) {
             return result;
@@ -311,7 +342,7 @@ export class GridRowsValidator {
 
         const array = Array.isArray(row.childrenAfterAggFilter) ? row.childrenAfterAggFilter : [];
         const length = array.length;
-        const treeData = this.gridRows.treeData;
+        const treeData = gridRows.treeData;
         for (let i = 0; i < length; ++i) {
             const child = array[i];
             if (!(child instanceof RowNode)) {
@@ -321,7 +352,7 @@ export class GridRowsValidator {
                 this.errors.get(row).add('Found self in allChildren');
                 continue;
             }
-            const childAllChildren = this.verifyLeafs(array[i]);
+            const childAllChildren = this.verifyLeafs(gridRows, array[i]);
             for (const leaf of childAllChildren.leafs) {
                 if (allChildrenSet.has(leaf)) {
                     ++duplicates;

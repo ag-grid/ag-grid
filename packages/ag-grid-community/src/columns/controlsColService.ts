@@ -54,21 +54,12 @@ export class ControlsColService extends BeanStub implements NamedBean {
         return [];
     }
 
-    public sortControlsColsFirst(columns?: AgColumn[] | null): void {
-        if (!columns) {
-            return;
+    public putControlColsFirstInList(list: AgColumn[], cols?: AgColumn[] | null): AgColumn[] | null {
+        if (!cols) {
+            return null;
         }
-        function sortControlsColsFirst(a: AgColumn, b: AgColumn): number {
-            const isAControl = isColumnControlsCol(a);
-            const isBControl = isColumnControlsCol(b);
-            if (isAControl && !isBControl) {
-                return -1;
-            }
-            if (!isAControl && isBControl) {
-                return 1;
-            }
-            return 0;
-        }
-        columns.sort(sortControlsColsFirst);
+        // we use colId, and not instance, to remove old controlsCols
+        const colsFiltered = cols.filter((col) => !isColumnControlsCol(col));
+        return [...list, ...colsFiltered];
     }
 }

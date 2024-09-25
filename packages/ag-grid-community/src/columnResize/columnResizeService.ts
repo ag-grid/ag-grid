@@ -222,7 +222,6 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
 
         if (atLeastOneColChanged) {
             flexedCols = this.columnFlexService.refreshFlexedColumns({
-                resizingCols: allResizedCols,
                 skipSetLeft: true,
             });
             this.visibleColsService.setLeftValues(source);

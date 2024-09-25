@@ -19,7 +19,7 @@ const borders: [ThemeParam, string][] = [
 ];
 
 export const BordersEditor = withErrorBoundary(() => {
-    const params = useRenderedTheme().getParams();
+    const params = useRenderedTheme().getParams().getValues();
     const selectedBorders = borders.filter(([param]) => !!params[param]).map(([, label]) => label);
 
     return (
@@ -60,7 +60,7 @@ const BorderItem = (props: BorderProps) => {
     const theme = useRenderedTheme();
     let editorValue = value;
     if (editorValue == null) {
-        const params = theme.getParams();
+        const params = theme.getParams().getValues();
         if (param.property in params) {
             editorValue = params[param.property];
         } else {

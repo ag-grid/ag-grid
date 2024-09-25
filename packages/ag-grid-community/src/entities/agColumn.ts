@@ -111,7 +111,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     private rowGroupActive = false;
     private pivotActive = false;
     private aggregationActive = false;
-    private flex: number | null | undefined;
+    private flex: number | null = null;
 
     private readonly primary: boolean;
 
@@ -771,16 +771,14 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
         return this.maxWidth;
     }
 
-    public getFlex(): number {
-        return this.flex || 0;
+    public getFlex(): number | null {
+        return this.flex;
     }
 
     // this method should only be used by the columnModel to
     // change flex when required by the applyColumnState method.
     public setFlex(flex: number | null) {
-        if (this.flex !== flex) {
-            this.flex = flex;
-        }
+        this.flex = flex ?? null;
         this.dispatchStateUpdatedEvent('flex');
     }
 

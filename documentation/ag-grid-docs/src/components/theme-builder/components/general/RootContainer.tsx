@@ -1,8 +1,6 @@
-import { logErrorMessageOnce, paramToVariableName } from '@components/theme-builder/model/utils';
+import { type ThemeImpl, logErrorMessageOnce, paramToVariableName } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
-
-import type { Theme } from 'ag-grid-community';
 
 import { useRenderedTheme } from '../../model/rendered-theme';
 import { EditorPanel } from '../editors/EditorPanel';
@@ -107,8 +105,8 @@ const Main = styled('div')`
     gap: 20px;
 `;
 
-function warnOfUnknownCssVariables(theme: Theme) {
-    const allowedVariables = new Set(Object.keys(theme.getParams()).map(paramToVariableName));
+function warnOfUnknownCssVariables(theme: ThemeImpl) {
+    const allowedVariables = new Set(Object.keys(theme.getParams().getValues()).map(paramToVariableName));
     allowedVariables.add('--ag-line-height');
     allowedVariables.add('--ag-indentation-level');
     for (const [, variable] of theme.getCSS().matchAll(/var\((--ag-[\w-]+)[^)]*\)/g)) {

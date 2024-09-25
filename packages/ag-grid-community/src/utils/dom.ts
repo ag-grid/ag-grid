@@ -243,7 +243,7 @@ export function _getScrollLeft(element: HTMLElement, rtl: boolean): number {
         scrollLeft = Math.abs(scrollLeft);
 
         if (_isBrowserChrome() && !_isRtlNegativeScroll()) {
-            scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
+            scrollLeft = element.scrollWidth - element.getBoundingClientRect().width - scrollLeft;
         }
     }
 
@@ -256,7 +256,7 @@ export function _setScrollLeft(element: HTMLElement, value: number, rtl: boolean
         if (_isRtlNegativeScroll()) {
             value *= -1;
         } else if (_isBrowserSafari() || _isBrowserChrome()) {
-            value = element.scrollWidth - element.clientWidth - value;
+            value = element.scrollWidth - element.getBoundingClientRect().width - value;
         }
     }
     element.scrollLeft = value;

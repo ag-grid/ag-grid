@@ -9,39 +9,28 @@ export class GridRowsDiagramNode {
     public hiddenChildren: Set<GridRowsDiagramNode> | null = null;
     public prefix: string = '';
 
-    public constructor(public readonly row: RowNode | null) {}
+    public constructor(
+        public readonly gridRows: GridRows,
+        public readonly row: RowNode | null
+    ) {}
 }
 
 export class GridRowsDiagramTree {
-    public readonly diagramRoot: GridRowsDiagramNode;
-    public readonly diagramNodes = new Map<RowNode | null, GridRowsDiagramNode>();
+    public readonly diagramRoots = new Map<GridRows, GridRowsDiagramNode>();
+    public readonly diagramNodes = new Map<RowNode, GridRowsDiagramNode>();
     #processedHiddenRows = new Set<RowNode>();
 
     public constructor(public readonly gridRows: GridRows) {
-        const { rootRowNode, displayedRows, options } = gridRows;
-        this.diagramRoot = this.getDiagramNode(rootRowNode)!;
-        this.diagramNodes.set(null, this.diagramRoot);
-        this.diagramNodes.set(rootRowNode, this.diagramRoot);
-
-        for (const row of displayedRows) {
-            this.getDiagramNode(row);
-        }
-
-        if (options.printHiddenRows ?? true) {
-            for (const row of displayedRows) {
-                this.processHiddenRows(row);
-            }
-        }
-
-        this.#updateDiagramTree(this.diagramRoot, '', new Set());
+        const diagramRoot = this.getDiagramRoot(gridRows)!;
+        this.#updateDiagramTree(diagramRoot, '', new Set());
     }
 
-    private processHiddenRows(row: RowNode) {
+    private processHiddenRows(gridRows: GridRows, row: RowNode) {
         if (this.#processedHiddenRows.has(row)) {
             return;
         }
         this.#processedHiddenRows.add(row);
-        const node = this.getDiagramNode(row);
+        const node = this.getDiagramNode(gridRows, row);
         if (!node) {
             return;
         }
@@ -55,16 +44,16 @@ export class GridRowsDiagramTree {
             if (typeof child !== 'object' || child === null || this.diagramNodes.has(child)) {
                 continue;
             }
-            const diagramChild = this.getDiagramNode(child);
+            const diagramChild = this.getDiagramNode(gridRows, child);
             if (diagramChild) {
                 node.hiddenChildren.add(diagramChild);
-                this.processHiddenRows(child);
+                this.processHiddenRows(gridRows, child);
             }
         }
     }
 
-    public getNodeType(row: IRowNode): string {
-        if (row.level === -1 && row === this.gridRows.rootRowNode) {
+    public getNodeType(gridRows: GridRows, row: IRowNode): string {
+        if (row.level === -1 && row === gridRows.rootRowNode) {
             return 'ROOT';
         }
         if (row.footer) {
@@ -85,38 +74,78 @@ export class GridRowsDiagramTree {
         return 'LEAF';
     }
 
-    public getDiagramNode = (row: RowNode | null): GridRowsDiagramNode | null => {
+    public getDiagramRoot(gridRows: GridRows): GridRowsDiagramNode {
+        let diagramRoot = this.diagramRoots.get(gridRows);
+        if (!diagramRoot) {
+            const rootRowNode = gridRows.rootRowNode;
+            diagramRoot = new GridRowsDiagramNode(gridRows, gridRows.rootRowNode);
+            this.diagramRoots.set(gridRows, diagramRoot);
+            if (rootRowNode) {
+                this.diagramNodes.set(rootRowNode, diagramRoot);
+            }
+            const displayedRows = gridRows.displayedRows;
+            for (const row of displayedRows) {
+                this.getDiagramNode(gridRows, row);
+            }
+
+            if (gridRows.options.printHiddenRows ?? true) {
+                for (const row of displayedRows) {
+                    this.processHiddenRows(gridRows, row);
+                }
+            }
+        }
+        return diagramRoot;
+    }
+
+    public getDiagramNode = (gridRows: GridRows, row: RowNode | null): GridRowsDiagramNode | null => {
         if (typeof row !== 'object') {
             return null;
         }
-        let diagramNode = this.diagramNodes.get(row);
+        let diagramNode = row ? this.diagramNodes.get(row) : this.getDiagramRoot(gridRows);
         if (!diagramNode) {
-            diagramNode = new GridRowsDiagramNode(row);
-            this.diagramNodes.set(row, diagramNode);
+            diagramNode = new GridRowsDiagramNode(gridRows, row);
             if (row) {
+                this.diagramNodes.set(row, diagramNode);
                 let parent: RowNode | null | undefined;
                 if (row.footer && typeof row.id === 'string' && row.id?.startsWith('rowGroupFooter_')) {
-                    parent = this.gridRows.getById(row.id!.slice('rowGroupFooter_'.length));
+                    parent = gridRows.getById(row.id!.slice('rowGroupFooter_'.length));
                 }
                 if (!parent) {
                     parent = row.parent ?? null;
                 }
-                const parentNode = this.getDiagramNode(parent);
-                if (parentNode) {
+                const parentNode = this.getDiagramNode(gridRows, parent);
+                if (parentNode && !diagramNode.parent) {
                     diagramNode.parent = parentNode;
                     parentNode.children.set(row, diagramNode);
+                }
+                const detailGridRows = gridRows.getDetailGridRows(row);
+                if (detailGridRows) {
+                    const detailRoot = this.getDiagramRoot(detailGridRows);
+                    if (detailRoot) {
+                        detailRoot.parent = diagramNode;
+                        diagramNode.children.set(null, detailRoot);
+                    }
+
+                    for (const displayedRow of detailGridRows.displayedRows) {
+                        const detailChild = this.getDiagramNode(detailGridRows, displayedRow);
+                        if (detailChild) {
+                            detailChild.parent = detailRoot;
+                            detailRoot.children.set(displayedRow, detailChild);
+                        }
+                    }
                 }
             }
         }
         return diagramNode;
     };
 
-    public diagramToString(printErrors: boolean, columns: Column[] | null): string {
+    public diagramToString(printErrors: boolean, inputColumns: Column[] | null): string {
         const processedRows = new Set<RowNode>();
         const rootRowNode = this.gridRows.rootRowNode;
-        let result = (rootRowNode ? this.#rowDiagram(rootRowNode, columns) : '[no root row]') + '\n';
+        let result =
+            (rootRowNode ? this.#rowDiagram(this.gridRows, rootRowNode, inputColumns) : '[no root row]') + '\n';
 
-        const processRow = (row: RowNode) => {
+        const processRow = (gridRows: GridRows, row: RowNode, columns: Column[] | null) => {
             if (processedRows.has(row)) {
                 result += '[duplicate row ' + rowIdAndIndexToString(row) + ']\n';
                 return;
@@ -127,14 +156,14 @@ export class GridRowsDiagramTree {
                 return;
             }
 
-            const diagramNode = this.getDiagramNode(row);
+            const diagramNode = this.getDiagramNode(gridRows, row);
             const prefix = diagramNode?.prefix ?? '';
 
-            result += prefix + this.#rowDiagram(row, columns);
+            result += prefix + this.#rowDiagram(gridRows, row, columns);
             result += '\n';
 
             if (printErrors) {
-                const rowErrors = this.gridRows.errors.get(row);
+                const rowErrors = gridRows.errors.get(row);
                 if (rowErrors.errors.size > 0) {
                     result += rowErrors.toString(' '.repeat(prefix.length + 1));
                 }
@@ -142,12 +171,26 @@ export class GridRowsDiagramTree {
 
             if (diagramNode?.hiddenChildren) {
                 for (const child of diagramNode.hiddenChildren) {
-                    processRow(child.row!);
+                    processRow(gridRows, child.row!, columns);
+                }
+            }
+
+            const detailGridRows = gridRows.getDetailGridRows(row);
+            if (detailGridRows) {
+                const detailColumns = detailGridRows.api.getAllGridColumns();
+                const detailRoot = this.getDiagramRoot(detailGridRows);
+                if (detailRoot.row) {
+                    processRow(detailGridRows, detailRoot.row, detailColumns);
+                }
+                for (const displayedRow of detailGridRows.displayedRows) {
+                    processRow(detailGridRows, displayedRow, detailColumns);
                 }
             }
         };
 
-        this.gridRows.displayedRows.forEach(processRow);
+        for (const displayedRow of this.gridRows.displayedRows) {
+            processRow(this.gridRows, displayedRow, inputColumns);
+        }
 
         const additionalErrors = this.gridRows.errors.toString({ exclude: processedRows });
         if (additionalErrors.length > 0) {
@@ -161,41 +204,41 @@ export class GridRowsDiagramTree {
         return result;
     }
 
-    #rowDiagram(row: RowNode, columns: Column[] | null): string {
+    #rowDiagram(gridRows: GridRows, row: RowNode, columns: Column[] | null): string {
         let result = '';
         let typeAdded = false;
         if (
-            this.gridRows.treeData &&
+            gridRows.treeData &&
             row.key &&
             !row.footer &&
             (row.data || (typeof row.id === 'string' && row.id.startsWith('row-group-')))
         ) {
             result += optionalEscapeString(row.key) + ' ';
-            result += this.getNodeType(row) + ' ';
+            result += this.getNodeType(gridRows, row) + ' ';
             typeAdded = true;
         }
 
         if (!typeAdded) {
-            result += this.getNodeType(row) + ' ';
+            result += this.getNodeType(gridRows, row) + ' ';
         }
 
         if (row.isSelected()) {
             result += 'selected ';
         }
-        if (row.level >= 0 && !row.expanded && row.group) {
+        if (row.level >= 0 && !row.expanded && (row.group || row.master)) {
             result += 'collapsed ';
         }
-        if (!this.gridRows.isRowDisplayed(row) && row !== this.gridRows.rootRowNode) {
+        if (!gridRows.isRowDisplayed(row) && row !== gridRows.rootRowNode) {
             result += 'hidden ';
         }
 
-        if (this.gridRows.options.printIds !== false) {
+        if (gridRows.options.printIds !== false) {
             result += 'id:' + rowIdToString(row) + ' ';
         }
 
         if (columns) {
             for (const column of columns) {
-                const value = this.gridRows.api.getCellValue({ rowNode: row, colKey: column });
+                const value = gridRows.api.getCellValue({ rowNode: row, colKey: column });
                 if (value !== undefined || row.data) {
                     result += column.getColId() + ':' + JSON.stringify(value) + ' ';
                 }
