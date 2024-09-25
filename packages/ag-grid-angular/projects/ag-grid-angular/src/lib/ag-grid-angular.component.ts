@@ -428,12 +428,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public clipboardDelimiter: string | undefined = undefined;
     /** Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows.
      * @default false
-     * @deprecated v32.2 Use `selection.copySelectedRows` instead.
+     * @deprecated v32.2 Use `rowSelection.copySelectedRows` instead.
      */
     @Input() public suppressCopyRowsToClipboard: boolean | undefined = undefined;
     /** Set to `true` to copy rows instead of ranges when a range with only a single cell is selected.
      * @default false
-     * @deprecated v32.2 Use `selection.copySelectedRows` instead.
+     * @deprecated v32.2 Use `rowSelection.copySelectedRows` instead.
      */
     @Input() public suppressCopySingleCellRanges: boolean | undefined = undefined;
     /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard.
@@ -1081,7 +1081,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public groupMaintainOrder: boolean | undefined = undefined;
     /** When `true`, if you select a group, the children of the group will also be selected.
      * @default false
-     * @deprecated v32.2 Use `selection.groupSelects` instead
+     * @deprecated v32.2 Use `rowSelection.groupSelects` instead
      */
     @Input() public groupSelectsChildren: boolean | undefined = undefined;
     /** If grouping, locks the group settings of a number of columns, e.g. `0` for no group locking. `1` for first group column locked, `-1` for all group columns locked.
@@ -1127,7 +1127,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public groupSuppressBlankHeader: boolean | undefined = undefined;
     /** If using `groupSelectsChildren`, then only the children that pass the current filter will get selected.
      * @default false
-     * @deprecated v32.2 Use `selection.groupSelects` instead
+     * @deprecated v32.2 Use `rowSelection.groupSelects` instead
      */
     @Input() public groupSelectsFiltered: boolean | undefined = undefined;
     /** Shows the open group in the group column for non-group rows.
@@ -1342,17 +1342,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public cellSelection: boolean | CellSelectionOptions<TData> | undefined = undefined;
     /** Set to `true` to allow multiple rows to be selected using single click.
      * @default false
-     * @deprecated v32.2 Use `selection.enableMultiSelectWithClick` instead
+     * @deprecated v32.2 Use `rowSelection.enableMultiSelectWithClick` instead
      */
     @Input() public rowMultiSelectWithClick: boolean | undefined = undefined;
     /** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
      * @default false
-     * @deprecated v32.2 Use `selection.suppressDeselection` instead
+     * @deprecated v32.2 Use `rowSelection.suppressDeselection` instead
      */
     @Input() public suppressRowDeselection: boolean | undefined = undefined;
     /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.
      * @default false
-     * @deprecated v32.2 Use `selection.enableClickSelection` instead
+     * @deprecated v32.2 Use `rowSelection.enableClickSelection` instead
      */
     @Input() public suppressRowClickSelection: boolean | undefined = undefined;
     /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels.
@@ -1370,7 +1370,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public selectionColumnDef: SelectionColumnDef | undefined = undefined;
     /** If `true`, only a single range can be selected.
      * @default false
-     * @deprecated v32.2 Use `selection.suppressMultiRanges` instead
+     * @deprecated v32.2 Use `cellSelection.suppressMultiRanges` instead
      */
     @Input() public suppressMultiRangeSelection: boolean | undefined = undefined;
     /** Set to `true` to be able to select the text within cells.
@@ -1381,27 +1381,27 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public enableCellTextSelection: boolean | undefined = undefined;
     /** Set to `true` to enable Range Selection.
      * @default false
-     * @deprecated v32.2 Use `selection.mode = 'cell'` instead
+     * @deprecated v32.2 Use `cellSelection = true` instead
      */
     @Input() public enableRangeSelection: boolean | undefined = undefined;
     /** Set to `true` to enable the Range Handle.
      * @default false
-     * @deprecated v32.2 Use `selection.handle` instead
+     * @deprecated v32.2 Use `cellSelection.handle` instead
      */
     @Input() public enableRangeHandle: boolean | undefined = undefined;
     /** Set to `true` to enable the Fill Handle.
      * @default false
-     * @deprecated v32.2 Use `selection.handle` instead
+     * @deprecated v32.2 Use `cellSelection.handle` instead
      */
     @Input() public enableFillHandle: boolean | undefined = undefined;
     /** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical.
      * @default 'xy'
-     * @deprecated v32.2 Use `selection.handle.direction` instead
+     * @deprecated v32.2 Use `cellSelection.handle.direction` instead
      */
     @Input() public fillHandleDirection: 'x' | 'y' | 'xy' | undefined = undefined;
     /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle.
      * @default false
-     * @deprecated v32.2 Use `selection.suppressClearOnFillReduction` instead
+     * @deprecated v32.2 Use `cellSelection.suppressClearOnFillReduction` instead
      */
     @Input() public suppressClearOnFillReduction: boolean | undefined = undefined;
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
@@ -1647,7 +1647,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public processRowPostCreate: ((params: ProcessRowParams<TData>) => void) | undefined = undefined;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
-     * @deprecated v32.2 Use `selection.isRowSelectable` instead
+     * @deprecated v32.2 Use `cellSelection.isRowSelectable` instead
      */
     @Input() public isRowSelectable: IsRowSelectable<TData> | undefined = undefined;
     /** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row.
