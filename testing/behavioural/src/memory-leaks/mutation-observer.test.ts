@@ -1,12 +1,12 @@
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowNode } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule, RowNode } from 'ag-grid-community';
 
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 const mutationObserver = global.MutationObserver;
 
 describe('Mutation Observers Disconnected', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
+    const gridsManager = new TestGridsManager({ modules: [CommunityFeaturesModule, ClientSideRowModelModule] });
 
     const allMocks: any = [];
     const mutationObserverMock = vitest.fn<(MutationCallback) => MutationObserver>().mockImplementation(() => {

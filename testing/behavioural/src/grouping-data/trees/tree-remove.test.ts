@@ -1,5 +1,5 @@
 import type { RowDataTransaction } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, executeTransactionsAsync } from '../../test-utils';
@@ -10,7 +10,9 @@ const gridRowsOptions: GridRowsOptions = {
 };
 
 describe('ag-grid tree transactions', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule],
+    });
 
     beforeEach(() => {
         vitest.useRealTimers();

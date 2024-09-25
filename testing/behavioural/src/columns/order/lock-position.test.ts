@@ -1,14 +1,16 @@
 import type { MockInstance } from 'vitest';
 
 import type { ColDef, ColGroupDef } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../../test-utils';
 import { getColumnOrder, getColumnOrderFromState } from '../column-test-utils';
 
 describe('lockPosition Column Order', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule],
+    });
     let consoleWarnSpy: MockInstance | undefined;
 
     afterEach(() => {

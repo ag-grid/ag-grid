@@ -1,6 +1,6 @@
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
 import type { GridOptions, RowDataTransaction } from 'ag-grid-community';
 
 import type { GridRowsOptions } from '../test-utils';
@@ -12,7 +12,7 @@ const defaultGridRowsOptions: GridRowsOptions = {
 };
 
 describe('ag-grid rows-ordering', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
+    const gridsManager = new TestGridsManager({ modules: [CommunityFeaturesModule, ClientSideRowModelModule] });
     let consoleWarnSpy: MockInstance | undefined;
     let consoleErrorSpy: MockInstance | undefined;
 

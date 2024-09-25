@@ -1,11 +1,11 @@
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
 
 import { TestGridsManager } from '../test-utils';
 
 describe('ag-grid overlays state', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
+    const gridsManager = new TestGridsManager({ modules: [CommunityFeaturesModule, ClientSideRowModelModule] });
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
     let consoleWarnSpy: MockInstance;
 
