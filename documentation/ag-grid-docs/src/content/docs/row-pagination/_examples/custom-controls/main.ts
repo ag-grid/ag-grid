@@ -32,7 +32,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         filter: true,
     },
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         checkboxes: true,
         headerCheckbox: true,

@@ -169,7 +169,7 @@ const gridOptions: GridOptions = {
         minWidth: 100,
     },
     popupParent: document.body,
-    selection: { mode: 'cell' },
+    cellSelection: true,
     enableCharts: true,
     chartThemes: ['my-custom-theme-light', 'my-custom-theme-dark'],
     customChartThemes: {

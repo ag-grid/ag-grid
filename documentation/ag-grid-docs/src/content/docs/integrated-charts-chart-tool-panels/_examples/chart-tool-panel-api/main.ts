@@ -32,7 +32,7 @@ const gridOptions: GridOptions = {
         minWidth: 100,
     },
     enableCharts: true,
-    selection: { mode: 'cell' },
+    cellSelection: true,
     popupParent: document.body,
     onGridReady: (params: GridReadyEvent) => {
         getData().then((rowData) => params.api.setGridOption('rowData', rowData));

@@ -1626,7 +1626,14 @@
         "meta": {
             "displayName": "Selection"
         },
-        "selection": {
+        "cellSelection": {
+            "more": {
+                "name": "Cell Selection",
+                "url": "./cell-selection"
+            },
+            "addNestedFields": true
+        },
+        "rowsSelection": {
             "more": {
                 "name": "Row Selection",
                 "url": "./row-selection"

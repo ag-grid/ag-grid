@@ -80,7 +80,7 @@ const VueExample = {
             leftApi: null,
             rightApi: null,
 
-            selection: {
+            rowSelection: {
                 mode: 'multiRow',
                 checkboxes: false,
                 headerCheckbox: false,

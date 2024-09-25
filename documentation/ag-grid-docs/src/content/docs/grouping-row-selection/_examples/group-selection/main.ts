@@ -30,7 +30,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 250,
         cellRenderer: 'agGroupCellRenderer',
     },
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         groupSelects: 'self',
     },

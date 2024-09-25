@@ -7,11 +7,11 @@ Enable users to select many rows at once within a grid.
 
 ## Enabling Multi-Row Selection
 
-To enable multi-row selection set `selection.mode` to `'multiRow'`:
+To enable multi-row selection set `rowSelection.mode` to `'multiRow'`:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: { 
+    rowSelection: { 
         mode: 'multiRow' 
     }
 }
@@ -29,13 +29,13 @@ This behaviour also applies when [Checkbox Selection](#checkbox-selection) is en
 
 ## Removing Selection Checkboxes
 
-To prevent any row selection checkboxes from being rendered in rows, set `selection.checkboxes` to `false`. 
-To prevent the header checkbox from being rendered, set `selection.headerCheckbox` to `false`.
+To prevent any row selection checkboxes from being rendered in rows, set `rowSelection.checkboxes` to `false`. 
+To prevent the header checkbox from being rendered, set `rowSelection.headerCheckbox` to `false`.
 Setting both to `false` will disable the checkbox column. You will also need to enable click selection by setting `enableClickSelection: true`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: {
+    rowSelection: {
         mode: 'singleRow',
         checkboxes: false,
         headerCheckbox: false,
@@ -47,18 +47,18 @@ const gridOptions = {
 {% gridExampleRunner title="Checkbox Selection" name="checkbox-selection" /%}
 
 {% note %}
-You may pass a function to `selection.checkboxes` to dynamically enable or disable checkboxes for given rows.
+You may pass a function to `rowSelection.checkboxes` to dynamically enable or disable checkboxes for given rows.
 {% /note %}
 
 ## Configure Selectable Rows
 
-It is possible to specify which rows can be selected via the `selection.isRowSelectable` callback function.
+It is possible to specify which rows can be selected via the `rowSelection.isRowSelectable` callback function.
 
 For instance if we only wanted to allow selection for rows where the 'year' property is less than 2004, we could implement the following:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         isRowSelectable: (rowNode) => rowNode.data ? rowNode.data.year < 2004 : false,
     }
@@ -75,28 +75,28 @@ Note that this example uses `hideDisabledCheckboxes` to hide disabled checkboxes
 
 All rows may be selected at once by using the header checkbox, which is enabled by default in `'multiRow'` mode.
 
-The three possible values of `selection.selectAll` are:
+The three possible values of `rowSelection.selectAll` are:
 - `'all'`: _(Default)_ Selecting the header checkbox selects all [selectable](#configure-selectable-rows) rows in the grid.
 - `'filtered'`: Selecting the header checkbox will select all rows that satisfy the currently active filter.
 - `'currentPage'`: Selecting the header checkbox will select all rows that satisfy the currently active filter on the current page.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: { 
+    rowSelection: { 
         mode: 'multiRow',
         selectAll: 'filtered'
     }
 }
 ```
 
-The example below demonstrates the three different modes available for `selection.selectAll`:
+The example below demonstrates the three different modes available for `rowSelection.selectAll`:
 
 {% gridExampleRunner title="Header Checkbox Selection" name="header-checkbox" /%}
 
-Note that when `selection.isRowSelectable` is defined, the header checkbox will only select selectable rows.
+Note that when `rowSelection.isRowSelectable` is defined, the header checkbox will only select selectable rows.
 
 {% note %}
-The value of `selection.selectAll` does not affect group selection behaviour, which is controlled by `selection.groupSelects`. 
+The value of `rowSelection.selectAll` does not affect group selection behaviour, which is controlled by `rowSelection.groupSelects`. 
 See [Row Grouping - Selecting Groups](./grouping-row-selection) for more on this.
 {% /note %}
 
@@ -128,7 +128,7 @@ The checkbox column has a default `maxWidth` set. To make the column resizable (
 
 ## Enable Click Selection & Deselection
 
-The `selection.enableClickSelection` property configures whether a row's selection state will be impacted when the row is clicked, or when {% kbd "␣ Space" /%} is pressed while the row is focused.
+The `rowSelection.enableClickSelection` property configures whether a row's selection state will be impacted when the row is clicked, or when {% kbd "␣ Space" /%} is pressed while the row is focused.
 
 {% interfaceDocumentation interfaceName="MultiRowSelectionOptions" names=["enableClickSelection"] config={"description": ""}/%}
 
@@ -137,7 +137,7 @@ Click-selection and deselection can be enabled by setting `enableClickSelection`
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: { 
+    rowSelection: { 
         mode: 'multiRow',
         enableClickSelection: true,
     }
@@ -155,11 +155,11 @@ Note that deselection is still possible when checkboxes are enabled by clicking 
 ## Force Checkboxes to be Selected
 
 It is possible to select a row via the Grid API and disable its checkbox to prevent users from deselecting it. 
-This can be achieved by providing a function to `selection.checkboxes`.
+This can be achieved by providing a function to `rowSelection.checkboxes`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         checkboxes: (params) => params.data && params.data.year === 2012,
     },
@@ -184,11 +184,11 @@ Clicking the header checkbox, however, will select all rows even if their checkb
 
 In certain circumstances, especially in the context of touchscreen devices, users may want to select multiple rows without having to use the {% kbd "^ Ctrl" /%} and {% kbd "⇧ Shift" /%} keys.
 
-This can be accomplished by setting the `selection.enableMultiSelectWithClick` flag to `true`. You will also need to set `enableClickSelection` to `true`.
+This can be accomplished by setting the `rowSelection.enableMultiSelectWithClick` flag to `true`. You will also need to set `enableClickSelection` to `true`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         checkboxes: false,
         headerCheckbox: false,

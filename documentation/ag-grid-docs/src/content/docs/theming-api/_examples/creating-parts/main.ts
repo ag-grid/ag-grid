@@ -82,7 +82,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     initialState: {
         rowSelection: ['1', '2', '3'],
     },
-    selection: { mode: 'multiRow', checkboxes: true },
+    rowSelection: { mode: 'multiRow', checkboxes: true },
 };
 
 createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);

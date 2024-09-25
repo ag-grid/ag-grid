@@ -41,7 +41,7 @@ const gridOptions: GridOptions = {
             suppressCount: true,
         },
     },
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         groupSelects: 'self',
     },

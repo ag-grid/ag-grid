@@ -104,7 +104,7 @@ const VueExample = {
         this.rowData = getData();
         this.groupDisplayType = 'custom';
         this.groupDefaultExpanded = 1;
-        this.selection = {
+        this.rowSelection = {
             mode: 'multiRow',
             checkboxes: false,
             headerCheckbox: false,

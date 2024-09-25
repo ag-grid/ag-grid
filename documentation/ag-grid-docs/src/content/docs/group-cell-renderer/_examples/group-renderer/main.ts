@@ -69,7 +69,7 @@ const gridOptions: GridOptions = {
     // we don't want the auto column here, as we are providing our own cols
     groupDisplayType: 'custom',
     groupDefaultExpanded: 1,
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
         headerCheckbox: false,

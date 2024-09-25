@@ -47,7 +47,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         sortable: false,
     },
     rowBuffer: 0,
-    selection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false },
+    rowSelection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false },
     // tell grid we want virtual row model type
     rowModelType: 'infinite',
     // how big each page in our page cache will be, default is 100

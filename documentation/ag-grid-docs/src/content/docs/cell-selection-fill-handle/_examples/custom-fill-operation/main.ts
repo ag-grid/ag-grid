@@ -28,8 +28,7 @@ const gridOptions: GridOptions = {
         editable: true,
         cellDataType: false,
     },
-    selection: {
-        mode: 'cell',
+    cellSelection: {
         handle: {
             mode: 'fill',
             setFillValue(params) {

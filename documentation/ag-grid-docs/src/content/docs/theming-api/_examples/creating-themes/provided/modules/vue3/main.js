@@ -29,7 +29,7 @@ const VueExample = {
     setup(props) {
         return {
             theme: myCustomTheme,
-            selection: { mode: 'multiRow', checkboxes: true },
+            rowSelection: { mode: 'multiRow', checkboxes: true },
             columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'price' }],
             defaultColDef: {
                 editable: true,

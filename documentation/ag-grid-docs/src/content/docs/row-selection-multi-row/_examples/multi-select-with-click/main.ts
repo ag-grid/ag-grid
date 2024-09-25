@@ -13,9 +13,9 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [{ field: 'athlete' }, { field: 'sport' }, { field: 'year', maxWidth: 120 }],
     defaultColDef: { flex: 1, minWidth: 100 },
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
-        enableMultiSelectWithClick: true,
+        enableTouchSelection: true,
         enableClickSelection: true,
         checkboxes: false,
         headerCheckbox: false,

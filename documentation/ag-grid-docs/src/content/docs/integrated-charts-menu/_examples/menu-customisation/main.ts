@@ -26,7 +26,7 @@ const gridOptions: GridOptions = {
         { field: 'bronze', chartDataType: 'series' },
     ],
     defaultColDef: { flex: 1 },
-    selection: { mode: 'cell' },
+    cellSelection: true,
     popupParent: document.body,
     enableCharts: true,
     chartMenuItems: chartMenuItems,

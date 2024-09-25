@@ -90,7 +90,7 @@ const VueExample = {
                 minWidth: 100,
                 filter: true,
             },
-            selection: {
+            rowSelection: {
                 mode: 'multiRow',
             },
             leftColumns: [
