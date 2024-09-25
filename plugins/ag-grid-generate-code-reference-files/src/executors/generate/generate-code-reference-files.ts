@@ -326,7 +326,7 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
                 //Check for type params
 
                 // spl here - todo
-                console.error('Missing interface: ' + JSON.stringify(a));
+                console.error(`${i} extends ${extended} but  ${extended} is not part of interfaces.AUTO.json.`);
             }
 
             if (isDocStyle) {
