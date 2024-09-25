@@ -10,7 +10,7 @@ import { createRoot } from 'react-dom/client';
 
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
-const selection = {
+const rowSelection = {
     mode: 'multiRow',
     hideDisabledCheckboxes: true,
     headerCheckbox: false,
@@ -98,7 +98,7 @@ const GridExample = () => {
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     rowBuffer={0}
-                    selection={selection}
+                    rowSelection={rowSelection}
                     rowModelType={'infinite'}
                     cacheBlockSize={100}
                     cacheOverflowSize={2}

@@ -17,7 +17,7 @@ const VueExample = {
         <ag-grid-vue
             style="height: 100%;"
             :theme="theme"
-            :selection="selection"
+            :rowSelection="rowSelection"
             :columnDefs="columnDefs"
             :defaultColDef="defaultColDef"
             :rowData="rowData"

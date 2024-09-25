@@ -49,7 +49,7 @@ const GridExample = () => {
             enableValue: true,
         };
     }, []);
-    const selection = useMemo(
+    const rowSelection = useMemo(
         () => ({
             mode: 'multiRow',
         }),
@@ -112,7 +112,7 @@ const GridExample = () => {
                             defaultColDef={defaultColDef}
                             sideBar={true}
                             pagination={true}
-                            selection={selection}
+                            rowSelection={rowSelection}
                             suppressColumnMoveAnimation={true}
                             initialState={initialState}
                             onGridReady={onGridReady}

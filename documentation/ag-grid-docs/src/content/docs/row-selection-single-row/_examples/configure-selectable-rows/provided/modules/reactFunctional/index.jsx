@@ -19,7 +19,7 @@ const GridExample = () => {
 
     const columnDefs = useMemo(() => [{ field: 'athlete' }, { field: 'sport' }, { field: 'year', maxWidth: 120 }], []);
 
-    const selection = useMemo(
+    const rowSelection = useMemo(
         () => ({
             mode: 'singleRow',
             hideDisabledCheckboxes: true,
@@ -64,7 +64,7 @@ const GridExample = () => {
                     rowData={rowData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
-                    selection={selection}
+                    rowSelection={rowSelection}
                     onGridReady={onGridReady}
                 />
             </div>

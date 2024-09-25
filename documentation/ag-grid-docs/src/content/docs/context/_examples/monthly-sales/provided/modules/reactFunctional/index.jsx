@@ -53,7 +53,7 @@ const monthNames = [
     'Full Year',
 ];
 
-const selection = {
+const rowSelection = {
     mode: 'multiRow',
     headerCheckbox: false,
     groupSelects: 'descendants',
@@ -227,7 +227,7 @@ const GridExample = () => {
                         context={context.current}
                         defaultColDef={defaultColDef}
                         autoGroupColumnDef={autoGroupColumnDef}
-                        selection={selection}
+                        rowSelection={rowSelection}
                         onGridReady={onGridReady}
                     />
                 </div>

@@ -63,7 +63,7 @@ const VueExample = {
         <ag-grid-vue
             style="height: 100%;"
             :theme="theme"
-            :selection="selection"
+            :rowSelection="rowSelection"
             :initialState="initialState"
             :columnDefs="columnDefs"
             :defaultColDef="defaultColDef"

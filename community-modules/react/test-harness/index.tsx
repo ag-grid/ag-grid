@@ -14,7 +14,7 @@ const App = () => {
         { make: 'Porsche', model: 'Boxster', price: 72000 },
     ]);
     const [colDefs] = useState<ColDef[]>([{ field: 'make' }, { field: 'model' }, { field: 'price' }]);
-    const selection = useMemo<RowSelectionOptions>(
+    const rowSelection = useMemo<RowSelectionOptions>(
         () => ({
             mode: 'multiRow',
             checkboxes: false,
@@ -34,7 +34,7 @@ const App = () => {
                         filter: true,
                         flex: 1,
                     }}
-                    selection={selection}
+                    rowSelection={rowSelection}
                     onGridReady={onGridReady}
                     rowData={rowData}
                     columnDefs={colDefs}

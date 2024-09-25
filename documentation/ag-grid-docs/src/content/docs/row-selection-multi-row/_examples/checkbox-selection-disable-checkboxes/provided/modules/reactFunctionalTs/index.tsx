@@ -25,7 +25,7 @@ const GridExample = () => {
         []
     );
 
-    const selection = useMemo<RowSelectionOptions>(
+    const rowSelection = useMemo<RowSelectionOptions>(
         () => ({
             mode: 'multiRow',
             hideDisabledCheckboxes: true,
@@ -70,7 +70,7 @@ const GridExample = () => {
                     rowData={rowData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
-                    selection={selection}
+                    rowSelection={rowSelection}
                     onGridReady={onGridReady}
                 />
             </div>
