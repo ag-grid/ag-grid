@@ -1,6 +1,7 @@
 import type { _ColumnResizeApi } from '../api/gridApi';
 import { HorizontalResizeModule } from '../dragAndDrop/dragModule';
 import { _defineModule } from '../interfaces/iModule';
+import { AutoWidthModule } from '../rendering/autoWidthModule';
 import { VERSION } from '../version';
 import { setColumnWidth, setColumnWidths } from './columnResizeApi';
 import { ColumnResizeService } from './columnResizeService';
@@ -9,7 +10,7 @@ export const ColumnResizeCoreModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/column-resize-core',
     beans: [ColumnResizeService],
-    dependantModules: [HorizontalResizeModule],
+    dependantModules: [HorizontalResizeModule, AutoWidthModule],
 });
 
 export const ColumnResizeApiModule = _defineModule<_ColumnResizeApi>({

@@ -396,7 +396,6 @@ export {
 } from './rendering/features/positionableFeature';
 
 // rendering
-export { AutoWidthCalculator } from './rendering/autoWidthCalculator';
 export { CellComp } from './rendering/cell/cellComp';
 export { CellCtrl, ICellComp } from './rendering/cell/cellCtrl';
 export { RowCtrl, IRowComp } from './rendering/row/rowCtrl';

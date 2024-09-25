@@ -256,7 +256,7 @@ export interface CoreBeanCollection {
     scrollVisibleService: ScrollVisibleService;
     pinnedWidthService: PinnedWidthService;
     expressionService?: ExpressionService;
-    autoWidthCalculator: AutoWidthCalculator;
+    autoWidthCalculator?: AutoWidthCalculator;
     componentMetadataProvider: ComponentMetadataProvider;
     agComponentUtils?: AgComponentUtils;
     frameworkComponentWrapper: FrameworkComponentWrapper;

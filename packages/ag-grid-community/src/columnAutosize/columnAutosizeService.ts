@@ -37,7 +37,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
         this.animationFrameService = beans.animationFrameService;
-        this.autoWidthCalculator = beans.autoWidthCalculator;
+        this.autoWidthCalculator = beans.autoWidthCalculator!;
         this.ctrlsService = beans.ctrlsService;
         this.renderStatusService = beans.renderStatusService;
         this.scrollVisibleService = beans.scrollVisibleService;

@@ -1,5 +1,6 @@
 import type { _ColumnAutosizeApi } from '../api/gridApi';
 import { _defineModule } from '../interfaces/iModule';
+import { AutoWidthModule } from '../rendering/autoWidthModule';
 import { VERSION } from '../version';
 import { autoSizeAllColumns, autoSizeColumn, autoSizeColumns, sizeColumnsToFit } from './columnAutosizeApi';
 import { ColumnAutosizeService } from './columnAutosizeService';
@@ -8,6 +9,7 @@ export const ColumnAutosizeCoreModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/column-autosize-core',
     beans: [ColumnAutosizeService],
+    dependantModules: [AutoWidthModule],
 });
 
 export const ColumnAutosizeApiModule = _defineModule<_ColumnAutosizeApi>({

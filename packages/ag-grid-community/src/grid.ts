@@ -50,7 +50,6 @@ import { ModuleRegistry } from './modules/moduleRegistry';
 import { PageBoundsListener } from './pagination/pageBoundsListener';
 import { PageBoundsService } from './pagination/pageBoundsService';
 import { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
-import { AutoWidthCalculator } from './rendering/autoWidthCalculator';
 import { ColumnAnimationService } from './rendering/columnAnimationService';
 import { ColumnHoverService } from './rendering/columnHoverService';
 import { OverlayService } from './rendering/overlays/overlayService';
@@ -442,7 +441,6 @@ export class GridCoreCreator {
             ColumnFactory,
             NavigationService,
             ValueService,
-            AutoWidthCalculator,
             StandardMenuFactory,
             FocusService,
             MouseEventService,
