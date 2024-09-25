@@ -18,12 +18,15 @@ const gridConfig = require('./gridWatch.config');
 const RED = '\x1b[;31m';
 const GREEN = '\x1b[;32m';
 const YELLOW = '\x1b[;33m';
+const GRAY = '\x1b[90m';
 const RESET = '\x1b[m';
 
+function info(msg, ...args) {
+    console.log(`*** ${GRAY}${msg}${RESET}`, ...args);
+}
 function success(msg, ...args) {
     console.log(`*** ${GREEN}${msg}${RESET}`, ...args);
 }
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function warning(msg, ...args) {
     console.log(`*** ${YELLOW}${msg}${RESET}`, ...args);
 }
@@ -31,7 +34,76 @@ function error(msg, ...args) {
     console.log(`*** ${RED}${msg}${RESET}`, ...args);
 }
 
+function formatTime(timeDifference) {
+    if (timeDifference < 1000) {
+        return `${timeDifference.toFixed(2)}ms`;
+    } else if (timeDifference < 60000) {
+        return `${(timeDifference / 1000).toFixed(2)}s`;
+    } else {
+        const minutes = Math.floor(timeDifference / 60000);
+        const seconds = ((timeDifference % 60000) / 1000).toFixed(2);
+        return `${minutes}min ${seconds}s`;
+    }
+}
+
+function createTimeManager() {
+    const startTimes = {};
+    const completeTimeEntries = [];
+
+    function getTimeString(label, time) {
+        return `${label}: ${formatTime(time)}`;
+    }
+
+    return {
+        start(label) {
+            if (startTimes[label]) {
+                warning(`Time '${label}' already started`);
+                return;
+            }
+            startTimes[label] = performance.now();
+        },
+        stop(label) {
+            const time = startTimes[label];
+            if (time) {
+                completeTimeEntries.push([label, performance.now() - time]);
+                delete startTimes[label];
+            } else {
+                warning(`Time '${label}' not started`);
+            }
+        },
+        hasStarted(label) {
+            return Boolean(startTimes[label]);
+        },
+        clear() {
+            Object.keys(startTimes).forEach((key) => delete startTimes[key]);
+            completeTimeEntries.length = 0;
+        },
+        getCompleteTimeEntries() {
+            return [...completeTimeEntries];
+        },
+        timeString(labelToFind) {
+            const entry = completeTimeEntries.findLast(([label]) => label === labelToFind);
+
+            if (!entry) {
+                warning(`'${labelToFind}' not found`);
+                return;
+            }
+
+            const [label, time] = entry;
+            return getTimeString(label, time);
+        },
+        toString() {
+            return completeTimeEntries
+                .map(([label, time]) => {
+                    return getTimeString(label, time);
+                })
+                .join('\n');
+        },
+    };
+}
+
 const spawnedChildren = new Set();
+const timeManager = createTimeManager();
 
 function spawnNxWatch(outputCb) {
     let exitResolve, exitReject;
@@ -97,6 +169,10 @@ function spawnNxRun(target, config, projects) {
 let timeout;
 function scheduleBuild() {
     if (buildBuffer.length > 0) {
+        if (!timeManager.hasStarted('Total build time')) {
+            timeManager.start('Total build time');
+        }
+
         if (timeout) clearTimeout(timeout);
         timeout = setTimeout(() => build(), QUIET_PERIOD_MS);
     }
@@ -137,13 +213,24 @@ async function build() {
         targetMsg += ` (+${projects.size - PROJECT_ECHO_LIMIT} targets)`;
     }
     try {
+        timeManager.start(`${targetMsg} build`);
         success(`Starting build for: ${targetMsg}`);
         await spawnNxRun(target, config, [...projects.values()]);
         success(`Completed build for: ${targetMsg}`);
         success(`Build queue has ${buildBuffer.length} remaining.`);
+        timeManager.stop(`${targetMsg} build`);
+        info(timeManager.timeString(`${targetMsg} build`));
 
         if (buildBuffer.length === 0) {
             await touchBuildQueueEmptyFile();
+
+            timeManager.stop('Total build time');
+            info('Last build buffer times...');
+            timeManager
+                .toString()
+                .split('\n')
+                .forEach((str) => info(str));
+            timeManager.clear();
         }
     } catch (e) {
         error(`Build failed for: ${targetMsg}: ${e}`);
