@@ -1,4 +1,3 @@
-import type { Theme } from '@ag-grid-community/theming';
 import { type ThemeImpl, logErrorMessageOnce, paramToVariableName } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
