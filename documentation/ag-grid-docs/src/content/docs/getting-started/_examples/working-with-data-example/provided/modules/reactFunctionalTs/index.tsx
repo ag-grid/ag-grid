@@ -1,7 +1,7 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, ModuleRegistry, SelectionOptions } from '@ag-grid-community/core';
+import { ColDef, ModuleRegistry, RowSelectionOptions } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -12,7 +12,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const gridDiv = document.querySelector('#myGrid');
 
-const selection: SelectionOptions = {
+const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
     headerCheckbox: false,
 };
@@ -112,7 +112,7 @@ const GridExample = () => {
                 rowData={rowData}
                 columnDefs={columnDefs}
                 defaultColDef={defaultColDef}
-                selection={selection}
+                rowSelection={rowSelection}
                 pagination={true}
                 paginationPageSize={10}
                 paginationPageSizeSelector={[10, 25, 50]}
