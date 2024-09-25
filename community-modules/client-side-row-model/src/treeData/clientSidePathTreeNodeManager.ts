@@ -15,8 +15,6 @@ import type {
     ClientSideNodeManagerRowNode,
 } from '../clientSideNodeManager/abstractClientSideNodeManager';
 import { AbstractClientSideTreeNodeManager } from './abstractClientSideTreeNodeManager';
-import { makeFieldPathGetter } from './fieldAccess';
-import type { DataFieldGetter } from './fieldAccess';
 
 const TOP_LEVEL = 0;
 
@@ -28,19 +26,8 @@ export class ClientSidePathTreeNodeManager<TData>
 
     private allNodesMap: { [id: string]: RowNode } = {};
 
-    private childrenGetter: DataFieldGetter | null = null;
-
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private nextId = 0;
-
-    public override initRootNode(rootRowNode: RowNode<TData>): void {
-        const childrenField = this.gos.get('treeDataChildrenField');
-        if (this.childrenGetter?.path !== childrenField) {
-            this.childrenGetter = makeFieldPathGetter(childrenField);
-        }
-
-        super.initRootNode(rootRowNode);
-    }
 
     public getRowNode(id: string): RowNode | undefined {
         return this.allNodesMap[id];
