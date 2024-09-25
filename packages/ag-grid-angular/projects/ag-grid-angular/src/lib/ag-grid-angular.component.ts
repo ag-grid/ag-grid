@@ -1347,7 +1347,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public rowMultiSelectWithClick: boolean | undefined = undefined;
     /** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
      * @default false
-     * @deprecated v32.2 Use `rowSelection.suppressDeselection` instead
+     * @deprecated v32.2 Use `rowSelection.enableClickSelection` instead
      */
     @Input() public suppressRowDeselection: boolean | undefined = undefined;
     /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.

@@ -1488,7 +1488,7 @@ export interface GridOptions<TData = any> {
     /**
      * If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
      * @default false
-     * @deprecated v32.2 Use `rowSelection.suppressDeselection` instead
+     * @deprecated v32.2 Use `rowSelection.enableClickSelection` instead
      */
     suppressRowDeselection?: boolean;
     /**
