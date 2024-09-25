@@ -631,7 +631,7 @@ export class StateService extends BeanStub implements NamedBean {
         });
 
         if (_isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && cellRanges.length > 1) {
-            return _warnOnce('cannot add multiple ranges when `selection.suppressMultiRanges = true`');
+            return _warnOnce('cannot add multiple ranges when `cellSelection.suppressMultiRanges = true`');
         }
 
         rangeService.setCellRanges(cellRanges);

@@ -370,9 +370,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private addRowDraggerToRow(gui: RowGui) {
         if (_isCellSelectionEnabled(this.gos)) {
-            _warnOnce(
-                "Setting `rowDragEntireRow: true` in the gridOptions doesn't work with `selection.mode = 'cell'`"
-            );
+            _warnOnce("Setting `rowDragEntireRow: true` in the gridOptions doesn't work with `cellSelection: true`");
             return;
         }
         const translate = this.beans.localeService.getLocaleTextFunc();

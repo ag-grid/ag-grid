@@ -499,7 +499,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
         if (_isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && this.cellRanges.length > 0) {
-            return _warnOnce('cannot add multiple ranges when `selection.suppressMultiRanges = true`');
+            return _warnOnce('cannot add multiple ranges when `cellSelection.suppressMultiRanges = true`');
         }
 
         const newRange = this.createCellRangeFromCellRangeParams(params);
