@@ -2610,6 +2610,11 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
      * When enabled and a row is selected, the copy action should copy the entire row, rather than just the focused cell
      */
     copySelectedRows?: boolean;
+    /**
+     * Set to `true` to allow multiple rows to be selected using single click.
+     * @default false
+     */
+    enableTouchSelection?: boolean;
 }
 
 /**
@@ -2639,11 +2644,6 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any> extends Com
      * @default true
      */
     headerCheckbox?: boolean;
-    /**
-     * Set to `true` to allow multiple rows to be selected using single click.
-     * @default false
-     */
-    enableMultiSelectWithClick?: boolean;
 }
 
 /** Subset of ColDef allowing for customisation of the Controls column, currently used for checkbox selection */
