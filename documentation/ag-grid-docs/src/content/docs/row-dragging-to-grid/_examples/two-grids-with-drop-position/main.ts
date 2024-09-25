@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import {
     ColDef,
     GetRowIdParams,
@@ -8,7 +8,7 @@ import {
     ModuleRegistry,
     RowDropZoneParams,
     createGrid,
-} from '@ag-grid-community/core';
+} from 'ag-grid-community';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);

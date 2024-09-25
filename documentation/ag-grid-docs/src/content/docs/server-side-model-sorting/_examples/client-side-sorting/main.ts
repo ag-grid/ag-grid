@@ -5,9 +5,9 @@ import {
     IServerSideGetRowsParams,
     IsServerSideGroupOpenByDefaultParams,
     createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+} from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { FakeServer } from './fakeServer';
 

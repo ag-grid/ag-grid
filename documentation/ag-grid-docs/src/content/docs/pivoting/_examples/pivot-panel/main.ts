@@ -1,9 +1,9 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { SideBarModule } from '@ag-grid-enterprise/side-bar';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { RowGroupingModule } from 'ag-grid-enterprise';
+import { SideBarModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, SideBarModule, ColumnsToolPanelModule]);
 

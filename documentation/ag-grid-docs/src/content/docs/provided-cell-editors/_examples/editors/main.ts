@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import {
     ColDef,
     GridApi,
@@ -8,9 +8,9 @@ import {
     ISelectCellEditorParams,
     ITextCellEditorParams,
     createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
+} from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { RichSelectModule } from 'ag-grid-enterprise';
 
 import { colors } from './colors';
 import { ColourCellRenderer } from './colourCellRenderer_typescript';

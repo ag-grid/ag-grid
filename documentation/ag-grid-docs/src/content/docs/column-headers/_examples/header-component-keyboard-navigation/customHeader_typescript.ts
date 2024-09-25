@@ -1,4 +1,4 @@
-import { IHeaderParams } from '@ag-grid-community/core';
+import { IHeaderParams } from 'ag-grid-community';
 
 export class CustomHeader {
     private eGui: HTMLElement | undefined;

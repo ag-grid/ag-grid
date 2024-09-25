@@ -1,6 +1,7 @@
-import { IFilterAngularComp } from '@ag-grid-community/angular';
-import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/core';
 import { Component, ElementRef, ViewChild } from '@angular/core';
+
+import { IFilterAngularComp } from 'ag-grid-angular';
+import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,

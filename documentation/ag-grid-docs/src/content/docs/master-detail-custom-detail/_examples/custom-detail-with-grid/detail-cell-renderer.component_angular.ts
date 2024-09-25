@@ -1,6 +1,7 @@
-import { AgGridAngular, ICellRendererAngularComp } from '@ag-grid-community/angular';
-import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
 import { Component } from '@angular/core';
+
+import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
+import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,

@@ -1,4 +1,4 @@
-import { IHeaderGroupComp, IHeaderGroupParams } from '@ag-grid-community/core';
+import { IHeaderGroupComp, IHeaderGroupParams } from 'ag-grid-community';
 
 export class CustomHeaderGroup implements IHeaderGroupComp {
     params!: IHeaderGroupParams;

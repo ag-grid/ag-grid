@@ -1,8 +1,8 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { CsvExportModule } from '@ag-grid-community/csv-export';
-import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { CsvExportModule } from 'ag-grid-community';
+import { MenuModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 

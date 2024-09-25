@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import {
     AsyncTransactionsFlushedEvent,
     ColDef,
@@ -7,9 +7,9 @@ import {
     GridOptions,
     ValueFormatterParams,
     createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+} from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { getData, globalRowData } from './data';
 

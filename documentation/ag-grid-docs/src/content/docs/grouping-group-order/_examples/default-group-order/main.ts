@@ -1,7 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, InitialGroupOrderComparatorParams, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { GridApi, GridOptions, InitialGroupOrderComparatorParams, createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 

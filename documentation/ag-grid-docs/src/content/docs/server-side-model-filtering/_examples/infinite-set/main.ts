@@ -9,12 +9,12 @@ import {
     SetFilterValuesFuncParams,
     ValueFormatterParams,
     createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
-import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+} from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { MenuModule } from 'ag-grid-enterprise';
+import { MultiFilterModule } from 'ag-grid-enterprise';
+import { ServerSideRowModelModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
 import { FakeServer } from './fakeServer';
 

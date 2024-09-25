@@ -1,4 +1,4 @@
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { ICellRendererParams } from 'ag-grid-community';
 
 export function PriceRenderer(params: ICellRendererParams) {
     let priceMultiplier: number = 1;

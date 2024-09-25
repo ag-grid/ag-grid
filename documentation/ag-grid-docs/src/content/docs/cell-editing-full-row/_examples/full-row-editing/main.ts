@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import {
     CellValueChangedEvent,
     GridApi,
@@ -6,9 +6,9 @@ import {
     ModuleRegistry,
     RowValueChangedEvent,
     createGrid,
-} from '@ag-grid-community/core';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
+} from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
 
 import { NumericCellEditor } from './numericCellEditor_typescript';
 

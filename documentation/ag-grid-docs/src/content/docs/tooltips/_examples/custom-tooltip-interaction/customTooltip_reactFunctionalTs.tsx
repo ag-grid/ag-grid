@@ -1,5 +1,6 @@
-import { CustomTooltipProps } from '@ag-grid-community/react';
 import React, { useMemo, useRef } from 'react';
+
+import { CustomTooltipProps } from 'ag-grid-react';
 
 export default (props: CustomTooltipProps & { type: string }) => {
     const data = useMemo(() => props.api.getDisplayedRowAtIndex(props.rowIndex!)!.data, []);

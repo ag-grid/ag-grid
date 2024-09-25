@@ -1,4 +1,4 @@
-import { IDateComp, IDateParams } from '@ag-grid-community/core';
+import { IDateComp, IDateParams } from 'ag-grid-community';
 
 // we'll be using the globally provided flatpickr for our example
 declare var flatpickr: any;

@@ -1,4 +1,4 @@
-import { ICellRendererComp, IStatusPanelComp } from '@ag-grid-community/core';
+import { ICellRendererComp, IStatusPanelComp } from 'ag-grid-community';
 
 // simple cell renderer returns dummy buttons. in a real application, a component would probably
 // be used with operations tied to the buttons. in this example, the cell renderer is just for

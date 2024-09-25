@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import {
     CellClassRules,
     ColDef,
@@ -7,8 +7,8 @@ import {
     GridOptions,
     RowHeightParams,
     createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+} from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 import { getData } from './data';
 

@@ -1,7 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { FirstDataRenderedEvent, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { GetGroupIncludeTotalRowParams, ModuleRegistry } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { FirstDataRenderedEvent, GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import { GetGroupIncludeTotalRowParams, ModuleRegistry } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 

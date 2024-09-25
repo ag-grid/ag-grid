@@ -1,13 +1,13 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import type { ColDef, GridOptions } from '@ag-grid-community/core';
-import { createGrid } from '@ag-grid-community/core';
-import { themeAlpine, themeBalham, themeQuartz } from '@ag-grid-community/theming';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { SideBarModule } from '@ag-grid-enterprise/side-bar';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import type { ColDef, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { themeAlpine, themeBalham, themeQuartz } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { FiltersToolPanelModule } from 'ag-grid-enterprise';
+import { SideBarModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,

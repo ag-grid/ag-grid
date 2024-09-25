@@ -1,4 +1,4 @@
-import { IFloatingFilterComp, IFloatingFilterParams } from '@ag-grid-community/core';
+import { IFloatingFilterComp, IFloatingFilterParams } from 'ag-grid-community';
 
 import { CustomNumberFilter } from './custom-number-filter_typescript';
 

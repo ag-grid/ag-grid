@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import {
     FirstDataRenderedEvent,
     GetChartMenuItemsParams,
@@ -7,10 +7,10 @@ import {
     GridReadyEvent,
     MenuItemDef,
     createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
-import { MenuModule } from '@ag-grid-enterprise/menu';
+} from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { GridChartsModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 

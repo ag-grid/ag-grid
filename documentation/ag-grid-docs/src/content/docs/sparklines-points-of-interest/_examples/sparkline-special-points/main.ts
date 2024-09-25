@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import {
     AreaSparklineOptions,
     BarFormatterParams,
@@ -10,9 +10,9 @@ import {
     LineSparklineOptions,
     MarkerFormatterParams,
     createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
+} from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { SparklinesModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 

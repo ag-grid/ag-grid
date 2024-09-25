@@ -1,7 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { RangeSelectionModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RangeSelectionModule]);
 

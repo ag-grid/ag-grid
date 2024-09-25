@@ -1,5 +1,6 @@
-import { CustomHeaderProps } from '@ag-grid-community/react';
 import React from 'react';
+
+import { CustomHeaderProps } from 'ag-grid-react';
 
 export default ({ displayName }: CustomHeaderProps) => {
     return (

@@ -1,7 +1,8 @@
-import { IFilterAngularComp } from '@ag-grid-community/angular';
-import { IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/core';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
+import { IFilterAngularComp } from 'ag-grid-angular';
+import { IDoesFilterPassParams, IFilterParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,

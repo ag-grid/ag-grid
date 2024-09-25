@@ -1,4 +1,4 @@
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { ICellRendererParams } from 'ag-grid-community';
 
 interface CustomButtonParams extends ICellRendererParams {
     onClick: () => void;

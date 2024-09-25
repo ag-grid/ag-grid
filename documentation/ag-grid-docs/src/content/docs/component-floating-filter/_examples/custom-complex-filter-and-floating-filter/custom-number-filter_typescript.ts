@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '@ag-grid-community/core';
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from 'ag-grid-community';
 
 export class CustomNumberFilter implements IFilterComp {
     filterText!: string | null;

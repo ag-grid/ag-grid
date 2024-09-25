@@ -1,7 +1,8 @@
-import { IHeaderAngularComp } from '@ag-grid-community/angular';
-import { IHeaderParams } from '@ag-grid-community/core';
 import { NgClass } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
+
+import { IHeaderAngularComp } from 'ag-grid-angular';
+import { IHeaderParams } from 'ag-grid-community';
 
 export interface ICustomHeaderParams {
     menuIcon: string;

@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import type {
     GridApi,
     GridOptions,
@@ -7,8 +7,8 @@ import type {
     RowDragEnterEvent,
     RowDragLeaveEvent,
     RowDragMoveEvent,
-} from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+} from 'ag-grid-community';
+import { ModuleRegistry, createGrid } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 

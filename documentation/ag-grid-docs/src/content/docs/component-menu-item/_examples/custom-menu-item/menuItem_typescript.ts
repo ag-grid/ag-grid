@@ -1,4 +1,4 @@
-import { IMenuConfigParams, IMenuItemComp, IMenuItemParams } from '@ag-grid-community/core';
+import { IMenuConfigParams, IMenuItemComp, IMenuItemParams } from 'ag-grid-community';
 
 export interface CustomMenuItemParams extends IMenuItemParams {
     buttonValue: string;

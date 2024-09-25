@@ -1,4 +1,4 @@
-import { IViewportDatasource } from '@ag-grid-community/core';
+import { IViewportDatasource } from 'ag-grid-community';
 
 export function createViewportDatasource(mockServer): IViewportDatasource {
     // client code (ie your code) will call this constructor, pass in whatever you need for the

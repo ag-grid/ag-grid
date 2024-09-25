@@ -5,7 +5,7 @@ import {
     ICellRendererComp,
     ICellRendererParams,
     createGrid,
-} from '@ag-grid-community/core';
+} from 'ag-grid-community';
 
 export class DetailCellRenderer implements ICellRendererComp {
     eGui!: HTMLElement;

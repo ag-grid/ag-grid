@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
+import { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
 export interface GroupFlagCellRendererParams extends ICellRendererParams {
     flagCodes: Record<string, string>;

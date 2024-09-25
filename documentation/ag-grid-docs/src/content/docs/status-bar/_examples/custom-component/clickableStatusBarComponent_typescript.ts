@@ -1,4 +1,4 @@
-import { IStatusPanelComp, IStatusPanelParams } from '@ag-grid-community/core';
+import { IStatusPanelComp, IStatusPanelParams } from 'ag-grid-community';
 
 export class ClickableStatusBarComponent implements IStatusPanelComp {
     params!: IStatusPanelParams;

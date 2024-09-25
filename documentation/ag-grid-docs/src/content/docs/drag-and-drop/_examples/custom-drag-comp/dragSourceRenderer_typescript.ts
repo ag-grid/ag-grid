@@ -1,4 +1,4 @@
-import type { ICellRendererComp, ICellRendererParams, IRowNode } from '@ag-grid-community/core';
+import type { ICellRendererComp, ICellRendererParams, IRowNode } from 'ag-grid-community';
 
 export class DragSourceRenderer implements ICellRendererComp {
     eGui!: HTMLElement;

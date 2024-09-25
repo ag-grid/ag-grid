@@ -1,8 +1,8 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
-import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ColDef, GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { RangeSelectionModule } from 'ag-grid-enterprise';
+import { StatusBarModule } from 'ag-grid-enterprise';
 
 import { ClickableStatusBarComponent } from './clickableStatusBarComponent_typescript';
 

@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams, IRowNode, RowEvent } from '@ag-grid-community/core';
+import { ICellRendererComp, ICellRendererParams, IRowNode, RowEvent } from 'ag-grid-community';
 
 export class CustomGroupCellRenderer implements ICellRendererComp {
     eGui: HTMLElement | undefined;

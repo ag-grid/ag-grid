@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import {
     CellClassParams,
     CellStyle,
@@ -13,22 +13,22 @@ import {
     SelectionChangedEvent,
     ValueSetterParams,
     createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { CsvExportModule } from '@ag-grid-community/csv-export';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
-import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
-import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { SideBarModule } from '@ag-grid-enterprise/side-bar';
-import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
+} from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { CsvExportModule } from 'ag-grid-community';
+import { GridChartsModule } from 'ag-grid-enterprise';
+import { ClipboardModule } from 'ag-grid-enterprise';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { ExcelExportModule } from 'ag-grid-enterprise';
+import { FiltersToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { MultiFilterModule } from 'ag-grid-enterprise';
+import { RangeSelectionModule } from 'ag-grid-enterprise';
+import { RichSelectModule } from 'ag-grid-enterprise';
+import { RowGroupingModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
+import { SideBarModule } from 'ag-grid-enterprise';
+import { StatusBarModule } from 'ag-grid-enterprise';
 
 import { CountryCellRenderer } from './country-renderer_typescript';
 import { PersonFilter } from './person-filter_typescript';

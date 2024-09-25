@@ -1,4 +1,4 @@
-import { CustomCellRendererProps } from '@ag-grid-community/react';
+import { CustomCellRendererProps } from 'ag-grid-react';
 import React from 'react';
 
 export default (props: CustomCellRendererProps) =>

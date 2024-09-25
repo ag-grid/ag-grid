@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import {
     CellValueChangedEvent,
     GridApi,
@@ -8,10 +8,10 @@ import {
     ValueParserParams,
     ValueSetterParams,
     createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+} from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ClipboardModule } from 'ag-grid-enterprise';
+import { RangeSelectionModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ClipboardModule, RangeSelectionModule]);
 

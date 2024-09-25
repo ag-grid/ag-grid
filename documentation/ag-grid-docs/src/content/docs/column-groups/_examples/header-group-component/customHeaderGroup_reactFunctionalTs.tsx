@@ -1,5 +1,6 @@
-import { CustomHeaderGroupProps } from '@ag-grid-community/react';
 import React, { useEffect, useState } from 'react';
+
+import { CustomHeaderGroupProps } from 'ag-grid-react';
 
 export default (props: CustomHeaderGroupProps) => {
     const [expandState, setExpandState] = useState('collapsed');

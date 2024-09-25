@@ -1,6 +1,7 @@
-import { ILoadingCellRendererAngularComp } from '@ag-grid-community/angular';
-import { ILoadingCellRendererParams } from '@ag-grid-community/core';
 import { Component } from '@angular/core';
+
+import { ILoadingCellRendererAngularComp } from 'ag-grid-angular';
+import { ILoadingCellRendererParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,

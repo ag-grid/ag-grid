@@ -1,6 +1,7 @@
-import { ColDef, DetailGridInfo, GridReadyEvent } from '@ag-grid-community/core';
-import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import React, { useEffect } from 'react';
+
+import { ColDef, DetailGridInfo, GridReadyEvent } from 'ag-grid-community';
+import { AgGridReact, CustomCellRendererProps } from 'ag-grid-react';
 
 const DetailCellRenderer = ({ data, node, api }: CustomCellRendererProps) => {
     const rowId = node.id!;

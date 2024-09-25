@@ -1,4 +1,4 @@
-import { ICellEditorComp, ICellEditorParams } from '@ag-grid-community/core';
+import { ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
 
 function isCharNumeric(charStr: string | null) {
     return charStr != null && !!/^\d+$/.test(charStr);

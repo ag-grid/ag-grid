@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import type {
     CellFocusedParams,
     ColDef,
@@ -8,8 +8,8 @@ import type {
     GridApi,
     GridOptions,
     HeaderFocusedParams,
-} from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+} from 'ag-grid-community';
+import { ModuleRegistry, createGrid } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 

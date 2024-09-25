@@ -1,7 +1,8 @@
-import { IMenuItemAngularComp } from '@ag-grid-community/angular';
-import { IMenuConfigParams, IMenuItemParams } from '@ag-grid-community/core';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
+import { IMenuItemAngularComp } from 'ag-grid-angular';
+import { IMenuConfigParams, IMenuItemParams } from 'ag-grid-community';
 
 export interface CustomMenuItemParams extends IMenuItemParams {
     buttonValue: string;

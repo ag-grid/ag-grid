@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import {
     ColDef,
     GetRowIdParams,
@@ -9,7 +9,7 @@ import {
     ICellRendererParams,
     ModuleRegistry,
     createGrid,
-} from '@ag-grid-community/core';
+} from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 

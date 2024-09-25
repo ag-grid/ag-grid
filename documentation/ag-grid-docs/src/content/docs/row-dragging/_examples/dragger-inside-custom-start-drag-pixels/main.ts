@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import type {
     ColDef,
     GridApi,
@@ -6,8 +6,8 @@ import type {
     RowDragCancelEvent,
     RowDragEndEvent,
     RowDragEnterEvent,
-} from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+} from 'ag-grid-community';
+import { ModuleRegistry, createGrid } from 'ag-grid-community';
 
 import { CustomCellRenderer } from './customCellRenderer_typescript';
 
