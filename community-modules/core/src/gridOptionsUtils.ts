@@ -353,14 +353,14 @@ export function _getSuppressMultiRanges(gos: GridOptionsService): boolean {
         return gos.get('suppressMultiRangeSelection');
     }
 
-    return selection.mode === 'cell' ? selection.suppressMultiRanges ?? false : false;
+    return typeof selection !== 'boolean' ? selection?.suppressMultiRanges ?? false : false;
 }
 
 export function _isCellSelectionEnabled(gos: GridOptionsService): boolean {
     const selection = gos.get('cellSelection');
     const useNewAPI = selection !== undefined;
 
-    return useNewAPI ? selection.mode === 'cell' : gos.get('enableRangeSelection');
+    return useNewAPI ? !!selection : gos.get('enableRangeSelection');
 }
 
 export function _isRangeHandleEnabled(gos: GridOptionsService): boolean {
@@ -371,7 +371,7 @@ export function _isRangeHandleEnabled(gos: GridOptionsService): boolean {
         return gos.get('enableRangeHandle');
     }
 
-    return selection.mode === 'cell' ? selection.handle?.mode === 'range' : false;
+    return typeof selection !== 'boolean' ? selection.handle?.mode === 'range' : false;
 }
 
 export function _isFillHandleEnabled(gos: GridOptionsService): boolean {
@@ -382,7 +382,7 @@ export function _isFillHandleEnabled(gos: GridOptionsService): boolean {
         return gos.get('enableFillHandle');
     }
 
-    return selection.mode === 'cell' ? selection.handle?.mode === 'fill' : false;
+    return typeof selection !== 'boolean' ? selection.handle?.mode === 'fill' : false;
 }
 
 export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | undefined {
@@ -398,7 +398,7 @@ export function _getFillHandle(gos: GridOptionsService): FillHandleOptions | und
         };
     }
 
-    return selection.mode === 'cell' && selection.handle?.mode === 'fill' ? selection.handle : undefined;
+    return typeof selection !== 'boolean' && selection.handle?.mode === 'fill' ? selection.handle : undefined;
 }
 
 function _getEnableClickSelection(gos: GridOptionsService): NonNullable<RowSelectionOptions['enableClickSelection']> {

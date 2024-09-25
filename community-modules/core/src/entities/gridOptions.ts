@@ -1478,7 +1478,7 @@ export interface GridOptions<TData = any> {
     /**
      * Confgure cell selection
      */
-    cellSelection?: CellSelectionOptions<TData>;
+    cellSelection?: boolean | CellSelectionOptions<TData>;
     /**
      * Set to `true` to allow multiple rows to be selected using single click.
      * @default false
@@ -2542,7 +2542,6 @@ export type DomLayoutType = 'normal' | 'autoHeight' | 'print';
 
 /** Cell selection options */
 export interface CellSelectionOptions<TData = any> {
-    mode: 'cell';
     /**
      * If `true`, only a single range can be selected
      * @default false

@@ -5,7 +5,6 @@ import type {
     CellPosition,
     CellPositionUtils,
     CellRange,
-    CellSelectionOptions,
     CsvExportParams,
     CtrlsService,
     FocusService,
@@ -756,7 +755,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
     }
 
-    private shouldCopyCells(cellSelection?: CellSelectionOptions) {
+    private shouldCopyCells(cellSelection?: GridOptions['cellSelection']) {
         if (!this.rangeService || this.rangeService.isEmpty()) {
             return false;
         }

@@ -3,7 +3,6 @@ import type { GridOptions } from '../../entities/gridOptions';
 import { ModuleNames } from '../../modules/moduleNames';
 import { PropertyKeys } from '../../propertyKeys';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
-import { CELL_SELECTION_VALIDATORS } from './cellSelectionValidations';
 import { COL_DEF_VALIDATORS } from './colDefValidations';
 
 /**
@@ -408,7 +407,6 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
             return null;
         },
     },
-    cellSelection: () => CELL_SELECTION_VALIDATORS,
 });
 
 export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({

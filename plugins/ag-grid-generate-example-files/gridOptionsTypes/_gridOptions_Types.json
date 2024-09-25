@@ -242,7 +242,7 @@
     ]
   },
   "cellSelection": {
-    "typeName": "CellSelectionOptions<TData>",
+    "typeName": "boolean | CellSelectionOptions<TData>",
     "typesToInclude": [
       "CellSelectionOptions"
     ]
