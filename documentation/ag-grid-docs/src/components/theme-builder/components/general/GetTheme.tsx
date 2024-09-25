@@ -3,7 +3,6 @@ import { Checkmark, Copy } from '@carbon/icons-react';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 
-import { camelCase } from '../../../../../../../community-modules/theming/src/theme-utils';
 import { type RenderedThemeInfo, useRenderedThemeInfo } from '../../model/rendered-theme';
 import { UIPopupButton } from './UIPopupButton';
 
@@ -68,7 +67,7 @@ const GetThemeDialog = () => {
         </DownloadThemeWrapper>
     );
 };
-
+export const camelCase = (str: string) => str.replace(/[\W_]+([a-z])/g, (_, letter) => letter.toUpperCase());
 const renderThemeCodeSample = ({ overriddenParams, usedParts }: RenderedThemeInfo): string => {
     const imports = ['themeQuartz'];
     let code = '';
