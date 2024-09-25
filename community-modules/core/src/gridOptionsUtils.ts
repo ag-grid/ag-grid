@@ -466,14 +466,14 @@ export function _isMultiRowSelection(gos: GridOptionsService): boolean {
     return mode === 'multiRow';
 }
 
-export function _getEnableTouchSelection(gos: GridOptionsService): boolean {
+export function _getEnableSelectionWithoutKeys(gos: GridOptionsService): boolean {
     const selection = gos.get('rowSelection');
 
     if (typeof selection === 'string') {
         return gos.get('rowMultiSelectWithClick');
     }
 
-    return selection?.enableTouchSelection ?? false;
+    return selection?.enableSelectionWithoutKeys ?? false;
 }
 
 export function _getGroupSelection(gos: GridOptionsService): GroupSelectionMode | undefined {

@@ -15,7 +15,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: { flex: 1, minWidth: 100 },
     rowSelection: {
         mode: 'multiRow',
-        enableTouchSelection: true,
+        enableSelectionWithoutKeys: true,
         enableClickSelection: true,
         checkboxes: false,
         headerCheckbox: false,

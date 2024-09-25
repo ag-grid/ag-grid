@@ -51,7 +51,7 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
     suppressRowDeselection: { version: '32.2', message: 'Use `rowSelection.enableClickSelection` instead.' },
     rowMultiSelectWithClick: {
         version: '32.2',
-        message: 'Use `rowSelection.enableTouchSelection` instead.',
+        message: 'Use `rowSelection.enableSelectionWithoutKeys` instead.',
     },
     groupSelectsChildren: {
         version: '32.2',

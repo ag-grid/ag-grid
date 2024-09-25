@@ -443,7 +443,7 @@ describe('Row Selection Grid Options', () => {
                 const api = createGrid({
                     columnDefs,
                     rowData,
-                    rowSelection: { mode: 'multiRow', enableTouchSelection: true, enableClickSelection: true },
+                    rowSelection: { mode: 'multiRow', enableSelectionWithoutKeys: true, enableClickSelection: true },
                 });
 
                 clickRowByIndex(2);
@@ -457,7 +457,7 @@ describe('Row Selection Grid Options', () => {
                 const api = createGrid({
                     columnDefs,
                     rowData,
-                    rowSelection: { mode: 'multiRow', enableTouchSelection: true, enableClickSelection: true },
+                    rowSelection: { mode: 'multiRow', enableSelectionWithoutKeys: true, enableClickSelection: true },
                 });
 
                 selectRowsByIndex([1, 2, 3], true, api);

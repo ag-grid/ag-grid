@@ -2610,10 +2610,10 @@ interface CommonRowSelectionOptions<TData = any, TValue = any> {
      */
     copySelectedRows?: boolean;
     /**
-     * Set to `true` to allow multiple rows to be selected using single click.
+     * Set to `true` to allow (possibly multiple) rows to be selected and deselected using single click or touch.
      * @default false
      */
-    enableTouchSelection?: boolean;
+    enableSelectionWithoutKeys?: boolean;
 }
 
 /**

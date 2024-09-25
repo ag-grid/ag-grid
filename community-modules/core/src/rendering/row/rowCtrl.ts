@@ -14,7 +14,7 @@ import {
     _getActiveDomElement,
     _getEnableDeselection,
     _getEnableSelection,
-    _getEnableTouchSelection,
+    _getEnableSelectionWithoutKeys,
     _getGroupSelectsDescendants,
     _getRowHeightForNode,
     _isAnimateRows,
@@ -1129,7 +1129,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        const multiSelectOnClick = _getEnableTouchSelection(gos);
+        const multiSelectOnClick = _getEnableSelectionWithoutKeys(gos);
         const rowDeselectionWithCtrl = _getEnableDeselection(gos);
         const source = 'rowClicked';
 
