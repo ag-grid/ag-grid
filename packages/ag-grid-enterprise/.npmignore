@@ -1,10 +1,15 @@
-!dist
 src
+!dist
+!dist/types/src
 .npmignore
 project.json
 tsconfig.json
 tsconfig.lib.json
 tsconfig.umd.json
+tsconfig.spec.json
+tsconfig.types.json
+tsconfig.types.watch.json
+tsconfig.watch.json
 webpack.config.js
 main.d.ts.src
 updateMainTsWithCoreExports.js
@@ -12,3 +17,6 @@ updateMainTsWithCoreExports.js
 webpackBuild.sh
 eslint.config.mjs
 gulpfile.js
+jest.config.js
+jest.setup.js
+jest.jsdom-env.cjs
