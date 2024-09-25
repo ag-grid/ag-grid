@@ -35,7 +35,7 @@ const partDocs: Record<string, string | undefined> = {
     inputStyle: 'The appearance of text input fields',
 };
 
-const defaultPartIds = new Set(themes.themeQuartz.dependencies.map((dep) => dep.id));
+const defaultPartIds = new Set(themes._asThemeImpl(themes.themeQuartz).dependencies.map((dep) => dep.id));
 
 export class FeatureModel {
     readonly label: string;

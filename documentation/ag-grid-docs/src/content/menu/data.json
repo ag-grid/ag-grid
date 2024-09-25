@@ -279,6 +279,10 @@
                                         "path": "theming-css"
                                     },
                                     {
+                                        "title": "Color Schemes & Dark Mode",
+                                        "path": "theming-color-schemes"
+                                    },
+                                    {
                                         "title": "Migration",
                                         "path": "theming-migration"
                                     }
