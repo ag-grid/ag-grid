@@ -11,6 +11,7 @@
  */
 const { spawn } = require('child_process');
 const fs = require('node:fs/promises');
+const path = require('path');
 const { QUIET_PERIOD_MS, BATCH_LIMIT, PROJECT_ECHO_LIMIT, NX_ARGS, BUILD_QUEUE_EMPTY_FILE } = require('./constants');
 const chartsConfig = require('./chartsWatch.config');
 const gridConfig = require('./gridWatch.config');
@@ -248,6 +249,9 @@ async function touchBuildQueueEmptyFile() {
         if ('ENOENT' !== err.code) {
             throw err;
         }
+
+        const dirPath = path.dirname(BUILD_QUEUE_EMPTY_FILE);
+        await fs.mkdir(dirPath, { recursive: true });
         const fh = await fs.open(BUILD_QUEUE_EMPTY_FILE, 'a');
         await fh.close();
     }
