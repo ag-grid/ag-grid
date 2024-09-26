@@ -1482,7 +1482,7 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to allow multiple rows to be selected using single click.
      * @default false
-     * @deprecated v32.2 Use `rowSelection.enableMultiSelectWithClick` instead
+     * @deprecated v32.2 Use `rowSelection.enableSelectionWithoutKeys` instead
      */
     rowMultiSelectWithClick?: boolean;
     /**

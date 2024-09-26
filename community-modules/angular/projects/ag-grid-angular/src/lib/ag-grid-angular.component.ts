@@ -1342,7 +1342,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public cellSelection: boolean | CellSelectionOptions<TData> | undefined = undefined;
     /** Set to `true` to allow multiple rows to be selected using single click.
      * @default false
-     * @deprecated v32.2 Use `rowSelection.enableMultiSelectWithClick` instead
+     * @deprecated v32.2 Use `rowSelection.enableSelectionWithoutKeys` instead
      */
     @Input() public rowMultiSelectWithClick: boolean | undefined = undefined;
     /** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
