@@ -11,7 +11,7 @@ interface Params {
     code: ErrorCode;
 }
 interface Props {
-    errorPage: CollectionEntry<'errors'>;
+    errorPage?: CollectionEntry<'errors'>;
 }
 
 export async function getStaticPaths() {
@@ -35,8 +35,8 @@ export async function getStaticPaths() {
 
 const { framework, code } = Astro.params as Params;
 const { errorPage } = Astro.props as Props;
-const title = `AG Grid error #${code}`;
-const description = ''; // TODO
+const title = errorPage?.data.title ? errorPage?.data.title : `AG Grid error #${code}`;
+const description = errorPage?.data.description ? errorPage?.data.description : '';
 
 const { Content } = errorPage ? await errorPage.render() : { Content: undefined };
 ---
