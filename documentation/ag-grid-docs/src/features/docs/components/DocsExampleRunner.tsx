@@ -27,6 +27,7 @@ interface Props {
     importType: ImportType;
     isDev: boolean;
     typescriptOnly?: boolean;
+    suppressDarkMode?: boolean;
     overrideImportType?: ImportType;
 }
 
@@ -66,7 +67,15 @@ function getImportType(framework: InternalFramework): ImportType {
     return 'modules';
 }
 
-const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pageName, isDev }: Props) => {
+const DocsExampleRunnerInner = ({
+    name,
+    title,
+    exampleHeight,
+    typescriptOnly,
+    suppressDarkMode,
+    pageName,
+    isDev,
+}: Props) => {
     const exampleName = name;
     const id = `example-${name}`;
     const loadingIFrameId = getLoadingIFrameId({ pageName, exampleName: name });
@@ -171,6 +180,7 @@ const DocsExampleRunnerInner = ({ name, title, exampleHeight, typescriptOnly, pa
             loadingIFrameId={loadingIFrameId}
             supportedFrameworks={supportedFrameworks}
             supportedImportTypes={[getImportType(internalFramework)]}
+            suppressDarkMode={suppressDarkMode}
         />
     ) : null;
 };
