@@ -1,0 +1,11 @@
+@use 'design-system' as *;
+
+.errorPage {
+    height: 100%;
+    margin-top: $spacing-size-12;
+    margin-bottom: calc($spacing-size-12 * 4);
+
+    h2 {
+        margin-top: $spacing-size-8;
+    }
+}

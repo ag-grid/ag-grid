@@ -1015,3 +1015,6 @@ export * from './theming/parts/input-style/input-styles';
 export * from './theming/parts/tab-style/tab-styles';
 export * from './theming/parts/theme/themes';
 export * from './theming/theme-types';
+
+// errors
+export { ERRORS, type ErrorCode } from './errors';

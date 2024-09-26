@@ -1,0 +1,27 @@
+---
+import { ERRORS, type ErrorCode } from 'ag-grid-community';
+import Layout from '@layouts/Layout.astro';
+import { ErrorPage } from '@components/error/ErrorPage';
+
+interface Props {
+    code: ErrorCode;
+}
+
+export async function getStaticPaths() {
+    return Object.keys(ERRORS).map((code) => {
+        return {
+            params: {
+                code,
+            },
+        };
+    });
+}
+
+const { code } = Astro.params as Props;
+const title = `AG Grid error #${code}`;
+const description = ''; // TODO
+---
+
+<Layout title={title} description={description} showSearchBar={true} showDocsNav={false}>
+    <ErrorPage client:load errorCode={code} />
+</Layout>
