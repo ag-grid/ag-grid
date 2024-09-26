@@ -24,6 +24,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     // optional as 'singleColumn' is the default group display type
     groupDisplayType: 'singleColumn',
+    groupDefaultExpanded: 1,
 };
 
 // setup the grid after the page has finished loading

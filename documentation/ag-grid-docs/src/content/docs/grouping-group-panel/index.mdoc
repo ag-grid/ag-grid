@@ -2,83 +2,98 @@
 title: "Row Grouping - Row Group Panel"
 enterprise: true
 ---
+Use the Row Group Panel to enable users to modify the configured row group columns.
 
-This section covers the Row Group Panel which allows users control which columns the rows are grouped by.
+{% gridExampleRunner title="Enabling Row Group Panel" name="row-group-panel" /%}
 
-## Enabling Row Group Panel
+## Enabling the Row Group Panel
 
-To display the row group panel set `rowGroupPanelShow` as shown below:
+The Row Group Panel allows users to modify which columns are grouped by using drag and drop. The panel can be enabled
+by setting the `rowGroupPanelShow` grid option to `"always"` or `"onlyWhenGrouping"`.
 
+Columns also need to have `enableRowGroup` set to `true` in their column definition to be dragged into the panel.
+
+The example above enables the panel and configures the `country` and `year` columns to be controllable by the panel:
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = { 
     columnDefs: [
-        { field: 'country', enableRowGroup: true },
-        { field: 'year', enableRowGroup: true }, 
-        { field: 'sport', enableRowGroup: true },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
+        { field: 'country', rowGroup: true, enableRowGroup: true },
+        { field: 'year', rowGroup: true, enableRowGroup: true },
+        // ...other column definitions
     ],
     // possible options: 'never', 'always', 'onlyWhenGrouping'
     rowGroupPanelShow: 'always',
 }
 ```
 
-In the snippet above, the Row Group Panel is configured so that is `'always'` displayed. To only display the Row Group
-Panel when there are active row groups use: `'onlyWhenGrouping'`.
+## Row Group Panel in the Side Bar
 
-Note that `enableRowGroup=true` is only declared on the `country`, `year` and `sport` columns, which means only
-these columns can be dragged to the Row Group Panel.
+The Row Group Panel is also displayed as part of the [Columns Tool Panel](./tool-panel-columns/) in the [Side Bar](./side-bar/).
 
-This is demonstrated in the following example, note the following:
+{% gridExampleRunner title="Side Bar Row Group Panel" name="side-bar-row-group-panel" /%}
 
-* There are two active row groups as the supplied `country` and `year` column definitions have `rowGroup=true` declared.
+The example above enabled the Columns Tool Panel using the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = { 
+    sideBar: 'columns',
+}
+```
 
-* The Row Group Panel is always shown as `rowGroupPanelShow = 'always'`.
+Refer to the [Side Bar](./side-bar/) documentation for further configuration options.
 
-* Only the `country`, `year` and `sport` columns can be dragged to the Row Group Panel as they have `enableRowGroup` enabled.
+## Prevent User Grouping from Hiding Columns
 
-* The columns can be clicked in the Row Group Panel to progress their sort.
+After a user enables Row Grouping on a column, the columns visibility is hidden. This behaviour can be prevented by setting `suppressRowGroupHidesColumns`
+to `true`.
 
-{% gridExampleRunner title="Enabling Row Group Panel" name="row-group-panel"  exampleHeight=540 /%}
+Similarly, when a user un-groups a column, the column is made visible again. This behaviour can be prevented by setting `suppressMakeColumnVisibleAfterUnGroup`
+to `true`.
 
-## Keeping Columns Visible
+{% gridExampleRunner title="Keep Columns Visible" name="keep-columns-visible" /%}
 
-By default, dragging a column out of the grid will make it hidden and un-grouping a column will make it visible again.
-This default behaviour can be changed with the following properties:
+{% note %}
+When dragging a column to the row group panel, the column is considered outside of the grid and so will be hidden. This behaviour can be prevented by setting
+`suppressDragLeaveHidesColumns` to `true`.
+{% /note %}
 
-* `suppressDragLeaveHidesColumns`: When dragging a column out of the grid, e.g. when dragging a column from the grid to the group drop zone, the column will remain visible.
-* `suppressMakeColumnVisibleAfterUnGroup`: When un-grouping, e.g. when clicking the 'x' on a column in the drop zone, the column will not be made visible.
-* `suppressRowGroupHidesColumns`: When grouping, when a group is dragged into the group drop zones, the column will not be hidden.
+The example above prevents the column visibility from being impacted when a user changes the row group columns:
+```{% frameworkTransform=true %}
+const gridOptions = { 
+    suppressRowGroupHidesColumns: true,
+    suppressMakeColumnVisibleAfterUnGroup: true,
 
-The default behaviour is more natural for most scenarios as it stops data appearing twice, e.g. if country is displayed in the group column,
-there is no need to display country again in the country column. However, preventing hiding the grouped columns can allow for a finer control over the group sorting.
+    // prevent columns from being hidden when dragged over the row group panel
+    suppressDragLeaveHidesColumns: true,
+}
+```
 
-The example below demonstrates these three properties. Note the following:
+## Prevent Sorting
 
-* Columns country and year can be grouped by dragging the column to the group drop zone.
-* Grouped columns can be un-grouped by clicking the 'x' on the column in the drop zone.
-* The column visibility is not changed while the columns are grouped and un-grouped.
-* While dragging the column header over the drop zone, before it is dropped, the column appears translucent to indicate that the grouping has not yet been applied.
+The panel displays sort indicators, and the column pills can be clicked to change their sort. This behaviour can be prevented by setting the
+`rowGroupPanelSuppressSort` property to `true`.
 
-{% gridExampleRunner title="Keep Columns Visible" name="keep-columns-visible"  exampleHeight=515 /%}
+{% gridExampleRunner title="Prevent Panel Sorting" name="prevent-panel-sorting" /%}
 
-## Suppress Sorting
+The previous example demonstrates the following configuration for preventing the Row Group Panel from sorting columns:
+```{% frameworkTransform=true %}
+const gridOptions = { 
+    rowGroupPanelSuppressSort: true,
+}
+```
 
-By default, the column pills display sort indicators, and when clicked progress the columns sort status. This behaviour can be prevented by enabling the `rowGroupPanelSuppressSort` property.
+## Prevent Changes to Group Order
 
-The example below demonstrates this property. Note the following:
+The panel can be used to reorder or remove row grouping from columns. To prevent this, `groupLockGroupColumns` can be set to prevent
+removing or reordering columns. Providing `-1` will lock all columns, or provide a number representing the number of columns to lock.
 
-* The column pills within the row group panels do not have sort indicators.
-* Clicking on a column pill does not change the columns sort.
+{% gridExampleRunner title="Prevent Group Order Changes" name="prevent-group-order-changes" /%}
 
-{% gridExampleRunner title="Prevent Panel Sorting" name="prevent-panel-sorting"  exampleHeight=515 /%}
-
-## Example: Multiple Group Columns
-
-The following example demonstrates the row group panel used alongside multiple group columns.
-
-{% gridExampleRunner title="Multiple Group Columns" name="multiple-group-columns"  exampleHeight=515 /%}
+The example above demonstrates locking the first two columns from being reordered or removed:
+```{% frameworkTransform=true %}
+const gridOptions = { 
+    groupLockGroupColumns: 2,
+}
+```
 
 ## Next Up
 
