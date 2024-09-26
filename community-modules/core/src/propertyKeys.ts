@@ -76,7 +76,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     pivotSuppressAutoColumn: true,
     suppressExpandablePivotGroups: true,
     aggFuncs: true,
-    suppressAggFuncInHeader: true,
     allowShowChangeAfterFilter: true,
     ensureDomOrder: true,
     enableRtl: true,
