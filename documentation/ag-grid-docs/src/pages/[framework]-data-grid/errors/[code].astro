@@ -1,0 +1,48 @@
+---
+import { ERRORS, type ErrorCode } from 'ag-grid-community';
+import Layout from '@layouts/Layout.astro';
+import { ErrorPage } from '@components/error/ErrorPage';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import type { Framework } from '@ag-grid-types';
+import { FRAMEWORKS } from '@constants';
+
+interface Params {
+    framework: Framework;
+    code: ErrorCode;
+}
+interface Props {
+    errorPage: CollectionEntry<'errors'>;
+}
+
+export async function getStaticPaths() {
+    const errors = await getCollection('errors');
+    return FRAMEWORKS.flatMap((framework: Framework) => {
+        return Object.keys(ERRORS).map((codeNum) => {
+            const code = codeNum.toString();
+            const errorPage = errors.find(({ slug }) => slug === code);
+            return {
+                params: {
+                    framework,
+                    code,
+                },
+                props: {
+                    errorPage,
+                },
+            };
+        });
+    });
+}
+
+const { framework, code } = Astro.params as Params;
+const { errorPage } = Astro.props as Props;
+const title = `AG Grid error #${code}`;
+const description = ''; // TODO
+
+const { Content } = errorPage ? await errorPage.render() : { Content: undefined };
+---
+
+<Layout title={title} description={description} showSearchBar={true} showDocsNav={false}>
+    <ErrorPage client:only="react" errorCode={code}>
+        {Content ? <Content framework={framework} /> : undefined}
+    </ErrorPage>
+</Layout>
