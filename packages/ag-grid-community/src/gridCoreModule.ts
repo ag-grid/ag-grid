@@ -27,7 +27,7 @@ import { RowSelectionModule } from './selection/rowSelectionModule';
 import { SortModule } from './sort/sortModule';
 import { CellStyleModule } from './styling/cellStyleModule';
 import { ValidationService } from './validation/validationService';
-import { ExpressionModule, ValueCacheModule } from './valueService/valueModule';
+import { ChangeDetectionModule, ExpressionModule, ValueCacheModule } from './valueService/valueModule';
 import { VERSION } from './version';
 import { PopupModule } from './widgets/popupModule';
 
@@ -78,5 +78,6 @@ export const CommunityFeaturesModule = _defineModule({
         CellStyleModule,
         ColumnHoverModule,
         ColumnAnimationModule,
+        ChangeDetectionModule,
     ],
 });

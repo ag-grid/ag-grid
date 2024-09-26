@@ -56,7 +56,6 @@ import { SyncService } from './syncService';
 import { _errorOnce, _warnOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
-import { ChangeDetectionService } from './valueService/changeDetectionService';
 import { ValueService } from './valueService/valueService';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 
@@ -441,7 +440,6 @@ export class GridCoreCreator {
             Environment,
             CellNavigationService,
             ScrollVisibleService,
-            ChangeDetectionService,
             AnimationFrameService,
             ColumnDefFactory,
             RowCssClassCalculator,
