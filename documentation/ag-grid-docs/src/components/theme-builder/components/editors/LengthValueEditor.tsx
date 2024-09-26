@@ -1,5 +1,6 @@
-import { type LengthValue, paramValueToCss } from '@ag-grid-community/theming';
 import { reinterpretCSSValue, stripFloatingPointErrors } from '@components/theme-builder/model/utils';
+
+import { type LengthValue, paramValueToCss } from 'ag-grid-community';
 
 import { FormattedInput } from './FormattedInput';
 import { type ValueEditorProps } from './ValueEditorProps';

@@ -158,9 +158,9 @@ export const getOtherScriptFiles = async ({
     const filteredToFramework = {};
     const others = {};
     Object.entries(contents).forEach(([file, content]) => {
-        if (importType === 'packages') {
-            content = convertModuleToPackageImports(content);
-        }
+        // if (importType === 'packages') {
+        content = convertModuleToPackageImports(content);
+        // }
 
         let isFrameworkFile = false;
         FRAMEWORKS.forEach((framework) => {

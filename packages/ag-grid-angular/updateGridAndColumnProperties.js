@@ -2,7 +2,7 @@ const replace = require('replace-in-file');
 const fs = require('fs');
 const { EOL } = require('os');
 const ts = require('typescript');
-const ComponentUtil = require('@ag-grid-community/core').ComponentUtil;
+const ComponentUtil = require('ag-grid-community').ComponentUtil;
 const { getFormatterForTS } = require('./../../scripts/formatAST');
 
 const { formatNode, findNode, getFullJsDoc } = getFormatterForTS(ts);
@@ -185,7 +185,7 @@ function extractTypes(context, propsToSkip = []) {
 }
 
 function getGridPropertiesAndEventsJs() {
-    const gridOpsFile = '../../community-modules/core/src/entities/gridOptions.ts';
+    const gridOpsFile = '../ag-grid-community/src/entities/gridOptions.ts';
     const srcFile = parseFile(gridOpsFile);
     const gridOptionsNode = findNode('GridOptions', srcFile);
 
@@ -207,7 +207,7 @@ function getGridPropertiesAndEventsJs() {
 const updateGridProperties = (getGridPropertiesAndEvents) => {
     // extract the grid properties & events and add them to our angular grid component
     const { code: gridPropertiesAndEvents, types } = getGridPropertiesAndEvents();
-    const importsForProps = `import type {${EOL}    ${types.join(',' + EOL + '    ')}${EOL}} from "@ag-grid-community/core";`;
+    const importsForProps = `import type {${EOL}    ${types.join(',' + EOL + '    ')}${EOL}} from "ag-grid-community";`;
     const optionsForGrid = {
         files: './projects/ag-grid-angular/src/lib/ag-grid-angular.component.ts',
         from: [/(\/\/ @START@)[^]*(\/\/ @END@)/, /(\/\/ @START_IMPORTS@)[^]*(\/\/ @END_IMPORTS@)/],

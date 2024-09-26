@@ -1,21 +1,23 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { FiltersToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { RowGroupingModule } from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
+    CommunityFeaturesModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
     MenuModule,

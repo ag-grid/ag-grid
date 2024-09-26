@@ -1,10 +1,11 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { createTheme, iconSetMaterial } from '@ag-grid-community/theming';
-import { AgGridVue } from '@ag-grid-community/vue3';
 import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { createTheme, iconSetMaterial } from 'ag-grid-community';
+import { AgGridVue } from 'ag-grid-vue3';
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 const myCustomTheme = createTheme().withPart(iconSetMaterial).withParams({
     accentColor: 'red',

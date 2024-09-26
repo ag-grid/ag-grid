@@ -1,4 +1,9 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import React, { StrictMode, useCallback, useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
 import {
     ColDef,
     GetRowIdParams,
@@ -7,18 +12,14 @@ import {
     ModuleRegistry,
     RowDragEndEvent,
     SelectionOptions,
-} from '@ag-grid-community/core';
-import { CsvExportModule } from '@ag-grid-community/csv-export';
-import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
-import React, { StrictMode, useCallback, useEffect, useState } from 'react';
-import { createRoot } from 'react-dom/client';
+} from 'ag-grid-community';
+import { CsvExportModule } from 'ag-grid-community';
+import { ExcelExportModule, exportMultipleSheetsAsExcel } from 'ag-grid-enterprise';
+import { AgGridReact, CustomCellRendererProps } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule, ExcelExportModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule, CsvExportModule, ExcelExportModule]);
 
 const SportRenderer = (props: CustomCellRendererProps) => {
     return (

@@ -1,11 +1,13 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../../test-utils';
 import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
 
 describe('ag-grid tree aggregation and filter', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule],
+    });
 
     beforeEach(() => {
         vitest.useRealTimers();

@@ -1,5 +1,6 @@
-import { _errorOnce } from 'ag-grid-community';
 import { createVNode, defineComponent, render } from 'vue';
+
+import { _errorOnce } from 'ag-grid-community';
 
 function logMissingComp(component: string) {
     _errorOnce(`Could not find component with name of ${component}. Is it in Vue.components?`);

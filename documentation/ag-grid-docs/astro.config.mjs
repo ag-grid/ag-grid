@@ -114,7 +114,6 @@ const {
      * Charts robots.txt disallow json url to merge
      */
     CHARTS_ROBOTS_DISALLOW_JSON_URL,
-    WATCH_INTEGRATION = 'true',
 } = dotenvExpand.expand(dotenv).parsed;
 console.log(
     'Astro configuration',
@@ -134,7 +133,6 @@ console.log(
             DISABLE_EXAMPLE_RUNNER,
             CHARTS_SITEMAP_INDEX_URL,
             CHARTS_ROBOTS_DISALLOW_JSON_URL,
-            WATCH_INTEGRATION,
         },
         null,
         2
@@ -149,21 +147,24 @@ export default defineConfig({
         enabled: false,
     },
     vite: {
-        plugins: [mkcert(), svgr(), agHotModuleReload(Boolean(WATCH_INTEGRATION))],
+        plugins: [mkcert(), svgr(), agHotModuleReload()],
         server: {
             https: !['0', 'false'].includes(PUBLIC_HTTPS_SERVER),
         },
         css: {
             preprocessorOptions: {
                 scss: {
+                    api: 'modern-compiler',
                     functions: {
-                        'urlWithBaseUrl($url)': function (url) {
-                            const urlWithBase = urlWithBaseUrl(url.getValue(), PUBLIC_BASE_URL);
+                        'urlWithBaseUrl($url)': function (args) {
+                            const sassUrl = args[0].assertString();
+                            const url = sassUrl.toString().replaceAll(/['"]/g, '');
+                            const urlWithBase = urlWithBaseUrl(url, PUBLIC_BASE_URL);
 
-                            return new sass.types.String(urlWithBase);
+                            return new sass.SassString(urlWithBase);
                         },
                     },
-                    includePaths: ['../../external/ag-website-shared/src'],
+                    loadPaths: ['../../external/ag-website-shared/src'],
                 },
             },
         },

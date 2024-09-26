@@ -1,7 +1,3 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-// Theme
-import { ColDef, ModuleRegistry, ValueFormatterParams } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
 // React Grid Logic
 import '@ag-grid-community/styles/ag-grid.css';
 // Core CSS
@@ -9,7 +5,12 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { StrictMode, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+// Theme
+import { ColDef, ModuleRegistry, ValueFormatterParams } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 // Row Data Interface
 interface IRow {

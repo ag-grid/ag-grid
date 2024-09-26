@@ -1,4 +1,4 @@
-import type { GridApi, IRowNode, RowDataTransaction, RowNode } from '@ag-grid-community/core';
+import type { GridApi, IRowNode, RowDataTransaction, RowNode } from 'ag-grid-community';
 
 export function optionalEscapeString(s: string): string {
     return /^(?!\d)\w[._-\w]*$|^\d+$/.test(s) ? s : JSON.stringify(s);

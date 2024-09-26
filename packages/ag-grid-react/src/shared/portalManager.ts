@@ -1,5 +1,6 @@
-import { _errorOnce } from 'ag-grid-community';
 import type { ReactPortal } from 'react';
+
+import { _errorOnce } from 'ag-grid-community';
 
 import type { ReactComponent } from './reactComponent';
 

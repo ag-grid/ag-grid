@@ -1,21 +1,23 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ClipboardModule } from 'ag-grid-enterprise';
+import { ExcelExportModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { RangeSelectionModule } from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
 
 import MenuItem from './menuItem.jsx';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
+    CommunityFeaturesModule,
     MenuModule,
     ExcelExportModule,
     RangeSelectionModule,

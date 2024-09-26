@@ -1,5 +1,6 @@
-import { type Part, type Theme, _asThemeImpl, themeQuartz } from '@ag-grid-community/theming';
 import { atom, useAtomValue } from 'jotai';
+
+import { type Part, type Theme, _asThemeImpl, themeQuartz } from 'ag-grid-community';
 
 import { allParamModels } from './ParamModel';
 import { FeatureModel } from './PartModel';

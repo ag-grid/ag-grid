@@ -1,3 +1,5 @@
+import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
+
 import type {
     AbstractHeaderCellCtrl,
     HeaderCellCtrl,
@@ -7,7 +9,6 @@ import type {
     IHeaderRowComp,
 } from 'ag-grid-community';
 import { HeaderRowType, _EmptyBean } from 'ag-grid-community';
-import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import { BeansContext } from '../beansContext';
 import { agFlushSync, getNextValueIfDifferent } from '../utils';

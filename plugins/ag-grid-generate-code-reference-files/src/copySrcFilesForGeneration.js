@@ -31,7 +31,7 @@ function copyFileWithTSNoCheck(sourceFile, destinationDir, destinationFile) {
     });
 }
 
-const srcPropertyKeys = '../../community-modules/core/src/eventTypes.ts';
+const srcPropertyKeys = '../../packages/ag-grid-community/src/eventTypes.ts';
 const destDir = './executors/generate/_copiedFromCore';
 const destPropertyFile = '/eventTypes.ts';
 copyFileWithTSNoCheck(srcPropertyKeys, destDir, destPropertyFile);

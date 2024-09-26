@@ -1,5 +1,6 @@
-import { CustomCellEditorProps } from '@ag-grid-community/react';
 import React, { memo, useEffect, useRef, useState } from 'react';
+
+import { CustomCellEditorProps } from 'ag-grid-react';
 
 export default memo(({ value, onValueChange, stopEditing }: CustomCellEditorProps) => {
     const isHappy = (value: string) => value === 'Happy';

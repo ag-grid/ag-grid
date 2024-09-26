@@ -1,3 +1,7 @@
+import { markRaw, toRaw } from '@vue/reactivity';
+import type { PropType } from 'vue';
+import { defineComponent, getCurrentInstance, h } from 'vue';
+
 import type { AgEventType, GridApi, GridOptions, IRowNode, Module } from 'ag-grid-community';
 import {
     ALWAYS_SYNC_GLOBAL_EVENTS,
@@ -7,9 +11,6 @@ import {
     _warnOnce,
     createGrid,
 } from 'ag-grid-community';
-import { markRaw, toRaw } from '@vue/reactivity';
-import type { PropType } from 'vue';
-import { defineComponent, getCurrentInstance, h } from 'vue';
 
 import type { Properties } from './Utils';
 import { convertToRaw, getAgGridProperties } from './Utils';

@@ -1,4 +1,4 @@
-import corePackageJson from '../../../community-modules/core/package.json';
+import corePackageJson from '../../../packages/ag-grid-community/package.json';
 import type { Framework, ImportType, InternalFramework } from './types/ag-grid';
 
 const isTruthy = (val: string | boolean) => ['1', 'true', true].includes(val);

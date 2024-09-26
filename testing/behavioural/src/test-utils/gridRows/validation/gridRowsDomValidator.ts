@@ -1,4 +1,4 @@
-import type { IRowNode, RowNode } from '@ag-grid-community/core';
+import type { IRowNode, RowNode } from 'ag-grid-community';
 
 import type { GridRows } from '../gridRows';
 import type { GridRowErrors, GridRowsErrors } from '../gridRowsErrors';

@@ -1,5 +1,6 @@
-import { CustomCellRendererProps } from '@ag-grid-community/react';
 import React, { memo, useEffect, useState } from 'react';
+
+import { CustomCellRendererProps } from 'ag-grid-react';
 
 const DetailCellRenderer = ({ data }: CustomCellRendererProps) => {
     const [callCount, setCallCount] = useState(data.calls);

@@ -1,6 +1,27 @@
-import type { Part } from '@ag-grid-community/theming';
-import * as themes from '@ag-grid-community/theming';
 import { atom, useAtom } from 'jotai';
+
+import type { Part } from 'ag-grid-community';
+import {
+    _asThemeImpl,
+    colorSchemeDark,
+    colorSchemeDarkBlue,
+    colorSchemeDarkWarm,
+    colorSchemeLight,
+    colorSchemeLightCold,
+    colorSchemeLightWarm,
+    iconSetAlpine,
+    iconSetMaterial,
+    iconSetQuartzBold,
+    iconSetQuartzLight,
+    iconSetQuartzRegular,
+    inputStyleBordered,
+    inputStyleUnderlined,
+    tabStyleAlpine,
+    tabStyleMaterial,
+    tabStyleQuartz,
+    tabStyleRolodex,
+    themeQuartz,
+} from 'ag-grid-community';
 
 import type { PersistentAtom } from './JSONStorage';
 import { atomWithJSONStorage } from './JSONStorage';
@@ -8,22 +29,16 @@ import { memoize, titleCase } from './utils';
 
 const partsByFeatureName: Record<string, Part<any>[] | undefined> = {
     colorScheme: [
-        themes.colorSchemeLightCold,
-        themes.colorSchemeLight,
-        themes.colorSchemeLightWarm,
-        themes.colorSchemeDarkBlue,
-        themes.colorSchemeDark,
-        themes.colorSchemeDarkWarm,
+        colorSchemeLightCold,
+        colorSchemeLight,
+        colorSchemeLightWarm,
+        colorSchemeDarkBlue,
+        colorSchemeDark,
+        colorSchemeDarkWarm,
     ],
-    iconSet: [
-        themes.iconSetAlpine,
-        themes.iconSetMaterial,
-        themes.iconSetQuartzLight,
-        themes.iconSetQuartzRegular,
-        themes.iconSetQuartzBold,
-    ],
-    tabStyle: [themes.tabStyleQuartz, themes.tabStyleAlpine, themes.tabStyleMaterial, themes.tabStyleRolodex],
-    inputStyle: [themes.inputStyleBordered, themes.inputStyleUnderlined],
+    iconSet: [iconSetAlpine, iconSetMaterial, iconSetQuartzLight, iconSetQuartzRegular, iconSetQuartzBold],
+    tabStyle: [tabStyleQuartz, tabStyleAlpine, tabStyleMaterial, tabStyleRolodex],
+    inputStyle: [inputStyleBordered, inputStyleUnderlined],
 };
 
 export const getPartsByFeature = (featureName: string) => partsByFeatureName[featureName];
@@ -35,7 +50,7 @@ const partDocs: Record<string, string | undefined> = {
     inputStyle: 'The appearance of text input fields',
 };
 
-const defaultPartIds = new Set(themes._asThemeImpl(themes.themeQuartz).dependencies.map((dep) => dep.id));
+const defaultPartIds = new Set(_asThemeImpl(themeQuartz).dependencies.map((dep) => dep.id));
 
 export class FeatureModel {
     readonly label: string;

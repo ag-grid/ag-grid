@@ -17,6 +17,3 @@ community-modules/styles/src/internal/ag/generated/*
 
 # Algolia
 documentation/update-algolia-indices/output
-
-# Packages - generated files
-/packages/*

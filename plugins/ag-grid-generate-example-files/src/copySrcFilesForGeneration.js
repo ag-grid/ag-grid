@@ -52,10 +52,10 @@ function copyJsonFile(sourceFile, destinationFile) {
     });
 }
 
-const srcPropertyKeys = '../../community-modules/core/src/propertyKeys.ts';
+const srcPropertyKeys = '../../packages/ag-grid-community/src/propertyKeys.ts';
 const destPropertyKeys = './src/executors/generate/generator/_copiedFromCore/propertyKeys.ts';
 
-const srcEventKeys = '../../community-modules/core/src/eventTypes.ts';
+const srcEventKeys = '../../packages/ag-grid-community/src/eventTypes.ts';
 const destEventKeys = './src/executors/generate/generator/_copiedFromCore/eventTypes.ts';
 
 const srcModules = '../../documentation/ag-grid-docs/src/content/matrix-table/modules.json';

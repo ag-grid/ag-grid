@@ -39,7 +39,7 @@
     },
     "generateGridOptionsType": {
       "executor": "nx:run-script",
-      "dependsOn": ["@ag-grid-community/core:build:types", "copySrcFilesForGeneration"],
+      "dependsOn": ["ag-grid-community:build:types", "copySrcFilesForGeneration"],
       "options": {
         "script": "generateGridOptionsType"
       },
@@ -57,8 +57,8 @@
       },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/community-modules/core/src/propertyKeys.ts",
-        "{workspaceRoot}/community-modules/core/src/eventTypes.ts",
+        "{workspaceRoot}/packages/ag-grid-community/src/propertyKeys.ts",
+        "{workspaceRoot}/packages/ag-grid-community/src/eventTypes.ts",
         "{workspaceRoot}/documentation/ag-grid-docs/src/content/matrix-table/modules.json"
       ],
       "outputs": [

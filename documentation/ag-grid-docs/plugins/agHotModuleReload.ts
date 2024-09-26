@@ -2,23 +2,16 @@ import chokidar from 'chokidar';
 import type { Plugin, ViteDevServer } from 'vite';
 
 import { getIsDev } from '../src/utils/env';
-import { getDevFileList, getExampleRootFileUrl } from '../src/utils/pages';
 
 const BUILD_QUEUE_EMPTY_FILE = '../../node_modules/.cache/ag-build-queue.empty';
 
-export default function createAgHotModuleReload(watchIntegration: boolean): Plugin {
+export default function createAgHotModuleReload(): Plugin {
     return {
         name: 'ag-hmr',
         async configureServer(server: ViteDevServer) {
             if (!getIsDev()) return;
 
-            let filesToWatch = [BUILD_QUEUE_EMPTY_FILE];
-            if (!watchIntegration) {
-                const devFiles = getDevFileList();
-                const exampleFiles = getExampleRootFileUrl().pathname;
-                filesToWatch = [...devFiles, ...exampleFiles];
-            }
-
+            const filesToWatch = [BUILD_QUEUE_EMPTY_FILE];
             let timeout: NodeJS.Timeout | undefined;
             const fullReload = (path: string) => {
                 clearTimeout(timeout);

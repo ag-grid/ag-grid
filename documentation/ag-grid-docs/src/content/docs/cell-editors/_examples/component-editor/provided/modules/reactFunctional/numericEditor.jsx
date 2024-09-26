@@ -1,5 +1,6 @@
-import { useGridCellEditor } from '@ag-grid-community/react';
 import React, { memo, useCallback, useEffect, useRef } from 'react';
+
+import { useGridCellEditor } from 'ag-grid-react';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';

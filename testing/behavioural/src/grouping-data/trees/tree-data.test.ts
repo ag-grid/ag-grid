@@ -1,7 +1,8 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridOptions } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import type { MockInstance } from 'vitest';
+
+import type { GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
@@ -11,7 +12,9 @@ import type { RowSnapshot } from '../row-snapshot-test-utils';
 const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree data', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule],
+    });
 
     let consoleWarnSpy: MockInstance;
 

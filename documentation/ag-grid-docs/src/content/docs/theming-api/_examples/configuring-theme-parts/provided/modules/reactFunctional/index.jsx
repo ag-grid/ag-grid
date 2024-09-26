@@ -1,8 +1,10 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
+import React, { StrictMode, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 import {
     colorSchemeDark,
     colorSchemeDarkBlue,
@@ -18,15 +20,15 @@ import {
     themeAlpine,
     themeBalham,
     themeQuartz,
-} from '@ag-grid-community/theming';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { SideBarModule } from '@ag-grid-enterprise/side-bar';
-import React, { StrictMode, useMemo, useState } from 'react';
-import { createRoot } from 'react-dom/client';
+} from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { FiltersToolPanelModule } from 'ag-grid-enterprise';
+import { SideBarModule } from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
+    CommunityFeaturesModule,
     SideBarModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,

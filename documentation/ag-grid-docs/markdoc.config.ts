@@ -74,6 +74,7 @@ export default defineMarkdocConfig({
                 title: { type: String, required: true },
                 name: { type: String, required: true },
                 typescriptOnly: { type: Boolean },
+                suppressDarkMode: { type: Boolean },
                 overrideImportType: { type: String },
                 exampleHeight: { type: Number },
             },

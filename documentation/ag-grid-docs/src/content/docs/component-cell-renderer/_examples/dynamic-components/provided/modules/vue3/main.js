@@ -1,9 +1,10 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { AgGridVue } from '@ag-grid-community/vue3';
 import { createApp } from 'vue';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { AgGridVue } from 'ag-grid-vue3';
 
 import ChildMessageRenderer from './childMessageRendererVue.js';
 import CubeRenderer from './cubeRendererVue.js';
@@ -12,7 +13,7 @@ import ParamsRenderer from './paramsRendererVue.js';
 import SquareRenderer from './squareRendererVue.js';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 const VueExample = {
     template: `
