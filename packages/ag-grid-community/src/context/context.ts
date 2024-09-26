@@ -230,7 +230,7 @@ export interface CoreBeanCollection {
     pivotResultColsService: PivotResultColsService;
     autoColService?: IAutoColService;
     controlsColService?: ControlsColService;
-    columnDefFactory: ColumnDefFactory;
+    columnDefFactory?: ColumnDefFactory;
     columnGroupStateService: ColumnGroupStateService;
     columnAutosizeService?: ColumnAutosizeService;
     funcColsService: FuncColsService;

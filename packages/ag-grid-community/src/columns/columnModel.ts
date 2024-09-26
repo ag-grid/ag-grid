@@ -73,7 +73,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private autoColService?: IAutoColService;
     private controlsColService?: ControlsColService;
     private valueCache?: ValueCache;
-    private columnDefFactory: ColumnDefFactory;
+    private columnDefFactory?: ColumnDefFactory;
     private columnApplyStateService: ColumnApplyStateService;
     private columnGroupStateService: ColumnGroupStateService;
     private columnAutosizeService?: ColumnAutosizeService;
@@ -772,22 +772,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
-        if (!this.colDefCols) {
-            return;
-        }
-
-        const cols = this.colDefCols.list.slice();
-
-        if (this.showingPivotResult) {
-            cols.sort((a, b) => this.lastOrder!.indexOf(a) - this.lastOrder!.indexOf(b));
-        } else if (this.lastOrder) {
-            cols.sort((a, b) => this.cols.list.indexOf(a) - this.cols.list.indexOf(b));
-        }
-
-        const rowGroupColumns = this.funcColsService.rowGroupCols;
-        const pivotColumns = this.funcColsService.pivotCols;
-
-        return this.columnDefFactory.buildColumnDefs(cols, rowGroupColumns, pivotColumns);
+        return this.colDefCols
+            ? this.columnDefFactory?.getColumnDefs(
+                  this.colDefCols.list,
+                  this.showingPivotResult,
+                  this.lastOrder,
+                  this.cols.list
+              )
+            : undefined;
     }
 
     public isShowingPivotResult(): boolean {

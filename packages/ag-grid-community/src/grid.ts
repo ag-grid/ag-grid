@@ -4,7 +4,6 @@ import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
 import { CellNavigationService } from './cellNavigationService';
 import { ColumnApplyStateService } from './columns/columnApplyStateService';
-import { ColumnDefFactory } from './columns/columnDefFactory';
 import { ColumnFactory } from './columns/columnFactory';
 import { ColumnFlexService } from './columns/columnFlexService';
 import { ColumnGetStateService } from './columns/columnGetStateService';
@@ -439,7 +438,6 @@ export class GridCoreCreator {
             Environment,
             CellNavigationService,
             ScrollVisibleService,
-            ColumnDefFactory,
             RowCssClassCalculator,
             CtrlsService,
             PinnedWidthService,

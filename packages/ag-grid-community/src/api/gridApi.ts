@@ -544,13 +544,15 @@ export interface _ColumnHoverApi {
     isColumnHovered(column: Column): boolean;
 }
 
-export interface _ColumnGridApi<TData> {
-    getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null;
-
+export interface _GetColumnDefsApi<TData> {
     /**
      * Returns the current column definitions.
      */
     getColumnDefs(): (ColDef<TData> | ColGroupDef<TData>)[] | undefined;
+}
+
+export interface _ColumnGridApi<TData> {
+    getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null;
 
     /** Call this if you want to open or close a column group. */
     setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void;
@@ -1225,6 +1227,7 @@ export interface _CoreModuleGridApi<TData>
         _ColumnResizeApi,
         _ColumnMoveApi,
         _ColumnHoverApi,
+        _GetColumnDefsApi<TData>,
         _ColumnGridApi<TData>,
         _DragGridApi,
         _EditGridApi<TData>,

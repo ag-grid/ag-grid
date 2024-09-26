@@ -4,7 +4,7 @@ import { ColumnAutosizeModule } from './columnAutosize/columnAutosizeModule';
 import { ColumnMoveModule } from './columnMove/columnMoveModule';
 import { ColumnResizeModule } from './columnResize/columnResizeModule';
 import { ColumnHoverModule } from './columns/columnHover/columnHoverModule';
-import { ControlsColumnModule, DataTypeModule } from './columns/columnModule';
+import { ControlsColumnModule, DataTypeModule, GetColumnDefsModule } from './columns/columnModule';
 import { CellRendererFunctionModule } from './components/framework/cellRendererFunctionModule';
 import { DragAndDropModule, RowDragModule } from './dragAndDrop/dragModule';
 import { EditModule } from './edit/editModule';
@@ -81,5 +81,6 @@ export const CommunityFeaturesModule = _defineModule({
         ColumnAnimationModule,
         ChangeDetectionModule,
         AnimationFrameModule,
+        GetColumnDefsModule,
     ],
 });
