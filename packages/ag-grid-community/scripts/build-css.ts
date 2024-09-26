@@ -9,15 +9,15 @@ import cssRtl from 'postcss-rtlcss';
 import cssUrl from 'postcss-url';
 
 const srcFolder = join(__dirname, '..', 'src');
-const stylesFolder = join(srcFolder, 'styles');
+const themingFolder = join(srcFolder, 'theming');
 const DEV_MODE = process.argv.includes('--dev');
 
 const written = new Set<string>();
 
 const generateAllCSSEmbeds = async () => {
-    await generateCSSEmbed(join(stylesFolder, 'core/core.css'), true);
+    await generateCSSEmbed(join(themingFolder, 'core/core.css'), true);
 
-    const cssEntryPoints = globSync(join(stylesFolder, 'parts/**/*.css')).filter((path) => !path.includes('/css/'));
+    const cssEntryPoints = globSync(join(themingFolder, 'parts/**/*.css')).filter((path) => !path.includes('/css/'));
     for (const cssEntryPoint of cssEntryPoints) {
         await generateCSSEmbed(cssEntryPoint, false);
     }

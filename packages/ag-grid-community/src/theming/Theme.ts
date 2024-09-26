@@ -98,9 +98,9 @@ class ThemeImpl<TParams = unknown> implements Theme {
     public getParams(): Params {
         if (this._getParamsCache) return this._getParamsCache;
 
-        const mergedParams = new Params().withParams(coreDefaults);
+        let mergedParams = new Params().withParams(coreDefaults());
         for (const part of this._getFlatUnits()) {
-            mergedParams.mutateMergeWith(part.params);
+            mergedParams = mergedParams.mergedWith(part.params);
         }
 
         return (this._getParamsCache = mergedParams);
