@@ -24,14 +24,14 @@ const myCustomTheme = createTheme().withPart(iconSetMaterial).withParams({
             [defaultColDef]="defaultColDef"
             [rowData]="rowData"
             [theme]="theme"
-            [selection]="selection"
+            [rowSelection]="rowSelection"
         />
     `,
 })
 export class AppComponent {
     theme = myCustomTheme;
 
-    selection = { mode: 'multiRow', checkboxes: true };
+    rowSelection = { mode: 'multiRow', checkboxes: true };
 
     columnDefs: ColDef[] = [{ field: 'make' }, { field: 'model' }, { field: 'price' }];
 

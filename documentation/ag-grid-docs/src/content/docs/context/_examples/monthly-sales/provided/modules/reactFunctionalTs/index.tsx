@@ -1,7 +1,7 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, ColGroupDef, GridReadyEvent, SelectionOptions } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, GridReadyEvent, RowSelectionOptions } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact, CustomCellRendererProps, CustomGroupCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -54,7 +54,7 @@ const monthNames = [
     'Full Year',
 ];
 
-const selection: SelectionOptions = {
+const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
     headerCheckbox: false,
     groupSelects: 'descendants',
@@ -228,7 +228,7 @@ const GridExample = () => {
                         context={context.current}
                         defaultColDef={defaultColDef}
                         autoGroupColumnDef={autoGroupColumnDef}
-                        selection={selection}
+                        rowSelection={rowSelection}
                         onGridReady={onGridReady}
                     />
                 </div>

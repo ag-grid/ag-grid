@@ -175,10 +175,11 @@ export class CheckboxSelectionComponent extends Component {
             }
         }
 
-        const so = this.gos.get('selection');
-        const disableInsteadOfHide = so
-            ? !_getHideDisabledCheckboxes(so)
-            : this.column?.getColDef().showDisabledCheckboxes;
+        const so = this.gos.get('rowSelection');
+        const disableInsteadOfHide =
+            so && typeof so !== 'string'
+                ? !_getHideDisabledCheckboxes(so)
+                : this.column?.getColDef().showDisabledCheckboxes;
         if (disableInsteadOfHide) {
             this.eCheckbox.setDisabled(!selectable);
             this.setVisible(true);
@@ -199,8 +200,8 @@ export class CheckboxSelectionComponent extends Component {
             return this.overrides.isVisible;
         }
 
-        const so = this.gos.get('selection');
-        if (so) {
+        const so = this.gos.get('rowSelection');
+        if (so && typeof so !== 'string') {
             return _getCheckboxes(so);
         }
 

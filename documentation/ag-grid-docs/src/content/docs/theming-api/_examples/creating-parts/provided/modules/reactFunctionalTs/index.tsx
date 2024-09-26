@@ -65,7 +65,7 @@ const GridExample = () => {
     return (
         <AgGridReact
             theme={myCustomTheme}
-            selection={{ mode: 'multiRow', checkboxes: true }}
+            rowSelection={{ mode: 'multiRow', checkboxes: true }}
             initialState={{
                 rowSelection: ['1', '2', '3'],
             }}

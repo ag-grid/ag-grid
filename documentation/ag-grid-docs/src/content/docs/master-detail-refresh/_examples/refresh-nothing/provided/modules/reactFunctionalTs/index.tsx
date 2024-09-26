@@ -48,7 +48,7 @@ const GridExample = () => {
         return {
             refreshStrategy: 'nothing',
             detailGridOptions: {
-                selection: {
+                rowSelection: {
                     mode: 'multiRow',
                     headerCheckbox: false,
                 },

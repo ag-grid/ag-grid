@@ -41,7 +41,7 @@ const gridOptions: GridOptions = {
             suppressCount: true,
         },
     },
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         groupSelects: 'self',
     },
@@ -63,7 +63,7 @@ function getGroupSelectsValue(): GroupSelectionMode {
 }
 
 function onSelectionModeChange() {
-    gridApi.setGridOption('selection', {
+    gridApi.setGridOption('rowSelection', {
         mode: 'multiRow',
         groupSelects: getGroupSelectsValue(),
     });

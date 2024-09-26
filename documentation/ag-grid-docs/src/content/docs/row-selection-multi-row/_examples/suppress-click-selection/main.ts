@@ -27,7 +27,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selection: { mode: 'multiRow', enableClickSelection: true },
+    rowSelection: { mode: 'multiRow', enableClickSelection: true },
 };
 
 // setup the grid after the page has finished loading
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function onEnableClickSelection() {
     const value = document.querySelector<HTMLSelectElement>('#select-enable')?.value;
 
-    gridApi.setGridOption('selection', {
+    gridApi.setGridOption('rowSelection', {
         mode: 'multiRow',
         enableClickSelection: value === 'true' ? true : value === 'false' ? false : (value as any),
     });

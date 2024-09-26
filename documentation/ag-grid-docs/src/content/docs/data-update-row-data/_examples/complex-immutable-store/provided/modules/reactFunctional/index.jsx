@@ -192,7 +192,7 @@ const updateImmutableObject = (original, newValues) => {
     return newObject;
 };
 
-const selection = {
+const rowSelection = {
     mode: 'multiRow',
     groupSelects: 'descendants',
     headerCheckbox: false,
@@ -401,7 +401,7 @@ const GridExample = () => {
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         autoGroupColumnDef={autoGroupColumnDef}
-                        selection={selection}
+                        rowSelection={rowSelection}
                         suppressAggFuncInHeader={true}
                         getRowId={getRowId}
                     />

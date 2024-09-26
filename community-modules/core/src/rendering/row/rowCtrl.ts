@@ -13,8 +13,8 @@ import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContai
 import {
     _getActiveDomElement,
     _getEnableDeselection,
-    _getEnableMultiSelectWithClick,
     _getEnableSelection,
+    _getEnableSelectionWithoutKeys,
     _getGroupSelectsDescendants,
     _getRowHeightForNode,
     _isAnimateRows,
@@ -370,9 +370,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private addRowDraggerToRow(gui: RowGui) {
         if (_isCellSelectionEnabled(this.gos)) {
-            _warnOnce(
-                "Setting `rowDragEntireRow: true` in the gridOptions doesn't work with `selection.mode = 'cell'`"
-            );
+            _warnOnce("Setting `rowDragEntireRow: true` in the gridOptions doesn't work with `cellSelection: true`");
             return;
         }
         const translate = this.beans.localeService.getLocaleTextFunc();
@@ -1131,7 +1129,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        const multiSelectOnClick = _getEnableMultiSelectWithClick(gos);
+        const multiSelectOnClick = _getEnableSelectionWithoutKeys(gos);
         const rowDeselectionWithCtrl = _getEnableDeselection(gos);
         const source = 'rowClicked';
 

@@ -53,7 +53,7 @@ const gridOptions: GridOptions = {
         filter: true,
         floatingFilter: true,
     },
-    selection: { mode: 'cell' },
+    cellSelection: true,
     enableCharts: true,
     popupParent: document.body,
     chartThemeOverrides: {

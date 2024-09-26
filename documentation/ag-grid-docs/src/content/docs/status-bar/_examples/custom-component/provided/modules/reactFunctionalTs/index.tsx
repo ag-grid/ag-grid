@@ -1,7 +1,7 @@
 'use strict';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, SelectionOptions, StatusPanelDef } from '@ag-grid-community/core';
+import { ColDef, RowSelectionOptions, StatusPanelDef } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -17,7 +17,7 @@ import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, StatusBarModule, RangeSelectionModule]);
 
-const selection: SelectionOptions = {
+const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
     checkboxes: false,
     headerCheckbox: false,
@@ -92,7 +92,7 @@ const GridExample = () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    selection={selection}
+                    rowSelection={rowSelection}
                     statusBar={statusBar}
                 />
             </div>

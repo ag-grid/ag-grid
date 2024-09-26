@@ -197,7 +197,7 @@ const gridOptions: GridOptions = {
         filter: true,
     },
     getRowId: getRowId,
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
         headerCheckbox: false,

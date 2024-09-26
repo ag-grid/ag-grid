@@ -11,7 +11,7 @@ import {
     BeanStub,
     _errorOnce,
     _isMultiRowSelection,
-    _isUsingNewSelectionAPI,
+    _isUsingNewRowSelectionAPI,
     _last,
     _warnOnce,
     isSelectionUIEvent,
@@ -84,7 +84,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         }
 
         const isSelectingMultipleRows = newState.selectAll || newState.toggledNodes.size > 1;
-        if (_isUsingNewSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos) && isSelectingMultipleRows) {
+        if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos) && isSelectingMultipleRows) {
             return _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
         }
 
@@ -125,7 +125,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         const onlyThisNode = clearSelection && newValue && !rangeSelect;
         if (!_isMultiRowSelection(this.gos) || onlyThisNode) {
             if (nodes.length > 1) {
-                throw new Error("AG Grid: cannot select multiple rows when selection.mode is set to 'singleRow'");
+                throw new Error("AG Grid: cannot select multiple rows when rowSelection.mode is set to 'singleRow'");
             }
             const node = nodes[0];
             if (newValue && node.selectable) {

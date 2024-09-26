@@ -44,7 +44,7 @@ describe('Row Selection Grid API', () => {
                     const api = createGrid({
                         columnDefs,
                         rowData,
-                        selection: {
+                        rowSelection: {
                             mode: 'singleRow',
                         },
                     });
@@ -62,7 +62,7 @@ describe('Row Selection Grid API', () => {
                     const api = createGrid({
                         columnDefs,
                         rowData,
-                        selection: { mode: 'singleRow' },
+                        rowSelection: { mode: 'singleRow' },
                         pagination: true,
                         paginationPageSize: 5,
                         paginationPageSizeSelector: false,
@@ -79,7 +79,7 @@ describe('Row Selection Grid API', () => {
                     const api = createGrid({
                         columnDefs,
                         rowData,
-                        selection: { mode: 'singleRow' },
+                        rowSelection: { mode: 'singleRow' },
                     });
 
                     api.setGridOption('quickFilterText', 'ing');
@@ -95,7 +95,7 @@ describe('Row Selection Grid API', () => {
                     const api = createGrid({
                         columnDefs,
                         rowData,
-                        selection: { mode: 'singleRow' },
+                        rowSelection: { mode: 'singleRow' },
                     });
 
                     const nodes = api.getRenderedNodes();
@@ -109,7 +109,7 @@ describe('Row Selection Grid API', () => {
                     const api = createGrid({
                         columnDefs,
                         rowData,
-                        selection: { mode: 'singleRow' },
+                        rowSelection: { mode: 'singleRow' },
                     });
 
                     const nodes = api.getRenderedNodes();
@@ -126,7 +126,7 @@ describe('Row Selection Grid API', () => {
                 test('Prevented from selecting all rows via the API', async () => {
                     const api = createGrid({
                         columnDefs,
-                        selection: {
+                        rowSelection: {
                             mode: 'singleRow',
                         },
                         getRowId(params) {
@@ -162,7 +162,7 @@ describe('Row Selection Grid API', () => {
                         getRowId(params) {
                             return params.data.sport;
                         },
-                        selection: { mode: 'singleRow' },
+                        rowSelection: { mode: 'singleRow' },
                     });
 
                     await waitForFirstRender(api);
@@ -185,7 +185,7 @@ describe('Row Selection Grid API', () => {
                         getRowId(params) {
                             return params.data.sport;
                         },
-                        selection: { mode: 'singleRow' },
+                        rowSelection: { mode: 'singleRow' },
                     });
 
                     await waitForFirstRender(api);
@@ -203,7 +203,7 @@ describe('Row Selection Grid API', () => {
         describe('CSRM', () => {
             describe('setNodesSelected', () => {
                 test('Select single row', () => {
-                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
 
                     const nodes = api.getRenderedNodes();
                     const toSelect = [nodes[3]];
@@ -213,7 +213,7 @@ describe('Row Selection Grid API', () => {
                 });
 
                 test('Can select multiple rows', () => {
-                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
 
                     const nodes = api.getRenderedNodes();
                     const toSelect = [nodes[5], nodes[4], nodes[2]];
@@ -225,7 +225,7 @@ describe('Row Selection Grid API', () => {
 
             describe('selectAll', () => {
                 test('Can select all rows', () => {
-                    const api = createGrid({ columnDefs, rowData, selection: { mode: 'multiRow' } });
+                    const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
 
                     api.selectAll();
 
@@ -251,7 +251,7 @@ describe('Row Selection Grid API', () => {
                         getRowId(params) {
                             return params.data.sport;
                         },
-                        selection: { mode: 'multiRow' },
+                        rowSelection: { mode: 'multiRow' },
                     });
 
                     await waitForFirstRender(api);
@@ -274,7 +274,7 @@ describe('Row Selection Grid API', () => {
                         getRowId(params) {
                             return params.data.sport;
                         },
-                        selection: { mode: 'multiRow' },
+                        rowSelection: { mode: 'multiRow' },
                     });
 
                     await waitForFirstRender(api);

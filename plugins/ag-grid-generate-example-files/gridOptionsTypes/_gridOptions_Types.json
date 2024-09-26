@@ -241,10 +241,10 @@
       "SizeColumnsToContentStrategy"
     ]
   },
-  "selection": {
-    "typeName": "SelectionOptions",
+  "cellSelection": {
+    "typeName": "boolean | CellSelectionOptions<TData>",
     "typesToInclude": [
-      "SelectionOptions"
+      "CellSelectionOptions"
     ]
   },
   "selectionColumnDef": {
@@ -252,10 +252,6 @@
     "typesToInclude": [
       "SelectionColumnDef"
     ]
-  },
-  "rowSelection": {
-    "typeName": "'single' | 'multiple'",
-    "typesToInclude": []
   },
   "overlayLoadingTemplate": {
     "typeName": "string",
@@ -1420,5 +1416,11 @@
   "loadThemeGoogleFonts": {
     "typeName": "boolean",
     "typesToInclude": []
+  },
+  "rowSelection": {
+    "typeName": "RowSelectionOptions<TData> | 'single' | 'multiple'",
+    "typesToInclude": [
+      "RowSelectionOptions"
+    ]
   }
 }

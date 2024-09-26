@@ -22,7 +22,7 @@ const VueExample = {
             :columnDefs="columnDefs"
             :rowData="rowData"
             :defaultColDef="defaultColDef"
-            :selection="selection"
+            :cellSelection="true"
             :enableCharts="true"
             :popupParent="popupParent"
             :createChartContainer="createChartContainer"
@@ -53,9 +53,6 @@ const VueExample = {
         const defaultColDef = ref({ flex: 1 });
         const popupParent = ref(null);
         const rowData = ref(null);
-        const selection = ref({
-            mode: 'cell',
-        });
 
         onBeforeMount(() => {
             popupParent.value = document.body;
@@ -109,7 +106,6 @@ const VueExample = {
             gridApi,
             defaultColDef,
             popupParent,
-            selection,
             rowData,
             createChartContainer,
             onGridReady,

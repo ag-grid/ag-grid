@@ -14,7 +14,7 @@ separated by a `\t` (tab) character.
 
 ## Copying Cell Ranges
 
-When [Cell Ranges](./cell-selection) are enabled by setting `gridOptions.selection.mode='cell'`, copying will copy the Cell Range's content to your clipboard. Select a range by clicking on a cell and dragging with the mouse, then copy with the {% kbd "^ Ctrl" /%}+{% kbd "C" /%} keybind.
+When [Cell Ranges](./cell-selection) are enabled by setting `gridOptions.cellSelection=true`, copying will copy the Cell Range's content to your clipboard. Select a range by clicking on a cell and dragging with the mouse, then copy with the {% kbd "^ Ctrl" /%}+{% kbd "C" /%} keybind.
 
 Multiple cell ranges can be selected at once using {% kbd "^ Ctrl" /%} and dragging with the mouse. When copying, all ranges will be copied to the clipboard. Note that the relative positions of multiple ranges is not preserved when copying, they are stacked vertically in the clipboard.
 
@@ -32,8 +32,8 @@ In the below example `copyHeadersToClipboard` has been enabled, try:
 
 ## Copying Rows
 
-When [Row Selection](./row-selection) is enabled by setting `gridOptions.selection.mode` to either `"singleRow"` or `"multiRow"`, the default behaviour is to copy only the focused cell to the clipboard. 
-In order to copy the whole row, enable the `gridOptions.selection.copySelectedRows` flag.
+When [Row Selection](./row-selection) is enabled by setting `gridOptions.rowSelection.mode` to either `"singleRow"` or `"multiRow"`, the default behaviour is to copy only the focused cell to the clipboard. 
+In order to copy the whole row, enable the `gridOptions.rowSelection.copySelectedRows` flag.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {

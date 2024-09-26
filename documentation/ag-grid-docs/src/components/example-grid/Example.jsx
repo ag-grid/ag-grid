@@ -645,11 +645,13 @@ const ExampleInner = ({ darkMode }) => {
             undoRedoCellEditingLimit: 50,
             quickFilterText: null,
             autoGroupColumnDef: groupColumn,
-            selection: {
-                mode: 'cell',
+            cellSelection: {
                 handle: {
                     mode: 'fill',
                 },
+            },
+            rowSelection: {
+                mode: 'multiRow',
             },
             sideBar: {
                 toolPanels: ['columns', 'filters'],

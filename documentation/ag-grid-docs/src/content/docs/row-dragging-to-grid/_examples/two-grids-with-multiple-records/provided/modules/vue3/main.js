@@ -44,7 +44,7 @@ const VueExample = {
                                 style="height: 100%;"
                                 :class="themeClass"
                                 :defaultColDef="defaultColDef"
-                                :selection="selection"
+                                :rowSelection="rowSelection"
                                 :rowDragMultiRow="true"
                                 :getRowId="getRowId"
                                 :rowDragManaged="true"
@@ -90,7 +90,7 @@ const VueExample = {
                 minWidth: 100,
                 filter: true,
             },
-            selection: {
+            rowSelection: {
                 mode: 'multiRow',
             },
             leftColumns: [

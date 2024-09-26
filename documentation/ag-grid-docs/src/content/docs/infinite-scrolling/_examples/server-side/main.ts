@@ -75,7 +75,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 150,
         floatingFilter: true,
     },
-    selection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false },
+    rowSelection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false },
     rowModelType: 'infinite',
     cacheBlockSize: 100,
     cacheOverflowSize: 2,
