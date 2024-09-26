@@ -376,7 +376,6 @@ export type BeanName =
     | 'columnGroupStateService'
     | 'columnApplyStateService'
     | 'columnUtils'
-    | 'logSvc'
     | 'pivotResultColsService'
     | 'componentMetadataProvider'
     | 'context'
