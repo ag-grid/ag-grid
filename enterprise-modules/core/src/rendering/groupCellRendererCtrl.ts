@@ -423,13 +423,13 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     }
 
     private getInnerCompDetails(params: GroupCellRendererParams): UserCompDetails | undefined {
-        // // for full width rows, we don't do any of the below
-        // if (params.fullWidth) {
-        //     return this.userComponentFactory.getFullWidthGroupRowInnerCellRenderer(
-        //         this.gos.get('groupRowRendererParams'),
-        //         params
-        //     );
-        // }
+        // for full width rows, we don't do any of the below
+        if (params.fullWidth) {
+            return this.userComponentFactory.getFullWidthGroupRowInnerCellRenderer(
+                this.gos.get('groupRowRendererParams'),
+                params
+            );
+        }
 
         // when grouping, the normal case is we use the cell renderer of the grouped column. eg if grouping by country
         // and then rating, we will use the country cell renderer for each country group row and likewise the rating

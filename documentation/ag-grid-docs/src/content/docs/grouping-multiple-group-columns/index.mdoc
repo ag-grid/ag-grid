@@ -26,7 +26,7 @@ option.
 
 {% gridExampleRunner title="Multiple Group Column Configuration" name="multiple-group-column-configuration" /%}
 
-The example above uses the configuration demonstrated below to change the columns header name and apply a minimum width.
+The example above uses the configuration demonstrated below to change the column's header name and apply a minimum width.
 It also [Configures the Group Cell Component](./group-cell-renderer/) using the `cellRendererParams` option to add checkboxes and remove
 the count from each row group.
 
@@ -104,9 +104,8 @@ The example above uses the following configuration to provide a custom inner ren
 const gridOptions = {
     autoGroupColumnDef: {
         cellRendererParams: {
-            innerRenderer: InnerRenderer,
-            innerRendererParams: {foo: 'bar'},
-        }
+            innerRenderer: CustomMedalCellRenderer,
+        },
     },
 }
 ```

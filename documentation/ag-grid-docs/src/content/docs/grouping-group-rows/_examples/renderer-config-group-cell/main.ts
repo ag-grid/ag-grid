@@ -3,19 +3,12 @@ import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
-import { CustomMedalCellRenderer } from './customMedalCellRenderer_typescript';
-
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-    columnDefs: [
-        { field: 'athlete' },
-        { field: 'year' },
-        { field: 'sport' },
-        { field: 'total', rowGroup: true, cellRenderer: CustomMedalCellRenderer },
-    ],
+    columnDefs: [{ field: 'country', rowGroup: true }, { field: 'athlete' }, { field: 'year' }, { field: 'sport' }],
     defaultColDef: {
         flex: 1,
         minWidth: 100,
