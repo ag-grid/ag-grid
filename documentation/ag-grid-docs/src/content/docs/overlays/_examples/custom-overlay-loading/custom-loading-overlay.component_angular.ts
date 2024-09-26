@@ -1,6 +1,7 @@
-import type { ILoadingOverlayAngularComp } from '@ag-grid-community/angular';
-import type { ILoadingOverlayParams } from '@ag-grid-community/core';
 import { Component } from '@angular/core';
+
+import type { ILoadingOverlayAngularComp } from 'ag-grid-angular';
+import type { ILoadingOverlayParams } from 'ag-grid-community';
 
 type CustomLoadingOverlayParams = ILoadingOverlayParams & { loadingMessage: string };
 @Component({

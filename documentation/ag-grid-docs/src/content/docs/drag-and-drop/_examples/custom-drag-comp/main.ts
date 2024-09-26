@@ -1,13 +1,13 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { ModuleRegistry, createGrid } from 'ag-grid-community';
 
 import { getData } from './data';
 import { DragSourceRenderer } from './dragSourceRenderer_typescript';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-var rowClassRules = {
+const rowClassRules = {
     'red-row': 'data.color == "Red"',
     'green-row': 'data.color == "Green"',
     'blue-row': 'data.color == "Blue"',
@@ -33,9 +33,9 @@ const gridOptions: GridOptions = {
 };
 
 function onDragOver(event: any) {
-    var types = event.dataTransfer.types;
+    const types = event.dataTransfer.types;
 
-    var dragSupported = types.length;
+    const dragSupported = types.length;
 
     if (dragSupported) {
         event.dataTransfer.dropEffect = 'move';
@@ -47,17 +47,17 @@ function onDragOver(event: any) {
 function onDrop(event: any) {
     event.preventDefault();
 
-    var textData = event.dataTransfer.getData('text/plain');
-    var eJsonRow = document.createElement('div');
+    const textData = event.dataTransfer.getData('text/plain');
+    const eJsonRow = document.createElement('div');
     eJsonRow.classList.add('json-row');
     eJsonRow.innerText = textData;
 
-    var eJsonDisplay = document.querySelector('#eJsonDisplay')!;
+    const eJsonDisplay = document.querySelector('#eJsonDisplay')!;
     eJsonDisplay.appendChild(eJsonRow);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

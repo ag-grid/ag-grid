@@ -1,7 +1,8 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import type { MockInstance } from 'vitest';
+
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
 import { GROUP_ROW_DATA } from './data';
@@ -39,7 +40,7 @@ describe('Row Selection Grid Options', () => {
     }
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule],
     });
 
     beforeEach(() => {
@@ -186,6 +187,24 @@ describe('Row Selection Grid Options', () => {
 
                 toggleCheckboxByIndex(0, { shiftKey: true });
                 assertSelectedRowsByIndex([], api);
+            });
+
+            test('row-click interaction with multiple selected rows', () => {
+                const api = createGrid({
+                    columnDefs,
+                    rowData,
+                    selection: {
+                        mode: 'multiRow',
+                    },
+                });
+
+                // Select two rows by toggling checkboxes
+                selectRowsByIndex([2, 3], false, api);
+
+                clickRowByIndex(3);
+
+                // Both rows should still be selected
+                assertSelectedRowsByIndex([2, 3], api);
             });
 
             describe('Range selection behaviour', () => {

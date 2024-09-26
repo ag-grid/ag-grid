@@ -1,17 +1,20 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridReadyEvent, ICellEditor, ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact, getInstance } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import MySimpleEditor, { MySimpleInterface } from './mySimpleEditor';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import type { ColDef, GridReadyEvent, ICellEditor } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { AgGridReact, getInstance } from 'ag-grid-react';
+
+import type { MySimpleInterface } from './mySimpleEditor';
+import MySimpleEditor from './mySimpleEditor';
 import './style.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 const createRowData = () => {
     const cloneObject = (obj: any) => JSON.parse(JSON.stringify(obj));

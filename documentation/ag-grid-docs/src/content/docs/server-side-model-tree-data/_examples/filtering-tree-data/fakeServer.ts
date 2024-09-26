@@ -2,13 +2,13 @@
 // might generate sql queries from the Server-Side Row Model request.
 // To keep things simple it does the bare minimum to support the example.
 export function FakeServer(allData) {
-    var processedData = processData(allData);
+    const processedData = processData(allData);
     alasql.options.cache = false;
 
     return {
         getData: function (request) {
             const hasFilter = request.filterModel && Object.keys(request.filterModel).length;
-            var results = executeQuery(request, hasFilter);
+            let results = executeQuery(request, hasFilter);
 
             if (hasFilter) {
                 results = recursiveFilter(request, results);
@@ -21,20 +21,20 @@ export function FakeServer(allData) {
             };
         },
         getDates: function () {
-            var sql = 'SELECT DISTINCT startDate FROM ? ORDER BY startDate ASC';
+            const sql = 'SELECT DISTINCT startDate FROM ? ORDER BY startDate ASC';
 
             return alasql(sql, [processedData]).map((row) => row.startDate);
         },
         getEmployees: function () {
             // get children only
-            var sql = 'SELECT DISTINCT dataPath FROM ? WHERE underlings = FALSE ORDER BY dataPath ASC';
+            const sql = 'SELECT DISTINCT dataPath FROM ? WHERE underlings = FALSE ORDER BY dataPath ASC';
 
             return alasql(sql, [processedData]).map((row) => (row.dataPath ? row.dataPath.split(',') : null));
         },
     };
 
     function executeQuery(request, ignoreLimit) {
-        var sql = buildSql(request, ignoreLimit);
+        const sql = buildSql(request, ignoreLimit);
 
         console.log('[FakeServer] - about to execute query:', sql);
 
@@ -46,13 +46,13 @@ export function FakeServer(allData) {
     }
 
     function whereSql(request) {
-        var whereParts = [];
+        const whereParts = [];
 
-        var filterModel = request.filterModel;
+        const filterModel = request.filterModel;
 
         if (filterModel && Object.keys(filterModel).length) {
             Object.keys(filterModel).forEach(function (key) {
-                var item = filterModel[key];
+                const item = filterModel[key];
                 if (key === 'ag-Grid-AutoColumn') {
                     key = 'dataPath';
                 }
@@ -146,11 +146,11 @@ export function FakeServer(allData) {
     }
 
     function orderBySql(request) {
-        var sortModel = request.sortModel;
+        const sortModel = request.sortModel;
 
         if (sortModel.length === 0) return '';
 
-        var sorts = sortModel.map(function (s) {
+        const sorts = sortModel.map(function (s) {
             return s.colId + ' ' + s.sort.toUpperCase();
         });
 
@@ -161,14 +161,14 @@ export function FakeServer(allData) {
         if (ignoreLimit || request.endRow == undefined || request.startRow == undefined) {
             return '';
         }
-        var blockSize = request.endRow - request.startRow;
+        const blockSize = request.endRow - request.startRow;
 
         return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
     }
 
     function getLastRowIndex(request) {
         const hasFilter = request.filterModel && Object.keys(request.filterModel).length;
-        var results = executeQuery(request, hasFilter);
+        let results = executeQuery(request, hasFilter);
 
         if (hasFilter) {
             results = recursiveFilter(request, results);

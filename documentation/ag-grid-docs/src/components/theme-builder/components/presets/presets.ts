@@ -1,10 +1,11 @@
-import { type Part, iconSetAlpine, iconSetQuartzLight } from '@ag-grid-community/theming';
 import { allParamModels } from '@components/theme-builder/model/ParamModel';
 import { allFeatureModels } from '@components/theme-builder/model/PartModel';
 import { enabledAdvancedParamsAtom } from '@components/theme-builder/model/advanced-params';
 import { getApplicationConfigAtom } from '@components/theme-builder/model/application-config';
 import { resetChangedModelItems } from '@components/theme-builder/model/changed-model-items';
 import type { ThemeParams } from '@components/theme-builder/model/utils';
+
+import { type Part, iconSetAlpine, iconSetQuartzLight } from 'ag-grid-community';
 
 import type { Store } from '../../model/store';
 import { gridConfigAtom } from '../grid-config/grid-config-atom';

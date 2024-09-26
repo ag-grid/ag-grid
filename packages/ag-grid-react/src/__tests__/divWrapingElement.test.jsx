@@ -2,6 +2,8 @@
 import { mount } from 'enzyme';
 import React, { Component } from 'react';
 
+import { ClientSideRowModelModule } from 'ag-grid-community';
+
 import { AgGridReact } from '../agGridReact';
 import { ensureGridApiHasBeenSet } from './utils';
 
@@ -59,6 +61,7 @@ class GridWithNoComponentContainerSpecified extends Component {
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
+                    modules={[ClientSideRowModelModule]}
                     componentWrappingElement="div"
                 />
             </div>

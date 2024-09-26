@@ -1,10 +1,10 @@
-import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
+import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
 export class DetailCellRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
 
     init(params: ICellRendererParams) {
-        var firstRecord = params.data.callRecords[0];
+        const firstRecord = params.data.callRecords[0];
 
         this.eGui = document.createElement('div');
         this.eGui.className = 'cell-renderer-outer';

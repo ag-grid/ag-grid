@@ -1,3 +1,5 @@
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import type {
     Component,
     ComponentSelector,
@@ -7,7 +9,6 @@ import type {
     TabGuardComp as JsTabGuardComp,
 } from 'ag-grid-community';
 import { GridCtrl } from 'ag-grid-community';
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { BeansContext } from './beansContext';
 import GridBodyComp from './gridBodyComp';

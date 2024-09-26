@@ -1,7 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
 import type { MockInstance } from 'vitest';
+
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule, ModuleRegistry, createGrid } from 'ag-grid-community';
 
 describe('ag-grid overlays state', () => {
     let consoleWarnSpy: MockInstance | undefined;
@@ -16,7 +16,7 @@ describe('ag-grid overlays state', () => {
     }
 
     beforeAll(() => {
-        ModuleRegistry.register(ClientSideRowModelModule);
+        ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
     });
 
     beforeEach(() => {

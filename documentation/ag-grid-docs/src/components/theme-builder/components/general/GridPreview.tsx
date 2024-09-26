@@ -1,22 +1,23 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { type GridState, ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
-import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
-import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import { useApplicationConfigAtom } from '@components/theme-builder/model/application-config';
 import { useRenderedTheme } from '@components/theme-builder/model/rendered-theme';
 import styled from '@emotion/styled';
 import { memo, useRef, useState } from 'react';
 import root from 'react-shadow';
+
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { type GridState, ModuleRegistry } from 'ag-grid-community';
+import { AdvancedFilterModule } from 'ag-grid-enterprise';
+import { GridChartsModule } from 'ag-grid-enterprise';
+import { ClipboardModule } from 'ag-grid-enterprise';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { FiltersToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { RangeSelectionModule } from 'ag-grid-enterprise';
+import { RichSelectModule } from 'ag-grid-enterprise';
+import { RowGroupingModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
+import { StatusBarModule } from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
 
 import { ColorEditor } from '../editors/ColorValueEditor';
 import { LoadFontFamilyMenuFonts } from '../editors/FontFamilyValueEditor';

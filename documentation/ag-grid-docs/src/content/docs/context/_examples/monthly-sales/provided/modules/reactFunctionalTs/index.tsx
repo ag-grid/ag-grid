@@ -1,20 +1,28 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, ColGroupDef, GridReadyEvent, SelectionOptions } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact, CustomCellRendererProps, CustomGroupCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridReadyEvent, SelectionOptions } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { FiltersToolPanelModule } from 'ag-grid-enterprise';
+import { RowGroupingModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
+import type { CustomCellRendererProps } from 'ag-grid-react';
+import { AgGridReact, CustomGroupCellRendererProps } from 'ag-grid-react';
+
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, SetFilterModule, FiltersToolPanelModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    CommunityFeaturesModule,
+    RowGroupingModule,
+    SetFilterModule,
+    FiltersToolPanelModule,
+]);
 
 const monthValueGetter =
     '(ctx.month < ctx.months.indexOf(colDef.field)) ? data[colDef.field + "_bud"] : data[colDef.field + "_act"]';
@@ -161,7 +169,7 @@ const GridExample = () => {
 
     const onChangeMonth = useCallback(
         (i: number) => {
-            var newMonth = (context.current.month += i);
+            let newMonth = (context.current.month += i);
             if (newMonth < -1) {
                 newMonth = -1;
             }

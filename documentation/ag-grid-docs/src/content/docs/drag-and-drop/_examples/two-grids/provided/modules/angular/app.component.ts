@@ -1,14 +1,15 @@
-import { AgGridAngular } from '@ag-grid-community/angular';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef, GridApi, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { Component } from '@angular/core';
 
+import { AgGridAngular } from 'ag-grid-angular';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 @Component({
     standalone: true,
@@ -138,7 +139,7 @@ export class AppComponent {
     }
 
     binDragOver(event: any) {
-        var dragSupported = event.dataTransfer.types.indexOf('application/json') >= 0;
+        const dragSupported = event.dataTransfer.types.indexOf('application/json') >= 0;
         if (dragSupported) {
             event.dataTransfer.dropEffect = 'move';
             event.preventDefault();
@@ -147,37 +148,37 @@ export class AppComponent {
 
     binDrop(event: any) {
         event.preventDefault();
-        var jsonData = event.dataTransfer.getData('application/json');
-        var data = JSON.parse(jsonData);
+        const jsonData = event.dataTransfer.getData('application/json');
+        const data = JSON.parse(jsonData);
 
         // if data missing or data has no id, do nothing
         if (!data || data.id == null) {
             return;
         }
 
-        var transaction = {
+        const transaction = {
             remove: [data],
         };
 
-        var rowIsInLeftGrid = !!this.leftGridApi.getRowNode(data.id);
+        const rowIsInLeftGrid = !!this.leftGridApi.getRowNode(data.id);
         if (rowIsInLeftGrid) {
             this.leftGridApi.applyTransaction(transaction);
         }
 
-        var rowIsInRightGrid = !!this.rightGridApi.getRowNode(data.id);
+        const rowIsInRightGrid = !!this.rightGridApi.getRowNode(data.id);
         if (rowIsInRightGrid) {
             this.rightGridApi.applyTransaction(transaction);
         }
     }
 
     dragStart(event: any, color: string) {
-        var newItem = this.createDataItem(color);
-        var jsonData = JSON.stringify(newItem);
+        const newItem = this.createDataItem(color);
+        const jsonData = JSON.stringify(newItem);
         event.dataTransfer.setData('application/json', jsonData);
     }
 
     gridDragOver(event: any) {
-        var dragSupported = event.dataTransfer.types.length;
+        const dragSupported = event.dataTransfer.types.length;
 
         if (dragSupported) {
             event.dataTransfer.dropEffect = 'copy';
@@ -188,24 +189,24 @@ export class AppComponent {
     gridDrop(event: any, grid: string) {
         event.preventDefault();
 
-        var jsonData = event.dataTransfer.getData('application/json');
-        var data = JSON.parse(jsonData);
+        const jsonData = event.dataTransfer.getData('application/json');
+        const data = JSON.parse(jsonData);
 
         // if data missing or data has no it, do nothing
         if (!data || data.id == null) {
             return;
         }
 
-        var gridApi = grid == 'left' ? this.leftGridApi : this.rightGridApi;
+        const gridApi = grid == 'left' ? this.leftGridApi : this.rightGridApi;
 
         // do nothing if row is already in the grid, otherwise we would have duplicates
-        var rowAlreadyInGrid = !!gridApi!.getRowNode(data.id);
+        const rowAlreadyInGrid = !!gridApi!.getRowNode(data.id);
         if (rowAlreadyInGrid) {
             console.log('not adding row to avoid duplicates in the grid');
             return;
         }
 
-        var transaction = {
+        const transaction = {
             add: [data],
         };
         gridApi!.applyTransaction(transaction);

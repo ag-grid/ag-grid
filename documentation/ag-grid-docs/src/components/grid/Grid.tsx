@@ -1,15 +1,13 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { AgGridReact, type AgGridReactProps } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import LogoMark from '@components/logo/LogoMark';
 import { useDarkmode } from '@utils/hooks/useDarkmode';
 import classnames from 'classnames';
 import { type FunctionComponent, useEffect, useState } from 'react';
+
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { ColumnsToolPanelModule, MasterDetailModule, SetFilterModule, StatusBarModule } from 'ag-grid-enterprise';
+import { AgGridReact, type AgGridReactProps } from 'ag-grid-react';
 
 import styles from './Grid.module.scss';
 

@@ -1,4 +1,4 @@
-import corePackageJson from '../../../community-modules/core/package.json';
+import corePackageJson from '../../../packages/ag-grid-community/package.json';
 import type { Framework, ImportType, InternalFramework } from './types/ag-grid';
 
 const isTruthy = (val: string | boolean) => ['1', 'true', true].includes(val);
@@ -53,7 +53,7 @@ export const PUBLISHED_URLS = {
 
 // whether integrated charts includes ag-charts-enterprise or just ag-charts-community
 // also need to update plugins/ag-grid-generate-example-files/src/executors/generate/generator/constants.ts if this value is changed
-export const integratedChartsUsesChartsEnterprise = true;
+export const integratedChartsUsesChartsEnterprise = false;
 export const PUBLISHED_UMD_URLS = {
     'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}/dist/ag-grid-community.js`,
     'ag-grid-enterprise': `${NPM_CDN}/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise@${agGridVersion}/dist/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise.js`,
@@ -66,15 +66,17 @@ export const getEnterprisePackageName = () =>
 /**
  * Site base URL
  *
- * ie undefined for dev, /ag-charts for staging
+ * Not defined for most environments
  *
  * NOTE: Includes trailing slash (`/`)
  */
 export const SITE_BASE_URL =
-    // Astro default env var (for build time)
-    import.meta.env?.BASE_URL ||
+    // Use node env value during Astro build
+    globalThis.process?.env?.PUBLIC_BASE_URL?.replace(/\/?$/, '/') ||
     // `.env.*` override (for client side)
-    import.meta.env?.PUBLIC_BASE_URL.replace(/\/?$/, '/');
+    import.meta.env?.PUBLIC_BASE_URL?.replace(/\/?$/, '/') ||
+    // Use Astro base url for e2e tests
+    import.meta.env?.BASE_URL;
 
 /*
  * Site URL

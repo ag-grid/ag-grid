@@ -1,11 +1,7 @@
-import type {
-    HeaderGroupCellCtrl,
-    IHeaderGroupCellComp,
-    IHeaderGroupComp,
-    UserCompDetails,
-} from 'ag-grid-community';
-import { _EmptyBean } from 'ag-grid-community';
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+
+import type { HeaderGroupCellCtrl, IHeaderGroupCellComp, IHeaderGroupComp, UserCompDetails } from 'ag-grid-community';
+import { _EmptyBean } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';

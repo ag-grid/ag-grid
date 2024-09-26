@@ -1,4 +1,4 @@
-import { Column, IFilterComp, IMenuItemComp, IMenuItemParams } from '@ag-grid-community/core';
+import type { Column, IFilterComp, IMenuItemComp, IMenuItemParams } from 'ag-grid-community';
 
 export interface CustomMenuItemParams extends IMenuItemParams {
     column: Column;

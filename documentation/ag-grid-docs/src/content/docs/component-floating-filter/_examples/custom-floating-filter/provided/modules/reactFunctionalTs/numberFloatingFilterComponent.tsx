@@ -1,5 +1,7 @@
-import { CustomFloatingFilterProps } from '@ag-grid-community/react';
-import React, { ChangeEvent, Fragment } from 'react';
+import type { ChangeEvent } from 'react';
+import React, { Fragment } from 'react';
+
+import type { CustomFloatingFilterProps } from 'ag-grid-react';
 
 export interface CustomProps extends CustomFloatingFilterProps {
     color: string;

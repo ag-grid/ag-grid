@@ -1,8 +1,9 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { CsvExportModule } from '@ag-grid-community/csv-export';
-import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { CsvExportModule } from 'ag-grid-community';
+import { MenuModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule, MenuModule]);
 
@@ -28,7 +29,7 @@ const gridOptions: GridOptions = {
 };
 
 function getValue(inputSelector: string) {
-    var text = (document.querySelector(inputSelector) as any).value;
+    const text = (document.querySelector(inputSelector) as any).value;
     switch (text) {
         case 'none':
             return;
@@ -46,7 +47,7 @@ function getParams() {
 }
 
 function onBtnExport() {
-    var params = getParams();
+    const params = getParams();
     if (params.columnSeparator) {
         alert('NOTE: you are downloading a file with non-standard separators - it may not render correctly in Excel.');
     }
@@ -59,6 +60,6 @@ function onBtnUpdate() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

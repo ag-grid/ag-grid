@@ -1,7 +1,12 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import React, { StrictMode, useCallback, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import type {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
     CellEditorSelectorResult,
@@ -9,23 +14,26 @@ import {
     ICellEditorParams,
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
-import React, { StrictMode, useCallback, useMemo, useState } from 'react';
-import { createRoot } from 'react-dom/client';
+} from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { RichSelectModule } from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
 
-import { IRow, getData } from './data';
+import type { IRow } from './data';
+import { getData } from './data';
 import MoodEditor from './moodEditor';
 import NumericCellEditor from './numericCellEditor';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ColumnsToolPanelModule, RichSelectModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    CommunityFeaturesModule,
+    MenuModule,
+    ColumnsToolPanelModule,
+    RichSelectModule,
+]);
 
 const cellEditorSelector: (params: ICellEditorParams<IRow>) => CellEditorSelectorResult | undefined = (
     params: ICellEditorParams<IRow>

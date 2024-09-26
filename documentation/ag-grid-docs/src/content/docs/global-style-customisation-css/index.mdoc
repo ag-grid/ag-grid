@@ -62,10 +62,6 @@ If you provide a value for `--ag-grid-size` of "10px" then `--ag-cell-horizontal
 
 Likewise, if you provide a value for `--ag-active-color` of red "rgb(255,0,0)" then --ag-selected-row-background-color will default to an 8% semi-transparent red "rgba(255,0,0,0.08)".
 
-{% note %}
-Colour Blending on CSS variables is currently only implemented in the Quartz theme. Other themes need to specify their own colours for each variable, or use the Sass Styling API which implements [Colour Blending](./global-style-customisation-sass/#colour-blending) for all themes.
-{% /note %}
-
 ## Customising Themes using CSS Rules
 
 Some design effects can't be achieved through CSS variables alone. For example, there is no variable to set the `font-style` on header cells. If you want your column headers to be italic, use regular CSS.

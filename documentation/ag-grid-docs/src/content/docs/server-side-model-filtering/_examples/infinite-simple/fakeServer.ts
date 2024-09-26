@@ -6,7 +6,7 @@ export function FakeServer(allData) {
 
     return {
         getData: function (request) {
-            var results = executeQuery(request);
+            const results = executeQuery(request);
 
             return {
                 success: true,
@@ -17,7 +17,7 @@ export function FakeServer(allData) {
     };
 
     function executeQuery(request) {
-        var sql = buildSql(request);
+        const sql = buildSql(request);
 
         console.log('[FakeServer] - about to execute query:', sql);
 
@@ -29,12 +29,12 @@ export function FakeServer(allData) {
     }
 
     function whereSql(request) {
-        var whereParts = [];
-        var filterModel = request.filterModel;
+        const whereParts = [];
+        const filterModel = request.filterModel;
 
         if (filterModel) {
             Object.keys(filterModel).forEach(function (key) {
-                var item = filterModel[key];
+                const item = filterModel[key];
 
                 switch (item.filterType) {
                     case 'text':
@@ -116,11 +116,11 @@ export function FakeServer(allData) {
     }
 
     function orderBySql(request) {
-        var sortModel = request.sortModel;
+        const sortModel = request.sortModel;
 
         if (sortModel.length === 0) return '';
 
-        var sorts = sortModel.map(function (s) {
+        const sorts = sortModel.map(function (s) {
             return s.colId + ' ' + s.sort.toUpperCase();
         });
 
@@ -131,7 +131,7 @@ export function FakeServer(allData) {
         if (request.endRow == undefined || request.startRow == undefined) {
             return '';
         }
-        var blockSize = request.endRow - request.startRow;
+        const blockSize = request.endRow - request.startRow;
 
         return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
     }

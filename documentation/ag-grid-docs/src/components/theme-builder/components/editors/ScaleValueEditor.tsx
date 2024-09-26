@@ -1,5 +1,6 @@
-import type { ScaleValue } from '@ag-grid-community/theming';
 import { stripFloatingPointErrors } from '@components/theme-builder/model/utils';
+
+import type { ScaleValue } from 'ag-grid-community';
 
 import { FormattedInput } from './FormattedInput';
 import { type ValueEditorProps } from './ValueEditorProps';

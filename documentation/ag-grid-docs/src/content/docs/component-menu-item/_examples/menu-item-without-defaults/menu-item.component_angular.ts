@@ -1,8 +1,9 @@
-import { IMenuItemAngularComp } from '@ag-grid-community/angular';
-import { Column, IFilterComp, IMenuItemParams } from '@ag-grid-community/core';
 import { NgClass, NgStyle } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
+import type { IMenuItemAngularComp } from 'ag-grid-angular';
+import type { Column, IFilterComp, IMenuItemParams } from 'ag-grid-community';
 
 export interface CustomMenuItemParams extends IMenuItemParams {
     column: Column;

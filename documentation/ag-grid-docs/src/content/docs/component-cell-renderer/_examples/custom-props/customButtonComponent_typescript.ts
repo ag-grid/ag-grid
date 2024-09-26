@@ -1,4 +1,4 @@
-import { ICellRendererParams } from '@ag-grid-community/core';
+import type { ICellRendererParams } from 'ag-grid-community';
 
 interface CustomButtonParams extends ICellRendererParams {
     onClick: () => void;
@@ -11,7 +11,7 @@ export class CustomButtonComponent {
 
     init(params: CustomButtonParams) {
         this.eGui = document.createElement('div');
-        let eButton = document.createElement('button');
+        const eButton = document.createElement('button');
         eButton.className = 'btn-simple';
         eButton.textContent = 'Launch!';
         this.eventListener = params.onClick;

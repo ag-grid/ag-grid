@@ -1,6 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -24,20 +25,20 @@ const gridOptions: GridOptions = {
 };
 
 function onUpdateSomeValues() {
-    var rowCount = gridApi!.getDisplayedRowCount();
+    const rowCount = gridApi!.getDisplayedRowCount();
     // pick 20 cells at random to update
-    for (var i = 0; i < 20; i++) {
-        var row = Math.floor(Math.random() * rowCount);
-        var rowNode = gridApi!.getDisplayedRowAtIndex(row)!;
-        var col = ['a', 'b', 'c', 'd', 'e', 'f'][i % 6];
+    for (let i = 0; i < 20; i++) {
+        const row = Math.floor(Math.random() * rowCount);
+        const rowNode = gridApi!.getDisplayedRowAtIndex(row)!;
+        const col = ['a', 'b', 'c', 'd', 'e', 'f'][i % 6];
         rowNode.setDataValue(col, Math.floor(Math.random() * 10000));
     }
 }
 
 function createRowData() {
-    var rowData = [];
+    const rowData = [];
 
-    for (var i = 0; i < 20; i++) {
+    for (let i = 0; i < 20; i++) {
         rowData.push({
             a: Math.floor(((i + 323) * 25435) % 10000),
             b: Math.floor(((i + 323) * 23221) % 10000),
@@ -53,6 +54,6 @@ function createRowData() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

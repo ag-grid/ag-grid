@@ -279,6 +279,14 @@
                                         "path": "theming-css"
                                     },
                                     {
+                                        "title": "Color Schemes & Dark Mode",
+                                        "path": "theming-colors"
+                                    },
+                                    {
+                                        "title": "Borders",
+                                        "path": "theming-borders"
+                                    },
+                                    {
                                         "title": "Migration",
                                         "path": "theming-migration"
                                     }

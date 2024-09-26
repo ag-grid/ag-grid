@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
+import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
 const COUNTRY_CODES: Record<string, string> = {
     Ireland: 'ie',
@@ -36,7 +36,7 @@ export class CountryCellRenderer implements ICellRendererComp {
         if (params.value == null || params.value === '' || params.value === '(Select All)') {
             this.eGui.innerHTML = params.value;
         } else {
-            var flag =
+            const flag =
                 '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' +
                 COUNTRY_CODES[params.value] +
                 '.png">';

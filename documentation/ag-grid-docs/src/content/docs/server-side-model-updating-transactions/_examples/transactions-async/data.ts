@@ -46,17 +46,17 @@ export var data = [];
     const lastUpdated = new Date();
 
     for (let i = 0; i < products.length; i++) {
-        let product = products[i];
+        const product = products[i];
         for (let j = 0; j < portfolios.length; j++) {
-            let portfolio = portfolios[j];
+            const portfolio = portfolios[j];
 
-            let bookCount = randomBetween(MAX_BOOK_COUNT, MIN_BOOK_COUNT);
+            const bookCount = randomBetween(MAX_BOOK_COUNT, MIN_BOOK_COUNT);
 
             for (let k = 0; k < bookCount; k++) {
-                let book = createBookName();
-                let tradeCount = randomBetween(MAX_TRADE_COUNT, MIN_TRADE_COUNT);
+                const book = createBookName();
+                const tradeCount = randomBetween(MAX_TRADE_COUNT, MIN_TRADE_COUNT);
                 for (let l = 0; l < tradeCount; l++) {
-                    let trade = createTradeRecord(product, portfolio, book);
+                    const trade = createTradeRecord(product, portfolio, book);
 
                     trade.updateCount = 0;
                     trade.lastUpdated = lastUpdated;
@@ -115,9 +115,9 @@ function randomBetween(min, max) {
 }
 
 function createTradeRecord(product, portfolio, book) {
-    let current = Math.floor(Math.random() * 100000) + 100;
-    let previous = current + Math.floor(Math.random() * 10000) - 2000;
-    let trade = {
+    const current = Math.floor(Math.random() * 100000) + 100;
+    const previous = current + Math.floor(Math.random() * 10000) - 2000;
+    const trade = {
         product: product,
         portfolio: portfolio,
         book: book,

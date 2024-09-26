@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
+import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
 export class CustomCellRenderer implements ICellRendererComp {
     eGui: any;
@@ -15,7 +15,7 @@ export class CustomCellRenderer implements ICellRendererComp {
         <span>${params.data.year}</span>`;
 
         // creates the row dragger element
-        var rowDragger = document.createElement('i');
+        const rowDragger = document.createElement('i');
         rowDragger.classList.add('fas', 'fa-arrows-alt-v');
         this.eGui.appendChild(rowDragger);
 

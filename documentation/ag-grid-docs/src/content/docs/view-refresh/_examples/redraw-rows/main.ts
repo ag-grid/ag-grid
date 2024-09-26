@@ -1,11 +1,12 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, RowClassParams, RowStyle, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions, RowClassParams, RowStyle } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-var colorIndex = 0;
-var colors = ['#99999944', '#CC333344', '#33CC3344', '#2244CC44'];
+let colorIndex = 0;
+const colors = ['#99999944', '#CC333344', '#33CC3344', '#2244CC44'];
 
 let gridApi: GridApi;
 
@@ -30,8 +31,8 @@ const gridOptions: GridOptions = {
 };
 
 function createData(count: number) {
-    var result = [];
-    for (var i = 1; i <= count; i++) {
+    const result = [];
+    for (let i = 1; i <= count; i++) {
         result.push({
             a: (i * 863) % 100,
             b: (i * 811) % 100,
@@ -58,9 +59,9 @@ function redrawAllRows() {
 
 function redrawTopRows() {
     progressColor();
-    var rows = [];
-    for (var i = 0; i < 6; i++) {
-        var row = gridApi!.getDisplayedRowAtIndex(i)!;
+    const rows = [];
+    for (let i = 0; i < 6; i++) {
+        const row = gridApi!.getDisplayedRowAtIndex(i)!;
         rows.push(row);
     }
     gridApi!.redrawRows({ rowNodes: rows });
@@ -68,6 +69,6 @@ function redrawTopRows() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

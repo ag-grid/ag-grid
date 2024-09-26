@@ -1,7 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ValidationsModule } from '@ag-grid-community/core';
-import type { GridOptions, RowDataTransaction } from '@ag-grid-community/core';
 import type { MockInstance } from 'vitest';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import type { GridOptions, RowDataTransaction } from 'ag-grid-community';
 
 import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager, cachedJSONObjects, executeTransactionsAsync } from '../test-utils';
@@ -12,7 +12,9 @@ const defaultGridRowsOptions: GridRowsOptions = {
 };
 
 describe('ag-grid rows-ordering', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, ValidationsModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [CommunityFeaturesModule, ClientSideRowModelModule, ValidationsModule],
+    });
     let consoleWarnSpy: MockInstance | undefined;
     let consoleErrorSpy: MockInstance | undefined;
 

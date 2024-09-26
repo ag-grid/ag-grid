@@ -1,5 +1,7 @@
-import { CustomFloatingFilterProps } from '@ag-grid-community/react';
-import React, { ChangeEvent, Fragment } from 'react';
+import type { ChangeEvent } from 'react';
+import React, { Fragment } from 'react';
+
+import type { CustomFloatingFilterProps } from 'ag-grid-react';
 
 export default ({ model, onModelChange }: CustomFloatingFilterProps) => {
     const onInput = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {

@@ -1,11 +1,11 @@
-import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
+import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
 export class FullWidthCellRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
 
     init(params: ICellRendererParams) {
         // trick to convert string of html into dom object
-        var eTemp = document.createElement('div');
+        const eTemp = document.createElement('div');
         eTemp.innerHTML = this.getTemplate(params);
         this.eGui = eTemp.firstElementChild as HTMLElement;
         params.registerRowDragger(this.eGui, undefined, params.data.name, true);
@@ -14,9 +14,9 @@ export class FullWidthCellRenderer implements ICellRendererComp {
 
     getTemplate(params: ICellRendererParams) {
         // the flower row shares the same data as the parent row
-        var data = params.node.data;
+        const data = params.node.data;
 
-        var template =
+        const template =
             '<div class="full-width-panel">' +
             '  <div class="full-width-flag">' +
             '    <img border="0" src="https://www.ag-grid.com/example-assets/large-flags/' +
@@ -50,9 +50,9 @@ export class FullWidthCellRenderer implements ICellRendererComp {
     // grid and scroll the main grid and not this component. this ensures that
     // the wheel move is only picked up by the text field
     consumeMouseWheelOnCenterText() {
-        var eFullWidthCenter = this.eGui.querySelector('.full-width-center')!;
+        const eFullWidthCenter = this.eGui.querySelector('.full-width-center')!;
 
-        var mouseWheelListener = function (event: any) {
+        const mouseWheelListener = function (event: any) {
             event.stopPropagation();
         };
 

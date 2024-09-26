@@ -126,7 +126,6 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-enterprise/nm" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/core/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/client-side-row-model/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/community-modules/react/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/csv-export/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/infinite-row-model/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/viewport-row-model/dist" />
@@ -148,7 +147,6 @@
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/column-tool-panel/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/core/dist" />
       <excludeFolder url="file://$MODULE_DIR$/enterprise-modules/excel-export/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/community-modules/angular/dist" />
       <excludeFolder url="file://$MODULE_DIR$/.nx" />
       <excludeFolder url="file://$MODULE_DIR$/.vscode" />
       <excludeFolder url="file://$MODULE_DIR$/documentation/ag-grid-docs/.astro" />
@@ -157,18 +155,20 @@
       <excludeFolder url="file://$MODULE_DIR$/plugins/ag-grid-generate-example-files/dist" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/ag-grid-task-autogen/dist" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/ag-grid-generate-code-reference-files/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/community-modules/angular/.angular" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/vue/lib" />
-      <excludeFolder url="file://$MODULE_DIR$/community-modules/vue3/lib" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-charts-enterprise/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular/.angular" />
       <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-community/styles" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-angular/.angular" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-react/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/ag-grid-vue3/lib" />
     </content>
-    <content url="file://$MODULE_DIR$/community-modules/angular/dist" />
-    <content url="file://$MODULE_DIR$/community-modules/react/dev" />
     <content url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules" />
+    <content url="file://$MODULE_DIR$/packages/ag-grid-angular/dist" />
+    <content url="file://$MODULE_DIR$/packages/ag-grid-react/dev" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

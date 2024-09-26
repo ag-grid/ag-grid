@@ -1,9 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
-    ColDef,
     GetRowIdParams,
-    GridApi,
-    GridOptions,
     IAggFuncParams,
     IDoesFilterPassParams,
     IFilterComp,
@@ -11,9 +9,9 @@ import {
     IFilterType,
     IsGroupOpenByDefaultParams,
     createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+} from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { createDataItem, getData } from './data';
 

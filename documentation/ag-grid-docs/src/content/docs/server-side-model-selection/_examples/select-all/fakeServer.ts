@@ -6,7 +6,7 @@ export function FakeServer(allData) {
 
     return {
         getData: function (request) {
-            var results = executeQuery(request);
+            const results = executeQuery(request);
 
             return {
                 success: true,
@@ -17,7 +17,7 @@ export function FakeServer(allData) {
     };
 
     function executeQuery(request) {
-        var sql = buildSql(request);
+        const sql = buildSql(request);
 
         console.log('[FakeServer] - about to execute query:', sql);
 
@@ -36,13 +36,13 @@ export function FakeServer(allData) {
     }
 
     function selectSql(request) {
-        var rowGroupCols = request.rowGroupCols;
-        var valueCols = request.valueCols;
-        var groupKeys = request.groupKeys;
+        const rowGroupCols = request.rowGroupCols;
+        const valueCols = request.valueCols;
+        const groupKeys = request.groupKeys;
 
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
-            var rowGroupCol = rowGroupCols[groupKeys.length];
-            var colsToSelect = [rowGroupCol.id];
+            const rowGroupCol = rowGroupCols[groupKeys.length];
+            const colsToSelect = [rowGroupCol.id];
 
             valueCols.forEach(function (valueCol) {
                 colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + valueCol.id);
@@ -55,23 +55,23 @@ export function FakeServer(allData) {
     }
 
     function whereSql(request) {
-        var rowGroups = request.rowGroupCols;
-        var groupKeys = request.groupKeys;
-        var whereParts = [];
+        const rowGroups = request.rowGroupCols;
+        const groupKeys = request.groupKeys;
+        const whereParts = [];
 
         if (groupKeys) {
             groupKeys.forEach(function (key, i) {
-                var value = typeof key === 'string' ? "'" + key + "'" : key;
+                const value = typeof key === 'string' ? "'" + key + "'" : key;
 
                 whereParts.push(rowGroups[i].id + ' = ' + value);
             });
         }
 
-        var filterModel = request.filterModel;
+        const filterModel = request.filterModel;
 
         if (filterModel) {
             Object.keys(filterModel).forEach(function (key) {
-                var item = filterModel[key];
+                const item = filterModel[key];
 
                 switch (item.filterType) {
                     case 'text':
@@ -96,8 +96,8 @@ export function FakeServer(allData) {
 
     function createFilterSql(mapper, key, item) {
         if (item.operator) {
-            var condition1 = mapper(key, item.condition1);
-            var condition2 = mapper(key, item.condition2);
+            const condition1 = mapper(key, item.condition1);
+            const condition2 = mapper(key, item.condition2);
 
             return '(' + condition1 + ' ' + item.operator + ' ' + condition2 + ')';
         }
@@ -154,11 +154,11 @@ export function FakeServer(allData) {
     }
 
     function groupBySql(request) {
-        var rowGroupCols = request.rowGroupCols;
-        var groupKeys = request.groupKeys;
+        const rowGroupCols = request.rowGroupCols;
+        const groupKeys = request.groupKeys;
 
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
-            var rowGroupCol = rowGroupCols[groupKeys.length];
+            const rowGroupCol = rowGroupCols[groupKeys.length];
 
             return ' GROUP BY ' + rowGroupCol.id + ' HAVING count(*) > 0';
         }
@@ -167,11 +167,11 @@ export function FakeServer(allData) {
     }
 
     function orderBySql(request) {
-        var sortModel = request.sortModel;
+        const sortModel = request.sortModel;
 
         if (sortModel.length === 0) return '';
 
-        var sorts = sortModel.map(function (s) {
+        const sorts = sortModel.map(function (s) {
             return s.colId + ' ' + s.sort.toUpperCase();
         });
 
@@ -182,7 +182,7 @@ export function FakeServer(allData) {
         if (request.endRow == undefined || request.startRow == undefined) {
             return '';
         }
-        var blockSize = request.endRow - request.startRow;
+        const blockSize = request.endRow - request.startRow;
 
         return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
     }

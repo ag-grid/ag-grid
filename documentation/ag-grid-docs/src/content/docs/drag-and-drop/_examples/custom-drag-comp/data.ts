@@ -1,9 +1,9 @@
 let rowIdSequence = 100;
 
 export function getData(): any[] {
-    var data: any[] = [];
+    const data: any[] = [];
     ['Red', 'Green', 'Blue', 'Red', 'Green', 'Blue', 'Red', 'Green', 'Blue'].forEach((color) => {
-        var newDataItem = {
+        const newDataItem = {
             id: rowIdSequence++,
             color: color,
             value1: Math.floor(Math.random() * 100),

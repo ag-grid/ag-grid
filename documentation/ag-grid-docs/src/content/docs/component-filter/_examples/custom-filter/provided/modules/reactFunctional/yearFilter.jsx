@@ -1,5 +1,6 @@
-import { useGridFilter } from '@ag-grid-community/react';
 import React, { useCallback, useEffect, useState } from 'react';
+
+import { useGridFilter } from 'ag-grid-react';
 
 export default ({ model, onModelChange }) => {
     const [closeFilter, setCloseFilter] = useState();
