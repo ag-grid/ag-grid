@@ -86,7 +86,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     rowDragText: true,
     suppressGroupMaintainValueType: true,
     groupLockGroupColumns: true,
-    rowGroupPanelSuppressSort: true,
     suppressGroupRowsSticky: true,
     rowModelType: true,
     cacheOverflowSize: true,
