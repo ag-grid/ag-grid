@@ -221,12 +221,12 @@ function getPropertyBindings(
                 if (!isInstanceMethod(bindings.instanceMethods, property)) {
                     propertyAttributes.push(toInput(property));
 
-                    if (property.name !== 'defaultColDef') {
+                    if (property.name !== 'defaultColDef' && property.name !== 'autoGroupColumnDef') {
                         propertyVars.push(toRef(property));
                     }
                 }
 
-                if (property.name !== 'defaultColDef') {
+                if (property.name !== 'defaultColDef' && property.name !== 'autoGroupColumnDef') {
                     propertyAssignments.push(toAssignment(property));
                 }
             }
@@ -330,6 +330,9 @@ export function vanillaToVue3(
     const defaultColDef = bindings.defaultColDef
         ? convertDefaultColDef(bindings.defaultColDef, vueComponents, componentFileNames)
         : null;
+    const autoGroupColumnDef = bindings.autoGroupColumnDef
+        ? convertDefaultColDef(bindings.autoGroupColumnDef, vueComponents, componentFileNames)
+        : null;
 
     return (importType) => {
         const imports = getImports(bindings, exampleConfig, componentFileNames, allStylesheets);
@@ -359,6 +362,7 @@ const VueExample = {
         const columnDefs = ref(${columnDefs});
         const gridApi = shallowRef();
         ${defaultColDef ? `const defaultColDef = ref(${defaultColDef});` : ''}
+        ${autoGroupColumnDef ? `const autoGroupColumnDef = ref(${autoGroupColumnDef});` : ''}
         ${propertyVars.join(';\n')}
         
         onBeforeMount(() => {
