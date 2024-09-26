@@ -67,7 +67,7 @@ export class StateService extends BeanStub implements NamedBean {
     private paginationService?: PaginationService;
     private selectionService?: ISelectionService;
     private expansionService?: IExpansionService;
-    private columnAnimationService: ColumnAnimationService;
+    private columnAnimationService?: ColumnAnimationService;
     private columnApplyStateService: ColumnApplyStateService;
     private sideBarService?: ISideBarService;
     private rangeService?: IRangeService;
@@ -835,7 +835,7 @@ export class StateService extends BeanStub implements NamedBean {
 
     private suppressEventsAndDispatchInitEvent(updateFunc: () => void): void {
         this.suppressEvents = true;
-        this.columnAnimationService.setSuppressAnimation(true);
+        this.columnAnimationService?.setSuppressAnimation(true);
         updateFunc();
         // We want to suppress any grid events, but not user events.
         // Using a timeout here captures things like column resizing and emits a single grid initializing event.
@@ -847,7 +847,7 @@ export class StateService extends BeanStub implements NamedBean {
                 // Ensure the grid is still alive before dispatching the event.
                 return;
             }
-            this.columnAnimationService.setSuppressAnimation(false);
+            this.columnAnimationService?.setSuppressAnimation(false);
             this.dispatchStateUpdateEvent(['gridInitializing']);
         });
     }

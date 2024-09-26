@@ -20,6 +20,7 @@ import {
     AnimateSlideCellRendererModule,
     CheckboxCellRendererModule,
 } from './rendering/cellRenderers/cellRendererModule';
+import { ColumnAnimationModule } from './rendering/columnAnimationModule';
 import { StickyRowModule } from './rendering/features/stickyRowModule';
 import { OverlayModule } from './rendering/overlays/overlayModule';
 import { RowSelectionModule } from './selection/rowSelectionModule';
@@ -76,5 +77,6 @@ export const CommunityFeaturesModule = _defineModule({
         PopupModule,
         CellStyleModule,
         ColumnHoverModule,
+        ColumnAnimationModule,
     ],
 });

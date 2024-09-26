@@ -193,7 +193,7 @@ export interface CoreBeanCollection {
     columnResizeService?: ColumnResizeService;
     headerNavigationService: HeaderNavigationService;
     navigationService: NavigationService;
-    columnAnimationService: ColumnAnimationService;
+    columnAnimationService?: ColumnAnimationService;
     focusService: FocusService;
     popupService?: PopupService;
     stylingService?: StylingService;

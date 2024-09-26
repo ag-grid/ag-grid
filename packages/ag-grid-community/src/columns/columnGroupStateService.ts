@@ -13,7 +13,7 @@ export class ColumnGroupStateService extends BeanStub implements NamedBean {
     beanName = 'columnGroupStateService' as const;
 
     private columnModel: ColumnModel;
-    private columnAnimationService: ColumnAnimationService;
+    private columnAnimationService?: ColumnAnimationService;
     private visibleColsService: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -69,7 +69,7 @@ export class ColumnGroupStateService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.columnAnimationService.start();
+        this.columnAnimationService?.start();
 
         const impactedGroups: AgProvidedColumnGroup[] = [];
 
@@ -99,6 +99,6 @@ export class ColumnGroupStateService extends BeanStub implements NamedBean {
             });
         }
 
-        this.columnAnimationService.finish();
+        this.columnAnimationService?.finish();
     }
 }

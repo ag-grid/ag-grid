@@ -69,7 +69,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private visibleColsService: VisibleColsService;
     private columnViewportService: ColumnViewportService;
     private pivotResultColsService: PivotResultColsService;
-    private columnAnimationService: ColumnAnimationService;
+    private columnAnimationService?: ColumnAnimationService;
     private autoColService?: IAutoColService;
     private controlsColService?: ControlsColService;
     private valueCache?: ValueCache;
@@ -480,7 +480,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return;
         }
 
-        this.columnAnimationService.start();
+        this.columnAnimationService?.start();
 
         let actualPinned: ColumnPinnedType;
         if (pinned === true || pinned === 'left') {
@@ -513,7 +513,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             dispatchColumnPinnedEvent(this.eventService, updatedCols, source);
         }
 
-        this.columnAnimationService.finish();
+        this.columnAnimationService?.finish();
     }
 
     // called by headerRenderer - when a header is opened or closed

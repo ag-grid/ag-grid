@@ -80,7 +80,7 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
     private columnGetStateService: ColumnGetStateService;
     private funcColsService: FuncColsService;
     private visibleColsService: VisibleColsService;
-    private columnAnimationService: ColumnAnimationService;
+    private columnAnimationService?: ColumnAnimationService;
     private pivotResultColsService: PivotResultColsService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -213,7 +213,7 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
             return { unmatchedAndAutoStates, unmatchedCount };
         };
 
-        this.columnAnimationService.start();
+        this.columnAnimationService?.start();
 
         // eslint-disable-next-line prefer-const
         let { unmatchedAndAutoStates, unmatchedCount } = applyStates(params.state || [], providedCols, (id) =>
@@ -229,7 +229,7 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
                 this.pivotResultColsService.getPivotResultCol(id)
             ).unmatchedCount;
         }
-        this.columnAnimationService.finish();
+        this.columnAnimationService?.finish();
 
         return unmatchedCount === 0; // Successful if no states unaccounted for
     }
