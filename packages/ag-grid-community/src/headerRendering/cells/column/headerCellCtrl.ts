@@ -21,7 +21,6 @@ import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
-import { HoverFeature } from '../hoverFeature';
 import type { IHeader, IHeaderParams } from './headerComp';
 import { HeaderComp } from './headerComp';
 
@@ -98,7 +97,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         } else {
             _setDisplayed(eResize, false);
         }
-        compBean.createManagedBean(new HoverFeature([this.column], eGui));
+        this.beans.columnHoverService?.createHoverFeature(compBean, [this.column], eGui);
         compBean.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
         compBean.createManagedBean(
             new ManagedFocusFeature(eGui, {
@@ -619,16 +618,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private addColumnHoverListener(compBean: BeanStub): void {
-        const listener = () => {
-            if (!this.gos.get('columnHoverHighlight')) {
-                return;
-            }
-            const isHovered = this.beans.columnHoverService.isHovered(this.column);
-            this.comp.addOrRemoveCssClass('ag-column-hover', isHovered);
-        };
-
-        compBean.addManagedEventListeners({ columnHoverChanged: listener });
-        listener();
+        this.beans.columnHoverService?.addHeaderColumnHoverListener(compBean, this.comp, this.column);
     }
 
     public getColId(): string {

@@ -14,7 +14,6 @@ import { _createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
-import { HoverFeature } from '../hoverFeature';
 import type { IHeaderFilterCellComp } from './iHeaderFilterCellComp';
 
 export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCellComp, AgColumn> {
@@ -236,18 +235,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private setupHover(compBean: BeanStub): void {
-        compBean.createManagedBean(new HoverFeature([this.column], this.eGui));
-
-        const listener = () => {
-            if (!this.gos.get('columnHoverHighlight')) {
-                return;
-            }
-            const hovered = this.beans.columnHoverService.isHovered(this.column);
-            this.comp.addOrRemoveCssClass('ag-column-hover', hovered);
-        };
-
-        compBean.addManagedEventListeners({ columnHoverChanged: listener });
-        listener();
+        this.beans.columnHoverService?.addHeaderFilterColumnHoverListener(compBean, this.comp, this.column, this.eGui);
     }
 
     private setupLeft(compBean: BeanStub): void {

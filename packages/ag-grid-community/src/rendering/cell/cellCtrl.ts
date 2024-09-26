@@ -48,7 +48,6 @@ const CSS_CELL_FOCUS = 'ag-cell-focus';
 const CSS_CELL_FIRST_RIGHT_PINNED = 'ag-cell-first-right-pinned';
 const CSS_CELL_LAST_LEFT_PINNED = 'ag-cell-last-left-pinned';
 const CSS_CELL_NOT_INLINE_EDITING = 'ag-cell-not-inline-editing';
-const CSS_COLUMN_HOVER = 'ag-column-hover';
 const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
 
 export interface ICellComp {
@@ -1004,15 +1003,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onColumnHover(): void {
-        if (!this.cellComp) {
-            return;
-        }
-        if (!this.beans.gos.get('columnHoverHighlight')) {
-            return;
-        }
-
-        const isHovered = this.beans.columnHoverService.isHovered(this.column);
-        this.cellComp.addOrRemoveCssClass(CSS_COLUMN_HOVER, isHovered);
+        this.beans.columnHoverService?.onCellColumnHover(this.column, this.cellComp);
     }
 
     public onColDefChanged(): void {

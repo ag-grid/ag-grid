@@ -3,6 +3,7 @@ import { CommunityApiModule } from './api/apiModule';
 import { ColumnAutosizeModule } from './columnAutosize/columnAutosizeModule';
 import { ColumnMoveModule } from './columnMove/columnMoveModule';
 import { ColumnResizeModule } from './columnResize/columnResizeModule';
+import { ColumnHoverModule } from './columns/columnHover/columnHoverModule';
 import { ControlsColumnModule, DataTypeModule } from './columns/columnModule';
 import { CellRendererFunctionModule } from './components/framework/cellRendererFunctionModule';
 import { DragAndDropModule, RowDragModule } from './dragAndDrop/dragModule';
@@ -74,5 +75,6 @@ export const CommunityFeaturesModule = _defineModule({
         CellRendererFunctionModule,
         PopupModule,
         CellStyleModule,
+        ColumnHoverModule,
     ],
 });

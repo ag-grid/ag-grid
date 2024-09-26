@@ -19,7 +19,6 @@ import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
-import { HoverFeature } from '../hoverFeature';
 import { GroupWidthFeature } from './groupWidthFeature';
 import type { IHeaderGroupComp, IHeaderGroupParams } from './headerGroupComp';
 
@@ -74,7 +73,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const pinned = this.getParentRowCtrl().getPinned();
         const leafCols = this.column.getProvidedColumnGroup().getLeafColumns();
 
-        compBean.createManagedBean(new HoverFeature(leafCols, eGui));
+        this.beans.columnHoverService?.createHoverFeature(compBean, leafCols, eGui);
         compBean.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
         compBean.createManagedBean(new GroupWidthFeature(comp, this.column));
         if (this.beans.columnResizeService) {

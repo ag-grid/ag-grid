@@ -539,6 +539,11 @@ export interface _ColumnMoveApi {
     moveColumns(columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number): void;
 }
 
+export interface _ColumnHoverApi {
+    /** Returns true if the column is currently hovered. */
+    isColumnHovered(column: Column): boolean;
+}
+
 export interface _ColumnGridApi<TData> {
     getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null;
 
@@ -1219,6 +1224,7 @@ export interface _CoreModuleGridApi<TData>
         _ColumnAutosizeApi,
         _ColumnResizeApi,
         _ColumnMoveApi,
+        _ColumnHoverApi,
         _ColumnGridApi<TData>,
         _DragGridApi,
         _EditGridApi<TData>,

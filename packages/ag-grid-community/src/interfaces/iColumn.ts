@@ -183,7 +183,7 @@ export interface Column<TValue = any>
     /** Returns `true` if filter is active on the column. */
     isFilterActive(): boolean;
 
-    /** Returns `true` when this `Column` is hovered, otherwise `false` */
+    /** @deprecated v33 Use `api.isColumnHovered(column)` instead. */
     isHovered(): boolean;
 
     /** Returns `true` if this column is the first right pinned column. */

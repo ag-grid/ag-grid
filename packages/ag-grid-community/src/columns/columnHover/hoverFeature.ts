@@ -1,13 +1,13 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
-import type { ColumnHoverService } from '../../rendering/columnHoverService';
+import type { ColumnHoverService } from './columnHoverService';
 
 export class HoverFeature extends BeanStub {
     private columnHoverService: ColumnHoverService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnHoverService = beans.columnHoverService;
+        this.columnHoverService = beans.columnHoverService!;
     }
 
     private readonly columns: AgColumn[];
