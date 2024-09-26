@@ -16,9 +16,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'gold', aggFunc: 'sum' },
         { field: 'silver', aggFunc: 'sum' },
         { field: 'bronze', aggFunc: 'sum' },
-        { field: 'age', minWidth: 120 },
-        { field: 'year', maxWidth: 120 },
-        { field: 'date', minWidth: 150 },
     ],
     defaultColDef: {
         flex: 1,

@@ -12,7 +12,9 @@
                 "url": "./status-bar/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["IStatusPanelComp"],
+                "exclude": [
+                    "IStatusPanelComp"
+                ],
                 "include": []
             }
         },
@@ -22,7 +24,9 @@
                 "url": "./side-bar/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["IToolPanelComp"],
+                "exclude": [
+                    "IToolPanelComp"
+                ],
                 "include": []
             }
         },
@@ -592,7 +596,9 @@
                 "url": "./integrated-charts-customisation/#custom-chart-themes"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["AgChartThemeDefinition"]
+                "exclude": [
+                    "AgChartThemeDefinition"
+                ]
             }
         },
         "chartThemeOverrides": {
@@ -601,7 +607,9 @@
                 "url": "./integrated-charts-customisation/#overriding-themes"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["AgChartThemeOverrides"]
+                "exclude": [
+                    "AgChartThemeOverrides"
+                ]
             }
         },
         "chartToolPanelsDef": {
@@ -1051,6 +1059,25 @@
                 "name": "Hiding Repeated Value Column Labels",
                 "url": "./pivoting-column-groups/#hide-group-with-single-value-column"
             }
+        },
+        "groupTotalRow": {
+            "more": {
+                "name": "Group Total Rows",
+                "url": "./total-rows/#group-total-rows"
+            }
+        },
+        "grandTotalRow": {
+            "more": {
+                "name": "Grand Total Row",
+                "url": "./total-rows/#grand-total-row"
+            }
+        },
+        "suppressStickyTotalRow": {},
+        "groupSuppressBlankHeader": {
+            "more": {
+                "name": "Showing Values in Group and Total Rows",
+                "url": "./total-rows/#showing-values-in-group-and-total-rows"
+            }
         }
     },
     "rendering": {
@@ -1227,25 +1254,6 @@
                 "url": "./grouping-locking-group-columns"
             }
         },
-        "groupTotalRow": {
-            "more": {
-                "name": "Group Total Rows",
-                "url": "./total-rows/#group-total-rows"
-            }
-        },
-        "grandTotalRow": {
-            "more": {
-                "name": "Grand Total Row",
-                "url": "./total-rows/#grand-total-row"
-            }
-        },
-        "suppressStickyTotalRow": {},
-        "groupSuppressBlankHeader": {
-            "more": {
-                "name": "Showing Values in Group and Total Rows",
-                "url": "./total-rows/#showing-values-in-group-and-total-rows"
-            }
-        },
         "showOpenedGroup": {
             "more": {
                 "name": "Showing Open Groups",
@@ -1279,7 +1287,7 @@
         "groupHideOpenParents": {
             "more": {
                 "name": "Hide Open Parents",
-                "url": "./grouping-multiple-group-columns/#hide-open-parents"
+                "url": "./grouping-multiple-group-columns/#hiding-expanded-parent-rows"
             }
         },
         "groupAllowUnbalanced": {
@@ -1338,6 +1346,16 @@
                 "name": "Keeping Columns Visible",
                 "url": "./grouping-group-panel/#keeping-columns-visible"
             }
+        }
+    },
+    "treeData": {
+        "meta": {
+            "displayName": "Tree Data",
+            "page": {
+                "name": "Tree Data",
+                "url": "./tree-data/"
+            },
+            "description": "Tree Data provides a way to supply the grid with structured hierarchical data."
         },
         "treeData": {
             "more": {
@@ -1577,7 +1595,9 @@
             },
             "interfaceHierarchyOverrides": {
                 "exclude": [],
-                "include": ["IViewportDatasourceParams"]
+                "include": [
+                    "IViewportDatasourceParams"
+                ]
             }
         },
         "viewportRowModelPageSize": {

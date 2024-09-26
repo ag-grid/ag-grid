@@ -1,0 +1,82 @@
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
+
+import CustomMedalCellRenderer from './customMedalCellRenderer.js';
+import './styles.css';
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+
+const VueExample = {
+    template: `
+        <div style="height: 100%">
+                <ag-grid-vue
+      style="width: 100%; height: 100%;"
+      :class="themeClass"
+      :columnDefs="columnDefs"
+      @grid-ready="onGridReady"
+      :defaultColDef="defaultColDef"
+      :autoGroupColumnDef="autoGroupColumnDef"
+      :groupDisplayType="groupDisplayType"
+      :rowData="rowData"></ag-grid-vue>
+        </div>
+    `,
+    components: {
+        'ag-grid-vue': AgGridVue,
+        CustomMedalCellRenderer,
+    },
+    setup(props) {
+        const columnDefs = ref([
+            { field: 'athlete' },
+            { field: 'year' },
+            { field: 'sport' },
+            { field: 'total', rowGroup: true },
+        ]);
+        const gridApi = shallowRef();
+        const defaultColDef = ref({
+            flex: 1,
+            minWidth: 100,
+        });
+        const autoGroupColumnDef = ref({
+            headerName: 'Gold Medals',
+            minWidth: 220,
+            cellRendererParams: {
+                suppressCount: true,
+                innerRenderer: 'CustomMedalCellRenderer',
+            },
+        });
+        const groupDisplayType = ref(null);
+        const rowData = ref(null);
+
+        onBeforeMount(() => {
+            groupDisplayType.value = 'multipleColumns';
+        });
+
+        const onGridReady = (params) => {
+            gridApi.value = params.api;
+
+            const updateData = (data) => (rowData.value = data);
+
+            fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+                .then((resp) => resp.json())
+                .then((data) => updateData(data));
+        };
+
+        return {
+            columnDefs,
+            gridApi,
+            defaultColDef,
+            autoGroupColumnDef,
+            groupDisplayType,
+            rowData,
+            onGridReady,
+            themeClass: 'ag-theme-quartz',
+        };
+    },
+};
+
+createApp(VueExample).mount('#app');

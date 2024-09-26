@@ -1,47 +1,35 @@
 ---
-title: "Row Grouping - Single Group Column"
+title: "Row Grouping - Single Column"
 enterprise: true
 ---
+Display the group structure with a single generated column in the grid.
 
-This section covers the Single Group Column display type, where a single group column is automatically added by the grid
-containing all row groups under a single row group hierarchy.
+{% gridExampleRunner title="Enabling Single Group Column" name="enabling-single-group-column" /%}
 
-{% imageCaption imagePath="resources/single-group-column.png" alt="Single Group Column" centered=true constrained=true maxWidth="80%" /%}
+## Enabling a Single Group Column
 
-## Enabling Single Group Column
+The example above demonstrates that both `country` and `year` are grouped. Only a single group column is used to
+display the group value cells.
 
-By default, a Single Group Column is used, but it can be explicitly set using `groupDisplayType = 'singleColumn'` as shown below:
+The Single Group Column is enabled by default, but it can be set explicitly by setting the `groupDisplayType` grid option
+to `"singleColumn"` as shown below:
 
-```{% frameworkTransform=true spaceBetweenProperties=true %}
+```{% frameworkTransform=true %}
 const gridOptions = {
-    columnDefs: [
-        { field: 'country', rowGroup: true, hide: true },
-        { field: 'year', rowGroup: true, hide: true },
-        { field: 'athlete' },
-        { field: 'sport' },
-        { field: 'total' }
-    ],
-    // optional as 'singleColumn' is the default group display type
     groupDisplayType: 'singleColumn',
 }
 ```
 
-In the snippet above, rows will be grouped by `country` and `year` as both column definitions have `rowGroup=true` declared.
+## Configuring the Column
 
-The example below demonstrates the default row grouping behaviour. Note the following:
+The Single Group Column is added to the grid when row grouping is present, and can be configured via the `autoGroupColumnDef` grid
+option.
 
-* There are two active row groups as the supplied `country` and `year` column definitions have `rowGroup=true` declared.
+{% gridExampleRunner title="Single Group Column Configuration" name="single-group-column-configuration" /%}
 
-* A group column is added to the left-hand side of the grid as there are active row groups.
-
-* The `country` and `year` columns are not shown in the grid as `hide=true` is set on their column definitions.
-
-{% gridExampleRunner title="Enabling Single Group Column" name="enabling-single-group-column"  exampleHeight=540 /%}
-
-## Group Column Configuration
-
-The Single Group Column display type adds a single Auto Group Column to the grid. To change the default configuration
-of this group column, use the `autoGroupColumnDef` grid option as shown below:
+The example above uses the configuration demonstrated below to change the columns header name and apply a minimum width.
+It also [Configures the Group Cell Component](./group-cell-renderer/) using the `cellRendererParams` option to add checkboxes and remove
+the count from each row group.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -56,76 +44,133 @@ const gridOptions = {
 }
 ```
 
-Note how in the snippet above that the `autoGroupColumnDef` can be used to override any [Column Property](./column-definitions/).
+## Cell Renderer
+The column uses the `agGroupCellRenderer` component to display the group information, as well as the chevron control
+for expanding and collapsing rows. The renderer also embeds the grouped columns renderer and displays this inside of the group cell.
 
-The Auto Group Column uses the [Group Cell Renderer](./group-cell-renderer/) to render group cells, and are configured via the `cellRendererParams` property.
+This can be configured with several [Group Renderer Properties](./grouping-single-group-column/#configurable-properties-reference) using
+the `autoGroupColumnDef` property `cellRendererParams`. The example below removes the row count and enables checkboxes for row selection.
 
-The following example demonstrates some of the available `autoGroupColumnDef` configurations. Note that:
+{% gridExampleRunner title="Group Cell Renderer Configuration" name="renderer-config-group-cell" /%}
 
-* The group column name is changed by setting `headerName = 'My Group'`.
+The example above demonstrates the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'total', rowGroup: true, cellRenderer: CustomMedalCellRenderer },
+        // ... other column definitions
+    ],
+    autoGroupColumnDef: {
+        cellRendererParams: {
+            suppressCount: true,
+            checkbox: true,
+        }
+    },
+}
+```
 
-* The min width of the group column is changed via `minWidth = 220`.
+### Configurable Options
 
-* The count of each row group is removed by setting `cellRendererParams.suppressCount = true`.
+{% interfaceDocumentation interfaceName="IGroupCellRendererParams" overrideSrc="group-cell-renderer/group-cell-renderer.json" config={ "description": "" } /%}
 
-* Checkboxes are displayed beside each row group by setting `cellRendererParams.checkbox = true`.
+### Custom Inner Renderer
 
-{% gridExampleRunner title="Single Group Column Configuration" name="single-group-column-configuration"  exampleHeight=515 /%}
+When using the group cell renderer, the `agGroupCellRenderer` component will inherit the grouped columns renderer and display this inside of the group cell,
+adjacent to any configured checkboxes, cell count, and the expand/collapse chevron control.
 
-## Showing Open Groups
+This inner renderer can be overridden with a [Custom Cell Component](./component-cell-renderer/) by setting the `innerRenderer` and `innerRendererParams` properties
+on the `cellRendererParams` configuration.
 
-Setting the grid property `showOpenedGroup=true` will show the name of the opened group inside the group column.
-This is useful when `suppressGroupRowsSticky=true` and the user scrolls down through the children of the group and the row showing what group
-was opened is scrolled out of view.
+{% gridExampleRunner title="Group Cell Renderer Configuration" name="renderer-config-inner" /%}
 
-The example below uses `showOpenedGroup=true` and `suppressGroupRowsSticky=true` with one group column. The open group is shown at the leaf level.
+The example above uses the following configuration to provide a custom inner renderer to the group column:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoGroupColumnDef: {
+        cellRendererParams: {
+            innerRenderer: InnerRenderer,
+            innerRendererParams: {foo: 'bar'},
+        }
+    },
+}
+```
 
-{% gridExampleRunner title="Show Opened Groups" name="show-opened-group"  exampleHeight=515 /%}
+### Custom Cell Renderer
 
-## Adding Values To Leaf Nodes
+The Group Cell Renderer can be entirely replaced with a [Custom Cell Component](./component-cell-renderer/) by setting the `cellRenderer`
+property on the `autoGroupColumnDef` configuration.
 
-You may have noticed in the examples so far that the group columns don't produce values on the leaf nodes, the cells are empty. If you want to add values you can add a [valueGetter](./value-getters/) or `field` to the colDef and it will be used to render the leaf node.
-
-A side effect of this is that filtering will now work for the columns using the field values.
-
-This example shows specifying `field` in the auto group column. Note the following:
-
-* The group column shows both groups (Country and Year) as well as Athlete at the leaf level.
-* The field (Athlete) is used for filtering.
-
-{% gridExampleRunner title="Adding Values To Leaf Nodes" name="adding-values-to-leaf-nodes"  exampleHeight=515 /%}
-
-## Removing Single Children
-
-If your data has groups with only one child, then it can make sense to collapse these groups as there is no benefit to the user creating groups with just one child, it's arguably a waste of space.
-
-To turn this feature on set either `groupRemoveSingleChildren=true` or `groupRemoveLowestSingleChildren=true`.
-
-* **groupRemoveSingleChildren:** Removes groups from display if they only have one child.
-* **groupRemoveLowestSingleChildren:** Removes groups from display if they only have one child and the groups is at the lowest level (ie contains leaf nodes).
-
-The example below shows this feature. Note the following:
-
-* **Normal:** Shows the rows as normal, nothing is removed. All groups have their children count in brackets after the group.
-* **Remove Single Children:** Removes single children using the property `groupRemoveSingleChildren=true`. All groups with just one child are removed.
-* **Remove Lowest Single Children:** Removes single children using the property `groupRemoveLowestSingleChildren=true`. All groups for the 'City' column with just one child are removed. The 'City' column is the lowest level group, so it's the only group candidate to be removed when it only has one child.
-
-{% gridExampleRunner title="Removing Single Children" name="remove-single-children"  exampleHeight=540 /%}
-
-{% note %}
-Filtering does not impact what groups get removed. For example if you have a group with two
-children, the group is not removed, even if you apply a filter that removes one of the children.
-This is because AG Grid does grouping first and then applies filters second. If you change the filter,
-only the filter is reapplied, the grouping is not reapplied.
-{% /note %}
+{% gridExampleRunner title="Custom Group Cell Renderer" name="renderer-config-custom" /%}
 
 {% note %}
-The properties `groupRemoveSingleChildren`, `groupRemoveLowestSingleChildren`
-and `groupHideOpenParents` are mutually exclusive, you can only pick one.
-Technically it doesn't make sense to mix these. They don't work together as the logic for removing single
-children clashes with the logic for hiding open parents. Both want to remove parents at different times
-and for different reasons.
+It is also possible to [Determine Cell Renderers Dynamically](./component-cell-renderer/#dynamic-component-selection).
 {% /note %}
+
+## Group Column Filters
+
+The grid filters leaf rows by default, if all of a groups children are filtered out, the group is also hidden.
+
+### Inheriting Row Grouped Columns Filters
+
+Applying filters to the columns with row grouping active impacts which row groups are displayed. The grid provides the `agGroupColumnFilter`
+to allow users to filter the columns with row grouping enabled via the group column.
+
+{% gridExampleRunner title="Group Column Filtering" name="filtering-grouped-columns" /%}
+
+The example above demonstrates the following configuration to enable the group column filter:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoGroupColumnDef: {
+        filter: 'agGroupColumnFilter',
+        floatingFilter: true,
+    },
+}
+```
+
+### Tree Filter
+
+The `agSetColumnFilter` can be used to filter the group column in a [Tree List](./filter-set-tree-list/), representing the hierarchy of
+the row groups.
+
+{% gridExampleRunner title="Hierarchical Set Filter" name="filtering-set-hierarchy" /%}
+
+{% note %}
+The tree filter needs a value for each leaf row. In absence of a `field` or `valueGetter` on the group column, provide a `filterValueGetter`
+to the group column definition.
+{% /note %}
+
+The example above demonstrates the following configuration to enable the tree set filter:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoGroupColumnDef: {
+        filter: 'agSetColumnFilter',
+        filterValueGetter: (params) => params.data.athlete,
+        filterParams: {
+            treeList: true,
+            keyCreator: (params) => (params.value ? params.value.join('#') : null),
+        },
+    },
+}
+```
+
+Refer to the [Tree List Filter](./filter-set-tree-list/) documentation for further configuration options.
+
+### Text Filtering
+
+Providing a filter value getter to the group column allows for a simple string search of any group level.
+
+{% gridExampleRunner title="Custom Group Column Filter" name="filtering-custom" /%}
+
+The example above demonstrates using a filter value getter which returns an array of parent row keys. This enables searching for any group value
+containing the filter text:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoGroupColumnDef: {
+        filter: 'agTextColumnFilter',
+        filterValueGetter: (params) => params.node.parent.getRoute(),
+    },
+}
+```
 
 ## Next Up
 

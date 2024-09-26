@@ -94,6 +94,14 @@ function processDefaultColumnDefForVue(propertyName: string, providedExamples) {
     return false;
 }
 
+function processAutoGroupColumnDefForVue(propertyName: string, providedExamples) {
+    if (propertyName === 'autoGroupColumnDef') {
+        return !providedExamples['vue3'];
+    }
+
+    return false;
+}
+
 const GLOBAL_COMPONENTS = [
     'dateComponent',
     'loadingCellRenderer',
@@ -451,6 +459,13 @@ function internalParser(
                     bindings.defaultColDef = tsGenerate(node.initializer, tsTree);
                 }
 
+                if (
+                    processAutoGroupColumnDefForVue(propertyName, providedExamples) &&
+                    node.initializer &&
+                    ts.isObjectLiteralExpression(node.initializer)
+                ) {
+                    bindings.autoGroupColumnDef = tsGenerate(node.initializer, tsTree);
+                }
                 if (processGlobalComponentsForVue(propertyName, providedExamples) && ts.isIdentifier(node)) {
                     bindings.globalComponents.push(tsGenerate(node, tsTree));
                 }
@@ -513,6 +528,7 @@ function internalParser(
             components: [],
             vuePropertyBindings: {},
             defaultColDef: null,
+            autoGroupColumnDef: null,
             globalComponents: [],
             parsedColDefs: '',
             instanceMethods: [],
