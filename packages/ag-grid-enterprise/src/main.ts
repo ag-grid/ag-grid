@@ -54,4 +54,3 @@ export { SparklinesModule } from './sparkline/sparklinesModule';
 // once we have independent module imports this issue will go away
 export { GridChartsModule } from './charts/gridChartsModule';
 export { GridChartsModule as GridChartsEnterpriseModule } from './charts-enterprise/gridChartsEnterpriseModule';
-
