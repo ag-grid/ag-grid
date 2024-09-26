@@ -23,7 +23,6 @@ import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gri
 import { CtrlsFactory } from './ctrlsFactory';
 import { CtrlsService } from './ctrlsService';
 import type { GridOptions } from './entities/gridOptions';
-import { RowNodeEventThrottle } from './entities/rowNodeEventThrottle';
 import { RowPositionUtils } from './entities/rowPositionUtils';
 import { Environment } from './environment';
 import { EventService } from './eventService';
@@ -439,7 +438,6 @@ export class GridCoreCreator {
             ScrollVisibleService,
             CtrlsService,
             PinnedWidthService,
-            RowNodeEventThrottle,
             CtrlsFactory,
             SyncService,
             OverlayService,

@@ -22,13 +22,14 @@ import {
 import { FilterStage } from './filterStage';
 import { FlattenStage } from './flattenStage';
 import { ImmutableService } from './immutableService';
+import { RowNodeEventThrottle } from './rowNodeEventThrottle';
 import { SortStage } from './sortStage';
 
 export const ClientSideRowModelCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.ClientSideRowModelModule}-core`,
     rowModel: 'clientSide',
-    beans: [ClientSideRowModel, FilterStage, FlattenStage, ImmutableService],
+    beans: [ClientSideRowModel, FilterStage, FlattenStage, ImmutableService, RowNodeEventThrottle],
 });
 
 export const ClientSideRowModelSortModule = _defineModule({

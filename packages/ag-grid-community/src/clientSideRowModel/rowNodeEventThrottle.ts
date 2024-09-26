@@ -2,33 +2,23 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { RowGroupOpenedEvent } from '../events';
-import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import type { IRowModel } from '../interfaces/iRowModel';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 
 export class RowNodeEventThrottle extends BeanStub implements NamedBean {
     beanName = 'rowNodeEventThrottle' as const;
 
     private animationFrameService?: AnimationFrameService;
-    private rowModel: IRowModel;
+    private rowModel: IClientSideRowModel;
 
     public wireBeans(beans: BeanCollection): void {
         this.animationFrameService = beans.animationFrameService;
-        this.rowModel = beans.rowModel;
+        this.rowModel = beans.rowModel as IClientSideRowModel;
     }
-
-    private clientSideRowModel: IClientSideRowModel;
 
     private events: RowGroupOpenedEvent[] = [];
 
     private dispatchExpandedDebounced: () => void;
-
-    public postConstruct(): void {
-        if (_isClientSideRowModel(this.gos)) {
-            this.clientSideRowModel = this.rowModel as IClientSideRowModel;
-        }
-    }
 
     // because the user can call rowNode.setExpanded() many times in one VM turn,
     // we throttle the calls to ClientSideRowModel using animationFrameService. this means for 100
@@ -42,18 +32,10 @@ export class RowNodeEventThrottle extends BeanStub implements NamedBean {
     // rather than debounce() so this will get done if anyone flushes the animationFrameService
     // (eg user calls api.ensureRowVisible(), which in turn flushes ).
     public dispatchExpanded(event: RowGroupOpenedEvent, forceSync?: boolean): void {
-        // if not using CSRM, we don't debounce. otherwise this breaks the SSRM.
-        if (this.clientSideRowModel == null) {
-            this.eventService.dispatchEvent(event);
-            return;
-        }
-
         this.events.push(event);
 
         const func = () => {
-            if (this.clientSideRowModel) {
-                this.clientSideRowModel.onRowGroupOpened();
-            }
+            this.rowModel.onRowGroupOpened();
             this.events.forEach((e) => this.eventService.dispatchEvent(e));
             this.events = [];
         };
