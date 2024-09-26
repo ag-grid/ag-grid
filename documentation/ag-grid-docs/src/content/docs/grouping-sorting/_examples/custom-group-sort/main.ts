@@ -20,53 +20,29 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
-        {
-            field: 'year',
-            rowGroup: true,
-            hide: true,
-        },
-        {
-            field: 'month',
-            rowGroup: true,
-            hide: true,
-            comparator: (a, b) => {
-                const months = [
-                    'January',
-                    'February',
-                    'March',
-                    'April',
-                    'May',
-                    'June',
-                    'July',
-                    'August',
-                    'September',
-                    'October',
-                    'November',
-                    'December',
-                ];
-                // sorts 'months' in chronological order
-                return months.indexOf(a) - months.indexOf(b);
-            },
-        },
-        { field: 'salesRep' },
-        { field: 'handset' },
-        { field: 'sale' },
+        { field: 'country', rowGroup: true },
+        { field: 'year', rowGroup: true },
+        { field: 'athlete' },
+        { field: 'total' },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        filter: true,
     },
     autoGroupColumnDef: {
-        sort: 'asc',
         minWidth: 300,
+        comparator: (valueA, valueB, nodeA, nodeB) =>
+            (nodeA.allLeafChildren?.length ?? 0) - (nodeB.allLeafChildren?.length ?? 0),
     },
     groupDefaultExpanded: 1,
-    rowData: getData(),
 };
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
+
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 });

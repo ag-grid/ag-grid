@@ -494,7 +494,9 @@
                 "url": "./cell-editors/#accessing-instances"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["ICellEditor"],
+                "exclude": [
+                    "ICellEditor"
+                ],
                 "include": []
             }
         }
@@ -551,22 +553,30 @@
         },
         "addEventListener": {
             "interfaceHierarchyOverrides": {
-                "exclude": ["AgEventTypeParams"]
+                "exclude": [
+                    "AgEventTypeParams"
+                ]
             }
         },
         "removeEventListener": {
             "interfaceHierarchyOverrides": {
-                "exclude": ["AgEventTypeParams"]
+                "exclude": [
+                    "AgEventTypeParams"
+                ]
             }
         },
         "addGlobalListener": {
             "interfaceHierarchyOverrides": {
-                "exclude": ["AgEventTypeParams"]
+                "exclude": [
+                    "AgEventTypeParams"
+                ]
             }
         },
         "removeGlobalListener": {
             "interfaceHierarchyOverrides": {
-                "exclude": ["AgEventTypeParams"]
+                "exclude": [
+                    "AgEventTypeParams"
+                ]
             }
         },
         "addRenderedRowListener": {
@@ -584,22 +594,12 @@
                 "url": "./grouping/"
             }
         },
-        "expandAll": {
-            "more": {
-                "name": "Expand / Collapse Groups via API",
-                "url": "./grouping-opening-groups/#expand--collapse-groups-via-api"
-            }
-        },
-        "collapseAll": {
-            "more": {
-                "name": "Expand / Collapse Groups via API",
-                "url": "./grouping-opening-groups/#expand--collapse-groups-via-api"
-            }
-        },
+        "expandAll": {},
+        "collapseAll": {},
         "setRowNodeExpanded": {
             "more": {
-                "name": "Expand / Collapse Groups via API",
-                "url": "./grouping-opening-groups/#expand--collapse-groups-via-api"
+                "name": "Expand to a Row",
+                "url": "./grouping-opening-groups/#expand-row-ancestors"
             }
         },
         "onGroupExpandedOrCollapsed": {},
@@ -677,7 +677,9 @@
                 "url": "./component-cell-renderer/#accessing-instances"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["ICellRendererParams"],
+                "exclude": [
+                    "ICellRendererParams"
+                ],
                 "include": []
             }
         },
@@ -862,7 +864,9 @@
                 "url": "./side-bar/#side-bar-api"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["ToolPanelDef"],
+                "exclude": [
+                    "ToolPanelDef"
+                ],
                 "include": []
             }
         },
@@ -926,7 +930,11 @@
                 "url": "./status-bar/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["IAfterGuiAttachedParams", "ContainerType", "IStatusPanelParams"],
+                "exclude": [
+                    "IAfterGuiAttachedParams",
+                    "ContainerType",
+                    "IStatusPanelParams"
+                ],
                 "include": []
             }
         }
@@ -945,7 +953,10 @@
                 "url": "./integrated-charts-api-range-chart/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["CellRangeParams", "CreateRangeChartParams"],
+                "exclude": [
+                    "CellRangeParams",
+                    "CreateRangeChartParams"
+                ],
                 "include": []
             }
         },
@@ -961,7 +972,9 @@
                 "url": "./integrated-charts-api-cross-filter-chart/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["CellRangeParams"],
+                "exclude": [
+                    "CellRangeParams"
+                ],
                 "include": []
             }
         },
@@ -989,7 +1002,11 @@
                 "url": "./integrated-charts-api-save-restore-charts/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["CellRangeParams", "ChartOptions", "ChartModelType"],
+                "exclude": [
+                    "CellRangeParams",
+                    "ChartOptions",
+                    "ChartModelType"
+                ],
                 "include": []
             }
         },
@@ -999,7 +1016,11 @@
                 "url": "./integrated-charts-api-save-restore-charts/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["CellRangeParams", "ChartOptions", "ChartModelType"],
+                "exclude": [
+                    "CellRangeParams",
+                    "ChartOptions",
+                    "ChartModelType"
+                ],
                 "include": []
             }
         },

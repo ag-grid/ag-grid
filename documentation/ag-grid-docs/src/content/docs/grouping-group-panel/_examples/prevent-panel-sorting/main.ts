@@ -12,10 +12,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'country', enableRowGroup: true, rowGroup: true, hide: true },
         { field: 'year', enableRowGroup: true, rowGroup: true, hide: true },
         { field: 'athlete', minWidth: 180 },
-        { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
-        { field: 'bronze', aggFunc: 'sum' },
-        { field: 'total', aggFunc: 'sum' },
+        { field: 'total' },
     ],
     defaultColDef: {
         flex: 1,
@@ -25,9 +22,13 @@ const gridOptions: GridOptions<IOlympicData> = {
         sort: 'asc',
         minWidth: 200,
     },
-    rowGroupPanelSuppressSort: true,
     rowGroupPanelShow: 'always',
 };
+
+function toggle() {
+    const checked = document.querySelector<HTMLInputElement>('#rowGroupPanelSuppressSort')!.checked;
+    gridApi!.setGridOption('rowGroupPanelSuppressSort', checked);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

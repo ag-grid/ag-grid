@@ -12,24 +12,19 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'country', rowGroup: true, hide: true },
         { field: 'year', rowGroup: true, hide: true },
         { field: 'athlete' },
-        { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
-        { field: 'bronze', aggFunc: 'sum' },
-        { field: 'total', aggFunc: 'sum' },
-        { field: 'age' },
-        { field: 'date' },
         { field: 'sport' },
+        { field: 'total' },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 150,
     },
     autoGroupColumnDef: {
-        minWidth: 300,
+        minWidth: 220,
     },
     groupDisplayType: 'multipleColumns',
     showOpenedGroup: true,
-    suppressGroupRowsSticky: true,
+    groupDefaultExpanded: -1,
 };
 
 // setup the grid after the page has finished loading
