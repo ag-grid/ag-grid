@@ -1,6 +1,6 @@
 import type { MockInstance } from 'vitest';
 
-import { CommunityFeaturesModule, InfiniteRowModelModule } from 'ag-grid-community';
+import { CommunityFeaturesModule, InfiniteRowModelModule, ValidationsModule } from 'ag-grid-community';
 
 import { TestGridsManager } from '../test-utils';
 
