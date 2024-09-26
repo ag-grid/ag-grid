@@ -14,7 +14,6 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { ResizeObserverService } from '../misc/resizeObserverService';
 import { _setAriaLabel, _setAriaRole } from '../utils/aria';
-import { _last } from '../utils/array';
 import { _getAbsoluteHeight, _getAbsoluteWidth, _getElementRectWithOffset } from '../utils/dom';
 import { _isElementInEventPath, _isStopPropagationForAgGrid } from '../utils/event';
 import { _warnOnce } from '../utils/function';
@@ -846,53 +845,66 @@ export class PopupService extends BeanStub implements NamedBean {
     }
 
     /** @return true if moved */
-    public bringPopupToFront(ePopup: HTMLElement): boolean {
+    public bringPopupToFront(ePopup: HTMLElement): void {
         const parent = this.getPopupParent();
         const popupList: HTMLElement[] = Array.prototype.slice.call(parent.querySelectorAll('.ag-popup'));
         const popupLen = popupList.length;
-        const alwaysOnTopList: HTMLElement[] = Array.prototype.slice.call(
-            parent.querySelectorAll('.ag-popup.ag-always-on-top')
-        );
-        const onTopLength = alwaysOnTopList.length;
+
         const eWrapper = this.getWrapper(ePopup);
 
         if (!eWrapper || popupLen <= 1 || !parent.contains(ePopup)) {
-            return false;
+            return;
         }
 
-        const pos = popupList.indexOf(eWrapper);
+        const standardPopupList: HTMLElement[] = [];
+        const alwaysOnTopList: HTMLElement[] = [];
 
-        const innerEls = eWrapper.querySelectorAll('div');
+        for (const popup of popupList) {
+            if (popup === eWrapper) {
+                continue;
+            }
+
+            if (popup.classList.contains('ag-always-on-top')) {
+                alwaysOnTopList.push(popup);
+            } else {
+                standardPopupList.push(popup);
+            }
+        }
+
         const innerElsScrollMap: [HTMLElement, number][] = [];
 
-        innerEls.forEach((el) => {
-            if (el.scrollTop !== 0) {
-                innerElsScrollMap.push([el, el.scrollTop]);
+        const onTopLength = alwaysOnTopList.length;
+        const isPopupAlwaysOnTop = eWrapper.classList.contains('ag-always-on-top');
+        const shouldBeLast = isPopupAlwaysOnTop || !onTopLength;
+
+        const targetList: HTMLElement[] = shouldBeLast
+            ? [...standardPopupList, ...alwaysOnTopList, eWrapper]
+            : [...standardPopupList, eWrapper, ...alwaysOnTopList];
+
+        for (let i = 0; i <= popupLen; i++) {
+            const currentPopup = targetList[i];
+
+            if (popupList[i] === targetList[i] || currentPopup === eWrapper) {
+                continue;
             }
-        });
 
-        let result = false;
-        if (onTopLength) {
-            const isPopupAlwaysOnTop = eWrapper.classList.contains('ag-always-on-top');
-
-            if (isPopupAlwaysOnTop) {
-                if (pos !== popupLen - 1) {
-                    _last(alwaysOnTopList).insertAdjacentElement('afterend', eWrapper);
-                    result = true;
+            const innerEls = currentPopup.querySelectorAll('div');
+            innerEls.forEach((el) => {
+                if (el.scrollTop !== 0) {
+                    innerElsScrollMap.push([el, el.scrollTop]);
                 }
-            } else if (pos !== popupLen - onTopLength - 1) {
-                alwaysOnTopList[0].insertAdjacentElement('beforebegin', eWrapper);
-                result = true;
+            });
+
+            if (i === 0) {
+                parent.insertAdjacentElement('afterbegin', currentPopup);
+            } else {
+                targetList[i - 1].insertAdjacentElement('afterend', currentPopup);
             }
-        } else if (pos !== popupLen - 1) {
-            _last(popupList).insertAdjacentElement('afterend', eWrapper);
-            result = true;
         }
 
         while (innerElsScrollMap.length) {
             const currentEl = innerElsScrollMap.pop();
             currentEl![0].scrollTop = currentEl![1];
         }
-        return result;
     }
 }
