@@ -10,7 +10,8 @@ import type {
 } from 'ag-charts-community';
 import { AgCharts, _ModuleSupport, _Theme } from 'ag-charts-community';
 
-import type { CrossFilteringContext } from '../../chartService';
+import type { ChartSelectionModel } from '../model/chartSelectionModel';
+import type { CrossFilteringContext } from '../model/crossFilteringContext';
 import { deproxy } from '../utils/integration';
 import { get } from '../utils/object';
 import type { ChartSeriesType } from '../utils/seriesTypeMapper';
@@ -18,6 +19,7 @@ import { getSeriesType } from '../utils/seriesTypeMapper';
 import { createAgChartTheme, lookupCustomChartTheme } from './chartTheme';
 
 export interface ChartProxyParams {
+    chartId: string;
     chartInstance?: AgChartInstance;
     chartType: ChartType;
     customChartThemes?: { [name: string]: AgChartTheme };
@@ -29,6 +31,7 @@ export interface ChartProxyParams {
     getExtraPaddingDirections: () => ExtraPaddingDirection[];
     apiChartThemeOverrides?: AgChartThemeOverrides;
     crossFiltering: boolean;
+    crossFilteringContext: CrossFilteringContext;
     crossFilterCallback: (event: any, reset?: boolean) => void;
     chartThemeToRestore?: string;
     chartOptionsToRestore?: AgChartThemeOverrides;
@@ -74,6 +77,7 @@ export abstract class ChartProxy<
     protected readonly crossFilterCallback: (event: any, reset?: boolean) => void;
 
     protected clearThemeOverrides = false;
+    protected selectionModel: ChartSelectionModel;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.isEnterpriseCharts = _ModuleSupport.enterpriseModule.isEnterprise;
@@ -82,6 +86,10 @@ export abstract class ChartProxy<
         this.crossFiltering = chartProxyParams.crossFiltering;
         this.crossFilterCallback = chartProxyParams.crossFilterCallback;
         this.standaloneChartType = getSeriesType(this.chartType) as TSeries;
+
+        this.selectionModel = chartProxyParams.crossFilteringContext.createChartSelectionModel(
+            this.chartProxyParams.chartId
+        );
 
         if (this.chart == null) {
             this.chart = AgCharts.create(this.getCommonChartOptions());
@@ -92,10 +100,6 @@ export abstract class ChartProxy<
     }
 
     protected abstract getUpdateOptions(params: UpdateParams, commonChartOptions: TOptions): TOptions;
-
-    public crossFilteringReset(): void {
-        // only required in cartesian charts
-    }
 
     public update(params: UpdateParams): void {
         this.getChartRef().update(this.getUpdateOptions(params, this.getCommonChartOptions(params.updatedOverrides)));

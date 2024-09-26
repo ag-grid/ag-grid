@@ -28,9 +28,6 @@ export abstract class CartesianChartProxy<TSeries extends CartesianChartTypes> e
     AgCartesianChartOptions,
     TSeries
 > {
-    protected crossFilteringAllPoints = new Set<string>();
-    protected crossFilteringSelectedPoints: string[] = [];
-
     protected constructor(params: ChartProxyParams) {
         super(params);
     }
@@ -91,9 +88,7 @@ export abstract class CartesianChartProxy<TSeries extends CartesianChartTypes> e
 
     protected getData(params: UpdateParams, axes: AgCartesianAxisOptions[]): any[] {
         const supportsCrossFiltering = ['area', 'line'].includes(this.standaloneChartType);
-        return this.crossFiltering && supportsCrossFiltering
-            ? this.getCrossFilterData(params)
-            : this.getDataTransformedData(params, axes);
+        return this.crossFiltering && supportsCrossFiltering ? params.data : this.getDataTransformedData(params, axes);
     }
 
     private getDataTransformedData(params: UpdateParams, axes: AgCartesianAxisOptions[]) {
@@ -166,47 +161,16 @@ export abstract class CartesianChartProxy<TSeries extends CartesianChartTypes> e
         });
     }
 
-    public override crossFilteringReset(): void {
-        this.crossFilteringSelectedPoints = [];
-        this.crossFilteringAllPoints.clear();
-    }
-
-    protected crossFilteringPointSelected(point: string): boolean {
-        return this.crossFilteringSelectedPoints.length == 0 || this.crossFilteringSelectedPoints.includes(point);
+    protected crossFilteringPointSelected(category: string, value: string): boolean {
+        return this.selectionModel.isSelected(category, value);
     }
 
     protected crossFilteringDeselectedPoints(): boolean {
-        return (
-            this.crossFilteringSelectedPoints.length > 0 &&
-            this.crossFilteringAllPoints.size !== this.crossFilteringSelectedPoints.length
-        );
+        return this.selectionModel.hasSelection();
     }
 
-    private getCrossFilterData(params: UpdateParams): any[] {
-        this.crossFilteringAllPoints.clear();
-        const [category] = params.categories;
-        const colId = params.fields[0].colId;
-        const filteredOutColId = `${colId}Filter`;
-        const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
-
-        return params.data.map((d) => {
-            const value = d[category.id];
-            this.crossFilteringAllPoints.add(value);
-
-            const pointSelected = this.crossFilteringPointSelected(value);
-            if (this.standaloneChartType === 'area' && lastSelectedChartId === params.chartId) {
-                d[`${colId}`] = pointSelected ? d[colId] : 0;
-            }
-            if (this.standaloneChartType === 'line') {
-                d[`${colId}Filter`] = pointSelected ? d[colId] : d[colId] + d[filteredOutColId];
-            }
-
-            return d;
-        });
-    }
-
-    protected crossFilteringAddSelectedPoint(multiSelection: boolean, value: string): void {
-        multiSelection ? this.crossFilteringSelectedPoints.push(value) : (this.crossFilteringSelectedPoints = [value]);
+    protected crossFilteringAddSelectedPoint(multiSelection: boolean, category: string, value: string): void {
+        this.selectionModel.toggleSelection(multiSelection, category, value);
     }
 
     protected isHorizontal(commonChartOptions: AgCartesianChartOptions): boolean {

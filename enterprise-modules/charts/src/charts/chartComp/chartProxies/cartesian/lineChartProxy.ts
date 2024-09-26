@@ -1,5 +1,6 @@
 import type { AgAreaSeriesOptions, AgCartesianAxisOptions, AgLineSeriesOptions } from 'ag-charts-community';
 
+import { CROSS_FILTER_FIELD_POSTFIX } from '../../model/crossFilterAPI';
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 import type { CartesianChartTypes } from './cartesianChartProxy';
@@ -37,46 +38,47 @@ export class LineChartProxy<T extends CartesianChartTypes = 'line'> extends Cart
                     xName: category.name,
                     yKey: f.colId,
                     yName: f.displayName,
-                    ...(this.crossFiltering && !selectionSource && { yKey: `${f.colId}Filter` }),
+                    ...(this.crossFiltering && !selectionSource && { yKey: `${f.colId}${CROSS_FILTER_FIELD_POSTFIX}` }),
                 }) as AgLineSeriesOptions
         );
 
-        return this.crossFiltering ? this.extractLineAreaCrossFilterSeries(series, params) : series;
+        return (this.crossFiltering ? this.applyCrossFilter(series, params) : series) as AgLineSeriesOptions[];
     }
 
-    protected extractLineAreaCrossFilterSeries(
-        series: (AgLineSeriesOptions | AgAreaSeriesOptions)[],
-        params: UpdateParams
-    ) {
+    protected applyCrossFilter(series: (AgLineSeriesOptions | AgAreaSeriesOptions)[], params: UpdateParams) {
         const [category] = params.categories;
 
-        return series.map((s) => {
-            s.listeners = {
+        const anySelected = this.selectionModel.hasSelection();
+
+        return series.map((s) => ({
+            listeners: {
                 nodeClick: (e: any) => {
-                    const value = e.datum![s.xKey!];
+                    const category = s.xKey;
+                    const value = e.datum![category];
                     const multiSelection = e.event.metaKey || e.event.ctrlKey;
-                    this.crossFilteringAddSelectedPoint(multiSelection, value);
+                    this.crossFilteringAddSelectedPoint(multiSelection, category, value);
                     this.crossFilterCallback(e);
                 },
-            };
-            s.marker = {
-                itemStyler: (p) => ({
-                    fill: p.highlighted ? 'yellow' : p.fill,
-                    size: p.highlighted ? 14 : this.crossFilteringPointSelected(p.datum[category.id]) ? 8 : 0,
+            },
+            marker: {
+                itemStyler: ({ highlighted, fill, size, datum }: any) => ({
+                    fill: highlighted ? 'yellow' : fill,
+                    fillOpacity:
+                        anySelected && !highlighted
+                            ? this.crossFilteringPointSelected(category.id, datum[category.id])
+                                ? 1
+                                : 0
+                            : 1,
+                    size: highlighted ? 14 : size,
                 }),
-            };
-            if (this.standaloneChartType === 'area') {
-                (s as AgAreaSeriesOptions).fillOpacity = this.crossFilteringDeselectedPoints()
-                    ? CROSS_FILTER_MARKER_FILL_OPACITY_FACTOR
-                    : 1;
-            }
-            if (this.standaloneChartType === 'line') {
-                (s as AgLineSeriesOptions).strokeOpacity = this.crossFilteringDeselectedPoints()
-                    ? CROSS_FILTER_MARKER_STROKE_OPACITY_FACTOR
-                    : 1;
-            }
-
-            return s;
-        });
+            },
+            ...(this.standaloneChartType === 'area' && {
+                fillOpacity: this.crossFilteringDeselectedPoints() ? CROSS_FILTER_MARKER_FILL_OPACITY_FACTOR : 1,
+            }),
+            ...(this.standaloneChartType === 'line' && {
+                strokeOpacity: this.crossFilteringDeselectedPoints() ? CROSS_FILTER_MARKER_STROKE_OPACITY_FACTOR : 1,
+            }),
+            ...s,
+        }));
     }
 }

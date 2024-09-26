@@ -1,5 +1,6 @@
 import type { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-community';
 
+import { CROSS_FILTER_FIELD_POSTFIX } from '../../model/crossFilterAPI';
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 
@@ -37,7 +38,7 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
                     yKey: field.colId,
                     yName: field.displayName,
                     ...(this.crossFiltering && {
-                        yFilterKey: `${field.colId}Filter`,
+                        yFilterKey: `${field.colId}${CROSS_FILTER_FIELD_POSTFIX}`,
                     }),
                 }) as AgBarSeriesOptions
         );

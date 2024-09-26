@@ -28,6 +28,7 @@ import {
 
 import type { ColState } from '../model/chartDataModel';
 import { ChartDataModel } from '../model/chartDataModel';
+import { CROSS_FILTER_FIELD_POSTFIX } from '../model/crossFilterAPI';
 
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];
@@ -217,7 +218,7 @@ export class ChartDatasource extends BeanStub {
             valueCols.forEach((col) => {
                 const colId = col.getColId();
                 if (crossFiltering) {
-                    const filteredOutColId = colId + 'Filter';
+                    const filteredOutColId = colId + CROSS_FILTER_FIELD_POSTFIX;
 
                     // add data value to value column
                     const value = this.valueService.getValue(col, rowNode);
@@ -328,7 +329,7 @@ export class ChartDatasource extends BeanStub {
                                 aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
 
                             // filtered out data
-                            const filteredOutColId = `${colId}Filter`;
+                            const filteredOutColId = `${colId}${CROSS_FILTER_FIELD_POSTFIX}`;
                             const dataToAggFiltered = groupItem.__children
                                 .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
                                 .map((child: any) => child[filteredOutColId]);

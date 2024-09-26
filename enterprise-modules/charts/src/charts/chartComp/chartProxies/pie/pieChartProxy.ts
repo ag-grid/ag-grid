@@ -5,6 +5,7 @@ import type {
     AgPolarSeriesOptions,
 } from 'ag-charts-community';
 
+import { CROSS_FILTER_FIELD_POSTFIX } from '../../model/crossFilterAPI';
 import type { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
 
@@ -58,7 +59,7 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
                     calloutLabel: { enabled: false }, // hide labels on primary series
                     highlightStyle: { item: { fill: undefined } },
                     ...(this.crossFiltering && {
-                        angleFilterKey: `${f.colId}Filter`,
+                        angleFilterKey: `${f.colId}${CROSS_FILTER_FIELD_POSTFIX}`,
                         listeners: {
                             nodeClick: this.crossFilterCallback,
                         },

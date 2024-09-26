@@ -10,6 +10,8 @@ import type {
 } from '@ag-grid-community/core';
 import { BeanStub, _includes, _isClientSideRowModel, _warnOnce } from '@ag-grid-community/core';
 
+import { CROSS_FILTER_FIELD_POSTFIX } from '../model/crossFilterAPI';
+
 export class ChartCrossFilterService extends BeanStub implements NamedBean {
     beanName = 'chartCrossFilterService' as const;
 
@@ -38,10 +40,10 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
 
         let colId = ChartCrossFilterService.extractFilterColId(event);
 
-        if (colId.endsWith('Filter')) {
-            // remove 'Filter' suffix if present - this handles the area/line chart
+        if (colId.endsWith(CROSS_FILTER_FIELD_POSTFIX)) {
+            // remove CROSS_FILTER_FIELD_POSTFIX suffix if present - this handles the area/line chart
             // highlighting rather than filtering behaviour
-            colId = colId.replace('Filter', '');
+            colId = colId.replace(CROSS_FILTER_FIELD_POSTFIX, '');
         }
 
         if (this.isValidColumnFilter(colId)) {
@@ -123,10 +125,6 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
     }
 
     private isValidColumnFilter(colId: string) {
-        if (colId.endsWith('Filter')) {
-            colId = colId.replace('Filter', '');
-        }
-
         const filterType = this.getColumnFilterType(colId);
         if (typeof filterType === 'boolean') {
             return filterType;

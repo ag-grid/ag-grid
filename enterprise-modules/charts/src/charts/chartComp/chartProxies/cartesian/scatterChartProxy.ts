@@ -1,6 +1,7 @@
 import type { AgBubbleSeriesOptions, AgCartesianAxisOptions, AgScatterSeriesOptions } from 'ag-charts-community';
 
 import { ChartDataModel } from '../../model/chartDataModel';
+import { CROSS_FILTER_FIELD_POSTFIX } from '../../model/crossFilterAPI';
 import type { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 
@@ -66,14 +67,12 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
     }
 
     private extractCrossFilterSeries(series: (AgScatterSeriesOptions | AgBubbleSeriesOptions)[]) {
-        return series.map((series) => {
-            return {
-                xFilterKey: `${series.xKey}Filter`,
-                yFilterKey: `${series.yKey}Filter`,
-                highlightStyle: { item: { fill: 'yellow' } },
-                ...series,
-            };
-        });
+        return series.map((series) => ({
+            xFilterKey: `${series.xKey}${CROSS_FILTER_FIELD_POSTFIX}`,
+            yFilterKey: `${series.yKey}${CROSS_FILTER_FIELD_POSTFIX}`,
+            highlightStyle: { item: { fill: 'yellow' } },
+            ...series,
+        }));
     }
 
     private getSeriesDefinitions(fields: FieldDefinition[], paired: boolean): (SeriesDefinition | null)[] {

@@ -25,7 +25,6 @@ import {
 import { AgDialog } from '@ag-grid-enterprise/core';
 import type { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
 
-import type { CrossFilteringContext } from '../chartService';
 import { ChartController, DEFAULT_THEMES } from './chartController';
 import { AreaChartProxy } from './chartProxies/cartesian/areaChartProxy';
 import { BarChartProxy } from './chartProxies/cartesian/barChartProxy';
@@ -46,6 +45,7 @@ import type { ChartMenuContext } from './menu/chartMenuContext';
 import { ChartMenuParamsFactory } from './menu/chartMenuParamsFactory';
 import type { ChartModelParams } from './model/chartDataModel';
 import { ChartDataModel } from './model/chartDataModel';
+import type { CrossFilteringContext } from './model/crossFilteringContext';
 import type { ChartCrossFilterService } from './services/chartCrossFilterService';
 import type { ChartMenuService } from './services/chartMenuService';
 import { CHART_TOOL_PANEL_MENU_OPTIONS } from './services/chartMenuService';
@@ -178,6 +178,7 @@ export class GridChartComp extends Component {
 
         const chartType = this.chartController.getChartType();
         const chartProxyParams: ChartProxyParams = {
+            chartId: this.params.chartId,
             chartType,
             chartInstance,
             getChartThemeName: this.getChartThemeName.bind(this),
@@ -186,6 +187,7 @@ export class GridChartComp extends Component {
             getGridOptionsChartThemeOverrides: () => this.getGridOptionsChartThemeOverrides(),
             getExtraPaddingDirections: () => this.chartMenu?.getExtraPaddingDirections() ?? [],
             apiChartThemeOverrides: this.params.chartThemeOverrides,
+            crossFilteringContext: this.params.crossFilteringContext,
             crossFiltering: this.params.crossFiltering ?? false,
             crossFilterCallback,
             parentElement: this.eChart,
@@ -524,10 +526,6 @@ export class GridChartComp extends Component {
 
     public getUnderlyingChart() {
         return this.chartProxy.getChartRef();
-    }
-
-    public crossFilteringReset(): void {
-        this.chartProxy.crossFilteringReset();
     }
 
     private setActiveChartCellRange(focusEvent: FocusEvent): void {
