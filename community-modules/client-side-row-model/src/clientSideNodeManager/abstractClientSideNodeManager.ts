@@ -3,9 +3,9 @@ import type {
     ClientSideNodeManagerUpdateRowDataResult,
     IClientSideNodeManager,
     RowDataTransaction,
-    RowNode,
     SelectionEventSourceType,
 } from '@ag-grid-community/core';
+import { RowNode, _errorOnce, _warnOnce } from '@ag-grid-community/core';
 import { BeanStub } from '@ag-grid-community/core';
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
@@ -31,6 +31,9 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     extends BeanStub
     implements IClientSideNodeManager<TData>
 {
+    private nextId = 0;
+    protected allNodesMap: { [id: string]: RowNode } = {};
+
     public rootNode: ClientSideNodeManagerRootNode<TData>;
 
     protected beans: BeanCollection;
@@ -39,7 +42,9 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         this.beans = beans;
     }
 
-    public abstract getRowNode(id: string): RowNode | undefined;
+    public getRowNode(id: string): RowNode | undefined {
+        return this.allNodesMap[id];
+    }
 
     public abstract setNewRowData(rowData: TData[]): void;
 
@@ -125,5 +130,56 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         // If the array has an odd number of elements, the addIndex need to be rounded up.
         // Consider that array.slice does round up internally, but we are setting this value to node.sourceRowIndex.
         return Math.ceil(addIndex);
+    }
+
+    protected clearAllNodesMap(): void {
+        this.allNodesMap = {};
+        this.nextId = 0;
+    }
+
+    protected createNode(dataItem: TData, sourceRowIndex: number): RowNode<TData> {
+        const node: ClientSideNodeManagerRowNode<TData> = new RowNode<TData>(this.beans);
+        node.parent = this.rootNode;
+        node.level = 0;
+        node.group = false;
+        node.master = false;
+        node.expanded = false;
+        node.sourceRowIndex = sourceRowIndex;
+
+        node.setDataAndId(dataItem, String(this.nextId));
+
+        if (this.allNodesMap[node.id!]) {
+            _warnOnce(
+                `duplicate node id '${node.id}' detected from getRowId callback, this could cause issues in your grid.`
+            );
+        }
+        this.allNodesMap[node.id!] = node;
+
+        this.nextId++;
+
+        return node;
+    }
+
+    protected lookupRowNode(getRowIdFunc: ((data: any) => string) | undefined, data: TData): RowNode | null {
+        let rowNode: RowNode | undefined;
+        if (getRowIdFunc) {
+            // find rowNode using id
+            const id = getRowIdFunc({ data, level: 0 });
+            rowNode = this.allNodesMap[id];
+            if (!rowNode) {
+                _errorOnce(`could not find row id=${id}, data item was not found for this id`);
+                return null;
+            }
+        } else {
+            // find rowNode using object references
+            rowNode = this.rootNode.allLeafChildren?.find((node) => node.data === data);
+            if (!rowNode) {
+                _errorOnce(`could not find data item as object was not found`, data);
+                _errorOnce(`Consider using getRowId to help the Grid find matching row data`);
+                return null;
+            }
+        }
+
+        return rowNode || null;
     }
 }

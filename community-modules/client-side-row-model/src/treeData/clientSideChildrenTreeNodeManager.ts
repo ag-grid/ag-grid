@@ -3,17 +3,9 @@ import type {
     IClientSideNodeManager,
     NamedBean,
     RowDataTransaction,
-} from '@ag-grid-community/core';
-import {
     RowNode,
-    _cloneObject,
-    _errorOnce,
-    _exists,
-    _getRowIdCallback,
-    _iterateObject,
-    _missingOrEmpty,
-    _warnOnce,
 } from '@ag-grid-community/core';
+import { _cloneObject, _exists, _getRowIdCallback, _iterateObject, _missingOrEmpty } from '@ag-grid-community/core';
 
 import type {
     ClientSideNodeManagerRootNode,
@@ -23,20 +15,13 @@ import { AbstractClientSideNodeManager } from '../clientSideNodeManager/abstract
 import { makeFieldPathGetter } from './fieldAccess';
 import type { DataFieldGetter } from './fieldAccess';
 
-const TOP_LEVEL = 0;
-
 export class ClientSideChildrenTreeNodeManager<TData>
     extends AbstractClientSideNodeManager<TData>
     implements IClientSideNodeManager<TData>, NamedBean
 {
     beanName = 'clientSideChildrenTreeNodeManager' as const;
 
-    private allNodesMap: { [id: string]: RowNode } = {};
-
     private childrenGetter: DataFieldGetter | null = null;
-
-    // when user is provide the id's, we also keep a map of ids to row nodes for convenience
-    private nextId = 0;
 
     public override initRootNode(rootRowNode: RowNode<TData>): void {
         const childrenField = this.gos.get('treeDataChildrenField');
@@ -45,10 +30,6 @@ export class ClientSideChildrenTreeNodeManager<TData>
         }
 
         super.initRootNode(rootRowNode);
-    }
-
-    public getRowNode(id: string): RowNode | undefined {
-        return this.allNodesMap[id];
     }
 
     public override setNewRowData(rowData: TData[]): void {
@@ -64,16 +45,13 @@ export class ClientSideChildrenTreeNodeManager<TData>
         rootNode.childrenMapped = null;
         rootNode.updateHasChildren();
 
-        this.nextId = 0;
-        this.allNodesMap = {};
+        this.clearAllNodesMap();
 
         if (rowData) {
             // we use rootNode as the parent, however if using ag-grid-enterprise, the grouping stage
             // sets the parent node on each row (even if we are not grouping). so setting parent node
             // here is for benefit of ag-grid-community users
-            rootNode.allLeafChildren = rowData.map((dataItem, index) =>
-                this.createNode(dataItem, this.rootNode, TOP_LEVEL, index)
-            );
+            rootNode.allLeafChildren = rowData.map((dataItem, index) => this.createNode(dataItem, index));
         } else {
             rootNode.allLeafChildren = [];
             rootNode.childrenAfterGroup = [];
@@ -205,8 +183,9 @@ export class ClientSideChildrenTreeNodeManager<TData>
 
         const nodesToUnselect: RowNode[] = [];
 
-        this.executeRemove(rowDataTran, updateRowDataResult, nodesToUnselect);
-        this.executeUpdate(rowDataTran, updateRowDataResult, nodesToUnselect);
+        const getRowIdFunc = _getRowIdCallback(this.gos);
+        this.executeRemove(getRowIdFunc, rowDataTran, updateRowDataResult, nodesToUnselect);
+        this.executeUpdate(getRowIdFunc, rowDataTran, updateRowDataResult, nodesToUnselect);
         this.executeAdd(rowDataTran, updateRowDataResult);
 
         this.updateSelection(nodesToUnselect, 'rowDataChanged');
@@ -244,9 +223,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
         }
 
         // create new row nodes for each data item
-        const newNodes: RowNode[] = add!.map((item, index) =>
-            this.createNode(item, this.rootNode, TOP_LEVEL, addIndex + index)
-        );
+        const newNodes: RowNode[] = add!.map((item, index) => this.createNode(item, addIndex + index));
 
         if (addIndex < allLeafChildren.length) {
             // Insert at the specified index
@@ -279,6 +256,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
     }
 
     private executeRemove(
+        getRowIdFunc: ((data: any) => string) | undefined,
         rowDataTran: RowDataTransaction,
         { rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult<TData>,
         nodesToUnselect: RowNode[]
@@ -292,7 +270,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
         const rowIdsRemoved: { [key: string]: boolean } = {};
 
         remove!.forEach((item) => {
-            const rowNode = this.lookupRowNode(item);
+            const rowNode = this.lookupRowNode(getRowIdFunc, item);
 
             if (!rowNode) {
                 return;
@@ -331,6 +309,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
     }
 
     private executeUpdate(
+        getRowIdFunc: ((data: any) => string) | undefined,
         rowDataTran: RowDataTransaction,
         { rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult<TData>,
         nodesToUnselect: RowNode[]
@@ -341,7 +320,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
         }
 
         update!.forEach((item) => {
-            const rowNode = this.lookupRowNode(item);
+            const rowNode = this.lookupRowNode(getRowIdFunc, item);
 
             if (!rowNode) {
                 return;
@@ -354,56 +333,5 @@ export class ClientSideChildrenTreeNodeManager<TData>
 
             rowNodeTransaction.update.push(rowNode);
         });
-    }
-
-    private lookupRowNode(data: TData): RowNode | null {
-        const getRowIdFunc = _getRowIdCallback(this.gos);
-
-        let rowNode: RowNode | undefined;
-        if (getRowIdFunc) {
-            // find rowNode using id
-            const id = getRowIdFunc({ data, level: 0 });
-            rowNode = this.allNodesMap[id];
-            if (!rowNode) {
-                _errorOnce(`could not find row id=${id}, data item was not found for this id`);
-                return null;
-            }
-        } else {
-            // find rowNode using object references
-            rowNode = this.rootNode.allLeafChildren?.find((node) => node.data === data);
-            if (!rowNode) {
-                _errorOnce(`could not find data item as object was not found`, data);
-                _errorOnce(`Consider using getRowId to help the Grid find matching row data`);
-                return null;
-            }
-        }
-
-        return rowNode || null;
-    }
-
-    private createNode(dataItem: TData, parent: RowNode<TData>, level: number, sourceRowIndex: number): RowNode<TData> {
-        const node: ClientSideNodeManagerRowNode<TData> = new RowNode<TData>(this.beans);
-        node.sourceRowIndex = sourceRowIndex;
-
-        node.group = false;
-        node.master = false;
-        node.expanded = false;
-
-        if (parent) {
-            node.parent = parent;
-        }
-        node.level = level;
-        node.setDataAndId(dataItem, this.nextId.toString());
-
-        if (this.allNodesMap[node.id!]) {
-            _warnOnce(
-                `duplicate node id '${node.id}' detected from getRowId callback, this could cause issues in your grid.`
-            );
-        }
-        this.allNodesMap[node.id!] = node;
-
-        this.nextId++;
-
-        return node;
     }
 }
