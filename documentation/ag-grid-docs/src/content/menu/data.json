@@ -913,7 +913,7 @@
                                 "isEnterprise": true
                             },
                             {
-                                "title": "Group Structure",
+                                "title": "Group Display Types",
                                 "path": "grouping-display-types",
                                 "isEnterprise": true,
                                 "items": [

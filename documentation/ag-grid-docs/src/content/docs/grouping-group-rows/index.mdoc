@@ -21,7 +21,7 @@ const gridOptions = {
 
 ## Cell Renderer
 The group rows use the `agGroupCellRenderer` component to display the group information, as well as the chevron control
-for expanding and collapsing rows. The renderer also embeds the grouped columns renderer and displays this inside of the group cell.
+for expanding and collapsing rows.
 
 This can be configured with several [Group Renderer Properties](./grouping-group-rows/#configurable-properties-reference) using
 the `groupRowRendererParams` grid option. The example below removes the row count and enables checkboxes for row selection.
@@ -59,10 +59,11 @@ on the `groupRowRendererParams` grid option.
 The example above uses the following configuration to provide a custom inner renderer to the group column:
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    groupRowRendererParams: {
-        innerRenderer: InnerRenderer,
-        innerRendererParams: {foo: 'bar'},
-    }
+    autoGroupColumnDef: {
+        cellRendererParams: {
+            innerRenderer: CustomMedalCellRenderer,
+        },
+    },
 }
 ```
 
@@ -82,4 +83,4 @@ const gridOptions = {
 
 ## Next Up
 
-Continue to the next section to learn about the [Custom Group Columns](./grouping-custom-group-columns/) display type.
+Continue to the next section to learn about the [Row Group Panel](./grouping-group-panel/).

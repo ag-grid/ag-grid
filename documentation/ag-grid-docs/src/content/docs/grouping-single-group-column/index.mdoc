@@ -88,9 +88,8 @@ The example above uses the following configuration to provide a custom inner ren
 const gridOptions = {
     autoGroupColumnDef: {
         cellRendererParams: {
-            innerRenderer: InnerRenderer,
-            innerRendererParams: {foo: 'bar'},
-        }
+            innerRenderer: CustomMedalCellRenderer,
+        },
     },
 }
 ```
