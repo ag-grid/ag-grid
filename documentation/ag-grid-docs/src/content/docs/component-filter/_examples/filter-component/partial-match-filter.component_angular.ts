@@ -1,8 +1,8 @@
 import { Component, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { IFilterAngularComp } from 'ag-grid-angular';
-import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from 'ag-grid-community';
+import type { IFilterAngularComp } from 'ag-grid-angular';
+import type { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,

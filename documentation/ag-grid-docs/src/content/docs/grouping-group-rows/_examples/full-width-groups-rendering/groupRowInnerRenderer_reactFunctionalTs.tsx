@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { CustomCellRendererProps } from 'ag-grid-react';
+import type { CustomCellRendererProps } from 'ag-grid-react';
 
 interface GroupFlagCellRendererParams extends CustomCellRendererProps {
     flagCodes: Record<string, string>;

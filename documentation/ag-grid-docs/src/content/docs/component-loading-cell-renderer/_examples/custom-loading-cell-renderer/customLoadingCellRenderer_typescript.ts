@@ -1,4 +1,4 @@
-import { ILoadingCellRendererComp, ILoadingCellRendererParams } from 'ag-grid-community';
+import type { ILoadingCellRendererComp, ILoadingCellRendererParams } from 'ag-grid-community';
 
 export class CustomLoadingCellRenderer implements ILoadingCellRendererComp {
     eGui!: HTMLElement;

@@ -1,4 +1,5 @@
-import { GridApi, GridOptions, IServerSideDatasource, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
@@ -57,7 +58,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
         getRows: (params) => {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
-            var response = server.getData(params.request);
+            const response = server.getData(params.request);
 
             // adding delay to simulate real server call
             setTimeout(() => {
@@ -75,7 +76,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -87,10 +88,10 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             // setup the fake server with entire dataset
-            var fakeServer = new FakeServer(data);
+            const fakeServer = new FakeServer(data);
 
             // create datasource with a reference to the fake server
-            var datasource = getServerSideDatasource(fakeServer);
+            const datasource = getServerSideDatasource(fakeServer);
 
             // register the datasource with the grid
             gridApi!.setGridOption('serverSideDatasource', datasource);

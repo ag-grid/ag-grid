@@ -1,12 +1,12 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     ColDef,
     FirstDataRenderedEvent,
     GridApi,
     GridOptions,
     PaginationNumberFormatterParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -57,7 +57,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

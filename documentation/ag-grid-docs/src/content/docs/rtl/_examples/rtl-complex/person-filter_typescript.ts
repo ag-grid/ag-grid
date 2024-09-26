@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from 'ag-grid-community';
+import type { IDoesFilterPassParams, IFilterComp, IFilterParams } from 'ag-grid-community';
 
 export class PersonFilter implements IFilterComp {
     filterParams!: IFilterParams;
@@ -52,7 +52,7 @@ export class PersonFilter implements IFilterComp {
     }
 
     isFilterActive() {
-        var isActive = this.filterText !== null && this.filterText !== undefined && this.filterText !== '';
+        const isActive = this.filterText !== null && this.filterText !== undefined && this.filterText !== '';
         return isActive;
     }
 

@@ -1,11 +1,13 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { CellValueChangedEvent, GridApi, GridOptions, ICellEditorParams, createGrid } from 'ag-grid-community';
+import type { CellValueChangedEvent, GridApi, GridOptions, ICellEditorParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
 import { RichSelectModule } from 'ag-grid-enterprise';
 
-import { IRow, getData } from './data';
+import type { IRow } from './data';
+import { getData } from './data';
 import { GenderCellRenderer } from './genderCellRenderer_typescript';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule, RichSelectModule]);

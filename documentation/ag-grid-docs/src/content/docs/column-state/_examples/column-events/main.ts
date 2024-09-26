@@ -1,7 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     ColDef,
-    Column,
     ColumnMovedEvent,
     ColumnPinnedEvent,
     ColumnPivotChangedEvent,
@@ -12,8 +11,8 @@ import {
     GridApi,
     GridOptions,
     SortChangedEvent,
-    createGrid,
 } from 'ag-grid-community';
+import { Column, createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 

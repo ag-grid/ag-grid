@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, RowHeightParams, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions, RowHeightParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -34,13 +35,13 @@ function getRowHeight(params: RowHeightParams): number | undefined | null {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
         .then(function (data) {
-            var differentHeights = [40, 80, 120, 200];
+            const differentHeights = [40, 80, 120, 200];
             data.forEach(function (dataItem: any, index: number) {
                 dataItem.rowHeight = differentHeights[index % 4];
             });

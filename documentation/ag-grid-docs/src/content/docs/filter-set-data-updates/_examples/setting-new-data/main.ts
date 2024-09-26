@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { FirstDataRenderedEvent, GridApi, GridOptions, IFiltersToolPanel, createGrid } from 'ag-grid-community';
+import type { FirstDataRenderedEvent, GridApi, GridOptions } from 'ag-grid-community';
+import { IFiltersToolPanel, createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { FiltersToolPanelModule } from 'ag-grid-enterprise';
@@ -36,12 +37,12 @@ function getRowData() {
 }
 
 function updateOne() {
-    var newData = [{ col1: 'A' }, { col1: 'A' }, { col1: 'C' }, { col1: 'D' }, { col1: 'E' }];
+    const newData = [{ col1: 'A' }, { col1: 'A' }, { col1: 'C' }, { col1: 'D' }, { col1: 'E' }];
     gridApi!.setGridOption('rowData', newData);
 }
 
 function updateTwo() {
-    var newData = [
+    const newData = [
         { col1: 'A' },
         { col1: 'A' },
         { col1: 'B' },
@@ -65,6 +66,6 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

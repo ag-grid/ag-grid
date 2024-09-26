@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -30,46 +31,46 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function getDisplayedRowAtIndex() {
-    var rowNode = gridApi!.getDisplayedRowAtIndex(0)!;
+    const rowNode = gridApi!.getDisplayedRowAtIndex(0)!;
     console.log('getDisplayedRowAtIndex(0) => ' + rowNode.data!.athlete + ' ' + rowNode.data!.year);
 }
 
 function getDisplayedRowCount() {
-    var count = gridApi!.getDisplayedRowCount();
+    const count = gridApi!.getDisplayedRowCount();
     console.log('getDisplayedRowCount() => ' + count);
 }
 
 function printAllDisplayedRows() {
-    var count = gridApi!.getDisplayedRowCount();
+    const count = gridApi!.getDisplayedRowCount();
     console.log('## printAllDisplayedRows');
-    for (var i = 0; i < count; i++) {
-        var rowNode = gridApi!.getDisplayedRowAtIndex(i)!;
+    for (let i = 0; i < count; i++) {
+        const rowNode = gridApi!.getDisplayedRowAtIndex(i)!;
         console.log('row ' + i + ' is ' + rowNode.data!.athlete);
     }
 }
 
 function printPageDisplayedRows() {
-    var rowCount = gridApi!.getDisplayedRowCount();
-    var lastGridIndex = rowCount - 1;
-    var currentPage = gridApi!.paginationGetCurrentPage();
-    var pageSize = gridApi!.paginationGetPageSize();
-    var startPageIndex = currentPage * pageSize;
-    var endPageIndex = (currentPage + 1) * pageSize - 1;
+    const rowCount = gridApi!.getDisplayedRowCount();
+    const lastGridIndex = rowCount - 1;
+    const currentPage = gridApi!.paginationGetCurrentPage();
+    const pageSize = gridApi!.paginationGetPageSize();
+    const startPageIndex = currentPage * pageSize;
+    let endPageIndex = (currentPage + 1) * pageSize - 1;
 
     if (endPageIndex > lastGridIndex) {
         endPageIndex = lastGridIndex;
     }
 
     console.log('## printPageDisplayedRows');
-    for (var i = startPageIndex; i <= endPageIndex; i++) {
-        var rowNode = gridApi!.getDisplayedRowAtIndex(i)!;
+    for (let i = startPageIndex; i <= endPageIndex; i++) {
+        const rowNode = gridApi!.getDisplayedRowAtIndex(i)!;
         console.log('row ' + i + ' is ' + rowNode.data!.athlete);
     }
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

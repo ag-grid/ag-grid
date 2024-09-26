@@ -1,4 +1,4 @@
-import {
+import type {
     ColDef,
     GridApi,
     GridOptions,
@@ -9,8 +9,8 @@ import {
     SetFilterValuesFuncParams,
     ValueFormatterParams,
     ValueGetterParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
@@ -108,7 +108,7 @@ function treeDataKeyCreator(params: KeyCreatorParams) {
     return params.value ? params.value.join(',') : null;
 }
 
-var fakeServer: any;
+let fakeServer: any;
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
     return {
@@ -118,7 +118,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
             // simulating real server call with a 500ms delay
             setTimeout(() => {
                 // get data for request from our fake server
-                var response = server.getData(params.request);
+                const response = server.getData(params.request);
                 if (response.success) {
                     // supply rows for requested block to grid
                     params.success({ rowData: response.rows, rowCount: response.lastRow });
@@ -136,7 +136,7 @@ function getDatesAsync(params: SetFilterValuesFuncParams<any, Date>) {
         setTimeout(() => getDatesAsync(params), 500);
         return;
     }
-    var dates = fakeServer.getDates();
+    let dates = fakeServer.getDates();
 
     if (dates) {
         // values need to match the cell value (what the `valueGetter` returns)
@@ -155,7 +155,7 @@ function getEmployeesAsync(params: SetFilterValuesFuncParams<any, string[]>) {
         setTimeout(() => getEmployeesAsync(params), 500);
         return;
     }
-    var employees = fakeServer.getEmployees();
+    const employees = fakeServer.getEmployees();
 
     // simulating real server call with a 500ms delay
     setTimeout(() => {
@@ -165,7 +165,7 @@ function getEmployeesAsync(params: SetFilterValuesFuncParams<any, string[]>) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/tree-data.json')
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fakeServer = new FakeServer(data);
 
             // create datasource with a reference to the fake server
-            var datasource = getServerSideDatasource(fakeServer);
+            const datasource = getServerSideDatasource(fakeServer);
 
             // register the datasource with the grid
             gridApi!.setGridOption('serverSideDatasource', datasource);

@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { FirstDataRenderedEvent, GridApi, GridOptions, IDetailCellRendererParams, createGrid } from 'ag-grid-community';
+import type { FirstDataRenderedEvent, GridApi, GridOptions, IDetailCellRendererParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MasterDetailModule } from 'ag-grid-enterprise';
@@ -48,7 +49,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')

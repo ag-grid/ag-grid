@@ -1,13 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
-    ColDef,
-    GetMainMenuItemsParams,
-    GridApi,
-    GridOptions,
-    MenuItemDef,
-    PostProcessPopupParams,
-    createGrid,
-} from 'ag-grid-community';
+import type { ColDef, GetMainMenuItemsParams, GridApi, GridOptions, MenuItemDef } from 'ag-grid-community';
+import { PostProcessPopupParams, createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';

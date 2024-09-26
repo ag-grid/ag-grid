@@ -1,14 +1,15 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, IRowNode, RefreshCellsParams, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions, IRowNode, RefreshCellsParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
 // the row animation look nice when you see all the rows
-var data: any[] = [];
-var topRowData: any[] = [];
-var bottomRowData: any[] = [];
+let data: any[] = [];
+let topRowData: any[] = [];
+let bottomRowData: any[] = [];
 let gridApi: GridApi;
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -39,8 +40,8 @@ const gridOptions: GridOptions = {
 };
 
 function createData(count: number): any[] {
-    var result = [];
-    for (var i = 1; i <= count; i++) {
+    const result = [];
+    for (let i = 1; i <= count; i++) {
         result.push({
             a: (i * 863) % 100,
             b: (i * 811) % 100,
@@ -63,7 +64,7 @@ function isSuppressFlashSelected() {
 
 function scrambleAndRefreshAll() {
     scramble();
-    var params = {
+    const params = {
         force: isForceRefreshSelected(),
         suppressFlash: isSuppressFlashSelected(),
     };
@@ -74,8 +75,8 @@ function scrambleAndRefreshLeftToRight() {
     scramble();
 
     ['a', 'b', 'c', 'd', 'e', 'f'].forEach((col, index) => {
-        var millis = index * 100;
-        var params = {
+        const millis = index * 100;
+        const params = {
             force: isForceRefreshSelected(),
             suppressFlash: isSuppressFlashSelected(),
             columns: [col],
@@ -87,9 +88,9 @@ function scrambleAndRefreshLeftToRight() {
 function scrambleAndRefreshTopToBottom() {
     scramble();
 
-    var frame = 0;
-    var i;
-    var rowNode;
+    let frame = 0;
+    let i;
+    let rowNode;
 
     for (i = 0; i < gridApi.getPinnedTopRowCount(); i++) {
         rowNode = gridApi.getPinnedTopRow(i)!;
@@ -107,9 +108,9 @@ function scrambleAndRefreshTopToBottom() {
     }
 
     function refreshRow(rowNode: IRowNode, api: GridApi) {
-        var millis = frame++ * 100;
-        var rowNodes = [rowNode]; // params needs an array
-        var params: RefreshCellsParams = {
+        const millis = frame++ * 100;
+        const rowNodes = [rowNode]; // params needs an array
+        const params: RefreshCellsParams = {
             force: isForceRefreshSelected(),
             suppressFlash: isSuppressFlashSelected(),
             rowNodes: rowNodes,
@@ -142,6 +143,6 @@ function scrambleItem(item: any) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

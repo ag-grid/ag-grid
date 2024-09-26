@@ -1,11 +1,11 @@
-import {
+import type {
     GetRowIdParams,
     GridApi,
     GridOptions,
     IServerSideDatasource,
     StoreRefreshedEvent,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
@@ -126,7 +126,7 @@ const getServerSideDatasource = (server: any): IServerSideDatasource => {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

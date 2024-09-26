@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { AdvancedFilterModel, FirstDataRenderedEvent, GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import type { AdvancedFilterModel, FirstDataRenderedEvent, GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';

@@ -1,4 +1,4 @@
-import {
+import type {
     ColDef,
     GridApi,
     GridOptions,
@@ -8,8 +8,8 @@ import {
     KeyCreatorParams,
     SetFilterValuesFuncParams,
     ValueFormatterParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { MenuModule } from 'ag-grid-enterprise';
 import { MultiFilterModule } from 'ag-grid-enterprise';
@@ -96,15 +96,15 @@ const gridOptions: GridOptions<IOlympicData> = {
     onFilterChanged: onFilterChanged,
 };
 
-var fakeServer: any;
-var selectedCountries: string[] | null = null;
-var textFilterStored: string[] | null = null;
+let fakeServer: any;
+let selectedCountries: string[] | null = null;
+let textFilterStored: string[] | null = null;
 
 function onFilterChanged() {
-    var countryFilterModel = gridApi!.getFilterModel()['country'];
-    var sportFilterModel = gridApi!.getFilterModel()['sport'];
-    var selected = countryFilterModel && countryFilterModel.values;
-    var textFilter = sportFilterModel?.filterModels[0] ? sportFilterModel.filterModels[0] : null;
+    const countryFilterModel = gridApi!.getFilterModel()['country'];
+    const sportFilterModel = gridApi!.getFilterModel()['sport'];
+    const selected = countryFilterModel && countryFilterModel.values;
+    const textFilter = sportFilterModel?.filterModels[0] ? sportFilterModel.filterModels[0] : null;
 
     if (!areEqual(selectedCountries, selected) || !areEqual(textFilterStored, textFilter)) {
         selectedCountries = selected;
@@ -137,8 +137,8 @@ function areEqual(a: null | string[], b: null | string[]) {
 }
 
 function getCountryValuesAsync(params: SetFilterValuesFuncParams) {
-    var sportFilterModel = params.api.getFilterModel()['sport'];
-    var countries = fakeServer.getCountries(sportFilterModel);
+    const sportFilterModel = params.api.getFilterModel()['sport'];
+    const countries = fakeServer.getCountries(sportFilterModel);
 
     // simulating real server call with a 500ms delay
     setTimeout(() => {
@@ -147,8 +147,8 @@ function getCountryValuesAsync(params: SetFilterValuesFuncParams) {
 }
 
 function getSportValuesAsync(params: SetFilterValuesFuncParams) {
-    var sportFilterModel = params.api.getFilterModel()['sport'];
-    var sports = fakeServer.getSports(selectedCountries, sportFilterModel);
+    const sportFilterModel = params.api.getFilterModel()['sport'];
+    const sports = fakeServer.getSports(selectedCountries, sportFilterModel);
 
     // simulating real server call with a 500ms delay
     setTimeout(() => {
@@ -162,7 +162,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
             // get data for request from our fake server
-            var response = server.getData(params.request);
+            const response = server.getData(params.request);
 
             // simulating real server call with a 500ms delay
             setTimeout(() => {
@@ -179,7 +179,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fakeServer = new FakeServer(data);
 
             // create datasource with a reference to the fake server
-            var datasource = getServerSideDatasource(fakeServer);
+            const datasource = getServerSideDatasource(fakeServer);
 
             // register the datasource with the grid
             gridApi!.setGridOption('serverSideDatasource', datasource);

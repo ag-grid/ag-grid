@@ -1,12 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
-    GridApi,
-    GridOptions,
-    IAggFuncParams,
-    ValueFormatterParams,
-    ValueGetterParams,
-    createGrid,
-} from 'ag-grid-community';
+import type { GridApi, GridOptions, IAggFuncParams, ValueFormatterParams, ValueGetterParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { FiltersToolPanelModule } from 'ag-grid-enterprise';

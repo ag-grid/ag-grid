@@ -1,13 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
-    ChartRef,
-    ColDef,
-    FirstDataRenderedEvent,
-    GridApi,
-    GridOptions,
-    GridReadyEvent,
-    createGrid,
-} from 'ag-grid-community';
+import type { ChartRef, ColDef, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { GridChartsModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';

@@ -1,5 +1,5 @@
 export function getData(): any[] {
-    var rowData = [
+    const rowData = [
         {
             localTime: '5:00am',
             show: { name: 'Wake Up Dublin', presenter: 'Andrew Connell' },

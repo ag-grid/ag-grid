@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ColDef, GetRowIdParams, GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import { GetRowIdParams, createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -23,6 +24,6 @@ const gridOptions: GridOptions = {
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

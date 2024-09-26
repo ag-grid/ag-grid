@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { IFloatingFilterAngularComp } from 'ag-grid-angular';
-import { IFloatingFilterParams, ISimpleFilter } from 'ag-grid-community';
+import type { IFloatingFilterAngularComp } from 'ag-grid-angular';
+import type { IFloatingFilterParams, ISimpleFilter } from 'ag-grid-community';
 
 export interface CustomParams {
     color: string;

@@ -1,9 +1,10 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ColGroupDef, GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import type { ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-declare var window: any;
+declare let window: any;
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 

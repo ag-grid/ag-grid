@@ -1,4 +1,4 @@
-import {
+import type {
     ColDef,
     ColumnRowGroupChangedEvent,
     GetRowIdParams,
@@ -7,8 +7,8 @@ import {
     IServerSideGetRowsParams,
     IsServerSideGroupOpenByDefaultParams,
     ServerSideTransaction,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
@@ -124,7 +124,7 @@ function getServerSideDatasource(server: any) {
 }
 
 function getRowId(params: GetRowIdParams) {
-    var rowId = '';
+    let rowId = '';
     if (params.parentKeys && params.parentKeys.length) {
         rowId += params.parentKeys.join('-') + '-';
     }
@@ -153,7 +153,7 @@ function onColumnRowGroupChanged(event: ColumnRowGroupChangedEvent) {
 }
 
 function isServerSideGroupOpenByDefault(params: IsServerSideGroupOpenByDefaultParams) {
-    let route = params.rowNode.getRoute();
+    const route = params.rowNode.getRoute();
     if (!route) {
         return false;
     }

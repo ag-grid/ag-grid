@@ -1,13 +1,13 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     AsyncTransactionsFlushedEvent,
     ColDef,
     GetRowIdParams,
     GridApi,
     GridOptions,
     ValueFormatterParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -15,7 +15,7 @@ import { getData, globalRowData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
-var UPDATE_COUNT = 20;
+const UPDATE_COUNT = 20;
 
 const columnDefs: ColDef[] = [
     // these are the row groups, so they are all hidden (they are show in the group column)
@@ -187,28 +187,28 @@ function onFlushTransactions() {
 }
 
 function startFeed(api: GridApi) {
-    var count = 1;
+    let count = 1;
 
     setInterval(() => {
-        var thisCount = count++;
-        var updatedIndexes: any = {};
-        var newItems: any[] = [];
-        for (var i = 0; i < UPDATE_COUNT; i++) {
+        const thisCount = count++;
+        const updatedIndexes: any = {};
+        const newItems: any[] = [];
+        for (let i = 0; i < UPDATE_COUNT; i++) {
             // pick one index at random
-            var index = Math.floor(Math.random() * globalRowData.length);
+            const index = Math.floor(Math.random() * globalRowData.length);
             // dont do same index twice, otherwise two updates for same row in one transaction
             if (updatedIndexes[index]) {
                 continue;
             }
-            var itemToUpdate = globalRowData[index];
-            var newItem: any = copyObject(itemToUpdate);
+            const itemToUpdate = globalRowData[index];
+            const newItem: any = copyObject(itemToUpdate);
             // copy previous to current value
             newItem.previous = newItem.current;
             // then create new current value
             newItem.current = Math.floor(Math.random() * 100000) + 100;
             newItems.push(newItem);
         }
-        var resultCallback = () => {
+        const resultCallback = () => {
             console.log('transactionApplied() - ' + thisCount);
         };
         api.applyTransactionAsync({ update: newItems }, resultCallback);
@@ -219,7 +219,7 @@ function startFeed(api: GridApi) {
 // makes a copy of the original and merges in the new values
 function copyObject(object: any) {
     // start with new object
-    var newObject: any = {};
+    const newObject: any = {};
 
     // copy in the old values
     Object.keys(object).forEach((key) => {
@@ -231,6 +231,6 @@ function copyObject(object: any) {
 
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
-    var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(eGridDiv, gridOptions);
 });

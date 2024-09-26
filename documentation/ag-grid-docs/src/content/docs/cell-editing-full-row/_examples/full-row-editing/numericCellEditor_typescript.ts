@@ -1,11 +1,11 @@
-import { ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
+import type { ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
 
 function isCharNumeric(charStr: string | null) {
     return charStr != null && !!/^\d+$/.test(charStr);
 }
 
 function isNumericKey(event: any) {
-    var charStr = event.key;
+    const charStr = event.key;
     return isCharNumeric(charStr);
 }
 

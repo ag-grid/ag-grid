@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ColDef, ColGroupDef, GridApi, GridOptions, IFiltersToolPanel, createGrid } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
+import { IFiltersToolPanel, createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { FiltersToolPanelModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
@@ -32,7 +33,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
     },
 ];
 
-var sortedToolPanelColumnDefs = [
+const sortedToolPanelColumnDefs = [
     {
         headerName: 'Athlete',
         children: [{ field: 'age' }, { field: 'country' }, { headerName: 'Name', field: 'athlete' }],
@@ -48,7 +49,7 @@ var sortedToolPanelColumnDefs = [
     { colId: 'sport', field: 'sport', width: 110 },
 ];
 
-var customToolPanelColumnDefs = [
+const customToolPanelColumnDefs = [
     {
         headerName: 'Dummy Group 1',
         children: [
@@ -101,18 +102,18 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function setCustomSortLayout() {
-    var filtersToolPanel = gridApi!.getToolPanelInstance('filters');
+    const filtersToolPanel = gridApi!.getToolPanelInstance('filters');
     filtersToolPanel!.setFilterLayout(sortedToolPanelColumnDefs);
 }
 
 function setCustomGroupLayout() {
-    var filtersToolPanel = gridApi!.getToolPanelInstance('filters');
+    const filtersToolPanel = gridApi!.getToolPanelInstance('filters');
     filtersToolPanel!.setFilterLayout(customToolPanelColumnDefs);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

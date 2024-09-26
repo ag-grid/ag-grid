@@ -1,13 +1,13 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterModel,
     GridApi,
     GridOptions,
     GridReadyEvent,
     IAdvancedFilterBuilderParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';

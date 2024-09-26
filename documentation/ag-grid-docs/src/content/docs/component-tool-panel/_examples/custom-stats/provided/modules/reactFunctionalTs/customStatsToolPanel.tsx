@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { CustomToolPanelProps } from 'ag-grid-react';
+import type { CustomToolPanelProps } from 'ag-grid-react';
 
 const totalStyle = { paddingBottom: '15px' };
 

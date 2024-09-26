@@ -1,12 +1,12 @@
-import {
+import type {
     ColDef,
     GridApi,
     GridOptions,
     IServerSideDatasource,
     IServerSideGetRowsParams,
     SetFilterValuesFuncParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
@@ -17,9 +17,9 @@ import { FakeServer } from './fakeServer';
 
 ModuleRegistry.registerModules([ColumnsToolPanelModule, MenuModule, RowGroupingModule, ServerSideRowModelModule]);
 
-var colDefCountry: ColDef = { field: 'country', rowGroup: true };
-var colDefYear: ColDef = { field: 'year', rowGroup: true };
-var colDefAthlete: ColDef = {
+const colDefCountry: ColDef = { field: 'country', rowGroup: true };
+const colDefYear: ColDef = { field: 'year', rowGroup: true };
+const colDefAthlete: ColDef = {
     field: 'athlete',
     filter: 'agSetColumnFilter',
     filterParams: {
@@ -28,11 +28,11 @@ var colDefAthlete: ColDef = {
     suppressHeaderMenuButton: true,
     suppressHeaderContextMenu: true,
 };
-var colDefAge: ColDef = { field: 'age' };
-var colDefSport: ColDef = { field: 'sport' };
-var colDefGold: ColDef = { field: 'gold', aggFunc: 'sum' };
-var colDefSilver: ColDef = { field: 'silver', aggFunc: 'sum' };
-var colDefBronze: ColDef = { field: 'bronze', aggFunc: 'sum' };
+const colDefAge: ColDef = { field: 'age' };
+const colDefSport: ColDef = { field: 'sport' };
+const colDefGold: ColDef = { field: 'gold', aggFunc: 'sum' };
+const colDefSilver: ColDef = { field: 'silver', aggFunc: 'sum' };
+const colDefBronze: ColDef = { field: 'bronze', aggFunc: 'sum' };
 
 const columnDefs: ColDef[] = [
     colDefAthlete,
@@ -76,7 +76,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function getAthletesAsync(params: SetFilterValuesFuncParams) {
-    var countries = fakeServer.getAthletes();
+    const countries = fakeServer.getAthletes();
 
     // simulating real server call with a 500ms delay
     setTimeout(() => {
@@ -85,7 +85,7 @@ function getAthletesAsync(params: SetFilterValuesFuncParams) {
 }
 
 function onBtApply() {
-    var cols = [];
+    const cols = [];
     if (getBooleanValue('#athlete')) {
         cols.push(colDefAthlete);
     }
@@ -124,7 +124,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
         getRows: (params: IServerSideGetRowsParams) => {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
-            var response = server.getData(params.request);
+            const response = server.getData(params.request);
 
             // adding delay to simulate real server call
             setTimeout(() => {
@@ -144,7 +144,7 @@ var fakeServer: any = undefined;
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fakeServer = new FakeServer(data);
 
             // create datasource with a reference to the fake server
-            var datasource: IServerSideDatasource = getServerSideDatasource(fakeServer);
+            const datasource: IServerSideDatasource = getServerSideDatasource(fakeServer);
 
             // register the datasource with the grid
             gridApi!.setGridOption('serverSideDatasource', datasource);

@@ -1,18 +1,18 @@
-import {
+import type {
     AgAxisCaptionFormatterParams,
     AgCartesianSeriesTooltipRendererParams,
     AgCrosshairLabelRendererParams,
 } from 'ag-charts-community';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     FirstDataRenderedEvent,
     GridApi,
     GridOptions,
     GridReadyEvent,
     ValueParserParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { GridChartsModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';

@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ColGroupDef, GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import type { ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
@@ -52,7 +53,7 @@ const gridOptions: GridOptions = {
 };
 
 function createRow(index: number) {
-    var makes = ['Toyota', 'Ford', 'BMW', 'Phantom', 'Porsche'];
+    const makes = ['Toyota', 'Ford', 'BMW', 'Phantom', 'Porsche'];
 
     return {
         id: 'D' + (1000 + index),
@@ -72,8 +73,8 @@ function createRow(index: number) {
 }
 
 function getData(count: number) {
-    var rowData = [];
-    for (var i = 0; i < count; i++) {
+    const rowData = [];
+    for (let i = 0; i < count; i++) {
         rowData.push(createRow(i));
     }
     return rowData;
@@ -86,7 +87,7 @@ function updateRowData(rowCount: number) {
 }
 
 function cbFloatingRows() {
-    var show = (document.getElementById('floating-rows') as HTMLInputElement).checked;
+    const show = (document.getElementById('floating-rows') as HTMLInputElement).checked;
     if (show) {
         gridApi!.setGridOption('pinnedTopRowData', [createRow(999), createRow(998)]);
         gridApi!.setGridOption('pinnedBottomRowData', [createRow(997), createRow(996)]);
@@ -113,6 +114,6 @@ function setFixedHeight() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

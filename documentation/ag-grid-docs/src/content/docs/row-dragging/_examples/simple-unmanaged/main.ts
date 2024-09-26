@@ -1,12 +1,13 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GetRowIdParams, GridApi, GridOptions, RowDragMoveEvent, createGrid } from 'ag-grid-community';
+import type { GetRowIdParams, GridApi, GridOptions, RowDragMoveEvent } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 import { getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-var immutableStore: any[] = getData();
+let immutableStore: any[] = getData();
 
 let gridApi: GridApi;
 
@@ -40,15 +41,15 @@ const gridOptions: GridOptions = {
     },
 };
 
-var sortActive = false;
-var filterActive = false;
+let sortActive = false;
+let filterActive = false;
 
 // listen for change on sort changed
 function onSortChanged() {
-    var colState = gridApi!.getColumnState() || [];
+    const colState = gridApi!.getColumnState() || [];
     sortActive = colState.some((c) => c.sort);
     // suppress row drag if either sort or filter is active
-    var suppressRowDrag = sortActive || filterActive;
+    const suppressRowDrag = sortActive || filterActive;
     console.log(
         'sortActive = ' + sortActive + ', filterActive = ' + filterActive + ', allowRowDrag = ' + suppressRowDrag
     );
@@ -59,7 +60,7 @@ function onSortChanged() {
 function onFilterChanged() {
     filterActive = gridApi!.isAnyFilterPresent();
     // suppress row drag if either sort or filter is active
-    var suppressRowDrag = sortActive || filterActive;
+    const suppressRowDrag = sortActive || filterActive;
     console.log(
         'sortActive = ' + sortActive + ', filterActive = ' + filterActive + ', allowRowDrag = ' + suppressRowDrag
     );
@@ -71,20 +72,20 @@ function getRowId(params: GetRowIdParams) {
 }
 
 function onRowDragMove(event: RowDragMoveEvent) {
-    var movingNode = event.node;
-    var overNode = event.overNode;
+    const movingNode = event.node;
+    const overNode = event.overNode;
 
-    var rowNeedsToMove = movingNode !== overNode;
+    const rowNeedsToMove = movingNode !== overNode;
 
     if (rowNeedsToMove) {
         // the list of rows we have is data, not row nodes, so extract the data
-        var movingData = movingNode.data;
-        var overData = overNode!.data;
+        const movingData = movingNode.data;
+        const overData = overNode!.data;
 
-        var fromIndex = immutableStore.indexOf(movingData);
-        var toIndex = immutableStore.indexOf(overData);
+        const fromIndex = immutableStore.indexOf(movingData);
+        const toIndex = immutableStore.indexOf(overData);
 
-        var newStore = immutableStore.slice();
+        const newStore = immutableStore.slice();
         moveInArray(newStore, fromIndex, toIndex);
 
         immutableStore = newStore;
@@ -94,7 +95,7 @@ function onRowDragMove(event: RowDragMoveEvent) {
     }
 
     function moveInArray(arr: any[], fromIndex: number, toIndex: number) {
-        var element = arr[fromIndex];
+        const element = arr[fromIndex];
         arr.splice(fromIndex, 1);
         arr.splice(toIndex, 0, element);
     }
@@ -102,6 +103,6 @@ function onRowDragMove(event: RowDragMoveEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

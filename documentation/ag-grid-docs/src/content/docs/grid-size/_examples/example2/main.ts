@@ -1,21 +1,21 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     FirstDataRenderedEvent,
     GridApi,
     GridOptions,
     GridReadyEvent,
     GridSizeChangedEvent,
     RowHeightParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 import { getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-var minRowHeight = 25;
-var currentRowHeight: number;
+let minRowHeight = 25;
+let currentRowHeight: number;
 
 let gridApi: GridApi;
 
@@ -63,9 +63,9 @@ const updateRowHeight = (params: { api: GridApi }) => {
         return;
     }
 
-    var gridHeight = bodyViewport.clientHeight;
+    const gridHeight = bodyViewport.clientHeight;
     // get the rendered rows
-    var renderedRowCount = params.api.getDisplayedRowCount();
+    const renderedRowCount = params.api.getDisplayedRowCount();
 
     // if the rendered rows * min height is greater than available height, just just set the height
     // to the min and let the scrollbar do its thing
@@ -83,6 +83,6 @@ const updateRowHeight = (params: { api: GridApi }) => {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

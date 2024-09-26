@@ -6,13 +6,15 @@ import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ColDef, FirstDataRenderedEvent, GetRowIdParams, GridReadyEvent, ModuleRegistry } from 'ag-grid-community';
+import type { ColDef, FirstDataRenderedEvent, GetRowIdParams, GridReadyEvent } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MasterDetailModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
-import { AgGridReact, CustomDetailCellRendererProps } from 'ag-grid-react';
+import type { CustomDetailCellRendererProps } from 'ag-grid-react';
+import { AgGridReact } from 'ag-grid-react';
 
-import { IAccount } from './interfaces';
+import type { IAccount } from './interfaces';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,

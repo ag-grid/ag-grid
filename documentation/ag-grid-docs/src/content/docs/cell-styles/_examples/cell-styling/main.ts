@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     CellClassParams,
     CellClassRules,
     ColDef,
@@ -7,8 +7,8 @@ import {
     GridOptions,
     ICellRendererParams,
     ValueParserParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);

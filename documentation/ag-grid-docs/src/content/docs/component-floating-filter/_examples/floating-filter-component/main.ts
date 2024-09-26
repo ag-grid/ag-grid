@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ColDef, GridApi, GridOptions, INumberFilterParams, createGrid } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, INumberFilterParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 import { SliderFloatingFilter } from './sliderFloatingFilter_typescript';

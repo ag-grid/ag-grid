@@ -17,7 +17,7 @@ ModuleRegistry.registerModules([
 ]);
 
 const baseThemes = [themeQuartz, themeBalham, themeAlpine];
-let theme = baseThemes[0];
+const theme = baseThemes[0];
 
 const columnDefs: ColDef[] = [{ field: 'make' }, { field: 'model' }, { field: 'price' }];
 

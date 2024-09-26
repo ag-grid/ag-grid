@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -34,12 +35,12 @@ function fillExact() {
 }
 
 function setWidthAndHeight(size: string) {
-    var eGridDiv = document.querySelector<HTMLElement>('#myGrid')! as any;
+    const eGridDiv = document.querySelector<HTMLElement>('#myGrid')! as any;
     eGridDiv.style.setProperty('width', size);
     eGridDiv.style.setProperty('height', size);
 }
 
-var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 gridApi = createGrid(gridDiv, gridOptions);
 
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

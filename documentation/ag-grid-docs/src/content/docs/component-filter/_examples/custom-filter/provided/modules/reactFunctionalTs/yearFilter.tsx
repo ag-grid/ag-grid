@@ -1,7 +1,9 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import type { ChangeEvent } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { IAfterGuiAttachedParams, IDoesFilterPassParams } from 'ag-grid-community';
-import { CustomFilterProps, useGridFilter } from 'ag-grid-react';
+import type { IAfterGuiAttachedParams, IDoesFilterPassParams } from 'ag-grid-community';
+import type { CustomFilterProps } from 'ag-grid-react';
+import { useGridFilter } from 'ag-grid-react';
 
 export default ({ model, onModelChange }: CustomFilterProps) => {
     const [closeFilter, setCloseFilter] = useState<(() => void) | undefined>();

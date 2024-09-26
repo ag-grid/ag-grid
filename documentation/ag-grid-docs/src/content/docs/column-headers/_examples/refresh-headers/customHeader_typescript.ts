@@ -1,4 +1,4 @@
-import { IHeaderComp, IHeaderParams } from 'ag-grid-community';
+import type { IHeaderComp, IHeaderParams } from 'ag-grid-community';
 
 export class CustomHeader implements IHeaderComp {
     params!: IHeaderParams;

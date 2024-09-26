@@ -6,7 +6,8 @@ import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ColDef, ColGroupDef, ModuleRegistry, ValueGetterParams } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, ValueGetterParams } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);

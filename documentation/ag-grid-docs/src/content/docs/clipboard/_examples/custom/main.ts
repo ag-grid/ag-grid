@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, SendToClipboardParams, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions, SendToClipboardParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ClipboardModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';

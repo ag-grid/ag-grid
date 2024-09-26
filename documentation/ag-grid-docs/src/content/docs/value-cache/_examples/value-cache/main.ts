@@ -1,13 +1,13 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     ColDef,
     GetRowIdParams,
     GridApi,
     GridOptions,
     ValueFormatterParams,
     ValueGetterParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -15,7 +15,7 @@ import { getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
-var callCount = 1;
+let callCount = 1;
 
 const columnDefs: ColDef[] = [
     { field: 'q1', type: 'quarterFigure' },
@@ -30,11 +30,11 @@ const columnDefs: ColDef[] = [
         aggFunc: 'sum',
         valueFormatter: formatNumber,
         valueGetter: (params: ValueGetterParams) => {
-            var q1 = params.getValue('q1');
-            var q2 = params.getValue('q2');
-            var q3 = params.getValue('q3');
-            var q4 = params.getValue('q4');
-            var result = q1 + q2 + q3 + q4;
+            const q1 = params.getValue('q1');
+            const q2 = params.getValue('q2');
+            const q3 = params.getValue('q3');
+            const q4 = params.getValue('q4');
+            const result = q1 + q2 + q3 + q4;
             console.log(
                 `Total Value Getter (${callCount}, ${params.column.getId()}): ${[q1, q2, q3, q4].join(', ')} =  ${result}`
             );
@@ -79,7 +79,7 @@ const gridOptions: GridOptions = {
 };
 
 function formatNumber(params: ValueFormatterParams) {
-    var number = params.value;
+    const number = params.value;
     return Math.floor(number).toLocaleString();
 }
 
@@ -101,7 +101,7 @@ function makeGrid(valueCacheOn: boolean) {
     gridOptions.valueCache = valueCacheOn;
 
     // then similar to all the other examples, create the grid
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 }
 

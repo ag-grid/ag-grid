@@ -1,12 +1,12 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     GridApi,
     GridOptions,
     ICellRendererParams,
     IsFullWidthRowParams,
     RowHeightParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 import { getData } from './data';
@@ -41,7 +41,7 @@ function countryCellRenderer(params: ICellRendererParams) {
     if (!params.fullWidth) {
         return params.value;
     }
-    var flag =
+    const flag =
         '<img border="0" width="15" height="10" src="https://www.ag-grid.com/example-assets/flags/' +
         params.data.code +
         '.png">';
@@ -55,6 +55,6 @@ function isFullWidth(data: any) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

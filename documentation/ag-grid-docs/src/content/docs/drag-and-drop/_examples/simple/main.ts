@@ -32,7 +32,7 @@ const gridOptions: GridOptions = {
 };
 
 function onDragOver(event: any) {
-    var dragSupported = event.dataTransfer.length;
+    const dragSupported = event.dataTransfer.length;
 
     if (dragSupported) {
         event.dataTransfer.dropEffect = 'move';
@@ -42,13 +42,13 @@ function onDragOver(event: any) {
 }
 
 function onDrop(event: any) {
-    var jsonData = event.dataTransfer.getData('application/json');
+    const jsonData = event.dataTransfer.getData('application/json');
 
-    var eJsonRow = document.createElement('div');
+    const eJsonRow = document.createElement('div');
     eJsonRow.classList.add('json-row');
     eJsonRow.innerText = jsonData;
 
-    var eJsonDisplay = document.querySelector('#eJsonDisplay')!;
+    const eJsonDisplay = document.querySelector('#eJsonDisplay')!;
 
     eJsonDisplay.appendChild(eJsonRow);
     event.preventDefault();
@@ -56,6 +56,6 @@ function onDrop(event: any) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

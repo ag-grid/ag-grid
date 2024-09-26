@@ -1,4 +1,4 @@
-import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterComp, IFilterParams } from 'ag-grid-community';
+import type { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterComp, IFilterParams } from 'ag-grid-community';
 
 export class PersonFilter implements IFilterComp {
     filterParams!: IFilterParams;

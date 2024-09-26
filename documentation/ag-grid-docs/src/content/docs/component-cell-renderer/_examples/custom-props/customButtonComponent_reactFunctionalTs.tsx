@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { CustomCellRendererProps } from 'ag-grid-react';
+import type { CustomCellRendererProps } from 'ag-grid-react';
 
 interface CustomButtonParams extends CustomCellRendererProps {
     onClick: () => void;

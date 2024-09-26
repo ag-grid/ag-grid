@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ColDef, GridApi, GridOptions, INumberCellEditorParams, createGrid } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, INumberCellEditorParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);

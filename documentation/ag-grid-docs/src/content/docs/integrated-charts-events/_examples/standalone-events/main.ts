@@ -1,7 +1,8 @@
-import { AgChartLegendClickEvent, AgSeriesNodeClickEvent } from 'ag-charts-community';
+import type { AgChartLegendClickEvent, AgSeriesNodeClickEvent } from 'ag-charts-community';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { FirstDataRenderedEvent, GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import type { FirstDataRenderedEvent, GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { GridChartsModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';

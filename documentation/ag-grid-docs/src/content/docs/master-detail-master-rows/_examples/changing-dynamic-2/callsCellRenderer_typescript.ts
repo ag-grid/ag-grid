@@ -1,11 +1,11 @@
-import { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
+import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
 export class CallsCellRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
     eValue: any;
 
     init(params: ICellRendererParams) {
-        var eTemp = document.createElement('div');
+        const eTemp = document.createElement('div');
         eTemp.innerHTML =
             '<span class="calls-cell-renderer">' +
             '<button data-ref="btAdd">+</button>' +
@@ -16,8 +16,8 @@ export class CallsCellRenderer implements ICellRendererComp {
         this.eGui = eTemp.firstChild as HTMLElement;
 
         this.eValue = this.eGui.querySelector('[data-ref="eValue"]');
-        var btAdd = this.eGui.querySelector('[data-ref="btAdd"]')!;
-        var btRemove = this.eGui.querySelector('[data-ref="btRemove"]')!;
+        const btAdd = this.eGui.querySelector('[data-ref="btAdd"]')!;
+        const btRemove = this.eGui.querySelector('[data-ref="btRemove"]')!;
 
         btAdd.addEventListener('click', this.onBtAdd.bind(this, params));
         btRemove.addEventListener('click', this.onBtRemove.bind(this, params));
@@ -26,23 +26,23 @@ export class CallsCellRenderer implements ICellRendererComp {
     }
 
     onBtRemove(params: ICellRendererParams) {
-        var oldData = params.node.data;
+        const oldData = params.node.data;
 
-        var oldCallRecords = oldData.callRecords;
+        const oldCallRecords = oldData.callRecords;
 
         if (oldCallRecords.length == 0) {
             return;
         }
 
-        var newCallRecords = oldCallRecords.slice(0); // make a copy
+        const newCallRecords = oldCallRecords.slice(0); // make a copy
         newCallRecords.pop(); // remove one item
 
-        var minutes = 0;
+        let minutes = 0;
         newCallRecords.forEach(function (r: any) {
             minutes += r.duration;
         });
 
-        var newData = {
+        const newData = {
             name: oldData.name,
             account: oldData.account,
             calls: newCallRecords.length,
@@ -54,11 +54,11 @@ export class CallsCellRenderer implements ICellRendererComp {
     }
 
     onBtAdd(params: ICellRendererParams) {
-        var oldData = params.node.data;
+        const oldData = params.node.data;
 
-        var oldCallRecords = oldData.callRecords;
+        const oldCallRecords = oldData.callRecords;
 
-        var newCallRecords = oldCallRecords.slice(0); // make a copy
+        const newCallRecords = oldCallRecords.slice(0); // make a copy
         newCallRecords.push({
             name: ['Bob', 'Paul', 'David', 'John'][Math.floor(Math.random() * 4)],
             callId: Math.floor(Math.random() * 1000),
@@ -68,12 +68,12 @@ export class CallsCellRenderer implements ICellRendererComp {
             number: '(02) ' + Math.floor(Math.random() * 1000000),
         }); // add one item
 
-        var minutes = 0;
+        let minutes = 0;
         newCallRecords.forEach(function (r: any) {
             minutes += r.duration;
         });
 
-        var newData = {
+        const newData = {
             name: oldData.name,
             account: oldData.account,
             calls: newCallRecords.length,

@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ColDef, GridApi, GridOptions, RowClassParams, RowStyle, createGrid } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import { RowClassParams, RowStyle, createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 import { CustomPinnedRowRenderer } from './customPinnedRowRenderer_typescript';
@@ -23,7 +24,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

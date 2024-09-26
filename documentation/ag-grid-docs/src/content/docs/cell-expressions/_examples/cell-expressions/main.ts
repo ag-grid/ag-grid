@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -63,7 +64,7 @@ const gridOptionsRight: GridOptions<RightData> = {
 };
 
 gridOptionsLeft.context.sum = function (field: keyof RightData) {
-    var result = 0;
+    let result = 0;
     rowDataRight.forEach((item) => {
         result += item[field];
     });
@@ -83,8 +84,8 @@ function cellValueChanged() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDivLeft = document.querySelector<HTMLElement>('#myGridLeft')!;
+    const gridDivLeft = document.querySelector<HTMLElement>('#myGridLeft')!;
     leftGridApi = createGrid(gridDivLeft, gridOptionsLeft);
-    var gridDivRight = document.querySelector<HTMLElement>('#myGridRight')!;
+    const gridDivRight = document.querySelector<HTMLElement>('#myGridRight')!;
     rightGridApi = createGrid(gridDivRight, gridOptionsRight);
 });

@@ -1,7 +1,7 @@
 import { NgStyle } from '@angular/common';
 import { Component } from '@angular/core';
 
-import { ICellRendererAngularComp } from 'ag-grid-angular';
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
 
 @Component({
     standalone: true,

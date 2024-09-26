@@ -1,4 +1,4 @@
-import {
+import type {
     ColDef,
     GetRowIdParams,
     GridApi,
@@ -8,8 +8,8 @@ import {
     IsServerSideGroupOpenByDefaultParams,
     ServerSideTransaction,
     ServerSideTransactionResult,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';

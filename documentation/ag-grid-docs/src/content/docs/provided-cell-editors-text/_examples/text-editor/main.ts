@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ColDef, GridApi, GridOptions, ITextCellEditorParams, createGrid } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, ITextCellEditorParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 import { colors } from './colors';

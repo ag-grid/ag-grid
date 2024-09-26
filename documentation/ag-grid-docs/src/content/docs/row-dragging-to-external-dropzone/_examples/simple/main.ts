@@ -1,10 +1,11 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ColDef, GridApi, GridOptions, GridReadyEvent, RowDropZoneParams, createGrid } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, GridReadyEvent, RowDropZoneParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-var rowIdSequence = 100;
+let rowIdSequence = 100;
 
 const columnDefs: ColDef[] = [
     { field: 'id', rowDrag: true },
@@ -35,7 +36,7 @@ const gridOptions: GridOptions = {
 };
 
 function addCheckboxListener(params: GridReadyEvent) {
-    var checkbox = document.querySelector('input[type=checkbox]')! as any;
+    const checkbox = document.querySelector('input[type=checkbox]')! as any;
 
     checkbox.addEventListener('change', () => {
         params.api.setGridOption('suppressMoveWhenRowDragging', checkbox.checked);
@@ -43,9 +44,9 @@ function addCheckboxListener(params: GridReadyEvent) {
 }
 
 function createRowData() {
-    var data: any[] = [];
+    const data: any[] = [];
     ['Red', 'Green', 'Blue', 'Red', 'Green', 'Blue', 'Red', 'Green', 'Blue'].forEach((color) => {
-        var newDataItem = {
+        const newDataItem = {
             id: rowIdSequence++,
             color: color,
             value1: Math.floor(Math.random() * 100),
@@ -57,7 +58,7 @@ function createRowData() {
 }
 
 function createTile(data: any) {
-    var el = document.createElement('div');
+    const el = document.createElement('div');
 
     el.classList.add('tile');
     el.classList.add(data.color.toLowerCase());
@@ -76,13 +77,13 @@ function createTile(data: any) {
 }
 
 function addDropZones(params: GridReadyEvent) {
-    var tileContainer = document.querySelector('.tile-container') as any;
-    var dropZone: RowDropZoneParams = {
+    const tileContainer = document.querySelector('.tile-container') as any;
+    const dropZone: RowDropZoneParams = {
         getContainer: () => {
             return tileContainer as any;
         },
         onDragStop: (params) => {
-            var tile = createTile(params.node.data);
+            const tile = createTile(params.node.data);
             tileContainer.appendChild(tile);
         },
     };
@@ -92,7 +93,7 @@ function addDropZones(params: GridReadyEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
     gridApi = createGrid(gridDiv, gridOptions);
 });

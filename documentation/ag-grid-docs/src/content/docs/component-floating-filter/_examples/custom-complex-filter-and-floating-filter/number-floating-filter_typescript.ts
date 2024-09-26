@@ -1,8 +1,8 @@
-import { IFloatingFilterComp, IFloatingFilterParams } from 'ag-grid-community';
+import type { IFloatingFilterComp, IFloatingFilterParams } from 'ag-grid-community';
 
-import { CustomNumberFilter } from './custom-number-filter_typescript';
+import type { CustomNumberFilter } from './custom-number-filter_typescript';
 
-declare var $: any;
+declare let $: any;
 
 export interface CustomFloatingParams {
     maxValue: number;

@@ -6,7 +6,7 @@ import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ColDef, SelectionOptions, StatusPanelDef } from 'ag-grid-community';
+import type { ColDef, SelectionOptions, StatusPanelDef } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { RangeSelectionModule } from 'ag-grid-enterprise';
 import { StatusBarModule } from 'ag-grid-enterprise';

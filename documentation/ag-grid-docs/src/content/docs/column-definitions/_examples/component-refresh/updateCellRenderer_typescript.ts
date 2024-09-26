@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
+import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
 export class UpdateCellRenderer implements ICellRendererComp {
     private eGui: HTMLElement | undefined;

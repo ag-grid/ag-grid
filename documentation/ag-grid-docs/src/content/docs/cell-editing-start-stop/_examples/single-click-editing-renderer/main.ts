@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, ICellRendererComp, ICellRendererParams, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { ICellRendererComp, ICellRendererParams, createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 import { CellRenderer } from './cellRenderer_typescript';

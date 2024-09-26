@@ -1,4 +1,4 @@
-import { IFloatingFilterComp, IFloatingFilterParams } from 'ag-grid-community';
+import type { IFloatingFilterComp, IFloatingFilterParams } from 'ag-grid-community';
 
 export interface CustomParams {
     color: string;

@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ColGroupDef, GridApi, GridOptions, IColumnToolPanel, createGrid } from 'ag-grid-community';
+import type { ColGroupDef, GridApi, GridOptions } from 'ag-grid-community';
+import { IColumnToolPanel, createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
@@ -52,34 +53,34 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     sideBar: 'columns',
     onGridReady: (params) => {
-        var columnToolPanel = params.api.getToolPanelInstance('columns')!;
+        const columnToolPanel = params.api.getToolPanelInstance('columns')!;
         columnToolPanel.collapseColumnGroups();
     },
 };
 
 function expandAllGroups() {
-    var columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
+    const columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
     columnToolPanel.expandColumnGroups();
 }
 
 function collapseAllGroups() {
-    var columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
+    const columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
     columnToolPanel.collapseColumnGroups();
 }
 
 function expandAthleteAndCompetitionGroups() {
-    var columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
+    const columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
     columnToolPanel.expandColumnGroups(['athleteGroupId', 'competitionGroupId']);
 }
 
 function collapseCompetitionGroups() {
-    var columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
+    const columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
     columnToolPanel.collapseColumnGroups(['competitionGroupId']);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

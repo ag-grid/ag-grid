@@ -1,4 +1,4 @@
-import { IToolPanelComp, IToolPanelParams } from 'ag-grid-community';
+import type { IToolPanelComp, IToolPanelParams } from 'ag-grid-community';
 
 export interface CustomStatsToolPanelParams extends IToolPanelParams {
     title: string;

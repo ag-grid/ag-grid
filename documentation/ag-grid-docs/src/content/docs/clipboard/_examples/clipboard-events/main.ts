@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     CellValueChangedEvent,
     CutEndEvent,
     CutStartEvent,
@@ -7,8 +7,8 @@ import {
     GridOptions,
     PasteEndEvent,
     PasteStartEvent,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ClipboardModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';

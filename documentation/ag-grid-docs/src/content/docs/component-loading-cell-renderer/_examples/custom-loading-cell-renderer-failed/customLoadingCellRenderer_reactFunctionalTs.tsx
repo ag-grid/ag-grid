@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { CustomLoadingCellRendererProps } from 'ag-grid-react';
+import type { CustomLoadingCellRendererProps } from 'ag-grid-react';
 
 export default (props: CustomLoadingCellRendererProps & { loadingMessage: string }) => {
     if (props.node.failedLoad) {

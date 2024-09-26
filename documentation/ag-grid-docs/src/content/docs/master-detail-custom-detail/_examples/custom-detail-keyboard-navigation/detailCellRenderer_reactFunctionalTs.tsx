@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { CustomCellRendererProps } from 'ag-grid-react';
+import type { CustomCellRendererProps } from 'ag-grid-react';
 
 const findRowForEl = (el: HTMLElement): HTMLElement | null => {
     let rowEl: HTMLElement | null = el;

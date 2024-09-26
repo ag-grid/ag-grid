@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ColDef, GridApi, GridOptions, IRowNode, createGrid } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ExcelExportModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
@@ -35,7 +36,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function onBtExport() {
-    var spreadsheets: string[] = [];
+    const spreadsheets: string[] = [];
 
     let nodesToExport: IRowNode[] = [];
     gridApi!.forEachNode((node, index) => {
@@ -73,7 +74,7 @@ function onBtExport() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

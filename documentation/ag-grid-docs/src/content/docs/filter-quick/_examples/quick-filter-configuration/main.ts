@@ -54,7 +54,7 @@ const gridOptions: GridOptions = {
     quickFilterMatcher: quickFilterMatcher,
 };
 
-var includeHiddenColumns = false;
+let includeHiddenColumns = false;
 
 function onIncludeHiddenColumnsToggled() {
     includeHiddenColumns = !includeHiddenColumns;
@@ -74,7 +74,7 @@ function onPrintQuickFilterTexts() {
 }
 
 function quickFilterParser(quickFilter: string) {
-    let quickFilterParts = [];
+    const quickFilterParts = [];
     let lastSpaceIndex = -1;
 
     const isQuote = (index: number) => quickFilter[index] === '"';
@@ -114,6 +114,6 @@ function quickFilterMatcher(quickFilterParts: string[], rowQuickFilterAggregateT
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

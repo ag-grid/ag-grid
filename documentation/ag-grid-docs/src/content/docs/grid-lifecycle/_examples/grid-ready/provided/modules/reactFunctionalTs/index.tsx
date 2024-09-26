@@ -6,7 +6,8 @@ import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ColDef, GridReadyEvent, ModuleRegistry } from 'ag-grid-community';
+import type { ColDef, GridReadyEvent } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data';

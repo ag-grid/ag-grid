@@ -1,13 +1,13 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     ColDef,
     GridApi,
     GridOptions,
     ICellRendererComp,
     ICellRendererParams,
     ValueFormatterParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -20,14 +20,14 @@ class CompanyLogoRenderer implements ICellRendererComp {
 
     // Optional: Params for rendering. The same params that are passed to the cellRenderer function.
     init(params: ICellRendererParams) {
-        let companyLogo: HTMLImageElement = document.createElement('img');
+        const companyLogo: HTMLImageElement = document.createElement('img');
         companyLogo.src = `https://www.ag-grid.com/example-assets/space-company-logos/${params.value.toLowerCase()}.png`;
         companyLogo.setAttribute(
             'style',
             'display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1)'
         );
 
-        let companyName: HTMLParagraphElement = document.createElement('p');
+        const companyName: HTMLParagraphElement = document.createElement('p');
         companyName.textContent = params.value;
         companyName.setAttribute('style', 'text-overflow: ellipsis; overflow: hidden; white-space: nowrap;');
 

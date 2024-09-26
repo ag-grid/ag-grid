@@ -1,4 +1,4 @@
-import { IHeaderGroupComp, IHeaderGroupParams } from 'ag-grid-community';
+import type { IHeaderGroupComp, IHeaderGroupParams } from 'ag-grid-community';
 
 export class CustomHeaderGroup implements IHeaderGroupComp {
     params!: IHeaderGroupParams;
@@ -43,7 +43,7 @@ export class CustomHeaderGroup implements IHeaderGroupComp {
     }
 
     expandOrCollapse() {
-        var currentState = this.params.columnGroup.getProvidedColumnGroup().isExpanded();
+        const currentState = this.params.columnGroup.getProvidedColumnGroup().isExpanded();
         this.params.setExpanded(!currentState);
     }
 

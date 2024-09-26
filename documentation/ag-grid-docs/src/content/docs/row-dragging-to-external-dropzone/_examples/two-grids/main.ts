@@ -1,34 +1,33 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     ColDef,
     GetRowIdParams,
     GridApi,
     GridOptions,
     GridReadyEvent,
-    ModuleRegistry,
     RowDropZoneParams,
-    createGrid,
 } from 'ag-grid-community';
+import { ModuleRegistry, createGrid } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-var rowIdSequence = 100;
+let rowIdSequence = 100;
 
-var leftColumnDefs: ColDef[] = [
+const leftColumnDefs: ColDef[] = [
     { field: 'id', rowDrag: true },
     { field: 'color' },
     { field: 'value1' },
     { field: 'value2' },
 ];
 
-var rightColumnDefs: ColDef[] = [
+const rightColumnDefs: ColDef[] = [
     { field: 'id', rowDrag: true },
     { field: 'color' },
     { field: 'value1' },
     { field: 'value2' },
 ];
-var leftApi: GridApi;
-var leftGridOptions: GridOptions = {
+let leftApi: GridApi;
+const leftGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
@@ -51,8 +50,8 @@ var leftGridOptions: GridOptions = {
         addGridDropZone(params, 'Right');
     },
 };
-var rightApi: GridApi;
-var rightGridOptions: GridOptions = {
+let rightApi: GridApi;
+const rightGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
@@ -97,7 +96,7 @@ function addRecordToGrid(side: string, data: any) {
         return;
     }
 
-    var gridApi = side === 'left' ? leftApi : rightApi,
+    let gridApi = side === 'left' ? leftApi : rightApi,
         // do nothing if row is already in the grid, otherwise we would have duplicates
         rowAlreadyInGrid = !!gridApi!.getRowNode(data.id),
         transaction;
@@ -115,7 +114,7 @@ function addRecordToGrid(side: string, data: any) {
 }
 
 function onFactoryButtonClick(e: any) {
-    var button = e.currentTarget,
+    const button = e.currentTarget,
         buttonColor = button.getAttribute('data-color'),
         side = button.getAttribute('data-side'),
         data = createDataItem(buttonColor);
@@ -129,12 +128,12 @@ function binDrop(data: any) {
         return;
     }
 
-    var transaction = {
+    const transaction = {
         remove: [data],
     };
 
     [leftApi, rightApi].forEach((api) => {
-        var rowsInGrid = !!api!.getRowNode(data.id);
+        const rowsInGrid = !!api!.getRowNode(data.id);
 
         if (rowsInGrid) {
             api!.applyTransaction(transaction);
@@ -143,7 +142,7 @@ function binDrop(data: any) {
 }
 
 function addBinZone(params: GridReadyEvent) {
-    var eBin = document.querySelector('.bin') as any,
+    const eBin = document.querySelector('.bin') as any,
         icon = eBin.querySelector('i'),
         dropZone: RowDropZoneParams = {
             getContainer: () => {
@@ -168,7 +167,7 @@ function addBinZone(params: GridReadyEvent) {
 }
 
 function addGridDropZone(params: GridReadyEvent, side: string) {
-    var grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!,
+    const grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!,
         dropZone: RowDropZoneParams = {
             getContainer: () => {
                 return grid;
@@ -182,7 +181,7 @@ function addGridDropZone(params: GridReadyEvent, side: string) {
 }
 
 function loadGrid(side: string) {
-    var grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
+    const grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
     if (side === 'Left') {
         leftApi = createGrid(grid, leftGridOptions);
     } else {
@@ -190,9 +189,9 @@ function loadGrid(side: string) {
     }
 }
 
-var buttons = document.querySelectorAll('button.factory');
+const buttons = document.querySelectorAll('button.factory');
 
-for (var i = 0; i < buttons.length; i++) {
+for (let i = 0; i < buttons.length; i++) {
     buttons[i].addEventListener('click', onFactoryButtonClick);
 }
 

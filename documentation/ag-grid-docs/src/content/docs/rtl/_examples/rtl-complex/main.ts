@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     CellClassParams,
     CellStyle,
     ColDef,
@@ -12,8 +12,8 @@ import {
     RowSelectedEvent,
     SelectionChangedEvent,
     ValueSetterParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { CsvExportModule } from 'ag-grid-community';
 import { GridChartsModule } from 'ag-grid-enterprise';

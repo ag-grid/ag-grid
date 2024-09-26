@@ -4,7 +4,8 @@ import React, { StrictMode, useCallback, useEffect, useRef, useState } from 'rea
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ColDef, GetRowIdParams, GridApi, GridReadyEvent, ModuleRegistry, RowDropZoneParams } from 'ag-grid-community';
+import type { ColDef, GetRowIdParams, GridApi, GridReadyEvent, RowDropZoneParams } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
@@ -88,7 +89,7 @@ const GridExample = () => {
     };
 
     const onFactoryButtonClick = (e: any) => {
-        var button = e.currentTarget,
+        const button = e.currentTarget,
             buttonColor = button.getAttribute('data-color'),
             side = button.getAttribute('data-side'),
             data = createDataItem(buttonColor);
@@ -102,12 +103,12 @@ const GridExample = () => {
             return;
         }
 
-        var transaction = {
+        const transaction = {
             remove: [data],
         };
 
         [leftApi, rightApi].forEach((api) => {
-            var rowsInGrid = !!api!.getRowNode(data.id);
+            const rowsInGrid = !!api!.getRowNode(data.id);
 
             if (rowsInGrid) {
                 api!.applyTransaction(transaction);

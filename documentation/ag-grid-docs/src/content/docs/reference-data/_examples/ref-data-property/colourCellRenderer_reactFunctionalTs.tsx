@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { CustomCellRendererProps } from 'ag-grid-react';
+import type { CustomCellRendererProps } from 'ag-grid-react';
 
 function removeSpaces(str: string) {
     return str ? str.replace(/\s/g, '') : str;

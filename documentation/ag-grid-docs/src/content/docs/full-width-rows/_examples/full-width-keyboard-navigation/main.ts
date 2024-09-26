@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, IsFullWidthRowParams, SuppressKeyboardEventParams, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions, IsFullWidthRowParams, SuppressKeyboardEventParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 import { getData } from './data';

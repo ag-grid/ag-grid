@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, RowSelectedEvent, SelectionChangedEvent, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions, RowSelectedEvent, SelectionChangedEvent } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -33,13 +34,13 @@ function onRowSelected(event: RowSelectedEvent) {
 }
 
 function onSelectionChanged(event: SelectionChangedEvent) {
-    var rowCount = event.api.getSelectedNodes().length;
+    const rowCount = event.api.getSelectedNodes().length;
     window.alert('selection changed, ' + rowCount + ' rows selected');
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
-import { ICellRendererAngularComp } from 'ag-grid-angular';
-import { ICellRendererParams } from 'ag-grid-community';
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
+import type { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
     selector: 'app-company-logo-renderer',

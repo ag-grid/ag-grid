@@ -5,7 +5,7 @@ export function FakeServer() {
 
     return {
         getData: function (request) {
-            var results = executeQuery(request);
+            const results = executeQuery(request);
 
             return {
                 success: true,
@@ -15,13 +15,13 @@ export function FakeServer() {
     };
 
     function executeQuery(request) {
-        var groupByResult = executeRowGroupQuery(request);
+        const groupByResult = executeRowGroupQuery(request);
 
         return groupByResult;
     }
 
     function executeRowGroupQuery(request) {
-        var groupByQuery = buildGroupBySql(request);
+        const groupByQuery = buildGroupBySql(request);
 
         console.log('[FakeServer] - about to execute row group query:', groupByQuery);
 
@@ -40,13 +40,13 @@ export function FakeServer() {
     }
 
     function selectSql(request) {
-        var rowGroupCols = request.rowGroupCols;
-        var valueCols = request.valueCols;
-        var groupKeys = request.groupKeys;
+        const rowGroupCols = request.rowGroupCols;
+        const valueCols = request.valueCols;
+        const groupKeys = request.groupKeys;
 
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
-            var rowGroupCol = rowGroupCols[groupKeys.length];
-            var colsToSelect = [rowGroupCol.id];
+            const rowGroupCol = rowGroupCols[groupKeys.length];
+            const colsToSelect = [rowGroupCol.id];
 
             valueCols.forEach(function (valueCol) {
                 colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + valueCol.id);
@@ -59,13 +59,13 @@ export function FakeServer() {
     }
 
     function whereSql(request) {
-        var rowGroups = request.rowGroupCols;
-        var groupKeys = request.groupKeys;
-        var whereParts = [];
+        const rowGroups = request.rowGroupCols;
+        const groupKeys = request.groupKeys;
+        const whereParts = [];
 
         if (groupKeys) {
             groupKeys.forEach(function (key, i) {
-                var value = typeof key === 'string' ? "'" + key + "'" : key;
+                const value = typeof key === 'string' ? "'" + key + "'" : key;
 
                 whereParts.push(rowGroups[i].id + ' = ' + value);
             });
@@ -79,11 +79,11 @@ export function FakeServer() {
     }
 
     function groupBySql(request) {
-        var rowGroupCols = request.rowGroupCols;
-        var groupKeys = request.groupKeys;
+        const rowGroupCols = request.rowGroupCols;
+        const groupKeys = request.groupKeys;
 
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
-            var rowGroupCol = rowGroupCols[groupKeys.length];
+            const rowGroupCol = rowGroupCols[groupKeys.length];
 
             return ' GROUP BY ' + rowGroupCol.id + ' HAVING count(*) > 0';
         }
@@ -92,11 +92,11 @@ export function FakeServer() {
     }
 
     function orderBySql(request) {
-        var sortModel = request.sortModel;
+        const sortModel = request.sortModel;
 
         if (sortModel.length === 0) return '';
 
-        var sorts = sortModel.map(function (s) {
+        const sorts = sortModel.map(function (s) {
             return s.colId + ' ' + s.sort.toUpperCase();
         });
 
@@ -107,7 +107,7 @@ export function FakeServer() {
         if (request.endRow == undefined || request.startRow == undefined) {
             return '';
         }
-        var blockSize = request.endRow - request.startRow;
+        const blockSize = request.endRow - request.startRow;
 
         return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
     }
@@ -124,7 +124,7 @@ export function FakeServer() {
         if (request.endRow == undefined || request.startRow == undefined) {
             return results.length;
         }
-        var currentLastRow = request.startRow + results.length;
+        const currentLastRow = request.startRow + results.length;
 
         return currentLastRow <= request.endRow ? currentLastRow : -1;
     }
@@ -133,7 +133,7 @@ export function FakeServer() {
 // IE Workaround - as templates literals are not supported
 function interpolate(str, o) {
     return str.replace(/{([^{}]*)}/g, function (a, b) {
-        var r = o[b];
+        const r = o[b];
         return typeof r === 'string' || typeof r === 'number' ? r : a;
     });
 }

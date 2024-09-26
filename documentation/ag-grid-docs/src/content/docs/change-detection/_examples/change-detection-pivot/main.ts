@@ -1,13 +1,13 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     GetRowIdParams,
     GridApi,
     GridOptions,
     GridReadyEvent,
     IRowNode,
     ValueGetterParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -51,7 +51,7 @@ const gridOptions: GridOptions = {
 };
 
 function ageRangeValueGetter(params: ValueGetterParams) {
-    var age = params.getValue('age');
+    const age = params.getValue('age');
     if (age === undefined) {
         return null;
     }
@@ -65,25 +65,25 @@ function ageRangeValueGetter(params: ValueGetterParams) {
 }
 
 // pretty basic, but deterministic (so same numbers each time we run), random number generator
-var seed: number;
+let seed: number;
 function random() {
     seed = ((seed || 1) * 16807) % 2147483647;
     return seed;
 }
 
 function getRowData() {
-    var rowData = [];
-    for (var i = 1; i <= 100; i++) {
-        var row = createRow();
+    const rowData = [];
+    for (let i = 1; i <= 100; i++) {
+        const row = createRow();
         rowData.push(row);
     }
     return rowData;
 }
 
-var studentId: number;
+let studentId: number;
 function createRow() {
     studentId = studentId ? studentId : 10023;
-    var randomNumber = random();
+    const randomNumber = random();
     return {
         student: studentId++,
         points: (randomNumber % 60) + 40,
@@ -94,7 +94,7 @@ function createRow() {
 }
 
 function pivotMode() {
-    var pivotModeOn = (document.getElementById('pivot-mode') as HTMLInputElement).checked;
+    const pivotModeOn = (document.getElementById('pivot-mode') as HTMLInputElement).checked;
 
     gridApi!.setGridOption('pivotMode', pivotModeOn);
 
@@ -108,16 +108,16 @@ function pivotMode() {
 }
 
 function updateOneRecord() {
-    var rowNodeToUpdate = pickExistingRowNodeAtRandom(gridApi!);
+    const rowNodeToUpdate = pickExistingRowNodeAtRandom(gridApi!);
     if (!rowNodeToUpdate) return;
 
-    var randomValue = createNewRandomScore(rowNodeToUpdate.data);
+    const randomValue = createNewRandomScore(rowNodeToUpdate.data);
     console.log('updating points to ' + randomValue + ' on ', rowNodeToUpdate.data);
     rowNodeToUpdate.setDataValue('points', randomValue);
 }
 
 function createNewRandomScore(data: Student) {
-    var randomValue = createRandomNumber();
+    let randomValue = createRandomNumber();
     // make sure random number is not actually the same number again
     while (randomValue === data.points) {
         randomValue = createRandomNumber();
@@ -130,7 +130,7 @@ function createRandomNumber() {
 }
 
 function pickExistingRowNodeAtRandom(api: GridApi) {
-    var allItems: IRowNode[] = [];
+    const allItems: IRowNode[] = [];
     api.forEachLeafNode(function (rowNode) {
         allItems.push(rowNode);
     });
@@ -138,25 +138,25 @@ function pickExistingRowNodeAtRandom(api: GridApi) {
     if (allItems.length === 0) {
         return;
     }
-    var result = allItems[Math.floor(Math.random() * allItems.length)];
+    const result = allItems[Math.floor(Math.random() * allItems.length)];
 
     return result;
 }
 
 function pickExistingRowItemAtRandom(api: GridApi): Student | null {
-    var rowNode = pickExistingRowNodeAtRandom(api);
+    const rowNode = pickExistingRowNodeAtRandom(api);
     return rowNode ? rowNode.data : null;
 }
 
 function updateUsingTransaction() {
-    var itemToUpdate = pickExistingRowItemAtRandom(gridApi!);
+    const itemToUpdate = pickExistingRowItemAtRandom(gridApi!);
     if (!itemToUpdate) {
         return;
     }
 
     console.log('updating - before', itemToUpdate);
     itemToUpdate.points = createNewRandomScore(itemToUpdate);
-    var transaction = {
+    const transaction = {
         update: [itemToUpdate],
     };
     console.log('updating - after', itemToUpdate);
@@ -164,11 +164,11 @@ function updateUsingTransaction() {
 }
 
 function addNewGroupUsingTransaction() {
-    var item1 = createRow();
-    var item2 = createRow();
+    const item1 = createRow();
+    const item2 = createRow();
     item1.yearGroup = 'Year 5';
     item2.yearGroup = 'Year 5';
-    var transaction = {
+    const transaction = {
         add: [item1, item2],
     };
     console.log('add - ', item1);
@@ -177,9 +177,9 @@ function addNewGroupUsingTransaction() {
 }
 
 function addNewCourse() {
-    var item1 = createRow();
+    const item1 = createRow();
     item1.course = 'Physics';
-    var transaction = {
+    const transaction = {
         add: [item1],
     };
     console.log('add - ', item1);
@@ -187,13 +187,13 @@ function addNewCourse() {
 }
 
 function removePhysics() {
-    var allPhysics: any = [];
+    const allPhysics: any = [];
     gridApi!.forEachLeafNode(function (rowNode) {
         if (rowNode.data.course === 'Physics') {
             allPhysics.push(rowNode.data);
         }
     });
-    var transaction = {
+    const transaction = {
         remove: allPhysics,
     };
     console.log('removing ' + allPhysics.length + ' physics items.');
@@ -201,12 +201,12 @@ function removePhysics() {
 }
 
 function moveCourse() {
-    var item = pickExistingRowItemAtRandom(gridApi!);
+    const item = pickExistingRowItemAtRandom(gridApi!);
     if (!item) {
         return;
     }
     item.course = item.course === 'History' ? 'Science' : 'History';
-    var transaction = {
+    const transaction = {
         update: [item],
     };
     console.log('moving ', item);
@@ -215,6 +215,6 @@ function moveCourse() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

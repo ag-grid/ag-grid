@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
     GridApi,
@@ -7,8 +7,8 @@ import {
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
     RowPinnedType,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 import { getData } from './data';
@@ -99,9 +99,9 @@ function onBtPreviousCell() {
 }
 
 function onBtWhich() {
-    var cellDefs = gridApi!.getEditingCells();
+    const cellDefs = gridApi!.getEditingCells();
     if (cellDefs.length > 0) {
-        var cellDef = cellDefs[0];
+        const cellDef = cellDefs[0];
         console.log(
             'editing cell is: row = ' +
                 cellDef.rowIndex +
@@ -117,6 +117,6 @@ function onBtWhich() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

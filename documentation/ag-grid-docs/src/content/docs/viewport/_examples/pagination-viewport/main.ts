@@ -1,4 +1,4 @@
-import {
+import type {
     ColDef,
     GetRowIdParams,
     GridApi,
@@ -6,8 +6,8 @@ import {
     ICellRendererComp,
     ICellRendererParams,
     ValueFormatterParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ViewportRowModelModule } from 'ag-grid-enterprise';
 
@@ -99,7 +99,7 @@ function numberFormatter(params: ValueFormatterParams) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/stocks.json')
@@ -107,10 +107,10 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(function (data) {
             // set up a mock server - real code will not do this, it will contact your
             // real server to get what it needs
-            var mockServer = createMockServer();
+            const mockServer = createMockServer();
             mockServer.init(data);
 
-            var viewportDatasource = createViewportDatasource(mockServer);
+            const viewportDatasource = createViewportDatasource(mockServer);
             gridApi!.setGridOption('viewportDatasource', viewportDatasource);
         });
 });

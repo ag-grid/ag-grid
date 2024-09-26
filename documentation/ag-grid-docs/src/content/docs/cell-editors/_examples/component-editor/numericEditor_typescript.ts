@@ -1,4 +1,4 @@
-import { ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
+import type { ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';

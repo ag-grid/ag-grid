@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ColGroupDef, GridApi, GridOptions, GridReadyEvent, createGrid } from 'ag-grid-community';
+import type { ColGroupDef, GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { CsvExportModule } from 'ag-grid-community';
 import { ExcelExportModule } from 'ag-grid-enterprise';

@@ -7,8 +7,10 @@ import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
 // Theme
-import { ColDef, ModuleRegistry, ValueFormatterParams } from 'ag-grid-community';
-import { AgGridReact, CustomCellRendererProps } from 'ag-grid-react';
+import type { ColDef, ValueFormatterParams } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import type { CustomCellRendererProps } from 'ag-grid-react';
+import { AgGridReact } from 'ag-grid-react';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 

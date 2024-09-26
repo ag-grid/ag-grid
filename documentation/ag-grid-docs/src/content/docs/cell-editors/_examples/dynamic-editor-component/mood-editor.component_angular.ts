@@ -1,7 +1,8 @@
 import { NgClass } from '@angular/common';
-import { AfterViewInit, Component, ViewChild, ViewContainerRef } from '@angular/core';
+import type { AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ViewContainerRef } from '@angular/core';
 
-import { ICellEditorAngularComp } from 'ag-grid-angular';
+import type { ICellEditorAngularComp } from 'ag-grid-angular';
 
 @Component({
     standalone: true,

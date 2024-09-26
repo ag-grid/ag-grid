@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-import { CustomCellRendererProps } from 'ag-grid-react';
+import type { CustomCellRendererProps } from 'ag-grid-react';
 
 const FullWidthCellRenderer = (props: CustomCellRendererProps) => {
     const myRef = useRef<HTMLDivElement>(null);

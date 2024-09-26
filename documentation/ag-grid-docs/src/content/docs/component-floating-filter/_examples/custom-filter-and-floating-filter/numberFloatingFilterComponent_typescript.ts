@@ -1,6 +1,6 @@
-import { IFloatingFilterComp, IFloatingFilterParams } from 'ag-grid-community';
+import type { IFloatingFilterComp, IFloatingFilterParams } from 'ag-grid-community';
 
-import { NumberFilterComponent } from './numberFilterComponent_typescript';
+import type { NumberFilterComponent } from './numberFilterComponent_typescript';
 
 export class NumberFloatingFilterComponent implements IFloatingFilterComp {
     eGui!: HTMLDivElement;

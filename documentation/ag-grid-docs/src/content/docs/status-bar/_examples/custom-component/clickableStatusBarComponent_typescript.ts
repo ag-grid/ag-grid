@@ -1,4 +1,4 @@
-import { IStatusPanelComp, IStatusPanelParams } from 'ag-grid-community';
+import type { IStatusPanelComp, IStatusPanelParams } from 'ag-grid-community';
 
 export class ClickableStatusBarComponent implements IStatusPanelComp {
     params!: IStatusPanelParams;
@@ -12,7 +12,7 @@ export class ClickableStatusBarComponent implements IStatusPanelComp {
         this.eGui = document.createElement('div');
         this.eGui.className = 'ag-status-name-value';
 
-        var label = document.createElement('span');
+        const label = document.createElement('span');
         label.textContent = 'Status Bar Component ';
         this.eGui.appendChild(label);
 

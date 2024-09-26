@@ -1,6 +1,5 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ColDef, GridApi, GridOptions, ICellRendererParams, ValueGetterParams, createGrid } from 'ag-grid-community';
-import { ModuleRegistry } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, ICellRendererParams, ValueGetterParams } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 

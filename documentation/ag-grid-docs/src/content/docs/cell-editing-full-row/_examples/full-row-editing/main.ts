@@ -1,12 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
-    CellValueChangedEvent,
-    GridApi,
-    GridOptions,
-    ModuleRegistry,
-    RowValueChangedEvent,
-    createGrid,
-} from 'ag-grid-community';
+import type { CellValueChangedEvent, GridApi, GridOptions, RowValueChangedEvent } from 'ag-grid-community';
+import { ModuleRegistry, createGrid } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
 

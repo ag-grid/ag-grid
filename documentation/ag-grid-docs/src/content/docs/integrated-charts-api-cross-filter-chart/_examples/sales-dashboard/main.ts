@@ -1,12 +1,12 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     FirstDataRenderedEvent,
     GridApi,
     GridOptions,
     GridReadyEvent,
     ValueFormatterParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { GridChartsModule } from 'ag-grid-enterprise';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';

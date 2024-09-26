@@ -1,4 +1,4 @@
-import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterComp, IFilterParams } from 'ag-grid-community';
+import type { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterComp, IFilterParams } from 'ag-grid-community';
 
 export class YearFilter implements IFilterComp {
     eGui!: HTMLDivElement;

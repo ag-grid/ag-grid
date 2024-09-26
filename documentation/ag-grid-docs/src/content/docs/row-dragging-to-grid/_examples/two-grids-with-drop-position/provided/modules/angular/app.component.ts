@@ -4,7 +4,8 @@ import { Component, ViewChild } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ColDef, GetRowIdParams, GridApi, GridReadyEvent, ModuleRegistry, RowDropZoneParams } from 'ag-grid-community';
+import type { ColDef, GetRowIdParams, GridApi, GridReadyEvent, RowDropZoneParams } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 import './styles.css';
 
@@ -186,7 +187,7 @@ export class AppComponent {
     }
 
     onFactoryButtonClick(e: any) {
-        var button = e.currentTarget,
+        const button = e.currentTarget,
             buttonColor = button.getAttribute('data-color'),
             side = button.getAttribute('data-side'),
             data = createDataItem(buttonColor);
@@ -200,12 +201,12 @@ export class AppComponent {
             return;
         }
 
-        var transaction = {
+        const transaction = {
             remove: [data],
         };
 
         [this.leftApi, this.rightApi].forEach((api) => {
-            var rowsInGrid = !!api.getRowNode(data.id);
+            const rowsInGrid = !!api.getRowNode(data.id);
 
             if (rowsInGrid) {
                 api.applyTransaction(transaction);

@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     ColDef,
     GetLocaleTextParams,
     GridApi,
@@ -8,15 +8,15 @@ import {
     IFilterOptionDef,
     INumberFilterParams,
     ITextFilterParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
-declare var window: any;
+declare let window: any;
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-var filterParams: INumberFilterParams = {
+const filterParams: INumberFilterParams = {
     filterOptions: [
         'empty',
         {
@@ -53,7 +53,7 @@ var filterParams: INumberFilterParams = {
     maxNumConditions: 1,
 };
 
-var containsFilterParams: ITextFilterParams = {
+const containsFilterParams: ITextFilterParams = {
     filterOptions: [
         'contains',
         {
@@ -83,7 +83,7 @@ var containsFilterParams: ITextFilterParams = {
     ] as IFilterOptionDef[],
 };
 
-var equalsFilterParams: IDateFilterParams = {
+const equalsFilterParams: IDateFilterParams = {
     filterOptions: [
         'equals',
         {
@@ -92,8 +92,8 @@ var equalsFilterParams: IDateFilterParams = {
             predicate: ([filterValue]: any[], cellValue) => {
                 if (cellValue == null) return true;
 
-                var parts = cellValue.split('/');
-                var cellDate = new Date(Number(parts[2]), Number(parts[1] - 1), Number(parts[0]));
+                const parts = cellValue.split('/');
+                const cellDate = new Date(Number(parts[2]), Number(parts[1] - 1), Number(parts[0]));
 
                 return cellDate.getTime() === filterValue.getTime();
             },
@@ -116,8 +116,8 @@ var equalsFilterParams: IDateFilterParams = {
             predicate: ([fv1, fv2]: any[], cellValue) => {
                 if (cellValue == null) return true;
 
-                var parts = cellValue.split('/');
-                var cellDate = new Date(Number(parts[2]), Number(parts[1] - 1), Number(parts[0]));
+                const parts = cellValue.split('/');
+                const cellDate = new Date(Number(parts[2]), Number(parts[1] - 1), Number(parts[0]));
 
                 return cellDate.getTime() > fv1.getTime() && cellDate.getTime() < fv2.getTime();
             },
@@ -125,10 +125,10 @@ var equalsFilterParams: IDateFilterParams = {
         },
     ] as IFilterOptionDef[],
     comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
-        var dateAsString = cellValue;
+        const dateAsString = cellValue;
         if (dateAsString == null) return -1;
-        var dateParts = dateAsString.split('/');
-        var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+        const dateParts = dateAsString.split('/');
+        const cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
         if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
             return 0;
@@ -145,7 +145,7 @@ var equalsFilterParams: IDateFilterParams = {
     },
 };
 
-var notEqualsFilterParams: ITextFilterParams = {
+const notEqualsFilterParams: ITextFilterParams = {
     filterOptions: [
         'notEqual',
         {
@@ -204,7 +204,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function printState() {
-    var filterState = gridApi!.getFilterModel();
+    const filterState = gridApi!.getFilterModel();
     console.log('filterState: ', filterState);
 }
 
@@ -225,7 +225,7 @@ function resetState() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')

@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
+import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
 interface MissionCellRendererParams extends ICellRendererParams {
     src?: (params: boolean) => string;
@@ -8,7 +8,7 @@ export class MissionResultRenderer implements ICellRendererComp {
     eGui!: HTMLSpanElement;
 
     init(params: MissionCellRendererParams) {
-        let icon: HTMLImageElement = document.createElement('img');
+        const icon: HTMLImageElement = document.createElement('img');
         if (params.src) {
             icon.src = params.src(params.value);
         } else {

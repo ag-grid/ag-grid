@@ -1,13 +1,13 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     FirstDataRenderedEvent,
     GridApi,
     GridOptions,
     ISetFilter,
     ISetFilterParams,
     SetFilterValuesFuncParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { FiltersToolPanelModule } from 'ag-grid-enterprise';
@@ -24,11 +24,11 @@ ModuleRegistry.registerModules([
     SetFilterModule,
 ]);
 
-var list1 = ['Elephant', 'Lion', 'Monkey'];
-var list2 = ['Elephant', 'Giraffe', 'Tiger'];
+const list1 = ['Elephant', 'Lion', 'Monkey'];
+const list2 = ['Elephant', 'Giraffe', 'Tiger'];
 
-var valuesArray = list1.slice();
-var valuesCallbackList = list1;
+const valuesArray = list1.slice();
+let valuesCallbackList = list1;
 
 function valuesCallback(params: SetFilterValuesFuncParams) {
     setTimeout(() => {
@@ -36,11 +36,11 @@ function valuesCallback(params: SetFilterValuesFuncParams) {
     }, 1000);
 }
 
-var arrayFilterParams: ISetFilterParams = {
+const arrayFilterParams: ISetFilterParams = {
     values: valuesArray,
 };
 
-var callbackFilterParams: ISetFilterParams = {
+const callbackFilterParams: ISetFilterParams = {
     values: valuesCallback,
     refreshValuesOnOpen: true,
 };
@@ -107,6 +107,6 @@ function useList2() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

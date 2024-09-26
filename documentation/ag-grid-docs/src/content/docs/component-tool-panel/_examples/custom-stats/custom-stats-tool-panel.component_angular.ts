@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
-import { IToolPanelAngularComp } from 'ag-grid-angular';
-import { IRowNode, IToolPanelParams } from 'ag-grid-community';
+import type { IToolPanelAngularComp } from 'ag-grid-angular';
+import type { IRowNode, IToolPanelParams } from 'ag-grid-community';
 
 export interface CustomStatsToolPanelParams extends IToolPanelParams {
     title: string;

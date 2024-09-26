@@ -1,4 +1,4 @@
-import { IViewportDatasource } from 'ag-grid-community';
+import type { IViewportDatasource } from 'ag-grid-community';
 
 export function createViewportDatasource(mockServer): IViewportDatasource {
     // client code (ie your code) will call this constructor, pass in whatever you need for the
@@ -43,15 +43,15 @@ export function createViewportDatasource(mockServer): IViewportDatasource {
 
         // process rowData event
         onRowData(event) {
-            var rowDataFromServer = event.rowDataMap;
+            const rowDataFromServer = event.rowDataMap;
             this.params.setRowData(rowDataFromServer);
         }
 
         // process dataUpdated event
         onDataUpdated(event) {
-            var that = this;
+            const that = this;
             event.changes.forEach(function (change) {
-                var rowNode = that.params.getRow(change.rowIndex);
+                const rowNode = that.params.getRow(change.rowIndex);
                 // if the rowNode is missing, it means the grid is not displaying that row.
                 // if the data is missing, it means the rowNode is there, but that data has not
                 // loaded into it yet, so to early to set delta changes.
@@ -66,7 +66,7 @@ export function createViewportDatasource(mockServer): IViewportDatasource {
 
         // process rowCount event
         onRowCountChanged(event) {
-            var rowCountFromServer = event.rowCount;
+            const rowCountFromServer = event.rowCount;
             // this will get the grid to make set the height of the row container, so we can scroll vertically properly
             this.params.setRowCount(rowCountFromServer);
         }

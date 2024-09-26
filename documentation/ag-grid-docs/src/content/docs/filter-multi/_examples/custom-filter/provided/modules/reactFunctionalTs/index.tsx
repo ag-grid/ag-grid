@@ -6,7 +6,7 @@ import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ColDef, GridReadyEvent, IMultiFilterParams } from 'ag-grid-community';
+import type { ColDef, GridReadyEvent, IMultiFilterParams } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ClipboardModule } from 'ag-grid-enterprise';
 import { FiltersToolPanelModule } from 'ag-grid-enterprise';
@@ -17,7 +17,7 @@ import { AgGridReact } from 'ag-grid-react';
 
 import YearFilter from './YearFilter';
 import YearFloatingFilter from './YearFloatingFilter';
-import { IOlympicData } from './interfaces';
+import type { IOlympicData } from './interfaces';
 import './style.css';
 
 ModuleRegistry.registerModules([

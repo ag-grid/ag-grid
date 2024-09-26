@@ -1,9 +1,6 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, createGrid } from 'ag-grid-community';
-import { ModuleRegistry } from 'ag-grid-community';
-import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
-import { FiltersToolPanelModule } from 'ag-grid-enterprise';
-import { SetFilterModule } from 'ag-grid-enterprise';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid } from 'ag-grid-community';
+import { ColumnsToolPanelModule, FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -70,7 +67,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

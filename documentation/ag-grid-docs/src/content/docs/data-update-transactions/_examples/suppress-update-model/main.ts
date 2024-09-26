@@ -1,9 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
-    ColDef,
     GetRowIdParams,
-    GridApi,
-    GridOptions,
     IAggFuncParams,
     IDoesFilterPassParams,
     IFilterComp,

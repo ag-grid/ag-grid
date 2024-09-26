@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     ChartToolbarMenuItemOptions,
     ChartType,
     ColDef,
@@ -7,15 +7,15 @@ import {
     GridApi,
     GridOptions,
     ValueFormatterParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { GridChartsModule } from 'ag-grid-enterprise';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, RowGroupingModule]);
 
-declare var __basePath: string;
+declare let __basePath: string;
 
 // Types
 interface WorkerMessage {
@@ -121,7 +121,7 @@ function handleWorkerMessage(e: any): void {
 
 // after page is loaded, create the grid
 document.addEventListener('DOMContentLoaded', function () {
-    var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(eGridDiv, gridOptions);
 });
 

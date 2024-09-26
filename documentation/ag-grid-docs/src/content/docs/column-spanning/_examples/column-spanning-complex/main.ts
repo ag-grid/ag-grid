@@ -1,20 +1,13 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
-    CellClassRules,
-    ColDef,
-    ColSpanParams,
-    GridApi,
-    GridOptions,
-    RowHeightParams,
-    createGrid,
-} from 'ag-grid-community';
+import type { CellClassRules, ColDef, ColSpanParams, GridApi, GridOptions, RowHeightParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 import { getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-var cellClassRules: CellClassRules = {
+const cellClassRules: CellClassRules = {
     'header-cell': 'data.section === "big-title"',
     'quarters-cell': 'data.section === "quarters"',
 };
@@ -80,6 +73,6 @@ function isQuarterRow(params: ColSpanParams) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

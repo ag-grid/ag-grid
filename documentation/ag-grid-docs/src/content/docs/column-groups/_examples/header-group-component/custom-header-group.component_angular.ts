@@ -1,8 +1,8 @@
 import { NgClass } from '@angular/common';
 import { Component } from '@angular/core';
 
-import { IHeaderGroupAngularComp } from 'ag-grid-angular';
-import { IHeaderGroupParams } from 'ag-grid-community';
+import type { IHeaderGroupAngularComp } from 'ag-grid-angular';
+import type { IHeaderGroupParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,

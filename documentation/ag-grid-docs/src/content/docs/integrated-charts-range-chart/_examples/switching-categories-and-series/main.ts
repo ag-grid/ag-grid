@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { FirstDataRenderedEvent, GridApi, GridOptions, ModuleRegistry, createGrid } from 'ag-grid-community';
+import type { FirstDataRenderedEvent, GridApi, GridOptions } from 'ag-grid-community';
+import { ModuleRegistry, createGrid } from 'ag-grid-community';
 import { GridChartsModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
 import { RowGroupingModule } from 'ag-grid-enterprise';

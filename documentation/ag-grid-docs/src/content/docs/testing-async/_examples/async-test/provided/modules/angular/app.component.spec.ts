@@ -1,5 +1,6 @@
-import { DebugElement } from '@angular/core';
-import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
+import type { DebugElement } from '@angular/core';
+import type { ComponentFixture } from '@angular/core/testing';
+import { TestBed, fakeAsync, flush } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 
@@ -22,7 +23,7 @@ describe('AppComponent', () => {
 
         fixture = TestBed.createComponent(AppComponent);
         component = fixture.componentInstance;
-        let compDebugElement = fixture.debugElement;
+        const compDebugElement = fixture.debugElement;
 
         // Get a reference to our quickFilter input and rendered template
         quickFilterDE = compDebugElement.query(By.css('#quickFilter'));

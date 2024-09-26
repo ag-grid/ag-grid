@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { CustomTooltipProps } from 'ag-grid-react';
+import type { CustomTooltipProps } from 'ag-grid-react';
 
 export default (props: CustomTooltipProps & { color: string }) => {
     return (

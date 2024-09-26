@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
-import { ICellRendererAngularComp } from 'ag-grid-angular';
-import { GroupCellRendererParams, IRowNode } from 'ag-grid-community';
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
+import type { GroupCellRendererParams, IRowNode } from 'ag-grid-community';
 
 interface GroupRowParams extends GroupCellRendererParams {
     flagCodes: Record<string, string>;

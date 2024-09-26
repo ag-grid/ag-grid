@@ -1,8 +1,10 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, GridReadyEvent, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
-import { TAthlete, getData } from './data';
+import type { TAthlete } from './data';
+import { getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 

@@ -1,4 +1,4 @@
-import { ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
+import type { ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
 
 export class MoodEditor implements ICellEditorComp {
     mood!: string;
@@ -7,7 +7,7 @@ export class MoodEditor implements ICellEditorComp {
     sadImg: any;
 
     onKeyDown(event: any) {
-        var key = event.key;
+        const key = event.key;
         if (
             key === 'ArrowLeft' || // left
             key == 'ArrowRight'

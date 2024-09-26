@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
-import { IStatusPanelAngularComp } from 'ag-grid-angular';
-import { IStatusPanelParams } from 'ag-grid-community';
+import type { IStatusPanelAngularComp } from 'ag-grid-angular';
+import type { IStatusPanelParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,

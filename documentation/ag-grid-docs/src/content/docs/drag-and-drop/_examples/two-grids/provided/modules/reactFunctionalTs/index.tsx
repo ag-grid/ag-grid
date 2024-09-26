@@ -69,7 +69,7 @@ const GridExample = () => {
     const createLeftRowData = () => ['Red', 'Green', 'Blue'].map(createDataItem);
 
     const createDataItem = (color: string) => {
-        let newDataItem = {
+        const newDataItem = {
             id: nextRowId++,
             color: color,
             value1: Math.floor(Math.random() * 100),

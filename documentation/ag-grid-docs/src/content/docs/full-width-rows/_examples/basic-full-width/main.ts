@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ColDef, GridApi, GridOptions, IsFullWidthRowParams, RowHeightParams, createGrid } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, IsFullWidthRowParams, RowHeightParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript';

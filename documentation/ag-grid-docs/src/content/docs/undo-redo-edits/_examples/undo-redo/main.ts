@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     CellValueChangedEvent,
     GridApi,
     GridOptions,
@@ -7,8 +7,8 @@ import {
     RedoStartedEvent,
     UndoEndedEvent,
     UndoStartedEvent,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ClipboardModule } from 'ag-grid-enterprise';
 import { RangeSelectionModule } from 'ag-grid-enterprise';
@@ -71,11 +71,11 @@ function onFirstDataRendered() {
 function onCellValueChanged(params: CellValueChangedEvent) {
     console.log('cellValueChanged', params);
 
-    var undoSize = params.api.getCurrentUndoSize();
+    const undoSize = params.api.getCurrentUndoSize();
     setValue('#undoInput', undoSize);
     disable('#undoBtn', undoSize < 1);
 
-    var redoSize = params.api.getCurrentRedoSize();
+    const redoSize = params.api.getCurrentRedoSize();
     setValue('#redoInput', redoSize);
     disable('#redoBtn', redoSize < 1);
 }
@@ -121,6 +121,6 @@ function getRows() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

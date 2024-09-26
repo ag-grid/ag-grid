@@ -1,4 +1,5 @@
-import { GridApi, GridOptions, IServerSideDatasource, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';

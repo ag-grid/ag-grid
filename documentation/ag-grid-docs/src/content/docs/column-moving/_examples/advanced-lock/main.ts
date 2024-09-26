@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ColDef, ColumnPinnedEvent, GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import type { ColDef, ColumnPinnedEvent, GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 import { ControlsCellRenderer } from './controlsCellRenderer_typescript';

@@ -3,24 +3,24 @@ import type { ColDef, GetRowIdParams, GridApi, GridOptions } from 'ag-grid-commu
 import { ModuleRegistry, createGrid } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
-var rowIdSequence = 100;
+let rowIdSequence = 100;
 
-var leftColumnDefs: ColDef[] = [
+const leftColumnDefs: ColDef[] = [
     { field: 'id', dndSource: true },
     { field: 'color' },
     { field: 'value1' },
     { field: 'value2' },
 ];
 
-var rightColumnDefs: ColDef[] = [
+const rightColumnDefs: ColDef[] = [
     { field: 'id', dndSource: true },
     { field: 'color' },
     { field: 'value1' },
     { field: 'value2' },
 ];
 
-var leftApi: GridApi;
-var leftGridOptions: GridOptions = {
+let leftApi: GridApi;
+const leftGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         filter: true,
@@ -38,8 +38,8 @@ var leftGridOptions: GridOptions = {
     columnDefs: leftColumnDefs,
 };
 
-var rightApi: GridApi;
-var rightGridOptions: GridOptions = {
+let rightApi: GridApi;
+const rightGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         filter: true,
@@ -73,7 +73,7 @@ function createDataItem(color: string) {
 }
 
 function binDragOver(event: any) {
-    var dragSupported = event.dataTransfer.types.length;
+    const dragSupported = event.dataTransfer.types.length;
 
     if (dragSupported) {
         event.dataTransfer.dropEffect = 'move';
@@ -84,38 +84,38 @@ function binDragOver(event: any) {
 function binDrop(event: any) {
     event.preventDefault();
 
-    var jsonData = event.dataTransfer.getData('application/json');
-    var data = JSON.parse(jsonData);
+    const jsonData = event.dataTransfer.getData('application/json');
+    const data = JSON.parse(jsonData);
 
     // if data missing or data has no id, do nothing
     if (!data || data.id == null) {
         return;
     }
 
-    var transaction = {
+    const transaction = {
         remove: [data],
     };
 
-    var rowIsInLeftGrid = !!leftApi!.getRowNode(data.id);
+    const rowIsInLeftGrid = !!leftApi!.getRowNode(data.id);
     if (rowIsInLeftGrid) {
         leftApi!.applyTransaction(transaction);
     }
 
-    var rowIsInRightGrid = !!rightApi!.getRowNode(data.id);
+    const rowIsInRightGrid = !!rightApi!.getRowNode(data.id);
     if (rowIsInRightGrid) {
         rightApi!.applyTransaction(transaction);
     }
 }
 
 function dragStart(event: any, color: string) {
-    var newItem = createDataItem(color);
-    var jsonData = JSON.stringify(newItem);
+    const newItem = createDataItem(color);
+    const jsonData = JSON.stringify(newItem);
 
     event.dataTransfer.setData('application/json', jsonData);
 }
 
 function gridDragOver(event: any) {
-    var dragSupported = event.dataTransfer.types.length;
+    const dragSupported = event.dataTransfer.types.length;
 
     if (dragSupported) {
         event.dataTransfer.dropEffect = 'copy';
@@ -126,33 +126,33 @@ function gridDragOver(event: any) {
 function gridDrop(event: any, grid: string) {
     event.preventDefault();
 
-    var jsonData = event.dataTransfer.getData('application/json');
-    var data = JSON.parse(jsonData);
+    const jsonData = event.dataTransfer.getData('application/json');
+    const data = JSON.parse(jsonData);
 
     // if data missing or data has no it, do nothing
     if (!data || data.id == null) {
         return;
     }
 
-    var gridApi = grid == 'left' ? leftApi! : rightApi!;
+    const gridApi = grid == 'left' ? leftApi! : rightApi!;
 
     // do nothing if row is already in the grid, otherwise we would have duplicates
-    var rowAlreadyInGrid = !!gridApi!.getRowNode(data.id);
+    const rowAlreadyInGrid = !!gridApi!.getRowNode(data.id);
     if (rowAlreadyInGrid) {
         console.log('not adding row to avoid duplicates in the grid');
         return;
     }
 
-    var transaction = {
+    const transaction = {
         add: [data],
     };
     gridApi.applyTransaction(transaction);
 }
 
-var leftGridDiv = document.querySelector<HTMLElement>('#eLeftGrid')!;
+const leftGridDiv = document.querySelector<HTMLElement>('#eLeftGrid')!;
 leftApi = createGrid(leftGridDiv, leftGridOptions);
 
-var rightGridDiv = document.querySelector<HTMLElement>('#eRightGrid')!;
+const rightGridDiv = document.querySelector<HTMLElement>('#eRightGrid')!;
 rightApi = createGrid(rightGridDiv, rightGridOptions);
 
 if (typeof window !== 'undefined') {

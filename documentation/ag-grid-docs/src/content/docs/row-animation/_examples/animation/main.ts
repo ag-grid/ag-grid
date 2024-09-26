@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ColDef, GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
@@ -14,7 +15,7 @@ ModuleRegistry.registerModules([
     SetFilterModule,
 ]);
 
-var countDownDirection = true;
+let countDownDirection = true;
 
 const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 150 },
@@ -47,14 +48,14 @@ const gridOptions: GridOptions<IOlympicData> = {
 // it's an interval, and each time it runs, it takes the next action
 // from the 'actions' list below
 function startInterval(api: GridApi) {
-    var actionIndex = 0;
+    let actionIndex = 0;
 
     resetCountdown();
     executeAfterXSeconds();
 
     function executeAfterXSeconds() {
         setTimeout(() => {
-            var action = getActions()[actionIndex];
+            const action = getActions()[actionIndex];
             action(api);
             actionIndex++;
             if (actionIndex >= getActions().length) {
@@ -74,7 +75,7 @@ function resetCountdown() {
 }
 
 function setTitleFormatted(apiName: null | string, methodName?: string, paramsName?: string) {
-    var html;
+    let html;
     if (apiName === null) {
         html = '<span class="code-highlight-yellow">command:> </span>';
     } else {
@@ -137,7 +138,7 @@ function getActions() {
 
 // from actual demo page (/animation/)
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')! || document.querySelector('#animationGrid');
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')! || document.querySelector('#animationGrid');
 
     gridApi = createGrid(gridDiv, gridOptions);
 

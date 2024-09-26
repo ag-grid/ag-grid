@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ExcelExportModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
@@ -31,7 +32,7 @@ const gridOptions: GridOptions = {
         processCellCallback: (params) => {
             const rowIndex = params.accumulatedRowIndex;
             const valueGetter = params.column.getColDef().valueGetter;
-            return !!valueGetter ? `=CONCATENATE(A${rowIndex}, " ", B${rowIndex})` : params.value;
+            return valueGetter ? `=CONCATENATE(A${rowIndex}, " ", B${rowIndex})` : params.value;
         },
     },
     excelStyles: [

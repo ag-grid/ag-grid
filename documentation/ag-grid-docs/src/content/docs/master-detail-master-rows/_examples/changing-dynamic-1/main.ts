@@ -1,12 +1,12 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     FirstDataRenderedEvent,
     GetRowIdParams,
     GridApi,
     GridOptions,
     IDetailCellRendererParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MasterDetailModule } from 'ag-grid-enterprise';
@@ -60,15 +60,15 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 }
 
 function onBtClearMilaCalls() {
-    var milaSmithRowNode = gridApi!.getRowNode('177001')!;
-    var milaSmithData = milaSmithRowNode.data;
+    const milaSmithRowNode = gridApi!.getRowNode('177001')!;
+    const milaSmithData = milaSmithRowNode.data;
     milaSmithData.callRecords = [];
     gridApi!.applyTransaction({ update: [milaSmithData] });
 }
 
 function onBtSetMilaCalls() {
-    var milaSmithRowNode = gridApi!.getRowNode('177001')!;
-    var milaSmithData = milaSmithRowNode.data;
+    const milaSmithRowNode = gridApi!.getRowNode('177001')!;
+    const milaSmithData = milaSmithRowNode.data;
     milaSmithData.callRecords = [
         {
             name: 'susan',
@@ -92,7 +92,7 @@ function onBtSetMilaCalls() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/master-detail-dynamic-data.json')

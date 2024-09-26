@@ -1,12 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
-    GridApi,
-    GridOptions,
-    IDateFilterParams,
-    IMultiFilterParams,
-    ISetFilterParams,
-    createGrid,
-} from 'ag-grid-community';
+import type { GridApi, GridOptions, IDateFilterParams, IMultiFilterParams, ISetFilterParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ClipboardModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
@@ -21,7 +15,7 @@ ModuleRegistry.registerModules([
     SetFilterModule,
 ]);
 
-var dateFilterParams: IMultiFilterParams = {
+const dateFilterParams: IMultiFilterParams = {
     filters: [
         {
             filter: 'agDateColumnFilter',
@@ -79,13 +73,13 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function getDate(value: string) {
-    var dateParts = value.split('/');
+    const dateParts = value.split('/');
     return new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

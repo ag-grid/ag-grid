@@ -1,12 +1,12 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     GridApi,
     GridOptions,
     SideBarDef,
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { FiltersToolPanelModule } from 'ag-grid-enterprise';
@@ -100,7 +100,7 @@ function setSideBar(def: SideBarDef | string | string[] | boolean) {
 }
 
 function getSideBar() {
-    var sideBar = gridApi!.getSideBar();
+    const sideBar = gridApi!.getSideBar();
     alert(JSON.stringify(sideBar));
     console.log(sideBar);
 }
@@ -111,7 +111,7 @@ function setSideBarPosition(position: 'left' | 'right') {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

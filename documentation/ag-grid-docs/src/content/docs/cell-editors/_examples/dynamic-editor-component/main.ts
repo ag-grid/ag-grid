@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
     CellEditorSelectorResult,
@@ -8,14 +8,15 @@ import {
     ICellEditorParams,
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
 import { RichSelectModule } from 'ag-grid-enterprise';
 
-import { IRow, getData } from './data';
+import type { IRow } from './data';
+import { getData } from './data';
 import { MoodEditor } from './moodEditor_typescript';
 import { NumericCellEditor } from './numericCellEditor_typescript';
 
@@ -89,6 +90,6 @@ function cellEditorSelector(params: ICellEditorParams<IRow>): CellEditorSelector
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

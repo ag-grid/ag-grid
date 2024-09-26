@@ -1,8 +1,8 @@
 import { NgClass } from '@angular/common';
 import { Component } from '@angular/core';
 
-import { ITooltipAngularComp } from 'ag-grid-angular';
-import { ITooltipParams } from 'ag-grid-community';
+import type { ITooltipAngularComp } from 'ag-grid-angular';
+import type { ITooltipParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,

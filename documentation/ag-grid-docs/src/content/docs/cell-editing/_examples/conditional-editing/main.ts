@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { CellClassParams, EditableCallbackParams, GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import type { CellClassParams, EditableCallbackParams, GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);

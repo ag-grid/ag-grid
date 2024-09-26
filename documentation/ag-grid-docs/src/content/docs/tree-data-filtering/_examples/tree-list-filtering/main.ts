@@ -1,8 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     GetRowIdParams,
-    GridApi,
-    GridOptions,
     ISetFilterParams,
     KeyCreatorParams,
     ValueFormatterParams,
@@ -66,6 +65,6 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

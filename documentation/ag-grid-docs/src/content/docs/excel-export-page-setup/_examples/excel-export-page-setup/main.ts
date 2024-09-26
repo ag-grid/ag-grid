@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ExcelExportModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
@@ -29,7 +30,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function getNumber(id: string) {
-    var el = document.querySelector(id) as any;
+    const el = document.querySelector(id) as any;
 
     if (!el || isNaN(el.value)) {
         return 0;

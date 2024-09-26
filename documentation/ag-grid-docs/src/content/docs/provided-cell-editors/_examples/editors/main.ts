@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     ColDef,
     GridApi,
     GridOptions,
@@ -7,8 +7,8 @@ import {
     IRichCellEditorParams,
     ISelectCellEditorParams,
     ITextCellEditorParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
 

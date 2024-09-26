@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, IDetailCellRendererParams, IServerSideDatasource, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions, IDetailCellRendererParams, IServerSideDatasource } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MasterDetailModule } from 'ag-grid-enterprise';
@@ -61,7 +62,7 @@ const gridOptions: GridOptions = {
     onGridReady: (params) => {
         setTimeout(() => {
             // expand some master row
-            var someRow = params.api.getRowNode('1');
+            const someRow = params.api.getRowNode('1');
             if (someRow) {
                 someRow.setExpanded(true);
             }
@@ -74,7 +75,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
         getRows: (params) => {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
-            var response = server.getData(params.request);
+            const response = server.getData(params.request);
 
             // adding delay to simulate real server call
             setTimeout(() => {
@@ -92,17 +93,17 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/call-data.json')
         .then((response) => response.json())
         .then(function (data) {
             // setup the fake server with entire dataset
-            var fakeServer = FakeServer(data);
+            const fakeServer = FakeServer(data);
 
             // create datasource with a reference to the fake server
-            var datasource = getServerSideDatasource(fakeServer);
+            const datasource = getServerSideDatasource(fakeServer);
 
             // register the datasource with the grid
             gridApi!.setGridOption('serverSideDatasource', datasource);

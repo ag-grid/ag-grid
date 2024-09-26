@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { FirstDataRenderedEvent, GridApi, GridOptions, ISetFilterParams, createGrid } from 'ag-grid-community';
+import type { FirstDataRenderedEvent, GridApi, GridOptions, ISetFilterParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { FiltersToolPanelModule } from 'ag-grid-enterprise';
@@ -14,18 +15,18 @@ ModuleRegistry.registerModules([
     SetFilterModule,
 ]);
 
-var listOfDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const listOfDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-var daysValuesNotProvidedFilterParams: ISetFilterParams = {
+const daysValuesNotProvidedFilterParams: ISetFilterParams = {
     comparator: (a: string | null, b: string | null) => {
-        var aIndex = a == null ? -1 : listOfDays.indexOf(a);
-        var bIndex = b == null ? -1 : listOfDays.indexOf(b);
+        const aIndex = a == null ? -1 : listOfDays.indexOf(a);
+        const bIndex = b == null ? -1 : listOfDays.indexOf(b);
         if (aIndex === bIndex) return 0;
         return aIndex > bIndex ? 1 : -1;
     },
 };
 
-var daysValuesProvidedFilterParams: ISetFilterParams = {
+const daysValuesProvidedFilterParams: ISetFilterParams = {
     values: listOfDays,
     suppressSorting: true, // use provided order
 };
@@ -57,11 +58,11 @@ const gridOptions: GridOptions = {
 };
 
 function getRowData() {
-    var weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+    const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
-    var rows = [];
-    for (var i = 0; i < 200; i++) {
-        var index = Math.floor(Math.random() * 5);
+    const rows = [];
+    for (let i = 0; i < 200; i++) {
+        const index = Math.floor(Math.random() * 5);
         rows.push({ days: weekdays[index] });
     }
 
@@ -74,6 +75,6 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

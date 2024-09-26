@@ -1,14 +1,14 @@
 import React from 'react';
 
-import { CustomCellRendererProps } from 'ag-grid-react';
+import type { CustomCellRendererProps } from 'ag-grid-react';
 
 export default (props: CustomCellRendererProps) => {
     const onAdd = () => {
-        var oldData = props.node.data;
+        const oldData = props.node.data;
 
-        var oldCallRecords = oldData.callRecords;
+        const oldCallRecords = oldData.callRecords;
 
-        var newCallRecords: any[] = oldCallRecords.slice(0); // make a copy
+        const newCallRecords: any[] = oldCallRecords.slice(0); // make a copy
         newCallRecords.push({
             name: ['Bob', 'Paul', 'David', 'John'][Math.floor(Math.random() * 4)],
             callId: Math.floor(Math.random() * 1000),
@@ -18,10 +18,10 @@ export default (props: CustomCellRendererProps) => {
             number: '(02) ' + Math.floor(Math.random() * 1000000),
         }); // add one item
 
-        var minutes = 0;
+        let minutes = 0;
         newCallRecords.forEach((r) => (minutes += r.duration));
 
-        var newData = {
+        const newData = {
             name: oldData.name,
             account: oldData.account,
             calls: newCallRecords.length,
@@ -35,21 +35,21 @@ export default (props: CustomCellRendererProps) => {
     };
 
     const onRemove = () => {
-        var oldData = props.node.data;
+        const oldData = props.node.data;
 
-        var oldCallRecords = oldData.callRecords;
+        const oldCallRecords = oldData.callRecords;
 
         if (oldCallRecords.length == 0) {
             return;
         }
 
-        var newCallRecords: any[] = oldCallRecords.slice(0); // make a copy
+        const newCallRecords: any[] = oldCallRecords.slice(0); // make a copy
         newCallRecords.pop(); // remove one item
 
-        var minutes = 0;
+        let minutes = 0;
         newCallRecords.forEach((r) => (minutes += r.duration));
 
-        var newData = {
+        const newData = {
             name: oldData.name,
             account: oldData.account,
             calls: newCallRecords.length,

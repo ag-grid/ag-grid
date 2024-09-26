@@ -8,7 +8,7 @@ export function createMockServer() {
 
         periodicallyUpdateData() {
             // keep a record of all the items that changed
-            var changes = [];
+            const changes = [];
 
             // make some mock changes to the data
             this.makeSomePriceChanges(changes);
@@ -19,15 +19,16 @@ export function createMockServer() {
         }
 
         informConnectionsOfChanges(changes) {
-            var that = this;
+            const that = this;
             // go through each connection
             Object.keys(this.connections).forEach(function (connectionId) {
-                var connection = that.connections[connectionId];
+                const connection = that.connections[connectionId];
                 // create a list of changes that are applicable to this connection only
-                var changesThisConnection = [];
+                const changesThisConnection = [];
                 changes.forEach(function (change) {
                     // see if the index of this change is within the connections viewport
-                    var changeInRange = change.rowIndex >= connection.firstRow && change.rowIndex <= connection.lastRow;
+                    const changeInRange =
+                        change.rowIndex >= connection.firstRow && change.rowIndex <= connection.lastRow;
                     if (changeInRange) {
                         changesThisConnection.push(change);
                     }
@@ -43,14 +44,14 @@ export function createMockServer() {
         }
 
         makeSomeVolumeChanges(changes) {
-            for (var i = 0; i < 10; i++) {
+            for (let i = 0; i < 10; i++) {
                 // pick a data item at random
-                var index = Math.floor(this.allData.length * Math.random());
-                var dataItem = this.allData[index];
+                const index = Math.floor(this.allData.length * Math.random());
+                const dataItem = this.allData[index];
 
                 // change by a value between -5 and 5
-                var move = Math.floor(10 * Math.random()) - 5;
-                var newValue = dataItem.volume + move;
+                const move = Math.floor(10 * Math.random()) - 5;
+                const newValue = dataItem.volume + move;
                 dataItem.volume = newValue;
 
                 changes.push({
@@ -63,13 +64,13 @@ export function createMockServer() {
 
         makeSomePriceChanges(changes) {
             // randomly update data for some rows
-            for (var i = 0; i < 10; i++) {
-                var index = Math.floor(this.allData.length * Math.random());
+            for (let i = 0; i < 10; i++) {
+                const index = Math.floor(this.allData.length * Math.random());
 
-                var dataItem = this.allData[index];
+                const dataItem = this.allData[index];
                 // change by a value between -1 and 2 with one decimal place
-                var move = Math.floor(30 * Math.random()) / 10 - 1;
-                var newValue = dataItem.mid + move;
+                const move = Math.floor(30 * Math.random()) / 10 - 1;
+                const newValue = dataItem.mid + move;
                 dataItem.mid = newValue;
 
                 this.setBidAndAsk(dataItem);
@@ -96,7 +97,7 @@ export function createMockServer() {
             this.allData = allData;
 
             // the sample data has just name and code, we need to add in dummy figures
-            var that = this;
+            const that = this;
             this.allData.forEach(function (dataItem) {
                 // have volume a random between 100 and 10,000
                 dataItem.volume = Math.floor(Math.random() * 10000 + 100);
@@ -114,7 +115,7 @@ export function createMockServer() {
         }
 
         connect(listener) {
-            var connectionId = this.nextConnectionId;
+            const connectionId = this.nextConnectionId;
             this.nextConnectionId++;
             // keep a record of the connection
             this.connections[connectionId] = {
@@ -139,7 +140,7 @@ export function createMockServer() {
 
         // pretend we are on a network, send message to client after 20ms
         sendEventAsync(connectionId, event) {
-            var listener = this.connections[connectionId].listener;
+            const listener = this.connections[connectionId].listener;
             setTimeout(function () {
                 listener(event);
             }, 20);
@@ -150,7 +151,7 @@ export function createMockServer() {
         }
 
         setViewportRange(connectionId, firstRow, lastRow) {
-            var connection = this.connections[connectionId];
+            const connection = this.connections[connectionId];
             connection.firstRow = firstRow;
             connection.lastRow = lastRow;
 
@@ -163,7 +164,7 @@ export function createMockServer() {
         // removes any entries outside the viewport (firstRow to lastRow)
         purgeFromClientRows(rowsInClient, firstRow, lastRow) {
             Object.keys(rowsInClient).forEach(function (rowIndexStr) {
-                var rowIndex = parseInt(rowIndexStr);
+                const rowIndex = parseInt(rowIndexStr);
                 if (rowIndex < firstRow || rowIndex > lastRow) {
                     delete rowsInClient[rowIndex];
                 }
@@ -177,11 +178,11 @@ export function createMockServer() {
             }
 
             // we want to keep track of what rows the client has
-            var rowsInClient = this.connections[connectionId].rowsInClient;
+            const rowsInClient = this.connections[connectionId].rowsInClient;
 
             // the map contains row indexes mapped to rows
-            var rowDataMap = {};
-            for (var i = firstRow; i <= lastRow; i++) {
+            const rowDataMap = {};
+            for (let i = firstRow; i <= lastRow; i++) {
                 // if client already has this row, don't send it again
                 if (rowsInClient[i]) {
                     continue;

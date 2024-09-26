@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import {
+import type {
     CellPosition,
     ColDef,
     ColGroupDef,
@@ -12,8 +12,8 @@ import {
     NavigateToNextHeaderParams,
     TabToNextCellParams,
     TabToNextHeaderParams,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);

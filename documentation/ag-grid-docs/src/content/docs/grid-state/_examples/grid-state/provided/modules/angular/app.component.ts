@@ -1,12 +1,14 @@
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import type { HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import type { ChangeDetectorRef } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import {
+import type {
     ColDef,
     GridApi,
     GridOptions,
@@ -22,7 +24,7 @@ import { FiltersToolPanelModule } from 'ag-grid-enterprise';
 import { RangeSelectionModule } from 'ag-grid-enterprise';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
-import { IOlympicData } from './interfaces';
+import type { IOlympicData } from './interfaces';
 import './styles.css';
 
 ModuleRegistry.registerModules([

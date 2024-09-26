@@ -1,14 +1,12 @@
-import {
+import type {
     GetRowIdParams,
-    GetServerSideGroupLevelParamsParams,
     GridApi,
     GridOptions,
     IServerSideDatasource,
     IServerSideGetRowsParams,
     IsServerSideGroupOpenByDefaultParams,
-    ServerSideGroupLevelParams,
-    createGrid,
 } from 'ag-grid-community';
+import { GetServerSideGroupLevelParamsParams, ServerSideGroupLevelParams, createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
@@ -46,23 +44,23 @@ function getRowId(params: GetRowIdParams) {
 }
 
 function isServerSideGroupOpenByDefault(params: IsServerSideGroupOpenByDefaultParams) {
-    var route = params.rowNode.getRoute();
+    const route = params.rowNode.getRoute();
     if (!route) {
         return false;
     }
 
-    var routeAsString = route.join(',');
+    const routeAsString = route.join(',');
 
-    var routesToOpenByDefault = ['Zimbabwe', 'Zimbabwe,Swimming', 'United States,Swimming'];
+    const routesToOpenByDefault = ['Zimbabwe', 'Zimbabwe,Swimming', 'United States,Swimming'];
 
     return routesToOpenByDefault.indexOf(routeAsString) >= 0;
 }
 
 function onBtRouteOfSelected() {
-    var selectedNodes = gridApi!.getSelectedNodes();
+    const selectedNodes = gridApi!.getSelectedNodes();
     selectedNodes.forEach(function (rowNode, index) {
-        var route = rowNode.getRoute();
-        var routeString = route ? route.join(',') : undefined;
+        const route = rowNode.getRoute();
+        const routeString = route ? route.join(',') : undefined;
         console.log('#' + index + ', route = [' + routeString + ']');
     });
 }
@@ -72,7 +70,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
         getRows: (params: IServerSideGetRowsParams) => {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
-            var response = server.getData(params.request);
+            const response = server.getData(params.request);
 
             // adding delay to simulate real server call
             setTimeout(() => {
@@ -90,17 +88,17 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
         .then(function (data) {
             // setup the fake server with entire dataset
-            var fakeServer = new FakeServer(data);
+            const fakeServer = new FakeServer(data);
 
             // create datasource with a reference to the fake server
-            var datasource = getServerSideDatasource(fakeServer);
+            const datasource = getServerSideDatasource(fakeServer);
 
             // register the datasource with the grid
             gridApi!.setGridOption('serverSideDatasource', datasource);

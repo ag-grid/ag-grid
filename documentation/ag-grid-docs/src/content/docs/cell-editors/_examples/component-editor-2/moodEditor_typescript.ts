@@ -1,4 +1,4 @@
-import { ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
+import type { ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
 
 export class MoodEditor implements ICellEditorComp {
     defaultImgStyle: string;

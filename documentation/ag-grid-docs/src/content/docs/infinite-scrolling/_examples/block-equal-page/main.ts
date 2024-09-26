@@ -1,4 +1,4 @@
-import {
+import type {
     ColDef,
     GetRowIdParams,
     GridApi,
@@ -7,8 +7,8 @@ import {
     IDatasource,
     IGetRowsParams,
     SortModelItem,
-    createGrid,
 } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { InfiniteRowModelModule } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';

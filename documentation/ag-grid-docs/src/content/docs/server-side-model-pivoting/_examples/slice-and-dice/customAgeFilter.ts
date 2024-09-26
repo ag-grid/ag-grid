@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from 'ag-grid-community';
+import type { IDoesFilterPassParams, IFilterComp, IFilterParams } from 'ag-grid-community';
 
 export class CustomAgeFilter implements IFilterComp {
     eGui!: HTMLElement;

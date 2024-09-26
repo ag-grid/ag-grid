@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { CellDoubleClickedEvent, CellKeyDownEvent, ColDef, GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import type { CellDoubleClickedEvent, CellKeyDownEvent, ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 

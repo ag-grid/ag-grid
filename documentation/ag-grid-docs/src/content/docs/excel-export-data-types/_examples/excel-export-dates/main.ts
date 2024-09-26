@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { CsvExportModule } from 'ag-grid-community';
 import { ExcelExportModule } from 'ag-grid-enterprise';
@@ -22,10 +23,10 @@ const gridOptions: GridOptions = {
             headerName: 'dd/mm/yy',
             cellClass: 'dateUK',
             valueFormatter: (params) => {
-                var date = new Date(params.value);
-                var day = date.getDate().toString().padStart(2, '0');
-                var month = (date.getMonth() + 1).toString().padStart(2, '0');
-                var year = date.getFullYear().toString().substring(2);
+                const date = new Date(params.value);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear().toString().substring(2);
                 return day + '/' + month + '/' + year;
             },
         },
@@ -34,10 +35,10 @@ const gridOptions: GridOptions = {
             headerName: 'mm/dd/yy',
             cellClass: 'dateUS',
             valueFormatter: (params) => {
-                var date = new Date(params.value);
-                var day = date.getDate().toString().padStart(2, '0');
-                var month = (date.getMonth() + 1).toString().padStart(2, '0');
-                var year = date.getFullYear().toString().substring(2);
+                const date = new Date(params.value);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear().toString().substring(2);
                 return month + '/' + day + '/' + year;
             },
         },
@@ -47,15 +48,15 @@ const gridOptions: GridOptions = {
             cellClass: 'dateLong',
             minWidth: 150,
             valueFormatter: (params) => {
-                var date = new Date(params.value);
-                var day = date.getDate().toString().padStart(2, '0');
-                var month = (date.getMonth() + 1).toString().padStart(2, '0');
-                var year = date.getFullYear().toString();
-                var hourNum = date.getHours() % 12;
-                var hour = (hourNum === 0 ? 12 : hourNum).toString().padStart(2, '0');
-                var min = date.getMinutes().toString().padStart(2, '0');
-                var sec = date.getSeconds().toString().padStart(2, '0');
-                var amPM = date.getHours() < 12 ? 'AM' : 'PM';
+                const date = new Date(params.value);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear().toString();
+                const hourNum = date.getHours() % 12;
+                const hour = (hourNum === 0 ? 12 : hourNum).toString().padStart(2, '0');
+                const min = date.getMinutes().toString().padStart(2, '0');
+                const sec = date.getSeconds().toString().padStart(2, '0');
+                const amPM = date.getHours() < 12 ? 'AM' : 'PM';
 
                 return day + '/' + month + '/' + year + ' ' + hour + ':' + min + ':' + sec + ' ' + amPM;
             },

@@ -1,4 +1,5 @@
-import { ICellRendererComp, IStatusPanelComp } from 'ag-grid-community';
+import type { ICellRendererComp } from 'ag-grid-community';
+import { IStatusPanelComp } from 'ag-grid-community';
 
 // simple cell renderer returns dummy buttons. in a real application, a component would probably
 // be used with operations tied to the buttons. in this example, the cell renderer is just for
@@ -9,7 +10,7 @@ export class ControlsCellRenderer implements ICellRendererComp {
     init() {
         this.eGui = document.createElement('div');
 
-        let button = document.createElement('button');
+        const button = document.createElement('button');
         button.textContent = 'Action';
         this.eGui.appendChild(button);
     }

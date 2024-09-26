@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, HeaderValueGetterParams, ValueGetterParams, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions, HeaderValueGetterParams, ValueGetterParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
@@ -72,7 +73,7 @@ function valueGetter(params: ValueGetterParams<IOlympicData, number>) {
     return params.data ? params.data[params.colDef.field!] * -1 : null;
 }
 
-var includeHiddenColumns = false;
+let includeHiddenColumns = false;
 
 function onIncludeHiddenColumnsToggled() {
     includeHiddenColumns = !includeHiddenColumns;

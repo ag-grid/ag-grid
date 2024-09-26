@@ -1,4 +1,4 @@
-import { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
+import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
 export interface GroupFlagCellRendererParams extends ICellRendererParams {
     flagCodes: Record<string, string>;
@@ -24,9 +24,9 @@ export class GroupRowInnerRenderer implements ICellRendererComp {
     }
 
     refreshGui() {
-        var flagCode = this.params.flagCodes[this.params.node.key!];
+        const flagCode = this.params.flagCodes[this.params.node.key!];
 
-        var html = '';
+        let html = '';
 
         if (flagCode) {
             html +=
@@ -35,8 +35,8 @@ export class GroupRowInnerRenderer implements ICellRendererComp {
                 '.png">';
         }
 
-        var node = this.params.node;
-        var aggData = node.aggData;
+        const node = this.params.node;
+        const aggData = node.aggData;
 
         html += '<span class="groupTitle">COUNTRY_NAME</span>';
         html +=

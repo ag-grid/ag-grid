@@ -1,11 +1,5 @@
-import {
-    DetailGridInfo,
-    GridApi,
-    GridOptions,
-    ICellRendererComp,
-    ICellRendererParams,
-    createGrid,
-} from 'ag-grid-community';
+import type { DetailGridInfo, GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 
 export class DetailCellRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
@@ -16,7 +10,7 @@ export class DetailCellRenderer implements ICellRendererComp {
         this.params = params;
 
         // trick to convert string of HTML into DOM object
-        var eTemp = document.createElement('div');
+        const eTemp = document.createElement('div');
         eTemp.innerHTML = this.getTemplate();
         this.eGui = eTemp.firstElementChild as HTMLElement;
 
@@ -24,8 +18,8 @@ export class DetailCellRenderer implements ICellRendererComp {
     }
 
     setupDetailGrid() {
-        var eDetailGrid = this.eGui.querySelector<HTMLElement>('.full-width-grid')!;
-        var detailGridOptions: GridOptions = {
+        const eDetailGrid = this.eGui.querySelector<HTMLElement>('.full-width-grid')!;
+        const detailGridOptions: GridOptions = {
             columnDefs: [
                 { field: 'callId' },
                 { field: 'direction' },
@@ -42,10 +36,10 @@ export class DetailCellRenderer implements ICellRendererComp {
 
         this.detailGridApi = createGrid(eDetailGrid, detailGridOptions);
 
-        var masterGridApi = this.params.api;
-        var rowId = this.params.node.id!;
+        const masterGridApi = this.params.api;
+        const rowId = this.params.node.id!;
 
-        var gridInfo: DetailGridInfo = {
+        const gridInfo: DetailGridInfo = {
             id: rowId,
             api: this.detailGridApi,
         };
@@ -55,11 +49,11 @@ export class DetailCellRenderer implements ICellRendererComp {
     }
 
     getTemplate() {
-        var data = this.params.data;
+        const data = this.params.data;
         // Application logic to match parent theme for this Example
         const themeClass: string =
             'full-width-grid ' + (document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz');
-        var template =
+        const template =
             '<div class="full-width-panel">' +
             '  <div class="full-width-details">' +
             '    <div class="full-width-detail"><b>Name: </b>' +
@@ -84,9 +78,9 @@ export class DetailCellRenderer implements ICellRendererComp {
     }
 
     destroy() {
-        var rowId = this.params.node.id!;
+        const rowId = this.params.node.id!;
         console.log('removing Grid Info with id: ' + rowId);
-        var masterGridApi = this.params.api;
+        const masterGridApi = this.params.api;
         masterGridApi.removeDetailGridInfo(rowId);
 
         console.log('destroying detail grid');

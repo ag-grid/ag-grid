@@ -1,5 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, ISetFilterParams, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions, ISetFilterParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { FiltersToolPanelModule } from 'ag-grid-enterprise';
@@ -14,10 +15,10 @@ ModuleRegistry.registerModules([
     SetFilterModule,
 ]);
 
-var filterParams: ISetFilterParams = {
+const filterParams: ISetFilterParams = {
     comparator: (a: string | null, b: string | null) => {
-        var valA = a == null ? 0 : parseInt(a);
-        var valB = b == null ? 0 : parseInt(b);
+        const valA = a == null ? 0 : parseInt(a);
+        const valB = b == null ? 0 : parseInt(b);
         if (valA === valB) return 0;
         return valA > valB ? 1 : -1;
     },
@@ -52,8 +53,8 @@ const gridOptions: GridOptions = {
 };
 
 function getRowData() {
-    var rows = [];
-    for (var i = 1; i < 117; i++) {
+    const rows = [];
+    for (let i = 1; i < 117; i++) {
         rows.push({ age: i });
     }
     return rows;
@@ -61,6 +62,6 @@ function getRowData() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

@@ -1,11 +1,11 @@
-import { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
+import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
 export class DetailCellRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
     eParentEl!: HTMLElement;
 
     init(params: ICellRendererParams) {
-        var firstRecord = params.data.callRecords[0];
+        const firstRecord = params.data.callRecords[0];
 
         this.eParentEl = params.eParentOfValue;
         this.eParentEl.addEventListener('focus', this.onParentElFocus);
