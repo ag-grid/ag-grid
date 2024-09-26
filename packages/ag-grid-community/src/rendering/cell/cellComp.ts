@@ -343,7 +343,7 @@ export class CellComp extends Component implements TooltipParentComp {
         // and lastly we never use it if doing auto-height, as the auto-height service checks the
         // row height directly after the cell is created, it doesn't wait around for the tasks to complete
         const suppressAnimationFrame = this.beans.gos.get('suppressAnimationFrame');
-        const useTaskService = !suppressAnimationFrame;
+        const useTaskService = !suppressAnimationFrame && this.beans.animationFrameService;
 
         const displayComponentVersionCopy = this.rendererVersion;
 
@@ -368,7 +368,7 @@ export class CellComp extends Component implements TooltipParentComp {
         // if we changed this (always use task service) would make sense, however it would break tests, possibly
         // test of users.
         if (useTaskService && this.firstRender) {
-            this.beans.animationFrameService.createTask(
+            this.beans.animationFrameService!.createTask(
                 createCellRendererFunc,
                 this.rowNode.rowIndex!,
                 'createTasksP2'

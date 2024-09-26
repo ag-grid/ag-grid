@@ -200,7 +200,7 @@ export interface CoreBeanCollection {
     columnHoverService?: ColumnHoverService;
     userComponentFactory: UserComponentFactory;
     userComponentRegistry: UserComponentRegistry;
-    animationFrameService: AnimationFrameService;
+    animationFrameService?: AnimationFrameService;
     dragService?: DragService;
     dragAndDropService?: DragAndDropService;
     sortController?: SortController;

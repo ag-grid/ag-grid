@@ -295,7 +295,7 @@ export { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRenderi
 
 // misc
 export { IImmutableService } from './interfaces/iImmutableService';
-export type { AnimationFrameService } from './misc/animationFrameService';
+export { _requestAnimationFrame } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
 export type { MenuService } from './misc/menuService';
 

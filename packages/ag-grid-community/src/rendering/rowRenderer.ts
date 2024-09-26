@@ -90,7 +90,7 @@ export interface RedrawRowsParams<TData = any> {
 export class RowRenderer extends BeanStub implements NamedBean {
     beanName = 'rowRenderer' as const;
 
-    private animationFrameService: AnimationFrameService;
+    private animationFrameService?: AnimationFrameService;
     private paginationService?: PaginationService;
     private pageBoundsService: PageBoundsService;
     private columnModel: ColumnModel;
@@ -1097,7 +1097,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             const newFocusedCell = this.getCellToRestoreFocusToAfterRefresh();
 
             if (cellFocused != null && newFocusedCell == null) {
-                this.animationFrameService.flushAllFrames();
+                this.animationFrameService?.flushAllFrames();
                 this.restoreFocusedCell(cellFocused);
             }
         }
@@ -1181,9 +1181,13 @@ export class RowRenderer extends BeanStub implements NamedBean {
         });
 
         if (rowsToRecycle) {
-            const useAnimationFrame = afterScroll && !this.gos.get('suppressAnimationFrame') && !this.printLayout;
+            const useAnimationFrame =
+                afterScroll &&
+                !this.gos.get('suppressAnimationFrame') &&
+                !this.printLayout &&
+                this.beans.animationFrameService;
             if (useAnimationFrame) {
-                this.beans.animationFrameService.addDestroyTask(() => {
+                this.beans.animationFrameService!.addDestroyTask(() => {
                     this.destroyRowCtrls(rowsToRecycle, animate);
                     this.updateAllRowCtrls();
                     this.dispatchDisplayedRowsChanged();
@@ -1559,7 +1563,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // having animation frames for other times makes the grid look 'jumpy'.
 
         const suppressAnimationFrame = this.gos.get('suppressAnimationFrame');
-        const useAnimationFrameForCreate = afterScroll && !suppressAnimationFrame && !this.printLayout;
+        const useAnimationFrameForCreate =
+            afterScroll && !suppressAnimationFrame && !this.printLayout && !!this.beans.animationFrameService;
 
         const res = new RowCtrl(rowNode, this.beans, animate, useAnimationFrameForCreate, this.printLayout);
 

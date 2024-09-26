@@ -13,7 +13,7 @@ import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _warnOnce } from '../utils/function';
-import type { AnimationFrameService } from './animationFrameService';
+import { _requestAnimationFrame } from './animationFrameService';
 
 interface BaseShowColumnMenuParams {
     column?: Column;
@@ -49,7 +49,6 @@ export class MenuService extends BeanStub implements NamedBean {
 
     private filterMenuFactory: IMenuFactory;
     private ctrlsService: CtrlsService;
-    private animationFrameService: AnimationFrameService;
     private filterManager?: FilterManager;
     private contextMenuService?: IContextMenuService;
     private enterpriseMenuFactory?: IMenuFactory;
@@ -57,7 +56,6 @@ export class MenuService extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.filterMenuFactory = beans.filterMenuFactory!;
         this.ctrlsService = beans.ctrlsService;
-        this.animationFrameService = beans.animationFrameService;
         this.filterManager = beans.filterManager;
         this.contextMenuService = beans.contextMenuService;
         this.enterpriseMenuFactory = beans.enterpriseMenuFactory;
@@ -192,7 +190,7 @@ export class MenuService extends BeanStub implements NamedBean {
             // auto
             this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
             // make sure we've finished scrolling into view before displaying the menu
-            this.animationFrameService.requestAnimationFrame(() => {
+            _requestAnimationFrame(this.gos, () => {
                 const headerCellCtrl = this.ctrlsService
                     .getHeaderRowContainerCtrl(column.getPinned())
                     ?.getHeaderCtrlForColumn(column);

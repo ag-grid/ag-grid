@@ -1,17 +1,11 @@
-import type {
-    AnimationFrameService,
-    BeanCollection,
-    Component,
-    ComponentEvent,
-    CssVariablesChanged,
-    Environment,
-} from 'ag-grid-community';
+import type { BeanCollection, Component, ComponentEvent, CssVariablesChanged, Environment } from 'ag-grid-community';
 import {
     KeyCode,
     RefPlaceholder,
     TabGuardComp,
     _getAriaPosInSet,
     _observeResize,
+    _requestAnimationFrame,
     _setAriaLabel,
     _setAriaPosInSet,
     _setAriaRole,
@@ -42,11 +36,9 @@ export class VirtualList<
     C extends Component<any> = Component<any>,
     TEventType extends string = ComponentEvent,
 > extends TabGuardComp<TEventType> {
-    protected animationFrameService: AnimationFrameService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
-        this.animationFrameService = beans.animationFrameService;
         this.environment = beans.environment;
     }
 
@@ -111,7 +103,7 @@ export class VirtualList<
 
     private addResizeObserver(): void {
         // do this in an animation frame to prevent loops
-        const listener = () => this.animationFrameService.requestAnimationFrame(() => this.drawVirtualRows());
+        const listener = () => _requestAnimationFrame(this.gos, () => this.drawVirtualRows());
         const destroyObserver = _observeResize(this.gos, this.getGui(), listener);
         this.addDestroyFunc(destroyObserver);
     }
@@ -225,7 +217,7 @@ export class VirtualList<
 
         this.ensureIndexVisible(rowNumber);
 
-        this.animationFrameService.requestAnimationFrame(() => {
+        _requestAnimationFrame(this.gos, () => {
             this.isScrolling = false;
             if (!this.isAlive()) {
                 return;

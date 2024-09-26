@@ -11,6 +11,7 @@ import { EditModule } from './edit/editModule';
 import { FilterModule } from './filter/filterModule';
 import { ColumnGroupHeaderModule, ColumnHeaderModule } from './headerRendering/cells/headerModule';
 import { _defineModule } from './interfaces/iModule';
+import { AnimationFrameModule } from './misc/animationFrameModule';
 import { StateModule } from './misc/state/stateModule';
 import { ModuleNames } from './modules/moduleNames';
 import { PaginationModule } from './pagination/paginationModule';
@@ -79,5 +80,6 @@ export const CommunityFeaturesModule = _defineModule({
         ColumnHoverModule,
         ColumnAnimationModule,
         ChangeDetectionModule,
+        AnimationFrameModule,
     ],
 });

@@ -10,7 +10,7 @@ import type { AnimationFrameService } from '../misc/animationFrameService';
 export class RowNodeEventThrottle extends BeanStub implements NamedBean {
     beanName = 'rowNodeEventThrottle' as const;
 
-    private animationFrameService: AnimationFrameService;
+    private animationFrameService?: AnimationFrameService;
     private rowModel: IRowModel;
 
     public wireBeans(beans: BeanCollection): void {
@@ -62,9 +62,33 @@ export class RowNodeEventThrottle extends BeanStub implements NamedBean {
             func();
         } else {
             if (this.dispatchExpandedDebounced == null) {
-                this.dispatchExpandedDebounced = this.animationFrameService.debounce(func);
+                this.dispatchExpandedDebounced = this.debounce(func);
             }
             this.dispatchExpandedDebounced();
         }
+    }
+
+    // the advantage over normal debounce is the client can call flushAllFrames()
+    // to make sure all rendering is complete. we don't wait any milliseconds,
+    // as this is intended to batch calls in one VM turn.
+    private debounce(func: () => void) {
+        if (!this.animationFrameService) {
+            return () => window.setTimeout(func, 0);
+        }
+        let pending = false;
+        return () => {
+            if (!this.animationFrameService!.isOn()) {
+                window.setTimeout(func, 0);
+                return;
+            }
+            if (pending) {
+                return;
+            }
+            pending = true;
+            this.animationFrameService!.addDestroyTask(() => {
+                pending = false;
+                func();
+            });
+        };
     }
 }

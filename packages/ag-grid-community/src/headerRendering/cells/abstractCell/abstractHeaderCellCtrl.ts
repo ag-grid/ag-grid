@@ -12,6 +12,7 @@ import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthServic
 import { _getActiveDomElement, _getDocument, _setDomData } from '../../../gridOptionsUtils';
 import type { BrandedType } from '../../../interfaces/brandedType';
 import type { ColumnPinnedType } from '../../../interfaces/iColumn';
+import { _requestAnimationFrame } from '../../../misc/animationFrameService';
 import type { MenuService } from '../../../misc/menuService';
 import { _setAriaColIndex } from '../../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize, _getInnerWidth, _observeResize } from '../../../utils/dom';
@@ -135,7 +136,7 @@ export abstract class AbstractHeaderCellCtrl<
         compBean: BeanStub;
     }) {
         const { wrapperElement, checkMeasuringCallback, compBean } = params;
-        const { animationFrameService, columnModel, gos } = this.beans;
+        const { columnModel, gos } = this.beans;
         const measureHeight = (timesCalled: number) => {
             if (!this.isAlive() || !compBean.isAlive()) {
                 return;
@@ -158,7 +159,7 @@ export abstract class AbstractHeaderCellCtrl<
                 const possiblyNoContentYet = autoHeight == 0;
 
                 if (notYetInDom || possiblyNoContentYet) {
-                    animationFrameService.requestAnimationFrame(() => measureHeight(timesCalled + 1));
+                    _requestAnimationFrame(gos, () => measureHeight(timesCalled + 1));
                     return;
                 }
             }

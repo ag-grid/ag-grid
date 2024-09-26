@@ -9,7 +9,7 @@ import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
 import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { IRowModel } from '../interfaces/iRowModel';
-import type { AnimationFrameService } from '../misc/animationFrameService';
+import { _requestAnimationFrame } from '../misc/animationFrameService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
@@ -55,7 +55,6 @@ export interface IGridBodyComp extends LayoutView {
 }
 
 export class GridBodyCtrl extends BeanStub {
-    private animationFrameService: AnimationFrameService;
     private rowContainerHeightService: RowContainerHeightService;
     private ctrlsService: CtrlsService;
     private columnModel: ColumnModel;
@@ -72,7 +71,6 @@ export class GridBodyCtrl extends BeanStub {
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
-        this.animationFrameService = beans.animationFrameService;
         this.rowContainerHeightService = beans.rowContainerHeightService;
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;
@@ -241,7 +239,7 @@ export class GridBodyCtrl extends BeanStub {
         const pad = _isInvisibleScrollbar() ? 16 : 0;
         const width = `calc(100% + ${scrollbarWidth + pad}px)`;
 
-        this.animationFrameService.requestAnimationFrame(() => this.comp.setBodyViewportWidth(width));
+        _requestAnimationFrame(this.gos, () => this.comp.setBodyViewportWidth(width));
 
         this.updateScrollingClasses();
     }

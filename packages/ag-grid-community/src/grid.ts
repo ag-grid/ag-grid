@@ -41,7 +41,6 @@ import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { Module } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { LocaleService } from './localeService';
-import { AnimationFrameService } from './misc/animationFrameService';
 import { ApiEventService } from './misc/apiEventService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
@@ -440,7 +439,6 @@ export class GridCoreCreator {
             Environment,
             CellNavigationService,
             ScrollVisibleService,
-            AnimationFrameService,
             ColumnDefFactory,
             RowCssClassCalculator,
             CtrlsService,

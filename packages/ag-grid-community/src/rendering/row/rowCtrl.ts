@@ -305,7 +305,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // adding hover functionality adds listener to this row, so we
         // do it lazily in an animation frame
         if (this.useAnimationFrameForCreate) {
-            this.beans.animationFrameService.createTask(
+            this.beans.animationFrameService!.createTask(
                 this.addHoverFunctionality.bind(this, gui),
                 this.rowNode.rowIndex!,
                 'createTasksP2'
@@ -329,7 +329,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             // very bad UX (eg 10 rows get inserted, then all 10 expand, look particularly bad
             // when scrolling). so this makes sure when rows are shown for the first time, they
             // are resized immediately without animation.
-            this.beans.animationFrameService.addDestroyTask(() => {
+            this.beans.animationFrameService!.addDestroyTask(() => {
                 if (!this.isAlive()) {
                     return;
                 }
@@ -506,7 +506,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (this.updateColumnListsPending) {
             return;
         }
-        this.beans.animationFrameService.createTask(
+        this.beans.animationFrameService!.createTask(
             () => {
                 if (!this.active) {
                     return;
