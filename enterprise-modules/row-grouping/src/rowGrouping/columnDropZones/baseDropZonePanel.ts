@@ -8,7 +8,7 @@ import type {
     DropTarget,
     FuncColsService,
 } from '@ag-grid-community/core';
-import { DragSourceType } from '@ag-grid-community/core';
+import { DragSourceType, _shouldUpdateColVisibilityAfterGroup } from '@ag-grid-community/core';
 import type { PillDropZonePanelParams } from '@ag-grid-enterprise/core';
 import { PillDropZonePanel } from '@ag-grid-enterprise/core';
 
@@ -63,7 +63,9 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     }
 
     private showOrHideColumnOnExit(draggingEvent: DraggingEvent): boolean {
-        return this.isRowGroupPanel() && !this.gos.get('suppressRowGroupHidesColumns') && !draggingEvent.fromNudge;
+        return (
+            this.isRowGroupPanel() && _shouldUpdateColVisibilityAfterGroup(this.gos, true) && !draggingEvent.fromNudge
+        );
     }
 
     protected override handleDragEnterEnd(draggingEvent: DraggingEvent): void {
