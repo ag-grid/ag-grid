@@ -763,7 +763,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         if (cellSelection) {
             // If `cellSelection` is defined, user is using the new cell selection API, so we only copy
             // cells by default.
-            return typeof rowSelection === 'object' && rowSelection.copySelectedRows ? false : true;
+            const shouldCopyRowsInstead =
+                typeof rowSelection === 'object' && rowSelection.copySelectedRows && !this.selectionService.isEmpty();
+            return !shouldCopyRowsInstead;
         } else {
             // If user is using the deprecated API, we preserve the previous behaviour
             const suppressCopySingleCellRanges = this.gos.get('suppressCopySingleCellRanges');
