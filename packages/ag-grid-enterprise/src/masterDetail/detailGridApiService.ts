@@ -19,7 +19,7 @@ export class DetailGridApiService extends BeanStub implements NamedBean, IDetail
 
     private detailGridInfoMap: { [id: string]: DetailGridInfo | undefined } = {};
 
-    public setMasterForRow(rowNode: RowNode<any>, data: any, shouldSetExpanded: boolean): void {
+    public setMasterForRow<TData = any>(rowNode: RowNode<TData>, data: TData, shouldSetExpanded: boolean): void {
         const oldMaster = rowNode.master;
         let master = false;
 
