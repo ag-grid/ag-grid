@@ -158,10 +158,6 @@ export const getOtherScriptFiles = async ({
     const filteredToFramework = {};
     const others = {};
     Object.entries(contents).forEach(([file, content]) => {
-        // if (importType === 'packages') {
-        content = convertModuleToPackageImports(content);
-        // }
-
         let isFrameworkFile = false;
         FRAMEWORKS.forEach((framework) => {
             const suffix = getComponentSuffix(file, framework);
@@ -180,12 +176,3 @@ export const getOtherScriptFiles = async ({
     });
     return [others, filteredToFramework];
 };
-
-export function convertModuleToPackageImports(file: any) {
-    return file
-        .replace(/@ag-grid-community\/core/g, 'ag-grid-community')
-        .replace(/@ag-grid-community\/react/g, 'ag-grid-react')
-        .replace(/@ag-grid-community\/angular/g, 'ag-grid-angular')
-        .replace(/@ag-grid-community\/vue3/g, 'ag-grid-vue3')
-        .replace(/@ag-grid-community\/styles/g, 'ag-grid-community/styles');
-}

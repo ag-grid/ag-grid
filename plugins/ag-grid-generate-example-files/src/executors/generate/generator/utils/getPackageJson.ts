@@ -1,13 +1,7 @@
 import { readFileSync } from 'fs';
 
-import { moduleConfig } from '../_copiedFromCore/modules';
 import { getEnterprisePackageName } from '../constants';
 import type { InternalFramework } from '../types';
-
-const modules = moduleConfig.filter((m) => m.module && !m.framework);
-// const communityModules = modules.filter((m) => {
-//     return m.module.includes('community');
-// });
 
 interface Params {
     isEnterprise: boolean;
@@ -74,25 +68,14 @@ function addPackageJson(isEnterprise, isLocale, framework, importType) {
         addDependency('@ag-grid-community/locale', agGridLocaleVersion);
     }
 
-    if (importType === 'modules' && framework !== 'vanilla') {
-        if (framework === 'angular') {
-            addDependency('@ag-grid-community/angular', agGridAngularVersion);
-        }
-        if (isFrameworkReact()) {
-            addDependency('@ag-grid-community/react', agGridReactVersion);
-        }
-        // Just include all modules for now
-        modules.forEach((m) => addDependency(m.module, agGridVersion));
-    } else {
-        if (framework === 'angular') {
-            addDependency('ag-grid-angular', agGridAngularVersion);
-        }
-        if (isFrameworkReact()) {
-            addDependency('ag-grid-react', agGridReactVersion);
-        }
-        addDependency('ag-grid-community', agGridVersion);
-        addDependency(getEnterprisePackageName(), agGridEnterpriseVersion);
+    if (framework === 'angular') {
+        addDependency('ag-grid-angular', agGridAngularVersion);
     }
+    if (isFrameworkReact()) {
+        addDependency('ag-grid-react', agGridReactVersion);
+    }
+    addDependency('ag-grid-community', agGridVersion);
+    addDependency(getEnterprisePackageName(), agGridEnterpriseVersion);
 
     return packageJson;
 }

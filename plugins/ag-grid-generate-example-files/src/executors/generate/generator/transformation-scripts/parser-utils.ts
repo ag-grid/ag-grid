@@ -242,11 +242,9 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
     return allImports;
 }
 
-export function addLicenseManager(imports: any[], exampleConfig: ExampleConfig, usePackages: boolean) {
+export function addLicenseManager(imports: any[], exampleConfig: ExampleConfig) {
     if (exampleConfig.licenseKey) {
-        imports.push(
-            `import { LicenseManager } from '${usePackages ? getEnterprisePackageName() : '@ag-grid-enterprise/core'}';`
-        );
+        imports.push(`import { LicenseManager } from '${getEnterprisePackageName()}';`);
     }
 }
 
@@ -443,40 +441,7 @@ export function findAllAccessedProperties(node) {
     return properties;
 }
 
-/** Convert import paths to their package equivalent when the docs are in Packages mode
- * i.e import { GridOptions } from '@ag-grid-community/core';
- * to
- * import { GridOptions } from 'ag-grid-community';
- */
-export function convertImportPath(modulePackage: string, convertToPackage: boolean) {
-    if (convertToPackage) {
-        const conversions = {
-            // Duplicates have different quotes to handle both cases
-            "'@ag-grid-community/angular'": "'ag-grid-angular'",
-            '"@ag-grid-community/angular"': "'ag-grid-angular'",
-            "'@ag-grid-community/vue3'": "'ag-grid-vue3'",
-            '"@ag-grid-community/vue3"': "'ag-grid-vue3'",
-            "'@ag-grid-community/react'": "'ag-grid-react'",
-            '"@ag-grid-community/react"': "'ag-grid-react'",
-        };
-        if (conversions[modulePackage]) {
-            return conversions[modulePackage];
-        }
-
-        if (modulePackage.includes('@ag-grid-community/core/dist')) {
-            return modulePackage.replace('@ag-grid-community/core/dist', 'ag-grid-community/dist');
-        }
-        if (modulePackage.includes('@ag-grid-community/styles')) {
-            return modulePackage.replace('@ag-grid-community/styles', 'ag-grid-community/styles');
-        }
-
-        if (modulePackage.includes('@ag-grid-community')) {
-            return `'ag-grid-community'`;
-        }
-        if (modulePackage.includes('@ag-grid-enterprise')) {
-            return `'${getEnterprisePackageName()}'`;
-        }
-    }
+export function stripTypescriptSuffix(modulePackage: string) {
     return modulePackage.replace('_typescript', '').replace(/"/g, `'`);
 }
 
@@ -515,7 +480,7 @@ export function addBindingImports(
             return !i.module.includes('@ag-grid-community/locale');
         })
         .forEach((i: BindingImport) => {
-            const path = convertImportPath(i.module, convertToPackage);
+            const path = stripTypescriptSuffix(i.module);
             if (!i.module.includes('_typescript') || !ignoreTsImports) {
                 workingImports[path] = workingImports[path] || {
                     namedImport: undefined,

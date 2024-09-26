@@ -24,7 +24,7 @@ import {
     getTransformTsFileExt,
 } from './generator/utils/fileUtils';
 import { frameworkFilesGenerator } from './generator/utils/frameworkFilesGenerator';
-import { convertModuleToPackageImports, getOtherScriptFiles } from './generator/utils/getOtherScriptFiles';
+import { getOtherScriptFiles } from './generator/utils/getOtherScriptFiles';
 import { getPackageJson } from './generator/utils/getPackageJson';
 import { getStyleFiles } from './generator/utils/getStyleFiles';
 
@@ -269,16 +269,6 @@ async function convertModulesToPackages(fileContent: any, isDev: boolean, intern
     if (internalFramework === 'vanilla') {
         fileContent = removeModuleRegistration(fileContent);
     }
-    // // Remove the original import statements that contain modules
-    // fileContent = fileContent
-    //     // Remove module import statements
-    //     .replace(/import[\s\n]*\{[^}]*\w+Module\b[^}]*\}[\s\n]*from\s*.*ag-grid.*\n/g, '')
-    //     // Remove ModuleRegistry import if by itself
-    //     .replace(/import ((.|\n)[^{,]*?ModuleRegistry(.|\n)*?)from.*\n/g, '')
-    //     // Remove if ModuleRegistry is with other imports
-    //     .replace(/ModuleRegistry(,)?/g, '');
-
-    fileContent = convertModuleToPackageImports(fileContent);
 
     if (isEnterprise) {
         const communityImportRegex = /import ['"]ag-grid-community/;
