@@ -6,14 +6,14 @@ import React, { StrictMode, useCallback, useEffect, useMemo, useState } from 're
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import {
+import type {
     ColDef,
     GetRowIdParams,
-    ModuleRegistry,
     SelectionOptions,
     ValueFormatterParams,
     ValueGetterParams,
 } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 

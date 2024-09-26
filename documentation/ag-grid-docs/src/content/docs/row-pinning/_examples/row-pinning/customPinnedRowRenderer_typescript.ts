@@ -1,7 +1,7 @@
-import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
+import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
 function setStyle(element: any, propertyObject: any) {
-    for (var property in propertyObject) {
+    for (const property in propertyObject) {
         element.style[property] = propertyObject[property];
     }
 }

@@ -1,9 +1,10 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridOptions, ModuleRegistry, createGrid } from '@ag-grid-community/core';
-import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, GridOptions } from 'ag-grid-community';
+import { ModuleRegistry, createGrid } from 'ag-grid-community';
+import { ClipboardModule } from 'ag-grid-enterprise';
+import { ExcelExportModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
 // Register shared Modules globally
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule]);
@@ -42,7 +43,7 @@ const rightGridOptions: GridOptions = {
 
 function loadGrid(side: string) {
     const grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
-    let modules = side === 'Left' ? [SetFilterModule, ClipboardModule] : [ExcelExportModule];
+    const modules = side === 'Left' ? [SetFilterModule, ClipboardModule] : [ExcelExportModule];
     createGrid(grid, side === 'Left' ? leftGridOptions : rightGridOptions, { modules: modules });
 }
 

@@ -1,6 +1,7 @@
-import { IHeaderAngularComp } from '@ag-grid-community/angular';
-import { IHeaderParams } from '@ag-grid-community/core';
 import { Component, ElementRef, ViewChild } from '@angular/core';
+
+import type { IHeaderAngularComp } from 'ag-grid-angular';
+import type { IHeaderParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,

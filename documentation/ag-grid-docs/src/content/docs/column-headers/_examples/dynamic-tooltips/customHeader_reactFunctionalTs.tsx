@@ -1,5 +1,6 @@
-import { CustomHeaderProps } from '@ag-grid-community/react';
 import React, { useEffect, useRef, useState } from 'react';
+
+import type { CustomHeaderProps } from 'ag-grid-react';
 
 export interface MyCustomHeaderProps extends CustomHeaderProps {
     menuIcon: string;

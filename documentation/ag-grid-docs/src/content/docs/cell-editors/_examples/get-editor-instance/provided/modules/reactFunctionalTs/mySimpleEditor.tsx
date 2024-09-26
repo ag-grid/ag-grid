@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
-import { ICellEditor } from 'ag-grid-community';
-import { CustomCellEditorProps } from 'ag-grid-react';
+import type { ICellEditor } from 'ag-grid-community';
+import type { CustomCellEditorProps } from 'ag-grid-react';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';

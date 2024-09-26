@@ -1,4 +1,4 @@
-import { ICellEditorComp, ICellEditorParams } from '@ag-grid-community/core';
+import type { ICellEditorComp, ICellEditorParams } from 'ag-grid-community';
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
@@ -39,7 +39,7 @@ export class NumericCellEditor implements ICellEditorComp {
 
         // only start edit if key pressed is a number, not a letter
         const isCharacter = eventKey && eventKey.length === 1;
-        var isNotANumber = isCharacter && '1234567890'.indexOf(eventKey!) < 0;
+        const isNotANumber = isCharacter && '1234567890'.indexOf(eventKey!) < 0;
         this.cancelBeforeStart = !!isNotANumber;
     }
 
@@ -78,7 +78,7 @@ export class NumericCellEditor implements ICellEditorComp {
     // example - will reject the number if it contains the value 007
     // - not very practical, but demonstrates the method.
     isCancelAfterEnd() {
-        var value = this.getValue();
+        const value = this.getValue();
         return value.indexOf('007') >= 0;
     }
 

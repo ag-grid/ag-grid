@@ -11,7 +11,7 @@ function FakeServer() {
             intervals = [];
         },
         getData: function (request) {
-            var results = executeQuery(request);
+            const results = executeQuery(request);
 
             return {
                 success: true,
@@ -30,17 +30,17 @@ function FakeServer() {
     };
 
     function executeQuery(request) {
-        var groupByResult = executeRowGroupQuery(request);
-        var rowGroupCols = request.rowGroupCols;
-        var groupKeys = request.groupKeys;
+        const groupByResult = executeRowGroupQuery(request);
+        const rowGroupCols = request.rowGroupCols;
+        const groupKeys = request.groupKeys;
 
         if (!isDoingGrouping(rowGroupCols, groupKeys)) {
             return groupByResult;
         }
 
-        var groupsToUse = request.rowGroupCols.slice(groupKeys.length, groupKeys.length + 1);
-        var groupColId = groupsToUse[0].id;
-        var childCountResult = executeGroupChildCountsQuery(request, groupColId);
+        const groupsToUse = request.rowGroupCols.slice(groupKeys.length, groupKeys.length + 1);
+        const groupColId = groupsToUse[0].id;
+        const childCountResult = executeGroupChildCountsQuery(request, groupColId);
 
         // add 'childCount' to group results
         return groupByResult.map(function (group) {
@@ -50,13 +50,13 @@ function FakeServer() {
     }
 
     function executeRowGroupQuery(request) {
-        var groupByQuery = buildGroupBySql(request);
+        const groupByQuery = buildGroupBySql(request);
 
         return alasql(groupByQuery, [data]);
     }
 
     function executeGroupChildCountsQuery(request, groupId) {
-        var SQL = interpolate('SELECT {0} FROM ? pivot (count({0}) for {0})' + whereSql(request), [groupId]);
+        const SQL = interpolate('SELECT {0} FROM ? pivot (count({0}) for {0})' + whereSql(request), [groupId]);
 
         return alasql(SQL, [data])[0];
     }
@@ -73,13 +73,13 @@ function FakeServer() {
     }
 
     function selectSql(request) {
-        var rowGroupCols = request.rowGroupCols;
-        var valueCols = request.valueCols;
-        var groupKeys = request.groupKeys;
+        const rowGroupCols = request.rowGroupCols;
+        const valueCols = request.valueCols;
+        const groupKeys = request.groupKeys;
 
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
-            var rowGroupCol = rowGroupCols[groupKeys.length];
-            var colsToSelect = [rowGroupCol.id];
+            const rowGroupCol = rowGroupCols[groupKeys.length];
+            const colsToSelect = [rowGroupCol.id];
 
             valueCols.forEach(function (valueCol) {
                 colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + valueCol.id);
@@ -92,13 +92,13 @@ function FakeServer() {
     }
 
     function whereSql(request) {
-        var rowGroups = request.rowGroupCols;
-        var groupKeys = request.groupKeys;
-        var whereParts = [];
+        const rowGroups = request.rowGroupCols;
+        const groupKeys = request.groupKeys;
+        const whereParts = [];
 
         if (groupKeys) {
             groupKeys.forEach(function (key, i) {
-                var value = typeof key === 'string' ? "'" + key + "'" : key;
+                const value = typeof key === 'string' ? "'" + key + "'" : key;
 
                 whereParts.push(rowGroups[i].id + ' = ' + value);
             });
@@ -112,11 +112,11 @@ function FakeServer() {
     }
 
     function groupBySql(request) {
-        var rowGroupCols = request.rowGroupCols;
-        var groupKeys = request.groupKeys;
+        const rowGroupCols = request.rowGroupCols;
+        const groupKeys = request.groupKeys;
 
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
-            var rowGroupCol = rowGroupCols[groupKeys.length];
+            const rowGroupCol = rowGroupCols[groupKeys.length];
 
             return ' GROUP BY ' + rowGroupCol.id + ' HAVING count(*) > 0';
         }
@@ -125,11 +125,11 @@ function FakeServer() {
     }
 
     function orderBySql(request) {
-        var sortModel = request.sortModel;
+        const sortModel = request.sortModel;
 
         if (sortModel.length === 0) return '';
 
-        var sorts = sortModel.map(function (s) {
+        const sorts = sortModel.map(function (s) {
             return s.colId + ' ' + s.sort.toUpperCase();
         });
 
@@ -140,7 +140,7 @@ function FakeServer() {
         if (request.endRow == undefined || request.startRow == undefined) {
             return '';
         }
-        var blockSize = request.endRow - request.startRow;
+        const blockSize = request.endRow - request.startRow;
 
         return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
     }
@@ -157,7 +157,7 @@ function FakeServer() {
         if (request.endRow == undefined || request.startRow == undefined) {
             return results.length;
         }
-        var currentLastRow = request.startRow + results.length;
+        const currentLastRow = request.startRow + results.length;
 
         return currentLastRow <= request.endRow ? currentLastRow : -1;
     }
@@ -174,7 +174,7 @@ export function getFakeServer() {
 // IE Workaround - as templates literals are not supported
 function interpolate(str, o) {
     return str.replace(/{([^{}]*)}/g, function (a, b) {
-        var r = o[b];
+        const r = o[b];
         return typeof r === 'string' || typeof r === 'number' ? r : a;
     });
 }
@@ -218,22 +218,22 @@ portfolios.forEach((portfolio, idx) => {
 
 let nextBookId = 62472;
 
-export let data = [];
+export const data = [];
 
 // IIFE to create initial data
 (function () {
     const lastUpdated = new Date();
 
     for (let i = 0; i < products.length; i++) {
-        let product = products[i];
+        const product = products[i];
         for (let j = 0; j < portfolios.length; j++) {
-            let portfolio = portfolios[j];
+            const portfolio = portfolios[j];
 
             for (let k = 0; k < BOOK_COUNT; k++) {
-                let book = createBookName();
-                let tradeCount = randomBetween(MAX_TRADE_COUNT, MIN_TRADE_COUNT);
+                const book = createBookName();
+                const tradeCount = randomBetween(MAX_TRADE_COUNT, MIN_TRADE_COUNT);
                 for (let l = 0; l < tradeCount; l++) {
-                    let trade = createTradeRecord(product, portfolio, book);
+                    const trade = createTradeRecord(product, portfolio, book);
 
                     trade.updateCount = 0;
                     trade.lastUpdated = lastUpdated;
@@ -245,7 +245,7 @@ export let data = [];
     }
 })();
 
-export let dataObservers = [];
+export const dataObservers = [];
 export const registerObserver = ({ transactionFunc, groupedFields }) => {
     const existingObserver = dataObservers.find(({ transactionFunc: oldFunc }) => oldFunc === transactionFunc);
     if (existingObserver) {
@@ -386,9 +386,9 @@ function randomBetween(min, max) {
 }
 
 function createTradeRecord(product, portfolio, book) {
-    let current = Math.floor(Math.random() * 100000) + 100;
-    let previous = current + Math.floor(Math.random() * 10000) - 2000;
-    let trade = {
+    const current = Math.floor(Math.random() * 100000) + 100;
+    const previous = current + Math.floor(Math.random() * 10000) - 2000;
+    const trade = {
         product: product,
         portfolio: portfolio,
         book: book,

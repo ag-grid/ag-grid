@@ -1,6 +1,6 @@
-import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
+import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
-import { FlagContext, IOlympicData } from './interfaces';
+import type { FlagContext, IOlympicData } from './interfaces';
 
 export class CountryCellRenderer implements ICellRendererComp {
     eGui!: HTMLDivElement;

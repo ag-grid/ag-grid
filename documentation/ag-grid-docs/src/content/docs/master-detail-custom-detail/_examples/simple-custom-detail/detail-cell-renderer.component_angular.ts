@@ -1,5 +1,6 @@
-import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 import { Component } from '@angular/core';
+
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
 
 @Component({
     standalone: true,

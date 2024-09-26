@@ -6,7 +6,7 @@ import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import {
+import type {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
     CellEditorSelectorResult,
@@ -21,7 +21,8 @@ import { MenuModule } from 'ag-grid-enterprise';
 import { RichSelectModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
-import { IRow, getData } from './data';
+import type { IRow } from './data';
+import { getData } from './data';
 import MoodEditor from './moodEditor';
 import NumericCellEditor from './numericCellEditor';
 import './styles.css';

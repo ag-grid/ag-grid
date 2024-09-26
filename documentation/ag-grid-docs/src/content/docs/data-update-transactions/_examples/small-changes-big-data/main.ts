@@ -1,5 +1,5 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type {
     ColDef,
     GetRowIdParams,
     GridApi,
@@ -10,24 +10,24 @@ import {
     IFilterParams,
     IFilterType,
     IsGroupOpenByDefaultParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+} from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { createDataItem, getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
-var aggCallCount = 0;
-var compareCallCount = 0;
-var filterCallCount = 0;
+let aggCallCount = 0;
+let compareCallCount = 0;
+let filterCallCount = 0;
 let gridApi: GridApi;
 function myAggFunc(params: IAggFuncParams) {
     aggCallCount++;
 
-    var total = 0;
-    for (var i = 0; i < params.values.length; i++) {
+    let total = 0;
+    for (let i = 0; i < params.values.length; i++) {
         total += params.values[i];
     }
     return total;
@@ -62,7 +62,7 @@ function getMyFilter(): IFilterType {
         }
 
         getValueFromInput() {
-            var value = parseInt(this.eInput.value);
+            const value = parseInt(this.eInput.value);
             this.filterValue = isNaN(value) ? null : value;
         }
 
@@ -95,7 +95,7 @@ function getMyFilter(): IFilterType {
     return MyFilter;
 }
 
-var myFilter = getMyFilter();
+const myFilter = getMyFilter();
 
 function getRowId(params: GetRowIdParams) {
     return String(params.data.id);
@@ -103,15 +103,15 @@ function getRowId(params: GetRowIdParams) {
 
 function onBtDuplicate() {
     // get the first child of the
-    var selectedRows = gridApi.getSelectedRows();
+    const selectedRows = gridApi.getSelectedRows();
     if (!selectedRows || selectedRows.length === 0) {
         console.log('No rows selected!');
         return;
     }
 
-    var newItems: any = [];
+    const newItems: any = [];
     selectedRows.forEach((selectedRow) => {
-        var newItem = createDataItem(
+        const newItem = createDataItem(
             selectedRow.name,
             selectedRow.distro,
             selectedRow.laptop,
@@ -128,16 +128,23 @@ function onBtDuplicate() {
 
 function onBtUpdate() {
     // get the first child of the
-    var selectedRows = gridApi.getSelectedRows();
+    const selectedRows = gridApi.getSelectedRows();
     if (!selectedRows || selectedRows.length === 0) {
         console.log('No rows selected!');
         return;
     }
 
-    var updatedItems: any[] = [];
+    const updatedItems: any[] = [];
     selectedRows.forEach((oldItem) => {
-        var newValue = Math.floor(Math.random() * 100) + 10;
-        var newItem = createDataItem(oldItem.name, oldItem.distro, oldItem.laptop, oldItem.city, newValue, oldItem.id);
+        const newValue = Math.floor(Math.random() * 100) + 10;
+        const newItem = createDataItem(
+            oldItem.name,
+            oldItem.distro,
+            oldItem.laptop,
+            oldItem.city,
+            newValue,
+            oldItem.id
+        );
         updatedItems.push(newItem);
     });
 
@@ -148,7 +155,7 @@ function onBtUpdate() {
 
 function onBtDelete() {
     // get the first child of the
-    var selectedRows = gridApi.getSelectedRows();
+    const selectedRows = gridApi.getSelectedRows();
     if (!selectedRows || selectedRows.length === 0) {
         console.log('No rows selected!');
         return;
@@ -167,9 +174,9 @@ function timeOperation(name: string, operation: any) {
     aggCallCount = 0;
     compareCallCount = 0;
     filterCallCount = 0;
-    var start = new Date().getTime();
+    const start = new Date().getTime();
     operation();
-    var end = new Date().getTime();
+    const end = new Date().getTime();
     console.log(
         name +
             ' finished in ' +
@@ -224,6 +231,6 @@ function isGroupOpenByDefault(params: IsGroupOpenByDefaultParams<IOlympicData, a
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
-    var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(eGridDiv, gridOptions);
 });

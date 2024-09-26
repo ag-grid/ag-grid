@@ -1,6 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, ITextFilterParams, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, ITextFilterParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -8,7 +9,7 @@ function contains(target: string, lookingFor: string) {
     return target && target.indexOf(lookingFor) >= 0;
 }
 
-var athleteFilterParams: ITextFilterParams = {
+const athleteFilterParams: ITextFilterParams = {
     filterOptions: ['contains', 'notContains'],
     textFormatter: (r) => {
         if (r == null) return null;
@@ -30,10 +31,10 @@ var athleteFilterParams: ITextFilterParams = {
     maxNumConditions: 1,
 };
 
-var countryFilterParams: ITextFilterParams = {
+const countryFilterParams: ITextFilterParams = {
     filterOptions: ['contains'],
     textMatcher: ({ value, filterText }) => {
-        var aliases: Record<string, string> = {
+        const aliases: Record<string, string> = {
             usa: 'united states',
             holland: 'netherlands',
             niall: 'ireland',
@@ -43,7 +44,7 @@ var countryFilterParams: ITextFilterParams = {
             xi: 'china',
         };
 
-        var literalMatch = contains(value, filterText || '');
+        const literalMatch = contains(value, filterText || '');
 
         return !!literalMatch || !!contains(value, aliases[filterText || '']);
     },
@@ -84,7 +85,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

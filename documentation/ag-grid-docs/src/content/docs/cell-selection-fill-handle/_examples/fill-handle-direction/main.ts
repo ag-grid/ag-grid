@@ -1,7 +1,8 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { RangeSelectionModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RangeSelectionModule]);
 
@@ -36,8 +37,8 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function fillHandleAxis(direction: 'x' | 'y' | 'xy') {
-    var buttons = Array.prototype.slice.call(document.querySelectorAll('.ag-fill-direction'));
-    var button = document.querySelector('.ag-fill-direction.' + direction)!;
+    const buttons = Array.prototype.slice.call(document.querySelectorAll('.ag-fill-direction'));
+    const button = document.querySelector('.ag-fill-direction.' + direction)!;
 
     buttons.forEach((btn) => {
         btn.classList.remove('selected');
@@ -56,7 +57,7 @@ function fillHandleAxis(direction: 'x' | 'y' | 'xy') {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')

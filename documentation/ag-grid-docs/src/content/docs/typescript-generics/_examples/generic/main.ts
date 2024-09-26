@@ -1,14 +1,14 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type {
     ColDef,
     GetRowIdParams,
     GridApi,
     GridOptions,
     RowSelectedEvent,
     ValueFormatterParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+} from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -36,7 +36,7 @@ const columnDefs: ColDef<ICar>[] = [
 ];
 
 // Data with ICar interface
-var rowData: ICar[] = [
+const rowData: ICar[] = [
     { make: 'Toyota', model: 'Celica', price: 35000 },
     { make: 'Ford', model: 'Mondeo', price: 32000 },
     { make: 'Porsche', model: 'Boxster', price: 72000 },
@@ -83,7 +83,7 @@ function onShowSelection() {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
     // lookup the container we want the Grid to use
-    var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
     // create the grid passing in the div to use together with the columns & data we want to use
     gridApi = createGrid(eGridDiv, gridOptions);

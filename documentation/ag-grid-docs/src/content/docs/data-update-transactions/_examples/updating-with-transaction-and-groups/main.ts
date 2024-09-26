@@ -1,14 +1,14 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type {
     GridApi,
     GridOptions,
     IGroupCellRendererParams,
     RowClassParams,
     ValueFormatterParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+} from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { createNewRowData, getData } from './data';
 
@@ -59,7 +59,7 @@ const gridOptions: GridOptions = {
     // this allows the different colors per group, by assigning a different
     // css class to each group level based on the key
     getRowClass: (params: RowClassParams) => {
-        var rowNode = params.node;
+        const rowNode = params.node;
         if (rowNode.group) {
             switch (rowNode.key) {
                 case 'In Workshop':
@@ -79,7 +79,7 @@ const gridOptions: GridOptions = {
 };
 
 function getRowData() {
-    var rowData: any[] = [];
+    const rowData: any[] = [];
     gridApi!.forEachNode(function (node) {
         rowData.push(node.data);
     });
@@ -88,12 +88,12 @@ function getRowData() {
 }
 
 function onAddRow(category: string) {
-    var rowDataItem = createNewRowData(category);
+    const rowDataItem = createNewRowData(category);
     gridApi!.applyTransaction({ add: [rowDataItem] });
 }
 
 function onMoveToGroup(category: string) {
-    var selectedRowData = gridApi!.getSelectedRows();
+    const selectedRowData = gridApi!.getSelectedRows();
     selectedRowData.forEach((dataItem) => {
         dataItem.category = category;
     });
@@ -101,13 +101,13 @@ function onMoveToGroup(category: string) {
 }
 
 function onRemoveSelected() {
-    var selectedRowData = gridApi!.getSelectedRows();
+    const selectedRowData = gridApi!.getSelectedRows();
     gridApi!.applyTransaction({ remove: selectedRowData });
 }
 
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
-    var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(eGridDiv, gridOptions);
 });

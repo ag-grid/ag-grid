@@ -1,6 +1,6 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
-import type { GridApi, GridOptions } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ModuleRegistry, createGrid } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 

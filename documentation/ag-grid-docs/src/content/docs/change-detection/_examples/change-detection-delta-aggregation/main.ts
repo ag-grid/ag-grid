@@ -1,13 +1,14 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GetRowIdParams, GridApi, GridOptions, IRowNode, ValueParserParams, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GetRowIdParams, GridApi, GridOptions, IRowNode, ValueParserParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, SetFilterModule]);
 
-var rowIdCounter = 0;
-var callCount = 0;
+let rowIdCounter = 0;
+let callCount = 0;
 
 let gridApi: GridApi;
 
@@ -53,8 +54,8 @@ const gridOptions: GridOptions = {
     aggregateOnlyChangedColumns: true,
     aggFuncs: {
         sum: (params) => {
-            var values = params && params.values ? params.values : [];
-            var result = 0;
+            const values = params && params.values ? params.values : [];
+            let result = 0;
             if (values) {
                 values.forEach((value) => {
                     if (typeof value === 'number') {
@@ -76,11 +77,11 @@ const gridOptions: GridOptions = {
 };
 
 function createRowData() {
-    var result = [];
-    for (var i = 1; i <= 2; i++) {
-        for (var j = 1; j <= 5; j++) {
-            for (var k = 1; k <= 3; k++) {
-                var rowDataItem = createRowItem(i, j, k);
+    const result = [];
+    for (let i = 1; i <= 2; i++) {
+        for (let j = 1; j <= 5; j++) {
+            for (let k = 1; k <= 3; k++) {
+                const rowDataItem = createRowItem(i, j, k);
                 result.push(rowDataItem);
             }
         }
@@ -89,7 +90,7 @@ function createRowData() {
 }
 
 function createRowItem(i: number, j: number, k: number) {
-    var rowDataItem = {
+    const rowDataItem = {
         id: rowIdCounter++,
         a: (j * k * 863) % 100,
         b: (j * k * 811) % 100,
@@ -112,20 +113,20 @@ function numberValueParser(params: ValueParserParams) {
 }
 
 function updateOneRecord() {
-    var rowNodeToUpdate = pickExistingRowNodeAtRandom(gridApi!);
+    const rowNodeToUpdate = pickExistingRowNodeAtRandom(gridApi!);
 
     if (!rowNodeToUpdate) return;
 
-    var randomValue = createRandomNumber();
-    var randomColumnId = pickRandomColumn();
+    const randomValue = createRandomNumber();
+    const randomColumnId = pickRandomColumn();
 
     console.log('updating ' + randomColumnId + ' to ' + randomValue + ' on ', rowNodeToUpdate.data);
     rowNodeToUpdate.setDataValue(randomColumnId, randomValue);
 }
 
 function pickRandomColumn() {
-    var letters = ['a', 'b', 'c', 'd'];
-    var randomIndex = Math.floor(Math.random() * letters.length);
+    const letters = ['a', 'b', 'c', 'd'];
+    const randomIndex = Math.floor(Math.random() * letters.length);
     return letters[randomIndex];
 }
 
@@ -134,12 +135,12 @@ function createRandomNumber() {
 }
 
 function pickExistingRowItemAtRandom(api: GridApi) {
-    var rowNode = pickExistingRowNodeAtRandom(api);
+    const rowNode = pickExistingRowNodeAtRandom(api);
     return rowNode ? rowNode.data : null;
 }
 
 function pickExistingRowNodeAtRandom(api: GridApi): IRowNode | undefined {
-    var allItems: IRowNode[] = [];
+    const allItems: IRowNode[] = [];
     api.forEachLeafNode(function (rowNode) {
         allItems.push(rowNode);
     });
@@ -147,13 +148,13 @@ function pickExistingRowNodeAtRandom(api: GridApi): IRowNode | undefined {
     if (allItems.length === 0) {
         return undefined;
     }
-    var result = allItems[Math.floor(Math.random() * allItems.length)];
+    const result = allItems[Math.floor(Math.random() * allItems.length)];
 
     return result;
 }
 
 function updateUsingTransaction() {
-    var itemToUpdate = pickExistingRowItemAtRandom(gridApi!);
+    const itemToUpdate = pickExistingRowItemAtRandom(gridApi!);
     if (!itemToUpdate) {
         return;
     }
@@ -163,7 +164,7 @@ function updateUsingTransaction() {
     itemToUpdate[pickRandomColumn()] = createRandomNumber();
     itemToUpdate[pickRandomColumn()] = createRandomNumber();
 
-    var transaction = {
+    const transaction = {
         update: [itemToUpdate],
     };
 
@@ -173,12 +174,12 @@ function updateUsingTransaction() {
 }
 
 function removeUsingTransaction() {
-    var itemToRemove = pickExistingRowItemAtRandom(gridApi!);
+    const itemToRemove = pickExistingRowItemAtRandom(gridApi!);
     if (!itemToRemove) {
         return;
     }
 
-    var transaction = {
+    const transaction = {
         remove: [itemToRemove],
     };
 
@@ -188,12 +189,12 @@ function removeUsingTransaction() {
 }
 
 function addUsingTransaction() {
-    var i = Math.floor(Math.random() * 2);
-    var j = Math.floor(Math.random() * 5);
-    var k = Math.floor(Math.random() * 3);
-    var newItem = createRowItem(i, j, k);
+    const i = Math.floor(Math.random() * 2);
+    const j = Math.floor(Math.random() * 5);
+    const k = Math.floor(Math.random() * 3);
+    const newItem = createRowItem(i, j, k);
 
-    var transaction = {
+    const transaction = {
         add: [newItem],
     };
 
@@ -203,14 +204,14 @@ function addUsingTransaction() {
 }
 
 function changeGroupUsingTransaction() {
-    var itemToUpdate = pickExistingRowItemAtRandom(gridApi!);
+    const itemToUpdate = pickExistingRowItemAtRandom(gridApi!);
     if (!itemToUpdate) {
         return;
     }
 
     itemToUpdate.topGroup = itemToUpdate.topGroup === 'Top' ? 'Bottom' : 'Top';
 
-    var transaction = {
+    const transaction = {
         update: [itemToUpdate],
     };
 
@@ -221,6 +222,6 @@ function changeGroupUsingTransaction() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

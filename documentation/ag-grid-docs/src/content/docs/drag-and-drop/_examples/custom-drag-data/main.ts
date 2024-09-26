@@ -1,6 +1,6 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { DndSourceOnRowDragParams, GridApi, GridOptions } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { DndSourceOnRowDragParams, GridApi, GridOptions } from 'ag-grid-community';
+import { ModuleRegistry, createGrid } from 'ag-grid-community';
 
 import { getData } from './data';
 
@@ -34,7 +34,7 @@ const gridOptions: GridOptions = {
 };
 
 function onDragOver(event: any) {
-    var dragSupported = event.dataTransfer.types.length;
+    const dragSupported = event.dataTransfer.types.length;
 
     if (dragSupported) {
         event.dataTransfer.dropEffect = 'move';
@@ -45,27 +45,27 @@ function onDragOver(event: any) {
 
 function onDrop(event: any) {
     event.preventDefault();
-    var jsonData = event.dataTransfer.getData('application/json');
+    const jsonData = event.dataTransfer.getData('application/json');
 
-    var eJsonRow = document.createElement('div');
+    const eJsonRow = document.createElement('div');
     eJsonRow.classList.add('json-row');
     eJsonRow.innerText = jsonData;
 
-    var eJsonDisplay = document.querySelector('#eJsonDisplay')!;
+    const eJsonDisplay = document.querySelector('#eJsonDisplay')!;
     eJsonDisplay.appendChild(eJsonRow);
 }
 
 function onRowDrag(params: DndSourceOnRowDragParams) {
     // create the data that we want to drag
-    var rowNode = params.rowNode;
-    var e = params.dragEvent;
-    var jsonObject = {
+    const rowNode = params.rowNode;
+    const e = params.dragEvent;
+    const jsonObject = {
         grid: 'GRID_001',
         operation: 'Drag on Column',
         rowId: rowNode.data.id,
         selected: rowNode.isSelected(),
     };
-    var jsonData = JSON.stringify(jsonObject);
+    const jsonData = JSON.stringify(jsonObject);
 
     e.dataTransfer!.setData('application/json', jsonData);
     e.dataTransfer!.setData('text/plain', jsonData);
@@ -73,6 +73,6 @@ function onRowDrag(params: DndSourceOnRowDragParams) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

@@ -1,13 +1,7 @@
-import {
-    GridApi,
-    GridOptions,
-    ICellRendererParams,
-    IDatasource,
-    IGetRowsParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
+import type { GridApi, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { InfiniteRowModelModule } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 

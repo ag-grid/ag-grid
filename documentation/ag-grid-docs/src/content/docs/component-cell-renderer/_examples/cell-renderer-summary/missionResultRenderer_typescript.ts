@@ -1,11 +1,11 @@
-import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
+import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
 export class MissionResultRenderer implements ICellRendererComp {
     eGui!: HTMLSpanElement;
 
     // Optional: Params for rendering. The same params that are passed to the cellRenderer function.
     init(params: ICellRendererParams) {
-        let icon: HTMLImageElement = document.createElement('img');
+        const icon: HTMLImageElement = document.createElement('img');
         icon.src = `https://www.ag-grid.com/example-assets/icons/${
             params.value ? 'tick-in-circle' : 'cross-in-circle'
         }.png`;

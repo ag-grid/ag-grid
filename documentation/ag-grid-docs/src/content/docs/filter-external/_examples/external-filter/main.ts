@@ -1,15 +1,16 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, IDateFilterParams, IRowNode, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, IDateFilterParams, IRowNode } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MenuModule, SetFilterModule]);
 
-var dateFilterParams: IDateFilterParams = {
+const dateFilterParams: IDateFilterParams = {
     comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
-        var cellDate = asDate(cellValue);
+        const cellDate = asDate(cellValue);
 
         if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
             return 0;
@@ -54,7 +55,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     doesExternalFilterPass: doesExternalFilterPass,
 };
 
-var ageType = 'everyone';
+let ageType = 'everyone';
 
 function isExternalFilterPresent(): boolean {
     // if ageType is not everyone, then we are filtering
@@ -80,7 +81,7 @@ function doesExternalFilterPass(node: IRowNode<IOlympicData>): boolean {
 }
 
 function asDate(dateAsString: string) {
-    var splitFields = dateAsString.split('/');
+    const splitFields = dateAsString.split('/');
     return new Date(
         Number.parseInt(splitFields[2]),
         Number.parseInt(splitFields[1]) - 1,
@@ -95,7 +96,7 @@ function externalFilterChanged(newValue: string) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

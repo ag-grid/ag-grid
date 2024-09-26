@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
-import { CustomCellRendererProps } from 'ag-grid-react';
+import type { CustomCellRendererProps } from 'ag-grid-react';
 
 export default forwardRef((props: CustomCellRendererProps<IOlympicData, number>, ref) => {
     const [value, setValue] = useState(props.value);

@@ -1,6 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, RowClassParams, RowStyle, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, RowClassParams, RowStyle } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 import { CustomPinnedRowRenderer } from './customPinnedRowRenderer_typescript';
 
@@ -67,8 +68,8 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function createData(count: number, prefix: string): any[] {
-    var result: any[] = [];
-    for (var i = 0; i < count; i++) {
+    const result: any[] = [];
+    for (let i = 0; i < count; i++) {
         result.push({
             athlete: prefix + ' Athlete ' + i,
             age: prefix + ' Age ' + i,
@@ -83,7 +84,7 @@ function createData(count: number, prefix: string): any[] {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
