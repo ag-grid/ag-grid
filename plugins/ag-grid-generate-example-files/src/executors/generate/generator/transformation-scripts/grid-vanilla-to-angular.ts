@@ -14,7 +14,6 @@ import {
     isInstanceMethod,
     preferParamsApi,
     removeFunctionKeyword,
-    removeModuleRegistration,
     replaceGridReadyRowData,
     usesThemingApi,
 } from './parser-utils';
@@ -334,10 +333,6 @@ ${bindings.utils.join('\n')}
 
         // Until we support this cleanly.
         generatedOutput = handleRowGenericInterface(generatedOutput, tData);
-
-        if (importType === 'packages') {
-            generatedOutput = removeModuleRegistration(generatedOutput);
-        }
 
         return generatedOutput;
     };

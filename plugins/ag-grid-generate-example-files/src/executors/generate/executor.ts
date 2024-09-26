@@ -9,6 +9,7 @@ import {
     DARK_INTEGRATED_START,
     getIntegratedDarkModeCode,
     getInterfaceFileContents,
+    removeModuleRegistration,
 } from './generator/transformation-scripts/parser-utils';
 import type { ExampleConfig, GeneratedContents, ImportType, InternalFramework } from './generator/types';
 import { FRAMEWORKS, TYPESCRIPT_INTERNAL_FRAMEWORKS } from './generator/types';
@@ -265,7 +266,9 @@ export async function generateFiles(options: ExecutorOptions) {
 async function convertModulesToPackages(fileContent: any, isDev: boolean, internalFramework: InternalFramework) {
     const isEnterprise = fileContent.includes('-enterprise');
 
-    // fileContent = removeModuleRegistration(fileContent);
+    if (internalFramework === 'vanilla') {
+        fileContent = removeModuleRegistration(fileContent);
+    }
     // // Remove the original import statements that contain modules
     // fileContent = fileContent
     //     // Remove module import statements

@@ -23,6 +23,7 @@ interface Props {
     loadingIFrameId: string;
     supportedFrameworks: InternalFramework[];
     supportedImportTypes: ImportType[];
+    suppressDarkMode?: boolean;
 }
 
 const DEFAULT_HEIGHT = 500;
@@ -41,6 +42,7 @@ export const ExampleRunner: FunctionComponent<Props> = ({
     loadingIFrameId,
     supportedFrameworks,
     supportedImportTypes,
+    suppressDarkMode,
 }) => {
     const [showCode, setShowCode] = useState(false);
 
@@ -59,6 +61,7 @@ export const ExampleRunner: FunctionComponent<Props> = ({
                         isHidden={showCode}
                         url={exampleRunnerExampleUrl!}
                         loadingIFrameId={loadingIFrameId}
+                        suppressDarkMode={suppressDarkMode}
                     />
                     {exampleFiles && (
                         <CodeViewer

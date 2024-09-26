@@ -5,7 +5,6 @@ import {
     addGenericInterfaceImport,
     findLocaleImport,
     getIntegratedDarkModeCode,
-    removeModuleRegistration,
     usesThemingApi,
 } from './parser-utils';
 import { toTitleCase } from './string-utils';
@@ -142,10 +141,6 @@ export function vanillaToTypescript(
 
         // Remove the original import statements
         unWrapped = unWrapped.replace(/import ((.|\n)*?)from.*\n/g, '');
-
-        if (importType === 'packages') {
-            unWrapped = removeModuleRegistration(unWrapped);
-        }
 
         unWrapped = addAllCommunityFeatureModule(unWrapped);
 
