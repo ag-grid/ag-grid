@@ -9,3 +9,13 @@
         margin-top: $spacing-size-8;
     }
 }
+
+.content {
+    p {
+        margin-bottom: $spacing-size-2;
+    }
+
+    pre {
+        background-color: rgb(254 226 226); // TODO: Find better color
+    }
+}

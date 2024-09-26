@@ -1,4 +1,3 @@
-import Code from '@ag-website-shared/components/code/Code';
 import { throwDevWarning } from '@ag-website-shared/utils/throwDevWarning';
 import { type ReactElement, useEffect, useState } from 'react';
 
@@ -44,14 +43,14 @@ export const ErrorPage = ({ errorCode, children }: Props) => {
         <div className={styles.errorPage}>
             <div className="layout-max-width-small">
                 <section>
-                    <h1>AG Grid error #{errorCode}</h1>
+                    <h1>AG Grid Error #{errorCode}</h1>
                 </section>
 
-                <section>
-                    <article>
-                        <Code code={errorText} />
-                        {children}
-                    </article>
+                <section className={styles.content}>
+                    {children}
+
+                    <p>The error text shown:</p>
+                    <pre>{errorText}</pre>
                 </section>
             </div>
         </div>
