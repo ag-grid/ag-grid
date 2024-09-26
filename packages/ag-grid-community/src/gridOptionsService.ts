@@ -8,8 +8,8 @@ import type { Environment } from './environment';
 import type { AgEventType } from './eventTypes';
 import type { AgEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
-import type { GridOptionOrDefault } from './gridOptionsDefaults';
-import { GRID_OPTION_DEFAULTS } from './gridOptionsDefaults';
+import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
+import type { GridOptionOrDefault } from './gridOptionsDefault';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import { LocalEventService } from './localEventService';
 import type { ModuleNames } from './modules/moduleNames';
@@ -163,7 +163,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     public get<K extends keyof GridOptions>(property: K): GridOptionOrDefault<K> {
         return (
             this.gridOptions[property] ??
-            (GRID_OPTION_DEFAULTS[property as keyof typeof GRID_OPTION_DEFAULTS] as GridOptions[K])
+            (GRID_OPTION_DEFAULTS[property as keyof typeof GRID_OPTION_DEFAULTS] as GridOptionOrDefault<K>)
         );
     }
 
