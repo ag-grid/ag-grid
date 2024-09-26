@@ -184,7 +184,7 @@ Clicking the header checkbox, however, will select all rows even if their checkb
 
 In certain circumstances, especially in the context of touchscreen devices, users may want to select multiple rows without having to use the {% kbd "^ Ctrl" /%} and {% kbd "⇧ Shift" /%} keys.
 
-This can be accomplished by setting the `rowSelection.enableMultiSelectWithClick` flag to `true`. You will also need to set `enableClickSelection` to `true`.
+This can be accomplished by setting the `rowSelection.enableSelectionWithoutKeys` flag to `true`. You will also need to set `enableClickSelection` to `true`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -192,7 +192,7 @@ const gridOptions = {
         mode: 'multiRow',
         checkboxes: false,
         headerCheckbox: false,
-        enableMultiSelectWithClick: true,
+        enableSelectionWithoutKeys: true,
         enableClickSelection: true,
     },
 }
