@@ -93,13 +93,13 @@ import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { StickyRowService } from '../rendering/features/stickyRowService';
 import type { OverlayService } from '../rendering/overlays/overlayService';
-import type { RowCssClassCalculator } from '../rendering/row/rowCssClassCalculator';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import type { RowNodeSorter } from '../sort/rowNodeSorter';
 import type { SortController } from '../sort/sortController';
-import type { StylingService } from '../styling/stylingService';
+import type { CellStyleService } from '../styling/cellStyleService';
+import type { RowStyleService } from '../styling/rowStyleService';
 import type { SyncService } from '../syncService';
 import type { UndoRedoService } from '../undoRedo/undoRedoService';
 import type { ValidationService } from '../validation/validationService';
@@ -196,7 +196,7 @@ export interface CoreBeanCollection {
     columnAnimationService?: ColumnAnimationService;
     focusService: FocusService;
     popupService?: PopupService;
-    stylingService?: StylingService;
+    cellStyleService?: CellStyleService;
     columnHoverService?: ColumnHoverService;
     userComponentFactory: UserComponentFactory;
     userComponentRegistry: UserComponentRegistry;
@@ -210,7 +210,7 @@ export interface CoreBeanCollection {
     frameworkOverrides: IFrameworkOverrides;
     rowPositionUtils: RowPositionUtils;
     selectionService?: ISelectionService;
-    rowCssClassCalculator: RowCssClassCalculator;
+    rowStyleService?: RowStyleService;
     rowModel: IRowModel;
     ctrlsService: CtrlsService;
     ctrlsFactory: CtrlsFactory;
@@ -345,6 +345,7 @@ export type BeanName =
     | 'cellNavigationService'
     | 'cellRendererFactory'
     | 'cellRendererService'
+    | 'cellStyleService'
     | 'changeDetectionService'
     | 'chartColumnService'
     | 'chartCrossFilterService'
@@ -444,7 +445,6 @@ export type BeanName =
     | 'pageBoundsService'
     | 'renderStatusService'
     | 'rowContainerHeightService'
-    | 'rowCssClassCalculator'
     | 'rowDragService'
     | 'rowEditService'
     | 'rowModel'
@@ -454,6 +454,7 @@ export type BeanName =
     | 'rowNodeSorter'
     | 'rowPositionUtils'
     | 'rowRenderer'
+    | 'rowStyleService'
     | 'scrollVisibleService'
     | 'selectableService'
     | 'selectionController'
@@ -476,7 +477,6 @@ export type BeanName =
     | 'stateService'
     | 'statusBarService'
     | 'stickyRowService'
-    | 'stylingService'
     | 'syncService'
     | 'templateService'
     | 'toolPanelColDefService'

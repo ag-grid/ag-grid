@@ -43,7 +43,9 @@ import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { ModuleNames } from '../../modules/moduleNames';
+import { calculateRowLevel } from '../../styling/rowStyleService';
 import { _setAriaExpanded, _setAriaRowIndex, _setAriaSelected } from '../../utils/aria';
+import { _pushAll } from '../../utils/array';
 import {
     _addOrRemoveAttribute,
     _isElementChildOfClass,
@@ -60,7 +62,6 @@ import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../widgets/tooltipFeature';
 import { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
-import type { RowCssClassCalculatorParams } from './rowCssClassCalculator';
 
 type RowType = 'Normal' | 'FullWidth' | 'FullWidthLoading' | 'FullWidthGroup' | 'FullWidthDetail';
 
@@ -182,7 +183,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.initRowBusinessKey();
 
         this.rowFocused = beans.focusService.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
-        this.rowLevel = beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
+        this.rowLevel = calculateRowLevel(this.rowNode);
 
         this.setRowType();
         this.setAnimateFlags(animateIn);
@@ -1281,7 +1282,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onUiLevelChanged(): void {
-        const newLevel = this.beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
+        const newLevel = calculateRowLevel(this.rowNode);
         if (this.rowLevel != newLevel) {
             const classToAdd = 'ag-row-level-' + newLevel;
             const classToRemove = 'ag-row-level-' + this.rowLevel;
@@ -1359,7 +1360,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private postProcessClassesFromGridOptions(): void {
-        const cssClasses = this.beans.rowCssClassCalculator.processClassesFromGridOptions(this.rowNode);
+        const cssClasses = this.beans.rowStyleService?.processClassesFromGridOptions(this.rowNode);
         if (!cssClasses || !cssClasses.length) {
             return;
         }
@@ -1370,7 +1371,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private postProcessRowClassRules(): void {
-        this.beans.rowCssClassCalculator.processRowClassRules(
+        this.beans.rowStyleService?.processRowClassRules(
             this.rowNode,
             (className: string) => {
                 this.allRowGuis.forEach((gui) => gui.rowComp.addOrRemoveCssClass(className, true));
@@ -1397,21 +1398,78 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private getInitialRowClasses(rowContainerType: RowContainerType): string[] {
         const pinned = this.getPinnedForContainer(rowContainerType);
+        const fullWidthRow = this.isFullWidth();
+        const { rowNode } = this;
 
-        const params: RowCssClassCalculatorParams = {
-            rowNode: this.rowNode,
-            rowFocused: this.rowFocused,
-            fadeRowIn: this.fadeInAnimation[rowContainerType],
-            rowIsEven: this.rowNode.rowIndex! % 2 === 0,
-            rowLevel: this.rowLevel,
-            fullWidthRow: this.isFullWidth(),
-            firstRowOnPage: this.isFirstRowOnPage(),
-            lastRowOnPage: this.isLastRowOnPage(),
-            printLayout: this.printLayout,
-            expandable: this.rowNode.isExpandable(),
-            pinned: pinned,
-        };
-        return this.beans.rowCssClassCalculator.getInitialRowClasses(params);
+        const classes: string[] = [];
+
+        classes.push('ag-row');
+        classes.push(this.rowFocused ? 'ag-row-focus' : 'ag-row-no-focus');
+
+        if (this.fadeInAnimation[rowContainerType]) {
+            classes.push('ag-opacity-zero');
+        }
+
+        classes.push(rowNode.rowIndex! % 2 === 0 ? 'ag-row-even' : 'ag-row-odd');
+
+        if (rowNode.isRowPinned()) {
+            classes.push('ag-row-pinned');
+        }
+
+        if (rowNode.isSelected()) {
+            classes.push('ag-row-selected');
+        }
+
+        if (rowNode.footer) {
+            classes.push('ag-row-footer');
+        }
+
+        classes.push('ag-row-level-' + this.rowLevel);
+
+        if (rowNode.stub) {
+            classes.push('ag-row-loading');
+        }
+
+        if (fullWidthRow) {
+            classes.push('ag-full-width-row');
+        }
+
+        if (rowNode.isExpandable()) {
+            classes.push('ag-row-group');
+            classes.push(rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
+        }
+
+        if (rowNode.dragging) {
+            classes.push('ag-row-dragging');
+        }
+
+        const { rowStyleService } = this.beans;
+        if (rowStyleService) {
+            _pushAll(classes, rowStyleService.processClassesFromGridOptions(rowNode));
+            _pushAll(classes, rowStyleService.preProcessRowClassRules(rowNode));
+        }
+
+        // we use absolute position unless we are doing print layout
+        classes.push(this.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
+
+        if (this.isFirstRowOnPage()) {
+            classes.push('ag-row-first');
+        }
+
+        if (this.isLastRowOnPage()) {
+            classes.push('ag-row-last');
+        }
+
+        if (fullWidthRow) {
+            if (pinned === 'left') {
+                classes.push('ag-cell-last-left-pinned');
+            }
+            if (pinned === 'right') {
+                classes.push('ag-cell-first-right-pinned');
+            }
+        }
+
+        return classes;
     }
 
     public processStylesFromGridOptions(): RowStyle | undefined {

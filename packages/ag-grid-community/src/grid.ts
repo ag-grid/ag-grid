@@ -47,7 +47,6 @@ import { PageBoundsListener } from './pagination/pageBoundsListener';
 import { PageBoundsService } from './pagination/pageBoundsService';
 import { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
 import { OverlayService } from './rendering/overlays/overlayService';
-import { RowCssClassCalculator } from './rendering/row/rowCssClassCalculator';
 import { RowContainerHeightService } from './rendering/rowContainerHeightService';
 import { RowRenderer } from './rendering/rowRenderer';
 import { SyncService } from './syncService';
@@ -438,7 +437,6 @@ export class GridCoreCreator {
             Environment,
             CellNavigationService,
             ScrollVisibleService,
-            RowCssClassCalculator,
             CtrlsService,
             PinnedWidthService,
             RowNodeEventThrottle,

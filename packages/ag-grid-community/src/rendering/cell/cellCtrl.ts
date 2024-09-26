@@ -25,6 +25,7 @@ import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
+import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
 import { _setAriaColIndex } from '../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../utils/dom';
 import { _exists, _makeNull } from '../../utils/generic';
@@ -36,7 +37,6 @@ import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellR
 import { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { FlashCellsParams } from '../rowRenderer';
-import type { CellCustomStyleFeature } from './cellCustomStyleFeature';
 import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
 import { CellMouseListenerFeature } from './cellMouseListenerFeature';
 import { CellPositionFeature } from './cellPositionFeature';
@@ -148,7 +148,7 @@ export class CellCtrl extends BeanStub {
 
     private addFeatures(): void {
         this.cellPositionFeature = new CellPositionFeature(this, this.beans);
-        this.cellCustomStyleFeature = this.beans.stylingService?.createCellCustomStyleFeature(this, this.beans);
+        this.cellCustomStyleFeature = this.beans.cellStyleService?.createCellCustomStyleFeature(this, this.beans);
         this.cellMouseListenerFeature = new CellMouseListenerFeature(this, this.beans, this.column);
 
         this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(

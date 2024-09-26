@@ -26,7 +26,7 @@ import { StickyRowModule } from './rendering/features/stickyRowModule';
 import { OverlayModule } from './rendering/overlays/overlayModule';
 import { RowSelectionModule } from './selection/rowSelectionModule';
 import { SortModule } from './sort/sortModule';
-import { CellStyleModule } from './styling/cellStyleModule';
+import { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 import { ValidationService } from './validation/validationService';
 import { ChangeDetectionModule, ExpressionModule, ValueCacheModule } from './valueService/valueModule';
 import { VERSION } from './version';
@@ -82,5 +82,6 @@ export const CommunityFeaturesModule = _defineModule({
         ChangeDetectionModule,
         AnimationFrameModule,
         GetColumnDefsModule,
+        RowStyleModule,
     ],
 });

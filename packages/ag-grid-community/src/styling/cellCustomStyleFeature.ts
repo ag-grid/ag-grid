@@ -1,10 +1,11 @@
-import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection } from '../../context/context';
-import type { AgColumn } from '../../entities/agColumn';
-import type { CellClassParams, CellClassRules } from '../../entities/colDef';
-import type { CellStyle, CellStyleFunc } from '../../entities/colDef';
-import type { RowNode } from '../../entities/rowNode';
-import type { CellCtrl, ICellComp } from './cellCtrl';
+import { BeanStub } from '../context/beanStub';
+import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { CellClassParams, CellClassRules } from '../entities/colDef';
+import type { CellStyle, CellStyleFunc } from '../entities/colDef';
+import type { RowNode } from '../entities/rowNode';
+import type { CellCtrl, ICellComp } from '../rendering/cell/cellCtrl';
+import { processClassRules } from './stylingUtils';
 
 export class CellCustomStyleFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;
@@ -47,7 +48,8 @@ export class CellCustomStyleFeature extends BeanStub {
             rowIndex: this.rowNode.rowIndex!,
         });
 
-        this.beans.stylingService!.processClassRules(
+        processClassRules(
+            this.beans.expressionService,
             // if current was previous, skip
             cellClassRules === this.cellClassRules ? undefined : this.cellClassRules,
             cellClassRules,
@@ -102,7 +104,7 @@ export class CellCustomStyleFeature extends BeanStub {
             this.staticClasses.forEach((className) => this.cellComp.addOrRemoveCssClass(className, false));
         }
 
-        this.staticClasses = this.beans.stylingService!.getStaticCellClasses(colDef, cellClassParams);
+        this.staticClasses = this.beans.cellStyleService!.getStaticCellClasses(colDef, cellClassParams);
 
         if (this.staticClasses.length) {
             this.staticClasses.forEach((className) => this.cellComp.addOrRemoveCssClass(className, true));

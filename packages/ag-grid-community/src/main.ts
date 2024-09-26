@@ -456,7 +456,7 @@ export { ISelectionContext } from './selection/rowRangeSelectionContext';
 export { BaseSelectionService } from './selection/baseSelectionService';
 
 // styling
-export type { StylingService } from './styling/stylingService';
+export type { CellStyleService } from './styling/cellStyleService';
 export { UpdateLayoutClassesParams, LayoutCssClasses } from './styling/layoutFeature';
 
 // widgets
