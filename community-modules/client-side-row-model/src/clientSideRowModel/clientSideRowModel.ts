@@ -224,7 +224,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         ]);
         const filterAggStageRefreshProps: Set<keyof GridOptions> = new Set([]);
         const flattenStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'suppressGroupChangesColumnVisibility',
+            'groupHideParentOfSingleChild',
             'groupRemoveSingleChildren',
             'groupRemoveLowestSingleChildren',
             'groupIncludeFooter',

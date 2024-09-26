@@ -21,6 +21,7 @@ import type {
 import {
     BeanStub,
     GroupInstanceIdCreator,
+    _canSkipShowingRowGroup,
     _compose,
     _isClientSideRowModel,
     _isServerSideRowModel,
@@ -93,8 +94,6 @@ export class GridSerializer extends BeanStub implements NamedBean {
         node: RowNode
     ): void {
         const rowSkipper: (params: ShouldRowBeSkippedParams) => boolean = params.shouldRowBeSkipped || (() => false);
-        const skipSingleChildrenGroup = this.gos.get('groupRemoveSingleChildren');
-        const skipLowestSingleChildrenGroup = this.gos.get('groupRemoveLowestSingleChildren');
         // if onlySelected, we ignore groupHideOpenParents as the user has explicitly selected the rows they wish to export.
         // similarly, if specific rowNodes are provided we do the same. (the clipboard service uses rowNodes to define which rows to export)
         const isClipboardExport = params.rowPositions != null;
@@ -102,11 +101,10 @@ export class GridSerializer extends BeanStub implements NamedBean {
         const hideOpenParents = this.gos.get('groupHideOpenParents') && !isExplicitExportSelection;
         const isLeafNode = this.columnModel.isPivotMode() ? node.leafGroup : !node.group;
         const isFooter = !!node.footer;
-        const shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
         const shouldSkipCurrentGroup =
             node.allChildrenCount === 1 &&
             node.childrenAfterGroup?.length === 1 &&
-            (skipSingleChildrenGroup || shouldSkipLowestGroup);
+            _canSkipShowingRowGroup(this.gos, node);
 
         if (
             (!isLeafNode && !isFooter && (params.skipRowGroups || shouldSkipCurrentGroup || hideOpenParents)) ||
