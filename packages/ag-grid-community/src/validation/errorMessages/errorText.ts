@@ -1,4 +1,5 @@
 import type { ClientSideRowModelStep } from '../../interfaces/iClientSideRowModel';
+import type { Column } from '../../interfaces/iColumn';
 import type * as e from './errorTypeIds';
 
 export type * as _ErrorType from './errorTypeIds';
@@ -34,7 +35,7 @@ const errorMap = {
     [10 as e.InvalidCSRMStep]: (step: ClientSideRowModelStep | undefined, stepsMapped: string[]) =>
         `Invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}` as const,
     [11 as e.NoGridOptions]: () => 'No gridOptions provided to createGrid' as const,
-    [12 as e.NoColumnFoundForKey]: (colKey: string) => `column '${colKey}' not found` as const,
+    [12 as e.NoColumnFoundForKey]: (colKey: string | Column) => ['column ', colKey, ' not found'] as const,
     [13 as e.NoRowIndexOnRowNode]: () =>
         'Could not find rowIndex, this means tasks are being executed on a rowNode that has been removed from the grid.' as const,
     [14 as e.RowIdCannotStartWithGroupPrefix]: (groupPrefix: string) =>

@@ -289,7 +289,6 @@ export type { StandardMenuFactory } from './headerRendering/cells/column/standar
 
 // misc
 export type { ResizeObserverService } from './misc/resizeObserverService';
-export { IImmutableService } from './interfaces/iImmutableService';
 export type { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
 export type { MenuService } from './misc/menuService';

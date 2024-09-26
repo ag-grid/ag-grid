@@ -30,7 +30,7 @@ export function showColumnMenuAfterMouseClick(
         column = beans.columnModel.getColDefCol(colKey);
     }
     if (!column) {
-        _errorOnce1<_ErrorType.NoColumnFoundForKey>(12);
+        _errorOnce1<_ErrorType.NoColumnFoundForKey>(12, colKey);
         return;
     }
     beans.menuService.showColumnMenu({
@@ -43,7 +43,7 @@ export function showColumnMenuAfterMouseClick(
 export function showColumnMenu(beans: BeanCollection, colKey: string | Column): void {
     const column = beans.columnModel.getCol(colKey);
     if (!column) {
-        _errorOnce1<_ErrorType.NoColumnFoundForKey>(12);
+        _errorOnce1<_ErrorType.NoColumnFoundForKey>(12, colKey);
         return;
     }
     beans.menuService.showColumnMenu({

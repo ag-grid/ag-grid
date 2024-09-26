@@ -13,7 +13,7 @@ export class ExpressionService extends BeanStub implements NamedBean {
             // valueGetter is an expression, so execute the expression
             return this.evaluateExpression(expression, params);
         } else {
-            _errorOnce1<_ErrorType.InvalidExpressionType>(15);
+            _errorOnce1<_ErrorType.InvalidExpressionType>(15, expression);
         }
     }
 

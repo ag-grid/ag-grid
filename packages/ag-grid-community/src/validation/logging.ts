@@ -1,5 +1,5 @@
 import { _errorOnce as errorLog, _warnOnce as warnLog } from '../utils/function';
-import type { ErrorId, ErrorMap, ErrorParams } from './errorMessages/errorText1';
+import type { ErrorId, ErrorMap, ErrorParams } from './errorMessages/errorText';
 import type { ValidationService } from './validationService';
 
 let validationService: ValidationService | null = null;
