@@ -4,11 +4,15 @@ import type { ValidationService } from './validationService';
 
 let validationService: ValidationService | null = null;
 let suppressAllLogging = false;
+let baseDocLink = 'https://www.ag-grid.com/javascript-data-grid';
 export function provideValidationServiceLogger(logger: ValidationService) {
     validationService = logger;
 }
 export function suppressAllLogs() {
     suppressAllLogging = true;
+}
+export function setValidationDocLink(docLink: string) {
+    baseDocLink = docLink;
 }
 
 type LogFn = (message: string, ...args: any[]) => void;
@@ -23,7 +27,7 @@ function getMsgOrDefault<TId extends ErrorId>(logger: LogFn, id: TId, args: GetE
 const minifiedLog = (errorNum: number, args: GetErrorParams<any>) => {
     // work out how to pass args into the link if safe to do so
     // need to pass the framework name and version of AG Grid
-    return `visit www.ag-grid.com/error-message?id=${errorNum} for the full message or register the ValidationsModule to see the full message in the console.`;
+    return `Visit ${baseDocLink}/errors/${errorNum} \n  Alternatively register the ValidationsModule to see the full message in the console.`;
 };
 
 export function _warnOnce1<

@@ -8,7 +8,6 @@ import { _getRowIdCallback } from '../gridOptionsUtils';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _warnOnce } from '../utils/function';
 import { _missingOrEmpty } from '../utils/generic';
 import { _cloneObject } from '../utils/object';
 import type { _ErrorType } from '../validation/logging';
@@ -92,7 +91,7 @@ export class ClientSideNodeManager {
 
     public setRowData(rowData: any[]): RowNode[] | undefined {
         if (typeof rowData === 'string') {
-            _warnOnce('rowData must be an array.');
+            _warnOnce1<_ErrorType.RowDataNotAString>(1, {});
             return;
         }
         this.rowCountReady = true;

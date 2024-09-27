@@ -23,7 +23,6 @@ import { StickyRowModule } from './rendering/features/stickyRowModule';
 import { OverlayModule } from './rendering/overlays/overlayModule';
 import { RowSelectionModule } from './selection/rowSelectionModule';
 import { SortModule } from './sort/sortModule';
-import { ValidationService } from './validation/validationService';
 import { ExpressionModule, ValueCacheModule } from './valueService/valueModule';
 import { VERSION } from './version';
 
@@ -32,18 +31,11 @@ export const GridCoreModule = {
     moduleName: ModuleNames.CommunityCoreModule,
 };
 
-export const ValidationsModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/core-validations',
-    beans: [ValidationService],
-});
-
 export const CommunityFeaturesModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/core-community-features',
     dependantModules: [
         GridCoreModule,
-        ValidationsModule,
         EditModule,
         FilterModule,
         StateModule,

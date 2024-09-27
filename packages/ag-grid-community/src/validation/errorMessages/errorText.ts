@@ -30,7 +30,7 @@ export type InvalidExpressionEvaluation = 16;
  *    This enables easy finding references of errors and also makes it clearer what the error is when reading the code.
  *    However, as it is just a type it does not add any bundle size.
  */
-const errorMap = {
+export const AG_GRID_ERRORS = {
     [1 as RowDataNotAString]: () => '`rowData` must be an array' as const,
     [2 as DuplicateRowNode]: ({ nodeId }: { nodeId: string | undefined }) =>
         `Duplicate node id '${nodeId}' detected from getRowId callback, this could cause issues in your grid.` as const,
@@ -79,7 +79,7 @@ const errorMap = {
         ] as const,
 } as const;
 
-export type ErrorMap = typeof errorMap;
+export type ErrorMap = typeof AG_GRID_ERRORS;
 export type ErrorId = keyof ErrorMap;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
@@ -87,7 +87,7 @@ export type GetErrorParams<TId extends ErrorId | null> =
     ErrorValue<TId> extends (params: infer P) => any ? P : Record<string, never>;
 
 export function getError<TId extends ErrorId, TParams extends GetErrorParams<TId>>(errorId: TId, args: TParams): any[] {
-    const msgOrFunc: ErrorMap[TId] = errorMap[errorId];
+    const msgOrFunc: ErrorMap[TId] = AG_GRID_ERRORS[errorId];
 
     if (!msgOrFunc) {
         return [`Missing error text for error id ${errorId}!`];
