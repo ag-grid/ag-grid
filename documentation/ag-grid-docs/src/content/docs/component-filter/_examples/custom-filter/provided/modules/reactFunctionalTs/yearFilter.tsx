@@ -5,9 +5,6 @@ import type { IAfterGuiAttachedParams, IDoesFilterPassParams } from 'ag-grid-com
 import type { CustomFilterProps } from 'ag-grid-react';
 import { useGridFilter } from 'ag-grid-react';
 
-import { IAfterGuiAttachedParams, IDoesFilterPassParams } from 'ag-grid-community';
-import { CustomFilterProps, useGridFilter } from 'ag-grid-react';
-
 export default ({ model, onModelChange }: CustomFilterProps) => {
     const [closeFilter, setCloseFilter] = useState<(() => void) | undefined>();
     const [unappliedModel, setUnappliedModel] = useState(model);

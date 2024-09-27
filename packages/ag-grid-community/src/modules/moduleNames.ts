@@ -22,6 +22,7 @@ export enum ModuleNames {
     MasterDetailModule = '@ag-grid-enterprise/master-detail',
     RichSelectModule = '@ag-grid-enterprise/rich-select',
     GridChartsModule = '@ag-grid-enterprise/charts',
+    TreeDataModule = '@ag-grid-enterprise/tree-data',
     ViewportRowModelModule = '@ag-grid-enterprise/viewport-row-model',
     ServerSideRowModelModule = '@ag-grid-enterprise/server-side-row-model',
     ExcelExportModule = '@ag-grid-enterprise/excel-export',

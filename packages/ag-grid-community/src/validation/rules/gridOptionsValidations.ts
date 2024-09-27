@@ -141,8 +141,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     },
 
     treeDataChildrenField: {
-        // TODO: we need to finalise the definition of this new TreeDataModule
-        // module: ModuleNames.TreeDataModule,
+        module: ModuleNames.TreeDataModule,
     },
     viewportDatasource: {
         supportedRowModels: ['viewport'],
