@@ -1,7 +1,6 @@
-import { _defineModule } from '../interfaces/iModule';
-import { VERSION } from '../version';
+import { defineCommunityModule } from '../interfaces/iModule';
+import { ColumnAnimationService } from './columnAnimationService';
 
-export const ColumnAnimationModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/column-animation',
+export const ColumnAnimationModule = defineCommunityModule('@ag-grid-community/column-animation', {
+    beans: [ColumnAnimationService],
 });

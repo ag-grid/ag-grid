@@ -1,7 +1,6 @@
 import type { _ColumnGridApi, _GetColumnDefsApi } from '../api/gridApi';
-import { _defineModule } from '../interfaces/iModule';
+import { defineCommunityModule } from '../interfaces/iModule';
 import { CheckboxCellRendererModule } from '../rendering/cellRenderers/cellRendererModule';
-import { VERSION } from '../version';
 import {
     applyColumnState,
     getAllDisplayedColumnGroups,
@@ -43,37 +42,27 @@ import { ColumnFlexService } from './columnFlexService';
 import { ControlsColService } from './controlsColService';
 import { DataTypeService } from './dataTypeService';
 
-export const DataTypeModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/data-type',
+export const DataTypeModule = defineCommunityModule('@ag-grid-community/data-type', {
     beans: [DataTypeService],
-    dependantModules: [CheckboxCellRendererModule],
+    dependsOn: [CheckboxCellRendererModule],
 });
 
-export const ControlsColumnModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/controls-column',
+export const ControlsColumnModule = defineCommunityModule('@ag-grid-community/controls-column', {
     beans: [ControlsColService],
 });
 
-export const GetColumnDefsModule = _defineModule<_GetColumnDefsApi<any>>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/get-column-defs',
+export const GetColumnDefsModule = defineCommunityModule<_GetColumnDefsApi<any>>('@ag-grid-community/get-column-defs', {
     beans: [ColumnDefFactory],
     apiFunctions: {
         getColumnDefs,
     },
 });
 
-export const ColumnFlexModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/column-flex',
+export const ColumnFlexModule = defineCommunityModule('@ag-grid-community/column-flex', {
     beans: [ColumnFlexService],
 });
 
-export const ColumnApiModule = _defineModule<_ColumnGridApi<any>>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/column-api',
+export const ColumnApiModule = defineCommunityModule<_ColumnGridApi<any>>('@ag-grid-community/column-api', {
     apiFunctions: {
         getColumnDef,
         setColumnGroupOpened,

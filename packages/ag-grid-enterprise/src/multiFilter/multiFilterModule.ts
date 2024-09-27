@@ -1,14 +1,12 @@
-import { ColumnFilterModule, ModuleNames, ReadOnlyFloatingFilterModule, _defineModule } from 'ag-grid-community';
+import { ColumnFilterModule, ModuleNames, ReadOnlyFloatingFilterModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { VERSION } from '../version';
+import { defineEnterpriseModule } from '../moduleUtils';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 import { MultiFilter } from './multiFilter';
 import { MultiFloatingFilterComp } from './multiFloatingFilter';
 
-export const MultiFilterCoreModule = _defineModule({
-    version: VERSION,
-    moduleName: `${ModuleNames.MultiFilterModule}-core`,
+export const MultiFilterCoreModule = defineEnterpriseModule(`${ModuleNames.MultiFilterModule}-core`, {
     userComponents: [
         { name: 'agMultiColumnFilter', classImp: MultiFilter },
         {
@@ -16,18 +14,14 @@ export const MultiFilterCoreModule = _defineModule({
             classImp: AgMenuItemRenderer,
         },
     ],
-    dependantModules: [EnterpriseCoreModule, ColumnFilterModule],
+    dependsOn: [EnterpriseCoreModule, ColumnFilterModule],
 });
 
-const MultiFloatingFilterModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-enterprise/multi-floating-filter',
+const MultiFloatingFilterModule = defineEnterpriseModule('@ag-grid-enterprise/multi-floating-filter', {
     userComponents: [{ name: 'agMultiColumnFloatingFilter', classImp: MultiFloatingFilterComp }],
-    dependantModules: [MultiFilterCoreModule, ReadOnlyFloatingFilterModule],
+    dependsOn: [MultiFilterCoreModule, ReadOnlyFloatingFilterModule],
 });
 
-export const MultiFilterModule = _defineModule({
-    version: VERSION,
-    moduleName: ModuleNames.MultiFilterModule,
-    dependantModules: [MultiFilterCoreModule, MultiFloatingFilterModule],
+export const MultiFilterModule = defineEnterpriseModule(ModuleNames.MultiFilterModule, {
+    dependsOn: [MultiFilterCoreModule, MultiFloatingFilterModule],
 });

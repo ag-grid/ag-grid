@@ -1,30 +1,23 @@
 import type { _ColumnMoveApi } from '../api/gridApi';
 import { DragAndDropModule } from '../dragAndDrop/dragModule';
-import { _defineModule } from '../interfaces/iModule';
-import { VERSION } from '../version';
+import { defineCommunityModule } from '../interfaces/iModule';
 import { moveColumn, moveColumnByIndex, moveColumns } from './columnMoveApi';
 import { ColumnMoveService } from './columnMoveService';
 
-export const ColumnMoveCoreModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/column-move-core',
+export const ColumnMoveCoreModule = defineCommunityModule('@ag-grid-community/column-move-core', {
     beans: [ColumnMoveService],
-    dependantModules: [DragAndDropModule],
+    dependsOn: [DragAndDropModule],
 });
 
-export const ColumnMoveApiModule = _defineModule<_ColumnMoveApi>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/column-move-api',
+export const ColumnMoveApiModule = defineCommunityModule<_ColumnMoveApi>('@ag-grid-community/column-move-api', {
     apiFunctions: {
         moveColumn,
         moveColumnByIndex,
         moveColumns,
     },
-    dependantModules: [ColumnMoveCoreModule],
+    dependsOn: [ColumnMoveCoreModule],
 });
 
-export const ColumnMoveModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/column-move',
-    dependantModules: [ColumnMoveApiModule],
+export const ColumnMoveModule = defineCommunityModule('@ag-grid-community/column-move', {
+    dependsOn: [ColumnMoveApiModule],
 });

@@ -1,17 +1,10 @@
 import type { _RowGroupingGridApi } from 'ag-grid-community';
-import {
-    ColumnFilterModule,
-    FloatingFilterModule,
-    ModuleNames,
-    PopupModule,
-    StickyRowModule,
-    _defineModule,
-} from 'ag-grid-community';
+import { ColumnFilterModule, FloatingFilterModule, ModuleNames, PopupModule, StickyRowModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { defineEnterpriseModule } from '../moduleUtils';
 import { GroupCellRenderer } from '../rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from '../rendering/groupCellRendererCtrl';
-import { VERSION } from '../version';
 import { AggFuncService } from './aggFuncService';
 import { AggregationStage } from './aggregationStage';
 import { AutoColService } from './autoColService';
@@ -56,9 +49,7 @@ import {
 } from './rowGroupingApi';
 import { ShowRowGroupColsService } from './showRowGroupColsService';
 
-export const RowGroupingCoreModule = _defineModule({
-    version: VERSION,
-    moduleName: `${ModuleNames.RowGroupingModule}-core`,
+export const RowGroupingCoreModule = defineEnterpriseModule(`${ModuleNames.RowGroupingModule}-core`, {
     beans: [
         AggregationStage,
         FilterAggregatesStage,
@@ -80,79 +71,70 @@ export const RowGroupingCoreModule = _defineModule({
         },
     ],
     controllers: [{ name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl }],
-    dependantModules: [
+    dependsOn: [
         EnterpriseCoreModule,
         PopupModule, // can be extracted into row group panel module
     ],
 });
 
-export const RowGroupingSelectionModule = _defineModule({
-    version: VERSION,
-    moduleName: `${ModuleNames.RowGroupingModule}-selection`,
+export const RowGroupingSelectionModule = defineEnterpriseModule(`${ModuleNames.RowGroupingModule}-selection`, {
     beans: [SelectableService],
-    dependantModules: [RowGroupingCoreModule],
+    dependsOn: [RowGroupingCoreModule],
 });
 
-export const PivotModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-enterprise/pivot',
+export const PivotModule = defineEnterpriseModule('@ag-grid-enterprise/pivot', {
     beans: [PivotResultColsService, PivotColDefService, PivotStage],
-    dependantModules: [RowGroupingCoreModule],
+    dependsOn: [RowGroupingCoreModule],
 });
 
-export const RowGroupingApiModule = _defineModule<_RowGroupingGridApi<any>>({
-    version: VERSION,
-    moduleName: `${ModuleNames.RowGroupingModule}-api`,
-    apiFunctions: {
-        addAggFunc,
-        addAggFuncs,
-        clearAggFuncs,
-        setColumnAggFunc,
-        isPivotMode,
-        getPivotResultColumn,
-        setValueColumns,
-        getValueColumns,
-        removeValueColumn,
-        removeValueColumns,
-        addValueColumn,
-        addValueColumns,
-        setRowGroupColumns,
-        removeRowGroupColumn,
-        removeRowGroupColumns,
-        addRowGroupColumn,
-        addRowGroupColumns,
-        getRowGroupColumns,
-        moveRowGroupColumn,
-        setPivotColumns,
-        removePivotColumn,
-        removePivotColumns,
-        addPivotColumn,
-        addPivotColumns,
-        getPivotColumns,
-        setPivotResultColumns,
-        getPivotResultColumns,
-    },
-    dependantModules: [RowGroupingCoreModule],
-});
+export const RowGroupingApiModule = defineEnterpriseModule<_RowGroupingGridApi<any>>(
+    `${ModuleNames.RowGroupingModule}-api`,
+    {
+        apiFunctions: {
+            addAggFunc,
+            addAggFuncs,
+            clearAggFuncs,
+            setColumnAggFunc,
+            isPivotMode,
+            getPivotResultColumn,
+            setValueColumns,
+            getValueColumns,
+            removeValueColumn,
+            removeValueColumns,
+            addValueColumn,
+            addValueColumns,
+            setRowGroupColumns,
+            removeRowGroupColumn,
+            removeRowGroupColumns,
+            addRowGroupColumn,
+            addRowGroupColumns,
+            getRowGroupColumns,
+            moveRowGroupColumn,
+            setPivotColumns,
+            removePivotColumn,
+            removePivotColumns,
+            addPivotColumn,
+            addPivotColumns,
+            getPivotColumns,
+            setPivotResultColumns,
+            getPivotResultColumns,
+        },
+        dependsOn: [RowGroupingCoreModule],
+    }
+);
 
-export const GroupFilterModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-enterprise/group-filter',
+export const GroupFilterModule = defineEnterpriseModule('@ag-grid-enterprise/group-filter', {
     userComponents: [{ name: 'agGroupColumnFilter', classImp: GroupFilter }],
-    dependantModules: [RowGroupingCoreModule, ColumnFilterModule],
+    dependsOn: [RowGroupingCoreModule, ColumnFilterModule],
 });
 
-export const GroupFloatingFilterModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-enterprise/group-floating-filter',
+export const GroupFloatingFilterModule = defineEnterpriseModule('@ag-grid-enterprise/group-floating-filter', {
     userComponents: [{ name: 'agGroupColumnFloatingFilter', classImp: GroupFloatingFilterComp }],
-    dependantModules: [GroupFilterModule, FloatingFilterModule],
+    dependsOn: [GroupFilterModule, FloatingFilterModule],
 });
 
-export const RowGroupingModule = _defineModule({
-    version: VERSION,
-    moduleName: ModuleNames.RowGroupingModule,
-    dependantModules: [
+export const RowGroupingModule = defineEnterpriseModule(ModuleNames.RowGroupingModule, {
+    dependsOn: [
         RowGroupingCoreModule,
         RowGroupingApiModule,
         GroupFilterModule,

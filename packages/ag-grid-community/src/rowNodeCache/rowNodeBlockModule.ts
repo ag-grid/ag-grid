@@ -1,9 +1,6 @@
-import { _defineModule } from '../interfaces/iModule';
-import { VERSION } from '../version';
+import { defineCommunityModule } from '../interfaces/iModule';
 import { RowNodeBlockLoader } from './rowNodeBlockLoader';
 
-export const RowNodeBlockModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/row-node-block',
+export const RowNodeBlockModule = defineCommunityModule('@ag-grid-community/row-node-block', {
     beans: [RowNodeBlockLoader],
 });

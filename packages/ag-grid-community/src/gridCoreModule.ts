@@ -32,7 +32,7 @@ import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridDestroyService } from './gridDestroyService';
 import { GridOptionsService } from './gridOptionsService';
 import { ColumnGroupHeaderModule, ColumnHeaderModule } from './headerRendering/cells/headerModule';
-import { _defineModule } from './interfaces/iModule';
+import { defineCommunityModule } from './interfaces/iModule';
 import { LocaleService } from './localeService';
 import { AnimationFrameModule } from './misc/animationFrameModule';
 import { EventApiModule } from './misc/apiEvents/apiEventModule';
@@ -62,12 +62,9 @@ import { SyncService } from './syncService';
 import { ValidationService } from './validation/validationService';
 import { CellApiModule, ChangeDetectionModule, ExpressionModule, ValueCacheModule } from './valueService/valueModule';
 import { ValueService } from './valueService/valueService';
-import { VERSION } from './version';
 import { PopupModule } from './widgets/popupModule';
 
-export const GridCoreModule = {
-    version: VERSION,
-    moduleName: ModuleNames.CommunityCoreModule,
+export const GridCoreModule = defineCommunityModule(ModuleNames.CommunityCoreModule, {
     beans: [
         PositionUtils,
         GridDestroyService,
@@ -100,19 +97,15 @@ export const GridCoreModule = {
         ColumnNameService,
         ColumnViewportService,
     ],
-    dependantModules: [CoreApiModule],
-};
+    dependsOn: [CoreApiModule],
+});
 
-export const ValidationsModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/core-validations',
+export const ValidationsModule = defineCommunityModule('@ag-grid-community/core-validations', {
     beans: [ValidationService],
 });
 
-export const CommunityFeaturesModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/core-community-features',
-    dependantModules: [
+export const CommunityFeaturesModule = defineCommunityModule('@ag-grid-community/core-community-features', {
+    dependsOn: [
         GridCoreModule,
         ValidationsModule,
         EditModule,

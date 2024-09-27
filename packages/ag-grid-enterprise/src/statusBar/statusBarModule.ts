@@ -1,8 +1,8 @@
 import type { _StatusBarGridApi } from 'ag-grid-community';
-import { KeyboardNavigationCoreModule, ModuleNames, RowSelectionCoreModule, _defineModule } from 'ag-grid-community';
+import { KeyboardNavigationCoreModule, ModuleNames, RowSelectionCoreModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { VERSION } from '../version';
+import { defineEnterpriseModule } from '../moduleUtils';
 import { AggregationComp } from './providedPanels/aggregationComp';
 import { FilteredRowsComp } from './providedPanels/filteredRowsComp';
 import { SelectedRowsComp } from './providedPanels/selectedRowsComp';
@@ -11,9 +11,7 @@ import { TotalRowsComp } from './providedPanels/totalRowsComp';
 import { getStatusPanel } from './statusBarApi';
 import { StatusBarService } from './statusBarService';
 
-export const StatusBarCoreModule = _defineModule({
-    version: VERSION,
-    moduleName: `${ModuleNames.StatusBarModule}-core`,
+export const StatusBarCoreModule = defineEnterpriseModule(`${ModuleNames.StatusBarModule}-core`, {
     beans: [StatusBarService],
     userComponents: [
         { name: 'agAggregationComponent', classImp: AggregationComp },
@@ -21,27 +19,21 @@ export const StatusBarCoreModule = _defineModule({
         { name: 'agFilteredRowCountComponent', classImp: FilteredRowsComp },
         { name: 'agTotalAndFilteredRowCountComponent', classImp: TotalAndFilteredRowsComp },
     ],
-    dependantModules: [EnterpriseCoreModule, KeyboardNavigationCoreModule],
+    dependsOn: [EnterpriseCoreModule, KeyboardNavigationCoreModule],
 });
 
-export const StatusBarSelectionModule = _defineModule({
-    version: VERSION,
-    moduleName: `${ModuleNames.StatusBarModule}-selection`,
+export const StatusBarSelectionModule = defineEnterpriseModule(`${ModuleNames.StatusBarModule}-selection`, {
     userComponents: [{ name: 'agSelectedRowCountComponent', classImp: SelectedRowsComp }],
-    dependantModules: [StatusBarCoreModule, RowSelectionCoreModule],
+    dependsOn: [StatusBarCoreModule, RowSelectionCoreModule],
 });
 
-export const StatusBarApiModule = _defineModule<_StatusBarGridApi>({
-    version: VERSION,
-    moduleName: `${ModuleNames.StatusBarModule}-api`,
+export const StatusBarApiModule = defineEnterpriseModule<_StatusBarGridApi>(`${ModuleNames.StatusBarModule}-api`, {
     apiFunctions: {
         getStatusPanel,
     },
-    dependantModules: [StatusBarCoreModule],
+    dependsOn: [StatusBarCoreModule],
 });
 
-export const StatusBarModule = _defineModule({
-    version: VERSION,
-    moduleName: ModuleNames.StatusBarModule,
-    dependantModules: [StatusBarCoreModule, StatusBarApiModule, StatusBarSelectionModule],
+export const StatusBarModule = defineEnterpriseModule(ModuleNames.StatusBarModule, {
+    dependsOn: [StatusBarCoreModule, StatusBarApiModule, StatusBarSelectionModule],
 });

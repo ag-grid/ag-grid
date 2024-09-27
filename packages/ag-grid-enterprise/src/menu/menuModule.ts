@@ -1,8 +1,8 @@
 import type { _MenuGridApi } from 'ag-grid-community';
-import { CommunityMenuApiModule, ModuleNames, PopupModule, SharedMenuModule, _defineModule } from 'ag-grid-community';
+import { CommunityMenuApiModule, ModuleNames, PopupModule, SharedMenuModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { VERSION } from '../version';
+import { defineEnterpriseModule } from '../moduleUtils';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
 import { ColumnChooserFactory } from './columnChooserFactory';
@@ -13,11 +13,9 @@ import { hideColumnChooser, showColumnChooser, showContextMenu } from './menuApi
 import { MenuItemMapper } from './menuItemMapper';
 import { MenuUtils } from './menuUtils';
 
-export const MenuCoreModule = _defineModule({
-    version: VERSION,
-    moduleName: `${ModuleNames.MenuModule}-core`,
+export const MenuCoreModule = defineEnterpriseModule(`${ModuleNames.MenuModule}-core`, {
     beans: [MenuItemMapper, ChartMenuItemMapper, MenuUtils],
-    dependantModules: [EnterpriseCoreModule, PopupModule, SharedMenuModule],
+    dependsOn: [EnterpriseCoreModule, PopupModule, SharedMenuModule],
     userComponents: [
         {
             name: 'agMenuItem',
@@ -26,40 +24,30 @@ export const MenuCoreModule = _defineModule({
     ],
 });
 
-export const ColumnMenuModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-enterprise/column-menu',
+export const ColumnMenuModule = defineEnterpriseModule('@ag-grid-enterprise/column-menu', {
     beans: [EnterpriseMenuFactory, ColumnMenuFactory],
-    dependantModules: [MenuCoreModule],
+    dependsOn: [MenuCoreModule],
 });
 
-export const ColumnChooserModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-enterprise/column-chooser',
+export const ColumnChooserModule = defineEnterpriseModule('@ag-grid-enterprise/column-chooser', {
     beans: [ColumnChooserFactory],
-    dependantModules: [MenuCoreModule],
+    dependsOn: [MenuCoreModule],
 });
 
-export const ContextMenuModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-enterprise/context-menu',
+export const ContextMenuModule = defineEnterpriseModule('@ag-grid-enterprise/context-menu', {
     beans: [ContextMenuService],
-    dependantModules: [MenuCoreModule],
+    dependsOn: [MenuCoreModule],
 });
 
-export const MenuApiModule = _defineModule<_MenuGridApi>({
-    version: VERSION,
-    moduleName: `${ModuleNames.MenuModule}-api`,
+export const MenuApiModule = defineEnterpriseModule<_MenuGridApi>(`${ModuleNames.MenuModule}-api`, {
     apiFunctions: {
         showContextMenu,
         showColumnChooser,
         hideColumnChooser,
     },
-    dependantModules: [ColumnChooserModule, ContextMenuModule, CommunityMenuApiModule],
+    dependsOn: [ColumnChooserModule, ContextMenuModule, CommunityMenuApiModule],
 });
 
-export const MenuModule = _defineModule({
-    version: VERSION,
-    moduleName: ModuleNames.MenuModule,
-    dependantModules: [ColumnMenuModule, ColumnChooserModule, ContextMenuModule, MenuApiModule],
+export const MenuModule = defineEnterpriseModule(ModuleNames.MenuModule, {
+    dependsOn: [ColumnMenuModule, ColumnChooserModule, ContextMenuModule, MenuApiModule],
 });

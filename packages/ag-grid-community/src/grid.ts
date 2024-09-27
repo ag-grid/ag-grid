@@ -273,8 +273,8 @@ export class GridCoreCreator {
             };
 
             addIndividualModule(mod);
-            if (mod.dependantModules) {
-                mod.dependantModules.forEach((m) => addModule(moduleBased, m, gridId));
+            if (mod.dependsOn) {
+                mod.dependsOn.forEach((m) => addModule(moduleBased, m, gridId));
             }
         };
 

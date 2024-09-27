@@ -1,40 +1,31 @@
 import type { _SortGridApi } from '../api/gridApi';
-import { _defineModule } from '../interfaces/iModule';
-import { VERSION } from '../version';
+import { defineCommunityModule } from '../interfaces/iModule';
 import { RowNodeSorter } from './rowNodeSorter';
 import { onSortChanged } from './sortApi';
 import { SortController } from './sortController';
 import { SortIndicatorComp } from './sortIndicatorComp';
 
-export const SortCoreModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/sort-core',
+export const SortCoreModule = defineCommunityModule('@ag-grid-community/sort-core', {
     beans: [SortController, RowNodeSorter],
 });
 
-export const SortIndicatorCompModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/sort-indicator-comp',
+export const SortIndicatorCompModule = defineCommunityModule('@ag-grid-community/sort-indicator-comp', {
     userComponents: [
         {
             classImp: SortIndicatorComp,
             name: 'agSortIndicator',
         },
     ],
-    dependantModules: [SortCoreModule],
+    dependsOn: [SortCoreModule],
 });
 
-export const SortApiModule = _defineModule<_SortGridApi>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/sort-api',
+export const SortApiModule = defineCommunityModule<_SortGridApi>('@ag-grid-community/sort-api', {
     apiFunctions: {
         onSortChanged,
     },
-    dependantModules: [SortCoreModule],
+    dependsOn: [SortCoreModule],
 });
 
-export const SortModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/sort',
-    dependantModules: [SortApiModule, SortIndicatorCompModule],
+export const SortModule = defineCommunityModule('@ag-grid-community/sort', {
+    dependsOn: [SortApiModule, SortIndicatorCompModule],
 });

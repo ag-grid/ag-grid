@@ -1,6 +1,5 @@
 import type { _PaginationGridApi } from '../api/gridApi';
-import { _defineModule } from '../interfaces/iModule';
-import { VERSION } from '../version';
+import { defineCommunityModule } from '../interfaces/iModule';
 import {
     paginationGetCurrentPage,
     paginationGetPageSize,
@@ -16,16 +15,12 @@ import {
 import { PaginationAutoPageSizeService } from './paginationAutoPageSizeService';
 import { PaginationService } from './paginationService';
 
-export const PaginationCoreModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/pagination-core',
+export const PaginationCoreModule = defineCommunityModule('@ag-grid-community/pagination-core', {
     beans: [PaginationService, PaginationAutoPageSizeService],
 });
 
-export const PaginationApiModule = _defineModule<_PaginationGridApi>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/pagination-api',
-    dependantModules: [PaginationCoreModule],
+export const PaginationApiModule = defineCommunityModule<_PaginationGridApi>('@ag-grid-community/pagination-api', {
+    dependsOn: [PaginationCoreModule],
     apiFunctions: {
         paginationIsLastPageFound,
         paginationGetPageSize,
@@ -40,8 +35,6 @@ export const PaginationApiModule = _defineModule<_PaginationGridApi>({
     },
 });
 
-export const PaginationModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/pagination',
-    dependantModules: [PaginationCoreModule, PaginationApiModule],
+export const PaginationModule = defineCommunityModule('@ag-grid-community/pagination', {
+    dependsOn: [PaginationCoreModule, PaginationApiModule],
 });

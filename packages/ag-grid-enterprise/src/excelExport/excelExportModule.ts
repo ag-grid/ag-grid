@@ -1,8 +1,8 @@
 import type { _ExcelExportGridApi } from 'ag-grid-community';
-import { CsvExportCoreModule, ModuleNames, _defineModule } from 'ag-grid-community';
+import { CsvExportCoreModule, ModuleNames } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { VERSION } from '../version';
+import { defineEnterpriseModule } from '../moduleUtils';
 import { ExcelCreator } from './excelCreator';
 import {
     exportDataAsExcel,
@@ -12,28 +12,25 @@ import {
     getSheetDataForExcel,
 } from './excelExportApi';
 
-export const ExcelExportCoreModule = _defineModule({
-    version: VERSION,
-    moduleName: `${ModuleNames.ExcelExportModule}-core`,
+export const ExcelExportCoreModule = defineEnterpriseModule(`${ModuleNames.ExcelExportModule}-core`, {
     beans: [ExcelCreator],
-    dependantModules: [CsvExportCoreModule, EnterpriseCoreModule],
+    dependsOn: [CsvExportCoreModule, EnterpriseCoreModule],
 });
 
-export const ExcelExportApiModule = _defineModule<_ExcelExportGridApi>({
-    version: VERSION,
-    moduleName: `${ModuleNames.ExcelExportModule}-api`,
-    apiFunctions: {
-        getDataAsExcel,
-        exportDataAsExcel,
-        getSheetDataForExcel,
-        getMultipleSheetsAsExcel,
-        exportMultipleSheetsAsExcel,
-    },
-    dependantModules: [ExcelExportCoreModule],
-});
+export const ExcelExportApiModule = defineEnterpriseModule<_ExcelExportGridApi>(
+    `${ModuleNames.ExcelExportModule}-api`,
+    {
+        apiFunctions: {
+            getDataAsExcel,
+            exportDataAsExcel,
+            getSheetDataForExcel,
+            getMultipleSheetsAsExcel,
+            exportMultipleSheetsAsExcel,
+        },
+        dependsOn: [ExcelExportCoreModule],
+    }
+);
 
-export const ExcelExportModule = _defineModule({
-    version: VERSION,
-    moduleName: ModuleNames.ExcelExportModule,
-    dependantModules: [ExcelExportCoreModule, ExcelExportApiModule],
+export const ExcelExportModule = defineEnterpriseModule(ModuleNames.ExcelExportModule, {
+    dependsOn: [ExcelExportCoreModule, ExcelExportApiModule],
 });
