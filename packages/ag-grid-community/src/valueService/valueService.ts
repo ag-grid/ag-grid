@@ -13,7 +13,7 @@ import type {
 } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
-import { _isServerSideRowModel, _useAsyncEvents } from '../gridOptionsUtils';
+import { _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
@@ -70,9 +70,8 @@ export class ValueService extends BeanStub implements NamedBean {
         // We listen to our own event and use it to call the columnSpecific callback,
         // this way the handler calls are correctly interleaved with other global events
         const listener = (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event);
-        const async = _useAsyncEvents(this.gos);
-        this.eventService.addEventListener('cellValueChanged', listener, async);
-        this.addDestroyFunc(() => this.eventService.removeEventListener('cellValueChanged', listener, async));
+        this.eventService.addEventListener('cellValueChanged', listener, true);
+        this.addDestroyFunc(() => this.eventService.removeEventListener('cellValueChanged', listener, true));
 
         this.addManagedPropertyListener('treeData', (propChange) => (this.isTreeData = propChange.currentValue));
     }
@@ -93,12 +92,11 @@ export class ValueService extends BeanStub implements NamedBean {
         }
 
         let includeFooter = false;
-        const groupIncludeFooterOpt = this.gos.get('groupTotalRow') ?? this.gos.get('groupIncludeFooter');
+        const groupIncludeFooterOpt = this.gos.get('groupTotalRow');
         if (typeof groupIncludeFooterOpt !== 'function') {
             includeFooter = !!groupIncludeFooterOpt;
         } else {
-            const groupIncludeFooterCb: any =
-                this.gos.getCallback('groupTotalRow' as any) ?? this.gos.getCallback('groupIncludeFooter' as any);
+            const groupIncludeFooterCb: any = this.gos.getCallback('groupTotalRow' as any);
             includeFooter = !!groupIncludeFooterCb({ node: this });
         }
 

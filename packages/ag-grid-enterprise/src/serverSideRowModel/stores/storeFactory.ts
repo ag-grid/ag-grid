@@ -127,14 +127,7 @@ export class StoreFactory extends BeanStub implements NamedBean {
     }
 
     private isInfiniteScroll(storeParams?: ServerSideGroupLevelParams): boolean {
-        const res =
-            storeParams && storeParams.suppressInfiniteScroll != null
-                ? storeParams.suppressInfiniteScroll
-                : this.isSuppressServerSideInfiniteScroll();
+        const res = storeParams?.suppressInfiniteScroll ?? false;
         return !res;
-    }
-
-    private isSuppressServerSideInfiniteScroll(): boolean {
-        return this.gos.get('suppressServerSideInfiniteScroll');
     }
 }

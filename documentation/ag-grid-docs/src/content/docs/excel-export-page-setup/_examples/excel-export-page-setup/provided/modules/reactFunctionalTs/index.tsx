@@ -1,24 +1,24 @@
 'use strict';
 
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { ExcelExportModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
-import { IOlympicData } from './interfaces';
+import type { IOlympicData } from './interfaces';
 import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule, MenuModule, ExcelExportModule]);
 
 function getNumber(id: string) {
-    var el = document.querySelector(id) as any;
+    const el = document.querySelector(id) as any;
     if (!el || isNaN(el.value)) {
         return 0;
     }

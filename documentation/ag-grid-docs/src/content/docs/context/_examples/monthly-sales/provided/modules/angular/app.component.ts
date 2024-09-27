@@ -1,7 +1,24 @@
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import type { HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
+
+import { AgGridAngular } from 'ag-grid-angular';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
+import type {
+    ColDef,
+    ColGroupDef,
+    GridApi,
+    GridReadyEvent,
+    ICellRendererParams,
+    SelectionOptions,
+} from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { FiltersToolPanelModule } from 'ag-grid-enterprise';
+import { RowGroupingModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
@@ -166,7 +183,7 @@ export class AppComponent {
     constructor(private http: HttpClient) {}
 
     onChangeMonth(i: number) {
-        var newMonth = (this.context.month += i);
+        let newMonth = (this.context.month += i);
         if (newMonth < -1) {
             newMonth = -1;
         }

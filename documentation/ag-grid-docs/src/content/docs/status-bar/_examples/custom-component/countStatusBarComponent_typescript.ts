@@ -1,4 +1,4 @@
-import { IStatusPanelComp, IStatusPanelParams } from '@ag-grid-community/core';
+import type { IStatusPanelComp, IStatusPanelParams } from 'ag-grid-community';
 
 export class CountStatusBarComponent implements IStatusPanelComp {
     params!: IStatusPanelParams;
@@ -11,7 +11,7 @@ export class CountStatusBarComponent implements IStatusPanelComp {
         this.eGui = document.createElement('div');
         this.eGui.className = 'ag-status-name-value';
 
-        var label = document.createElement('span');
+        const label = document.createElement('span');
         label.textContent = 'Row Count Component: ';
         this.eGui.appendChild(label);
 

@@ -104,18 +104,8 @@ export function getDisplayedColBefore(beans: BeanCollection, col: Column): Colum
     return beans.visibleColsService.getColBefore(col as AgColumn);
 }
 
-/** @deprecated v31.1 */
-export function setColumnVisible(beans: BeanCollection, key: string | Column, visible: boolean): void {
-    beans.columnModel.setColsVisible([key as string | AgColumn], visible, 'api');
-}
-
 export function setColumnsVisible(beans: BeanCollection, keys: (string | Column)[], visible: boolean): void {
     beans.columnModel.setColsVisible(keys as (string | AgColumn)[], visible, 'api');
-}
-
-/** @deprecated v31.1 */
-export function setColumnPinned(beans: BeanCollection, key: string | ColDef | Column, pinned: ColumnPinnedType): void {
-    beans.columnModel.setColsPinned([key], pinned, 'api');
 }
 
 export function setColumnsPinned(

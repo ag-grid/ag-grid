@@ -1,5 +1,6 @@
-import type { CustomDragAndDropImageProps } from '@ag-grid-community/react';
 import React from 'react';
+
+import type { CustomDragAndDropImageProps } from 'ag-grid-react';
 
 export default (props: CustomDragAndDropImageProps & { accentColour: string }) => {
     const getIcon = (icon: string | null): string | undefined => {

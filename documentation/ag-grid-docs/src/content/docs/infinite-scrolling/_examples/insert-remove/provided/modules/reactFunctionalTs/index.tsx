@@ -1,21 +1,22 @@
 'use strict';
 
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import {
+import type {
     ColDef,
     GetRowIdParams,
     GridReadyEvent,
     IDatasource,
-    ModuleRegistry,
     RowClassParams,
     ValueFormatterParams,
 } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 import { InfiniteRowModelModule } from 'ag-grid-community';
-import { AgGridReact, CustomCellRendererProps } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import type { CustomCellRendererProps } from 'ag-grid-react';
+import { AgGridReact } from 'ag-grid-react';
 
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 

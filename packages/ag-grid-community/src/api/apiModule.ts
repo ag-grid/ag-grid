@@ -3,7 +3,7 @@ import { _defineModule } from '../interfaces/iModule';
 import { OverlayApiModule } from '../rendering/overlays/overlayModule';
 import { RenderApiModule } from '../rendering/renderModule';
 import { VERSION } from '../version';
-import { expireValueCache, getCellValue, getValue } from './cellApi';
+import { expireValueCache, getCellValue } from './cellApi';
 import { destroy, getGridId, getGridOption, isDestroyed, setGridOption, updateGridOptions } from './coreApi';
 import { addEventListener, addGlobalListener, removeEventListener, removeGlobalListener } from './eventApi';
 import type {
@@ -23,22 +23,14 @@ import {
     tabToNextCell,
     tabToPreviousCell,
 } from './keyboardNavigationApi';
-import {
-    hidePopupMenu,
-    showColumnMenu,
-    showColumnMenuAfterButtonClick,
-    showColumnMenuAfterMouseClick,
-} from './menuApi';
+import { hidePopupMenu, showColumnMenu } from './menuApi';
 import {
     addRenderedRowListener,
     forEachNode,
     getDisplayedRowAtIndex,
     getDisplayedRowCount,
-    getFirstDisplayedRow,
     getFirstDisplayedRowIndex,
-    getLastDisplayedRow,
     getLastDisplayedRowIndex,
-    getModel,
     getRenderedNodes,
     getRowNode,
     redrawRows,
@@ -75,13 +67,10 @@ export const RowApiModule = _defineModule<_RowGridApi<any>>({
         addRenderedRowListener,
         getRenderedNodes,
         forEachNode,
-        getFirstDisplayedRow,
         getFirstDisplayedRowIndex,
-        getLastDisplayedRow,
         getLastDisplayedRowIndex,
         getDisplayedRowAtIndex,
         getDisplayedRowCount,
-        getModel,
     },
 });
 
@@ -126,7 +115,6 @@ export const CellApiModule = _defineModule<_CellGridApi<any>>({
     moduleName: '@ag-grid-community/cell-api',
     apiFunctions: {
         expireValueCache,
-        getValue,
         getCellValue,
     },
 });
@@ -135,8 +123,6 @@ export const CommunityMenuApiModule = _defineModule<_CommunityMenuGridApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/menu-api',
     apiFunctions: {
-        showColumnMenuAfterButtonClick,
-        showColumnMenuAfterMouseClick,
         showColumnMenu,
         hidePopupMenu,
     },

@@ -1,3 +1,5 @@
+import type { IGroupHideOpenParentsService } from 'ag-grid-community';
+
 import type { ColumnModel } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -32,6 +34,7 @@ import { ChangedPath } from '../utils/changedPath';
 import { _debounce, _errorOnce, _warnOnce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
 import type { ValueCache } from '../valueService/valueCache';
+import { updateRowNodeAfterSort } from './sortStage';
 
 enum RecursionType {
     Normal,
@@ -66,10 +69,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private selectionService?: ISelectionService;
     private valueCache?: ValueCache;
     private environment: Environment;
+    private groupHideOpenParentsService?: IGroupHideOpenParentsService;
 
     // standard stages
     private filterStage: IRowNodeStage;
-    private sortStage: IRowNodeStage;
+    private sortStage?: IRowNodeStage;
     private flattenStage: IRowNodeStage;
 
     // enterprise stages
@@ -85,6 +89,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.selectionService = beans.selectionService;
         this.valueCache = beans.valueCache;
         this.environment = beans.environment;
+        this.groupHideOpenParentsService = beans.groupHideOpenParentsService;
 
         this.filterStage = beans.filterStage!;
         this.sortStage = beans.sortStage!;
@@ -228,7 +233,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const aggregateStageRefreshProps: Set<keyof GridOptions> = new Set([
             'getGroupRowAgg',
             'alwaysAggregateAtRootLevel',
-            'groupIncludeTotalFooter',
             'suppressAggFilteredOnly',
             'grandTotalRow',
         ]);
@@ -241,7 +245,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const flattenStageRefreshProps: Set<keyof GridOptions> = new Set([
             'groupRemoveSingleChildren',
             'groupRemoveLowestSingleChildren',
-            'groupIncludeFooter',
             'groupTotalRow',
         ]);
 
@@ -1140,11 +1143,28 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private doSort(rowNodeTransactions: RowNodeTransaction[] | undefined, changedPath: ChangedPath) {
-        this.sortStage.execute({
-            rowNode: this.rootNode,
-            rowNodeTransactions: rowNodeTransactions,
-            changedPath: changedPath,
-        });
+        if (this.sortStage) {
+            this.sortStage.execute({
+                rowNode: this.rootNode,
+                rowNodeTransactions: rowNodeTransactions,
+                changedPath: changedPath,
+            });
+        } else {
+            changedPath.forEachChangedNodeDepthFirst((rowNode) => {
+                // this needs to run before sorting
+                this.groupHideOpenParentsService?.pullDownGroupDataForHideOpenParents(
+                    rowNode.childrenAfterAggFilter,
+                    true
+                );
+
+                rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
+
+                updateRowNodeAfterSort(rowNode);
+            });
+        }
+
+        // this needs to run after sorting
+        this.groupHideOpenParentsService?.updateGroupDataForHideOpenParents(changedPath);
     }
 
     private doRowGrouping(

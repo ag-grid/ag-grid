@@ -1,6 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -63,11 +64,11 @@ function clearSort() {
     });
 }
 
-var savedSort: any;
+let savedSort: any;
 
 function saveSort() {
-    var colState = gridApi!.getColumnState();
-    var sortState = colState
+    const colState = gridApi!.getColumnState();
+    const sortState = colState
         .filter(function (s) {
             return s.sort != null;
         })
@@ -87,7 +88,7 @@ function restoreFromSave() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

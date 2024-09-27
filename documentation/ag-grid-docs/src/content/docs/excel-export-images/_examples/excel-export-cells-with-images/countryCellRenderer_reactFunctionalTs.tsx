@@ -1,7 +1,8 @@
-import { CustomCellRendererProps } from '@ag-grid-community/react';
 import React from 'react';
 
-import { FlagContext, IOlympicData } from './interfaces';
+import type { CustomCellRendererProps } from 'ag-grid-react';
+
+import type { FlagContext, IOlympicData } from './interfaces';
 
 export default (props: CustomCellRendererProps<IOlympicData, any, FlagContext>) => (
     <React.Fragment>

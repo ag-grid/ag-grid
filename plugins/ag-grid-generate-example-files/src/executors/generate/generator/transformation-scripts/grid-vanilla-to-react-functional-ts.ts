@@ -62,7 +62,7 @@ function getModuleImports(
         imports: [...propertyInterfaces, ...extraCoreTypes],
     });
 
-    addLicenseManager(imports, exampleConfig, false);
+    addLicenseManager(imports, exampleConfig);
 
     if (bImports.length > 0) {
         addBindingImports(bImports, imports, false, true);
@@ -81,62 +81,10 @@ function getModuleImports(
     return imports;
 }
 
-function getPackageImports(
-    bindings: ParsedBindings,
-    exampleConfig: ExampleConfig,
-    componentFilenames: string[],
-    extraCoreTypes: string[],
-    allStylesheets: string[]
-): string[] {
-    const { inlineGridStyles, tData } = bindings;
-
-    const imports = [
-        "import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';",
-        "import { createRoot } from 'react-dom/client';",
-        "import { AgGridReact } from 'ag-grid-react';",
-    ];
-
-    addLicenseManager(imports, exampleConfig, true);
-
-    if (!usesThemingApi(bindings)) {
-        imports.push("import 'ag-grid-community/styles/ag-grid.css';");
-
-        // to account for the (rare) example that has more than one class...just default to quartz if it does
-        // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
-        // "source" non dark version
-        const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
-        imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
-    }
-
-    if (allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));
-    }
-
-    const propertyInterfaces = getPropertyInterfaces(bindings.properties);
-    const bImports = [...(bindings.imports || [])];
-    bImports.push({
-        module: `'ag-grid-community'`,
-        isNamespaced: false,
-        imports: [...propertyInterfaces, ...extraCoreTypes],
-    });
-    if (bImports.length > 0) {
-        addBindingImports(bImports, imports, true, true);
-    }
-
-    if (componentFilenames) {
-        imports.push(...componentFilenames.map(getImport));
-    }
-
-    addGenericInterfaceImport(imports, bindings.tData, bindings);
-
-    return imports;
-}
-
 function getImports(
     bindings: ParsedBindings,
     exampleConfig: ExampleConfig,
     componentFileNames: string[],
-    importType: ImportType,
     extraCoreTypes: string[],
     allStylesheets: string[]
 ): string[] {
@@ -146,11 +94,7 @@ function getImports(
         imports.push(`import { ${localeImport.imports[0]} } from '@ag-grid-community/locale';`);
     }
 
-    if (importType === 'packages') {
-        imports.push(...getPackageImports(bindings, exampleConfig, componentFileNames, extraCoreTypes, allStylesheets));
-    } else {
-        imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, extraCoreTypes, allStylesheets));
-    }
+    imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, extraCoreTypes, allStylesheets));
 
     return imports;
 }
@@ -261,14 +205,7 @@ export function vanillaToReactFunctionalTs(
             extraCoreTypes = ['GridReadyEvent'];
         }
 
-        const imports = getImports(
-            bindings,
-            exampleConfig,
-            componentFilenames,
-            importType,
-            extraCoreTypes,
-            allStylesheets
-        );
+        const imports = getImports(bindings, exampleConfig, componentFilenames, extraCoreTypes, allStylesheets);
 
         const components: { [componentName: string]: string } = extractComponentInformation(
             properties,

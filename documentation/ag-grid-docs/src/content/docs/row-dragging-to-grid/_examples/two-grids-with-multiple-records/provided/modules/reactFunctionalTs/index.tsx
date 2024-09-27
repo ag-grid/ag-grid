@@ -1,19 +1,20 @@
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { StrictMode, useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import {
+import type {
     ColDef,
     GetRowIdParams,
     GridApi,
     GridReadyEvent,
-    ModuleRegistry,
     RowDragEndEvent,
     SelectionOptions,
 } from 'ag-grid-community';
-import { AgGridReact, CustomCellRendererProps } from 'ag-grid-react';
+import { ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import type { CustomCellRendererProps } from 'ag-grid-react';
+import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
@@ -132,7 +133,7 @@ const GridExample = () => {
 
     const onDragStop = useCallback(
         (params: RowDragEndEvent) => {
-            var nodes = params.nodes;
+            const nodes = params.nodes;
 
             if (radioChecked === 0) {
                 leftApi!.applyTransaction({

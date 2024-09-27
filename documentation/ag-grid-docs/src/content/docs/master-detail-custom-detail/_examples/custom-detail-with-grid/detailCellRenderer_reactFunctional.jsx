@@ -1,5 +1,6 @@
-import { AgGridReact } from '@ag-grid-community/react';
 import React, { useEffect } from 'react';
+
+import { AgGridReact } from 'ag-grid-react';
 
 const DetailCellRenderer = ({ data, node, api }) => {
     const rowId = node.id;

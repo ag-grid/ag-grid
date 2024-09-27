@@ -1,4 +1,4 @@
-import {
+import type {
     ColDef,
     GetRowIdParams,
     GridApi,
@@ -6,10 +6,10 @@ import {
     GridReadyEvent,
     IServerSideGetRowsParams,
     ServerSideTransaction,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+} from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { data, dataObservers, randomUpdates } from './data';
 import { FakeServer } from './fakeServer';
@@ -52,7 +52,7 @@ const gridOptions: GridOptions = {
         minWidth: 220,
     },
     getRowId: (params: GetRowIdParams) => {
-        var rowId = '';
+        let rowId = '';
         if (params.parentKeys && params.parentKeys.length) {
             rowId += params.parentKeys.join('-') + '-';
         }

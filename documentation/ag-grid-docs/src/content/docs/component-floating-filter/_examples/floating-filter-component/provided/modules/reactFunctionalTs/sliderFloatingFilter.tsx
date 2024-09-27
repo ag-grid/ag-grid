@@ -1,4 +1,7 @@
-import React, { ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
+import React from 'react';
+
+import type { CustomFloatingFilterProps } from 'ag-grid-react';
 
 import { CustomFloatingFilterProps } from 'ag-grid-react';
 

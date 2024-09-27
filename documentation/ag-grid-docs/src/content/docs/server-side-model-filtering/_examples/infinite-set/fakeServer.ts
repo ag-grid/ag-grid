@@ -6,7 +6,7 @@ export function FakeServer(allData) {
 
     return {
         getData: function (request) {
-            var results = executeQuery(request);
+            const results = executeQuery(request);
             results.forEach((row) => {
                 row.country = {
                     code: row.countryCode,
@@ -23,8 +23,8 @@ export function FakeServer(allData) {
             };
         },
         getCountries: function (sportFilter) {
-            var textFilter = sportFilter ? ' WHERE ' + textFilterMapper('sport', sportFilter.filterModels[0]) : '';
-            var sql = 'SELECT DISTINCT countryCode, countryName FROM ? ' + textFilter + ' ORDER BY countryName ASC';
+            const textFilter = sportFilter ? ' WHERE ' + textFilterMapper('sport', sportFilter.filterModels[0]) : '';
+            const sql = 'SELECT DISTINCT countryCode, countryName FROM ? ' + textFilter + ' ORDER BY countryName ASC';
 
             return alasql(sql, [allData]).map((row) => ({
                 code: row.countryCode,
@@ -34,10 +34,10 @@ export function FakeServer(allData) {
         getSports: function (countries, sportFilter) {
             console.log('Returning sports for ' + (countries ? countries.join(', ') : 'all countries'));
 
-            var where = countries ? " WHERE countryCode IN ('" + countries.join("', '") + "')" : '';
-            var operator = countries ? ' AND ' : ' WHERE ';
-            var textFilter = sportFilter ? operator + textFilterMapper('sport', sportFilter.filterModels[0]) : '';
-            var sql = 'SELECT DISTINCT sport FROM ? ' + where + textFilter + ' ORDER BY sport ASC';
+            const where = countries ? " WHERE countryCode IN ('" + countries.join("', '") + "')" : '';
+            const operator = countries ? ' AND ' : ' WHERE ';
+            const textFilter = sportFilter ? operator + textFilterMapper('sport', sportFilter.filterModels[0]) : '';
+            const sql = 'SELECT DISTINCT sport FROM ? ' + where + textFilter + ' ORDER BY sport ASC';
 
             return alasql(sql, [allData]).map(function (x) {
                 return x.sport;
@@ -46,7 +46,7 @@ export function FakeServer(allData) {
     };
 
     function executeQuery(request) {
-        var sql = buildSql(request);
+        const sql = buildSql(request);
 
         console.log('[FakeServer] - about to execute query:', sql);
 
@@ -82,8 +82,8 @@ export function FakeServer(allData) {
 
     function createFilterSql(mapper, key, item) {
         if (item.operator) {
-            var condition1 = mapper(key, item.condition1);
-            var condition2 = mapper(key, item.condition2);
+            const condition1 = mapper(key, item.condition1);
+            const condition2 = mapper(key, item.condition2);
 
             return '(' + condition1 + ' ' + item.operator + ' ' + condition2 + ')';
         }
@@ -92,12 +92,12 @@ export function FakeServer(allData) {
     }
 
     function whereSql(request) {
-        var whereParts = [];
-        var filterModel = request.filterModel;
+        const whereParts = [];
+        const filterModel = request.filterModel;
 
         if (filterModel) {
             Object.keys(filterModel).forEach(function (columnKey) {
-                var filter = filterModel[columnKey];
+                const filter = filterModel[columnKey];
 
                 if (filter.filterType === 'set') {
                     whereParts.push(mapColumnKey(columnKey) + " IN ('" + filter.values.join("', '") + "')");
@@ -112,7 +112,7 @@ export function FakeServer(allData) {
                 if (filter.filterType === 'multi') {
                     Object.keys(filter.filterModels).forEach(function (fm) {
                         if (filter.filterModels[fm]) {
-                            var model = filter.filterModels[fm];
+                            const model = filter.filterModels[fm];
                             switch (model.filterType) {
                                 case 'text':
                                     whereParts.push(createFilterSql(textFilterMapper, columnKey, model));
@@ -141,11 +141,11 @@ export function FakeServer(allData) {
     }
 
     function orderBySql(request) {
-        var sortModel = request.sortModel;
+        const sortModel = request.sortModel;
 
         if (sortModel.length === 0) return '';
 
-        var sorts = sortModel.map(function (s) {
+        const sorts = sortModel.map(function (s) {
             return mapColumnKey(s.colId) + ' ' + s.sort.toUpperCase();
         });
 
@@ -156,7 +156,7 @@ export function FakeServer(allData) {
         if (request.endRow == undefined || request.startRow == undefined) {
             return '';
         }
-        var blockSize = request.endRow - request.startRow;
+        const blockSize = request.endRow - request.startRow;
 
         return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
     }

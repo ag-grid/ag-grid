@@ -1,6 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -24,7 +25,7 @@ const gridOptions: GridOptions = {
 
 function onFlashOneCell() {
     // pick fourth row at random
-    var rowNode = gridApi!.getDisplayedRowAtIndex(4)!;
+    const rowNode = gridApi!.getDisplayedRowAtIndex(4)!;
     // pick 'c' column
     gridApi!.flashCells({ rowNodes: [rowNode], columns: ['c'] });
 }
@@ -36,22 +37,22 @@ function onFlashTwoColumns() {
 
 function onFlashTwoRows() {
     // pick fourth and fifth row at random
-    var rowNode1 = gridApi!.getDisplayedRowAtIndex(4)!;
-    var rowNode2 = gridApi!.getDisplayedRowAtIndex(5)!;
+    const rowNode1 = gridApi!.getDisplayedRowAtIndex(4)!;
+    const rowNode2 = gridApi!.getDisplayedRowAtIndex(5)!;
     // flash whole row, so leave column selection out
     gridApi!.flashCells({ rowNodes: [rowNode1, rowNode2] });
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });
 
 function createRowData() {
-    var rowData = [];
+    const rowData = [];
 
-    for (var i = 0; i < 20; i++) {
+    for (let i = 0; i < 20; i++) {
         rowData.push({
             a: Math.floor(((i + 323) * 25435) % 10000),
             b: Math.floor(((i + 323) * 23221) % 10000),

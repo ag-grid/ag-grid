@@ -1,7 +1,8 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 
@@ -32,7 +33,7 @@ const gridOptions: GridOptions = {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
     // lookup the container we want the Grid to use
-    var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
     // create the grid passing in the div to use together with the columns & data we want to use
     gridApi = createGrid(eGridDiv, gridOptions);

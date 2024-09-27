@@ -107,19 +107,8 @@ export class DateCompWrapper {
     }
 
     public updateParams(params: IDateParams): void {
-        let hasRefreshed = false;
         if (this.dateComp?.refresh && typeof this.dateComp.refresh === 'function') {
-            const result = this.dateComp.refresh(params);
-            // framework wrapper always implements optional methods, but returns null if no underlying method
-            if (result !== null) {
-                hasRefreshed = true;
-            }
-        }
-        if (!hasRefreshed && this.dateComp?.onParamsUpdated && typeof this.dateComp.onParamsUpdated === 'function') {
-            const result = this.dateComp.onParamsUpdated(params);
-            if (result !== null) {
-                _warnOnce(`Custom date component method 'onParamsUpdated' is deprecated. Use 'refresh' instead.`);
-            }
+            this.dateComp.refresh(params);
         }
     }
 

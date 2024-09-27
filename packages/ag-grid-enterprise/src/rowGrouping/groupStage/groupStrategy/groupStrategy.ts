@@ -50,7 +50,6 @@ interface GroupingDetails {
     isGroupOpenByDefault: (params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean;
     initialGroupOrderComparator: (params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => number;
 
-    suppressGroupMaintainValueType: boolean;
     keyCreators: (((params: KeyCreatorParams) => string) | undefined)[];
 }
 
@@ -140,7 +139,6 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
             groupAllowUnbalanced: this.gos.get('groupAllowUnbalanced'),
             isGroupOpenByDefault: this.gos.getCallback('isGroupOpenByDefault') as any,
             initialGroupOrderComparator: this.gos.getCallback('initialGroupOrderComparator') as any,
-            suppressGroupMaintainValueType: this.gos.get('suppressGroupMaintainValueType'),
             keyCreators: groupedCols?.map((column) => column.getColDef().keyCreator) ?? [],
         };
 
@@ -602,12 +600,8 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
             const groupColumn = groupNode.rowGroupColumn;
             const isRowGroupDisplayed = groupColumn !== null && col.isRowGroupDisplayed(groupColumn.getId());
             if (isRowGroupDisplayed) {
-                if (details.suppressGroupMaintainValueType) {
-                    groupNode.groupData![col.getColId()] = groupInfo.key;
-                } else {
-                    // if maintain group value type, get the value from any leaf node.
-                    groupNode.groupData![col.getColId()] = this.valueService.getValue(groupColumn, groupInfo.leafNode);
-                }
+                // if maintain group value type, get the value from any leaf node.
+                groupNode.groupData![col.getColId()] = this.valueService.getValue(groupColumn, groupInfo.leafNode);
             }
         });
     }

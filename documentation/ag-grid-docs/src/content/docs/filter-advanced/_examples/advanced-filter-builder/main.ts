@@ -1,8 +1,9 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { AdvancedFilterModel, FirstDataRenderedEvent, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
-import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { AdvancedFilterModel, FirstDataRenderedEvent, GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { AdvancedFilterModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([AdvancedFilterModule, ClientSideRowModelModule, MenuModule]);
 

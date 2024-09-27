@@ -1,6 +1,5 @@
 import type { BeanCollection } from '../context/context';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
-import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { RedrawRowsParams } from '../rendering/rowRenderer';
 
@@ -51,18 +50,8 @@ export function forEachNode<TData = any>(
     beans.rowModel.forEachNode(callback, includeFooterNodes);
 }
 
-/** @deprecated v31.1 */
-export function getFirstDisplayedRow(beans: BeanCollection): number {
-    return getFirstDisplayedRowIndex(beans);
-}
-
 export function getFirstDisplayedRowIndex(beans: BeanCollection): number {
     return beans.rowRenderer.getFirstVirtualRenderedRow();
-}
-
-/** @deprecated v31.1 */
-export function getLastDisplayedRow(beans: BeanCollection): number {
-    return getLastDisplayedRowIndex(beans);
 }
 
 export function getLastDisplayedRowIndex(beans: BeanCollection): number {
@@ -75,9 +64,4 @@ export function getDisplayedRowAtIndex<TData = any>(beans: BeanCollection, index
 
 export function getDisplayedRowCount(beans: BeanCollection): number {
     return beans.rowModel.getRowCount();
-}
-
-/** @deprecated v31.1 */
-export function getModel(beans: BeanCollection): IRowModel {
-    return beans.rowModel;
 }

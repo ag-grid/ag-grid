@@ -1,12 +1,7 @@
-import {
-    GridApi,
-    GridOptions,
-    IServerSideDatasource,
-    IServerSideGetRowsRequest,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+import type { GridApi, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ServerSideRowModelModule]);
 
@@ -38,17 +33,17 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
         .then(function (data) {
             // setup the fake server with entire dataset
-            var fakeServer = createFakeServer(data);
+            const fakeServer = createFakeServer(data);
 
             // create datasource with a reference to the fake server
-            var datasource = createServerSideDatasource(fakeServer);
+            const datasource = createServerSideDatasource(fakeServer);
 
             // register the datasource with the grid
             gridApi!.setGridOption('serverSideDatasource', datasource);
@@ -78,7 +73,7 @@ function createServerSideDatasource(server: any): IServerSideDatasource {
             );
 
             // get data for request from our fake server
-            var response = server.getData(params.request);
+            const response = server.getData(params.request);
 
             // simulating real server call with a 500ms delay
             setTimeout(() => {
@@ -97,7 +92,7 @@ function createFakeServer(allData: any[]) {
     return {
         getData: (request: Pick<IServerSideGetRowsRequest, 'startRow' | 'endRow'>) => {
             // in this simplified fake server all rows are contained in an array
-            var requestedRows = allData.slice(request.startRow, request.endRow);
+            const requestedRows = allData.slice(request.startRow, request.endRow);
 
             return {
                 success: true,

@@ -1,6 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -77,7 +78,7 @@ function jumpToCol() {
 }
 
 function jumpToRow() {
-    var value = (document.getElementById('row') as HTMLInputElement).value;
+    const value = (document.getElementById('row') as HTMLInputElement).value;
     const index = Number(value);
     if (typeof index === 'number' && !isNaN(index)) {
         gridApi!.ensureIndexVisible(index);

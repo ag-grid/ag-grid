@@ -1,18 +1,18 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type {
     FirstDataRenderedEvent,
     GridApi,
     GridOptions,
     ISetFilterParams,
     KeyCreatorParams,
     ValueFormatterParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+} from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { FiltersToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -47,7 +47,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function countryCodeKeyCreator(params: KeyCreatorParams) {
-    var countryObject = params.value;
+    const countryObject = params.value;
     return countryObject.code;
 }
 
@@ -56,7 +56,7 @@ function countryValueFormatter(params: ValueFormatterParams) {
 }
 
 function printFilterModel() {
-    var filterModel = gridApi!.getFilterModel();
+    const filterModel = gridApi!.getFilterModel();
     console.log(filterModel);
 }
 
@@ -66,7 +66,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

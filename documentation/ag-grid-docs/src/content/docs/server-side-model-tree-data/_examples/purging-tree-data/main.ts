@@ -1,19 +1,18 @@
-import {
+import type {
     ColDef,
     GridApi,
     GridOptions,
     IServerSideDatasource,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
-    IsServerSideGroup,
     IsServerSideGroupOpenByDefaultParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+} from 'ag-grid-community';
+import { IsServerSideGroup, createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { RowGroupingModule } from 'ag-grid-enterprise';
+import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ColumnsToolPanelModule, MenuModule, RowGroupingModule, ServerSideRowModelModule]);
 
@@ -40,8 +39,8 @@ const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     cacheBlockSize: 10,
     isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
-        var isKathrynPowers = params.rowNode.level == 0 && params.data.employeeName == 'Kathryn Powers';
-        var isMabelWard = params.rowNode.level == 1 && params.data.employeeName == 'Mabel Ward';
+        const isKathrynPowers = params.rowNode.level == 0 && params.data.employeeName == 'Kathryn Powers';
+        const isMabelWard = params.rowNode.level == 1 && params.data.employeeName == 'Mabel Ward';
         return isKathrynPowers || isMabelWard;
     },
     isServerSideGroup: (dataItem: any) => {
@@ -60,14 +59,14 @@ function refreshCache(route: string[]) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/tree-data.json')
         .then((response) => response.json())
         .then(function (data) {
-            var fakeServer = createFakeServer(data);
-            var datasource = createServerSideDatasource(fakeServer);
+            const fakeServer = createFakeServer(data);
+            const datasource = createServerSideDatasource(fakeServer);
             gridApi!.setGridOption('serverSideDatasource', datasource);
         });
 });
@@ -88,8 +87,8 @@ function createFakeServer(fakeServerData: any[]) {
                     });
                 }
 
-                var key = groupKeys[0];
-                for (var i = 0; i < data.length; i++) {
+                const key = groupKeys[0];
+                for (let i = 0; i < data.length; i++) {
                     if (data[i].employeeName === key) {
                         return extractRowsFromData(groupKeys.slice(1), data[i].underlings.slice());
                     }
@@ -106,10 +105,10 @@ function createServerSideDatasource(fakeServer: any) {
     const dataSource: IServerSideDatasource = {
         getRows: (params: IServerSideGetRowsParams) => {
             console.log('ServerSideDatasource.getRows: params = ', params);
-            var request = params.request;
-            var allRows = fakeServer.getData(request);
-            var doingInfinite = request.startRow != null && request.endRow != null;
-            var result = doingInfinite
+            const request = params.request;
+            const allRows = fakeServer.getData(request);
+            const doingInfinite = request.startRow != null && request.endRow != null;
+            const result = doingInfinite
                 ? {
                       rowData: allRows.slice(request.startRow, request.endRow),
                       rowCount: allRows.length,

@@ -1,4 +1,8 @@
-import { Component, OnDestroy } from '@angular/core';
+import type { OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
+
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
+import type { ICellRendererParams } from 'ag-grid-community';
 
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';

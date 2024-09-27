@@ -601,7 +601,6 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         }
 
         resultantStyle.id = excelId;
-        resultantStyle.name = excelId;
         const key: string = styleIds.join('-');
         this.mixedStyles[key] = {
             excelID: excelId,
