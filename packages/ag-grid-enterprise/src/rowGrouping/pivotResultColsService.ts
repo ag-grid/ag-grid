@@ -1,18 +1,23 @@
-import type { NamedBean } from '../context/bean';
-import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, Context } from '../context/context';
-import type { AgColumn } from '../entities/agColumn';
-import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { AbstractColDef, ColDef, ColGroupDef } from '../entities/colDef';
-import type { ColumnEventType } from '../events';
-import { _areEqual } from '../utils/array';
-import { _exists } from '../utils/generic';
-import type { ColumnFactory } from './columnFactory';
-import type { ColKey, ColumnCollections, ColumnModel } from './columnModel';
-import { destroyColumnTree, getColumnsFromTree } from './columnUtils';
-import type { VisibleColsService } from './visibleColsService';
+import type {
+    AbstractColDef,
+    AgColumn,
+    AgProvidedColumnGroup,
+    BeanCollection,
+    ColDef,
+    ColGroupDef,
+    ColKey,
+    ColumnEventType,
+    ColumnFactory,
+    ColumnModel,
+    Context,
+    IPivotResultColsService,
+    NamedBean,
+    VisibleColsService,
+    _ColumnCollections,
+} from 'ag-grid-community';
+import { BeanStub, _areEqual, _destroyColumnTree, _exists, _getColumnsFromTree } from 'ag-grid-community';
 
-export class PivotResultColsService extends BeanStub implements NamedBean {
+export class PivotResultColsService extends BeanStub implements NamedBean, IPivotResultColsService {
     beanName = 'pivotResultColsService' as const;
 
     private context: Context;
@@ -28,18 +33,13 @@ export class PivotResultColsService extends BeanStub implements NamedBean {
     }
 
     // if pivoting, these are the generated columns as a result of the pivot
-    private pivotResultCols: ColumnCollections | null;
-
-    // private pivotResultColTree: IProvidedColumn[] | null;
-    // private pivotResultColTreeDept = -1;
-    // private pivotResultCols_old: Column[] | null;
-    // private pivotResultColsMap: { [id: string]: Column };
+    private pivotResultCols: _ColumnCollections | null;
 
     // Saved when pivot is disabled, available to re-use when pivot is restored
     private previousPivotResultCols: (AgColumn | AgProvidedColumnGroup)[] | null;
 
     public override destroy(): void {
-        destroyColumnTree(this.context, this.pivotResultCols?.tree);
+        _destroyColumnTree(this.context, this.pivotResultCols?.tree);
         super.destroy();
     }
 
@@ -71,7 +71,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean {
         return foundColumn;
     }
 
-    public getPivotResultCols(): ColumnCollections | null {
+    public getPivotResultCols(): _ColumnCollections | null {
         return this.pivotResultCols;
     }
 
@@ -100,11 +100,11 @@ export class PivotResultColsService extends BeanStub implements NamedBean {
                 this.pivotResultCols?.tree || this.previousPivotResultCols || undefined,
                 source
             );
-            destroyColumnTree(this.context, this.pivotResultCols?.tree, balancedTreeResult.columnTree);
+            _destroyColumnTree(this.context, this.pivotResultCols?.tree, balancedTreeResult.columnTree);
 
             const tree = balancedTreeResult.columnTree;
             const treeDepth = balancedTreeResult.treeDept;
-            const list = getColumnsFromTree(tree);
+            const list = _getColumnsFromTree(tree);
             const map = {};
 
             this.pivotResultCols = { tree, treeDepth, list, map };

@@ -6,10 +6,10 @@ import type {
     IAggFunc,
     IAggregationStage,
     IClientSideRowModel,
+    IPivotResultColsService,
     IRowModel,
     IRowNodeStage,
     PartialCellRange,
-    PivotResultColsService,
     RowNode,
     RowNodeSorter,
     SortController,
@@ -50,7 +50,7 @@ interface IData {
 
 export class ChartDatasource extends BeanStub {
     private gridRowModel: IRowModel;
-    private pivotResultColsService: PivotResultColsService;
+    private pivotResultColsService?: IPivotResultColsService;
     private valueService: ValueService;
     private columnModel: ColumnModel;
     private rowNodeSorter?: RowNodeSorter;
@@ -346,7 +346,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private updatePivotKeysForSSRM() {
-        const secondaryColumns = this.pivotResultColsService.getPivotResultCols()?.list;
+        const secondaryColumns = this.pivotResultColsService?.getPivotResultCols()?.list;
 
         if (!secondaryColumns) {
             return;

@@ -1,6 +1,5 @@
 import type { ColumnModel } from '../../columns/columnModel';
 import type { ColumnState, ColumnStateParams, ColumnStateService } from '../../columns/columnStateService';
-import type { PivotResultColsService } from '../../columns/pivotResultColsService';
 import type { VisibleColsService } from '../../columns/visibleColsService';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
@@ -40,6 +39,7 @@ import type {
 } from '../../interfaces/gridState';
 import type { IExpansionService } from '../../interfaces/iExpansionService';
 import type { FilterModel } from '../../interfaces/iFilter';
+import type { IPivotResultColsService } from '../../interfaces/iPivotResultColsService';
 import type { IRowModel } from '../../interfaces/iRowModel';
 import type { ISelectionService } from '../../interfaces/iSelectionService';
 import type { ISideBarService } from '../../interfaces/iSideBar';
@@ -56,7 +56,7 @@ export class StateService extends BeanStub implements NamedBean {
 
     private filterManager?: FilterManager;
     private ctrlsService: CtrlsService;
-    private pivotResultColsService: PivotResultColsService;
+    private pivotResultColsService?: IPivotResultColsService;
     private focusService: FocusService;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
@@ -487,7 +487,7 @@ export class StateService extends BeanStub implements NamedBean {
         const columnGroupStates = this.columnGroupStates;
         this.columnGroupStates = undefined;
 
-        if (!this.pivotResultColsService.isPivotResultColsPresent()) {
+        if (!this.pivotResultColsService?.isPivotResultColsPresent()) {
             return;
         }
 

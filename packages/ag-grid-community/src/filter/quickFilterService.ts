@@ -1,5 +1,4 @@
 import type { ColumnModel } from '../columns/columnModel';
-import type { PivotResultColsService } from '../columns/pivotResultColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -7,6 +6,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
+import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
@@ -19,7 +19,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     private filterValueService: FilterValueService;
     private columnModel: ColumnModel;
     private rowModel: IRowModel;
-    private pivotResultColsService: PivotResultColsService;
+    private pivotResultColsService?: IPivotResultColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.filterValueService = beans.filterValueService!;
@@ -77,7 +77,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
 
         let columnsForQuickFilter =
             (pivotMode && !this.gos.get('applyQuickFilterBeforePivotOrAgg')
-                ? this.pivotResultColsService.getPivotResultCols()?.list
+                ? this.pivotResultColsService?.getPivotResultCols()?.list
                 : providedCols) ?? [];
         if (groupAutoCols) {
             columnsForQuickFilter = columnsForQuickFilter.concat(groupAutoCols);

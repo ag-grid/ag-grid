@@ -9,7 +9,6 @@ import { ColumnNameService } from './columns/columnNameService';
 import { ColumnStateService } from './columns/columnStateService';
 import { ColumnViewportService } from './columns/columnViewportService';
 import { FuncColsService } from './columns/funcColsService';
-import { PivotResultColsService } from './columns/pivotResultColsService';
 import { VisibleColsService } from './columns/visibleColsService';
 import { ComponentMetadataProvider } from './components/framework/componentMetadataProvider';
 import { UserComponentFactory } from './components/framework/userComponentFactory';
@@ -440,7 +439,6 @@ export class GridCoreCreator {
             FuncColsService,
             ColumnNameService,
             ColumnViewportService,
-            PivotResultColsService,
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => (module.beans ? module.beans : []));

@@ -8,6 +8,7 @@ import type { IAggFunc } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { SortController } from '../sort/sortController';
 import { _areEqual, _removeFromArray } from '../utils/array';
@@ -21,9 +22,8 @@ import {
 } from './columnEventUtils';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnModel } from './columnModel';
-import { GROUP_AUTO_COLUMN_ID, getColumnsFromTree } from './columnUtils';
+import { GROUP_AUTO_COLUMN_ID, _getColumnsFromTree } from './columnUtils';
 import type { FuncColsService } from './funcColsService';
-import type { PivotResultColsService } from './pivotResultColsService';
 import type { VisibleColsService } from './visibleColsService';
 
 export interface ModifyColumnsNoEventsCallbacks {
@@ -82,7 +82,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
     private funcColsService: FuncColsService;
     private visibleColsService: VisibleColsService;
     private columnAnimationService?: ColumnAnimationService;
-    private pivotResultColsService: PivotResultColsService;
+    private pivotResultColsService?: IPivotResultColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
@@ -223,10 +223,11 @@ export class ColumnStateService extends BeanStub implements NamedBean {
         // If there are still states left over, see if we can apply them to newly generated
         // pivot result cols or auto cols. Also if defaults exist, ensure they are applied to pivot resul cols
         if (unmatchedAndAutoStates.length > 0 || _exists(params.defaultState)) {
-            const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
-            const pivotResultColsList = pivotResultCols?.list;
-            unmatchedCount = applyStates(unmatchedAndAutoStates, pivotResultColsList || [], (id) =>
-                this.pivotResultColsService.getPivotResultCol(id)
+            const pivotResultColsList = this.pivotResultColsService?.getPivotResultCols()?.list;
+            unmatchedCount = applyStates(
+                unmatchedAndAutoStates,
+                pivotResultColsList || [],
+                (id) => this.pivotResultColsService?.getPivotResultCol(id) ?? null
             ).unmatchedCount;
         }
         this.columnAnimationService?.finish();
@@ -246,7 +247,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
         // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
         const primaryColumnTree = this.columnModel.getColDefColTree();
-        const primaryColumns = getColumnsFromTree(primaryColumnTree);
+        const primaryColumns = _getColumnsFromTree(primaryColumnTree);
         const columnStates: ColumnState[] = [];
 
         // we start at 1000, so if user has mix of rowGroup and group specified, it will work with both.

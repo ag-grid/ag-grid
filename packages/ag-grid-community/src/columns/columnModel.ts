@@ -27,6 +27,7 @@ import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/h
 import type { HeaderRowCtrl } from '../headerRendering/row/headerRowCtrl';
 import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
+import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { _areEqual, _includes, _insertIntoArray, _moveInArray } from '../utils/array';
@@ -39,11 +40,10 @@ import type { ColumnFactory } from './columnFactory';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnState, ColumnStateService } from './columnStateService';
 import { GROUP_AUTO_COLUMN_ID } from './columnUtils';
-import { destroyColumnTree, getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
+import { _destroyColumnTree, _getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
 import type { ControlsColService } from './controlsColService';
 import type { FuncColsService } from './funcColsService';
-import type { PivotResultColsService } from './pivotResultColsService';
 import type { VisibleColsService } from './visibleColsService';
 
 export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
@@ -67,7 +67,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private columnFactory: ColumnFactory;
     private visibleColsService: VisibleColsService;
     private columnViewportService: ColumnViewportService;
-    private pivotResultColsService: PivotResultColsService;
+    private pivotResultColsService?: IPivotResultColsService;
     private columnAnimationService?: ColumnAnimationService;
     private autoColService?: IAutoColService;
     private controlsColService?: ControlsColService;
@@ -181,11 +181,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const oldTree = this.colDefCols?.tree;
         const newTree = this.columnFactory.createColumnTree(this.colDefs, true, oldTree, source);
 
-        destroyColumnTree(this.context, this.colDefCols?.tree, newTree.columnTree);
+        _destroyColumnTree(this.context, this.colDefCols?.tree, newTree.columnTree);
 
         const tree = newTree.columnTree;
         const treeDepth = newTree.treeDept;
-        const list = getColumnsFromTree(tree);
+        const list = _getColumnsFromTree(tree);
         const map: { [id: string]: AgColumn } = {};
 
         list.forEach((col) => (map[col.getId()] = col));
@@ -276,18 +276,18 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private selectCols(): void {
-        const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
+        const pivotResultCols = this.pivotResultColsService?.getPivotResultCols() ?? null;
         this.showingPivotResult = pivotResultCols != null;
 
-        if (pivotResultCols) {
-            const { map, list, tree, treeDepth } = pivotResultCols;
-            this.cols = {
-                list: list.slice(),
-                map: { ...map },
-                tree: tree.slice(),
-                treeDepth,
-            };
+        const { map, list, tree, treeDepth } = pivotResultCols ?? this.colDefCols;
+        this.cols = {
+            list: list.slice(),
+            map: { ...map },
+            tree: tree.slice(),
+            treeDepth,
+        };
 
+        if (pivotResultCols) {
             // If the current columns are the same or a subset of the previous
             // we keep the previous order, otherwise we go back to the order the pivot
             // cols are generated in
@@ -295,14 +295,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
             if (!hasSameColumns) {
                 this.lastPivotOrder = null;
             }
-        } else {
-            const { map, list, tree, treeDepth } = this.colDefCols;
-            this.cols = {
-                list: list.slice(),
-                map: { ...map },
-                tree: tree.slice(),
-                treeDepth,
-            };
         }
     }
 
@@ -354,7 +346,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const destroyPrevious = () => {
             if (this.autoCols) {
-                destroyColumnTree(this.context, this.autoCols.tree);
+                _destroyColumnTree(this.context, this.autoCols.tree);
                 this.autoCols = null;
             }
         };
@@ -401,7 +393,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     private createControlsCols(): void {
         const destroyCollection = () => {
-            destroyColumnTree(this.context, this.controlsCols?.tree);
+            _destroyColumnTree(this.context, this.controlsCols?.tree);
             this.controlsCols = null;
         };
 
@@ -878,9 +870,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public override destroy(): void {
-        destroyColumnTree(this.context, this.colDefCols?.tree);
-        destroyColumnTree(this.context, this.autoCols?.tree);
-        destroyColumnTree(this.context, this.controlsCols?.tree);
+        _destroyColumnTree(this.context, this.colDefCols?.tree);
+        _destroyColumnTree(this.context, this.autoCols?.tree);
+        _destroyColumnTree(this.context, this.controlsCols?.tree);
         super.destroy();
     }
 
@@ -906,8 +898,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     // returns colDefCols, pivotResultCols and autoCols
     public getAllCols(): AgColumn[] {
-        const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
-        const pivotResultColsList = pivotResultCols?.list;
+        const pivotResultColsList = this.pivotResultColsService?.getPivotResultCols()?.list;
         return [
             this.colDefCols?.list ?? [],
             this.autoCols?.list ?? [],

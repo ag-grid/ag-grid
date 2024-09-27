@@ -6,9 +6,9 @@ import type {
     ColumnModel,
     FuncColsService,
     GridOptions,
+    IPivotResultColsService,
     IRowNodeStage,
     NamedBean,
-    PivotResultColsService,
     RowNode,
     StageExecuteParams,
     ValueService,
@@ -24,14 +24,14 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
 
     private valueService: ValueService;
     private columnModel: ColumnModel;
-    private pivotResultColsService: PivotResultColsService;
+    private pivotResultColsService: IPivotResultColsService;
     private funcColsService: FuncColsService;
     private pivotColDefService: PivotColDefService;
 
     public wireBeans(beans: BeanCollection) {
         this.valueService = beans.valueService;
         this.columnModel = beans.columnModel;
-        this.pivotResultColsService = beans.pivotResultColsService;
+        this.pivotResultColsService = beans.pivotResultColsService!;
         this.funcColsService = beans.funcColsService;
         this.pivotColDefService = beans.pivotColDefService as PivotColDefService;
     }

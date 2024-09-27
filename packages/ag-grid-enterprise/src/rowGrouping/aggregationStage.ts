@@ -7,9 +7,9 @@ import type {
     GetGroupRowAggParams,
     IAggFunc,
     IAggFuncParams,
+    IPivotResultColsService,
     IRowNodeStage,
     NamedBean,
-    PivotResultColsService,
     RowNode,
     StageExecuteParams,
     ValueService,
@@ -36,7 +36,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
     private valueService: ValueService;
     private aggFuncService: AggFuncService;
     private funcColsService: FuncColsService;
-    private pivotResultColsService: PivotResultColsService;
+    private pivotResultColsService?: IPivotResultColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
@@ -147,7 +147,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
     private aggregateRowNodeUsingValuesAndPivot(rowNode: RowNode): any {
         const result: any = {};
 
-        const secondaryColumns = this.pivotResultColsService.getPivotResultCols()?.list ?? [];
+        const secondaryColumns = this.pivotResultColsService?.getPivotResultCols()?.list ?? [];
         let canSkipTotalColumns = true;
         for (let i = 0; i < secondaryColumns.length; i++) {
             const secondaryCol = secondaryColumns[i];

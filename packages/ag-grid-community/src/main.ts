@@ -10,7 +10,7 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
 // columns
 export { ColumnFactory } from './columns/columnFactory';
-export { ColumnModel } from './columns/columnModel';
+export { ColumnModel, ColumnCollections as _ColumnCollections, ColKey } from './columns/columnModel';
 export type { ColumnAutosizeService } from './columnAutosize/columnAutosizeService';
 export type { FuncColsService } from './columns/funcColsService';
 export type { ColumnStateService } from './columns/columnStateService';
@@ -19,11 +19,17 @@ export type { ColumnMoveService } from './columnMove/columnMoveService';
 export type { ColumnNameService } from './columns/columnNameService';
 export { IAggColumnNameService } from './interfaces/iAggColumnNameService';
 export { IShowRowGroupColsService, IColumnDropZonesService } from './interfaces/iShowRowGroupColsService';
-export type { PivotResultColsService } from './columns/pivotResultColsService';
+export { IPivotResultColsService } from './interfaces/iPivotResultColsService';
 export { ColumnKeyCreator } from './columns/columnKeyCreator';
 export type { VisibleColsService } from './columns/visibleColsService';
 export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
-export { GROUP_AUTO_COLUMN_ID, isColumnControlsCol, isColumnGroupAutoCol } from './columns/columnUtils';
+export {
+    GROUP_AUTO_COLUMN_ID,
+    isColumnControlsCol,
+    isColumnGroupAutoCol,
+    _destroyColumnTree,
+    _getColumnsFromTree,
+} from './columns/columnUtils';
 export { IAutoColService } from './interfaces/iAutoColService';
 export {
     SizeColumnsToFitGridColumnLimits,

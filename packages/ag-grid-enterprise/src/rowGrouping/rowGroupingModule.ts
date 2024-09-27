@@ -23,6 +23,7 @@ import { GroupHideOpenParentsService } from './groupHideOpenParentsService';
 import { GroupStage } from './groupStage/groupStage';
 import { SelectableService } from './groupStage/selectableService';
 import { PivotColDefService } from './pivotColDefService';
+import { PivotResultColsService } from './pivotResultColsService';
 import { PivotStage } from './pivotStage';
 import {
     addAggFunc,
@@ -62,8 +63,6 @@ export const RowGroupingCoreModule = _defineModule({
         AggregationStage,
         FilterAggregatesStage,
         GroupStage,
-        PivotColDefService,
-        PivotStage,
         AggFuncService,
         AutoColService,
         ShowRowGroupColsService,
@@ -91,6 +90,13 @@ export const RowGroupingSelectionModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.RowGroupingModule}-selection`,
     beans: [SelectableService],
+    dependantModules: [RowGroupingCoreModule],
+});
+
+export const PivotModule = _defineModule({
+    version: VERSION,
+    moduleName: '@ag-grid-enterprise/pivot',
+    beans: [PivotResultColsService, PivotColDefService, PivotStage],
     dependantModules: [RowGroupingCoreModule],
 });
 
@@ -153,5 +159,6 @@ export const RowGroupingModule = _defineModule({
         GroupFloatingFilterModule,
         RowGroupingSelectionModule,
         StickyRowModule,
+        PivotModule,
     ],
 });
