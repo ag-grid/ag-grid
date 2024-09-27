@@ -20,7 +20,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.overlayService = beans.overlayService;
+        this.overlayService = beans.overlayService!;
         this.focusService = beans.focusService;
         this.visibleColsService = beans.visibleColsService;
     }

@@ -45,7 +45,6 @@ import { ModuleRegistry } from './modules/moduleRegistry';
 import { PageBoundsListener } from './pagination/pageBoundsListener';
 import { PageBoundsService } from './pagination/pageBoundsService';
 import { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
-import { OverlayService } from './rendering/overlays/overlayService';
 import { RowContainerHeightService } from './rendering/rowContainerHeightService';
 import { RowRenderer } from './rendering/rowRenderer';
 import { SyncService } from './syncService';
@@ -440,7 +439,6 @@ export class GridCoreCreator {
             PinnedWidthService,
             CtrlsFactory,
             SyncService,
-            OverlayService,
             ApiEventService,
             AriaAnnouncementService,
             ColumnApplyStateService,

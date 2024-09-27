@@ -48,7 +48,7 @@ export class FocusService extends BeanStub implements NamedBean {
     private navigationService: NavigationService;
     private ctrlsService: CtrlsService;
     private filterManager?: FilterManager;
-    private overlayService: OverlayService;
+    private overlayService?: OverlayService;
 
     private rangeService?: IRangeService;
     private advancedFilterService?: IAdvancedFilterService;
@@ -371,11 +371,11 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public isHeaderFocusSuppressed(): boolean {
-        return this.gos.get('suppressHeaderFocus') || this.overlayService.isExclusive();
+        return this.gos.get('suppressHeaderFocus') || !!this.overlayService?.isExclusive();
     }
 
     public isCellFocusSuppressed(): boolean {
-        return this.gos.get('suppressCellFocus') || this.overlayService.isExclusive();
+        return this.gos.get('suppressCellFocus') || !!this.overlayService?.isExclusive();
     }
 
     public focusHeaderPosition(params: {
@@ -532,7 +532,7 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public focusFirstHeader(): boolean {
-        if (this.overlayService.isExclusive() && this.focusOverlay()) {
+        if (this.overlayService?.isExclusive() && this.focusOverlay()) {
             return true;
         }
 
@@ -554,7 +554,7 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public focusLastHeader(event?: KeyboardEvent): boolean {
-        if (this.overlayService.isExclusive() && this.focusOverlay(true)) {
+        if (this.overlayService?.isExclusive() && this.focusOverlay(true)) {
             return true;
         }
 
@@ -718,17 +718,12 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public focusOverlay(backwards?: boolean): boolean {
-        const overlayGui = this.overlayService.isVisible() && this.overlayService.getOverlayWrapper()?.getGui();
+        const overlayGui = this.overlayService?.isVisible() && this.overlayService.getOverlayWrapper()?.getGui();
         return !!overlayGui && this.focusInto(overlayGui, backwards);
     }
 
-    private focusGridViewFailed(backwards: boolean, canFocusOverlay: boolean): boolean {
-        const overlayFocused = canFocusOverlay && this.focusOverlay(backwards);
-        return overlayFocused || (backwards && this.focusLastHeader());
-    }
-
     public focusGridView(column?: AgColumn, backwards: boolean = false, canFocusOverlay = true): boolean {
-        if (this.overlayService.isExclusive()) {
+        if (this.overlayService?.isExclusive()) {
             return canFocusOverlay && this.focusOverlay(backwards);
         }
 

@@ -241,7 +241,7 @@ export interface CoreBeanCollection {
     globalEventListener: AgGlobalEventListener;
     globalSyncEventListener: AgGlobalEventListener;
     stateService?: StateService;
-    overlayService: OverlayService;
+    overlayService?: OverlayService;
     columnGetStateService: ColumnGetStateService;
     pinnedRowModel?: PinnedRowModel;
     menuService?: MenuService;

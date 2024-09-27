@@ -150,7 +150,6 @@ export const CommunityApiModule = _defineModule({
         ColumnApiModule,
         RowApiModule,
         ScrollApiModule,
-        OverlayApiModule,
         KeyboardNavigationApiModule,
         EventApiModule,
         RenderApiModule,

@@ -6,7 +6,6 @@ import {
     FakeHScrollComp,
     FakeVScrollComp,
     GridBodyCtrl,
-    OverlayWrapperComponent,
     _observeResize,
     _setAriaColCount,
     _setAriaRowCount,
@@ -25,7 +24,7 @@ interface SectionProperties {
 }
 
 const GridBodyComp = () => {
-    const { context, gos } = useContext(BeansContext);
+    const { context, gos, overlayService } = useContext(BeansContext);
 
     const [rowAnimationClass, setRowAnimationClass] = useState<string>('');
     const [topHeight, setTopHeight] = useState<number>(0);
@@ -101,7 +100,10 @@ const GridBodyComp = () => {
         };
 
         addComp(eRef, FakeHScrollComp, ' AG Fake Horizontal Scroll ');
-        addComp(eRef, OverlayWrapperComponent, ' AG Overlay Wrapper ');
+        const overlayComp = overlayService?.getOverlayWrapperCompClass();
+        if (overlayComp) {
+            addComp(eRef, overlayComp, ' AG Overlay Wrapper ');
+        }
 
         if (eBody.current) {
             addComp(eBody.current, FakeVScrollComp, ' AG Fake Vertical Scroll ');

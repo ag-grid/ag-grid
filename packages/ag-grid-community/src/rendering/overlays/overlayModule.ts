@@ -4,6 +4,13 @@ import { VERSION } from '../../version';
 import { LoadingOverlayComponent } from './loadingOverlayComponent';
 import { NoRowsOverlayComponent } from './noRowsOverlayComponent';
 import { hideOverlay, showLoadingOverlay, showNoRowsOverlay } from './overlayApi';
+import { OverlayService } from './overlayService';
+
+export const OverlayCoreModule = _defineModule({
+    version: VERSION,
+    moduleName: '@ag-grid-community/overlay-core',
+    beans: [OverlayService],
+});
 
 export const OverlayApiModule = _defineModule<_OverlayGridApi>({
     version: VERSION,
@@ -13,6 +20,7 @@ export const OverlayApiModule = _defineModule<_OverlayGridApi>({
         showNoRowsOverlay,
         hideOverlay,
     },
+    dependantModules: [OverlayCoreModule],
 });
 
 export const LoadingOverlayModule = _defineModule({
@@ -24,6 +32,7 @@ export const LoadingOverlayModule = _defineModule({
             name: 'agLoadingOverlay',
         },
     ],
+    dependantModules: [OverlayCoreModule],
 });
 
 export const NoRowsOverlayModule = _defineModule({
@@ -35,10 +44,11 @@ export const NoRowsOverlayModule = _defineModule({
             name: 'agNoRowsOverlay',
         },
     ],
+    dependantModules: [OverlayCoreModule],
 });
 
 export const OverlayModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/overlay',
-    dependantModules: [OverlayApiModule, LoadingOverlayModule, NoRowsOverlayModule],
+    dependantModules: [OverlayCoreModule, OverlayApiModule, LoadingOverlayModule, NoRowsOverlayModule],
 });

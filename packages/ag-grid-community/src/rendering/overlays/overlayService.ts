@@ -10,7 +10,8 @@ import { _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { IRowModel } from '../../interfaces/iRowModel';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _warnOnce } from '../../utils/function';
-import type { OverlayWrapperComponent } from './overlayWrapperComponent';
+import type { ComponentSelector } from '../../widgets/component';
+import { OverlayWrapperComponent, OverlayWrapperSelector } from './overlayWrapperComponent';
 
 const enum OverlayServiceState {
     Hidden = 0,
@@ -111,6 +112,14 @@ export class OverlayService extends BeanStub implements NamedBean {
         }
 
         this.doHideOverlay();
+    }
+
+    public getOverlayWrapperSelector(): ComponentSelector {
+        return OverlayWrapperSelector;
+    }
+
+    public getOverlayWrapperCompClass(): typeof OverlayWrapperComponent {
+        return OverlayWrapperComponent;
     }
 
     private updateOverlayVisibility(): void {
