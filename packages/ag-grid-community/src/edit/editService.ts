@@ -6,9 +6,9 @@ import { BeanStub } from '../context/beanStub';
 import type { CoreBeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
-import type { NavigationService } from '../gridBodyComp/navigationService';
 import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
+import type { NavigationService } from '../navigation/navigationService';
 import type { CellCtrl, ICellComp } from '../rendering/cell/cellCtrl';
 import type { ValueService } from '../valueService/valueService';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
@@ -16,7 +16,7 @@ import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 export class EditService extends BeanStub implements NamedBean {
     beanName = 'editService' as const;
 
-    private navigationService: NavigationService;
+    private navigationService?: NavigationService;
     private userComponentFactory: UserComponentFactory;
     private valueService: ValueService;
 
@@ -208,7 +208,7 @@ export class EditService extends BeanStub implements NamedBean {
 
         if (enterNavigatesVerticallyAfterEdit) {
             const key = shiftKey ? KeyCode.UP : KeyCode.DOWN;
-            this.navigationService.navigateToNextCell(null, key, cellPosition, false);
+            this.navigationService?.navigateToNextCell(null, key, cellPosition, false);
         }
     }
 }

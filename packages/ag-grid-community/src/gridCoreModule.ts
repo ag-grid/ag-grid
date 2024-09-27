@@ -1,7 +1,6 @@
 import { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
 import { ApiFunctionService } from './api/apiFunctionService';
 import { CommunityApiModule } from './api/apiModule';
-import { CellNavigationService } from './cellNavigationService';
 import { ColumnAutosizeModule } from './columnAutosize/columnAutosizeModule';
 import { ColumnMoveModule } from './columnMove/columnMoveModule';
 import { ColumnResizeModule } from './columnResize/columnResizeModule';
@@ -22,25 +21,24 @@ import { CtrlsFactory } from './ctrlsFactory';
 import { CtrlsService } from './ctrlsService';
 import { DragAndDropModule, RowDragModule } from './dragAndDrop/dragModule';
 import { EditModule } from './edit/editModule';
-import { RowPositionUtils } from './entities/rowPositionUtils';
+import { PositionUtils } from './entities/positionUtils';
 import { Environment } from './environment';
 import { EventService } from './eventService';
 import { FilterModule } from './filter/filterModule';
 import { FocusService } from './focusService';
 import { MouseEventService } from './gridBodyComp/mouseEventService';
-import { NavigationService } from './gridBodyComp/navigationService';
 import { PinnedWidthService } from './gridBodyComp/pinnedWidthService';
 import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridDestroyService } from './gridDestroyService';
 import { GridOptionsService } from './gridOptionsService';
 import { ColumnGroupHeaderModule, ColumnHeaderModule } from './headerRendering/cells/headerModule';
-import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
 import { _defineModule } from './interfaces/iModule';
 import { LocaleService } from './localeService';
 import { AnimationFrameModule } from './misc/animationFrameModule';
 import { EventApiModule } from './misc/apiEvents/apiEventModule';
 import { StateModule } from './misc/state/stateModule';
 import { ModuleNames } from './modules/moduleNames';
+import { KeyboardNavigationModule } from './navigation/navigationModule';
 import { PageBoundsListener } from './pagination/pageBoundsListener';
 import { PageBoundsService } from './pagination/pageBoundsService';
 import { PaginationModule } from './pagination/paginationModule';
@@ -70,7 +68,7 @@ export const GridCoreModule = {
     version: VERSION,
     moduleName: ModuleNames.CommunityCoreModule,
     beans: [
-        RowPositionUtils,
+        PositionUtils,
         GridDestroyService,
         ApiFunctionService,
         UserComponentRegistry,
@@ -82,17 +80,14 @@ export const GridCoreModule = {
         EventService,
         GridOptionsService,
         ColumnModel,
-        HeaderNavigationService,
         PageBoundsService,
         PageBoundsListener,
         RowRenderer,
         ColumnFactory,
-        NavigationService,
         ValueService,
         FocusService,
         MouseEventService,
         Environment,
-        CellNavigationService,
         ScrollVisibleService,
         CtrlsService,
         PinnedWidthService,
@@ -154,5 +149,6 @@ export const CommunityFeaturesModule = _defineModule({
         RowStyleModule,
         EventApiModule,
         ColumnFlexModule,
+        KeyboardNavigationModule,
     ],
 });

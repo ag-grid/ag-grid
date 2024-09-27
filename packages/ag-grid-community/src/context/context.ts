@@ -2,7 +2,6 @@ import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
 import type { RowModelHelperService } from '../api/rowModelHelperService';
-import type { CellNavigationService } from '../cellNavigationService';
 import type { RowNodeEventThrottle } from '../clientSideRowModel/rowNodeEventThrottle';
 import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
 import type { ColumnMoveService } from '../columnMove/columnMoveService';
@@ -33,7 +32,7 @@ import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { EditService } from '../edit/editService';
 import type { RowEditService } from '../edit/rowEditService';
 import type { GridOptions } from '../entities/gridOptions';
-import type { RowPositionUtils } from '../entities/rowPositionUtils';
+import type { PositionUtils } from '../entities/positionUtils';
 import type { Environment } from '../environment';
 import type { EventService } from '../eventService';
 import type { AgGlobalEventListener } from '../events';
@@ -43,12 +42,10 @@ import type { FilterValueService } from '../filter/filterValueService';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { FocusService } from '../focusService';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
-import type { NavigationService } from '../gridBodyComp/navigationService';
 import type { PinnedWidthService } from '../gridBodyComp/pinnedWidthService';
 import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
 import type { GridDestroyService } from '../gridDestroyService';
 import type { GridOptionsService } from '../gridOptionsService';
-import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
 import type { IChartService } from '../interfaces/IChartService';
 import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
@@ -81,6 +78,9 @@ import type { ApiEventService } from '../misc/apiEvents/apiEventService';
 import type { MenuService } from '../misc/menuService';
 import type { StateService } from '../misc/state/stateService';
 import { ModuleRegistry } from '../modules/moduleRegistry';
+import type { CellNavigationService } from '../navigation/cellNavigationService';
+import type { HeaderNavigationService } from '../navigation/headerNavigationService';
+import type { NavigationService } from '../navigation/navigationService';
 import type { PageBoundsListener } from '../pagination/pageBoundsListener';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageSizeService';
@@ -189,8 +189,8 @@ export interface CoreBeanCollection {
     columnMoveService?: ColumnMoveService;
     columnFlexService?: ColumnFlexService;
     columnResizeService?: ColumnResizeService;
-    headerNavigationService: HeaderNavigationService;
-    navigationService: NavigationService;
+    headerNavigationService?: HeaderNavigationService;
+    navigationService?: NavigationService;
     columnAnimationService?: ColumnAnimationService;
     focusService: FocusService;
     popupService?: PopupService;
@@ -206,7 +206,7 @@ export interface CoreBeanCollection {
     filterManager?: FilterManager;
     rowContainerHeightService: RowContainerHeightService;
     frameworkOverrides: IFrameworkOverrides;
-    rowPositionUtils: RowPositionUtils;
+    positionUtils: PositionUtils;
     selectionService?: ISelectionService;
     rowStyleService?: RowStyleService;
     rowModel: IRowModel;
@@ -248,7 +248,7 @@ export interface CoreBeanCollection {
     excelCreator?: IExcelCreator;
     clipboardService?: IClipboardService;
     mouseEventService: MouseEventService;
-    cellNavigationService: CellNavigationService;
+    cellNavigationService?: CellNavigationService;
     scrollVisibleService: ScrollVisibleService;
     pinnedWidthService: PinnedWidthService;
     expressionService?: ExpressionService;
@@ -437,6 +437,7 @@ export type BeanName =
     | 'rangeService'
     | 'pageBoundsListener'
     | 'pageBoundsService'
+    | 'positionUtils'
     | 'renderStatusService'
     | 'rowContainerHeightService'
     | 'rowDragService'
@@ -446,7 +447,6 @@ export type BeanName =
     | 'rowNodeEventThrottle'
     | 'rowModelHelperService'
     | 'rowNodeSorter'
-    | 'rowPositionUtils'
     | 'rowRenderer'
     | 'rowStyleService'
     | 'scrollVisibleService'

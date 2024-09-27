@@ -17,7 +17,7 @@ import type {
     MenuItemDef,
     MenuService,
     NamedBean,
-    RowPositionUtils,
+    PositionUtils,
     SortController,
 } from 'ag-grid-community';
 import { BeanStub, ModuleNames, _createIconNoSpan, _escapeString, _exists, _warnOnce } from 'ag-grid-community';
@@ -32,7 +32,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private columnStateService: ColumnStateService;
     private funcColsService: FuncColsService;
     private focusService: FocusService;
-    private rowPositionUtils: RowPositionUtils;
+    private positionUtils: PositionUtils;
     private chartMenuItemMapper: ChartMenuItemMapper;
     private menuService: MenuService;
     private sortController?: SortController;
@@ -50,7 +50,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         this.columnStateService = beans.columnStateService;
         this.funcColsService = beans.funcColsService;
         this.focusService = beans.focusService;
-        this.rowPositionUtils = beans.rowPositionUtils;
+        this.positionUtils = beans.positionUtils;
         this.chartMenuItemMapper = beans.chartMenuItemMapper as ChartMenuItemMapper;
         this.menuService = beans.menuService!;
         this.sortController = beans.sortController;
@@ -279,7 +279,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             case 'cut':
                 if (this.gos.assertModuleRegistered(ModuleNames.ClipboardModule, 'Cut from Menu')) {
                     const focusedCell = this.focusService.getFocusedCell();
-                    const rowNode = focusedCell ? this.rowPositionUtils.getRowNode(focusedCell) : null;
+                    const rowNode = focusedCell ? this.positionUtils.getRowNode(focusedCell) : null;
                     const isEditable = rowNode ? focusedCell?.column.isCellEditable(rowNode) : false;
                     return {
                         name: localeTextFunc('cut', 'Cut'),

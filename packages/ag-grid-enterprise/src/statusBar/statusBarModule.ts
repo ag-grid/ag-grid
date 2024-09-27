@@ -1,5 +1,5 @@
 import type { _StatusBarGridApi } from 'ag-grid-community';
-import { ModuleNames, RowSelectionCoreModule, _defineModule } from 'ag-grid-community';
+import { KeyboardNavigationCoreModule, ModuleNames, RowSelectionCoreModule, _defineModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
@@ -21,7 +21,7 @@ export const StatusBarCoreModule = _defineModule({
         { name: 'agFilteredRowCountComponent', classImp: FilteredRowsComp },
         { name: 'agTotalAndFilteredRowCountComponent', classImp: TotalAndFilteredRowsComp },
     ],
-    dependantModules: [EnterpriseCoreModule],
+    dependantModules: [EnterpriseCoreModule, KeyboardNavigationCoreModule],
 });
 
 export const StatusBarSelectionModule = _defineModule({

@@ -6,7 +6,6 @@ import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { Environment } from '../environment';
 import type { FilterManager } from '../filter/filterManager';
 import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
-import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _requestAnimationFrame } from '../misc/animationFrameService';
@@ -60,7 +59,6 @@ export class GridBodyCtrl extends BeanStub {
     private columnModel: ColumnModel;
     private scrollVisibleService: ScrollVisibleService;
     private contextMenuService?: IContextMenuService;
-    private headerNavigationService: HeaderNavigationService;
     private rowDragService?: RowDragService;
     private pinnedRowModel?: PinnedRowModel;
     private rowRenderer: RowRenderer;
@@ -76,7 +74,6 @@ export class GridBodyCtrl extends BeanStub {
         this.columnModel = beans.columnModel;
         this.scrollVisibleService = beans.scrollVisibleService;
         this.contextMenuService = beans.contextMenuService;
-        this.headerNavigationService = beans.headerNavigationService;
         this.rowDragService = beans.rowDragService;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.rowRenderer = beans.rowRenderer;
@@ -318,7 +315,8 @@ export class GridBodyCtrl extends BeanStub {
 
     public updateRowCount(): void {
         const headerCount =
-            this.headerNavigationService.getHeaderRowCount() + (this.filterManager?.getHeaderRowCount() ?? 0);
+            (this.ctrlsService.getHeaderRowContainerCtrl()?.getRowCount() ?? 0) +
+            (this.filterManager?.getHeaderRowCount() ?? 0);
 
         const rowCount = this.rowModel.isLastRowIndexKnown() ? this.rowModel.getRowCount() : -1;
         const total = rowCount === -1 ? -1 : headerCount + rowCount;

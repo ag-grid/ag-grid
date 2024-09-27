@@ -9,13 +9,13 @@ import type { FocusService } from '../focusService';
 import { _getActiveDomElement } from '../gridOptionsUtils';
 import { _requestAnimationFrame } from '../misc/animationFrameService';
 import type { MenuService } from '../misc/menuService';
+import type { HeaderNavigationService } from '../navigation/headerNavigationService';
+import { HeaderNavigationDirection } from '../navigation/headerNavigationService';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _exists } from '../utils/generic';
 import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
 import type { LongTapEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
-import type { HeaderNavigationService } from './common/headerNavigationService';
-import { HeaderNavigationDirection } from './common/headerNavigationService';
 
 export interface IGridHeaderComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -23,7 +23,7 @@ export interface IGridHeaderComp {
 }
 
 export class GridHeaderCtrl extends BeanStub {
-    private headerNavigationService: HeaderNavigationService;
+    private headerNavigationService?: HeaderNavigationService;
     private focusService: FocusService;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
@@ -49,13 +49,15 @@ export class GridHeaderCtrl extends BeanStub {
         this.comp = comp;
         this.eGui = eGui;
 
-        this.createManagedBean(
-            new ManagedFocusFeature(eFocusableElement, {
-                onTabKeyDown: this.onTabKeyDown.bind(this),
-                handleKeyDown: this.handleKeyDown.bind(this),
-                onFocusOut: this.onFocusOut.bind(this),
-            })
-        );
+        if (this.headerNavigationService) {
+            this.createManagedBean(
+                new ManagedFocusFeature(eFocusableElement, {
+                    onTabKeyDown: this.onTabKeyDown.bind(this),
+                    handleKeyDown: this.handleKeyDown.bind(this),
+                    onFocusOut: this.onFocusOut.bind(this),
+                })
+            );
+        }
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
         this.addManagedEventListeners({
@@ -153,7 +155,7 @@ export class GridHeaderCtrl extends BeanStub {
         const direction = backwards !== isRtl ? HeaderNavigationDirection.LEFT : HeaderNavigationDirection.RIGHT;
 
         if (
-            this.headerNavigationService.navigateHorizontally(direction, true, e) ||
+            this.headerNavigationService!.navigateHorizontally(direction, true, e) ||
             (!backwards && this.focusService.focusOverlay(false)) ||
             this.focusService.focusNextGridCoreContainer(backwards, true)
         ) {
@@ -173,7 +175,7 @@ export class GridHeaderCtrl extends BeanStub {
                 if (!_exists(direction)) {
                     direction = HeaderNavigationDirection.RIGHT;
                 }
-                if (this.headerNavigationService.navigateHorizontally(direction, false, e)) {
+                if (this.headerNavigationService!.navigateHorizontally(direction, false, e)) {
                     // preventDefault so that the arrow keys don't cause an extra scroll
                     e.preventDefault();
                 }
@@ -186,7 +188,7 @@ export class GridHeaderCtrl extends BeanStub {
                 if (!_exists(direction)) {
                     direction = HeaderNavigationDirection.DOWN;
                 }
-                if (this.headerNavigationService.navigateVertically(direction, null, e)) {
+                if (this.headerNavigationService!.navigateVertically(direction, null, e)) {
                     // preventDefault so that the arrow keys don't cause an extra scroll
                     e.preventDefault();
                 }

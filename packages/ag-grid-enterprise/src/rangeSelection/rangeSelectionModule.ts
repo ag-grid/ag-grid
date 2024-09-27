@@ -1,5 +1,5 @@
 import type { _RangeSelectionGridApi } from 'ag-grid-community';
-import { ModuleNames, _defineModule } from 'ag-grid-community';
+import { KeyboardNavigationCoreModule, ModuleNames, _defineModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
@@ -11,7 +11,7 @@ export const RangeSelectionCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.RangeSelectionModule}-core`,
     beans: [RangeService, SelectionHandleFactory],
-    dependantModules: [EnterpriseCoreModule],
+    dependantModules: [EnterpriseCoreModule, KeyboardNavigationCoreModule],
 });
 
 export const RangeSelectionApiModule = _defineModule<_RangeSelectionGridApi>({

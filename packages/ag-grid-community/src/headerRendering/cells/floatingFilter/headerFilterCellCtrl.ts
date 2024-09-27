@@ -130,7 +130,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         const nextFocusableEl = this.focusService.findNextFocusableElement(this.eGui, null, e.shiftKey);
 
         if (nextFocusableEl) {
-            this.beans.headerNavigationService.scrollToColumn(this.column);
+            this.beans.headerNavigationService?.scrollToColumn(this.column);
             e.preventDefault();
             nextFocusableEl.focus();
             return;

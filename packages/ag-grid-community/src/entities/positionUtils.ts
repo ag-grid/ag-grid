@@ -1,13 +1,29 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import type { CellPosition } from '../interfaces/iCellPosition';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
+import type { RowRenderer } from '../rendering/rowRenderer';
 import { _exists } from '../utils/generic';
+import type { AgColumn } from './agColumn';
 import type { RowNode } from './rowNode';
+
+export function _createCellId(cellPosition: CellPosition): string {
+    const { rowIndex, rowPinned, column } = cellPosition;
+    return `${rowIndex}.${rowPinned == null ? 'null' : rowPinned}.${column.getId()}`;
+}
+
+export function _areCellsEqual(cellA: CellPosition, cellB: CellPosition): boolean {
+    const colsMatch = cellA.column === cellB.column;
+    const floatingMatch = cellA.rowPinned === cellB.rowPinned;
+    const indexMatch = cellA.rowIndex === cellB.rowIndex;
+    return colsMatch && floatingMatch && indexMatch;
+}
 
 // tests if this row selection is before the other row selection
 export function _isRowBefore(rowA: RowPosition, rowB: RowPosition): boolean {
@@ -47,17 +63,19 @@ export function _isSameRow(rowA: RowPosition | undefined, rowB: RowPosition | un
     return rowA!.rowIndex === rowB!.rowIndex && rowA!.rowPinned == rowB!.rowPinned;
 }
 
-export class RowPositionUtils extends BeanStub implements NamedBean {
-    beanName = 'rowPositionUtils' as const;
+export class PositionUtils extends BeanStub implements NamedBean {
+    beanName = 'positionUtils' as const;
 
     private rowModel: IRowModel;
     private pinnedRowModel?: PinnedRowModel;
     private pageBoundsService: PageBoundsService;
+    private rowRenderer: RowRenderer;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.pageBoundsService = beans.pageBoundsService;
+        this.rowRenderer = beans.rowRenderer;
     }
 
     public getFirstRow(): RowPosition | null {
@@ -106,5 +124,14 @@ export class RowPositionUtils extends BeanStub implements NamedBean {
             default:
                 return this.rowModel.getRow(gridRow.rowIndex);
         }
+    }
+
+    public getCellByPosition(cellPosition: CellPosition): CellCtrl | null {
+        const rowCtrl = this.rowRenderer.getRowByPosition(cellPosition);
+        if (!rowCtrl) {
+            return null;
+        }
+
+        return rowCtrl.getCellCtrl(cellPosition.column as AgColumn);
     }
 }

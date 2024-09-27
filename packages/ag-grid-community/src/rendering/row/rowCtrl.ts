@@ -902,7 +902,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             column: (lastFocusedCell?.column as AgColumn) ?? this.getColumnForFullWidth(currentFullWidthComp),
         };
 
-        this.beans.navigationService.navigateToNextCell(keyboardEvent, keyboardEvent.key, cellPosition, true);
+        this.beans.navigationService?.navigateToNextCell(keyboardEvent, keyboardEvent.key, cellPosition, true);
         keyboardEvent.preventDefault();
     }
 
@@ -934,7 +934,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         if ((this.isFullWidth() && isFullWidthContainerFocused) || !nextEl) {
-            this.beans.navigationService.onTabKeyDown(this, keyboardEvent);
+            this.beans.navigationService?.onTabKeyDown(this, keyboardEvent);
         }
     }
 
@@ -1860,7 +1860,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         const headerRowCount =
-            this.beans.headerNavigationService.getHeaderRowCount() +
+            (this.beans.ctrlsService.getHeaderRowContainerCtrl()?.getRowCount() ?? 0) +
             (this.beans.filterManager?.getHeaderRowCount() ?? 0);
         const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
         const ariaRowIndex = headerRowCount + this.rowNode.rowIndex! + 1;

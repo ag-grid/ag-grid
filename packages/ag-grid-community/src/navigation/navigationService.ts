@@ -1,4 +1,3 @@
-import type { CellNavigationService } from '../cellNavigationService';
 import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { KeyCode } from '../constants/keyCode';
@@ -7,11 +6,13 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import { _isRowBefore } from '../entities/rowPositionUtils';
-import type { RowPositionUtils } from '../entities/rowPositionUtils';
+import { _isRowBefore } from '../entities/positionUtils';
+import type { PositionUtils } from '../entities/positionUtils';
 import type { FocusService } from '../focusService';
+import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
+import type { MouseEventService } from '../gridBodyComp/mouseEventService';
+import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
 import { _isGroupRowsSticky } from '../gridOptionsUtils';
-import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { NavigateToNextCellParams, TabToNextCellParams } from '../interfaces/iCallbackParams';
 import type { CellPosition } from '../interfaces/iCellPosition';
@@ -26,9 +27,8 @@ import type { RowRenderer } from '../rendering/rowRenderer';
 import { _last } from '../utils/array';
 import { _throttle, _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
-import type { GridBodyCtrl } from './gridBodyCtrl';
-import type { MouseEventService } from './mouseEventService';
-import type { ScrollVisibleService } from './scrollVisibleService';
+import type { CellNavigationService } from './cellNavigationService';
+import type { HeaderNavigationService } from './headerNavigationService';
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */
@@ -55,7 +55,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     private ctrlsService: CtrlsService;
     private rowRenderer: RowRenderer;
     private headerNavigationService: HeaderNavigationService;
-    private rowPositionUtils: RowPositionUtils;
+    private positionUtils: PositionUtils;
     private cellNavigationService: CellNavigationService;
     private pinnedRowModel?: PinnedRowModel;
     private scrollVisibleService: ScrollVisibleService;
@@ -70,9 +70,9 @@ export class NavigationService extends BeanStub implements NamedBean {
         this.rowModel = beans.rowModel;
         this.ctrlsService = beans.ctrlsService;
         this.rowRenderer = beans.rowRenderer;
-        this.headerNavigationService = beans.headerNavigationService;
-        this.rowPositionUtils = beans.rowPositionUtils;
-        this.cellNavigationService = beans.cellNavigationService;
+        this.headerNavigationService = beans.headerNavigationService!;
+        this.positionUtils = beans.positionUtils;
+        this.cellNavigationService = beans.cellNavigationService!;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.scrollVisibleService = beans.scrollVisibleService;
         this.rangeService = beans.rangeService;
@@ -450,7 +450,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             return false;
         }
 
-        let cellOrRow: CellCtrl | RowCtrl | null = this.getCellByPosition(focusedCell);
+        let cellOrRow: CellCtrl | RowCtrl | null = this.positionUtils.getCellByPosition(focusedCell);
 
         // if cell is not rendered, means user has scrolled away from the cell
         // or that the focusedCell is a Full Width Row
@@ -669,7 +669,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             }
 
             if (nextPosition.rowIndex < 0) {
-                const headerLen = this.headerNavigationService.getHeaderRowCount();
+                const headerLen = this.focusService.getHeaderRowCount();
 
                 this.focusService.focusHeaderPosition({
                     headerPosition: {
@@ -699,7 +699,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
             // we have to call this after ensureColumnVisible - otherwise it could be a virtual column
             // or row that is not currently in view, hence the renderedCell would not exist
-            const nextCell = this.getCellByPosition(nextPosition);
+            const nextCell = this.positionUtils.getCellByPosition(nextPosition);
 
             // if next cell is fullWidth row, then no rendered cell,
             // as fullWidth rows have no cells, so we skip it
@@ -732,15 +732,6 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
 
         return false;
-    }
-
-    public getCellByPosition(cellPosition: CellPosition): CellCtrl | null {
-        const rowCtrl = this.rowRenderer.getRowByPosition(cellPosition);
-        if (!rowCtrl) {
-            return null;
-        }
-
-        return rowCtrl.getCellCtrl(cellPosition.column as AgColumn);
     }
 
     private lookupRowNodeForCell(cell: CellPosition) {
@@ -823,7 +814,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
 
         if (nextCell.rowIndex < 0) {
-            const headerLen = this.headerNavigationService.getHeaderRowCount();
+            const headerLen = this.focusService.getHeaderRowCount();
 
             this.focusService.focusHeaderPosition({
                 headerPosition: { headerRowIndex: headerLen + nextCell.rowIndex, column: currentCell.column },
@@ -848,7 +839,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         // ensureCellVisible first, to make sure cell at position is rendered.
         this.ensureCellVisible(cellPosition);
 
-        const cellCtrl = this.getCellByPosition(cellPosition);
+        const cellCtrl = this.positionUtils.getCellByPosition(cellPosition);
 
         // not guaranteed to have a cellComp when using the SSRM as blocks are loading.
         if (!cellCtrl) {
@@ -912,14 +903,14 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     private isValidNavigateCell(cell: CellPosition): boolean {
-        const rowNode = this.rowPositionUtils.getRowNode(cell);
+        const rowNode = this.positionUtils.getRowNode(cell);
 
         // we do not allow focusing on detail rows and full width rows
         return !!rowNode;
     }
 
     private getLastCellOfColSpan(cell: CellPosition): CellPosition {
-        const cellCtrl = this.getCellByPosition(cell);
+        const cellCtrl = this.positionUtils.getCellByPosition(cell);
 
         if (!cellCtrl) {
             return cell;

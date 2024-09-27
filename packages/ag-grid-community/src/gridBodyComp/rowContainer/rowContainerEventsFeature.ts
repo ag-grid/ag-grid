@@ -10,6 +10,7 @@ import type { IClipboardService } from '../../interfaces/iClipboardService';
 import type { IContextMenuService } from '../../interfaces/iContextMenu';
 import type { IRowModel } from '../../interfaces/iRowModel';
 import type { RowPinnedType } from '../../interfaces/iRowNode';
+import type { NavigationService } from '../../navigation/navigationService';
 import type { PinnedRowModel } from '../../pinnedRowModel/pinnedRowModel';
 import { CellCtrl } from '../../rendering/cell/cellCtrl';
 import { RowCtrl } from '../../rendering/row/rowCtrl';
@@ -26,12 +27,11 @@ import {
 import type { LongTapEvent } from '../../widgets/touchListener';
 import { TouchListener } from '../../widgets/touchListener';
 import type { MouseEventService } from './../mouseEventService';
-import type { NavigationService } from './../navigationService';
 
 export class RowContainerEventsFeature extends BeanStub {
     private mouseEventService: MouseEventService;
     private contextMenuService?: IContextMenuService;
-    private navigationService: NavigationService;
+    private navigationService?: NavigationService;
     private focusService: FocusService;
     private undoRedoService?: UndoRedoService;
     private visibleColsService: VisibleColsService;
@@ -174,7 +174,7 @@ export class RowContainerEventsFeature extends BeanStub {
         if (gridProcessingAllowed) {
             if (eventName === 'keydown') {
                 // first see if it's a scroll key, page up / down, home / end etc
-                const wasScrollKey = !editing && this.navigationService.handlePageScrollingKey(keyboardEvent);
+                const wasScrollKey = !editing && this.navigationService?.handlePageScrollingKey(keyboardEvent);
 
                 // if not a scroll key, then we pass onto cell
                 if (!wasScrollKey) {
@@ -209,7 +209,7 @@ export class RowContainerEventsFeature extends BeanStub {
                     case KeyCode.PAGE_END:
                     case KeyCode.PAGE_UP:
                     case KeyCode.PAGE_DOWN:
-                        this.navigationService.handlePageScrollingKey(keyboardEvent, true);
+                        this.navigationService?.handlePageScrollingKey(keyboardEvent, true);
                         break;
 
                     case KeyCode.UP:

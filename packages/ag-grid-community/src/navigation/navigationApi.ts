@@ -21,19 +21,19 @@ export function setFocusedCell(
 }
 
 export function tabToNextCell(beans: BeanCollection, event?: KeyboardEvent): boolean {
-    return beans.navigationService.tabToNextCell(false, event);
+    return beans.navigationService?.tabToNextCell(false, event) ?? false;
 }
 
 export function tabToPreviousCell(beans: BeanCollection, event?: KeyboardEvent): boolean {
-    return beans.navigationService.tabToNextCell(true, event);
+    return beans.navigationService?.tabToNextCell(true, event) ?? false;
 }
 
 export function setFocusedHeader(
     beans: BeanCollection,
     colKey: string | Column | ColumnGroup,
     floatingFilter: boolean = false
-) {
-    const headerPosition = beans.headerNavigationService.getHeaderPositionForColumn(colKey, floatingFilter);
+): void {
+    const headerPosition = beans.headerNavigationService?.getHeaderPositionForColumn(colKey, floatingFilter);
 
     if (!headerPosition) {
         return;

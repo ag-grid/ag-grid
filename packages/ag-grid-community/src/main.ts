@@ -266,7 +266,7 @@ export { GridBodyComp } from './gridBodyComp/gridBodyComp';
 export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from './gridBodyComp/gridBodyCtrl';
 export type { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 export type { MouseEventService } from './gridBodyComp/mouseEventService';
-export type { NavigationService } from './gridBodyComp/navigationService';
+export type { NavigationService } from './navigation/navigationService';
 export { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
 export { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
 
@@ -564,7 +564,7 @@ export { ICsvCreator } from './interfaces/iCsvCreator';
 // root
 export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
-export type { CellNavigationService } from './cellNavigationService';
+export type { CellNavigationService } from './navigation/cellNavigationService';
 export { KeyCode } from './constants/keyCode';
 export { VerticalDirection, HorizontalDirection } from './constants/direction';
 export {
@@ -686,14 +686,13 @@ export { IAggFuncService } from './interfaces/iAggFuncService';
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from './interfaces/iClipboardService';
 export { IMenuFactory } from './interfaces/iMenuFactory';
 export { IColumnChooserFactory, ShowColumnChooserParams } from './interfaces/iColumnChooserFactory';
-export { _areCellsEqual, _createCellId } from './entities/cellPositionUtils';
 export { CellPosition } from './interfaces/iCellPosition';
-export type { RowPositionUtils } from './entities/rowPositionUtils';
-export { _isRowBefore, _isSameRow } from './entities/rowPositionUtils';
+export type { PositionUtils } from './entities/positionUtils';
+export { _areCellsEqual, _createCellId, _isRowBefore, _isSameRow } from './entities/positionUtils';
 export { RowPosition } from './interfaces/iRowPosition';
 export { HeaderPosition } from './interfaces/iHeaderPosition';
-export type { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
-export { HeaderNavigationDirection } from './headerRendering/common/headerNavigationService';
+export type { HeaderNavigationService } from './navigation/headerNavigationService';
+export { HeaderNavigationDirection } from './navigation/headerNavigationService';
 export {
     IAggFunc,
     IAggFuncParams,
@@ -1026,6 +1025,7 @@ export { CsvExportModule, CsvExportCoreModule as _CsvExportCoreModule } from './
 export { InfiniteRowModelModule } from './infiniteRowModel/infiniteRowModelModule';
 export { PopupModule } from './widgets/popupModule';
 export { SharedMenuModule } from './misc/sharedMenuModule';
+export { KeyboardNavigationCoreModule } from './navigation/navigationModule';
 
 //  events
 export * from './events';

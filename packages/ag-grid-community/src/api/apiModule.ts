@@ -4,22 +4,7 @@ import { RenderApiModule } from '../rendering/renderModule';
 import { VERSION } from '../version';
 import { expireValueCache, getCellValue, getValue } from './cellApi';
 import { destroy, getGridId, getGridOption, isDestroyed, setGridOption, updateGridOptions } from './coreApi';
-import type {
-    _CellGridApi,
-    _CommunityMenuGridApi,
-    _CoreGridApi,
-    _KeyboardNavigationGridApi,
-    _RowGridApi,
-    _ScrollGridApi,
-} from './gridApi';
-import {
-    clearFocusedCell,
-    getFocusedCell,
-    setFocusedCell,
-    setFocusedHeader,
-    tabToNextCell,
-    tabToPreviousCell,
-} from './keyboardNavigationApi';
+import type { _CellGridApi, _CommunityMenuGridApi, _CoreGridApi, _RowGridApi, _ScrollGridApi } from './gridApi';
 import {
     hidePopupMenu,
     showColumnMenu,
@@ -94,19 +79,6 @@ export const ScrollApiModule = _defineModule<_ScrollGridApi<any>>({
     },
 });
 
-export const KeyboardNavigationApiModule = _defineModule<_KeyboardNavigationGridApi>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/keyboard-navigation-api',
-    apiFunctions: {
-        getFocusedCell,
-        clearFocusedCell,
-        setFocusedCell,
-        setFocusedHeader,
-        tabToNextCell,
-        tabToPreviousCell,
-    },
-});
-
 export const CellApiModule = _defineModule<_CellGridApi<any>>({
     version: VERSION,
     moduleName: '@ag-grid-community/cell-api',
@@ -136,7 +108,6 @@ export const CommunityApiModule = _defineModule({
         ColumnApiModule,
         RowApiModule,
         ScrollApiModule,
-        KeyboardNavigationApiModule,
         RenderApiModule,
         CellApiModule,
         CommunityMenuApiModule,
