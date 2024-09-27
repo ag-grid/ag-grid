@@ -69,10 +69,6 @@ export class FilterManager extends BeanStub implements NamedBean {
             this.onFilterChanged();
         });
 
-        this.addManagedPropertyListener('advancedFilterModel', (event) =>
-            this.setAdvancedFilterModel(event.currentValue)
-        );
-
         if (this.quickFilterService) {
             this.addManagedListeners(this.quickFilterService, {
                 quickFilterChanged: () => this.onFilterChanged({ source: 'quickFilter' }),
@@ -368,17 +364,6 @@ export class FilterManager extends BeanStub implements NamedBean {
             return false;
         }
         return !!this.columnFilterService?.hasFloatingFilters();
-    }
-
-    public getFilterInstance<TFilter extends IFilter>(
-        key: string | AgColumn,
-        callback?: (filter: TFilter | null) => void
-    ): undefined {
-        if (this.isAdvancedFilterEnabled()) {
-            this.warnAdvancedFilters();
-            return undefined;
-        }
-        return this.columnFilterService?.getFilterInstance(key, callback);
     }
 
     public getColumnFilterInstance<TFilter extends IFilter>(

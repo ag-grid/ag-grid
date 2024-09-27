@@ -129,10 +129,6 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         this.setEditable(editable);
     }
 
-    public onParamsUpdated(params: IFloatingFilterParams): void {
-        this.refresh(params);
-    }
-
     public refresh(params: IFloatingFilterParams): void {
         this.setSimpleParams(params);
     }

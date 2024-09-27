@@ -31,13 +31,6 @@ export interface IToolPanelComp<TData = any, TContext = any, TState = any>
     extends IToolPanel<TData, TContext, TState>,
         IComponent<IToolPanelParams<TData, TContext, TState>> {}
 
-/**
- * @deprecated v31.3 - Use `IToolPanelColumnCompParams` instead.
- */
-export interface ToolPanelColumnCompParams<TData = any, TContext = any>
-    extends IToolPanelParams<TData, TContext, ColumnToolPanelState>,
-        IToolPanelColumnCompParams {}
-
 export interface IToolPanelColumnCompParams {
     /** Suppress Column Move */
     suppressColumnMove: boolean;

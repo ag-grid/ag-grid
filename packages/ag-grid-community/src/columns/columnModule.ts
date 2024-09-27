@@ -32,8 +32,6 @@ import {
     resetColumnState,
     setColumnGroupOpened,
     setColumnGroupState,
-    setColumnPinned,
-    setColumnVisible,
     setColumnsPinned,
     setColumnsVisible,
 } from './columnApi';
@@ -83,9 +81,7 @@ export const ColumnApiModule = defineCommunityModule<_ColumnGridApi<any>>('@ag-g
         isPinningRight,
         getDisplayedColAfter,
         getDisplayedColBefore,
-        setColumnVisible,
         setColumnsVisible,
-        setColumnPinned,
         setColumnsPinned,
         getAllGridColumns,
         getDisplayedLeftColumns,

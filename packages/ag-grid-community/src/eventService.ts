@@ -3,7 +3,6 @@ import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { AgEventType } from './eventTypes';
 import type { AgEventListener, AgGlobalEventListener, AllEventsWithoutGridCommon } from './events';
-import { _useAsyncEvents } from './gridOptionsUtils';
 import type { IEventEmitter } from './interfaces/iEventEmitter';
 import { LocalEventService } from './localEventService';
 
@@ -22,8 +21,7 @@ export class EventService extends BeanStub<AgEventType> implements NamedBean, IE
 
     public postConstruct(): void {
         if (this.globalEventListener) {
-            const async = _useAsyncEvents(this.gos);
-            this.addGlobalListener(this.globalEventListener, async);
+            this.addGlobalListener(this.globalEventListener, true);
         }
 
         if (this.globalSyncEventListener) {

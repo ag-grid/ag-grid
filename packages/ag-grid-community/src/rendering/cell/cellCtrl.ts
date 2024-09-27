@@ -577,7 +577,7 @@ export class CellCtrl extends BeanStub {
 
         const colDef = this.column.getColDef();
         const newData = params != null && !!params.newData;
-        const suppressFlash = (params != null && !!params.suppressFlash) || !!colDef.suppressCellFlash;
+        const suppressFlash = params != null && !!params.suppressFlash;
         // we always refresh if cell has no value - this can happen when user provides Cell Renderer and the
         // cell renderer doesn't rely on a value, instead it could be looking directly at the data, or maybe
         // printing the current time (which would be silly)???. Generally speaking
@@ -608,10 +608,7 @@ export class CellCtrl extends BeanStub {
             // be to busy. see comment in FilterManager with regards processingFilterChange
             const processingFilterChange = this.beans.filterManager?.isSuppressFlashingCellsBecauseFiltering();
 
-            const flashCell =
-                !suppressFlash &&
-                !processingFilterChange &&
-                (this.beans.gos.get('enableCellChangeFlash') || colDef.enableCellChangeFlash);
+            const flashCell = !suppressFlash && !processingFilterChange && colDef.enableCellChangeFlash;
 
             if (flashCell) {
                 this.flashCell();
@@ -635,13 +632,8 @@ export class CellCtrl extends BeanStub {
     }
 
     // user can also call this via API
-    public flashCell(
-        delays?: Pick<FlashCellsParams, 'fadeDelay' | 'flashDelay' | 'fadeDuration' | 'flashDuration'>
-    ): void {
-        const flashDuration = delays?.flashDuration ?? delays?.flashDelay;
-        const fadeDuration = delays?.fadeDuration ?? delays?.fadeDelay;
-
-        this.animateCell('data-changed', flashDuration, fadeDuration);
+    public flashCell(delays?: Pick<FlashCellsParams, 'fadeDuration' | 'flashDuration'>): void {
+        this.animateCell('data-changed', delays?.flashDuration, delays?.fadeDuration);
     }
 
     private animateCell(cssName: string, flashDuration?: number | null, fadeDuration?: number | null): void {

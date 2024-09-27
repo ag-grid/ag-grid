@@ -102,7 +102,6 @@ import type {
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
 } from '../events';
-import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type {
     SizeColumnsToContentStrategy,
     SizeColumnsToFitGridStrategy,
@@ -576,11 +575,7 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     enableAdvancedFilter?: boolean;
-    /**
-     * @deprecated As of v31, use `initialState.filter.advancedFilterModel` instead.
-     * @initial
-     */
-    advancedFilterModel?: AdvancedFilterModel | null;
+
     /**
      * Hidden columns are excluded from the Advanced Filter by default.
      * To include hidden columns, set to `true`.
@@ -772,13 +767,6 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     suppressFocusAfterRefresh?: boolean;
-    /**
-     * Disables the asynchronous nature of the events introduced in v10, and makes them synchronous. This property only exists for the purpose of supporting legacy code which has a dependency on synchronous events from earlier versions (v9 or earlier) of AG Grid. **It is strongly recommended that you do not change this property unless you have legacy issues.**
-     * @deprecated v31 Events should be handled asynchronously.
-     * @default false
-     * @initial
-     */
-    suppressAsyncEvents?: boolean;
     /**
      * @deprecated As of v32.2 the grid always uses the browser's ResizeObserver, this grid option has no effect
      * @default false
@@ -975,31 +963,20 @@ export interface GridOptions<TData = any> {
      * @default true
      */
     animateRows?: boolean;
-    /**
-     * Set to `true` to have cells flash after data changes.
-     * @default false
-     * @deprecated 31.2 use `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns.
-     */
-    enableCellChangeFlash?: boolean;
+
     /**
      * Sets the duration in milliseconds of how long a cell should remain in its "flashed" state.
      * If `0`, the cell will not flash.
      * @default 500
      */
     cellFlashDuration?: number;
-    /**
-     * @deprecated v31.1 - use `cellFlashDuration` instead.
-     */
-    cellFlashDelay?: number;
+
     /**
      * Sets the duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDuration` has completed.
      * @default 1000
      */
     cellFadeDuration?: number;
-    /**
-     * @deprecated v31.1 - use `cellFadeDuration` instead.
-     */
-    cellFadeDelay?: number;
+
     /**
      * Set to `true` to have cells flash after data changes even when the change is due to filtering.
      * @default false
@@ -1099,13 +1076,6 @@ export interface GridOptions<TData = any> {
     // *** Row Grouping *** //
 
     /**
-     * @deprecated v31
-     * When enabled, the grid will cast group values to string type.
-     * @default false
-     * @initial
-     */
-    suppressGroupMaintainValueType?: boolean;
-    /**
      * Specifies how the results of row grouping should be displayed.
      *
      *  The options are:
@@ -1147,24 +1117,6 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     groupAggFiltering?: boolean | IsRowFilterable<TData>;
-    /**
-     * If grouping, this controls whether to show a group footer when the group is expanded.
-     * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.
-     * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).
-     * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.
-     * If a callback function is provided, it can used to select which groups will have a footer added.
-     * @default false
-     *
-     * @deprecated v31.3 - use `groupTotalRow` instead.
-     */
-    groupIncludeFooter?: boolean | UseGroupFooter<TData>;
-    /**
-     * Set to `true` to show a 'grand total' group footer across all groups.
-     * @default false
-     *
-     * @deprecated v31.3 - use `grandTotalRow` instead.
-     */
-    groupIncludeTotalFooter?: boolean;
 
     /**
      * When provided, an extra row group total row will be inserted into row groups at the specified position, to display
@@ -1319,14 +1271,6 @@ export interface GridOptions<TData = any> {
     serverSideInitialRowCount?: number;
 
     /**
-     * When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.
-     * @default false
-     * @initial
-     * @deprecated v31.1
-     */
-    suppressServerSideInfiniteScroll?: boolean;
-
-    /**
      * When `true`, the Server-side Row Model will not use a full width loading renderer, instead using the colDef `loadingCellRenderer` if present.
      */
     suppressServerSideFullWidthLoadingRow?: boolean;
@@ -1379,18 +1323,6 @@ export interface GridOptions<TData = any> {
      * @initial
      */
     serverSideOnlyRefreshFilteredGroups?: boolean;
-    /**
-     * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
-     * @default false
-     * @deprecated v31.1
-     */
-    serverSideSortOnServer?: boolean;
-    /**
-     * When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
-     * @default false
-     * @deprecated v31.1
-     */
-    serverSideFilterOnServer?: boolean;
 
     /**
      * Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.
@@ -1775,9 +1707,8 @@ export interface GridOptions<TData = any> {
      * Allows overriding the default behaviour for when user hits `Tab` key when a header is focused.
      * Return the next header position to navigate to, `true` to stay on the current header,
      * or `false` to let the browser handle the tab behaviour.
-     * As of v31.3, returning `null` is deprecated.
      */
-    tabToNextHeader?: (params: TabToNextHeaderParams<TData>) => HeaderPosition | boolean | null;
+    tabToNextHeader?: (params: TabToNextHeaderParams<TData>) => HeaderPosition | boolean;
     /**
      * Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.
      */
@@ -1786,9 +1717,8 @@ export interface GridOptions<TData = any> {
      * Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused.
      * Return the next cell position to navigate to, `true` to stay on the current cell,
      * or `false` to let the browser handle the tab behaviour.
-     * As of v31.3, returning `null` is deprecated.
      */
-    tabToNextCell?: (params: TabToNextCellParams<TData>) => CellPosition | boolean | null;
+    tabToNextCell?: (params: TabToNextCellParams<TData>) => CellPosition | boolean;
 
     // *** Localisation *** //
     /**
@@ -2369,11 +2299,6 @@ export interface GridOptions<TData = any> {
      * Sort has changed. The grid also listens for this and updates the model.
      */
     onSortChanged?(event: SortChangedEvent<TData>): void;
-
-    /**
-     * @deprecated Since v31 api is no longer attached to GridOptions. See https://ag-grid.com/javascript-data-grid/grid-interface/#grid-api for how to access the api in your framework.
-     */
-    api?: never;
 }
 
 export type RowGroupingDisplayType = 'singleColumn' | 'multipleColumns' | 'groupRows' | 'custom';

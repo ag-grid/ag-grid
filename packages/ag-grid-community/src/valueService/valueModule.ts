@@ -1,6 +1,6 @@
 import type { _ValueApi, _ValueCacheApi } from '../api/gridApi';
 import { defineCommunityModule } from '../interfaces/iModule';
-import { expireValueCache, getCellValue, getValue } from './cellApi';
+import { expireValueCache, getCellValue } from './cellApi';
 import { ChangeDetectionService } from './changeDetectionService';
 import { ExpressionService } from './expressionService';
 import { ValueCache } from './valueCache';
@@ -22,7 +22,6 @@ export const ChangeDetectionModule = defineCommunityModule('@ag-grid-community/c
 
 export const CellApiModule = defineCommunityModule<_ValueApi>('@ag-grid-community/cell-api', {
     apiFunctions: {
-        getValue,
         getCellValue,
     },
 });

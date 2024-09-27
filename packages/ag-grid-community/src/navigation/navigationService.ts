@@ -644,12 +644,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                     nextCellPosition: nextPosition ? nextPosition : null,
                 };
                 const userResult = userFunc(params);
-                if (userResult === true || userResult === null) {
-                    if (userResult === null) {
-                        _warnOnce(
-                            'Returning `null` from tabToNextCell is deprecated. Return `true` to stay on the current cell, or `false` to let the browser handle the tab behaviour.'
-                        );
-                    }
+                if (userResult === true) {
                     nextPosition = previousPosition;
                 } else if (userResult === false) {
                     return false;

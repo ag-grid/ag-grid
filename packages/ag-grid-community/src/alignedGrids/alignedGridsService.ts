@@ -69,9 +69,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 }
 
                 if (!refOrComp.api) {
-                    _errorOnce(
-                        `alignedGrids - No api found on the linked grid. If you are passing gridOptions to alignedGrids since v31 this is no longer valid. ${seeUrl()}`
-                    );
+                    _errorOnce(`alignedGrids - No api found on the linked grid. ${seeUrl()}`);
                 }
                 return refOrComp.api;
             })

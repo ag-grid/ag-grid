@@ -141,7 +141,6 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
                 'masterDetail',
                 'treeData',
                 'removePivotHeaderRowWhenSingleValueColumn',
-                'suppressServerSideInfiniteScroll',
                 'cacheBlockSize',
             ],
             resetListener

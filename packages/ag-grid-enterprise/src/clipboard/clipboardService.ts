@@ -1060,11 +1060,10 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const { node, column } = params;
 
         const isTreeData = this.gos.get('treeData');
-        const isSuppressGroupMaintainValueType = this.gos.get('suppressGroupMaintainValueType');
 
-        // if not tree data and not suppressGroupMaintainValueType then we get the value from the group data
+        // if not tree datathen we get the value from the group data
         const getValueFromNode = () => {
-            if (isTreeData || isSuppressGroupMaintainValueType || !column) {
+            if (isTreeData || !column) {
                 return node.key;
             }
             const value = node.groupData?.[column.getId()];

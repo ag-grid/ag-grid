@@ -7,7 +7,6 @@ import {
     destroyFilter,
     getColumnFilterInstance,
     getColumnFilterModel,
-    getFilterInstance,
     getFilterModel,
     isColumnFilterPresent,
     setColumnFilterModel,
@@ -61,7 +60,6 @@ export const ColumnFilterApiModule = defineCommunityModule<_ColumnFilterGridApi>
     {
         apiFunctions: {
             isColumnFilterPresent,
-            getFilterInstance,
             getColumnFilterInstance,
             destroyFilter,
             setFilterModel,

@@ -1,12 +1,5 @@
 import type { BeanCollection, ColDef, ColGroupDef, Column, IAggFunc } from 'ag-grid-community';
 
-/** @deprecated v31.1 */
-export function addAggFunc(beans: BeanCollection, key: string, aggFunc: IAggFunc): void {
-    if (beans.aggFuncService) {
-        beans.aggFuncService.addAggFuncs({ key: aggFunc });
-    }
-}
-
 export function addAggFuncs(beans: BeanCollection, aggFuncs: { [key: string]: IAggFunc }): void {
     if (beans.aggFuncService) {
         beans.aggFuncService.addAggFuncs(aggFuncs);
@@ -47,18 +40,8 @@ export function getValueColumns(beans: BeanCollection): Column[] {
     return beans.funcColsService.valueCols;
 }
 
-/** @deprecated v31.1 */
-export function removeValueColumn(beans: BeanCollection, colKey: string | ColDef | Column): void {
-    beans.funcColsService.removeValueColumns([colKey], 'api');
-}
-
 export function removeValueColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {
     beans.funcColsService.removeValueColumns(colKeys, 'api');
-}
-
-/** @deprecated v31.1 */
-export function addValueColumn(beans: BeanCollection, colKey: string | ColDef | Column): void {
-    beans.funcColsService.addValueColumns([colKey], 'api');
 }
 
 export function addValueColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {
@@ -69,18 +52,8 @@ export function setRowGroupColumns(beans: BeanCollection, colKeys: (string | Col
     beans.funcColsService.setRowGroupColumns(colKeys, 'api');
 }
 
-/** @deprecated v31.1 */
-export function removeRowGroupColumn(beans: BeanCollection, colKey: string | ColDef | Column): void {
-    beans.funcColsService.removeRowGroupColumns([colKey], 'api');
-}
-
 export function removeRowGroupColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {
     beans.funcColsService.removeRowGroupColumns(colKeys, 'api');
-}
-
-/** @deprecated v31.1 */
-export function addRowGroupColumn(beans: BeanCollection, colKey: string | ColDef | Column): void {
-    beans.funcColsService.addRowGroupColumns([colKey], 'api');
 }
 
 export function addRowGroupColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {
@@ -99,18 +72,8 @@ export function setPivotColumns(beans: BeanCollection, colKeys: (string | ColDef
     beans.funcColsService.setPivotColumns(colKeys, 'api');
 }
 
-/** @deprecated v31.1 */
-export function removePivotColumn(beans: BeanCollection, colKey: string | ColDef | Column): void {
-    beans.funcColsService.removePivotColumns([colKey], 'api');
-}
-
 export function removePivotColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {
     beans.funcColsService.removePivotColumns(colKeys, 'api');
-}
-
-/** @deprecated v31.1 */
-export function addPivotColumn(beans: BeanCollection, colKey: string | ColDef | Column): void {
-    beans.funcColsService.addPivotColumns([colKey], 'api');
 }
 
 export function addPivotColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {

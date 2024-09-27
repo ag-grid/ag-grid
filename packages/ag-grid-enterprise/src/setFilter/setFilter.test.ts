@@ -94,7 +94,6 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
         doesRowPassOtherFilter: () => true,
         filterChangedCallback: () => {},
         filterModifiedCallback: () => {},
-        valueGetter: ({ node }) => node.data.value,
         getValue: (node) => node.data.value,
         ...filterParams,
     };

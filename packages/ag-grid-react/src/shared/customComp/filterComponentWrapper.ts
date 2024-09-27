@@ -73,7 +73,6 @@ export class FilterComponentWrapper
         // remove props in IFilterParams but not CustomFilterProps
         delete (props as any).filterChangedCallback;
         delete (props as any).filterModifiedCallback;
-        delete (props as any).valueGetter;
         return props;
     }
 }

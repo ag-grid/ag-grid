@@ -27,8 +27,6 @@ export interface IGroupCellRendererParams<TData = any, TValue = any> {
     suppressDoubleClickExpand?: boolean;
     /** Set to `true` to suppress expand on <kbd>↵ Enter</kbd> */
     suppressEnterExpand?: boolean;
-    /** The value getter for the footer text. Can be a function or expression. @deprecated v31.2 use `totalValueGetter` */
-    footerValueGetter?: string | FooterValueGetterFunc;
     /** The value getter for the total row text. Can be a function or expression. */
     totalValueGetter?: string | TotalValueGetterFunc;
     /** If `true`, count is not displayed beside the name. */
