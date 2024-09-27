@@ -74,10 +74,6 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         });
     }
 
-    public onParamsUpdated(params: IFloatingFilterParams<MultiFilter>): void {
-        this.refresh(params);
-    }
-
     public refresh(params: IFloatingFilterParams<MultiFilter>): void {
         this.params = params;
         const { compDetailsList: newCompDetailsList, floatingFilterParamsList } = this.getCompDetailsList(params);
@@ -91,17 +87,8 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         if (allFloatingFilterCompsUnchanged) {
             floatingFilterParamsList.forEach((floatingFilterParams, index) => {
                 const floatingFilter = this.floatingFilters[index] as IFloatingFilterComp<IFilter>;
-                let hasRefreshed = false;
-                if (floatingFilter.refresh) {
-                    const result = floatingFilter.refresh(floatingFilterParams);
-                    // framework wrapper always implements optional methods, but returns null if no underlying method
-                    if (result !== null) {
-                        hasRefreshed = true;
-                    }
-                }
-                if (!hasRefreshed) {
-                    floatingFilter.onParamsUpdated?.(floatingFilterParams);
-                }
+                floatingFilter.refresh?.(floatingFilterParams);
+                // framework wrapper always implements optional methods, but returns null if no underlying method
             });
         } else {
             _clearElement(this.getGui());

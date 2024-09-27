@@ -55,10 +55,6 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
         this.eFloatingFilterText.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }
 
-    public onParamsUpdated(params: IFloatingFilterParams): void {
-        this.refresh(params);
-    }
-
     public refresh(params: IFloatingFilterParams): void {
         this.params = params;
         this.setParams(params);

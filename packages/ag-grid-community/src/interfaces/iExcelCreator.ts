@@ -22,10 +22,6 @@ export interface ExcelStyle {
     numberFormat?: ExcelNumberFormat;
     /** Use this property to setup cell protection. */
     protection?: ExcelProtection;
-    /**
-     * @deprecated Legacy property
-     */
-    name?: string;
 }
 
 export interface ExcelAlignment {
@@ -73,10 +69,6 @@ export interface ExcelAlignment {
      * @default false
      */
     wrapText?: boolean;
-    /**
-     * @deprecated Legacy property
-     */
-    verticalText?: boolean;
 }
 
 export interface ExcelBorders {
@@ -160,10 +152,6 @@ export interface ExcelFont {
     underline?: 'Single' | 'Double';
     /** Use this property to change the default font alignment. Note: This is different than setting cell vertical alignment. */
     verticalAlign?: 'Superscript' | 'Subscript';
-    /**
-     * @deprecated Legacy property
-     */
-    charSet?: number;
 }
 
 export interface ExcelInterior {

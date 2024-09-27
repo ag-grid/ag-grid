@@ -8,15 +8,6 @@ export function isColumnFilterPresent(beans: BeanCollection): boolean {
     return !!beans.filterManager?.isColumnFilterPresent() || !!beans.filterManager?.isAggregateFilterPresent();
 }
 
-/** @deprecated v31.1 */
-export function getFilterInstance<TFilter extends IFilter>(
-    beans: BeanCollection,
-    key: string | Column,
-    callback?: (filter: TFilter | null) => void
-): undefined {
-    return beans.filterManager?.getFilterInstance(key as string | AgColumn, callback);
-}
-
 export function getColumnFilterInstance<TFilter extends IFilter>(
     beans: BeanCollection,
     key: string | Column

@@ -21,7 +21,6 @@ export class ComponentMetadataProvider extends BeanStub implements NamedBean {
                     'setInputPlaceholder',
                     'setInputAriaLabel',
                     'setDisabled',
-                    'onParamsUpdated',
                     'refresh',
                 ],
             },
@@ -57,7 +56,7 @@ export class ComponentMetadataProvider extends BeanStub implements NamedBean {
             },
             floatingFilterComponent: {
                 mandatoryMethodList: ['onParentModelChanged'],
-                optionalMethodList: ['afterGuiAttached', 'onParamsUpdated', 'refresh'],
+                optionalMethodList: ['afterGuiAttached', 'refresh'],
             },
             cellRenderer: {
                 mandatoryMethodList: [],

@@ -81,27 +81,6 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
         return eParentElement;
     }
 
-    protected addParentContainerStyleAndClasses() {
-        if (!this.componentInstance) {
-            return;
-        }
-
-        if (this.componentInstance.getReactContainerStyle && this.componentInstance.getReactContainerStyle()) {
-            _warnOnce(
-                'Since v31.1 "getReactContainerStyle" is deprecated. Apply styling directly to ".ag-react-container" if needed.'
-            );
-            Object.assign(this.eParentElement.style, this.componentInstance.getReactContainerStyle());
-        }
-
-        if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
-            _warnOnce(
-                'Since v31.1 "getReactContainerClasses" is deprecated. Apply styling directly to ".ag-react-container" if needed.'
-            );
-            const parentContainerClasses: string[] = this.componentInstance.getReactContainerClasses();
-            parentContainerClasses.forEach((className) => this.eParentElement.classList.add(className));
-        }
-    }
-
     public statelessComponentRendered(): boolean {
         // fixed fragmentsFuncRendererCreateDestroy funcRendererWithNan (changeDetectionService too for NaN)
         return this.eParentElement.childElementCount > 0 || this.eParentElement.childNodes.length > 0;
@@ -181,7 +160,6 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
             // grab hold of the actual instance created
             this.ref = (element: any) => {
                 this.componentInstance = element;
-                this.addParentContainerStyleAndClasses();
                 this.resolveInstanceCreated?.(true);
                 this.resolveInstanceCreated = undefined;
             };

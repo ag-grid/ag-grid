@@ -105,7 +105,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
                 return;
             }
 
-            // this footer should only be non-top level. Don't need to check groupIncludeFooter
+            // this footer should only be non-top level.
             // as we won't have footer rows in that instance.
             if (node.footer && this.gos.get('groupHideOpenParents')) {
                 const showRowGroup = colDef && colDef.showRowGroup;
@@ -359,29 +359,22 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     }
 
     private addFooterValue(): void {
-        let footerValueGetter = this.params.totalValueGetter;
-        if (!footerValueGetter) {
-            const legacyGetter = this.params.footerValueGetter;
-            if (legacyGetter) {
-                footerValueGetter = legacyGetter;
-                _warnOnce('As of v31.3, footerValueGetter is deprecated. Use `totalValueGetter` instead.');
-            }
-        }
+        const totalValueGetter = this.params.totalValueGetter;
         let footerValue = '';
 
-        if (footerValueGetter) {
+        if (totalValueGetter) {
             // params is same as we were given, except we set the value as the item to display
             const paramsClone = _cloneObject(this.params);
             paramsClone.value = this.params.value;
 
-            if (typeof footerValueGetter === 'function') {
-                footerValue = footerValueGetter(paramsClone);
-            } else if (typeof footerValueGetter === 'string') {
+            if (typeof totalValueGetter === 'function') {
+                footerValue = totalValueGetter(paramsClone);
+            } else if (typeof totalValueGetter === 'string') {
                 footerValue = this.expressionService
-                    ? this.expressionService.evaluate(footerValueGetter, paramsClone)
+                    ? this.expressionService.evaluate(totalValueGetter, paramsClone)
                     : '';
             } else {
-                _warnOnce('footerValueGetter should be either a function or a string (expression)');
+                _warnOnce('totalValueGetter should be either a function or a string (expression)');
             }
         } else {
             const localeTextFunc = this.localeService.getLocaleTextFunc();

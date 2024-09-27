@@ -61,10 +61,6 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         });
     }
 
-    public onParamsUpdated(params: IFloatingFilterParams<GroupFilter>): void {
-        this.refresh(params);
-    }
-
     public refresh(params: IFloatingFilterParams<GroupFilter>): void {
         this.params = params;
         this.setParams();
@@ -140,11 +136,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
             this.params.showParentFilter
         );
         if (compDetails) {
-            if (this.underlyingFloatingFilter?.refresh) {
-                this.underlyingFloatingFilter.refresh(compDetails.params);
-            } else {
-                this.underlyingFloatingFilter?.onParamsUpdated?.(compDetails.params);
-            }
+            this.underlyingFloatingFilter?.refresh?.(compDetails.params);
         }
     }
 

@@ -2,7 +2,7 @@ import type { _ColumnMoveApi } from '../api/gridApi';
 import { DragAndDropModule } from '../dragAndDrop/dragModule';
 import { _defineModule } from '../interfaces/iModule';
 import { VERSION } from '../version';
-import { moveColumn, moveColumnByIndex, moveColumns } from './columnMoveApi';
+import { moveColumnByIndex, moveColumns } from './columnMoveApi';
 import { ColumnMoveService } from './columnMoveService';
 
 export const ColumnMoveCoreModule = _defineModule({
@@ -16,7 +16,6 @@ export const ColumnMoveApiModule = _defineModule<_ColumnMoveApi>({
     version: VERSION,
     moduleName: '@ag-grid-community/column-move-api',
     apiFunctions: {
-        moveColumn,
         moveColumnByIndex,
         moveColumns,
     },

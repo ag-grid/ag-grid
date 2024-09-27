@@ -398,10 +398,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     menuTabs?: ColumnMenuTab[];
     /** Params used to change the behaviour and appearance of the Column Chooser/Columns Menu tab. */
     columnChooserParams?: ColumnChooserParams;
-    /** @deprecated v31.1 Use columnChooserParams instead */
-    columnsMenuParams?: ColumnsMenuParams;
-    /** @deprecated v31.1 Use suppressHeaderMenuButton instead */
-    suppressMenu?: boolean;
+
     /**
      * Set to `true` if no menu button should be shown for this column header.
      * @default false
@@ -541,12 +538,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @default false
      */
     enableCellChangeFlash?: boolean;
-    /**
-     * Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid.
-     * @default false
-     * @deprecated 31.2 Use `enableCellChangeFlash={false}` in the ColDef.
-     */
-    suppressCellFlash?: boolean;
 
     // *** Columns: Row Dragging *** //
 
@@ -816,9 +807,6 @@ export interface GetQuickFilterTextParams<TData = any, TValue = any> extends AgG
 }
 
 export type ColumnMenuTab = 'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab';
-
-/** @deprecated v31.1 Use `ColumnChooserParams` instead */
-export interface ColumnsMenuParams extends ColumnChooserParams {}
 
 export interface ColumnChooserParams {
     /** To suppress updating the layout of columns as they are rearranged in the grid */

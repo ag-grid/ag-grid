@@ -442,7 +442,7 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public focusHeaderPositionFromUserFunc(params: {
-        userFunc: (params: WithoutGridCommon<TabToNextHeaderParams>) => boolean | HeaderPosition | null;
+        userFunc: (params: WithoutGridCommon<TabToNextHeaderParams>) => boolean | HeaderPosition;
         headerPosition: HeaderPosition | null;
         direction?: 'Before' | 'After' | null;
         event?: KeyboardEvent;
@@ -471,7 +471,7 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     private getHeaderPositionFromUserFunc(params: {
-        userFunc: (params: WithoutGridCommon<TabToNextHeaderParams>) => boolean | HeaderPosition | null;
+        userFunc: (params: WithoutGridCommon<TabToNextHeaderParams>) => boolean | HeaderPosition;
         direction?: 'Before' | 'After' | null;
         currentPosition: HeaderPosition | null;
         headerPosition: HeaderPosition | null;
@@ -485,12 +485,7 @@ export class FocusService extends BeanStub implements NamedBean {
             headerRowCount,
         };
         const userResult = userFunc(userFuncParams);
-        if (userResult === true || userResult === null) {
-            if (userResult === null) {
-                _warnOnce(
-                    'Since v31.3 Returning `null` from tabToNextHeader is deprecated. Return `true` to stay on the current header, or `false` to let the browser handle the tab behaviour.'
-                );
-            }
+        if (userResult === true) {
             return currentPosition;
         }
         if (userResult === false) {

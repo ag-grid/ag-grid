@@ -4,9 +4,6 @@ import { ModuleNames } from '../../modules/moduleNames';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 
 const COLUMN_DEFINITION_DEPRECATIONS: Deprecations<ColDef | ColGroupDef> = {
-    columnsMenuParams: { version: '31.1', message: 'Use `columnChooserParams` instead.' },
-    suppressMenu: { version: '31.1', message: 'Use `suppressHeaderMenuButton` instead.' },
-    suppressCellFlash: { version: '31.2', message: 'Use `enableCellChangeFlash={false}` in the ColDef' },
     checkboxSelection: { version: '32.2', message: 'Use `selection.checkboxes` in `GridOptions` instead.' },
     headerCheckboxSelection: {
         version: '32.2',
@@ -59,9 +56,6 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
             };
         }
         return null;
-    },
-    columnsMenuParams: {
-        module: [ModuleNames.MenuModule, ModuleNames.ColumnsToolPanelModule],
     },
     columnChooserParams: {
         module: [ModuleNames.MenuModule, ModuleNames.ColumnsToolPanelModule],
@@ -134,7 +128,6 @@ const colDefPropertyMap: Record<ColKey, undefined> = {
     floatingFilterComponentParams: undefined,
     tooltipComponentParams: undefined,
     refData: undefined,
-    columnsMenuParams: undefined,
     columnChooserParams: undefined,
     children: undefined,
     sortingOrder: undefined,
@@ -155,7 +148,6 @@ const colDefPropertyMap: Record<ColKey, undefined> = {
     initialRowGroupIndex: undefined,
     pivotIndex: undefined,
     initialPivotIndex: undefined,
-    suppressCellFlash: undefined,
     suppressColumnsToolPanel: undefined,
     suppressFiltersToolPanel: undefined,
     openByDefault: undefined,
@@ -172,7 +164,6 @@ const colDefPropertyMap: Record<ColKey, undefined> = {
     headerCheckboxSelection: undefined,
     headerCheckboxSelectionFilteredOnly: undefined,
     headerCheckboxSelectionCurrentPageOnly: undefined,
-    suppressMenu: undefined,
     suppressHeaderMenuButton: undefined,
     suppressMovable: undefined,
     lockPosition: undefined,

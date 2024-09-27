@@ -3,7 +3,6 @@ import { BeanStub } from '../context/beanStub';
 import type { AgEventType } from '../eventTypes';
 import type { AgEventListener, AgGlobalEventListener } from '../events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from '../events';
-import { _useAsyncEvents } from '../gridOptionsUtils';
 import { FrameworkEventListenerService } from './frameworkEventListenerService';
 
 export class ApiEventService extends BeanStub<AgEventType> implements NamedBean {
@@ -25,7 +24,7 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
     public override addEventListener<T extends AgEventType>(eventType: T, userListener: AgEventListener): void {
         const listener = this.frameworkEventWrappingService.wrap(userListener);
 
-        const async = _useAsyncEvents(this.gos) && !ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);
+        const async = !ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);
         const listeners = async ? this.asyncEventListeners : this.syncEventListeners;
         if (!listeners.has(eventType)) {
             listeners.set(eventType, new Set());
@@ -46,27 +45,20 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
     public addGlobalListener(userListener: AgGlobalEventListener): void {
         const listener = this.frameworkEventWrappingService.wrapGlobal(userListener);
 
-        const async = _useAsyncEvents(this.gos);
-
-        if (async) {
-            // if async then need to setup the global listener for sync to handle alwaysSyncGlobalEvents
-            const syncListener: AgGlobalEventListener = (eventType, event) => {
-                if (ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType)) {
-                    listener(eventType, event);
-                }
-            };
-            const asyncListener: AgGlobalEventListener = (eventType, event) => {
-                if (!ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType)) {
-                    listener(eventType, event);
-                }
-            };
-            this.globalEventListenerPairs.set(userListener, { syncListener, asyncListener });
-            this.eventService.addGlobalListener(syncListener, false);
-            this.eventService.addGlobalListener(asyncListener, true);
-        } else {
-            this.syncGlobalEventListeners.add(listener);
-            this.eventService.addGlobalListener(listener, false);
-        }
+        // if async then need to setup the global listener for sync to handle alwaysSyncGlobalEvents
+        const syncListener: AgGlobalEventListener = (eventType, event) => {
+            if (ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType)) {
+                listener(eventType, event);
+            }
+        };
+        const asyncListener: AgGlobalEventListener = (eventType, event) => {
+            if (!ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType)) {
+                listener(eventType, event);
+            }
+        };
+        this.globalEventListenerPairs.set(userListener, { syncListener, asyncListener });
+        this.eventService.addGlobalListener(syncListener, false);
+        this.eventService.addGlobalListener(asyncListener, true);
     }
 
     public removeGlobalListener(userListener: AgGlobalEventListener): void {

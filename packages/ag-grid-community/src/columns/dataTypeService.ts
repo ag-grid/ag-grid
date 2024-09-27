@@ -275,12 +275,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     return undefined as any;
                 }
 
-                // `groupRows` is equivalent to `suppressGroupMaintainValueType = true` - they both use the key as the value
-                if (
-                    (this.gos.get('suppressGroupMaintainValueType') ||
-                        this.gos.get('groupDisplayType') === 'groupRows') &&
-                    !this.gos.get('treeData')
-                ) {
+                // `groupRows` use the key as the value
+                if (this.gos.get('groupDisplayType') === 'groupRows' && !this.gos.get('treeData')) {
                     // we don't want to double format the value
                     // as this is already formatted by using the valueFormatter as the keyCreator
                     return undefined as any;

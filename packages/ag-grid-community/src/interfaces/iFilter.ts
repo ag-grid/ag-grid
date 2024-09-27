@@ -190,11 +190,6 @@ export interface IFilterParams<TData = any, TContext = any> extends BaseFilterPa
      * Apart from emitting the event, the grid takes no further action.
      */
     filterModifiedCallback: () => void;
-
-    /**
-     * @deprecated v31 Use `getValue` instead
-     */
-    valueGetter: ValueGetterFunc<TData>;
 }
 
 /**
