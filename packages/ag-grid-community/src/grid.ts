@@ -63,7 +63,6 @@ import { SyncService } from './syncService';
 import { _errorOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
-import type { _ErrorType } from './validation/logging';
 import { _logError } from './validation/logging';
 import { ChangeDetectionService } from './valueService/changeDetectionService';
 import { ValueService } from './valueService/valueService';
@@ -167,7 +166,8 @@ export function createGrid<TData>(
     params?: Params
 ): GridApi<TData> {
     if (!gridOptions) {
-        _logError<_ErrorType.NoGridOptions>(11, {});
+        // No gridOptions provided, abort creating the grid
+        _logError(11, {});
         return {} as GridApi;
     }
     const api = new GridCoreCreator().create(

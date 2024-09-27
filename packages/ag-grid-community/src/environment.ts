@@ -3,7 +3,6 @@ import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { GridTheme } from './entities/gridOptions';
 import type { ResizeObserverService } from './misc/resizeObserverService';
-import type { _ErrorType } from './validation/logging';
 import { _logWarn } from './validation/logging';
 
 const ROW_HEIGHT: Variable = {
@@ -169,7 +168,8 @@ export class Environment extends BeanStub implements NamedBean {
         let lastMeasurement = this.measureSizeEl(variable);
 
         if (lastMeasurement === 'no-styles') {
-            _logWarn<_ErrorType.NoValueForVariable>(9, { variable });
+            // No value for the variable
+            _logWarn(9, { variable });
         }
 
         const unsubscribe = this.resizeObserverService.observeResize(sizeEl, () => {

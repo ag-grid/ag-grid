@@ -5,19 +5,22 @@ import type { ValidationService } from './validationService';
 let validationService: ValidationService | null = null;
 let suppressAllLogging = false;
 let baseDocLink = 'https://www.ag-grid.com/javascript-data-grid';
+/**
+ * The ValidationService passes itself in if it has been included.
+ * @param logger
+ */
 export function provideValidationServiceLogger(logger: ValidationService) {
     validationService = logger;
 }
 export function suppressAllLogs() {
     suppressAllLogging = true;
 }
+/** Set by the Framework override to give us accurate links for the framework  */
 export function setValidationDocLink(docLink: string) {
     baseDocLink = docLink;
 }
 
 type LogFn = (message: string, ...args: any[]) => void;
-// polyfill for NoInfer in TS 5.4 to enable forcing the generic type to be provided when calling warnOnce or errorOnce
-type _NoInfer<T> = [T][T extends any ? 0 : never];
 
 function getMsgOrDefault<TId extends ErrorId>(logger: LogFn, id: TId, args: GetErrorParams<TId>) {
     if (suppressAllLogging) return;
@@ -34,19 +37,17 @@ const minifiedLog = (errorNum: number, args: GetErrorParams<any>) => {
 };
 
 export function _logWarn<
-    TId extends ErrorId | null = null,
+    TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    TShowMessageAtCallLocation = TId extends ErrorId ? ErrorMap[TId] : null,
->(id: _NoInfer<TId>, args: GetErrorParams<TId>) {
+    TShowMessageAtCallLocation = ErrorMap[TId],
+>(id: TId, args: GetErrorParams<TId>) {
     getMsgOrDefault(warnLog, id!, args as any);
 }
 
 export function _logError<
-    TId extends ErrorId | null = null,
+    TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    TShowMessageAtCallLocation = TId extends ErrorId ? ErrorMap[TId] : null,
->(id: _NoInfer<TId>, args: GetErrorParams<TId>) {
+    TShowMessageAtCallLocation = ErrorMap[TId],
+>(id: TId, args: GetErrorParams<TId>) {
     getMsgOrDefault(errorLog, id!, args as any);
 }
-
-export * as _ErrorType from './errorMessages/errorText';

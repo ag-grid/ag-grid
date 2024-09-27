@@ -2,7 +2,6 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { Column } from '../interfaces/iColumn';
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
-import type { _ErrorType } from '../validation/logging';
 import { _logError } from '../validation/logging';
 
 export function isColumnFilterPresent(beans: BeanCollection): boolean {
@@ -46,7 +45,8 @@ export function setColumnFilterModel<TModel>(
 export function showColumnFilter(beans: BeanCollection, colKey: string | Column): void {
     const column = beans.columnModel.getCol(colKey);
     if (!column) {
-        _logError<_ErrorType.NoColumnFoundForKey>(12, { colKey });
+        // Column not found, can't show filter
+        _logError(12, { colKey });
         return;
     }
     beans.menuService.showFilterMenu({
