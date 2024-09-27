@@ -1,6 +1,6 @@
 import { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
 import { ApiFunctionService } from './api/apiFunctionService';
-import { CommunityApiModule } from './api/apiModule';
+import { CommunityApiModule, CoreApiModule } from './api/apiModule';
 import { ColumnAutosizeModule } from './columnAutosize/columnAutosizeModule';
 import { ColumnMoveModule } from './columnMove/columnMoveModule';
 import { ColumnResizeModule } from './columnResize/columnResizeModule';
@@ -36,6 +36,7 @@ import { _defineModule } from './interfaces/iModule';
 import { LocaleService } from './localeService';
 import { AnimationFrameModule } from './misc/animationFrameModule';
 import { EventApiModule } from './misc/apiEvents/apiEventModule';
+import { CommunityMenuApiModule } from './misc/menu/sharedMenuModule';
 import { StateModule } from './misc/state/stateModule';
 import { ModuleNames } from './modules/moduleNames';
 import { KeyboardNavigationModule } from './navigation/navigationModule';
@@ -59,7 +60,7 @@ import { SortModule } from './sort/sortModule';
 import { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 import { SyncService } from './syncService';
 import { ValidationService } from './validation/validationService';
-import { ChangeDetectionModule, ExpressionModule, ValueCacheModule } from './valueService/valueModule';
+import { CellApiModule, ChangeDetectionModule, ExpressionModule, ValueCacheModule } from './valueService/valueModule';
 import { ValueService } from './valueService/valueService';
 import { VERSION } from './version';
 import { PopupModule } from './widgets/popupModule';
@@ -99,6 +100,7 @@ export const GridCoreModule = {
         ColumnNameService,
         ColumnViewportService,
     ],
+    dependantModules: [CoreApiModule],
 };
 
 export const ValidationsModule = _defineModule({
@@ -150,5 +152,7 @@ export const CommunityFeaturesModule = _defineModule({
         EventApiModule,
         ColumnFlexModule,
         KeyboardNavigationModule,
+        CellApiModule,
+        CommunityMenuApiModule,
     ],
 });

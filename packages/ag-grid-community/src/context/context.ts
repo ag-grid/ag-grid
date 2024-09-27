@@ -75,7 +75,7 @@ import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { LocaleService } from '../localeService';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEvents/apiEventService';
-import type { MenuService } from '../misc/menuService';
+import type { MenuService } from '../misc/menu/menuService';
 import type { StateService } from '../misc/state/stateService';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import type { CellNavigationService } from '../navigation/cellNavigationService';

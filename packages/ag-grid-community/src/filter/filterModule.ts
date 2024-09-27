@@ -1,7 +1,7 @@
 import type { _ColumnFilterGridApi, _FilterGridApi, _QuickFilterGridApi } from '../api/gridApi';
 import { HeaderFilterCellCtrl } from '../headerRendering/cells/floatingFilter/headerFilterCellCtrl';
 import { _defineModule } from '../interfaces/iModule';
-import { SharedMenuModule } from '../misc/sharedMenuModule';
+import { SharedMenuModule } from '../misc/menu/sharedMenuModule';
 import { VERSION } from '../version';
 import { PopupModule } from '../widgets/popupModule';
 import {

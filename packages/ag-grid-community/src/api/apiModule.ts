@@ -2,15 +2,8 @@ import { ColumnApiModule } from '../columns/columnModule';
 import { _defineModule } from '../interfaces/iModule';
 import { RenderApiModule } from '../rendering/renderModule';
 import { VERSION } from '../version';
-import { expireValueCache, getCellValue, getValue } from './cellApi';
 import { destroy, getGridId, getGridOption, isDestroyed, setGridOption, updateGridOptions } from './coreApi';
-import type { _CellGridApi, _CommunityMenuGridApi, _CoreGridApi, _RowGridApi, _ScrollGridApi } from './gridApi';
-import {
-    hidePopupMenu,
-    showColumnMenu,
-    showColumnMenuAfterButtonClick,
-    showColumnMenuAfterMouseClick,
-} from './menuApi';
+import type { _CoreGridApi, _RowGridApi, _ScrollGridApi } from './gridApi';
 import {
     addRenderedRowListener,
     forEachNode,
@@ -79,37 +72,8 @@ export const ScrollApiModule = _defineModule<_ScrollGridApi<any>>({
     },
 });
 
-export const CellApiModule = _defineModule<_CellGridApi<any>>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/cell-api',
-    apiFunctions: {
-        expireValueCache,
-        getValue,
-        getCellValue,
-    },
-});
-
-export const CommunityMenuApiModule = _defineModule<_CommunityMenuGridApi>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/menu-api',
-    apiFunctions: {
-        showColumnMenuAfterButtonClick,
-        showColumnMenuAfterMouseClick,
-        showColumnMenu,
-        hidePopupMenu,
-    },
-});
-
 export const CommunityApiModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-community/api',
-    dependantModules: [
-        CoreApiModule,
-        ColumnApiModule,
-        RowApiModule,
-        ScrollApiModule,
-        RenderApiModule,
-        CellApiModule,
-        CommunityMenuApiModule,
-    ],
+    dependantModules: [ColumnApiModule, RowApiModule, ScrollApiModule, RenderApiModule],
 });

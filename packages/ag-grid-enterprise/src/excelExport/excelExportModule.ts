@@ -1,6 +1,5 @@
 import type { _ExcelExportGridApi } from 'ag-grid-community';
-import { ModuleNames, _defineModule } from 'ag-grid-community';
-import { _CsvExportCoreModule } from 'ag-grid-community';
+import { CsvExportCoreModule, ModuleNames, _defineModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
@@ -17,7 +16,7 @@ export const ExcelExportCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.ExcelExportModule}-core`,
     beans: [ExcelCreator],
-    dependantModules: [_CsvExportCoreModule, EnterpriseCoreModule],
+    dependantModules: [CsvExportCoreModule, EnterpriseCoreModule],
 });
 
 export const ExcelExportApiModule = _defineModule<_ExcelExportGridApi>({

@@ -1,10 +1,10 @@
 import type { _RowGroupingGridApi } from 'ag-grid-community';
 import {
+    ColumnFilterModule,
+    FloatingFilterModule,
     ModuleNames,
     PopupModule,
     StickyRowModule,
-    _ColumnFilterModule,
-    _FloatingFilterModule,
     _defineModule,
 } from 'ag-grid-community';
 
@@ -139,14 +139,14 @@ export const GroupFilterModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-enterprise/group-filter',
     userComponents: [{ name: 'agGroupColumnFilter', classImp: GroupFilter }],
-    dependantModules: [RowGroupingCoreModule, _ColumnFilterModule],
+    dependantModules: [RowGroupingCoreModule, ColumnFilterModule],
 });
 
 export const GroupFloatingFilterModule = _defineModule({
     version: VERSION,
     moduleName: '@ag-grid-enterprise/group-floating-filter',
     userComponents: [{ name: 'agGroupColumnFloatingFilter', classImp: GroupFloatingFilterComp }],
-    dependantModules: [GroupFilterModule, _FloatingFilterModule],
+    dependantModules: [GroupFilterModule, FloatingFilterModule],
 });
 
 export const RowGroupingModule = _defineModule({

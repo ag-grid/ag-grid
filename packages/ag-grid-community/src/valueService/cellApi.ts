@@ -1,9 +1,9 @@
+import type { GetCellValueParams } from '../api/gridApi';
 import type { BeanCollection } from '../context/context';
 import type { Column } from '../interfaces/iColumn';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _missing } from '../utils/generic';
 import { _escapeString } from '../utils/string';
-import type { GetCellValueParams } from './gridApi';
 
 export function expireValueCache(beans: BeanCollection): void {
     beans.valueCache?.expire();

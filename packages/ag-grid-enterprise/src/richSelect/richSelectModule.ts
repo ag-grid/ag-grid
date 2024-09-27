@@ -1,4 +1,4 @@
-import { ModuleNames, _EditCoreModule, _defineModule } from 'ag-grid-community';
+import { EditCoreModule, ModuleNames, _defineModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
@@ -12,5 +12,5 @@ export const RichSelectModule = _defineModule({
         { name: 'agRichSelect', classImp: RichSelectCellEditor },
         { name: 'agRichSelectCellEditor', classImp: RichSelectCellEditor },
     ],
-    dependantModules: [EnterpriseCoreModule, _EditCoreModule],
+    dependantModules: [EnterpriseCoreModule, EditCoreModule],
 });

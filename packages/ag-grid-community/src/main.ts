@@ -303,7 +303,7 @@ export { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRenderi
 export { IImmutableService } from './interfaces/iImmutableService';
 export { _requestAnimationFrame } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
-export type { MenuService } from './misc/menuService';
+export type { MenuService } from './misc/menu/menuService';
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from './interfaces/iCellEditor';
@@ -1002,29 +1002,30 @@ export { ModuleRegistry } from './modules/moduleRegistry';
 export { ColumnMoveModule } from './columnMove/columnMoveModule';
 export { DragModule, HorizontalResizeModule, DragAndDropModule } from './dragAndDrop/dragModule';
 export {
-    ColumnFilterModule as _ColumnFilterModule,
-    FilterCoreModule as _FilterCoreModule,
-    FloatingFilterModule as _FloatingFilterModule,
-    ReadOnlyFloatingFilterModule as _ReadOnlyFloatingFilterModule,
+    ColumnFilterModule,
+    FilterCoreModule,
+    FloatingFilterModule,
+    ReadOnlyFloatingFilterModule,
     FilterValueModule,
 } from './filter/filterModule';
-export { EditCoreModule as _EditCoreModule } from './edit/editModule';
+export { EditCoreModule } from './edit/editModule';
 export { StickyRowModule } from './rendering/features/stickyRowModule';
-export { RowNodeBlockModule as _RowNodeBlockModule } from './rowNodeCache/rowNodeBlockModule';
+export { RowNodeBlockModule } from './rowNodeCache/rowNodeBlockModule';
 export { RowSelectionCoreModule } from './selection/rowSelectionModule';
 export {
     CsrmSsrmSharedApiModule as _CsrmSsrmSharedApiModule,
     SsrmInfiniteSharedApiModule as _SsrmInfiniteSharedApiModule,
 } from './api/sharedApiModule';
-export { CommunityMenuApiModule as _CommunityMenuApiModule, CommunityApiModule } from './api/apiModule';
+export { CommunityApiModule } from './api/apiModule';
+export { CommunityMenuApiModule } from './misc/menu/sharedMenuModule';
 export { CommunityFeaturesModule, GridCoreModule } from './gridCoreModule';
 export { SortModule } from './sort/sortModule';
 export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
 export { ClientSideRowModelModule, ClientSideRowModelCoreModule } from './clientSideRowModel/clientSideRowModelModule';
-export { CsvExportModule, CsvExportCoreModule as _CsvExportCoreModule } from './csvExport/csvExportModule';
+export { CsvExportModule, CsvExportCoreModule as CsvExportCoreModule } from './csvExport/csvExportModule';
 export { InfiniteRowModelModule } from './infiniteRowModel/infiniteRowModelModule';
 export { PopupModule } from './widgets/popupModule';
-export { SharedMenuModule } from './misc/sharedMenuModule';
+export { SharedMenuModule } from './misc/menu/sharedMenuModule';
 export { KeyboardNavigationCoreModule } from './navigation/navigationModule';
 
 //  events

@@ -5,7 +5,7 @@ import { _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { Column } from '../../../interfaces/iColumn';
 import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
-import type { MenuService } from '../../../misc/menuService';
+import type { MenuService } from '../../../misc/menu/menuService';
 import type { SortController } from '../../../sort/sortController';
 import type { SortIndicatorComp } from '../../../sort/sortIndicatorComp';
 import { _removeFromParent, _setDisplayed } from '../../../utils/dom';

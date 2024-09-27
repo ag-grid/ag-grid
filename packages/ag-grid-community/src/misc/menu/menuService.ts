@@ -1,19 +1,19 @@
-import type { NamedBean } from '../context/bean';
-import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
-import type { CtrlsService } from '../ctrlsService';
-import type { AgColumn } from '../entities/agColumn';
-import { isColumn } from '../entities/agColumn';
-import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { FilterManager } from '../filter/filterManager';
-import { _isLegacyMenuEnabled } from '../gridOptionsUtils';
-import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
-import type { Column } from '../interfaces/iColumn';
-import type { IContextMenuService } from '../interfaces/iContextMenu';
-import type { IMenuFactory } from '../interfaces/iMenuFactory';
-import { _isIOSUserAgent } from '../utils/browser';
-import { _warnOnce } from '../utils/function';
-import { _requestAnimationFrame } from './animationFrameService';
+import type { NamedBean } from '../../context/bean';
+import { BeanStub } from '../../context/beanStub';
+import type { BeanCollection } from '../../context/context';
+import type { CtrlsService } from '../../ctrlsService';
+import type { AgColumn } from '../../entities/agColumn';
+import { isColumn } from '../../entities/agColumn';
+import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
+import type { FilterManager } from '../../filter/filterManager';
+import { _isLegacyMenuEnabled } from '../../gridOptionsUtils';
+import type { ContainerType } from '../../interfaces/iAfterGuiAttachedParams';
+import type { Column } from '../../interfaces/iColumn';
+import type { IContextMenuService } from '../../interfaces/iContextMenu';
+import type { IMenuFactory } from '../../interfaces/iMenuFactory';
+import { _isIOSUserAgent } from '../../utils/browser';
+import { _warnOnce } from '../../utils/function';
+import { _requestAnimationFrame } from '../animationFrameService';
 
 interface BaseShowColumnMenuParams {
     column?: Column;

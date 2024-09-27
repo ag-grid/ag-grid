@@ -351,10 +351,12 @@ export interface _EventGridApi<TData> {
     ): void;
 }
 
-export interface _CellGridApi<TData> {
+export interface _ValueCacheApi {
     /** Expire the value cache. */
     expireValueCache(): void;
+}
 
+export interface _ValueApi {
     /**
      * @deprecated v31.3 Use `getCellValue` instead.
      */
@@ -1216,7 +1218,8 @@ export interface _CoreModuleGridApi<TData>
         _ScrollGridApi<TData>,
         _KeyboardNavigationGridApi,
         _EventGridApi<TData>,
-        _CellGridApi<TData>,
+        _ValueCacheApi,
+        _ValueApi,
         _CommunityMenuGridApi,
         _SortGridApi,
         _OverlayGridApi,

@@ -1,5 +1,5 @@
 import type { _MenuGridApi } from 'ag-grid-community';
-import { ModuleNames, PopupModule, SharedMenuModule, _CommunityMenuApiModule, _defineModule } from 'ag-grid-community';
+import { CommunityMenuApiModule, ModuleNames, PopupModule, SharedMenuModule, _defineModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
@@ -55,7 +55,7 @@ export const MenuApiModule = _defineModule<_MenuGridApi>({
         showColumnChooser,
         hideColumnChooser,
     },
-    dependantModules: [ColumnChooserModule, ContextMenuModule, _CommunityMenuApiModule],
+    dependantModules: [ColumnChooserModule, ContextMenuModule, CommunityMenuApiModule],
 });
 
 export const MenuModule = _defineModule({

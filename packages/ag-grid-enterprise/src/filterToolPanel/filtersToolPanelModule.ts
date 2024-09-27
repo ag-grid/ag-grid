@@ -1,4 +1,4 @@
-import { ModuleNames, _ColumnFilterModule, _defineModule } from 'ag-grid-community';
+import { ColumnFilterModule, ModuleNames, _defineModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { SideBarModule } from '../sideBar/sideBarModule';
@@ -10,5 +10,5 @@ export const FiltersToolPanelModule = _defineModule({
     moduleName: ModuleNames.FiltersToolPanelModule,
     beans: [],
     userComponents: [{ name: 'agFiltersToolPanel', classImp: FiltersToolPanel }],
-    dependantModules: [SideBarModule, EnterpriseCoreModule, _ColumnFilterModule],
+    dependantModules: [SideBarModule, EnterpriseCoreModule, ColumnFilterModule],
 });

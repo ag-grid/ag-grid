@@ -1,6 +1,6 @@
-import type { BeanCollection } from '../context/context';
-import type { Column } from '../interfaces/iColumn';
-import { _errorOnce } from '../utils/function';
+import type { BeanCollection } from '../../context/context';
+import type { Column } from '../../interfaces/iColumn';
+import { _errorOnce } from '../../utils/function';
 
 /** @deprecated v31.1 */
 export function showColumnMenuAfterButtonClick(

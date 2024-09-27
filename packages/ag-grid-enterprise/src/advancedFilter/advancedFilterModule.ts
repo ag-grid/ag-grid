@@ -1,10 +1,10 @@
 import type { _AdvancedFilterGridApi } from 'ag-grid-community';
 import {
     DragAndDropModule,
+    FilterCoreModule,
     FilterValueModule,
     ModuleNames,
     PopupModule,
-    _FilterCoreModule,
     _defineModule,
 } from 'ag-grid-community';
 
@@ -23,7 +23,7 @@ export const AdvancedFilterCoreModule = _defineModule({
     version: VERSION,
     moduleName: `${ModuleNames.AdvancedFilterModule}-core`,
     beans: [AdvancedFilterService, AdvancedFilterExpressionService],
-    dependantModules: [EnterpriseCoreModule, _FilterCoreModule, DragAndDropModule, PopupModule, FilterValueModule],
+    dependantModules: [EnterpriseCoreModule, FilterCoreModule, DragAndDropModule, PopupModule, FilterValueModule],
 });
 
 export const AdvancedFilterApiModule = _defineModule<_AdvancedFilterGridApi>({

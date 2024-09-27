@@ -8,7 +8,7 @@ import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
 import { _getActiveDomElement } from '../gridOptionsUtils';
 import { _requestAnimationFrame } from '../misc/animationFrameService';
-import type { MenuService } from '../misc/menuService';
+import type { MenuService } from '../misc/menu/menuService';
 import type { HeaderNavigationService } from '../navigation/headerNavigationService';
 import { HeaderNavigationDirection } from '../navigation/headerNavigationService';
 import { _isIOSUserAgent } from '../utils/browser';

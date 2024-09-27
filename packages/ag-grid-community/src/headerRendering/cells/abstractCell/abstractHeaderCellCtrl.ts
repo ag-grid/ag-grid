@@ -13,7 +13,7 @@ import { _getActiveDomElement, _getDocument, _setDomData } from '../../../gridOp
 import type { BrandedType } from '../../../interfaces/brandedType';
 import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import { _requestAnimationFrame } from '../../../misc/animationFrameService';
-import type { MenuService } from '../../../misc/menuService';
+import type { MenuService } from '../../../misc/menu/menuService';
 import { _setAriaColIndex } from '../../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize, _getInnerWidth, _observeResize } from '../../../utils/dom';
 import { _isUserSuppressingHeaderKeyboardEvent } from '../../../utils/keyboard';
