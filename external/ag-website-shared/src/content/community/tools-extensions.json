@@ -25,6 +25,18 @@
         "tags": ["Wrapper"]
     },
     {
+        "repo": "https://github.com/reflex-dev/reflex",
+        "title": "Reflex AG Grid",
+        "description": "An AG Grid wrapper for Reflex: an open-source framework for quickly building beautiful, interactive web applications in pure Python.",
+        "link": "https://reflex.dev/docs/library/tables-and-data-grids/ag-grid/",
+        "type": "Wrapper",
+        "open_source": true,
+        "stars": 19400,
+        "img": "reflex.webp",
+        "frameworks": ["Python"],
+        "tags": ["Wrapper"]
+    },
+    {
         "repo": "https://github.com/RocketCommunicationsInc/astro",
         "title": "Astro UXDS",
         "description": "Astro UXDS is a collection of guidelines, patterns and components for designing space-based user interface applications which provides a custom `Astro` theme for AG Grid.",

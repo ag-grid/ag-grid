@@ -8,9 +8,9 @@ import { _getRowIdCallback } from '../gridOptionsUtils';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _errorOnce, _warnOnce } from '../utils/function';
 import { _missingOrEmpty } from '../utils/generic';
 import { _cloneObject } from '../utils/object';
+import { _logError, _logWarn } from '../validation/logging';
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
 
@@ -90,7 +90,7 @@ export class ClientSideNodeManager {
 
     public setRowData(rowData: any[]): RowNode[] | undefined {
         if (typeof rowData === 'string') {
-            _warnOnce('rowData must be an array.');
+            _logWarn(1, {});
             return;
         }
         this.rowCountReady = true;
@@ -392,15 +392,16 @@ export class ClientSideNodeManager {
             const id = getRowIdFunc({ data, level: 0 });
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                _errorOnce(`could not find row id=${id}, data item was not found for this id`);
+                // Cannot find the row node for the given id
+                _logError(4, { id });
                 return null;
             }
         } else {
             // find rowNode using object references
             rowNode = this.rootNode.allLeafChildren?.find((node) => node.data === data);
             if (!rowNode) {
-                _errorOnce(`could not find data item as object was not found`, data);
-                _errorOnce(`Consider using getRowId to help the Grid find matching row data`);
+                // Cannot find the row node for the given data
+                _logError(5, { data });
                 return null;
             }
         }
@@ -425,9 +426,7 @@ export class ClientSideNodeManager {
         node.setDataAndId(dataItem, this.nextId.toString());
 
         if (this.allNodesMap[node.id!]) {
-            _warnOnce(
-                `duplicate node id '${node.id}' detected from getRowId callback, this could cause issues in your grid.`
-            );
+            _logWarn(2, { nodeId: node.id });
         }
         this.allNodesMap[node.id!] = node;
 

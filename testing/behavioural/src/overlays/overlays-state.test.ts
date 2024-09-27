@@ -5,7 +5,9 @@ import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-commu
 import { TestGridsManager } from '../test-utils';
 
 describe('ag-grid overlays state', () => {
-    const gridsManager = new TestGridsManager({ modules: [CommunityFeaturesModule, ClientSideRowModelModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [CommunityFeaturesModule, ClientSideRowModelModule],
+    });
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
     let consoleWarnSpy: MockInstance;
 

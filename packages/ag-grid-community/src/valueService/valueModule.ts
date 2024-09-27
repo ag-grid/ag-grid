@@ -20,7 +20,7 @@ export const ChangeDetectionModule = defineCommunityModule('ChangeDetectionModul
     beans: [ChangeDetectionService],
 });
 
-export const CellApiModule = defineCommunityModule<_ValueApi>('CellApiModule', {
+export const CellApiModule = defineCommunityModule<_ValueApi<any>>('CellApiModule', {
     apiFunctions: {
         getCellValue,
     },

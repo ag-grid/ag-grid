@@ -12,7 +12,9 @@ const defaultGridRowsOptions: GridRowsOptions = {
 };
 
 describe('ag-grid rows-ordering', () => {
-    const gridsManager = new TestGridsManager({ modules: [CommunityFeaturesModule, ClientSideRowModelModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [CommunityFeaturesModule, ClientSideRowModelModule],
+    });
     let consoleWarnSpy: MockInstance | undefined;
     let consoleErrorSpy: MockInstance | undefined;
 
@@ -174,7 +176,8 @@ describe('ag-grid rows-ordering', () => {
         );
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            "AG Grid: duplicate node id '9' detected from getRowId callback, this could cause issues in your grid."
+            'AG Grid: error #2',
+            "Duplicate node id '9' detected from getRowId callback, this could cause issues in your grid."
         );
 
         consoleWarnSpy.mockRestore();
@@ -639,13 +642,15 @@ describe('ag-grid rows-ordering', () => {
             api.applyTransaction({ update: [{ id: 'jhDjSi3Ec-3', x: 3 }] });
 
             expect(consoleErrorSpy).toHaveBeenCalledWith(
-                'AG Grid: could not find row id=jhDjSi3Ec-3, data item was not found for this id'
+                'AG Grid: error #4',
+                'Could not find row id=jhDjSi3Ec-3, data item was not found for this id'
             );
 
             await executeTransactionsAsync({ update: [{ id: 'jhDjSi3Ec-4', x: 4 }] }, api);
 
             expect(consoleErrorSpy).toHaveBeenCalledWith(
-                'AG Grid: could not find row id=jhDjSi3Ec-4, data item was not found for this id'
+                'AG Grid: error #4',
+                'Could not find row id=jhDjSi3Ec-4, data item was not found for this id'
             );
 
             consoleErrorSpy.mockRestore();

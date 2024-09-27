@@ -66,7 +66,7 @@ import { RowSelectionModule } from './selection/rowSelectionModule';
 import { SortModule } from './sort/sortModule';
 import { CellStyleModule, RowStyleModule } from './styling/stylingModule';
 import { SyncService } from './syncService';
-import { ValidationService } from './validation/validationService';
+import { ValidationModule } from './validation/validationModule';
 import { CellApiModule, ChangeDetectionModule, ExpressionModule, ValueCacheModule } from './valueService/valueModule';
 import { ValueService } from './valueService/valueService';
 import { PopupModule } from './widgets/popupModule';
@@ -107,14 +107,10 @@ export const GridCoreModule = defineCommunityModule(ModuleNames.CommunityCoreMod
     dependsOn: [CoreApiModule],
 });
 
-export const ValidationsModule = defineCommunityModule('ValidationsModule', {
-    beans: [ValidationService],
-});
-
 export const CommunityFeaturesModule = defineCommunityModule('CommunityFeaturesModule', {
     dependsOn: [
         GridCoreModule,
-        ValidationsModule,
+        ValidationModule,
         EditModule,
         FilterModule,
         StateModule,

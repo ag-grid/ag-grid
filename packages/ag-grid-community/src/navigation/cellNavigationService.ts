@@ -15,8 +15,8 @@ import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import { _last } from '../utils/array';
-import { _warnOnce } from '../utils/function';
 import { _missing } from '../utils/generic';
+import { _logWarn } from '../validation/logging';
 
 export class CellNavigationService extends BeanStub implements NamedBean {
     beanName = 'cellNavigationService' as const;
@@ -93,22 +93,15 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                     pointer = this.getCellBelow(pointer);
                     break;
                 case KeyCode.RIGHT:
-                    if (this.gos.get('enableRtl')) {
-                        pointer = this.getCellToLeft(pointer);
-                    } else {
-                        pointer = this.getCellToRight(pointer);
-                    }
+                    pointer = this.gos.get('enableRtl') ? this.getCellToLeft(pointer) : this.getCellToRight(pointer);
                     break;
                 case KeyCode.LEFT:
-                    if (this.gos.get('enableRtl')) {
-                        pointer = this.getCellToRight(pointer);
-                    } else {
-                        pointer = this.getCellToLeft(pointer);
-                    }
+                    pointer = this.gos.get('enableRtl') ? this.getCellToRight(pointer) : this.getCellToLeft(pointer);
                     break;
                 default:
                     pointer = null;
-                    _warnOnce('unknown key for navigation ', key);
+                    // unknown key, do nothing
+                    _logWarn(8, { key });
                     break;
             }
 

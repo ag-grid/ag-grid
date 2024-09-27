@@ -104,12 +104,12 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     enableRangeSelection: { module: ModuleNames.RangeSelectionModule },
     enableRangeHandle: {
         dependencies: {
-            enableRangeSelection: [true],
+            enableRangeSelection: { required: [true] },
         },
     },
     enableFillHandle: {
         dependencies: {
-            enableRangeSelection: [true],
+            enableRangeSelection: { required: [true] },
         },
     },
 
@@ -119,24 +119,28 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     groupHideOpenParents: {
         supportedRowModels: ['clientSide', 'serverSide'],
         dependencies: {
-            groupTotalRow: [undefined, 'bottom'],
+            groupTotalRow: { required: [undefined, 'bottom'] },
+            treeData: {
+                required: [undefined, false],
+                reason: "Tree Data has values at the group level so it doesn't make sense to hide them.",
+            },
         },
     },
     groupRemoveSingleChildren: {
         dependencies: {
-            groupHideOpenParents: [undefined, false],
-            groupRemoveLowestSingleChildren: [undefined, false],
+            groupHideOpenParents: { required: [undefined, false] },
+            groupRemoveLowestSingleChildren: { required: [undefined, false] },
         },
     },
     groupRemoveLowestSingleChildren: {
         dependencies: {
-            groupHideOpenParents: [undefined, false],
-            groupRemoveSingleChildren: [undefined, false],
+            groupHideOpenParents: { required: [undefined, false] },
+            groupRemoveSingleChildren: { required: [undefined, false] },
         },
     },
     groupSelectsChildren: {
         dependencies: {
-            rowSelection: ['multiple'],
+            rowSelection: { required: ['multiple'] },
         },
     },
 

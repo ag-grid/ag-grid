@@ -300,8 +300,8 @@ export {
 export { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerCtrl';
 
 // misc
-export { IImmutableService } from './interfaces/iImmutableService';
 export { _requestAnimationFrame } from './misc/animationFrameService';
+export type { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
 export type { MenuService } from './misc/menu/menuService';
 
@@ -995,6 +995,8 @@ export { ZipContainer } from './csvExport/zipContainer/zipContainer';
 export { Module, ModuleValidationResult, ModuleWithApi, BaseModule } from './interfaces/iModule';
 export { ModuleNames } from './modules/moduleNames';
 export { ModuleRegistry } from './modules/moduleRegistry';
+
+export { ValidationModule } from './validation/validationModule';
 
 export { ColumnMoveModule } from './columnMove/columnMoveModule';
 export { DragModule, HorizontalResizeModule, DragAndDropModule } from './dragAndDrop/dragModule';
