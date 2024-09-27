@@ -1,6 +1,12 @@
-import { AgGridAngular } from '@ag-grid-community/angular';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
+import type { HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import type { ChangeDetectorRef } from '@angular/core';
+import { Component } from '@angular/core';
+
+import { AgGridAngular } from 'ag-grid-angular';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import type {
     ColDef,
     GridApi,
     GridOptions,
@@ -9,23 +15,21 @@ import {
     GridState,
     SelectionOptions,
     StateUpdatedEvent,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ChangeDetectorRef, Component } from '@angular/core';
+} from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { FiltersToolPanelModule } from 'ag-grid-enterprise';
+import { RangeSelectionModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
-import { IOlympicData } from './interfaces';
+import type { IOlympicData } from './interfaces';
 import './styles.css';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
+    CommunityFeaturesModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
     SetFilterModule,

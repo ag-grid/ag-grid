@@ -1,5 +1,5 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
     GridApi,
@@ -7,9 +7,9 @@ import {
     ICellRendererParams,
     RowEditingStartedEvent,
     RowEditingStoppedEvent,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+} from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 import { GenderRenderer } from './genderRenderer_typescript';
 import { MoodRenderer } from './moodRenderer_typescript';

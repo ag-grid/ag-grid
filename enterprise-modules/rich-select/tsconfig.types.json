@@ -1,9 +1,0 @@
-{
-  "extends": "./tsconfig.lib.json",
-  "compilerOptions": {
-    "declaration": true,
-    "emitDeclarationOnly": true
-  },
-  "include": ["src/*.ts"],
-  "exclude": ["src/*.test.ts"]
-}

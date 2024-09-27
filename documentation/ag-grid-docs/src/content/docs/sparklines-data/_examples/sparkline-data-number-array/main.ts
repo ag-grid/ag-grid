@@ -1,7 +1,8 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { AreaSparklineOptions, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { AreaSparklineOptions, GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { SparklinesModule } from 'ag-grid-enterprise';
 
 import { getStockData } from './data';
 
@@ -34,6 +35,6 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

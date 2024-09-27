@@ -1,23 +1,25 @@
-import { AgGridAngular } from '@ag-grid-community/angular';
-import { ICellRendererAngularComp } from '@ag-grid-community/angular';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import type { HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import { Component, ViewChild } from '@angular/core';
+
+import { AgGridAngular } from 'ag-grid-angular';
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import type {
     ColDef,
     GetRowIdParams,
     GridApi,
     GridReadyEvent,
     ICellRendererParams,
-    ModuleRegistry,
     SelectionOptions,
-} from '@ag-grid-community/core';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, ViewChild } from '@angular/core';
+} from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 @Component({
     standalone: true,
     template: ` <i class="far fa-trash-alt" style="cursor: pointer" (click)="applyTransaction()"></i>`,
@@ -210,9 +212,9 @@ export class AppComponent {
     addGridDropZone() {
         const dropZoneParams = this.rightApi.getRowDropZoneParams({
             onDragStop: (params) => {
-                var deselectCheck = this.eDeselectRadio.nativeElement.checked;
-                var moveCheck = this.eMoveRadio.nativeElement.checked;
-                var nodes = params.nodes;
+                const deselectCheck = this.eDeselectRadio.nativeElement.checked;
+                const moveCheck = this.eMoveRadio.nativeElement.checked;
+                const nodes = params.nodes;
 
                 if (moveCheck) {
                     this.leftApi.applyTransaction({

@@ -71,18 +71,18 @@ if (process.env.NX_TASK_TARGET_TARGET?.endsWith('umd')) {
     };
 }
 
-let alias = {};
-if (
-    process.env.NX_TASK_TARGET_PROJECT === 'ag-grid-enterprise' ||
-    process.env.NX_TASK_TARGET_PROJECT === 'ag-grid-charts-enterprise'
-) {
-    alias = {
-        '@ag-grid-community/core': 'ag-grid-community',
-        '@ag-grid-community/client-side-row-model': 'ag-grid-community',
-        '@ag-grid-community/csv-export': 'ag-grid-community',
-        '@ag-grid-community/infinite-row-model': 'ag-grid-community',
-    };
-}
+// let alias = {};
+// if (
+//     process.env.NX_TASK_TARGET_PROJECT === 'ag-grid-enterprise' ||
+//     process.env.NX_TASK_TARGET_PROJECT === 'ag-grid-charts-enterprise'
+// ) {
+//     alias = {
+//         '@ag-grid-community/core': 'ag-grid-community',
+//         '@ag-grid-community/client-side-row-model': 'ag-grid-community',
+//         '@ag-grid-community/csv-export': 'ag-grid-community',
+//         '@ag-grid-community/infinite-row-model': 'ag-grid-community',
+//     };
+// }
 
 plugins.push(postBuildMinificationPlugin);
 
@@ -90,7 +90,7 @@ plugins.push(postBuildMinificationPlugin);
 const options = {
     outExtension,
     plugins,
-    alias,
+    // alias,
 };
 
 module.exports = options;

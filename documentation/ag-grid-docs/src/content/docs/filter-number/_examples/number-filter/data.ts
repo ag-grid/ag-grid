@@ -1,7 +1,7 @@
 export function getData(): any[] {
-    var rows = [];
+    const rows = [];
 
-    for (var i = 0; i < 1000; i++) {
+    for (let i = 0; i < 1000; i++) {
         rows.push({ sale: parseFloat(getRandomNumber(-500, 1000).toFixed(2)) });
     }
 

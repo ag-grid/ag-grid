@@ -1,20 +1,27 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { FiltersToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data.jsx';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, SetFilterModule, MenuModule, FiltersToolPanelModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    CommunityFeaturesModule,
+    SetFilterModule,
+    MenuModule,
+    FiltersToolPanelModule,
+]);
 
 const colourCellRenderer = (props) => {
     if (!props.value || props.value === '(Select All)') {

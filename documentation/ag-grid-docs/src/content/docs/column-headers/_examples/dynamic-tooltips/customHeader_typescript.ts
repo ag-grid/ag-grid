@@ -1,4 +1,4 @@
-import { IHeaderParams } from '@ag-grid-community/core';
+import type { IHeaderParams } from 'ag-grid-community';
 
 export interface ICustomHeaderParams {
     menuIcon: string;

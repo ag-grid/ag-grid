@@ -1,30 +1,32 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import type {
     ColDef,
     GridPreDestroyedEvent,
     GridReadyEvent,
     GridState,
-    ModuleRegistry,
     SelectionOptions,
     StateUpdatedEvent,
-} from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
-import { createRoot } from 'react-dom/client';
+} from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { FiltersToolPanelModule } from 'ag-grid-enterprise';
+import { RangeSelectionModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
 
-import { IOlympicData } from './interfaces';
+import type { IOlympicData } from './interfaces';
 import './styles.css';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
+    CommunityFeaturesModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
     SetFilterModule,

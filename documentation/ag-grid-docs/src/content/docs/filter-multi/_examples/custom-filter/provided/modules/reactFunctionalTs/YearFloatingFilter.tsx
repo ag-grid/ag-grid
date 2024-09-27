@@ -1,5 +1,6 @@
-import { CustomFloatingFilterProps } from '@ag-grid-community/react';
 import React from 'react';
+
+import type { CustomFloatingFilterProps } from 'ag-grid-react';
 
 export default ({ model, onModelChange }: CustomFloatingFilterProps) => {
     return (

@@ -1,4 +1,4 @@
-var LAPTOPS = ['Hewlett Packard', 'Lenovo', 'Dell', 'Asus', 'Apple', 'Acer', 'Microsoft', 'Razer'];
+const LAPTOPS = ['Hewlett Packard', 'Lenovo', 'Dell', 'Asus', 'Apple', 'Acer', 'Microsoft', 'Razer'];
 
 let idCounter = 0;
 

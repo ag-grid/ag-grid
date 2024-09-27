@@ -1,15 +1,16 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { AgGridVue } from '@ag-grid-community/vue3';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { MenuModule } from '@ag-grid-enterprise/menu';
 import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { ExcelExportModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { AgGridVue } from 'ag-grid-vue3';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule, MenuModule, ExcelExportModule]);
 
 const VueExample = {
     template: `

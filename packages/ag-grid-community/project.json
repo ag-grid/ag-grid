@@ -8,18 +8,12 @@
       "executor": "nx:noop",
       "inputs": [],
       "outputs": [],
-      "dependsOn": ["build:types", "build:package", "build:umd", "build:copy-styles"]
+      "dependsOn": ["build:types", "theming:codegen", "build:package", "build:copy-styles", "build:umd"]
     },
     "build:umd": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build", "@ag-grid-community/core:build", "build:copy-styles"],
-      "inputs": [
-        "tsDefaults",
-        {
-          "dependentTasksOutputFiles": "**/main.cjs.js",
-          "transitive": true
-        }
-      ],
+      "dependsOn": ["^build", "build:copy-styles", "build:package"],
+      "inputs": ["tsDefaults"],
       "outputs": [],
       "options": {
         "cwd": "packages/ag-grid-community",
@@ -38,28 +32,60 @@
       }
     },
     "build:types": {
+      "executor": "@nx/js:tsc",
       "dependsOn": ["^build:types"],
-      "command": "npx gulp copy-from-module-source && cp main.d.ts.src dist/types/main.d.ts",
-      "options": {
-        "cwd": "packages/ag-grid-community"
-      },
-      "cache": true
-    },
-    "build:package": {
-      "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["^build", "@ag-grid-community/core:build"],
       "inputs": [
-        "tsDefaults",
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
         {
-          "dependentTasksOutputFiles": "**/main.cjs.js",
-          "transitive": true
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
         }
       ],
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "packages/ag-grid-community/dist/package",
+        "outputPath": "packages/ag-grid-community/dist/types",
         "main": "packages/ag-grid-community/src/main.ts",
-        "tsConfig": "packages/ag-grid-community/tsconfig.lib.json",
+        "tsConfig": "packages/ag-grid-community/tsconfig.types.json",
+        "compiler": "tsc"
+      },
+      "configurations": {
+        "watch": {
+          "tsConfig": "packages/ag-grid-community/tsconfig.types.watch.json"
+        },
+        "production": {}
+      }
+    },
+    "theming:codegen": {
+      "executor": "nx:run-script",
+      "cache": true,
+      "options": {
+        "script": "codegen:prod"
+      },
+      "outputs": ["{projectRoot}/**/GENERATED-*.ts"]
+    },
+    "build:package": {
+      "executor": "@nx/esbuild:esbuild",
+      "dependsOn": ["^build"],
+      "inputs": [
+        "{projectRoot}/package.json",
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/tsconfig.*.json",
+        "tsDeclarations",
+        "sharedGlobals",
+        "defaultExcludes",
+        {
+          "externalDependencies": ["npm:typescript", "npm:esbuild"]
+        }
+      ],
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "{projectRoot}/dist/package",
+        "main": "{projectRoot}/src/main.ts",
+        "tsConfig": "{projectRoot}/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
         "platform": "browser",
         "target": "es2020",
@@ -68,12 +94,27 @@
       },
       "configurations": {
         "watch": {
-          "tsConfig": "packages/ag-grid-community/tsconfig.watch.json"
+          "tsConfig": "{projectRoot}/tsconfig.watch.json"
+        },
+        "staging": {
+          "sourcemap": false
         },
         "production": {
           "sourcemap": false
-        },
-        "sizing": { "metafile": true }
+        }
+      }
+    },
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/ag-grid-community/jest.config.js"
       }
     },
     "pack": {
@@ -84,7 +125,11 @@
       "options": {
         "cwd": "{projectRoot}",
         "parallel": false,
-        "commands": ["mkdir -p ../../dist/artifacts/{projectRoot}", "yarn pack -f ../../dist/artifacts/{projectRoot}.tgz", "rm -rf ../../dist/artifacts/{projectRoot}"]
+        "commands": [
+          "mkdir -p ../../dist/artifacts/{projectRoot}",
+          "yarn pack -f ../../dist/artifacts/{projectRoot}.tgz",
+          "rm -rf ../../dist/artifacts/{projectRoot}"
+        ]
       }
     },
     "pack:extract": {
@@ -101,7 +146,9 @@
       "dependsOn": ["pack:extract"],
       "inputs": ["allOutputs"],
       "options": {
-        "commands": ["node scripts/package/sanity-check-package.js --allowed-ext css scss -- dist/artifacts/contents/{projectRoot}/package"]
+        "commands": [
+          "node scripts/package/sanity-check-package.js --allowed-ext css scss -- dist/artifacts/contents/{projectRoot}/package"
+        ]
       },
       "configurations": {
         "production": {},

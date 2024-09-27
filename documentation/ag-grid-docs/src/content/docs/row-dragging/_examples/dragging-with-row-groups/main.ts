@@ -1,10 +1,11 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, RowDragCallbackParams, RowDragEndEvent, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions, RowDragCallbackParams, RowDragEndEvent } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { RowGroupingModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 
@@ -16,7 +17,7 @@ ModuleRegistry.registerModules([
     SetFilterModule,
 ]);
 
-var rowDrag = function (params: RowDragCallbackParams) {
+const rowDrag = function (params: RowDragCallbackParams) {
     // only rows that are NOT groups should be draggable
     return !params.node.group;
 };
@@ -46,11 +47,11 @@ const gridOptions: GridOptions = {
 };
 
 function onRowDragMove(event: RowDragEndEvent) {
-    var movingNode = event.node!;
-    var overNode = event.overNode!;
+    const movingNode = event.node!;
+    const overNode = event.overNode!;
 
     // find out what country group we are hovering over
-    var groupCountry;
+    let groupCountry;
     if (overNode.group) {
         // if over a group, we take the group key (which will be the
         // country as we are grouping by country)
@@ -60,10 +61,10 @@ function onRowDragMove(event: RowDragEndEvent) {
         groupCountry = overNode.data.country;
     }
 
-    var needToChangeParent = movingNode.data.country !== groupCountry;
+    const needToChangeParent = movingNode.data.country !== groupCountry;
 
     if (needToChangeParent) {
-        var movingData = movingNode.data;
+        const movingData = movingNode.data;
         movingData.country = groupCountry;
         gridApi!.applyTransaction({
             update: [movingData],
@@ -74,6 +75,6 @@ function onRowDragMove(event: RowDragEndEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

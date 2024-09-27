@@ -1,19 +1,27 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ChartRef, ColDef, GridReadyEvent, ModuleRegistry, SelectionOptions } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import React, { StrictMode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import type { ChartRef, ColDef, GridReadyEvent, SelectionOptions } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { GridChartsModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { RowGroupingModule } from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
+
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule, RowGroupingModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    CommunityFeaturesModule,
+    GridChartsModule,
+    MenuModule,
+    RowGroupingModule,
+]);
 
 const selection: SelectionOptions = {
     mode: 'cell',

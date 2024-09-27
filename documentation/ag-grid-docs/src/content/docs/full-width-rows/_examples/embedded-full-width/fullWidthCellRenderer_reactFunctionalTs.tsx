@@ -1,5 +1,6 @@
-import { CustomCellRendererProps } from '@ag-grid-community/react';
 import React, { useState } from 'react';
+
+import type { CustomCellRendererProps } from 'ag-grid-react';
 
 export default (props: CustomCellRendererProps) => {
     const [cssClass] = useState(props.pinned ? 'example-full-width-pinned' : 'example-full-width-row');

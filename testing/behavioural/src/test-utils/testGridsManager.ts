@@ -1,6 +1,6 @@
-import type { GridApi, GridOptions, Module, Params } from '@ag-grid-community/core';
-import { createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import type { GridApi, GridOptions, Module, Params } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 export interface TestGridManagerOptions {
     /** The modules to register when a grid gets created */

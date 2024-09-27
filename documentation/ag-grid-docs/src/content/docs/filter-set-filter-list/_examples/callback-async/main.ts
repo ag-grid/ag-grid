@@ -1,10 +1,11 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, ISetFilterParams, SetFilterValuesFuncParams, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions, ISetFilterParams, SetFilterValuesFuncParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { FiltersToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -14,7 +15,7 @@ ModuleRegistry.registerModules([
     SetFilterModule,
 ]);
 
-var filterParams: ISetFilterParams = {
+const filterParams: ISetFilterParams = {
     values: (params: SetFilterValuesFuncParams) => {
         setTimeout(() => {
             params.success(['value 1', 'value 2']);
@@ -50,6 +51,6 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

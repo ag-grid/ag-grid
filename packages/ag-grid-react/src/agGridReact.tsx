@@ -1,10 +1,11 @@
-import type { GridApi } from 'ag-grid-community';
 import React, { Component } from 'react';
 
-import { AgGridReactUi } from './reactUi/agGridReactUi';
-import type { AgGridReactProps, AgReactUiProps } from './shared/interfaces';
+import type { GridApi } from 'ag-grid-community';
 
-export class AgGridReact<TData = any> extends Component<AgGridReactProps<TData> | AgReactUiProps<TData>, object> {
+import { AgGridReactUi } from './reactUi/agGridReactUi';
+import type { AgGridReactProps } from './shared/interfaces';
+
+export class AgGridReact<TData = any> extends Component<AgGridReactProps<TData>, object> {
     /** Grid Api available after onGridReady event has fired. */
     public api!: GridApi<TData>;
     private apiListeners: Array<(params: any) => void> = [];

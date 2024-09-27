@@ -1,18 +1,11 @@
-import {
-    ColDef,
-    GetRowIdParams,
-    GridApi,
-    GridOptions,
-    IDatasource,
-    IGetRowsParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
+import type { ColDef, GetRowIdParams, GridApi, GridOptions, IDatasource, IGetRowsParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { InfiniteRowModelModule } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
-var ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('');
+const ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
 function getColumnDefs() {
     const columnDefs: ColDef[] = [{ headerName: '#', width: 80, valueGetter: 'node.rowIndex' }];
@@ -47,13 +40,13 @@ function getDataSource(count: number) {
     const dataSource: IDatasource = {
         rowCount: count,
         getRows: (params: IGetRowsParams) => {
-            var rowsThisPage: any[] = [];
+            const rowsThisPage: any[] = [];
 
             for (var rowIndex = params.startRow; rowIndex < params.endRow; rowIndex++) {
                 var record: Record<string, string> = {};
                 ALPHABET.forEach(function (letter, colIndex) {
-                    var randomNumber = 17 + rowIndex + colIndex;
-                    var cellKey = letter.toUpperCase() + (rowIndex + 1);
+                    const randomNumber = 17 + rowIndex + colIndex;
+                    const cellKey = letter.toUpperCase() + (rowIndex + 1);
                     record[letter] = cellKey + ' = ' + randomNumber;
                 });
                 rowsThisPage.push(record);
@@ -70,6 +63,6 @@ function getDataSource(count: number) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

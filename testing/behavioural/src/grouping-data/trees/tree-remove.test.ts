@@ -1,6 +1,6 @@
-import { ClientSideRowModelModule, TreeDataModule } from '@ag-grid-community/client-side-row-model';
-import type { RowDataTransaction } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import type { RowDataTransaction } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, executeTransactionsAsync } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
@@ -11,7 +11,7 @@ const gridRowsOptions: GridRowsOptions = {
 
 describe('ag-grid tree transactions', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
+        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
     });
 
     beforeEach(() => {

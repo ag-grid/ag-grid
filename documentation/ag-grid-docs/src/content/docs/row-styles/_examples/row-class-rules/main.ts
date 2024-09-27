@@ -1,6 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 import { getData } from './data';
 
@@ -17,7 +18,7 @@ const gridOptions: GridOptions = {
     rowClassRules: {
         // row style function
         'sick-days-warning': (params) => {
-            var numSickDays = params.data.sickDays;
+            const numSickDays = params.data.sickDays;
             return numSickDays > 5 && numSickDays <= 7;
         },
         // row style expression
@@ -27,7 +28,7 @@ const gridOptions: GridOptions = {
 
 function setData() {
     gridApi!.forEachNode(function (rowNode) {
-        var newData = {
+        const newData = {
             employee: rowNode.data.employee,
             sickDays: randomInt(),
         };
@@ -42,6 +43,6 @@ function randomInt() {
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
-    var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(eGridDiv, gridOptions);
 });

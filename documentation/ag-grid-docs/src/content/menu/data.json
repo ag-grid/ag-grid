@@ -280,7 +280,11 @@
                                     },
                                     {
                                         "title": "Color Schemes & Dark Mode",
-                                        "path": "theming-color-schemes"
+                                        "path": "theming-colors"
+                                    },
+                                    {
+                                        "title": "Borders",
+                                        "path": "theming-borders"
                                     },
                                     {
                                         "title": "Migration",

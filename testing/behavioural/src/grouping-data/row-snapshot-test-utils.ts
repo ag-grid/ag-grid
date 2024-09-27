@@ -1,4 +1,4 @@
-import type { IRowNode } from '@ag-grid-community/core';
+import type { IRowNode } from 'ag-grid-community';
 
 function getRowKey<TData = any>(row: IRowNode<TData> | null | undefined): string | null | undefined {
     return row ? row.key : undefined;

@@ -1,9 +1,9 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
 import { cleanup, render } from '@testing-library/react';
 import React from 'react';
+
+import type { ColDef } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule, ModuleRegistry } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
 
 describe('ag-grid overlays state (react)', () => {
     const columnDefs: ColDef[] = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
@@ -17,7 +17,7 @@ describe('ag-grid overlays state (react)', () => {
     }
 
     beforeAll(() => {
-        ModuleRegistry.register(ClientSideRowModelModule);
+        ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
     });
 
     beforeEach(() => {

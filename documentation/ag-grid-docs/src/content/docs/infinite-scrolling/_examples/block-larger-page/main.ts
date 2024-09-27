@@ -1,4 +1,4 @@
-import {
+import type {
     ColDef,
     GetRowIdParams,
     GridApi,
@@ -7,13 +7,13 @@ import {
     IDatasource,
     IGetRowsParams,
     SortModelItem,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+} from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { InfiniteRowModelModule } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
 import { countries } from './countries';
 

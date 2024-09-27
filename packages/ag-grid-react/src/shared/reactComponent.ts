@@ -1,8 +1,9 @@
-import type { ComponentType, IComponent, WrappableInterface } from 'ag-grid-community';
-import { AgPromise, _warnOnce } from 'ag-grid-community';
 import type { ReactPortal } from 'react';
 import { createElement } from 'react';
 import { createPortal } from 'react-dom';
+
+import type { ComponentType, IComponent, WrappableInterface } from 'ag-grid-community';
+import { AgPromise, _warnOnce } from 'ag-grid-community';
 
 import generateNewKey from './keyGenerator';
 import type { PortalManager } from './portalManager';
@@ -78,27 +79,6 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
         params.reactContainer = eParentElement;
 
         return eParentElement;
-    }
-
-    protected addParentContainerStyleAndClasses() {
-        if (!this.componentInstance) {
-            return;
-        }
-
-        if (this.componentInstance.getReactContainerStyle && this.componentInstance.getReactContainerStyle()) {
-            _warnOnce(
-                'Since v31.1 "getReactContainerStyle" is deprecated. Apply styling directly to ".ag-react-container" if needed.'
-            );
-            Object.assign(this.eParentElement.style, this.componentInstance.getReactContainerStyle());
-        }
-
-        if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
-            _warnOnce(
-                'Since v31.1 "getReactContainerClasses" is deprecated. Apply styling directly to ".ag-react-container" if needed.'
-            );
-            const parentContainerClasses: string[] = this.componentInstance.getReactContainerClasses();
-            parentContainerClasses.forEach((className) => this.eParentElement.classList.add(className));
-        }
     }
 
     public statelessComponentRendered(): boolean {
@@ -180,7 +160,6 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
             // grab hold of the actual instance created
             this.ref = (element: any) => {
                 this.componentInstance = element;
-                this.addParentContainerStyleAndClasses();
                 this.resolveInstanceCreated?.(true);
                 this.resolveInstanceCreated = undefined;
             };

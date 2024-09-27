@@ -1,19 +1,21 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { AgGridVue } from '@ag-grid-community/vue3';
-import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { ClipboardModule } from 'ag-grid-enterprise';
+import { ExcelExportModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { RangeSelectionModule } from 'ag-grid-enterprise';
+import { AgGridVue } from 'ag-grid-vue3';
 
 import MenuItem from './menuItemVue.js';
 import './style.css';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
+    CommunityFeaturesModule,
     MenuModule,
     ExcelExportModule,
     RangeSelectionModule,

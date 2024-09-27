@@ -1,23 +1,23 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import React, { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import type {
     ColDef,
     GetRowIdParams,
     GridApi,
     GridReadyEvent,
-    ModuleRegistry,
     RowDataTransaction,
     RowDropZoneParams,
-    RowNodeTransaction,
-} from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import React, { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
-import { createRoot } from 'react-dom/client';
+} from 'ag-grid-community';
+import { ModuleRegistry, RowNodeTransaction } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 const columns: ColDef[] = [
     { field: 'id', rowDrag: true },
@@ -101,7 +101,7 @@ const GridExample = () => {
     };
 
     const onFactoryButtonClick = (e: any) => {
-        var button = e.currentTarget,
+        const button = e.currentTarget,
             buttonColor = button.getAttribute('data-color'),
             side = button.getAttribute('data-side'),
             data = createDataItem(buttonColor);
@@ -115,12 +115,12 @@ const GridExample = () => {
             return;
         }
 
-        var transaction = {
+        const transaction = {
             remove: [data],
         };
 
         [leftApi, rightApi].forEach((api) => {
-            var rowsInGrid = !!api!.getRowNode(data.id);
+            const rowsInGrid = !!api!.getRowNode(data.id);
 
             if (rowsInGrid) {
                 api!.applyTransaction(transaction);

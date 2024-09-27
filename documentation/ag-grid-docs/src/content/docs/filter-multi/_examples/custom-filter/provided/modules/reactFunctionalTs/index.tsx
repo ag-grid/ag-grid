@@ -1,26 +1,28 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridReadyEvent, IMultiFilterParams } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import type { ColDef, GridReadyEvent, IMultiFilterParams } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { ClipboardModule } from 'ag-grid-enterprise';
+import { FiltersToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { MultiFilterModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
+
 import YearFilter from './YearFilter';
 import YearFloatingFilter from './YearFloatingFilter';
-import { IOlympicData } from './interfaces';
+import type { IOlympicData } from './interfaces';
 import './style.css';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
+    CommunityFeaturesModule,
     MultiFilterModule,
     SetFilterModule,
     MenuModule,

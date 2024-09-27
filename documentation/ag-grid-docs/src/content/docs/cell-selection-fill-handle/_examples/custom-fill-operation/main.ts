@@ -1,11 +1,12 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { FillEndEvent, FillStartEvent, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { FillEndEvent, FillStartEvent, GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { RangeSelectionModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RangeSelectionModule]);
 
-var daysList = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const daysList = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 let gridApi: GridApi;
 
@@ -33,7 +34,7 @@ const gridOptions: GridOptions = {
         handle: {
             mode: 'fill',
             setFillValue(params) {
-                var hasNonDayValues = params.initialValues.some(function (val) {
+                const hasNonDayValues = params.initialValues.some(function (val) {
                     return daysList.indexOf(val) === -1;
                 });
 
@@ -41,9 +42,9 @@ const gridOptions: GridOptions = {
                     return false;
                 }
 
-                var lastValue = params.values[params.values.length - 1];
-                var idxOfLast = daysList.indexOf(lastValue);
-                var nextDay = daysList[(idxOfLast + 1) % daysList.length];
+                const lastValue = params.values[params.values.length - 1];
+                const idxOfLast = daysList.indexOf(lastValue);
+                const nextDay = daysList[(idxOfLast + 1) % daysList.length];
                 console.log('Custom Fill Operation -> Next Day is:', nextDay);
                 return nextDay;
             },
@@ -58,11 +59,11 @@ const gridOptions: GridOptions = {
 };
 
 function createRowData(rowData: any[]) {
-    var currentDate = new Date();
-    var currentYear = currentDate.getFullYear();
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
 
-    for (var i = 0; i < rowData.length; i++) {
-        var dt = new Date(getRandom(currentYear - 10, currentYear + 10), getRandom(0, 12), getRandom(1, 25));
+    for (let i = 0; i < rowData.length; i++) {
+        const dt = new Date(getRandom(currentYear - 10, currentYear + 10), getRandom(0, 12), getRandom(1, 25));
         rowData[i].dayOfTheWeek = daysList[dt.getDay()];
     }
     return rowData;
@@ -73,7 +74,7 @@ var getRandom = function (start: number, finish: number) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')

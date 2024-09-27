@@ -39,8 +39,6 @@
     "vue": "^3.0.0"
   },
   "devDependencies": {
-    "gulp": "^4.0.0",
-    "gulp-replace": "^1.0.0",
     "@types/jest": "^24.0.19",
     "@vue/cli-plugin-e2e-cypress": "~5.0.8",
     "@vue/cli-plugin-typescript": "~5.0.8",

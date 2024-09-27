@@ -1,8 +1,9 @@
-import { ICellRendererAngularComp } from '@ag-grid-community/angular';
-import { ICellRendererParams } from '@ag-grid-community/core';
 import { Component } from '@angular/core';
 
-import { FlagContext, IOlympicData } from './interfaces';
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
+import type { ICellRendererParams } from 'ag-grid-community';
+
+import type { FlagContext, IOlympicData } from './interfaces';
 
 @Component({
     standalone: true,

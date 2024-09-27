@@ -1,22 +1,23 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, ColGroupDef, GridApi, GridOptions, ICellRendererParams, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi, GridOptions, ICellRendererParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { FiltersToolPanelModule } from 'ag-grid-enterprise';
+import { RowGroupingModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, FiltersToolPanelModule, RowGroupingModule, SetFilterModule]);
 
-var monthValueGetter =
+const monthValueGetter =
     '(ctx.month < ctx.months.indexOf(colDef.field)) ? data[colDef.field + "_bud"] : data[colDef.field + "_act"]';
-var monthCellClassRules = {
+const monthCellClassRules = {
     'cell-act': 'ctx.month < ctx.months.indexOf(colDef.field)',
     'cell-bud': 'ctx.month >= ctx.months.indexOf(colDef.field)',
     'cell-negative': 'x < 0',
 };
-var yearToDateValueGetter =
+const yearToDateValueGetter =
     'var total = 0; ctx.months.forEach( function(monthName, monthIndex) { if (monthIndex<=ctx.month) { total += data[monthName + "_act"]; } }); return total; ';
-var accountingCellRenderer = function (params: ICellRendererParams) {
+const accountingCellRenderer = function (params: ICellRendererParams) {
     if (params.value == null) {
         return '';
     } else if (params.value >= 0) {
@@ -126,7 +127,7 @@ const gridOptions: GridOptions = {
     context: context,
 };
 
-var monthNames = [
+const monthNames = [
     'Budget Only',
     'Year to Jan',
     'Year to Feb',
@@ -143,7 +144,7 @@ var monthNames = [
 ];
 
 function onChangeMonth(i: number) {
-    var newMonth = (context.month += i);
+    let newMonth = (context.month += i);
 
     if (newMonth < -1) {
         newMonth = -1;
@@ -164,7 +165,7 @@ function onQuickFilterChanged() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/monthly-sales.json')

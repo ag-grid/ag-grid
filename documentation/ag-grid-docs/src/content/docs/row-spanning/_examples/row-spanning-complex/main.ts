@@ -1,6 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, RowSpanParams, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, RowSpanParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 import { getData } from './data';
 import { ShowCellRenderer } from './showCellRenderer_typescript';

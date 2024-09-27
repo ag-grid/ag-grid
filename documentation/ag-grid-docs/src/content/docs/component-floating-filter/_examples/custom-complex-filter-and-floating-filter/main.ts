@@ -1,17 +1,18 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type {
     ColDef,
     GridApi,
     GridOptions,
     IDateFilterParams,
     INumberFilterParams,
     ITextFilterParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+} from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 import { CustomNumberFilter } from './custom-number-filter_typescript';
-import { CustomFloatingParams, NumberFloatingFilter } from './number-floating-filter_typescript';
+import type { CustomFloatingParams } from './number-floating-filter_typescript';
+import { NumberFloatingFilter } from './number-floating-filter_typescript';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -39,9 +40,9 @@ const columnDefs: ColDef[] = [
         filter: 'agDateColumnFilter',
         filterParams: {
             comparator: function (filterLocalDateAtMidnight: Date, cellValue: string) {
-                var dateAsString = cellValue;
-                var dateParts = dateAsString.split('/');
-                var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+                const dateAsString = cellValue;
+                const dateParts = dateAsString.split('/');
+                const cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
                 if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
                     return 0;
@@ -112,7 +113,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

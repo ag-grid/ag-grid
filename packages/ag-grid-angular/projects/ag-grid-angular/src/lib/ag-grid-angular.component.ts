@@ -1,8 +1,21 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnDestroy,
+    Output,
+    ViewContainerRef,
+    ViewEncapsulation,
+} from '@angular/core';
+import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
+
 // @START_IMPORTS@
 import type {
     AdvancedFilterBuilderVisibleChangedEvent,
-    AdvancedFilterModel,
     AlignedGrid,
     AsyncTransactionsFlushedEvent,
     BodyScrollEndEvent,
@@ -173,7 +186,6 @@ import type {
     TreeDataDisplayType,
     UndoEndedEvent,
     UndoStartedEvent,
-    UseGroupFooter,
     UseGroupTotalRow,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
@@ -182,19 +194,6 @@ import type {
 // @END_IMPORTS@
 import type { GridApi, GridOptions, GridParams, Module } from 'ag-grid-community';
 import { _combineAttributesAndGridOptions, _processOnChange, createGrid } from 'ag-grid-community';
-import {
-    AfterViewInit,
-    Component,
-    ElementRef,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnDestroy,
-    Output,
-    ViewContainerRef,
-    ViewEncapsulation,
-} from '@angular/core';
-import type { AgChartTheme, AgChartThemeOverrides } from 'ag-charts-types';
 
 import { AngularFrameworkComponentWrapper } from './angularFrameworkComponentWrapper';
 import { AngularFrameworkOverrides } from './angularFrameworkOverrides';
@@ -653,10 +652,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public enableAdvancedFilter: boolean | undefined = undefined;
-    /** @deprecated As of v31, use `initialState.filter.advancedFilterModel` instead.
-     * @initial
-     */
-    @Input() public advancedFilterModel: AdvancedFilterModel | null | undefined = undefined;
     /** Hidden columns are excluded from the Advanced Filter by default.
      * To include hidden columns, set to `true`.
      * @default false
@@ -801,12 +796,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public suppressFocusAfterRefresh: boolean | undefined = undefined;
-    /** Disables the asynchronous nature of the events introduced in v10, and makes them synchronous. This property only exists for the purpose of supporting legacy code which has a dependency on synchronous events from earlier versions (v9 or earlier) of AG Grid.     **It is strongly recommended that you do not change this property unless you have legacy issues.**
-     * @deprecated v31 Events should be handled asynchronously.
-     * @default false
-     * @initial
-     */
-    @Input() public suppressAsyncEvents: boolean | undefined = undefined;
     /** @deprecated As of v32.2 the grid always uses the browser's ResizeObserver, this grid option has no effect
      * @default false
      * @initial
@@ -958,26 +947,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default true
      */
     @Input() public animateRows: boolean | undefined = undefined;
-    /** Set to `true` to have cells flash after data changes.
-     * @default false
-     * @deprecated 31.2 use `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns.
-     */
-    @Input() public enableCellChangeFlash: boolean | undefined = undefined;
     /** Sets the duration in milliseconds of how long a cell should remain in its "flashed" state.
      * If `0`, the cell will not flash.
      * @default 500
      */
     @Input() public cellFlashDuration: number | undefined = undefined;
-    /** @deprecated v31.1 - use `cellFlashDuration` instead.
-     */
-    @Input() public cellFlashDelay: number | undefined = undefined;
     /** Sets the duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDuration` has completed.
      * @default 1000
      */
     @Input() public cellFadeDuration: number | undefined = undefined;
-    /** @deprecated v31.1 - use `cellFadeDuration` instead.
-     */
-    @Input() public cellFadeDelay: number | undefined = undefined;
     /** Set to `true` to have cells flash after data changes even when the change is due to filtering.
      * @default false
      * @initial
@@ -1051,12 +1029,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Set to `true` to have the Full Width Rows embedded in grid's main container so they can be scrolled horizontally.
      */
     @Input() public embedFullWidthRows: boolean | undefined = undefined;
-    /** @deprecated v31
-     * When enabled, the grid will cast group values to string type.
-     * @default false
-     * @initial
-     */
-    @Input() public suppressGroupMaintainValueType: boolean | undefined = undefined;
     /** Specifies how the results of row grouping should be displayed.
      *
      *  The options are:
@@ -1092,22 +1064,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public groupAggFiltering: boolean | IsRowFilterable<TData> | undefined = undefined;
-    /** If grouping, this controls whether to show a group footer when the group is expanded.
-     * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.
-     * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).
-     * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.
-     * If a callback function is provided, it can used to select which groups will have a footer added.
-     * @default false
-     *
-     * @deprecated v31.3 - use `groupTotalRow` instead.
-     */
-    @Input() public groupIncludeFooter: boolean | UseGroupFooter<TData> | undefined = undefined;
-    /** Set to `true` to show a 'grand total' group footer across all groups.
-     * @default false
-     *
-     * @deprecated v31.3 - use `grandTotalRow` instead.
-     */
-    @Input() public groupIncludeTotalFooter: boolean | undefined = undefined;
     /** When provided, an extra row group total row will be inserted into row groups at the specified position, to display
      * when the group is expanded. This row will contain the aggregate values for the group. If a callback function is
      * provided, it can be used to selectively determine which groups will have a total row added.
@@ -1239,12 +1195,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public serverSideInitialRowCount: number | undefined = undefined;
-    /** When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.
-     * @default false
-     * @initial
-     * @deprecated v31.1
-     */
-    @Input() public suppressServerSideInfiniteScroll: boolean | undefined = undefined;
     /** When `true`, the Server-side Row Model will not use a full width loading renderer, instead using the colDef `loadingCellRenderer` if present.
      */
     @Input() public suppressServerSideFullWidthLoadingRow: boolean | undefined = undefined;
@@ -1286,16 +1236,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public serverSideOnlyRefreshFilteredGroups: boolean | undefined = undefined;
-    /** When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
-     * @default false
-     * @deprecated v31.1
-     */
-    @Input() public serverSideSortOnServer: boolean | undefined = undefined;
-    /** When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
-     * @default false
-     * @deprecated v31.1
-     */
-    @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
     /** Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.
      * @default '_'
      * @initial
@@ -1446,7 +1386,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public alwaysMultiSort: boolean | undefined = undefined;
-    /** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key.
+    /** Set to `'ctrl'` to have multi sorting by clicking work using the `Ctrl` (or `Command ⌘` for Mac) key.
      */
     @Input() public multiSortKey: 'ctrl' | undefined = undefined;
     /** Set to `true` to suppress sorting of un-sorted data to match original row data.
@@ -1579,11 +1519,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused.
      * Return the next header position to navigate to, `true` to stay on the current header,
      * or `false` to let the browser handle the tab behaviour.
-     * As of v31.3, returning `null` is deprecated.
      */
-    @Input() public tabToNextHeader:
-        | ((params: TabToNextHeaderParams<TData>) => HeaderPosition | boolean | null)
-        | undefined = undefined;
+    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams<TData>) => HeaderPosition | boolean) | undefined =
+        undefined;
     /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.
      */
     @Input() public navigateToNextCell: ((params: NavigateToNextCellParams<TData>) => CellPosition | null) | undefined =
@@ -1591,9 +1529,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused.
      * Return the next cell position to navigate to, `true` to stay on the current cell,
      * or `false` to let the browser handle the tab behaviour.
-     * As of v31.3, returning `null` is deprecated.
      */
-    @Input() public tabToNextCell: ((params: TabToNextCellParams<TData>) => CellPosition | boolean | null) | undefined =
+    @Input() public tabToNextCell: ((params: TabToNextCellParams<TData>) => CellPosition | boolean) | undefined =
         undefined;
     /** A callback for localising text within the grid.
      * @initial
@@ -2147,7 +2084,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_debug: boolean | null | '';
     static ngAcceptInputType_enableBrowserTooltips: boolean | null | '';
     static ngAcceptInputType_enableCellExpressions: boolean | null | '';
-    static ngAcceptInputType_groupIncludeTotalFooter: boolean | null | '';
     static ngAcceptInputType_groupSuppressBlankHeader: boolean | null | '';
     static ngAcceptInputType_suppressMenuHide: boolean | null | '';
     static ngAcceptInputType_suppressRowDeselection: boolean | null | '';
@@ -2169,10 +2105,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressClearOnFillReduction: boolean | null | '';
     static ngAcceptInputType_deltaSort: boolean | null | '';
     static ngAcceptInputType_suppressTouch: boolean | null | '';
-    static ngAcceptInputType_suppressAsyncEvents: boolean | null | '';
     static ngAcceptInputType_allowContextMenuWithControlKey: boolean | null | '';
     static ngAcceptInputType_suppressContextMenu: boolean | null | '';
-    static ngAcceptInputType_enableCellChangeFlash: boolean | null | '';
     static ngAcceptInputType_suppressDragLeaveHidesColumns: boolean | null | '';
     static ngAcceptInputType_suppressRowGroupHidesColumns: boolean | null | '';
     static ngAcceptInputType_suppressMiddleClickScrolls: boolean | null | '';
@@ -2248,8 +2182,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_serverSideSortAllLevels: boolean | null | '';
     static ngAcceptInputType_serverSideEnableClientSideSort: boolean | null | '';
     static ngAcceptInputType_serverSideOnlyRefreshFilteredGroups: boolean | null | '';
-    static ngAcceptInputType_serverSideSortOnServer: boolean | null | '';
-    static ngAcceptInputType_serverSideFilterOnServer: boolean | null | '';
     static ngAcceptInputType_suppressAggFilteredOnly: boolean | null | '';
     static ngAcceptInputType_showOpenedGroup: boolean | null | '';
     static ngAcceptInputType_suppressClipboardApi: boolean | null | '';
@@ -2265,13 +2197,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressCopySingleCellRanges: boolean | null | '';
     static ngAcceptInputType_suppressGroupRowsSticky: boolean | null | '';
     static ngAcceptInputType_suppressCutToClipboard: boolean | null | '';
-    static ngAcceptInputType_suppressServerSideInfiniteScroll: boolean | null | '';
     static ngAcceptInputType_rowGroupPanelSuppressSort: boolean | null | '';
     static ngAcceptInputType_allowShowChangeAfterFilter: boolean | null | '';
     static ngAcceptInputType_enableAdvancedFilter: boolean | null | '';
     static ngAcceptInputType_masterDetail: boolean | null | '';
     static ngAcceptInputType_treeData: boolean | null | '';
-    static ngAcceptInputType_suppressGroupMaintainValueType: boolean | null | '';
     static ngAcceptInputType_applyQuickFilterBeforePivotOrAgg: boolean | null | '';
     static ngAcceptInputType_suppressServerSideFullWidthLoadingRow: boolean | null | '';
     static ngAcceptInputType_suppressAdvancedFilterEval: boolean | null | '';

@@ -1,8 +1,9 @@
-import { type ColorValue, paramValueToCss } from '@ag-grid-community/theming';
 import styled from '@emotion/styled';
 import { FloatingPortal, autoPlacement, autoUpdate, offset, useFloating } from '@floating-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { HexAlphaColorPicker, HexColorPicker } from 'react-colorful';
+
+import { type ColorValue, paramValueToCss } from 'ag-grid-community';
 
 import { useClickAwayListener } from '../component-utils';
 import { Card } from '../general/Card';

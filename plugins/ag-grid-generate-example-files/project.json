@@ -39,7 +39,7 @@
     },
     "generateGridOptionsType": {
       "executor": "nx:run-script",
-      "dependsOn": ["@ag-grid-community/core:build:types", "copySrcFilesForGeneration"],
+      "dependsOn": ["ag-grid-community:build:types", "copySrcFilesForGeneration"],
       "options": {
         "script": "generateGridOptionsType"
       },
@@ -57,14 +57,12 @@
       },
       "cache": true,
       "inputs": [
-        "{workspaceRoot}/community-modules/core/src/propertyKeys.ts",
-        "{workspaceRoot}/community-modules/core/src/eventTypes.ts",
-        "{workspaceRoot}/documentation/ag-grid-docs/src/content/matrix-table/modules.json"
+        "{workspaceRoot}/packages/ag-grid-community/src/propertyKeys.ts",
+        "{workspaceRoot}/packages/ag-grid-community/src/eventTypes.ts"
       ],
       "outputs": [
         "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/propertyKeys.ts",
-        "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventTypes.ts",
-        "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/modules.ts"
+        "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/executors/generate/generator/_copiedFromCore/eventTypes.ts"
       ]
     },
     "lint": {

@@ -1,6 +1,6 @@
 export function getData(): any[] {
-    var rowData = [];
-    var words = [
+    const rowData = [];
+    const words = [
         'One',
         'Apple',
         'Moon',
@@ -15,7 +15,7 @@ export function getData(): any[] {
         'Beach',
     ];
 
-    for (var i = 0; i < 100; i++) {
+    for (let i = 0; i < 100; i++) {
         rowData.push({
             simple: words[i % words.length],
             numberBad: Math.floor(((i + 2) * 173456) % 10000),

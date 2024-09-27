@@ -1,7 +1,8 @@
-import type { IDragAndDropImageAngularComponent } from '@ag-grid-community/angular';
-import type { IDragAndDropImageParams } from '@ag-grid-community/core';
 import { NgClass } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
+
+import type { IDragAndDropImageAngularComponent } from 'ag-grid-angular';
+import type { IDragAndDropImageParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,

@@ -1,6 +1,8 @@
-import { AgGridAngular, ICellRendererAngularComp } from '@ag-grid-community/angular';
-import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
 import { Component } from '@angular/core';
+
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
+import { AgGridAngular } from 'ag-grid-angular';
+import type { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
@@ -63,7 +65,7 @@ export class DetailCellRenderer implements ICellRendererAngularComp {
     }
 
     onGridReady(params: GridReadyEvent) {
-        var gridInfo = {
+        const gridInfo = {
             id: this.rowId,
             api: params.api,
         };

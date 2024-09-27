@@ -1,4 +1,4 @@
-import { ITooltipComp, ITooltipParams } from '@ag-grid-community/core';
+import type { ITooltipComp, ITooltipParams } from 'ag-grid-community';
 
 export class CustomTooltip implements ITooltipComp {
     eGui: any;

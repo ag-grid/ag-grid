@@ -1,21 +1,24 @@
-import { AgGridAngular, ICellRendererAngularComp } from '@ag-grid-community/angular';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import type { HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import { Component } from '@angular/core';
+
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
+import { AgGridAngular } from 'ag-grid-angular';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import type {
     CellValueChangedEvent,
     ColDef,
     GridReadyEvent,
     ICellRendererParams,
-    ModuleRegistry,
     SelectionChangedEvent,
     SelectionOptions,
     ValueFormatterParams,
-} from '@ag-grid-community/core';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component } from '@angular/core';
+} from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 // Row Data Interface
 interface IRow {

@@ -1,4 +1,4 @@
-import type { ICellRendererComp, ICellRendererParams, IRowNode } from '@ag-grid-community/core';
+import type { ICellRendererComp, ICellRendererParams, IRowNode } from 'ag-grid-community';
 
 export class DragSourceRenderer implements ICellRendererComp {
     eGui!: HTMLElement;
@@ -6,7 +6,7 @@ export class DragSourceRenderer implements ICellRendererComp {
     onDragStartListener: any;
 
     init(params: ICellRendererParams) {
-        var eTemp = document.createElement('div');
+        const eTemp = document.createElement('div');
         eTemp.innerHTML = '<div draggable="true">Drag Me!</div>';
 
         this.eGui = eTemp.firstChild as HTMLElement;

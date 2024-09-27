@@ -1,7 +1,7 @@
 export function getData(): any[] {
-    var rowData = [];
+    const rowData = [];
 
-    for (var i = 0; i < 10; i++) {
+    for (let i = 0; i < 10; i++) {
         rowData.push({
             id: i,
             numberGood: Math.floor(((i + 2) * 476321) % 10000),

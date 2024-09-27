@@ -1,5 +1,5 @@
 export function getData(): any[] {
-    var rowData = [
+    const rowData = [
         {
             // these attributes appear in the top level rows of the grid
             name: 'Ireland',

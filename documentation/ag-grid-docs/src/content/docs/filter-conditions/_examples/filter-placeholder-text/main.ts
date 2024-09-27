@@ -1,14 +1,14 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type {
     ColDef,
     GridApi,
     GridOptions,
     IFilterPlaceholderFunctionParams,
     INumberFilterParams,
     ITextFilterParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+} from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 

@@ -1,13 +1,14 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import { createPart, createTheme } from '@ag-grid-community/theming';
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { createPart, createTheme } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 const myCheckboxStyle = createPart('checkboxStyle')
     // Add some CSS to this part. If your application is bundled with Vite you

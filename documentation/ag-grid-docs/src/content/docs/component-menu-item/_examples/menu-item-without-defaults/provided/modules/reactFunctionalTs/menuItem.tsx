@@ -1,6 +1,8 @@
-import { Column, IFilterComp } from '@ag-grid-community/core';
-import { CustomMenuItemProps } from '@ag-grid-community/react';
-import React, { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+
+import type { Column, IFilterComp } from 'ag-grid-community';
+import type { CustomMenuItemProps } from 'ag-grid-react';
 
 export interface ButtonCustomMenuItemProps extends CustomMenuItemProps {
     column: Column;

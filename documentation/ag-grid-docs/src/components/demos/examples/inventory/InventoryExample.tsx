@@ -1,4 +1,5 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { type ChangeEvent, type FunctionComponent, useCallback, useMemo, useRef, useState } from 'react';
+
 import type {
     ColDef,
     GetDetailRowDataParams,
@@ -6,16 +7,12 @@ import type {
     ValueFormatterFunc,
     ValueFormatterParams,
     ValueGetterParams,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
-import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { type ChangeEvent, type FunctionComponent, useCallback, useMemo, useRef, useState } from 'react';
+} from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { ExcelExportModule, MasterDetailModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
 
 import styles from './InventoryExample.module.css';
 import { ActionsCellRenderer } from './cell-renderers/ActionsCellRenderer';
