@@ -179,6 +179,7 @@ export type EnterpriseModuleName =
     | 'FiltersToolPanelModule'
     | 'GridChartsApiModule'
     | 'GridChartsCoreModule'
+    | 'GridChartsEnterpriseFeaturesModule'
     | 'GridChartsModule'
     | 'GroupFilterModule'
     | 'GroupFloatingFilterModule'

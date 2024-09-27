@@ -390,6 +390,7 @@ export type BeanName =
     | 'environment'
     | 'eventService'
     | 'eGridDiv'
+    | 'enterpriseChartProxyFactory'
     | 'expansionService'
     | 'expressionService'
     | 'filterAggregatesStage'

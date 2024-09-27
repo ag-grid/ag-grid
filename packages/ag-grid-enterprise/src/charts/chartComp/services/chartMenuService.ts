@@ -29,7 +29,7 @@ export const CHART_TOOL_PANEL_MENU_OPTIONS: { [key in ChartToolPanelName]: Chart
 export class ChartMenuService extends BeanStub implements NamedBean {
     beanName = 'chartMenuService' as const;
 
-    private advancedSettingsMenuFactory: AdvancedSettingsMenuFactory;
+    private advancedSettingsMenuFactory?: AdvancedSettingsMenuFactory;
 
     public wireBeans(beans: BeanCollection) {
         this.advancedSettingsMenuFactory = beans.advancedSettingsMenuFactory as AdvancedSettingsMenuFactory;
@@ -49,11 +49,11 @@ export class ChartMenuService extends BeanStub implements NamedBean {
     }
 
     public openAdvancedSettings(chartMenuContext: ChartMenuContext, eventSource?: HTMLElement): void {
-        this.advancedSettingsMenuFactory.showMenu(chartMenuContext, eventSource);
+        this.advancedSettingsMenuFactory?.showMenu(chartMenuContext, eventSource);
     }
 
     public hideAdvancedSettings(): void {
-        this.advancedSettingsMenuFactory.hideMenu();
+        this.advancedSettingsMenuFactory?.hideMenu();
     }
 
     public getChartToolbarOptions(): ChartToolbarMenuItemOptions[] {
