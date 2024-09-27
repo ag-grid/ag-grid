@@ -1,52 +1,20 @@
-import { ApiFunctionService } from './api/apiFunctionService';
 import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
-import { CellNavigationService } from './cellNavigationService';
-import { ColumnFactory } from './columns/columnFactory';
-import { ColumnModel } from './columns/columnModel';
-import { ColumnNameService } from './columns/columnNameService';
-import { ColumnStateService } from './columns/columnStateService';
-import { ColumnViewportService } from './columns/columnViewportService';
-import { FuncColsService } from './columns/funcColsService';
-import { VisibleColsService } from './columns/visibleColsService';
-import { ComponentMetadataProvider } from './components/framework/componentMetadataProvider';
-import { UserComponentFactory } from './components/framework/userComponentFactory';
-import { UserComponentRegistry } from './components/framework/userComponentRegistry';
 import type { ComponentMeta, ContextParams, SingletonBean } from './context/context';
 import { Context } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
-import { CtrlsFactory } from './ctrlsFactory';
-import { CtrlsService } from './ctrlsService';
 import type { GridOptions } from './entities/gridOptions';
-import { RowPositionUtils } from './entities/rowPositionUtils';
-import { Environment } from './environment';
-import { EventService } from './eventService';
-import { FocusService } from './focusService';
-import { MouseEventService } from './gridBodyComp/mouseEventService';
-import { NavigationService } from './gridBodyComp/navigationService';
-import { PinnedWidthService } from './gridBodyComp/pinnedWidthService';
-import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridComp } from './gridComp/gridComp';
-import { GridDestroyService } from './gridDestroyService';
-import { GridOptionsService, getCoercedGridOptions } from './gridOptionsService';
-import { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
+import { getCoercedGridOptions } from './gridOptionsService';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { Module } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
-import { LocaleService } from './localeService';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
-import { PageBoundsListener } from './pagination/pageBoundsListener';
-import { PageBoundsService } from './pagination/pageBoundsService';
-import { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
-import { RowContainerHeightService } from './rendering/rowContainerHeightService';
-import { RowRenderer } from './rendering/rowRenderer';
-import { SyncService } from './syncService';
 import { _errorOnce, _warnOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
-import { ValueService } from './valueService/valueService';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 
 export interface GridParams {
@@ -404,42 +372,7 @@ export class GridCoreCreator {
             return;
         }
 
-        // beans should only contain SERVICES, it should NEVER contain COMPONENTS
-        const beans: SingletonBean[] = [
-            RowPositionUtils,
-            GridDestroyService,
-            ApiFunctionService,
-            UserComponentRegistry,
-            ComponentMetadataProvider,
-            UserComponentFactory,
-            RowContainerHeightService,
-            LocaleService,
-            VisibleColsService,
-            EventService,
-            GridOptionsService,
-            ColumnModel,
-            HeaderNavigationService,
-            PageBoundsService,
-            PageBoundsListener,
-            RowRenderer,
-            ColumnFactory,
-            NavigationService,
-            ValueService,
-            FocusService,
-            MouseEventService,
-            Environment,
-            CellNavigationService,
-            ScrollVisibleService,
-            CtrlsService,
-            PinnedWidthService,
-            CtrlsFactory,
-            SyncService,
-            AriaAnnouncementService,
-            ColumnStateService,
-            FuncColsService,
-            ColumnNameService,
-            ColumnViewportService,
-        ];
+        const beans: SingletonBean[] = [];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => (module.beans ? module.beans : []));
         beans.push(...moduleBeans);
