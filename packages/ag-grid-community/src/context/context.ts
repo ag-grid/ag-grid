@@ -187,7 +187,7 @@ export interface CoreBeanCollection {
     columnNameService: ColumnNameService;
     visibleColsService: VisibleColsService;
     columnMoveService?: ColumnMoveService;
-    columnFlexService: ColumnFlexService;
+    columnFlexService?: ColumnFlexService;
     columnResizeService?: ColumnResizeService;
     headerNavigationService: HeaderNavigationService;
     navigationService: NavigationService;

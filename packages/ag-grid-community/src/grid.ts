@@ -4,7 +4,6 @@ import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
 import { CellNavigationService } from './cellNavigationService';
 import { ColumnFactory } from './columns/columnFactory';
-import { ColumnFlexService } from './columns/columnFlexService';
 import { ColumnModel } from './columns/columnModel';
 import { ColumnNameService } from './columns/columnNameService';
 import { ColumnStateService } from './columns/columnStateService';
@@ -438,7 +437,6 @@ export class GridCoreCreator {
             SyncService,
             AriaAnnouncementService,
             ColumnStateService,
-            ColumnFlexService,
             FuncColsService,
             ColumnNameService,
             ColumnViewportService,

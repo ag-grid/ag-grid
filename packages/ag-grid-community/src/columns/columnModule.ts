@@ -39,6 +39,7 @@ import {
     setColumnsVisible,
 } from './columnApi';
 import { ColumnDefFactory } from './columnDefFactory';
+import { ColumnFlexService } from './columnFlexService';
 import { ControlsColService } from './controlsColService';
 import { DataTypeService } from './dataTypeService';
 
@@ -62,6 +63,12 @@ export const GetColumnDefsModule = _defineModule<_GetColumnDefsApi<any>>({
     apiFunctions: {
         getColumnDefs,
     },
+});
+
+export const ColumnFlexModule = _defineModule({
+    version: VERSION,
+    moduleName: '@ag-grid-community/column-flex',
+    beans: [ColumnFlexService],
 });
 
 export const ColumnApiModule = _defineModule<_ColumnGridApi<any>>({
