@@ -25,9 +25,9 @@ import { _warnOnce } from '../utils/function';
 import { _toStringOrNull } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
 import type { ValueService } from '../valueService/valueService';
-import type { ColumnApplyStateService, ColumnState, ColumnStateParams } from './columnApplyStateService';
 import type { ColumnModel } from './columnModel';
 import { convertSourceType } from './columnModel';
+import type { ColumnState, ColumnStateParams, ColumnStateService } from './columnStateService';
 import { convertColumnTypes } from './columnUtils';
 import type { FuncColsService } from './funcColsService';
 
@@ -42,7 +42,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
     private valueService: ValueService;
-    private columnApplyStateService: ColumnApplyStateService;
+    private columnStateService: ColumnStateService;
     private filterManager?: FilterManager;
 
     public wireBeans(beans: BeanCollection): void {
@@ -50,7 +50,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
         this.valueService = beans.valueService;
-        this.columnApplyStateService = beans.columnApplyStateService;
+        this.columnStateService = beans.columnStateService;
         this.filterManager = beans.filterManager;
     }
 
@@ -511,13 +511,13 @@ export class DataTypeService extends BeanStub implements NamedBean {
             );
         }
         if (state.length) {
-            this.columnApplyStateService.applyColumnState({ state }, 'cellDataTypeInferred');
+            this.columnStateService.applyColumnState({ state }, 'cellDataTypeInferred');
         }
         this.initialData = null;
     }
 
     private getUpdatedColumnState(column: AgColumn, columnStateUpdates: Set<keyof ColumnStateParams>): ColumnState {
-        const columnState = this.columnApplyStateService.getColumnStateFromColDef(column);
+        const columnState = this.columnStateService.getColumnStateFromColDef(column);
         columnStateUpdates.forEach((key) => {
             // if the column state has been updated, don't update again
             delete columnState[key];

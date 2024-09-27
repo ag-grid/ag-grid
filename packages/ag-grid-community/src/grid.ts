@@ -3,13 +3,11 @@ import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
 import { CellNavigationService } from './cellNavigationService';
-import { ColumnApplyStateService } from './columns/columnApplyStateService';
 import { ColumnFactory } from './columns/columnFactory';
 import { ColumnFlexService } from './columns/columnFlexService';
-import { ColumnGetStateService } from './columns/columnGetStateService';
-import { ColumnGroupStateService } from './columns/columnGroupStateService';
 import { ColumnModel } from './columns/columnModel';
 import { ColumnNameService } from './columns/columnNameService';
+import { ColumnStateService } from './columns/columnStateService';
 import { ColumnViewportService } from './columns/columnViewportService';
 import { FuncColsService } from './columns/funcColsService';
 import { PivotResultColsService } from './columns/pivotResultColsService';
@@ -439,9 +437,7 @@ export class GridCoreCreator {
             CtrlsFactory,
             SyncService,
             AriaAnnouncementService,
-            ColumnApplyStateService,
-            ColumnGetStateService,
-            ColumnGroupStateService,
+            ColumnStateService,
             ColumnFlexService,
             FuncColsService,
             ColumnNameService,

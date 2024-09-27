@@ -33,12 +33,11 @@ import { _areEqual, _includes, _insertIntoArray, _moveInArray } from '../utils/a
 import { _warnOnce } from '../utils/function';
 import { _missingOrEmpty } from '../utils/generic';
 import type { ValueCache } from '../valueService/valueCache';
-import type { ColumnApplyStateService, ColumnState } from './columnApplyStateService';
 import type { ColumnDefFactory } from './columnDefFactory';
 import { dispatchColumnPinnedEvent } from './columnEventUtils';
 import type { ColumnFactory } from './columnFactory';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
-import type { ColumnGroupStateService } from './columnGroupStateService';
+import type { ColumnState, ColumnStateService } from './columnStateService';
 import { GROUP_AUTO_COLUMN_ID } from './columnUtils';
 import { destroyColumnTree, getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
@@ -74,8 +73,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private controlsColService?: ControlsColService;
     private valueCache?: ValueCache;
     private columnDefFactory?: ColumnDefFactory;
-    private columnApplyStateService: ColumnApplyStateService;
-    private columnGroupStateService: ColumnGroupStateService;
+    private columnStateService: ColumnStateService;
     private columnAutosizeService?: ColumnAutosizeService;
     private funcColsService: FuncColsService;
     private quickFilterService?: QuickFilterService;
@@ -94,8 +92,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.controlsColService = beans.controlsColService;
         this.valueCache = beans.valueCache;
         this.columnDefFactory = beans.columnDefFactory;
-        this.columnApplyStateService = beans.columnApplyStateService;
-        this.columnGroupStateService = beans.columnGroupStateService;
+        this.columnStateService = beans.columnStateService;
         this.columnAutosizeService = beans.columnAutosizeService;
         this.funcColsService = beans.funcColsService;
         this.quickFilterService = beans.quickFilterService;
@@ -173,7 +170,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private createColsFromColDefs(source: ColumnEventType): void {
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
         const dispatchEventsFunc = this.colDefs
-            ? this.columnApplyStateService.compareColumnStatesAndDispatchEvents(source)
+            ? this.columnStateService.compareColumnStatesAndDispatchEvents(source)
             : undefined;
 
         // always invalidate cache on changing columns, as the column id's for the new columns
@@ -456,7 +453,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public setColsVisible(keys: (string | AgColumn)[], visible = false, source: ColumnEventType): void {
-        this.columnApplyStateService.applyColumnState(
+        this.columnStateService.applyColumnState(
             {
                 state: keys.map<ColumnState>((key) => ({
                     colId: typeof key === 'string' ? key : key.getColId(),
@@ -529,7 +526,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         } else {
             keyAsString = key || '';
         }
-        this.columnGroupStateService.setColumnGroupState([{ groupId: keyAsString, open: newValue }], source);
+        this.columnStateService.setColumnGroupState([{ groupId: keyAsString, open: newValue }], source);
     }
 
     public getProvidedColGroup(key: string): AgProvidedColumnGroup | null {

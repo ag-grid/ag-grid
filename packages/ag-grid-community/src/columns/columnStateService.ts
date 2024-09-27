@@ -2,6 +2,8 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { IAggFunc } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
@@ -17,7 +19,7 @@ import {
     dispatchColumnResizedEvent,
     dispatchColumnVisibleEvent,
 } from './columnEventUtils';
-import type { ColumnGetStateService } from './columnGetStateService';
+import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnModel } from './columnModel';
 import { GROUP_AUTO_COLUMN_ID, getColumnsFromTree } from './columnUtils';
 import type { FuncColsService } from './funcColsService';
@@ -72,12 +74,11 @@ export interface ApplyColumnStateParams {
     defaultState?: ColumnStateParams;
 }
 
-export class ColumnApplyStateService extends BeanStub implements NamedBean {
-    beanName = 'columnApplyStateService' as const;
+export class ColumnStateService extends BeanStub implements NamedBean {
+    beanName = 'columnStateService' as const;
 
     private columnModel: ColumnModel;
     private sortController?: SortController;
-    private columnGetStateService: ColumnGetStateService;
     private funcColsService: FuncColsService;
     private visibleColsService: VisibleColsService;
     private columnAnimationService?: ColumnAnimationService;
@@ -86,7 +87,6 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.sortController = beans.sortController;
-        this.columnGetStateService = beans.columnGetStateService;
         this.funcColsService = beans.funcColsService;
         this.visibleColsService = beans.visibleColsService;
         this.columnAnimationService = beans.columnAnimationService;
@@ -517,7 +517,7 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
             valueColumns: this.funcColsService.valueCols.slice(),
         };
 
-        const columnStateBefore = this.columnGetStateService.getColumnState();
+        const columnStateBefore = this.getColumnState();
         const columnStateBeforeMap: { [colId: string]: ColumnState } = {};
 
         columnStateBefore.forEach((col) => {
@@ -629,7 +629,7 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
     private normaliseColumnMovedEventForColumnState(colStateBefore: ColumnState[], source: ColumnEventType) {
         // we are only interested in columns that were both present and visible before and after
 
-        const colStateAfter = this.columnGetStateService.getColumnState();
+        const colStateAfter = this.getColumnState();
 
         const colStateAfterMapped: { [id: string]: ColumnState } = {};
         colStateAfter.forEach((s) => (colStateAfterMapped[s.colId!] = s));
@@ -670,6 +670,142 @@ export class ColumnApplyStateService extends BeanStub implements NamedBean {
             finished: true,
             source,
         });
+    }
+
+    public getColumnState(): ColumnState[] {
+        const primaryCols = this.columnModel.getColDefCols();
+
+        if (_missing(primaryCols) || !this.columnModel.isAlive()) {
+            return [];
+        }
+
+        const colsForState = this.columnModel.getAllCols();
+        const res = colsForState.map((col) => this.createStateItemFromColumn(col));
+
+        this.orderColumnStateList(res);
+
+        return res;
+    }
+
+    private createStateItemFromColumn(column: AgColumn): ColumnState {
+        const rowGorupColumns = this.funcColsService.rowGroupCols;
+        const pivotColumns = this.funcColsService.pivotCols;
+
+        const rowGroupIndex = column.isRowGroupActive() ? rowGorupColumns.indexOf(column) : null;
+        const pivotIndex = column.isPivotActive() ? pivotColumns.indexOf(column) : null;
+
+        const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
+        const sort = column.getSort() != null ? column.getSort() : null;
+        const sortIndex = column.getSortIndex() != null ? column.getSortIndex() : null;
+
+        const res: ColumnState = {
+            colId: column.getColId(),
+            width: column.getActualWidth(),
+            hide: !column.isVisible(),
+            pinned: column.getPinned(),
+            sort,
+            sortIndex,
+            aggFunc,
+            rowGroup: column.isRowGroupActive(),
+            rowGroupIndex,
+            pivot: column.isPivotActive(),
+            pivotIndex: pivotIndex,
+            flex: column.getFlex() ?? null,
+        };
+
+        return res;
+    }
+
+    private orderColumnStateList(columnStateList: any[]): void {
+        const gridColumns = this.columnModel.getCols();
+        // for fast looking, store the index of each column
+        const colIdToGridIndexMap = new Map<string, number>(gridColumns.map((col, index) => [col.getColId(), index]));
+
+        columnStateList.sort((itemA: any, itemB: any) => {
+            const posA = colIdToGridIndexMap.has(itemA.colId) ? colIdToGridIndexMap.get(itemA.colId) : -1;
+            const posB = colIdToGridIndexMap.has(itemB.colId) ? colIdToGridIndexMap.get(itemB.colId) : -1;
+            return posA! - posB!;
+        });
+    }
+
+    public getColumnGroupState(): { groupId: string; open: boolean }[] {
+        const columnGroupState: { groupId: string; open: boolean }[] = [];
+        const gridBalancedTree = this.columnModel.getColTree();
+
+        depthFirstOriginalTreeSearch(null, gridBalancedTree, (node) => {
+            if (isProvidedColumnGroup(node)) {
+                columnGroupState.push({
+                    groupId: node.getGroupId(),
+                    open: node.isExpanded(),
+                });
+            }
+        });
+
+        return columnGroupState;
+    }
+
+    public resetColumnGroupState(source: ColumnEventType): void {
+        const primaryColumnTree = this.columnModel.getColDefColTree();
+        if (!primaryColumnTree) {
+            return;
+        }
+
+        const stateItems: { groupId: string; open: boolean | undefined }[] = [];
+
+        depthFirstOriginalTreeSearch(null, primaryColumnTree, (child) => {
+            if (isProvidedColumnGroup(child)) {
+                const colGroupDef = child.getColGroupDef();
+                const groupState = {
+                    groupId: child.getGroupId(),
+                    open: !colGroupDef ? undefined : colGroupDef.openByDefault,
+                };
+                stateItems.push(groupState);
+            }
+        });
+
+        this.setColumnGroupState(stateItems, source);
+    }
+
+    public setColumnGroupState(
+        stateItems: { groupId: string; open: boolean | undefined }[],
+        source: ColumnEventType
+    ): void {
+        const gridBalancedTree = this.columnModel.getColTree();
+        if (!gridBalancedTree) {
+            return;
+        }
+
+        this.columnAnimationService?.start();
+
+        const impactedGroups: AgProvidedColumnGroup[] = [];
+
+        stateItems.forEach((stateItem) => {
+            const groupKey = stateItem.groupId;
+            const newValue = stateItem.open;
+            const providedColumnGroup = this.columnModel.getProvidedColGroup(groupKey);
+
+            if (!providedColumnGroup) {
+                return;
+            }
+            if (providedColumnGroup.isExpanded() === newValue) {
+                return;
+            }
+
+            providedColumnGroup.setExpanded(newValue);
+            impactedGroups.push(providedColumnGroup);
+        });
+
+        this.visibleColsService.refresh(source, true);
+
+        if (impactedGroups.length) {
+            this.eventService.dispatchEvent({
+                type: 'columnGroupOpened',
+                columnGroup: impactedGroups.length === 1 ? impactedGroups[0] : undefined,
+                columnGroups: impactedGroups,
+            });
+        }
+
+        this.columnAnimationService?.finish();
     }
 }
 

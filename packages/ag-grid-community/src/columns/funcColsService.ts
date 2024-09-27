@@ -8,9 +8,9 @@ import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _removeFromArray } from '../utils/array';
 import { _attrToBoolean, _attrToNumber, _exists, _missingOrEmpty } from '../utils/generic';
-import type { ColumnState, ModifyColumnsNoEventsCallbacks } from './columnApplyStateService';
 import { dispatchColumnChangedEvent } from './columnEventUtils';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
+import type { ColumnState, ModifyColumnsNoEventsCallbacks } from './columnStateService';
 import type { VisibleColsService } from './visibleColsService';
 
 export class FuncColsService extends BeanStub implements NamedBean {

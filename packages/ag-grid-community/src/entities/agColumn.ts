@@ -1,5 +1,5 @@
-import type { ColumnState } from '../columns/columnApplyStateService';
 import type { ColumnHoverService } from '../columns/columnHover/columnHoverService';
+import type { ColumnState } from '../columns/columnStateService';
 import { isColumnControlsCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';

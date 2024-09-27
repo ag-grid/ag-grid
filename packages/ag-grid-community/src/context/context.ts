@@ -7,15 +7,13 @@ import type { RowNodeEventThrottle } from '../clientSideRowModel/rowNodeEventThr
 import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
 import type { ColumnMoveService } from '../columnMove/columnMoveService';
 import type { ColumnResizeService } from '../columnResize/columnResizeService';
-import type { ColumnApplyStateService } from '../columns/columnApplyStateService';
 import type { ColumnDefFactory } from '../columns/columnDefFactory';
 import type { ColumnFactory } from '../columns/columnFactory';
 import type { ColumnFlexService } from '../columns/columnFlexService';
-import type { ColumnGetStateService } from '../columns/columnGetStateService';
-import type { ColumnGroupStateService } from '../columns/columnGroupStateService';
 import type { ColumnHoverService } from '../columns/columnHover/columnHoverService';
 import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnNameService } from '../columns/columnNameService';
+import type { ColumnStateService } from '../columns/columnStateService';
 import type { ColumnViewportService } from '../columns/columnViewportService';
 import type { ControlsColService } from '../columns/controlsColService';
 import type { DataTypeService } from '../columns/dataTypeService';
@@ -225,13 +223,12 @@ export interface CoreBeanCollection {
     gridApi: GridApi;
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
-    columnApplyStateService: ColumnApplyStateService;
+    columnStateService: ColumnStateService;
     columnFactory: ColumnFactory;
     pivotResultColsService: PivotResultColsService;
     autoColService?: IAutoColService;
     controlsColService?: ControlsColService;
     columnDefFactory?: ColumnDefFactory;
-    columnGroupStateService: ColumnGroupStateService;
     columnAutosizeService?: ColumnAutosizeService;
     funcColsService: FuncColsService;
     quickFilterService?: QuickFilterService;
@@ -242,7 +239,6 @@ export interface CoreBeanCollection {
     globalSyncEventListener: AgGlobalEventListener;
     stateService?: StateService;
     overlayService?: OverlayService;
-    columnGetStateService: ColumnGetStateService;
     pinnedRowModel?: PinnedRowModel;
     menuService?: MenuService;
     apiEventService?: ApiEventService;
@@ -363,7 +359,6 @@ export type BeanName =
     | 'columnEditorFactory'
     | 'columnFilterService'
     | 'columnFlexService'
-    | 'columnGetStateService'
     | 'columnResizeService'
     | 'columnFactory'
     | 'columnAnimationService'
@@ -374,8 +369,7 @@ export type BeanName =
     | 'columnPositionService'
     | 'columnNameService'
     | 'columnViewportService'
-    | 'columnGroupStateService'
-    | 'columnApplyStateService'
+    | 'columnStateService'
     | 'columnUtils'
     | 'pivotResultColsService'
     | 'componentMetadataProvider'

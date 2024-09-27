@@ -1,10 +1,10 @@
 import type {
     AgColumn,
     BeanCollection,
-    ColumnApplyStateService,
     ColumnEventType,
     ColumnModel,
     ColumnState,
+    ColumnStateService,
     IAggFunc,
     IAggFuncService,
     NamedBean,
@@ -18,12 +18,12 @@ export class ModelItemUtils extends BeanStub implements NamedBean {
 
     private aggFuncService?: IAggFuncService;
     private columnModel: ColumnModel;
-    private columnApplyStateService: ColumnApplyStateService;
+    private columnStateService: ColumnStateService;
 
     public wireBeans(beans: BeanCollection) {
         this.aggFuncService = beans.aggFuncService;
         this.columnModel = beans.columnModel;
-        this.columnApplyStateService = beans.columnApplyStateService;
+        this.columnStateService = beans.columnStateService;
     }
 
     public selectAllChildren(colTree: ColumnModelItem[], selectAllChecked: boolean, eventType: ColumnEventType): void {
@@ -80,7 +80,7 @@ export class ModelItemUtils extends BeanStub implements NamedBean {
         });
 
         if (colStateItems.length > 0) {
-            this.columnApplyStateService.applyColumnState({ state: colStateItems }, eventType);
+            this.columnStateService.applyColumnState({ state: colStateItems }, eventType);
         }
     }
 
@@ -136,7 +136,7 @@ export class ModelItemUtils extends BeanStub implements NamedBean {
         columns.forEach(action);
 
         if (colStateItems.length > 0) {
-            this.columnApplyStateService.applyColumnState({ state: colStateItems }, eventType);
+            this.columnStateService.applyColumnState({ state: colStateItems }, eventType);
         }
     }
 
@@ -170,7 +170,7 @@ export class ModelItemUtils extends BeanStub implements NamedBean {
                 };
             }
         });
-        this.columnApplyStateService.applyColumnState({ state }, eventType);
+        this.columnStateService.applyColumnState({ state }, eventType);
     }
 
     public createPivotState(column: AgColumn): {

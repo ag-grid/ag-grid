@@ -1,7 +1,5 @@
-import type { ColumnApplyStateService, ColumnState, ColumnStateParams } from '../../columns/columnApplyStateService';
-import type { ColumnGetStateService } from '../../columns/columnGetStateService';
-import type { ColumnGroupStateService } from '../../columns/columnGroupStateService';
 import type { ColumnModel } from '../../columns/columnModel';
+import type { ColumnState, ColumnStateParams, ColumnStateService } from '../../columns/columnStateService';
 import type { PivotResultColsService } from '../../columns/pivotResultColsService';
 import type { VisibleColsService } from '../../columns/visibleColsService';
 import type { NamedBean } from '../../context/bean';
@@ -62,13 +60,11 @@ export class StateService extends BeanStub implements NamedBean {
     private focusService: FocusService;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
-    private columnGroupStateService: ColumnGroupStateService;
-    private columnGetStateService: ColumnGetStateService;
     private paginationService?: PaginationService;
     private selectionService?: ISelectionService;
     private expansionService?: IExpansionService;
     private columnAnimationService?: ColumnAnimationService;
-    private columnApplyStateService: ColumnApplyStateService;
+    private columnStateService: ColumnStateService;
     private sideBarService?: ISideBarService;
     private rangeService?: IRangeService;
     private rowModel: IRowModel;
@@ -80,13 +76,11 @@ export class StateService extends BeanStub implements NamedBean {
         this.focusService = beans.focusService;
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
-        this.columnGroupStateService = beans.columnGroupStateService;
-        this.columnGetStateService = beans.columnGetStateService;
         this.paginationService = beans.paginationService;
         this.selectionService = beans.selectionService;
         this.expansionService = beans.expansionService;
         this.columnAnimationService = beans.columnAnimationService;
-        this.columnApplyStateService = beans.columnApplyStateService;
+        this.columnStateService = beans.columnStateService;
         this.sideBarService = beans.sideBarService;
         this.rangeService = beans.rangeService;
         this.rowModel = beans.rowModel;
@@ -321,7 +315,7 @@ export class StateService extends BeanStub implements NamedBean {
         const columns: string[] = [];
 
         let defaultSortIndex = 0;
-        const columnState = this.columnGetStateService.getColumnState();
+        const columnState = this.columnStateService.getColumnState();
         for (let i = 0; i < columnState.length; i++) {
             const {
                 colId,
@@ -476,7 +470,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         if (columnStates.length) {
             this.columnStates = columnStates;
-            this.columnApplyStateService.applyColumnState(
+            this.columnStateService.applyColumnState(
                 {
                     state: columnStates,
                     applyOrder,
@@ -505,7 +499,7 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             }
 
-            this.columnApplyStateService.applyColumnState(
+            this.columnStateService.applyColumnState(
                 {
                     state: secondaryColumnStates,
                     applyOrder,
@@ -516,12 +510,12 @@ export class StateService extends BeanStub implements NamedBean {
 
         if (columnGroupStates) {
             // no easy/performant way of knowing which column groups are pivot column groups
-            this.columnGroupStateService.setColumnGroupState(columnGroupStates, 'gridInitializing');
+            this.columnStateService.setColumnGroupState(columnGroupStates, 'gridInitializing');
         }
     }
 
     private getColumnGroupState(): ColumnGroupState | undefined {
-        const columnGroupState = this.columnGroupStateService.getColumnGroupState();
+        const columnGroupState = this.columnStateService.getColumnGroupState();
         const openColumnGroups: string[] = [];
         columnGroupState.forEach(({ groupId, open }) => {
             if (open) {
@@ -537,7 +531,7 @@ export class StateService extends BeanStub implements NamedBean {
         }
 
         const openColumnGroups = new Set(initialState.columnGroup?.openColumnGroupIds);
-        const existingColumnGroupState = this.columnGroupStateService.getColumnGroupState();
+        const existingColumnGroupState = this.columnStateService.getColumnGroupState();
         const stateItems = existingColumnGroupState.map(({ groupId }) => {
             const open = openColumnGroups.has(groupId);
             if (open) {
@@ -558,7 +552,7 @@ export class StateService extends BeanStub implements NamedBean {
         if (stateItems.length) {
             this.columnGroupStates = stateItems;
         }
-        this.columnGroupStateService.setColumnGroupState(stateItems, 'gridInitializing');
+        this.columnStateService.setColumnGroupState(stateItems, 'gridInitializing');
     }
 
     private getFilterState(): FilterState | undefined {

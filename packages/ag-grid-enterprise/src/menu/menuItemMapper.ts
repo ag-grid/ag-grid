@@ -1,11 +1,11 @@
 import type {
     AgColumn,
     BeanCollection,
-    ColumnApplyStateService,
     ColumnAutosizeService,
     ColumnEventType,
     ColumnModel,
     ColumnNameService,
+    ColumnStateService,
     FocusService,
     FuncColsService,
     IAggFuncService,
@@ -29,7 +29,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
 
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
-    private columnApplyStateService: ColumnApplyStateService;
+    private columnStateService: ColumnStateService;
     private funcColsService: FuncColsService;
     private focusService: FocusService;
     private rowPositionUtils: RowPositionUtils;
@@ -47,7 +47,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
-        this.columnApplyStateService = beans.columnApplyStateService;
+        this.columnStateService = beans.columnStateService;
         this.funcColsService = beans.funcColsService;
         this.focusService = beans.focusService;
         this.rowPositionUtils = beans.rowPositionUtils;
@@ -230,7 +230,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             case 'resetColumns':
                 return {
                     name: localeTextFunc('resetColumns', 'Reset Columns'),
-                    action: () => this.columnApplyStateService.resetColumnState(source),
+                    action: () => this.columnStateService.resetColumnState(source),
                 };
             case 'expandAll':
                 return {
