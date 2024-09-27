@@ -25,17 +25,6 @@ export function refreshCells<TData = any>(beans: BeanCollection, params: Refresh
 }
 
 export function flashCells<TData = any>(beans: BeanCollection, params: FlashCellsParams<TData> = {}): void {
-    const warning = (prop: 'fade' | 'flash') =>
-        _warnOnce(
-            `Since v31.1 api.flashCells parameter '${prop}Delay' is deprecated. Please use '${prop}Duration' instead.`
-        );
-    if (_exists(params.fadeDelay)) {
-        warning('fade');
-    }
-    if (_exists(params.flashDelay)) {
-        warning('flash');
-    }
-
     beans.frameworkOverrides.wrapIncoming(() => beans.rowRenderer.flashCells(params));
 }
 

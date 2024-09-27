@@ -429,10 +429,6 @@ export class ColumnFilterService extends BeanStub {
             .then(() => this.updateActiveFilters());
     }
 
-    private createValueGetter(column: AgColumn): IFilterParams['valueGetter'] {
-        return ({ node }) => this.valueService.getValue(column, node as RowNode, true);
-    }
-
     private createGetValue(filterColumn: AgColumn): IFilterParams['getValue'] {
         return (rowNode, column) => {
             const columnToUse = column ? this.columnModel.getCol(column) : filterColumn;
@@ -552,7 +548,6 @@ export class ColumnFilterService extends BeanStub {
             rowModel: this.rowModel,
             filterChangedCallback: () => {},
             filterModifiedCallback: () => {},
-            valueGetter: this.createValueGetter(column),
             getValue: this.createGetValue(column),
             doesRowPassOtherFilter: () => true,
         });
@@ -675,7 +670,6 @@ export class ColumnFilterService extends BeanStub {
             currentParentModel: () => this.getCurrentFloatingFilterParentModel(column),
             parentFilterInstance,
             showParentFilter,
-            suppressFilterButton: false, // This one might be overridden from the colDef
         };
 
         return this.userComponentFactory.getFloatingFilterCompDetails(colDef, params, defaultFloatingFilterType);
@@ -828,20 +822,6 @@ export class ColumnFilterService extends BeanStub {
     public hasFloatingFilters(): boolean {
         const gridColumns = this.columnModel.getCols();
         return gridColumns.some((col) => col.getColDef().floatingFilter);
-    }
-
-    public getFilterInstance<TFilter extends IFilter>(
-        key: string | AgColumn,
-        callback?: (filter: TFilter | null) => void
-    ): undefined {
-        if (!callback) {
-            return undefined;
-        }
-        this.getFilterInstanceImpl(key).then((filter) => {
-            const unwrapped = _unwrapUserComp(filter) as any;
-            callback(unwrapped);
-        });
-        return undefined;
     }
 
     public getColumnFilterInstance<TFilter extends IFilter>(

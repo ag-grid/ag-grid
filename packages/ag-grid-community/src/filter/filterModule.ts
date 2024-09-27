@@ -6,7 +6,6 @@ import {
     destroyFilter,
     getColumnFilterInstance,
     getColumnFilterModel,
-    getFilterInstance,
     getFilterModel,
     isColumnFilterPresent,
     setColumnFilterModel,
@@ -55,7 +54,6 @@ export const ColumnFilterApiModule = _defineModule<_ColumnFilterGridApi>({
     moduleName: '@ag-grid-community/column-filter-api',
     apiFunctions: {
         isColumnFilterPresent,
-        getFilterInstance,
         getColumnFilterInstance,
         destroyFilter,
         setFilterModel,

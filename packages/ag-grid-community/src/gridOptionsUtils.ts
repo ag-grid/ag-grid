@@ -46,10 +46,6 @@ export function _isRowSelection(gos: GridOptionsService): boolean {
     return _getRowSelectionMode(gos) !== undefined;
 }
 
-export function _useAsyncEvents(gos: GridOptionsService) {
-    return !gos.get('suppressAsyncEvents');
-}
-
 export function _isGetRowHeightFunction(gos: GridOptionsService): boolean {
     return typeof gos.get('getRowHeight') === 'function';
 }
@@ -241,16 +237,7 @@ export function _getGroupAggFiltering(
 }
 
 export function _getGrandTotalRow(gos: GridOptionsService): 'top' | 'bottom' | undefined {
-    const userValue = gos.get('grandTotalRow');
-    if (userValue) {
-        return userValue;
-    }
-
-    const legacyValue = gos.get('groupIncludeTotalFooter');
-    if (legacyValue) {
-        return 'bottom';
-    }
-    return undefined;
+    return gos.get('grandTotalRow');
 }
 
 export function _getGroupTotalRowCallback(
@@ -262,18 +249,7 @@ export function _getGroupTotalRowCallback(
         return gos.getCallback('groupTotalRow' as any) as any;
     }
 
-    if (userValue) {
-        return () => userValue;
-    }
-
-    const legacyValue = gos.get('groupIncludeFooter');
-    if (typeof legacyValue === 'function') {
-        const legacyCallback = gos.getCallback('groupIncludeFooter' as any) as any;
-        return (p: GetGroupIncludeFooterParams) => {
-            return legacyCallback(p) ? 'bottom' : undefined;
-        };
-    }
-    return () => (legacyValue ? 'bottom' : undefined);
+    return () => userValue ?? undefined;
 }
 
 export function _isGroupMultiAutoColumn(gos: GridOptionsService) {

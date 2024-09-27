@@ -1,21 +1,10 @@
 import type { BeanCollection } from '../context/context';
-import type { Column } from '../interfaces/iColumn';
-import type { IRowNode } from '../interfaces/iRowNode';
 import { _missing } from '../utils/generic';
 import { _escapeString } from '../utils/string';
 import type { GetCellValueParams } from './gridApi';
 
 export function expireValueCache(beans: BeanCollection): void {
     beans.valueCache?.expire();
-}
-
-/** @deprecated v31.1 */
-export function getValue<TValue = any>(
-    beans: BeanCollection,
-    colKey: string | Column<TValue>,
-    rowNode: IRowNode
-): TValue | null | undefined {
-    return getCellValue(beans, { colKey, rowNode }) as TValue | null | undefined;
 }
 
 export function getCellValue<TValue = any>(beans: BeanCollection, params: GetCellValueParams<TValue>): any {
