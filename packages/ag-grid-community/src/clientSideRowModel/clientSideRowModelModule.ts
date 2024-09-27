@@ -1,6 +1,7 @@
 import type { _ClientSideRowModelGridApi } from '../api/gridApi';
 import { RowModelHelperService } from '../api/rowModelHelperService';
 import { CsrmSsrmSharedApiModule } from '../api/sharedApiModule';
+import { FilterCoreModule } from '../filter/filterModule';
 import { defineCommunityModule } from '../interfaces/iModule';
 import { ModuleNames } from '../modules/moduleNames';
 import { SortModule } from '../sort/sortModule';
@@ -26,13 +27,19 @@ import { SortStage } from './sortStage';
 
 export const ClientSideRowModelCoreModule = defineCommunityModule('ClientSideRowModelCoreModule', {
     rowModel: 'clientSide',
-    beans: [ClientSideRowModel, FilterStage, FlattenStage, ImmutableService, RowNodeEventThrottle],
+    beans: [ClientSideRowModel, FlattenStage, ImmutableService, RowNodeEventThrottle],
 });
 
 export const ClientSideRowModelSortModule = defineCommunityModule('ClientSideRowModelSortModule', {
     rowModel: 'clientSide',
     beans: [SortStage],
     dependsOn: [ClientSideRowModelCoreModule, SortModule],
+});
+
+export const ClientSideRowModelFilterModule = defineCommunityModule('ClientSideRowModelFilterModule', {
+    rowModel: 'clientSide',
+    beans: [FilterStage],
+    dependsOn: [FilterCoreModule],
 });
 
 export const ClientSideRowModelApiModule = defineCommunityModule<_ClientSideRowModelGridApi<any>>(
@@ -57,5 +64,10 @@ export const ClientSideRowModelApiModule = defineCommunityModule<_ClientSideRowM
 );
 
 export const ClientSideRowModelModule = defineCommunityModule(ModuleNames.ClientSideRowModelModule, {
-    dependsOn: [ClientSideRowModelCoreModule, ClientSideRowModelApiModule, ClientSideRowModelSortModule],
+    dependsOn: [
+        ClientSideRowModelCoreModule,
+        ClientSideRowModelApiModule,
+        ClientSideRowModelSortModule,
+        ClientSideRowModelFilterModule,
+    ],
 });

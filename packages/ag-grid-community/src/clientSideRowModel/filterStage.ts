@@ -1,13 +1,24 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { FilterManager } from '../filter/filterManager';
 import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
+import { ClientSideRowModelSteps } from '../main';
 import type { ChangedPath } from '../utils/changedPath';
+
+export function updateRowNodeAfterFilter(rowNode: RowNode): void {
+    if (rowNode.sibling) {
+        rowNode.sibling.childrenAfterFilter = rowNode.childrenAfterFilter;
+    }
+}
 
 export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
     beanName = 'filterStage' as const;
+
+    public refreshProps: Set<keyof GridOptions<any>> = new Set(['excludeChildrenWhenTreeDataFiltering']);
+    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.FILTER;
 
     private filterManager?: FilterManager;
 
@@ -54,9 +65,7 @@ export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
                 rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
             }
 
-            if (rowNode.sibling) {
-                rowNode.sibling.childrenAfterFilter = rowNode.childrenAfterFilter;
-            }
+            updateRowNodeAfterFilter(rowNode);
         };
 
         if (this.doingTreeDataFiltering()) {

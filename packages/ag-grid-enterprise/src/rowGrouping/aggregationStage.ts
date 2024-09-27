@@ -5,6 +5,7 @@ import type {
     ColumnModel,
     FuncColsService,
     GetGroupRowAggParams,
+    GridOptions,
     IAggFunc,
     IAggFuncParams,
     IPivotResultColsService,
@@ -15,7 +16,14 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _errorOnce, _getGrandTotalRow, _getGroupAggFiltering, _missingOrEmpty } from 'ag-grid-community';
+import {
+    BeanStub,
+    ClientSideRowModelSteps,
+    _errorOnce,
+    _getGrandTotalRow,
+    _getGroupAggFiltering,
+    _missingOrEmpty,
+} from 'ag-grid-community';
 
 import type { AggFuncService } from './aggFuncService';
 
@@ -31,6 +39,14 @@ interface AggregationDetails {
 
 export class AggregationStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'aggregationStage' as const;
+
+    public refreshProps: Set<keyof GridOptions<any>> = new Set([
+        'getGroupRowAgg',
+        'alwaysAggregateAtRootLevel',
+        'suppressAggFilteredOnly',
+        'grandTotalRow',
+    ]);
+    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.AGGREGATE;
 
     private columnModel: ColumnModel;
     private valueService: ValueService;

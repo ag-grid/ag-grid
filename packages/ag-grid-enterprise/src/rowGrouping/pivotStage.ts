@@ -13,7 +13,7 @@ import type {
     StageExecuteParams,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _iterateObject, _missing } from 'ag-grid-community';
+import { BeanStub, ClientSideRowModelSteps, _iterateObject, _missing } from 'ag-grid-community';
 
 import type { PivotColDefService } from './pivotColDefService';
 
@@ -21,6 +21,14 @@ const EXCEEDED_MAX_UNIQUE_VALUES = 'Exceeded maximum allowed pivot column count.
 
 export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'pivotStage' as const;
+
+    public refreshProps: Set<keyof GridOptions<any>> = new Set([
+        'removePivotHeaderRowWhenSingleValueColumn',
+        'pivotRowTotals',
+        'pivotColumnGroupTotals',
+        'suppressExpandablePivotGroups',
+    ]);
+    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.PIVOT;
 
     private valueService: ValueService;
     private columnModel: ColumnModel;

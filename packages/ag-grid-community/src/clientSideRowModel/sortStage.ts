@@ -3,9 +3,11 @@ import type { FuncColsService } from '../columns/funcColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
+import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { PostSortRowsParams } from '../interfaces/iCallbackParams';
+import { ClientSideRowModelSteps } from '../interfaces/iClientSideRowModel';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IGroupHideOpenParentsService } from '../interfaces/iGroupHideOpenParentsService';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -43,6 +45,9 @@ export function updateRowNodeAfterSort(rowNode: RowNode): void {
 
 export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'sortStage' as const;
+
+    public refreshProps: Set<keyof GridOptions<any>> = new Set(['postSortRows', 'groupDisplayType', 'accentedSort']);
+    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.SORT;
 
     private sortController: SortController;
     private columnModel: ColumnModel;
