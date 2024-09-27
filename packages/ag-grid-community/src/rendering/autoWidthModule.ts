@@ -1,6 +1,6 @@
 import { defineCommunityModule } from '../interfaces/iModule';
 import { AutoWidthCalculator } from './autoWidthCalculator';
 
-export const AutoWidthModule = defineCommunityModule('@ag-grid-community/auto-width', {
+export const AutoWidthModule = defineCommunityModule('AutoWidthModule', {
     beans: [AutoWidthCalculator],
 });

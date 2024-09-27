@@ -35,7 +35,7 @@ import { StoreFactory } from './stores/storeFactory';
 import { StoreUtils } from './stores/storeUtils';
 import { TransactionManager } from './transactionManager';
 
-export const ServerSideRowModelCoreModule = defineEnterpriseModule(`${ModuleNames.ServerSideRowModelModule}-core`, {
+export const ServerSideRowModelCoreModule = defineEnterpriseModule('ServerSideRowModelCoreModule', {
     rowModel: 'serverSide',
     beans: [
         ServerSideRowModel,
@@ -53,32 +53,26 @@ export const ServerSideRowModelCoreModule = defineEnterpriseModule(`${ModuleName
     dependsOn: [EnterpriseCoreModule, RowNodeBlockModule],
 });
 
-export const ServerSideRowModelRowSelectionModule = defineEnterpriseModule(
-    `${ModuleNames.ServerSideRowModelModule}-row-selection`,
-    {
-        rowModel: 'serverSide',
-        beans: [ServerSideSelectionService],
-        dependsOn: [ServerSideRowModelCoreModule],
-    }
-);
+export const ServerSideRowModelRowSelectionModule = defineEnterpriseModule('ServerSideRowModelRowSelectionModule', {
+    rowModel: 'serverSide',
+    beans: [ServerSideSelectionService],
+    dependsOn: [ServerSideRowModelCoreModule],
+});
 
-export const ServerSideRowModelRowGroupingModule = defineEnterpriseModule(
-    `${ModuleNames.ServerSideRowModelModule}-row-grouping`,
-    {
-        rowModel: 'serverSide',
-        beans: [ServerSideExpansionService],
-        dependsOn: [ServerSideRowModelCoreModule],
-    }
-);
+export const ServerSideRowModelRowGroupingModule = defineEnterpriseModule('ServerSideRowModelRowGroupingModule', {
+    rowModel: 'serverSide',
+    beans: [ServerSideExpansionService],
+    dependsOn: [ServerSideRowModelCoreModule],
+});
 
-export const ServerSideRowModelSortModule = defineEnterpriseModule(`${ModuleNames.ServerSideRowModelModule}-sort`, {
+export const ServerSideRowModelSortModule = defineEnterpriseModule('ServerSideRowModelSortModule', {
     rowModel: 'serverSide',
     beans: [SortListener],
     dependsOn: [ServerSideRowModelCoreModule, SortModule],
 });
 
 export const ServerSideRowModelApiModule = defineEnterpriseModule<_ServerSideRowModelGridApi>(
-    `${ModuleNames.ServerSideRowModelModule}-api`,
+    'ServerSideRowModelApiModule',
     {
         beans: [RowModelHelperService],
         apiFunctions: {

@@ -7,11 +7,11 @@ import { DragService } from './dragService';
 import { HorizontalResizeService } from './horizontalResizeService';
 import { RowDragService } from './rowDragService';
 
-export const DragModule = defineCommunityModule('@ag-grid-community/drag', {
+export const DragModule = defineCommunityModule('DragModule', {
     beans: [DragService],
 });
 
-export const DragAndDropModule = defineCommunityModule('@ag-grid-community/drag-and-drop', {
+export const DragAndDropModule = defineCommunityModule('DragAndDropModule', {
     beans: [DragAndDropService],
     dependsOn: [DragModule],
     userComponents: [
@@ -22,12 +22,12 @@ export const DragAndDropModule = defineCommunityModule('@ag-grid-community/drag-
     ],
 });
 
-export const RowDragCoreModule = defineCommunityModule('@ag-grid-community/row-drag-core', {
+export const RowDragCoreModule = defineCommunityModule('RowDragCoreModule', {
     beans: [RowDragService],
     dependsOn: [DragAndDropModule],
 });
 
-export const RowDragApiModule = defineCommunityModule<_DragGridApi>('@ag-grid-community/row-drag-api', {
+export const RowDragApiModule = defineCommunityModule<_DragGridApi>('RowDragApiModule', {
     apiFunctions: {
         addRowDropZone,
         removeRowDropZone,
@@ -36,11 +36,11 @@ export const RowDragApiModule = defineCommunityModule<_DragGridApi>('@ag-grid-co
     dependsOn: [RowDragCoreModule],
 });
 
-export const RowDragModule = defineCommunityModule('@ag-grid-community/row-drag', {
+export const RowDragModule = defineCommunityModule('RowDragModule', {
     dependsOn: [RowDragApiModule],
 });
 
-export const HorizontalResizeModule = defineCommunityModule('@ag-grid-community/horizontal-resize', {
+export const HorizontalResizeModule = defineCommunityModule('HorizontalResizeModule', {
     beans: [HorizontalResizeService],
     dependsOn: [DragModule],
 });

@@ -5,12 +5,12 @@ import { defineEnterpriseModule } from '../moduleUtils';
 import { SetFilter } from './setFilter';
 import { SetFloatingFilterComp } from './setFloatingFilter';
 
-export const SetFilterCoreModule = defineEnterpriseModule(`${ModuleNames.SetFilterModule}-core`, {
+export const SetFilterCoreModule = defineEnterpriseModule('SetFilterCoreModule', {
     userComponents: [{ name: 'agSetColumnFilter', classImp: SetFilter }],
     dependsOn: [EnterpriseCoreModule, ColumnFilterModule],
 });
 
-const SetFloatingFilterModule = defineEnterpriseModule('@ag-grid-enterprise/set-floating-filter', {
+const SetFloatingFilterModule = defineEnterpriseModule('SetFloatingFilterModule', {
     userComponents: [{ name: 'agSetColumnFloatingFilter', classImp: SetFloatingFilterComp }],
     dependsOn: [SetFilterCoreModule, FloatingFilterModule],
 });

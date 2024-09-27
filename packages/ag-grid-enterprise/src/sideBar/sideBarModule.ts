@@ -18,12 +18,12 @@ import {
 } from './sideBarApi';
 import { SideBarService } from './sideBarService';
 
-export const SideBarCoreModule = defineEnterpriseModule(`${ModuleNames.SideBarModule}-core`, {
+export const SideBarCoreModule = defineEnterpriseModule('SideBarCoreModule', {
     beans: [ToolPanelColDefService, SideBarService],
     dependsOn: [EnterpriseCoreModule, HorizontalResizeModule],
 });
 
-export const SideBarApiModule = defineEnterpriseModule<_SideBarGridApi<any>>(`${ModuleNames.SideBarModule}-api`, {
+export const SideBarApiModule = defineEnterpriseModule<_SideBarGridApi<any>>('SideBarApiModule', {
     apiFunctions: {
         isSideBarVisible,
         setSideBarVisible,

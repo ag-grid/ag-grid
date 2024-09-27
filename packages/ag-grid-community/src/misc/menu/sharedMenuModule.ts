@@ -3,11 +3,11 @@ import { defineCommunityModule } from '../../interfaces/iModule';
 import { hidePopupMenu, showColumnMenu } from './menuApi';
 import { MenuService } from './menuService';
 
-export const SharedMenuModule = defineCommunityModule('@ag-grid-community/shared-menu', {
+export const SharedMenuModule = defineCommunityModule('SharedMenuModule', {
     beans: [MenuService],
 });
 
-export const CommunityMenuApiModule = defineCommunityModule<_CommunityMenuGridApi>('@ag-grid-community/menu-api', {
+export const CommunityMenuApiModule = defineCommunityModule<_CommunityMenuGridApi>('CommunityMenuApiModule', {
     apiFunctions: {
         showColumnMenu,
         hidePopupMenu,

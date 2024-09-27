@@ -13,7 +13,7 @@ import { hideColumnChooser, showColumnChooser, showContextMenu } from './menuApi
 import { MenuItemMapper } from './menuItemMapper';
 import { MenuUtils } from './menuUtils';
 
-export const MenuCoreModule = defineEnterpriseModule(`${ModuleNames.MenuModule}-core`, {
+export const MenuCoreModule = defineEnterpriseModule('MenuCoreModule', {
     beans: [MenuItemMapper, ChartMenuItemMapper, MenuUtils],
     dependsOn: [EnterpriseCoreModule, PopupModule, SharedMenuModule],
     userComponents: [
@@ -24,22 +24,22 @@ export const MenuCoreModule = defineEnterpriseModule(`${ModuleNames.MenuModule}-
     ],
 });
 
-export const ColumnMenuModule = defineEnterpriseModule('@ag-grid-enterprise/column-menu', {
+export const ColumnMenuModule = defineEnterpriseModule('ColumnMenuModule', {
     beans: [EnterpriseMenuFactory, ColumnMenuFactory],
     dependsOn: [MenuCoreModule],
 });
 
-export const ColumnChooserModule = defineEnterpriseModule('@ag-grid-enterprise/column-chooser', {
+export const ColumnChooserModule = defineEnterpriseModule('ColumnChooserModule', {
     beans: [ColumnChooserFactory],
     dependsOn: [MenuCoreModule],
 });
 
-export const ContextMenuModule = defineEnterpriseModule('@ag-grid-enterprise/context-menu', {
+export const ContextMenuModule = defineEnterpriseModule('ContextMenuModule', {
     beans: [ContextMenuService],
     dependsOn: [MenuCoreModule],
 });
 
-export const MenuApiModule = defineEnterpriseModule<_MenuGridApi>(`${ModuleNames.MenuModule}-api`, {
+export const MenuApiModule = defineEnterpriseModule<_MenuGridApi>('MenuApiModule', {
     apiFunctions: {
         showContextMenu,
         showColumnChooser,

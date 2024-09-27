@@ -5,11 +5,11 @@ import { NoRowsOverlayComponent } from './noRowsOverlayComponent';
 import { hideOverlay, showLoadingOverlay, showNoRowsOverlay } from './overlayApi';
 import { OverlayService } from './overlayService';
 
-export const OverlayCoreModule = defineCommunityModule('@ag-grid-community/overlay-core', {
+export const OverlayCoreModule = defineCommunityModule('OverlayCoreModule', {
     beans: [OverlayService],
 });
 
-export const OverlayApiModule = defineCommunityModule<_OverlayGridApi>('@ag-grid-community/overlay-api', {
+export const OverlayApiModule = defineCommunityModule<_OverlayGridApi>('OverlayApiModule', {
     apiFunctions: {
         showLoadingOverlay,
         showNoRowsOverlay,
@@ -18,7 +18,7 @@ export const OverlayApiModule = defineCommunityModule<_OverlayGridApi>('@ag-grid
     dependsOn: [OverlayCoreModule],
 });
 
-export const LoadingOverlayModule = defineCommunityModule('@ag-grid-community/loading-overlay', {
+export const LoadingOverlayModule = defineCommunityModule('LoadingOverlayModule', {
     userComponents: [
         {
             classImp: LoadingOverlayComponent,
@@ -28,7 +28,7 @@ export const LoadingOverlayModule = defineCommunityModule('@ag-grid-community/lo
     dependsOn: [OverlayCoreModule],
 });
 
-export const NoRowsOverlayModule = defineCommunityModule('@ag-grid-community/no-rows-overlay', {
+export const NoRowsOverlayModule = defineCommunityModule('NoRowsOverlayModule', {
     userComponents: [
         {
             classImp: NoRowsOverlayComponent,
@@ -38,6 +38,6 @@ export const NoRowsOverlayModule = defineCommunityModule('@ag-grid-community/no-
     dependsOn: [OverlayCoreModule],
 });
 
-export const OverlayModule = defineCommunityModule('@ag-grid-community/overlay', {
+export const OverlayModule = defineCommunityModule('OverlayModule', {
     dependsOn: [OverlayCoreModule, OverlayApiModule, LoadingOverlayModule, NoRowsOverlayModule],
 });

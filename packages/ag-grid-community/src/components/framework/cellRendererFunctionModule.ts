@@ -1,6 +1,6 @@
 import { defineCommunityModule } from '../../interfaces/iModule';
 import { AgComponentUtils } from './agComponentUtils';
 
-export const CellRendererFunctionModule = defineCommunityModule('@ag-grid-community/cell-renderer-function', {
+export const CellRendererFunctionModule = defineCommunityModule('CellRendererFunctionModule', {
     beans: [AgComponentUtils],
 });

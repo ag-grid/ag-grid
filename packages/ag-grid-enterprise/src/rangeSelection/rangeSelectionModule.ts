@@ -7,23 +7,20 @@ import { addCellRange, clearRangeSelection, getCellRanges } from './rangeSelecti
 import { RangeService } from './rangeService';
 import { SelectionHandleFactory } from './selectionHandleFactory';
 
-export const RangeSelectionCoreModule = defineEnterpriseModule(`${ModuleNames.RangeSelectionModule}-core`, {
+export const RangeSelectionCoreModule = defineEnterpriseModule('RangeSelectionCoreModule', {
     beans: [RangeService, SelectionHandleFactory],
     dependsOn: [EnterpriseCoreModule, KeyboardNavigationCoreModule],
 });
 
-export const RangeSelectionApiModule = defineEnterpriseModule<_RangeSelectionGridApi>(
-    `${ModuleNames.RangeSelectionModule}-api`,
-    {
-        apiFunctions: {
-            getCellRanges,
-            addCellRange,
-            clearRangeSelection,
-            clearCellSelection: clearRangeSelection,
-        },
-        dependsOn: [RangeSelectionCoreModule],
-    }
-);
+export const RangeSelectionApiModule = defineEnterpriseModule<_RangeSelectionGridApi>('RangeSelectionApiModule', {
+    apiFunctions: {
+        getCellRanges,
+        addCellRange,
+        clearRangeSelection,
+        clearCellSelection: clearRangeSelection,
+    },
+    dependsOn: [RangeSelectionCoreModule],
+});
 
 export const RangeSelectionModule = defineEnterpriseModule(ModuleNames.RangeSelectionModule, {
     dependsOn: [RangeSelectionCoreModule, RangeSelectionApiModule],

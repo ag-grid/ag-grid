@@ -6,7 +6,7 @@ import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 import { MultiFilter } from './multiFilter';
 import { MultiFloatingFilterComp } from './multiFloatingFilter';
 
-export const MultiFilterCoreModule = defineEnterpriseModule(`${ModuleNames.MultiFilterModule}-core`, {
+export const MultiFilterCoreModule = defineEnterpriseModule('MultiFilterCoreModule', {
     userComponents: [
         { name: 'agMultiColumnFilter', classImp: MultiFilter },
         {
@@ -17,7 +17,7 @@ export const MultiFilterCoreModule = defineEnterpriseModule(`${ModuleNames.Multi
     dependsOn: [EnterpriseCoreModule, ColumnFilterModule],
 });
 
-const MultiFloatingFilterModule = defineEnterpriseModule('@ag-grid-enterprise/multi-floating-filter', {
+const MultiFloatingFilterModule = defineEnterpriseModule('MultiFloatingFilterModule', {
     userComponents: [{ name: 'agMultiColumnFloatingFilter', classImp: MultiFloatingFilterComp }],
     dependsOn: [MultiFilterCoreModule, ReadOnlyFloatingFilterModule],
 });

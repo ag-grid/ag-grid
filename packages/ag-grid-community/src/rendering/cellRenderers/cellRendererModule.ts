@@ -3,19 +3,16 @@ import { AnimateShowChangeCellRenderer } from './animateShowChangeCellRenderer';
 import { AnimateSlideCellRenderer } from './animateSlideCellRenderer';
 import { CheckboxCellRenderer } from './checkboxCellRenderer';
 
-export const AnimateShowChangeCellRendererModule = defineCommunityModule(
-    '@ag-grid-community/animate-show-change-cell-renderer',
-    {
-        userComponents: [
-            {
-                classImp: AnimateShowChangeCellRenderer,
-                name: 'agAnimateShowChangeCellRenderer',
-            },
-        ],
-    }
-);
+export const AnimateShowChangeCellRendererModule = defineCommunityModule('AnimateShowChangeCellRendererModule', {
+    userComponents: [
+        {
+            classImp: AnimateShowChangeCellRenderer,
+            name: 'agAnimateShowChangeCellRenderer',
+        },
+    ],
+});
 
-export const AnimateSlideCellRendererModule = defineCommunityModule('@ag-grid-community/animate-slide-cell-renderer', {
+export const AnimateSlideCellRendererModule = defineCommunityModule('AnimateSlideCellRendererModule', {
     userComponents: [
         {
             classImp: AnimateSlideCellRenderer,
@@ -24,7 +21,7 @@ export const AnimateSlideCellRendererModule = defineCommunityModule('@ag-grid-co
     ],
 });
 
-export const CheckboxCellRendererModule = defineCommunityModule('@ag-grid-community/checkbox-cell-renderer', {
+export const CheckboxCellRendererModule = defineCommunityModule('CheckboxCellRendererModule', {
     userComponents: [
         {
             classImp: CheckboxCellRenderer,

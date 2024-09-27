@@ -40,27 +40,27 @@ import { ColumnFlexService } from './columnFlexService';
 import { ControlsColService } from './controlsColService';
 import { DataTypeService } from './dataTypeService';
 
-export const DataTypeModule = defineCommunityModule('@ag-grid-community/data-type', {
+export const DataTypeModule = defineCommunityModule('DataTypeModule', {
     beans: [DataTypeService],
     dependsOn: [CheckboxCellRendererModule],
 });
 
-export const ControlsColumnModule = defineCommunityModule('@ag-grid-community/controls-column', {
+export const ControlsColumnModule = defineCommunityModule('ControlsColumnModule', {
     beans: [ControlsColService],
 });
 
-export const GetColumnDefsModule = defineCommunityModule<_GetColumnDefsApi<any>>('@ag-grid-community/get-column-defs', {
+export const GetColumnDefsApiModule = defineCommunityModule<_GetColumnDefsApi<any>>('GetColumnDefsApiModule', {
     beans: [ColumnDefFactory],
     apiFunctions: {
         getColumnDefs,
     },
 });
 
-export const ColumnFlexModule = defineCommunityModule('@ag-grid-community/column-flex', {
+export const ColumnFlexModule = defineCommunityModule('ColumnFlexModule', {
     beans: [ColumnFlexService],
 });
 
-export const ColumnApiModule = defineCommunityModule<_ColumnGridApi<any>>('@ag-grid-community/column-api', {
+export const ColumnApiModule = defineCommunityModule<_ColumnGridApi<any>>('ColumnApiModule', {
     apiFunctions: {
         getColumnDef,
         setColumnGroupOpened,

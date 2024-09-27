@@ -5,19 +5,16 @@ import { getCacheBlockState, isLastRowIndexKnown, setRowCount } from './ssrmInfi
 
 // these modules are not used in core, but are shared between multiple other modules
 
-export const CsrmSsrmSharedApiModule = defineCommunityModule<_CsrmSsrmSharedGridApi>(
-    '@ag-grid-community/csrm-ssrm-shared-api',
-    {
-        apiFunctions: {
-            expandAll,
-            collapseAll,
-            onRowHeightChanged,
-        },
-    }
-);
+export const CsrmSsrmSharedApiModule = defineCommunityModule<_CsrmSsrmSharedGridApi>('CsrmSsrmSharedApiModule', {
+    apiFunctions: {
+        expandAll,
+        collapseAll,
+        onRowHeightChanged,
+    },
+});
 
 export const SsrmInfiniteSharedApiModule = defineCommunityModule<_SsrmInfiniteSharedGridApi>(
-    '@ag-grid-community/ssrm-infinite-shared-api',
+    'SsrmInfiniteSharedApiModule',
     {
         apiFunctions: {
             setRowCount,

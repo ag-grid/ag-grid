@@ -1,13 +1,19 @@
 import { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
 import { ApiFunctionService } from './api/apiFunctionService';
-import { CommunityApiModule, CoreApiModule } from './api/apiModule';
+import { CoreApiModule, RowApiModule, ScrollApiModule } from './api/apiModule';
 import { ColumnAutosizeModule } from './columnAutosize/columnAutosizeModule';
 import { ColumnMoveModule } from './columnMove/columnMoveModule';
 import { ColumnResizeModule } from './columnResize/columnResizeModule';
 import { ColumnFactory } from './columns/columnFactory';
 import { ColumnHoverModule } from './columns/columnHover/columnHoverModule';
 import { ColumnModel } from './columns/columnModel';
-import { ColumnFlexModule, ControlsColumnModule, DataTypeModule, GetColumnDefsModule } from './columns/columnModule';
+import {
+    ColumnApiModule,
+    ColumnFlexModule,
+    ControlsColumnModule,
+    DataTypeModule,
+    GetColumnDefsApiModule,
+} from './columns/columnModule';
 import { ColumnNameService } from './columns/columnNameService';
 import { ColumnStateService } from './columns/columnStateService';
 import { ColumnViewportService } from './columns/columnViewportService';
@@ -53,6 +59,7 @@ import {
 import { ColumnAnimationModule } from './rendering/columnAnimationModule';
 import { StickyRowModule } from './rendering/features/stickyRowModule';
 import { OverlayModule } from './rendering/overlays/overlayModule';
+import { RenderApiModule } from './rendering/renderModule';
 import { RowContainerHeightService } from './rendering/rowContainerHeightService';
 import { RowRenderer } from './rendering/rowRenderer';
 import { RowSelectionModule } from './selection/rowSelectionModule';
@@ -100,11 +107,11 @@ export const GridCoreModule = defineCommunityModule(ModuleNames.CommunityCoreMod
     dependsOn: [CoreApiModule],
 });
 
-export const ValidationsModule = defineCommunityModule('@ag-grid-community/core-validations', {
+export const ValidationsModule = defineCommunityModule('ValidationsModule', {
     beans: [ValidationService],
 });
 
-export const CommunityFeaturesModule = defineCommunityModule('@ag-grid-community/core-community-features', {
+export const CommunityFeaturesModule = defineCommunityModule('CommunityFeaturesModule', {
     dependsOn: [
         GridCoreModule,
         ValidationsModule,
@@ -114,7 +121,10 @@ export const CommunityFeaturesModule = defineCommunityModule('@ag-grid-community
         DataTypeModule,
         AlignedGridsModule,
         PaginationModule,
-        CommunityApiModule,
+        ColumnApiModule,
+        RowApiModule,
+        ScrollApiModule,
+        RenderApiModule,
         ColumnMoveModule,
         ColumnAutosizeModule,
         ControlsColumnModule,
@@ -140,7 +150,7 @@ export const CommunityFeaturesModule = defineCommunityModule('@ag-grid-community
         ColumnAnimationModule,
         ChangeDetectionModule,
         AnimationFrameModule,
-        GetColumnDefsModule,
+        GetColumnDefsApiModule,
         RowStyleModule,
         EventApiModule,
         ColumnFlexModule,

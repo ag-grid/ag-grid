@@ -10,7 +10,7 @@ import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 import { DetailGridApiService } from './detailGridApiService';
 import { addDetailGridInfo, forEachDetailGridInfo, getDetailGridInfo, removeDetailGridInfo } from './masterDetailApi';
 
-export const MasterDetailCoreModule = defineEnterpriseModule(`${ModuleNames.MasterDetailModule}-core`, {
+export const MasterDetailCoreModule = defineEnterpriseModule('MasterDetailCoreModule', {
     userComponents: [
         {
             name: 'agGroupRowRenderer',
@@ -29,19 +29,16 @@ export const MasterDetailCoreModule = defineEnterpriseModule(`${ModuleNames.Mast
     dependsOn: [EnterpriseCoreModule],
 });
 
-export const MasterDetailApiModule = defineEnterpriseModule<_MasterDetailGridApi>(
-    `${ModuleNames.MasterDetailModule}-api`,
-    {
-        beans: [DetailGridApiService],
-        apiFunctions: {
-            addDetailGridInfo,
-            removeDetailGridInfo,
-            getDetailGridInfo,
-            forEachDetailGridInfo,
-        },
-        dependsOn: [MasterDetailCoreModule],
-    }
-);
+export const MasterDetailApiModule = defineEnterpriseModule<_MasterDetailGridApi>('MasterDetailApiModule', {
+    beans: [DetailGridApiService],
+    apiFunctions: {
+        addDetailGridInfo,
+        removeDetailGridInfo,
+        getDetailGridInfo,
+        forEachDetailGridInfo,
+    },
+    dependsOn: [MasterDetailCoreModule],
+});
 
 export const MasterDetailModule = defineEnterpriseModule(ModuleNames.MasterDetailModule, {
     dependsOn: [MasterDetailCoreModule, MasterDetailApiModule],

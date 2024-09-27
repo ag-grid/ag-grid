@@ -29,11 +29,11 @@ import { TextFloatingFilter } from './provided/text/textFloatingFilter';
 import { getQuickFilter, isQuickFilterPresent, resetQuickFilter } from './quickFilterApi';
 import { QuickFilterService } from './quickFilterService';
 
-export const FilterCoreModule = defineCommunityModule('@ag-grid-community/filter-core', {
+export const FilterCoreModule = defineCommunityModule('FilterCoreModule', {
     beans: [FilterManager],
 });
 
-export const FilterApiModule = defineCommunityModule<_FilterGridApi>('@ag-grid-community/filter-api', {
+export const FilterApiModule = defineCommunityModule<_FilterGridApi>('FilterApiModule', {
     apiFunctions: {
         isAnyFilterPresent,
         onFilterChanged,
@@ -41,52 +41,49 @@ export const FilterApiModule = defineCommunityModule<_FilterGridApi>('@ag-grid-c
     dependsOn: [FilterCoreModule],
 });
 
-export const FilterValueModule = defineCommunityModule('@ag-grid-community/filter-value', {
+export const FilterValueModule = defineCommunityModule('FilterValueModule', {
     beans: [FilterValueService],
 });
 
-export const ColumnFilterModule = defineCommunityModule('@ag-grid-community/column-filter', {
+export const ColumnFilterModule = defineCommunityModule('ColumnFilterModule', {
     beans: [ColumnFilterService],
     dependsOn: [FilterCoreModule, PopupModule, FilterValueModule],
 });
 
-export const ColumnFilterMenuModule = defineCommunityModule('@ag-grid-community/column-filter-menu', {
+export const ColumnFilterMenuModule = defineCommunityModule('ColumnFilterMenuModule', {
     beans: [FilterMenuFactory],
     dependsOn: [ColumnFilterModule, PopupModule, SharedMenuModule],
 });
 
-export const ColumnFilterApiModule = defineCommunityModule<_ColumnFilterGridApi>(
-    '@ag-grid-community/column-filter-api',
-    {
-        apiFunctions: {
-            isColumnFilterPresent,
-            getColumnFilterInstance,
-            destroyFilter,
-            setFilterModel,
-            getFilterModel,
-            getColumnFilterModel,
-            setColumnFilterModel,
-            showColumnFilter,
-        },
-        dependsOn: [ColumnFilterModule, FilterApiModule],
-    }
-);
+export const ColumnFilterApiModule = defineCommunityModule<_ColumnFilterGridApi>('ColumnFilterApiModule', {
+    apiFunctions: {
+        isColumnFilterPresent,
+        getColumnFilterInstance,
+        destroyFilter,
+        setFilterModel,
+        getFilterModel,
+        getColumnFilterModel,
+        setColumnFilterModel,
+        showColumnFilter,
+    },
+    dependsOn: [ColumnFilterModule, FilterApiModule],
+});
 
-export const FloatingFilterCoreModule = defineCommunityModule('@ag-grid-community/floating-filter-core', {
+export const FloatingFilterCoreModule = defineCommunityModule('FloatingFilterCoreModule', {
     controllers: [{ name: 'headerFilterCell', classImp: HeaderFilterCellCtrl as any }],
     dependsOn: [ColumnFilterModule],
 });
 
-export const FloatingFilterModule = defineCommunityModule('@ag-grid-community/floating-filter', {
+export const FloatingFilterModule = defineCommunityModule('FloatingFilterModule', {
     dependsOn: [FloatingFilterCoreModule, ColumnFilterModule],
 });
 
-export const ReadOnlyFloatingFilterModule = defineCommunityModule('@ag-grid-community/read-only-floating-filter', {
+export const ReadOnlyFloatingFilterModule = defineCommunityModule('ReadOnlyFloatingFilterModule', {
     userComponents: [{ name: 'agReadOnlyFloatingFilter', classImp: ReadOnlyFloatingFilter }],
     dependsOn: [FloatingFilterCoreModule],
 });
 
-export const SimpleFilterModule = defineCommunityModule('@ag-grid-community/simple-filter', {
+export const SimpleFilterModule = defineCommunityModule('SimpleFilterModule', {
     dependsOn: [ColumnFilterModule],
     userComponents: [
         { name: 'agTextColumnFilter', classImp: TextFilter },
@@ -96,7 +93,7 @@ export const SimpleFilterModule = defineCommunityModule('@ag-grid-community/simp
     ],
 });
 
-export const SimpleFloatingFilterModule = defineCommunityModule('@ag-grid-community/simple-floating-filter', {
+export const SimpleFloatingFilterModule = defineCommunityModule('SimpleFloatingFilterModule', {
     dependsOn: [SimpleFilterModule, FloatingFilterCoreModule],
     userComponents: [
         { name: 'agTextColumnFloatingFilter', classImp: TextFloatingFilter },
@@ -105,12 +102,12 @@ export const SimpleFloatingFilterModule = defineCommunityModule('@ag-grid-commun
     ],
 });
 
-export const QuickFilterCoreModule = defineCommunityModule('@ag-grid-community/quick-filter-core', {
+export const QuickFilterCoreModule = defineCommunityModule('QuickFilterCoreModulee', {
     beans: [QuickFilterService],
     dependsOn: [FilterCoreModule, FilterValueModule],
 });
 
-export const QuickFilterApiModule = defineCommunityModule<_QuickFilterGridApi>('@ag-grid-community/quick-filter-api', {
+export const QuickFilterApiModule = defineCommunityModule<_QuickFilterGridApi>('QuickFilterApiModule', {
     apiFunctions: {
         isQuickFilterPresent,
         getQuickFilter,
@@ -119,11 +116,11 @@ export const QuickFilterApiModule = defineCommunityModule<_QuickFilterGridApi>('
     dependsOn: [QuickFilterCoreModule],
 });
 
-export const QuickFilterModule = defineCommunityModule('@ag-grid-community/quick-filter', {
+export const QuickFilterModule = defineCommunityModule('QuickFilterModule', {
     dependsOn: [QuickFilterCoreModule, QuickFilterApiModule],
 });
 
-export const FilterModule = defineCommunityModule('@ag-grid-community/filter', {
+export const FilterModule = defineCommunityModule('FilterModule', {
     dependsOn: [
         SimpleFloatingFilterModule,
         ReadOnlyFloatingFilterModule,

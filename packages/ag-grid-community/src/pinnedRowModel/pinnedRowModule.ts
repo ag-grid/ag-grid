@@ -3,11 +3,11 @@ import { defineCommunityModule } from '../interfaces/iModule';
 import { getPinnedBottomRow, getPinnedBottomRowCount, getPinnedTopRow, getPinnedTopRowCount } from './pinnedRowApi';
 import { PinnedRowModel } from './pinnedRowModel';
 
-export const PinnedRowCoreModule = defineCommunityModule('@ag-grid-community/pinned-row-core', {
+export const PinnedRowCoreModule = defineCommunityModule('PinnedRowCoreModule', {
     beans: [PinnedRowModel],
 });
 
-export const PinnedRowApiModule = defineCommunityModule<_PinnedRowGridApi>('@ag-grid-community/pinned-row-api', {
+export const PinnedRowApiModule = defineCommunityModule<_PinnedRowGridApi>('PinnedRowApiModule', {
     apiFunctions: {
         getPinnedTopRowCount,
         getPinnedBottomRowCount,
@@ -17,6 +17,6 @@ export const PinnedRowApiModule = defineCommunityModule<_PinnedRowGridApi>('@ag-
     dependsOn: [PinnedRowCoreModule],
 });
 
-export const PinnedRowModule = defineCommunityModule('@ag-grid-community/pinned-row', {
+export const PinnedRowModule = defineCommunityModule('PinnedRowModule', {
     dependsOn: [PinnedRowApiModule],
 });

@@ -5,11 +5,11 @@ import { onSortChanged } from './sortApi';
 import { SortController } from './sortController';
 import { SortIndicatorComp } from './sortIndicatorComp';
 
-export const SortCoreModule = defineCommunityModule('@ag-grid-community/sort-core', {
+export const SortCoreModule = defineCommunityModule('SortCoreModule', {
     beans: [SortController, RowNodeSorter],
 });
 
-export const SortIndicatorCompModule = defineCommunityModule('@ag-grid-community/sort-indicator-comp', {
+export const SortIndicatorCompModule = defineCommunityModule('SortIndicatorCompModule', {
     userComponents: [
         {
             classImp: SortIndicatorComp,
@@ -19,13 +19,13 @@ export const SortIndicatorCompModule = defineCommunityModule('@ag-grid-community
     dependsOn: [SortCoreModule],
 });
 
-export const SortApiModule = defineCommunityModule<_SortGridApi>('@ag-grid-community/sort-api', {
+export const SortApiModule = defineCommunityModule<_SortGridApi>('SortApiModule', {
     apiFunctions: {
         onSortChanged,
     },
     dependsOn: [SortCoreModule],
 });
 
-export const SortModule = defineCommunityModule('@ag-grid-community/sort', {
+export const SortModule = defineCommunityModule('SortModule', {
     dependsOn: [SortApiModule, SortIndicatorCompModule],
 });

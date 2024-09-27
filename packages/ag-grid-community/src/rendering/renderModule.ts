@@ -11,7 +11,7 @@ import {
     setGridAriaProperty,
 } from './renderApi';
 
-export const RenderApiModule = defineCommunityModule<_RenderGridApi<any>>('@ag-grid-community/render-api', {
+export const RenderApiModule = defineCommunityModule<_RenderGridApi<any>>('RenderApiModule', {
     apiFunctions: {
         setGridAriaProperty,
         refreshCells,

@@ -4,12 +4,12 @@ import { defineCommunityModule } from '../interfaces/iModule';
 import { moveColumnByIndex, moveColumns } from './columnMoveApi';
 import { ColumnMoveService } from './columnMoveService';
 
-export const ColumnMoveCoreModule = defineCommunityModule('@ag-grid-community/column-move-core', {
+export const ColumnMoveCoreModule = defineCommunityModule('ColumnMoveCoreModule', {
     beans: [ColumnMoveService],
     dependsOn: [DragAndDropModule],
 });
 
-export const ColumnMoveApiModule = defineCommunityModule<_ColumnMoveApi>('@ag-grid-community/column-move-api', {
+export const ColumnMoveApiModule = defineCommunityModule<_ColumnMoveApi>('ColumnMoveApiModule', {
     apiFunctions: {
         moveColumnByIndex,
         moveColumns,
@@ -17,6 +17,6 @@ export const ColumnMoveApiModule = defineCommunityModule<_ColumnMoveApi>('@ag-gr
     dependsOn: [ColumnMoveCoreModule],
 });
 
-export const ColumnMoveModule = defineCommunityModule('@ag-grid-community/column-move', {
+export const ColumnMoveModule = defineCommunityModule('ColumnMoveModule', {
     dependsOn: [ColumnMoveApiModule],
 });

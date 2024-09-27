@@ -2,7 +2,7 @@ import { defineCommunityModule } from '../../interfaces/iModule';
 import { HeaderComp } from './column/headerComp';
 import { HeaderGroupComp } from './columnGroup/headerGroupComp';
 
-export const ColumnHeaderModule = defineCommunityModule('@ag-grid-community/column-header', {
+export const ColumnHeaderModule = defineCommunityModule('ColumnHeaderModule', {
     userComponents: [
         {
             classImp: HeaderComp,
@@ -11,7 +11,7 @@ export const ColumnHeaderModule = defineCommunityModule('@ag-grid-community/colu
     ],
 });
 
-export const ColumnGroupHeaderModule = defineCommunityModule('@ag-grid-community/column-group-header', {
+export const ColumnGroupHeaderModule = defineCommunityModule('ColumnGroupHeaderModule', {
     userComponents: [
         {
             classImp: HeaderGroupComp,

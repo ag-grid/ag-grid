@@ -12,23 +12,20 @@ import {
 import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import { AdvancedFilterService } from './advancedFilterService';
 
-export const AdvancedFilterCoreModule = defineEnterpriseModule(`${ModuleNames.AdvancedFilterModule}-core`, {
+export const AdvancedFilterCoreModule = defineEnterpriseModule('AdvancedFilterCoreModule', {
     beans: [AdvancedFilterService, AdvancedFilterExpressionService],
     dependsOn: [EnterpriseCoreModule, FilterCoreModule, DragAndDropModule, PopupModule, FilterValueModule],
 });
 
-export const AdvancedFilterApiModule = defineEnterpriseModule<_AdvancedFilterGridApi>(
-    `${ModuleNames.AdvancedFilterModule}-api`,
-    {
-        apiFunctions: {
-            getAdvancedFilterModel,
-            setAdvancedFilterModel,
-            showAdvancedFilterBuilder,
-            hideAdvancedFilterBuilder,
-        },
-        dependsOn: [AdvancedFilterCoreModule],
-    }
-);
+export const AdvancedFilterApiModule = defineEnterpriseModule<_AdvancedFilterGridApi>('AdvancedFilterApiModule', {
+    apiFunctions: {
+        getAdvancedFilterModel,
+        setAdvancedFilterModel,
+        showAdvancedFilterBuilder,
+        hideAdvancedFilterBuilder,
+    },
+    dependsOn: [AdvancedFilterCoreModule],
+});
 
 export const AdvancedFilterModule = defineEnterpriseModule(ModuleNames.AdvancedFilterModule, {
     dependsOn: [AdvancedFilterCoreModule, AdvancedFilterApiModule],

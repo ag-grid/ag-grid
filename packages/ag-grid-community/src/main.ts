@@ -1013,7 +1013,6 @@ export {
     CsrmSsrmSharedApiModule as _CsrmSsrmSharedApiModule,
     SsrmInfiniteSharedApiModule as _SsrmInfiniteSharedApiModule,
 } from './api/sharedApiModule';
-export { CommunityApiModule } from './api/apiModule';
 export { CommunityMenuApiModule } from './misc/menu/sharedMenuModule';
 export { CommunityFeaturesModule, GridCoreModule } from './gridCoreModule';
 export { SortModule } from './sort/sortModule';

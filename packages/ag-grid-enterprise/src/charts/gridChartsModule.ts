@@ -27,7 +27,7 @@ import {
 } from './chartsApi';
 import { validGridChartsVersion } from './utils/validGridChartsVersion';
 
-export const GridChartsCoreModule = defineEnterpriseModule(`${ModuleNames.GridChartsModule}-core`, {
+export const GridChartsCoreModule = defineEnterpriseModule('GridChartsCoreModule', {
     validate: () => {
         return validGridChartsVersion({
             gridVersion: GRID_VERSION,
@@ -51,7 +51,7 @@ export const GridChartsCoreModule = defineEnterpriseModule(`${ModuleNames.GridCh
     dependsOn: [RangeSelectionModule, EnterpriseCoreModule, DragAndDropModule, PopupModule],
 });
 
-export const GridChartsApiModule = defineEnterpriseModule<_GridChartsGridApi>(`${ModuleNames.GridChartsModule}-api`, {
+export const GridChartsApiModule = defineEnterpriseModule<_GridChartsGridApi>('GridChartsApiModule', {
     apiFunctions: {
         getChartModels,
         getChartRef,

@@ -15,11 +15,11 @@ import {
 import { PaginationAutoPageSizeService } from './paginationAutoPageSizeService';
 import { PaginationService } from './paginationService';
 
-export const PaginationCoreModule = defineCommunityModule('@ag-grid-community/pagination-core', {
+export const PaginationCoreModule = defineCommunityModule('PaginationCoreModule', {
     beans: [PaginationService, PaginationAutoPageSizeService],
 });
 
-export const PaginationApiModule = defineCommunityModule<_PaginationGridApi>('@ag-grid-community/pagination-api', {
+export const PaginationApiModule = defineCommunityModule<_PaginationGridApi>('PaginationApiModule', {
     dependsOn: [PaginationCoreModule],
     apiFunctions: {
         paginationIsLastPageFound,
@@ -35,6 +35,6 @@ export const PaginationApiModule = defineCommunityModule<_PaginationGridApi>('@a
     },
 });
 
-export const PaginationModule = defineCommunityModule('@ag-grid-community/pagination', {
+export const PaginationModule = defineCommunityModule('PaginationModule', {
     dependsOn: [PaginationCoreModule, PaginationApiModule],
 });

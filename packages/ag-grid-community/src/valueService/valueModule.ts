@@ -5,22 +5,22 @@ import { ChangeDetectionService } from './changeDetectionService';
 import { ExpressionService } from './expressionService';
 import { ValueCache } from './valueCache';
 
-export const ValueCacheModule = defineCommunityModule<_ValueCacheApi>('@ag-grid-community/value-cache', {
+export const ValueCacheModule = defineCommunityModule<_ValueCacheApi>('ValueCacheModule', {
     beans: [ValueCache],
     apiFunctions: {
         expireValueCache,
     },
 });
 
-export const ExpressionModule = defineCommunityModule('@ag-grid-community/expression', {
+export const ExpressionModule = defineCommunityModule('ExpressionModule', {
     beans: [ExpressionService],
 });
 
-export const ChangeDetectionModule = defineCommunityModule('@ag-grid-community/change-detection', {
+export const ChangeDetectionModule = defineCommunityModule('ChangeDetectionModule', {
     beans: [ChangeDetectionService],
 });
 
-export const CellApiModule = defineCommunityModule<_ValueApi>('@ag-grid-community/cell-api', {
+export const CellApiModule = defineCommunityModule<_ValueApi>('CellApiModule', {
     apiFunctions: {
         getCellValue,
     },

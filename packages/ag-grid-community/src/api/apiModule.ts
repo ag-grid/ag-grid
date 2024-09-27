@@ -1,6 +1,4 @@
-import { ColumnApiModule } from '../columns/columnModule';
 import { defineCommunityModule } from '../interfaces/iModule';
-import { RenderApiModule } from '../rendering/renderModule';
 import { destroy, getGridId, getGridOption, isDestroyed, setGridOption, updateGridOptions } from './coreApi';
 import type { _CoreGridApi, _RowGridApi, _ScrollGridApi } from './gridApi';
 import {
@@ -23,7 +21,7 @@ import {
     getVerticalPixelRange,
 } from './scrollApi';
 
-export const CoreApiModule = defineCommunityModule<_CoreGridApi>('@ag-grid-community/core-api', {
+export const CoreApiModule = defineCommunityModule<_CoreGridApi>('CoreApiModule', {
     apiFunctions: {
         getGridId,
         destroy,
@@ -34,7 +32,7 @@ export const CoreApiModule = defineCommunityModule<_CoreGridApi>('@ag-grid-commu
     },
 });
 
-export const RowApiModule = defineCommunityModule<_RowGridApi<any>>('@ag-grid-community/row-api', {
+export const RowApiModule = defineCommunityModule<_RowGridApi<any>>('RowApiModule', {
     apiFunctions: {
         redrawRows,
         setRowNodeExpanded,
@@ -49,7 +47,7 @@ export const RowApiModule = defineCommunityModule<_RowGridApi<any>>('@ag-grid-co
     },
 });
 
-export const ScrollApiModule = defineCommunityModule<_ScrollGridApi<any>>('@ag-grid-community/scroll-api', {
+export const ScrollApiModule = defineCommunityModule<_ScrollGridApi<any>>('ScrollApiModule', {
     apiFunctions: {
         getVerticalPixelRange,
         getHorizontalPixelRange,
@@ -57,8 +55,4 @@ export const ScrollApiModule = defineCommunityModule<_ScrollGridApi<any>>('@ag-g
         ensureIndexVisible,
         ensureNodeVisible,
     },
-});
-
-export const CommunityApiModule = defineCommunityModule('@ag-grid-community/api', {
-    dependsOn: [ColumnApiModule, RowApiModule, ScrollApiModule, RenderApiModule],
 });

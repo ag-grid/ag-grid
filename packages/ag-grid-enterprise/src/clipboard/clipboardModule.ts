@@ -14,12 +14,12 @@ import {
 } from './clipboardApi';
 import { ClipboardService } from './clipboardService';
 
-export const ClipboardCoreModule = defineEnterpriseModule(`${ModuleNames.ClipboardModule}-core`, {
+export const ClipboardCoreModule = defineEnterpriseModule('ClipboardCoreModule', {
     beans: [ClipboardService],
     dependsOn: [EnterpriseCoreModule, CsvExportModule, KeyboardNavigationCoreModule],
 });
 
-export const ClipboardApiModule = defineEnterpriseModule<_ClipboardGridApi>(`${ModuleNames.ClipboardModule}-api`, {
+export const ClipboardApiModule = defineEnterpriseModule<_ClipboardGridApi>('ClipboardApiModule', {
     apiFunctions: {
         copyToClipboard,
         cutToClipboard,

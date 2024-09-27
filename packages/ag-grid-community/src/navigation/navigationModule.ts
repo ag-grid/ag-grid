@@ -12,12 +12,12 @@ import {
 } from './navigationApi';
 import { NavigationService } from './navigationService';
 
-export const KeyboardNavigationCoreModule = defineCommunityModule('@ag-grid-community/keyboard-navigation-core', {
+export const KeyboardNavigationCoreModule = defineCommunityModule('KeyboardNavigationCoreModule', {
     beans: [NavigationService, CellNavigationService, HeaderNavigationService],
 });
 
 export const KeyboardNavigationApiModule = defineCommunityModule<_KeyboardNavigationGridApi>(
-    '@ag-grid-community/keyboard-navigation-api',
+    'KeyboardNavigationApiModule',
     {
         apiFunctions: {
             getFocusedCell,
@@ -31,6 +31,6 @@ export const KeyboardNavigationApiModule = defineCommunityModule<_KeyboardNaviga
     }
 );
 
-export const KeyboardNavigationModule = defineCommunityModule('@ag-grid-community/keyboard-navigation', {
+export const KeyboardNavigationModule = defineCommunityModule('KeyboardNavigationModule', {
     dependsOn: [KeyboardNavigationApiModule, KeyboardNavigationCoreModule],
 });

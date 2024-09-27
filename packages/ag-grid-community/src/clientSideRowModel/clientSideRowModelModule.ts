@@ -24,19 +24,19 @@ import { ImmutableService } from './immutableService';
 import { RowNodeEventThrottle } from './rowNodeEventThrottle';
 import { SortStage } from './sortStage';
 
-export const ClientSideRowModelCoreModule = defineCommunityModule(`${ModuleNames.ClientSideRowModelModule}-core`, {
+export const ClientSideRowModelCoreModule = defineCommunityModule('ClientSideRowModelCoreModule', {
     rowModel: 'clientSide',
     beans: [ClientSideRowModel, FilterStage, FlattenStage, ImmutableService, RowNodeEventThrottle],
 });
 
-export const ClientSideRowModelSortModule = defineCommunityModule(`${ModuleNames.ClientSideRowModelModule}-sort`, {
+export const ClientSideRowModelSortModule = defineCommunityModule('ClientSideRowModelSortModule', {
     rowModel: 'clientSide',
     beans: [SortStage],
     dependsOn: [ClientSideRowModelCoreModule, SortModule],
 });
 
 export const ClientSideRowModelApiModule = defineCommunityModule<_ClientSideRowModelGridApi<any>>(
-    `${ModuleNames.ClientSideRowModelModule}-api`,
+    'ClientSideRowModelApiModule',
     {
         beans: [RowModelHelperService],
         apiFunctions: {

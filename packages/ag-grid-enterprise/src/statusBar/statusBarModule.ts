@@ -11,7 +11,7 @@ import { TotalRowsComp } from './providedPanels/totalRowsComp';
 import { getStatusPanel } from './statusBarApi';
 import { StatusBarService } from './statusBarService';
 
-export const StatusBarCoreModule = defineEnterpriseModule(`${ModuleNames.StatusBarModule}-core`, {
+export const StatusBarCoreModule = defineEnterpriseModule('StatusBarCoreModule', {
     beans: [StatusBarService],
     userComponents: [
         { name: 'agAggregationComponent', classImp: AggregationComp },
@@ -22,12 +22,12 @@ export const StatusBarCoreModule = defineEnterpriseModule(`${ModuleNames.StatusB
     dependsOn: [EnterpriseCoreModule, KeyboardNavigationCoreModule],
 });
 
-export const StatusBarSelectionModule = defineEnterpriseModule(`${ModuleNames.StatusBarModule}-selection`, {
+export const StatusBarSelectionModule = defineEnterpriseModule('StatusBarSelectionModule', {
     userComponents: [{ name: 'agSelectedRowCountComponent', classImp: SelectedRowsComp }],
     dependsOn: [StatusBarCoreModule, RowSelectionCoreModule],
 });
 
-export const StatusBarApiModule = defineEnterpriseModule<_StatusBarGridApi>(`${ModuleNames.StatusBarModule}-api`, {
+export const StatusBarApiModule = defineEnterpriseModule<_StatusBarGridApi>('StatusBarApiModule', {
     apiFunctions: {
         getStatusPanel,
     },

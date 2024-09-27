@@ -42,7 +42,7 @@ import {
 } from './rowGroupingApi';
 import { ShowRowGroupColsService } from './showRowGroupColsService';
 
-export const RowGroupingCoreModule = defineEnterpriseModule(`${ModuleNames.RowGroupingModule}-core`, {
+export const RowGroupingCoreModule = defineEnterpriseModule('RowGroupingCoreModule', {
     beans: [
         AggregationStage,
         FilterAggregatesStage,
@@ -70,51 +70,48 @@ export const RowGroupingCoreModule = defineEnterpriseModule(`${ModuleNames.RowGr
     ],
 });
 
-export const RowGroupingSelectionModule = defineEnterpriseModule(`${ModuleNames.RowGroupingModule}-selection`, {
+export const RowGroupingSelectionModule = defineEnterpriseModule('RowGroupingSelectionModule', {
     beans: [SelectableService],
     dependsOn: [RowGroupingCoreModule],
 });
 
-export const PivotModule = defineEnterpriseModule('@ag-grid-enterprise/pivot', {
+export const PivotModule = defineEnterpriseModule('PivotModule', {
     beans: [PivotResultColsService, PivotColDefService, PivotStage],
     dependsOn: [RowGroupingCoreModule],
 });
 
-export const RowGroupingApiModule = defineEnterpriseModule<_RowGroupingGridApi<any>>(
-    `${ModuleNames.RowGroupingModule}-api`,
-    {
-        apiFunctions: {
-            addAggFuncs,
-            clearAggFuncs,
-            setColumnAggFunc,
-            isPivotMode,
-            getPivotResultColumn,
-            setValueColumns,
-            getValueColumns,
-            removeValueColumns,
-            addValueColumns,
-            setRowGroupColumns,
-            removeRowGroupColumns,
-            addRowGroupColumns,
-            getRowGroupColumns,
-            moveRowGroupColumn,
-            setPivotColumns,
-            removePivotColumns,
-            addPivotColumns,
-            getPivotColumns,
-            setPivotResultColumns,
-            getPivotResultColumns,
-        },
-        dependsOn: [RowGroupingCoreModule],
-    }
-);
+export const RowGroupingApiModule = defineEnterpriseModule<_RowGroupingGridApi<any>>('RowGroupingApiModule', {
+    apiFunctions: {
+        addAggFuncs,
+        clearAggFuncs,
+        setColumnAggFunc,
+        isPivotMode,
+        getPivotResultColumn,
+        setValueColumns,
+        getValueColumns,
+        removeValueColumns,
+        addValueColumns,
+        setRowGroupColumns,
+        removeRowGroupColumns,
+        addRowGroupColumns,
+        getRowGroupColumns,
+        moveRowGroupColumn,
+        setPivotColumns,
+        removePivotColumns,
+        addPivotColumns,
+        getPivotColumns,
+        setPivotResultColumns,
+        getPivotResultColumns,
+    },
+    dependsOn: [RowGroupingCoreModule],
+});
 
-export const GroupFilterModule = defineEnterpriseModule('@ag-grid-enterprise/group-filter', {
+export const GroupFilterModule = defineEnterpriseModule('GroupFilterModule', {
     userComponents: [{ name: 'agGroupColumnFilter', classImp: GroupFilter }],
     dependsOn: [RowGroupingCoreModule, ColumnFilterModule],
 });
 
-export const GroupFloatingFilterModule = defineEnterpriseModule('@ag-grid-enterprise/group-floating-filter', {
+export const GroupFloatingFilterModule = defineEnterpriseModule('GroupFloatingFilterModule', {
     userComponents: [{ name: 'agGroupColumnFloatingFilter', classImp: GroupFloatingFilterComp }],
     dependsOn: [GroupFilterModule, FloatingFilterModule],
 });

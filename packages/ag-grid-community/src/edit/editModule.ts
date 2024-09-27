@@ -23,12 +23,12 @@ import {
 import { EditService } from './editService';
 import { RowEditService } from './rowEditService';
 
-export const EditCoreModule = defineCommunityModule('@ag-grid-community/edit-core', {
+export const EditCoreModule = defineCommunityModule('EditCoreModule', {
     beans: [EditService],
     dependsOn: [PopupModule],
 });
 
-export const EditApiModule = defineCommunityModule<_EditGridApi<any>>('@ag-grid-community/edit-api', {
+export const EditApiModule = defineCommunityModule<_EditGridApi<any>>('EditApiModule', {
     apiFunctions: {
         undoCellEditing,
         redoCellEditing,
@@ -42,22 +42,22 @@ export const EditApiModule = defineCommunityModule<_EditGridApi<any>>('@ag-grid-
     dependsOn: [EditCoreModule],
 });
 
-export const UndoRedoEditModule = defineCommunityModule('@ag-grid-community/undo-redo-edit', {
+export const UndoRedoEditModule = defineCommunityModule('UndoRedoEditModule', {
     beans: [UndoRedoService],
     dependsOn: [EditCoreModule],
 });
 
-export const FullRowEditModule = defineCommunityModule('@ag-grid-community/full-row-edit', {
+export const FullRowEditModule = defineCommunityModule('FullRowEditModule', {
     beans: [RowEditService],
     dependsOn: [EditCoreModule],
 });
 
-export const DefaultEditorModule = defineCommunityModule('@ag-grid-community/default-editor', {
+export const DefaultEditorModule = defineCommunityModule('DefaultEditorModule', {
     userComponents: [{ name: 'agCellEditor', classImp: TextCellEditor }],
     dependsOn: [EditCoreModule],
 });
 
-export const DataTypeEditorsModule = defineCommunityModule('@ag-grid-community/data-type-editors', {
+export const DataTypeEditorsModule = defineCommunityModule('DataTypeEditorsModule', {
     userComponents: [
         { name: 'agTextCellEditor', classImp: TextCellEditor },
         {
@@ -74,20 +74,20 @@ export const DataTypeEditorsModule = defineCommunityModule('@ag-grid-community/d
     dependsOn: [DefaultEditorModule],
 });
 
-export const SelectEditorModule = defineCommunityModule('@ag-grid-community/select-editor', {
+export const SelectEditorModule = defineCommunityModule('SelectEditorModule', {
     userComponents: [{ name: 'agSelectCellEditor', classImp: SelectCellEditor }],
     dependsOn: [EditCoreModule],
 });
 
-export const LargeTextEditorModule = defineCommunityModule('@ag-grid-community/large-text-editor', {
+export const LargeTextEditorModule = defineCommunityModule('LargeTextEditorModule', {
     userComponents: [{ name: 'agLargeTextCellEditor', classImp: LargeTextCellEditor }],
     dependsOn: [EditCoreModule],
 });
 
-const AllCommunityEditorsModule = defineCommunityModule('@ag-grid-community/all-editors', {
+const AllCommunityEditorsModule = defineCommunityModule('AllCommunityEditorsModule', {
     dependsOn: [DefaultEditorModule, DataTypeEditorsModule, SelectEditorModule, LargeTextEditorModule],
 });
 
-export const EditModule = defineCommunityModule('@ag-grid-community/editing', {
+export const EditModule = defineCommunityModule('EditModule', {
     dependsOn: [EditCoreModule, UndoRedoEditModule, FullRowEditModule, AllCommunityEditorsModule, EditApiModule],
 });

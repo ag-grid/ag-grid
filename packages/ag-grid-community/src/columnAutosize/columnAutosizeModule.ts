@@ -4,23 +4,20 @@ import { AutoWidthModule } from '../rendering/autoWidthModule';
 import { autoSizeAllColumns, autoSizeColumns, sizeColumnsToFit } from './columnAutosizeApi';
 import { ColumnAutosizeService } from './columnAutosizeService';
 
-export const ColumnAutosizeCoreModule = defineCommunityModule('@ag-grid-community/column-autosize-core', {
+export const ColumnAutosizeCoreModule = defineCommunityModule('ColumnAutosizeCoreModule', {
     beans: [ColumnAutosizeService],
     dependsOn: [AutoWidthModule],
 });
 
-export const ColumnAutosizeApiModule = defineCommunityModule<_ColumnAutosizeApi>(
-    '@ag-grid-community/column-autosize-api',
-    {
-        apiFunctions: {
-            sizeColumnsToFit,
-            autoSizeColumns,
-            autoSizeAllColumns,
-        },
-        dependsOn: [ColumnAutosizeCoreModule],
-    }
-);
+export const ColumnAutosizeApiModule = defineCommunityModule<_ColumnAutosizeApi>('ColumnAutosizeApiModule', {
+    apiFunctions: {
+        sizeColumnsToFit,
+        autoSizeColumns,
+        autoSizeAllColumns,
+    },
+    dependsOn: [ColumnAutosizeCoreModule],
+});
 
-export const ColumnAutosizeModule = defineCommunityModule('@ag-grid-community/column-autosize', {
+export const ColumnAutosizeModule = defineCommunityModule('ColumnAutosizeModule', {
     dependsOn: [ColumnAutosizeApiModule],
 });

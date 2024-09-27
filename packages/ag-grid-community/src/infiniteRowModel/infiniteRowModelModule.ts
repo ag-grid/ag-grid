@@ -7,24 +7,21 @@ import { RowNodeBlockModule } from '../rowNodeCache/rowNodeBlockModule';
 import { InfiniteRowModel } from './infiniteRowModel';
 import { getInfiniteRowCount, purgeInfiniteCache, refreshInfiniteCache } from './infiniteRowModelApi';
 
-export const InfiniteRowModelCoreModule = defineCommunityModule(`${ModuleNames.InfiniteRowModelModule}-core`, {
+export const InfiniteRowModelCoreModule = defineCommunityModule('InfiniteRowModelCoreModule', {
     rowModel: 'infinite',
     beans: [InfiniteRowModel],
     dependsOn: [RowNodeBlockModule],
 });
 
-export const InfiniteRowModelApiModule = defineCommunityModule<_InfiniteRowModelGridApi>(
-    `${ModuleNames.InfiniteRowModelModule}-api`,
-    {
-        beans: [RowModelHelperService],
-        apiFunctions: {
-            refreshInfiniteCache,
-            purgeInfiniteCache,
-            getInfiniteRowCount,
-        },
-        dependsOn: [InfiniteRowModelCoreModule, SsrmInfiniteSharedApiModule],
-    }
-);
+export const InfiniteRowModelApiModule = defineCommunityModule<_InfiniteRowModelGridApi>('InfiniteRowModelApiModule', {
+    beans: [RowModelHelperService],
+    apiFunctions: {
+        refreshInfiniteCache,
+        purgeInfiniteCache,
+        getInfiniteRowCount,
+    },
+    dependsOn: [InfiniteRowModelCoreModule, SsrmInfiniteSharedApiModule],
+});
 
 export const InfiniteRowModelModule = defineCommunityModule(ModuleNames.InfiniteRowModelModule, {
     dependsOn: [InfiniteRowModelCoreModule, InfiniteRowModelApiModule],
