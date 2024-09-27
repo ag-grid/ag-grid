@@ -25,9 +25,12 @@ function getMsgOrDefault<TId extends ErrorId>(logger: LogFn, id: TId, args: GetE
 }
 
 const minifiedLog = (errorNum: number, args: GetErrorParams<any>) => {
-    // work out how to pass args into the link if safe to do so
-    // need to pass the framework name and version of AG Grid
-    return `Visit ${baseDocLink}/errors/${errorNum} \n  Alternatively register the ValidationsModule to see the full message in the console.`;
+    const params = new URLSearchParams();
+    Object.entries(args as any).forEach(([key, value]) => {
+        params.append(key, (value as any)?.toString?.());
+    });
+
+    return `Visit ${baseDocLink}/errors/${errorNum}?${params.toString()} \n  Alternatively register the ValidationsModule to see the full message in the console.`;
 };
 
 export function _warnOnce1<
