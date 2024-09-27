@@ -1,12 +1,14 @@
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { NgStyle } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import type { HttpClient } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import type { OnInit } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ColDef } from 'ag-grid-community';
+import type { ColDef } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 import './styles.css';

@@ -1,5 +1,5 @@
 export function getData(): any[] {
-    var rowData = [
+    const rowData = [
         { section: 'big-title', jan: 'Warehouse 1' },
         { section: 'quarters', jan: 'Q1', apr: 'Q2' },
         { jan: 534, feb: 612, mar: 243, apr: 231, may: 428, jun: 231 },

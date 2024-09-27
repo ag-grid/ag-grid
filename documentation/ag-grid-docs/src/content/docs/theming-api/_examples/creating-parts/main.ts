@@ -1,10 +1,10 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import type { ColDef, GridOptions } from '@ag-grid-community/core';
-import { createGrid } from '@ag-grid-community/core';
-import { createPart, createTheme } from '@ag-grid-community/theming';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import type { ColDef, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { createPart, createTheme } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 

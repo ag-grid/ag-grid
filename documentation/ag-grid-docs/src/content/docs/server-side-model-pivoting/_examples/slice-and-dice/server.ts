@@ -84,7 +84,7 @@ class FakeServer {
             }
         } else if (pivotMode) {
             // When pivoting without groups, aggregate all data into one row
-            var rootGroup = this.aggregateList(rowData, valueCols);
+            const rootGroup = this.aggregateList(rowData, valueCols);
             rowData = [rootGroup];
         }
 
@@ -106,22 +106,22 @@ class FakeServer {
     }
 
     sortList(data, sortModel) {
-        var sortPresent = sortModel && sortModel.length > 0;
+        const sortPresent = sortModel && sortModel.length > 0;
         if (!sortPresent) {
             return data;
         }
         // do an in memory sort of the data, across all the fields
-        var resultOfSort = data.slice();
+        const resultOfSort = data.slice();
         resultOfSort.sort(function (a, b) {
-            for (var k = 0; k < sortModel.length; k++) {
-                var sortColModel = sortModel[k];
-                var valueA = a[sortColModel.colId];
-                var valueB = b[sortColModel.colId];
+            for (let k = 0; k < sortModel.length; k++) {
+                const sortColModel = sortModel[k];
+                const valueA = a[sortColModel.colId];
+                const valueB = b[sortColModel.colId];
                 // this filter didn't find a difference, move onto the next one
                 if (valueA == valueB) {
                     continue;
                 }
-                var sortDirection = sortColModel.sort === 'asc' ? 1 : -1;
+                const sortDirection = sortColModel.sort === 'asc' ? 1 : -1;
                 if (valueA > valueB) {
                     return sortDirection;
                 } else {
@@ -135,18 +135,18 @@ class FakeServer {
     }
 
     filterList(data, filterModel) {
-        var filterPresent = filterModel && Object.keys(filterModel).length > 0;
+        const filterPresent = filterModel && Object.keys(filterModel).length > 0;
         if (!filterPresent) {
             return data;
         }
 
-        var resultOfFilter = [];
-        for (var i = 0; i < data.length; i++) {
-            var item = data[i];
+        const resultOfFilter = [];
+        for (let i = 0; i < data.length; i++) {
+            const item = data[i];
 
             if (filterModel.age) {
-                var age = item.age;
-                var allowedAge = parseInt(filterModel.age.filter);
+                const age = item.age;
+                const allowedAge = parseInt(filterModel.age.filter);
                 if (filterModel.age.type == 'equals') {
                     if (age !== allowedAge) {
                         continue;
@@ -188,19 +188,19 @@ class FakeServer {
     pivot(pivotCols, rowGroupCols, valueCols, data) {
         const pivotData = [];
         const aggColsList = [];
-        let pivotFields = new Set();
+        const pivotFields = new Set();
         data.forEach(function (item) {
-            var pivotValues = [];
+            const pivotValues = [];
             pivotCols.forEach(function (pivotCol) {
-                var pivotField = pivotCol.id;
-                var pivotValue = item[pivotField];
+                const pivotField = pivotCol.id;
+                const pivotValue = item[pivotField];
                 if (pivotValue !== null && pivotValue !== undefined && pivotValue.toString) {
                     pivotValues.push(pivotValue.toString());
                 } else {
                     pivotValues.push('-');
                 }
             });
-            var pivotItem = {};
+            const pivotItem = {};
 
             valueCols.forEach(function (valueCol) {
                 const valField = valueCol.id;
@@ -217,12 +217,12 @@ class FakeServer {
                     });
                 }
 
-                var value = item[valField];
+                const value = item[valField];
                 pivotItem[colKey] = value;
             });
 
             rowGroupCols.forEach(function (rowGroupCol) {
-                var rowGroupField = rowGroupCol.id;
+                const rowGroupField = rowGroupCol.id;
                 pivotItem[rowGroupField] = item[rowGroupField];
             });
 
@@ -237,17 +237,17 @@ class FakeServer {
     }
 
     buildGroupsFromData(rowData, rowGroupCols, groupKeys, valueCols) {
-        var rowGroupCol = rowGroupCols[groupKeys.length];
-        var field = rowGroupCol.id;
-        var mappedRowData = this.groupBy(rowData, field);
+        const rowGroupCol = rowGroupCols[groupKeys.length];
+        const field = rowGroupCol.id;
+        const mappedRowData = this.groupBy(rowData, field);
 
         if (!mappedRowData) {
             return [];
         }
 
-        var groups = [];
-        var that = this;
-        for (let key in mappedRowData) {
+        const groups = [];
+        const that = this;
+        for (const key in mappedRowData) {
             const thisRowData = mappedRowData[key];
             const groupItem = that.aggregateList(thisRowData, valueCols);
             groupItem[field] = key;
@@ -318,14 +318,14 @@ class FakeServer {
     // if user has opened the two groups United States and 2002, we filter
     // out everything that is not equal to United States and 2002.
     filterOutOtherGroups(originalData, groupKeys, rowGroupCols) {
-        var filteredData = originalData;
-        var that = this;
+        let filteredData = originalData;
+        const that = this;
 
         // if we are inside a group, then filter out everything that is not
         // part of this group
         groupKeys.forEach(function (groupKey, index) {
-            var rowGroupCol = rowGroupCols[index];
-            var field = rowGroupCol.id;
+            const rowGroupCol = rowGroupCols[index];
+            const field = rowGroupCol.id;
 
             filteredData = that.filter(filteredData, function (item) {
                 return item[field] == groupKey;
@@ -336,10 +336,10 @@ class FakeServer {
     }
 
     groupBy(data, field) {
-        var result = {};
+        const result = {};
         data.forEach(function (item) {
-            var key = item[field];
-            var listForThisKey = result[key];
+            const key = item[field];
+            let listForThisKey = result[key];
             if (!listForThisKey) {
                 listForThisKey = [];
                 result[key] = listForThisKey;
@@ -350,7 +350,7 @@ class FakeServer {
     }
 
     filter(data, callback) {
-        var result = [];
+        const result = [];
         data.forEach(function (item) {
             if (callback(item)) {
                 result.push(item);

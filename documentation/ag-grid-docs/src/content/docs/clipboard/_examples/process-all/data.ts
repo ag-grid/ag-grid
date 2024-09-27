@@ -1,6 +1,6 @@
 export function getData(): any[] {
-    var data = [];
-    for (var i = 0; i < 20; i++) {
+    const data = [];
+    for (let i = 0; i < 20; i++) {
         data.push({
             a: 'Green ' + i * 2,
             b: 'Green ' + i * 3 + 11,

@@ -52,7 +52,7 @@
       ],
       "options": {
         "cwd": "community-modules/styles",
-        "command": "sass --no-source-map --load-path src/internal src:."
+        "command": "sass --silence-deprecation=mixed-decls --no-source-map --load-path src/internal src:."
       },
       "cache": true
     },

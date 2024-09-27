@@ -30,7 +30,19 @@ export class Params {
         return this.values[mode] || {};
     }
 
-    mutateMergeWith(other: Params): void {
-        _mergeDeep(this.values, other.values);
+    mergedWith(other: Params): Params {
+        const thisParamsCopy = { ...this.values };
+        for (const [mode, otherParams] of Object.entries(other.values)) {
+            if (otherParams) {
+                const thisParamsModeCopy = { ...(thisParamsCopy[mode] || {}) };
+                for (const [name, otherValue] of Object.entries(otherParams)) {
+                    if (otherValue !== undefined) {
+                        thisParamsModeCopy[name] = otherValue;
+                    }
+                }
+                thisParamsCopy[mode] = thisParamsModeCopy;
+            }
+        }
+        return new Params(thisParamsCopy);
     }
 }

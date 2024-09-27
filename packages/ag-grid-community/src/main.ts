@@ -1025,12 +1025,12 @@ export { SharedMenuModule } from './misc/sharedMenuModule';
 export * from './events';
 
 // theming
-export { type Part, createPart } from './styles/Part';
-export { type Theme, createTheme, asThemeImpl as _asThemeImpl } from './styles/Theme';
-export * from './styles/parts/checkbox-style/checkbox-styles';
-export * from './styles/parts/color-scheme/color-schemes';
-export * from './styles/parts/icon-set/icon-sets';
-export * from './styles/parts/input-style/input-styles';
-export * from './styles/parts/tab-style/tab-styles';
-export * from './styles/parts/theme/themes';
-export * from './styles/theme-types';
+export { type Part, createPart } from './theming/Part';
+export { type Theme, createTheme, asThemeImpl as _asThemeImpl } from './theming/Theme';
+export * from './theming/parts/checkbox-style/checkbox-styles';
+export * from './theming/parts/color-scheme/color-schemes';
+export * from './theming/parts/icon-set/icon-sets';
+export * from './theming/parts/input-style/input-styles';
+export * from './theming/parts/tab-style/tab-styles';
+export * from './theming/parts/theme/themes';
+export * from './theming/theme-types';

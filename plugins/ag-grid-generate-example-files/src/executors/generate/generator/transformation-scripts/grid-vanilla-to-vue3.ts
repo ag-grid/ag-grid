@@ -122,7 +122,6 @@ function toAssignment(property: any): string {
 function getPropertyBindings(
     bindings: ParsedBindings,
     componentFileNames: string[],
-    importType: ImportType,
     vueComponents
 ): [string[], string[], string[], string[], string[]] {
     const propertyAssignments = [];
@@ -262,7 +261,7 @@ function getModuleImports(
         "import { AgGridVue } from 'ag-grid-vue3';",
     ];
 
-    addLicenseManager(imports, exampleConfig, false);
+    addLicenseManager(imports, exampleConfig);
 
     if (!usesThemingApi(bindings)) {
         imports.push("import 'ag-grid-community/styles/ag-grid.css';");
@@ -299,58 +298,10 @@ function getModuleImports(
     return imports;
 }
 
-function getPackageImports(
-    bindings: ParsedBindings,
-    exampleConfig: ExampleConfig,
-    componentFileNames: string[],
-    allStylesheets: string[]
-): string[] {
-    const { inlineGridStyles } = bindings;
-
-    const imports = [
-        "import { createApp, onBeforeMount, ref, shallowRef } from 'vue';",
-        "import { AgGridVue } from 'ag-grid-vue3';",
-    ];
-
-    addEnterprisePackage(imports, bindings);
-    addLicenseManager(imports, exampleConfig, true);
-
-    if (!usesThemingApi(bindings)) {
-        imports.push("import 'ag-grid-community/styles/ag-grid.css';");
-        // to account for the (rare) example that has more than one class...just default to quartz if it does
-        // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
-        // "source" non dark version
-        const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
-        imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
-    }
-
-    if (allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
-    }
-
-    const bImports = [...(bindings.imports || [])];
-    bImports.push({
-        module: `'ag-grid-community'`,
-        isNamespaced: false,
-        imports: [],
-    });
-    if (bImports.length > 0) {
-        addBindingImports(bImports, imports, true, true);
-    }
-
-    if (componentFileNames) {
-        imports.push(...componentFileNames.map((componentFileName) => getImport(componentFileName, 'Vue', '')));
-    }
-    addRelativeImports(bindings, imports, 'js');
-
-    return imports;
-}
-
 function getImports(
     bindings: ParsedBindings,
     exampleConfig: ExampleConfig,
     componentFileNames: string[],
-    importType: ImportType,
     allStylesheets: string[]
 ): string[] {
     const imports = [];
@@ -360,11 +311,7 @@ function getImports(
         imports.push(`import { ${localeImport.imports[0]} } from '@ag-grid-community/locale';`);
     }
 
-    if (importType === 'packages') {
-        imports.push(...getPackageImports(bindings, exampleConfig, componentFileNames, allStylesheets));
-    } else {
-        imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, allStylesheets));
-    }
+    imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, allStylesheets));
 
     return imports;
 }
@@ -387,11 +334,10 @@ export function vanillaToVue3(
         : null;
 
     return (importType) => {
-        const imports = getImports(bindings, exampleConfig, componentFileNames, importType, allStylesheets);
+        const imports = getImports(bindings, exampleConfig, componentFileNames, allStylesheets);
         const [propertyAssignments, propertyVars, propertyAttributes, _, propertyNames] = getPropertyBindings(
             bindings,
             componentFileNames,
-            importType,
             vueComponents
         );
         const template = getTemplate(bindings, exampleConfig, propertyAttributes.concat(eventAttributes));

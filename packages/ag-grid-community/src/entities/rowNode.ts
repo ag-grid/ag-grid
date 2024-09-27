@@ -502,21 +502,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         return this.hovered;
     }
 
-    public setMaster(master: boolean): void {
-        if (this.master === master) {
-            return;
-        }
-
-        // if changing AWAY from master, then unexpand, otherwise
-        // next time it's shown it is expanded again
-        if (this.master && !master) {
-            this.expanded = false;
-        }
-
-        this.master = master;
-        this.dispatchRowEvent('masterChanged');
-    }
-
     public setGroup(group: boolean): void {
         if (this.group === group) {
             return;
@@ -915,7 +900,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.selected = selected;
     }
 
-    private dispatchRowEvent<T extends RowNodeEventType>(type: T): void {
+    public dispatchRowEvent<T extends RowNodeEventType>(type: T): void {
         this.localEventService?.dispatchEvent({
             type: type,
             node: this,

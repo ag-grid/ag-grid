@@ -13,7 +13,11 @@ import { horizontalSpacingIcon, radiusIcon, verticalSpacingIcon } from './icons'
 export const EditorPanel = () => {
     const [expanded, setExpanded] = useApplicationConfigAtom('expandedEditors');
     return (
-        <AccordionRoot type="multiple" defaultValue={expanded || ['General']} onValueChange={setExpanded}>
+        <AccordionRoot
+            type="multiple"
+            defaultValue={expanded || ['General', 'All Parameters']}
+            onValueChange={setExpanded}
+        >
             <div className="pageHeading">
                 <h1 className="pageTitle">Theme Builder </h1>
             </div>
@@ -79,7 +83,7 @@ export const EditorPanel = () => {
                 <PartEditor featureName="iconSet" />
                 <ParamEditor param="iconSize" label="Size" />
             </Section>
-            <Section heading="Advanced">
+            <Section heading="All Parameters">
                 <AdvancedParamSelector />
             </Section>
         </AccordionRoot>

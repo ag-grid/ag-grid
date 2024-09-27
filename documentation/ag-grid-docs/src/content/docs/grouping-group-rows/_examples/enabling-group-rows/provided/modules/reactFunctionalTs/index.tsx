@@ -6,9 +6,11 @@ import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ColDef, GridReadyEvent, ModuleRegistry } from 'ag-grid-community';
+import type { ColDef, GridReadyEvent } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
-import { AgGridReact, CustomCellRendererProps } from 'ag-grid-react';
+import type { CustomCellRendererProps } from 'ag-grid-react';
+import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 

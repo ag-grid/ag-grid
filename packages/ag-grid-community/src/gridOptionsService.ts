@@ -8,6 +8,8 @@ import type { Environment } from './environment';
 import type { AgEventType } from './eventTypes';
 import type { AgEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
+import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
+import type { GridOptionOrDefault } from './gridOptionsDefault';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import { LocalEventService } from './localEventService';
 import type { ModuleNames } from './modules/moduleNames';
@@ -17,7 +19,6 @@ import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _log, _warnOnce } from './utils/function';
 import { _exists, toBoolean } from './utils/generic';
 import { toConstrainedNum, toNumber } from './utils/number';
-import { GRID_OPTION_DEFAULTS } from './validation/rules/gridOptionsValidations';
 import type { ValidationService } from './validation/validationService';
 
 type GetKeys<T, U> = {
@@ -159,12 +160,10 @@ export class GridOptionsService extends BeanStub implements NamedBean {
      * Get the raw value of the GridOptions property provided.
      * @param property
      */
-    public get<K extends keyof GridOptions>(
-        property: K
-    ): K extends keyof typeof GRID_OPTION_DEFAULTS ? NonNullable<GridOptions[K]> : GridOptions[K] {
+    public get<K extends keyof GridOptions>(property: K): GridOptionOrDefault<K> {
         return (
             this.gridOptions[property] ??
-            (GRID_OPTION_DEFAULTS[property as keyof typeof GRID_OPTION_DEFAULTS] as GridOptions[K])
+            (GRID_OPTION_DEFAULTS[property as keyof typeof GRID_OPTION_DEFAULTS] as GridOptionOrDefault<K>)
         );
     }
 

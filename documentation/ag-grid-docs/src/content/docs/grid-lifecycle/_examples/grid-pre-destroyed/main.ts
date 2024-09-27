@@ -1,8 +1,10 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, GridPreDestroyedEvent, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, GridPreDestroyedEvent } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
-import { TAthlete, getDataSet } from './data';
+import type { TAthlete } from './data';
+import { getDataSet } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -11,7 +13,7 @@ interface ColumnWidth {
     width: number;
 }
 
-var columnWidths: Map<string, number> | undefined = undefined;
+let columnWidths: Map<string, number> | undefined = undefined;
 
 let gridApi: GridApi;
 

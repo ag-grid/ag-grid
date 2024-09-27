@@ -1,7 +1,8 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
@@ -48,8 +49,8 @@ const gridOptions: GridOptions = {
 };
 
 function getRowData() {
-    var rowData = [];
-    for (var i = 1; i <= 16; i++) {
+    const rowData = [];
+    for (let i = 1; i <= 16; i++) {
         rowData.push({
             group: i < 8 ? 'A' : 'B',
             a: (i * 863) % 100,
@@ -63,6 +64,6 @@ function getRowData() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

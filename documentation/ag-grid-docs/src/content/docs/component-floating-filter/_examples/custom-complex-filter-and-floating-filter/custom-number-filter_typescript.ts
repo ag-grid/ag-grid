@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '@ag-grid-community/core';
+import type { IDoesFilterPassParams, IFilterComp, IFilterParams } from 'ag-grid-community';
 
 export class CustomNumberFilter implements IFilterComp {
     filterText!: string | null;
@@ -44,11 +44,11 @@ export class CustomNumberFilter implements IFilterComp {
             return true;
         }
 
-        var { node } = params;
+        const { node } = params;
 
-        var value = this.filterParams.getValue(node);
+        const value = this.filterParams.getValue(node);
 
-        var filterValue = this.filterText;
+        const filterValue = this.filterText;
 
         if (value == null) return false;
         return Number(value) > Number(filterValue);

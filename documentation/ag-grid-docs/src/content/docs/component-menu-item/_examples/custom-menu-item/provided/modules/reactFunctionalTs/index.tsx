@@ -6,7 +6,7 @@ import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ColDef, GetContextMenuItemsParams, GetMainMenuItemsParams, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef, GetContextMenuItemsParams, GetMainMenuItemsParams, GridReadyEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ClipboardModule } from 'ag-grid-enterprise';
 import { ExcelExportModule } from 'ag-grid-enterprise';
@@ -14,7 +14,7 @@ import { MenuModule } from 'ag-grid-enterprise';
 import { RangeSelectionModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
-import { IOlympicData } from './interfaces';
+import type { IOlympicData } from './interfaces';
 import MenuItem from './menuItem';
 
 ModuleRegistry.registerModules([

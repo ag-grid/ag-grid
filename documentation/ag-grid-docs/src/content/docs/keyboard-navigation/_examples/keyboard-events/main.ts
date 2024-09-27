@@ -1,11 +1,13 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CellKeyDownEvent, ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { KeyboardEvent } from 'react';
+import type { KeyboardEvent } from 'react';
+
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { CellKeyDownEvent, ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { FiltersToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -53,8 +55,8 @@ function onCellKeyDown(e: CellKeyDownEvent) {
     if (key.length) {
         console.log('Key Pressed = ' + key);
         if (key === 's') {
-            var rowNode = e.node;
-            var newSelection = !rowNode.isSelected();
+            const rowNode = e.node;
+            const newSelection = !rowNode.isSelected();
             console.log('setting selection on node ' + rowNode.data.athlete + ' to ' + newSelection);
             rowNode.setSelected(newSelection);
         }
@@ -63,7 +65,7 @@ function onCellKeyDown(e: CellKeyDownEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

@@ -1,13 +1,7 @@
-import {
-    ColDef,
-    GridApi,
-    GridOptions,
-    IViewportDatasource,
-    IViewportDatasourceParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ViewportRowModelModule } from '@ag-grid-enterprise/viewport-row-model';
+import type { ColDef, GridApi, GridOptions, IViewportDatasource, IViewportDatasourceParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ViewportRowModelModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ViewportRowModelModule]);
 
@@ -44,7 +38,7 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });
 
@@ -53,14 +47,14 @@ function createViewportDatasource(): IViewportDatasource {
     return {
         init: (params: IViewportDatasourceParams) => {
             initParams = params;
-            var oneMillion = 1000 * 1000;
+            const oneMillion = 1000 * 1000;
             params.setRowCount(oneMillion);
         },
         setViewportRange(firstRow: number, lastRow: number) {
-            var rowData: any = {};
+            const rowData: any = {};
 
-            for (var rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
-                var item: any = {};
+            for (let rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
+                const item: any = {};
                 item.id = rowIndex;
                 item.a = 'A-' + rowIndex;
                 item.b = 'B-' + rowIndex;

@@ -1,5 +1,6 @@
-import { CustomHeaderProps } from '@ag-grid-community/react';
 import React, { useRef } from 'react';
+
+import type { CustomHeaderProps } from 'ag-grid-react';
 
 const CustomHeader = (props: CustomHeaderProps) => {
     const { enableFilterButton, displayName, showColumnMenu } = props;

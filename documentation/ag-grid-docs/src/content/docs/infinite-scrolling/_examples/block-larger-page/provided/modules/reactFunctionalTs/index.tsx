@@ -5,12 +5,14 @@ import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ColDef, GetRowIdParams, GridReadyEvent, IDatasource, ModuleRegistry } from 'ag-grid-community';
+import type { ColDef, GetRowIdParams, GridReadyEvent, IDatasource } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 import { InfiniteRowModelModule } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
 import { SetFilterModule } from 'ag-grid-enterprise';
-import { AgGridReact, CustomCellRendererProps } from 'ag-grid-react';
+import type { CustomCellRendererProps } from 'ag-grid-react';
+import { AgGridReact } from 'ag-grid-react';
 
 import { countries } from './countries';
 

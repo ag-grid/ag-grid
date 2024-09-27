@@ -24,7 +24,7 @@ export function FakeServer(allData) {
             return [];
         }
 
-        let results = [];
+        const results = [];
         valueCols.forEach((valueCol) => {
             const pivotResults = executePivotQuery(request, pivotCol, valueCol);
 

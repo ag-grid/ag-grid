@@ -1,4 +1,4 @@
-import type { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
+import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
 const createPill = (color: string) => {
     const colorSpan = document.createElement('span');

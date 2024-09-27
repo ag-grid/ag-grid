@@ -72,7 +72,6 @@
       "community-modules/locale",
       "packages/ag-grid-community",
       "packages/ag-grid-enterprise",
-      "packages/ag-grid-charts-enterprise",
       "packages/ag-grid-react",
       "packages/ag-grid-angular",
       "packages/ag-grid-vue3",

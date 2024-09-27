@@ -1,9 +1,10 @@
-import { ColDef, GridApi, GridOptions, IServerSideDatasource, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+import type { ColDef, GridApi, GridOptions, IServerSideDatasource } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { RowGroupingModule } from 'ag-grid-enterprise';
+import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { FakeServer } from './fakeServer';
 
@@ -62,17 +63,17 @@ function expand(key?: string, open = false) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
         .then(function (data) {
             // setup the fake server with entire dataset
-            var fakeServer = new FakeServer(data);
+            const fakeServer = new FakeServer(data);
 
             // create datasource with a reference to the fake server
-            var datasource = getServerSideDatasource(fakeServer);
+            const datasource = getServerSideDatasource(fakeServer);
 
             // register the datasource with the grid
             gridApi!.setGridOption('serverSideDatasource', datasource);
@@ -82,11 +83,11 @@ document.addEventListener('DOMContentLoaded', function () {
 function getServerSideDatasource(server: any): IServerSideDatasource {
     return {
         getRows: (params) => {
-            var request = params.request;
+            const request = params.request;
 
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
-            var response = server.getData(request);
+            const response = server.getData(request);
 
             // simulating real server call with a 500ms delay
             setTimeout(() => {

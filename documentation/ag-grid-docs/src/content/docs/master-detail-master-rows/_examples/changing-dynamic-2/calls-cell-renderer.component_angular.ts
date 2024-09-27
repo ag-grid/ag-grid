@@ -1,6 +1,7 @@
-import { ICellRendererAngularComp } from '@ag-grid-community/angular';
-import { ICellRendererParams } from '@ag-grid-community/core';
 import { Component } from '@angular/core';
+
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
+import type { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
@@ -20,11 +21,11 @@ export class CallsCellRenderer implements ICellRendererAngularComp {
     }
 
     onAdd(): void {
-        var oldData = this.params.node.data;
+        const oldData = this.params.node.data;
 
-        var oldCallRecords = oldData.callRecords;
+        const oldCallRecords = oldData.callRecords;
 
-        var newCallRecords = oldCallRecords.slice(0); // make a copy
+        const newCallRecords = oldCallRecords.slice(0); // make a copy
         newCallRecords.push({
             name: ['Bob', 'Paul', 'David', 'John'][Math.floor(Math.random() * 4)],
             callId: Math.floor(Math.random() * 1000),
@@ -34,10 +35,10 @@ export class CallsCellRenderer implements ICellRendererAngularComp {
             number: '(02) ' + Math.floor(Math.random() * 1000000),
         }); // add one item
 
-        var minutes = 0;
+        let minutes = 0;
         newCallRecords.forEach((r: any) => (minutes += r.duration));
 
-        var newData = {
+        const newData = {
             name: oldData.name,
             account: oldData.account,
             calls: newCallRecords.length,
@@ -51,21 +52,21 @@ export class CallsCellRenderer implements ICellRendererAngularComp {
     }
 
     onRemove(): void {
-        var oldData = this.params.node.data;
+        const oldData = this.params.node.data;
 
-        var oldCallRecords = oldData.callRecords;
+        const oldCallRecords = oldData.callRecords;
 
         if (oldCallRecords.length == 0) {
             return;
         }
 
-        var newCallRecords = oldCallRecords.slice(0); // make a copy
+        const newCallRecords = oldCallRecords.slice(0); // make a copy
         newCallRecords.pop(); // remove one item
 
-        var minutes = 0;
+        let minutes = 0;
         newCallRecords.forEach((r: any) => (minutes += r.duration));
 
-        var newData = {
+        const newData = {
             name: oldData.name,
             account: oldData.account,
             calls: newCallRecords.length,

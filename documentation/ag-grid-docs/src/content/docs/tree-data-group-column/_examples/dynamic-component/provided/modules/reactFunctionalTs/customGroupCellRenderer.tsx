@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { RowEvent } from 'ag-grid-community';
-import { CustomCellRendererProps } from 'ag-grid-react';
+import type { RowEvent } from 'ag-grid-community';
+import type { CustomCellRendererProps } from 'ag-grid-react';
 
 export default (props: CustomCellRendererProps) => {
     const { node, value } = props;

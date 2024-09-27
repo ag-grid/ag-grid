@@ -1,5 +1,6 @@
-import { CustomCellRendererProps } from '@ag-grid-community/react';
 import React, { useState } from 'react';
+
+import type { CustomCellRendererProps } from 'ag-grid-react';
 
 const DetailCellRenderer = ({ data }: CustomCellRendererProps) => {
     const firstRecord = data.callRecords[0];

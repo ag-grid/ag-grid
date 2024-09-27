@@ -6,10 +6,12 @@ import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ColDef, GridReadyEvent, ICellEditor, ModuleRegistry } from 'ag-grid-community';
+import type { ColDef, GridReadyEvent, ICellEditor } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact, getInstance } from 'ag-grid-react';
 
-import MySimpleEditor, { MySimpleInterface } from './mySimpleEditor';
+import type { MySimpleInterface } from './mySimpleEditor';
+import MySimpleEditor from './mySimpleEditor';
 import './style.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);

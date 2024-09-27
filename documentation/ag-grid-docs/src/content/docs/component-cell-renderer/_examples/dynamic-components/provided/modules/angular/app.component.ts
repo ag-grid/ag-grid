@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ColDef, GridApi, GridReadyEvent, IRowNode } from 'ag-grid-community';
+import type { ColDef, GridApi, GridReadyEvent, IRowNode } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 
 import { ChildMessageRenderer } from './child-message-renderer.component';

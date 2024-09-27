@@ -1,5 +1,5 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type {
     CsvCell,
     CsvExportParams,
     ExcelCell,
@@ -9,14 +9,14 @@ import {
     GridOptions,
     IDetailCellRendererParams,
     ProcessRowGroupForExportParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
-import { MenuModule } from '@ag-grid-enterprise/menu';
+} from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ClipboardModule } from 'ag-grid-enterprise';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { ExcelExportModule } from 'ag-grid-enterprise';
+import { MasterDetailModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -27,7 +27,7 @@ ModuleRegistry.registerModules([
     MenuModule,
 ]);
 
-var getRows = (params: ProcessRowGroupForExportParams) => {
+const getRows = (params: ProcessRowGroupForExportParams) => {
     const rows = [
         {
             outlineLevel: 1,
@@ -58,14 +58,14 @@ var getRows = (params: ProcessRowGroupForExportParams) => {
     return rows;
 };
 
-var defaultCsvExportParams: CsvExportParams = {
+const defaultCsvExportParams: CsvExportParams = {
     getCustomContentBelowRow: (params) => {
         const rows = getRows(params);
 
         return rows.map((row) => row.cells) as CsvCell[][];
     },
 };
-var defaultExcelExportParams: ExcelExportParams = {
+const defaultExcelExportParams: ExcelExportParams = {
     getCustomContentBelowRow: (params) => getRows(params) as ExcelRow[],
     columnWidth: 120,
     fileName: 'ag-grid.xlsx',
@@ -138,7 +138,7 @@ function onBtExport() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')

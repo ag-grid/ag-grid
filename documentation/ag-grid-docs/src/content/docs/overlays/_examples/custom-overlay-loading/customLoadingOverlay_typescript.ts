@@ -1,4 +1,4 @@
-import type { ILoadingOverlayComp, ILoadingOverlayParams } from '@ag-grid-community/core';
+import type { ILoadingOverlayComp, ILoadingOverlayParams } from 'ag-grid-community';
 
 type CustomLoadingOverlayParams = ILoadingOverlayParams & { loadingMessage: string };
 

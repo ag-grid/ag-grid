@@ -6,7 +6,8 @@ import React, { StrictMode, useCallback, useEffect, useMemo, useRef, useState } 
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ChartRef, ColDef, GridReadyEvent, ModuleRegistry, SelectionOptions } from 'ag-grid-community';
+import type { ChartRef, ColDef, GridReadyEvent, SelectionOptions } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 import { GridChartsModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
 import { RowGroupingModule } from 'ag-grid-enterprise';

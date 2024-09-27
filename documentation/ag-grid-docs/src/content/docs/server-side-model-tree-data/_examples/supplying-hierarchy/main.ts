@@ -1,4 +1,4 @@
-import {
+import type {
     ColDef,
     GridApi,
     GridOptions,
@@ -6,12 +6,12 @@ import {
     IServerSideDatasource,
     IServerSideGetRowsParams,
     IsServerSideGroupOpenByDefaultParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+} from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ColumnsToolPanelModule, MenuModule, ServerSideRowModelModule]);
 
@@ -58,13 +58,13 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/tree-data.json')
         .then((response) => response.json())
         .then(function (data) {
-            var datasource = createServerSideDatasource(data);
+            const datasource = createServerSideDatasource(data);
             gridApi!.setGridOption('serverSideDatasource', datasource);
 
             function createServerSideDatasource(data: any) {

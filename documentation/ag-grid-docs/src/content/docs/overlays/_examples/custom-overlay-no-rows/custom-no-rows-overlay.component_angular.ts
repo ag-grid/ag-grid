@@ -1,6 +1,7 @@
-import type { INoRowsOverlayAngularComp } from '@ag-grid-community/angular';
-import type { INoRowsOverlayParams } from '@ag-grid-community/core';
 import { Component } from '@angular/core';
+
+import type { INoRowsOverlayAngularComp } from 'ag-grid-angular';
+import type { INoRowsOverlayParams } from 'ag-grid-community';
 
 type CustomNoRowsOverlayParams = INoRowsOverlayParams & { noRowsMessageFunc: () => string };
 

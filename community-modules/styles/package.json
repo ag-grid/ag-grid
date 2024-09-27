@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build:styles": "npm run build:sass -- --no-error-css && node post-build.js",
-    "build:sass": "sass --no-source-map --load-path src/internal src:.",
+    "build:sass": "sass --silence-deprecation=mixed-decls --no-source-map --load-path src/internal src:.",
     "watch": "npm-run-all build --parallel watch:sass watch:post-build",
     "watch:post-build": "chokidar '*.css' --ignore '*.min.css' --command 'node post-build.js'",
     "watch:sass": "npm run build:sass -- --watch",

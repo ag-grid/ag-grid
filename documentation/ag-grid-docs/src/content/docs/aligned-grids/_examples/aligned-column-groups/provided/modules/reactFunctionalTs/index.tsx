@@ -4,14 +4,14 @@ import React, { StrictMode, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import {
+import type {
     ColDef,
     ColGroupDef,
     FirstDataRenderedEvent,
     GridReadyEvent,
-    ModuleRegistry,
     SizeColumnsToFitGridStrategy,
 } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
