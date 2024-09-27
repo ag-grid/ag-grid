@@ -3,8 +3,6 @@ import React, { Fragment } from 'react';
 
 import type { CustomFloatingFilterProps } from 'ag-grid-react';
 
-import { CustomFloatingFilterProps } from 'ag-grid-react';
-
 export default ({ model, onModelChange }: CustomFloatingFilterProps) => {
     const onInput = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
         onModelChange(value === '' ? null : Number(value));

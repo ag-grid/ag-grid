@@ -3,8 +3,6 @@ import React, { Fragment } from 'react';
 
 import type { CustomFloatingFilterProps } from 'ag-grid-react';
 
-import { CustomFloatingFilterProps } from 'ag-grid-react';
-
 export interface CustomProps extends CustomFloatingFilterProps {
     color: string;
 }

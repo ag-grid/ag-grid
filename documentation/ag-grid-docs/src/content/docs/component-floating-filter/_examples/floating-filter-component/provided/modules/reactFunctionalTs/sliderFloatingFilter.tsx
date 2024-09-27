@@ -3,8 +3,6 @@ import React from 'react';
 
 import type { CustomFloatingFilterProps } from 'ag-grid-react';
 
-import { CustomFloatingFilterProps } from 'ag-grid-react';
-
 export interface SliderFloatingFilterProps extends CustomFloatingFilterProps {
     maxValue: number;
 }

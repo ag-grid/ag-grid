@@ -5,9 +5,6 @@ import type { IDoesFilterPassParams } from 'ag-grid-community';
 import type { CustomFilterProps } from 'ag-grid-react';
 import { useGridFilter } from 'ag-grid-react';
 
-import { IDoesFilterPassParams } from 'ag-grid-community';
-import { CustomFilterProps, useGridFilter } from 'ag-grid-react';
-
 export default forwardRef(({ model, onModelChange, getValue }: CustomFilterProps<any, any, { value: string }>, ref) => {
     const refInput = useRef<HTMLInputElement>(null);
 

@@ -11,11 +11,6 @@ import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 
-import { AgGridAngular } from 'ag-grid-angular';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ColDef } from 'ag-grid-community';
-import { ModuleRegistry } from 'ag-grid-community';
-
 import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);

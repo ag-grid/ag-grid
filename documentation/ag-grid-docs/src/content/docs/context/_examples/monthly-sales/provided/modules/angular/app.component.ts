@@ -20,15 +20,6 @@ import { FiltersToolPanelModule } from 'ag-grid-enterprise';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
-import { AgGridAngular } from 'ag-grid-angular';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
-import { ColDef, ColGroupDef, GridApi, GridReadyEvent, ICellRendererParams, SelectionOptions } from 'ag-grid-community';
-import { ModuleRegistry } from 'ag-grid-community';
-import { FiltersToolPanelModule } from 'ag-grid-enterprise';
-import { RowGroupingModule } from 'ag-grid-enterprise';
-import { SetFilterModule } from 'ag-grid-enterprise';
-
 import './styles.css';
 
 ModuleRegistry.registerModules([

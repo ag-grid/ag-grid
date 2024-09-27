@@ -1,5 +1,3 @@
-import type { IGroupHideOpenParentsService } from 'ag-grid-community';
-
 import type { ColumnModel } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -23,6 +21,7 @@ import type {
     RefreshModelParams,
 } from '../interfaces/iClientSideRowModel';
 import { ClientSideRowModelSteps } from '../interfaces/iClientSideRowModel';
+import type { IGroupHideOpenParentsService } from '../interfaces/iGroupHideOpenParentsService';
 import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
 import { RowHighlightPosition } from '../interfaces/iRowNode';
 import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
