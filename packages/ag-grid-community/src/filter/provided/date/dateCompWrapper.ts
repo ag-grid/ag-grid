@@ -109,7 +109,6 @@ export class DateCompWrapper {
     public updateParams(params: IDateParams): void {
         if (this.dateComp?.refresh && typeof this.dateComp.refresh === 'function') {
             this.dateComp.refresh(params);
-            // framework wrapper always implements optional methods, but returns null if no underlying method
         }
     }
 
