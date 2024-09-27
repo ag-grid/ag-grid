@@ -220,9 +220,3 @@ export class ValidationService extends BeanStub implements NamedBean {
         return getError(id, args);
     }
 }
-
-export const ValidationsModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/core-validations',
-    beans: [ValidationService],
-});

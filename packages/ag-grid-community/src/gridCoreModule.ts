@@ -23,6 +23,7 @@ import { StickyRowModule } from './rendering/features/stickyRowModule';
 import { OverlayModule } from './rendering/overlays/overlayModule';
 import { RowSelectionModule } from './selection/rowSelectionModule';
 import { SortModule } from './sort/sortModule';
+import { ValidationModule } from './validation/validtionModule';
 import { ExpressionModule, ValueCacheModule } from './valueService/valueModule';
 import { VERSION } from './version';
 
@@ -36,6 +37,7 @@ export const CommunityFeaturesModule = _defineModule({
     moduleName: '@ag-grid-community/core-community-features',
     dependantModules: [
         GridCoreModule,
+        ValidationModule,
         EditModule,
         FilterModule,
         StateModule,

@@ -33,7 +33,7 @@ const minifiedLog = (errorNum: number, args: GetErrorParams<any>) => {
         params.append(key, (value as any)?.toString?.());
     });
 
-    return `Visit ${baseDocLink}/errors/${errorNum}?${params.toString()} \n  Alternatively register the ValidationsModule to see the full message in the console.`;
+    return `Visit ${baseDocLink}/errors/${errorNum}?${params.toString()} \n  Alternatively register the ValidationModule to see the full message in the console.`;
 };
 
 export function _logWarn<

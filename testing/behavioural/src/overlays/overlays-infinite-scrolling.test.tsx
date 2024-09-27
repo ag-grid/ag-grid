@@ -1,12 +1,12 @@
 import type { MockInstance } from 'vitest';
 
-import { CommunityFeaturesModule, InfiniteRowModelModule, ValidationsModule } from 'ag-grid-community';
+import { CommunityFeaturesModule, InfiniteRowModelModule } from 'ag-grid-community';
 
 import { TestGridsManager } from '../test-utils';
 
 describe('ag-grid overlays infinite scrolling state', () => {
     const gridsManager = new TestGridsManager({
-        modules: [CommunityFeaturesModule, InfiniteRowModelModule, ValidationsModule],
+        modules: [CommunityFeaturesModule, InfiniteRowModelModule],
     });
 
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];

@@ -977,7 +977,7 @@ export { Module, ModuleValidationResult, _defineModule } from './interfaces/iMod
 export { ModuleNames } from './modules/moduleNames';
 export { ModuleRegistry } from './modules/moduleRegistry';
 
-export { ValidationsModule } from './validation/validationService';
+export { ValidationModule } from './validation/validationModule';
 
 export { ColumnMoveModule } from './columnMove/columnMoveModule';
 export { DragModule, HorizontalResizeModule, DragAndDropModule } from './dragAndDrop/dragModule';
