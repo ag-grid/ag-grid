@@ -25,10 +25,10 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowGroupPanelShow: 'always',
 };
 
-const toggle = () => {
+function toggle() {
     const checked = document.querySelector<HTMLInputElement>('#rowGroupPanelSuppressSort')!.checked;
     gridApi!.setGridOption('rowGroupPanelSuppressSort', checked);
-};
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
