@@ -1,6 +1,4 @@
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
 import type { HttpClient } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
@@ -9,6 +7,8 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
 import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { ExcelExportModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
 
