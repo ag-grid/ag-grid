@@ -33,7 +33,7 @@ const minifiedLog = (errorNum: number, args: GetErrorParams<any>) => {
     return `Visit ${baseDocLink}/errors/${errorNum}?${params.toString()} \n  Alternatively register the ValidationsModule to see the full message in the console.`;
 };
 
-export function _warnOnce1<
+export function _logWarn<
     TId extends ErrorId | null = null,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = TId extends ErrorId ? ErrorMap[TId] : null,
@@ -41,7 +41,7 @@ export function _warnOnce1<
     getMsgOrDefault(warnLog, id!, args as any);
 }
 
-export function _errorOnce1<
+export function _logError<
     TId extends ErrorId | null = null,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = TId extends ErrorId ? ErrorMap[TId] : null,

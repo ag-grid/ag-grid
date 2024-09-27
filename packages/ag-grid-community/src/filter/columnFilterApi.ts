@@ -3,7 +3,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { Column } from '../interfaces/iColumn';
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
 import type { _ErrorType } from '../validation/logging';
-import { _errorOnce1 } from '../validation/logging';
+import { _logError } from '../validation/logging';
 
 export function isColumnFilterPresent(beans: BeanCollection): boolean {
     return !!beans.filterManager?.isColumnFilterPresent() || !!beans.filterManager?.isAggregateFilterPresent();
@@ -46,7 +46,7 @@ export function setColumnFilterModel<TModel>(
 export function showColumnFilter(beans: BeanCollection, colKey: string | Column): void {
     const column = beans.columnModel.getCol(colKey);
     if (!column) {
-        _errorOnce1<_ErrorType.NoColumnFoundForKey>(12, { colKey });
+        _logError<_ErrorType.NoColumnFoundForKey>(12, { colKey });
         return;
     }
     beans.menuService.showFilterMenu({

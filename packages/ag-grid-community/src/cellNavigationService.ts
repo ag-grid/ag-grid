@@ -17,7 +17,7 @@ import type { RowRenderer } from './rendering/rowRenderer';
 import { _last } from './utils/array';
 import { _missing } from './utils/generic';
 import type { _ErrorType } from './validation/logging';
-import { _warnOnce1 } from './validation/logging';
+import { _logWarn } from './validation/logging';
 
 export class CellNavigationService extends BeanStub implements NamedBean {
     beanName = 'cellNavigationService' as const;
@@ -101,7 +101,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                     break;
                 default:
                     pointer = null;
-                    _warnOnce1<_ErrorType.UnknownKeyNavigation>(8, { key });
+                    _logWarn<_ErrorType.UnknownKeyNavigation>(8, { key });
                     break;
             }
 

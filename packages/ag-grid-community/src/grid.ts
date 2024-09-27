@@ -64,7 +64,7 @@ import { _errorOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
 import type { _ErrorType } from './validation/logging';
-import { _errorOnce1 } from './validation/logging';
+import { _logError } from './validation/logging';
 import { ChangeDetectionService } from './valueService/changeDetectionService';
 import { ValueService } from './valueService/valueService';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
@@ -167,7 +167,7 @@ export function createGrid<TData>(
     params?: Params
 ): GridApi<TData> {
     if (!gridOptions) {
-        _errorOnce1<_ErrorType.NoGridOptions>(11, {});
+        _logError<_ErrorType.NoGridOptions>(11, {});
         return {} as GridApi;
     }
     const api = new GridCoreCreator().create(

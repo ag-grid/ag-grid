@@ -29,7 +29,7 @@ import { FrameworkEventListenerService } from '../misc/frameworkEventListenerSer
 import { _debounce, _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
 import type { _ErrorType } from '../validation/logging';
-import { _errorOnce1 } from '../validation/logging';
+import { _logError } from '../validation/logging';
 import type { AgColumn } from './agColumn';
 
 /**
@@ -358,7 +358,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
     public getRowIndexString(): string | null {
         if (this.rowIndex == null) {
-            _errorOnce1<_ErrorType.NoRowIndexOnRowNode>(13, {});
+            _logError<_ErrorType.NoRowIndexOnRowNode>(13, {});
             return null;
         }
 
@@ -459,7 +459,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
                 // make sure id provided doesn't start with 'row-group-' as this is reserved.
                 if (this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
-                    _errorOnce1<_ErrorType.RowIdCannotStartWithGroupPrefix>(14, {
+                    _logError<_ErrorType.RowIdCannotStartWithGroupPrefix>(14, {
                         groupPrefix: RowNode.ID_PREFIX_ROW_GROUP,
                     });
                 }
