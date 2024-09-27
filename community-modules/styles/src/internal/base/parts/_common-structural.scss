@@ -528,6 +528,10 @@
         white-space: normal;
     }
 
+    .ag-header-cell-comp-wrapper-limited-height > div {
+        overflow: hidden;
+    }
+
     .ag-right-aligned-header .ag-header-cell-label {
         flex-direction: row-reverse;
     }

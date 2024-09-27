@@ -511,6 +511,11 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private refreshSpanHeaderHeight() {
         const { eGui, column, comp, beans } = this;
+        const groupHeaderHeight = this.beans.columnModel.getGroupRowsHeight();
+        const isZeroGroupHeight = groupHeaderHeight.reduce((total, next) => (total += next), 0) === 0;
+
+        comp.addOrRemoveCssClass('ag-header-parent-hidden', isZeroGroupHeight);
+
         if (!column.isSpanHeaderHeight()) {
             eGui.style.removeProperty('top');
             eGui.style.removeProperty('height');
@@ -526,6 +531,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         const { columnModel } = beans;
 
         const headerHeight = columnModel.getColumnHeaderRowHeight();
+
         if (numberOfParents === 0) {
             // if spanning has stopped then need to reset these values.
             comp.addOrRemoveCssClass('ag-header-span-total', false);
@@ -535,7 +541,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         }
 
         comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
-        const groupHeaderHeight = this.beans.columnModel.getGroupRowsHeight();
 
         let extraHeight = 0;
         for (let i = 0; i < numberOfParents; i++) {
