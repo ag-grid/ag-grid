@@ -1,16 +1,13 @@
 import { ColumnApiModule } from '../columns/columnModule';
 import { _defineModule } from '../interfaces/iModule';
-import { OverlayApiModule } from '../rendering/overlays/overlayModule';
 import { RenderApiModule } from '../rendering/renderModule';
 import { VERSION } from '../version';
 import { expireValueCache, getCellValue, getValue } from './cellApi';
 import { destroy, getGridId, getGridOption, isDestroyed, setGridOption, updateGridOptions } from './coreApi';
-import { addEventListener, addGlobalListener, removeEventListener, removeGlobalListener } from './eventApi';
 import type {
     _CellGridApi,
     _CommunityMenuGridApi,
     _CoreGridApi,
-    _EventGridApi,
     _KeyboardNavigationGridApi,
     _RowGridApi,
     _ScrollGridApi,
@@ -110,17 +107,6 @@ export const KeyboardNavigationApiModule = _defineModule<_KeyboardNavigationGrid
     },
 });
 
-export const EventApiModule = _defineModule<_EventGridApi<any>>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/event-api',
-    apiFunctions: {
-        addEventListener,
-        addGlobalListener,
-        removeEventListener,
-        removeGlobalListener,
-    },
-});
-
 export const CellApiModule = _defineModule<_CellGridApi<any>>({
     version: VERSION,
     moduleName: '@ag-grid-community/cell-api',
@@ -151,7 +137,6 @@ export const CommunityApiModule = _defineModule({
         RowApiModule,
         ScrollApiModule,
         KeyboardNavigationApiModule,
-        EventApiModule,
         RenderApiModule,
         CellApiModule,
         CommunityMenuApiModule,

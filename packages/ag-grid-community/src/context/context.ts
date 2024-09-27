@@ -79,7 +79,7 @@ import type { IStatusBarService } from '../interfaces/iStatusBarService';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { LocaleService } from '../localeService';
 import type { AnimationFrameService } from '../misc/animationFrameService';
-import type { ApiEventService } from '../misc/apiEventService';
+import type { ApiEventService } from '../misc/apiEvents/apiEventService';
 import type { MenuService } from '../misc/menuService';
 import type { StateService } from '../misc/state/stateService';
 import { ModuleRegistry } from '../modules/moduleRegistry';
@@ -245,7 +245,7 @@ export interface CoreBeanCollection {
     columnGetStateService: ColumnGetStateService;
     pinnedRowModel?: PinnedRowModel;
     menuService?: MenuService;
-    apiEventService: ApiEventService;
+    apiEventService?: ApiEventService;
     undoRedoService?: UndoRedoService;
     rowNodeBlockLoader?: RowNodeBlockLoader;
     csvCreator?: ICsvCreator;

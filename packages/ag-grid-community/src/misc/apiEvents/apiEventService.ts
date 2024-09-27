@@ -1,10 +1,10 @@
-import type { NamedBean } from '../context/bean';
-import { BeanStub } from '../context/beanStub';
-import type { AgEventType } from '../eventTypes';
-import type { AgEventListener, AgGlobalEventListener } from '../events';
-import { ALWAYS_SYNC_GLOBAL_EVENTS } from '../events';
-import { _useAsyncEvents } from '../gridOptionsUtils';
-import { FrameworkEventListenerService } from './frameworkEventListenerService';
+import type { NamedBean } from '../../context/bean';
+import { BeanStub } from '../../context/beanStub';
+import type { AgEventType } from '../../eventTypes';
+import type { AgEventListener, AgGlobalEventListener } from '../../events';
+import { ALWAYS_SYNC_GLOBAL_EVENTS } from '../../events';
+import { _useAsyncEvents } from '../../gridOptionsUtils';
+import { FrameworkEventListenerService } from '../frameworkEventListenerService';
 
 export class ApiEventService extends BeanStub<AgEventType> implements NamedBean {
     beanName = 'apiEventService' as const;
