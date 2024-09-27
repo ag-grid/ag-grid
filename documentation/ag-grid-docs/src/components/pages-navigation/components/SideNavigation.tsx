@@ -29,7 +29,7 @@ export function SideNavigation({ headings, delayedScrollSpy }: Props) {
                                 onClick={(event) => {
                                     event.preventDefault();
                                     scrollIntoViewById(slug);
-                                    navigate({ hash: slug });
+                                    navigate({ search: window.location.search, hash: slug });
                                 }}
                             >
                                 {addNonBreakingSpaceBetweenLastWords(text)}
