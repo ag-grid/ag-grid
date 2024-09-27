@@ -1,5 +1,9 @@
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+<<<<<<< HEAD
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
+=======
+import { RowGroupingModule } from 'ag-grid-enterprise';
+>>>>>>> latest
 
 import { GridRows, TestGridsManager } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
@@ -7,7 +11,11 @@ import { getRowsSnapshot, simpleHierarchyRowSnapshot } from '../row-snapshot-tes
 
 describe('ag-grid grouping tree data with groupRows', () => {
     const gridsManager = new TestGridsManager({
+<<<<<<< HEAD
         modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
+=======
+        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule],
+>>>>>>> latest
     });
 
     beforeEach(() => {

@@ -420,8 +420,11 @@ export {
 export { LoadCompleteEvent, LoadSuccessParams } from './rowNodeCache/iRowNodeBlock';
 export { RowNodeBlock } from './rowNodeCache/rowNodeBlock';
 export { RowNodeBlockLoader } from './rowNodeCache/rowNodeBlockLoader';
+<<<<<<< HEAD
 export { IClientSideNodeManager, ClientSideNodeManagerUpdateRowDataResult } from './interfaces/iClientSideNodeManager';
 export { AbstractClientSideNodeManager } from './clientSideRowModel/clientSideNodeManager/abstractClientSideNodeManager';
+=======
+>>>>>>> latest
 export {
     IClientSideRowModel,
     ClientSideRowModelSteps,
