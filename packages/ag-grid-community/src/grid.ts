@@ -60,9 +60,10 @@ import { RowContainerHeightService } from './rendering/rowContainerHeightService
 import { RowRenderer } from './rendering/rowRenderer';
 import { StylingService } from './styling/stylingService';
 import { SyncService } from './syncService';
-import { _errorOnce, _warnOnce } from './utils/function';
+import { _errorOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
+import { _logError } from './validation/logging';
 import { ChangeDetectionService } from './valueService/changeDetectionService';
 import { ValueService } from './valueService/valueService';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
@@ -165,7 +166,8 @@ export function createGrid<TData>(
     params?: Params
 ): GridApi<TData> {
     if (!gridOptions) {
-        _errorOnce('No gridOptions provided to createGrid');
+        // No gridOptions provided, abort creating the grid
+        _logError(11, {});
         return {} as GridApi;
     }
     const api = new GridCoreCreator().create(
@@ -207,7 +209,6 @@ export class GridCoreCreator {
 
         if (!beanClasses) {
             // Detailed error message will have been printed by createBeansList
-            _errorOnce('Failed to create grid.');
             // Break typing so that the normal return type does not have to handle undefined.
             return undefined as any;
         }

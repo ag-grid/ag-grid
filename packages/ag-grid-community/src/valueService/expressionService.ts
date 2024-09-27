@@ -1,6 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { _errorOnce, _log } from '../utils/function';
+import { _logError } from '../validation/logging';
 
 export class ExpressionService extends BeanStub implements NamedBean {
     beanName = 'expressionService' as const;
@@ -12,7 +12,7 @@ export class ExpressionService extends BeanStub implements NamedBean {
             // valueGetter is an expression, so execute the expression
             return this.evaluateExpression(expression, params);
         } else {
-            _errorOnce('value should be either a string or a function', expression);
+            _logError(15, { expression });
         }
     }
 
@@ -40,14 +40,7 @@ export class ExpressionService extends BeanStub implements NamedBean {
         } catch (e) {
             // the expression failed, which can happen, as it's the client that
             // provides the expression. so print a nice message
-            // tslint:disable-next-line
-            _log('Processing of the expression failed');
-            // tslint:disable-next-line
-            _log('Expression = ', expression);
-            // tslint:disable-next-line
-            _log('Params = ', params);
-            // tslint:disable-next-line
-            _log('Exception = ', e);
+            _logError(16, { expression, params, e });
             return null;
         }
     }

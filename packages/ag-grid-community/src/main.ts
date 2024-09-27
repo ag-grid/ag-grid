@@ -289,7 +289,6 @@ export type { StandardMenuFactory } from './headerRendering/cells/column/standar
 
 // misc
 export type { ResizeObserverService } from './misc/resizeObserverService';
-export { IImmutableService } from './interfaces/iImmutableService';
 export type { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
 export type { MenuService } from './misc/menuService';
@@ -977,6 +976,8 @@ export { ZipContainer } from './csvExport/zipContainer/zipContainer';
 export { Module, ModuleValidationResult, _defineModule } from './interfaces/iModule';
 export { ModuleNames } from './modules/moduleNames';
 export { ModuleRegistry } from './modules/moduleRegistry';
+
+export { ValidationModule } from './validation/validationModule';
 
 export { ColumnMoveModule } from './columnMove/columnMoveModule';
 export { DragModule, HorizontalResizeModule, DragAndDropModule } from './dragAndDrop/dragModule';

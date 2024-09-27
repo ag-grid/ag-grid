@@ -26,8 +26,9 @@ import type {
 import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
 import { LocalEventService } from '../localEventService';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
-import { _debounce, _errorOnce, _warnOnce } from '../utils/function';
+import { _debounce, _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
+import { _logError } from '../validation/logging';
 import type { AgColumn } from './agColumn';
 
 /**
@@ -356,9 +357,8 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
     public getRowIndexString(): string | null {
         if (this.rowIndex == null) {
-            _errorOnce(
-                'Could not find rowIndex, this means tasks are being executed on a rowNode that has been removed from the grid.'
-            );
+            // Row has been removed so no index
+            _logError(13, {});
             return null;
         }
 
@@ -459,9 +459,9 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
                 // make sure id provided doesn't start with 'row-group-' as this is reserved.
                 if (this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
-                    _errorOnce(
-                        `Row IDs cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for AG Grid's row grouping feature.`
-                    );
+                    _logError(14, {
+                        groupPrefix: RowNode.ID_PREFIX_ROW_GROUP,
+                    });
                 }
             } else {
                 // this can happen if user has set blank into the rowNode after the row previously
