@@ -9,7 +9,7 @@ import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
 import { VERSION } from '../version';
 import { validateApiFunction } from './apiFunctionValidator';
-import type { ErrorId, ErrorParams } from './errorMessages/errorText';
+import type { ErrorId, GetErrorParams } from './errorMessages/errorText';
 import { getError } from './errorMessages/errorText';
 import { provideValidationServiceLogger } from './logging';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
@@ -216,8 +216,8 @@ export class ValidationService extends BeanStub implements NamedBean {
         }
     }
 
-    public getConsoleMessage<TId extends ErrorId>(id: TId, ...args: ErrorParams<TId>): any[] {
-        return getError(id, ...args);
+    public getConsoleMessage<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>): any[] {
+        return getError(id, args);
     }
 }
 

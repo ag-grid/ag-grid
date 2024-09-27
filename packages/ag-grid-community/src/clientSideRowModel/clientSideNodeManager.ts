@@ -11,7 +11,7 @@ import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _warnOnce } from '../utils/function';
 import { _missingOrEmpty } from '../utils/generic';
 import { _cloneObject } from '../utils/object';
-import type { _ErrorType } from '../validation/errorMessages/errorText';
+import type { _ErrorType } from '../validation/logging';
 import { _errorOnce1, _warnOnce1 } from '../validation/logging';
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
@@ -394,14 +394,14 @@ export class ClientSideNodeManager {
             const id = getRowIdFunc({ data, level: 0 });
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                _errorOnce1<_ErrorType.NotFoundRowId>(4, id);
+                _errorOnce1<_ErrorType.NotFoundRowId>(4, { id });
                 return null;
             }
         } else {
             // find rowNode using object references
             rowNode = this.rootNode.allLeafChildren?.find((node) => node.data === data);
             if (!rowNode) {
-                _errorOnce1<_ErrorType.NotFoundDataItem>(5, data);
+                _errorOnce1<_ErrorType.NotFoundDataItem>(5, { data });
                 return null;
             }
         }
@@ -426,7 +426,7 @@ export class ClientSideNodeManager {
         node.setDataAndId(dataItem, this.nextId.toString());
 
         if (this.allNodesMap[node.id!]) {
-            _warnOnce1<_ErrorType.DuplicateRowNode>(2, node.id);
+            _warnOnce1<_ErrorType.DuplicateRowNode>(2, { nodeId: node.id });
         }
         this.allNodesMap[node.id!] = node;
 
