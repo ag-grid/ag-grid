@@ -1,9 +1,10 @@
+import { AG_GRID_LOCALE_DE } from '@ag-grid-community/locale';
+
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { CsvExportModule } from 'ag-grid-community';
-import { AG_GRID_LOCALE_DE } from 'ag-grid-community';
 import { GridChartsModule } from 'ag-grid-enterprise';
 import { ClipboardModule } from 'ag-grid-enterprise';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
