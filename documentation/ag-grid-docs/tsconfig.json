@@ -33,37 +33,12 @@
       "@ag-website-shared/*": ["../../external/ag-website-shared/src/*"],
 
       // Get auto completion in _examples
-      "@ag-grid-community/core": ["../../community-modules/core/src/main.ts"],
-      "@ag-grid-community/client-side-row-model": ["../../community-modules/client-side-row-model/src/main.ts"],
-      "@ag-grid-community/csv-export": ["../../community-modules/csv-export/src/main.ts"],
-      "@ag-grid-community/infinite-row-model": ["../../community-modules/infinite-row-model/src/main.ts"],
-      "@ag-grid-community/theming": ["../../community-modules/theming/src/main.ts"],
+      "ag-grid-community": ["../../packages/ag-grid-community/src/main.ts"],
+      "ag-grid-enterprise": ["../../packages/ag-grid-enterprise/src/main.ts"],
 
-      "@ag-grid-enterprise/core": ["../../enterprise-modules/core/src/main.ts"],
-      "@ag-grid-enterprise/charts": ["../../enterprise-modules/charts/src/main.ts"],
-      "@ag-grid-enterprise/charts-enterprise": ["../../enterprise-modules/charts-enterprise/src/main.ts"],
-      "@ag-grid-enterprise/sparklines": ["../../enterprise-modules/sparklines/src/main.ts"],
-      "@ag-grid-enterprise/clipboard": ["../../enterprise-modules/clipboard/src/main.ts"],
-      "@ag-grid-enterprise/column-tool-panel": ["../../enterprise-modules/column-tool-panel/src/main.ts"],
-      "@ag-grid-enterprise/excel-export": ["../../enterprise-modules/excel-export/src/main.ts"],
-      "@ag-grid-enterprise/filter-tool-panel": ["../../enterprise-modules/filter-tool-panel/src/main.ts"],
-      "@ag-grid-enterprise/master-detail": ["../../enterprise-modules/master-detail/src/main.ts"],
-      "@ag-grid-enterprise/menu": ["../../enterprise-modules/menu/src/main.ts"],
-      "@ag-grid-enterprise/range-selection": ["../../enterprise-modules/range-selection/src/main.ts"],
-      "@ag-grid-enterprise/rich-select": ["../../enterprise-modules/rich-select/src/main.ts"],
-      "@ag-grid-enterprise/row-grouping": ["../../enterprise-modules/row-grouping/src/main.ts"],
-      "@ag-grid-enterprise/server-side-row-model": ["../../enterprise-modules/server-side-row-model/src/main.ts"],
-      "@ag-grid-enterprise/set-filter": ["../../enterprise-modules/set-filter/src/main.ts"],
-      "@ag-grid-enterprise/multi-filter": ["../../enterprise-modules/multi-filter/src/main.ts"],
-      "@ag-grid-enterprise/advanced-filter": ["../../enterprise-modules/advanced-filter/src/main.ts"],
-      "@ag-grid-enterprise/side-bar": ["../../enterprise-modules/side-bar/src/main.ts"],
-      "@ag-grid-enterprise/status-bar": ["../../enterprise-modules/status-bar/src/main.ts"],
-      "@ag-grid-enterprise/viewport-row-model": ["../../enterprise-modules/viewport-row-model/src/main.ts"],
-
-      "@ag-grid-community/react": ["../../community-modules/react/src/index.ts"],
-      "@ag-grid-community/angular": ["../../community-modules/angular/projects/ag-grid-angular/src/public-api.ts"],
-      "@ag-grid-community/vue": ["../../community-modules/vue/src/main.ts"],
-      "@ag-grid-community/vue3": ["../../community-modules/vue3/src/main.ts"]
+      "ag-grid-react": ["../../packages/ag-grid-react/src/index.ts"],
+      "ag-grid-angular": ["../../packages/ag-grid-angular/projects/ag-grid-angular/src/public-api.ts"],
+      "ag-grid-vue3": ["../../packages/ag-grid-vue3/src/main.ts"]
     },
     "types": ["vitest/globals"]
   }

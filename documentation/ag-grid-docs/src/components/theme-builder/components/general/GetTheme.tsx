@@ -3,7 +3,6 @@ import { Checkmark, Copy } from '@carbon/icons-react';
 import styled from '@emotion/styled';
 import { useMemo, useState } from 'react';
 
-import { camelCase } from '../../../../../../../community-modules/theming/src/theme-utils';
 import { type RenderedThemeInfo, useRenderedThemeInfo } from '../../model/rendered-theme';
 import { UIPopupButton } from './UIPopupButton';
 
@@ -83,10 +82,12 @@ const renderThemeCodeSample = ({ overriddenParams, usedParts }: RenderedThemeInf
         imports.push(partImport);
     }
     code += `\t.withParams(${paramsJS.replaceAll('\n', '\n    ')});\n`;
-    code = `import { ${imports.join(', ')} } from '@ag-grid-community/theming';\n\n${code}`;
+    code = `import { ${imports.join(', ')} } from 'ag-grid-community';\n\n${code}`;
 
     return code;
 };
+
+const camelCase = (str: string) => str.replace(/[\W_]+([a-z])/g, (_, letter) => letter.toUpperCase());
 
 const CodeWrapper = styled('div')`
     user-select: text;

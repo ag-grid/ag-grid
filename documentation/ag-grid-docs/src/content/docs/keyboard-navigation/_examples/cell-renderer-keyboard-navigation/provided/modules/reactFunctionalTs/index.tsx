@@ -1,18 +1,19 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridReadyEvent, SuppressKeyboardEventParams } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ColDef, GridReadyEvent, SuppressKeyboardEventParams } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
+
 import CustomElements from './customElements';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 const GRID_CELL_CLASSNAME = 'ag-cell';
 

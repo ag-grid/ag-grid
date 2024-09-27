@@ -1,76 +1,57 @@
-/*
- * Used for umd bundles without styles, as well as cjs/esm packaging
- */
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CommunityFeaturesModule, ModuleRegistry } from '@ag-grid-community/core';
-import { CsvExportModule } from '@ag-grid-community/csv-export';
-import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
-import { AdvancedFilterModule } from '@ag-grid-enterprise/advanced-filter';
-import { GridChartsModule } from '@ag-grid-enterprise/charts';
-import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
-import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { MultiFilterModule } from '@ag-grid-enterprise/multi-filter';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
-import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
-import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
-import { SideBarModule } from '@ag-grid-enterprise/side-bar';
-import { SparklinesModule } from '@ag-grid-enterprise/sparklines';
-import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
-import { ViewportRowModelModule } from '@ag-grid-enterprise/viewport-row-model';
+export { GridLicenseManager as LicenseManager } from './license/gridLicenseManager';
+export { ILicenseManager } from './license/shared/licenseManager';
 
-ModuleRegistry.__registerModules(
-    [
-        CommunityFeaturesModule,
-        ClientSideRowModelModule,
-        InfiniteRowModelModule,
-        CsvExportModule,
-        AdvancedFilterModule,
-        GridChartsModule,
-        ClipboardModule,
-        ColumnsToolPanelModule,
-        ExcelExportModule,
-        FiltersToolPanelModule,
-        MasterDetailModule,
-        MenuModule,
-        MultiFilterModule,
-        RangeSelectionModule,
-        RichSelectModule,
-        RowGroupingModule,
-        ServerSideRowModelModule,
-        SetFilterModule,
-        SideBarModule,
-        SparklinesModule,
-        StatusBarModule,
-        ViewportRowModelModule,
-    ],
-    false,
-    undefined
-);
+// widgets shared across enterprise modules
+export { AgGroupComponent, AgGroupComponentSelector, AgGroupComponentParams } from './widgets/agGroupComponent';
+export { AgRichSelect } from './widgets/agRichSelect';
+export { PillDragComp } from './widgets/pillDragComp';
+export { PillDropZonePanel, PillDropZonePanelParams } from './widgets/pillDropZonePanel';
+export { AgDialog } from './widgets/agDialog';
+export { AgPanel } from './widgets/agPanel';
+export { VirtualList } from './widgets/virtualList';
+export { VirtualListModel } from './widgets/iVirtualList';
 
-export * from '@ag-grid-community/core';
-export * from '@ag-grid-community/theming';
-export * from '@ag-grid-enterprise/core';
-export * from '@ag-grid-enterprise/advanced-filter';
-export * from '@ag-grid-enterprise/charts';
-export * from '@ag-grid-enterprise/clipboard';
-export * from '@ag-grid-enterprise/column-tool-panel';
-export * from '@ag-grid-enterprise/excel-export';
-export * from '@ag-grid-enterprise/filter-tool-panel';
-export * from '@ag-grid-enterprise/master-detail';
-export * from '@ag-grid-enterprise/menu';
-export * from '@ag-grid-enterprise/multi-filter';
-export * from '@ag-grid-enterprise/range-selection';
-export * from '@ag-grid-enterprise/rich-select';
-export * from '@ag-grid-enterprise/row-grouping';
-export * from '@ag-grid-enterprise/server-side-row-model';
-export * from '@ag-grid-enterprise/set-filter';
-export * from '@ag-grid-enterprise/side-bar';
-export * from '@ag-grid-enterprise/sparklines';
-export * from '@ag-grid-enterprise/status-bar';
-export * from '@ag-grid-enterprise/viewport-row-model';
+export { AgMenuItemComponent, MenuItemActivatedEvent, CloseMenuEvent } from './widgets/agMenuItemComponent';
+export { AgMenuList } from './widgets/agMenuList';
+export { AgMenuPanel } from './widgets/agMenuPanel';
+export { AgMenuItemRenderer } from './widgets/agMenuItemRenderer';
+
+export { VirtualListDragItem, VirtualListDragParams } from './features/iVirtualListDragFeature';
+export { VirtualListDragFeature } from './features/virtualListDragFeature';
+
+export { TabbedItem } from './widgets/iTabbedLayout';
+export { TabbedLayout } from './widgets/tabbedLayout';
+
+export { GroupCellRenderer } from './rendering/groupCellRenderer';
+export { GroupCellRendererCtrl } from './rendering/groupCellRendererCtrl';
+
+export { getMultipleSheetsAsExcel, exportMultipleSheetsAsExcel } from './excelExport/excelCreator';
+
+export { MultiFilter } from './multiFilter/multiFilter';
+
+export { SetFilter } from './setFilter/setFilter';
+
+export { EnterpriseCoreModule } from './agGridEnterpriseModule';
+export { AdvancedFilterModule } from './advancedFilter/advancedFilterModule';
+export { ColumnsToolPanelModule } from './columnToolPanel/columnsToolPanelModule';
+export { MenuModule } from './menu/menuModule';
+export { RichSelectModule } from './richSelect/richSelectModule';
+export { SetFilterModule } from './setFilter/setFilterModule';
+export { StatusBarModule } from './statusBar/statusBarModule';
+export { ExcelExportModule } from './excelExport/excelExportModule';
+export { MultiFilterModule } from './multiFilter/multiFilterModule';
+export { RowGroupingModule } from './rowGrouping/rowGroupingModule';
+export { SideBarModule } from './sideBar/sideBarModule';
+export { ViewportRowModelModule } from './viewportRowModel/viewportRowModelModule';
+export { ClipboardModule } from './clipboard/clipboardModule';
+export { FiltersToolPanelModule } from './filterToolPanel/filtersToolPanelModule';
+export { MasterDetailModule } from './masterDetail/masterDetailModule';
+export { RangeSelectionModule } from './rangeSelection/rangeSelectionModule';
+export { ServerSideRowModelModule } from './serverSideRowModel/serverSideRowModelModule';
+export { SparklinesModule } from './sparkline/sparklinesModule';
+export { TreeDataModule } from './treeData/treeDataModule';
+
+// tbd - having these here means all charts will be enterprise
+// once we have independent module imports this issue will go away
+export { GridChartsModule } from './charts/gridChartsModule';
+export { GridChartsModule as GridChartsEnterpriseModule } from './charts-enterprise/gridChartsEnterpriseModule';

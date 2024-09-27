@@ -1,13 +1,16 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridOptions } from '@ag-grid-community/core';
-import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import type { MockInstance } from 'vitest';
+
+import type { GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { MasterDetailModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager } from '../test-utils';
 
 describe('ag-grid master detail', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, MasterDetailModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [CommunityFeaturesModule, ClientSideRowModelModule, MasterDetailModule],
+    });
     let consoleErrorSpy: MockInstance | undefined;
 
     beforeEach(() => {

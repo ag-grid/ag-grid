@@ -1,4 +1,4 @@
-import type { Theme, themeQuartz } from '@ag-grid-community/theming';
+import type { Theme, themeQuartz } from 'ag-grid-community';
 
 type ThemeParams<T> = T extends Theme<infer U> ? keyof U : never;
 type AllThemeParams = ThemeParams<typeof themeQuartz>;

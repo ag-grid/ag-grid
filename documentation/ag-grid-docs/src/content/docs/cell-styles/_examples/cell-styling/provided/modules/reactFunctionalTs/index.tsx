@@ -1,6 +1,11 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import React, { StrictMode, useCallback, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
 import {
     CellClassParams,
     CellClassRules,
@@ -8,16 +13,12 @@ import {
     GridReadyEvent,
     ModuleRegistry,
     ValueParserParams,
-} from '@ag-grid-community/core';
-import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import React, { StrictMode, useCallback, useMemo, useState } from 'react';
-import { createRoot } from 'react-dom/client';
+} from 'ag-grid-community';
+import { AgGridReact, CustomCellRendererProps } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 const ragCellClassRules: CellClassRules = {
     'rag-green-outer': (params) => params.value === 2008,

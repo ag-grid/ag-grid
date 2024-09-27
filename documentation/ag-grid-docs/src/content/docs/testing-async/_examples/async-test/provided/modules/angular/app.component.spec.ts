@@ -1,8 +1,9 @@
-import { AgGridAngular } from '@ag-grid-community/angular';
 import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+
+import { AgGridAngular } from 'ag-grid-angular';
 
 import { AppComponent } from './app.component';
 

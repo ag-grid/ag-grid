@@ -1,8 +1,7 @@
 import type { ImportType, InternalFramework } from '@ag-grid-types';
 import { USE_PACKAGES } from '@constants';
-import { setImportType, setInternalFramework } from '@stores/frameworkStore';
+import { setInternalFramework } from '@stores/frameworkStore';
 import { isReactInternalFramework } from '@utils/framework';
-import { useImportType } from '@utils/hooks/useImportType';
 import { useCallback } from 'react';
 
 import styles from './CodeOptions.module.scss';
@@ -28,10 +27,10 @@ const SELECTOR_CONFIG: Record<SelectorType, SelectorConfig> = {
         },
     },
 };
-const IMPORT_TYPE_CONFIG: Record<ImportType, string> = {
-    modules: 'Modules',
-    packages: 'Packages',
-};
+// const IMPORT_TYPE_CONFIG: Record<ImportType, string> = {
+//     modules: 'Modules',
+//     packages: 'Packages',
+// };
 
 if (USE_PACKAGES) {
     SELECTOR_CONFIG.typescript.labelValues['JavaScript'] = 'vanilla';
@@ -88,60 +87,59 @@ function CodeOptionSelector({
     );
 }
 
-function ImportTypeSelector({
-    id,
-    tracking,
-    supportedImportTypes,
-}: {
-    id: string;
-    tracking?: (value: string) => void;
-    supportedImportTypes: ImportType[];
-}) {
-    const formId = `${id}-import-selector`;
-    const importType = useImportType();
+// function ImportTypeSelector({
+//     id,
+//     tracking,
+//     supportedImportTypes,
+// }: {
+//     id: string;
+//     tracking?: (value: string) => void;
+//     supportedImportTypes: ImportType[];
+// }) {
+//     const formId = `${id}-import-selector`;
+//     const importType = useImportType();
 
-    const onChange = useCallback(
-        (event) => {
-            const value = event.target.value;
-            if (value === importType) {
-                return;
-            }
-            setImportType(value);
-        },
-        [importType]
-    );
+//     const onChange = useCallback(
+//         (event) => {
+//             const value = event.target.value;
+//             if (value === importType) {
+//                 return;
+//             }
+//             setImportType(value);
+//         },
+//         [importType]
+//     );
 
-    const importTypes: ImportType[] = supportedImportTypes?.length > 0 ? supportedImportTypes : ['modules', 'packages'];
-    return (
-        <div>
-            <label className="text-sm" htmlFor={formId}>
-                Import type:
-            </label>{' '}
-            <select
-                className={styles.simpleSelect}
-                id={formId}
-                value={importType}
-                onChange={(event) => {
-                    onChange(event);
-                    tracking && tracking(event.target.value);
-                }}
-                onBlur={onChange}
-            >
-                {importTypes.map((i) => (
-                    <option key={i} value={i}>
-                        {IMPORT_TYPE_CONFIG[i]}
-                    </option>
-                ))}
-            </select>
-        </div>
-    );
-}
+//     const importTypes: ImportType[] = supportedImportTypes?.length > 0 ? supportedImportTypes : ['modules', 'packages'];
+//     return (
+//         <div>
+//             <label className="text-sm" htmlFor={formId}>
+//                 Import type:
+//             </label>{' '}
+//             <select
+//                 className={styles.simpleSelect}
+//                 id={formId}
+//                 value={importType}
+//                 onChange={(event) => {
+//                     onChange(event);
+//                     tracking && tracking(event.target.value);
+//                 }}
+//                 onBlur={onChange}
+//             >
+//                 {importTypes.map((i) => (
+//                     <option key={i} value={i}>
+//                         {IMPORT_TYPE_CONFIG[i]}
+//                     </option>
+//                 ))}
+//             </select>
+//         </div>
+//     );
+// }
 
 export const CodeOptions = ({
     id,
     internalFramework,
     supportedFrameworks,
-    supportedImportTypes,
 }: {
     id: string;
     internalFramework: InternalFramework;
@@ -162,9 +160,9 @@ export const CodeOptions = ({
             )}
             {showReactSelector && <CodeOptionSelector id={id} type="react" internalFramework={internalFramework} />}
 
-            {internalFramework !== 'vanilla' && (
+            {/* {internalFramework === 'vanilla' && (
                 <ImportTypeSelector id={id} supportedImportTypes={supportedImportTypes} />
-            )}
+            )} */}
         </div>
     );
 };

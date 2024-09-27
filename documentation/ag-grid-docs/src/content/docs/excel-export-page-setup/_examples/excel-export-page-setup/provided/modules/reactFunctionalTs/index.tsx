@@ -1,20 +1,21 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridReadyEvent } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { MenuModule } from '@ag-grid-enterprise/menu';
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ExcelExportModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
 
 import { IOlympicData } from './interfaces';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule, MenuModule, ExcelExportModule]);
 
 function getNumber(id: string) {
     var el = document.querySelector(id) as any;

@@ -1,8 +1,9 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions, GridReadyEvent, Module } from 'ag-grid-community';
 import { Component, ViewChild } from '@angular/core';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
+
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions, GridReadyEvent, Module } from 'ag-grid-community';
 
 import { AgGridAngular } from '../ag-grid-angular.component';
 

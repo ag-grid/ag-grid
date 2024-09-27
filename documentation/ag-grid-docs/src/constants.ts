@@ -1,4 +1,4 @@
-import corePackageJson from '../../../community-modules/core/package.json';
+import corePackageJson from '../../../packages/ag-grid-community/package.json';
 import type { Framework, ImportType, InternalFramework } from './types/ag-grid';
 
 const isTruthy = (val: string | boolean) => ['1', 'true', true].includes(val);
@@ -53,7 +53,7 @@ export const PUBLISHED_URLS = {
 
 // whether integrated charts includes ag-charts-enterprise or just ag-charts-community
 // also need to update plugins/ag-grid-generate-example-files/src/executors/generate/generator/constants.ts if this value is changed
-export const integratedChartsUsesChartsEnterprise = true;
+export const integratedChartsUsesChartsEnterprise = false;
 export const PUBLISHED_UMD_URLS = {
     'ag-grid-community': `${NPM_CDN}/ag-grid-community@${agGridVersion}/dist/ag-grid-community.js`,
     'ag-grid-enterprise': `${NPM_CDN}/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise@${agGridVersion}/dist/ag-grid-${integratedChartsUsesChartsEnterprise ? 'charts-' : ''}enterprise.js`,

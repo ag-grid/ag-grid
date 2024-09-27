@@ -1,5 +1,6 @@
-import { CustomCellRendererProps } from '@ag-grid-community/react';
 import React, { useCallback } from 'react';
+
+import { CustomCellRendererProps } from 'ag-grid-react';
 
 export default (props: CustomCellRendererProps<IOlympicData>) => {
     const onClick = useCallback(() => {

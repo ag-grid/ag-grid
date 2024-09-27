@@ -5,7 +5,10 @@
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "nx:noop"
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
     },
     "build": {
       "executor": "nx:noop",
@@ -17,17 +20,9 @@
         "production": {}
       }
     },
-    "build:copy-source": {
-      "dependsOn": ["@ag-grid-community/react:build"],
-      "cache": true,
-      "command": "npx gulp copy-from-module-source",
-      "options": {
-        "cwd": "packages/ag-grid-react"
-      }
-    },
     "build:types": {
       "executor": "@nx/js:tsc",
-      "dependsOn": ["@ag-grid-community/core:build:types", "build:copy-source"],
+      "dependsOn": ["ag-grid-community:build"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
@@ -47,20 +42,17 @@
         "compiler": "tsc"
       },
       "configurations": {
-        "watch": {
-          "tsConfig": "packages/ag-grid-react/tsconfig.types.json"
-        },
+        "watch": {},
         "production": {}
       }
     },
     "build:package": {
       "executor": "@nx/esbuild:esbuild",
-      "dependsOn": ["ag-grid-community:build:types", "build:copy-source"],
+      "dependsOn": ["ag-grid-community:build"],
       "inputs": [
         "{projectRoot}/package.json",
         "{projectRoot}/src/**/*",
         "{projectRoot}/tsconfig.*.json",
-        "{projectRoot}/gulpfile.js",
         "tsDeclarations",
         "sharedGlobals",
         "defaultExcludes"
@@ -78,6 +70,7 @@
         "sourcemap": true
       },
       "configurations": {
+        "watch": {},
         "production": {
           "sourcemap": false
         },
@@ -90,7 +83,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "packages/ag-grid-react/dist/umd",
-        "outputFileName": "@ag-grid-community/react",
+        "outputFileName": "ag-grid-react",
         "main": "packages/ag-grid-react/dist/package/index.esm.mjs",
         "tsConfig": "packages/ag-grid-react/tsconfig.lib.json",
         "esbuildConfig": "esbuild.config.cjs",
@@ -154,5 +147,5 @@
       }
     }
   },
-  "tags": ["package:community", "package:framework", "package", "community", "framework"]
+  "tags": ["module:community", "module:framework", "module", "community", "framework"]
 }

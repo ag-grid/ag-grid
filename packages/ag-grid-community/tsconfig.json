@@ -7,7 +7,7 @@
       "path": "./tsconfig.lib.json"
     },
     {
-      "path": "./tsconfig.umd.json"
+      "path": "./tsconfig.spec.json"
     }
   ]
 }

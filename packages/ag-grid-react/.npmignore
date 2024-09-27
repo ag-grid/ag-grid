@@ -15,7 +15,6 @@ tsconfig.json
 tsconfig.lib.json
 tsconfig.spec.json
 tsconfig.types.json
-gulpfile.js
 !dist
 !dist/types/src
 *.map

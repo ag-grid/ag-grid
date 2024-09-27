@@ -79,8 +79,11 @@ async function getDocsExampleNameParts({ pages }: { pages: DocsPage[] }): Promis
                     example.supportedFrameworks.has(example.internalFramework);
 
                 return IMPORT_TYPES.map((importType) => {
-                    const isVanillaModules = importType === 'modules' && example.internalFramework === 'vanilla';
-                    const isSupported = frameworkSupported && !isVanillaModules;
+                    // vanilla modules are not supported
+                    // vanilla packages are supported
+                    const isVanillaPackages = importType === 'packages' && example.internalFramework === 'vanilla';
+                    const modulesOnly = example.internalFramework !== 'vanilla' && importType === 'modules';
+                    const isSupported = frameworkSupported && (isVanillaPackages || modulesOnly);
                     if (!isSupported) {
                         return undefined;
                     }

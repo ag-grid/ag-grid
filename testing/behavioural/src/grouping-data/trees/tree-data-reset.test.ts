@@ -1,7 +1,8 @@
-import { ClientSideRowModelModule, TreeDataModule } from '@ag-grid-community/client-side-row-model';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { setTimeout as asyncSetTimeout } from 'timers/promises';
 import type { MockInstance } from 'vitest';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, cachedJSONObjects } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
@@ -14,7 +15,7 @@ const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree data', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
+        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
     });
 
     let consoleWarnSpy: MockInstance;

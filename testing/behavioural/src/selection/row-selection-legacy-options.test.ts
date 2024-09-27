@@ -1,10 +1,8 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions } from '@ag-grid-community/core';
-import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
-import { ViewportRowModelModule } from '@ag-grid-enterprise/viewport-row-model';
 import type { MockInstance } from 'vitest';
+
+import type { GridApi, GridOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule, InfiniteRowModelModule } from 'ag-grid-community';
+import { RowGroupingModule, ServerSideRowModelModule, ViewportRowModelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
 import { GROUP_ROW_DATA } from './data';
@@ -46,6 +44,7 @@ describe('Row Selection Legacy Grid Options', () => {
 
     const gridMgr = new TestGridsManager({
         modules: [
+            CommunityFeaturesModule,
             ClientSideRowModelModule,
             ServerSideRowModelModule,
             ViewportRowModelModule,

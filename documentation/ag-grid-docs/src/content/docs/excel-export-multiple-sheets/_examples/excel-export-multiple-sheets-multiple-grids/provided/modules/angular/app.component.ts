@@ -1,6 +1,11 @@
-import { ICellRendererAngularComp } from '@ag-grid-community/angular';
-import { AgGridAngular } from '@ag-grid-community/angular';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Component, ViewChild } from '@angular/core';
+
+import { ICellRendererAngularComp } from 'ag-grid-angular';
+import { AgGridAngular } from 'ag-grid-angular';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
 import {
     ColDef,
     GetRowIdParams,
@@ -9,17 +14,13 @@ import {
     ICellRendererParams,
     ModuleRegistry,
     SelectionOptions,
-} from '@ag-grid-community/core';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component, ViewChild } from '@angular/core';
+} from 'ag-grid-community';
+import { ExcelExportModule, exportMultipleSheetsAsExcel } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ExcelExportModule, MenuModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule, ExcelExportModule, MenuModule]);
 
 @Component({
     standalone: true,

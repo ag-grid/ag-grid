@@ -1,6 +1,7 @@
-import { IAfterGuiAttachedParams, IDoesFilterPassParams } from '@ag-grid-community/core';
-import { CustomFilterProps, useGridFilter } from '@ag-grid-community/react';
 import React, { useCallback, useRef } from 'react';
+
+import { IAfterGuiAttachedParams, IDoesFilterPassParams } from 'ag-grid-community';
+import { CustomFilterProps, useGridFilter } from 'ag-grid-react';
 
 export default ({ model, onModelChange }: CustomFilterProps) => {
     const refInput = useRef<HTMLInputElement>(null);

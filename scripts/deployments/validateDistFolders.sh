@@ -101,11 +101,17 @@ validatePackages()
       current_root_dir="$packagesDir/$directory/package"
       validateCommonDist "$current_root_dir"
 
-      current_dist=$current_root_dir/dist
-      count=`find $current_dist -name *.js -maxdepth 1 | wc -l | tr -d ' '`
-      if [[ $count -ne 4 ]]
+      expected_umd=4
+      if [[ $directory = "ag-grid-enterprise" ]]
       then
-        echo "ERROR: $current_dist should have 4 umd files"
+        expected_umd=8
+      fi
+
+      current_dist=$current_root_dir/dist
+      count=`find $current_dist -maxdepth 1 -name *.js | wc -l | tr -d ' '`
+      if [[ $count -ne $expected_umd ]]
+      then
+        echo "ERROR: $current_dist should have $expected_umd umd files"
         exit 1
       fi
     elif [[ ${frameworks[@]} =~ $directory ]]
@@ -139,16 +145,13 @@ validateLocale()
 }
 
 # check all expected modules & packages are there
-validateExpectedDirs "dist/artifacts/contents/community-modules" 10
-validateExpectedDirs "dist/artifacts/contents/enterprise-modules" 21
-validateExpectedDirs "dist/artifacts/contents/packages" 7
+validateExpectedDirs "dist/artifacts/contents/community-modules" 3
+validateExpectedDirs "dist/artifacts/contents/packages" 6
 
-validateExpectedDirs "dist/artifacts/community-modules" 10
-validateExpectedDirs "dist/artifacts/enterprise-modules" 21
-validateExpectedDirs "dist/artifacts/packages" 7
+validateExpectedDirs "dist/artifacts/community-modules" 3
+validateExpectedDirs "dist/artifacts/packages" 6
 
 validateModules "dist/artifacts/contents/community-modules"
-validateModules "dist/artifacts/contents/enterprise-modules"
 validatePackages "dist/artifacts/contents/packages"
 
 validateLocale "dist/artifacts/contents/community-modules/locale/package"
