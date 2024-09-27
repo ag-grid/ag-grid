@@ -211,12 +211,6 @@
       "DataTypeDefinition"
     ]
   },
-  "advancedFilterModel": {
-    "typeName": "AdvancedFilterModel | null",
-    "typesToInclude": [
-      "AdvancedFilterModel"
-    ]
-  },
   "advancedFilterParent": {
     "typeName": "HTMLElement | null",
     "typesToInclude": []
@@ -465,14 +459,6 @@
     "typeName": "number",
     "typesToInclude": []
   },
-  "cellFlashDelay": {
-    "typeName": "number",
-    "typesToInclude": []
-  },
-  "cellFadeDelay": {
-    "typeName": "number",
-    "typesToInclude": []
-  },
   "cellFlashDuration": {
     "typeName": "number",
     "typesToInclude": []
@@ -648,7 +634,7 @@
     ]
   },
   "tabToNextHeader": {
-    "typeName": "(params: TabToNextHeaderParams<TData>) => HeaderPosition | boolean | null",
+    "typeName": "(params: TabToNextHeaderParams<TData>) => HeaderPosition | boolean",
     "typesToInclude": [
       "TabToNextHeaderParams",
       "HeaderPosition"
@@ -662,7 +648,7 @@
     ]
   },
   "tabToNextCell": {
-    "typeName": "(params: TabToNextCellParams<TData>) => CellPosition | boolean | null",
+    "typeName": "(params: TabToNextCellParams<TData>) => CellPosition | boolean",
     "typesToInclude": [
       "TabToNextCellParams",
       "CellPosition"
@@ -800,12 +786,6 @@
       "InitialGroupOrderComparatorParams"
     ]
   },
-  "groupIncludeFooter": {
-    "typeName": "boolean | UseGroupFooter<TData>",
-    "typesToInclude": [
-      "UseGroupFooter"
-    ]
-  },
   "loadingCellRendererSelector": {
     "typeName": "LoadingCellRendererSelectorFunc<TData>",
     "typesToInclude": [
@@ -878,10 +858,6 @@
     "typesToInclude": []
   },
   "enableCellExpressions": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "groupIncludeTotalFooter": {
     "typeName": "boolean",
     "typesToInclude": []
   },
@@ -969,19 +945,11 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "suppressAsyncEvents": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "allowContextMenuWithControlKey": {
     "typeName": "boolean",
     "typesToInclude": []
   },
   "suppressContextMenu": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "enableCellChangeFlash": {
     "typeName": "boolean",
     "typesToInclude": []
   },
@@ -1285,14 +1253,6 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "serverSideSortOnServer": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "serverSideFilterOnServer": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "suppressAggFilteredOnly": {
     "typeName": "boolean",
     "typesToInclude": []
@@ -1353,10 +1313,6 @@
     "typeName": "boolean",
     "typesToInclude": []
   },
-  "suppressServerSideInfiniteScroll": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
   "rowGroupPanelSuppressSort": {
     "typeName": "boolean",
     "typesToInclude": []
@@ -1374,10 +1330,6 @@
     "typesToInclude": []
   },
   "treeData": {
-    "typeName": "boolean",
-    "typesToInclude": []
-  },
-  "suppressGroupMaintainValueType": {
     "typeName": "boolean",
     "typesToInclude": []
   },

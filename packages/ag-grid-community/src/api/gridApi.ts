@@ -222,14 +222,8 @@ export interface _RowGridApi<TData> {
      */
     forEachNode(callback: (rowNode: IRowNode<TData>, index: number) => void, includeFooterNodes?: boolean): void;
 
-    /** @deprecated v31.1 `getFirstDisplayedRow` is deprecated. Please use `getFirstDisplayedRowIndex` instead. */
-    getFirstDisplayedRow(): number;
-
     /** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */
     getFirstDisplayedRowIndex(): number;
-
-    /** @deprecated v31.1 `getLastDisplayedRow` is deprecated. Please use `getLastDisplayedRowIndex` instead. */
-    getLastDisplayedRow(): number;
 
     /** Get the index of the last displayed row due to scrolling (includes invisible rendered rows in the buffer). */
     getLastDisplayedRowIndex(): number;
@@ -239,16 +233,6 @@ export interface _RowGridApi<TData> {
 
     /** Returns the total number of displayed rows. */
     getDisplayedRowCount(): number;
-
-    /**
-     * Returns the row model inside the table.
-     * From here you can see the original rows, rows after filter has been applied,
-     * rows after aggregation has been applied, and the final set of 'to be displayed' rows.
-     *
-     * @deprecated As of v31.1, getModel() is deprecated and will not be available in future versions.
-     * Please use the appropriate grid API methods instead
-     */
-    getModel(): IRowModel;
 }
 
 export interface _ScrollGridApi<TData> {
@@ -356,11 +340,6 @@ export interface _CellGridApi<TData> {
     expireValueCache(): void;
 
     /**
-     * @deprecated v31.3 Use `getCellValue` instead.
-     */
-    getValue<TValue = any>(colKey: string | Column<TValue>, rowNode: IRowNode): TValue | null | undefined;
-
-    /**
      * Gets the cell value for the given column and `rowNode` (row).
      * Based on params.useFormatter with either return the value as specified by the `field` or `valueGetter` on the column definition or the formatted value.
      */
@@ -376,12 +355,6 @@ export interface _CellGridApi<TData> {
 }
 
 export interface _CommunityMenuGridApi {
-    /** @deprecated v31.1 Use `IHeaderParams.showColumnMenu` within a header component, or `api.showColumnMenu` elsewhere. */
-    showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void;
-
-    /** @deprecated v31.1 Use `IHeaderParams.showColumnMenuAfterMouseClick` within a header component, or `api.showColumnMenu` elsewhere. */
-    showColumnMenuAfterMouseClick(colKey: string | Column, mouseEvent: MouseEvent | Touch): void;
-
     /** Show the column menu for the provided column. */
     showColumnMenu(colKey: string | Column): void;
 
@@ -496,9 +469,6 @@ export interface _ColumnAutosizeApi {
      **/
     sizeColumnsToFit(paramsOrGridWidth?: ISizeColumnsToFitParams | number): void;
 
-    /** @deprecated v31.1 autoSizeColumn(key) deprecated, please use autoSizeColumns([colKey]) instead. */
-    autoSizeColumn(key: string | ColDef | Column, skipHeader?: boolean): void;
-
     /**
      * Auto-sizes columns based on their contents. If inferring cell data types with custom column types
      * and row data is initially empty or yet to be set,
@@ -517,9 +487,6 @@ export interface _ColumnAutosizeApi {
 }
 
 export interface _ColumnResizeApi {
-    /** @deprecated v31.1 setColumnWidths(key, newWidth) deprecated, please use setColumnWidths( [{key: newWidth}] ) instead. */
-    setColumnWidth(key: string | ColDef | Column, newWidth: number, finished?: boolean, source?: ColumnEventType): void;
-
     /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
     setColumnWidths(
         columnWidths: { key: string | ColDef | Column; newWidth: number }[],
@@ -529,9 +496,6 @@ export interface _ColumnResizeApi {
 }
 
 export interface _ColumnMoveApi {
-    /** @deprecated v31.1 moveColumn(key, toIndex) deprecated, please use moveColumns([key], toIndex) instead. */
-    moveColumn(key: string | ColDef | Column, toIndex: number): void;
-
     /** Moves the column at `fromIdex` to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */
     moveColumnByIndex(fromIndex: number, toIndex: number): void;
 
@@ -601,14 +565,8 @@ export interface _ColumnGridApi<TData> {
     /** Same as `getVisibleColAfter` except gives column to the left. */
     getDisplayedColBefore<TValue = any>(col: Column): Column<TValue> | null;
 
-    /** @deprecated v31.1 setColumnVisible(key, visible) deprecated, please use setColumnsVisible([key], visible) instead. */
-    setColumnVisible(key: string | Column, visible: boolean): void;
-
     /** Sets the visibility of columns. Key can be the column ID or `Column` object. */
     setColumnsVisible(keys: (string | Column)[], visible: boolean): void;
-
-    /** @deprecated v31.1 setColumnPinned(key, pinned) deprecated, please use setColumnsPinned([key], pinned) instead. */
-    setColumnPinned(key: string | ColDef | Column, pinned: ColumnPinnedType): void;
 
     /** Set a column's pinned / unpinned state. Key can be the column ID, field, `ColDef` object or `Column` object. */
     setColumnsPinned(keys: (string | ColDef | Column)[], pinned: ColumnPinnedType): void;
@@ -701,16 +659,6 @@ export interface _FilterGridApi {
 export interface _ColumnFilterGridApi {
     /** Returns `true` if any column filter is set, otherwise `false`. */
     isColumnFilterPresent(): boolean;
-
-    /**
-     * @deprecated v31.1 To get/set individual filter models, use `getColumnFilterModel` or `setColumnFilterModel` instead.
-     * To get hold of the filter instance, use `getColumnFilterInstance` which returns the instance asynchronously.
-     * This method now only works asynchronously via the callback. The return value will always be `undefined`.
-     */
-    getFilterInstance<TFilter extends IFilter>(
-        key: string | Column,
-        callback?: (filter: TFilter | null) => void
-    ): undefined;
 
     /**
      * Returns the filter component instance for a column.
@@ -926,9 +874,6 @@ export interface _CsvExportGridApi {
 }
 
 export interface _RowGroupingGridApi<TData> {
-    /** @deprecated v31.1 addAggFunc(key, func) is  deprecated, please use addAggFuncs({ key: func }) instead. */
-    addAggFunc(key: string, aggFunc: IAggFunc): void;
-
     /** Add aggregations function with the specified keys. */
     addAggFuncs(aggFuncs: { [key: string]: IAggFunc }): void;
 
@@ -953,9 +898,6 @@ export interface _RowGroupingGridApi<TData> {
     /** Get a list of the existing value columns. */
     getValueColumns(): Column[];
 
-    /** @deprecated v31.1 removeValueColumn(colKey) deprecated, please use removeValueColumns([colKey]) instead. */
-    removeValueColumn(colKey: string | ColDef | Column): void;
-
     /** Remove the given list of columns from the existing set of value columns. */
     removeValueColumns(colKeys: (string | ColDef | Column)[]): void;
 
@@ -968,17 +910,8 @@ export interface _RowGroupingGridApi<TData> {
     /** Move the column to a new position in the row grouping order. */
     moveRowGroupColumn(fromIndex: number, toIndex: number): void;
 
-    /** @deprecated v31.1 addValueColumn(colKey) deprecated, please use addValueColumns([colKey]) instead. */
-    addValueColumn(colKey: string | ColDef | Column): void;
-
-    /** @deprecated v31.1 removeRowGroupColumn(colKey) deprecated, please use removeRowGroupColumns([colKey]) instead. */
-    removeRowGroupColumn(colKey: string | ColDef | Column): void;
-
     /** Remove columns from the row groups. */
     removeRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
-
-    /** @deprecated v31.1 addRowGroupColumn(colKey) deprecated, please use addRowGroupColumns([colKey]) instead. */
-    addRowGroupColumn(colKey: string | ColDef | Column): void;
 
     /** Add columns to the row groups. */
     addRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
@@ -989,14 +922,8 @@ export interface _RowGroupingGridApi<TData> {
     /** Set the columns for the grid to pivot on. */
     setPivotColumns(colKeys: (string | ColDef | Column)[]): void;
 
-    /** @deprecated v31.1 removePivotColumn(colKey) deprecated, please use removePivotColumns([colKey]) instead. */
-    removePivotColumn(colKey: string | ColDef | Column): void;
-
     /** Stops the grid from pivoting on the provided columns. */
     removePivotColumns(colKeys: (string | ColDef | Column)[]): void;
-
-    /** @deprecated v31.1 addPivotColumn(colKey) deprecated, please use addPivotColumns([colKey]) instead. */
-    addPivotColumn(colKey: string | ColDef | Column): void;
 
     /** Add columns for the grid to pivot on. */
     addPivotColumns(colKeys: (string | ColDef | Column)[]): void;

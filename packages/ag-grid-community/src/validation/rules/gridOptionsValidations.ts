@@ -12,24 +12,6 @@ import { SELECTION_VALIDATORS } from './selectionValidations';
  * If the property was simply renamed, use the `renamed` property. The value will be implicitly copied to the new property.
  */
 const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
-    advancedFilterModel: { version: '31', message: 'Use `initialState.filter.advancedFilterModel` instead.' },
-    suppressAsyncEvents: { version: '31', message: 'Events should be handled asynchronously.' },
-
-    cellFadeDelay: { version: '31.1', renamed: 'cellFadeDuration' },
-    cellFlashDelay: { version: '31.1', renamed: 'cellFlashDuration' },
-
-    suppressServerSideInfiniteScroll: { version: '31.1' },
-    serverSideSortOnServer: { version: '31.1' },
-    serverSideFilterOnServer: { version: '31.1' },
-
-    enableCellChangeFlash: {
-        version: '31.2',
-        message: 'Use `enableCellChangeFlash` in the `ColDef` or `defaultColDef` for all columns.',
-    },
-
-    groupIncludeFooter: { version: '31.3', message: 'Use `groupTotalRow` instead.' },
-    groupIncludeTotalFooter: { version: '31.3', message: 'Use `grandTotalRow` instead.' },
-
     suppressLoadingOverlay: { version: '32', message: 'Use `loading`=false instead.' },
 
     enableFillHandle: { version: '32.2', message: 'Use `selection.handle` instead.' },
@@ -134,29 +116,11 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     groupDefaultExpanded: {
         supportedRowModels: ['clientSide'],
     },
-    groupIncludeFooter: {
-        supportedRowModels: ['clientSide', 'serverSide'],
-        validate: (options) => {
-            const rowModel = options.rowModelType ?? 'clientSide';
-            switch (rowModel) {
-                case 'clientSide':
-                    return null;
-                case 'serverSide': {
-                    const warning = 'groupIncludeFooter is not supported alongside suppressServerSideInfiniteScroll';
-                    return options.suppressServerSideInfiniteScroll ? warning : null;
-                }
-            }
-            return null;
-        },
-    },
     groupHideOpenParents: {
         supportedRowModels: ['clientSide', 'serverSide'],
         dependencies: {
             groupTotalRow: [undefined, 'bottom'],
         },
-    },
-    groupIncludeTotalFooter: {
-        supportedRowModels: ['clientSide'],
     },
     groupRemoveSingleChildren: {
         dependencies: {

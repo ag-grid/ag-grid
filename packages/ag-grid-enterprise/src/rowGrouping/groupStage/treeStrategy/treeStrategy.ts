@@ -40,7 +40,6 @@ export type InitialGroupOrderComparatorCallback =
 export interface TreeExecutionDetails {
     changedPath: ChangedPath | undefined;
     expandByDefault: number;
-    suppressGroupMaintainValueType: boolean;
     getDataPath: GetDataPath | undefined;
     isGroupOpenByDefault: IsGroupOpenByDefaultCallback;
     initialGroupOrderComparator: InitialGroupOrderComparatorCallback;
@@ -81,7 +80,6 @@ export class TreeStrategy extends BeanStub implements IRowNodeStage {
         const details: TreeExecutionDetails = {
             changedPath,
             expandByDefault: gos.get('groupDefaultExpanded'),
-            suppressGroupMaintainValueType: gos.get('suppressGroupMaintainValueType'),
             getDataPath: gos.get('getDataPath'),
             isGroupOpenByDefault: gos.getCallback('isGroupOpenByDefault'),
             initialGroupOrderComparator: gos.getCallback('initialGroupOrderComparator'),

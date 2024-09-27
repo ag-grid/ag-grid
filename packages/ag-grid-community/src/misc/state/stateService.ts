@@ -213,9 +213,8 @@ export class StateService extends BeanStub implements NamedBean {
             rowSelection: rowSelectionState,
             pagination: paginationState,
         } = this.getInitialState();
-        const advancedFilterModel = this.gos.get('advancedFilterModel');
-        if (filterState || advancedFilterModel) {
-            this.setFilterState(filterState, advancedFilterModel);
+        if (filterState) {
+            this.setFilterState(filterState);
         }
         if (rowGroupExpansionState) {
             this.setRowGroupExpansionState(rowGroupExpansionState);
@@ -570,13 +569,8 @@ export class StateService extends BeanStub implements NamedBean {
         return filterModel || advancedFilterModel ? { filterModel, advancedFilterModel } : undefined;
     }
 
-    private setFilterState(
-        filterState?: FilterState,
-        gridOptionAdvancedFilterModel?: AdvancedFilterModel | null
-    ): void {
-        const { filterModel, advancedFilterModel } = filterState ?? {
-            advancedFilterModel: gridOptionAdvancedFilterModel,
-        };
+    private setFilterState(filterState?: FilterState): void {
+        const { filterModel, advancedFilterModel } = filterState ?? {};
         if (filterModel) {
             this.filterManager?.setFilterModel(filterModel, 'columnFilter');
         }

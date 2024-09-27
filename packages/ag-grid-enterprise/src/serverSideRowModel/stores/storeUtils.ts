@@ -166,18 +166,4 @@ export class StoreUtils extends BeanStub implements NamedBean {
             this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups')
         );
     }
-    public isServerSideSortOnServer() {
-        return (
-            this.gos.get('serverSideSortOnServer') &&
-            this.assertRowModelIsServerSide('serverSideSortOnServer') &&
-            this.assertNotTreeData('serverSideSortOnServer')
-        );
-    }
-    public isServerSideFilterOnServer() {
-        return (
-            this.gos.get('serverSideFilterOnServer') &&
-            this.assertRowModelIsServerSide('serverSideFilterOnServer') &&
-            this.assertNotTreeData('serverSideFilterOnServer')
-        );
-    }
 }

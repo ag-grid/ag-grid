@@ -94,10 +94,6 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
         );
     }
 
-    public override onParamsUpdated(params: INumberFloatingFilterParams): void {
-        this.refresh(params);
-    }
-
     public override refresh(params: INumberFloatingFilterParams): void {
         const allowedCharPattern = getAllowedCharPattern(params.filterParams);
         if (allowedCharPattern !== this.allowedCharPattern) {

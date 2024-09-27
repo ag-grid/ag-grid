@@ -358,7 +358,6 @@ export {
     IToolPanel,
     IToolPanelComp,
     IToolPanelParams,
-    ToolPanelColumnCompParams,
     BaseToolPanelParams,
     IToolPanelColumnCompParams,
     IToolPanelFiltersCompParams,
@@ -559,7 +558,6 @@ export type { CellNavigationService } from './cellNavigationService';
 export { KeyCode } from './constants/keyCode';
 export { VerticalDirection, HorizontalDirection } from './constants/direction';
 export {
-    Grid,
     GridParams,
     Params,
     GridCoreCreator,
@@ -733,7 +731,6 @@ export {
     HeaderCheckboxSelectionCallbackParams,
     HeaderCheckboxSelectionCallback,
     HeaderLocation,
-    ColumnsMenuParams,
     ColumnChooserParams,
     ColumnMenuTab,
     HeaderClassParams,

@@ -64,10 +64,6 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
         });
     }
 
-    public onParamsUpdated(params: IFloatingFilterParams): void {
-        this.refresh(params);
-    }
-
     public refresh(params: IFloatingFilterParams): void {
         this.init(params);
     }

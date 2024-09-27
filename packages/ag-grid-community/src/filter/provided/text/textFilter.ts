@@ -63,20 +63,11 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
 
         super.setParams(params);
 
-        this.matcher = this.getTextMatcher();
+        this.matcher = this.textFilterParams.textMatcher || this.defaultMatcher;
         this.formatter =
             this.textFilterParams.textFormatter ||
             (this.textFilterParams.caseSensitive ? this.defaultFormatter : this.defaultLowercaseFormatter);
         this.filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
-    }
-
-    private getTextMatcher(): TextMatcher {
-        const legacyComparator = (this.textFilterParams as any).textCustomComparator;
-        if (legacyComparator) {
-            _warnOnce('textCustomComparator is deprecated, use textMatcher instead.');
-            return ({ filterOption, value, filterText }) => legacyComparator(filterOption, value, filterText);
-        }
-        return this.textFilterParams.textMatcher || this.defaultMatcher;
     }
 
     protected createCondition(position: number): TextFilterModel {
