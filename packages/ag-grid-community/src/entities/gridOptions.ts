@@ -933,7 +933,6 @@ export interface GridOptions<TData = any> {
     /**
      * When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false
-     * @initial
      */
     suppressAggFuncInHeader?: boolean;
 
