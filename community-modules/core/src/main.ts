@@ -621,6 +621,7 @@ export {
     _isServerSideRowModel,
     _isGroupUseEntireRow,
     _getRowHeightAsNumber,
+    _shouldUpdateColVisibilityAfterGroup,
     _getActiveDomElement,
     _isNothingFocused,
     _getDocument,
