@@ -21,6 +21,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     autoGroupColumnDef: {
         headerName: 'My Group',
+        field: 'athlete',
         minWidth: 220,
         cellRendererParams: {
             suppressCount: true,

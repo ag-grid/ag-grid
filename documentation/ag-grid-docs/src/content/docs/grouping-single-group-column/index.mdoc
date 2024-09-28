@@ -27,7 +27,8 @@ option.
 
 {% gridExampleRunner title="Single Group Column Configuration" name="single-group-column-configuration" /%}
 
-The example above uses the configuration demonstrated below to change the columns header name and apply a minimum width.
+The example above uses the configuration demonstrated below to change the columns header name, apply a minimum width, and display
+`athlete` values in the leaf level rows.
 It also [Configures the Group Cell Component](./group-cell-renderer/) using the `cellRendererParams` option to add checkboxes and remove
 the count from each row group.
 
@@ -35,6 +36,7 @@ the count from each row group.
 const gridOptions = {
     autoGroupColumnDef: {
         headerName: 'My Group',
+        field: 'athlete',
         minWidth: 220,
         cellRendererParams: {
             suppressCount: true,
