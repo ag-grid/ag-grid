@@ -1214,14 +1214,22 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     showOpenedGroup?: boolean;
+
+    /**
+     * Enable to display the child row in place of the group row when the group only has a single child.
+     * @default false
+     */
+    groupHideParentOfSingleChild?: boolean | 'leafGroupsOnly';
     /**
      * Set to `true` to collapse groups that only have one child.
      * @default false
+     * @deprecated v32.3.0 - use `groupHideParentOfSingleChild` instead.
      */
     groupRemoveSingleChildren?: boolean;
     /**
      * Set to `true` to collapse lowest level groups that only have one child.
      * @default false
+     * @deprecated v32.3.0 - use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.
      */
     groupRemoveLowestSingleChildren?: boolean;
     /**

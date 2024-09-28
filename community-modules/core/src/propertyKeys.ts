@@ -400,6 +400,7 @@ export class PropertyKeys {
         'suppressStickyTotalRow',
         // needs avoid coercion to boolean so that we can warn if it's unset
         'loadThemeGoogleFonts',
+        'groupHideParentOfSingleChild',
         'suppressGroupChangesColumnVisibility',
     ];
 
