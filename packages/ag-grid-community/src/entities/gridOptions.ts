@@ -1200,7 +1200,6 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to suppress sort indicators and actions from the row group panel.
      * @default false
-     * @initial
      */
     rowGroupPanelSuppressSort?: boolean;
 
