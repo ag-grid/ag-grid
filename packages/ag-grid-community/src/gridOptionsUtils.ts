@@ -9,7 +9,7 @@ import type {
     SelectionOptions,
     SingleRowSelectionOptions,
 } from './entities/gridOptions';
-import { RowNode } from './entities/rowNode';
+import type { RowNode } from './entities/rowNode';
 import type {
     ExtractParamsFromCallback,
     ExtractReturnTypeFromCallback,
