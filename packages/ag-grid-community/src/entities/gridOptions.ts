@@ -406,9 +406,24 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     suppressDragLeaveHidesColumns?: boolean;
+
+    /**
+     * Enable to prevent column visibility changing when grouped columns are changed.
+     * @default false
+     */
+    suppressGroupChangesColumnVisibility?: boolean | 'suppressHideOnGroup' | 'suppressShowOnUngroup';
+
+    /**
+     * By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
+     * @default false
+     * @deprecated v32.3.0 - Use `suppressGroupChangesColumnVisibility: 'suppressShowOnUngroup'` instead.
+     */
+    suppressMakeColumnVisibleAfterUnGroup?: boolean;
+
     /**
      * If `true`, when you drag a column into a row group panel the column is not hidden.
      * @default false
+     * @deprecated v32.3.0 - Use `suppressGroupChangesColumnVisibility: 'suppressHideOnGroup'` instead.
      */
     suppressRowGroupHidesColumns?: boolean;
 
@@ -1186,11 +1201,6 @@ export interface GridOptions<TData = any> {
      */
     groupRowRendererParams?: any;
 
-    /**
-     * By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
-     * @default false
-     */
-    suppressMakeColumnVisibleAfterUnGroup?: boolean;
     /**
      * Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.
      * @default false

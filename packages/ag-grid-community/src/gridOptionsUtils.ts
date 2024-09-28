@@ -296,6 +296,32 @@ export function _getRowIdCallback<TData = any>(
 }
 
 /** Get the selection checkbox configuration. Defaults to enabled. */
+export function _shouldUpdateColVisibilityAfterGroup(gos: GridOptionsService, isGrouped: boolean): boolean {
+    const preventVisibilityChanges = gos.get('suppressGroupChangesColumnVisibility');
+    if (preventVisibilityChanges === true) {
+        return false;
+    }
+    if (isGrouped && preventVisibilityChanges === 'suppressHideOnGroup') {
+        return false;
+    }
+    if (!isGrouped && preventVisibilityChanges === 'suppressShowOnUngroup') {
+        return false;
+    }
+
+    const legacySuppressOnGroup = gos.get('suppressRowGroupHidesColumns');
+    if (isGrouped && legacySuppressOnGroup === true) {
+        return false;
+    }
+
+    const legacySuppressOnUngroup = gos.get('suppressMakeColumnVisibleAfterUnGroup');
+    if (!isGrouped && legacySuppressOnUngroup === true) {
+        return false;
+    }
+
+    return true;
+}
+
+/** Get the selection checkbox configuration. Defaults to enabled. */
 export function _getCheckboxes(
     selection: SelectionOptions
 ): NonNullable<SingleRowSelectionOptions['checkboxes']> | NonNullable<MultiRowSelectionOptions['checkboxes']> {

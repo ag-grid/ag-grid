@@ -522,8 +522,22 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public suppressDragLeaveHidesColumns: boolean | undefined = undefined;
+    /** Enable to prevent column visibility changing when grouped columns are changed.
+     * @default false
+     */
+    @Input() public suppressGroupChangesColumnVisibility:
+        | boolean
+        | 'suppressHideOnGroup'
+        | 'suppressShowOnUngroup'
+        | undefined = undefined;
+    /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
+     * @default false
+     * @deprecated v32.3.0 - Use `suppressGroupChangesColumnVisibility: 'suppressShowOnUngroup'` instead.
+     */
+    @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     /** If `true`, when you drag a column into a row group panel the column is not hidden.
      * @default false
+     * @deprecated v32.3.0 - Use `suppressGroupChangesColumnVisibility: 'suppressHideOnGroup'` instead.
      */
     @Input() public suppressRowGroupHidesColumns: boolean | undefined = undefined;
     /** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing).
@@ -1115,10 +1129,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Customise the parameters provided to the `groupRowRenderer` component.
      */
     @Input() public groupRowRendererParams: any = undefined;
-    /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
-     * @default false
-     */
-    @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.
      * @default false
      */
