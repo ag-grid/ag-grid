@@ -1169,7 +1169,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public treeData: boolean | undefined = undefined;
     /** Set to `true` to suppress sort indicators and actions from the row group panel.
      * @default false
-     * @initial
      */
     @Input() public rowGroupPanelSuppressSort: boolean | undefined = undefined;
     /** Set to `true` prevent Group Rows from sticking to the top of the grid.
