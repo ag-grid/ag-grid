@@ -1102,12 +1102,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public showOpenedGroup: boolean | undefined = undefined;
+    /** Enable to display the child row in place of the group row when the group only has a single child.
+     * @default false
+     */
+    @Input() public groupHideParentOfSingleChild: boolean | 'leafGroupsOnly' | undefined = undefined;
     /** Set to `true` to collapse groups that only have one child.
      * @default false
+     * @deprecated v32.3.0 - use `groupHideParentOfSingleChild` instead.
      */
     @Input() public groupRemoveSingleChildren: boolean | undefined = undefined;
     /** Set to `true` to collapse lowest level groups that only have one child.
      * @default false
+     * @deprecated v32.3.0 - use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.
      */
     @Input() public groupRemoveLowestSingleChildren: boolean | undefined = undefined;
     /** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience.

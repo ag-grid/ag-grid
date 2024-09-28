@@ -603,6 +603,7 @@ export {
     _isClientSideRowModel,
     _isServerSideRowModel,
     _isGroupUseEntireRow,
+    _canSkipShowingRowGroup,
     _getRowHeightAsNumber,
     _shouldUpdateColVisibilityAfterGroup,
     _getActiveDomElement,

@@ -9,6 +9,7 @@ import type {
     SelectionOptions,
     SingleRowSelectionOptions,
 } from './entities/gridOptions';
+import { RowNode } from './entities/rowNode';
 import type {
     ExtractParamsFromCallback,
     ExtractReturnTypeFromCallback,
@@ -293,6 +294,24 @@ export function _getRowIdCallback<TData = any>(
 
         return id;
     };
+}
+
+export function _canSkipShowingRowGroup(gos: GridOptionsService, node: RowNode): boolean {
+    const isSkippingGroups = gos.get('groupHideParentOfSingleChild');
+    if (isSkippingGroups === true) {
+        return true;
+    }
+    if (isSkippingGroups === 'leafGroupsOnly' && node.leafGroup) {
+        return true;
+    }
+    // deprecated
+    if (gos.get('groupRemoveSingleChildren')) {
+        return true;
+    }
+    if (gos.get('groupRemoveLowestSingleChildren') && node.leafGroup) {
+        return true;
+    }
+    return false;
 }
 
 /** Get the selection checkbox configuration. Defaults to enabled. */
