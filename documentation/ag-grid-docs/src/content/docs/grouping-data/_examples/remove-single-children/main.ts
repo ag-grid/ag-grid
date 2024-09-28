@@ -40,31 +40,18 @@ const gridOptions: GridOptions = {
     },
     rowData: getData(),
 
-    // optional as 'singleColumn' is the default group display type
-    groupDisplayType: 'singleColumn',
-
-    // set this to true to remove single children
-    groupRemoveSingleChildren: false,
-
-    // set this to true to remove leaf level single children
-    groupRemoveLowestSingleChildren: false,
-
     // expand everything by default
     groupDefaultExpanded: -1,
 
     suppressAggFuncInHeader: true,
 };
 
-function changeSelection(type: string) {
-    // normal, single or lowest
-    if (type === 'normal') {
-        gridApi!.updateGridOptions({ groupRemoveSingleChildren: false, groupRemoveLowestSingleChildren: false });
-    } else if (type === 'single') {
-        gridApi!.updateGridOptions({ groupRemoveSingleChildren: true, groupRemoveLowestSingleChildren: false });
-    } else if (type === 'lowest') {
-        gridApi!.updateGridOptions({ groupRemoveSingleChildren: false, groupRemoveLowestSingleChildren: true });
+function onOptionChange() {
+    const key = (document.querySelector('#input-display-type') as HTMLSelectElement).value;
+    if (key === 'true' || key === 'false') {
+        gridApi!.setGridOption('groupHideParentOfSingleChild', key === 'true');
     } else {
-        console.log('unknown type: ' + type);
+        gridApi!.setGridOption('groupHideParentOfSingleChild', 'leafGroupsOnly');
     }
 }
 

@@ -60,35 +60,25 @@ const gridOptions = {
 }
 ```
 
-## Maintain Group Order
+## Maintaining Group Row Order
 
-When sorting on non-group columns it may be desirable to maintain the existing group order. This behaviour can be
-enabled through the `groupMaintainOrder` grid option as shown below:
+After applying a sort to a row group column, the order of row groups is updated. It is possible to preserve this updated 
+order when subsequently sorting on a non-group column by enabling `groupMaintainOrder`.
 
-```{% frameworkTransform=true spaceBetweenProperties=true %}
+{% note %}
+Consider whether [Always Multi Sorting](/grid-options/#reference-sort-alwaysMultiSort) may be a more suitable configuration
+for your application.
+{% /note %}
+
+{% gridExampleRunner title="Maintain Group Order" name="maintain-group-order" /%}
+
+The example above demonstrates the following configuration:
+
+```{% frameworkTransform=true %}
 const gridOptions = {
-    columnDefs: [
-        { field: 'assignee', rowGroup: true, hide: true },
-        { field: 'priority', rowGroup: true, hide: true },        
-        { field: 'task' },      
-    ],
-    groupDisplayType: 'multipleColumns',
-    // preserves current group order when sorting on non-group columns
     groupMaintainOrder: true,
 }
 ```
-
-Note that [Group Order](./grouping-group-order/) is not the same as sorting. Maintaining group order will not preserve
-active group sorts, just the current order of the groups. However, when sorting on group columns the group order will
-be changed based on the sort.
-
-The following example demonstrates how `groupMaintainOrder` works. Note the following:
-
-* `groupMaintainOrder = true` is defined on the grid options supplied to the grid.
-* Clicking on the 'Task' column header only sorts the tasks without reordering the groups.
-* Sorting on the 'Assignee' or 'Priority' group column headers will reorder the groups.
-
-{% gridExampleRunner title="Maintain Group Order" name="maintain-group-order"  exampleHeight=515 /%}
 
 ## Next Up
 

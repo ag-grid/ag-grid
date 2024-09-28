@@ -1,10 +1,13 @@
 <div class="example-wrapper">
     <div class="example-header">
-        <button style="margin: 6px" onclick="changeSelection('normal')">Normal</button>
-
-        <button style="margin: 6px" onclick="changeSelection('single')">groupRemoveSingleChildren="true"</button>
-
-        <button style="margin: 6px" onclick="changeSelection('lowest')">groupRemoveLowestSingleChildren="true"</button>
+        <label>
+            <span>groupHideParentOfSingleChild:</span>
+            <select id="input-display-type" onchange="onOptionChange()">
+                <option value="false">false</option>
+                <option value="true">true</option>
+                <option value="leafGroupsOnly">"leafGroupsOnly"</option>
+            </select>
+        </label>
     </div>
-    <div id="myGrid" class="ag-theme-quartz"></div>
+    <div id="myGrid" class="ag-theme-quartz" style="height: 100%"></div>
 </div>

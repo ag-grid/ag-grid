@@ -85,31 +85,22 @@ const gridOptions = {
 
 ## Hiding Parents of Individual Rows
 
-Groups with only a single child can be hidden from the grid by setting the `groupRemoveSingleChildren` grid option to `true`. To only remove
-groups with a single leaf child, instead set `groupRemoveLowestSingleChildren` to `true`.
+Groups with only a single child can be hidden from the grid by setting the `groupHideParentOfSingleChild` grid option to `true`. To only remove
+groups with a single leaf child, instead set to `"leafGroupsOnly"`.
+
+Filtering does not impact which groups get removed. Only groups containing a single child prior to filtering being applied are removed.
 
 {% gridExampleRunner title="Removing Single Children" name="remove-single-children"  exampleHeight=540 /%}
 
-The grid can be configured to hide all parents of a single row by using the following configuration:
+The following is an example of the configuration used to hide all parents of a single row:
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    groupRemoveSingleChildren: true,
-}
-```
-
-Only the lowest level groups of single rows will be hidden by using `groupRemoveLowestSingleChildren`:
-```{% frameworkTransform=true %}
-const gridOptions = {
-    groupRemoveLowestSingleChildren: true,
+    groupHideParentOfSingleChild: true,
 }
 ```
 
 {% note %}
-Filtering does not impact which groups get removed. Only groups containing a single child before filtering is applied are removed.
-{% /note %}
-
-{% note %}
-The properties `groupRemoveSingleChildren`, `groupRemoveLowestSingleChildren` and `groupHideOpenParents` are mutually exclusive.
+This property `groupHideParentOfSingleChild` and `groupHideOpenParents` are mutually exclusive, and cannot be used together.
 {% /note %}
 
 ## Next Up
