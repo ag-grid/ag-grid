@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '@ag-grid-community/core';
+import type { IDoesFilterPassParams, IFilterComp, IFilterParams } from 'ag-grid-community';
 
 export class WinningsFilter implements IFilterComp {
     filterChangedCallback!: (additionalEventAttributes?: any) => void;
@@ -11,7 +11,7 @@ export class WinningsFilter implements IFilterComp {
     cbGreater90: any;
 
     init(params: IFilterParams) {
-        var uniqueId = Math.random();
+        const uniqueId = Math.random();
         this.filterChangedCallback = params.filterChangedCallback;
         this.eGui = document.createElement('div');
         this.eGui.innerHTML =
@@ -52,9 +52,9 @@ export class WinningsFilter implements IFilterComp {
     }
 
     doesFilterPass(params: IDoesFilterPassParams) {
-        var { node } = params;
+        const { node } = params;
 
-        var value = this.filterParams.getValue(node);
+        const value = this.filterParams.getValue(node);
 
         if (this.cbNoFilter.checked) {
             return true;

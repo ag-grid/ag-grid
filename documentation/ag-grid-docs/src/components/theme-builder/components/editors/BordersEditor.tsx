@@ -1,10 +1,11 @@
-import { paramValueToCss } from '@ag-grid-community/theming';
 import { Checkmark, ChevronDown } from '@carbon/icons-react';
 import { ParamModel, useParamAtom } from '@components/theme-builder/model/ParamModel';
 import { useRenderedTheme } from '@components/theme-builder/model/rendered-theme';
 import type { ThemeParam } from '@components/theme-builder/model/utils';
 import styled from '@emotion/styled';
 import * as RadixDropdown from '@radix-ui/react-dropdown-menu';
+
+import { paramValueToCss } from 'ag-grid-community';
 
 import { withErrorBoundary } from '../general/ErrorBoundary';
 import { FormField } from './FormField';
@@ -18,7 +19,7 @@ const borders: [ThemeParam, string][] = [
 ];
 
 export const BordersEditor = withErrorBoundary(() => {
-    const params = useRenderedTheme().getParams();
+    const params = useRenderedTheme().getParams().getValues();
     const selectedBorders = borders.filter(([param]) => !!params[param]).map(([, label]) => label);
 
     return (
@@ -59,7 +60,7 @@ const BorderItem = (props: BorderProps) => {
     const theme = useRenderedTheme();
     let editorValue = value;
     if (editorValue == null) {
-        const params = theme.getParams();
+        const params = theme.getParams().getValues();
         if (param.property in params) {
             editorValue = params[param.property];
         } else {

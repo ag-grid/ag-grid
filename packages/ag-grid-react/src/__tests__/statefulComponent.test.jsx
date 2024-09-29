@@ -2,6 +2,8 @@
 import { mount } from 'enzyme';
 import React, { Component } from 'react';
 
+import { ClientSideRowModelModule } from 'ag-grid-community';
+
 import { AgGridReact } from '../agGridReact';
 import { ensureGridApiHasBeenSet, waitForAsyncCondition } from './utils';
 
@@ -147,6 +149,7 @@ class GridWithStatefulComponent extends Component {
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
+                    modules={[ClientSideRowModelModule]}
                 />
             </div>
         );

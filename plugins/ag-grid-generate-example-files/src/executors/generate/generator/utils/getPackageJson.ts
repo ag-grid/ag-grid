@@ -1,13 +1,7 @@
 import { readFileSync } from 'fs';
 
-import { moduleConfig } from '../_copiedFromCore/modules';
 import { getEnterprisePackageName } from '../constants';
 import type { InternalFramework } from '../types';
-
-const modules = moduleConfig.filter((m) => m.module && !m.framework);
-// const communityModules = modules.filter((m) => {
-//     return m.module.includes('community');
-// });
 
 interface Params {
     isEnterprise: boolean;
@@ -16,15 +10,17 @@ interface Params {
     importType: 'modules' | 'packages';
 }
 
-function getPackageJsonVersion(packageName: string, isEnterprise: boolean) {
-    const path = `${process.cwd()}/${isEnterprise ? 'enterprise' : 'community'}-modules/${packageName}/package.json`;
+function getPackageJsonVersion(packageName: string, isModule: boolean = false) {
+    const path = isModule
+        ? `${process.cwd()}/community-modules/${packageName}/package.json`
+        : `${process.cwd()}/packages/${packageName}/package.json`;
     const packageJsonStr = readFileSync(path, 'utf-8');
     const packageJson = JSON.parse(packageJsonStr);
     return '^' + packageJson.version;
 }
 
 export function getPackageJson({ isEnterprise, isLocale, internalFramework, importType }: Params) {
-    return addPackageJson(isEnterprise, isLocale, internalFramework, importType);
+    return addPackageJson(isEnterprise, isLocale, internalFramework, 'packages');
 }
 
 /** Used for type checking in plunker, and type checking & dep installation with codesandbox */
@@ -62,35 +58,24 @@ function addPackageJson(isEnterprise, isLocale, framework, importType) {
         addDependency('@types/react-dom', '18');
     }
 
-    const agGridVersion = getPackageJsonVersion('core', false);
-    const agGridEnterpriseVersion = getPackageJsonVersion('core', true);
-    const agGridReactVersion = getPackageJsonVersion('react', false);
-    const agGridAngularVersion = getPackageJsonVersion('angular', false);
-    const agGridLocaleVersion = getPackageJsonVersion('locale', false);
+    const agGridVersion = getPackageJsonVersion('ag-grid-community');
+    const agGridEnterpriseVersion = getPackageJsonVersion('ag-grid-enterprise');
+    const agGridReactVersion = getPackageJsonVersion('ag-grid-react');
+    const agGridAngularVersion = getPackageJsonVersion('ag-grid-angular');
+    const agGridLocaleVersion = getPackageJsonVersion('locale', true);
 
     if (isLocale) {
         addDependency('@ag-grid-community/locale', agGridLocaleVersion);
     }
 
-    if (importType === 'modules' && framework !== 'vanilla') {
-        if (framework === 'angular') {
-            addDependency('@ag-grid-community/angular', agGridAngularVersion);
-        }
-        if (isFrameworkReact()) {
-            addDependency('@ag-grid-community/react', agGridReactVersion);
-        }
-        // Just include all modules for now
-        modules.forEach((m) => addDependency(m.module, agGridVersion));
-    } else {
-        if (framework === 'angular') {
-            addDependency('ag-grid-angular', agGridAngularVersion);
-        }
-        if (isFrameworkReact()) {
-            addDependency('ag-grid-react', agGridReactVersion);
-        }
-        addDependency('ag-grid-community', agGridVersion);
-        addDependency(getEnterprisePackageName(), agGridEnterpriseVersion);
+    if (framework === 'angular') {
+        addDependency('ag-grid-angular', agGridAngularVersion);
     }
+    if (isFrameworkReact()) {
+        addDependency('ag-grid-react', agGridReactVersion);
+    }
+    addDependency('ag-grid-community', agGridVersion);
+    addDependency(getEnterprisePackageName(), agGridEnterpriseVersion);
 
     return packageJson;
 }

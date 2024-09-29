@@ -1,14 +1,8 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
-    ColDef,
-    GridApi,
-    GridOptions,
-    ICellEditorParams,
-    IRichCellEditorParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, ICellEditorParams, IRichCellEditorParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { RichSelectModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RichSelectModule]);
 

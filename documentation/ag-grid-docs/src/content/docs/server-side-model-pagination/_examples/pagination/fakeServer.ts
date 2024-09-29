@@ -6,7 +6,7 @@ export function FakeServer(allData) {
 
     return {
         getData: function (request) {
-            var results = executeQuery(request);
+            const results = executeQuery(request);
 
             return {
                 success: true,
@@ -15,7 +15,7 @@ export function FakeServer(allData) {
             };
         },
         getCountries: function () {
-            var SQL = 'SELECT DISTINCT country FROM ? ORDER BY country ASC';
+            const SQL = 'SELECT DISTINCT country FROM ? ORDER BY country ASC';
 
             return alasql(SQL, [allData]).map(function (x) {
                 return x.country;
@@ -24,7 +24,7 @@ export function FakeServer(allData) {
     };
 
     function executeQuery(request) {
-        var sql = buildSql(request);
+        const sql = buildSql(request);
 
         console.log('[FakeServer] - about to execute query:', sql);
 
@@ -36,12 +36,12 @@ export function FakeServer(allData) {
     }
 
     function whereSql(request) {
-        var whereParts = [];
-        var filterModel = request.filterModel;
+        const whereParts = [];
+        const filterModel = request.filterModel;
 
         if (filterModel) {
             Object.keys(filterModel).forEach(function (columnKey) {
-                var filter = filterModel[columnKey];
+                const filter = filterModel[columnKey];
 
                 if (filter.filterType === 'set') {
                     whereParts.push(columnKey + " IN ('" + filter.values.join("', '") + "')");
@@ -60,11 +60,11 @@ export function FakeServer(allData) {
     }
 
     function orderBySql(request) {
-        var sortModel = request.sortModel;
+        const sortModel = request.sortModel;
 
         if (sortModel.length === 0) return '';
 
-        var sorts = sortModel.map(function (s) {
+        const sorts = sortModel.map(function (s) {
             return s.colId + ' ' + s.sort.toUpperCase();
         });
 
@@ -75,7 +75,7 @@ export function FakeServer(allData) {
         if (request.endRow == undefined || request.startRow == undefined) {
             return '';
         }
-        var blockSize = request.endRow - request.startRow;
+        const blockSize = request.endRow - request.startRow;
 
         return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
     }

@@ -1,6 +1,8 @@
 /**
  * Automated Integrated Charts demo
  */
+import { Easing, Group } from '@tweenjs/tween.js';
+
 import type {
     ColDef,
     GridApi,
@@ -8,8 +10,7 @@ import type {
     ICellRendererParams,
     MenuItemDef,
     ValueFormatterParams,
-} from '@ag-grid-community/core';
-import { Easing, Group } from '@tweenjs/tween.js';
+} from 'ag-grid-community';
 
 import { createPeopleData } from '../../data/createPeopleData';
 import { INTEGRATED_CHARTS_ID } from '../../lib/constants';

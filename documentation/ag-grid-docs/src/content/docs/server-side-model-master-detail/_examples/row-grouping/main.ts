@@ -1,17 +1,12 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
-    GridApi,
-    GridOptions,
-    IDetailCellRendererParams,
-    IServerSideDatasource,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
-import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions, IDetailCellRendererParams, IServerSideDatasource } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { MasterDetailModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { RowGroupingModule } from 'ag-grid-enterprise';
+import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { FakeServer } from './fakeServer';
 
@@ -67,7 +62,7 @@ const gridOptions: GridOptions = {
     onGridReady: (params) => {
         setTimeout(() => {
             // expand some master row
-            var someRow = params.api.getRowNode('1');
+            const someRow = params.api.getRowNode('1');
             if (someRow) {
                 someRow.setExpanded(true);
             }
@@ -80,7 +75,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
         getRows: (params) => {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
-            var response = server.getData(params.request);
+            const response = server.getData(params.request);
 
             // adding delay to simulate real server call
             setTimeout(() => {
@@ -98,17 +93,17 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/call-data.json')
         .then((response) => response.json())
         .then(function (data) {
             // setup the fake server with entire dataset
-            var fakeServer = FakeServer(data);
+            const fakeServer = FakeServer(data);
 
             // create datasource with a reference to the fake server
-            var datasource = getServerSideDatasource(fakeServer);
+            const datasource = getServerSideDatasource(fakeServer);
 
             // register the datasource with the grid
             gridApi!.setGridOption('serverSideDatasource', datasource);

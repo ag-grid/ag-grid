@@ -1,28 +1,26 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import type {
     ColDef,
     GetRowIdParams,
     GridApi,
     GridOptions,
     ValueFormatterParams,
     ValueGetterParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+} from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
-var callCount = 1;
+let callCount = 1;
 
-var totalValueGetter = function (params: ValueGetterParams) {
-    var q1 = params.getValue('q1');
-    var q2 = params.getValue('q2');
-    var q3 = params.getValue('q3');
-    var q4 = params.getValue('q4');
-    var result = q1 + q2 + q3 + q4;
+const totalValueGetter = function (params: ValueGetterParams) {
+    const q1 = params.getValue('q1');
+    const q2 = params.getValue('q2');
+    const q3 = params.getValue('q3');
+    const q4 = params.getValue('q4');
+    const result = q1 + q2 + q3 + q4;
     console.log(
         'Total Value Getter (' +
             callCount +
@@ -36,8 +34,8 @@ var totalValueGetter = function (params: ValueGetterParams) {
     callCount++;
     return result;
 };
-var total10ValueGetter = function (params: ValueGetterParams) {
-    var total = params.getValue('total');
+const total10ValueGetter = function (params: ValueGetterParams) {
+    const total = params.getValue('total');
     return total * 10;
 };
 const columnDefs: ColDef[] = [
@@ -100,7 +98,7 @@ const gridOptions: GridOptions = {
 };
 
 function formatNumber(params: ValueFormatterParams) {
-    var number = params.value;
+    const number = params.value;
     return Math.floor(number).toLocaleString();
 }
 
@@ -118,11 +116,11 @@ function onRefreshCells() {
 }
 
 function onUpdateOneValue() {
-    var randomId = Math.floor(Math.random() * 10) + '';
-    var rowNode = gridApi!.getRowNode(randomId);
+    const randomId = Math.floor(Math.random() * 10) + '';
+    const rowNode = gridApi!.getRowNode(randomId);
     if (rowNode) {
-        var randomCol = ['q1', 'q2', 'q3', 'q4'][Math.floor(Math.random() * 4)];
-        var newValue = Math.floor(Math.random() * 1000);
+        const randomCol = ['q1', 'q2', 'q3', 'q4'][Math.floor(Math.random() * 4)];
+        const newValue = Math.floor(Math.random() * 1000);
         console.log('onUpdateOneValue -> start');
         rowNode.setDataValue(randomCol, newValue);
         console.log('onUpdateOneValue -> end');
@@ -131,6 +129,6 @@ function onUpdateOneValue() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

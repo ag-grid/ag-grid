@@ -1,5 +1,6 @@
-import { useGridFilter } from '@ag-grid-community/react';
 import React, { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
+
+import { useGridFilter } from 'ag-grid-react';
 
 export default forwardRef(({ model, onModelChange, getValue }, ref) => {
     const refInput = useRef(null);

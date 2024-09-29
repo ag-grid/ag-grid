@@ -1,13 +1,14 @@
-import { AgGridAngular } from '@ag-grid-community/angular';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { themeAlpine, themeBalham, themeQuartz } from '@ag-grid-community/theming';
 import { Component } from '@angular/core';
+
+import { AgGridAngular } from 'ag-grid-angular';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import type { ColDef } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { themeAlpine, themeBalham, themeQuartz } from 'ag-grid-community';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 @Component({
     standalone: true,

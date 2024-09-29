@@ -1,5 +1,6 @@
-import type { CustomCellRendererProps } from '@ag-grid-community/react';
 import React from 'react';
+
+import type { CustomCellRendererProps } from 'ag-grid-react';
 
 const createPill = (color: string) => (
     <span

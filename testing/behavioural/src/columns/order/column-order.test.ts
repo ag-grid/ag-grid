@@ -1,12 +1,14 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef, ColGroupDef } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import type { ColDef, ColGroupDef } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../../test-utils';
 import { getColumnOrder, getColumnOrderFromState } from '../column-test-utils';
 
 describe('Column Order', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RowGroupingModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule],
+    });
 
     afterEach(() => {
         gridsManager.reset();

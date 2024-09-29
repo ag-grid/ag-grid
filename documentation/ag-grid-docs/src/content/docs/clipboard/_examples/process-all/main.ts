@@ -1,9 +1,10 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridOptions, ProcessDataFromClipboardParams, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, ProcessDataFromClipboardParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ClipboardModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { RangeSelectionModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 
@@ -35,14 +36,14 @@ const gridOptions: GridOptions = {
 };
 
 function processDataFromClipboard(params: ProcessDataFromClipboardParams): string[][] | null {
-    var containsRed;
-    var containsYellow;
-    var data = params.data;
+    let containsRed;
+    let containsYellow;
+    const data = params.data;
 
-    for (var i = 0; i < data.length; i++) {
-        var row = data[i];
-        for (var j = 0; j < row.length; j++) {
-            var value = row[j];
+    for (let i = 0; i < data.length; i++) {
+        const row = data[i];
+        for (let j = 0; j < row.length; j++) {
+            const value = row[j];
             if (value) {
                 if (value.startsWith('Red')) {
                     containsRed = true;
@@ -71,6 +72,6 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

@@ -10,11 +10,12 @@ interface Props {
     title: string;
     name: string;
     exampleHeight?: number;
+    suppressDarkMode?: boolean;
     typescriptOnly?: boolean;
     overrideImportType?: ImportType;
 }
 
-const { title, name, exampleHeight, typescriptOnly, overrideImportType } = Astro.props as Props;
+const { title, name, exampleHeight, typescriptOnly, suppressDarkMode, overrideImportType } = Astro.props as Props;
 
 const pageName = getPageNameFromPath(Astro.url.pathname);
 const isDev = getIsDev();
@@ -29,6 +30,7 @@ const isDev = getIsDev();
                 name={name}
                 exampleHeight={exampleHeight}
                 typescriptOnly={typescriptOnly}
+                suppressDarkMode={suppressDarkMode}
                 overrideImportType={overrideImportType}
                 pageName={pageName}
                 isDev={isDev}

@@ -1,6 +1,8 @@
-import { IDoesFilterPassParams } from '@ag-grid-community/core';
-import { CustomFilterProps, useGridFilter } from '@ag-grid-community/react';
 import React, { useCallback } from 'react';
+
+import type { IDoesFilterPassParams } from 'ag-grid-community';
+import type { CustomFilterProps } from 'ag-grid-react';
+import { useGridFilter } from 'ag-grid-react';
 
 export default ({ model, onModelChange, getValue }: CustomFilterProps) => {
     const doesFilterPass = useCallback(

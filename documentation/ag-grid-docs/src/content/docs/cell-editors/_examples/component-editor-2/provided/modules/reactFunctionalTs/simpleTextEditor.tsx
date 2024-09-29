@@ -1,6 +1,7 @@
-import { ICellEditor } from '@ag-grid-community/core';
-import { CustomCellEditorProps } from '@ag-grid-community/react';
 import React, { useEffect, useRef } from 'react';
+
+import type { ICellEditor } from 'ag-grid-community';
+import type { CustomCellEditorProps } from 'ag-grid-react';
 
 export interface MySimpleInterface extends ICellEditor {
     myCustomFunction(): { rowIndex: number; colId: string };

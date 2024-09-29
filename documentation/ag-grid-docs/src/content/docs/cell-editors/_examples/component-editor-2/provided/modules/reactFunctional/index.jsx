@@ -1,13 +1,14 @@
 'use strict';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { AgGridReact } from '@ag-grid-community/react';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import React, { StrictMode, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { RichSelectModule } from 'ag-grid-enterprise';
+import { AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data.jsx';
 import GenderRenderer from './genderRenderer.jsx';
@@ -16,7 +17,7 @@ import MoodRenderer from './moodRenderer.jsx';
 import SimpleTextEditor from './simpleTextEditor.jsx';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RichSelectModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule, RichSelectModule]);
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);

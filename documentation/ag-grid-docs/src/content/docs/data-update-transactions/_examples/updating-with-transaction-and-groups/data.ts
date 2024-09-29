@@ -1,16 +1,16 @@
 export function getData(): any[] {
-    var rowData = [];
+    const rowData = [];
 
-    for (var i = 0; i < 10; i++) {
-        var category = categories[i % categories.length];
+    for (let i = 0; i < 10; i++) {
+        const category = categories[i % categories.length];
         rowData.push(createNewRowData(category));
     }
     return rowData;
 }
 
 // make the data three 10 times bigger
-var names = ['Elly', 'Shane', 'Niall', 'Rob', 'John', 'Sean', 'Dicky', 'Willy', 'Shaggy', 'Spud', 'Sugar', 'Spice'];
-var models = [
+const names = ['Elly', 'Shane', 'Niall', 'Rob', 'John', 'Sean', 'Dicky', 'Willy', 'Shaggy', 'Spud', 'Sugar', 'Spice'];
+const models = [
     'Mondeo',
     'Celica',
     'Boxster',
@@ -25,7 +25,7 @@ var models = [
 var categories = ['Sold', 'For Sale', 'In Workshop'];
 
 export function createNewRowData(category: string) {
-    var newData = {
+    const newData = {
         // use make if provided, otherwise select random make
         category: category,
         model: models[Math.floor(Math.random() * models.length)],

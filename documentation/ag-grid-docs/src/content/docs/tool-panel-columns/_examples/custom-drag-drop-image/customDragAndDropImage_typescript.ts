@@ -1,4 +1,4 @@
-import type { IDragAndDropImageParams } from '@ag-grid-community/core';
+import type { IDragAndDropImageParams } from 'ag-grid-community';
 
 export interface ICustomHeaderParams {
     menuIcon: string;

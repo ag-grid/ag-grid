@@ -1,16 +1,16 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type {
     FirstDataRenderedEvent,
     GridApi,
     GridOptions,
     ICellRendererParams,
     IDetailCellRendererParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
-import { MenuModule } from '@ag-grid-enterprise/menu';
+} from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { MasterDetailModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, MasterDetailModule, MenuModule]);
 
@@ -30,14 +30,14 @@ const gridOptions: GridOptions<IAccount> = {
     masterDetail: true,
     detailRowHeight: 195,
     detailCellRendererParams: (params: ICellRendererParams) => {
-        var res = {} as IDetailCellRendererParams;
+        const res = {} as IDetailCellRendererParams;
 
         // we use the same getDetailRowData for both options
         res.getDetailRowData = function (params) {
             params.successCallback(params.data.callRecords);
         };
 
-        var nameMatch = params.data.name === 'Mila Smith' || params.data.name === 'Harper Johnson';
+        const nameMatch = params.data.name === 'Mila Smith' || params.data.name === 'Harper Johnson';
 
         if (nameMatch) {
             // grid options for columns {callId, number}
@@ -70,8 +70,8 @@ const gridOptions: GridOptions<IAccount> = {
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
     // arbitrarily expand a row for presentational purposes
     setTimeout(() => {
-        var node1 = params.api.getDisplayedRowAtIndex(1)!;
-        var node2 = params.api.getDisplayedRowAtIndex(2)!;
+        const node1 = params.api.getDisplayedRowAtIndex(1)!;
+        const node2 = params.api.getDisplayedRowAtIndex(2)!;
         node1.setExpanded(true);
         node2.setExpanded(true);
     }, 0);
@@ -79,7 +79,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')

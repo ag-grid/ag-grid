@@ -242,11 +242,9 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
     return allImports;
 }
 
-export function addLicenseManager(imports: any[], exampleConfig: ExampleConfig, usePackages: boolean) {
+export function addLicenseManager(imports: any[], exampleConfig: ExampleConfig) {
     if (exampleConfig.licenseKey) {
-        imports.push(
-            `import { LicenseManager } from '${usePackages ? getEnterprisePackageName() : '@ag-grid-enterprise/core'}';`
-        );
+        imports.push(`import { LicenseManager } from '${getEnterprisePackageName()}';`);
     }
 }
 
@@ -255,6 +253,13 @@ export function addEnterprisePackage(imports: any[], bindings: ParsedBindings) {
     if (isEnterprise) {
         imports.push(`import '${getEnterprisePackageName()}';`);
     }
+}
+
+export function addAllCommunityFeatureModule(moduleRegistration: string) {
+    return moduleRegistration.replace(
+        'ModuleRegistry.registerModules([',
+        'ModuleRegistry.registerModules([CommunityFeaturesModule, '
+    );
 }
 
 export function extractModuleRegistration(srcFile: ts.SourceFile): string {
@@ -436,40 +441,7 @@ export function findAllAccessedProperties(node) {
     return properties;
 }
 
-/** Convert import paths to their package equivalent when the docs are in Packages mode
- * i.e import { GridOptions } from '@ag-grid-community/core';
- * to
- * import { GridOptions } from 'ag-grid-community';
- */
-export function convertImportPath(modulePackage: string, convertToPackage: boolean) {
-    if (convertToPackage) {
-        const conversions = {
-            // Duplicates have different quotes to handle both cases
-            "'@ag-grid-community/angular'": "'ag-grid-angular'",
-            '"@ag-grid-community/angular"': "'ag-grid-angular'",
-            "'@ag-grid-community/vue3'": "'ag-grid-vue3'",
-            '"@ag-grid-community/vue3"': "'ag-grid-vue3'",
-            "'@ag-grid-community/react'": "'ag-grid-react'",
-            '"@ag-grid-community/react"': "'ag-grid-react'",
-        };
-        if (conversions[modulePackage]) {
-            return conversions[modulePackage];
-        }
-
-        if (modulePackage.includes('@ag-grid-community/core/dist')) {
-            return modulePackage.replace('@ag-grid-community/core/dist', 'ag-grid-community/dist');
-        }
-        if (modulePackage.includes('@ag-grid-community/styles')) {
-            return modulePackage.replace('@ag-grid-community/styles', 'ag-grid-community/styles');
-        }
-
-        if (modulePackage.includes('@ag-grid-community')) {
-            return `'ag-grid-community'`;
-        }
-        if (modulePackage.includes('@ag-grid-enterprise')) {
-            return `'${getEnterprisePackageName()}'`;
-        }
-    }
+export function stripTypescriptSuffix(modulePackage: string) {
     return modulePackage.replace('_typescript', '').replace(/"/g, `'`);
 }
 
@@ -499,6 +471,7 @@ export function addBindingImports(
     convertToPackage: boolean,
     ignoreTsImports: boolean
 ) {
+    convertToPackage = true;
     const workingImports = {};
     const namespacedImports = [];
 
@@ -507,7 +480,7 @@ export function addBindingImports(
             return !i.module.includes('@ag-grid-community/locale');
         })
         .forEach((i: BindingImport) => {
-            const path = convertImportPath(i.module, convertToPackage);
+            const path = stripTypescriptSuffix(i.module);
             if (!i.module.includes('_typescript') || !ignoreTsImports) {
                 workingImports[path] = workingImports[path] || {
                     namedImport: undefined,
@@ -540,12 +513,15 @@ export function addBindingImports(
 
     let hasEnterpriseModules = false;
     Object.entries(workingImports).forEach(([k, v]: [string, { namedImport: string; imports: string[] }]) => {
-        let unique = [...new Set(v.imports)].sort();
+        let unique = [...new Set([...v.imports])].sort();
 
         if (convertToPackage && k.includes('ag-grid')) {
             // Remove module related imports
-            unique = unique.filter((i) => !i.includes('Module') || i == 'AgGridModule');
+            // unique = unique.filter((i) => !i.includes('Module') || i == 'AgGridModule');
             hasEnterpriseModules = hasEnterpriseModules || k.includes('enterprise');
+        }
+        if (!hasEnterpriseModules) {
+            unique.unshift('CommunityFeaturesModule');
         }
         if (unique.length > 0 || v.namedImport) {
             const namedImport = v.namedImport ? v.namedImport : '';
@@ -561,13 +537,15 @@ export function addBindingImports(
             imports.push(fullImportStr);
         }
     });
-    if (hasEnterpriseModules && convertToPackage) {
-        imports.push(`import '${getEnterprisePackageName()}';`);
-    }
+    // if (hasEnterpriseModules && convertToPackage) {
+    //     imports.push(`import '${getEnterprisePackageName()}';`);
+    // }
 }
 
-export const usesThemingApi = (bindings: ParsedBindings) =>
-    bindings.imports.some((b) => b.module.includes('ag-grid-community/theming'));
+export const usesThemingApi = (bindings: ParsedBindings) => {
+    // bindings.imports.some((b) => b.module.includes('ag-grid-community/theming'));
+    return bindings.properties.some((p) => p.name === 'theme');
+};
 
 /** Add imports such as "import { colors } from './colors.js';"
  * Does not include the imports for framework component

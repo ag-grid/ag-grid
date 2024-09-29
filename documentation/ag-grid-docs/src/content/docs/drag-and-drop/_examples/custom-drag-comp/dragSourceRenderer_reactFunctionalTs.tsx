@@ -1,5 +1,6 @@
-import type { CustomCellRendererProps } from '@ag-grid-community/react';
 import React from 'react';
+
+import type { CustomCellRendererProps } from 'ag-grid-react';
 
 export default (props: CustomCellRendererProps) => {
     const onDragStart = (dragEvent: any) => {

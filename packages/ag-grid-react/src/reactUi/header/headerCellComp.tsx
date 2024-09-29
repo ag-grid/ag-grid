@@ -1,12 +1,7 @@
-import type {
-    ColumnSortState,
-    HeaderCellCtrl,
-    IHeader,
-    IHeaderCellComp,
-    UserCompDetails,
-} from 'ag-grid-community';
-import { CssClassManager, _EmptyBean, _removeAriaSort, _setAriaSort } from 'ag-grid-community';
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+
+import type { ColumnSortState, HeaderCellCtrl, IHeader, IHeaderCellComp, UserCompDetails } from 'ag-grid-community';
+import { CssClassManager, _EmptyBean, _removeAriaSort, _setAriaSort } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
@@ -55,8 +50,10 @@ const HeaderCellComp = ({ ctrl }: { ctrl: HeaderCellCtrl }) => {
         ctrl.setComp(compProxy, eRef, eResize.current!, eHeaderCompWrapper.current!, compBean.current);
 
         const selectAllGui = ctrl.getSelectAllGui();
-        eResize.current?.insertAdjacentElement('afterend', selectAllGui);
-        compBean.current!.addDestroyFunc(() => selectAllGui.remove());
+        if (selectAllGui) {
+            eResize.current?.insertAdjacentElement('afterend', selectAllGui);
+            compBean.current!.addDestroyFunc(() => selectAllGui.remove());
+        }
     }, []);
 
     // js comps

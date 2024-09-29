@@ -1,11 +1,12 @@
-import { AgGridAngular } from '@ag-grid-community/angular';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { ColDef } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { createTheme, iconSetMaterial } from '@ag-grid-community/theming';
 import { Component } from '@angular/core';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+import { AgGridAngular } from 'ag-grid-angular';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import type { ColDef } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { createTheme, iconSetMaterial } from 'ag-grid-community';
+
+ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
 
 const myCustomTheme = createTheme().withPart(iconSetMaterial).withParams({
     accentColor: 'red',

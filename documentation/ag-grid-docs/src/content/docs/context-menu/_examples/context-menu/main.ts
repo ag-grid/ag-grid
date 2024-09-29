@@ -1,11 +1,12 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GetContextMenuItemsParams, GridApi, GridOptions, MenuItemDef, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';
-import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
-import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GetContextMenuItemsParams, GridApi, GridOptions, MenuItemDef } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { GridChartsModule } from 'ag-grid-enterprise';
+import { ClipboardModule } from 'ag-grid-enterprise';
+import { ExcelExportModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { RangeSelectionModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -45,7 +46,7 @@ function createFlagImg(flag: string) {
 }
 
 function getContextMenuItems(params: GetContextMenuItemsParams): (string | MenuItemDef)[] {
-    var result: (string | MenuItemDef)[] = [
+    const result: (string | MenuItemDef)[] = [
         {
             // custom item
             name: 'Alert ' + params.value,
@@ -184,7 +185,7 @@ function getContextMenuItems(params: GetContextMenuItemsParams): (string | MenuI
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

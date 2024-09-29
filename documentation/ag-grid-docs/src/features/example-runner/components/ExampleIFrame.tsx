@@ -11,9 +11,16 @@ interface Props {
     isHidden?: boolean;
     url?: string;
     loadingIFrameId: string;
+    suppressDarkMode?: boolean;
 }
 
-export const ExampleIFrame: FunctionComponent<Props> = ({ title, isHidden, url, loadingIFrameId }) => {
+export const ExampleIFrame: FunctionComponent<Props> = ({
+    title,
+    isHidden,
+    url,
+    loadingIFrameId,
+    suppressDarkMode,
+}) => {
     const [isIntersecting, setIsIntersecting] = useState(false);
     const iFrameRef = useRef<HTMLIFrameElement>(null);
     const [darkMode] = useDarkmode();
@@ -60,11 +67,15 @@ export const ExampleIFrame: FunctionComponent<Props> = ({ title, isHidden, url, 
         if (!iFrameRef.current) {
             return;
         }
-        applyExampleDarkMode(iFrameRef.current.contentDocument!, darkMode);
+        if (!suppressDarkMode) {
+            applyExampleDarkMode(iFrameRef.current.contentDocument!, darkMode);
+        }
     }, [darkMode]);
 
     const handleOnLoad = useCallback(() => {
-        applyExampleDarkMode(iFrameRef.current.contentDocument, darkMode);
+        if (!suppressDarkMode) {
+            applyExampleDarkMode(iFrameRef.current.contentDocument, darkMode);
+        }
     }, [darkMode]);
 
     return (
@@ -97,6 +108,7 @@ const themes: Record<string, any> = {
 
 const applyExampleDarkMode = (document: Document, darkMode: boolean) => {
     document.documentElement.dataset.colorScheme = darkMode ? 'dark' : 'light';
+    document.documentElement.dataset.agThemeMode = darkMode ? 'dark-blue' : 'light';
     document.documentElement.dataset.defaultTheme = darkMode ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
     injectStylesheet(document);
 

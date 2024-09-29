@@ -1,8 +1,10 @@
-import { CustomDateProps, useGridDate } from '@ag-grid-community/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import type { CustomDateProps } from 'ag-grid-react';
+import { useGridDate } from 'ag-grid-react';
+
 // we'll be using the globally provided flatpickr for our example
-declare var flatpickr: any;
+declare let flatpickr: any;
 
 export default ({ date, onDateChange }: CustomDateProps) => {
     const [picker, setPicker] = useState<any>(null);
