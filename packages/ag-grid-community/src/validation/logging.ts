@@ -27,10 +27,38 @@ function getMsgOrDefault<TId extends ErrorId>(logger: LogFn, id: TId, args: GetE
     logger(`error #${id}`, ...(validationService?.getConsoleMessage(id, args) ?? [minifiedLog(id, args)]));
 }
 
+/**
+ * Stringify object, removing any circular dependencies
+ */
+function stringifyObject(inputObj: any) {
+    const object: Record<string, any> = {};
+
+    for (const prop in inputObj) {
+        if (
+            Object.prototype.hasOwnProperty.call(inputObj, prop) &&
+            typeof inputObj[prop] !== 'object' &&
+            typeof inputObj[prop] !== 'function'
+        ) {
+            object[prop] = inputObj[prop];
+        }
+    }
+    return JSON.stringify(object);
+}
+
+function stringifyValue(value: any) {
+    let output = value;
+    if (value instanceof Error) {
+        output = value.toString();
+    } else if (typeof value === 'object') {
+        output = stringifyObject(value);
+    }
+    return output;
+}
+
 const minifiedLog = (errorNum: number, args: GetErrorParams<any>) => {
     const params = new URLSearchParams();
     Object.entries(args as any).forEach(([key, value]) => {
-        params.append(key, (value as any)?.toString?.());
+        params.append(key, stringifyValue(value));
     });
 
     return `Visit ${baseDocLink}/errors/${errorNum}?${params.toString()} \n  Alternatively register the ValidationModule to see the full message in the console.`;
