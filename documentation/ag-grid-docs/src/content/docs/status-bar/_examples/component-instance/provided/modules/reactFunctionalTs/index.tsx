@@ -3,7 +3,7 @@
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, IStatusPanel, SelectionOptions, StatusPanelDef } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -15,12 +15,7 @@ import { AgGridReact, getInstance } from 'ag-grid-react';
 import ClickableStatusBarComponent from './clickableStatusBarComponent';
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    CommunityFeaturesModule,
-    StatusBarModule,
-    RangeSelectionModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, StatusBarModule, RangeSelectionModule]);
 
 export interface IClickableStatusBar extends IStatusPanel {
     setVisible(visible: boolean): void;

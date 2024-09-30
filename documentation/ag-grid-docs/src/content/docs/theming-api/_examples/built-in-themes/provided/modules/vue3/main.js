@@ -1,6 +1,6 @@
 import { computed, createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { themeAlpine, themeBalham, themeQuartz } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
@@ -12,7 +12,7 @@ import { AgGridVue } from 'ag-grid-vue3';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
-    CommunityFeaturesModule,
+
     SideBarModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,

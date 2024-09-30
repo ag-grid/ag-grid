@@ -11,13 +11,13 @@ import type {
     ICellRendererParams,
     SelectionOptions,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, CommunityFeaturesModule, ModuleRegistry } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 @Component({
     standalone: true,
     template: ` <i class="far fa-trash-alt" style="cursor: pointer" (click)="applyTransaction()"></i>`,
