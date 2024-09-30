@@ -51,7 +51,7 @@ const gridOptions: GridOptions = {
         flex: 1,
     },
     rowData,
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         checkboxes: false,
         headerCheckbox: false,

@@ -22,7 +22,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selection: { mode: 'multiRow' },
+    rowSelection: { mode: 'multiRow' },
     selectionColumnDef: {
         sortable: true,
         width: 120,

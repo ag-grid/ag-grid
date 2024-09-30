@@ -34,7 +34,7 @@ export class DragListenerFeature extends BeanStub {
             onDragging: this.rangeService.onDragging.bind(this.rangeService),
         };
 
-        this.addManagedPropertyListeners(['enableRangeSelection', 'selection'], () => {
+        this.addManagedPropertyListeners(['enableRangeSelection', 'cellSelection'], () => {
             const isEnabled = _isCellSelectionEnabled(this.gos);
             if (isEnabled) {
                 this.enableFeature();

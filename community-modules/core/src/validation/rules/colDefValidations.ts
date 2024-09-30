@@ -7,22 +7,22 @@ const COLUMN_DEFINITION_DEPRECATIONS: Deprecations<ColDef | ColGroupDef> = {
     columnsMenuParams: { version: '31.1', message: 'Use `columnChooserParams` instead.' },
     suppressMenu: { version: '31.1', message: 'Use `suppressHeaderMenuButton` instead.' },
     suppressCellFlash: { version: '31.2', message: 'Use `enableCellChangeFlash={false}` in the ColDef' },
-    checkboxSelection: { version: '32.2', message: 'Use `selection.checkboxes` in `GridOptions` instead.' },
+    checkboxSelection: { version: '32.2', message: 'Use `rowSelection.checkboxes` in `GridOptions` instead.' },
     headerCheckboxSelection: {
         version: '32.2',
-        message: 'Use `selection.headerCheckbox = true` in `GridOptions` instead.',
+        message: 'Use `rowSelection.headerCheckbox = true` in `GridOptions` instead.',
     },
     headerCheckboxSelectionFilteredOnly: {
         version: '32.2',
-        message: 'Use `selection.selectAll = "filtered"` in `GridOptions` instead.',
+        message: 'Use `rowSelection.selectAll = "filtered"` in `GridOptions` instead.',
     },
     headerCheckboxSelectionCurrentPageOnly: {
         version: '32.2',
-        message: 'Use `selection.selectAll = "currentPage"` in `GridOptions` instead.',
+        message: 'Use `rowSelection.selectAll = "currentPage"` in `GridOptions` instead.',
     },
     showDisabledCheckboxes: {
         version: '32.2',
-        message: 'Use `selection.hideDisabledCheckboxes = true` in `GridOptions` instead.',
+        message: 'Use `rowSelection.hideDisabledCheckboxes = true` in `GridOptions` instead.',
     },
 };
 

@@ -16,7 +16,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selection: { mode: 'singleRow' },
+    rowSelection: { mode: 'singleRow' },
     selectionColumnDef: {
         sortable: true,
         width: 100,

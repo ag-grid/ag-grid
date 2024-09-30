@@ -42,7 +42,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     sideBar: true,
     pagination: true,
-    selection: { mode: 'multiRow' },
+    rowSelection: { mode: 'multiRow' },
     suppressColumnMoveAnimation: true,
     onGridPreDestroyed: onGridPreDestroyed,
     onStateUpdated: onStateUpdated,

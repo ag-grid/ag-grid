@@ -26,7 +26,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     pagination: true,
     paginationAutoPageSize: true,
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         selectAll: 'all',
     },
@@ -39,7 +39,7 @@ function onQuickFilterChanged() {
 function updateSelectAllMode() {
     const selectAll = document.querySelector<HTMLSelectElement>('#select-all-mode')?.value ?? 'all';
 
-    gridApi.setGridOption('selection', {
+    gridApi.setGridOption('rowSelection', {
         mode: 'multiRow',
         selectAll: selectAll as 'all' | 'filtered' | 'currentPage',
     });

@@ -54,7 +54,7 @@ const App = {
         :rowData="rowData"
         :defaultColDef="defaultColDef"
         :pagination="true"
-        :selection="selection"
+        :rowSelection="rowSelection"
         @cell-value-changed="onCellValueChanged"
         @selection-changed="onSelectionChanged"
     >
@@ -123,7 +123,7 @@ const App = {
             { field: 'rocket' },
         ]);
 
-        const selection = ref({
+        const rowSelection = ref({
             mode: 'multiRow',
             headerCheckbox: false,
         });
@@ -141,7 +141,7 @@ const App = {
         return {
             rowData,
             colDefs,
-            selection,
+            rowSelection,
             defaultColDef,
             themeClass:
                 /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||

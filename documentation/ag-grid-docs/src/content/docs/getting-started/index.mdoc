@@ -599,7 +599,7 @@ Data is [Sorted](./row-sorting/) by clicking the column headers. Sorting is enab
 
 ### Row Selection
 
-[Row Selection](./row-selection/) is enabled using the `selection` attribute.
+[Row Selection](./row-selection/) is enabled using the `rowSelection` attribute.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -607,7 +607,7 @@ const gridOptions = {
     columnDefs: [
         { field: "make" },
     ],
-    selection: {
+    rowSelection: {
       mode: 'multiRow',
     },
 };

@@ -46,7 +46,7 @@ const gridOptions: GridOptions = {
         // apply red to Ford cars
         'rag-red': (params) => params.data.make === 'Ford',
     },
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         headerCheckbox: false,
     },
