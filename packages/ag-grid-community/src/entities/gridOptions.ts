@@ -1533,7 +1533,7 @@ export interface GridOptions<TData = any> {
      */
     alwaysMultiSort?: boolean;
     /**
-     * Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key.
+     * Set to `'ctrl'` to have multi sorting by clicking work using the `Ctrl` (or `Command ⌘` for Mac) key.
      */
     multiSortKey?: 'ctrl';
     /**
@@ -1832,7 +1832,7 @@ export interface GridOptions<TData = any> {
     processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
     /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
-     * @deprecated v32.2 Use `cellSelection.isRowSelectable` instead
+     * @deprecated v32.2 Use `rowSelection.isRowSelectable` instead
      */
     isRowSelectable?: IsRowSelectable<TData>;
     /**

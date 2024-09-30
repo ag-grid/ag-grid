@@ -5,7 +5,7 @@ import type {
     ISetNodesSelectedParams,
     NamedBean,
     RowNode,
-    RowSelectionOptions,
+    RowSelectionMode,
     SelectionEventSourceType,
     ServerSideRowGroupSelectionState,
     ServerSideRowSelectionState,
@@ -32,7 +32,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 
     private selectionStrategy: ISelectionStrategy;
-    private selectionMode?: RowSelectionOptions['mode'];
+    private selectionMode?: RowSelectionMode;
 
     public postConstruct(): void {
         this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], () => {

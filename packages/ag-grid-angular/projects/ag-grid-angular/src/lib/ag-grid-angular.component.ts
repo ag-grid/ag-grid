@@ -1378,7 +1378,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public alwaysMultiSort: boolean | undefined = undefined;
-    /** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key.
+    /** Set to `'ctrl'` to have multi sorting by clicking work using the `Ctrl` (or `Command ⌘` for Mac) key.
      */
     @Input() public multiSortKey: 'ctrl' | undefined = undefined;
     /** Set to `true` to suppress sorting of un-sorted data to match original row data.
