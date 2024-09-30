@@ -109,9 +109,39 @@ function createCrossFilterThemeOverrides(
         listeners: {
             legendItemClick: (e: AgChartLegendClickEvent) => {
                 const chart = proxy.getChart();
-                chart.series.forEach((s) => {
-                    s.toggleSeriesItem(e.itemId, e.enabled);
-                });
+                const series: any = chart.series.find((s: any) => s.id === e.seriesId);
+                const item = series?.['nodeData']?.find((i: any) => i.itemId === e.itemId);
+                const datum = item?.datum;
+
+                const categoryKey = proxy.getCategoryKey();
+                const category = series.properties[categoryKey];
+
+                const newFilterState = series.nodeData
+                    .filter((i: any) => i.enabled)
+                    .map((i: any) => {
+                        return {
+                            category: series.properties[categoryKey],
+                            value: i.datum[category],
+                        };
+                    });
+
+                chartProxyParams.crossFilteringContext
+                    .getChartSelectionModel(chartProxyParams.chartId)
+                    .setSelection(newFilterState);
+
+                // chartProxyParams.
+
+                // const event = {
+                //     event: { ...e, metaKey: true },
+                //     [categoryKey]: category,
+                //     datum,
+                // };
+
+                // chartProxyParams.crossFilterCallback(event, false);
+
+                // chart.series.forEach((s) => {
+                //     s.toggleSeriesItem(e.itemId, e.enabled);
+                // });
             },
         },
     };

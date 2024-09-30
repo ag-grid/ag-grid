@@ -179,10 +179,15 @@ export class GridChartComp extends Component {
                 const value = event.datum![category];
                 const multiSelection = event.event.metaKey || event.event.ctrlKey;
 
-                ctx.getChartSelectionModel(chartId).toggleSelection(multiSelection, category, value);
+                if (multiSelection) {
+                    ctx.getChartSelectionModel(chartId).toggleSelection(multiSelection, category, value);
+                } else {
+                    ctx.clearAllSelections(false);
+                    ctx.getChartSelectionModel(chartId).toggleSelection(false, category, value);
+                }
             }
 
-            this.crossFilterService.filter(event, reset);
+            // this.crossFilterService.filter(event, reset);
         };
 
         const chartType = this.chartController.getChartType();

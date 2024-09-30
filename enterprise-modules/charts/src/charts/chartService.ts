@@ -32,6 +32,7 @@ import { VERSION as GRID_VERSION } from '../version';
 import { CrossFilteringContext } from './chartComp/crossfilter/crossFilteringContext';
 import type { GridChartParams } from './chartComp/gridChartComp';
 import { GridChartComp } from './chartComp/gridChartComp';
+import type { ChartCrossFilterService } from './chartComp/services/chartCrossFilterService';
 import { ChartParamsValidator } from './chartComp/utils/chartParamsValidator';
 import { getCanonicalChartType } from './chartComp/utils/seriesTypeMapper';
 import { upgradeChartModel } from './chartModelMigration';
@@ -57,12 +58,16 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
     private rangeService?: IRangeService;
     private environment: Environment;
     private focusService: FocusService;
+    private crossFilteringContext: CrossFilteringContext;
+    private crossFilterService: ChartCrossFilterService;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleColsService = beans.visibleColsService;
         this.rangeService = beans.rangeService;
         this.environment = beans.environment;
         this.focusService = beans.focusService;
+        this.crossFilterService = beans.chartCrossFilterService as ChartCrossFilterService;
+        this.crossFilteringContext = new CrossFilteringContext(this.crossFilterService);
     }
 
     public static CHARTS_VERSION = CHARTS_VERSION;
@@ -73,7 +78,6 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
     private activeChartComps = new Set<GridChartComp>();
 
     // this shared (singleton) context is used by cross filtering in line and area charts
-    private crossFilteringContext: CrossFilteringContext = new CrossFilteringContext();
 
     public isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;
 

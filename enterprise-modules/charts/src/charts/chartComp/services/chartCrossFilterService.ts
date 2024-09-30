@@ -59,9 +59,9 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
         }
     }
 
-    private resetFilters(filterModel: any) {
+    public resetFilters(filterModel: any, force = false) {
         const filtersExist = Object.keys(filterModel).length > 0;
-        if (filtersExist) {
+        if (filtersExist || force) {
             // only reset filters / charts when necessary to prevent undesirable flickering effect
             this.filterManager?.setFilterModel(null);
             this.filterManager?.onFilterChanged({ source: 'api' });
@@ -96,6 +96,12 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
         }
 
         this.filterManager?.setFilterModel(filterModel);
+    }
+
+    setFilters(updates: Record<string, any[]>) {
+        this.filterManager?.setFilterModel(
+            mapValues(updates, (key, values) => this.getUpdatedFilterModel(key, values))
+        );
     }
 
     private getUpdatedFilterModel(colId: any, updatedValues: any[]) {
@@ -144,4 +150,11 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
     private getColumnById(colId: string) {
         return this.columnModel.getCol(colId) as AgColumn;
     }
+}
+
+function mapValues<T = any, U = any>(obj: Record<string, T>, fn: (key: string, value: T) => U): Record<string, U> {
+    return Object.entries(obj).reduce<Record<string, U>>((acc, [key, value]) => {
+        acc[key] = fn(key, value);
+        return acc;
+    }, {});
 }

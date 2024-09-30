@@ -1,12 +1,15 @@
+import type { CrossFilteringContext } from './crossFilteringContext';
 import type { CrossFilterCategoryEntry } from './selectionModelAPI';
 
 export class ChartSelectionModel {
     public selection: CrossFilterCategoryEntry[] = [];
     public available: CrossFilterCategoryEntry[] = [];
     public chartId: string;
+    private crossFilteringContext: CrossFilteringContext;
 
-    public constructor(chartId: string) {
+    public constructor(chartId: string, crossFilteringContext: CrossFilteringContext) {
         this.chartId = chartId;
+        this.crossFilteringContext = crossFilteringContext;
     }
 
     setAvailable(entries: CrossFilterCategoryEntry[]): void {
@@ -15,6 +18,14 @@ export class ChartSelectionModel {
 
     getAvailable(): CrossFilterCategoryEntry[] {
         return this.available;
+    }
+
+    getFlatSelection(): Record<string, string[]> {
+        return this.selection.reduce<Record<string, string[]>>((acc, entry) => {
+            acc[entry.category] ??= [];
+            acc[entry.category].push((entry['value'] as any)?.value || entry.value);
+            return acc;
+        }, {});
     }
 
     public areAllSelected(category: string): boolean {
@@ -26,27 +37,36 @@ export class ChartSelectionModel {
     }
 
     public isSelected(category: string, value: string): boolean {
-        return this.selection.some((entry) => entry.category === category && entry.value === value);
+        const rawValue = (value as any)?.value || value;
+        return this.selection.some((entry) => entry.category === category && entry.value === rawValue);
     }
 
-    public toggleSelection(multiSelection: boolean, category: string, value: string): void {
+    public toggleSelection(multiSelection: boolean, category: string, value: string, notify = true): void {
         const isSelected = this.isSelected(category, value);
 
+        const rawValue = (value as any)?.value || value;
         if (isSelected) {
-            this.selection = this.selection.filter((entry) => entry.category !== category || entry.value !== value);
+            this.selection = this.selection.filter((entry) => entry.category !== category || entry.value !== rawValue);
         } else {
             if (!multiSelection) {
-                this.clearSelection();
+                this.clearSelection(false);
             }
-            this.selection.push({ category, value });
+            this.selection.push({ category, value: rawValue });
+        }
+
+        if (notify) {
+            this.crossFilteringContext.updateFromSelection();
         }
     }
 
-    setSelection(entries: CrossFilterCategoryEntry[]): void {
+    setSelection(entries: CrossFilterCategoryEntry[], notify = true): void {
         this.selection = entries;
+        if (notify) {
+            this.crossFilteringContext.updateFromSelection();
+        }
     }
 
-    public clearSelection(): void {
-        this.selection = [];
+    public clearSelection(notify = true): void {
+        this.setSelection([], notify);
     }
 }
