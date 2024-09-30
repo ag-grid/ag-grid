@@ -240,7 +240,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     checkboxSelection?: boolean | CheckboxSelectionCallback<TData, TValue>;
     /**
-     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.selection`
+     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
      *
      * Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled.
      * @default false

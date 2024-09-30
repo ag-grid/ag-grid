@@ -1661,7 +1661,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public processRowPostCreate: ((params: ProcessRowParams<TData>) => void) | undefined = undefined;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
-     * @deprecated v32.2 Use `cellSelection.isRowSelectable` instead
+     * @deprecated v32.2 Use `rowSelection.isRowSelectable` instead
      */
     @Input() public isRowSelectable: IsRowSelectable<TData> | undefined = undefined;
     /** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row.
@@ -1669,7 +1669,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public isRowMaster: IsRowMaster<TData> | undefined = undefined;
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression.
      *
-     * @deprecated v32.2 Use `selection.handle.setFillValue` instead
+     * @deprecated v32.2 Use `cellSelection.handle.setFillValue` instead
      */
     @Input() public fillOperation: ((params: FillOperationParams<TData>) => any) | undefined = undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.

@@ -1902,7 +1902,7 @@ export interface GridOptions<TData = any> {
     processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
     /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
-     * @deprecated v32.2 Use `cellSelection.isRowSelectable` instead
+     * @deprecated v32.2 Use `rowSelection.isRowSelectable` instead
      */
     isRowSelectable?: IsRowSelectable<TData>;
     /**
@@ -1912,7 +1912,7 @@ export interface GridOptions<TData = any> {
     /**
      * Callback to fill values instead of simply copying values or increasing number values using linear progression.
      *
-     * @deprecated v32.2 Use `selection.handle.setFillValue` instead
+     * @deprecated v32.2 Use `cellSelection.handle.setFillValue` instead
      */
     fillOperation?: (params: FillOperationParams<TData>) => any;
 
