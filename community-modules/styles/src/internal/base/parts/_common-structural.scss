@@ -485,10 +485,10 @@
         flex: 1 1 auto;
         align-self: stretch;
         align-items: center;
+        overflow: hidden;
     }
 
     .ag-header-cell-label {
-        overflow: hidden;
         text-overflow: ellipsis;
     }
 
@@ -496,6 +496,7 @@
         position: sticky;
         flex: none;
         max-width: 100%;
+        overflow: visible;
     }
 
     .ag-header-group-text {
