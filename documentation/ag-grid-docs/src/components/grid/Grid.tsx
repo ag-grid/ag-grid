@@ -3,7 +3,7 @@ import { useDarkmode } from '@utils/hooks/useDarkmode';
 import classnames from 'classnames';
 import { type FunctionComponent, useEffect, useState } from 'react';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { ColumnsToolPanelModule, MasterDetailModule, SetFilterModule, StatusBarModule } from 'ag-grid-enterprise';
@@ -51,6 +51,7 @@ export const Grid: FunctionComponent<Props> = ({ theme = 'ag-theme-quartz', dark
                     suppressNoRowsOverlay={true}
                     {...props}
                     modules={[
+                        CommunityFeaturesModule,
                         ClientSideRowModelModule,
                         MasterDetailModule,
                         SetFilterModule,
