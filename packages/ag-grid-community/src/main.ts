@@ -608,7 +608,9 @@ export {
     _isClientSideRowModel,
     _isServerSideRowModel,
     _isGroupUseEntireRow,
+    _canSkipShowingRowGroup,
     _getRowHeightAsNumber,
+    _shouldUpdateColVisibilityAfterGroup,
     _getActiveDomElement,
     _isNothingFocused,
     _getDocument,
@@ -981,6 +983,8 @@ export { ZipContainer } from './csvExport/zipContainer/zipContainer';
 export { Module, ModuleValidationResult, _defineModule } from './interfaces/iModule';
 export { ModuleNames } from './modules/moduleNames';
 export { ModuleRegistry } from './modules/moduleRegistry';
+
+export { ValidationModule } from './validation/validationModule';
 
 export { ColumnMoveModule } from './columnMove/columnMoveModule';
 export { DragModule, HorizontalResizeModule, DragAndDropModule } from './dragAndDrop/dragModule';

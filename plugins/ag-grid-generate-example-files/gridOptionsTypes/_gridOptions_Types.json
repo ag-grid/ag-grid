@@ -1376,5 +1376,13 @@
   "loadThemeGoogleFonts": {
     "typeName": "boolean",
     "typesToInclude": []
+  },
+  "groupHideParentOfSingleChild": {
+    "typeName": "boolean | 'leafGroupsOnly'",
+    "typesToInclude": []
+  },
+  "suppressGroupChangesColumnVisibility": {
+    "typeName": "boolean | 'suppressHideOnGroup' | 'suppressShowOnUngroup'",
+    "typesToInclude": []
   }
 }

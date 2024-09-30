@@ -522,8 +522,22 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public suppressDragLeaveHidesColumns: boolean | undefined = undefined;
+    /** Enable to prevent column visibility changing when grouped columns are changed.
+     * @default false
+     */
+    @Input() public suppressGroupChangesColumnVisibility:
+        | boolean
+        | 'suppressHideOnGroup'
+        | 'suppressShowOnUngroup'
+        | undefined = undefined;
+    /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
+     * @default false
+     * @deprecated v32.3.0 - Use `suppressGroupChangesColumnVisibility: 'suppressShowOnUngroup'` instead.
+     */
+    @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     /** If `true`, when you drag a column into a row group panel the column is not hidden.
      * @default false
+     * @deprecated v32.3.0 - Use `suppressGroupChangesColumnVisibility: 'suppressHideOnGroup'` instead.
      */
     @Input() public suppressRowGroupHidesColumns: boolean | undefined = undefined;
     /** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing).
@@ -924,7 +938,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public aggFuncs: { [key: string]: IAggFunc<TData> } | undefined = undefined;
     /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false
-     * @initial
      */
     @Input() public suppressAggFuncInHeader: boolean | undefined = undefined;
     /** When using aggregations, the grid will always calculate the root level aggregation value.
@@ -1089,12 +1102,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input() public showOpenedGroup: boolean | undefined = undefined;
+    /** Enable to display the child row in place of the group row when the group only has a single child.
+     * @default false
+     */
+    @Input() public groupHideParentOfSingleChild: boolean | 'leafGroupsOnly' | undefined = undefined;
     /** Set to `true` to collapse groups that only have one child.
      * @default false
+     * @deprecated v32.3.0 - use `groupHideParentOfSingleChild` instead.
      */
     @Input() public groupRemoveSingleChildren: boolean | undefined = undefined;
     /** Set to `true` to collapse lowest level groups that only have one child.
      * @default false
+     * @deprecated v32.3.0 - use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.
      */
     @Input() public groupRemoveLowestSingleChildren: boolean | undefined = undefined;
     /** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience.
@@ -1116,20 +1135,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Customise the parameters provided to the `groupRowRenderer` component.
      */
     @Input() public groupRowRendererParams: any = undefined;
-    /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
-     * @default false
-     */
-    @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
-    /** Set to `true` to enable the Grid to work with Tree Data.
-     *
-     * You must either:
-     *
-     * - Provide the `treeDataChildrenField` option: the path to the field that contains the array of children in the input row data.
-     *   For example if your data is like this: `[{account: {children: [childNode1, childNode2]}}]`
-     *   then this property should be: `account.children`.
-     *
-     * - Implement the `getDataPath(data)` callback
-     *
+    /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.
      * @default false
      */
     @Input() public treeData: boolean | undefined = undefined;
@@ -1148,7 +1154,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public treeDataChildrenField: string | undefined = undefined;
     /** Set to `true` to suppress sort indicators and actions from the row group panel.
      * @default false
-     * @initial
      */
     @Input() public rowGroupPanelSuppressSort: boolean | undefined = undefined;
     /** Set to `true` prevent Group Rows from sticking to the top of the grid.

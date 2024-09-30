@@ -57,7 +57,10 @@ export class PaginationService extends BeanStub implements NamedBean {
 
     private isPaginateChildRows(): boolean {
         const shouldPaginate =
-            this.gos.get('groupRemoveSingleChildren') || this.gos.get('groupRemoveLowestSingleChildren');
+            this.gos.get('groupHideParentOfSingleChild') ||
+            // following two properties deprecated v32.3.0
+            this.gos.get('groupRemoveSingleChildren') ||
+            this.gos.get('groupRemoveLowestSingleChildren');
         if (shouldPaginate) {
             return true;
         }

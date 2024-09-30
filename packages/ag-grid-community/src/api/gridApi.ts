@@ -38,7 +38,6 @@ import type { IColumnToolPanel } from '../interfaces/iColumnToolPanel';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
-import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { RefreshServerSideParams } from '../interfaces/iServerSideRowModel';
 import type { IServerSideGroupSelectionState, IServerSideSelectionState } from '../interfaces/iServerSideSelection';
@@ -121,7 +120,7 @@ export interface _RowSelectionGridApi<TData = any> {
     /**
      * Set all of the provided nodes selection state to the provided value.
      */
-    setNodesSelected(params: { nodes: IRowNode[]; newValue: boolean; source?: SelectionEventSourceType }): void;
+    setNodesSelected(params: { nodes: IRowNode<TData>[]; newValue: boolean; source?: SelectionEventSourceType }): void;
 
     /**
      * Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.
@@ -192,7 +191,7 @@ export interface _RowGridApi<TData> {
      * Expand or collapse a specific row node, optionally expanding/collapsing all of its parent nodes.
      * By default rows are expanded asynchronously for best performance. Set forceSync: `true` if you need to interact with the expanded row immediately after this function.
      */
-    setRowNodeExpanded(rowNode: IRowNode, expanded: boolean, expandParents?: boolean, forceSync?: boolean): void;
+    setRowNodeExpanded(rowNode: IRowNode<TData>, expanded: boolean, expandParents?: boolean, forceSync?: boolean): void;
 
     /**
      * Returns the row node with the given ID.
@@ -344,7 +343,7 @@ export interface _CellGridApi<TData> {
      * Based on params.useFormatter with either return the value as specified by the `field` or `valueGetter` on the column definition or the formatted value.
      */
     getCellValue<TValue = any>(params: {
-        rowNode: IRowNode;
+        rowNode: IRowNode<TData>;
         colKey: string | Column<TValue>;
         useFormatter: true;
     }): string | null | undefined;
@@ -799,7 +798,7 @@ export interface _RenderGridApi<TData> {
     getSizesForCurrentTheme(): { rowHeight: number; headerHeight: number };
 
     /** Returns the list of active cell renderer instances. */
-    getCellRendererInstances(params?: GetCellRendererInstancesParams<TData>): ICellRenderer[];
+    getCellRendererInstances(params?: GetCellRendererInstancesParams<TData>): ICellRenderer<TData>[];
 }
 
 export interface _SideBarGridApi<TData> {
@@ -830,17 +829,17 @@ export interface _SideBarGridApi<TData> {
     getToolPanelInstance(id: 'columns'): IColumnToolPanel | undefined;
     getToolPanelInstance(id: 'filters'): IFiltersToolPanel | undefined;
     // This override is a duplicate but is required to make the general override public
-    getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined;
+    getToolPanelInstance<TToolPanel = IToolPanel<TData>>(id: string): TToolPanel | undefined;
     /** Gets the tool panel instance corresponding to the supplied `id`. */
-    getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined;
+    getToolPanelInstance<TToolPanel = IToolPanel<TData>>(id: string): TToolPanel | undefined;
 
     /** Returns the current side bar configuration. If a shortcut was used, returns the detailed long form. */
     getSideBar(): SideBarDef | undefined;
 }
 
-export interface _StatusBarGridApi {
+export interface _StatusBarGridApi<TData = any> {
     /** Gets the status panel instance corresponding to the supplied `id`. */
-    getStatusPanel<TStatusPanel = IStatusPanel>(key: string): TStatusPanel | undefined;
+    getStatusPanel<TStatusPanel = IStatusPanel<TData>>(key: string): TStatusPanel | undefined;
 }
 
 export interface _InfiniteRowModelGridApi {
@@ -875,13 +874,16 @@ export interface _CsvExportGridApi {
 
 export interface _RowGroupingGridApi<TData> {
     /** Add aggregations function with the specified keys. */
-    addAggFuncs(aggFuncs: { [key: string]: IAggFunc }): void;
+    addAggFuncs(aggFuncs: { [key: string]: IAggFunc<TData> }): void;
 
     /** Clears all aggregation functions (including those provided by the grid). */
     clearAggFuncs(): void;
 
     /** Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function. */
-    setColumnAggFunc(key: string | ColDef | Column, aggFunc: string | IAggFunc | null | undefined): void;
+    setColumnAggFunc<TValue = any>(
+        key: string | ColDef<TData, TValue> | Column<TValue>,
+        aggFunc: string | IAggFunc<TData, TValue> | null | undefined
+    ): void;
 
     /** Returns whether pivot mode is currently active. */
     isPivotMode(): boolean;
@@ -1162,7 +1164,7 @@ export interface GridApi<TData = any>
     extends _CoreModuleGridApi<TData>,
         _ClientSideRowModelGridApi<TData>,
         _SideBarGridApi<TData>,
-        _StatusBarGridApi,
+        _StatusBarGridApi<TData>,
         _InfiniteRowModelGridApi,
         _CsvExportGridApi,
         _RowGroupingGridApi<TData>,
