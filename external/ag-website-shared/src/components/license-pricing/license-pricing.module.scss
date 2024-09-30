@@ -15,12 +15,14 @@
 }
 
 .introSection {
-    width: 80%;
+    position: relative;
+    width: 100%;
     margin: 0 auto;
     display: flex;
     align-items: center;
     flex-direction: column;
     margin-bottom: $spacing-size-8;
+    padding-top: $spacing-size-2;
 
     p {
         text-align: center;
@@ -611,10 +613,10 @@
 }
 
 .switchContainer {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
     top: 42px;
 }
 
@@ -650,9 +652,9 @@
 
 .gradient {
     position: absolute;
-    top: -70px;
+    top: -22px;
     height: 100px;
-    width: 100vw;
+    width: 100%;
     background: linear-gradient(transparent, var(--color-bg-brand-solid));
     opacity: 0.05;
 
