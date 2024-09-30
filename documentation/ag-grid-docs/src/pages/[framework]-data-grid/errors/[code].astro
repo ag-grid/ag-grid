@@ -9,7 +9,7 @@ import { PagesNavigation } from '@components/pages-navigation/components/PagesNa
 import { Header } from '@features/docs/components/Header';
 import { getErrorText } from '@utils/getErrorText';
 import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
-import { getHeadings } from '@utils/markdoc/getHeadings';
+import { getHeadings, getTopHeading } from '@utils/markdoc/getHeadings';
 import { DOCS_TAB_ITEM_ID_PREFIX } from '@ag-website-shared/constants';
 import { AG_GRID_ERRORS } from '../../../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
 
@@ -57,6 +57,7 @@ const pageName = `errors/${code}`;
 const defaultErrorText = getErrorText({ errorCode: code });
 
 const getTabItemSlug = (id: string) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`;
+const topHeading = getTopHeading(title);
 const fullErrorTextHeading = { slug: getTabItemSlug('full-error-text'), depth: 2, text: 'Full Error Text' };
 const headings = errorPage
     ? (
@@ -68,7 +69,7 @@ const headings = errorPage
               getTabItemSlug,
           })
       ).concat(fullErrorTextHeading)
-    : [fullErrorTextHeading];
+    : [topHeading, fullErrorTextHeading];
 ---
 
 <Layout title={title} description={description} showSearchBar={true} showDocsNav={true}>
@@ -99,7 +100,7 @@ const headings = errorPage
             </div>
         </div>
 
-        <SideNavigation client:load headings={headings} />
+        <SideNavigation client:load headings={headings} alwaysShow />
     </div>
 </Layout>
 
