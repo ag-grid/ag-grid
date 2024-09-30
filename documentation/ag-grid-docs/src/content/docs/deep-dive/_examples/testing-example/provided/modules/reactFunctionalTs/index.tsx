@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 // Theme
-import type { ColDef, SelectionOptions, ValueFormatterParams } from 'ag-grid-community';
+import type { ColDef, RowSelectionOptions, ValueFormatterParams } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 // Core CSS
@@ -70,7 +70,7 @@ interface IRow {
     successful: boolean;
 }
 
-const selection: SelectionOptions = {
+const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
     headerCheckbox: false,
 };
@@ -143,7 +143,7 @@ const GridExample = () => {
                 columnDefs={colDefs}
                 defaultColDef={defaultColDef}
                 pagination={true}
-                selection={selection}
+                rowSelection={rowSelection}
                 onSelectionChanged={(event) => console.log('Row Selected!')}
                 onCellValueChanged={(event) => console.log(`New Cell Value: ${event.value}`)}
             />

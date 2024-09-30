@@ -11,7 +11,7 @@ import { AgGridReact } from 'ag-grid-react';
 
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
-const selection = { mode: 'multiRow', checkboxes: false, headerCheckbox: false };
+const rowSelection = { mode: 'multiRow', checkboxes: false, headerCheckbox: false };
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -92,7 +92,7 @@ const GridExample = () => {
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     rowBuffer={0}
-                    selection={selection}
+                    rowSelection={rowSelection}
                     rowModelType={'infinite'}
                     cacheBlockSize={100}
                     cacheOverflowSize={2}

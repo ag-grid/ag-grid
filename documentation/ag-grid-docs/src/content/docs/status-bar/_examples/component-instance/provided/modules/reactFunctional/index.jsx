@@ -16,7 +16,7 @@ import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, StatusBarModule, RangeSelectionModule]);
 
-const selection = {
+const rowSelection = {
     mode: 'multiRow',
     checkboxes: false,
     headerCheckbox: false,
@@ -99,7 +99,7 @@ const GridExample = () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    selection={selection}
+                    rowSelection={rowSelection}
                     statusBar={statusBar}
                 />
             </div>

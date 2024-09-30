@@ -4,7 +4,7 @@ import React, { StrictMode, useCallback, useEffect, useMemo, useRef, useState } 
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import type { ChartRef, ColDef, GridReadyEvent, SelectionOptions } from 'ag-grid-community';
+import type { ChartRef, ColDef, GridReadyEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -16,10 +16,6 @@ import { AgGridReact } from 'ag-grid-react';
 import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule, RowGroupingModule]);
-
-const selection: SelectionOptions = {
-    mode: 'cell',
-};
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -79,7 +75,7 @@ const GridExample = () => {
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                        selection={selection}
+                        cellSelection={true}
                         enableCharts={true}
                         popupParent={popupParent}
                         createChartContainer={updateChartParams}

@@ -22,7 +22,7 @@ const gridOptions: GridOptions = {
         flex: 1,
     },
     rowData: getData(),
-    selection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false },
+    rowSelection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false },
 };
 
 let newCount = 1;

@@ -162,7 +162,7 @@ function reverseItems() {
 
 function onSelectionModeChange() {
     const mode = document.querySelector<HTMLSelectElement>('#select-mode')!.value as any;
-    gridApi!.setGridOption('selection', { mode });
+    gridApi!.setGridOption('rowSelection', { mode });
 }
 
 let gridApi: GridApi;
@@ -176,7 +176,7 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         width: 250,
     },
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
     },
     autoGroupColumnDef: {

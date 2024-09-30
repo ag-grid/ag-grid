@@ -9,7 +9,7 @@ Row Selection can allow users to select rows in a tree structure.
 When using [Multiple Row Selection](./row-selection-multi-row/) with a tree structure, the grid can be configured to impact descendant and
 ancestor rows when a row is selected.
 
-To enable hierarchical selection, set the `selection.groupSelects` option to one of the following values:
+To enable hierarchical selection, set the `rowSelection.groupSelects` option to one of the following values:
 
 - `'self'`: Selecting a parent row has no additional side effects.
 - `'descendants'`: Selecting a parent row will select all of its descendants.
@@ -20,7 +20,7 @@ To enable hierarchical selection, set the `selection.groupSelects` option to one
 The example above demonstrates the following configuration:
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: {
+    rowSelection: {
         mode: 'multiple',
         groupSelects: 'descendants',
     },
@@ -46,7 +46,7 @@ const gridOptions = {
         },
     },
     
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         checkboxes: false,
         headerCheckbox: false,

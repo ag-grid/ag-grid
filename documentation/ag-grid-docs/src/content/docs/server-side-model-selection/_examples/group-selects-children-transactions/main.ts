@@ -56,7 +56,7 @@ const gridOptions: GridOptions = {
 
     rowModelType: 'serverSide',
 
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
     },

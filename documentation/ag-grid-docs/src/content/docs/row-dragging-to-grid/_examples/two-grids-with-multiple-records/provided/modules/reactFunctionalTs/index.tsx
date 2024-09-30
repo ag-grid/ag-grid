@@ -8,7 +8,7 @@ import type {
     GridApi,
     GridReadyEvent,
     RowDragEndEvent,
-    SelectionOptions,
+    RowSelectionOptions,
 } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -76,7 +76,7 @@ const defaultColDef: ColDef = {
     filter: true,
 };
 
-const selection: SelectionOptions = {
+const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
 };
 
@@ -133,7 +133,7 @@ const GridExample = () => {
 
     const onDragStop = useCallback(
         (params: RowDragEndEvent) => {
-            const nodes = params.nodes;
+            var nodes = params.nodes;
 
             if (radioChecked === 0) {
                 leftApi!.applyTransaction({
@@ -201,7 +201,7 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
-                    selection={id === 0 ? selection : undefined}
+                    rowSelection={id === 0 ? rowSelection : undefined}
                     rowDragMultiRow={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
                     rowData={id === 0 ? leftRowData : rightRowData}

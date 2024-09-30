@@ -40,8 +40,7 @@ const gridOptions: GridOptions = {
         enableCellChangeFlash: true,
     },
     rowData: getRows(),
-    selection: {
-        mode: 'cell',
+    cellSelection: {
         handle: {
             mode: 'fill',
         },

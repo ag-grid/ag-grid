@@ -7,13 +7,11 @@ Cell selection allows Excel-like selection of ranges of cells. Cell selections a
 
 ## Enabling Cell Selection
 
-Cell Selection is enabled by setting the `selection.mode` to `'cell'`. 
+Cell Selection is enabled by setting the `gridOptions.cellSelection` to `true`, or to a configuration object. 
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: {
-        mode: 'cell',
-    }
+    cellSelection: true,
 }
 ```
 
@@ -45,12 +43,11 @@ The example below demonstrates simple cell selection. Cell ranges can be selecte
 
 ## Prevent Selection of Multiple Ranges
 
-By default multiple ranges can be selected. To restrict cell selection to a single range, even if the {% kbd "^ Ctrl" /%} key is held down, set `selection.suppressMultiRanges` to `true`.
+By default multiple ranges can be selected. To restrict cell selection to a single range, even if the {% kbd "^ Ctrl" /%} key is held down, set `cellSelection.suppressMultiRanges` to `true`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: {
-        mode: 'cell',
+    cellSelection: {
         suppressMultiRanges: true,
     }
 }

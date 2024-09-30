@@ -41,7 +41,7 @@ const GridExample = () => {
         return {
             refreshStrategy: 'rows',
             detailGridOptions: {
-                selection: { mode: 'multiple' },
+                rowSelection: { mode: 'multiple' },
                 getRowId: (params) => {
                     return String(params.data.callId);
                 },

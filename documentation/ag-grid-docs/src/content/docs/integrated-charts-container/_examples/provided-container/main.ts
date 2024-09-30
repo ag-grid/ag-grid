@@ -20,7 +20,7 @@ const gridOptions: GridOptions = {
         { field: 'total', chartDataType: 'series' },
     ],
     defaultColDef: { flex: 1 },
-    selection: { mode: 'cell' },
+    cellSelection: true,
     enableCharts: true,
     popupParent: document.body,
     createChartContainer,

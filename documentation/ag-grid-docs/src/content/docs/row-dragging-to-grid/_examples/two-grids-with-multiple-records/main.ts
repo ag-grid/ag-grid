@@ -81,7 +81,7 @@ const leftGridOptions: GridOptions = {
         minWidth: 100,
         filter: true,
     },
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
     },
     rowDragMultiRow: true,
