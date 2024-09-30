@@ -106,6 +106,6 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
     }
 
     public override getCategoryKey(): string {
-        return 'angleKey';
+        return 'calloutLabelKey';
     }
 }

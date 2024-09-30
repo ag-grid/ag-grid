@@ -123,7 +123,10 @@ function createCrossFilterThemeOverrides(
             },
             legend,
             listeners: {
-                click: (e: any) => chartProxyParams.crossFilteringContext.clearAllSelections(),
+                click: (e: any) => {
+                    // clear selection if chart background clicked
+                    chartProxyParams.crossFilterCallback(e, true);
+                },
             },
         },
     };
