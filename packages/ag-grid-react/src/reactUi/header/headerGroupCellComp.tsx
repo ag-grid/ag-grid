@@ -86,10 +86,6 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
         }
     }, [userCompDetails]);
 
-    useEffect(() => {
-        console.log(userCompRef);
-    }, [userCompRef]);
-
     const userCompStateless = useMemo(() => {
         const res = userCompDetails?.componentFromFramework && isComponentStateless(userCompDetails.componentClass);
         return !!res;

@@ -185,7 +185,9 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
         destroyFuncs.current.push(() => {
             apiRef.current = undefined;
         });
-        gridIdRef.current = apiRef.current.getGridId();
+        if (apiRef.current) {
+            gridIdRef.current = apiRef.current.getGridId();
+        }
     }, []);
 
     const style = useMemo(() => {
