@@ -1,8 +1,19 @@
-import type { ChartProxyParams } from '../chartProxy';
-import { LineChartProxy } from './lineChartProxy';
+import type { AgAreaSeriesOptions } from 'ag-charts-community';
 
-export class AreaChartProxy extends LineChartProxy<'area'> {
+import type { ChartProxyParams, UpdateParams } from '../chartProxy';
+import { CROSS_FILTER_MARKER_FILL_OPACITY_FACTOR } from './constants';
+import { ContinuousChartProxy } from './continuousChartProxy';
+
+export class AreaChartProxy extends ContinuousChartProxy<'line'> {
     public constructor(params: ChartProxyParams) {
         super(params);
+    }
+
+    protected override applyCrossFilter(series: AgAreaSeriesOptions[], params: UpdateParams) {
+        const anySelected = this.selectionModel.hasSelection();
+        return super.applyCrossFilter(series, params).map((s) => ({
+            fillOpacity: anySelected ? CROSS_FILTER_MARKER_FILL_OPACITY_FACTOR : 1,
+            ...s,
+        }));
     }
 }
