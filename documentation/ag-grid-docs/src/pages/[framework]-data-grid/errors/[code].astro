@@ -11,7 +11,10 @@ import { getErrorText } from '@utils/getErrorText';
 import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
 import { getHeadings, getTopHeading } from '@utils/markdoc/getHeadings';
 import { DOCS_TAB_ITEM_ID_PREFIX } from '@ag-website-shared/constants';
-import { AG_GRID_ERRORS } from '../../../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
+import {
+    AG_GRID_ERRORS,
+    type ErrorId,
+} from '../../../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
 import Note from '@ag-website-shared/components/alert/Note';
 
 interface Params {
@@ -43,7 +46,8 @@ export async function getStaticPaths() {
 
 const { framework, code } = Astro.params as Params;
 const { errorPage } = Astro.props as Props;
-const title = errorPage?.data.title ? errorPage?.data.title : `AG Grid Error #${code}`;
+const errorCode = parseInt(code, 10) as ErrorId;
+const title = `AG Grid Error #${code}`;
 const description = errorPage?.data.description ? errorPage?.data.description : '';
 
 const { Content } = errorPage ? await errorPage.render() : { Content: undefined };
@@ -55,7 +59,7 @@ const menuSections: MenuSection[] = getFilteredMenuSections({
 });
 const path = Astro.url.pathname;
 const pageName = `errors/${code}`;
-const defaultErrorText = getErrorText({ errorCode: code });
+const defaultErrorText = getErrorText({ errorCode });
 
 const getTabItemSlug = (id: string) => `${DOCS_TAB_ITEM_ID_PREFIX}${id}`;
 const topHeading = getTopHeading(title);
@@ -93,16 +97,17 @@ const headings = errorPage
             </div>
         </div>
 
-        <SideNavigation client:load headings={headings} alwaysShow />
+        <SideNavigation client:load headings={headings} />
     </div>
 </Layout>
 
 <script>
     import { getErrorText } from '@utils/getErrorText';
+    import type { ErrorId } from '../../../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
 
     // Get errorCode from url, so it doesn't need to be passed
     // in from Astro and we can import in this script
-    const errorCode = window.location.pathname.split('/').filter(Boolean).slice(-1)[0];
+    const errorCode = parseInt(window.location.pathname.split('/').filter(Boolean).slice(-1)[0], 10) as ErrorId;
     const searchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(searchParams.entries());
     const errorText = getErrorText({ errorCode, params });

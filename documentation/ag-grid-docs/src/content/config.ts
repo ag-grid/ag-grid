@@ -99,7 +99,6 @@ const matrixTable = defineCollection({
 
 const errors = defineCollection({
     schema: z.object({
-        title: z.string().optional(),
         description: z.string().optional(),
     }),
 });
