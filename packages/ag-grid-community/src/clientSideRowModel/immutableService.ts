@@ -25,7 +25,7 @@ export class ImmutableService extends BeanStub implements NamedBean {
     private clientSideRowModel: ClientSideRowModel;
 
     public postConstruct(): void {
-        if (_isClientSideRowModel(this.gos)) {
+        if (_isClientSideRowModel(this.gos, this.rowModel)) {
             this.clientSideRowModel = this.rowModel as ClientSideRowModel;
 
             this.addManagedPropertyListener('rowData', () => this.onRowDataUpdated());
@@ -71,7 +71,7 @@ export class ImmutableService extends BeanStub implements NamedBean {
 
     /** Converts the setRowData() command to a transaction */
     private createTransactionForRowData<TData>(rowData: TData[]): RowDataTransaction | null {
-        if (!_isClientSideRowModel(this.gos)) {
+        if (!_isClientSideRowModel(this.gos, this.rowModel)) {
             _errorOnce('ImmutableService only works with ClientSideRowModel');
             return null;
         }

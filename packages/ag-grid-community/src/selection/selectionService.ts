@@ -278,11 +278,11 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             return false;
         }
         // also only do it if CSRM (code should never allow this anyway)
-        if (!_isClientSideRowModel(this.gos)) {
+        if (!_isClientSideRowModel(this.gos, this.rowModel)) {
             return false;
         }
 
-        const clientSideRowModel = this.rowModel as IClientSideRowModel;
+        const clientSideRowModel = this.rowModel;
         const rootNode = clientSideRowModel.getRootNode();
 
         if (!changedPath) {
@@ -399,12 +399,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     // Designed for use with 'children' as the group selection type,
     // where groups don't actually appear in the selection normally.
     public getBestCostNodeSelection(): RowNode[] | undefined {
-        if (!_isClientSideRowModel(this.gos)) {
+        if (!_isClientSideRowModel(this.gos, this.rowModel)) {
             // Error logged as part of gridApi as that is only call point for this method.
             return;
         }
 
-        const clientSideRowModel = this.rowModel as IClientSideRowModel;
+        const clientSideRowModel = this.rowModel;
 
         const topLevelNodes = clientSideRowModel.getTopLevelNodes();
 

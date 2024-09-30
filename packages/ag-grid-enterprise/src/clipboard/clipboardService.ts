@@ -116,8 +116,8 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private navigatorApiFailed = false;
 
     public postConstruct(): void {
-        if (_isClientSideRowModel(this.gos)) {
-            this.clientSideRowModel = this.rowModel as IClientSideRowModel;
+        if (_isClientSideRowModel(this.gos, this.rowModel)) {
+            this.clientSideRowModel = this.rowModel;
         }
 
         this.ctrlsService.whenReady(this, (p) => {

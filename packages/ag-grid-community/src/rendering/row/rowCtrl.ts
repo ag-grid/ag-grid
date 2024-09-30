@@ -32,7 +32,6 @@ import {
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ProcessRowParams, RenderedRowEvent } from '../../interfaces/iCallbackParams';
 import type { CellPosition } from '../../interfaces/iCellPosition';
-import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { ColumnInstanceId, ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IEventListener } from '../../interfaces/iEventEmitter';
@@ -40,7 +39,6 @@ import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import { RowHighlightPosition } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
-import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { ModuleNames } from '../../modules/moduleNames';
 import { calculateRowLevel } from '../../styling/rowStyleService';
@@ -1190,9 +1188,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 // we do the update in a timeout, to make sure we are not calling from inside the grid
                 // doing another update
                 const updateRowHeightFunc = () => {
-                    this.rowNode.setRowHeight(clientHeight);
-                    if (_isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos)) {
-                        (this.beans.rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChanged();
+                    const { beans, gos, rowNode } = this;
+                    const { rowModel } = beans;
+                    rowNode.setRowHeight(clientHeight);
+                    if (_isClientSideRowModel(gos, rowModel) || _isServerSideRowModel(this.gos, rowModel)) {
+                        rowModel.onRowHeightChanged();
                     }
                 };
                 window.setTimeout(updateRowHeightFunc, 0);

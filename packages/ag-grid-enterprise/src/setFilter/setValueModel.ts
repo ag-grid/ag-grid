@@ -3,7 +3,6 @@ import type {
     AgEventType,
     FuncColsService,
     GridOptionsService,
-    IClientSideRowModel,
     IEventEmitter,
     IEventListener,
     RowNode,
@@ -177,9 +176,9 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
         const getDataPath = gos.get('getDataPath');
         const groupAllowUnbalanced = gos.get('groupAllowUnbalanced');
 
-        if (_isClientSideRowModel(gos)) {
+        if (_isClientSideRowModel(gos, rowModel)) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
-                rowModel as IClientSideRowModel,
+                rowModel,
                 this.filterParams,
                 this.createKey,
                 this.caseFormat,

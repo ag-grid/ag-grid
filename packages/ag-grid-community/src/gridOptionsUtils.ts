@@ -20,9 +20,11 @@ import type {
     GetGroupIncludeFooterParams,
     RowHeightParams,
 } from './interfaces/iCallbackParams';
+import type { IClientSideRowModel } from './interfaces/iClientSideRowModel';
 import type { WithoutGridCommon } from './interfaces/iCommon';
-import type { RowModelType } from './interfaces/iRowModel';
+import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
+import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
 import { ModuleNames } from './modules/moduleNames';
 import { _warnOnce } from './utils/function';
 import { _exists, _missing } from './utils/generic';
@@ -31,11 +33,11 @@ function isRowModelType(gos: GridOptionsService, rowModelType: RowModelType): bo
     return gos.get('rowModelType') === rowModelType;
 }
 
-export function _isClientSideRowModel(gos: GridOptionsService): boolean {
+export function _isClientSideRowModel(gos: GridOptionsService, rowModel?: IRowModel): rowModel is IClientSideRowModel {
     return isRowModelType(gos, 'clientSide');
 }
 
-export function _isServerSideRowModel(gos: GridOptionsService): boolean {
+export function _isServerSideRowModel(gos: GridOptionsService, rowModel?: IRowModel): rowModel is IServerSideRowModel {
     return isRowModelType(gos, 'serverSide');
 }
 
