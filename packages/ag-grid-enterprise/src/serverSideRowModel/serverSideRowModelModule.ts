@@ -1,5 +1,6 @@
 import type { _ServerSideRowModelGridApi } from 'ag-grid-community';
 import {
+    CommunityFeaturesModule,
     ModuleNames,
     RowModelHelperService,
     SortModule,
@@ -107,5 +108,6 @@ export const ServerSideRowModelModule = _defineModule({
         ServerSideRowModelRowSelectionModule,
         ServerSideRowModelSortModule,
         ServerSideRowModelRowGroupingModule,
+        CommunityFeaturesModule,
     ],
 });
