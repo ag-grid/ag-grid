@@ -60,26 +60,23 @@ const gridOptions = {
 }
 ```
 
-## Maintaining Group Row Order
+## Unsorted Group Order
 
-After applying a sort to a row group column, the order of row groups is updated. It is possible to preserve this updated 
-order when subsequently sorting on a non-group column by enabling `groupMaintainOrder`.
+When no sorting is applied, the groups are ordered by the order in which they appear in the data. This order can be overwritten with
+a custom initial order by providing an `initialGroupOrderComparator` grid option.
 
 {% note %}
-Consider whether [Always Multi Sorting](/grid-options/#reference-sort-alwaysMultiSort) may be a more suitable configuration
-for your application.
+As this is an initial order of groups, it executes before filtering and aggregation. This means it cannot use post-filtered data, or
+aggregated values as comparison criteria.
 {% /note %}
 
-{% gridExampleRunner title="Maintain Group Order" name="maintain-group-order" /%}
+{% gridExampleRunner title="Initial Group Order" name="initial-group-order" /%}
 
-The example above demonstrates the following configuration:
+The example above demonstrates the following configuration to order group rows based on the number of leaf children:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    groupMaintainOrder: true,
+    initialGroupOrderComparator: (params) =>
+        params.nodeA.allLeafChildren.length - params.nodeB.allLeafChildren.length,
 }
 ```
-
-## Next Up
-
-Continue to the next section to learn about [Filtering Groups](./grouping-filtering/).

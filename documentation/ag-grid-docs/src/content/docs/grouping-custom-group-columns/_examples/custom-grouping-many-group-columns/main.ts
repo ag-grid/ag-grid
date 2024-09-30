@@ -7,28 +7,22 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const columnDefs: ColDef[] = [
     {
-        headerName: 'Country',
+        headerName: 'Country Groups',
         minWidth: 200,
-        // this tells the grid what values to put into the cell
         showRowGroup: 'country',
-        // this tells the grid what to use to render the cell
         cellRenderer: 'agGroupCellRenderer',
     },
     {
-        headerName: 'Year',
+        headerName: 'Year Groups',
         minWidth: 200,
         showRowGroup: 'year',
         cellRenderer: 'agGroupCellRenderer',
     },
-    // these are the two columns we use to group by. we also hide them, so there
-    // is no duplication with the values above
     { field: 'country', rowGroup: true, hide: true },
     { field: 'year', rowGroup: true, hide: true },
 
     { field: 'athlete', minWidth: 220 },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
+    { field: 'total' },
 ];
 
 let gridApi: GridApi<IOlympicData>;

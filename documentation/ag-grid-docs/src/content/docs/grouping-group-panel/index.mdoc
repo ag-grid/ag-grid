@@ -43,24 +43,22 @@ Refer to the [Side Bar](./side-bar/) documentation for further configuration opt
 
 ## Prevent User Grouping from Hiding Columns
 
-After a user enables Row Grouping on a column, the columns visibility is hidden. This behaviour can be prevented by setting `suppressRowGroupHidesColumns`
-to `true`.
+After a user applies row grouping to a column, the column is hidden. If the user removes the row grouping, the column is made visible again.
 
-Similarly, when a user un-groups a column, the column is made visible again. This behaviour can be prevented by setting `suppressMakeColumnVisibleAfterUnGroup`
-to `true`.
+This behaviour can be configured by setting the `suppressGroupChangesColumnVisibility` grid option property to `true`, `"suppressHideOnGroup"`
+or `"suppressShowOnUngroup"`.
 
 {% gridExampleRunner title="Keep Columns Visible" name="keep-columns-visible" /%}
 
 {% note %}
-When dragging a column to the row group panel, the column is considered outside of the grid and so will be hidden. This behaviour can be prevented by setting
+When dragging a column over the row group panel, the column is considered outside of the grid and so will be hidden. This behaviour can be prevented by setting
 `suppressDragLeaveHidesColumns` to `true`.
 {% /note %}
 
-The example above prevents the column visibility from being impacted when a user changes the row group columns:
+The following configuration can be used to prevent the column visibility from being impacted when a user changes the row group columns:
 ```{% frameworkTransform=true %}
 const gridOptions = { 
-    suppressRowGroupHidesColumns: true,
-    suppressMakeColumnVisibleAfterUnGroup: true,
+    suppressGroupChangesColumnVisibility: true,
 
     // prevent columns from being hidden when dragged over the row group panel
     suppressDragLeaveHidesColumns: true,

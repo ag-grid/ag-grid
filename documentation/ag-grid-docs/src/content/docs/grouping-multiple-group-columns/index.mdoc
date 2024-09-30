@@ -19,7 +19,7 @@ const gridOptions = {
 }
 ```
 
-## Configuring the Columns
+## Configuration
 
 The columns are added to the grid when row grouping is present, and can be configured via the `autoGroupColumnDef` grid
 option.
@@ -64,7 +64,7 @@ const gridOptions = {
 The column uses the `agGroupCellRenderer` component to display the group information, as well as the chevron control
 for expanding and collapsing rows. The renderer also embeds the grouped columns renderer and displays this inside of the group cell.
 
-This can be configured with several [Group Renderer Properties](./grouping-multiple-group-columns/#configurable-properties-reference) using
+This can be configured with several [Group Renderer Properties](./grouping-multiple-group-columns/#configurable-options) using
 the `autoGroupColumnDef` property `cellRendererParams`. The example below removes the row count and enables checkboxes for row selection.
 
 {% gridExampleRunner title="Group Cell Renderer Configuration" name="renderer-config-group-cell" /%}
@@ -121,7 +121,7 @@ property on the `autoGroupColumnDef` configuration.
 It is also possible to [Determine Cell Renderers Dynamically](./component-cell-renderer/#dynamic-component-selection).
 {% /note %}
 
-## Inheriting Row Grouped Column Filters
+## Filtering
 
 To enable filters on the group column, set the `filter` property of the `autoGroupColumnDef` to `'agGroupColumnFilter'`. This configuration
 will cause the group column to inherit the the filter from the column it is representing.

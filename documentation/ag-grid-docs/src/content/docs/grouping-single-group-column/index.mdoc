@@ -20,7 +20,7 @@ const gridOptions = {
 }
 ```
 
-## Configuring the Column
+## Configuration
 
 The Single Group Column is added to the grid when row grouping is present, and can be configured via the `autoGroupColumnDef` grid
 option.
@@ -50,7 +50,7 @@ const gridOptions = {
 The column uses the `agGroupCellRenderer` component to display the group information, as well as the chevron control
 for expanding and collapsing rows. The renderer also embeds the grouped columns renderer and displays this inside of the group cell.
 
-This can be configured with several [Group Renderer Properties](./grouping-single-group-column/#configurable-properties-reference) using
+This can be configured with several [Group Renderer Properties](./grouping-single-group-column/#configurable-options) using
 the `autoGroupColumnDef` property `cellRendererParams`. The example below removes the row count and enables checkboxes for row selection.
 
 {% gridExampleRunner title="Group Cell Renderer Configuration" name="renderer-config-group-cell" /%}
@@ -107,11 +107,11 @@ property on the `autoGroupColumnDef` configuration.
 It is also possible to [Determine Cell Renderers Dynamically](./component-cell-renderer/#dynamic-component-selection).
 {% /note %}
 
-## Group Column Filters
+## Filtering
 
 The grid filters leaf rows by default, if all of a groups children are filtered out, the group is also hidden.
 
-### Inheriting Row Grouped Columns Filters
+### Inherit Row Grouped Columns Filters
 
 Applying filters to the columns with row grouping active impacts which row groups are displayed. The grid provides the `agGroupColumnFilter`
 to allow users to filter the columns with row grouping enabled via the group column.

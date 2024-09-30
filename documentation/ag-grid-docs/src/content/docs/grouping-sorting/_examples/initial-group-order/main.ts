@@ -1,38 +1,38 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, ICellRendererParams, createGrid } from '@ag-grid-community/core';
+import { GridApi, GridOptions, InitialGroupOrderComparatorParams, createGrid } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
-import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
-    FiltersToolPanelModule,
+    ColumnsToolPanelModule,
     MenuModule,
     RowGroupingModule,
     SetFilterModule,
 ]);
 
-let gridApi: GridApi<IOlympicData>;
+let gridApi: GridApi;
 
-const gridOptions: GridOptions<IOlympicData> = {
+const gridOptions: GridOptions = {
     columnDefs: [
-        { field: 'sport', rowGroup: true, hide: true },
         { field: 'country', rowGroup: true, hide: true },
-        { field: 'athlete', minWidth: 250 },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
+        { field: 'year', rowGroup: true, hide: true },
+        { field: 'athlete' },
+        { field: 'total' },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        filter: true,
-        floatingFilter: true,
     },
-    groupDisplayType: 'groupRows',
-    sideBar: 'filters',
+    autoGroupColumnDef: {
+        minWidth: 200,
+    },
+    groupDisplayType: 'multipleColumns',
+    initialGroupOrderComparator: (params: InitialGroupOrderComparatorParams) =>
+        params.nodeA.allLeafChildren.length - params.nodeB.allLeafChildren.length,
 };
 
 // setup the grid after the page has finished loading
@@ -42,7 +42,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
-        .then(function (data) {
-            gridApi!.setGridOption('rowData', data);
-        });
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
 });

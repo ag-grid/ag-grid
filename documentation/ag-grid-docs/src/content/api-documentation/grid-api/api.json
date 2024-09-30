@@ -594,22 +594,12 @@
                 "url": "./grouping/"
             }
         },
-        "expandAll": {
-            "more": {
-                "name": "Expand / Collapse Groups via API",
-                "url": "./grouping-opening-groups/#expand--collapse-groups-via-api"
-            }
-        },
-        "collapseAll": {
-            "more": {
-                "name": "Expand / Collapse Groups via API",
-                "url": "./grouping-opening-groups/#expand--collapse-groups-via-api"
-            }
-        },
+        "expandAll": {},
+        "collapseAll": {},
         "setRowNodeExpanded": {
             "more": {
-                "name": "Expand / Collapse Groups via API",
-                "url": "./grouping-opening-groups/#expand--collapse-groups-via-api"
+                "name": "Expand to a Row",
+                "url": "./grouping-opening-groups/#expand-row-ancestors"
             }
         },
         "onGroupExpandedOrCollapsed": {},

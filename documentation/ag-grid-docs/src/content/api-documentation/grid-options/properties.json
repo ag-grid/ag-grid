@@ -12,7 +12,9 @@
                 "url": "./status-bar/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["IStatusPanelComp"],
+                "exclude": [
+                    "IStatusPanelComp"
+                ],
                 "include": []
             }
         },
@@ -22,7 +24,9 @@
                 "url": "./side-bar/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["IToolPanelComp"],
+                "exclude": [
+                    "IToolPanelComp"
+                ],
                 "include": []
             }
         },
@@ -277,12 +281,6 @@
             "more": {
                 "name": "Suppress Hide Leave",
                 "url": "./column-moving/#suppress-hide-leave"
-            }
-        },
-        "suppressRowGroupHidesColumns": {
-            "more": {
-                "name": "Keeping Columns Visible",
-                "url": "./grouping-group-panel/#keeping-columns-visible"
             }
         }
     },
@@ -592,7 +590,9 @@
                 "url": "./integrated-charts-customisation/#custom-chart-themes"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["AgChartThemeDefinition"]
+                "exclude": [
+                    "AgChartThemeDefinition"
+                ]
             }
         },
         "chartThemeOverrides": {
@@ -601,7 +601,9 @@
                 "url": "./integrated-charts-customisation/#overriding-themes"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["AgChartThemeOverrides"]
+                "exclude": [
+                    "AgChartThemeOverrides"
+                ]
             }
         },
         "chartToolPanelsDef": {
@@ -1225,49 +1227,44 @@
         "groupDefaultExpanded": {
             "more": {
                 "name": "Opening Group Levels by Default",
-                "url": "./grouping-opening-groups/#opening-group-levels-by-default"
+                "url": "./grouping-opening-groups/#expanding-by-group-level"
             }
         },
         "autoGroupColumnDef": {
             "more": {
                 "name": "Group Column Configuration",
-                "url": "./grouping-single-group-column/#group-column-configuration"
+                "url": "./grouping-single-group-column/#configuration"
             }
         },
-        "groupMaintainOrder": {
-            "more": {
-                "name": "Maintain Group Order",
-                "url": "./grouping-sorting/#maintain-group-order"
-            }
-        },
+        "groupMaintainOrder": {},
         "groupLockGroupColumns": {
             "more": {
                 "name": "Group Lock Group Columns",
-                "url": "./grouping-locking-group-columns"
+                "url": "./grouping-group-panel/#prevent-changes-to-group-order"
             }
         },
         "showOpenedGroup": {
             "more": {
                 "name": "Showing Open Groups",
-                "url": "./grouping-single-group-column/#showing-open-groups"
+                "url": "./grouping-multiple-group-columns/#display-the-parent-group-value"
             }
         },
         "isGroupOpenByDefault": {
             "more": {
                 "name": "Open Groups by Default",
-                "url": "./grouping-opening-groups/#open-groups-by-default"
+                "url": "./grouping-opening-groups/#expanding-via-callback"
             }
         },
         "initialGroupOrderComparator": {
             "more": {
                 "name": "Initial Group Order",
-                "url": "./grouping-group-order/#initial-group-order"
+                "url": "./grouping-sorting/#unsorted-group-order"
             }
         },
         "groupHideParentOfSingleChild": {
             "more": {
                 "name": "Remove Single Children",
-                "url": "./grouping-single-group-column/#removing-single-children"
+                "url": "./grouping-data/#hiding-parents-of-individual-rows"
             }
         },
         "groupHideOpenParents": {
@@ -1279,39 +1276,32 @@
         "groupAllowUnbalanced": {
             "more": {
                 "name": "Enabling Unbalanced Groups",
-                "url": "./grouping-unbalanced-groups/"
+                "url": "./grouping-data/#grouping-on-null-and-undefined-data"
             }
         },
         "rowGroupPanelShow": {
             "more": {
                 "name": "Enabling Row Group Panel",
-                "url": "./grouping-group-panel/#enabling-row-group-panel"
+                "url": "./grouping-group-panel/#enabling-the-row-group-panel"
             }
         },
         "rowGroupPanelSuppressSort": {
             "more": {
                 "name": "Suppress Sorting",
-                "url": "./grouping-group-panel/#suppress-sorting"
+                "url": "./grouping-group-panel/#prevent-sorting"
             }
         },
         "groupRowRenderer": {
             "description": "Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.",
             "more": {
-                "name": "Group Row Cell Renderer",
-                "url": "./grouping-group-rows/#providing-cell-renderer"
+                "name": "Custom Group Row Cell Renderer",
+                "url": "./grouping-group-rows/#custom-cell-renderer"
             }
         },
         "groupRowRendererParams": {
             "more": {
-                "name": "Providing Cell Renderer",
-                "url": "./grouping-group-rows/#providing-cell-renderer"
-            }
-        },
-        "suppressDragLeaveHidesColumns": {
-            "description": "By default, dragging a column out of the grid, i.e. to the [Row Group Panel](./grouping-group-panel/), it will be hidden in the grid. This property prevents the column becoming hidden in the grid. Default: `false`",
-            "more": {
-                "name": "Keeping Columns Visible",
-                "url": "./grouping-group-panel/#keeping-columns-visible"
+                "name": "Configuring Group Row Cell Renderer",
+                "url": "./grouping-group-rows/#cell-renderer"
             }
         },
         "suppressGroupRowsSticky": {
@@ -1320,10 +1310,17 @@
                 "url": "./server-side-model-grouping/#suppressing-sticky-groups"
             }
         },
+        "suppressDragLeaveHidesColumns": {
+            "description": "By default, dragging a column out of the grid, i.e. to the [Row Group Panel](./grouping-group-panel/), it will be hidden in the grid. This property prevents the column becoming hidden in the grid. Default: `false`",
+            "more": {
+                "name": "Keeping Columns Visible",
+                "url": "./grouping-group-panel/#prevent-user-grouping-from-hiding-columns"
+            }
+        },
         "suppressGroupChangesColumnVisibility": {
             "more": {
                 "name": "Keeping Columns Visible",
-                "url": "./grouping-group-panel/#keeping-columns-visible"
+                "url": "./grouping-group-panel/#prevent-user-grouping-from-hiding-columns"
             }
         }
     },
@@ -1574,7 +1571,9 @@
             },
             "interfaceHierarchyOverrides": {
                 "exclude": [],
-                "include": ["IViewportDatasourceParams"]
+                "include": [
+                    "IViewportDatasourceParams"
+                ]
             }
         },
         "viewportRowModelPageSize": {
