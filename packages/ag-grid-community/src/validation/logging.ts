@@ -55,13 +55,18 @@ function stringifyValue(value: any) {
     return output;
 }
 
-const minifiedLog = (errorNum: number, args: GetErrorParams<any>) => {
+export function getErrorLink(errorNum: ErrorId, args: GetErrorParams<any>) {
     const params = new URLSearchParams();
     Object.entries(args as any).forEach(([key, value]) => {
         params.append(key, stringifyValue(value));
     });
 
-    return `Visit ${baseDocLink}/errors/${errorNum}?${params.toString()} \n  Alternatively register the ValidationModule to see the full message in the console.`;
+    return `${baseDocLink}/errors/${errorNum}?${params.toString()}`;
+}
+
+const minifiedLog = (errorNum: ErrorId, args: GetErrorParams<any>) => {
+    const errorLink = getErrorLink(errorNum, args);
+    return `Visit ${errorLink} \n  Alternatively register the ValidationModule to see the full message in the console.`;
 };
 
 export function _logWarn<
