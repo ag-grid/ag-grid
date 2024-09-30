@@ -1,5 +1,6 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import {
+    type CellClassParams,
     type CellClassRules,
     type ColDef,
     type FirstDataRenderedEvent,
@@ -9,11 +10,10 @@ import {
     type RowClassParams,
     type RowClassRules,
     createGrid,
-} from '@ag-grid-community/core';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
+} from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 
-import type { CellClassParams } from '../../../../../../../../packages/ag-grid-community/dist/types/core/main';
 import { getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);

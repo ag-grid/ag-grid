@@ -1,14 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
-    type ColDef,
-    type GridApi,
-    type GridOptions,
-    ModuleRegistry,
-    type RowClassParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import { type ColDef, type GridOptions, ModuleRegistry, createGrid } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import { getData } from './data';
 
