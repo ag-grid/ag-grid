@@ -64,11 +64,10 @@ export const GridChartsApiModule: _ModuleWithApi<_GridChartsGridApi> = {
     dependsOn: [GridChartsCoreModule],
 };
 
-
 export const GridChartsEnterpriseFeaturesModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('GridChartsEnterpriseFeaturesModule'),
     beans: [EnterpriseChartProxyFactory, AdvancedSettingsMenuFactory],
-});
+};
 
 export const GridChartsModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('GridChartsModule'),

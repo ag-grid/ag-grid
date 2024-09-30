@@ -271,7 +271,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
         return res;
     }
 
-    protected createBean<T extends Bean | null | undefined>(
+    public createBean<T extends Bean | null | undefined>(
         bean: T,
         context?: Context | null,
         afterPreCreateCallback?: (bean: Bean) => void
@@ -283,7 +283,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
      * Destroys a bean and returns undefined to support destruction and clean up in a single line.
      * this.dateComp = this.context.destroyBean(this.dateComp);
      */
-    protected destroyBean<T extends Bean | null | undefined>(bean: T, context?: Context): undefined {
+    public destroyBean<T extends Bean | null | undefined>(bean: T, context?: Context): undefined {
         return (context || this.stubContext).destroyBean(bean);
     }
 

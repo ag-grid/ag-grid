@@ -370,6 +370,7 @@ export type BeanName =
     | 'columnNameService'
     | 'columnViewportService'
     | 'columnStateService'
+    | 'columnToolPanelFactory'
     | 'columnUtils'
     | 'pivotResultColsService'
     | 'componentMetadataProvider'

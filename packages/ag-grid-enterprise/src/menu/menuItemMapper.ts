@@ -355,7 +355,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return null;
                 }
             case 'columnChooser':
-                if (this.gos.isModuleRegistered('ColumnsToolPanelModule')) {
+                if (this.gos.isModuleRegistered('ColumnsToolPanelCoreModule')) {
                     return {
                         name: localeTextFunc('columnChooser', 'Choose Columns'),
                         icon: _createIconNoSpan('columns', this.gos, null),

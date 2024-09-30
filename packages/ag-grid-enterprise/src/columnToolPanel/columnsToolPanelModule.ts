@@ -7,10 +7,11 @@ import { RowGroupingModule } from '../rowGrouping/rowGroupingModule';
 import { SideBarModule } from '../sideBar/sideBarModule';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 import { ColumnToolPanel } from './columnToolPanel';
+import { ColumnToolPanelFactory } from './columnToolPanelFactory';
 import { ModelItemUtils } from './modelItemUtils';
 
-export const ColumnsToolPanelModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule('ColumnsToolPanelModule'),
+export const ColumnsToolPanelCoreModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('ColumnsToolPanelCoreModule'),
     beans: [ModelItemUtils],
     userComponents: [
         { name: 'agColumnsToolPanel', classImp: ColumnToolPanel },
@@ -19,12 +20,16 @@ export const ColumnsToolPanelModule: _ModuleWithoutApi = {
             classImp: AgMenuItemRenderer,
         },
     ],
-    dependsOn: [
-        EnterpriseCoreModule,
-        RowGroupingModule,
-        SideBarModule,
-        ColumnMoveModule,
-        DragAndDropModule,
-        PopupModule,
-    ],
+    dependsOn: [EnterpriseCoreModule, SideBarModule, ColumnMoveModule, DragAndDropModule, PopupModule],
+};
+
+export const ColumnsToolPanelRowGroupingModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('ColumnsToolPanelRowGroupingModule'),
+    beans: [ColumnToolPanelFactory],
+    dependsOn: [ColumnsToolPanelCoreModule, RowGroupingModule],
+};
+
+export const ColumnsToolPanelModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('ColumnsToolPanelModule'),
+    dependsOn: [ColumnsToolPanelCoreModule, ColumnsToolPanelRowGroupingModule],
 };
