@@ -633,9 +633,12 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
         const { rowNodeEventThrottle } = this.beans;
 
-        rowNodeEventThrottle
-            ? rowNodeEventThrottle.dispatchExpanded(event, forceSync)
-            : this.beans.eventService.dispatchEvent(event);
+        // throttle used for CSRM only
+        if (rowNodeEventThrottle) {
+            rowNodeEventThrottle.dispatchExpanded(event, forceSync);
+        } else {
+            this.beans.eventService.dispatchEvent(event);
+        }
 
         // when using footers we need to refresh the group row, as the aggregation
         // values jump between group and footer, because the footer can be callback
