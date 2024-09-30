@@ -1,12 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
-    FirstDataRenderedEvent,
-    GridApi,
-    GridOptions,
-    GridSizeChangedEvent,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { FirstDataRenderedEvent, GridApi, GridOptions, GridSizeChangedEvent } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -31,19 +26,19 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 function onGridSizeChanged(params: GridSizeChangedEvent) {
     // get the current grids width
-    var gridWidth = document.querySelector('.ag-body-viewport')!.clientWidth;
+    const gridWidth = document.querySelector('.ag-body-viewport')!.clientWidth;
 
     // keep track of which columns to hide/show
-    var columnsToShow = [];
-    var columnsToHide = [];
+    const columnsToShow = [];
+    const columnsToHide = [];
 
     // iterate over all columns (visible or not) and work out
     // now many columns can fit (based on their minWidth)
-    var totalColsWidth = 0;
-    var allColumns = params.api.getColumns();
+    let totalColsWidth = 0;
+    const allColumns = params.api.getColumns();
     if (allColumns && allColumns.length > 0) {
-        for (var i = 0; i < allColumns.length; i++) {
-            var column = allColumns[i];
+        for (let i = 0; i < allColumns.length; i++) {
+            const column = allColumns[i];
             totalColsWidth += column.getMinWidth();
             if (totalColsWidth > gridWidth) {
                 columnsToHide.push(column.getColId());
@@ -70,7 +65,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

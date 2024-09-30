@@ -1,6 +1,6 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import type { GridApi, GridOptions, ValueGetterParams } from '@ag-grid-community/core';
-import { ModuleRegistry, createGrid } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions, ValueGetterParams } from 'ag-grid-community';
+import { ModuleRegistry, createGrid } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -76,8 +76,8 @@ const gridOptions: GridOptions = {
 };
 
 function createRowData() {
-    var rowData = [];
-    for (var i = 0; i < 100; i++) {
+    const rowData = [];
+    for (let i = 0; i < 100; i++) {
         rowData.push({
             a: Math.floor(i % 4),
             b: Math.floor(i % 7),
@@ -88,6 +88,6 @@ function createRowData() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

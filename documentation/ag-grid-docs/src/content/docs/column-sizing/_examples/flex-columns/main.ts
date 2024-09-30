@@ -1,10 +1,11 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, ColGroupDef, ColSpanParams, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, ColSpanParams, GridApi, GridOptions } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-var colSpan = function (params: ColSpanParams) {
+const colSpan = function (params: ColSpanParams) {
     return params.data === 2 ? 3 : 1;
 };
 
@@ -34,8 +35,8 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 
 function fillAllCellsWithWidthMeasurement() {
     Array.prototype.slice.call(document.querySelectorAll('.ag-cell')).forEach((cell) => {
-        var width = cell.offsetWidth;
-        var isFullWidthRow = cell.parentElement.childNodes.length === 1;
+        const width = cell.offsetWidth;
+        const isFullWidthRow = cell.parentElement.childNodes.length === 1;
         cell.textContent = (isFullWidthRow ? 'Total width: ' : '') + width + 'px';
     });
 }
@@ -52,6 +53,6 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

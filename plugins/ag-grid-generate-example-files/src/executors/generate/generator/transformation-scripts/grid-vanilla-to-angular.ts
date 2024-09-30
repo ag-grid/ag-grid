@@ -88,7 +88,7 @@ function addModuleImports(
         imports: [...propertyInterfaces, 'GridReadyEvent', 'GridApi'],
     });
 
-    addLicenseManager(imports, exampleConfig, false);
+    addLicenseManager(imports, exampleConfig);
 
     if (bImports.length > 0) {
         addBindingImports(bImports, imports, false, true);
@@ -101,50 +101,10 @@ function addModuleImports(
     return imports;
 }
 
-function addPackageImports(
-    imports: string[],
-    bindings: ParsedBindings,
-    exampleConfig: ExampleConfig,
-    allStylesheets: string[]
-): string[] {
-    const { inlineGridStyles, imports: bindingImports, properties } = bindings;
-
-    imports.push("import { AgGridAngular } from 'ag-grid-angular';");
-    addLicenseManager(imports, exampleConfig, true);
-
-    if (!usesThemingApi(bindings)) {
-        imports.push("import 'ag-grid-community/styles/ag-grid.css';");
-        // to account for the (rare) example that has more than one class...just default to quartz if it does
-        // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
-        // "source" non dark version
-        const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
-        imports.push(`import "ag-grid-community/styles/${theme}.css";`);
-    }
-
-    if (allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
-    }
-
-    const propertyInterfaces = getPropertyInterfaces(properties);
-    const bImports = [...(bindingImports || [])];
-    bImports.push({
-        module: `'ag-grid-community'`,
-        isNamespaced: false,
-        imports: [...propertyInterfaces, 'GridReadyEvent', 'GridApi'],
-    });
-
-    if (bImports.length > 0) {
-        addBindingImports(bImports, imports, true, true);
-    }
-
-    return imports;
-}
-
 function getImports(
     bindings: ParsedBindings,
     exampleConfig: ExampleConfig,
     componentFileNames: string[],
-    importType: ImportType,
     allStylesheets: string[]
 ): string[] {
     const imports = ["import { Component } from '@angular/core';"];
@@ -158,11 +118,7 @@ function getImports(
         imports.push(`import { ${localeImport.imports[0]} } from '@ag-grid-community/locale';`);
     }
 
-    if (importType === 'packages') {
-        addPackageImports(imports, bindings, exampleConfig, allStylesheets);
-    } else {
-        addModuleImports(imports, bindings, exampleConfig, allStylesheets);
-    }
+    addModuleImports(imports, bindings, exampleConfig, allStylesheets);
 
     if (componentFileNames) {
         imports.push(...componentFileNames.map(getImport));
@@ -211,7 +167,7 @@ export function vanillaToAngular(
     const genericParams = rowDataType !== 'any' ? `<${rowDataType}>` : '';
 
     return (importType) => {
-        const imports = getImports(bindings, exampleConfig, componentFileNames, importType, allStylesheets);
+        const imports = getImports(bindings, exampleConfig, componentFileNames, allStylesheets);
         const propertyAttributes = [];
         const propertyVars = [];
         const propertyAssignments = [];

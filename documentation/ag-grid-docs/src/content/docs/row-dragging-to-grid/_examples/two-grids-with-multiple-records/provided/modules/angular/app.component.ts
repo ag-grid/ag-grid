@@ -1,20 +1,19 @@
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, ViewChild } from '@angular/core';
 
+import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ICellRendererAngularComp } from 'ag-grid-angular';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import {
+import type {
     ColDef,
     GetRowIdParams,
     GridApi,
     GridReadyEvent,
     ICellRendererParams,
-    ModuleRegistry,
     SelectionOptions,
 } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule, ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import './styles.css';
 
@@ -211,9 +210,9 @@ export class AppComponent {
     addGridDropZone() {
         const dropZoneParams = this.rightApi.getRowDropZoneParams({
             onDragStop: (params) => {
-                var deselectCheck = this.eDeselectRadio.nativeElement.checked;
-                var moveCheck = this.eMoveRadio.nativeElement.checked;
-                var nodes = params.nodes;
+                const deselectCheck = this.eDeselectRadio.nativeElement.checked;
+                const moveCheck = this.eMoveRadio.nativeElement.checked;
+                const nodes = params.nodes;
 
                 if (moveCheck) {
                     this.leftApi.applyTransaction({

@@ -349,8 +349,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private sortRowNodes(): void {
-        const serverIsSorting =
-            this.storeUtils.isServerSideSortAllLevels() || this.storeUtils.isServerSideSortOnServer();
+        const serverIsSorting = this.storeUtils.isServerSideSortAllLevels();
         const sortOptions = this.sortController?.getSortOptions();
         const noSortApplied = !sortOptions || sortOptions.length == 0;
         if (serverIsSorting || noSortApplied || !this.rowNodeSorter) {
@@ -366,8 +365,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     private filterRowNodes(): void {
-        const serverIsFiltering =
-            !this.storeUtils.isServerSideOnlyRefreshFilteredGroups() || this.storeUtils.isServerSideFilterOnServer();
+        const serverIsFiltering = !this.storeUtils.isServerSideOnlyRefreshFilteredGroups();
         // filtering for InFullStore only works at lowest level details.
         // reason is the logic for group filtering was to difficult to work out how it should work at time of writing.
         const groupLevel = this.groupLevel;
@@ -556,14 +554,8 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public refreshAfterFilter(params: StoreRefreshAfterParams): void {
-        const serverIsFiltering = this.storeUtils.isServerSideFilterOnServer();
-        const storeIsImpacted = this.storeUtils.isServerRefreshNeeded(
-            this.parentRowNode,
-            this.ssrmParams.rowGroupCols,
-            params
-        );
         const serverIsFilteringAllLevels = !this.storeUtils.isServerSideOnlyRefreshFilteredGroups();
-        if (serverIsFilteringAllLevels || (serverIsFiltering && storeIsImpacted)) {
+        if (serverIsFilteringAllLevels) {
             this.refreshStore(true);
             this.sortRowNodes();
             return;
@@ -575,14 +567,8 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     }
 
     public refreshAfterSort(params: StoreRefreshAfterParams): void {
-        const serverIsSorting = this.storeUtils.isServerSideSortOnServer();
-        const storeIsImpacted = this.storeUtils.isServerRefreshNeeded(
-            this.parentRowNode,
-            this.ssrmParams.rowGroupCols,
-            params
-        );
         const serverIsSortingAllLevels = this.storeUtils.isServerSideSortAllLevels();
-        if (serverIsSortingAllLevels || (serverIsSorting && storeIsImpacted)) {
+        if (serverIsSortingAllLevels) {
             this.refreshStore(true);
             this.filterRowNodes();
             return;

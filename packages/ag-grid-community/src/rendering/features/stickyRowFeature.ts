@@ -331,8 +331,8 @@ export class StickyRowFeature extends BeanStub {
             return true;
         }
 
-        const suppressGroupRows = !!this.gos.get('groupIncludeFooter') || suppressFootersSticky === 'group';
-        const suppressGrandRows = !!this.gos.get('groupIncludeTotalFooter') || suppressFootersSticky === 'grand';
+        const suppressGroupRows = suppressFootersSticky === 'group';
+        const suppressGrandRows = suppressFootersSticky === 'grand';
         if (suppressGroupRows && suppressGrandRows) {
             return true;
         }

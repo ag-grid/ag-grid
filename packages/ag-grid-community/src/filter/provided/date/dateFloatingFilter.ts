@@ -68,10 +68,6 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         this.eReadOnlyText.setDisabled(true).setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
     }
 
-    public override onParamsUpdated(params: IFloatingFilterParams<DateFilter>): void {
-        this.refresh(params);
-    }
-
     public override refresh(params: IFloatingFilterParams<DateFilter>): void {
         super.refresh(params);
         this.params = params;

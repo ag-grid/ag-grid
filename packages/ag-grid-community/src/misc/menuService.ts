@@ -183,10 +183,9 @@ export class MenuService extends BeanStub implements NamedBean {
     }
 
     public isColumnMenuInHeaderEnabled(column: AgColumn): boolean {
-        const { suppressMenu, suppressHeaderMenuButton } = column.getColDef();
-        const isSuppressMenuButton = suppressHeaderMenuButton ?? suppressMenu;
+        const { suppressHeaderMenuButton } = column.getColDef();
         return (
-            !isSuppressMenuButton &&
+            !suppressHeaderMenuButton &&
             this.activeMenuFactory.isMenuEnabled(column) &&
             (this.isLegacyMenuEnabled() || !!this.enterpriseMenuFactory)
         );
@@ -247,16 +246,7 @@ export class MenuService extends BeanStub implements NamedBean {
     }
 
     public isFloatingFilterButtonEnabled(column: AgColumn): boolean {
-        const colDef = column.getColDef();
-        const legacySuppressFilterButton = colDef.floatingFilterComponentParams?.suppressFilterButton;
-        if (legacySuppressFilterButton != null) {
-            _warnOnce(
-                `As of v31.1, 'colDef.floatingFilterComponentParams.suppressFilterButton' is deprecated. Use 'colDef.suppressFloatingFilterButton' instead.`
-            );
-        }
-        return colDef.suppressFloatingFilterButton == null
-            ? !legacySuppressFilterButton
-            : !colDef.suppressFloatingFilterButton;
+        return !!column.getColDef().suppressFloatingFilterButton;
     }
 
     private getColumnMenuType(): 'legacy' | 'new' {

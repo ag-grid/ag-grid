@@ -60,9 +60,10 @@ import { RowContainerHeightService } from './rendering/rowContainerHeightService
 import { RowRenderer } from './rendering/rowRenderer';
 import { StylingService } from './styling/stylingService';
 import { SyncService } from './syncService';
-import { _errorOnce, _warnOnce } from './utils/function';
+import { _errorOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
+import { _logError } from './validation/logging';
 import { ChangeDetectionService } from './valueService/changeDetectionService';
 import { ValueService } from './valueService/valueService';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
@@ -165,7 +166,8 @@ export function createGrid<TData>(
     params?: Params
 ): GridApi<TData> {
     if (!gridOptions) {
-        _errorOnce('No gridOptions provided to createGrid');
+        // No gridOptions provided, abort creating the grid
+        _logError(11, {});
         return {} as GridApi;
     }
     const api = new GridCoreCreator().create(
@@ -179,67 +181,7 @@ export function createGrid<TData>(
         params
     );
 
-    // @deprecated v31 api no longer mutated onto the provided gridOptions
-    // Instead we place a getter that will log an error when accessed and direct users to the docs
-    // Only apply for direct usages of createGrid, not for frameworks
-    if (!Object.isFrozen(gridOptions) && !(params as GridParams)?.frameworkOverrides) {
-        const apiUrl = 'https://ag-grid.com/javascript-data-grid/grid-interface/#grid-api';
-        Object.defineProperty(gridOptions, 'api', {
-            get: () => {
-                _errorOnce(`gridOptions.api is no longer supported. See ${apiUrl}.`);
-                return undefined;
-            },
-            configurable: true,
-        });
-    }
-
     return api;
-}
-/**
- * @deprecated v31 use createGrid() instead
- */
-export class Grid {
-    private readonly gridOptions: any; // Not typed to enable setting api for backwards compatibility
-
-    constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
-        _warnOnce(
-            'Since v31 new Grid(...) is deprecated. Use createGrid instead: `const gridApi = createGrid(...)`. The grid api is returned from createGrid and will not be available on gridOptions.'
-        );
-
-        if (!gridOptions) {
-            _errorOnce('No gridOptions provided to the grid');
-            return;
-        }
-
-        this.gridOptions = gridOptions as any;
-
-        const api = new GridCoreCreator().create(
-            eGridDiv,
-            gridOptions,
-            (context) => {
-                const gridComp = new GridComp(eGridDiv);
-                const bean = context.createBean(gridComp);
-                bean.addDestroyFunc(() => {
-                    this.destroy();
-                });
-            },
-            undefined,
-            params
-        );
-
-        // Maintain existing behaviour by mutating gridOptions with the apis for deprecated new Grid()
-        this.gridOptions.api = api;
-    }
-
-    public destroy(): void {
-        if (this.gridOptions) {
-            this.gridOptions.api?.destroy();
-            // need to remove these, as we don't own the lifecycle of the gridOptions, we need to
-            // remove the references in case the user keeps the grid options, we want the rest
-            // of the grid to be picked up by the garbage collector
-            delete this.gridOptions.api;
-        }
-    }
 }
 
 let nextGridId = 1;
@@ -267,7 +209,6 @@ export class GridCoreCreator {
 
         if (!beanClasses) {
             // Detailed error message will have been printed by createBeansList
-            _errorOnce('Failed to create grid.');
             // Break typing so that the normal return type does not have to handle undefined.
             return undefined as any;
         }

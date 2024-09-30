@@ -1,6 +1,7 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, GridOptions, ValueGetterParams, createGrid } from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { GridApi, GridOptions, ValueGetterParams } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -13,7 +14,7 @@ class CustomButtonComponent {
 
     init() {
         this.eGui = document.createElement('div');
-        let eButton = document.createElement('button');
+        const eButton = document.createElement('button');
         eButton.className = 'btn-simple';
         eButton.textContent = 'Push Me!';
         this.eventListener = () => alert('clicked');

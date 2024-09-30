@@ -33,8 +33,6 @@ import {
     resetColumnState,
     setColumnGroupOpened,
     setColumnGroupState,
-    setColumnPinned,
-    setColumnVisible,
     setColumnsPinned,
     setColumnsVisible,
 } from './columnApi';
@@ -78,9 +76,7 @@ export const ColumnApiModule = _defineModule<_ColumnGridApi<any>>({
         isPinningRight,
         getDisplayedColAfter,
         getDisplayedColBefore,
-        setColumnVisible,
         setColumnsVisible,
-        setColumnPinned,
         setColumnsPinned,
         getAllGridColumns,
         getDisplayedLeftColumns,

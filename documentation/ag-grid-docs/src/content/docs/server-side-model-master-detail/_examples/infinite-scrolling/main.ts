@@ -1,17 +1,17 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type {
     GridApi,
     GridOptions,
     IDetailCellRendererParams,
     IServerSideDatasource,
     IServerSideGetRowsRequest,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
-import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
-import { MenuModule } from '@ag-grid-enterprise/menu';
-import { ServerSideRowModelModule } from '@ag-grid-enterprise/server-side-row-model';
+} from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { MasterDetailModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
+import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
@@ -64,7 +64,7 @@ const gridOptions: GridOptions = {
     onGridReady: (params) => {
         setTimeout(() => {
             // expand some master row
-            var someRow = params.api.getRowNode('1');
+            const someRow = params.api.getRowNode('1');
             if (someRow) {
                 someRow.setExpanded(true);
             }
@@ -77,7 +77,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
         getRows: (params) => {
             // adding delay to simulate real server call
             setTimeout(() => {
-                var response = server.getResponse(params.request);
+                const response = server.getResponse(params.request);
 
                 if (response.success) {
                     // call the success callback
@@ -97,10 +97,10 @@ function getFakeServer(allData: any) {
             console.log('asking for rows: ' + request.startRow + ' to ' + request.endRow);
 
             // take a slice of the total rows
-            var rowsThisPage = allData.slice(request.startRow, request.endRow);
+            const rowsThisPage = allData.slice(request.startRow, request.endRow);
 
             // if row count is known, it's possible to skip over blocks
-            var lastRow = allData.length;
+            const lastRow = allData.length;
 
             return {
                 success: true,
@@ -113,14 +113,14 @@ function getFakeServer(allData: any) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/call-data.json')
         .then((response) => response.json())
         .then(function (data) {
-            var server = getFakeServer(data);
-            var datasource = getServerSideDatasource(server);
+            const server = getFakeServer(data);
+            const datasource = getServerSideDatasource(server);
             gridApi!.setGridOption('serverSideDatasource', datasource);
         });
 });

@@ -146,11 +146,10 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         }
 
         const isTreeData = this.gos.get('treeData');
-        const isSuppressGroupMaintainValueType = this.gos.get('suppressGroupMaintainValueType');
 
-        // if not tree data and not suppressGroupMaintainValueType then we get the value from the group data
+        // if not tree data then we get the value from the group data
         const getValueFromNode = (node: RowNode) => {
-            if (isTreeData || isSuppressGroupMaintainValueType) {
+            if (isTreeData) {
                 return node.key;
             }
             const value = node.groupData?.[column.getId()];

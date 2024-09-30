@@ -1,14 +1,14 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type {
     GridApi,
     GridOptions,
     KeyCreatorParams,
     ValueFormatterParams,
     ValueGetterParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+} from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
@@ -51,14 +51,14 @@ function countryValueFormatter(params: ValueFormatterParams) {
 }
 
 function countryKeyCreator(params: KeyCreatorParams) {
-    var countryObject = params.value;
+    const countryObject = params.value;
     return countryObject.name;
 }
 
 function countryValueGetter(params: ValueGetterParams) {
     // hack the data  - replace the country with an object of country name and code
-    var countryName = params.data.country;
-    var countryCode = countryName.substring(0, 2).toUpperCase();
+    const countryName = params.data.country;
+    const countryCode = countryName.substring(0, 2).toUpperCase();
     return {
         name: countryName,
         code: countryCode,
@@ -67,7 +67,7 @@ function countryValueGetter(params: ValueGetterParams) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

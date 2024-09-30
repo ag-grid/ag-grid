@@ -90,17 +90,20 @@
         "platform": "browser",
         "target": "es2020",
         "format": ["cjs", "esm"],
-        "sourcemap": true
+        "sourcemap": true,
+        "metafile": true
       },
       "configurations": {
         "watch": {
           "tsConfig": "{projectRoot}/tsconfig.watch.json"
         },
         "staging": {
-          "sourcemap": false
+          "sourcemap": false,
+          "metafile": false
         },
         "production": {
-          "sourcemap": false
+          "sourcemap": false,
+          "metafile": false
         }
       }
     },

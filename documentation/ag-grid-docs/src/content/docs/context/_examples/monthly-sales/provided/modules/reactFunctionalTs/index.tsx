@@ -1,17 +1,18 @@
 'use strict';
 
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ColDef, ColGroupDef, GridReadyEvent, SelectionOptions } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridReadyEvent, SelectionOptions } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { FiltersToolPanelModule } from 'ag-grid-enterprise';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 import { SetFilterModule } from 'ag-grid-enterprise';
-import { AgGridReact, CustomCellRendererProps, CustomGroupCellRendererProps } from 'ag-grid-react';
+import type { CustomCellRendererProps } from 'ag-grid-react';
+import { AgGridReact, CustomGroupCellRendererProps } from 'ag-grid-react';
 
 import './styles.css';
 
@@ -168,7 +169,7 @@ const GridExample = () => {
 
     const onChangeMonth = useCallback(
         (i: number) => {
-            var newMonth = (context.current.month += i);
+            let newMonth = (context.current.month += i);
             if (newMonth < -1) {
                 newMonth = -1;
             }

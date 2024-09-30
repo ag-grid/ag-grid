@@ -9,6 +9,7 @@ import type {
     SelectionOptions,
     SingleRowSelectionOptions,
 } from './entities/gridOptions';
+import type { RowNode } from './entities/rowNode';
 import type {
     ExtractParamsFromCallback,
     ExtractReturnTypeFromCallback,
@@ -44,10 +45,6 @@ export function _isDomLayout(gos: GridOptionsService, domLayout: DomLayoutType) 
 
 export function _isRowSelection(gos: GridOptionsService): boolean {
     return _getRowSelectionMode(gos) !== undefined;
-}
-
-export function _useAsyncEvents(gos: GridOptionsService) {
-    return !gos.get('suppressAsyncEvents');
 }
 
 export function _isGetRowHeightFunction(gos: GridOptionsService): boolean {
@@ -241,16 +238,7 @@ export function _getGroupAggFiltering(
 }
 
 export function _getGrandTotalRow(gos: GridOptionsService): 'top' | 'bottom' | undefined {
-    const userValue = gos.get('grandTotalRow');
-    if (userValue) {
-        return userValue;
-    }
-
-    const legacyValue = gos.get('groupIncludeTotalFooter');
-    if (legacyValue) {
-        return 'bottom';
-    }
-    return undefined;
+    return gos.get('grandTotalRow');
 }
 
 export function _getGroupTotalRowCallback(
@@ -262,18 +250,7 @@ export function _getGroupTotalRowCallback(
         return gos.getCallback('groupTotalRow' as any) as any;
     }
 
-    if (userValue) {
-        return () => userValue;
-    }
-
-    const legacyValue = gos.get('groupIncludeFooter');
-    if (typeof legacyValue === 'function') {
-        const legacyCallback = gos.getCallback('groupIncludeFooter' as any) as any;
-        return (p: GetGroupIncludeFooterParams) => {
-            return legacyCallback(p) ? 'bottom' : undefined;
-        };
-    }
-    return () => (legacyValue ? 'bottom' : undefined);
+    return () => userValue ?? undefined;
 }
 
 export function _isGroupMultiAutoColumn(gos: GridOptionsService) {
@@ -317,6 +294,50 @@ export function _getRowIdCallback<TData = any>(
 
         return id;
     };
+}
+
+export function _canSkipShowingRowGroup(gos: GridOptionsService, node: RowNode): boolean {
+    const isSkippingGroups = gos.get('groupHideParentOfSingleChild');
+    if (isSkippingGroups === true) {
+        return true;
+    }
+    if (isSkippingGroups === 'leafGroupsOnly' && node.leafGroup) {
+        return true;
+    }
+    // deprecated
+    if (gos.get('groupRemoveSingleChildren')) {
+        return true;
+    }
+    if (gos.get('groupRemoveLowestSingleChildren') && node.leafGroup) {
+        return true;
+    }
+    return false;
+}
+
+/** Get the selection checkbox configuration. Defaults to enabled. */
+export function _shouldUpdateColVisibilityAfterGroup(gos: GridOptionsService, isGrouped: boolean): boolean {
+    const preventVisibilityChanges = gos.get('suppressGroupChangesColumnVisibility');
+    if (preventVisibilityChanges === true) {
+        return false;
+    }
+    if (isGrouped && preventVisibilityChanges === 'suppressHideOnGroup') {
+        return false;
+    }
+    if (!isGrouped && preventVisibilityChanges === 'suppressShowOnUngroup') {
+        return false;
+    }
+
+    const legacySuppressOnGroup = gos.get('suppressRowGroupHidesColumns');
+    if (isGrouped && legacySuppressOnGroup === true) {
+        return false;
+    }
+
+    const legacySuppressOnUngroup = gos.get('suppressMakeColumnVisibleAfterUnGroup');
+    if (!isGrouped && legacySuppressOnUngroup === true) {
+        return false;
+    }
+
+    return true;
 }
 
 /** Get the selection checkbox configuration. Defaults to enabled. */

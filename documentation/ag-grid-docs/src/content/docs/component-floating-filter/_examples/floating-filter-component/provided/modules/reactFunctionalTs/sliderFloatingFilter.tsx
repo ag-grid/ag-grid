@@ -1,6 +1,7 @@
-import React, { ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
+import React from 'react';
 
-import { CustomFloatingFilterProps } from 'ag-grid-react';
+import type { CustomFloatingFilterProps } from 'ag-grid-react';
 
 export interface SliderFloatingFilterProps extends CustomFloatingFilterProps {
     maxValue: number;

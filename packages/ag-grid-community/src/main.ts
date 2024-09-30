@@ -289,7 +289,6 @@ export type { StandardMenuFactory } from './headerRendering/cells/column/standar
 
 // misc
 export type { ResizeObserverService } from './misc/resizeObserverService';
-export { IImmutableService } from './interfaces/iImmutableService';
 export type { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
 export type { MenuService } from './misc/menuService';
@@ -358,7 +357,6 @@ export {
     IToolPanel,
     IToolPanelComp,
     IToolPanelParams,
-    ToolPanelColumnCompParams,
     BaseToolPanelParams,
     IToolPanelColumnCompParams,
     IToolPanelFiltersCompParams,
@@ -559,7 +557,6 @@ export type { CellNavigationService } from './cellNavigationService';
 export { KeyCode } from './constants/keyCode';
 export { VerticalDirection, HorizontalDirection } from './constants/direction';
 export {
-    Grid,
     GridParams,
     Params,
     GridCoreCreator,
@@ -606,7 +603,9 @@ export {
     _isClientSideRowModel,
     _isServerSideRowModel,
     _isGroupUseEntireRow,
+    _canSkipShowingRowGroup,
     _getRowHeightAsNumber,
+    _shouldUpdateColVisibilityAfterGroup,
     _getActiveDomElement,
     _isNothingFocused,
     _getDocument,
@@ -733,7 +732,6 @@ export {
     HeaderCheckboxSelectionCallbackParams,
     HeaderCheckboxSelectionCallback,
     HeaderLocation,
-    ColumnsMenuParams,
     ColumnChooserParams,
     ColumnMenuTab,
     HeaderClassParams,
@@ -980,6 +978,8 @@ export { ZipContainer } from './csvExport/zipContainer/zipContainer';
 export { Module, ModuleValidationResult, _defineModule } from './interfaces/iModule';
 export { ModuleNames } from './modules/moduleNames';
 export { ModuleRegistry } from './modules/moduleRegistry';
+
+export { ValidationModule } from './validation/validationModule';
 
 export { ColumnMoveModule } from './columnMove/columnMoveModule';
 export { DragModule, HorizontalResizeModule, DragAndDropModule } from './dragAndDrop/dragModule';

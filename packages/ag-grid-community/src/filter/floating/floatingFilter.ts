@@ -26,8 +26,6 @@ export interface IFloatingFilterParams<P = InbuiltParentType, TData = any, TCont
      * For example, the provided filters use debounceMs from the parent filter params.
      * */
     filterParams: IFilterParams;
-    /** @deprecated v31.1 Use `colDef.suppressFloatingFilterButton` instead. */
-    suppressFilterButton: boolean;
 
     /**
      * This is a shortcut to invoke getModel on the parent filter.
@@ -73,9 +71,6 @@ export interface IFloatingFilter<P = any> extends BaseFloatingFilter {
      * The event is the FilterChangedEvent that the grid fires.
      */
     onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null): void;
-
-    /** @deprecated v31.1 - Use `refresh` instead */
-    onParamsUpdated?(params: IFloatingFilterParams<P>): void;
 
     /** A hook to perform any necessary operations when the column definition is updated. */
     refresh?(params: IFloatingFilterParams<P>): void;

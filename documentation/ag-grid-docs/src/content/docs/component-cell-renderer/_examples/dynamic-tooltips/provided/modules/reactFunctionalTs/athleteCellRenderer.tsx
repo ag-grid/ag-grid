@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 
-import { CustomCellRendererProps } from 'ag-grid-react';
+import type { CustomCellRendererProps } from 'ag-grid-react';
 
 export default forwardRef((props: CustomCellRendererProps) => {
     const wrapper = useRef<HTMLDivElement>(null);

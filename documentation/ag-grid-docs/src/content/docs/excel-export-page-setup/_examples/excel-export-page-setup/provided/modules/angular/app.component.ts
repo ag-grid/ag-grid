@@ -1,17 +1,15 @@
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
-import { ModuleRegistry } from 'ag-grid-community';
-import { ExcelExportModule } from 'ag-grid-enterprise';
-import { MenuModule } from 'ag-grid-enterprise';
+import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { ClientSideRowModelModule, CommunityFeaturesModule, ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { ExcelExportModule, MenuModule } from 'ag-grid-enterprise';
 
-import { IOlympicData } from './interfaces';
+import type { IOlympicData } from './interfaces';
 import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule, MenuModule, ExcelExportModule]);
@@ -142,7 +140,7 @@ export class AppComponent {
 }
 
 function getNumber(id: string) {
-    var el = document.querySelector(id) as any;
+    const el = document.querySelector(id) as any;
     if (!el || isNaN(el.value)) {
         return 0;
     }

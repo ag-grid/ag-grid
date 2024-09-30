@@ -1,8 +1,9 @@
-import { IFloatingFilterAngularComp } from '@ag-grid-community/angular';
-import { IFloatingFilterParams } from '@ag-grid-community/core';
 import { Component } from '@angular/core';
 
-import { YearFilter } from './year-filter.component_angular';
+import type { IFloatingFilterAngularComp } from 'ag-grid-angular';
+import type { IFloatingFilterParams } from 'ag-grid-community';
+
+import type { YearFilter } from './year-filter.component_angular';
 
 @Component({
     standalone: true,

@@ -1,7 +1,8 @@
-import { IFilterAngularComp } from '@ag-grid-community/angular';
-import { IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/core';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
+import type { IFilterAngularComp } from 'ag-grid-angular';
+import type { IDoesFilterPassParams, IFilterParams } from 'ag-grid-community';
 
 @Component({
     standalone: true,
@@ -35,9 +36,9 @@ export class NumberFilterComponent implements IFilterAngularComp {
             return true;
         }
 
-        var { node } = params;
+        const { node } = params;
 
-        var value = this.filterParams.getValue(node);
+        const value = this.filterParams.getValue(node);
 
         if (value == null) return false;
         return Number(value) > Number(this.filterText);

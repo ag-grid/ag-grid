@@ -1,11 +1,11 @@
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
 import React, { StrictMode, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
 import type { ColDef, GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
@@ -69,7 +69,7 @@ const GridExample = () => {
     const createLeftRowData = () => ['Red', 'Green', 'Blue'].map(createDataItem);
 
     const createDataItem = (color: string) => {
-        let newDataItem = {
+        const newDataItem = {
             id: nextRowId++,
             color: color,
             value1: Math.floor(Math.random() * 100),

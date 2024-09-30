@@ -1,7 +1,7 @@
-import { IDateComp, IDateParams } from '@ag-grid-community/core';
+import type { IDateComp, IDateParams } from 'ag-grid-community';
 
 // we'll be using the globally provided flatpickr for our example
-declare var flatpickr: any;
+declare let flatpickr: any;
 
 export class CustomDateComponent implements IDateComp {
     params!: IDateParams;

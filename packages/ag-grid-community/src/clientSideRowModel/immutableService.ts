@@ -3,7 +3,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
-import type { IImmutableService } from '../interfaces/iImmutableService';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
@@ -12,7 +11,7 @@ import { _exists } from '../utils/generic';
 import { _iterateObject } from '../utils/object';
 import type { ClientSideRowModel } from './clientSideRowModel';
 
-export class ImmutableService extends BeanStub implements NamedBean, IImmutableService {
+export class ImmutableService extends BeanStub implements NamedBean {
     beanName = 'immutableService' as const;
 
     private rowModel: IRowModel;

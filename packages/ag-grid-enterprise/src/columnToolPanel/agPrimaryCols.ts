@@ -1,16 +1,11 @@
-import type {
-    ColDef,
-    ColGroupDef,
-    ColumnEventType,
-    ComponentSelector,
-    ToolPanelColumnCompParams,
-} from 'ag-grid-community';
+import type { ColDef, ColGroupDef, ColumnEventType, ComponentSelector } from 'ag-grid-community';
 import { Component, PositionableFeature, RefPlaceholder } from 'ag-grid-community';
 
 import type { AgPrimaryColsHeader } from './agPrimaryColsHeader';
 import { AgPrimaryColsHeaderSelector } from './agPrimaryColsHeader';
 import type { AgPrimaryColsList } from './agPrimaryColsList';
 import { AgPrimaryColsListSelector } from './agPrimaryColsList';
+import type { ToolPanelColumnCompParams } from './columnToolPanel';
 
 export class AgPrimaryCols extends Component {
     private readonly primaryColsHeaderPanel: AgPrimaryColsHeader = RefPlaceholder;

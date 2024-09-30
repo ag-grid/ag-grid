@@ -1,5 +1,5 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import {
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type {
     GetRowIdParams,
     GridApi,
     GridOptions,
@@ -7,10 +7,10 @@ import {
     IRowNode,
     RowDragEndEvent,
     ValueFormatterParams,
-    createGrid,
-} from '@ag-grid-community/core';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+} from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 
@@ -20,9 +20,9 @@ class FileCellRenderer {
     private eGui!: any;
 
     init(params: ICellRendererParams) {
-        var tempDiv = document.createElement('div');
-        var value = params.value;
-        var icon = this.getFileIcon(params.value);
+        const tempDiv = document.createElement('div');
+        const value = params.value;
+        const icon = this.getFileIcon(params.value);
         tempDiv.innerHTML = icon ? '<i class="' + icon + '"/>' + '<span class="filename">' + value + '</span>' : value;
         this.eGui = tempDiv.firstChild!;
     }
@@ -43,7 +43,7 @@ class FileCellRenderer {
     }
 }
 
-var valueFormatter = function (params: ValueFormatterParams) {
+const valueFormatter = function (params: ValueFormatterParams) {
     return params.value ? params.value + ' MB' : '';
 };
 
@@ -83,13 +83,13 @@ const gridOptions: GridOptions = {
 
 function onRowDragEnd(event: RowDragEndEvent) {
     // this is the row the mouse is hovering over
-    var overNode = event.overNode;
+    const overNode = event.overNode;
     if (!overNode) {
         return;
     }
 
     // folder to drop into is where we are going to move the file/folder to
-    var folderToDropInto =
+    const folderToDropInto =
         overNode.data.type === 'folder'
             ? // if over a folder, we take the immediate row
               overNode
@@ -97,21 +97,21 @@ function onRowDragEnd(event: RowDragEndEvent) {
               overNode.parent;
 
     // the data we want to move
-    var movingData = event.node.data;
+    const movingData = event.node.data;
 
     // take new parent path from parent, if data is missing, means it's the root node,
     // which has no data.
-    var newParentPath = folderToDropInto!.data ? folderToDropInto!.data.filePath : [];
-    var needToChangeParent = !arePathsEqual(newParentPath, movingData.filePath);
+    const newParentPath = folderToDropInto!.data ? folderToDropInto!.data.filePath : [];
+    const needToChangeParent = !arePathsEqual(newParentPath, movingData.filePath);
 
     // check we are not moving a folder into a child folder
-    var invalidMode = isSelectionParentOfTarget(event.node, folderToDropInto);
+    const invalidMode = isSelectionParentOfTarget(event.node, folderToDropInto);
     if (invalidMode) {
         console.log('invalid move');
     }
 
     if (needToChangeParent && !invalidMode) {
-        var updatedRows: any[] = [];
+        const updatedRows: any[] = [];
         moveToPath(newParentPath, event.node, updatedRows);
 
         gridApi!.applyTransaction({
@@ -126,9 +126,9 @@ function onRowDragEnd(event: RowDragEndEvent) {
 // before we send it to AG Grid
 function moveToPath(newParentPath: string[], node: IRowNode, allUpdatedNodes: any[]) {
     // last part of the file path is the file name
-    var oldPath = node.data.filePath;
-    var fileName = oldPath[oldPath.length - 1];
-    var newChildPath = newParentPath.slice();
+    const oldPath = node.data.filePath;
+    const fileName = oldPath[oldPath.length - 1];
+    const newChildPath = newParentPath.slice();
     newChildPath.push(fileName);
 
     node.data.filePath = newChildPath;
@@ -143,7 +143,7 @@ function moveToPath(newParentPath: string[], node: IRowNode, allUpdatedNodes: an
 }
 
 function isSelectionParentOfTarget(selectedNode: IRowNode, targetNode: IRowNode | null) {
-    let children = [...(selectedNode.childrenAfterGroup || [])];
+    const children = [...(selectedNode.childrenAfterGroup || [])];
 
     if (!targetNode) {
         return false;
@@ -172,7 +172,7 @@ function arePathsEqual(path1: string[], path2: string[]) {
         return false;
     }
 
-    var equal = true;
+    let equal = true;
     path1.forEach(function (item, index) {
         if (path2[index] !== item) {
             equal = false;
@@ -186,7 +186,7 @@ function arePathsEqual(path1: string[], path2: string[]) {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
     // lookup the container we want the Grid to use
-    var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
     // create the grid passing in the div to use together with the columns & data we want to use
     gridApi = createGrid(eGridDiv, gridOptions);
