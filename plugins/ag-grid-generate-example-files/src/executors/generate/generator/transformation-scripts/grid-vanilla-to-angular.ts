@@ -93,6 +93,10 @@ function addModuleImports(
         addBindingImports(bImports, imports, false, true);
     }
 
+    if (bindings.moduleRegistration) {
+        imports.push(bindings.moduleRegistration);
+    }
+
     return imports;
 }
 

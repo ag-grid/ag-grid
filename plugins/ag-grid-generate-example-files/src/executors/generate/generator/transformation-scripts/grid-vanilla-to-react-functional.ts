@@ -63,6 +63,10 @@ function getModuleImports(
         addBindingImports(moduleImports, imports, false, true);
     }
 
+    if (bindings.moduleRegistration) {
+        imports.push(bindings.moduleRegistration);
+    }
+
     return imports;
 }
 
