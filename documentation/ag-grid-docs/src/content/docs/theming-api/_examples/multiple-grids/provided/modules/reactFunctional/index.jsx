@@ -3,14 +3,14 @@
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { themeAlpine, themeBalham, themeQuartz } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 import './style.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {
     return (

@@ -1,5 +1,5 @@
 import type { ColDef, ColGroupDef } from 'ag-grid-community';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../../test-utils';
@@ -7,7 +7,7 @@ import { getAutoGroupColumnIds, getColumnOrder } from '../column-test-utils';
 
 describe('pivotMode=true', () => {
     const gridsManager = new TestGridsManager({
-        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule],
     });
 
     afterEach(() => {

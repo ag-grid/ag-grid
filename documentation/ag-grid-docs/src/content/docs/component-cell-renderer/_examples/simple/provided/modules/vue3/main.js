@@ -1,6 +1,6 @@
 import { createApp, ref } from 'vue';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -9,7 +9,7 @@ import { AgGridVue } from 'ag-grid-vue3';
 import MedalCellRenderer from './medalCellRendererVue.js';
 import TotalValueRenderer from './totalValueRendererVue.js';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: `

@@ -3,7 +3,7 @@
 import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, FirstDataRenderedEvent, GridReadyEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -17,13 +17,7 @@ import DetailCellRenderer from './detailCellRenderer';
 import type { IAccount } from './interfaces';
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    CommunityFeaturesModule,
-    MasterDetailModule,
-    MenuModule,
-    ColumnsToolPanelModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule]);
 
 let allRowData: any[];
 

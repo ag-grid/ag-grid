@@ -1,11 +1,11 @@
 import { createApp } from 'vue';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { themeQuartz } from 'ag-grid-community';
 import { AgGridVue } from 'ag-grid-vue3';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: `

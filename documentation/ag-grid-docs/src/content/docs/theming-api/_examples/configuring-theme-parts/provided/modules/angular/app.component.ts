@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import {
@@ -28,7 +28,7 @@ import { SideBarModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
-    CommunityFeaturesModule,
+
     SideBarModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,

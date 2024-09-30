@@ -1,5 +1,5 @@
 import type { InternalFramework } from '@ag-grid-types';
-import { FILES_BASE_PATH, NPM_CDN, PUBLISHED_URLS, SITE_BASE_URL } from '@constants';
+import { FILES_BASE_PATH, NPM_CDN, PUBLISHED_URLS, SITE_BASE_URL, agGridVersion } from '@constants';
 import { isUsingPublishedPackages } from '@utils/pages';
 import { pathJoin } from '@utils/pathJoin';
 
@@ -38,10 +38,12 @@ const localBuildAndArchiveConfiguration: Configuration = {
     },
     gridCommunityPaths: {
         'ag-grid-community': `${localPrefix}/ag-grid-community`,
+        '@ag-grid-community/locale': `${localPrefix}/@ag-grid-community/locale/dist/package/main.cjs.js`,
     },
     gridEnterprisePaths: {
         'ag-charts-community': `${localPrefix}/ag-charts-community/dist/package/main.cjs.js`,
         'ag-charts-enterprise': `${localPrefix}/ag-charts-enterprise/dist/package/main.cjs.js`,
+        '@ag-grid-community/locale': `${localPrefix}/@ag-grid-community/locale/dist/package/main.cjs.js`,
     },
 };
 
@@ -52,6 +54,7 @@ const publishedConfiguration: Configuration = {
         'ag-charts-angular': `${NPM_CDN}/ag-charts-angular@${agChartsAngular.version}/`,
         'ag-charts-vue3': `${NPM_CDN}/ag-charts-vue3@${agChartsVue3.version}/`,
         'ag-charts-community': `${NPM_CDN}/ag-charts-community@${agChartsCommunity.version}/`,
+        '@ag-grid-community/locale': `${NPM_CDN}/@ag-grid-community/locale@${agGridVersion}/dist/package/main.cjs.js`,
     },
     gridEnterprisePaths: {
         'ag-charts-react': `${NPM_CDN}/ag-charts-react@${agChartsReact.version}/`,
@@ -59,6 +62,7 @@ const publishedConfiguration: Configuration = {
         'ag-charts-vue3': `${NPM_CDN}/ag-charts-vue3@${agChartsVue3.version}/`,
         'ag-charts-community': `${NPM_CDN}/ag-charts-community@${agChartsCommunity.version}/dist/package/main.cjs.js`,
         'ag-charts-enterprise': `${NPM_CDN}/ag-charts-enterprise@${agChartsEnterprise.version}/dist/package/main.cjs.js`,
+        '@ag-grid-community/locale': `${NPM_CDN}/@ag-grid-community/locale@${agGridVersion}/dist/package/main.cjs.js`,
     },
 };
 
@@ -120,6 +124,7 @@ export const SystemJs = ({
         configuration.gridMap = {
             ...configuration.gridMap,
             'ag-charts-community': `${localPrefix}/ag-charts-community`,
+            '@ag-grid-community/locale': `${localPrefix}/@ag-grid-community/locale`,
         };
     }
     configuration = getRelevantConfig(configuration, internalFramework);

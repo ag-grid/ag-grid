@@ -1,6 +1,7 @@
 import type { _InfiniteRowModelGridApi } from '../api/gridApi';
 import { RowModelHelperService } from '../api/rowModelHelperService';
 import { SsrmInfiniteSharedApiModule } from '../api/sharedApiModule';
+import { CommunityFeaturesModule } from '../gridCoreModule';
 import { defineCommunityModule } from '../interfaces/iModule';
 import { ModuleNames } from '../modules/moduleNames';
 import { RowNodeBlockModule } from '../rowNodeCache/rowNodeBlockModule';
@@ -24,5 +25,5 @@ export const InfiniteRowModelApiModule = defineCommunityModule<_InfiniteRowModel
 });
 
 export const InfiniteRowModelModule = defineCommunityModule(ModuleNames.InfiniteRowModelModule, {
-    dependsOn: [InfiniteRowModelCoreModule, InfiniteRowModelApiModule],
+    dependsOn: [InfiniteRowModelCoreModule, InfiniteRowModelApiModule, CommunityFeaturesModule],
 });
