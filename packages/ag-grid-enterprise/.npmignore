@@ -1,6 +1,6 @@
 !dist
-!dist/types/src
 src
+!dist/types/src
 .npmignore
 project.json
 tsconfig.json
@@ -17,7 +17,6 @@ updateMainTsWithCoreExports.js
 webpackBuild.sh
 eslint.config.mjs
 gulpfile.js
-jest.jsdom-env.cjs
 jest.config.js
 jest.setup.js
-jest.jsdom-env.cjs
+scripts
