@@ -5,7 +5,7 @@ import type {
     AgPolarSeriesOptions,
 } from 'ag-charts-community';
 
-import { CROSS_FILTER_FIELD_POSTFIX } from '../../model/crossFilterAPI';
+import { CROSS_FILTER_FIELD_POSTFIX } from '../../crossfilter/crossFilterAPI';
 import type { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
 
@@ -103,5 +103,9 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
     private getFields(params: UpdateParams): FieldDefinition[] {
         // pie charts only support a single series, donut charts support multiple series
         return this.chartType === 'pie' ? params.fields.slice(0, 1) : params.fields;
+    }
+
+    public override getCategoryKey(): string {
+        return 'angleKey';
     }
 }

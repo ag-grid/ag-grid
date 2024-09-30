@@ -1,4 +1,4 @@
-import { ChartSelectionModel } from '../crossfilter/chartSelectionModel';
+import { ChartSelectionModel } from './chartSelectionModel';
 
 export class CrossFilteringContext {
     private chartSelectionModels: Record<string, ChartSelectionModel> = {};

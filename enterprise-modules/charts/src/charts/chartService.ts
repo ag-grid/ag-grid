@@ -29,9 +29,9 @@ import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-commu
 import { VERSION as CHARTS_VERSION, _ModuleSupport } from 'ag-charts-community';
 
 import { VERSION as GRID_VERSION } from '../version';
+import { CrossFilteringContext } from './chartComp/crossfilter/crossFilteringContext';
 import type { GridChartParams } from './chartComp/gridChartComp';
 import { GridChartComp } from './chartComp/gridChartComp';
-import { CrossFilteringContext } from './chartComp/model/crossFilteringContext';
 import { ChartParamsValidator } from './chartComp/utils/chartParamsValidator';
 import { getCanonicalChartType } from './chartComp/utils/seriesTypeMapper';
 import { upgradeChartModel } from './chartModelMigration';
@@ -271,7 +271,6 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             chartType: getCanonicalChartType(chartType),
             insideDialog: !(chartContainer || createChartContainerFunc),
             crossFilteringContext: this.crossFilteringContext,
-            crossFilteringResetCallback: () => this.crossFilteringContext.clearAllSelections(),
         };
 
         const chartComp = new GridChartComp(gridChartParams);

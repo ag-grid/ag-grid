@@ -10,7 +10,7 @@ import type {
 } from '@ag-grid-community/core';
 import { BeanStub, _includes, _isClientSideRowModel, _warnOnce } from '@ag-grid-community/core';
 
-import { CROSS_FILTER_FIELD_POSTFIX } from '../model/crossFilterAPI';
+import { CROSS_FILTER_FIELD_POSTFIX } from '../crossfilter/crossFilterAPI';
 
 export class ChartCrossFilterService extends BeanStub implements NamedBean {
     beanName = 'chartCrossFilterService' as const;

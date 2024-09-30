@@ -10,8 +10,8 @@ import type {
 } from 'ag-charts-community';
 import { AgCharts, _ModuleSupport, _Theme } from 'ag-charts-community';
 
-import type { ChartSelectionModel } from '../model/chartSelectionModel';
-import type { CrossFilteringContext } from '../model/crossFilteringContext';
+import type { ChartSelectionModel } from '../crossfilter/chartSelectionModel';
+import type { CrossFilteringContext } from '../crossfilter/crossFilteringContext';
 import { deproxy } from '../utils/integration';
 import { get } from '../utils/object';
 import type { ChartSeriesType } from '../utils/seriesTypeMapper';
@@ -57,7 +57,7 @@ export interface UpdateParams {
         chartDataType?: string;
     }[];
     fields: FieldDefinition[];
-    chartId?: string;
+    chartId: string;
     getCrossFilteringContext: () => CrossFilteringContext;
     seriesChartTypes: SeriesChartType[];
     updatedOverrides?: AgChartThemeOverrides;
@@ -107,6 +107,10 @@ export abstract class ChartProxy<
 
     public updateThemeOverrides(themeOverrides: AgChartThemeOverrides): void {
         this.getChartRef().updateDelta({ theme: { overrides: themeOverrides } });
+    }
+
+    public getCategoryKey(): string {
+        return 'xKey';
     }
 
     public getChart() {

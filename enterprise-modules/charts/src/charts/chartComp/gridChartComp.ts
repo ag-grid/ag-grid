@@ -40,12 +40,12 @@ import { PolarChartProxy } from './chartProxies/polar/polarChartProxy';
 import { HeatmapChartProxy } from './chartProxies/specialized/heatmapChartProxy';
 import { BoxPlotChartProxy } from './chartProxies/statistical/boxPlotChartProxy';
 import { RangeChartProxy } from './chartProxies/statistical/rangeChartProxy';
+import type { CrossFilteringContext } from './crossfilter/crossFilteringContext';
 import { ChartMenu } from './menu/chartMenu';
 import type { ChartMenuContext } from './menu/chartMenuContext';
 import { ChartMenuParamsFactory } from './menu/chartMenuParamsFactory';
 import type { ChartModelParams } from './model/chartDataModel';
 import { ChartDataModel } from './model/chartDataModel';
-import type { CrossFilteringContext } from './model/crossFilteringContext';
 import type { ChartCrossFilterService } from './services/chartCrossFilterService';
 import type { ChartMenuService } from './services/chartMenuService';
 import { CHART_TOOL_PANEL_MENU_OPTIONS } from './services/chartMenuService';
@@ -71,7 +71,6 @@ export interface GridChartParams {
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes?: SeriesChartType[];
-    crossFilteringResetCallback?: () => void;
 }
 
 export class GridChartComp extends Component {
@@ -174,9 +173,9 @@ export class GridChartComp extends Component {
             ctx.lastSelectedChartId = reset ? '' : chartId;
 
             if (reset) {
-                this.params.crossFilteringResetCallback!();
+                ctx.clearAllSelections();
             } else {
-                const category = event.xKey;
+                const category = event[this.chartProxy.getCategoryKey()];
                 const value = event.datum![category];
                 const multiSelection = event.event.metaKey || event.event.ctrlKey;
 

@@ -26,9 +26,9 @@ import {
     _warnOnce,
 } from '@ag-grid-community/core';
 
+import { CROSS_FILTER_FIELD_POSTFIX } from '../crossfilter/crossFilterAPI';
 import type { ColState } from '../model/chartDataModel';
 import { ChartDataModel } from '../model/chartDataModel';
-import { CROSS_FILTER_FIELD_POSTFIX } from '../model/crossFilterAPI';
 
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];
