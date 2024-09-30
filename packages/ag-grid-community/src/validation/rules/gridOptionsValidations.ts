@@ -68,6 +68,24 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
         message:
             'Either use `onDisplayedColumnsChanged` which is fired at the same time, or use one of the more specific column events.',
     },
+
+    groupRemoveSingleChildren: {
+        version: '32.3',
+        renamed: 'groupHideParentOfSingleChild',
+    },
+    groupRemoveLowestSingleChildren: {
+        version: '32.3',
+        message: 'Use `groupHideParentOfSingleChild: "leafGroupsOnly"` instead.',
+    },
+
+    suppressRowGroupHidesColumns: {
+        version: '32.3',
+        message: 'Use `suppressGroupChangesColumnVisibility: "suppressHideOnGroup"` instead.',
+    },
+    suppressMakeColumnVisibleAfterUnGroup: {
+        version: '32.3',
+        message: 'Use `suppressGroupChangesColumnVisibility: "suppressShowOnUngroup"` instead.',
+    },
 });
 
 /**

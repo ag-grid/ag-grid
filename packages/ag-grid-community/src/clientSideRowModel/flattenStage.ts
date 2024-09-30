@@ -13,8 +13,7 @@ import { _exists, _missingOrEmpty } from '../utils/generic';
 
 interface FlattenDetails {
     hideOpenParents: boolean;
-    groupRemoveSingleChildren: boolean;
-    groupRemoveLowestSingleChildren: boolean;
+    groupHideParentOfSingleChild: GridOptions['groupHideParentOfSingleChild'];
     isGroupMultiAutoColumn: boolean;
     grandTotalRow: 'top' | 'bottom' | undefined;
     groupTotalRow: (params: WithoutGridCommon<GetGroupIncludeFooterParams<any, any>>) => 'top' | 'bottom' | undefined;
@@ -24,6 +23,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
     beanName = 'flattenStage' as const;
 
     public refreshProps: Set<keyof GridOptions<any>> = new Set([
+        'groupHideParentOfSingleChild',
         'groupRemoveSingleChildren',
         'groupRemoveLowestSingleChildren',
         'groupTotalRow',
@@ -73,14 +73,15 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
     }
 
     private getFlattenDetails(): FlattenDetails {
-        // these two are mutually exclusive, so if first set, we don't set the second
-        const groupRemoveSingleChildren = this.gos.get('groupRemoveSingleChildren');
-        const groupRemoveLowestSingleChildren =
-            !groupRemoveSingleChildren && this.gos.get('groupRemoveLowestSingleChildren');
-
+        let groupHideParentOfSingleChild = this.gos.get('groupHideParentOfSingleChild');
+        if (!groupHideParentOfSingleChild) {
+            groupHideParentOfSingleChild = this.gos.get('groupRemoveSingleChildren');
+            if (!groupHideParentOfSingleChild && this.gos.get('groupRemoveLowestSingleChildren')) {
+                groupHideParentOfSingleChild = 'leafGroupsOnly';
+            }
+        }
         return {
-            groupRemoveLowestSingleChildren,
-            groupRemoveSingleChildren,
+            groupHideParentOfSingleChild,
             isGroupMultiAutoColumn: _isGroupMultiAutoColumn(this.gos),
             hideOpenParents: this.gos.get('groupHideOpenParents'),
             grandTotalRow: _getGrandTotalRow(this.gos),
@@ -107,10 +108,10 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
             const isSkippedLeafNode = skipLeafNodes && !isParent;
 
             const isRemovedSingleChildrenGroup =
-                details.groupRemoveSingleChildren && isParent && rowNode.childrenAfterGroup!.length === 1;
+                details.groupHideParentOfSingleChild === true && isParent && rowNode.childrenAfterGroup!.length === 1;
 
             const isRemovedLowestSingleChildrenGroup =
-                details.groupRemoveLowestSingleChildren &&
+                details.groupHideParentOfSingleChild === 'leafGroupsOnly' &&
                 isParent &&
                 rowNode.leafGroup &&
                 rowNode.childrenAfterGroup!.length === 1;
