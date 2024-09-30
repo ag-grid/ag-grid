@@ -67,11 +67,7 @@ export class GridCtrl extends BeanStub {
         this.updateGridThemeClass();
         this.addManagedEventListeners({ gridStylesChanged: this.handleThemeChange.bind(this) });
 
-        const unsubscribeFromResize = _observeResize(
-            this.gos,
-            this.eGridHostDiv,
-            this.onGridSizeChanged.bind(this)
-        );
+        const unsubscribeFromResize = _observeResize(this.gos, this.eGridHostDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
 
         ctrlsService.register('gridCtrl', this);

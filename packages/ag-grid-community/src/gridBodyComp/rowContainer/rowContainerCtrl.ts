@@ -9,7 +9,14 @@ import type { IRangeService } from '../../interfaces/IRangeService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { RowRenderer } from '../../rendering/rowRenderer';
-import { _getInnerWidth, _getScrollLeft, _isHorizontalScrollShowing, _isInDOM, _observeResize, _setScrollLeft } from '../../utils/dom';
+import {
+    _getInnerWidth,
+    _getScrollLeft,
+    _isHorizontalScrollShowing,
+    _isInDOM,
+    _observeResize,
+    _setScrollLeft,
+} from '../../utils/dom';
 import { CenterWidthFeature } from '../centerWidthFeature';
 import type { ScrollPartner } from '../gridBodyScrollFeature';
 import { ViewportSizeFeature } from '../viewportSizeFeature';

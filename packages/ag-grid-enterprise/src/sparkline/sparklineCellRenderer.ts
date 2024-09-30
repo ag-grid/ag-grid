@@ -1,8 +1,4 @@
-import type {
-    BeanCollection,
-    ICellRenderer,
-    ISparklineCellRendererParams,
-} from 'ag-grid-community';
+import type { BeanCollection, ICellRenderer, ISparklineCellRendererParams } from 'ag-grid-community';
 import { Component, RefPlaceholder, _observeResize } from 'ag-grid-community';
 
 import type { SparklineFactoryOptions } from './agSparkline';
