@@ -307,6 +307,10 @@ function getImports(
 
     imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, allStylesheets));
 
+    if (bindings.moduleRegistration) {
+        imports.push(bindings.moduleRegistration);
+    }
+
     return imports;
 }
 
