@@ -76,16 +76,7 @@ const headings = errorPage
 <Layout title={title} description={description} showSearchBar={true} showDocsNav={true}>
     <div class:list={[styles.contentViewport, 'layout-grid']}>
         <PagesNavigation client:load menuSections={menuSections} framework={framework} pageName={pageName} />
-        <div
-            id="doc-content"
-            class:list={[
-                styles.docPage,
-                styles.errorPage,
-                {
-                    noSideMenu: styles.hideSideMenu,
-                },
-            ]}
-        >
+        <div id="doc-content" class:list={[styles.docPage, styles.errorPage]}>
             <Header
                 client:load
                 title={title}
