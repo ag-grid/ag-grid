@@ -520,7 +520,7 @@ export function addBindingImports(
             // unique = unique.filter((i) => !i.includes('Module') || i == 'AgGridModule');
             hasEnterpriseModules = hasEnterpriseModules || k.includes('enterprise');
         }
-        if (!hasEnterpriseModules) {
+        if (!hasEnterpriseModules && !k.includes('ag-charts')) {
             unique.unshift('CommunityFeaturesModule');
         }
         if (unique.length > 0 || v.namedImport) {
