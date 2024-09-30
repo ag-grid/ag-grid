@@ -14,7 +14,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     beanName = 'scrollVisibleService' as const;
 
     private ctrlsService: CtrlsService;
-    private columnAnimationService: ColumnAnimationService;
+    private columnAnimationService?: ColumnAnimationService;
 
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
@@ -59,9 +59,9 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         // location at the start of the animation, so pre animation the H scrollbar is still
         // needed, but post animation it is not. So if animation is active, we only update
         // after the animation has ended.
-        if (this.columnAnimationService.isActive()) {
+        if (this.columnAnimationService?.isActive()) {
             this.columnAnimationService.executeLaterVMTurn(() => {
-                this.columnAnimationService.executeLaterVMTurn(() => this.updateScrollVisibleImpl());
+                this.columnAnimationService!.executeLaterVMTurn(() => this.updateScrollVisibleImpl());
             });
         } else {
             this.updateScrollVisibleImpl();
@@ -71,7 +71,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     private updateScrollVisibleImpl(): void {
         const centerRowCtrl = this.ctrlsService.get('center');
 
-        if (!centerRowCtrl || this.columnAnimationService.isActive()) {
+        if (!centerRowCtrl || this.columnAnimationService?.isActive()) {
             return;
         }
 

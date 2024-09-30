@@ -1,4 +1,4 @@
-import type { BeanCollection, ColumnModel, FocusService, HeaderNavigationService } from 'ag-grid-community';
+import type { BeanCollection, ColumnModel, CtrlsService, FocusService } from 'ag-grid-community';
 import {
     Component,
     KeyCode,
@@ -16,12 +16,12 @@ import { AdvancedFilterComp } from './advancedFilterComp';
 export class AdvancedFilterHeaderComp extends Component {
     private columnModel: ColumnModel;
     private focusService: FocusService;
-    private headerNavigationService: HeaderNavigationService;
+    private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.focusService = beans.focusService;
-        this.headerNavigationService = beans.headerNavigationService;
+        this.ctrlsService = beans.ctrlsService;
     }
 
     private eAdvancedFilter: AdvancedFilterComp | undefined;
@@ -123,7 +123,7 @@ export class AdvancedFilterHeaderComp extends Component {
     }
 
     private setAriaRowIndex(): void {
-        _setAriaRowIndex(this.getGui(), this.headerNavigationService.getHeaderRowCount());
+        _setAriaRowIndex(this.getGui(), this.ctrlsService.getHeaderRowContainerCtrl()?.getRowCount() ?? 0);
     }
 
     private onGridColumnsChanged(): void {

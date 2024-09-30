@@ -1,4 +1,4 @@
-import type { ApplyColumnStateParams, ColumnState } from '../columns/columnApplyStateService';
+import type { ApplyColumnStateParams, ColumnState } from '../columns/columnStateService';
 import type { RowDropZoneEvents, RowDropZoneParams } from '../dragAndDrop/rowDragFeature';
 import type { ColDef, ColGroupDef, ColumnChooserParams, HeaderLocation, IAggFunc } from '../entities/colDef';
 import type { ChartRef, GridOptions } from '../entities/gridOptions';
@@ -35,6 +35,7 @@ import type { ClientSideRowModelStep } from '../interfaces/iClientSideRowModel';
 import type { IClipboardCopyParams, IClipboardCopyRowsParams } from '../interfaces/iClipboardService';
 import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from '../interfaces/iColumn';
 import type { IColumnToolPanel } from '../interfaces/iColumnToolPanel';
+import type { IContextMenuParams } from '../interfaces/iContextMenu';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
@@ -47,7 +48,6 @@ import type { IToolPanel } from '../interfaces/iToolPanel';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { ServerSideTransaction, ServerSideTransactionResult } from '../interfaces/serverSideTransaction';
-import type { IContextMenuParams } from '../misc/menuService';
 import type { ManagedGridOptionKey, ManagedGridOptions } from '../propertyKeys';
 import type { ICellRenderer } from '../rendering/cellRenderers/iCellRenderer';
 import type {
@@ -334,10 +334,12 @@ export interface _EventGridApi<TData> {
     ): void;
 }
 
-export interface _CellGridApi<TData> {
+export interface _ValueCacheApi {
     /** Expire the value cache. */
     expireValueCache(): void;
+}
 
+export interface _ValueApi<TData> {
     /**
      * Gets the cell value for the given column and `rowNode` (row).
      * Based on params.useFormatter with either return the value as specified by the `field` or `valueGetter` on the column definition or the formatted value.
@@ -502,13 +504,20 @@ export interface _ColumnMoveApi {
     moveColumns(columnsToMoveKeys: (string | ColDef | Column)[], toIndex: number): void;
 }
 
-export interface _ColumnGridApi<TData> {
-    getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null;
+export interface _ColumnHoverApi {
+    /** Returns true if the column is currently hovered. */
+    isColumnHovered(column: Column): boolean;
+}
 
+export interface _GetColumnDefsApi<TData> {
     /**
      * Returns the current column definitions.
      */
     getColumnDefs(): (ColDef<TData> | ColGroupDef<TData>)[] | undefined;
+}
+
+export interface _ColumnGridApi<TData> {
+    getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null;
 
     /** Call this if you want to open or close a column group. */
     setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void;
@@ -1138,7 +1147,8 @@ export interface _CoreModuleGridApi<TData>
         _ScrollGridApi<TData>,
         _KeyboardNavigationGridApi,
         _EventGridApi<TData>,
-        _CellGridApi<TData>,
+        _ValueCacheApi,
+        _ValueApi<TData>,
         _CommunityMenuGridApi,
         _SortGridApi,
         _OverlayGridApi,
@@ -1148,6 +1158,8 @@ export interface _CoreModuleGridApi<TData>
         _ColumnAutosizeApi,
         _ColumnResizeApi,
         _ColumnMoveApi,
+        _ColumnHoverApi,
+        _GetColumnDefsApi<TData>,
         _ColumnGridApi<TData>,
         _DragGridApi,
         _EditGridApi<TData>,

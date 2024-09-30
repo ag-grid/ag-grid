@@ -87,7 +87,7 @@ export class GridChartComp extends Component {
         this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
         this.chartMenuService = beans.chartMenuService as ChartMenuService;
         this.focusService = beans.focusService;
-        this.popupService = beans.popupService;
+        this.popupService = beans.popupService!;
     }
 
     private readonly eChart: HTMLElement = RefPlaceholder;

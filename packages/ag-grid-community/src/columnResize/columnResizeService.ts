@@ -28,7 +28,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
     private columnModel: ColumnModel;
     private columnViewportService: ColumnViewportService;
     private visibleColsService: VisibleColsService;
-    private columnFlexService: ColumnFlexService;
+    private columnFlexService?: ColumnFlexService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
@@ -221,9 +221,10 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         let flexedCols: AgColumn[] = [];
 
         if (atLeastOneColChanged) {
-            flexedCols = this.columnFlexService.refreshFlexedColumns({
-                skipSetLeft: true,
-            });
+            flexedCols =
+                this.columnFlexService?.refreshFlexedColumns({
+                    skipSetLeft: true,
+                }) ?? [];
             this.visibleColsService.setLeftValues(source);
             this.visibleColsService.updateBodyWidths();
             this.columnViewportService.checkViewportColumns();

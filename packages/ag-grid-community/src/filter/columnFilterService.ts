@@ -1,8 +1,13 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { DataTypeService } from '../columns/dataTypeService';
-import { FilterComponent } from '../components/framework/componentTypes';
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
-import type { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
+import {
+    _getFilterDetails,
+    _getFloatingFilterCompDetails,
+    _mergeFilterParamsWithApplicationProvidedParams,
+} from '../components/framework/userCompUtils';
+import type { UserComponentFactory } from '../components/framework/userComponentFactory';
+import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
@@ -18,6 +23,7 @@ import { _getGroupAggFiltering, _isSetFilterByDefault } from '../gridOptionsUtil
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import type { IRowModel } from '../interfaces/iRowModel';
+import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import { _warnOnce } from '../utils/function';
 import { _exists, _jsonEquals } from '../utils/generic';
@@ -25,6 +31,7 @@ import { _cloneObject } from '../utils/object';
 import { AgPromise } from '../utils/promise';
 import type { ValueService } from '../valueService/valueService';
 import type { FilterManager } from './filterManager';
+import type { FilterValueService } from './filterValueService';
 import type { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
 import { getDefaultFloatingFilterType } from './floating/floatingFilterMapper';
 
@@ -57,7 +64,7 @@ const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = [
     'december',
 ];
 
-export class ColumnFilterService extends BeanStub {
+export class ColumnFilterService extends BeanStub implements NamedBean {
     beanName: BeanName = 'columnFilterService';
 
     private valueService: ValueService;
@@ -67,6 +74,7 @@ export class ColumnFilterService extends BeanStub {
     private rowRenderer: RowRenderer;
     private dataTypeService?: DataTypeService;
     private filterManager?: FilterManager;
+    private filterValueService: FilterValueService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueService = beans.valueService;
@@ -76,6 +84,7 @@ export class ColumnFilterService extends BeanStub {
         this.rowRenderer = beans.rowRenderer;
         this.dataTypeService = beans.dataTypeService;
         this.filterManager = beans.filterManager;
+        this.filterValueService = beans.filterValueService!;
     }
 
     private allColumnFilters = new Map<string, FilterWrapper>();
@@ -432,7 +441,7 @@ export class ColumnFilterService extends BeanStub {
     private createGetValue(filterColumn: AgColumn): IFilterParams['getValue'] {
         return (rowNode, column) => {
             const columnToUse = column ? this.columnModel.getCol(column) : filterColumn;
-            return columnToUse ? this.valueService.getValue(columnToUse, rowNode, true) : undefined;
+            return columnToUse ? this.filterValueService.getValue(columnToUse, rowNode) : undefined;
         };
     }
 
@@ -520,7 +529,7 @@ export class ColumnFilterService extends BeanStub {
                 this.filterManager ? this.filterManager.doesRowPassOtherFilters(filterInstance, node) : true,
         };
 
-        const compDetails = this.userComponentFactory.getFilterDetails(colDef, params, defaultFilter);
+        const compDetails = _getFilterDetails(this.userComponentFactory, colDef, params, defaultFilter);
         if (!compDetails) {
             return { filterPromise: null, compDetails: null };
         }
@@ -650,9 +659,9 @@ export class ColumnFilterService extends BeanStub {
                     this.filterChangedCallbackFactory(filterInstance as IFilterComp, column)()
                 ),
         };
-        const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(
+        const finalFilterParams = _mergeFilterParamsWithApplicationProvidedParams(
+            this.userComponentFactory,
             colDef,
-            FilterComponent,
             filterParams
         );
 
@@ -672,7 +681,7 @@ export class ColumnFilterService extends BeanStub {
             showParentFilter,
         };
 
-        return this.userComponentFactory.getFloatingFilterCompDetails(colDef, params, defaultFloatingFilterType);
+        return _getFloatingFilterCompDetails(this.userComponentFactory, colDef, params, defaultFloatingFilterType);
     }
 
     public getCurrentFloatingFilterParentModel(column: AgColumn): any {

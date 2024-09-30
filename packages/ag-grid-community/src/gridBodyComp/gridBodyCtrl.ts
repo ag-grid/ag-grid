@@ -6,10 +6,9 @@ import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { Environment } from '../environment';
 import type { FilterManager } from '../filter/filterManager';
 import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
-import type { HeaderNavigationService } from '../headerRendering/common/headerNavigationService';
+import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { IRowModel } from '../interfaces/iRowModel';
-import type { AnimationFrameService } from '../misc/animationFrameService';
-import type { EventShowContextMenuParams, MenuService } from '../misc/menuService';
+import { _requestAnimationFrame } from '../misc/animationFrameService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
@@ -55,30 +54,26 @@ export interface IGridBodyComp extends LayoutView {
 }
 
 export class GridBodyCtrl extends BeanStub {
-    private animationFrameService: AnimationFrameService;
     private rowContainerHeightService: RowContainerHeightService;
     private ctrlsService: CtrlsService;
     private columnModel: ColumnModel;
     private scrollVisibleService: ScrollVisibleService;
-    private menuService: MenuService;
-    private headerNavigationService: HeaderNavigationService;
+    private contextMenuService?: IContextMenuService;
     private rowDragService?: RowDragService;
     private pinnedRowModel?: PinnedRowModel;
     private rowRenderer: RowRenderer;
-    private popupService: PopupService;
+    private popupService?: PopupService;
     private mouseEventService: MouseEventService;
     private rowModel: IRowModel;
     private filterManager?: FilterManager;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
-        this.animationFrameService = beans.animationFrameService;
         this.rowContainerHeightService = beans.rowContainerHeightService;
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;
         this.scrollVisibleService = beans.scrollVisibleService;
-        this.menuService = beans.menuService;
-        this.headerNavigationService = beans.headerNavigationService;
+        this.contextMenuService = beans.contextMenuService;
         this.rowDragService = beans.rowDragService;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.rowRenderer = beans.rowRenderer;
@@ -241,7 +236,7 @@ export class GridBodyCtrl extends BeanStub {
         const pad = _isInvisibleScrollbar() ? 16 : 0;
         const width = `calc(100% + ${scrollbarWidth + pad}px)`;
 
-        this.animationFrameService.requestAnimationFrame(() => this.comp.setBodyViewportWidth(width));
+        _requestAnimationFrame(this.gos, () => this.comp.setBodyViewportWidth(width));
 
         this.updateScrollingClasses();
     }
@@ -303,8 +298,9 @@ export class GridBodyCtrl extends BeanStub {
                 const popupService = this.popupService;
 
                 clickInsideGrid =
-                    popupService.getActivePopups().some((popup) => popup.contains(elementWithFocus)) ||
-                    popupService.isElementWithinCustomPopup(elementWithFocus);
+                    !!popupService &&
+                    (popupService.getActivePopups().some((popup) => popup.contains(elementWithFocus)) ||
+                        popupService.isElementWithinCustomPopup(elementWithFocus));
             }
 
             if (!clickInsideGrid) {
@@ -319,7 +315,8 @@ export class GridBodyCtrl extends BeanStub {
 
     public updateRowCount(): void {
         const headerCount =
-            this.headerNavigationService.getHeaderRowCount() + (this.filterManager?.getHeaderRowCount() ?? 0);
+            (this.ctrlsService.getHeaderRowContainerCtrl()?.getRowCount() ?? 0) +
+            (this.filterManager?.getHeaderRowCount() ?? 0);
 
         const rowCount = this.rowModel.isLastRowIndexKnown() ? this.rowModel.getRowCount() : -1;
         const total = rowCount === -1 ? -1 : headerCount + rowCount;
@@ -450,12 +447,12 @@ export class GridBodyCtrl extends BeanStub {
 
         if (target === this.eBodyViewport || target === this.ctrlsService.get('center').getViewportElement()) {
             // show it
-            this.menuService.showContextMenu({
+            this.contextMenuService?.showContextMenu({
                 mouseEvent,
-                touchEvent,
+                touchEvent: touchEvent!,
                 value: null,
                 anchorToElement: this.eGridBody,
-            } as EventShowContextMenuParams);
+            });
         }
     }
 
@@ -481,7 +478,7 @@ export class GridBodyCtrl extends BeanStub {
             return;
         }
 
-        if (this.popupService.hasAnchoredPopup()) {
+        if (this.popupService?.hasAnchoredPopup()) {
             e.preventDefault();
         }
     }

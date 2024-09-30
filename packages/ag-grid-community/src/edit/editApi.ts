@@ -51,7 +51,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
 
     ensureColumnVisible(beans, params.colKey);
 
-    const cell = beans.navigationService.getCellByPosition(cellPosition);
+    const cell = beans.positionUtils.getCellByPosition(cellPosition);
     if (!cell) {
         return;
     }

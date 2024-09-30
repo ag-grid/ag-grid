@@ -6,10 +6,9 @@ import type {
     CellPosition,
     CellRange,
     FillOperationParams,
-    NavigationService,
+    PositionUtils,
     RowNode,
     RowPosition,
-    RowPositionUtils,
     ValueService,
     VisibleColsService,
 } from 'ag-grid-community';
@@ -41,18 +40,16 @@ type Direction = 'x' | 'y';
 
 export class AgFillHandle extends AbstractSelectionHandle {
     private valueService: ValueService;
-    private navigationService: NavigationService;
     private cellNavigationService: CellNavigationService;
     private visibleColsService: VisibleColsService;
-    protected rowPositionUtils: RowPositionUtils;
+    protected positionUtils: PositionUtils;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.valueService = beans.valueService;
-        this.navigationService = beans.navigationService;
-        this.cellNavigationService = beans.cellNavigationService;
+        this.cellNavigationService = beans.cellNavigationService!;
         this.visibleColsService = beans.visibleColsService;
-        this.rowPositionUtils = beans.rowPositionUtils;
+        this.positionUtils = beans.positionUtils;
     }
 
     private initialPosition: CellPosition | undefined;
@@ -243,7 +240,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             }
 
             while (!finished && currentRow) {
-                const rowNode = this.rowPositionUtils.getRowNode(currentRow);
+                const rowNode = this.positionUtils.getRowNode(currentRow);
                 if (!rowNode) {
                     break;
                 }
@@ -285,7 +282,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             if (withinInitialRange) {
                 currentValue = this.valueService.getValue(col, rowNode);
                 initialValues.push(currentValue);
-                initialNonAggregatedValues.push(this.valueService.getValue(col, rowNode, undefined, true));
+                initialNonAggregatedValues.push(this.valueService.getValue(col, rowNode, true));
                 initialFormattedValues.push(this.valueService.formatValue(col, rowNode, currentValue));
                 withinInitialRange = updateInitialSet();
             } else {
@@ -508,7 +505,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     }
 
     private extendVertical(initialPosition: CellPosition, endPosition: CellPosition, isMovingUp?: boolean) {
-        const { navigationService, rangeService } = this;
+        const { positionUtils, rangeService } = this;
 
         let row: RowPosition | null = initialPosition;
 
@@ -528,7 +525,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 }
 
                 if (!isInitialRow) {
-                    const cell = navigationService.getCellByPosition(cellPos);
+                    const cell = positionUtils.getCellByPosition(cellPos);
 
                     if (cell) {
                         this.markedCells.push(cell);
@@ -569,7 +566,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             for (let i = 0; i < colLen; i++) {
                 const rowPos = { rowIndex: row.rowIndex, rowPinned: row.rowPinned };
                 const celPos = { ...rowPos, column: cellRange.columns[i] };
-                const cell = this.navigationService.getCellByPosition(celPos);
+                const cell = this.positionUtils.getCellByPosition(celPos);
 
                 if (cell) {
                     this.markedCells.push(cell);
@@ -604,7 +601,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
             do {
                 isLastRow = _isSameRow(row, rangeEndRow);
-                const cell = this.navigationService.getCellByPosition({
+                const cell = this.positionUtils.getCellByPosition({
                     rowIndex: row.rowIndex,
                     rowPinned: row.rowPinned,
                     column: column,
@@ -644,7 +641,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
             do {
                 isLastRow = _isSameRow(row, rangeEndRow);
-                const cell = this.navigationService.getCellByPosition({
+                const cell = this.positionUtils.getCellByPosition({
                     rowIndex: row.rowIndex,
                     rowPinned: row.rowPinned,
                     column: column,

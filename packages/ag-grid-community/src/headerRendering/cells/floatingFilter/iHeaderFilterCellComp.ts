@@ -1,5 +1,5 @@
-import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import type { IFloatingFilter } from '../../../filter/floating/floatingFilter';
+import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import type { AgPromise } from '../../../utils/promise';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 

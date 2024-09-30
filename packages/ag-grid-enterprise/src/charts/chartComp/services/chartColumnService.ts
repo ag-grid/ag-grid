@@ -7,8 +7,8 @@ import type {
     FuncColsService,
     IShowRowGroupColsService,
     NamedBean,
+    PositionUtils,
     RowNode,
-    RowPositionUtils,
     ValueService,
     VisibleColsService,
 } from 'ag-grid-community';
@@ -23,7 +23,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
     private visibleColsService: VisibleColsService;
     private funcColsService: FuncColsService;
     private valueService: ValueService;
-    private rowPositionUtils: RowPositionUtils;
+    private positionUtils: PositionUtils;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
@@ -32,7 +32,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
         this.visibleColsService = beans.visibleColsService;
         this.funcColsService = beans.funcColsService;
         this.valueService = beans.valueService;
-        this.rowPositionUtils = beans.rowPositionUtils;
+        this.positionUtils = beans.positionUtils;
     }
 
     private valueColsWithoutSeriesType: Set<string> = new Set();
@@ -143,7 +143,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
             return false;
         }
 
-        const row = this.rowPositionUtils.getRowNode({ rowIndex: 0, rowPinned: null });
+        const row = this.positionUtils.getRowNode({ rowIndex: 0, rowPinned: null });
 
         if (!row) {
             return this.valueColsWithoutSeriesType.has(colId);

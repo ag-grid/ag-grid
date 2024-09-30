@@ -7,10 +7,16 @@ import type { StickyTopOffsetChangedEvent } from '../../events';
 import { _isDomLayout } from '../../gridOptionsUtils';
 import type { IRangeService } from '../../interfaces/IRangeService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
-import type { ResizeObserverService } from '../../misc/resizeObserverService';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { RowRenderer } from '../../rendering/rowRenderer';
-import { _getInnerWidth, _getScrollLeft, _isHorizontalScrollShowing, _isInDOM, _setScrollLeft } from '../../utils/dom';
+import {
+    _getInnerWidth,
+    _getScrollLeft,
+    _isHorizontalScrollShowing,
+    _isInDOM,
+    _observeResize,
+    _setScrollLeft,
+} from '../../utils/dom';
 import { CenterWidthFeature } from '../centerWidthFeature';
 import type { ScrollPartner } from '../gridBodyScrollFeature';
 import { ViewportSizeFeature } from '../viewportSizeFeature';
@@ -227,7 +233,6 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     private dragService?: DragService;
     private ctrlsService: CtrlsService;
     private columnViewportService: ColumnViewportService;
-    private resizeObserverService: ResizeObserverService;
     private rowRenderer: RowRenderer;
     private rangeService?: IRangeService;
 
@@ -235,7 +240,6 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         this.dragService = beans.dragService;
         this.ctrlsService = beans.ctrlsService;
         this.columnViewportService = beans.columnViewportService;
-        this.resizeObserverService = beans.resizeObserverService;
         this.rowRenderer = beans.rowRenderer;
         this.rangeService = beans.rangeService;
     }
@@ -420,7 +424,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public registerViewportResizeListener(listener: () => void) {
-        const unsubscribeFromResize = this.resizeObserverService.observeResize(this.eViewport, listener);
+        const unsubscribeFromResize = _observeResize(this.gos, this.eViewport, listener);
         this.addDestroyFunc(() => unsubscribeFromResize());
     }
 

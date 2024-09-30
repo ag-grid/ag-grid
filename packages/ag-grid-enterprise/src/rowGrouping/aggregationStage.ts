@@ -5,17 +5,25 @@ import type {
     ColumnModel,
     FuncColsService,
     GetGroupRowAggParams,
+    GridOptions,
     IAggFunc,
     IAggFuncParams,
+    IPivotResultColsService,
     IRowNodeStage,
     NamedBean,
-    PivotResultColsService,
     RowNode,
     StageExecuteParams,
     ValueService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _errorOnce, _getGrandTotalRow, _getGroupAggFiltering, _missingOrEmpty } from 'ag-grid-community';
+import {
+    BeanStub,
+    ClientSideRowModelSteps,
+    _errorOnce,
+    _getGrandTotalRow,
+    _getGroupAggFiltering,
+    _missingOrEmpty,
+} from 'ag-grid-community';
 
 import type { AggFuncService } from './aggFuncService';
 
@@ -32,11 +40,19 @@ interface AggregationDetails {
 export class AggregationStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'aggregationStage' as const;
 
+    public refreshProps: Set<keyof GridOptions<any>> = new Set([
+        'getGroupRowAgg',
+        'alwaysAggregateAtRootLevel',
+        'suppressAggFilteredOnly',
+        'grandTotalRow',
+    ]);
+    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.AGGREGATE;
+
     private columnModel: ColumnModel;
     private valueService: ValueService;
     private aggFuncService: AggFuncService;
     private funcColsService: FuncColsService;
-    private pivotResultColsService: PivotResultColsService;
+    private pivotResultColsService?: IPivotResultColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
@@ -147,7 +163,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
     private aggregateRowNodeUsingValuesAndPivot(rowNode: RowNode): any {
         const result: any = {};
 
-        const secondaryColumns = this.pivotResultColsService.getPivotResultCols()?.list ?? [];
+        const secondaryColumns = this.pivotResultColsService?.getPivotResultCols()?.list ?? [];
         let canSkipTotalColumns = true;
         for (let i = 0; i < secondaryColumns.length; i++) {
             const secondaryCol = secondaryColumns[i];

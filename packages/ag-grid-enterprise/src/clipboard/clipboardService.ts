@@ -18,11 +18,11 @@ import type {
     IRowModel,
     ISelectionService,
     NamedBean,
+    PositionUtils,
     ProcessCellForExportParams,
     ProcessRowGroupForExportParams,
     RowNode,
     RowPosition,
-    RowPositionUtils,
     RowRenderer,
     SelectionOptions,
     ValueService,
@@ -91,7 +91,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private visibleColsService: VisibleColsService;
     private funcColsService: FuncColsService;
     private cellNavigationService: CellNavigationService;
-    public rowPositionUtils: RowPositionUtils;
+    public positionUtils: PositionUtils;
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -104,8 +104,8 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.rowRenderer = beans.rowRenderer;
         this.visibleColsService = beans.visibleColsService;
         this.funcColsService = beans.funcColsService;
-        this.cellNavigationService = beans.cellNavigationService;
-        this.rowPositionUtils = beans.rowPositionUtils;
+        this.cellNavigationService = beans.cellNavigationService!;
+        this.positionUtils = beans.positionUtils;
         this.rangeService = beans.rangeService;
     }
 
@@ -629,7 +629,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 if (!rowPointer) {
                     return null;
                 }
-                const res = this.rowPositionUtils.getRowNode(rowPointer);
+                const res = this.positionUtils.getRowNode(rowPointer);
                 // move to next row down for next set of values
                 rowPointer = this.cellNavigationService.getRowBelow({
                     rowPinned: rowPointer.rowPinned,
@@ -797,7 +797,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 return;
             }
 
-            const rowNode = this.rowPositionUtils.getRowNode(focusedCell);
+            const rowNode = this.positionUtils.getRowNode(focusedCell);
             if (rowNode) {
                 this.clearCellValue(rowNode, focusedCell.column as AgColumn);
             }
@@ -863,7 +863,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         // the currentRow could be missing if the user sets the active range manually, and sets a range
         // that is outside of the grid (eg. sets range rows 0 to 100, but grid has only 20 rows).
         while (!isLastRow && currentRow != null) {
-            const rowNode = this.rowPositionUtils.getRowNode(currentRow);
+            const rowNode = this.positionUtils.getRowNode(currentRow);
             isLastRow = _isSameRow(currentRow, lastRow);
 
             rowCallback(currentRow, rowNode, range.columns as AgColumn[], rangeIndex++, isLastRow && isLastRange);

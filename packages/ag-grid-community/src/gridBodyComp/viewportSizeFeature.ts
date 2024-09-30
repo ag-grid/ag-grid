@@ -22,7 +22,7 @@ export class ViewportSizeFeature extends BeanStub {
     private pinnedWidthService: PinnedWidthService;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
-    private columnFlexService: ColumnFlexService;
+    private columnFlexService?: ColumnFlexService;
     private scrollVisibleService: ScrollVisibleService;
     private columnViewportService: ColumnViewportService;
 
@@ -82,7 +82,7 @@ export class ViewportSizeFeature extends BeanStub {
 
             if (newWidth !== this.centerWidth) {
                 this.centerWidth = newWidth;
-                this.columnFlexService.refreshFlexedColumns({
+                this.columnFlexService?.refreshFlexedColumns({
                     viewportWidth: this.centerWidth,
                     updateBodyWidths: true,
                     fireResizedEvent: true,

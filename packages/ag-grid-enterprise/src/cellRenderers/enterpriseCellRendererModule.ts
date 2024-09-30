@@ -1,12 +1,8 @@
-import { _defineModule } from 'ag-grid-community';
-
-import { VERSION } from '../version';
+import { defineEnterpriseModule } from '../moduleUtils';
 import { LoadingCellRenderer } from './loadingCellRenderer';
 import { SkeletonCellRenderer } from './skeletonCellRenderer';
 
-export const LoadingCellRendererModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-enterprise/loading-cell-renderer',
+export const LoadingCellRendererModule = defineEnterpriseModule('LoadingCellRendererModule', {
     userComponents: [
         {
             classImp: LoadingCellRenderer,
@@ -15,9 +11,7 @@ export const LoadingCellRendererModule = _defineModule({
     ],
 });
 
-export const SkeletonCellRendererModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-enterprise/skeleton-cell-renderer',
+export const SkeletonCellRendererModule = defineEnterpriseModule('SkeletonCellRendererModule', {
     userComponents: [
         {
             classImp: SkeletonCellRenderer,

@@ -33,6 +33,7 @@ import {
     _getGlobalGridOption,
     _isClientSideRowModel,
     _isServerSideRowModel,
+    _observeResize,
     _processOnChange,
     _warnOnce,
 } from 'ag-grid-community';
@@ -297,7 +298,7 @@ class ReactFrameworkComponentWrapper
 
 // Define DetailCellRenderer and ReactFrameworkOverrides here to avoid circular dependency
 const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: any) => {
-    const { ctrlsFactory, context, gos, resizeObserverService, rowModel } = useContext(BeansContext);
+    const { ctrlsFactory, context, gos, rowModel } = useContext(BeansContext);
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [gridCssClasses, setGridCssClasses] = useState<CssClasses>(() => new CssClasses());
@@ -382,7 +383,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
                 }
             };
 
-            resizeObserverDestroyFunc.current = resizeObserverService.observeResize(eRef, checkRowSizeFunc);
+            resizeObserverDestroyFunc.current = _observeResize(gos, eRef, checkRowSizeFunc);
             checkRowSizeFunc();
         }
     }, []);

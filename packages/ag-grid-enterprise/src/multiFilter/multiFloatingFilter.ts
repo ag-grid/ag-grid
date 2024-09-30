@@ -16,6 +16,7 @@ import {
     AgPromise,
     Component,
     _clearElement,
+    _getFloatingFilterCompDetails,
     _mergeDeep,
     _setDisplayed,
     getDefaultFloatingFilterType,
@@ -176,7 +177,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                 this.filterManager!.getDefaultFloatingFilter(this.params.column as AgColumn)
             ) ?? 'agReadOnlyFloatingFilter';
 
-        return this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);
+        return _getFloatingFilterCompDetails(this.userComponentFactory, filterDef, params, defaultComponentName);
     }
 
     private parentMultiFilterInstance(cb: (instance: MultiFilter) => void): void {

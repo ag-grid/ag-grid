@@ -1,9 +1,6 @@
-import { _defineModule } from '../../interfaces/iModule';
-import { VERSION } from '../../version';
+import { defineCommunityModule } from '../../interfaces/iModule';
 import { StickyRowService } from './stickyRowService';
 
-export const StickyRowModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/sticky-row',
+export const StickyRowModule = defineCommunityModule('StickyRowModule', {
     beans: [StickyRowService],
 });

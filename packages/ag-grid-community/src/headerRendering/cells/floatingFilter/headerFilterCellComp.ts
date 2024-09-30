@@ -1,5 +1,5 @@
-import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import type { IFloatingFilterComp } from '../../../filter/floating/floatingFilter';
+import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { _setDisplayed } from '../../../utils/dom';
 import type { AgPromise } from '../../../utils/promise';
 import { RefPlaceholder } from '../../../widgets/component';

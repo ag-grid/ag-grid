@@ -45,7 +45,7 @@ export interface TreeExecutionDetails {
     initialGroupOrderComparator: InitialGroupOrderComparatorCallback;
 }
 
-export class TreeStrategy extends BeanStub implements IRowNodeStage {
+export class TreeStrategy extends BeanStub {
     private beans: BeanCollection;
     private showRowGroupColsService: IShowRowGroupColsService;
     private oldGroupDisplayColIds: string | undefined;

@@ -1,44 +1,43 @@
 import type { _OverlayGridApi } from '../../api/gridApi';
-import { _defineModule } from '../../interfaces/iModule';
-import { VERSION } from '../../version';
+import { defineCommunityModule } from '../../interfaces/iModule';
 import { LoadingOverlayComponent } from './loadingOverlayComponent';
 import { NoRowsOverlayComponent } from './noRowsOverlayComponent';
 import { hideOverlay, showLoadingOverlay, showNoRowsOverlay } from './overlayApi';
+import { OverlayService } from './overlayService';
 
-export const OverlayApiModule = _defineModule<_OverlayGridApi>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/overlay-api',
+export const OverlayCoreModule = defineCommunityModule('OverlayCoreModule', {
+    beans: [OverlayService],
+});
+
+export const OverlayApiModule = defineCommunityModule<_OverlayGridApi>('OverlayApiModule', {
     apiFunctions: {
         showLoadingOverlay,
         showNoRowsOverlay,
         hideOverlay,
     },
+    dependsOn: [OverlayCoreModule],
 });
 
-export const LoadingOverlayModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/loading-overlay',
+export const LoadingOverlayModule = defineCommunityModule('LoadingOverlayModule', {
     userComponents: [
         {
             classImp: LoadingOverlayComponent,
             name: 'agLoadingOverlay',
         },
     ],
+    dependsOn: [OverlayCoreModule],
 });
 
-export const NoRowsOverlayModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/no-rows-overlay',
+export const NoRowsOverlayModule = defineCommunityModule('NoRowsOverlayModule', {
     userComponents: [
         {
             classImp: NoRowsOverlayComponent,
             name: 'agNoRowsOverlay',
         },
     ],
+    dependsOn: [OverlayCoreModule],
 });
 
-export const OverlayModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/overlay',
-    dependantModules: [OverlayApiModule, LoadingOverlayModule, NoRowsOverlayModule],
+export const OverlayModule = defineCommunityModule('OverlayModule', {
+    dependsOn: [OverlayCoreModule, OverlayApiModule, LoadingOverlayModule, NoRowsOverlayModule],
 });
