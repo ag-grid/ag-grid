@@ -12,6 +12,7 @@ import { SideNavigation } from '@components/pages-navigation/components/SideNavi
 import { getHeadings, getTopHeading } from '@utils/markdoc/getHeadings';
 import { DOCS_TAB_ITEM_ID_PREFIX } from '@ag-website-shared/constants';
 import { AG_GRID_ERRORS } from '../../../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
+import Note from '@ag-website-shared/components/alert/Note';
 
 interface Params {
     framework: Framework;
@@ -97,6 +98,7 @@ const headings = errorPage
 
                 <h2 id={fullErrorTextHeading.slug}>{fullErrorTextHeading.text}</h2>
                 <pre id="errorCodeText">{defaultErrorText}</pre>
+                <Note>To show this error text in the dev console, import the <code>ValidationModule</code>.</Note>
             </div>
         </div>
 
