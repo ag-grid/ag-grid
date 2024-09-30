@@ -255,13 +255,6 @@ export function addEnterprisePackage(imports: any[], bindings: ParsedBindings) {
     }
 }
 
-export function addAllCommunityFeatureModule(moduleRegistration: string) {
-    return moduleRegistration.replace(
-        'ModuleRegistry.registerModules([',
-        'ModuleRegistry.registerModules([CommunityFeaturesModule, '
-    );
-}
-
 export function extractModuleRegistration(srcFile: ts.SourceFile): string {
     for (const statement of srcFile.statements) {
         if (
@@ -520,9 +513,7 @@ export function addBindingImports(
             // unique = unique.filter((i) => !i.includes('Module') || i == 'AgGridModule');
             hasEnterpriseModules = hasEnterpriseModules || k.includes('enterprise');
         }
-        if (!hasEnterpriseModules && !k.includes('ag-charts')) {
-            unique.unshift('CommunityFeaturesModule');
-        }
+
         if (unique.length > 0 || v.namedImport) {
             const namedImport = v.namedImport ? v.namedImport : '';
             const importStr = unique.length > 0 ? `{ ${unique.join(', ')} }` : '';

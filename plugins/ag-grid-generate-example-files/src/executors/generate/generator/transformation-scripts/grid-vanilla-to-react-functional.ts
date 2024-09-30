@@ -3,9 +3,7 @@ import { basename } from 'path';
 import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
-    addAllCommunityFeatureModule,
     addBindingImports,
-    addEnterprisePackage,
     addLicenseManager,
     addRelativeImports,
     convertFunctionToConstProperty,
@@ -63,8 +61,6 @@ function getModuleImports(
     if (bindings.moduleRegistration) {
         const moduleImports = bindings.imports.filter((i) => i.imports.find((m) => m.includes('Module')));
         addBindingImports(moduleImports, imports, false, true);
-
-        imports.push(addAllCommunityFeatureModule(bindings.moduleRegistration));
     }
 
     return imports;
