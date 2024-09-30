@@ -60,7 +60,6 @@ import { RowContainerHeightService } from './rendering/rowContainerHeightService
 import { RowRenderer } from './rendering/rowRenderer';
 import { StylingService } from './styling/stylingService';
 import { SyncService } from './syncService';
-import { _errorOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
 import { _logError } from './validation/logging';
@@ -350,7 +349,7 @@ export class GridCoreCreator {
         };
 
         if (!rowModelModuleNames[rowModelType]) {
-            _errorOnce('Could not find row model for rowModelType = ', rowModelType);
+            _logError(17, { rowModelType });
             return;
         }
 
