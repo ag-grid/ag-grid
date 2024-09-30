@@ -7,7 +7,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type {
     ColDef,
     GetRowIdParams,
-    SelectionOptions,
+    RowSelectionOptions,
     ValueFormatterParams,
     ValueGetterParams,
 } from 'ag-grid-community';
@@ -200,7 +200,7 @@ const updateImmutableObject = (original: any, newValues: any) => {
     return newObject;
 };
 
-const selection: SelectionOptions = {
+const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
     groupSelects: 'descendants',
     headerCheckbox: false,
@@ -409,7 +409,7 @@ const GridExample = () => {
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         autoGroupColumnDef={autoGroupColumnDef}
-                        selection={selection}
+                        rowSelection={rowSelection}
                         suppressAggFuncInHeader={true}
                         getRowId={getRowId}
                     />

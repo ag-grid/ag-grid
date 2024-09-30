@@ -30,7 +30,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
     },

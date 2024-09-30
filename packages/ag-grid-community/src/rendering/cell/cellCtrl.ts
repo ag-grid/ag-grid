@@ -417,8 +417,14 @@ export class CellCtrl extends BeanStub {
     }
 
     private isCheckboxSelection(colDef: ColDef): boolean | Function | undefined {
-        const { selection } = this.beans.gridOptions;
-        return colDef.checkboxSelection || (isColumnControlsCol(this.column) && selection && _getCheckboxes(selection));
+        const { rowSelection } = this.beans.gridOptions;
+        return (
+            colDef.checkboxSelection ||
+            (isColumnControlsCol(this.column) &&
+                rowSelection &&
+                typeof rowSelection !== 'string' &&
+                _getCheckboxes(rowSelection))
+        );
     }
 
     private refreshShouldDestroy(): boolean {

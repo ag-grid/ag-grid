@@ -18,7 +18,7 @@ const VueExample = {
         <ag-grid-vue
             style="height: 100%;"
             :theme="theme"
-            :selection="selection"
+            :rowSelection="rowSelection"
             :columnDefs="columnDefs"
             :defaultColDef="defaultColDef"
             :rowData="rowData"
@@ -30,7 +30,7 @@ const VueExample = {
     setup(props) {
         return {
             theme: myCustomTheme,
-            selection: { mode: 'multiRow', checkboxes: true },
+            rowSelection: { mode: 'multiRow', checkboxes: true },
             columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'price' }],
             defaultColDef: {
                 editable: true,

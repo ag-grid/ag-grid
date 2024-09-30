@@ -3,7 +3,7 @@
 import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import type { ColDef, GetRowIdParams, GridReadyEvent, IDatasource, SelectionOptions } from 'ag-grid-community';
+import type { ColDef, GetRowIdParams, GridReadyEvent, IDatasource, RowSelectionOptions } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { InfiniteRowModelModule } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -97,7 +97,7 @@ const filterData = (filterModel: any, data: any[]) => {
     return resultOfFilter;
 };
 
-const selection: SelectionOptions = {
+const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
     checkboxes: false,
     headerCheckbox: false,
@@ -210,7 +210,7 @@ const GridExample = () => {
                 <AgGridReact
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    selection={selection}
+                    rowSelection={rowSelection}
                     rowModelType={'infinite'}
                     cacheBlockSize={100}
                     cacheOverflowSize={2}

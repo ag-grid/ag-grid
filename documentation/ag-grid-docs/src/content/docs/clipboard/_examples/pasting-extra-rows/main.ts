@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
         editable: true,
     },
     columnDefs,
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         checkboxes: false,
         headerCheckbox: false,

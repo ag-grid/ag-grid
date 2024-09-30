@@ -166,7 +166,7 @@ When performing multiple row selections using shift-click, it is possible that n
 
 ## Specify Selectable Rows
 
-It is also possible to specify which rows can be selected via the `selection.isRowSelectable` callback function.
+It is also possible to specify which rows can be selected via the `rowSelection.isRowSelectable` callback function.
 
 {% interfaceDocumentation interfaceName="MultiRowSelectionOptions" names=["isRowSelectable"] config={"description":""} /%}
 
@@ -174,7 +174,7 @@ For instance if we only wanted to allow rows where the `data.country` property i
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         isRowSelectable: function(data) {
             return data.country === 'United States';

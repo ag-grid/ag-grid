@@ -56,7 +56,7 @@ const dateFormatter = (params) => {
     });
 };
 
-const selection = {
+const rowSelection = {
     mode: 'multiRow',
     headerCheckbox: false,
 };
@@ -127,7 +127,7 @@ const GridExample = () => {
                 columnDefs={colDefs}
                 defaultColDef={defaultColDef}
                 pagination={true}
-                selection={selection}
+                rowSelection={rowSelection}
                 onSelectionChanged={(event) => console.log('Row Selected!')}
                 onCellValueChanged={(event) => console.log(`New Cell Value: ${event.value}`)}
             />

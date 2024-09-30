@@ -30,25 +30,24 @@ const CSS_CELL_RANGE_BOTTOM = 'ag-cell-range-bottom';
 const CSS_CELL_RANGE_LEFT = 'ag-cell-range-left';
 
 function _isRangeHandleEnabled(gos: GridOptionsService): boolean {
-    const selection = gos.get('selection');
+    const selection = gos.get('cellSelection');
     const useNewAPI = selection !== undefined;
 
     if (!useNewAPI) {
         return gos.get('enableRangeHandle');
     }
 
-    return selection.mode === 'cell' ? selection.handle?.mode === 'range' : false;
+    return typeof selection !== 'boolean' ? selection.handle?.mode === 'range' : false;
 }
-
 function _isFillHandleEnabled(gos: GridOptionsService): boolean {
-    const selection = gos.get('selection');
+    const selection = gos.get('cellSelection');
     const useNewAPI = selection !== undefined;
 
     if (!useNewAPI) {
         return gos.get('enableFillHandle');
     }
 
-    return selection.mode === 'cell' ? selection.handle?.mode === 'fill' : false;
+    return typeof selection !== 'boolean' ? selection.handle?.mode === 'fill' : false;
 }
 
 export class CellRangeFeature implements ICellRangeFeature {

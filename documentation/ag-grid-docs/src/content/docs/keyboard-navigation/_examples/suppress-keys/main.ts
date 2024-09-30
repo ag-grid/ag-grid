@@ -61,7 +61,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         suppressKeyboardEvent: suppressNavigation,
         suppressHeaderKeyboardEvent: suppressUpDownNavigation,
     },
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         checkboxes: false,
         headerCheckbox: false,

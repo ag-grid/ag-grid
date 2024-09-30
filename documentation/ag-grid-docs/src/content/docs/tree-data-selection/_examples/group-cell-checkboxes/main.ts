@@ -46,7 +46,7 @@ const gridOptions: GridOptions = {
     rowData: getData(),
     treeData: true,
     getDataPath: (data) => data.path,
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         checkboxes: false,
         headerCheckbox: false,

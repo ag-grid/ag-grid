@@ -304,7 +304,7 @@ const gridOptions: GridOptions = {
         width: 250,
         field: 'trade',
     },
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
         headerCheckbox: false,
