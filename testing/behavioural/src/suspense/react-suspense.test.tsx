@@ -1,13 +1,13 @@
 import { cleanup, render } from '@testing-library/react';
 import React, { Suspense, act, useState } from 'react';
 
-import { CommunityFeaturesModule, ModuleRegistry } from 'ag-grid-community';
+import { ModuleRegistry } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 describe('React Suspense', () => {
     beforeAll(() => {
-        ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+        ModuleRegistry.registerModules([ClientSideRowModelModule]);
     });
 
     beforeEach(() => {

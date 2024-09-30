@@ -1,7 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { MasterDetailModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
@@ -9,7 +9,7 @@ import { GridRows, TestGridsManager } from '../test-utils';
 
 describe('ag-grid master detail', () => {
     const gridsManager = new TestGridsManager({
-        modules: [CommunityFeaturesModule, ClientSideRowModelModule, MasterDetailModule],
+        modules: [ClientSideRowModelModule, MasterDetailModule],
     });
     let consoleErrorSpy: MockInstance | undefined;
 
