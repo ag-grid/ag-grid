@@ -168,11 +168,21 @@ export class GridChartComp extends Component {
         }
 
         const crossFilterCallback = (event: any, reset: boolean) => {
+            const chartId = this.params.chartId;
             const ctx = this.params.crossFilteringContext;
-            ctx.lastSelectedChartId = reset ? '' : this.chartController.getChartId();
+
+            ctx.lastSelectedChartId = reset ? '' : chartId;
+
             if (reset) {
                 this.params.crossFilteringResetCallback!();
+            } else {
+                const category = event.xKey;
+                const value = event.datum![category];
+                const multiSelection = event.event.metaKey || event.event.ctrlKey;
+
+                ctx.getChartSelectionModel(chartId).toggleSelection(multiSelection, category, value);
             }
+
             this.crossFilterService.filter(event, reset);
         };
 
