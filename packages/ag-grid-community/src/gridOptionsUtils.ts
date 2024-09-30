@@ -9,6 +9,7 @@ import type {
     SelectionOptions,
     SingleRowSelectionOptions,
 } from './entities/gridOptions';
+import type { RowNode } from './entities/rowNode';
 import type {
     ExtractParamsFromCallback,
     ExtractReturnTypeFromCallback,
@@ -293,6 +294,50 @@ export function _getRowIdCallback<TData = any>(
     };
 }
 
+export function _canSkipShowingRowGroup(gos: GridOptionsService, node: RowNode): boolean {
+    const isSkippingGroups = gos.get('groupHideParentOfSingleChild');
+    if (isSkippingGroups === true) {
+        return true;
+    }
+    if (isSkippingGroups === 'leafGroupsOnly' && node.leafGroup) {
+        return true;
+    }
+    // deprecated
+    if (gos.get('groupRemoveSingleChildren')) {
+        return true;
+    }
+    if (gos.get('groupRemoveLowestSingleChildren') && node.leafGroup) {
+        return true;
+    }
+    return false;
+}
+
+/** Get the selection checkbox configuration. Defaults to enabled. */
+export function _shouldUpdateColVisibilityAfterGroup(gos: GridOptionsService, isGrouped: boolean): boolean {
+    const preventVisibilityChanges = gos.get('suppressGroupChangesColumnVisibility');
+    if (preventVisibilityChanges === true) {
+        return false;
+    }
+    if (isGrouped && preventVisibilityChanges === 'suppressHideOnGroup') {
+        return false;
+    }
+    if (!isGrouped && preventVisibilityChanges === 'suppressShowOnUngroup') {
+        return false;
+    }
+
+    const legacySuppressOnGroup = gos.get('suppressRowGroupHidesColumns');
+    if (isGrouped && legacySuppressOnGroup === true) {
+        return false;
+    }
+
+    const legacySuppressOnUngroup = gos.get('suppressMakeColumnVisibleAfterUnGroup');
+    if (!isGrouped && legacySuppressOnUngroup === true) {
+        return false;
+    }
+
+    return true;
+}
+
 /** Get the selection checkbox configuration. Defaults to enabled. */
 export function _getCheckboxes(
     selection: SelectionOptions
@@ -451,4 +496,16 @@ export function _getGroupSelectsDescendants(gos: GridOptionsService): boolean {
 
 export function _isSetFilterByDefault(gos: GridOptionsService): boolean {
     return gos.isModuleRegistered(ModuleNames.SetFilterModule) && !gos.get('suppressSetFilterByDefault');
+}
+
+export function _isLegacyMenuEnabled(gos: GridOptionsService): boolean {
+    return gos.get('columnMenu') === 'legacy';
+}
+
+export function _isColumnMenuAnchoringEnabled(gos: GridOptionsService): boolean {
+    return !_isLegacyMenuEnabled(gos);
+}
+
+export function _areAdditionalColumnMenuItemsEnabled(gos: GridOptionsService): boolean {
+    return gos.get('columnMenu') === 'new';
 }

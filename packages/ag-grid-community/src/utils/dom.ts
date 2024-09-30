@@ -1,5 +1,7 @@
 import type { CellStyle } from '../entities/colDef';
 import type { RowStyle } from '../entities/gridOptions';
+import type { GridOptionsService } from '../gridOptionsService';
+import { _getWindow } from '../gridOptionsUtils';
 import type { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
 import { _setAriaHidden } from './aria';
 import { _isBrowserChrome, _isBrowserSafari } from './browser';
@@ -497,4 +499,12 @@ export function _bindCellRendererToHtmlElement(
             }
         }
     });
+}
+
+export function _observeResize(gos: GridOptionsService, element: HTMLElement, callback: () => void): () => void {
+    const win = _getWindow(gos);
+    const ResizeObserverImpl = win.ResizeObserver;
+    const resizeObserver = ResizeObserverImpl ? new ResizeObserverImpl(callback) : null;
+    resizeObserver?.observe(element);
+    return () => resizeObserver?.disconnect();
 }

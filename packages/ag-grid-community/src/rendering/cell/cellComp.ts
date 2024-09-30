@@ -1,4 +1,3 @@
-import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import type { BeanCollection } from '../../context/context';
 import type { PopupEditorWrapper } from '../../edit/cellEditors/popupEditorWrapper';
 import type { AgColumn } from '../../entities/agColumn';
@@ -6,6 +5,8 @@ import type { CellStyle } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import { _getActiveDomElement } from '../../gridOptionsUtils';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
+import type { PopupPositionParams } from '../../interfaces/iPopup';
+import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { _setAriaRole } from '../../utils/aria';
 import { _browserSupportsPreventScroll } from '../../utils/browser';
@@ -14,7 +15,6 @@ import { _warnOnce } from '../../utils/function';
 import { _missing } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import { Component } from '../../widgets/component';
-import type { PopupPositionParams } from '../../widgets/popupService';
 import type { TooltipParentComp } from '../../widgets/tooltipStateManager';
 import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from './../dndSourceComp';
@@ -343,7 +343,7 @@ export class CellComp extends Component implements TooltipParentComp {
         // and lastly we never use it if doing auto-height, as the auto-height service checks the
         // row height directly after the cell is created, it doesn't wait around for the tasks to complete
         const suppressAnimationFrame = this.beans.gos.get('suppressAnimationFrame');
-        const useTaskService = !suppressAnimationFrame;
+        const useTaskService = !suppressAnimationFrame && this.beans.animationFrameService;
 
         const displayComponentVersionCopy = this.rendererVersion;
 
@@ -368,7 +368,7 @@ export class CellComp extends Component implements TooltipParentComp {
         // if we changed this (always use task service) would make sense, however it would break tests, possibly
         // test of users.
         if (useTaskService && this.firstRender) {
-            this.beans.animationFrameService.createTask(
+            this.beans.animationFrameService!.createTask(
                 createCellRendererFunc,
                 this.rowNode.rowIndex!,
                 'createTasksP2'
@@ -511,7 +511,7 @@ export class CellComp extends Component implements TooltipParentComp {
             ePopupGui.appendChild(this.cellEditorGui);
         }
 
-        const popupService = this.beans.popupService;
+        const popupService = this.beans.popupService!;
 
         const useModelPopup = this.beans.gos.get('stopEditingWhenCellsLoseFocus');
 

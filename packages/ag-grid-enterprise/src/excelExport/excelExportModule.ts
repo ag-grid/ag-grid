@@ -1,9 +1,8 @@
 import type { _ExcelExportGridApi } from 'ag-grid-community';
-import { ModuleNames, _defineModule } from 'ag-grid-community';
-import { _CsvExportCoreModule } from 'ag-grid-community';
+import { CsvExportCoreModule, ModuleNames } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { VERSION } from '../version';
+import { defineEnterpriseModule } from '../moduleUtils';
 import { ExcelCreator } from './excelCreator';
 import {
     exportDataAsExcel,
@@ -13,16 +12,12 @@ import {
     getSheetDataForExcel,
 } from './excelExportApi';
 
-export const ExcelExportCoreModule = _defineModule({
-    version: VERSION,
-    moduleName: `${ModuleNames.ExcelExportModule}-core`,
+export const ExcelExportCoreModule = defineEnterpriseModule('ExcelExportCoreModule', {
     beans: [ExcelCreator],
-    dependantModules: [_CsvExportCoreModule, EnterpriseCoreModule],
+    dependsOn: [CsvExportCoreModule, EnterpriseCoreModule],
 });
 
-export const ExcelExportApiModule = _defineModule<_ExcelExportGridApi>({
-    version: VERSION,
-    moduleName: `${ModuleNames.ExcelExportModule}-api`,
+export const ExcelExportApiModule = defineEnterpriseModule<_ExcelExportGridApi>('ExcelExportApiModule', {
     apiFunctions: {
         getDataAsExcel,
         exportDataAsExcel,
@@ -30,11 +25,9 @@ export const ExcelExportApiModule = _defineModule<_ExcelExportGridApi>({
         getMultipleSheetsAsExcel,
         exportMultipleSheetsAsExcel,
     },
-    dependantModules: [ExcelExportCoreModule],
+    dependsOn: [ExcelExportCoreModule],
 });
 
-export const ExcelExportModule = _defineModule({
-    version: VERSION,
-    moduleName: ModuleNames.ExcelExportModule,
-    dependantModules: [ExcelExportCoreModule, ExcelExportApiModule],
+export const ExcelExportModule = defineEnterpriseModule(ModuleNames.ExcelExportModule, {
+    dependsOn: [ExcelExportCoreModule, ExcelExportApiModule],
 });

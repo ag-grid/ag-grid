@@ -1,21 +1,14 @@
-import type {
-    BeanCollection,
-    ICellRenderer,
-    ISparklineCellRendererParams,
-    ResizeObserverService,
-} from 'ag-grid-community';
-import { Component, RefPlaceholder } from 'ag-grid-community';
+import type { BeanCollection, ICellRenderer, ISparklineCellRendererParams } from 'ag-grid-community';
+import { Component, RefPlaceholder, _observeResize } from 'ag-grid-community';
 
 import type { SparklineFactoryOptions } from './agSparkline';
 import { AgSparkline } from './agSparkline';
 import type { SparklineTooltipSingleton } from './tooltip/sparklineTooltipSingleton';
 
 export class SparklineCellRenderer extends Component implements ICellRenderer {
-    private resizeObserverService!: ResizeObserverService;
     private sparklineTooltipSingleton!: SparklineTooltipSingleton;
 
     public wireBeans(beans: BeanCollection) {
-        this.resizeObserverService = beans.resizeObserverService;
         this.sparklineTooltipSingleton = beans.sparklineTooltipSingleton as SparklineTooltipSingleton;
     }
 
@@ -61,7 +54,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             }
         };
 
-        const unsubscribeFromResize = this.resizeObserverService.observeResize(this.getGui(), updateSparkline);
+        const unsubscribeFromResize = _observeResize(this.gos, this.getGui(), updateSparkline);
         this.addDestroyFunc(() => unsubscribeFromResize());
     }
 

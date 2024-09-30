@@ -6,8 +6,8 @@ import type {
     CellNavigationService,
     IRangeService,
     IStatusPanelComp,
+    PositionUtils,
     RowPosition,
-    RowPositionUtils,
     ValueService,
 } from 'ag-grid-community';
 import {
@@ -30,13 +30,13 @@ import { AgNameValueSelector } from './agNameValue';
 export class AggregationComp extends Component implements IStatusPanelComp {
     private valueService: ValueService;
     private cellNavigationService: CellNavigationService;
-    private rowPositionUtils: RowPositionUtils;
+    private positionUtils: PositionUtils;
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection) {
         this.valueService = beans.valueService;
-        this.cellNavigationService = beans.cellNavigationService;
-        this.rowPositionUtils = beans.rowPositionUtils;
+        this.cellNavigationService = beans.cellNavigationService!;
+        this.positionUtils = beans.positionUtils;
         this.rangeService = beans.rangeService;
     }
 
@@ -175,7 +175,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
                         cellsSoFar[cellId] = true;
 
-                        const rowNode = this.rowPositionUtils.getRowNode(currentRow);
+                        const rowNode = this.positionUtils.getRowNode(currentRow);
                         if (_missing(rowNode)) {
                             return;
                         }

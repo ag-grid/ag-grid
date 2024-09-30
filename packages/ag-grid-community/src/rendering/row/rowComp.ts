@@ -1,7 +1,7 @@
-import type { UserCompDetails } from '../../components/framework/userComponentFactory';
 import type { BeanCollection } from '../../context/context';
 import type { RowStyle } from '../../entities/gridOptions';
 import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
+import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _setAriaRole } from '../../utils/aria';
 import { _addStylesToElement, _setDomChildOrder } from '../../utils/dom';
 import { _errorOnce } from '../../utils/function';

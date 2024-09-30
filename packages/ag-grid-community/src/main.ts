@@ -10,20 +10,26 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
 // columns
 export { ColumnFactory } from './columns/columnFactory';
-export { ColumnModel } from './columns/columnModel';
+export { ColumnModel, ColumnCollections as _ColumnCollections, ColKey } from './columns/columnModel';
 export type { ColumnAutosizeService } from './columnAutosize/columnAutosizeService';
 export type { FuncColsService } from './columns/funcColsService';
-export type { ColumnApplyStateService } from './columns/columnApplyStateService';
-export { ColumnState, ColumnStateParams, ApplyColumnStateParams } from './columns/columnApplyStateService';
+export type { ColumnStateService } from './columns/columnStateService';
+export { ColumnState, ColumnStateParams, ApplyColumnStateParams } from './columns/columnStateService';
 export type { ColumnMoveService } from './columnMove/columnMoveService';
 export type { ColumnNameService } from './columns/columnNameService';
 export { IAggColumnNameService } from './interfaces/iAggColumnNameService';
 export { IShowRowGroupColsService, IColumnDropZonesService } from './interfaces/iShowRowGroupColsService';
-export type { PivotResultColsService } from './columns/pivotResultColsService';
+export { IPivotResultColsService } from './interfaces/iPivotResultColsService';
 export { ColumnKeyCreator } from './columns/columnKeyCreator';
 export type { VisibleColsService } from './columns/visibleColsService';
 export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
-export { GROUP_AUTO_COLUMN_ID, isColumnControlsCol, isColumnGroupAutoCol } from './columns/columnUtils';
+export {
+    GROUP_AUTO_COLUMN_ID,
+    isColumnControlsCol,
+    isColumnGroupAutoCol,
+    _destroyColumnTree,
+    _getColumnsFromTree,
+} from './columns/columnUtils';
 export { IAutoColService } from './interfaces/iAutoColService';
 export {
     SizeColumnsToFitGridColumnLimits,
@@ -41,8 +47,14 @@ export { EmptyBean as _EmptyBean } from './components/emptyBean';
 export { ComponentSelector, AgComponentSelector, RefPlaceholder, ComponentEvent } from './widgets/component';
 
 export { UserComponentRegistry } from './components/framework/userComponentRegistry';
-export { UserComponentFactory, UserCompDetails } from './components/framework/userComponentFactory';
-export { ComponentType } from './components/framework/componentTypes';
+export { UserCompDetails, ComponentType } from './interfaces/iUserCompDetails';
+export type { UserComponentFactory } from './components/framework/userComponentFactory';
+export {
+    _getFilterDetails,
+    _getFloatingFilterCompDetails,
+    _getCellRendererDetails,
+    _getEditorRendererDetails,
+} from './components/framework/userCompUtils';
 export { _unwrapUserComp } from './components/framework/unwrapUserComp';
 
 // context
@@ -170,6 +182,7 @@ export {
     ISetFilterTreeListTooltipParams,
 } from './interfaces/iSetFilter';
 export type { FilterManager } from './filter/filterManager';
+export type { FilterValueService } from './filter/filterValueService';
 export { FilterRequestSource } from './filter/iColumnFilter';
 export {
     IMultiFilter,
@@ -253,7 +266,7 @@ export { GridBodyComp } from './gridBodyComp/gridBodyComp';
 export { GridBodyCtrl, IGridBodyComp, RowAnimationCssClasses } from './gridBodyComp/gridBodyCtrl';
 export type { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 export type { MouseEventService } from './gridBodyComp/mouseEventService';
-export type { NavigationService } from './gridBodyComp/navigationService';
+export type { NavigationService } from './navigation/navigationService';
 export { FakeHScrollComp } from './gridBodyComp/fakeHScrollComp';
 export { FakeVScrollComp } from './gridBodyComp/fakeVScrollComp';
 
@@ -285,14 +298,12 @@ export {
     IAbstractHeaderCellComp,
 } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 export { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerCtrl';
-export type { StandardMenuFactory } from './headerRendering/cells/column/standardMenu';
 
 // misc
-export type { ResizeObserverService } from './misc/resizeObserverService';
+export { _requestAnimationFrame } from './misc/animationFrameService';
 export type { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
-export type { MenuService } from './misc/menuService';
-export { IContextMenuParams } from './misc/menuService';
+export type { MenuService } from './misc/menu/menuService';
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from './interfaces/iCellEditor';
@@ -388,7 +399,6 @@ export {
 } from './rendering/features/positionableFeature';
 
 // rendering
-export { AutoWidthCalculator } from './rendering/autoWidthCalculator';
 export { CellComp } from './rendering/cell/cellComp';
 export { CellCtrl, ICellComp } from './rendering/cell/cellCtrl';
 export { RowCtrl, IRowComp } from './rendering/row/rowCtrl';
@@ -451,7 +461,7 @@ export { ISelectionContext } from './selection/rowRangeSelectionContext';
 export { BaseSelectionService } from './selection/baseSelectionService';
 
 // styling
-export type { StylingService } from './styling/stylingService';
+export type { CellStyleService } from './styling/cellStyleService';
 export { UpdateLayoutClassesParams, LayoutCssClasses } from './styling/layoutFeature';
 
 // widgets
@@ -482,7 +492,7 @@ export { TabGuardCtrl, ITabGuard, TabGuardClassNames } from './widgets/tabGuardC
 export { TabGuardFeature } from './widgets/tabGuardFeature';
 export { PopupComponent } from './widgets/popupComponent';
 export type { PopupService } from './widgets/popupService';
-export { AgPopup, PopupPositionParams, PopupEventParams } from './widgets/popupService';
+export { PopupPositionParams, PopupEventParams } from './interfaces/iPopup';
 export { TouchListener, TapEvent, LongTapEvent, TouchListenerEvent } from './widgets/touchListener';
 export { FocusableContainer } from './interfaces/iFocusableContainer';
 
@@ -553,7 +563,7 @@ export { ICsvCreator } from './interfaces/iCsvCreator';
 // root
 export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
-export type { CellNavigationService } from './cellNavigationService';
+export type { CellNavigationService } from './navigation/cellNavigationService';
 export { KeyCode } from './constants/keyCode';
 export { VerticalDirection, HorizontalDirection } from './constants/direction';
 export {
@@ -603,7 +613,9 @@ export {
     _isClientSideRowModel,
     _isServerSideRowModel,
     _isGroupUseEntireRow,
+    _canSkipShowingRowGroup,
     _getRowHeightAsNumber,
+    _shouldUpdateColVisibilityAfterGroup,
     _getActiveDomElement,
     _isNothingFocused,
     _getDocument,
@@ -620,6 +632,8 @@ export {
     _getSuppressMultiRanges,
     _getRowSelectionMode,
     _isUsingNewSelectionAPI,
+    _isLegacyMenuEnabled,
+    _isColumnMenuAnchoringEnabled,
 } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
 export type { EventService } from './eventService';
@@ -672,14 +686,13 @@ export { IAggFuncService } from './interfaces/iAggFuncService';
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from './interfaces/iClipboardService';
 export { IMenuFactory } from './interfaces/iMenuFactory';
 export { IColumnChooserFactory, ShowColumnChooserParams } from './interfaces/iColumnChooserFactory';
-export { _areCellsEqual, _createCellId } from './entities/cellPositionUtils';
 export { CellPosition } from './interfaces/iCellPosition';
-export type { RowPositionUtils } from './entities/rowPositionUtils';
-export { _isRowBefore, _isSameRow } from './entities/rowPositionUtils';
+export type { PositionUtils } from './entities/positionUtils';
+export { _areCellsEqual, _createCellId, _isRowBefore, _isSameRow } from './entities/positionUtils';
 export { RowPosition } from './interfaces/iRowPosition';
 export { HeaderPosition } from './interfaces/iHeaderPosition';
-export type { HeaderNavigationService } from './headerRendering/common/headerNavigationService';
-export { HeaderNavigationDirection } from './headerRendering/common/headerNavigationService';
+export type { HeaderNavigationService } from './navigation/headerNavigationService';
+export { HeaderNavigationDirection } from './navigation/headerNavigationService';
 export {
     IAggFunc,
     IAggFuncParams,
@@ -832,7 +845,14 @@ export { WithoutGridCommon } from './interfaces/iCommon';
 export { ManagedGridOptionKey, ManagedGridOptions, PropertyKeys } from './propertyKeys';
 export { IPivotColDefService } from './interfaces/iPivotColDefService';
 export { IViewportDatasource, IViewportDatasourceParams } from './interfaces/iViewportDatasource';
-export { IContextMenuFactory } from './interfaces/iContextMenuFactory';
+export {
+    IContextMenuService,
+    ShowContextMenuParams,
+    IContextMenuParams,
+    EventShowContextMenuParams,
+    MouseShowContextMenuParams,
+    TouchShowContextMenuParam,
+} from './interfaces/iContextMenu';
 export { IRowNodeStage, StageExecuteParams } from './interfaces/iRowNodeStage';
 export { IDateParams, IDate, IDateComp, BaseDate, BaseDateParams } from './interfaces/dateComponent';
 export { IAfterGuiAttachedParams, ContainerType } from './interfaces/iAfterGuiAttachedParams';
@@ -928,6 +948,7 @@ export {
     _getInnerHeight,
     _getInnerWidth,
     _isNodeOrElement,
+    _observeResize,
 } from './utils/dom';
 export {
     _getCtrlForEventTarget,
@@ -973,7 +994,7 @@ export { XmlFactory } from './csvExport/xmlFactory';
 export { ZipContainer } from './csvExport/zipContainer/zipContainer';
 
 // modules
-export { Module, ModuleValidationResult, _defineModule } from './interfaces/iModule';
+export { Module, ModuleValidationResult, ModuleWithApi, BaseModule } from './interfaces/iModule';
 export { ModuleNames } from './modules/moduleNames';
 export { ModuleRegistry } from './modules/moduleRegistry';
 
@@ -982,26 +1003,30 @@ export { ValidationModule } from './validation/validationModule';
 export { ColumnMoveModule } from './columnMove/columnMoveModule';
 export { DragModule, HorizontalResizeModule, DragAndDropModule } from './dragAndDrop/dragModule';
 export {
-    ColumnFilterModule as _ColumnFilterModule,
-    FilterCoreModule as _FilterCoreModule,
-    FloatingFilterModule as _FloatingFilterModule,
-    ReadOnlyFloatingFilterModule as _ReadOnlyFloatingFilterModule,
+    ColumnFilterModule,
+    FilterCoreModule,
+    FloatingFilterModule,
+    ReadOnlyFloatingFilterModule,
+    FilterValueModule,
 } from './filter/filterModule';
-export { EditCoreModule as _EditCoreModule } from './edit/editModule';
+export { EditCoreModule } from './edit/editModule';
 export { StickyRowModule } from './rendering/features/stickyRowModule';
-export { RowNodeBlockModule as _RowNodeBlockModule } from './rowNodeCache/rowNodeBlockModule';
+export { RowNodeBlockModule } from './rowNodeCache/rowNodeBlockModule';
 export { RowSelectionCoreModule } from './selection/rowSelectionModule';
 export {
     CsrmSsrmSharedApiModule as _CsrmSsrmSharedApiModule,
     SsrmInfiniteSharedApiModule as _SsrmInfiniteSharedApiModule,
 } from './api/sharedApiModule';
-export { CommunityMenuApiModule as _CommunityMenuApiModule, CommunityApiModule } from './api/apiModule';
+export { CommunityMenuApiModule } from './misc/menu/sharedMenuModule';
 export { CommunityFeaturesModule, GridCoreModule } from './gridCoreModule';
 export { SortModule } from './sort/sortModule';
 export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
 export { ClientSideRowModelModule, ClientSideRowModelCoreModule } from './clientSideRowModel/clientSideRowModelModule';
-export { CsvExportModule, CsvExportCoreModule as _CsvExportCoreModule } from './csvExport/csvExportModule';
+export { CsvExportModule, CsvExportCoreModule as CsvExportCoreModule } from './csvExport/csvExportModule';
 export { InfiniteRowModelModule } from './infiniteRowModel/infiniteRowModelModule';
+export { PopupModule } from './widgets/popupModule';
+export { SharedMenuModule } from './misc/menu/sharedMenuModule';
+export { KeyboardNavigationCoreModule } from './navigation/navigationModule';
 
 //  events
 export * from './events';

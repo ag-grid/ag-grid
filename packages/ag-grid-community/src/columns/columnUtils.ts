@@ -11,7 +11,7 @@ import { CONTROLS_COLUMN_ID_PREFIX } from './controlsColService';
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn' as const;
 
 // Possible candidate for reuse (alot of recursive traversal duplication)
-export function getColumnsFromTree(rootColumns: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] {
+export function _getColumnsFromTree(rootColumns: (AgColumn | AgProvidedColumnGroup)[]): AgColumn[] {
     const result: AgColumn[] = [];
 
     const recursiveFindColumns = (childColumns: (AgColumn | AgProvidedColumnGroup)[]): void => {
@@ -34,7 +34,7 @@ export function getWidthOfColsInList(columnList: AgColumn[]) {
     return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
 }
 
-export function destroyColumnTree(
+export function _destroyColumnTree(
     context: Context,
     oldTree: (AgColumn | AgProvidedColumnGroup)[] | null | undefined,
     newTree?: (AgColumn | AgProvidedColumnGroup)[] | null

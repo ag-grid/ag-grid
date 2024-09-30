@@ -1,14 +1,29 @@
 import type {
     BeanCollection,
+    ComponentType,
     IToolPanelComp,
     IToolPanelParams,
     ToolPanelDef,
+    UserCompDetails,
     UserComponentFactory,
     WithoutGridCommon,
 } from 'ag-grid-community';
 import { Component, _warnOnce } from 'ag-grid-community';
 
 import { AgHorizontalResize } from './agHorizontalResize';
+
+function getToolPanelCompDetails(
+    userComponentFactory: UserComponentFactory,
+    toolPanelDef: ToolPanelDef,
+    params: WithoutGridCommon<IToolPanelParams>
+): UserCompDetails {
+    return userComponentFactory.getCompDetails(toolPanelDef, ToolPanelComponent, null, params, true)!;
+}
+
+const ToolPanelComponent: ComponentType = {
+    propertyName: 'toolPanel',
+    cellRenderer: false,
+};
 
 export class ToolPanelWrapper extends Component {
     private userComponentFactory: UserComponentFactory;
@@ -47,7 +62,7 @@ export class ToolPanelWrapper extends Component {
         this.toolPanelId = id;
         this.width = width;
 
-        const compDetails = this.userComponentFactory.getToolPanelCompDetails(toolPanelDef, params);
+        const compDetails = getToolPanelCompDetails(this.userComponentFactory, toolPanelDef, params);
         const componentPromise = compDetails.newAgStackInstance();
 
         this.params = compDetails.params;

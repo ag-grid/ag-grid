@@ -12,6 +12,7 @@ import {
     _escapeString,
     _exists,
     _getDocument,
+    _getEditorRendererDetails,
     _setAriaSelected,
 } from 'ag-grid-community';
 
@@ -124,20 +125,21 @@ export class RichSelectRow<TValue> extends Component {
 
         if (this.params.cellRenderer) {
             const richSelect = this.getParentComponent()?.getParentComponent() as AgRichSelect;
-            userCompDetails = this.userComponentFactory.getEditorRendererDetails<
-                RichSelectParams,
-                IRichCellEditorRendererParams<TValue>
-            >(this.params, {
-                value,
-                valueFormatted,
-                getValue: () => richSelect?.getValue(),
-                setValue: (value: TValue[] | TValue | null) => {
-                    richSelect?.setValue(value, true);
-                },
-                setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
-                    this.setTooltip({ newTooltipText: value, shouldDisplayTooltip });
-                },
-            });
+            userCompDetails = _getEditorRendererDetails<RichSelectParams, IRichCellEditorRendererParams<TValue>>(
+                this.userComponentFactory,
+                this.params,
+                {
+                    value,
+                    valueFormatted,
+                    getValue: () => richSelect?.getValue(),
+                    setValue: (value: TValue[] | TValue | null) => {
+                        richSelect?.setValue(value, true);
+                    },
+                    setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
+                        this.setTooltip({ newTooltipText: value, shouldDisplayTooltip });
+                    },
+                }
+            );
         }
 
         if (userCompDetails) {

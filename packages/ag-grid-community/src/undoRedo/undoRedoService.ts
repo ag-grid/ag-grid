@@ -4,9 +4,8 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import { _areCellsEqual } from '../entities/cellPositionUtils';
-import { _isSameRow } from '../entities/rowPositionUtils';
-import type { RowPositionUtils } from '../entities/rowPositionUtils';
+import { _areCellsEqual, _isSameRow } from '../entities/positionUtils';
+import type { PositionUtils } from '../entities/positionUtils';
 import type { CellValueChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
@@ -22,14 +21,14 @@ export class UndoRedoService extends BeanStub implements NamedBean {
 
     private focusService: FocusService;
     private ctrlsService: CtrlsService;
-    private rowPositionUtils: RowPositionUtils;
+    private positionUtils: PositionUtils;
     private columnModel: ColumnModel;
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
         this.focusService = beans.focusService;
         this.ctrlsService = beans.ctrlsService;
-        this.rowPositionUtils = beans.rowPositionUtils;
+        this.positionUtils = beans.positionUtils;
         this.columnModel = beans.columnModel;
         this.rangeService = beans.rangeService;
     }
@@ -197,7 +196,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         action.cellValueChanges.forEach((cellValueChange) => {
             const { rowIndex, rowPinned, columnId } = cellValueChange;
             const rowPosition: RowPosition = { rowIndex, rowPinned };
-            const currentRow = this.rowPositionUtils.getRowNode(rowPosition);
+            const currentRow = this.positionUtils.getRowNode(rowPosition);
 
             // checks if the row has been filtered out
             if (!currentRow!.displayed) {
@@ -247,7 +246,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         const cellValueChange = cellValueChanges[0];
         const { rowIndex, rowPinned } = cellValueChange;
         const rowPosition: RowPosition = { rowIndex, rowPinned };
-        const row = this.rowPositionUtils.getRowNode(rowPosition);
+        const row = this.positionUtils.getRowNode(rowPosition);
 
         const lastFocusedCell: LastFocusedCell = {
             rowPinned: cellValueChange.rowPinned,

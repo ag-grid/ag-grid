@@ -31,7 +31,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
     beanName = 'columnMoveService' as const;
 
     private columnModel: ColumnModel;
-    private columnAnimationService: ColumnAnimationService;
+    private columnAnimationService?: ColumnAnimationService;
     private ctrlsService: CtrlsService;
     private visibleColsService: VisibleColsService;
     private focusService: FocusService;
@@ -73,7 +73,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.columnAnimationService.start();
+        this.columnAnimationService?.start();
         // we want to pull all the columns out first and put them into an ordered list
         const movedColumns = this.columnModel.getColsForKeys(columnsToMoveKeys);
 
@@ -89,7 +89,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             });
         }
 
-        this.columnAnimationService.finish();
+        this.columnAnimationService?.finish();
     }
 
     private doesMovePassRules(columnsToMove: AgColumn[], toIndex: number): boolean {

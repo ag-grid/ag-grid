@@ -90,6 +90,11 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
+            '@ag-grid-community/locale': {
+                main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
         },
     });
 })(this);

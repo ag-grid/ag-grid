@@ -21,7 +21,7 @@ export abstract class AgPickerField<
     protected popupService: PopupService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.popupService = beans.popupService;
+        this.popupService = beans.popupService!;
     }
 
     protected abstract createPickerComponent(): TComponent;

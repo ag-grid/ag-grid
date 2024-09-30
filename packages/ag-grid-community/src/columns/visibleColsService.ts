@@ -21,7 +21,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     beanName = 'visibleColsService' as const;
 
     private columnModel: ColumnModel;
-    private columnFlexService: ColumnFlexService;
+    private columnFlexService?: ColumnFlexService;
     private columnViewportService: ColumnViewportService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -72,7 +72,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.joinCols();
         this.setLeftValues(source);
         this.autoHeightCols = this.allCols.filter((col) => col.isAutoHeight());
-        this.columnFlexService.refreshFlexedColumns();
+        this.columnFlexService?.refreshFlexedColumns();
         this.updateBodyWidths();
         this.columnViewportService.checkViewportColumns(false);
         this.setFirstRightAndLastLeftPinned(source);

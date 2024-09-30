@@ -1,6 +1,5 @@
 import type { _DragGridApi } from '../api/gridApi';
-import { _defineModule } from '../interfaces/iModule';
-import { VERSION } from '../version';
+import { defineCommunityModule } from '../interfaces/iModule';
 import { DragAndDropImageComponent } from './dragAndDropImageComponent';
 import { DragAndDropService } from './dragAndDropService';
 import { addRowDropZone, getRowDropZoneParams, removeRowDropZone } from './dragApi';
@@ -8,17 +7,13 @@ import { DragService } from './dragService';
 import { HorizontalResizeService } from './horizontalResizeService';
 import { RowDragService } from './rowDragService';
 
-export const DragModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/drag',
+export const DragModule = defineCommunityModule('DragModule', {
     beans: [DragService],
 });
 
-export const DragAndDropModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/drag-and-drop',
+export const DragAndDropModule = defineCommunityModule('DragAndDropModule', {
     beans: [DragAndDropService],
-    dependantModules: [DragModule],
+    dependsOn: [DragModule],
     userComponents: [
         {
             classImp: DragAndDropImageComponent,
@@ -27,33 +22,25 @@ export const DragAndDropModule = _defineModule({
     ],
 });
 
-export const RowDragCoreModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/row-drag-core',
+export const RowDragCoreModule = defineCommunityModule('RowDragCoreModule', {
     beans: [RowDragService],
-    dependantModules: [DragAndDropModule],
+    dependsOn: [DragAndDropModule],
 });
 
-export const RowDragApiModule = _defineModule<_DragGridApi>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/row-drag-api',
+export const RowDragApiModule = defineCommunityModule<_DragGridApi>('RowDragApiModule', {
     apiFunctions: {
         addRowDropZone,
         removeRowDropZone,
         getRowDropZoneParams,
     },
-    dependantModules: [RowDragCoreModule],
+    dependsOn: [RowDragCoreModule],
 });
 
-export const RowDragModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/row-drag',
-    dependantModules: [RowDragApiModule],
+export const RowDragModule = defineCommunityModule('RowDragModule', {
+    dependsOn: [RowDragApiModule],
 });
 
-export const HorizontalResizeModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/horizontal-resize',
+export const HorizontalResizeModule = defineCommunityModule('HorizontalResizeModule', {
     beans: [HorizontalResizeService],
-    dependantModules: [DragModule],
+    dependsOn: [DragModule],
 });

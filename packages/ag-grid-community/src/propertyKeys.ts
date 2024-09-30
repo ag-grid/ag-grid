@@ -74,7 +74,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     pivotSuppressAutoColumn: true,
     suppressExpandablePivotGroups: true,
     aggFuncs: true,
-    suppressAggFuncInHeader: true,
     allowShowChangeAfterFilter: true,
     ensureDomOrder: true,
     enableRtl: true,
@@ -83,7 +82,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     suppressRowVirtualisation: true,
     rowDragText: true,
     groupLockGroupColumns: true,
-    rowGroupPanelSuppressSort: true,
     suppressGroupRowsSticky: true,
     rowModelType: true,
     cacheOverflowSize: true,
@@ -388,6 +386,8 @@ export class PropertyKeys {
         'suppressStickyTotalRow',
         // needs avoid coercion to boolean so that we can warn if it's unset
         'loadThemeGoogleFonts',
+        'groupHideParentOfSingleChild',
+        'suppressGroupChangesColumnVisibility',
     ];
 
     public static FUNCTION_PROPERTIES: (CallbackKeys | FunctionKeys)[] = [

@@ -1,7 +1,8 @@
 import type { _GridChartsGridApi } from 'ag-grid-community';
-import { DragAndDropModule, ModuleNames, _defineModule } from 'ag-grid-community';
+import { DragAndDropModule, ModuleNames, PopupModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { defineEnterpriseModule } from '../moduleUtils';
 import { RangeSelectionModule } from '../rangeSelection/rangeSelectionModule';
 import { VERSION as GRID_VERSION } from '../version';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
@@ -26,15 +27,13 @@ import {
 } from './chartsApi';
 import { validGridChartsVersion } from './utils/validGridChartsVersion';
 
-export const GridChartsCoreModule = _defineModule({
-    version: GRID_VERSION,
+export const GridChartsCoreModule = defineEnterpriseModule('GridChartsCoreModule', {
     validate: () => {
         return validGridChartsVersion({
             gridVersion: GRID_VERSION,
             chartsVersion: ChartService.CHARTS_VERSION,
         });
     },
-    moduleName: `${ModuleNames.GridChartsModule}-core`,
     beans: [
         ChartService,
         ChartTranslationService,
@@ -49,12 +48,10 @@ export const GridChartsCoreModule = _defineModule({
             classImp: AgMenuItemRenderer,
         },
     ],
-    dependantModules: [RangeSelectionModule, EnterpriseCoreModule, DragAndDropModule],
+    dependsOn: [RangeSelectionModule, EnterpriseCoreModule, DragAndDropModule, PopupModule],
 });
 
-export const GridChartsApiModule = _defineModule<_GridChartsGridApi>({
-    version: GRID_VERSION,
-    moduleName: `${ModuleNames.GridChartsModule}-api`,
+export const GridChartsApiModule = defineEnterpriseModule<_GridChartsGridApi>('GridChartsApiModule', {
     apiFunctions: {
         getChartModels,
         getChartRef,
@@ -68,11 +65,9 @@ export const GridChartsApiModule = _defineModule<_GridChartsGridApi>({
         updateChart,
         restoreChart,
     },
-    dependantModules: [GridChartsCoreModule],
+    dependsOn: [GridChartsCoreModule],
 });
 
-export const GridChartsModule = _defineModule({
-    version: GRID_VERSION,
-    moduleName: ModuleNames.GridChartsModule,
-    dependantModules: [GridChartsCoreModule, GridChartsApiModule],
+export const GridChartsModule = defineEnterpriseModule(ModuleNames.GridChartsModule, {
+    dependsOn: [GridChartsCoreModule, GridChartsApiModule],
 });

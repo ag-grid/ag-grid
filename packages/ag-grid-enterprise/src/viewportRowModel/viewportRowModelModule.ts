@@ -1,13 +1,11 @@
-import { ModuleNames, _defineModule } from 'ag-grid-community';
+import { CommunityFeaturesModule, ModuleNames } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { VERSION } from '../version';
+import { defineEnterpriseModule } from '../moduleUtils';
 import { ViewportRowModel } from './viewportRowModel';
 
-export const ViewportRowModelModule = _defineModule({
-    version: VERSION,
-    moduleName: ModuleNames.ViewportRowModelModule,
+export const ViewportRowModelModule = defineEnterpriseModule(ModuleNames.ViewportRowModelModule, {
     rowModel: 'viewport',
     beans: [ViewportRowModel],
-    dependantModules: [EnterpriseCoreModule],
+    dependsOn: [EnterpriseCoreModule, CommunityFeaturesModule],
 });

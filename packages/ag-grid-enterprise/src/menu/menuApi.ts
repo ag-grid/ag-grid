@@ -1,8 +1,12 @@
 import type { AgColumn, BeanCollection, ColumnChooserParams, IContextMenuParams } from 'ag-grid-community';
 
 export function showContextMenu(beans: BeanCollection, params?: IContextMenuParams) {
+    const { contextMenuService } = beans;
+    if (!contextMenuService) {
+        return;
+    }
     const { rowNode, column, value, x, y } = params || {};
-    let { x: clientX, y: clientY } = beans.menuService.getContextMenuPosition(rowNode, column as AgColumn);
+    let { x: clientX, y: clientY } = contextMenuService.getContextMenuPosition(rowNode, column as AgColumn);
 
     if (x != null) {
         clientX = x;
@@ -12,7 +16,7 @@ export function showContextMenu(beans: BeanCollection, params?: IContextMenuPara
         clientY = y;
     }
 
-    beans.menuService.showContextMenu({
+    contextMenuService.showContextMenu({
         mouseEvent: new MouseEvent('mousedown', { clientX, clientY }),
         rowNode,
         column,
@@ -21,9 +25,9 @@ export function showContextMenu(beans: BeanCollection, params?: IContextMenuPara
 }
 
 export function showColumnChooser(beans: BeanCollection, params?: ColumnChooserParams): void {
-    beans.menuService.showColumnChooser({ chooserParams: params });
+    beans.columnChooserFactory?.showColumnChooser({ chooserParams: params });
 }
 
 export function hideColumnChooser(beans: BeanCollection): void {
-    beans.menuService.hideColumnChooser();
+    beans.columnChooserFactory?.hideActiveColumnChooser();
 }
