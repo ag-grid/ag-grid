@@ -1,4 +1,4 @@
-import { ModuleNames, _defineModule } from 'ag-grid-community';
+import { CommunityFeaturesModule, ModuleNames, _defineModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
@@ -9,5 +9,5 @@ export const ViewportRowModelModule = _defineModule({
     moduleName: ModuleNames.ViewportRowModelModule,
     rowModel: 'viewport',
     beans: [ViewportRowModel],
-    dependantModules: [EnterpriseCoreModule],
+    dependantModules: [EnterpriseCoreModule, CommunityFeaturesModule],
 });

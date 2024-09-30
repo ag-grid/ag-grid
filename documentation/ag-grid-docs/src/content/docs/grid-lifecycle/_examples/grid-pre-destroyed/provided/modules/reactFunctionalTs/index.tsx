@@ -3,7 +3,7 @@
 import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, GridApi, GridPreDestroyedEvent, GridReadyEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -14,7 +14,7 @@ import type { TAthlete } from './data';
 import { getData } from './data';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 interface ColumnWidth {
     field: string;

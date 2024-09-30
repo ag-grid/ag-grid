@@ -14,7 +14,7 @@ import type {
     SelectionOptions,
     StateUpdatedEvent,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, CommunityFeaturesModule, ModuleRegistry } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import {
@@ -29,7 +29,7 @@ import './styles.css';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
-    CommunityFeaturesModule,
+
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
     SetFilterModule,

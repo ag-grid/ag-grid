@@ -11,14 +11,14 @@ import type {
     ICellRendererParams,
     SelectionOptions,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, CommunityFeaturesModule, ModuleRegistry } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { ExcelExportModule, MenuModule, exportMultipleSheetsAsExcel } from 'ag-grid-enterprise';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule, ExcelExportModule, MenuModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ExcelExportModule, MenuModule]);
 
 @Component({
     standalone: true,

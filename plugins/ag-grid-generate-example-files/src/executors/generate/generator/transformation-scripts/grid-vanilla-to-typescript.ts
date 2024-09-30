@@ -1,6 +1,5 @@
 import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import {
-    addAllCommunityFeatureModule,
     addBindingImports,
     addGenericInterfaceImport,
     findLocaleImport,
@@ -141,8 +140,6 @@ export function vanillaToTypescript(
 
         // Remove the original import statements
         unWrapped = unWrapped.replace(/import ((.|\n)*?)from.*\n/g, '');
-
-        unWrapped = addAllCommunityFeatureModule(unWrapped);
 
         return `${formattedImports}${unWrapped} ${toAttach || ''} ${getIntegratedDarkModeCode(bindings.exampleName, true, 'gridApi')}`;
     };

@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, ColGroupDef, RowGroupingDisplayType } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -12,7 +12,7 @@ import {
 
 describe('Auto Group Column Order', () => {
     const gridsManager = new TestGridsManager({
-        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule],
     });
 
     afterEach(() => {

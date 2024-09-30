@@ -1,6 +1,7 @@
 import type { _ClientSideRowModelGridApi } from '../api/gridApi';
 import { RowModelHelperService } from '../api/rowModelHelperService';
 import { CsrmSsrmSharedApiModule } from '../api/sharedApiModule';
+import { CommunityFeaturesModule } from '../gridCoreModule';
 import { _defineModule } from '../interfaces/iModule';
 import { ModuleNames } from '../modules/moduleNames';
 import { SortModule } from '../sort/sortModule';
@@ -62,5 +63,10 @@ export const ClientSideRowModelApiModule = _defineModule<_ClientSideRowModelGrid
 export const ClientSideRowModelModule = _defineModule({
     version: VERSION,
     moduleName: ModuleNames.ClientSideRowModelModule,
-    dependantModules: [ClientSideRowModelCoreModule, ClientSideRowModelApiModule, ClientSideRowModelSortModule],
+    dependantModules: [
+        ClientSideRowModelCoreModule,
+        ClientSideRowModelApiModule,
+        ClientSideRowModelSortModule,
+        CommunityFeaturesModule,
+    ],
 });

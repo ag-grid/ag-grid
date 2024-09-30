@@ -2,7 +2,7 @@
 import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, GridApi, GridOptions, GridPreDestroyedEvent, GridReadyEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -12,7 +12,7 @@ import type { TAthlete } from './data';
 import { getData } from './data';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 interface ColumnWidth {
     field: string;

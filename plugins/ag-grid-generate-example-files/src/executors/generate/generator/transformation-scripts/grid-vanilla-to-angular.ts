@@ -2,7 +2,6 @@ import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import { convertTemplate, getImport, toConst, toInput, toMemberWithValue, toOutput } from './angular-utils';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
-    addAllCommunityFeatureModule,
     addBindingImports,
     addGenericInterfaceImport,
     addLicenseManager,
@@ -92,10 +91,6 @@ function addModuleImports(
 
     if (bImports.length > 0) {
         addBindingImports(bImports, imports, false, true);
-    }
-
-    if (bindings.moduleRegistration) {
-        imports.push(addAllCommunityFeatureModule(bindings.moduleRegistration));
     }
 
     return imports;
