@@ -752,7 +752,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 this.tooltipFeature = this.destroyBean(this.tooltipFeature, this.beans.context);
             }
         });
-        this.addManagedPropertyListeners(['rowDragEntireRow'], () => {
+
+        this.addManagedPropertyListeners(
+            ['rowStyle', 'getRowStyle', 'rowClass', 'getRowClass', 'rowClassRules'],
+            this.postProcessCss.bind(this)
+        );
+
+        this.addManagedPropertyListener('rowDragEntireRow', () => {
             const useRowDragEntireRow = this.gos.get('rowDragEntireRow');
             if (useRowDragEntireRow) {
                 this.allRowGuis.forEach((gui) => {
