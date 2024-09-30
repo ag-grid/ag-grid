@@ -3,7 +3,7 @@ import { useDarkmode } from '@utils/hooks/useDarkmode';
 import classnames from 'classnames';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule, CsvExportModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import 'ag-grid-community/styles/ag-theme-balham.css';
@@ -566,7 +566,6 @@ const ExampleInner = ({ darkMode }) => {
 
     const modules = useMemo(
         () => [
-            CommunityFeaturesModule,
             ClientSideRowModelModule,
             CsvExportModule,
             ClipboardModule,
