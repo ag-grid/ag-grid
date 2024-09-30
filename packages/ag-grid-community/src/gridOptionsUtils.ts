@@ -313,6 +313,12 @@ export function _canSkipShowingRowGroup(gos: GridOptionsService, node: RowNode):
     return false;
 }
 
+export function _getMaxConcurrentDatasourceRequests(gos: GridOptionsService): number | undefined {
+    const res = gos.get('maxConcurrentDatasourceRequests');
+    // negative number, eg -1, means no max restriction
+    return res > 0 ? res : undefined;
+}
+
 /** Get the selection checkbox configuration. Defaults to enabled. */
 export function _shouldUpdateColVisibilityAfterGroup(gos: GridOptionsService, isGrouped: boolean): boolean {
     const preventVisibilityChanges = gos.get('suppressGroupChangesColumnVisibility');

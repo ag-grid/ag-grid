@@ -1,4 +1,6 @@
 import type { BeanCollection } from '../context/context';
+import { _isServerSideRowModel } from '../gridOptionsUtils';
+import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
 import { _logError } from '../validation/logging';
 import { _getInfiniteRowModel, _getServerSideRowModel } from './rowModelApiUtils';
 
@@ -21,6 +23,11 @@ export function setRowCount(beans: BeanCollection, rowCount: number, maxRowFound
 }
 
 export function getCacheBlockState(beans: BeanCollection): any {
+    if (_isServerSideRowModel(beans.gos)) {
+        const ssrm = beans.rowModel as IServerSideRowModel;
+        return ssrm.getBlockStates();
+    }
+
     return beans.rowNodeBlockLoader?.getBlockState() ?? {};
 }
 
