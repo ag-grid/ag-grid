@@ -63,7 +63,7 @@ const VueExample = {
         <ag-grid-vue
             style="height: 100%;"
             :theme="theme"
-            :selection="selection"
+            :rowSelection="rowSelection"
             :initialState="initialState"
             :columnDefs="columnDefs"
             :defaultColDef="defaultColDef"
@@ -76,7 +76,7 @@ const VueExample = {
     setup(props) {
         return {
             theme: myCustomTheme,
-            selection: { mode: 'multiRow', checkboxes: true },
+            rowSelection: { mode: 'multiRow', checkboxes: true },
             initialState: {
                 rowSelection: ['1', '2', '3'],
             },

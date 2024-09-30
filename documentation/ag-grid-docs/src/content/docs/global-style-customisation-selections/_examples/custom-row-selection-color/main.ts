@@ -22,7 +22,7 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     rowData: null,
     columnDefs: columnDefs,
-    selection: { mode: 'multiRow' },
+    rowSelection: { mode: 'multiRow' },
     defaultColDef: {
         editable: true,
         filter: true,

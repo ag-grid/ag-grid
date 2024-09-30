@@ -74,7 +74,7 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
     rowModelType: 'serverSide',
 
     // allow multiple row selections
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
     },

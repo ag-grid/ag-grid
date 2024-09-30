@@ -407,9 +407,9 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     }
 
     public isCellCheckboxSelection(rowNode: IRowNode): boolean {
-        const so = this.gos.get('selection');
+        const so = this.gos.get('rowSelection');
 
-        if (so) {
+        if (so && typeof so !== 'string') {
             const checkbox = isColumnControlsCol(this) && _getCheckboxes(so);
             return this.isColumnFunc(rowNode, checkbox);
         } else {

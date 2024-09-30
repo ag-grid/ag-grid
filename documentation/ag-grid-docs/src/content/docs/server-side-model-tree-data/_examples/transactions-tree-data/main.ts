@@ -48,7 +48,7 @@ const gridOptions: GridOptions = {
     treeData: true,
     columnDefs,
     cacheBlockSize: 10,
-    selection: { mode: 'singleRow', checkboxes: false },
+    rowSelection: { mode: 'singleRow', checkboxes: false },
 
     isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
         var isKathrynPowers = params.rowNode.level == 0 && params.data.employeeName == 'Kathryn Powers';

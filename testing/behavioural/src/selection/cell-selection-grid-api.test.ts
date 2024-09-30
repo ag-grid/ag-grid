@@ -48,7 +48,7 @@ describe('Cell Selection Grid API', () => {
             const api = createGrid({
                 columnDefs,
                 rowData,
-                selection: { mode: 'cell' },
+                cellSelection: true,
             });
 
             api.addCellRange({
@@ -80,7 +80,7 @@ describe('Cell Selection Grid API', () => {
             const api = createGrid({
                 columnDefs,
                 rowData,
-                selection: { mode: 'cell', suppressMultiRanges: true },
+                cellSelection: { suppressMultiRanges: true },
             });
 
             api.addCellRange({

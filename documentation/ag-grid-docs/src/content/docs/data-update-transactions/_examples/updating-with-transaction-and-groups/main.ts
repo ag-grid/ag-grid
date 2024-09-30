@@ -49,7 +49,7 @@ const gridOptions: GridOptions = {
     },
     groupDefaultExpanded: 1,
     rowData: getData(),
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
         checkboxes: false,

@@ -241,10 +241,10 @@
       "SizeColumnsToContentStrategy"
     ]
   },
-  "selection": {
-    "typeName": "SelectionOptions",
+  "cellSelection": {
+    "typeName": "boolean | CellSelectionOptions<TData>",
     "typesToInclude": [
-      "SelectionOptions"
+      "CellSelectionOptions"
     ]
   },
   "selectionColumnDef": {
@@ -252,10 +252,6 @@
     "typesToInclude": [
       "SelectionColumnDef"
     ]
-  },
-  "rowSelection": {
-    "typeName": "'single' | 'multiple'",
-    "typesToInclude": []
   },
   "overlayLoadingTemplate": {
     "typeName": "string",
@@ -1428,5 +1424,11 @@
   "suppressGroupChangesColumnVisibility": {
     "typeName": "boolean | 'suppressHideOnGroup' | 'suppressShowOnUngroup'",
     "typesToInclude": []
+  },
+  "rowSelection": {
+    "typeName": "RowSelectionOptions<TData> | 'single' | 'multiple'",
+    "typesToInclude": [
+      "RowSelectionOptions"
+    ]
   }
 }

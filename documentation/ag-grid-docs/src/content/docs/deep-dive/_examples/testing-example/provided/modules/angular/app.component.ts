@@ -6,8 +6,8 @@ import {
     GridReadyEvent,
     ICellRendererParams,
     ModuleRegistry,
+    RowSelectionOptions,
     SelectionChangedEvent,
-    SelectionOptions,
     ValueFormatterParams,
 } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -110,7 +110,7 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
                 [columnDefs]="colDefs"
                 [defaultColDef]="defaultColDef"
                 [pagination]="true"
-                [selection]="selection"
+                [rowSelection]="rowSelection"
                 (gridReady)="onGridReady($event)"
                 (cellValueChanged)="onCellValueChanged($event)"
                 (selectionChanged)="onSelectionChanged($event)"
@@ -170,7 +170,7 @@ export class AppComponent {
         { field: 'rocket' },
     ];
 
-    selection: SelectionOptions = {
+    rowSelection: RowSelectionOptions = {
         mode: 'multiRow',
         headerCheckbox: false,
     };

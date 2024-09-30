@@ -39,7 +39,7 @@ const VueExample = {
                                 style="height: 100%;"
                                 :class="themeClass"
                                 :defaultColDef="defaultColDef"
-                                :selection="selection"
+                                :rowSelection="rowSelection"
                                 :rowDragMultiRow="true"
                                 :getRowId="getRowId"
                                 :rowDragManaged="true"
@@ -80,7 +80,7 @@ const VueExample = {
             leftApi: null,
             rightApi: null,
 
-            selection: {
+            rowSelection: {
                 mode: 'multiRow',
                 checkboxes: false,
                 headerCheckbox: false,

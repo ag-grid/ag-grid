@@ -49,7 +49,7 @@ const GridExample = () => {
         return {
             refreshStrategy: 'everything',
             detailGridOptions: {
-                selection: { mode: 'multiRow', headerCheckbox: false },
+                rowSelection: { mode: 'multiRow', headerCheckbox: false },
                 getRowId: (params: GetRowIdParams) => {
                     return String(params.data.callId);
                 },

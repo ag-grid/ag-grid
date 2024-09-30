@@ -43,7 +43,7 @@ const gridOptions: GridOptions = {
         { field: 'startDate' },
     ],
     cacheBlockSize: 10,
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
     },

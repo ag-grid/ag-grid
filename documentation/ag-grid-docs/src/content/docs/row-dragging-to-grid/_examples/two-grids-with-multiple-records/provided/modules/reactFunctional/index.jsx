@@ -66,7 +66,7 @@ const defaultColDef = {
     filter: true,
 };
 
-const selection = {
+const rowSelection = {
     mode: 'multiRow',
 };
 
@@ -192,7 +192,7 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
-                    selection={id === 0 ? selection : undefined}
+                    rowSelection={id === 0 ? rowSelection : undefined}
                     rowDragMultiRow={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
                     rowData={id === 0 ? leftRowData : rightRowData}

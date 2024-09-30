@@ -5,7 +5,7 @@ import {
     ColDef,
     GetRowIdParams,
     ModuleRegistry,
-    SelectionOptions,
+    RowSelectionOptions,
     ValueFormatterParams,
     ValueGetterParams,
 } from '@ag-grid-community/core';
@@ -199,7 +199,7 @@ const updateImmutableObject = (original: any, newValues: any) => {
     return newObject;
 };
 
-const selection: SelectionOptions = {
+const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
     groupSelects: 'descendants',
     headerCheckbox: false,
@@ -408,7 +408,7 @@ const GridExample = () => {
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         autoGroupColumnDef={autoGroupColumnDef}
-                        selection={selection}
+                        rowSelection={rowSelection}
                         suppressAggFuncInHeader={true}
                         getRowId={getRowId}
                     />

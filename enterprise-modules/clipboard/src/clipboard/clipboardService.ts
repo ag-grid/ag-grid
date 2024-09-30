@@ -10,6 +10,7 @@ import type {
     FocusService,
     FuncColsService,
     GridCtrl,
+    GridOptions,
     IClientSideRowModel,
     IClipboardCopyParams,
     IClipboardCopyRowsParams,
@@ -25,7 +26,6 @@ import type {
     RowPosition,
     RowPositionUtils,
     RowRenderer,
-    SelectionOptions,
     ValueService,
     VisibleColsService,
     WithoutGridCommon,
@@ -734,14 +734,15 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         const copyParams = { includeHeaders, includeGroupHeaders };
-        const selection = this.gos.get('selection');
+        const rowSelection = this.gos.get('rowSelection');
+        const cellSelection = this.gos.get('cellSelection');
 
         let cellClearType: CellClearType | null = null;
         // Copy priority is Range > Row > Focus
-        if (this.shouldCopyCells(selection)) {
+        if (this.shouldCopyCells(cellSelection, rowSelection)) {
             this.copySelectedRangeToClipboard(copyParams);
             cellClearType = CellClearType.CellRange;
-        } else if (this.shouldCopyRows(selection)) {
+        } else if (this.shouldCopyRows(rowSelection)) {
             this.copySelectedRowsToClipboard(copyParams);
             cellClearType = CellClearType.SelectedRows;
         } else if (this.focusService.isAnyCellFocused()) {
@@ -754,15 +755,15 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
     }
 
-    private shouldCopyCells(selection?: SelectionOptions) {
+    private shouldCopyCells(cellSelection?: GridOptions['cellSelection'], rowSelection?: GridOptions['rowSelection']) {
         if (!this.rangeService || this.rangeService.isEmpty()) {
             return false;
         }
 
-        if (selection) {
-            // If `selection` is defined, user is using the new selection API, so we only copy
-            // cells if we're in cell selection mode.
-            return selection.mode === 'cell';
+        if (cellSelection) {
+            // If `cellSelection` is defined, user is using the new cell selection API, so we only copy
+            // cells by default.
+            return typeof rowSelection === 'object' && rowSelection.copySelectedRows ? false : true;
         } else {
             // If user is using the deprecated API, we preserve the previous behaviour
             const suppressCopySingleCellRanges = this.gos.get('suppressCopySingleCellRanges');
@@ -771,15 +772,15 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
     }
 
-    private shouldCopyRows(selection?: SelectionOptions) {
+    private shouldCopyRows(rowSelection?: GridOptions['rowSelection']) {
         if (this.selectionService.isEmpty()) {
             return false;
         }
 
-        if (selection) {
-            // If `selection` is defined, user is using the new selection API, so we determine
+        if (rowSelection && typeof rowSelection !== 'string') {
+            // If `rowSelection` is defined as an object, user is using the new selection API, so we determine
             // behaviour based on `copySelectedRows`
-            return selection.mode !== 'cell' && (selection.copySelectedRows ?? false);
+            return rowSelection.copySelectedRows ?? false;
         } else {
             // If user is using the deprecated API, we preserve the previous behaviour
             return !this.gos.get('suppressCopyRowsToClipboard');

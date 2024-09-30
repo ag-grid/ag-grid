@@ -47,7 +47,7 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
     // use the server-side row model
     rowModelType: 'serverSide',
 
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         selectAll: 'all',
     },
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function onSelectAllChanged() {
-    gridApi.setGridOption('selection', {
+    gridApi.setGridOption('rowSelection', {
         mode: 'multiRow',
         selectAll: document.querySelector<HTMLSelectElement>('#input-select-all')!.value as any,
     });

@@ -23,7 +23,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     rowDragManaged: true,
     rowDragMultiRow: true,
-    selection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false },
+    rowSelection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false },
 };
 
 // setup the grid after the page has finished loading

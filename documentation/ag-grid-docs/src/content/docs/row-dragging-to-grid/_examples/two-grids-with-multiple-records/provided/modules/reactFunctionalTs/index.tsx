@@ -6,7 +6,7 @@ import {
     GridReadyEvent,
     ModuleRegistry,
     RowDragEndEvent,
-    SelectionOptions,
+    RowSelectionOptions,
 } from '@ag-grid-community/core';
 import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -74,7 +74,7 @@ const defaultColDef: ColDef = {
     filter: true,
 };
 
-const selection: SelectionOptions = {
+const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
 };
 
@@ -199,7 +199,7 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
-                    selection={id === 0 ? selection : undefined}
+                    rowSelection={id === 0 ? rowSelection : undefined}
                     rowDragMultiRow={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
                     rowData={id === 0 ? leftRowData : rightRowData}

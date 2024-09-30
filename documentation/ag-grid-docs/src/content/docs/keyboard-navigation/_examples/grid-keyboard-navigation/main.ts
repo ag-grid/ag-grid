@@ -64,7 +64,7 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     rowData: null,
     columnDefs,
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
     },
     defaultColDef: {

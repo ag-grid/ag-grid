@@ -7,12 +7,11 @@ When working with cell selection, a Fill Handle allows you to run operations on 
 
 ## Enabling the Fill Handle
 
-To enable the Fill Handle, set `selection.handle` to `{ mode: 'fill' }` in the `gridOptions` as shown below:
+To enable the Fill Handle, set `cellSelection.handle` to `{ mode: 'fill' }` in the `gridOptions` as shown below:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: {
-        mode: 'cell',
+    cellSelection: {
         handle: {
             mode: 'fill',
         }
@@ -50,18 +49,17 @@ The default Fill Handle behaviour will be as close as possible to other spreadsh
 Reducing a range selection with the Fill Handle will clear cell contents by default, as can be observed in the
 [cell reduction](#range-reduction) example above.
 
-If this behaviour for decreasing selection needs to be prevented, the flag `selection.handle.suppressClearOnFillReduction` should be set to `true`.
+If this behaviour for decreasing selection needs to be prevented, the flag `cellSelection.handle.suppressClearOnFillReduction` should be set to `true`.
 
 {% gridExampleRunner title="Fill Handle - Range Reduction" name="fill-handle-reduction"  exampleHeight=560 /%}
 
 ## Fill Handle Axis
 
-By default, the Fill Handle can be dragged horizontally or vertically. If you wish to restrict the permitted direction of dragging to either horizontal or vertical, set `selection.handle.direction` to either `x` for horizontal or `y` for vertical.
+By default, the Fill Handle can be dragged horizontally or vertically. If you wish to restrict the permitted direction of dragging to either horizontal or vertical, set `cellSelection.handle.direction` to either `x` for horizontal or `y` for vertical.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: {
-        mode: 'cell',
+    cellSelection: {
         handle: {
             mode: 'fill',
             direction: 'x', // Fill Handle can only be dragged horizontally
@@ -82,7 +80,7 @@ When using the fill handle the grid will fire the `fillStart` event before it st
 ## Custom User Function
 
 Often there is a need to use a custom method to fill values instead of simply copying values or increasing number values using linear progression. 
-In these scenarios, the `selection.handle.setFillValue` callback should be used.
+In these scenarios, the `cellSelection.handle.setFillValue` callback should be used.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -92,8 +90,7 @@ const gridOptions = {
         { field: 'sport' },
         { field: 'total' }
     ],
-    selection: {
-        mode: 'cell',
+    cellSelection: {
         handle: {
             mode: 'fill',
             setFillValue: (params) => 'Custom Fill Value',

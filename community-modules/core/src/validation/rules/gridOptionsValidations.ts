@@ -4,7 +4,6 @@ import { ModuleNames } from '../../modules/moduleNames';
 import { PropertyKeys } from '../../propertyKeys';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 import { COL_DEF_VALIDATORS } from './colDefValidations';
-import { SELECTION_VALIDATORS } from './selectionValidations';
 
 /**
  * Deprecations have been kept separately for ease of removing them in the future.
@@ -32,46 +31,39 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
 
     suppressLoadingOverlay: { version: '32', message: 'Use `loading`=false instead.' },
 
-    enableFillHandle: { version: '32.2', message: 'Use `selection.handle` instead.' },
-    enableRangeHandle: { version: '32.2', message: 'Use `selection.handle` instead.' },
-    enableRangeSelection: { version: '32.2', message: 'Use `selection.mode = "cell"` instead.' },
-    rowSelection: {
-        version: '32.2',
-        message: 'Use `selection.mode = "singleRow"` or `selection.mode = "multiRow" instead.',
-    },
+    enableFillHandle: { version: '32.2', message: 'Use `cellSelection.handle` instead.' },
+    enableRangeHandle: { version: '32.2', message: 'Use `cellSelection.handle` instead.' },
+    enableRangeSelection: { version: '32.2', message: 'Use `cellSelection = true` instead.' },
     suppressMultiRangeSelection: {
         version: '32.2',
-        message: 'Use `selection.suppressMultiRanges` instead.',
+        message: 'Use `cellSelection.suppressMultiRanges` instead.',
     },
     suppressClearOnFillReduction: {
         version: '32.2',
-        message: 'Use `selection.handle.suppressClearOnFillReduction` instead.',
+        message: 'Use `cellSelection.handle.suppressClearOnFillReduction` instead.',
     },
-    fillHandleDirection: { version: '32.2', message: 'Use `selection.handle.direction` instead.' },
-    fillOperation: { version: '32.2', message: 'Use `selection.handle.setFillValue` instead.' },
+    fillHandleDirection: { version: '32.2', message: 'Use `cellSelection.handle.direction` instead.' },
+    fillOperation: { version: '32.2', message: 'Use `cellSelection.handle.setFillValue` instead.' },
     suppressRowClickSelection: {
         version: '32.2',
-        message: 'Row click selection is suppressed by default, use `selection.enableClickSelection` instead.',
+        message: 'Use `rowSelection.enableClickSelection` instead.',
     },
-    suppressRowDeselection: {
-        version: '32.2',
-        message: 'Row deselection is suppressed by default, use `selection.enableClickSelection` to enable.',
-    },
+    suppressRowDeselection: { version: '32.2', message: 'Use `rowSelection.enableClickSelection` instead.' },
     rowMultiSelectWithClick: {
         version: '32.2',
-        message: 'Use `selection.enableMultiSelectWithClick` instead.',
+        message: 'Use `rowSelection.enableSelectionWithoutKeys` instead.',
     },
     groupSelectsChildren: {
         version: '32.2',
-        message: 'Use `selection.groupSelects = "descendants"` instead.',
+        message: 'Use `rowSelection.groupSelects = "descendants"` instead.',
     },
     groupSelectsFiltered: {
         version: '32.2',
-        message: 'Use `selection.groupSelects = "filteredDescendants"` instead.',
+        message: 'Use `rowSelection.groupSelects = "filteredDescendants"` instead.',
     },
     isRowSelectable: { version: '32.2', message: 'Use `selectionOptions.isRowSelectable` instead.' },
-    suppressCopySingleCellRanges: { version: '32.2', message: 'Use `selection.copySelectedRows` instead.' },
-    suppressCopyRowsToClipboard: { version: '32.2', message: 'Use `selection.copySelectedRows` instead.' },
+    suppressCopySingleCellRanges: { version: '32.2', message: 'Use `rowSelection.copySelectedRows` instead.' },
+    suppressCopyRowsToClipboard: { version: '32.2', message: 'Use `rowSelection.copySelectedRows` instead.' },
     onRangeSelectionChanged: { version: '32.2', message: 'Use `onCellSelectionChanged` instead.' },
     onRangeDeleteStart: { version: '32.2', message: 'Use `onCellSelectionDeleteStart` instead.' },
     onRangeDeleteEnd: { version: '32.2', message: 'Use `onCellSelectionDeleteEnd` instead.' },
@@ -421,13 +413,23 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
         },
     },
 
+    rowSelection: {
+        validate({ rowSelection }) {
+            if (rowSelection && typeof rowSelection === 'string') {
+                return 'As of version 32.2.1, using `rowSelection` with the values "single" or "multiple" has been deprecated. Use the object value instead.';
+            }
+            return null;
+        },
+    },
+    cellSelection: {
+        module: ModuleNames.RangeSelectionModule,
+    },
+
     columnDefs: () => COL_DEF_VALIDATORS,
     defaultColDef: () => COL_DEF_VALIDATORS,
     defaultColGroupDef: () => COL_DEF_VALIDATORS,
     autoGroupColumnDef: () => COL_DEF_VALIDATORS,
     selectionColumnDef: () => COL_DEF_VALIDATORS,
-
-    selection: () => SELECTION_VALIDATORS,
 });
 
 export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({

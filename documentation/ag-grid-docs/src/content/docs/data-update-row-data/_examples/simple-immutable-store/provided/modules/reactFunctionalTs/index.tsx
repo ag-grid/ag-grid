@@ -7,7 +7,7 @@ import {
     GridApi,
     GridReadyEvent,
     ModuleRegistry,
-    SelectionOptions,
+    RowSelectionOptions,
 } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -84,7 +84,7 @@ function setItemVisible(id: string, visible: boolean) {
     element.style.display = visible ? 'inline' : 'none';
 }
 
-const selection: SelectionOptions = {
+const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
     groupSelects: 'descendants',
     headerCheckbox: false,
@@ -237,7 +237,7 @@ const GridExample = () => {
                             rowData={rowData}
                             columnDefs={columnDefs}
                             defaultColDef={defaultColDef}
-                            selection={selection}
+                            rowSelection={rowSelection}
                             autoGroupColumnDef={autoGroupColumnDef}
                             statusBar={statusBar}
                             groupDefaultExpanded={1}

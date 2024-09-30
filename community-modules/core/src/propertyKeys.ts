@@ -130,7 +130,6 @@ export type ManagedGridOptions<TData = any> = {
  */
 export class PropertyKeys {
     public static STRING_PROPERTIES: KeysOfType<string>[] = [
-        'rowSelection',
         'overlayLoadingTemplate',
         'overlayNoRowsTemplate',
         'gridId',
@@ -192,7 +191,7 @@ export class PropertyKeys {
         'advancedFilterBuilderParams',
         'initialState',
         'autoSizeStrategy',
-        'selection',
+        'cellSelection',
         'selectionColumnDef',
     ];
 
@@ -402,6 +401,7 @@ export class PropertyKeys {
         'loadThemeGoogleFonts',
         'groupHideParentOfSingleChild',
         'suppressGroupChangesColumnVisibility',
+        'rowSelection',
     ];
 
     public static FUNCTION_PROPERTIES: (CallbackKeys | FunctionKeys)[] = [

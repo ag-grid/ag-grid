@@ -6,7 +6,7 @@ import {
     GridReadyEvent,
     IDatasource,
     ModuleRegistry,
-    SelectionOptions,
+    RowSelectionOptions,
 } from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
@@ -101,7 +101,7 @@ const filterData = (filterModel: any, data: any[]) => {
     return resultOfFilter;
 };
 
-const selection: SelectionOptions = {
+const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
     checkboxes: false,
     headerCheckbox: false,
@@ -214,7 +214,7 @@ const GridExample = () => {
                 <AgGridReact
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    selection={selection}
+                    rowSelection={rowSelection}
                     rowModelType={'infinite'}
                     cacheBlockSize={100}
                     cacheOverflowSize={2}

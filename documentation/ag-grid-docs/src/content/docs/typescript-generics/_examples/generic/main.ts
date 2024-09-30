@@ -48,7 +48,7 @@ let gridApi: GridApi<ICar>;
 const gridOptions: GridOptions<ICar> = {
     columnDefs,
     rowData,
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
     },
     context: {

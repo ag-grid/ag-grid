@@ -1613,7 +1613,14 @@
         "meta": {
             "displayName": "Selection"
         },
-        "selection": {
+        "cellSelection": {
+            "more": {
+                "name": "Cell Selection",
+                "url": "./cell-selection"
+            },
+            "addNestedFields": true
+        },
+        "rowSelection": {
             "more": {
                 "name": "Row Selection",
                 "url": "./row-selection"
