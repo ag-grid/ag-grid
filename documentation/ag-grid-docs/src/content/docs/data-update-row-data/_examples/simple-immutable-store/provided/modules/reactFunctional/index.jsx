@@ -232,6 +232,7 @@ const GridExample = () => {
                             columnDefs={columnDefs}
                             defaultColDef={defaultColDef}
                             rowSelection={rowSelection}
+                            cellSelection={true}
                             autoGroupColumnDef={autoGroupColumnDef}
                             statusBar={statusBar}
                             groupDefaultExpanded={1}

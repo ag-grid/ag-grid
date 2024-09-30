@@ -160,11 +160,6 @@ function reverseItems() {
     gridApi!.setGridOption('rowData', immutableStore);
 }
 
-function onSelectionModeChange() {
-    const mode = document.querySelector<HTMLSelectElement>('#select-mode')!.value as any;
-    gridApi!.setGridOption('rowSelection', { mode });
-}
-
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
@@ -179,6 +174,7 @@ const gridOptions: GridOptions = {
     rowSelection: {
         mode: 'multiRow',
     },
+    cellSelection: true,
     autoGroupColumnDef: {
         headerName: 'Symbol',
         cellRenderer: 'agGroupCellRenderer',

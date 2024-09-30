@@ -133,7 +133,7 @@ const GridExample = () => {
 
     const onDragStop = useCallback(
         (params: RowDragEndEvent) => {
-            var nodes = params.nodes;
+            const nodes = params.nodes;
 
             if (radioChecked === 0) {
                 leftApi!.applyTransaction({

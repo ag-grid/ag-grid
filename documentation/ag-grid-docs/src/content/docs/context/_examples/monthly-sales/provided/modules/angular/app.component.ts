@@ -165,7 +165,7 @@ export class AppComponent {
     constructor(private http: HttpClient) {}
 
     onChangeMonth(i: number) {
-        var newMonth = (this.context.month += i);
+        let newMonth = (this.context.month += i);
         if (newMonth < -1) {
             newMonth = -1;
         }
