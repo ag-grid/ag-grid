@@ -66,7 +66,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 }
 
                 if (!refOrComp.api) {
-                    _logError(19, { docLink: seeUrl() });
+                    _logError(19, {});
                 }
                 return refOrComp.api;
             })
