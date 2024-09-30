@@ -16,8 +16,8 @@ import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContai
 import {
     _getActiveDomElement,
     _getEnableDeselection,
-    _getEnableMultiSelectWithClick,
     _getEnableSelection,
+    _getEnableSelectionWithoutKeys,
     _getGroupSelectsDescendants,
     _getRowHeightForNode,
     _isAnimateRows,
@@ -1134,7 +1134,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        const multiSelectOnClick = _getEnableMultiSelectWithClick(gos);
+        const multiSelectOnClick = _getEnableSelectionWithoutKeys(gos);
         const source = 'rowClicked';
 
         if (isSelected) {

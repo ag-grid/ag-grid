@@ -36,7 +36,7 @@ import {
     _isDomLayout,
     _isRowBefore,
     _isSameRow,
-    _isUsingNewSelectionAPI,
+    _isUsingNewCellSelectionAPI,
     _last,
     _makeNull,
     _missing,
@@ -498,7 +498,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         if (!_isCellSelectionEnabled(gos)) {
             return;
         }
-        if (_isUsingNewSelectionAPI(gos) && _getSuppressMultiRanges(gos) && this.cellRanges.length > 0) {
+        if (_isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && this.cellRanges.length > 0) {
             return _warnOnce('cannot add multiple ranges when `selection.suppressMultiRanges = true`');
         }
 

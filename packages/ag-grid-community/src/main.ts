@@ -631,9 +631,10 @@ export {
     _isCellSelectionEnabled,
     _getSuppressMultiRanges,
     _getRowSelectionMode,
-    _isUsingNewSelectionAPI,
     _isLegacyMenuEnabled,
     _isColumnMenuAnchoringEnabled,
+    _isUsingNewRowSelectionAPI,
+    _isUsingNewCellSelectionAPI,
 } from './gridOptionsUtils';
 export { LocalEventService } from './localEventService';
 export type { EventService } from './eventService';
@@ -770,12 +771,12 @@ export {
 export type { DataTypeService } from './columns/dataTypeService';
 export {
     GridOptions,
-    SelectionOptions,
     GroupSelectionMode,
     SelectAllMode,
     SelectionColumnDef,
     CellSelectionOptions,
     RowSelectionOptions,
+    RowSelectionMode,
     GridTheme,
     GridThemeUseArgs,
     IsApplyServerSideTransaction,

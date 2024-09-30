@@ -12,7 +12,9 @@
                 "url": "./status-bar/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["IStatusPanelComp"],
+                "exclude": [
+                    "IStatusPanelComp"
+                ],
                 "include": []
             }
         },
@@ -22,7 +24,9 @@
                 "url": "./side-bar/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["IToolPanelComp"],
+                "exclude": [
+                    "IToolPanelComp"
+                ],
                 "include": []
             }
         },
@@ -592,7 +596,9 @@
                 "url": "./integrated-charts-customisation/#custom-chart-themes"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["AgChartThemeDefinition"]
+                "exclude": [
+                    "AgChartThemeDefinition"
+                ]
             }
         },
         "chartThemeOverrides": {
@@ -601,7 +607,9 @@
                 "url": "./integrated-charts-customisation/#overriding-themes"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["AgChartThemeOverrides"]
+                "exclude": [
+                    "AgChartThemeOverrides"
+                ]
             }
         },
         "chartToolPanelsDef": {
@@ -1564,7 +1572,9 @@
             },
             "interfaceHierarchyOverrides": {
                 "exclude": [],
-                "include": ["IViewportDatasourceParams"]
+                "include": [
+                    "IViewportDatasourceParams"
+                ]
             }
         },
         "viewportRowModelPageSize": {
@@ -1613,7 +1623,14 @@
         "meta": {
             "displayName": "Selection"
         },
-        "selection": {
+        "cellSelection": {
+            "more": {
+                "name": "Cell Selection",
+                "url": "./cell-selection"
+            },
+            "addNestedFields": true
+        },
+        "rowSelection": {
             "more": {
                 "name": "Row Selection",
                 "url": "./row-selection"

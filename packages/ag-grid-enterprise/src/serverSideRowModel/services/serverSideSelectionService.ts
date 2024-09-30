@@ -14,7 +14,7 @@ import {
     BaseSelectionService,
     _getGroupSelectsDescendants,
     _getRowSelectionMode,
-    _isUsingNewSelectionAPI,
+    _isUsingNewRowSelectionAPI,
     _warnOnce,
 } from 'ag-grid-community';
 
@@ -35,7 +35,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     private selectionMode?: RowSelectionOptions['mode'];
 
     public postConstruct(): void {
-        this.addManagedPropertyListeners(['groupSelectsChildren', 'selection'], () => {
+        this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], () => {
             const groupSelectsChildren = _getGroupSelectsDescendants(this.gos);
 
             // Only switch strategies when value of groupSelectsChildren actually changes, not just any part of selection options
@@ -56,7 +56,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             }
         });
 
-        this.addManagedPropertyListeners(['rowSelection', 'selection'], () => {
+        this.addManagedPropertyListeners(['rowSelection'], () => {
             // Only reset selection when selection mode changes, not just any part of selection options
             const rowSelection = _getRowSelectionMode(this.gos);
             if (rowSelection !== this.selectionMode) {
@@ -198,7 +198,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         justCurrentPage?: boolean | undefined;
     }): void {
         validateSelectionParameters(params);
-        if (_isUsingNewSelectionAPI(this.gos) && _getRowSelectionMode(this.gos) !== 'multiRow') {
+        if (_isUsingNewRowSelectionAPI(this.gos) && _getRowSelectionMode(this.gos) !== 'multiRow') {
             return _warnOnce("cannot multi select unless selection mode is 'multiRow'");
         }
 
