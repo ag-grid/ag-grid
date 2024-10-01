@@ -16,8 +16,8 @@ export interface ISelectionService {
     getSelectedRows(): any[];
     getSelectionCount(): number;
     setNodesSelected(params: ISetNodesSelectedParams): number;
-    filterFromSelection(predicate: (node: RowNode) => boolean): void;
-    updateGroupsFromChildrenSelections(source: SelectionEventSourceType, changedPath?: ChangedPath): boolean;
+    filterFromSelection?(predicate: (node: RowNode) => boolean): void;
+    updateGroupsFromChildrenSelections?(source: SelectionEventSourceType, changedPath?: ChangedPath): boolean;
     syncInRowNode(rowNode: RowNode, oldNode: RowNode | null): void;
     reset(source: SelectionEventSourceType): void;
     getBestCostNodeSelection(): RowNode[] | undefined;

@@ -1,6 +1,4 @@
 import type {
-    BeanCollection,
-    IRowModel,
     ISelectionService,
     ISetNodesSelectedParams,
     NamedBean,
@@ -25,16 +23,11 @@ import type { ISelectionStrategy } from './selection/strategies/iSelectionStrate
 export class ServerSideSelectionService extends BaseSelectionService implements NamedBean, ISelectionService {
     beanName = 'selectionService' as const;
 
-    private rowModel: IRowModel;
-
-    public wireBeans(beans: BeanCollection) {
-        this.rowModel = beans.rowModel;
-    }
-
     private selectionStrategy: ISelectionStrategy;
     private selectionMode?: RowSelectionMode;
 
-    public postConstruct(): void {
+    public override postConstruct(): void {
+        super.postConstruct();
         this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], () => {
             const groupSelectsChildren = _getGroupSelectsDescendants(this.gos);
 
@@ -240,19 +233,9 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 
     // used by CSRM
-    public updateGroupsFromChildrenSelections(): boolean {
-        return false;
-    }
-
-    // used by CSRM
     public getBestCostNodeSelection(): RowNode<any>[] | undefined {
         _warnOnce('calling gridApi.getBestCostNodeSelection() is only possible when using rowModelType=`clientSide`.');
         return undefined;
-    }
-
-    // used by CSRM
-    public filterFromSelection(): void {
-        return;
     }
 }
 function validateSelectionParameters({
