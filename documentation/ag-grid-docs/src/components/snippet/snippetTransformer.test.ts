@@ -112,12 +112,13 @@ describe('Snippet Component', () => {
         // set every column width
         width: 100,
     },
+    rowSelection: { mode: 'singleRow' },
     // numeric property
     rowHeight: 50,
     // boolean property
     rowDragManaged: true,
     // string property
-    rowSelection: 'single',
+    columnMenu: 'new',
     // function property
     postSort: rowNodes => {
         // here we put Ireland rows on top while preserving the sort order  
