@@ -7,7 +7,6 @@ import type {
     StageExecuteParams,
     WithoutGridCommon,
 } from '@ag-grid-community/core';
-import { GridOptions } from '@ag-grid-community/core';
 import {
     BeanStub,
     RowNode,
@@ -20,7 +19,8 @@ import {
 
 interface FlattenDetails {
     hideOpenParents: boolean;
-    groupHideParentOfSingleChild: GridOptions['groupHideParentOfSingleChild'];
+    groupRemoveSingleChildren: boolean;
+    groupRemoveLowestSingleChildren: boolean;
     isGroupMultiAutoColumn: boolean;
     grandTotalRow: 'top' | 'bottom' | undefined;
     groupTotalRow: (params: WithoutGridCommon<GetGroupIncludeFooterParams<any, any>>) => 'top' | 'bottom' | undefined;
@@ -72,15 +72,14 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
     }
 
     private getFlattenDetails(): FlattenDetails {
-        let groupHideParentOfSingleChild = this.gos.get('groupHideParentOfSingleChild');
-        if (!groupHideParentOfSingleChild) {
-            groupHideParentOfSingleChild = this.gos.get('groupRemoveSingleChildren');
-            if (!groupHideParentOfSingleChild && this.gos.get('groupRemoveLowestSingleChildren')) {
-                groupHideParentOfSingleChild = 'leafGroupsOnly';
-            }
-        }
+        // these two are mutually exclusive, so if first set, we don't set the second
+        const groupRemoveSingleChildren = this.gos.get('groupRemoveSingleChildren');
+        const groupRemoveLowestSingleChildren =
+            !groupRemoveSingleChildren && this.gos.get('groupRemoveLowestSingleChildren');
+
         return {
-            groupHideParentOfSingleChild,
+            groupRemoveLowestSingleChildren,
+            groupRemoveSingleChildren,
             isGroupMultiAutoColumn: _isGroupMultiAutoColumn(this.gos),
             hideOpenParents: this.gos.get('groupHideOpenParents'),
             grandTotalRow: _getGrandTotalRow(this.gos),
@@ -107,10 +106,10 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
             const isSkippedLeafNode = skipLeafNodes && !isParent;
 
             const isRemovedSingleChildrenGroup =
-                details.groupHideParentOfSingleChild === true && isParent && rowNode.childrenAfterGroup!.length === 1;
+                details.groupRemoveSingleChildren && isParent && rowNode.childrenAfterGroup!.length === 1;
 
             const isRemovedLowestSingleChildrenGroup =
-                details.groupHideParentOfSingleChild === 'leafGroupsOnly' &&
+                details.groupRemoveLowestSingleChildren &&
                 isParent &&
                 rowNode.leafGroup &&
                 rowNode.childrenAfterGroup!.length === 1;

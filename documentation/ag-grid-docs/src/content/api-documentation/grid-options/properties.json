@@ -1264,7 +1264,13 @@
                 "url": "./grouping-group-order/#initial-group-order"
             }
         },
-        "groupHideParentOfSingleChild": {
+        "groupRemoveSingleChildren": {
+            "more": {
+                "name": "Remove Single Children",
+                "url": "./grouping-single-group-column/#removing-single-children"
+            }
+        },
+        "groupRemoveLowestSingleChildren": {
             "more": {
                 "name": "Remove Single Children",
                 "url": "./grouping-single-group-column/#removing-single-children"
@@ -1320,7 +1326,14 @@
                 "url": "./server-side-model-grouping/#suppressing-sticky-groups"
             }
         },
-        "suppressGroupChangesColumnVisibility": {
+        "suppressRowGroupHidesColumns": {
+            "more": {
+                "name": "Keeping Columns Visible",
+                "url": "./grouping-group-panel/#keeping-columns-visible"
+            }
+        },
+        "suppressMakeColumnVisibleAfterUnGroup": {
+            "description": "By default, when a column is un-grouped, i.e. using the [Row Group Panel](./grouping-group-panel/), it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false`",
             "more": {
                 "name": "Keeping Columns Visible",
                 "url": "./grouping-group-panel/#keeping-columns-visible"
