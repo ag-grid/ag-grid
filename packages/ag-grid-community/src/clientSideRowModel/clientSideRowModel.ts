@@ -1075,7 +1075,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         rowNodesOrderChanged: boolean,
         afterColumnsChanged: boolean
     ) {
-        if (this.gos.get('treeData')) {
+        const treeData = this.gos.get('treeData');
+        if (treeData) {
             if (this.nodeManager.executeTreeStage) {
                 // TODO: the TreeStrategy has to be moved in the client side node manager
                 // The tree build should happen during row nodes construction.
@@ -1096,35 +1097,36 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
                 this.updateSelectableAfterGrouping(changedPath);
             }
-            return;
         }
 
-        const groupStage = this.groupStage;
-        if (groupStage) {
-            if (rowNodeTransactions) {
-                groupStage.execute({
-                    rowNode: this.rootNode,
-                    rowNodeTransactions,
-                    rowNodesOrderChanged,
-                    changedPath: changedPath,
-                });
-            } else {
-                groupStage.execute({
-                    rowNode: this.rootNode,
-                    changedPath: changedPath,
-                    afterColumnsChanged: afterColumnsChanged,
-                });
-            }
+        if (!treeData) {
+            const groupStage = this.groupStage;
+            if (groupStage) {
+                if (rowNodeTransactions) {
+                    groupStage.execute({
+                        rowNode: this.rootNode,
+                        rowNodeTransactions,
+                        rowNodesOrderChanged,
+                        changedPath: changedPath,
+                    });
+                } else {
+                    groupStage.execute({
+                        rowNode: this.rootNode,
+                        changedPath: changedPath,
+                        afterColumnsChanged: afterColumnsChanged,
+                    });
+                }
 
-            this.updateSelectableAfterGrouping(changedPath);
-        } else {
-            const rootNode: ClientSideRowModelRootNode = this.rootNode;
-            const sibling: ClientSideRowModelRootNode = rootNode.sibling;
-            rootNode.childrenAfterGroup = rootNode.allLeafChildren;
-            if (sibling) {
-                sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
+                this.updateSelectableAfterGrouping(changedPath);
+            } else {
+                const rootNode: ClientSideRowModelRootNode = this.rootNode;
+                const sibling: ClientSideRowModelRootNode = rootNode.sibling;
+                rootNode.childrenAfterGroup = rootNode.allLeafChildren;
+                if (sibling) {
+                    sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
+                }
+                this.rootNode.updateHasChildren();
             }
-            this.rootNode.updateHasChildren();
         }
 
         if (this.rowNodesCountReady) {
