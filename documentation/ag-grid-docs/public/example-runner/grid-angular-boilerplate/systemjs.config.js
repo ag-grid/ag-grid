@@ -94,6 +94,9 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
+            '@ag-grid-community/locale': {
+                format: 'cjs',
+            },
         },
     });
 })(this);

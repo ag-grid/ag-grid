@@ -6,6 +6,7 @@ import type { GridOptions } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import { _getGrandTotalRow, _getGroupTotalRowCallback, _isGroupMultiAutoColumn } from '../gridOptionsUtils';
 import type { GetGroupIncludeFooterParams } from '../interfaces/iCallbackParams';
+import { ClientSideRowModelSteps } from '../interfaces/iClientSideRowModel';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
 import { _exists, _missingOrEmpty } from '../utils/generic';
@@ -20,6 +21,14 @@ interface FlattenDetails {
 
 export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
     beanName = 'flattenStage' as const;
+
+    public refreshProps: Set<keyof GridOptions<any>> = new Set([
+        'groupHideParentOfSingleChild',
+        'groupRemoveSingleChildren',
+        'groupRemoveLowestSingleChildren',
+        'groupTotalRow',
+    ]);
+    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.MAP;
 
     private beans: BeanCollection;
     private columnModel: ColumnModel;

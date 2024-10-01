@@ -3,7 +3,7 @@
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -17,7 +17,7 @@ import './styles.css';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
-    CommunityFeaturesModule,
+
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
     SetFilterModule,
@@ -51,7 +51,7 @@ const GridExample = () => {
             enableValue: true,
         };
     }, []);
-    const selection = useMemo(
+    const rowSelection = useMemo(
         () => ({
             mode: 'multiRow',
         }),
@@ -114,7 +114,7 @@ const GridExample = () => {
                             defaultColDef={defaultColDef}
                             sideBar={true}
                             pagination={true}
-                            selection={selection}
+                            rowSelection={rowSelection}
                             suppressColumnMoveAnimation={true}
                             initialState={initialState}
                             onGridReady={onGridReady}

@@ -4,9 +4,10 @@ exports[`Snippet Component > given a mix of grid options > it should create 'ang
 "<ag-grid-angular
     [columnDefs]="columnDefs"
     [defaultColDef]="defaultColDef"
+    [rowSelection]="rowSelection"
     [rowHeight]="rowHeight"
     [rowDragManaged]="rowDragManaged"
-    [rowSelection]="rowSelection"
+    [columnMenu]="columnMenu"
     [postSort]="postSort"
     /* other grid options ... */ />
 
@@ -21,12 +22,13 @@ this.defaultColDef = {
     // set every column width
     width: 100,
 };
+this.rowSelection = { mode: 'singleRow' };
 // numeric property
 this.rowHeight = 50;
 // boolean property
 this.rowDragManaged = true;
 // string property
-this.rowSelection = 'single';
+this.columnMenu = 'new';
 // function property
 this.postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -45,9 +47,10 @@ exports[`Snippet Component > given a mix of grid options > it should create 'ang
 "<ag-grid-angular
     [columnDefs]="columnDefs"
     [defaultColDef]="defaultColDef"
+    [rowSelection]="rowSelection"
     [rowHeight]="rowHeight"
     [rowDragManaged]="rowDragManaged"
-    [rowSelection]="rowSelection"
+    [columnMenu]="columnMenu"
     [postSort]="postSort"
     /* other grid options ... */ />
 
@@ -64,6 +67,8 @@ this.defaultColDef = {
     width: 100,
 };
 
+this.rowSelection = { mode: 'singleRow' };
+
 // numeric property
 this.rowHeight = 50;
 
@@ -71,7 +76,7 @@ this.rowHeight = 50;
 this.rowDragManaged = true;
 
 // string property
-this.rowSelection = 'single';
+this.columnMenu = 'new';
 
 // function property
 this.postSort = rowNodes => {
@@ -99,12 +104,13 @@ this.defaultColDef = {
     // set every column width
     width: 100,
 };
+this.rowSelection = { mode: 'singleRow' };
 // numeric property
 this.rowHeight = 50;
 // boolean property
 this.rowDragManaged = true;
 // string property
-this.rowSelection = 'single';
+this.columnMenu = 'new';
 // function property
 this.postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -133,6 +139,8 @@ this.defaultColDef = {
     width: 100,
 };
 
+this.rowSelection = { mode: 'singleRow' };
+
 // numeric property
 this.rowHeight = 50;
 
@@ -140,7 +148,7 @@ this.rowHeight = 50;
 this.rowDragManaged = true;
 
 // string property
-this.rowSelection = 'single';
+this.columnMenu = 'new';
 
 // function property
 this.postSort = rowNodes => {
@@ -169,12 +177,13 @@ exports[`Snippet Component > given a mix of grid options > it should create 'jav
         // set every column width
         width: 100,
     },
+    rowSelection: { mode: 'singleRow' },
     // numeric property
     rowHeight: 50,
     // boolean property
     rowDragManaged: true,
     // string property
-    rowSelection: 'single',
+    columnMenu: 'new',
     // function property
     postSort: rowNodes => {
         // here we put Ireland rows on top while preserving the sort order  
@@ -207,6 +216,8 @@ exports[`Snippet Component > given a mix of grid options > it should create 'jav
         width: 100,
     },
 
+    rowSelection: { mode: 'singleRow' },
+
     // numeric property
     rowHeight: 50,
 
@@ -214,7 +225,7 @@ exports[`Snippet Component > given a mix of grid options > it should create 'jav
     rowDragManaged: true,
 
     // string property
-    rowSelection: 'single',
+    columnMenu: 'new',
 
     // function property
     postSort: rowNodes => {
@@ -245,12 +256,13 @@ defaultColDef: {
     // set every column width
     width: 100,
 },
+rowSelection: { mode: 'singleRow' },
 // numeric property
 rowHeight: 50,
 // boolean property
 rowDragManaged: true,
 // string property
-rowSelection: 'single',
+columnMenu: 'new',
 // function property
 postSort: rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -279,6 +291,8 @@ defaultColDef: {
     width: 100,
 },
 
+rowSelection: { mode: 'singleRow' },
+
 // numeric property
 rowHeight: 50,
 
@@ -286,7 +300,7 @@ rowHeight: 50,
 rowDragManaged: true,
 
 // string property
-rowSelection: 'single',
+columnMenu: 'new',
 
 // function property
 postSort: rowNodes => {
@@ -316,12 +330,15 @@ const defaultColDef = useMemo(() => {
         width: 100,
     };
 }, []);
+const rowSelection = useMemo(() => { 
+	return { mode: 'singleRow' };
+}, []);
 // numeric property
 const rowHeight = 50;
 // boolean property
 const rowDragManaged = true;
 // string property
-const rowSelection = 'single';
+const columnMenu = 'new';
 // function property
 const postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -338,9 +355,10 @@ const postSort = rowNodes => {
 <AgGridReact
     columnDefs={columnDefs}
     defaultColDef={defaultColDef}
+    rowSelection={rowSelection}
     rowHeight={rowHeight}
     rowDragManaged={rowDragManaged}
-    rowSelection={rowSelection}
+    columnMenu={columnMenu}
     postSort={postSort}
 />"
 `;
@@ -361,6 +379,10 @@ const defaultColDef = useMemo(() => {
     };
 }, []);
 
+const rowSelection = useMemo(() => { 
+	return { mode: 'singleRow' };
+}, []);
+
 // numeric property
 const rowHeight = 50;
 
@@ -368,7 +390,7 @@ const rowHeight = 50;
 const rowDragManaged = true;
 
 // string property
-const rowSelection = 'single';
+const columnMenu = 'new';
 
 // function property
 const postSort = rowNodes => {
@@ -386,9 +408,10 @@ const postSort = rowNodes => {
 <AgGridReact
     columnDefs={columnDefs}
     defaultColDef={defaultColDef}
+    rowSelection={rowSelection}
     rowHeight={rowHeight}
     rowDragManaged={rowDragManaged}
-    rowSelection={rowSelection}
+    columnMenu={columnMenu}
     postSort={postSort}
 />"
 `;
@@ -407,12 +430,15 @@ const defaultColDef = useMemo(() => {
         width: 100,
     };
 }, []);
+const rowSelection = useMemo(() => { 
+	return { mode: 'singleRow' };
+}, []);
 // numeric property
 const rowHeight = 50;
 // boolean property
 const rowDragManaged = true;
 // string property
-const rowSelection = 'single';
+const columnMenu = 'new';
 // function property
 const postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -429,9 +455,10 @@ const postSort = rowNodes => {
 <AgGridReact
     columnDefs={columnDefs}
     defaultColDef={defaultColDef}
+    rowSelection={rowSelection}
     rowHeight={rowHeight}
     rowDragManaged={rowDragManaged}
-    rowSelection={rowSelection}
+    columnMenu={columnMenu}
     postSort={postSort}
 />"
 `;
@@ -452,6 +479,10 @@ const defaultColDef = useMemo(() => {
     };
 }, []);
 
+const rowSelection = useMemo(() => { 
+	return { mode: 'singleRow' };
+}, []);
+
 // numeric property
 const rowHeight = 50;
 
@@ -459,7 +490,7 @@ const rowHeight = 50;
 const rowDragManaged = true;
 
 // string property
-const rowSelection = 'single';
+const columnMenu = 'new';
 
 // function property
 const postSort = rowNodes => {
@@ -477,9 +508,10 @@ const postSort = rowNodes => {
 <AgGridReact
     columnDefs={columnDefs}
     defaultColDef={defaultColDef}
+    rowSelection={rowSelection}
     rowHeight={rowHeight}
     rowDragManaged={rowDragManaged}
-    rowSelection={rowSelection}
+    columnMenu={columnMenu}
     postSort={postSort}
 />"
 `;
@@ -488,9 +520,10 @@ exports[`Snippet Component > given a mix of grid options > it should create 'vue
 "<ag-grid-vue
     :columnDefs="columnDefs"
     :defaultColDef="defaultColDef"
+    :rowSelection="rowSelection"
     :rowHeight="rowHeight"
     :rowDragManaged="rowDragManaged"
-    :rowSelection="rowSelection"
+    :columnMenu="columnMenu"
     :postSort="postSort"
     /* other grid options ... */>
 </ag-grid-vue>
@@ -506,12 +539,13 @@ this.defaultColDef = {
     // set every column width
     width: 100,
 };
+this.rowSelection = { mode: 'singleRow' };
 // numeric property
 this.rowHeight = 50;
 // boolean property
 this.rowDragManaged = true;
 // string property
-this.rowSelection = 'single';
+this.columnMenu = 'new';
 // function property
 this.postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -530,9 +564,10 @@ exports[`Snippet Component > given a mix of grid options > it should create 'vue
 "<ag-grid-vue
     :columnDefs="columnDefs"
     :defaultColDef="defaultColDef"
+    :rowSelection="rowSelection"
     :rowHeight="rowHeight"
     :rowDragManaged="rowDragManaged"
-    :rowSelection="rowSelection"
+    :columnMenu="columnMenu"
     :postSort="postSort"
     /* other grid options ... */>
 </ag-grid-vue>
@@ -550,6 +585,8 @@ this.defaultColDef = {
     width: 100,
 };
 
+this.rowSelection = { mode: 'singleRow' };
+
 // numeric property
 this.rowHeight = 50;
 
@@ -557,7 +594,7 @@ this.rowHeight = 50;
 this.rowDragManaged = true;
 
 // string property
-this.rowSelection = 'single';
+this.columnMenu = 'new';
 
 // function property
 this.postSort = rowNodes => {
@@ -585,12 +622,13 @@ this.defaultColDef = {
     // set every column width
     width: 100,
 };
+this.rowSelection = { mode: 'singleRow' };
 // numeric property
 this.rowHeight = 50;
 // boolean property
 this.rowDragManaged = true;
 // string property
-this.rowSelection = 'single';
+this.columnMenu = 'new';
 // function property
 this.postSort = rowNodes => {
     // here we put Ireland rows on top while preserving the sort order  
@@ -619,6 +657,8 @@ this.defaultColDef = {
     width: 100,
 };
 
+this.rowSelection = { mode: 'singleRow' };
+
 // numeric property
 this.rowHeight = 50;
 
@@ -626,7 +666,7 @@ this.rowHeight = 50;
 this.rowDragManaged = true;
 
 // string property
-this.rowSelection = 'single';
+this.columnMenu = 'new';
 
 // function property
 this.postSort = rowNodes => {

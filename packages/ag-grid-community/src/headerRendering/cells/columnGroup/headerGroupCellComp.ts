@@ -1,4 +1,4 @@
-import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
+import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { _setDisplayed } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';

@@ -11,38 +11,16 @@ import { _getActiveDomElement, _getDocument } from '../gridOptionsUtils';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { PostProcessPopupParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { PopupEventParams, PopupPositionParams } from '../interfaces/iPopup';
 import type { IRowNode } from '../interfaces/iRowNode';
-import type { ResizeObserverService } from '../misc/resizeObserverService';
 import { _setAriaLabel, _setAriaRole } from '../utils/aria';
-import { _getAbsoluteHeight, _getAbsoluteWidth, _getElementRectWithOffset } from '../utils/dom';
+import { _getAbsoluteHeight, _getAbsoluteWidth, _getElementRectWithOffset, _observeResize } from '../utils/dom';
 import { _isElementInEventPath, _isStopPropagationForAgGrid } from '../utils/event';
 import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
 
-export interface PopupPositionParams {
-    ePopup: HTMLElement;
-    column?: AgColumn | null;
-    rowNode?: IRowNode | null;
-    nudgeX?: number;
-    nudgeY?: number;
-    position?: 'over' | 'under';
-    alignSide?: 'left' | 'right';
-    keepWithinBounds?: boolean;
-    skipObserver?: boolean;
-    updatePosition?: () => { x: number; y: number };
-    postProcessCallback?: () => void;
-}
-
-export interface PopupEventParams {
-    originalMouseEvent?: MouseEvent | Touch | null;
-    mouseEvent?: MouseEvent;
-    touchEvent?: TouchEvent;
-    keyboardEvent?: KeyboardEvent;
-    forceHide?: boolean;
-}
-
-export interface AgPopup {
+interface AgPopup {
     element: HTMLElement;
     wrapper: HTMLElement;
     hideFunc: (params?: PopupEventParams) => void;
@@ -106,12 +84,10 @@ export class PopupService extends BeanStub implements NamedBean {
     beanName = 'popupService' as const;
 
     private ctrlsService: CtrlsService;
-    private resizeObserverService: ResizeObserverService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
-        this.resizeObserverService = beans.resizeObserverService;
         this.environment = beans.environment;
     }
 
@@ -404,9 +380,7 @@ export class PopupService extends BeanStub implements NamedBean {
         if (!skipObserver) {
             // Since rendering popup contents can be asynchronous, use a resize observer to
             // reposition the popup after initial updates to the size of the contents
-            const resizeObserverDestroyFunc = this.resizeObserverService.observeResize(ePopup, () =>
-                updatePopupPosition(true)
-            );
+            const resizeObserverDestroyFunc = _observeResize(this.gos, ePopup, () => updatePopupPosition(true));
             // Only need to reposition when first open, so can clean up after a bit of time
             setTimeout(() => resizeObserverDestroyFunc(), WAIT_FOR_POPUP_CONTENT_RESIZE);
         }
@@ -414,10 +388,6 @@ export class PopupService extends BeanStub implements NamedBean {
 
     public getActivePopups(): HTMLElement[] {
         return this.popupList.map((popup) => popup.element);
-    }
-
-    public getPopupList(): AgPopup[] {
-        return this.popupList;
     }
 
     public getParentRect(): {

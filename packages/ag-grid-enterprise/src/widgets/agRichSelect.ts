@@ -24,6 +24,7 @@ import {
     _exists,
     _fuzzySuggestions,
     _getActiveDomElement,
+    _getEditorRendererDetails,
     _isEventFromPrintableCharacter,
     _isVisible,
     _setAriaActiveDescendant,
@@ -199,20 +200,21 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         if (cellRenderer) {
-            userCompDetails = this.userComponentFactory.getEditorRendererDetails<
-                RichSelectParams,
-                IRichCellEditorRendererParams<TValue>
-            >(config, {
-                value,
-                valueFormatted,
-                getValue: () => this.getValue(),
-                setValue: (value: TValue[] | TValue | null) => {
-                    this.setValue(value, true);
-                },
-                setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
-                    this.setTooltip({ newTooltipText: value, shouldDisplayTooltip });
-                },
-            });
+            userCompDetails = _getEditorRendererDetails<RichSelectParams, IRichCellEditorRendererParams<TValue>>(
+                this.userComponentFactory,
+                config,
+                {
+                    value,
+                    valueFormatted,
+                    getValue: () => this.getValue(),
+                    setValue: (value: TValue[] | TValue | null) => {
+                        this.setValue(value, true);
+                    },
+                    setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
+                        this.setTooltip({ newTooltipText: value, shouldDisplayTooltip });
+                    },
+                }
+            );
         }
 
         let userCompDetailsPromise: AgPromise<any> | undefined;

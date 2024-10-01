@@ -1,20 +1,12 @@
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-<<<<<<< HEAD
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
-=======
-import { RowGroupingModule } from 'ag-grid-enterprise';
->>>>>>> latest
 
 import type { GridRowsOptions } from '../../../test-utils';
 import { GridRows, TestGridsManager, cachedJSONObjects, executeTransactionsAsync } from '../../../test-utils';
 
 describe('ag-grid tree aggregation', () => {
     const gridsManager = new TestGridsManager({
-<<<<<<< HEAD
-        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
-=======
-        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule],
->>>>>>> latest
+        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
     });
 
     beforeEach(() => {
@@ -44,7 +36,7 @@ describe('ag-grid tree aggregation', () => {
             autoGroupColumnDef: { headerName: 'Path' },
             treeData: true,
             animateRows: false,
-            selection: { mode: 'multiRow' },
+            rowSelection: { mode: 'multiRow' },
             groupDefaultExpanded: -1,
             rowData,
             getRowId: (params) => params.data.id,
@@ -177,7 +169,7 @@ describe('ag-grid tree aggregation', () => {
             aggregateOnlyChangedColumns: true,
             treeData: true,
             animateRows: false,
-            selection: { mode: 'multiRow' },
+            rowSelection: { mode: 'multiRow' },
             groupDefaultExpanded: -1,
             rowData,
             getRowId: (params) => params.data.id,
@@ -337,7 +329,7 @@ describe('ag-grid tree aggregation', () => {
             alwaysAggregateAtRootLevel: true,
             treeData: true,
             animateRows: false,
-            selection: { mode: 'multiRow' },
+            rowSelection: { mode: 'multiRow' },
             groupDefaultExpanded: -1,
             rowData,
             getRowId: (params) => params.data.id,

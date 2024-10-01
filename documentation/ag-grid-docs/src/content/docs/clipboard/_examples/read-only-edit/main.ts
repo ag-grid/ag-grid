@@ -29,7 +29,7 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
     },
     getRowId: (params: GetRowIdParams) => String(params.data.id),
 
-    selection: { mode: 'cell' },
+    cellSelection: true,
     readOnlyEdit: true,
     onCellEditRequest: onCellEditRequest,
 };

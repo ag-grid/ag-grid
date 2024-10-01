@@ -1,11 +1,9 @@
 import type {
-    BeanCollection,
-    IRowModel,
     ISelectionService,
     ISetNodesSelectedParams,
     NamedBean,
     RowNode,
-    RowSelectionOptions,
+    RowSelectionMode,
     SelectionEventSourceType,
     ServerSideRowGroupSelectionState,
     ServerSideRowSelectionState,
@@ -14,7 +12,7 @@ import {
     BaseSelectionService,
     _getGroupSelectsDescendants,
     _getRowSelectionMode,
-    _isUsingNewSelectionAPI,
+    _isUsingNewRowSelectionAPI,
     _warnOnce,
 } from 'ag-grid-community';
 
@@ -25,17 +23,12 @@ import type { ISelectionStrategy } from './selection/strategies/iSelectionStrate
 export class ServerSideSelectionService extends BaseSelectionService implements NamedBean, ISelectionService {
     beanName = 'selectionService' as const;
 
-    private rowModel: IRowModel;
-
-    public wireBeans(beans: BeanCollection) {
-        this.rowModel = beans.rowModel;
-    }
-
     private selectionStrategy: ISelectionStrategy;
-    private selectionMode?: RowSelectionOptions['mode'];
+    private selectionMode?: RowSelectionMode;
 
-    public postConstruct(): void {
-        this.addManagedPropertyListeners(['groupSelectsChildren', 'selection'], () => {
+    public override postConstruct(): void {
+        super.postConstruct();
+        this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], () => {
             const groupSelectsChildren = _getGroupSelectsDescendants(this.gos);
 
             // Only switch strategies when value of groupSelectsChildren actually changes, not just any part of selection options
@@ -56,7 +49,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             }
         });
 
-        this.addManagedPropertyListeners(['rowSelection', 'selection'], () => {
+        this.addManagedPropertyListeners(['rowSelection'], () => {
             // Only reset selection when selection mode changes, not just any part of selection options
             const rowSelection = _getRowSelectionMode(this.gos);
             if (rowSelection !== this.selectionMode) {
@@ -198,7 +191,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         justCurrentPage?: boolean | undefined;
     }): void {
         validateSelectionParameters(params);
-        if (_isUsingNewSelectionAPI(this.gos) && _getRowSelectionMode(this.gos) !== 'multiRow') {
+        if (_isUsingNewRowSelectionAPI(this.gos) && _getRowSelectionMode(this.gos) !== 'multiRow') {
             return _warnOnce("cannot multi select unless selection mode is 'multiRow'");
         }
 
@@ -240,19 +233,9 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 
     // used by CSRM
-    public updateGroupsFromChildrenSelections(): boolean {
-        return false;
-    }
-
-    // used by CSRM
     public getBestCostNodeSelection(): RowNode<any>[] | undefined {
         _warnOnce('calling gridApi.getBestCostNodeSelection() is only possible when using rowModelType=`clientSide`.');
         return undefined;
-    }
-
-    // used by CSRM
-    public filterFromSelection(): void {
-        return;
     }
 }
 function validateSelectionParameters({

@@ -26,7 +26,7 @@ const gridOptions: GridOptions = {
         field: 'resource',
     },
     rowData: generateData(),
-    selection: { mode: 'cell' },
+    cellSelection: true,
     popupParent: document.body,
     enableCharts: true,
     groupDefaultExpanded: 1,

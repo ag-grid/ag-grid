@@ -2,10 +2,12 @@ import type {
     AgColumn,
     BeanCollection,
     ColumnModel,
+    ComponentType,
     CtrlsService,
     ExpressionService,
     FuncColsService,
     GroupCellRendererParams,
+    ICellRendererParams,
     IGroupCellRenderer,
     IGroupCellRendererCtrl,
     IGroupHideOpenParentsService,
@@ -17,12 +19,14 @@ import type {
     UserComponentFactory,
     ValueService,
     VisibleColsService,
+    WithoutGridCommon,
 } from 'ag-grid-community';
 import {
     BeanStub,
     KeyCode,
     _cloneObject,
     _createIconNoSpan,
+    _getCellRendererDetails,
     _getGrandTotalRow,
     _isElementInEventPath,
     _isStopPropagationForAgGrid,
@@ -32,6 +36,27 @@ import {
     _stopPropagationForAgGrid,
     _warnOnce,
 } from 'ag-grid-community';
+
+const InnerRendererComponent: ComponentType = {
+    propertyName: 'innerRenderer',
+    cellRenderer: true,
+};
+
+function getInnerRendererDetails(
+    userComponentFactory: UserComponentFactory,
+    def: GroupCellRendererParams,
+    params: WithoutGridCommon<ICellRendererParams>
+): UserCompDetails | undefined {
+    return userComponentFactory.getCompDetails(def, InnerRendererComponent, null, params);
+}
+
+function getFullWidthGroupRowInnerCellRenderer(
+    userComponentFactory: UserComponentFactory,
+    def: any,
+    params: WithoutGridCommon<ICellRendererParams>
+): UserCompDetails | undefined {
+    return userComponentFactory.getCompDetails(def, InnerRendererComponent, null, params);
+}
 
 export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendererCtrl {
     private expressionService?: ExpressionService;
@@ -390,7 +415,8 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     private getInnerCompDetails(params: GroupCellRendererParams): UserCompDetails | undefined {
         // for full width rows, we don't do any of the below
         if (params.fullWidth) {
-            return this.userComponentFactory.getFullWidthGroupRowInnerCellRenderer(
+            return getFullWidthGroupRowInnerCellRenderer(
+                this.userComponentFactory,
                 this.gos.get('groupRowRendererParams'),
                 params
             );
@@ -410,7 +436,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         // 3) groupedColDef.cellRendererParams.innerRenderer
 
         // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
-        const innerCompDetails = this.userComponentFactory.getInnerRendererDetails(params, params);
+        const innerCompDetails = getInnerRendererDetails(this.userComponentFactory, params, params);
 
         // avoid using GroupCellRenderer again, otherwise stack overflow, as we insert same renderer again and again.
         // this covers off chance user is grouping by a column that is also configured with GroupCellRenderer
@@ -430,7 +456,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         }
 
         // otherwise see if we can use the cellRenderer of the column we are grouping by
-        const relatedCompDetails = this.userComponentFactory.getCellRendererDetails(relatedColDef, params);
+        const relatedCompDetails = _getCellRendererDetails(this.userComponentFactory, relatedColDef, params);
 
         if (relatedCompDetails && !isGroupRowRenderer(relatedCompDetails)) {
             // Only if the original column is using a specific renderer, it it is a using a DEFAULT one ignore it
@@ -444,7 +470,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         ) {
             // edge case - this comes from a column which has been grouped dynamically, that has a renderer 'group'
             // and has an inner cell renderer
-            const res = this.userComponentFactory.getInnerRendererDetails(relatedColDef.cellRendererParams, params);
+            const res = getInnerRendererDetails(this.userComponentFactory, relatedColDef.cellRendererParams, params);
             return res;
         }
     }

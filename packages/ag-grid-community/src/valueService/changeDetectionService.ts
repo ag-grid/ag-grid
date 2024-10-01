@@ -26,8 +26,8 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
     private clientSideRowModel: IClientSideRowModel;
 
     public postConstruct(): void {
-        if (_isClientSideRowModel(this.gos)) {
-            this.clientSideRowModel = this.rowModel as IClientSideRowModel;
+        if (_isClientSideRowModel(this.gos, this.rowModel)) {
+            this.clientSideRowModel = this.rowModel;
         }
 
         this.addManagedEventListeners({ cellValueChanged: this.onCellValueChanged.bind(this) });

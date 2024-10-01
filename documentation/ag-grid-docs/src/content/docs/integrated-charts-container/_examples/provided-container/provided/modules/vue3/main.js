@@ -1,6 +1,6 @@
 import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -11,13 +11,7 @@ import { AgGridVue } from 'ag-grid-vue3';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    CommunityFeaturesModule,
-    GridChartsModule,
-    MenuModule,
-    RowGroupingModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule, RowGroupingModule]);
 
 const VueExample = {
     template: `
@@ -29,7 +23,7 @@ const VueExample = {
             :columnDefs="columnDefs"
             :rowData="rowData"
             :defaultColDef="defaultColDef"
-            :selection="selection"
+            :cellSelection="true"
             :enableCharts="true"
             :popupParent="popupParent"
             :createChartContainer="createChartContainer"
@@ -60,9 +54,6 @@ const VueExample = {
         const defaultColDef = ref({ flex: 1 });
         const popupParent = ref(null);
         const rowData = ref(null);
-        const selection = ref({
-            mode: 'cell',
-        });
 
         onBeforeMount(() => {
             popupParent.value = document.body;
@@ -116,7 +107,6 @@ const VueExample = {
             gridApi,
             defaultColDef,
             popupParent,
-            selection,
             rowData,
             createChartContainer,
             onGridReady,

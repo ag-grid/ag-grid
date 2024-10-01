@@ -1,18 +1,33 @@
-import type { BeanCollection, IRowNodeStage, NamedBean, StageExecuteParams } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import type {
+    BeanCollection,
+    GridOptions,
+    IRowNodeStage,
+    ISelectionService,
+    NamedBean,
+    StageExecuteParams,
+} from 'ag-grid-community';
+import { BeanStub, ClientSideRowModelSteps } from 'ag-grid-community';
 
 import { GroupStrategy } from './groupStrategy/groupStrategy';
-import type { SelectableService } from './selectableService';
 import { TreeStrategy } from './treeStrategy/treeStrategy';
 
 export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'groupStage' as const;
 
-    private selectableService: SelectableService;
+    public refreshProps: Set<keyof GridOptions<any>> = new Set([
+        'groupDefaultExpanded',
+        'groupAllowUnbalanced',
+        'initialGroupOrderComparator',
+        'groupHideOpenParents',
+        'groupDisplayType',
+    ]);
+    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.EVERYTHING;
+
+    private selectionService: ISelectionService | undefined;
     private strategy: GroupStrategy | TreeStrategy | undefined;
 
     public wireBeans(beans: BeanCollection) {
-        this.selectableService = beans.selectableService as SelectableService;
+        this.selectionService = beans.selectionService;
     }
 
     public execute(params: StageExecuteParams): void {
@@ -27,7 +42,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
 
         strategy.execute(params);
 
-        this.selectableService.updateSelectableAfterGrouping();
+        this.selectionService?.updateSelectable(true);
     }
 
     public override destroy(): void {

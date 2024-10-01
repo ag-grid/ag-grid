@@ -1,12 +1,10 @@
-import { ClientSideRowModelModule, ModuleNames, _defineModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 
-import { VERSION } from '../version';
+import { defineEnterpriseModule } from '../moduleUtils';
 import { ClientSideChildrenTreeNodeManager } from './clientSideChildrenTreeNodeManager';
 import { ClientSidePathTreeNodeManager } from './clientSidePathTreeNodeManager';
 
-export const TreeDataModule = _defineModule({
-    version: VERSION,
-    moduleName: ModuleNames.ClientSideRowModelModule,
+export const TreeDataModule = defineEnterpriseModule('TreeDataModule', {
     beans: [ClientSidePathTreeNodeManager, ClientSideChildrenTreeNodeManager],
-    dependantModules: [ClientSideRowModelModule],
+    dependsOn: [ClientSideRowModelModule],
 });

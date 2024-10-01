@@ -3,7 +3,7 @@
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -12,13 +12,7 @@ import { RowGroupingModule } from 'ag-grid-enterprise';
 import { StatusBarModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    CommunityFeaturesModule,
-    RowGroupingModule,
-    StatusBarModule,
-    RangeSelectionModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, StatusBarModule, RangeSelectionModule]);
 
 // creates a unique symbol, eg 'ADG' or 'ZJD'
 function createUniqueRandomSymbol(data) {
@@ -84,7 +78,7 @@ function setItemVisible(id, visible) {
     element.style.display = visible ? 'inline' : 'none';
 }
 
-const selection = {
+const rowSelection = {
     mode: 'multiRow',
     groupSelects: 'descendants',
     headerCheckbox: false,
@@ -237,7 +231,8 @@ const GridExample = () => {
                             rowData={rowData}
                             columnDefs={columnDefs}
                             defaultColDef={defaultColDef}
-                            selection={selection}
+                            rowSelection={rowSelection}
+                            cellSelection={true}
                             autoGroupColumnDef={autoGroupColumnDef}
                             statusBar={statusBar}
                             groupDefaultExpanded={1}

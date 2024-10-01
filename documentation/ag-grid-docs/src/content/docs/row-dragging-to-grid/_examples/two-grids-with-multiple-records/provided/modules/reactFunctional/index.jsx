@@ -1,7 +1,7 @@
 import React, { StrictMode, useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -9,7 +9,7 @@ import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const SportRenderer = (props) => {
     return (
@@ -67,7 +67,7 @@ const defaultColDef = {
     filter: true,
 };
 
-const selection = {
+const rowSelection = {
     mode: 'multiRow',
 };
 
@@ -193,7 +193,7 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
-                    selection={id === 0 ? selection : undefined}
+                    rowSelection={id === 0 ? rowSelection : undefined}
                     rowDragMultiRow={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
                     rowData={id === 0 ? leftRowData : rightRowData}

@@ -1,5 +1,4 @@
-import type { BeanCollection } from '../context/context';
-import type { AnimationFrameService } from '../misc/animationFrameService';
+import { _requestAnimationFrame } from '../misc/animationFrameService';
 import { _isIOSUserAgent, _isInvisibleScrollbar, _isMacOsUserAgent } from '../utils/browser';
 import { _isVisible } from '../utils/dom';
 import { _waitUntil } from '../utils/function';
@@ -7,12 +6,6 @@ import { Component, RefPlaceholder } from '../widgets/component';
 import type { ScrollPartner } from './gridBodyScrollFeature';
 
 export abstract class AbstractFakeScrollComp extends Component implements ScrollPartner {
-    private animationFrameService: AnimationFrameService;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.animationFrameService = beans.animationFrameService;
-    }
-
     protected readonly eViewport: HTMLElement = RefPlaceholder;
     protected readonly eContainer: HTMLElement = RefPlaceholder;
 
@@ -73,7 +66,7 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
             this.initialiseInvisibleScrollbar();
         }
 
-        this.animationFrameService.requestAnimationFrame(() => this.setScrollVisible());
+        _requestAnimationFrame(this.gos, () => this.setScrollVisible());
     }
 
     protected hideAndShowInvisibleScrollAsNeeded(): void {

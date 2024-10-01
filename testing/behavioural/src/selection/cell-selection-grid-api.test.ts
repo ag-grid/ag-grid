@@ -1,7 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RangeSelectionModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
@@ -12,7 +12,7 @@ describe('Cell Selection Grid API', () => {
     let consoleWarnSpy: MockInstance;
 
     const gridMgr = new TestGridsManager({
-        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RangeSelectionModule],
+        modules: [ClientSideRowModelModule, RangeSelectionModule],
     });
 
     function createGrid(go: GridOptions): GridApi {
@@ -49,7 +49,7 @@ describe('Cell Selection Grid API', () => {
             const api = createGrid({
                 columnDefs,
                 rowData,
-                selection: { mode: 'cell' },
+                cellSelection: true,
             });
 
             api.addCellRange({
@@ -81,7 +81,7 @@ describe('Cell Selection Grid API', () => {
             const api = createGrid({
                 columnDefs,
                 rowData,
-                selection: { mode: 'cell', suppressMultiRanges: true },
+                cellSelection: { suppressMultiRanges: true },
             });
 
             api.addCellRange({

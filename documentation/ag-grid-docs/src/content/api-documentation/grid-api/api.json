@@ -149,7 +149,8 @@
         "getAllDisplayedColumnGroups": {},
         "getCenterDisplayedColumnGroups": {},
         "getLeftDisplayedColumnGroups": {},
-        "getRightDisplayedColumnGroups": {}
+        "getRightDisplayedColumnGroups": {},
+        "isColumnHovered": {}
     },
     "Pivoting": {
         "meta": {

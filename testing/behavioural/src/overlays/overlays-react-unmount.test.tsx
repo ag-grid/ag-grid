@@ -3,7 +3,7 @@ import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import type { ColDef } from 'ag-grid-community';
-import { ClientSideRowModelModule, CommunityFeaturesModule, ModuleRegistry } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import type { AgGridReactProps } from 'ag-grid-react';
 
@@ -13,7 +13,7 @@ describe('ag-grid custom overlay react unmount', () => {
     const columnDefs: ColDef[] = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
 
     beforeAll(() => {
-        ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+        ModuleRegistry.registerModules([ClientSideRowModelModule]);
     });
 
     let mounts = 0;

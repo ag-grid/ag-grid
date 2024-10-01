@@ -1,9 +1,8 @@
-import type { HttpClient } from '@angular/common/http';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import type {
     ColDef,
@@ -11,24 +10,16 @@ import type {
     GridApi,
     GridReadyEvent,
     ICellRendererParams,
-    SelectionOptions,
+    RowSelectionOptions,
 } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { FiltersToolPanelModule } from 'ag-grid-enterprise';
-import { RowGroupingModule } from 'ag-grid-enterprise';
-import { SetFilterModule } from 'ag-grid-enterprise';
+import { FiltersToolPanelModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    CommunityFeaturesModule,
-    RowGroupingModule,
-    SetFilterModule,
-    FiltersToolPanelModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, SetFilterModule, FiltersToolPanelModule]);
 
 @Component({
     standalone: true,
@@ -70,7 +61,7 @@ ModuleRegistry.registerModules([
             [context]="context"
             [defaultColDef]="defaultColDef"
             [autoGroupColumnDef]="autoGroupColumnDef"
-            [selection]="selection"
+            [rowSelection]="rowSelection"
             [rowData]="rowData"
             [class]="themeClass"
             (gridReady)="onGridReady($event)"
@@ -161,7 +152,7 @@ export class AppComponent {
         minWidth: 260,
         cellRenderer: 'agGroupCellRenderer',
     };
-    public selection: SelectionOptions = {
+    public rowSelection: RowSelectionOptions = {
         mode: 'multiRow',
         headerCheckbox: false,
         groupSelects: 'descendants',

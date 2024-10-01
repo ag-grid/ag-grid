@@ -1,6 +1,6 @@
 import { createApp, ref, shallowRef } from 'vue';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -14,7 +14,7 @@ import './styles.css';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
-    CommunityFeaturesModule,
+
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
     SetFilterModule,
@@ -40,7 +40,7 @@ const VueExample = {
                     :defaultColDef="defaultColDef"
                     :sideBar="true"
                     :pagination="true"
-                    :selection="selection"
+                    :rowSelection="rowSelection"
                     :suppressColumnMoveAnimation="true"
                     :rowData="rowData"
                     :initialState="initialState"
@@ -75,7 +75,7 @@ const VueExample = {
             enablePivot: true,
             enableValue: true,
         });
-        const selection = ref({
+        const rowSelection = ref({
             mode: 'multiRow',
         });
         const rowData = ref(null);
@@ -114,7 +114,7 @@ const VueExample = {
             columnDefs,
             gridApi,
             defaultColDef,
-            selection,
+            rowSelection,
             rowData,
             gridVisible,
             initialState,

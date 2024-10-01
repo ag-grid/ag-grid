@@ -1,6 +1,7 @@
 import type { GridApi } from '../api/gridApi';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { ComponentMeta, ControllerMeta, SingletonBean } from '../context/context';
+import { VERSION } from '../version';
 import type { RowModelType } from './iRowModel';
 
 export type ModuleValidationValidResult = {
@@ -13,6 +14,13 @@ export type ModuleValidationInvalidResult = {
 };
 
 export type ModuleValidationResult = ModuleValidationValidResult | ModuleValidationInvalidResult;
+
+export type BaseModule = Omit<Module, 'apiFunctions' | 'version' | 'moduleName'>;
+
+export type ModuleWithApi<TGridApi extends Readonly<Partial<GridApi>>> = BaseModule &
+    (object extends TGridApi
+        ? { apiFunctions: never }
+        : { apiFunctions: { [K in ApiFunctionName & keyof TGridApi]: ApiFunction<K> } });
 
 export interface Module {
     version: string;
@@ -27,20 +35,18 @@ export interface Module {
     controllers?: ControllerMeta[];
     userComponents?: ComponentMeta[];
     rowModel?: RowModelType;
-    dependantModules?: Module[];
+    dependsOn?: Module[];
 
     apiFunctions?: { [K in ApiFunctionName]: ApiFunction<K> };
 }
 
-export function _defineModule(definition: Omit<Module, 'apiFunctions'>): Module;
-
-export function _defineModule<TGridApi extends Readonly<Partial<GridApi>>>(
-    definition: Omit<Module, 'apiFunctions'> &
-        (object extends TGridApi
-            ? { apiFunctions: never }
-            : { apiFunctions: { [K in ApiFunctionName & keyof TGridApi]: ApiFunction<K> } })
+export function defineCommunityModule(name: string, definition: BaseModule): Module;
+export function defineCommunityModule<TGridApi extends Readonly<Partial<GridApi>>>(
+    name: string,
+    definition: ModuleWithApi<TGridApi>
 ): Module;
-
-export function _defineModule(definition: any): Module {
+export function defineCommunityModule(name: string, definition: any): Module {
+    definition.moduleName = name;
+    definition.version = VERSION;
     return definition;
 }

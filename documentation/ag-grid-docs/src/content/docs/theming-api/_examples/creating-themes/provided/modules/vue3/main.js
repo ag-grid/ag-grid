@@ -1,11 +1,11 @@
 import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { createTheme, iconSetMaterial } from 'ag-grid-community';
 import { AgGridVue } from 'ag-grid-vue3';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const myCustomTheme = createTheme().withPart(iconSetMaterial).withParams({
     accentColor: 'red',
@@ -18,7 +18,7 @@ const VueExample = {
         <ag-grid-vue
             style="height: 100%;"
             :theme="theme"
-            :selection="selection"
+            :rowSelection="rowSelection"
             :columnDefs="columnDefs"
             :defaultColDef="defaultColDef"
             :rowData="rowData"
@@ -30,7 +30,7 @@ const VueExample = {
     setup(props) {
         return {
             theme: myCustomTheme,
-            selection: { mode: 'multiRow', checkboxes: true },
+            rowSelection: { mode: 'multiRow', checkboxes: true },
             columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'price' }],
             defaultColDef: {
                 editable: true,

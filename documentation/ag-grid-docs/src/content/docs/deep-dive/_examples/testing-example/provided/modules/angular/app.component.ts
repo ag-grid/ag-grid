@@ -1,24 +1,22 @@
-import type { HttpClient } from '@angular/common/http';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 
 import type { ICellRendererAngularComp } from 'ag-grid-angular';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
 import type {
     CellValueChangedEvent,
     ColDef,
     GridReadyEvent,
     ICellRendererParams,
+    RowSelectionOptions,
     SelectionChangedEvent,
-    SelectionOptions,
     ValueFormatterParams,
 } from 'ag-grid-community';
-import { ModuleRegistry } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 // Row Data Interface
 interface IRow {
@@ -113,7 +111,7 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
                 [columnDefs]="colDefs"
                 [defaultColDef]="defaultColDef"
                 [pagination]="true"
-                [selection]="selection"
+                [rowSelection]="rowSelection"
                 (gridReady)="onGridReady($event)"
                 (cellValueChanged)="onCellValueChanged($event)"
                 (selectionChanged)="onSelectionChanged($event)"
@@ -173,7 +171,7 @@ export class AppComponent {
         { field: 'rocket' },
     ];
 
-    selection: SelectionOptions = {
+    rowSelection: RowSelectionOptions = {
         mode: 'multiRow',
         headerCheckbox: false,
     };

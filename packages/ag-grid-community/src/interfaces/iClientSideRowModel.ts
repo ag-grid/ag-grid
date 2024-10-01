@@ -21,7 +21,6 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     onRowGroupOpened(): void;
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
     refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void;
-    expandOrCollapseAll(expand: boolean): void;
     forEachLeafNode(callback: (node: RowNode, index: number) => void): void;
     forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
     forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;

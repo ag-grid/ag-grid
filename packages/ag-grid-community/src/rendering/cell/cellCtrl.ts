@@ -1,11 +1,11 @@
 import { isColumnControlsCol } from '../../columns/columnUtils';
-import type { UserCompDetails } from '../../components/framework/userComponentFactory';
+import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { AgColumn } from '../../entities/agColumn';
-import { _createCellId } from '../../entities/cellPositionUtils';
 import type { CellStyle, ColDef } from '../../entities/colDef';
+import { _createCellId } from '../../entities/positionUtils';
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
@@ -23,9 +23,11 @@ import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
+import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
+import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
 import { _setAriaColIndex } from '../../utils/aria';
-import { _addOrRemoveAttribute, _getElementSize } from '../../utils/dom';
+import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../utils/dom';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _getValueUsingField } from '../../utils/object';
 import { _escapeString } from '../../utils/string';
@@ -35,7 +37,6 @@ import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellR
 import { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { FlashCellsParams } from '../rowRenderer';
-import { CellCustomStyleFeature } from './cellCustomStyleFeature';
 import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
 import { CellMouseListenerFeature } from './cellMouseListenerFeature';
 import { CellPositionFeature } from './cellPositionFeature';
@@ -47,7 +48,6 @@ const CSS_CELL_FOCUS = 'ag-cell-focus';
 const CSS_CELL_FIRST_RIGHT_PINNED = 'ag-cell-first-right-pinned';
 const CSS_CELL_LAST_LEFT_PINNED = 'ag-cell-last-left-pinned';
 const CSS_CELL_NOT_INLINE_EDITING = 'ag-cell-not-inline-editing';
-const CSS_COLUMN_HOVER = 'ag-column-hover';
 const CSS_CELL_WRAP_TEXT = 'ag-cell-wrap-text';
 
 export interface ICellComp {
@@ -148,7 +148,7 @@ export class CellCtrl extends BeanStub {
 
     private addFeatures(): void {
         this.cellPositionFeature = new CellPositionFeature(this, this.beans);
-        this.cellCustomStyleFeature = new CellCustomStyleFeature(this, this.beans);
+        this.cellCustomStyleFeature = this.beans.cellStyleService?.createCellCustomStyleFeature(this, this.beans);
         this.cellMouseListenerFeature = new CellMouseListenerFeature(this, this.beans, this.column);
 
         this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(
@@ -349,7 +349,7 @@ export class CellCtrl extends BeanStub {
         // do once to set size in case size doesn't change, common when cell is blank
         listener();
 
-        const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eCellWrapper, listener);
+        const destroyResizeObserver = _observeResize(this.beans.gos, eCellWrapper, listener);
 
         compBean.addDestroyFunc(() => {
             destroyResizeObserver();
@@ -377,13 +377,14 @@ export class CellCtrl extends BeanStub {
         const isSsrmLoading = this.rowNode.stub && this.rowNode.groupData?.[this.column.getId()] == null;
         if (isSsrmLoading) {
             const params = this.createCellRendererParams();
-            compDetails = this.beans.userComponentFactory.getLoadingCellRendererDetails(
+            compDetails = _getLoadingCellRendererDetails(
+                this.beans.userComponentFactory,
                 this.column.getColDef(),
                 params
             );
         } else if (this.isCellRenderer()) {
             const params = this.createCellRendererParams();
-            compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
+            compDetails = _getCellRendererDetails(this.beans.userComponentFactory, this.column.getColDef(), params);
         }
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.cellRangeFeature?.refreshHandle();
@@ -416,8 +417,14 @@ export class CellCtrl extends BeanStub {
     }
 
     private isCheckboxSelection(colDef: ColDef): boolean | Function | undefined {
-        const { selection } = this.beans.gridOptions;
-        return colDef.checkboxSelection || (isColumnControlsCol(this.column) && selection && _getCheckboxes(selection));
+        const { rowSelection } = this.beans.gridOptions;
+        return (
+            colDef.checkboxSelection ||
+            (isColumnControlsCol(this.column) &&
+                rowSelection &&
+                typeof rowSelection !== 'string' &&
+                _getCheckboxes(rowSelection))
+        );
     }
 
     private refreshShouldDestroy(): boolean {
@@ -994,15 +1001,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onColumnHover(): void {
-        if (!this.cellComp) {
-            return;
-        }
-        if (!this.beans.gos.get('columnHoverHighlight')) {
-            return;
-        }
-
-        const isHovered = this.beans.columnHoverService.isHovered(this.column);
-        this.cellComp.addOrRemoveCssClass(CSS_COLUMN_HOVER, isHovered);
+        this.beans.columnHoverService?.onCellColumnHover(this.column, this.cellComp);
     }
 
     public onColDefChanged(): void {

@@ -27,7 +27,7 @@ function getColumnDefs() {
 const gridOptions: GridOptions = {
     columnDefs: getColumnDefs(),
     defaultColDef: { flex: 1 },
-    selection: { mode: 'cell' },
+    cellSelection: true,
     enableCharts: true,
     chartThemeOverrides: {
         line: {

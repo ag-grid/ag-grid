@@ -33,6 +33,7 @@ import { ChangedPath } from '../utils/changedPath';
 import { _debounce, _errorOnce, _warnOnce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
 import type { ValueCache } from '../valueService/valueCache';
+import { updateRowNodeAfterFilter } from './filterStage';
 import { updateRowNodeAfterSort } from './sortStage';
 
 enum RecursionType {
@@ -71,7 +72,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private groupHideOpenParentsService?: IGroupHideOpenParentsService;
 
     // standard stages
-    private filterStage: IRowNodeStage;
+    private filterStage?: IRowNodeStage;
     private sortStage?: IRowNodeStage;
     private flattenStage: IRowNodeStage;
 
@@ -122,8 +123,18 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private isRefreshingModel: boolean = false;
     private rowNodesCountReady: boolean = false;
     private rowCountReady: boolean = false;
+    private orderedStages: IRowNodeStage[];
 
     public postConstruct(): void {
+        this.orderedStages = [
+            this.groupStage,
+            this.filterStage,
+            this.pivotStage,
+            this.aggregationStage,
+            this.sortStage,
+            this.filterAggregatesStage,
+            this.flattenStage,
+        ].filter((stage) => !!stage) as IRowNodeStage[];
         const refreshEverythingFunc = this.refreshModel.bind(this, { step: ClientSideRowModelSteps.EVERYTHING });
         const animate = !this.gos.get('suppressAnimationFrame');
         const refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(this, {
@@ -212,54 +223,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         //                       - the application would change these functions, far more likely the functions were
         //                       - non memoised correctly.
 
-        const resetProps: Set<keyof GridOptions> = new Set(['treeData', 'treeDataChildrenField']);
-
-        const groupStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'masterDetail',
-            'groupDefaultExpanded',
-            'groupAllowUnbalanced',
-            'initialGroupOrderComparator',
-            'groupHideOpenParents',
-            'groupDisplayType',
-        ]);
-        const filterStageRefreshProps: Set<keyof GridOptions> = new Set(['excludeChildrenWhenTreeDataFiltering']);
-        const pivotStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'removePivotHeaderRowWhenSingleValueColumn',
-            'pivotRowTotals',
-            'pivotColumnGroupTotals',
-            'suppressExpandablePivotGroups',
-        ]);
-        const aggregateStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'getGroupRowAgg',
-            'alwaysAggregateAtRootLevel',
-            'suppressAggFilteredOnly',
-            'grandTotalRow',
-        ]);
-        const sortStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'postSortRows',
-            'groupDisplayType',
-            'accentedSort',
-        ]);
-        const filterAggStageRefreshProps: Set<keyof GridOptions> = new Set([]);
-        const flattenStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'groupHideParentOfSingleChild',
-            'groupRemoveSingleChildren',
-            'groupRemoveLowestSingleChildren',
-            'groupTotalRow',
-        ]);
+        const resetProps = new Set<keyof GridOptions>(['treeData', 'treeDataChildrenField']);
 
         const allProps: (keyof GridOptions)[] = [
             'rowData',
+            'masterDetail',
             ...resetProps,
-            ...groupStageRefreshProps,
-            ...filterStageRefreshProps,
-            ...pivotStageRefreshProps,
-            ...pivotStageRefreshProps,
-            ...aggregateStageRefreshProps,
-            ...sortStageRefreshProps,
-            ...filterAggStageRefreshProps,
-            ...flattenStageRefreshProps,
+            ...this.orderedStages.flatMap(({ refreshProps }) => [...refreshProps]),
         ];
+
         this.addManagedPropertyListeners(allProps, (params) => {
             const properties = params.changeSet?.properties;
             if (!properties) {
@@ -290,41 +262,22 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 }
             }
 
-            if (arePropertiesImpacted(groupStageRefreshProps)) {
-                if (properties.includes('masterDetail')) {
-                    this.nodeManager.setMasterForAllRows?.(this.rootNode.allLeafChildren, true);
+            let refreshModelStep: ClientSideRowModelSteps | undefined;
+
+            if (properties.includes('masterDetail')) {
+                this.nodeManager.setMasterForAllRows?.(this.rootNode.allLeafChildren, true);
+                refreshModelStep = ClientSideRowModelSteps.EVERYTHING;
+            } else {
+                for (const { refreshProps, step } of this.orderedStages) {
+                    if (arePropertiesImpacted(refreshProps)) {
+                        refreshModelStep = step;
+                        break;
+                    }
                 }
-
-                this.refreshModel({ step: ClientSideRowModelSteps.EVERYTHING });
-                return;
             }
 
-            if (arePropertiesImpacted(filterStageRefreshProps)) {
-                this.refreshModel({ step: ClientSideRowModelSteps.FILTER });
-                return;
-            }
-
-            if (arePropertiesImpacted(pivotStageRefreshProps)) {
-                this.refreshModel({ step: ClientSideRowModelSteps.PIVOT });
-                return;
-            }
-            if (arePropertiesImpacted(aggregateStageRefreshProps)) {
-                this.refreshModel({ step: ClientSideRowModelSteps.AGGREGATE });
-                return;
-            }
-
-            if (arePropertiesImpacted(sortStageRefreshProps)) {
-                this.refreshModel({ step: ClientSideRowModelSteps.SORT });
-                return;
-            }
-
-            if (arePropertiesImpacted(filterAggStageRefreshProps)) {
-                this.refreshModel({ step: ClientSideRowModelSteps.FILTER_AGGREGATES });
-                return;
-            }
-
-            if (arePropertiesImpacted(flattenStageRefreshProps)) {
-                this.refreshModel({ step: ClientSideRowModelSteps.MAP });
+            if (refreshModelStep) {
+                this.refreshModel({ step: refreshModelStep });
             }
         });
 
@@ -1091,57 +1044,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 
-    // + gridApi.expandAll()
-    // + gridApi.collapseAll()
-    public expandOrCollapseAll(expand: boolean): void {
-        const usingTreeData = this.gos.get('treeData');
-        const usingPivotMode = this.columnModel.isPivotActive();
-
-        const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {
-            if (!rowNodes) {
-                return;
-            }
-            rowNodes.forEach((rowNode) => {
-                const actionRow = () => {
-                    rowNode.expanded = expand;
-                    recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
-                };
-
-                if (usingTreeData) {
-                    const hasChildren = _exists(rowNode.childrenAfterGroup);
-                    if (hasChildren) {
-                        actionRow();
-                    }
-                    return;
-                }
-
-                if (usingPivotMode) {
-                    const notLeafGroup = !rowNode.leafGroup;
-                    if (notLeafGroup) {
-                        actionRow();
-                    }
-                    return;
-                }
-
-                const isRowGroup = rowNode.group;
-                if (isRowGroup) {
-                    actionRow();
-                }
-            });
-        };
-
-        if (this.rootNode) {
-            recursiveExpandOrCollapse(this.rootNode.childrenAfterGroup);
-        }
-
-        this.refreshModel({ step: ClientSideRowModelSteps.MAP });
-
-        this.eventService.dispatchEvent({
-            type: 'expandOrCollapseAll',
-            source: expand ? 'expandAll' : 'collapseAll',
-        });
-    }
-
     private doSort(rowNodeTransactions: RowNodeTransaction[] | undefined, changedPath: ChangedPath) {
         if (this.sortStage) {
             this.sortStage.execute({
@@ -1190,7 +1092,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
 
             if (_getGroupSelectsDescendants(this.gos)) {
-                const selectionChanged = this.selectionService?.updateGroupsFromChildrenSelections(
+                const selectionChanged = this.selectionService?.updateGroupsFromChildrenSelections?.(
                     'rowGroupChanged',
                     changedPath
                 );
@@ -1222,7 +1124,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private doFilter(changedPath: ChangedPath) {
-        this.filterStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
+        if (this.filterStage) {
+            this.filterStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
+        } else {
+            changedPath.forEachChangedNodeDepthFirst((rowNode) => {
+                rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
+
+                updateRowNodeAfterFilter(rowNode);
+            }, true);
+        }
     }
 
     private doPivot(changedPath: ChangedPath) {

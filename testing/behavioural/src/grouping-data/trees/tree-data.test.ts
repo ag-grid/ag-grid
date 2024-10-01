@@ -1,7 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager } from '../../test-utils';
@@ -13,7 +13,7 @@ const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree data', () => {
     const gridsManager = new TestGridsManager({
-        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
     });
 
     let consoleWarnSpy: MockInstance;

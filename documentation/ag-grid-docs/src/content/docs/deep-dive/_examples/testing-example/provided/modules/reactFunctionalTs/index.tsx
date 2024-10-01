@@ -2,9 +2,9 @@
 import React, { StrictMode, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 // Theme
-import type { ColDef, SelectionOptions, ValueFormatterParams } from 'ag-grid-community';
+import type { ColDef, RowSelectionOptions, ValueFormatterParams } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 // Core CSS
@@ -12,7 +12,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import { AgGridReact } from 'ag-grid-react';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 // Custom Cell Renderer (Display logos based on cell value)
 const CompanyLogoRenderer = (params: CustomCellRendererProps) => (
@@ -70,7 +70,7 @@ interface IRow {
     successful: boolean;
 }
 
-const selection: SelectionOptions = {
+const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
     headerCheckbox: false,
 };
@@ -143,7 +143,7 @@ const GridExample = () => {
                 columnDefs={colDefs}
                 defaultColDef={defaultColDef}
                 pagination={true}
-                selection={selection}
+                rowSelection={rowSelection}
                 onSelectionChanged={(event) => console.log('Row Selected!')}
                 onCellValueChanged={(event) => console.log(`New Cell Value: ${event.value}`)}
             />

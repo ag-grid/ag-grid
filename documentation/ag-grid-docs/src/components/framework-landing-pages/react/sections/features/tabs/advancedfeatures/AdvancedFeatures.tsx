@@ -13,7 +13,7 @@ const AdvancedFeatures: React.FC = () => {
     rowData={rowData}
     columnDefs={colDefs}
     enableCharts={true}
-    enableRangeSelection={true}
+    cellSelection={true}
     masterDetail={true}
     enableAdvancedFilter={true}
     rowGroupPanelShow={true}

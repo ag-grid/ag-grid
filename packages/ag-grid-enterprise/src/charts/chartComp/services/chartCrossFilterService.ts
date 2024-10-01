@@ -22,8 +22,8 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
         this.columnModel = beans.columnModel;
         this.valueService = beans.valueService;
         this.filterManager = beans.filterManager;
-        if (_isClientSideRowModel(this.gos)) {
-            this.clientSideRowModel = beans.rowModel as IClientSideRowModel;
+        if (_isClientSideRowModel(this.gos, beans.rowModel)) {
+            this.clientSideRowModel = beans.rowModel;
         }
     }
 

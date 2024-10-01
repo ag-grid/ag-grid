@@ -1,16 +1,16 @@
 import React, { StrictMode, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import type { ColDef, SelectionOptions } from 'ag-grid-community';
+import type { ColDef, RowSelectionOptions } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {
     const grid = useRef<AgGridReact>(null);
@@ -27,7 +27,7 @@ const GridExample = () => {
         []
     );
 
-    const selection = useMemo<SelectionOptions>(
+    const rowSelection = useMemo<RowSelectionOptions>(
         () => ({
             mode: 'singleRow',
             hideDisabledCheckboxes: true,
@@ -44,7 +44,7 @@ const GridExample = () => {
     };
 
     function toggleHideCheckbox() {
-        grid.current?.api.setGridOption('selection', {
+        grid.current?.api.setGridOption('rowSelection', {
             mode: 'singleRow',
             isRowSelectable: (node) => (node.data ? node.data.year <= 2007 : false),
             hideDisabledCheckboxes: getCheckboxValue('#toggle-hide-checkbox'),
@@ -72,7 +72,7 @@ const GridExample = () => {
                     rowData={rowData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
-                    selection={selection}
+                    rowSelection={rowSelection}
                     onGridReady={onGridReady}
                 />
             </div>

@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import type { GridApi, GridOptions, SelectionOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, RowSelectionMode } from 'ag-grid-community';
 import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
@@ -27,7 +27,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selection: {
+    rowSelection: {
         mode: 'singleRow',
     },
 };
@@ -42,12 +42,12 @@ document.addEventListener('DOMContentLoaded', function () {
         .then((data: IOlympicData[]) => gridApi.setGridOption('rowData', data));
 });
 
-function getSelectValue(id: string): SelectionOptions['mode'] {
-    return (document.querySelector<HTMLSelectElement>(id)?.value as SelectionOptions['mode']) ?? 'singleRow';
+function getSelectValue(id: string): RowSelectionMode {
+    return (document.querySelector<HTMLSelectElement>(id)?.value as RowSelectionMode) ?? 'singleRow';
 }
 
 function updateSelectionOptions() {
-    gridApi.setGridOption('selection', {
+    gridApi.setGridOption('rowSelection', {
         mode: getSelectValue('#input-selection-mode'),
     });
 }

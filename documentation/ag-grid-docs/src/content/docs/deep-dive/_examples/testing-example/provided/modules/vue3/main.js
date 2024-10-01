@@ -1,13 +1,13 @@
 import { createApp } from 'vue';
 import { onMounted, ref } from 'vue';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from 'ag-grid-vue3';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const CompanyLogoRenderer = {
     template: `
@@ -55,7 +55,7 @@ const App = {
         :rowData="rowData"
         :defaultColDef="defaultColDef"
         :pagination="true"
-        :selection="selection"
+        :rowSelection="rowSelection"
         @cell-value-changed="onCellValueChanged"
         @selection-changed="onSelectionChanged"
     >
@@ -124,7 +124,7 @@ const App = {
             { field: 'rocket' },
         ]);
 
-        const selection = ref({
+        const rowSelection = ref({
             mode: 'multiRow',
             headerCheckbox: false,
         });
@@ -142,7 +142,7 @@ const App = {
         return {
             rowData,
             colDefs,
-            selection,
+            rowSelection,
             defaultColDef,
             themeClass:
                 /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||

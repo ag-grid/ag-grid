@@ -48,7 +48,7 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
     private popupService: PopupService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.popupService = beans.popupService;
+        this.popupService = beans.popupService!;
     }
 
     private eAutocompleteInput: AgInputTextField = RefPlaceholder;

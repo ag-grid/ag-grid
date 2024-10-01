@@ -4,7 +4,6 @@ import type {
     ChangedPath,
     ColumnModel,
     FuncColsService,
-    IRowNodeStage,
     ISelectionService,
     IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
@@ -53,7 +52,7 @@ interface GroupingDetails {
     keyCreators: (((params: KeyCreatorParams) => string) | undefined)[];
 }
 
-export class GroupStrategy extends BeanStub implements IRowNodeStage {
+export class GroupStrategy extends BeanStub {
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
     private valueService: ValueService;
@@ -428,7 +427,7 @@ export class GroupStrategy extends BeanStub implements IRowNodeStage {
         }
 
         // groups are about to get disposed, so need to deselect any that are selected
-        this.selectionService?.filterFromSelection((node: RowNode) => node && !node.group);
+        this.selectionService?.filterFromSelection?.((node: RowNode) => node && !node.group);
 
         const { groupedCols } = details;
         const rootNode: GroupRow = details.rootNode;

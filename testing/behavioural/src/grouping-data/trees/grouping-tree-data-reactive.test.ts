@@ -1,5 +1,5 @@
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../test-utils';
@@ -9,7 +9,7 @@ import { getRowsSnapshot } from '../row-snapshot-test-utils';
 
 describe('ag-grid grouping treeData is reactive', () => {
     const gridsManager = new TestGridsManager({
-        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
     });
 
     beforeEach(() => {

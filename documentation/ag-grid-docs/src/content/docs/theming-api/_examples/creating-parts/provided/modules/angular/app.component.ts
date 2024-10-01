@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { createPart, createTheme } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const myCheckboxStyle = createPart('checkboxStyle')
     // Add some CSS to this part. If your application is bundled with Vite you
@@ -72,14 +72,14 @@ const myCustomTheme = createTheme().withPart(myCheckboxStyle);
             [rowData]="rowData"
             [theme]="theme"
             [initialState]="initialState"
-            [selection]="selection"
+            [rowSelection]="rowSelection"
         />
     `,
 })
 export class AppComponent {
     theme = myCustomTheme;
 
-    selection = { mode: 'multiRow', checkboxes: true };
+    rowSelection = { mode: 'multiRow', checkboxes: true };
 
     initialState = {
         rowSelection: ['1', '2', '3'],

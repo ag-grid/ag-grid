@@ -1,10 +1,10 @@
-import type { BeanCollection, FuncColsService, NamedBean, PivotResultColsService } from 'ag-grid-community';
+import type { BeanCollection, FuncColsService, IPivotResultColsService, NamedBean } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
 export class ListenerUtils extends BeanStub implements NamedBean {
     beanName = 'ssrmListenerUtils' as const;
 
-    private pivotResultColsService: PivotResultColsService;
+    private pivotResultColsService?: IPivotResultColsService;
     private funcColsService: FuncColsService;
 
     public wireBeans(beans: BeanCollection) {
@@ -25,7 +25,7 @@ export class ListenerUtils extends BeanStub implements NamedBean {
     }
 
     public isSortingWithSecondaryColumn(changedColumnsInSort: string[]): boolean {
-        const pivotResultCols = this.pivotResultColsService.getPivotResultCols();
+        const pivotResultCols = this.pivotResultColsService?.getPivotResultCols();
         if (!pivotResultCols) {
             return false;
         }

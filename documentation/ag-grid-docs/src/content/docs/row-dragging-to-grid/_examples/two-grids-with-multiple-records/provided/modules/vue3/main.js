@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -8,7 +8,7 @@ import { AgGridVue } from 'ag-grid-vue3';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const SportRenderer = {
     template: `<i class="far fa-trash-alt" style="cursor: pointer" @click="applyTransaction()"></i>`,
@@ -45,7 +45,7 @@ const VueExample = {
                                 style="height: 100%;"
                                 :class="themeClass"
                                 :defaultColDef="defaultColDef"
-                                :selection="selection"
+                                :rowSelection="rowSelection"
                                 :rowDragMultiRow="true"
                                 :getRowId="getRowId"
                                 :rowDragManaged="true"
@@ -91,7 +91,7 @@ const VueExample = {
                 minWidth: 100,
                 filter: true,
             },
-            selection: {
+            rowSelection: {
                 mode: 'multiRow',
             },
             leftColumns: [

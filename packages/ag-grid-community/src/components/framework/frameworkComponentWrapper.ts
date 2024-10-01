@@ -1,6 +1,6 @@
 import type { IComponent } from '../../interfaces/iComponent';
+import type { ComponentType } from '../../interfaces/iUserCompDetails';
 import { _warnOnce } from '../../utils/function';
-import type { ComponentType } from './componentTypes';
 
 /**
  * B the business interface (ie IHeader)

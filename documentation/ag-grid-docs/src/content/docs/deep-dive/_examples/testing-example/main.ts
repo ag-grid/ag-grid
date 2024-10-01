@@ -138,7 +138,7 @@ const gridOptions: GridOptions = {
     },
     // Grid Options & Callbacks
     pagination: true,
-    selection: { mode: 'multiRow', headerCheckbox: false },
+    rowSelection: { mode: 'multiRow', headerCheckbox: false },
     onSelectionChanged: (event: SelectionChangedEvent) => {
         console.log('Row Selection Event!');
     },

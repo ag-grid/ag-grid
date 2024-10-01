@@ -63,7 +63,7 @@ export class SetLeftFeature extends BeanStub {
         const suppressMoveAnimation = this.beans.gos.get('suppressColumnMoveAnimation');
         const oldLeftExists = _exists(this.columnOrGroup.getOldLeft());
         const animateColumnMove =
-            this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
+            this.beans.columnAnimationService?.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {
             this.animateInLeft();
         } else {
@@ -74,11 +74,8 @@ export class SetLeftFeature extends BeanStub {
     private animateInLeft(): void {
         const colOrGroup = this.getColumnOrGroup();
 
-        const left = colOrGroup.getLeft();
-        const oldLeft = colOrGroup.getOldLeft();
-
-        const oldActualLeft = this.modifyLeftForPrintLayout(colOrGroup, oldLeft!);
-        const actualLeft = this.modifyLeftForPrintLayout(colOrGroup, left!);
+        const oldActualLeft = this.modifyLeftForPrintLayout(colOrGroup, colOrGroup.getOldLeft()!);
+        const actualLeft = this.modifyLeftForPrintLayout(colOrGroup, colOrGroup.getLeft()!);
 
         this.setLeft(oldActualLeft!);
 
@@ -89,7 +86,7 @@ export class SetLeftFeature extends BeanStub {
         // VM turn, but only one (the correct one) should get applied.
         this.actualLeft = actualLeft;
 
-        this.beans.columnAnimationService.executeNextVMTurn(() => {
+        this.beans.columnAnimationService!.executeNextVMTurn(() => {
             // test this left value is the latest one to be applied, and if not, do nothing
             if (this.actualLeft === actualLeft) {
                 this.setLeft(actualLeft);

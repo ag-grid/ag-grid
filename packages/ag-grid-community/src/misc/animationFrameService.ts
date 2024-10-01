@@ -2,6 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
+import type { GridOptionsService } from '../gridOptionsService';
 import { _getWindow } from '../gridOptionsUtils';
 import type { PaginationService } from '../pagination/paginationService';
 import { _warnOnce } from '../utils/function';
@@ -15,6 +16,18 @@ interface TaskItem {
 interface TaskList {
     list: TaskItem[];
     sorted: boolean;
+}
+
+export function _requestAnimationFrame(gos: GridOptionsService, callback: any) {
+    const win = _getWindow(gos);
+
+    if (win.requestAnimationFrame) {
+        win.requestAnimationFrame(callback);
+    } else if ((win as any).webkitRequestAnimationFrame) {
+        (win as any).webkitRequestAnimationFrame(callback);
+    } else {
+        win.setTimeout(callback, 0);
+    }
 }
 
 export class AnimationFrameService extends BeanStub implements NamedBean {
@@ -197,44 +210,10 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
         // check for the existence of requestAnimationFrame, and if
         // it's missing, then we polyfill it with setTimeout()
         const callback = this.executeFrame.bind(this, 60);
-        this.requestAnimationFrame(callback);
-    }
-
-    public requestAnimationFrame(callback: any) {
-        const win = _getWindow(this.gos);
-
-        if (win.requestAnimationFrame) {
-            win.requestAnimationFrame(callback);
-        } else if ((win as any).webkitRequestAnimationFrame) {
-            (win as any).webkitRequestAnimationFrame(callback);
-        } else {
-            win.setTimeout(callback, 0);
-        }
+        _requestAnimationFrame(this.gos, callback);
     }
 
     public isQueueEmpty(): boolean {
         return !this.ticking;
-    }
-
-    // a debounce utility used for parts of the app involved with rendering.
-    // the advantage over normal debounce is the client can call flushAllFrames()
-    // to make sure all rendering is complete. we don't wait any milliseconds,
-    // as this is intended to batch calls in one VM turn.
-    public debounce(func: () => void) {
-        let pending = false;
-        return () => {
-            if (!this.isOn()) {
-                window.setTimeout(func, 0);
-                return;
-            }
-            if (pending) {
-                return;
-            }
-            pending = true;
-            this.addDestroyTask(() => {
-                pending = false;
-                func();
-            });
-        };
     }
 }

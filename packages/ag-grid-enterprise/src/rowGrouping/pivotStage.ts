@@ -6,14 +6,14 @@ import type {
     ColumnModel,
     FuncColsService,
     GridOptions,
+    IPivotResultColsService,
     IRowNodeStage,
     NamedBean,
-    PivotResultColsService,
     RowNode,
     StageExecuteParams,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _iterateObject, _missing } from 'ag-grid-community';
+import { BeanStub, ClientSideRowModelSteps, _iterateObject, _missing } from 'ag-grid-community';
 
 import type { PivotColDefService } from './pivotColDefService';
 
@@ -22,16 +22,24 @@ const EXCEEDED_MAX_UNIQUE_VALUES = 'Exceeded maximum allowed pivot column count.
 export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'pivotStage' as const;
 
+    public refreshProps: Set<keyof GridOptions<any>> = new Set([
+        'removePivotHeaderRowWhenSingleValueColumn',
+        'pivotRowTotals',
+        'pivotColumnGroupTotals',
+        'suppressExpandablePivotGroups',
+    ]);
+    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.PIVOT;
+
     private valueService: ValueService;
     private columnModel: ColumnModel;
-    private pivotResultColsService: PivotResultColsService;
+    private pivotResultColsService: IPivotResultColsService;
     private funcColsService: FuncColsService;
     private pivotColDefService: PivotColDefService;
 
     public wireBeans(beans: BeanCollection) {
         this.valueService = beans.valueService;
         this.columnModel = beans.columnModel;
-        this.pivotResultColsService = beans.pivotResultColsService;
+        this.pivotResultColsService = beans.pivotResultColsService!;
         this.funcColsService = beans.funcColsService;
         this.pivotColDefService = beans.pivotColDefService as PivotColDefService;
     }

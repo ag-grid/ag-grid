@@ -3,11 +3,11 @@
 import React, { StrictMode, useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import type {
     ColDef,
     GetRowIdParams,
-    SelectionOptions,
+    RowSelectionOptions,
     ValueFormatterParams,
     ValueGetterParams,
 } from 'ag-grid-community';
@@ -19,7 +19,7 @@ import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule, RowGroupingModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 const MIN_BOOK_COUNT = 10;
 const MAX_BOOK_COUNT = 20;
@@ -200,7 +200,7 @@ const updateImmutableObject = (original: any, newValues: any) => {
     return newObject;
 };
 
-const selection: SelectionOptions = {
+const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
     groupSelects: 'descendants',
     headerCheckbox: false,
@@ -409,7 +409,7 @@ const GridExample = () => {
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         autoGroupColumnDef={autoGroupColumnDef}
-                        selection={selection}
+                        rowSelection={rowSelection}
                         suppressAggFuncInHeader={true}
                         getRowId={getRowId}
                     />

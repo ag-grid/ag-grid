@@ -1,11 +1,9 @@
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
-import type { HttpClient } from '@angular/common/http';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import type { ChangeDetectorRef } from '@angular/core';
 import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
 import type {
     ColDef,
     GridApi,
@@ -13,23 +11,25 @@ import type {
     GridPreDestroyedEvent,
     GridReadyEvent,
     GridState,
-    SelectionOptions,
+    RowSelectionOptions,
     StateUpdatedEvent,
 } from 'ag-grid-community';
-import { ModuleRegistry } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
-import { FiltersToolPanelModule } from 'ag-grid-enterprise';
-import { RangeSelectionModule } from 'ag-grid-enterprise';
-import { SetFilterModule } from 'ag-grid-enterprise';
+import {
+    ColumnsToolPanelModule,
+    FiltersToolPanelModule,
+    RangeSelectionModule,
+    SetFilterModule,
+} from 'ag-grid-enterprise';
 
 import type { IOlympicData } from './interfaces';
 import './styles.css';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
-    CommunityFeaturesModule,
+
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
     SetFilterModule,
@@ -56,7 +56,7 @@ ModuleRegistry.registerModules([
                     [defaultColDef]="defaultColDef"
                     [sideBar]="true"
                     [pagination]="true"
-                    [selection]="selection"
+                    [rowSelection]="rowSelection"
                     [suppressColumnMoveAnimation]="true"
                     [rowData]="rowData"
                     [initialState]="initialState"
@@ -94,7 +94,7 @@ export class AppComponent {
         enablePivot: true,
         enableValue: true,
     };
-    public selection: SelectionOptions = {
+    public rowSelection: RowSelectionOptions = {
         mode: 'multiRow',
     };
     public rowData?: IOlympicData[];

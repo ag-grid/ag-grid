@@ -3,12 +3,12 @@
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { createTheme, iconSetMaterial } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const myCustomTheme = createTheme().withPart(iconSetMaterial).withParams({
     accentColor: 'red',
@@ -20,7 +20,7 @@ const GridExample = () => {
     return (
         <AgGridReact
             theme={myCustomTheme}
-            selection={{ mode: 'multiRow', checkboxes: true }}
+            rowSelection={{ mode: 'multiRow', checkboxes: true }}
             columnDefs={columnDefs}
             rowData={rowData}
             defaultColDef={defaultColDef}

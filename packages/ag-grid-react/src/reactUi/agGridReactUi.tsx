@@ -33,6 +33,7 @@ import {
     _getGlobalGridOption,
     _isClientSideRowModel,
     _isServerSideRowModel,
+    _observeResize,
     _processOnChange,
     _warnOnce,
 } from 'ag-grid-community';
@@ -184,7 +185,9 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
         destroyFuncs.current.push(() => {
             apiRef.current = undefined;
         });
-        gridIdRef.current = apiRef.current.getGridId();
+        if (apiRef.current) {
+            gridIdRef.current = apiRef.current.getGridId();
+        }
     }, []);
 
     const style = useMemo(() => {
@@ -297,7 +300,7 @@ class ReactFrameworkComponentWrapper
 
 // Define DetailCellRenderer and ReactFrameworkOverrides here to avoid circular dependency
 const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: any) => {
-    const { ctrlsFactory, context, gos, resizeObserverService, rowModel } = useContext(BeansContext);
+    const { ctrlsFactory, context, gos, rowModel } = useContext(BeansContext);
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [gridCssClasses, setGridCssClasses] = useState<CssClasses>(() => new CssClasses());
@@ -374,15 +377,15 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
                     // doing another update
                     const updateRowHeightFunc = () => {
                         props.node.setRowHeight(clientHeight);
-                        if (_isClientSideRowModel(gos) || _isServerSideRowModel(gos)) {
-                            (rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChanged();
+                        if (_isClientSideRowModel(gos, rowModel) || _isServerSideRowModel(gos, rowModel)) {
+                            rowModel.onRowHeightChanged();
                         }
                     };
                     setTimeout(updateRowHeightFunc, 0);
                 }
             };
 
-            resizeObserverDestroyFunc.current = resizeObserverService.observeResize(eRef, checkRowSizeFunc);
+            resizeObserverDestroyFunc.current = _observeResize(gos, eRef, checkRowSizeFunc);
             checkRowSizeFunc();
         }
     }, []);

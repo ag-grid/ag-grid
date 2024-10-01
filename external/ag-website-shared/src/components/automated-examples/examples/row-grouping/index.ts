@@ -4,7 +4,7 @@
 import { Easing, Group } from '@tweenjs/tween.js';
 
 import type { ColDef, GridApi, GridOptions, MenuItemDef } from 'ag-grid-community';
-import { ClientSideRowModelModule, CommunityFeaturesModule, ModuleRegistry, createGrid } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid } from 'ag-grid-community';
 import {
     GridChartsModule,
     MenuModule,
@@ -33,7 +33,6 @@ let scriptRunner: ScriptRunner;
 let restartScriptTimeout;
 
 ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
     ClientSideRowModelModule,
     RowGroupingModule,
     RangeSelectionModule,
@@ -121,7 +120,7 @@ const gridOptions: GridOptions = {
         },
     },
     enableCharts: true,
-    selection: { mode: 'cell' },
+    cellSelection: true,
     suppressAggFuncInHeader: true,
     getRowId: (params) => String(params.data.id),
     rowGroupPanelShow: 'always',

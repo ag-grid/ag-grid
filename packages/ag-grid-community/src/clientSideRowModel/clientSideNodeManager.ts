@@ -1,104 +1,20 @@
-import type { FuncColsService } from '../columns/funcColsService';
-import type { BeanCollection } from '../context/context';
-import { RowNode } from '../entities/rowNode';
-import type { EventService } from '../eventService';
-import type { SelectionEventSourceType } from '../events';
-import type { GridOptionsService } from '../gridOptionsService';
+import type { NamedBean } from '../context/bean';
+import type { RowNode } from '../entities/rowNode';
 import { _getRowIdCallback } from '../gridOptionsUtils';
-import type { ISelectionService } from '../interfaces/iSelectionService';
+import type { ClientSideNodeManagerUpdateRowDataResult } from '../interfaces/iClientSideNodeManager';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
-import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _missingOrEmpty } from '../utils/generic';
-import { _cloneObject } from '../utils/object';
-import { _logError, _logWarn } from '../validation/logging';
+import { _exists, _missingOrEmpty } from '../utils/generic';
+import { _cloneObject, _iterateObject } from '../utils/object';
+import { AbstractClientSideNodeManager } from './abstractClientSideNodeManager';
 
-const ROOT_NODE_ID = 'ROOT_NODE_ID';
+export class ClientSideNodeManager<TData> extends AbstractClientSideNodeManager<TData> implements NamedBean {
+    beanName = 'clientSideNodeManager' as const;
 
-/**
- * This is the type of any row in allLeafChildren and childrenAfterGroup of the ClientSideNodeManager rootNode.
- * ClientSideNodeManager is allowed to update the sourceRowIndex property of the nodes.
- */
-interface ClientSideNodeManagerRowNode extends RowNode {
-    sourceRowIndex: number;
-}
-
-/**
- * This is the type of the root RowNode of the ClientSideNodeManager
- * ClientSideNodeManager is allowed to update the allLeafChildren and childrenAfterGroup properties of the root node.
- */
-interface ClientSideNodeManagerRootNode extends RowNode {
-    allLeafChildren: ClientSideNodeManagerRowNode[] | null;
-    childrenAfterGroup: ClientSideNodeManagerRowNode[] | null;
-}
-
-/** Result of ClientSideNodeManager.updateRowData method */
-export interface ClientSideNodeManagerUpdateRowDataResult {
-    /** The RowNodeTransaction containing all the removals, updates and additions */
-    rowNodeTransaction: RowNodeTransaction;
-
-    /** True if at least one row was inserted (and not just appended) */
-    rowsInserted: boolean;
-}
-
-export class ClientSideNodeManager {
-    private readonly rootNode: ClientSideNodeManagerRootNode;
-
-    private gos: GridOptionsService;
-    private eventService: EventService;
-    private selectionService?: ISelectionService;
-    private beans: BeanCollection;
-
-    private nextId = 0;
-
-    // has row data actually been set
-    private rowCountReady = false;
-
-    // when user is provide the id's, we also keep a map of ids to row nodes for convenience
-    private allNodesMap: { [id: string]: RowNode } = {};
-
-    constructor(
-        rootNode: RowNode,
-        gos: GridOptionsService,
-        eventService: EventService,
-        funcColsService: FuncColsService,
-        selectionService: ISelectionService | undefined,
-        beans: BeanCollection
-    ) {
-        this.rootNode = rootNode;
-        this.gos = gos;
-        this.eventService = eventService;
-        this.beans = beans;
-        this.selectionService = selectionService;
-
-        this.rootNode.group = true;
-        this.rootNode.level = -1;
-        this.rootNode.id = ROOT_NODE_ID;
-        this.rootNode.allLeafChildren = [];
-        this.rootNode.childrenAfterGroup = [];
-        this.rootNode.childrenAfterSort = [];
-        this.rootNode.childrenAfterAggFilter = [];
-        this.rootNode.childrenAfterFilter = [];
-    }
-
-    public getCopyOfNodesMap(): { [id: string]: RowNode } {
-        return _cloneObject(this.allNodesMap);
-    }
-
-    public getRowNode(id: string): RowNode | undefined {
-        return this.allNodesMap[id];
-    }
-
-    public setRowData(rowData: any[]): RowNode[] | undefined {
-        if (typeof rowData === 'string') {
-            _logWarn(1, {});
-            return;
-        }
-        this.rowCountReady = true;
-
+    public override setNewRowData(rowData: TData[]): void {
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
         const rootNode = this.rootNode;
-        const sibling: ClientSideNodeManagerRootNode = this.rootNode.sibling;
+        const sibling = this.rootNode.sibling;
 
         rootNode.childrenAfterFilter = null;
         rootNode.childrenAfterGroup = null;
@@ -107,8 +23,7 @@ export class ClientSideNodeManager {
         rootNode.childrenMapped = null;
         rootNode.updateHasChildren();
 
-        this.nextId = 0;
-        this.allNodesMap = {};
+        this.clearAllNodesMap();
 
         if (rowData) {
             // we use rootNode as the parent, however if using ag-grid-enterprise, the grouping stage
@@ -130,36 +45,78 @@ export class ClientSideNodeManager {
         }
     }
 
-    public updateRowData(rowDataTran: RowDataTransaction): ClientSideNodeManagerUpdateRowDataResult {
-        this.rowCountReady = true;
-        this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
+    public override setImmutableRowData(rowData: TData[]): ClientSideNodeManagerUpdateRowDataResult<TData> {
+        // convert the setRowData data into a transaction object by working out adds, removes and updates
 
-        const updateRowDataResult: ClientSideNodeManagerUpdateRowDataResult = {
-            rowNodeTransaction: { remove: [], update: [], add: [] },
-            rowsInserted: false,
-        };
+        const rowDataTransaction = this.createTransactionForRowData(rowData);
 
-        const nodesToUnselect: RowNode[] = [];
+        // Apply the transaction
+        const result = this.updateRowData(rowDataTransaction);
 
-        this.executeRemove(rowDataTran, updateRowDataResult, nodesToUnselect);
-        this.executeUpdate(rowDataTran, updateRowDataResult, nodesToUnselect);
-        this.executeAdd(rowDataTran, updateRowDataResult);
+        // If true, we will not apply the new order specified in the rowData, but keep the old order.
+        const suppressSortOrder = this.gos.get('suppressMaintainUnsortedOrder');
+        if (!suppressSortOrder) {
+            // we need to reorder the nodes to match the new data order
+            result.rowsOrderChanged = this.updateRowOrderFromRowData(rowData);
+        }
 
-        this.updateSelection(nodesToUnselect, 'rowDataChanged');
+        return result;
+    }
 
-        return updateRowDataResult;
+    /** Converts the setRowData() command to a transaction */
+    private createTransactionForRowData(rowData: TData[]): RowDataTransaction<TData> {
+        const getRowIdFunc = _getRowIdCallback(this.gos)!;
+
+        // get a map of the existing data, that we are going to modify as we find rows to not delete
+        const existingNodesMap: { [id: string]: RowNode | undefined } = _cloneObject(this.allNodesMap);
+
+        const remove: TData[] = [];
+        const update: TData[] = [];
+        const add: TData[] = [];
+
+        if (_exists(rowData)) {
+            // split all the new data in the following:
+            // if new, push to 'add'
+            // if update, push to 'update'
+            // if not changed, do not include in the transaction
+            rowData.forEach((data: TData) => {
+                const id = getRowIdFunc({ data, level: 0 });
+                const existingNode = existingNodesMap[id];
+
+                if (existingNode) {
+                    const dataHasChanged = existingNode.data !== data;
+                    if (dataHasChanged) {
+                        update.push(data);
+                    }
+                    // otherwise, if data not changed, we just don't include it anywhere, as it's not a delta
+
+                    existingNodesMap[id] = undefined; // remove from list, so we know the item is not to be removed
+                } else {
+                    add.push(data);
+                }
+            });
+        }
+
+        // at this point, all rows that are left, should be removed
+        _iterateObject(existingNodesMap, (id, rowNode) => {
+            if (rowNode) {
+                remove.push(rowNode.data);
+            }
+        });
+
+        return { remove, update, add };
     }
 
     /**
-     * Used by the immutable service, after updateRowData, after updating with a generated transaction to
+     * Used by setImmutableRowData, after updateRowData, after updating with a generated transaction to
      * apply the order as specified by the the new data. We use sourceRowIndex to determine the order of the rows.
      * Time complexity is O(n) where n is the number of rows/rowData
      * @returns true if the order changed, otherwise false
      */
-    public updateRowOrderFromRowData<TData>(rowData: TData[]): boolean {
+    private updateRowOrderFromRowData(rowData: TData[]): boolean {
         const rows = this.rootNode.allLeafChildren;
         const rowsLength = rows?.length ?? 0;
-        const rowsOutOfOrder = new Map<TData, ClientSideNodeManagerRowNode>();
+        const rowsOutOfOrder = new Map<TData, AbstractClientSideNodeManager.RowNode<TData>>();
         let firstIndexOutOfOrder = -1;
         let lastIndexOutOfOrder = -1;
 
@@ -173,7 +130,7 @@ export class ClientSideNodeManager {
                     firstIndexOutOfOrder = i; // First row out of order was found
                 }
                 lastIndexOutOfOrder = i; // Last row out of order
-                rowsOutOfOrder.set(data, row); // A new row out of order was found, add it to the map
+                rowsOutOfOrder.set(data!, row); // A new row out of order was found, add it to the map
             }
         }
         if (firstIndexOutOfOrder < 0) {
@@ -191,43 +148,28 @@ export class ClientSideNodeManager {
         return true; // The order changed
     }
 
-    public isRowCountReady(): boolean {
-        return this.rowCountReady;
+    public updateRowData(rowDataTran: RowDataTransaction<TData>): ClientSideNodeManagerUpdateRowDataResult<TData> {
+        this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
+
+        const updateRowDataResult: ClientSideNodeManagerUpdateRowDataResult<TData> = {
+            rowNodeTransaction: { remove: [], update: [], add: [] },
+            rowsInserted: false,
+            rowsOrderChanged: false,
+        };
+
+        const nodesToUnselect: RowNode[] = [];
+
+        const getRowIdFunc = _getRowIdCallback(this.gos);
+        this.executeRemove(getRowIdFunc, rowDataTran, updateRowDataResult, nodesToUnselect);
+        this.executeUpdate(getRowIdFunc, rowDataTran, updateRowDataResult, nodesToUnselect);
+        this.executeAdd(rowDataTran, updateRowDataResult);
+
+        this.updateSelection(nodesToUnselect, 'rowDataChanged');
+
+        return updateRowDataResult;
     }
 
-    private dispatchRowDataUpdateStartedEvent(rowData?: any[] | null): void {
-        this.eventService.dispatchEvent({
-            type: 'rowDataUpdateStarted',
-            firstRowData: rowData?.length ? rowData[0] : null,
-        });
-    }
-
-    private updateSelection(nodesToUnselect: RowNode[], source: SelectionEventSourceType): void {
-        const selectionChanged = nodesToUnselect.length > 0;
-        if (selectionChanged) {
-            this.selectionService?.setNodesSelected({
-                newValue: false,
-                nodes: nodesToUnselect,
-                suppressFinishActions: true,
-                source,
-            });
-        }
-
-        // we do this regardless of nodes to unselect or not, as it's possible
-        // a new node was inserted, so a parent that was previously selected (as all
-        // children were selected) should not be tri-state (as new one unselected against
-        // all other selected children).
-        this.selectionService?.updateGroupsFromChildrenSelections(source);
-
-        if (selectionChanged) {
-            this.eventService.dispatchEvent({
-                type: 'selectionChanged',
-                source: source,
-            });
-        }
-    }
-
-    private executeAdd(rowDataTran: RowDataTransaction, result: ClientSideNodeManagerUpdateRowDataResult): void {
+    private executeAdd(rowDataTran: RowDataTransaction, result: ClientSideNodeManagerUpdateRowDataResult<TData>): void {
         const add = rowDataTran.add;
         if (_missingOrEmpty(add)) {
             return;
@@ -242,8 +184,9 @@ export class ClientSideNodeManager {
             if (addIndex > 0) {
                 // TODO: this code should not be here, see AG-12602
                 // This was a fix for AG-6231, but is not the correct fix
-                const isTreeData = this.gos.get('treeData');
-                if (isTreeData) {
+                // We enable it only for trees that use getDataPath and not the new children field
+                const getDataPath = this.gos.get('getDataPath');
+                if (getDataPath) {
                     for (let i = 0; i < allLeafChildren.length; i++) {
                         const node = allLeafChildren[i];
                         if (node?.rowIndex == addIndex - 1) {
@@ -279,7 +222,7 @@ export class ClientSideNodeManager {
             this.rootNode.allLeafChildren = allLeafChildren.concat(newNodes);
         }
 
-        const sibling: ClientSideNodeManagerRootNode = this.rootNode.sibling;
+        const sibling = this.rootNode.sibling;
         if (sibling) {
             sibling.allLeafChildren = allLeafChildren;
         }
@@ -288,22 +231,10 @@ export class ClientSideNodeManager {
         result.rowNodeTransaction.add = newNodes;
     }
 
-    private sanitizeAddIndex(addIndex: number): number {
-        const allChildrenCount = this.rootNode.allLeafChildren?.length ?? 0;
-        if (addIndex < 0 || addIndex >= allChildrenCount || Number.isNaN(addIndex)) {
-            return allChildrenCount; // Append. Also for negative values, as it was historically the behavior.
-        }
-
-        // Ensure index is a whole number and not a floating point.
-        // Use case: the user want to add a row in the middle, doing addIndex = array.length / 2.
-        // If the array has an odd number of elements, the addIndex need to be rounded up.
-        // Consider that array.slice does round up internally, but we are setting this value to node.sourceRowIndex.
-        return Math.ceil(addIndex);
-    }
-
     private executeRemove(
+        getRowIdFunc: ((data: any) => string) | undefined,
         rowDataTran: RowDataTransaction,
-        { rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult,
+        { rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult<TData>,
         nodesToUnselect: RowNode[]
     ): void {
         const { remove } = rowDataTran;
@@ -315,7 +246,7 @@ export class ClientSideNodeManager {
         const rowIdsRemoved: { [key: string]: boolean } = {};
 
         remove!.forEach((item) => {
-            const rowNode = this.lookupRowNode(item);
+            const rowNode = this.lookupRowNode(getRowIdFunc, item);
 
             if (!rowNode) {
                 return;
@@ -347,15 +278,16 @@ export class ClientSideNodeManager {
             node.sourceRowIndex = idx;
         });
 
-        const sibling: ClientSideNodeManagerRootNode | null = this.rootNode.sibling;
+        const sibling = this.rootNode.sibling;
         if (sibling) {
             sibling.allLeafChildren = this.rootNode.allLeafChildren;
         }
     }
 
     private executeUpdate(
+        getRowIdFunc: ((data: any) => string) | undefined,
         rowDataTran: RowDataTransaction,
-        { rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult,
+        { rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult<TData>,
         nodesToUnselect: RowNode[]
     ): void {
         const { update } = rowDataTran;
@@ -364,7 +296,7 @@ export class ClientSideNodeManager {
         }
 
         update!.forEach((item) => {
-            const rowNode = this.lookupRowNode(item);
+            const rowNode = this.lookupRowNode(getRowIdFunc, item);
 
             if (!rowNode) {
                 return;
@@ -375,63 +307,17 @@ export class ClientSideNodeManager {
                 nodesToUnselect.push(rowNode);
             }
 
-            if (!this.gos.get('treeData')) {
-                this.beans.detailGridApiService?.setMasterForRow(rowNode, item, false);
-            }
-
             rowNodeTransaction.update.push(rowNode);
         });
     }
 
-    private lookupRowNode(data: any): RowNode | null {
-        const getRowIdFunc = _getRowIdCallback(this.gos);
-
-        let rowNode: RowNode | undefined;
-        if (getRowIdFunc) {
-            // find rowNode using id
-            const id = getRowIdFunc({ data, level: 0 });
-            rowNode = this.allNodesMap[id];
-            if (!rowNode) {
-                // Cannot find the row node for the given id
-                _logError(4, { id });
-                return null;
-            }
-        } else {
-            // find rowNode using object references
-            rowNode = this.rootNode.allLeafChildren?.find((node) => node.data === data);
-            if (!rowNode) {
-                // Cannot find the row node for the given data
-                _logError(5, { data });
-                return null;
-            }
-        }
-
-        return rowNode || null;
+    public setMasterForAllRows(rows: RowNode<TData>[] | null | undefined, shouldSetExpanded: boolean): void {
+        this.beans.detailGridApiService?.setMasterForAllRows(rows, shouldSetExpanded);
     }
 
-    private createNode(dataItem: any, sourceRowIndex: number): RowNode {
-        const node: ClientSideNodeManagerRowNode = new RowNode(this.beans);
-        node.sourceRowIndex = sourceRowIndex;
-
-        node.group = false;
-        node.master = false;
-        node.expanded = false;
-        node.parent = this.rootNode;
-        node.level = 0;
-
-        if (!this.gos.get('treeData')) {
-            this.beans.detailGridApiService?.setMasterForRow(node, dataItem, true);
-        }
-
-        node.setDataAndId(dataItem, this.nextId.toString());
-
-        if (this.allNodesMap[node.id!]) {
-            _logWarn(2, { nodeId: node.id });
-        }
-        this.allNodesMap[node.id!] = node;
-
-        this.nextId++;
-
+    protected override createNode(data: TData, sourceRowIndex: number): RowNode<TData> {
+        const node = super.createNode(data, sourceRowIndex);
+        this.beans.detailGridApiService?.setMasterForRow(node, data, true);
         return node;
     }
 }
