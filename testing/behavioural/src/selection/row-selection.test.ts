@@ -1034,6 +1034,58 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
+            test('Cannot select group rows where `isRowSelectable` returns false and `groupSelects` = "self"', async () => {
+                const api = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        isRowSelectable: (node) => node.data?.sport === 'Swimming',
+                    },
+                });
+
+                toggleCheckboxByIndex(0);
+                assertSelectedRowsByIndex([], api);
+
+                toggleCheckboxByIndex(2);
+                assertSelectedRowsByIndex([2], api);
+            });
+
+            test('Can select group rows where `isRowSelectable` returns false and `groupSelects` = "descendants"', async () => {
+                const api = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'descendants',
+                        isRowSelectable: (node) => node.data?.sport === 'Swimming',
+                    },
+                });
+
+                toggleCheckboxByIndex(0);
+                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11], api);
+            });
+
+            test('Selection state changes when `isRowSelectable` changes', async () => {
+                const api = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'descendants',
+                        isRowSelectable: (node) => node.data?.sport === 'Swimming',
+                    },
+                });
+
+                toggleCheckboxByIndex(0);
+                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11], api);
+
+                api.setGridOption('rowSelection', {
+                    mode: 'multiRow',
+                    groupSelects: 'descendants',
+                    isRowSelectable: (node) => node.data?.sport === 'Gymnastics',
+                });
+
+                assertSelectedRowsByIndex([], api);
+            });
+
             describe('Range selection behaviour', () => {
                 test('CTRL-click and CMD-click does not affect ability to select multiple rows', async () => {
                     const api = await createGridAndWait({
