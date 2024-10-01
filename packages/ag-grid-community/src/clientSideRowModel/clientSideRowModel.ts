@@ -1075,24 +1075,76 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         rowNodesOrderChanged: boolean,
         afterColumnsChanged: boolean
     ) {
-        if (this.groupStage) {
-            if (rowNodeTransactions) {
-                this.groupStage.execute({
-                    rowNode: this.rootNode,
-                    rowNodeTransactions,
-                    rowNodesOrderChanged,
-                    changedPath: changedPath,
-                });
-            } else {
-                this.groupStage.execute({
-                    rowNode: this.rootNode,
-                    changedPath: changedPath,
-                    afterColumnsChanged: afterColumnsChanged,
-                });
+        const treeData = this.gos.get('treeData');
+        if (treeData) {
+            if (this.nodeManager.executeTreeStage) {
+                // TODO: the TreeStrategy has to be moved in the client side node manager
+                // The tree build should happen during row nodes construction.
+                if (rowNodeTransactions) {
+                    this.nodeManager.executeTreeStage({
+                        rowNode: this.rootNode,
+                        rowNodeTransactions,
+                        rowNodesOrderChanged,
+                        changedPath: changedPath,
+                    });
+                } else {
+                    this.nodeManager.executeTreeStage({
+                        rowNode: this.rootNode,
+                        changedPath: changedPath,
+                        afterColumnsChanged: afterColumnsChanged,
+                    });
+                }
+
+                this.updateSelectableAfterGrouping(changedPath);
             }
+        }
+
+        if (!treeData) {
+            const groupStage = this.groupStage;
+            if (groupStage) {
+                if (rowNodeTransactions) {
+                    groupStage.execute({
+                        rowNode: this.rootNode,
+                        rowNodeTransactions,
+                        rowNodesOrderChanged,
+                        changedPath: changedPath,
+                    });
+                } else {
+                    groupStage.execute({
+                        rowNode: this.rootNode,
+                        changedPath: changedPath,
+                        afterColumnsChanged: afterColumnsChanged,
+                    });
+                }
+
+                this.updateSelectableAfterGrouping(changedPath);
+            } else {
+                const rootNode: ClientSideRowModelRootNode = this.rootNode;
+                const sibling: ClientSideRowModelRootNode = rootNode.sibling;
+                rootNode.childrenAfterGroup = rootNode.allLeafChildren;
+                if (sibling) {
+                    sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
+                }
+                this.rootNode.updateHasChildren();
+            }
+        }
+
+        if (this.rowNodesCountReady) {
+            // only if row data has been set
+            this.rowCountReady = true;
+            this.eventService.dispatchEventOnce({
+                type: 'rowCountReady',
+            });
+        }
+    }
+
+    private updateSelectableAfterGrouping(changedPath: ChangedPath | undefined): void {
+        const selectionService = this.selectionService;
+        if (selectionService) {
+            selectionService.updateSelectable(true);
 
             if (_getGroupSelectsDescendants(this.gos)) {
-                const selectionChanged = this.selectionService?.updateGroupsFromChildrenSelections?.(
+                const selectionChanged = selectionService.updateGroupsFromChildrenSelections?.(
                     'rowGroupChanged',
                     changedPath
                 );
@@ -1104,22 +1156,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                     });
                 }
             }
-        } else {
-            const rootNode: ClientSideRowModelRootNode = this.rootNode;
-            const sibling: ClientSideRowModelRootNode = rootNode.sibling;
-            rootNode.childrenAfterGroup = rootNode.allLeafChildren;
-            if (sibling) {
-                sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
-            }
-            this.rootNode.updateHasChildren();
-        }
-
-        if (this.rowNodesCountReady) {
-            // only if row data has been set
-            this.rowCountReady = true;
-            this.eventService.dispatchEventOnce({
-                type: 'rowCountReady',
-            });
         }
     }
 
