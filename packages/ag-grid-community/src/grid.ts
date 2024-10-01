@@ -201,7 +201,7 @@ export class GridCoreCreator {
         const passedViaConstructor: Module[] | undefined | null = params ? params.modules : null;
         const registered = ModuleRegistry.__getRegisteredModules(gridId);
 
-        const allModules: Module[] = [GridCoreModule];
+        const allModules: Module[] = [];
         const mapNames: { [name: string]: boolean } = {};
 
         // adds to list and removes duplicates
@@ -219,6 +219,8 @@ export class GridCoreCreator {
                 mod.dependsOn.forEach((m) => addModule(moduleBased, m, gridId));
             }
         };
+
+        addModule(true, GridCoreModule, gridId);
 
         if (passedViaConstructor) {
             passedViaConstructor.forEach((m) => addModule(true, m, gridId));
