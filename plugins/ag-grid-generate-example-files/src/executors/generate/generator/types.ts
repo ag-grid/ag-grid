@@ -68,6 +68,7 @@ export interface ParsedBindings {
     components: Component[];
     vuePropertyBindings: {};
     defaultColDef: string;
+    autoGroupColumnDef: string;
     onGridReady: string;
     globalComponents: string[];
     parsedColDefs: string;

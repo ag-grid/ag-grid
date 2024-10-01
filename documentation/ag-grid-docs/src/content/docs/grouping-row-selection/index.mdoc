@@ -2,44 +2,61 @@
 title: "Row Grouping - Selecting Groups"
 enterprise: true
 ---
-When using row grouping, you can customize what gets selected when selecting a row group using the `rowSelection.groupSelects` grid property.
+Row Selection can be configured with groups to select all of a rows descendants.
 
-{% interfaceDocumentation interfaceName="MultiRowSelectionOptions" names=["groupSelects"] config={"description":""} /%}
+## Selecting Descendants
 
-There are three values of `groupSelects`, corresponding to three modes of operation for selection of row groups:
-- `'self'`: Selecting a row group selects only that row and none of the rows within the group.
-- `'descendants'`: Selecting a row group recursively selects all rows within the group. The group row will also display as selected. When any of the descendants of the group row are deselected, the group row will display as "indeterminate". In this mode, the group row node will not be part of the selected nodes returned from `api.getSelectedNodes()`.
-- `'filteredDescendants'`: As for `'descendants'`, but only those grouped rows that satisfy the currently active filter will be selected/unselected. Note in particular that when some rows are filtered out of a group, selecting that group row will leave it in an indeterminate state.
+When using [Multiple Row Selection](./row-selection-multi-row/) with row grouping, the grid can be configured to impact descendant and
+ancestor rows when a row is selected.
+
+To enable hierarchical selection, set the `selection.groupSelects` option to one of the following values:
+
+- `'self'`: Selecting a parent row has no additional side effects.
+- `'descendants'`: Selecting a parent row will select all of its descendants.
+- `'filteredDescendants'`: Selecting a parent row will select all of its descendants that pass the filter.
 
 {% gridExampleRunner title="Group Selection" name="group-selection" /%}
 
-Use the controls above the grid to explore the effects of different values for `groupSelects`. For example, try the following:
-1. Select `'filteredDescendants'` from the "Group Selects" dropdown
-1. Type in a filter
-1. Select a group
-1. Notice that all filtered rows are selected. Upon removing the filter, the non-filtered rows are not selected.
-1. Notice that the group checkbox becomes indeterminate even while all its filtered descendants are selected. This is because the selected state of the group node is independent of the filter, so it becomes indeterminate since not all of its descendants are selected.
-
-## Preventing Leaf Nodes from Being Selected
-
-The example below is similar to the previous example except it does not render checkboxes on the leaf level nodes, allowing only entire groups to be selected. 
-This is achieved by providing a function for `rowSelection.checkboxes` and setting `rowSelection.hideDisabledCheckboxes = true`.
-
-Alternatively, you may instead prefer to provide a function to `autoGroupColumnDef.cellRendererParams.checkbox`. 
-This will instead render checkboxes next to the expansion chevron in the group cell. 
-You will still need to set `rowSelection.hideDisabledCheckboxes = true` to prevent checkboxes from being visible.
-
-{% gridExampleRunner title="Prevent Leaf Nodes from Being Selected" name="prevent-leaf-node-selection" /%}
+The example above demonstrates the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    selection: {
+        mode: 'multiple',
+        groupSelects: 'descendants',
+    },
+}
+```
 
 ## Checkboxes in Group Cells
-By default, the grid will render checkboxes in their own column. If there is a preference for rendering checkboxes in the group cell, next to the expansion chevron, this can be done by:
-1. Disabling checkboxes in the checkbox column: `rowSelection.checkboxes = false`
-1. Enabling checkboxes in the group cell renderer: `autoGroupColumnDef.cellRendererParams.checkbox = true`
 
-This is illustrated below. Note that the checkbox column will still be rendered unless `rowSelection.headerCheckbox` is also set to `false`.
+When using [Row Selection](./row-selection/) with grouping, the grid can be configured to render checkboxes in the group cell, to
+the right of the expand/collapse chevron.
+
+This can be configured on the group cell renderer, by setting the `cellRendererParams.checkbox` option to `true`.
+
+{% note %}
+If using `groupDisplayType` set to `"groupRows"`, this is instead configured via `groupRowRendererParams.checkbox`.
+{% /note %}
 
 {% gridExampleRunner title="Group Cell Checkboxes" name="group-cell-checkboxes" /%}
 
-## API Reference
+The example above demonstrates the following configuration to render checkboxes in the group cell, and [Removes the Default Checkboxes](./row-selection-single-row/#removing-selection-checkboxes):
 
-See the API reference in [Row Selection](./row-selection-api-reference).
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoGroupColumnDef: {
+        cellRendererParams: {
+            checkbox: true,
+        },
+    },
+    
+    selection: {
+        mode: 'multiRow',
+        checkboxes: false,
+        headerCheckbox: false,
+    },
+}
+```
+
+## Next Up
+Continue to the next section to learn [Sorting Groups](./grouping-sorting/).
