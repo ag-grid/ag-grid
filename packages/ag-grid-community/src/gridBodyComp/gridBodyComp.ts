@@ -2,10 +2,10 @@ import type { BeanCollection } from '../context/context';
 import { _isCellSelectionEnabled, _isMultiRowSelection } from '../gridOptionsUtils';
 import { GridHeaderSelector } from '../headerRendering/gridHeaderComp';
 import type { IRangeService } from '../interfaces/IRangeService';
-import type { ResizeObserverService } from '../misc/resizeObserverService';
-import { OverlayWrapperSelector } from '../rendering/overlays/overlayWrapperComponent';
+import type { OverlayService } from '../rendering/overlays/overlayService';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
+import { _observeResize } from '../utils/dom';
 import type { ComponentSelector } from '../widgets/component';
 import { Component, RefPlaceholder } from '../widgets/component';
 import { FakeHScrollSelector } from './fakeHScrollComp';
@@ -18,9 +18,9 @@ import type { RowContainerName } from './rowContainer/rowContainerCtrl';
 function makeRowContainers(names: RowContainerName[]): string {
     return names.map((name) => `<ag-row-container name="${name}"></ag-row-container>`).join('');
 }
-const GRID_BODY_TEMPLATE =
-    /* html */
-    `<div class="ag-root ag-unselectable" role="treegrid">
+
+function getGridBodyTemplate(includeOverlay?: boolean) {
+    return /* html */ `<div class="ag-root ag-unselectable" role="treegrid">
         <ag-header-root></ag-header-root>
         <div class="ag-floating-top" data-ref="eTop" role="presentation">
             ${makeRowContainers(['topLeft', 'topCenter', 'topRight', 'topFullWidth'])}
@@ -41,16 +41,17 @@ const GRID_BODY_TEMPLATE =
             ${makeRowContainers(['bottomLeft', 'bottomCenter', 'bottomRight', 'bottomFullWidth'])}
         </div>
         <ag-fake-horizontal-scroll></ag-fake-horizontal-scroll>
-        <ag-overlay-wrapper></ag-overlay-wrapper>
+        ${includeOverlay ? /* html */ `<ag-overlay-wrapper></ag-overlay-wrapper>` : ''}
     </div>`;
+}
 
 export class GridBodyComp extends Component {
-    private resizeObserverService: ResizeObserverService;
     private rangeService?: IRangeService;
+    private overlayService?: OverlayService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.resizeObserverService = beans.resizeObserverService;
         this.rangeService = beans.rangeService;
+        this.overlayService = beans.overlayService;
     }
 
     private readonly eBodyViewport: HTMLElement = RefPlaceholder;
@@ -62,17 +63,17 @@ export class GridBodyComp extends Component {
 
     private ctrl: GridBodyCtrl;
 
-    constructor() {
-        super(GRID_BODY_TEMPLATE, [
-            OverlayWrapperSelector,
+    public postConstruct() {
+        const overlaySelector = this.overlayService?.getOverlayWrapperSelector();
+
+        this.setTemplate(getGridBodyTemplate(!!overlaySelector), [
+            ...(overlaySelector ? [overlaySelector] : []),
             FakeHScrollSelector,
             FakeVScrollSelector,
             GridHeaderSelector,
             RowContainerSelector,
         ]);
-    }
 
-    public postConstruct() {
         const setHeight = (height: number, element: HTMLElement) => {
             const heightString = `${height}px`;
             element.style.minHeight = heightString;
@@ -114,7 +115,7 @@ export class GridBodyComp extends Component {
             setAlwaysVerticalScrollClass: (cssClass, on) =>
                 this.eBodyViewport.classList.toggle(CSS_CLASS_FORCE_VERTICAL_SCROLL, on),
             registerBodyViewportResizeListener: (listener) => {
-                const unsubscribeFromResize = this.resizeObserverService.observeResize(this.eBodyViewport, listener);
+                const unsubscribeFromResize = _observeResize(this.gos, this.eBodyViewport, listener);
                 this.addDestroyFunc(() => unsubscribeFromResize());
             },
             setPinnedTopBottomOverflowY: (overflow) =>

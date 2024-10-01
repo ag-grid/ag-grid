@@ -122,7 +122,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
     private getValue(node: RowNode, column: AgColumn): any {
         if (!this.primaryColumnsSortGroups) {
-            return this.valueService.getValue(column, node, false, false);
+            return this.valueService.getValue(column, node, false);
         }
 
         const isNodeGroupedAtLevel = node.rowGroupColumn === column;
@@ -133,7 +133,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             if (isGroupRows) {
                 const leafChild = node.allLeafChildren?.[0];
                 if (leafChild) {
-                    return this.valueService.getValue(column, leafChild, false, false);
+                    return this.valueService.getValue(column, leafChild, false);
                 }
                 return undefined;
             }
@@ -149,6 +149,6 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             return undefined;
         }
 
-        return this.valueService.getValue(column, node, false, false);
+        return this.valueService.getValue(column, node, false);
     }
 }

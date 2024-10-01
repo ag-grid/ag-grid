@@ -1,6 +1,5 @@
 import type { _RowSelectionGridApi } from '../api/gridApi';
-import { _defineModule } from '../interfaces/iModule';
-import { VERSION } from '../version';
+import { defineCommunityModule } from '../interfaces/iModule';
 import {
     deselectAll,
     deselectAllFiltered,
@@ -14,16 +13,12 @@ import {
 } from './rowSelectionApi';
 import { SelectionService } from './selectionService';
 
-export const RowSelectionCoreModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/row-selection-core',
+export const RowSelectionCoreModule = defineCommunityModule('RowSelectionCoreModule', {
     beans: [SelectionService],
 });
 
-export const RowSelectionApiModule = _defineModule<_RowSelectionGridApi>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/row-selection-api',
-    dependantModules: [RowSelectionCoreModule],
+export const RowSelectionApiModule = defineCommunityModule<_RowSelectionGridApi>('RowSelectionApiModule', {
+    dependsOn: [RowSelectionCoreModule],
     apiFunctions: {
         setNodesSelected,
         selectAll,
@@ -37,8 +32,6 @@ export const RowSelectionApiModule = _defineModule<_RowSelectionGridApi>({
     },
 });
 
-export const RowSelectionModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/row-selection',
-    dependantModules: [RowSelectionApiModule],
+export const RowSelectionModule = defineCommunityModule('RowSelectionModule', {
+    dependsOn: [RowSelectionApiModule],
 });

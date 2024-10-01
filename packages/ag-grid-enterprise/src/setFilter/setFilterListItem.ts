@@ -19,6 +19,7 @@ import {
     Component,
     RefPlaceholder,
     _createIcon,
+    _getCellRendererDetails,
     _setAriaChecked,
     _setAriaDescribedBy,
     _setAriaExpanded,
@@ -407,7 +408,8 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     }
 
     private renderCell(): void {
-        const compDetails = this.userComponentFactory.getSetFilterCellRendererDetails(
+        const compDetails = _getCellRendererDetails<SetFilterParams<any, V>, ISetFilterCellRendererParams>(
+            this.userComponentFactory,
             this.params,
             this.cellRendererParams
         );

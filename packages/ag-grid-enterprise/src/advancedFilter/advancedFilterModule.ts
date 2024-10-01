@@ -1,8 +1,8 @@
 import type { _AdvancedFilterGridApi } from 'ag-grid-community';
-import { DragAndDropModule, ModuleNames, _FilterCoreModule, _defineModule } from 'ag-grid-community';
+import { DragAndDropModule, FilterCoreModule, FilterValueModule, ModuleNames, PopupModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { VERSION } from '../version';
+import { defineEnterpriseModule } from '../moduleUtils';
 import {
     getAdvancedFilterModel,
     hideAdvancedFilterBuilder,
@@ -12,27 +12,21 @@ import {
 import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import { AdvancedFilterService } from './advancedFilterService';
 
-export const AdvancedFilterCoreModule = _defineModule({
-    version: VERSION,
-    moduleName: `${ModuleNames.AdvancedFilterModule}-core`,
+export const AdvancedFilterCoreModule = defineEnterpriseModule('AdvancedFilterCoreModule', {
     beans: [AdvancedFilterService, AdvancedFilterExpressionService],
-    dependantModules: [EnterpriseCoreModule, _FilterCoreModule, DragAndDropModule],
+    dependsOn: [EnterpriseCoreModule, FilterCoreModule, DragAndDropModule, PopupModule, FilterValueModule],
 });
 
-export const AdvancedFilterApiModule = _defineModule<_AdvancedFilterGridApi>({
-    version: VERSION,
-    moduleName: `${ModuleNames.AdvancedFilterModule}-api`,
+export const AdvancedFilterApiModule = defineEnterpriseModule<_AdvancedFilterGridApi>('AdvancedFilterApiModule', {
     apiFunctions: {
         getAdvancedFilterModel,
         setAdvancedFilterModel,
         showAdvancedFilterBuilder,
         hideAdvancedFilterBuilder,
     },
-    dependantModules: [AdvancedFilterCoreModule],
+    dependsOn: [AdvancedFilterCoreModule],
 });
 
-export const AdvancedFilterModule = _defineModule({
-    version: VERSION,
-    moduleName: ModuleNames.AdvancedFilterModule,
-    dependantModules: [AdvancedFilterCoreModule, AdvancedFilterApiModule],
+export const AdvancedFilterModule = defineEnterpriseModule(ModuleNames.AdvancedFilterModule, {
+    dependsOn: [AdvancedFilterCoreModule, AdvancedFilterApiModule],
 });

@@ -1,26 +1,19 @@
 import type { _StateGridApi } from '../../api/gridApi';
-import { _defineModule } from '../../interfaces/iModule';
-import { VERSION } from '../../version';
+import { defineCommunityModule } from '../../interfaces/iModule';
 import { getState } from './stateApi';
 import { StateService } from './stateService';
 
-export const StateCoreModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/state-core',
+export const StateCoreModule = defineCommunityModule('StateCoreModule', {
     beans: [StateService],
 });
 
-export const StateApiModule = _defineModule<_StateGridApi>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/state-api',
+export const StateApiModule = defineCommunityModule<_StateGridApi>('StateApiModule', {
     apiFunctions: {
         getState,
     },
-    dependantModules: [StateCoreModule],
+    dependsOn: [StateCoreModule],
 });
 
-export const StateModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/state',
-    dependantModules: [StateCoreModule, StateApiModule],
+export const StateModule = defineCommunityModule('StateModule', {
+    dependsOn: [StateCoreModule, StateApiModule],
 });

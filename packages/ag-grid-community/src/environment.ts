@@ -2,8 +2,8 @@ import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { GridTheme } from './entities/gridOptions';
-import type { ResizeObserverService } from './misc/resizeObserverService';
-import { _errorOnce, _warnOnce } from './utils/function';
+import { _observeResize } from './utils/dom';
+import { _logWarn } from './validation/logging';
 
 const ROW_HEIGHT: Variable = {
     cssName: '--ag-row-height',
@@ -24,11 +24,9 @@ const LIST_ITEM_HEIGHT: Variable = {
 export class Environment extends BeanStub implements NamedBean {
     beanName = 'environment' as const;
 
-    private resizeObserverService: ResizeObserverService;
     private eGridDiv: HTMLElement;
 
     public wireBeans(beans: BeanCollection): void {
-        this.resizeObserverService = beans.resizeObserverService;
         this.eGridDiv = beans.eGridDiv;
     }
 
@@ -168,12 +166,11 @@ export class Environment extends BeanStub implements NamedBean {
         let lastMeasurement = this.measureSizeEl(variable);
 
         if (lastMeasurement === 'no-styles') {
-            _warnOnce(
-                `no value for ${variable.cssName}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${variable.defaultValue} will be used and updated when styles load.`
-            );
+            // No value for the variable
+            _logWarn(9, { variable });
         }
 
-        const unsubscribe = this.resizeObserverService.observeResize(sizeEl, () => {
+        const unsubscribe = _observeResize(this.gos, sizeEl, () => {
             const newMeasurement = this.measureSizeEl(variable);
             if (newMeasurement === 'detached' || newMeasurement === 'no-styles') {
                 return;

@@ -1,4 +1,4 @@
-import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
+import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { _setDisplayed } from '../../../utils/dom';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
@@ -31,6 +31,21 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
 
         const compProxy: IHeaderGroupCellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
+            setHeaderWrapperHidden: (hidden) => {
+                if (hidden) {
+                    this.eHeaderCompWrapper.style.setProperty('display', 'none');
+                } else {
+                    this.eHeaderCompWrapper.style.removeProperty('display');
+                }
+            },
+            setHeaderWrapperMaxHeight: (value) => {
+                if (value != null) {
+                    this.eHeaderCompWrapper.style.setProperty('max-height', `${value}px`);
+                } else {
+                    this.eHeaderCompWrapper.style.removeProperty('max-height');
+                }
+                this.eHeaderCompWrapper.classList.toggle('ag-header-cell-comp-wrapper-limited-height', value != null);
+            },
             setResizableDisplayed: (displayed) => _setDisplayed(this.eResize, displayed),
             setWidth: (width) => (eGui.style.width = width),
             setAriaExpanded: (expanded: 'true' | 'false' | undefined) => setAttribute('aria-expanded', expanded),
@@ -61,5 +76,15 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
 
         this.headerGroupComp = headerGroupComp;
         this.ctrl.setDragSource(eGui);
+    }
+
+    private addOrRemoveHeaderWrapperStyle(style: string, value: string | null): void {
+        const { eHeaderCompWrapper } = this;
+
+        if (value) {
+            eHeaderCompWrapper.style.setProperty(style, value);
+        } else {
+            eHeaderCompWrapper.style.removeProperty(style);
+        }
     }
 }

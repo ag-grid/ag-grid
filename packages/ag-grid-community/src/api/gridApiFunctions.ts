@@ -131,6 +131,7 @@ export const gridApiFunctionsMap = {
         getCenterDisplayedColumnGroups: 0,
         getRightDisplayedColumnGroups: 0,
         getAllDisplayedColumnGroups: 0,
+        isColumnHovered: 0,
         autoSizeColumns: 0,
         autoSizeAllColumns: 0,
 

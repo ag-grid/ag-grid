@@ -1,22 +1,23 @@
 import type {
     AgColumn,
     BeanCollection,
-    ColumnApplyStateService,
     ColumnAutosizeService,
     ColumnEventType,
     ColumnModel,
     ColumnNameService,
+    ColumnStateService,
     FocusService,
     FuncColsService,
     IAggFuncService,
     IClipboardService,
+    IColumnChooserFactory,
     ICsvCreator,
     IExcelCreator,
     IExpansionService,
     MenuItemDef,
     MenuService,
     NamedBean,
-    RowPositionUtils,
+    PositionUtils,
     SortController,
 } from 'ag-grid-community';
 import { BeanStub, ModuleNames, _createIconNoSpan, _escapeString, _exists, _warnOnce } from 'ag-grid-community';
@@ -28,10 +29,10 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
 
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
-    private columnApplyStateService: ColumnApplyStateService;
+    private columnStateService: ColumnStateService;
     private funcColsService: FuncColsService;
     private focusService: FocusService;
-    private rowPositionUtils: RowPositionUtils;
+    private positionUtils: PositionUtils;
     private chartMenuItemMapper: ChartMenuItemMapper;
     private menuService: MenuService;
     private sortController?: SortController;
@@ -41,16 +42,17 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private aggFuncService?: IAggFuncService;
     private csvCreator?: ICsvCreator;
     private excelCreator?: IExcelCreator;
+    private columnChooserFactory?: IColumnChooserFactory;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
-        this.columnApplyStateService = beans.columnApplyStateService;
+        this.columnStateService = beans.columnStateService;
         this.funcColsService = beans.funcColsService;
         this.focusService = beans.focusService;
-        this.rowPositionUtils = beans.rowPositionUtils;
+        this.positionUtils = beans.positionUtils;
         this.chartMenuItemMapper = beans.chartMenuItemMapper as ChartMenuItemMapper;
-        this.menuService = beans.menuService;
+        this.menuService = beans.menuService!;
         this.sortController = beans.sortController;
         this.columnAutosizeService = beans.columnAutosizeService;
         this.expansionService = beans.expansionService;
@@ -58,6 +60,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         this.aggFuncService = beans.aggFuncService;
         this.csvCreator = beans.csvCreator;
         this.excelCreator = beans.excelCreator;
+        this.columnChooserFactory = beans.columnChooserFactory;
     }
 
     public mapWithStockItems(
@@ -227,7 +230,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             case 'resetColumns':
                 return {
                     name: localeTextFunc('resetColumns', 'Reset Columns'),
-                    action: () => this.columnApplyStateService.resetColumnState(source),
+                    action: () => this.columnStateService.resetColumnState(source),
                 };
             case 'expandAll':
                 return {
@@ -276,7 +279,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             case 'cut':
                 if (this.gos.assertModuleRegistered(ModuleNames.ClipboardModule, 'Cut from Menu')) {
                     const focusedCell = this.focusService.getFocusedCell();
-                    const rowNode = focusedCell ? this.rowPositionUtils.getRowNode(focusedCell) : null;
+                    const rowNode = focusedCell ? this.positionUtils.getRowNode(focusedCell) : null;
                     const isEditable = rowNode ? focusedCell?.column.isCellEditable(rowNode) : false;
                     return {
                         name: localeTextFunc('cut', 'Cut'),
@@ -356,7 +359,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return {
                         name: localeTextFunc('columnChooser', 'Choose Columns'),
                         icon: _createIconNoSpan('columns', this.gos, null),
-                        action: () => this.menuService.showColumnChooser({ column, eventSource: sourceElement() }),
+                        action: () =>
+                            this.columnChooserFactory?.showColumnChooser({ column, eventSource: sourceElement() }),
                     };
                 } else {
                     return null;

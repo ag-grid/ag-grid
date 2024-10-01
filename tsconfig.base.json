@@ -15,6 +15,7 @@
     "skipLibCheck": true,
     "strictBindCallApply": true,
     "skipDefaultLibCheck": true,
+    "noImplicitThis": true,
     "baseUrl": "./",
     "strictNullChecks": true,
     "downlevelIteration": true,

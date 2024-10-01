@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -13,7 +13,7 @@ import { AgGridVue } from 'ag-grid-vue3';
 import './styles.css';
 
 // Register shared Modules globally
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule, MenuModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule]);
 
 let rowIdSequence = 100;
 const createRowBlock = () =>

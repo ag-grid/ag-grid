@@ -1,26 +1,20 @@
-import { ModuleNames, _ColumnFilterModule, _FloatingFilterModule, _defineModule } from 'ag-grid-community';
+import { ColumnFilterModule, FloatingFilterModule, ModuleNames } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { VERSION } from '../version';
+import { defineEnterpriseModule } from '../moduleUtils';
 import { SetFilter } from './setFilter';
 import { SetFloatingFilterComp } from './setFloatingFilter';
 
-export const SetFilterCoreModule = _defineModule({
-    version: VERSION,
-    moduleName: `${ModuleNames.SetFilterModule}-core`,
+export const SetFilterCoreModule = defineEnterpriseModule('SetFilterCoreModule', {
     userComponents: [{ name: 'agSetColumnFilter', classImp: SetFilter }],
-    dependantModules: [EnterpriseCoreModule, _ColumnFilterModule],
+    dependsOn: [EnterpriseCoreModule, ColumnFilterModule],
 });
 
-const SetFloatingFilterModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-enterprise/set-floating-filter',
+const SetFloatingFilterModule = defineEnterpriseModule('SetFloatingFilterModule', {
     userComponents: [{ name: 'agSetColumnFloatingFilter', classImp: SetFloatingFilterComp }],
-    dependantModules: [SetFilterCoreModule, _FloatingFilterModule],
+    dependsOn: [SetFilterCoreModule, FloatingFilterModule],
 });
 
-export const SetFilterModule = _defineModule({
-    version: VERSION,
-    moduleName: ModuleNames.SetFilterModule,
-    dependantModules: [SetFilterCoreModule, SetFloatingFilterModule],
+export const SetFilterModule = defineEnterpriseModule(ModuleNames.SetFilterModule, {
+    dependsOn: [SetFilterCoreModule, SetFloatingFilterModule],
 });

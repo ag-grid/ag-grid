@@ -1,13 +1,22 @@
-import type { BeanCollection, IClientSideRowModel, IExpansionService, NamedBean } from 'ag-grid-community';
-import { BeanStub, ClientSideRowModelSteps } from 'ag-grid-community';
+import type {
+    BeanCollection,
+    ColumnModel,
+    IClientSideRowModel,
+    IExpansionService,
+    NamedBean,
+    RowNode,
+} from 'ag-grid-community';
+import { BeanStub, ClientSideRowModelSteps, _exists } from 'ag-grid-community';
 
 export class ClientSideExpansionService extends BeanStub implements NamedBean, IExpansionService {
     beanName = 'expansionService' as const;
 
     private rowModel: IClientSideRowModel;
+    private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel as IClientSideRowModel;
+        this.columnModel = beans.columnModel;
     }
 
     public expandRows(rowIds: string[]): void {
@@ -20,8 +29,54 @@ export class ClientSideExpansionService extends BeanStub implements NamedBean, I
         this.onGroupExpandedOrCollapsed();
     }
 
-    public expandAll(value: boolean): void {
-        this.rowModel.expandOrCollapseAll(value);
+    public expandAll(expand: boolean): void {
+        const usingTreeData = this.gos.get('treeData');
+        const usingPivotMode = this.columnModel.isPivotActive();
+
+        const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {
+            if (!rowNodes) {
+                return;
+            }
+            rowNodes.forEach((rowNode) => {
+                const actionRow = () => {
+                    rowNode.expanded = expand;
+                    recursiveExpandOrCollapse(rowNode.childrenAfterGroup);
+                };
+
+                if (usingTreeData) {
+                    const hasChildren = _exists(rowNode.childrenAfterGroup);
+                    if (hasChildren) {
+                        actionRow();
+                    }
+                    return;
+                }
+
+                if (usingPivotMode) {
+                    const notLeafGroup = !rowNode.leafGroup;
+                    if (notLeafGroup) {
+                        actionRow();
+                    }
+                    return;
+                }
+
+                const isRowGroup = rowNode.group;
+                if (isRowGroup) {
+                    actionRow();
+                }
+            });
+        };
+
+        const rootNode = this.rowModel.getRootNode();
+        if (rootNode) {
+            recursiveExpandOrCollapse(rootNode.childrenAfterGroup);
+        }
+
+        this.rowModel.refreshModel({ step: ClientSideRowModelSteps.MAP });
+
+        this.eventService.dispatchEvent({
+            type: 'expandOrCollapseAll',
+            source: expand ? 'expandAll' : 'collapseAll',
+        });
     }
 
     public onGroupExpandedOrCollapsed(): void {

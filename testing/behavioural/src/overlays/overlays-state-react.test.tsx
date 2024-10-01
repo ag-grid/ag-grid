@@ -2,7 +2,7 @@ import { cleanup, render } from '@testing-library/react';
 import React from 'react';
 
 import type { ColDef } from 'ag-grid-community';
-import { ClientSideRowModelModule, CommunityFeaturesModule, ModuleRegistry } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 describe('ag-grid overlays state (react)', () => {
@@ -17,7 +17,7 @@ describe('ag-grid overlays state (react)', () => {
     }
 
     beforeAll(() => {
-        ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+        ModuleRegistry.registerModules([ClientSideRowModelModule]);
     });
 
     beforeEach(() => {

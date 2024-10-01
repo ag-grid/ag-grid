@@ -1,16 +1,14 @@
-import { ColumnMoveModule, DragAndDropModule, ModuleNames, _defineModule } from 'ag-grid-community';
+import { ColumnMoveModule, DragAndDropModule, ModuleNames, PopupModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { defineEnterpriseModule } from '../moduleUtils';
 import { RowGroupingModule } from '../rowGrouping/rowGroupingModule';
 import { SideBarModule } from '../sideBar/sideBarModule';
-import { VERSION } from '../version';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 import { ColumnToolPanel } from './columnToolPanel';
 import { ModelItemUtils } from './modelItemUtils';
 
-export const ColumnsToolPanelModule = _defineModule({
-    version: VERSION,
-    moduleName: ModuleNames.ColumnsToolPanelModule,
+export const ColumnsToolPanelModule = defineEnterpriseModule(ModuleNames.ColumnsToolPanelModule, {
     beans: [ModelItemUtils],
     userComponents: [
         { name: 'agColumnsToolPanel', classImp: ColumnToolPanel },
@@ -19,5 +17,12 @@ export const ColumnsToolPanelModule = _defineModule({
             classImp: AgMenuItemRenderer,
         },
     ],
-    dependantModules: [EnterpriseCoreModule, RowGroupingModule, SideBarModule, ColumnMoveModule, DragAndDropModule],
+    dependsOn: [
+        EnterpriseCoreModule,
+        RowGroupingModule,
+        SideBarModule,
+        ColumnMoveModule,
+        DragAndDropModule,
+        PopupModule,
+    ],
 });

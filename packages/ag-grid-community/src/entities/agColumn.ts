@@ -1,4 +1,5 @@
-import type { ColumnState } from '../columns/columnApplyStateService';
+import type { ColumnHoverService } from '../columns/columnHover/columnHoverService';
+import type { ColumnState } from '../columns/columnStateService';
 import { isColumnControlsCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -18,7 +19,6 @@ import type {
 import type { IRowNode } from '../interfaces/iRowNode';
 import { LocalEventService } from '../localEventService';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
-import type { ColumnHoverService } from '../rendering/columnHoverService';
 import { _attrToNumber, _exists, _missing } from '../utils/generic';
 import { _mergeDeep } from '../utils/object';
 import type { AgColumnGroup } from './agColumnGroup';
@@ -57,7 +57,7 @@ export function isColumn(col: Column | ColumnGroup | ProvidedColumnGroup): col i
 export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements Column {
     public readonly isColumn = true as const;
 
-    private columnHoverService: ColumnHoverService;
+    private columnHoverService?: ColumnHoverService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnHoverService = beans.columnHoverService;
@@ -577,7 +577,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     }
 
     public isHovered(): boolean {
-        return this.columnHoverService.isHovered(this);
+        return !!this.columnHoverService?.isHovered(this);
     }
 
     public setPinned(pinned: ColumnPinnedType): void {

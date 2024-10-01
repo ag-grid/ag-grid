@@ -28,7 +28,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
-        this.popupService = beans.popupService;
+        this.popupService = beans.popupService!;
         this.sortController = beans.sortController;
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;

@@ -1,6 +1,6 @@
 import type { GroupResizeFeature } from '../../../columnResize/groupResizeFeature';
 import { setupCompBean } from '../../../components/emptyBean';
-import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
+import { _getHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
 import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
@@ -9,6 +9,7 @@ import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnEventType } from '../../../events';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { HeaderColumnId } from '../../../interfaces/iColumn';
+import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _last } from '../../../utils/array';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
@@ -18,13 +19,14 @@ import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
-import { HoverFeature } from '../hoverFeature';
 import { GroupWidthFeature } from './groupWidthFeature';
 import type { IHeaderGroupComp, IHeaderGroupParams } from './headerGroupComp';
 
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     setResizableDisplayed(displayed: boolean): void;
     setWidth(width: string): void;
+    setHeaderWrapperMaxHeight(value: number | null): void;
+    setHeaderWrapperHidden(value: boolean): void;
     setAriaExpanded(expanded: 'true' | 'false' | undefined): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeaderGroupComp | undefined;
@@ -70,10 +72,13 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.setupUserComp(compBean);
         this.addHeaderMouseListeners(compBean);
 
+        this.addManagedPropertyListener('groupHeaderHeight', this.refreshMaxHeaderHeight.bind(this));
+        this.refreshMaxHeaderHeight();
+
         const pinned = this.getParentRowCtrl().getPinned();
         const leafCols = this.column.getProvidedColumnGroup().getLeafColumns();
 
-        compBean.createManagedBean(new HoverFeature(leafCols, eGui));
+        this.beans.columnHoverService?.createHoverFeature(compBean, leafCols, eGui);
         compBean.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
         compBean.createManagedBean(new GroupWidthFeature(comp, this.column));
         if (this.beans.columnResizeService) {
@@ -99,6 +104,23 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.addResizeAndMoveKeyboardListeners(compBean);
         // Make sure this is the last destroy func as it clears the gui and comp
         compBean.addDestroyFunc(() => this.clearComponent());
+    }
+
+    private refreshMaxHeaderHeight(): void {
+        const { gos, comp } = this;
+
+        const groupHeaderHeight = gos.get('groupHeaderHeight');
+
+        if (groupHeaderHeight != null) {
+            if (groupHeaderHeight === 0) {
+                comp.setHeaderWrapperHidden(true);
+            } else {
+                comp.setHeaderWrapperMaxHeight(groupHeaderHeight);
+            }
+        } else {
+            comp.setHeaderWrapperHidden(false);
+            comp.setHeaderWrapperMaxHeight(null);
+        }
     }
 
     private addHighlightListeners(compBean: BeanStub, columns: AgColumn[]): void {
@@ -201,7 +223,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             },
         });
 
-        const compDetails = this.userComponentFactory.getHeaderGroupCompDetails(params)!;
+        const compDetails = _getHeaderGroupCompDetails(this.userComponentFactory, params)!;
         this.comp.setUserCompDetails(compDetails);
     }
 

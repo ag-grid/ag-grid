@@ -8,7 +8,7 @@ import type {
     MenuService,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _isClientSideRowModel, _removeRepeatsFromArray } from 'ag-grid-community';
+import { BeanStub, _isClientSideRowModel, _isLegacyMenuEnabled, _removeRepeatsFromArray } from 'ag-grid-community';
 
 import { AgMenuList } from '../widgets/agMenuList';
 import type { MenuItemMapper } from './menuItemMapper';
@@ -27,7 +27,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         this.menuItemMapper = beans.menuItemMapper as MenuItemMapper;
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
-        this.menuService = beans.menuService;
+        this.menuService = beans.menuService!;
     }
 
     public createMenu(
@@ -94,7 +94,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
     private getDefaultMenuOptions(column?: AgColumn): string[] {
         const result: string[] = [];
 
-        const isLegacyMenuEnabled = this.menuService.isLegacyMenuEnabled();
+        const isLegacyMenuEnabled = _isLegacyMenuEnabled(this.gos);
 
         if (!column) {
             if (!isLegacyMenuEnabled) {

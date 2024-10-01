@@ -65,7 +65,7 @@ function ageRangeValueGetter(params: ValueGetterParams) {
 }
 
 // pretty basic, but deterministic (so same numbers each time we run), random number generator
-let seed: number;
+var seed: number;
 function random() {
     seed = ((seed || 1) * 16807) % 2147483647;
     return seed;
@@ -80,7 +80,7 @@ function getRowData() {
     return rowData;
 }
 
-let studentId: number;
+var studentId: number;
 function createRow() {
     studentId = studentId ? studentId : 10023;
     const randomNumber = random();

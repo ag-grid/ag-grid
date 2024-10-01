@@ -1,11 +1,11 @@
 import { setupCompBean } from '../../../components/emptyBean';
-import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { ColumnEvent, FilterChangedEvent } from '../../../events';
-import { _getActiveDomElement } from '../../../gridOptionsUtils';
+import { _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
+import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _setAriaLabel } from '../../../utils/aria';
 import { _isElementChildOfClass } from '../../../utils/dom';
@@ -14,7 +14,6 @@ import { _createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
-import { HoverFeature } from '../hoverFeature';
 import type { IHeaderFilterCellComp } from './iHeaderFilterCellComp';
 
 export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCellComp, AgColumn> {
@@ -131,7 +130,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         const nextFocusableEl = this.focusService.findNextFocusableElement(this.eGui, null, e.shiftKey);
 
         if (nextFocusableEl) {
-            this.beans.headerNavigationService.scrollToColumn(this.column);
+            this.beans.headerNavigationService?.scrollToColumn(this.column);
             e.preventDefault();
             nextFocusableEl.focus();
             return;
@@ -236,18 +235,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private setupHover(compBean: BeanStub): void {
-        compBean.createManagedBean(new HoverFeature([this.column], this.eGui));
-
-        const listener = () => {
-            if (!this.gos.get('columnHoverHighlight')) {
-                return;
-            }
-            const hovered = this.beans.columnHoverService.isHovered(this.column);
-            this.comp.addOrRemoveCssClass('ag-column-hover', hovered);
-        };
-
-        compBean.addManagedEventListeners({ columnHoverChanged: listener });
-        listener();
+        this.beans.columnHoverService?.addHeaderFilterColumnHoverListener(compBean, this.comp, this.column, this.eGui);
     }
 
     private setupLeft(compBean: BeanStub): void {
@@ -256,8 +244,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private setupFilterButton(): void {
-        this.suppressFilterButton = !this.menuService.isFloatingFilterButtonEnabled(this.column);
-        this.highlightFilterButtonWhenActive = !this.menuService.isLegacyMenuEnabled();
+        this.suppressFilterButton = !this.menuService?.isFloatingFilterButtonEnabled(this.column);
+        this.highlightFilterButtonWhenActive = !_isLegacyMenuEnabled(this.gos);
     }
 
     private setupUserComp(): void {
@@ -281,7 +269,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     private showParentFilter() {
         const eventSource = this.suppressFilterButton ? this.eFloatingFilterBody : this.eButtonShowMainFilter;
-        this.menuService.showFilterMenu({
+        this.menuService?.showFilterMenu({
             column: this.column,
             buttonElement: eventSource,
             containerType: 'floatingFilter',

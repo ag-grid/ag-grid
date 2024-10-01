@@ -79,7 +79,8 @@ export function _debounce(func: (...args: any[]) => void, delay: number): (...ar
 
     // Calling debounce returns a new anonymous function
     return function (...args: any[]) {
-        const context = this;
+        //@ts-expect-error no implicit this
+        const context = this as any;
         window.clearTimeout(timeout);
 
         // Set the new timeout
@@ -98,6 +99,7 @@ export function _throttle(func: (...args: any[]) => void, wait: number): (...arg
     let previousCall = 0;
 
     return function (...args: any[]) {
+        //@ts-expect-error no implicit this
         const context = this;
         const currentCall = new Date().getTime();
 

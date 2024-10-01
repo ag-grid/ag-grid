@@ -1,7 +1,6 @@
-import type { _ColumnGridApi } from '../api/gridApi';
-import { _defineModule } from '../interfaces/iModule';
+import type { _ColumnGridApi, _GetColumnDefsApi } from '../api/gridApi';
+import { defineCommunityModule } from '../interfaces/iModule';
 import { CheckboxCellRendererModule } from '../rendering/cellRenderers/cellRendererModule';
-import { VERSION } from '../version';
 import {
     applyColumnState,
     getAllDisplayedColumnGroups,
@@ -36,28 +35,34 @@ import {
     setColumnsPinned,
     setColumnsVisible,
 } from './columnApi';
+import { ColumnDefFactory } from './columnDefFactory';
+import { ColumnFlexService } from './columnFlexService';
 import { ControlsColService } from './controlsColService';
 import { DataTypeService } from './dataTypeService';
 
-export const DataTypeModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/data-type',
+export const DataTypeModule = defineCommunityModule('DataTypeModule', {
     beans: [DataTypeService],
-    dependantModules: [CheckboxCellRendererModule],
+    dependsOn: [CheckboxCellRendererModule],
 });
 
-export const ControlsColumnModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/controls-column',
+export const ControlsColumnModule = defineCommunityModule('ControlsColumnModule', {
     beans: [ControlsColService],
 });
 
-export const ColumnApiModule = _defineModule<_ColumnGridApi<any>>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/column-api',
+export const GetColumnDefsApiModule = defineCommunityModule<_GetColumnDefsApi<any>>('GetColumnDefsApiModule', {
+    beans: [ColumnDefFactory],
+    apiFunctions: {
+        getColumnDefs,
+    },
+});
+
+export const ColumnFlexModule = defineCommunityModule('ColumnFlexModule', {
+    beans: [ColumnFlexService],
+});
+
+export const ColumnApiModule = defineCommunityModule<_ColumnGridApi<any>>('ColumnApiModule', {
     apiFunctions: {
         getColumnDef,
-        getColumnDefs,
         setColumnGroupOpened,
         getColumnGroup,
         getProvidedColumnGroup,

@@ -1,5 +1,5 @@
-import type { BeanCollection, IRowNodeStage, NamedBean, StageExecuteParams } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import type { BeanCollection, GridOptions, IRowNodeStage, NamedBean, StageExecuteParams } from 'ag-grid-community';
+import { BeanStub, ClientSideRowModelSteps } from 'ag-grid-community';
 
 import { GroupStrategy } from './groupStrategy/groupStrategy';
 import type { SelectableService } from './selectableService';
@@ -7,6 +7,15 @@ import { TreeStrategy } from './treeStrategy/treeStrategy';
 
 export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'groupStage' as const;
+
+    public refreshProps: Set<keyof GridOptions<any>> = new Set([
+        'groupDefaultExpanded',
+        'groupAllowUnbalanced',
+        'initialGroupOrderComparator',
+        'groupHideOpenParents',
+        'groupDisplayType',
+    ]);
+    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.EVERYTHING;
 
     private selectableService: SelectableService;
     private strategy: GroupStrategy | TreeStrategy | undefined;

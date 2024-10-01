@@ -1,3 +1,4 @@
+import { _getDragAndDropImageCompDetails } from '../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { HorizontalDirection, VerticalDirection } from '../constants/direction';
 import type { NamedBean } from '../context/bean';
@@ -579,7 +580,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             return;
         }
 
-        const userCompDetails = this.userComponentFactory.getDragAndDropImageCompDetails({
+        const userCompDetails = _getDragAndDropImageCompDetails(this.userComponentFactory, {
             dragSource,
         });
 

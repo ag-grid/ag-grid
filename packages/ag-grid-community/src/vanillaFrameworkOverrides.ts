@@ -1,14 +1,19 @@
 import type { FrameworkOverridesIncomingSource, IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import { _includes } from './utils/array';
 import { AgPromise } from './utils/promise';
+import { setValidationDocLink } from './validation/logging';
 
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
 
 /** The base frameworks, eg React & Angular, override this bean with implementations specific to their requirement. */
 export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     public renderingEngine: 'vanilla' | 'react' = 'vanilla';
+    private baseDocLink: string;
 
-    constructor(private frameworkName: 'javascript' | 'angular' | 'react' | 'vue' | 'solid' = 'javascript') {}
+    constructor(private frameworkName: 'javascript' | 'angular' | 'react' | 'vue' = 'javascript') {
+        this.baseDocLink = `https://www.ag-grid.com/${this.frameworkName}-data-grid`;
+        setValidationDocLink(this.baseDocLink);
+    }
 
     public setInterval(action: any, timeout?: any): AgPromise<number> {
         return new AgPromise((resolve) => {
@@ -42,7 +47,6 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     }
 
     getDocLink(path?: string): string {
-        const framework = this.frameworkName === 'solid' ? 'react' : this.frameworkName;
-        return `https://www.ag-grid.com/${framework}-data-grid${path ? `/${path}` : ''}`;
+        return `${this.baseDocLink}${path ? `/${path}` : ''}`;
     }
 }
