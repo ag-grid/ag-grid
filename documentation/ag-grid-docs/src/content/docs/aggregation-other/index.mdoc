@@ -64,14 +64,6 @@ The following example demonstrates restricting the aggregation functions. Note t
 
 {% gridExampleRunner title="Restricting Aggregation Functions" name="restricting-aggregation-functions"  exampleHeight=655 /%}
 
-## Aggregation API
-
-After the grid is initialised aggregations can be applied / retrieved / removed via the `api` with the following methods:
-
-{% apiDocumentation source="grid-api/api.json" section="rowPivoting" names=["getValueColumns", "addValueColumns", "removeValueColumns", "setValueColumns", "setColumnAggFunc"] /%}
-
-When the grid initialises, any column definitions that have `aggFunc` set will be automatically added as a value column.
-
 ## Column Headers
 
 When aggregating, the column headers will include the aggregation function for the column. For example the header `'Bank Balance'` will become `'sum(Bank Balance)'` if you have the sum aggregation active on the column. To turn this off and display simply `'Bank Balance'` then set the grid property `suppressAggFuncInHeader`.

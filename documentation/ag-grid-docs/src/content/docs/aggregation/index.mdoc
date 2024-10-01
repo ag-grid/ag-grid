@@ -59,6 +59,14 @@ Aggregation functions can be registered with the grid using the following grid o
 
 {% apiDocumentation source="grid-options/properties.json" section="rowPivoting" names=["aggFuncs", "suppressAggFilteredOnly", "groupAggFiltering","suppressAggFuncInHeader"] /%}
 
+## Aggregation API
+
+After the grid is initialised aggregations can be applied / retrieved / removed via the `api` with the following methods:
+
+{% apiDocumentation source="grid-api/api.json" section="rowPivoting" names=["getValueColumns", "addValueColumns", "removeValueColumns", "setValueColumns", "setColumnAggFunc"] /%}
+
+When the grid initialises, any column definitions that have `aggFunc` set will be automatically added as a value column.
+
 ## Next Up
 
 Continue to the next section to learn about [Custom Functions](./aggregation-custom-functions/).
