@@ -109,7 +109,6 @@ export const GridCoreModule = defineCommunityModule(ModuleNames.CommunityCoreMod
 
 export const CommunityFeaturesModule = defineCommunityModule('CommunityFeaturesModule', {
     dependsOn: [
-        GridCoreModule,
         ValidationModule,
         EditModule,
         FilterModule,
