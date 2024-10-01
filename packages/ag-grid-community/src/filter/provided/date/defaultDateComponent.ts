@@ -23,6 +23,8 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
     private params: IDateParams;
     private usingSafariDatePicker: boolean;
+    private isApply: boolean = false;
+    private applyOnFocusOut: boolean = false;
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
@@ -45,17 +47,41 @@ export class DefaultDateComponent extends Component implements IDateComp {
                 }
                 inputElement.focus();
             },
-            input: (e) => {
-                if (e.target !== _getActiveDomElement(this.gos)) {
-                    return;
-                }
-                if (this.eDateInput.isDisabled()) {
-                    return;
-                }
-
-                this.params.onDateChanged();
-            },
+            input: this.handleInput.bind(this, false),
+            change: this.handleInput.bind(this, true),
+            focusout: this.handleFocusOut.bind(this),
         });
+    }
+
+    private handleInput(isChange: boolean, e: InputEvent): void {
+        if (e.target !== _getActiveDomElement(this.gos)) {
+            return;
+        }
+        if (this.eDateInput.isDisabled()) {
+            return;
+        }
+
+        if (this.isApply) {
+            // If it's input event, queue up apply on focus out.
+            // If it's change, clear and run.
+            this.applyOnFocusOut = !isChange;
+            if (isChange) {
+                this.params.onDateChanged();
+            }
+            return;
+        }
+
+        if (!isChange) {
+            // if not apply, execute on input
+            this.params.onDateChanged();
+        }
+    }
+
+    private handleFocusOut(): void {
+        if (this.applyOnFocusOut) {
+            this.applyOnFocusOut = false;
+            this.params.onDateChanged();
+        }
     }
 
     private setParams(params: IDateParams): void {
@@ -66,7 +92,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
         inputElement.type = shouldUseBrowserDatePicker ? 'date' : 'text';
 
-        const { minValidYear, maxValidYear, minValidDate, maxValidDate } = params.filterParams || {};
+        const { minValidYear, maxValidYear, minValidDate, maxValidDate, buttons } = params.filterParams || {};
 
         if (minValidDate && minValidYear) {
             _warnOnce(
@@ -119,6 +145,8 @@ export class DefaultDateComponent extends Component implements IDateComp {
                 inputElement.max = `${maxValidYear}-12-31`;
             }
         }
+
+        this.isApply = params.location === 'floatingFilter' && !!buttons?.includes('apply');
     }
 
     public refresh(params: IDateParams): void {
