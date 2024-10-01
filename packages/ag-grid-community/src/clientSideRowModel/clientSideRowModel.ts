@@ -1075,25 +1075,27 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         rowNodesOrderChanged: boolean,
         afterColumnsChanged: boolean
     ) {
-        if (this.gos.get('treeData') && this.nodeManager.executeTreeStage) {
-            // TODO: the TreeStrategy has to be moved in the client side node manager
-            // The tree build should happen during row nodes construction.
-            if (rowNodeTransactions) {
-                this.nodeManager.executeTreeStage({
-                    rowNode: this.rootNode,
-                    rowNodeTransactions,
-                    rowNodesOrderChanged,
-                    changedPath: changedPath,
-                });
-            } else {
-                this.nodeManager.executeTreeStage({
-                    rowNode: this.rootNode,
-                    changedPath: changedPath,
-                    afterColumnsChanged: afterColumnsChanged,
-                });
-            }
+        if (this.gos.get('treeData')) {
+            if (this.nodeManager.executeTreeStage) {
+                // TODO: the TreeStrategy has to be moved in the client side node manager
+                // The tree build should happen during row nodes construction.
+                if (rowNodeTransactions) {
+                    this.nodeManager.executeTreeStage({
+                        rowNode: this.rootNode,
+                        rowNodeTransactions,
+                        rowNodesOrderChanged,
+                        changedPath: changedPath,
+                    });
+                } else {
+                    this.nodeManager.executeTreeStage({
+                        rowNode: this.rootNode,
+                        changedPath: changedPath,
+                        afterColumnsChanged: afterColumnsChanged,
+                    });
+                }
 
-            this.updateSelectableAfterGrouping(changedPath);
+                this.updateSelectableAfterGrouping(changedPath);
+            }
             return;
         }
 
