@@ -5,8 +5,6 @@ import type {
     BeanCollection,
     ColumnEventType,
     ColumnModel,
-    ColumnPanelItemDragEndEvent,
-    ColumnPanelItemDragStartEvent,
     DragAndDropService,
     DragItem,
     DragSource,
@@ -76,14 +74,15 @@ export class ToolPanelColumnGroupComp extends Component {
 
     public postConstruct(): void {
         this.setTemplate(
-            /* html */ `<div class="ag-column-select-column-group" aria-hidden="true">
-            <span class="ag-column-group-icons" data-ref="eColumnGroupIcons" >
-                <span class="ag-column-group-closed-icon" data-ref="eGroupClosedIcon"></span>
-                <span class="ag-column-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
-            </span>
-            <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-select-column-label" data-ref="eLabel"></span>
-        </div>`,
+            /* html */
+            `<div class="ag-column-select-column-group">
+                <span class="ag-column-group-icons" data-ref="eColumnGroupIcons" >
+                    <span class="ag-column-group-closed-icon" data-ref="eGroupClosedIcon"></span>
+                    <span class="ag-column-group-opened-icon" data-ref="eGroupOpenedIcon"></span>
+                </span>
+                <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
+                <span class="ag-column-select-column-label" data-ref="eLabel"></span>
+            </div>`,
             [AgCheckboxSelector]
         );
 
