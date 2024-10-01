@@ -418,6 +418,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
             if (rowSelection && typeof rowSelection === 'string') {
                 return 'As of version 32.2.1, using `rowSelection` with the values "single" or "multiple" has been deprecated. Use the object value instead.';
             }
+            if (rowSelection && typeof rowSelection !== 'object') {
+                return 'Expected `RowSelectionOptions` object for the `rowSelection` property.';
+            }
             return null;
         },
     },
