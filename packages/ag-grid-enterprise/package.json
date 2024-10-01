@@ -44,7 +44,7 @@
     "./styles/agGridQuartzFont.min.css": "./styles/agGridQuartzFont.min.css",
     "./styles": "./styles/_index.scss"
   },
-  "sideEffects": true,
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"

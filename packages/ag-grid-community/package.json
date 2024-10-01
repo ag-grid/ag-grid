@@ -48,7 +48,7 @@
     "codegen:prod": "tsx scripts/build-css.ts",
     "codegen:debug": "tsx scripts/build-css.ts --dev"
   },
-  "sideEffects": true,
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"
