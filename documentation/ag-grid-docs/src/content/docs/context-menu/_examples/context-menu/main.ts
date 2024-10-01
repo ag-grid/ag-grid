@@ -36,7 +36,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selection: { mode: 'cell' },
+    cellSelection: true,
     allowContextMenuWithControlKey: true,
     getContextMenuItems: getContextMenuItems,
 };

@@ -7,11 +7,11 @@ Enable users to select a single row within a grid.
 
 ## Enabling Single Row Selection
 
-To enable single row selection set `selection.mode` to `'singleRow'`.
+To enable single row selection set `rowSelection.mode` to `'singleRow'`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: {
+    rowSelection: {
         mode: 'singleRow'
     }
 }
@@ -25,11 +25,11 @@ Deselect a row by clicking its checkbox. Alternatively, you can do this via the 
 
 ## Removing Selection Checkboxes
 
-To prevent any row selection checkboxes from being rendered, set `selection.checkboxes` to `false`. You will also need to enable click selection by setting `enableClickSelection: true`.
+To prevent any row selection checkboxes from being rendered, set `rowSelection.checkboxes` to `false`. You will also need to enable click selection by setting `enableClickSelection: true`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: {
+    rowSelection: {
         mode: 'singleRow',
         checkboxes: false,
         enableClickSelection: true,
@@ -40,18 +40,18 @@ const gridOptions = {
 {% gridExampleRunner title="Disabling Checkboxes" name="removing-selection-checkboxes" /%}
 
 {% note %}
-You may also pass a function to `selection.checkboxes` to dynamically enable or disable checkboxes for given rows.
+You may also pass a function to `rowSelection.checkboxes` to dynamically enable or disable checkboxes for given rows.
 {% /note %}
 
 ## Configure Selectable Rows
 
-It is possible to specify which rows can be selected via the `selection.isRowSelectable` callback function.
+It is possible to specify which rows can be selected via the `rowSelection.isRowSelectable` callback function.
 
 For instance if we only wanted to allow selection for rows where the 'year' property is less than 2007, we could implement the following:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: {
+    rowSelection: {
         mode: 'singleRow',
         isRowSelectable: (rowNode) => rowNode.data ? rowNode.data.year < 2007 : false,
         hideDisabledCheckboxes: true
@@ -93,7 +93,7 @@ The checkbox column has a default `maxWidth` set. To make the column `resizable`
 
 ## Enable Click Selection & Deselection
 
-The `selection.enableClickSelection` property configures whether a row's selection state will be impacted when the row is clicked. 
+The `rowSelection.enableClickSelection` property configures whether a row's selection state will be impacted when the row is clicked. 
 
 {% interfaceDocumentation interfaceName="SingleRowSelectionOptions" names=["enableClickSelection"] config={"description": ""}/%}
 
@@ -102,7 +102,7 @@ Click-selection and deselection can be enabled by setting `enableClickSelection`
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    selection: { 
+    rowSelection: { 
         mode: 'singleRow',
         enableClickSelection: true,
     }

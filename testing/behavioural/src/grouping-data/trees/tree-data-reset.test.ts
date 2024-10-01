@@ -502,7 +502,7 @@ describe('ag-grid tree data', () => {
             animateRows: false,
             groupDefaultExpanded: -1,
             rowData: [],
-            selection: {
+            rowSelection: {
                 mode: 'multiRow',
             },
             getDataPath,

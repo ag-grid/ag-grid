@@ -4,7 +4,7 @@ import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import type { ColDef, ColGroupDef, GridReadyEvent, SelectionOptions } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridReadyEvent, RowSelectionOptions } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -56,7 +56,7 @@ const monthNames = [
     'Full Year',
 ];
 
-const selection: SelectionOptions = {
+const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
     headerCheckbox: false,
     groupSelects: 'descendants',
@@ -230,7 +230,7 @@ const GridExample = () => {
                         context={context.current}
                         defaultColDef={defaultColDef}
                         autoGroupColumnDef={autoGroupColumnDef}
-                        selection={selection}
+                        rowSelection={rowSelection}
                         onGridReady={onGridReady}
                     />
                 </div>

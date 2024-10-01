@@ -41,7 +41,7 @@ const VueExample = {
                 :context="context"
                 :defaultColDef="defaultColDef"
                 :autoGroupColumnDef="autoGroupColumnDef"
-                :selection="selection"
+                :rowSelection="rowSelection"
                 :rowData="rowData"></ag-grid-vue></div>
         </div>
     `,
@@ -120,7 +120,7 @@ const VueExample = {
         const context = ref(null);
         const autoGroupColumnDef = ref(null);
         const rowData = ref(null);
-        const selection = ref(null);
+        const rowSelection = ref(null);
 
         onBeforeMount(() => {
             context.value = {
@@ -133,7 +133,7 @@ const VueExample = {
                 minWidth: 260,
                 cellRenderer: 'agGroupCellRenderer',
             };
-            selection.value = {
+            rowSelection.value = {
                 mode: 'multiRow',
                 headerCheckbox: false,
                 groupSelects: 'descendants',

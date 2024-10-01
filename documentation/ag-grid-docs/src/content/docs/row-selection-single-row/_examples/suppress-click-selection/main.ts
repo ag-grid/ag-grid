@@ -27,7 +27,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selection: {
+    rowSelection: {
         mode: 'singleRow',
         enableClickSelection: true,
     },
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function onEnableClickSelection() {
     const value = document.querySelector<HTMLSelectElement>('#select-enable')?.value;
 
-    gridApi.setGridOption('selection', {
+    gridApi.setGridOption('rowSelection', {
         mode: 'singleRow',
         enableClickSelection: value === 'true' ? true : value === 'false' ? false : (value as any),
     });

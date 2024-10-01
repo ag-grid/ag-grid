@@ -71,7 +71,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
         sideBar,
         enableCharts: true,
         columnHoverHighlight: config.columnHover,
-        selection: { mode: 'cell' },
+        cellSelection: true,
         rowData: defaultRowData(),
         columnDefs: config.columnGroupsDeep
             ? buildDeepGroupColumnDefs(columnDefs)
@@ -118,7 +118,7 @@ export const buildGridOptions = (config: GridConfig): GridOptions => {
     }
 
     if (config.rowSelection) {
-        options.selection = {
+        options.rowSelection = {
             mode: 'multiRow',
         };
     }

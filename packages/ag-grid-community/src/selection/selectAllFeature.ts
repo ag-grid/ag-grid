@@ -2,7 +2,7 @@ import { isColumnControlsCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { SelectionOptions } from '../entities/gridOptions';
+import type { GridOptions, RowSelectionOptions } from '../entities/gridOptions';
 import type { SelectionEventSourceType } from '../events';
 import {
     _getActiveDomElement,
@@ -29,7 +29,7 @@ export class SelectAllFeature extends BeanStub {
 
     private cbSelectAllVisible = false;
     private processingEventFromCheckbox = false;
-    private selectionOptions: SelectionOptions | undefined;
+    private selectionOptions: RowSelectionOptions | undefined;
     private column: AgColumn;
     private headerCellCtrl: HeaderCellCtrl;
 
@@ -41,8 +41,14 @@ export class SelectAllFeature extends BeanStub {
     }
 
     public postConstruct() {
-        this.selectionOptions = this.gos.get('selection');
-        this.addManagedPropertyListener('selection', (e) => (this.selectionOptions = e.currentValue));
+        const setRowSelectionOptions = (rowSelection: GridOptions['rowSelection']) => {
+            if (rowSelection && typeof rowSelection !== 'string') {
+                this.selectionOptions = rowSelection;
+            }
+        };
+
+        setRowSelectionOptions(this.gos.get('rowSelection'));
+        this.addManagedPropertyListener('rowSelection', (e) => setRowSelectionOptions(e.currentValue));
     }
 
     public onSpaceKeyDown(e: KeyboardEvent): void {

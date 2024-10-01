@@ -72,14 +72,14 @@ const myCustomTheme = createTheme().withPart(myCheckboxStyle);
             [rowData]="rowData"
             [theme]="theme"
             [initialState]="initialState"
-            [selection]="selection"
+            [rowSelection]="rowSelection"
         />
     `,
 })
 export class AppComponent {
     theme = myCustomTheme;
 
-    selection = { mode: 'multiRow', checkboxes: true };
+    rowSelection = { mode: 'multiRow', checkboxes: true };
 
     initialState = {
         rowSelection: ['1', '2', '3'],

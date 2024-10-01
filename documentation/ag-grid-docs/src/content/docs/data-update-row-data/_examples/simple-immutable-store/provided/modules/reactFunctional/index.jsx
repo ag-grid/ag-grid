@@ -78,7 +78,7 @@ function setItemVisible(id, visible) {
     element.style.display = visible ? 'inline' : 'none';
 }
 
-const selection = {
+const rowSelection = {
     mode: 'multiRow',
     groupSelects: 'descendants',
     headerCheckbox: false,
@@ -231,7 +231,8 @@ const GridExample = () => {
                             rowData={rowData}
                             columnDefs={columnDefs}
                             defaultColDef={defaultColDef}
-                            selection={selection}
+                            rowSelection={rowSelection}
+                            cellSelection={true}
                             autoGroupColumnDef={autoGroupColumnDef}
                             statusBar={statusBar}
                             groupDefaultExpanded={1}

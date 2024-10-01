@@ -36,7 +36,7 @@ describe('ag-grid tree selection', () => {
             autoGroupColumnDef: { headerName: 'Hierarchy' },
             treeData: true,
             animateRows: false,
-            selection: { mode: 'multiRow' },
+            rowSelection: { mode: 'multiRow' },
             groupDefaultExpanded: -1,
             rowData,
             getRowId: (params) => params.data.id,

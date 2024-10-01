@@ -57,8 +57,7 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
         },
     },
     rowGroupPanelShow: 'always',
-    selection: {
-        mode: 'cell',
+    cellSelection: {
         handle: { mode: 'fill' },
     },
 };

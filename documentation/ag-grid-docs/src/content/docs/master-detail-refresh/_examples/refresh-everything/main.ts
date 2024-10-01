@@ -47,7 +47,7 @@ const gridOptions: GridOptions<IAccount> = {
         },
 
         detailGridOptions: {
-            selection: { mode: 'multiRow', headerCheckbox: false, checkboxes: true },
+            rowSelection: { mode: 'multiRow', headerCheckbox: false, checkboxes: true },
             getRowId: (params: GetRowIdParams) => {
                 return String(params.data.callId);
             },

@@ -24,7 +24,7 @@ export class ImmutableService extends BeanStub implements NamedBean {
     private clientSideRowModel: ClientSideRowModel;
 
     public postConstruct(): void {
-        if (_isClientSideRowModel(this.gos)) {
+        if (_isClientSideRowModel(this.gos, this.rowModel)) {
             this.clientSideRowModel = this.rowModel as ClientSideRowModel;
 
             this.addManagedPropertyListener('rowData', () => this.onRowDataUpdated());

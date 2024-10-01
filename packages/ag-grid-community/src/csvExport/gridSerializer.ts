@@ -16,10 +16,8 @@ import type {
     ProcessGroupHeaderForExportParams,
     ShouldRowBeSkippedParams,
 } from '../interfaces/exportParams';
-import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
-import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { RowNodeSorter } from '../sort/rowNodeSorter';
 import type { SortController } from '../sort/sortController';
@@ -236,8 +234,8 @@ export class GridSerializer extends BeanStub implements NamedBean {
         return (gridSerializingSession) => {
             // when in pivot mode, we always render cols on screen, never 'all columns'
             const rowModel = this.rowModel;
-            const usingCsrm = _isClientSideRowModel(this.gos);
-            const usingSsrm = _isServerSideRowModel(this.gos);
+            const usingCsrm = _isClientSideRowModel(this.gos, rowModel);
+            const usingSsrm = _isServerSideRowModel(this.gos, rowModel);
             const onlySelectedNonStandardModel = !usingCsrm && params.onlySelected;
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
             const { exportedRows = 'filteredAndSorted' } = params;
@@ -249,41 +247,46 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     .sort((a, b) => a.rowIndex - b.rowIndex)
                     .map((position) => rowModel.getRow(position.rowIndex))
                     .forEach(processRow);
-            } else if (this.columnModel.isPivotMode()) {
+
+                return gridSerializingSession;
+            }
+
+            if (this.columnModel.isPivotMode()) {
                 if (usingCsrm) {
-                    (rowModel as IClientSideRowModel).forEachPivotNode(processRow, true);
+                    rowModel.forEachPivotNode(processRow, true);
                 } else if (usingSsrm) {
-                    (rowModel as IServerSideRowModel).forEachNodeAfterFilterAndSort(processRow, true);
+                    rowModel.forEachNodeAfterFilterAndSort(processRow, true);
                 } else {
                     // must be enterprise, so we can just loop through all the nodes
                     rowModel.forEachNode(processRow);
                 }
+
+                return gridSerializingSession;
+            }
+
+            // onlySelectedAllPages: user doing pagination and wants selected items from
+            // other pages, so cannot use the standard row model as it won't have rows from
+            // other pages.
+            // onlySelectedNonStandardModel: if user wants selected in non standard row model
+            // (eg viewport) then again RowModel cannot be used, so need to use selected instead.
+            if (params.onlySelectedAllPages || onlySelectedNonStandardModel) {
+                const selectedNodes = this.selectionService?.getSelectedNodes() ?? [];
+                this.replicateSortedOrder(selectedNodes);
+                // serialize each node
+                selectedNodes.forEach(processRow);
             } else {
-                // onlySelectedAllPages: user doing pagination and wants selected items from
-                // other pages, so cannot use the standard row model as it won't have rows from
-                // other pages.
-                // onlySelectedNonStandardModel: if user wants selected in non standard row model
-                // (eg viewport) then again RowModel cannot be used, so need to use selected instead.
-                if (params.onlySelectedAllPages || onlySelectedNonStandardModel) {
-                    const selectedNodes = this.selectionService?.getSelectedNodes() ?? [];
-                    this.replicateSortedOrder(selectedNodes);
-                    // serialize each node
-                    selectedNodes.forEach(processRow);
+                // here is everything else - including standard row model and selected. we don't use
+                // the selection model even when just using selected, so that the result is the order
+                // of the rows appearing on the screen.
+                if (exportedRows === 'all') {
+                    rowModel.forEachNode(processRow);
+                } else if (usingCsrm || usingSsrm) {
+                    rowModel.forEachNodeAfterFilterAndSort(processRow, true);
                 } else {
-                    // here is everything else - including standard row model and selected. we don't use
-                    // the selection model even when just using selected, so that the result is the order
-                    // of the rows appearing on the screen.
-                    if (exportedRows === 'all') {
-                        rowModel.forEachNode(processRow);
-                    } else if (usingCsrm) {
-                        (rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(processRow, true);
-                    } else if (usingSsrm) {
-                        (rowModel as IServerSideRowModel).forEachNodeAfterFilterAndSort(processRow, true);
-                    } else {
-                        rowModel.forEachNode(processRow);
-                    }
+                    rowModel.forEachNode(processRow);
                 }
             }
+
             return gridSerializingSession;
         };
     }

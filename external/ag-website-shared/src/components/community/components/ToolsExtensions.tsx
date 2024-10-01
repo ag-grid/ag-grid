@@ -17,6 +17,7 @@ const frameworks = [
     'Laravel',
     '.NET',
     'Rust',
+    'PHP',
 ];
 
 const ToolsExtensions = ({ limit = -1 }) => {

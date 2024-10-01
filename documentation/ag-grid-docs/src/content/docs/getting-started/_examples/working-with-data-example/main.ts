@@ -85,7 +85,7 @@ const gridOptions: GridOptions = {
         filter: 'agTextColumnFilter',
         floatingFilter: true,
     },
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         headerCheckbox: false,
     },
