@@ -91,14 +91,127 @@ export const AG_GRID_ERRORS = {
     41: () => 'headerValueGetter must be a function or a string' as const,
     42: () => "if colDef.type is supplied an array it should be of type 'string[]'" as const,
     43: () => "colDef.type should be of type 'string' | 'string[]'" as const,
+    44: () =>
+        'Data type definition hierarchies (via the "extendsDataType" property) cannot contain circular references.' as const,
+    45: ({ parentCellDataType }: { parentCellDataType: string }) =>
+        `The data type definition ${parentCellDataType} does not exist.` as const,
+    46: () => 'The "baseDataType" property of a data type definition must match that of its parent.' as const,
+    47: ({ cellDataType }: { cellDataType: string }) => `Missing data type definition - "${cellDataType}"` as const,
+    48: ({ property }: { property: string }) =>
+        `Cell data type is "object" but no Value ${property} has been provided. Please either provide an object data type definition with a Value ${property}, or set "colDef.value${property}"` as const,
+    49: ({ methodName }: { methodName: string }) =>
+        `Framework component is missing the method ${methodName}()` as const,
+    50: ({ compName }: { compName: string | undefined }) =>
+        `Could not find component ${compName}, did you forget to configure this component?` as const,
+    51: () => `Export cancelled. Export is not allowed as per your configuration.` as const,
+    52: () => 'There is no `window` associated with the current `document`' as const,
+    53: () => `unknown value type during csv conversion` as const,
+    54: () => 'Could not find document body, it is needed for drag and drop.' as const,
+    55: () => 'addRowDropZone - A container target needs to be provided' as const,
+    56: () =>
+        'addRowDropZone - target already exists in the list of DropZones. Use `removeRowDropZone` before adding it again.' as const,
+    57: () => "Setting `rowDragEntireRow: true` in the gridOptions doesn't work with `cellSelection: true`" as const,
+    58: () => 'no values found for select cellEditor' as const,
+    59: () => 'cannot select pinned rows' as const,
+    60: () => 'cannot select node until id for node is known' as const,
+    61: () =>
+        'since version v32.2.0, rowNode.isFullWidthCell() has been deprecated. Instead check `rowNode.detail` followed by the user provided `isFullWidthRow` grid option.' as const,
+    62: ({ colId }: { colId: string }) => `setFilterModel() - no column found for colId: ${colId}` as const,
+    63: ({ colId }: { colId: string }) =>
+        `setFilterModel() - unable to fully apply model, filtering disabled for colId: ${colId}` as const,
+    64: ({ colId }: { colId: string }) =>
+        `setFilterModel() - unable to fully apply model, unable to create filter for colId: ${colId}` as const,
+    65: () => 'filter missing setModel method, which is needed for setFilterModel' as const,
+    66: () => 'filter API missing getModel method, which is needed for getFilterModel' as const,
+    67: () => 'Filter is missing isFilterActive() method' as const,
+    68: () => 'Column Filter API methods have been disabled as Advanced Filters are enabled.' as const,
+    69: ({ guiFromFilter }: { guiFromFilter: any }) =>
+        `getGui method from filter returned ${guiFromFilter}; it should be a DOM element.` as const,
+    70: ({ newFilter }: { newFilter: any }) =>
+        `Grid option quickFilterText only supports string inputs, received: ${typeof newFilter}` as const,
+    71: () => 'debounceMs is ignored when apply button is present' as const,
+    72: ({ keys }: { keys: string[] }) => [`ignoring FilterOptionDef as it doesn't contain one of `, keys] as const,
+    73: () => `invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'` as const,
+    74: () => 'no filter options for filter' as const,
+    75: () => 'Unknown button type specified' as const,
+    76: ({ filterModelType }: { filterModelType: any }) =>
+        [
+            'Unexpected type of filter "',
+            filterModelType,
+            '", it looks like the filter was configured with incorrect Filter Options',
+        ] as const,
+    77: () => `Filter model is missing 'conditions'` as const,
+    78: () =>
+        'Filter Model contains more conditions than "filterParams.maxNumConditions". Additional conditions have been ignored.' as const,
+    79: () => '"filterParams.maxNumConditions" must be greater than or equal to zero.' as const,
+    80: () => '"filterParams.numAlwaysVisibleConditions" must be greater than or equal to zero.' as const,
+    81: () =>
+        '"filterParams.numAlwaysVisibleConditions" cannot be greater than "filterParams.maxNumConditions".' as const,
+    82: ({ param }: { param: any }) => `DateFilter ${param} is not a number` as const,
+    83: () => `DateFilter minValidYear should be <= maxValidYear` as const,
+    84: () => `DateFilter minValidDate should be <= maxValidDate` as const,
+    85: () =>
+        'DateFilter should not have both minValidDate and minValidYear parameters set at the same time! minValidYear will be ignored.' as const,
+    86: () =>
+        'DateFilter should not have both maxValidDate and maxValidYear parameters set at the same time! maxValidYear will be ignored.' as const,
+    87: () =>
+        'DateFilter parameter minValidDate should always be lower than or equal to parameter maxValidDate.' as const,
+    88: ({ index }: { index: number }) => `Invalid row index for ensureIndexVisible: ${index}` as const,
+    89: () =>
+        `A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)` as const,
+    90: () => `datasource is missing getRows method` as const,
+    91: () =>
+        'initialGroupOrderComparator cannot be used with Infinite Row Model as sorting is done on the server side' as const,
+    92: ({ methodName }: { methodName: string }) =>
+        `AnimationFrameService.${methodName} called but animation frames are off` as const,
+    93: () => 'cannot add multiple ranges when `cellSelection.suppressMultiRanges = true`' as const,
+    94: ({
+        paginationPageSizeOption,
+        pageSizeSet,
+        pageSizesSet,
+        pageSizeOptions,
+    }: {
+        paginationPageSizeOption: number;
+        pageSizeSet: boolean;
+        pageSizesSet: any;
+        pageSizeOptions: any[];
+    }) =>
+        `'paginationPageSize=${paginationPageSizeOption}'${pageSizeSet ? '' : ' (default value)'}, but ${paginationPageSizeOption} is not included in${pageSizesSet ? '' : ' the default'} paginationPageSizeSelector=[${pageSizeOptions.join(', ')}].` as const,
+    95: ({
+        paginationPageSizeOption,
+        paginationPageSizeSelector,
+    }: {
+        paginationPageSizeOption: number;
+        paginationPageSizeSelector: string;
+    }) =>
+        `Either set '${paginationPageSizeSelector}' to an array that includes ${paginationPageSizeOption} or to 'false' to disable the page size selector.` as const,
+    96: ({ id, data }: { id: string; data: any }) =>
+        [
+            'Duplicate ID',
+            id,
+            'found for pinned row with data',
+            data,
+            'When `getRowId` is defined, it must return unique IDs for all pinned rows. Use the `rowPinned` parameter.',
+        ] as const,
+    97: ({ colId }: { colId: string }) => `cellEditor for column ${colId} is missing getGui() method` as const,
+    98: () =>
+        'popup cellEditor does not work with fullRowEdit - you cannot use them both - either turn off fullRowEdit, or stop using popup editors.' as const,
+    99: () =>
+        'Since v32, `api.hideOverlay()` does not hide the loading overlay when `loading=true`. Set `loading=false` instead.' as const,
+    100: () =>
+        'rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead' as const,
 } as const;
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
 export type ErrorId = keyof ErrorMap;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
-export type GetErrorParams<TId extends ErrorId | null> =
-    ErrorValue<TId> extends (params: infer P) => any ? P : Record<string, never>;
+export type GetErrorParams<TId extends ErrorId> =
+    ErrorValue<TId> extends (params: infer P) => any
+        ? P extends Record<string, any>
+            ? P
+            : Record<string, never>
+        : never;
 
 export function getError<TId extends ErrorId, TParams extends GetErrorParams<TId>>(errorId: TId, args: TParams): any[] {
     const msgOrFunc: ErrorMap[TId] = AG_GRID_ERRORS[errorId];

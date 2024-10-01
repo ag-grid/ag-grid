@@ -1,10 +1,10 @@
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
+import type { BeanCollection, UserComponentName } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
-import { _warnOnce } from '../utils/function';
-import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
+import { _doOnce, _warnOnce } from '../utils/function';
+import { _fuzzySuggestions } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
 import { validateApiFunction } from './apiFunctionValidator';
 import type { ErrorId, GetErrorParams } from './errorMessages/errorText';
@@ -109,7 +109,9 @@ export class ValidationService extends BeanStub implements NamedBean {
             if (supportedRowModels) {
                 const rowModel = this.gridOptions.rowModelType ?? 'clientSide';
                 if (!supportedRowModels.includes(rowModel)) {
-                    warnings.add(`${String(key)} is not supported with the '${rowModel}' row model.`);
+                    warnings.add(
+                        `${String(key)} is not supported with the '${rowModel}' row model. It is only valid with: ${supportedRowModels.join(', ')}.`
+                    );
                     return;
                 }
             }
@@ -217,4 +219,51 @@ export class ValidationService extends BeanStub implements NamedBean {
     public getConsoleMessage<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>): any[] {
         return getError(id, args);
     }
+
+    public warnAboutMissingComponent(
+        propertyName: string,
+        componentName: string,
+        agGridDefaults: { [key in UserComponentName]?: any },
+        jsComps: { [key: string]: any }
+    ) {
+        _doOnce(() => {
+            const validComponents = [
+                // Don't include the old names / internals in potential suggestions
+                ...Object.keys(agGridDefaults).filter(
+                    (k) => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)
+                ),
+                ...Object.keys(jsComps),
+            ];
+            const suggestions = _fuzzySuggestions(componentName, validComponents, true, 0.8).values;
+
+            _warnOnce(
+                `Could not find '${componentName}' component. It was configured as "${propertyName}: '${componentName}'" but it wasn't found in the list of registered components.`
+            );
+            if (suggestions.length > 0) {
+                _warnOnce(`         Did you mean: [${suggestions.slice(0, 3)}]?`);
+            }
+            _warnOnce(
+                `If using a custom component check it has been registered as described in: ${this.getFrameworkOverrides().getDocLink('components/')}`
+            );
+        }, 'MissingComp' + componentName);
+    }
+}
+
+export function _fuzzyCheckStrings(
+    inputValues: string[],
+    validValues: string[],
+    allSuggestions: string[]
+): { [p: string]: string[] } {
+    const fuzzyMatches: { [p: string]: string[] } = {};
+    const invalidInputs: string[] = inputValues.filter(
+        (inputValue) => !validValues.some((validValue) => validValue === inputValue)
+    );
+
+    if (invalidInputs.length > 0) {
+        invalidInputs.forEach(
+            (invalidInput) => (fuzzyMatches[invalidInput] = _fuzzySuggestions(invalidInput, allSuggestions).values)
+        );
+    }
+
+    return fuzzyMatches;
 }

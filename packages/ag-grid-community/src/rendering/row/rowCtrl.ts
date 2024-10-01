@@ -52,9 +52,10 @@ import {
     _observeResize,
 } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
-import { _executeNextVMTurn, _warnOnce } from '../../utils/function';
+import { _executeNextVMTurn } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
+import { _logWarn } from '../../validation/logging';
 import type { Component } from '../../widgets/component';
 import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../widgets/tooltipFeature';
@@ -1483,7 +1484,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const rowStyle = this.gos.get('rowStyle');
 
         if (rowStyle && typeof rowStyle === 'function') {
-            _warnOnce('rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
+            _logWarn(100, {});
             return;
         }
 

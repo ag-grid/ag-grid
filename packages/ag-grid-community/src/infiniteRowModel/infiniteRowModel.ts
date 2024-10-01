@@ -11,9 +11,9 @@ import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import type { SortController } from '../sort/sortController';
-import { _warnOnce } from '../utils/function';
 import { _jsonEquals } from '../utils/generic';
 import { NumberSequence } from '../utils/numberSequence';
+import { _logWarn } from '../validation/logging';
 import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
 
@@ -67,9 +67,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
 
     private verifyProps(): void {
         if (this.gos.exists('initialGroupOrderComparator')) {
-            _warnOnce(
-                'initialGroupOrderComparator cannot be used with Infinite Row Model as sorting is done on the server side'
-            );
+            _logWarn(91, {});
         }
     }
 

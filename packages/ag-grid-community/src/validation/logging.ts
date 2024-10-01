@@ -40,7 +40,7 @@ export function _logWarn<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
->(id: TId, args: GetErrorParams<TId>) {
+>(id: TId, args: GetErrorParams<TId>): void {
     getMsgOrDefault(warnLog, id!, args as any);
 }
 

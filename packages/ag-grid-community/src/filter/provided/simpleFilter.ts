@@ -2,8 +2,9 @@ import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttached
 import type { IDoesFilterPassParams, IFilterOptionDef } from '../../interfaces/iFilter';
 import { _areEqual } from '../../utils/array';
 import { _removeFromParent, _setDisabled, _setDisplayed } from '../../utils/dom';
-import { _isFunction, _warnOnce } from '../../utils/function';
+import { _isFunction } from '../../utils/function';
 import { AgPromise } from '../../utils/promise';
+import { _logWarn } from '../../validation/logging';
 import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
 import type { ListOption } from '../../widgets/agList';
@@ -249,7 +250,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             let conditions = combinedModel.conditions;
             if (conditions == null) {
                 conditions = [];
-                _warnOnce(`Filter model is missing 'conditions'`);
+                _logWarn(77, {});
             }
 
             const numConditions = this.validateAndUpdateConditions(conditions);
@@ -295,9 +296,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         let numConditions = conditions.length;
         if (numConditions > this.maxNumConditions) {
             conditions.splice(this.maxNumConditions);
-            _warnOnce(
-                'Filter Model contains more conditions than "filterParams.maxNumConditions". Additional conditions have been ignored.'
-            );
+            // 'Filter Model contains more conditions than "filterParams.maxNumConditions". Additional conditions have been ignored.'
+            _logWarn(78, {});
             numConditions = this.maxNumConditions;
         }
         return numConditions;
@@ -351,18 +351,16 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     private setNumConditions(params: SimpleFilterParams): void {
         this.maxNumConditions = params.maxNumConditions ?? 2;
         if (this.maxNumConditions < 1) {
-            _warnOnce('"filterParams.maxNumConditions" must be greater than or equal to zero.');
+            _logWarn(79, {});
             this.maxNumConditions = 1;
         }
         this.numAlwaysVisibleConditions = params.numAlwaysVisibleConditions ?? 1;
         if (this.numAlwaysVisibleConditions < 1) {
-            _warnOnce('"filterParams.numAlwaysVisibleConditions" must be greater than or equal to zero.');
+            _logWarn(80, {});
             this.numAlwaysVisibleConditions = 1;
         }
         if (this.numAlwaysVisibleConditions > this.maxNumConditions) {
-            _warnOnce(
-                '"filterParams.numAlwaysVisibleConditions" cannot be greater than "filterParams.maxNumConditions".'
-            );
+            _logWarn(81, {});
             this.numAlwaysVisibleConditions = this.maxNumConditions;
         }
     }

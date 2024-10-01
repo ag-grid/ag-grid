@@ -109,6 +109,17 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
             return null;
         },
     },
+    rowDragManaged: {
+        supportedRowModels: ['clientSide'],
+        dependencies: {
+            treeData: {
+                required: [false, undefined],
+            },
+            pagination: {
+                required: [false, undefined],
+            },
+        },
+    },
     masterDetail: { module: ModuleNames.MasterDetailModule },
 
     enableRangeSelection: { module: ModuleNames.RangeSelectionModule },
@@ -197,6 +208,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     },
     cellSelection: {
         module: ModuleNames.RangeSelectionModule,
+    },
+    quickFilterText: {
+        supportedRowModels: ['clientSide'],
     },
 
     columnDefs: () => COL_DEF_VALIDATORS,

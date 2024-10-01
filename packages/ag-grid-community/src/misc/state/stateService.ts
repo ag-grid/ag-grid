@@ -15,7 +15,6 @@ import {
     _isUsingNewCellSelectionAPI,
 } from '../../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../../interfaces/IRangeService';
-import type { AdvancedFilterModel } from '../../interfaces/advancedFilterModel';
 import type {
     AggregationColumnState,
     AggregationState,
@@ -47,8 +46,9 @@ import type { SortModelItem } from '../../interfaces/iSortModelItem';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../../interfaces/selectionState';
 import type { PaginationService } from '../../pagination/paginationService';
 import type { ColumnAnimationService } from '../../rendering/columnAnimationService';
-import { _debounce, _warnOnce } from '../../utils/function';
+import { _debounce } from '../../utils/function';
 import { _jsonEquals } from '../../utils/generic';
+import { _logWarn } from '../../validation/logging';
 import { migrateGridStateModel } from './stateModelMigration';
 
 export class StateService extends BeanStub implements NamedBean {
@@ -622,7 +622,9 @@ export class StateService extends BeanStub implements NamedBean {
         });
 
         if (_isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && cellRanges.length > 1) {
-            return _warnOnce('cannot add multiple ranges when `cellSelection.suppressMultiRanges = true`');
+            // 'cannot add multiple ranges when `cellSelection.suppressMultiRanges = true`'
+            _logWarn(93, {});
+            return;
         }
 
         rangeService.setCellRanges(cellRanges);
