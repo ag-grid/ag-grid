@@ -62,10 +62,11 @@ export class ToolPanelColumnComp extends Component {
 
     public postConstruct(): void {
         this.setTemplate(
-            /* html */ `<div class="ag-column-select-column" aria-hidden="true">
-            <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-select-column-label" data-ref="eLabel"></span>
-        </div>`,
+            /* html */
+            `<div class="ag-column-select-column">
+                <ag-checkbox data-ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
+                <span class="ag-column-select-column-label" data-ref="eLabel"></span>
+            </div>`,
             [AgCheckboxSelector]
         );
         this.eDragHandle = _createIconNoSpan('columnDrag', this.gos)!;
