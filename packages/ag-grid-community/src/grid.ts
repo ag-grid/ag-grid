@@ -6,6 +6,7 @@ import { Context } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import type { GridOptions } from './entities/gridOptions';
 import { GridComp } from './gridComp/gridComp';
+import { GridCoreModule } from './gridCoreModule';
 import { getCoercedGridOptions } from './gridOptionsService';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { Module } from './interfaces/iModule';
@@ -200,7 +201,7 @@ export class GridCoreCreator {
         const passedViaConstructor: Module[] | undefined | null = params ? params.modules : null;
         const registered = ModuleRegistry.__getRegisteredModules(gridId);
 
-        const allModules: Module[] = [];
+        const allModules: Module[] = [GridCoreModule];
         const mapNames: { [name: string]: boolean } = {};
 
         // adds to list and removes duplicates
