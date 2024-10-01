@@ -14,7 +14,6 @@ import { GroupFilter } from './groupFilter/groupFilter';
 import { GroupFloatingFilterComp } from './groupFilter/groupFloatingFilter';
 import { GroupHideOpenParentsService } from './groupHideOpenParentsService';
 import { GroupStage } from './groupStage/groupStage';
-import { SelectableService } from './groupStage/selectableService';
 import { PivotColDefService } from './pivotColDefService';
 import { PivotResultColsService } from './pivotResultColsService';
 import { PivotStage } from './pivotStage';
@@ -70,11 +69,6 @@ export const RowGroupingCoreModule = defineEnterpriseModule('RowGroupingCoreModu
     ],
 });
 
-export const RowGroupingSelectionModule = defineEnterpriseModule('RowGroupingSelectionModule', {
-    beans: [SelectableService],
-    dependsOn: [RowGroupingCoreModule],
-});
-
 export const PivotModule = defineEnterpriseModule('PivotModule', {
     beans: [PivotResultColsService, PivotColDefService, PivotStage],
     dependsOn: [RowGroupingCoreModule],
@@ -122,7 +116,6 @@ export const RowGroupingModule = defineEnterpriseModule(ModuleNames.RowGroupingM
         RowGroupingApiModule,
         GroupFilterModule,
         GroupFloatingFilterModule,
-        RowGroupingSelectionModule,
         StickyRowModule,
         PivotModule,
     ],

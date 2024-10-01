@@ -41,6 +41,9 @@ export interface ISelectionService {
     }): void;
     createCheckboxSelectionComponent(): CheckboxSelectionComponent;
     createSelectAllFeature(column: AgColumn): SelectAllFeature;
+
+    /** Called after grouping / treeData */
+    updateSelectable(skipLeafNodes: boolean): void;
 }
 
 interface INodeSelectionParams {
