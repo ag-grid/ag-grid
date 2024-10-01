@@ -2,144 +2,85 @@
 title: "Row Grouping - Group Rows"
 enterprise: true
 ---
+Full width group rows can be used to represent the group structure in the grid.
 
-This section covers the Group Rows display type, where group rows are automatically added by the grid containing the
-row groups instead of group columns. This can be preferred if you have a lot of information you want to say about the group.
-
-{% imageCaption imagePath="../grouping-display-types/resources/group-rows.png" alt="Group Rows" centered=true constrained=true maxWidth="80%" /%}
+{% gridExampleRunner title="Enabling Group Rows" name="enabling-group-rows" /%}
 
 ## Enabling Group Rows
 
-To display each row group using group rows set `groupDisplayType = 'groupRows'` as shown below:
+The example above demonstrates that both `country` and `year` are grouped. No group column is generated, instead using full width
+rows to display the group value cells.
 
-```{% frameworkTransform=true spaceBetweenProperties=true %}
+Group Rows can be enabled by setting the `groupDisplayType` grid option to `"groupRows"` as shown below:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    groupDisplayType: 'groupRows',
+}
+```
+
+## Cell Renderer
+The group rows use the `agGroupCellRenderer` component to display the group information, as well as the chevron control
+for expanding and collapsing rows.
+
+This can be configured with several [Group Renderer Properties](./grouping-group-rows/#configurable-options) using
+the `groupRowRendererParams` grid option. The example below removes the row count and enables checkboxes for row selection.
+
+{% gridExampleRunner title="Group Cell Renderer Configuration" name="renderer-config-group-cell" /%}
+
+The example above demonstrates the following configuration:
+```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true, hide: true },
-        { field: 'year', rowGroup: true, hide: true },
-        { field: 'sport' },
-        { field: 'total' }
+        { field: 'total', rowGroup: true, cellRenderer: CustomMedalCellRenderer },
+        // ... other column definitions
     ],
-    // display each row grouping in group rows
-    groupDisplayType: 'groupRows', 
-}
-```
-
-In the snippet above, rows will be grouped by `country` and `year` as both column definitions have `rowGroup=true` declared.
-These row groups will be displayed using Group Rows as `groupDisplayType = 'groupRows'`.
-
-The example below demonstrates the Group Rows display type. Note the following:
-
-* There are two active row groups as the supplied `country` and `year` column definitions have `rowGroup=true` declared.
-
-* Instead of group columns, the row groups are displayed using full width group rows as `groupDisplayType = 'groupRows'`.
-
-* The `country` and `year` columns are not shown in the grid as `hide=true` is set on their column definitions.
-
-* Styling has been added to the group rows to highlight the different group levels.
-
-{% gridExampleRunner title="Enabling Group Rows" name="enabling-group-rows"  exampleHeight=515 /%}
-
-## Group Row Configuration
-
-When using Group Rows, it is possible to change the rendering of the group row. This done by either replacing the
-Cell Renderer with your own [Custom Cell Renderer](./component-cell-renderer/), or configuring the provided
-[Group Cell Renderer](./group-cell-renderer/).
-
-If using Group Rows and no `groupRowRenderer` properties are provided, then the default
-[Group Cell Renderer](./group-cell-renderer/) is used with its default values.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    // groups by row - the grid defaults to using the default group cell renderer for the row with default settings.
-    groupDisplayType: 'groupRows', 
-}
-```
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    // identical to above - uses 'agGroupCellRenderer' which is the default, so doesn't change anything.
-    groupDisplayType: 'groupRows',
-    groupRowRenderer: 'agGroupCellRenderer',
-}
-```
-
-### Providing Cell Renderer
-
-To provide your own Cell Renderer, use the grid properties `groupRowRenderer` and `groupRowRendererParams`.
-
-Using your own Cell Renderer hands over rendering of the group row to your custom Cell Renderer. However, that also means
-the customer Cell Renderer will also need to provide expand / collapse functionality.
-
-{% if isFramework("javascript", "angular", "react") %}
-{% partial file="./_group-config-common.mdoc" /%}
-{% /if %}
-
-{% if isFramework("vue") %}
-```js
-const gridOptions = {
-   // configures Group Rows with a customer Cell Renderer
-   groupDisplayType: 'groupRows', 
-   groupRowRenderer: 'myCellRenderer',
-   groupRowRendererParams: {
-       someProp: 'someValue',
-   },
-}
-```
-{% /if %}
-
-### Configuring Group Cell Renderer
-
-Configure the default Group Cell Renderer using `groupRowRendererParams`. Full details on what to configure are provided
-in the page [Group Cell Renderer](./group-cell-renderer/).
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    // use Group Rows and configure the Group Cell Renderer
-    groupDisplayType: 'groupRows', 
     groupRowRendererParams: {
-        // puts a checkbox onto each group row
+        suppressCount: true,
         checkbox: true,
-        // puts a row dragger onto each group row
-        rowDrag: true
+    }
+}
+```
+
+### Configurable Options
+
+{% interfaceDocumentation interfaceName="IGroupCellRendererParams" overrideSrc="group-cell-renderer/group-cell-renderer.json" config={ "description": "" } /%}
+
+### Custom Inner Renderer
+
+When using the group cell renderer, the `agGroupCellRenderer` component will inherit the grouped columns renderer and display this inside of the group cell,
+adjacent to any configured checkboxes, cell count, and the expand/collapse chevron control.
+
+This inner renderer can be overridden with a [Custom Cell Component](./component-cell-renderer/) by setting the `innerRenderer` and `innerRendererParams` properties
+on the `groupRowRendererParams` grid option.
+
+{% gridExampleRunner title="Group Cell Renderer Configuration" name="renderer-config-inner" /%}
+
+The example above uses the following configuration to provide a custom inner renderer to the group column:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoGroupColumnDef: {
+        cellRendererParams: {
+            innerRenderer: CustomMedalCellRenderer,
+        },
     },
 }
 ```
 
-Below shows an example of aggregation with Group Rows. It also provides an `innerRenderer` to configure what gets
-displaying inside the row groups, however it keeps the Default Group Cell Renderer for its expand / collapse
-functionality. Note the following:
+### Custom Cell Renderer
 
-{% if isFramework("javascript", "angular", "react") %}
-- Each group spans the width of the grid.
-- Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
-- Each medal column is editable, you can change the number of medals for any of the athletes.
-- The column Year has a filter on it.
-- The cell renderer has logic listening for changes to filtering and data cell changes. This means the aggregation data in the full width row is updated if:
-    1. If you edit any cell
-    1. If you filter the data (ie take rows out).
-- The example shows how to use CSS to enable the row hover effect, which is not shown on full width rows by default.
-{% /if %}
+The Group Cell Renderer can be entirely replaced with a [Custom Cell Component](./component-cell-renderer/) by setting the
+`groupRowRenderer` grid option.
 
-{% if isFramework("vue") %}
-- Each group spans the width of the grid.
-- Each group uses a custom Cell Renderer. The cell renderer shows the aggregation data for each medal type.
-- Each medal column is editable, you can change the number of medals for any of the athletes.
-- The column Year has a filter on it.
-- The example shows how to use CSS to enable the row hover effect, which is not shown on full width rows by default.
-{% /if %}
+{% gridExampleRunner title="Custom Group Cell Renderer" name="renderer-config-custom" /%}
 
-{% gridExampleRunner title="Full Width Groups Rendering" name="full-width-groups-rendering"  exampleHeight=515 /%}
-
-## Sorting Group Rows
-
-To sort a group row, you can apply a sort to the underlying column. In the example below the [Row Group Panel](./grouping-group-panel/) is enabled to demonstrate this. Note the following:
-
-* Clicking on `country` in the row group panel applies a sort to the country row groups.
-* Holding the {% kbd "⇧ Shift" /%} key down while clicking `year` in the row group panel applies a sort to the year row groups, while maintaining the sort on the country row groups.
-
-{% gridExampleRunner title="Sorting Group Rows" name="sorting-group-rows"  exampleHeight=515 /%}
+The example above sets a custom cell renderer using the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    groupRowRenderer: CustomGroupCellRenderer,
+}
+```
 
 ## Next Up
 
-Continue to the next section to learn about the [Custom Group Columns](./grouping-custom-group-columns/) display type.
+Continue to the next section to learn about the [Row Group Panel](./grouping-group-panel/).
