@@ -1063,21 +1063,16 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private onSelectionOptionsChanged(
-        current: GridOptions['rowSelection'] | undefined,
-        prev: GridOptions['rowSelection'] | undefined,
+        current: GridOptions['rowSelection'],
+        prev: GridOptions['rowSelection'],
         source: ColumnEventType
     ) {
-        // Checkbox column is not reactive to changes in legacy selection options
-        if (typeof current === 'string' || typeof prev === 'string') {
-            return;
-        }
-
-        const prevCheckbox = prev ? _getCheckboxes(prev) : undefined;
-        const currCheckbox = current ? _getCheckboxes(current) : undefined;
+        const prevCheckbox = prev && typeof prev !== 'string' ? _getCheckboxes(prev) : undefined;
+        const currCheckbox = current && typeof current !== 'string' ? _getCheckboxes(current) : undefined;
         const checkboxHasChanged = prevCheckbox !== currCheckbox;
 
-        const prevHeaderCheckbox = prev ? _getHeaderCheckbox(prev) : undefined;
-        const currHeaderCheckbox = current ? _getHeaderCheckbox(current) : undefined;
+        const prevHeaderCheckbox = prev && typeof prev !== 'string' ? _getHeaderCheckbox(prev) : undefined;
+        const currHeaderCheckbox = current && typeof current !== 'string' ? _getHeaderCheckbox(current) : undefined;
         const headerCheckboxHasChanged = prevHeaderCheckbox !== currHeaderCheckbox;
 
         if (checkboxHasChanged || headerCheckboxHasChanged) {
