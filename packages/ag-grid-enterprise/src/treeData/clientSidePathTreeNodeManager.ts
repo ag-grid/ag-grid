@@ -5,15 +5,32 @@ import type {
     NamedBean,
     RowDataTransaction,
     RowNode,
+    StageExecuteParams,
 } from 'ag-grid-community';
 
 import { AbstractClientSideTreeNodeManager } from './abstractClientSideTreeNodeManager';
+import { TreeStage } from './treeStrategy/treeStage';
 
 export class ClientSidePathTreeNodeManager<TData>
     extends AbstractClientSideTreeNodeManager<TData>
     implements NamedBean
 {
     beanName = 'clientSidePathTreeNodeManager' as const;
+
+    private treeStage: TreeStage;
+
+    public postConstruct(): void {
+        this.treeStage = this.createManagedBean(new TreeStage());
+    }
+
+    public override clearRootNode(): void {
+        this.treeStage.clear();
+        super.clearRootNode();
+    }
+
+    public executeTreeStage(params: StageExecuteParams): void {
+        this.treeStage.execute(params);
+    }
 
     public override setNewRowData(rowData: TData[]): void {
         this.dispatchRowDataUpdateStartedEvent(rowData);
@@ -66,6 +83,27 @@ export class ClientSidePathTreeNodeManager<TData>
         }
 
         return result;
+    }
+
+    public updateRowData(rowDataTran: RowDataTransaction<TData>): ClientSideNodeManagerUpdateRowDataResult<TData> {
+        this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
+
+        const updateRowDataResult: ClientSideNodeManagerUpdateRowDataResult<TData> = {
+            rowNodeTransaction: { remove: [], update: [], add: [] },
+            rowsInserted: false,
+            rowsOrderChanged: false,
+        };
+
+        const nodesToUnselect: RowNode[] = [];
+
+        const getRowIdFunc = _getRowIdCallback(this.gos);
+        this.executeRemove(getRowIdFunc, rowDataTran, updateRowDataResult, nodesToUnselect);
+        this.executeUpdate(getRowIdFunc, rowDataTran, updateRowDataResult, nodesToUnselect);
+        this.executeAdd(rowDataTran, updateRowDataResult);
+
+        this.updateSelection(nodesToUnselect, 'rowDataChanged');
+
+        return updateRowDataResult;
     }
 
     /** Converts the setRowData() command to a transaction */
@@ -151,27 +189,6 @@ export class ClientSidePathTreeNodeManager<TData>
             }
         }
         return true; // The order changed
-    }
-
-    public updateRowData(rowDataTran: RowDataTransaction<TData>): ClientSideNodeManagerUpdateRowDataResult<TData> {
-        this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
-
-        const updateRowDataResult: ClientSideNodeManagerUpdateRowDataResult<TData> = {
-            rowNodeTransaction: { remove: [], update: [], add: [] },
-            rowsInserted: false,
-            rowsOrderChanged: false,
-        };
-
-        const nodesToUnselect: RowNode[] = [];
-
-        const getRowIdFunc = _getRowIdCallback(this.gos);
-        this.executeRemove(getRowIdFunc, rowDataTran, updateRowDataResult, nodesToUnselect);
-        this.executeUpdate(getRowIdFunc, rowDataTran, updateRowDataResult, nodesToUnselect);
-        this.executeAdd(rowDataTran, updateRowDataResult);
-
-        this.updateSelection(nodesToUnselect, 'rowDataChanged');
-
-        return updateRowDataResult;
     }
 
     private executeAdd(rowDataTran: RowDataTransaction, result: ClientSideNodeManagerUpdateRowDataResult<TData>): void {

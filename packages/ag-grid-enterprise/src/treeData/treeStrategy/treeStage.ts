@@ -2,7 +2,6 @@ import type {
     BeanCollection,
     ChangedPath,
     GetDataPath,
-    IRowNodeStage,
     IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
@@ -45,7 +44,7 @@ export interface TreeExecutionDetails {
     initialGroupOrderComparator: InitialGroupOrderComparatorCallback;
 }
 
-export class TreeStrategy extends BeanStub {
+export class TreeStage extends BeanStub {
     private beans: BeanCollection;
     private showRowGroupColsService: IShowRowGroupColsService;
     private oldGroupDisplayColIds: string | undefined;
@@ -62,6 +61,11 @@ export class TreeStrategy extends BeanStub {
     }
 
     public override destroy(): void {
+        this.clear();
+        super.destroy();
+    }
+
+    public clear() {
         const rootRow = this.root.row;
         if (rootRow !== null) {
             this.root.removeRow(rootRow);
@@ -69,7 +73,6 @@ export class TreeStrategy extends BeanStub {
         }
         this.destroyTree(this.root);
         this.commitDestroyedRows();
-        super.destroy();
     }
 
     public execute(params: StageExecuteParams): void {
