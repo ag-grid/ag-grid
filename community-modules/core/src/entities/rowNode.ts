@@ -82,12 +82,12 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     /** How many levels this node is from the top when grouping. */
     public level: number;
 
-    /** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupHideParentOfSingleChild=true`)*/
+    /** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupRemoveSingleChildren=true`)*/
     public uiLevel: number;
 
     /**
      * If doing in-memory (client-side) grouping, this is the index of the group column this cell is for.
-     * This will always be the same as the level, unless we are collapsing groups, i.e. `groupHideParentOfSingleChild=true`.
+     * This will always be the same as the level, unless we are collapsing groups, i.e. `groupRemoveSingleChildren=true`.
      */
     public rowGroupIndex: number | null;
 

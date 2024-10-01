@@ -152,7 +152,7 @@ interface BaseRowNode<TData = any> {
 
     /** How many levels this node is from the top when grouping. */
     level: number;
-    /** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupHideParentOfSingleChild=true`).*/
+    /** How many levels this node is from the top when grouping in the UI (only different to `parent` when `groupRemoveSingleChildren=true`).*/
     uiLevel: number;
     /** The parent node to this node, or empty if top level. */
     parent: IRowNode<TData> | null;
@@ -196,7 +196,7 @@ interface GroupRowNode<TData = any> {
     rowGroupColumn: Column | null;
     /**
      * If doing in-memory (client-side) grouping, this is the index of the group column this cell is for.
-     * This will always be the same as the level, unless we are collapsing groups, i.e. `groupHideParentOfSingleChild=true`.
+     * This will always be the same as the level, unless we are collapsing groups, i.e. `groupRemoveSingleChildren=true`.
      */
     rowGroupIndex: number | null;
     /** `true` if group is expanded, otherwise `false`. */

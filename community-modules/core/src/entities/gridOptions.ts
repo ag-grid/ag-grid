@@ -407,24 +407,9 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     suppressDragLeaveHidesColumns?: boolean;
-
-    /**
-     * Enable to prevent column visibility changing when grouped columns are changed.
-     * @default false
-     */
-    suppressGroupChangesColumnVisibility?: boolean | 'suppressHideOnGroup' | 'suppressShowOnUngroup';
-
-    /**
-     * By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
-     * @default false
-     * @deprecated v32.3.0 - Use `suppressGroupChangesColumnVisibility: 'suppressShowOnUngroup'` instead.
-     */
-    suppressMakeColumnVisibleAfterUnGroup?: boolean;
-
     /**
      * If `true`, when you drag a column into a row group panel the column is not hidden.
      * @default false
-     * @deprecated v32.3.0 - Use `suppressGroupChangesColumnVisibility: 'suppressHideOnGroup'` instead.
      */
     suppressRowGroupHidesColumns?: boolean;
 
@@ -960,6 +945,7 @@ export interface GridOptions<TData = any> {
     /**
      * When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false
+     * @initial
      */
     suppressAggFuncInHeader?: boolean;
 
@@ -1214,22 +1200,14 @@ export interface GridOptions<TData = any> {
      * @default false
      */
     showOpenedGroup?: boolean;
-
-    /**
-     * Enable to display the child row in place of the group row when the group only has a single child.
-     * @default false
-     */
-    groupHideParentOfSingleChild?: boolean | 'leafGroupsOnly';
     /**
      * Set to `true` to collapse groups that only have one child.
      * @default false
-     * @deprecated v32.3.0 - use `groupHideParentOfSingleChild` instead.
      */
     groupRemoveSingleChildren?: boolean;
     /**
      * Set to `true` to collapse lowest level groups that only have one child.
      * @default false
-     * @deprecated v32.3.0 - use `groupHideParentOfSingleChild: 'leafGroupsOnly'` instead.
      */
     groupRemoveLowestSingleChildren?: boolean;
     /**
@@ -1258,6 +1236,11 @@ export interface GridOptions<TData = any> {
     groupRowRendererParams?: any;
 
     /**
+     * By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
+     * @default false
+     */
+    suppressMakeColumnVisibleAfterUnGroup?: boolean;
+    /**
      * Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.
      * @default false
      */
@@ -1266,6 +1249,7 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to suppress sort indicators and actions from the row group panel.
      * @default false
+     * @initial
      */
     rowGroupPanelSuppressSort?: boolean;
 

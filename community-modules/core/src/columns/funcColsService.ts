@@ -4,7 +4,6 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef, IAggFunc } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
-import { _shouldUpdateColVisibilityAfterGroup } from '../gridOptionsUtils';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import { _removeFromArray } from '../utils/array';
 import { _attrToBoolean, _attrToNumber, _exists, _missingOrEmpty } from '../utils/generic';
@@ -122,8 +121,11 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
         column.setRowGroupActive(active, source);
 
-        if (_shouldUpdateColVisibilityAfterGroup(this.gos, active)) {
-            this.columnModel.setColsVisible([column], !active, source);
+        if (active && !this.gos.get('suppressRowGroupHidesColumns')) {
+            this.columnModel.setColsVisible([column], false, source);
+        }
+        if (!active && !this.gos.get('suppressMakeColumnVisibleAfterUnGroup')) {
+            this.columnModel.setColsVisible([column], true, source);
         }
     }
 
