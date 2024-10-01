@@ -1,3 +1,4 @@
+import { _mapValues } from '../utils/object';
 import type { ChartCrossFilterService } from './../services/chartCrossFilterService';
 import { ChartSelectionModel } from './chartSelectionModel';
 
@@ -23,9 +24,9 @@ export class CrossFilteringContext {
     }
 
     public clearAllSelections(notify = true): void {
-        Object.values(this.chartSelectionModels).forEach((chartSelectionModel) => {
-            chartSelectionModel.clearSelection(false);
-        });
+        Object.values(this.chartSelectionModels).forEach((chartSelectionModel) =>
+            chartSelectionModel.clearSelection(false)
+        );
 
         if (notify) {
             this.updateFromSelection();
@@ -34,9 +35,7 @@ export class CrossFilteringContext {
 
     public updateFromSelection(): void {
         const updates = Object.values(this.chartSelectionModels)
-            .map((chartSelectionModel) => {
-                return chartSelectionModel.getFlatSelection();
-            })
+            .map((chartSelectionModel) => chartSelectionModel.getFlatSelection())
             .reduce((acc, flatSelection) => {
                 Object.entries(flatSelection).forEach(([category, values]) => {
                     acc[category] ??= [];
@@ -49,6 +48,28 @@ export class CrossFilteringContext {
             this.crossFilterService.resetFilters(updates, true);
         } else {
             this.crossFilterService.setFilters(updates);
+        }
+    }
+
+    setFilters(crossFilterUpdate: any) {
+        const index: Record<string, ChartSelectionModel> = _mapValues(crossFilterUpdate, (key) =>
+            Object.values(this.chartSelectionModels).find((chartSelectionModel) => chartSelectionModel.category === key)
+        );
+
+        const updated = Object.entries(index)
+            .filter(([, a]) => !!a)
+            .map(([key, value]) =>
+                value.setSelection(
+                    crossFilterUpdate[key].map((v: any) => ({ category: key, value: v })),
+                    false
+                )
+            )
+            .filter((a) => a);
+
+        if (updated.length > 0) {
+            console.warn('setFilters', crossFilterUpdate);
+
+            this.updateFromSelection();
         }
     }
 }

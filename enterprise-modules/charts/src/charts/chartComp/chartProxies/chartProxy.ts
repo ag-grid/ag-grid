@@ -102,7 +102,11 @@ export abstract class ChartProxy<
     protected abstract getUpdateOptions(params: UpdateParams, commonChartOptions: TOptions): TOptions;
 
     public update(params: UpdateParams): void {
-        this.getChartRef().update(this.getUpdateOptions(params, this.getCommonChartOptions(params.updatedOverrides)));
+        const updateOptions = this.getUpdateOptions(params, this.getCommonChartOptions(params.updatedOverrides));
+
+        this.selectionModel.setCategory(params.categories[0].id);
+
+        this.getChartRef().update(updateOptions);
     }
 
     public updateThemeOverrides(themeOverrides: AgChartThemeOverrides): void {

@@ -39,7 +39,7 @@ export interface ChartModelParams {
     suppressChartRanges?: boolean;
     unlinkChart?: boolean;
     crossFiltering?: boolean;
-    crossFilteringContext?: CrossFilteringContext;
+    crossFilteringContext: CrossFilteringContext;
     showFilteredDataOnly?: boolean;
     seriesChartTypes?: SeriesChartType[];
     seriesGroupType?: SeriesGroupType;

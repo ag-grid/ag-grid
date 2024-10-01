@@ -6,6 +6,7 @@ export class ChartSelectionModel {
     public available: CrossFilterCategoryEntry[] = [];
     public chartId: string;
     private crossFilteringContext: CrossFilteringContext;
+    public category: string;
 
     public constructor(chartId: string, crossFilteringContext: CrossFilteringContext) {
         this.chartId = chartId;
@@ -59,14 +60,31 @@ export class ChartSelectionModel {
         }
     }
 
-    setSelection(entries: CrossFilterCategoryEntry[], notify = true): void {
+    setSelection(entries: CrossFilterCategoryEntry[], notify = true): boolean {
+        const entriesAreDifferent =
+            this.selection.length !== entries.length ||
+            this.selection.some(({ category, value }, i) => {
+                const rawValue = (value as any)?.value || value;
+                return category !== entries[i].category || rawValue !== entries[i].value;
+            });
+
+        if (!entriesAreDifferent) {
+            return false;
+        }
+
         this.selection = entries;
         if (notify) {
             this.crossFilteringContext.updateFromSelection();
         }
+
+        return true;
     }
 
     public clearSelection(notify = true): void {
         this.setSelection([], notify);
+    }
+
+    setCategory(category: string) {
+        this.category = category;
     }
 }

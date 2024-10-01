@@ -11,6 +11,7 @@ import type {
 import { BeanStub, _includes, _isClientSideRowModel, _warnOnce } from '@ag-grid-community/core';
 
 import { CROSS_FILTER_FIELD_POSTFIX } from '../crossfilter/crossFilterAPI';
+import { _mapValues } from '../utils/object';
 
 export class ChartCrossFilterService extends BeanStub implements NamedBean {
     beanName = 'chartCrossFilterService' as const;
@@ -100,7 +101,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
 
     setFilters(updates: Record<string, any[]>) {
         this.filterManager?.setFilterModel(
-            mapValues(updates, (key, values) => this.getUpdatedFilterModel(key, values))
+            _mapValues(updates, (key, values) => this.getUpdatedFilterModel(key, values))
         );
     }
 
@@ -150,11 +151,4 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
     private getColumnById(colId: string) {
         return this.columnModel.getCol(colId) as AgColumn;
     }
-}
-
-function mapValues<T = any, U = any>(obj: Record<string, T>, fn: (key: string, value: T) => U): Record<string, U> {
-    return Object.entries(obj).reduce<Record<string, U>>((acc, [key, value]) => {
-        acc[key] = fn(key, value);
-        return acc;
-    }, {});
 }
