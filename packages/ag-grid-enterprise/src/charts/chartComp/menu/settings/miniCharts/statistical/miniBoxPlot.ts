@@ -99,7 +99,7 @@ export class MiniBoxPlot extends MiniChartWithAxes {
         themeTemplateParameters?: ThemeTemplateParameters,
         isCustomTheme?: boolean
     ) {
-        const themeBackgroundColor = themeTemplateParameters?.get(_Theme.DEFAULT_BACKGROUND_COLOR);
+        const themeBackgroundColor = themeTemplateParameters?.get(_Theme.DEFAULT_BACKGROUND_COLOUR);
         const backgroundFill =
             (Array.isArray(themeBackgroundColor) ? themeBackgroundColor[0] : themeBackgroundColor) ?? 'white';
 

@@ -81,7 +81,7 @@ export class MiniTreemap extends MiniChart {
     }
 
     updateColors(fills: string[], strokes: string[], themeTemplate?: ThemeTemplateParameters, isCustomTheme?: boolean) {
-        const defaultBackgroundColor = themeTemplate?.get(_Theme.DEFAULT_BACKGROUND_COLOR);
+        const defaultBackgroundColor = themeTemplate?.get(_Theme.DEFAULT_BACKGROUND_COLOUR);
         const backgroundFill =
             (Array.isArray(defaultBackgroundColor) ? defaultBackgroundColor[0] : defaultBackgroundColor) ?? 'white';
 

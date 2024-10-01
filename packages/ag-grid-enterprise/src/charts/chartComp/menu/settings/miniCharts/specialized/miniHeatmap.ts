@@ -70,8 +70,8 @@ export class MiniHeatmap extends MiniChart {
     }
 
     updateColors(fills: string[], strokes: string[], themeTemplate?: ThemeTemplateParameters, isCustomTheme?: boolean) {
-        const defaultColorRange = themeTemplate?.get(_Theme.DEFAULT_DIVERGING_SERIES_COLOR_RANGE);
-        const defaultBackgroundColor = themeTemplate?.get(_Theme.DEFAULT_BACKGROUND_COLOR);
+        const defaultColorRange = themeTemplate?.get(_Theme.DEFAULT_DIVERGING_SERIES_COLOUR_RANGE);
+        const defaultBackgroundColor = themeTemplate?.get(_Theme.DEFAULT_BACKGROUND_COLOUR);
         const backgroundFill =
             (Array.isArray(defaultBackgroundColor) ? defaultBackgroundColor[0] : defaultBackgroundColor) ?? 'white';
 
