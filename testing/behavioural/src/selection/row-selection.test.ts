@@ -12,7 +12,6 @@ import {
     selectRowsByIndex,
     toggleCheckboxByIndex,
     toggleHeaderCheckboxByIndex,
-    wait,
 } from './utils';
 
 describe('Row Selection Grid Options', () => {
@@ -33,10 +32,10 @@ describe('Row Selection Grid Options', () => {
         return gridMgr.createGrid('myGrid', gridOptions);
     }
 
-    async function createGridAndWait(gridOptions: GridOptions, waitMs = 60): Promise<GridApi> {
+    async function createGridAndWait(gridOptions: GridOptions): Promise<GridApi> {
         const api = createGrid(gridOptions);
-        await wait(waitMs);
-        return api;
+
+        return new Promise((resolve) => api.addEventListener('firstDataRendered', () => resolve(api)));
     }
 
     const gridMgr = new TestGridsManager({
@@ -487,7 +486,6 @@ describe('Row Selection Grid Options', () => {
             });
         });
 
-        // TODO: Re-enable once checkbox settings are used/ported in the new API
         describe('Checkbox selection', () => {
             test('Checkbox can be toggled on and off', async () => {
                 const api = await createGridAndWait({
@@ -879,7 +877,6 @@ describe('Row Selection Grid Options', () => {
             });
         });
 
-        // TODO: Re-enable once checkbox settings are used/ported in the new API
         describe('Header checkbox selection', () => {
             test('can be used to select and deselect all rows', () => {
                 const api = createGrid({
@@ -983,8 +980,7 @@ describe('Row Selection Grid Options', () => {
             });
         });
 
-        // TODO: Re-enable once checkbox settings are used/ported in the new API
-        describe.skip('Group checkbox selection', () => {
+        describe('Group checkbox selection', () => {
             const groupGridOptions: Partial<GridOptions> = {
                 columnDefs: [
                     { field: 'country', rowGroup: true, hide: true },
@@ -1015,7 +1011,7 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([0], api);
             });
 
-            test('clicking group row with `groupSelectsChildren` enabled selects that row and all its children', async () => {
+            test('clicking group row with `groupSelects = "descendants"` enabled selects that row and all its children', async () => {
                 const api = await createGridAndWait({
                     ...groupGridOptions,
                     rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },

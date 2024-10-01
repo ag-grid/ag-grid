@@ -28,18 +28,14 @@ describe('Row Selection Legacy Grid Options', () => {
     let consoleErrorSpy: MockInstance;
     let consoleWarnSpy: MockInstance;
 
-    function wait(ms: number): Promise<void> {
-        return new Promise((resolve) => setTimeout(resolve, ms));
-    }
-
     function createGrid(gridOptions: GridOptions): GridApi {
         return gridMgr.createGrid('myGrid', gridOptions);
     }
 
-    async function createGridAndWait(gridOptions: GridOptions, waitMs = 60): Promise<GridApi> {
+    async function createGridAndWait(gridOptions: GridOptions): Promise<GridApi> {
         const api = createGrid(gridOptions);
-        await wait(waitMs);
-        return api;
+
+        return new Promise((resolve) => api.addEventListener('firstDataRendered', () => resolve(api)));
     }
 
     const gridMgr = new TestGridsManager({

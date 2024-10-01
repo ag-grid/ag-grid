@@ -1,20 +1,12 @@
 import type { GridApi, IRowNode } from 'ag-grid-community';
 import { _areEqual } from 'ag-grid-community';
 
-export function wait(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 export function getRowByIndex(index: number): HTMLElement | null {
     return document.getElementById('myGrid')!.querySelector(`[row-index="${index}"]`);
 }
 
 export function getCheckboxByIndex(index: number): HTMLElement | null {
-    return document
-        .getElementById('myGrid')!
-        .querySelectorAll<HTMLElement>('.ag-selection-checkbox')
-        .item(index)
-        .querySelector('input[type=checkbox]');
+    return getRowByIndex(index)?.querySelector<HTMLElement>('.ag-selection-checkbox input[type=checkbox]') ?? null;
 }
 
 export function getHeaderCheckboxByIndex(index: number): HTMLElement | null {
