@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
 import type { RowSelectionMode } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
-import type { SelectionEventSourceType } from '../events';
+import type { RowSelectedEvent, SelectionEventSourceType } from '../events';
 import { isSelectionUIEvent } from '../events';
 import {
     _getGroupSelectsDescendants,
@@ -332,8 +332,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         return updatedCount;
     }
 
-    private onRowSelected(event: any): void {
-        const rowNode = event.node;
+    private onRowSelected(event: RowSelectedEvent): void {
+        const rowNode = event.node as RowNode;
 
         // we do not store the group rows when the groups select children
         if (this.groupSelectsChildren && rowNode.group) {
@@ -341,9 +341,9 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         if (rowNode.isSelected()) {
-            this.selectedNodes.set(rowNode.id, rowNode);
+            this.selectedNodes.set(rowNode.id!, rowNode);
         } else {
-            this.selectedNodes.delete(rowNode.id);
+            this.selectedNodes.delete(rowNode.id!);
         }
     }
 
