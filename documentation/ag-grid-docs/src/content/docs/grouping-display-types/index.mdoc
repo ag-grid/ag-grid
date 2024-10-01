@@ -1,53 +1,29 @@
 ---
-title: "Row Grouping - Display Types"
+title: "Row Grouping - Displaying Grouped Data"
 enterprise: true
 ---
+Grouping hierarchy can be displayed in the grid in different ways.
 
-This section compares the different ways grouped rows can be displayed in the grid.
+## Display Types
 
-Row Grouping performs a _GROUP BY_ operation to the 'flat' list of rows provided to the grid, where the rows are grouped
-by one or more columns. The Display Types listed below are only concerned with how the results of Row Grouping are
-displayed in the grid.
+The row hierarchy can be shown in three different ways, configured by the `groupDisplayType` grid option:
+- A [Single Group Column](./grouping-single-group-column/) containing all row group levels.
+- [Multiple Group Columns](./grouping-multiple-group-columns/) with each column representing a row group level.
+- [Group Rows](./grouping-group-rows/) where parent rows are displayed as full width rows.
+
+{% gridExampleRunner title="Grouping Display Types" name="group-display-types" /%}
+
+To configure the display type, set the `groupDisplayType` property in the grid options to one of `"singleColumn"`,
+`"multipleColumns"` or `"groupRows"` as demonstrated in the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    groupDisplayType: 'multipleColumns',
+};
+```
 
 {% note %}
-If the rows supplied to the grid do not need to be grouped by the grid, consider using [Tree Data](./tree-data/) instead.
+While not advised, it is also possible to configure these columns using [Custom Group Columns](./grouping-custom-group-columns/).
 {% /note %}
-
-## Single Group Column
-
-A single group column is added to the grid which displays all row groups.
-
-{% imageCaption imagePath="resources/single-group-column.png" alt="Single Group Column" centered=true constrained=true maxWidth="70%" /%}
-
-As illustrated above, there is a single group column containing the `country` and `year` row groups in a single group hierarchy.
-
-See the [Single Group Column](./grouping-single-group-column/) section for more details.
-
-## Multiple Group Columns
-
-Separate group columns will be added to the grid for each column used to group the rows by.
-
-{% imageCaption imagePath="resources/multiple-group-columns.png" alt="Multiple Group Columns" centered=true constrained=true maxWidth="70%" /%}
-
-As illustrated above, the `country` and `year` row groups are displayed under separate group columns.
-
-See the [Multiple Group Columns](./grouping-multiple-group-columns/) section for more details.
-
-## Group Rows
-
-No group columns are added to the grid, instead row groups are displayed using group rows.
-
-{% imageCaption imagePath="resources/group-rows.png" alt="Group Rows" centered=true constrained=true maxWidth="70%"/%}
-
-As illustrated above, the `country` and `year` row groups are displayed using Group Rows.
-
-See the [Group Rows](./grouping-group-rows/) section for more details.
-
-## Custom Group Columns
-
-In some rare cases it may be desirable to supply your own custom groups rather than using the provided display types above.
-
-See the [Custom Group Columns](./grouping-custom-group-columns/) section for more details.
 
 ## Next Up
 

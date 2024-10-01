@@ -13,9 +13,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'country', rowGroup: true, enableRowGroup: true, hide: true },
         { field: 'year', rowGroup: true, enableRowGroup: true, hide: true },
         { field: 'sport', enableRowGroup: true },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
+        { field: 'total' },
     ],
     defaultColDef: {
         flex: 1,

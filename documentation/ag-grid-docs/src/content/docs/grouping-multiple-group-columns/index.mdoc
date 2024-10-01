@@ -2,47 +2,33 @@
 title: "Row Grouping - Multiple Group Columns"
 enterprise: true
 ---
+Display the group structure with one group column representing each level of row grouping.
 
-This section covers the Multiple Group Columns display type, where a group column is automatically added by the grid for
-each row group.
-
-{% imageCaption imagePath="../grouping-display-types/resources/multiple-group-columns.png" alt="Multiple Group Columns" centered=true constrained=true maxWidth="80%" /%}
+{% gridExampleRunner title="Enabling Single Group Column" name="enabling-multiple-group-column" /%}
 
 ## Enabling Multiple Group Columns
 
-To display each row group under a separate group column set `groupDisplayType = 'multipleColumns'` as shown below:
+The example above demonstrates that both `country` and `year` are grouped. One group column is used to display the group value cells
+for each column that was grouped.
 
-```{% frameworkTransform=true spaceBetweenProperties=true %}
+Multiple Group Columns can be enabled by setting the `groupDisplayType` grid option to `"multipleColumns"` as shown below:
+
+```{% frameworkTransform=true %}
 const gridOptions = {
-    columnDefs: [
-        { field: 'country', rowGroup: true, hide: true },
-        { field: 'year', rowGroup: true, hide: true },
-        { field: 'athlete' },
-        { field: 'sport' },
-        { field: 'total' }
-    ],
-    // display each row grouping in a separate group column
     groupDisplayType: 'multipleColumns',
 }
 ```
 
-In the snippet above, rows will be grouped by `country` and `year` as both column definitions have `rowGroup=true`
-declared, and a group column displayed for each column that we are grouping by.
+## Configuration
 
-This is demonstrated in the following example, note the following:
+The columns are added to the grid when row grouping is present, and can be configured via the `autoGroupColumnDef` grid
+option.
 
-* There are two active row groups as the supplied `country` and `year` column definitions have `rowGroup=true` declared.
+{% gridExampleRunner title="Multiple Group Column Configuration" name="multiple-group-column-configuration" /%}
 
-* Separate group columns are displayed for `country` and `year` as `groupDisplayType = 'multipleColumns'`.
-
-* The `country` and `year` columns are not shown in the grid as `hide=true` is set on their column definitions.
-
-{% gridExampleRunner title="Enabling Multiple Group Columns" name="enabling-multiple-group-columns"  exampleHeight=515 /%}
-
-## Group Column Configuration
-
-The Multiple Group Columns display type adds an Auto Group Column for each row group to the grid. To change the default
-configurations of these group columns, use the `autoGroupColumnDef` grid option as shown below:
+The example above uses the configuration demonstrated below to change the column's header name and apply a minimum width.
+It also [Configures the Group Cell Component](./group-cell-renderer/) using the `cellRendererParams` option to add checkboxes and remove
+the count from each row group.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -57,48 +43,118 @@ const gridOptions = {
 }
 ```
 
-Note how in the snippet above that the `autoGroupColumnDef` can be used to override any [Column Property](./column-definitions/).
+### Display the Parent Group Value
 
-The Auto Group Columns use the [Group Cell Renderer](./group-cell-renderer/) to render group cells, and are configured via the `cellRendererParams` property.
+The group hierarchy is represented by relative location to the parent. When scrolling through the grid it can become harder
+to keep track of the parent group value.
 
-The following example demonstrates some of the available `autoGroupColumnDef` configurations. Note that:
+Setting the grid property `showOpenedGroup` to `true` will show the value of the parent group
+inside the group column.
 
-* The group column names are changed using the `headerValueGetter` to add 'Group Column' after each column name.
+{% gridExampleRunner title="Show Opened Groups Many Columns" name="show-opened-groups-many-columns" /%}
 
-* The min width of the group column is changed via `minWidth = 220`.
+The example above demonstrates the following configuration to show the parent group value inside the group column:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    showOpenedGroup: true,
+}
+```
 
-* The count of each row group is removed by setting `cellRendererParams.suppressCount = true`.
+## Cell Renderer
+The column uses the `agGroupCellRenderer` component to display the group information, as well as the chevron control
+for expanding and collapsing rows. The renderer also embeds the grouped columns renderer and displays this inside of the group cell.
 
-* Checkboxes are displayed beside each row group by setting `cellRendererParams.checkbox = true`.
+This can be configured with several [Group Renderer Properties](./grouping-multiple-group-columns/#configurable-options) using
+the `autoGroupColumnDef` property `cellRendererParams`. The example below removes the row count and enables checkboxes for row selection.
 
-{% gridExampleRunner title="Multiple Group Columns Configuration" name="multiple-group-columns-configuration"  exampleHeight=515 /%}
+{% gridExampleRunner title="Group Cell Renderer Configuration" name="renderer-config-group-cell" /%}
 
-## Showing Open Groups
+The example above demonstrates the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'total', rowGroup: true, cellRenderer: CustomMedalCellRenderer },
+        // ... other column definitions
+    ],
+    autoGroupColumnDef: {
+        cellRendererParams: {
+            suppressCount: true,
+            checkbox: true,
+        }
+    },
+}
+```
 
-Setting the grid property `showOpenedGroup=true` will show the name of the opened group inside the group column.
-This is useful when `suppressGroupRowsSticky=true` and the user scrolls down through the children of the group, and the row showing what group
-was opened is scrolled out of view.
+### Configurable Options
 
-The following example uses `showOpenedGroup=true` and `suppressGroupRowsSticky=true` with many group columns. The open groups are shown across all
-group columns where the group is open for that column.
+{% interfaceDocumentation interfaceName="IGroupCellRendererParams" overrideSrc="group-cell-renderer/group-cell-renderer.json" config={ "description": "" } /%}
 
-{% gridExampleRunner title="Show Opened Groups Many Columns" name="show-opened-groups-many-columns"  exampleHeight=515 /%}
+### Custom Inner Renderer
 
-## Hide Open Parents
+When using the group cell renderer, the `agGroupCellRenderer` component will inherit the grouped columns renderer and display this inside of the group cell,
+adjacent to any configured checkboxes, cell count, and the expand/collapse chevron control.
 
-Depending on your preference, you may wish to hide parent rows when they are open. This gives the impression to the user that the children take the place of the parent row. This feature only makes sense when groups are in different columns. To turn this feature on set `groupHideOpenParents=true`.
+This inner renderer can be overridden with a [Custom Cell Component](./component-cell-renderer/) by setting the `innerRenderer` and `innerRendererParams` properties
+on the `cellRendererParams` configuration.
 
-This is demonstrated in the example below. Notice that each group row has [aggregated values](./aggregation/). When the group is closed, the group row shows the aggregated result. When the group is open, the group row is removed and in its place the child rows are displayed. The group column still displays the parent group in the group column, to allow users to close the group by clicking the chevron.
+{% gridExampleRunner title="Group Cell Renderer Configuration" name="renderer-config-inner" /%}
 
-The grid in the example below is configured to colour the rows differently for each group level. When a group is opened, the row colour changes to reflect the fact that the parent group row has been replaced by its child rows.
+The example above uses the following configuration to provide a custom inner renderer to the group column:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoGroupColumnDef: {
+        cellRendererParams: {
+            innerRenderer: CustomMedalCellRenderer,
+        },
+    },
+}
+```
 
-Filter is enabled for each column by providing a `filterValueGetter` for the `autoGroupColumnDef`. The filterValueGetter returns the value of the grouped column - eg for Country, it will filter on Country.
+### Custom Cell Renderer
+
+The Group Cell Renderer can be entirely replaced with a [Custom Cell Component](./component-cell-renderer/) by setting the `cellRenderer`
+property on the `autoGroupColumnDef` configuration.
+
+{% gridExampleRunner title="Custom Group Cell Renderer" name="renderer-config-custom" /%}
 
 {% note %}
-When `groupHideOpenParents=true` the Grid automatically disables Group Rows Sticky, see: [suppressGroupRowsSticky](./grid-options/#reference-rowGrouping-suppressGroupRowsSticky).
+It is also possible to [Determine Cell Renderers Dynamically](./component-cell-renderer/#dynamic-component-selection).
 {% /note %}
 
-{% gridExampleRunner title="Hide Open Parents" name="hide-open-parents"  exampleHeight=515 /%}
+## Filtering
+
+To enable filters on the group column, set the `filter` property of the `autoGroupColumnDef` to `'agGroupColumnFilter'`. This configuration
+will cause the group column to inherit the the filter from the column it is representing.
+
+{% gridExampleRunner title="Group Column Filtering" name="filtering-grouped-columns" /%}
+
+The example above demonstrates the following configuration to inherit the filter from the grouped column:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoGroupColumnDef: {
+        filter: 'agGroupColumnFilter',
+        floatingFilter: true,
+    },
+}
+```
+
+## Hiding Expanded Parent Rows
+
+Expanded rows can be configured to disappear when they are open, instead moving the group cell renderer into the first child row.
+To enable this feature set the `groupHideOpenParents` grid option to `true`.
+
+{% gridExampleRunner title="Hide Open Parents" name="hide-open-parents" /%}
+
+{% note %}
+When `groupHideOpenParents` is enabled the grid no longer sticks expanded group rows to the top of the viewport.
+{% /note %}
+
+The example above demonstrates the following configuration to hide open parents:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    groupHideOpenParents: true,
+}
+```
 
 ## Next Up
 

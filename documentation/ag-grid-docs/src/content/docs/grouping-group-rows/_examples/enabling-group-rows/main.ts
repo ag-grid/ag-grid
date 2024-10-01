@@ -12,17 +12,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
         { field: 'year', rowGroup: true, hide: true },
-        {
-            field: 'athlete',
-            minWidth: 250,
-            cellRenderer: (params: ICellRendererParams) => {
-                return `<span style="margin-left: 60px">${params.value}</span>`;
-            },
-        },
-        { field: 'sport', minWidth: 200 },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
+        { field: 'athlete' },
+        { field: 'sport' },
+        { field: 'total' },
     ],
     defaultColDef: {
         flex: 1,
