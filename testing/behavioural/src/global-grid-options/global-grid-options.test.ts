@@ -1,11 +1,5 @@
 import type { GlobalGridOptionsMergeStrategy, GridOptions } from 'ag-grid-community';
-import {
-    ClientSideRowModelModule,
-    CommunityFeaturesModule,
-    ModuleRegistry,
-    createGrid,
-    provideGlobalGridOptions,
-} from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid, provideGlobalGridOptions } from 'ag-grid-community';
 
 describe('Global Grid Options', () => {
     function createMyGrid(gridOptions: GridOptions = {}) {
@@ -18,7 +12,7 @@ describe('Global Grid Options', () => {
     }
 
     beforeAll(() => {
-        ModuleRegistry.registerModules([CommunityFeaturesModule, ClientSideRowModelModule]);
+        ModuleRegistry.registerModules([ClientSideRowModelModule]);
     });
 
     beforeEach(() => {

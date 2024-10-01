@@ -1,7 +1,7 @@
 import { setTimeout as asyncSetTimeout } from 'timers/promises';
 import type { MockInstance } from 'vitest';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, cachedJSONObjects } from '../../test-utils';
@@ -15,7 +15,7 @@ const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree data', () => {
     const gridsManager = new TestGridsManager({
-        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule],
     });
 
     let consoleWarnSpy: MockInstance;
@@ -502,7 +502,7 @@ describe('ag-grid tree data', () => {
             animateRows: false,
             groupDefaultExpanded: -1,
             rowData: [],
-            selection: {
+            rowSelection: {
                 mode: 'multiRow',
             },
             getDataPath,

@@ -3,6 +3,7 @@ import type {
     BeanCollection,
     ColumnModel,
     DataTypeService,
+    FilterValueService,
     IAdvancedFilterService,
     IRowNode,
     NamedBean,
@@ -28,12 +29,14 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     private columnModel: ColumnModel;
     private dataTypeService?: DataTypeService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
+    private filterValueService: FilterValueService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueService = beans.valueService;
         this.columnModel = beans.columnModel;
         this.dataTypeService = beans.dataTypeService;
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
+        this.filterValueService = beans.filterValueService!;
     }
 
     private enabled: boolean;
@@ -55,7 +58,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.expressionProxy = {
             getValue: (colId, node) => {
                 const column = this.columnModel.getColDefCol(colId);
-                return column ? this.valueService.getValue(column, node, true) : undefined;
+                return column ? this.filterValueService.getValue(column, node) : undefined;
             },
         };
 

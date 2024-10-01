@@ -1,14 +1,12 @@
-import { ModuleNames, _defineModule } from 'ag-grid-community';
+import { ModuleNames } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { VERSION } from '../version';
+import { defineEnterpriseModule } from '../moduleUtils';
 import { SparklineCellRenderer } from './sparklineCellRenderer';
 import { SparklineTooltipSingleton } from './tooltip/sparklineTooltipSingleton';
 
-export const SparklinesModule = _defineModule({
-    version: VERSION,
-    moduleName: ModuleNames.SparklinesModule,
+export const SparklinesModule = defineEnterpriseModule(ModuleNames.SparklinesModule, {
     beans: [SparklineTooltipSingleton],
     userComponents: [{ name: 'agSparklineCellRenderer', classImp: SparklineCellRenderer }],
-    dependantModules: [EnterpriseCoreModule],
+    dependsOn: [EnterpriseCoreModule],
 });

@@ -1,6 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
-import type { RowSelectionOptions } from '../entities/gridOptions';
+import type { RowSelectionMode } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
 import { isSelectionUIEvent } from '../events';
@@ -9,7 +9,7 @@ import {
     _getRowSelectionMode,
     _isClientSideRowModel,
     _isMultiRowSelection,
-    _isUsingNewSelectionAPI,
+    _isUsingNewRowSelectionAPI,
 } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -38,14 +38,14 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     private selectionCtx: RowRangeSelectionContext = new RowRangeSelectionContext();
 
     private groupSelectsChildren: boolean;
-    private rowSelectionMode?: RowSelectionOptions['mode'] = undefined;
+    private rowSelectionMode?: RowSelectionMode = undefined;
 
     public postConstruct(): void {
         const { gos, rowModel, onRowSelected } = this;
         this.selectionCtx.init(rowModel);
         this.rowSelectionMode = _getRowSelectionMode(gos);
         this.groupSelectsChildren = _getGroupSelectsDescendants(gos);
-        this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection', 'selection'], () => {
+        this.addManagedPropertyListeners(['groupSelectsChildren', 'rowSelection'], () => {
             const groupSelectsChildren = _getGroupSelectsDescendants(gos);
             const selectionMode = _getRowSelectionMode(gos);
 
@@ -278,11 +278,11 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             return false;
         }
         // also only do it if CSRM (code should never allow this anyway)
-        if (!_isClientSideRowModel(this.gos)) {
+        if (!_isClientSideRowModel(this.gos, this.rowModel)) {
             return false;
         }
 
-        const clientSideRowModel = this.rowModel as IClientSideRowModel;
+        const clientSideRowModel = this.rowModel;
         const rootNode = clientSideRowModel.getRootNode();
 
         if (!changedPath) {
@@ -399,12 +399,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     // Designed for use with 'children' as the group selection type,
     // where groups don't actually appear in the selection normally.
     public getBestCostNodeSelection(): RowNode[] | undefined {
-        if (!_isClientSideRowModel(this.gos)) {
+        if (!_isClientSideRowModel(this.gos, this.rowModel)) {
             // Error logged as part of gridApi as that is only call point for this method.
             return;
         }
 
-        const clientSideRowModel = this.rowModel as IClientSideRowModel;
+        const clientSideRowModel = this.rowModel;
 
         const topLevelNodes = clientSideRowModel.getTopLevelNodes();
 
@@ -601,7 +601,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         justFiltered?: boolean;
         justCurrentPage?: boolean;
     }) {
-        if (_isUsingNewSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
+        if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
             return _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
         }
         this.validateSelectAllType();

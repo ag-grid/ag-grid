@@ -233,14 +233,14 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     tooltipValueGetter?: (params: ITooltipParams<TData, TValue>) => string | any;
     /**
-     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.selection`
+     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
      *
      * Set to `true` (or return `true` from function) to render a selection checkbox in the column.
      * @default false
      */
     checkboxSelection?: boolean | CheckboxSelectionCallback<TData, TValue>;
     /**
-     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.selection`
+     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
      *
      * Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled.
      * @default false
@@ -419,20 +419,20 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     contextMenuItems?: (string | MenuItemDef<TData>)[] | GetContextMenuItems<TData>;
     /**
-     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.selection`
+     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
      *
      * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
      */
     headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback<TData, TValue>;
     /**
-     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.selection`
+     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
      *
      * If `true`, the header checkbox selection will only select filtered items.
      * @default false
      */
     headerCheckboxSelectionFilteredOnly?: boolean;
     /**
-     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.selection`
+     * @deprecated v32.2 Use the new selection API instead. See `GridOptions.rowSelection`
      *
      * If `true`, the header checkbox selection will only select nodes on the current page.
      * @default false

@@ -1,6 +1,7 @@
 import type { GridState } from '../../interfaces/gridState';
 
 export function migrateGridStateModel(state: GridState): GridState {
+    state = { ...state };
     // The `version` field was introduced in v32.2.0, so anything without that
     // field can be assumed to be compatible with v32.1.0
     if (!state.version) {

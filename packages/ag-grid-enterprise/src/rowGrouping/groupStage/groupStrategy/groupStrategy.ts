@@ -53,7 +53,7 @@ interface GroupingDetails {
     keyCreators: (((params: KeyCreatorParams) => string) | undefined)[];
 }
 
-export class GroupStrategy extends BeanStub implements IRowNodeStage {
+export class GroupStrategy extends BeanStub {
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
     private valueService: ValueService;

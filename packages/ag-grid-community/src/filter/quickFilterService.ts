@@ -1,5 +1,4 @@
 import type { ColumnModel } from '../columns/columnModel';
-import type { PivotResultColsService } from '../columns/pivotResultColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -7,22 +6,23 @@ import type { AgColumn } from '../entities/agColumn';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
+import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
-import type { ValueService } from '../valueService/valueService';
+import type { FilterValueService } from './filterValueService';
 
 export type QuickFilterServiceEvent = 'quickFilterChanged';
 export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implements NamedBean {
     beanName = 'quickFilterService' as const;
 
-    private valueService: ValueService;
+    private filterValueService: FilterValueService;
     private columnModel: ColumnModel;
     private rowModel: IRowModel;
-    private pivotResultColsService: PivotResultColsService;
+    private pivotResultColsService?: IPivotResultColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.valueService = beans.valueService;
+        this.filterValueService = beans.filterValueService!;
         this.columnModel = beans.columnModel;
         this.rowModel = beans.rowModel;
         this.pivotResultColsService = beans.pivotResultColsService;
@@ -77,7 +77,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
 
         let columnsForQuickFilter =
             (pivotMode && !this.gos.get('applyQuickFilterBeforePivotOrAgg')
-                ? this.pivotResultColsService.getPivotResultCols()?.list
+                ? this.pivotResultColsService?.getPivotResultCols()?.list
                 : providedCols) ?? [];
         if (groupAutoCols) {
             columnsForQuickFilter = columnsForQuickFilter.concat(groupAutoCols);
@@ -198,7 +198,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     }
 
     private getQuickFilterTextForColumn(column: AgColumn, node: RowNode): string {
-        let value = this.valueService.getValue(column, node, true);
+        let value = this.filterValueService.getValue(column, node);
         const colDef = column.getColDef();
 
         if (colDef.getQuickFilterText) {

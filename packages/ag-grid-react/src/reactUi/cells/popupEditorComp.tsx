@@ -45,11 +45,11 @@ const PopupEditorComp = (props: {
             keepWithinBounds: true,
         };
 
-        const positionCallback = popupService.positionPopupByComponent.bind(popupService, positionParams);
+        const positionCallback = popupService?.positionPopupByComponent.bind(popupService, positionParams);
 
         const translate = localeService.getLocaleTextFunc();
 
-        const addPopupRes = popupService.addPopup({
+        const addPopupRes = popupService?.addPopup({
             modal: useModelPopup,
             eChild: ePopupGui,
             closeOnEsc: true,

@@ -1,8 +1,14 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { DragListenerParams, DragService } from '../../dragAndDrop/dragService';
-import type { ResizeObserverService } from '../../misc/resizeObserverService';
-import { _getAbsoluteHeight, _getAbsoluteWidth, _isVisible, _setFixedHeight, _setFixedWidth } from '../../utils/dom';
+import {
+    _getAbsoluteHeight,
+    _getAbsoluteWidth,
+    _isVisible,
+    _observeResize,
+    _setFixedHeight,
+    _setFixedWidth,
+} from '../../utils/dom';
 import type { PopupService } from '../../widgets/popupService';
 
 const RESIZE_CONTAINER_STYLE = 'ag-resizer-wrapper';
@@ -60,13 +66,11 @@ interface MappedResizer {
 
 export type PositionableFeatureEvent = 'resize';
 export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
-    protected popupService: PopupService;
-    private resizeObserverService: ResizeObserverService;
+    protected popupService?: PopupService;
     private dragService?: DragService;
 
     public wireBeans(beans: BeanCollection): void {
         this.popupService = beans.popupService;
-        this.resizeObserverService = beans.resizeObserverService;
         this.dragService = beans.dragService;
     }
 
@@ -432,7 +436,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
             return;
         }
 
-        this.popupService.positionPopup({
+        this.popupService?.positionPopup({
             ePopup,
             keepWithinBounds: true,
             skipObserver: this.movable || this.isResizable(),
@@ -452,9 +456,10 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
             this.element.style.setProperty('max-height', `${availableHeight}px`);
         };
 
-        if (constrain) {
-            this.resizeObserverSubscriber = this.resizeObserverService.observeResize(
-                this.popupService.getPopupParent(),
+        if (constrain && this.popupService) {
+            this.resizeObserverSubscriber = _observeResize(
+                this.gos,
+                this.popupService?.getPopupParent(),
                 applyMaxHeightToElement
             );
         } else {
@@ -877,7 +882,7 @@ export class PositionableFeature extends BeanStub<PositionableFeatureEvent> {
     }
 
     private setOffsetParent() {
-        if (this.config.forcePopupParentAsOffsetParent) {
+        if (this.config.forcePopupParentAsOffsetParent && this.popupService) {
             this.offsetParent = this.popupService.getPopupParent();
         } else {
             this.offsetParent = this.element.offsetParent as HTMLElement;

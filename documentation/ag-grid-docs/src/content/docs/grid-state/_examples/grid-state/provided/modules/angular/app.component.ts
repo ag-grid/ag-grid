@@ -11,10 +11,10 @@ import type {
     GridPreDestroyedEvent,
     GridReadyEvent,
     GridState,
-    SelectionOptions,
+    RowSelectionOptions,
     StateUpdatedEvent,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, CommunityFeaturesModule, ModuleRegistry } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import {
@@ -29,7 +29,7 @@ import './styles.css';
 
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
-    CommunityFeaturesModule,
+
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
     SetFilterModule,
@@ -56,7 +56,7 @@ ModuleRegistry.registerModules([
                     [defaultColDef]="defaultColDef"
                     [sideBar]="true"
                     [pagination]="true"
-                    [selection]="selection"
+                    [rowSelection]="rowSelection"
                     [suppressColumnMoveAnimation]="true"
                     [rowData]="rowData"
                     [initialState]="initialState"
@@ -94,7 +94,7 @@ export class AppComponent {
         enablePivot: true,
         enableValue: true,
     };
-    public selection: SelectionOptions = {
+    public rowSelection: RowSelectionOptions = {
         mode: 'multiRow',
     };
     public rowData?: IOlympicData[];

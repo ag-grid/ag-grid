@@ -119,7 +119,7 @@ const gridOptions: GridOptions = {
         minWidth: 260,
         cellRenderer: 'agGroupCellRenderer',
     },
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         headerCheckbox: false,
         groupSelects: 'descendants',

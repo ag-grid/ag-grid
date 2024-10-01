@@ -15,9 +15,9 @@ import type {
     NamedBean,
     PartialCellRange,
     PinnedRowModel,
+    PositionUtils,
     RowPinnedType,
     RowPosition,
-    RowPositionUtils,
     ValueService,
     VisibleColsService,
 } from 'ag-grid-community';
@@ -36,7 +36,7 @@ import {
     _isDomLayout,
     _isRowBefore,
     _isSameRow,
-    _isUsingNewSelectionAPI,
+    _isUsingNewCellSelectionAPI,
     _last,
     _makeNull,
     _missing,
@@ -56,7 +56,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private visibleColsService: VisibleColsService;
     private cellNavigationService: CellNavigationService;
     private pinnedRowModel?: PinnedRowModel;
-    private rowPositionUtils: RowPositionUtils;
+    private positionUtils: PositionUtils;
     private ctrlsService: CtrlsService;
     private valueService: ValueService;
 
@@ -65,9 +65,9 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.dragService = beans.dragService!;
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
-        this.cellNavigationService = beans.cellNavigationService;
+        this.cellNavigationService = beans.cellNavigationService!;
         this.pinnedRowModel = beans.pinnedRowModel;
-        this.rowPositionUtils = beans.rowPositionUtils;
+        this.positionUtils = beans.positionUtils;
         this.ctrlsService = beans.ctrlsService;
         this.valueService = beans.valueService;
     }
@@ -409,7 +409,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         cellRanges.forEach((cellRange) => {
             this.forEachRowInRange(cellRange, (rowPosition) => {
-                const rowNode = this.rowPositionUtils.getRowNode(rowPosition);
+                const rowNode = this.positionUtils.getRowNode(rowPosition);
                 if (!rowNode) {
                     return;
                 }
@@ -498,8 +498,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         if (!_isCellSelectionEnabled(gos)) {
             return;
         }
-        if (_isUsingNewSelectionAPI(gos) && _getSuppressMultiRanges(gos) && this.cellRanges.length > 0) {
-            return _warnOnce('cannot add multiple ranges when `selection.suppressMultiRanges = true`');
+        if (_isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && this.cellRanges.length > 0) {
+            return _warnOnce('cannot add multiple ranges when `cellSelection.suppressMultiRanges = true`');
         }
 
         const newRange = this.createCellRangeFromCellRangeParams(params);

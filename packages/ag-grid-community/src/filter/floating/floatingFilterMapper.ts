@@ -1,5 +1,4 @@
-import { FilterComponent } from '../../components/framework/componentTypes';
-import { UserComponentFactory } from '../../components/framework/userComponentFactory';
+import { _getFilterCompKeys } from '../../components/framework/userCompUtils';
 import type { IFilterDef } from '../../interfaces/iFilter';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 
@@ -14,7 +13,7 @@ export function getDefaultFloatingFilterType(
 
     let defaultFloatingFilterType: string | null = null;
 
-    const { compName, jsComp, fwComp } = UserComponentFactory.getCompKeys(frameworkOverrides, def, FilterComponent);
+    const { compName, jsComp, fwComp } = _getFilterCompKeys(frameworkOverrides, def);
 
     if (compName) {
         const floatingFilterTypeMap: { [p: string]: string } = {

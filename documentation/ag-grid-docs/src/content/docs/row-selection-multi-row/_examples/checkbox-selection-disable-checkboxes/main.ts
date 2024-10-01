@@ -16,7 +16,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
     },
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         hideDisabledCheckboxes: true,
         isRowSelectable: (node) => (node.data ? node.data.year <= 2004 : false),
@@ -24,7 +24,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function toggleHideCheckbox() {
-    gridApi.setGridOption('selection', {
+    gridApi.setGridOption('rowSelection', {
         mode: 'multiRow',
         isRowSelectable: (node) => (node.data ? node.data.year <= 2004 : false),
         hideDisabledCheckboxes: getCheckboxValue('#toggle-hide-checkbox'),

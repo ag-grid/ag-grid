@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { CsvExportModule } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -10,7 +10,7 @@ import { AgGridVue } from 'ag-grid-vue3';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule, CsvExportModule, ExcelExportModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, CsvExportModule, ExcelExportModule]);
 
 const SportRenderer = {
     template: `<i class="far fa-trash-alt" style="cursor: pointer" @click="applyTransaction()"></i>`,
@@ -40,7 +40,7 @@ const VueExample = {
                                 style="height: 100%;"
                                 :class="themeClass"
                                 :defaultColDef="defaultColDef"
-                                :selection="selection"
+                                :rowSelection="rowSelection"
                                 :rowDragMultiRow="true"
                                 :getRowId="getRowId"
                                 :rowDragManaged="true"
@@ -81,7 +81,7 @@ const VueExample = {
             leftApi: null,
             rightApi: null,
 
-            selection: {
+            rowSelection: {
                 mode: 'multiRow',
                 checkboxes: false,
                 headerCheckbox: false,

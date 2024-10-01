@@ -1,11 +1,11 @@
 import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { createPart, createTheme } from 'ag-grid-community';
 import { AgGridVue } from 'ag-grid-vue3';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const myCheckboxStyle = createPart('checkboxStyle')
     // Add some CSS to this part. If your application is bundled with Vite you
@@ -64,7 +64,7 @@ const VueExample = {
         <ag-grid-vue
             style="height: 100%;"
             :theme="theme"
-            :selection="selection"
+            :rowSelection="rowSelection"
             :initialState="initialState"
             :columnDefs="columnDefs"
             :defaultColDef="defaultColDef"
@@ -77,7 +77,7 @@ const VueExample = {
     setup(props) {
         return {
             theme: myCustomTheme,
-            selection: { mode: 'multiRow', checkboxes: true },
+            rowSelection: { mode: 'multiRow', checkboxes: true },
             initialState: {
                 rowSelection: ['1', '2', '3'],
             },

@@ -1,5 +1,12 @@
 import type { Component, RichSelectParams } from 'ag-grid-community';
-import { KeyCode, _getDocument, _setAriaActiveDescendant, _setAriaControls, _setAriaLabel } from 'ag-grid-community';
+import {
+    KeyCode,
+    _getDocument,
+    _requestAnimationFrame,
+    _setAriaActiveDescendant,
+    _setAriaControls,
+    _setAriaLabel,
+} from 'ag-grid-community';
 
 import { RichSelectRow } from './agRichSelectRow';
 import { VirtualList } from './virtualList';
@@ -65,7 +72,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         const newIndex = super.navigateToPage(key, this.lastRowHovered);
 
         if (newIndex != null) {
-            this.animationFrameService.requestAnimationFrame(() => {
+            _requestAnimationFrame(this.gos, () => {
                 if (!this.isAlive()) {
                     return null;
                 }
@@ -89,7 +96,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     public onNavigationKeyDown(key: string, announceItem: () => void): void {
-        this.animationFrameService.requestAnimationFrame(() => {
+        _requestAnimationFrame(this.gos, () => {
             if (!this.currentList || !this.isAlive()) {
                 return;
             }

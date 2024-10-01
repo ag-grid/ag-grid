@@ -1,6 +1,6 @@
 !dist
-!dist/types/src
 src
+!dist/types/src
 .npmignore
 project.json
 tsconfig.json

@@ -1,17 +1,24 @@
 import type {
     AgColumn,
     BeanCollection,
+    CellCtrl,
     CellPosition,
     ColumnModel,
     CtrlsService,
+    EventShowContextMenuParams,
     FocusService,
     IAfterGuiAttachedParams,
-    IContextMenuFactory,
+    IContextMenuService,
     IRangeService,
     MenuItemDef,
+    MouseShowContextMenuParams,
     NamedBean,
     PopupService,
+    RowCtrl,
     RowNode,
+    RowRenderer,
+    TouchShowContextMenuParam,
+    ValueService,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -32,8 +39,8 @@ import type { MenuUtils } from './menuUtils';
 const CSS_MENU = 'ag-menu';
 const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
 
-export class ContextMenuFactory extends BeanStub implements NamedBean, IContextMenuFactory {
-    beanName = 'contextMenuFactory' as const;
+export class ContextMenuService extends BeanStub implements NamedBean, IContextMenuService {
+    beanName = 'contextMenuService' as const;
 
     private popupService: PopupService;
     private ctrlsService: CtrlsService;
@@ -41,14 +48,18 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
     private menuUtils: MenuUtils;
     private rangeService?: IRangeService;
     private focusService: FocusService;
+    private valueService: ValueService;
+    private rowRenderer: RowRenderer;
 
     public wireBeans(beans: BeanCollection): void {
-        this.popupService = beans.popupService;
+        this.popupService = beans.popupService!;
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;
         this.menuUtils = beans.menuUtils as MenuUtils;
         this.rangeService = beans.rangeService;
         this.focusService = beans.focusService;
+        this.valueService = beans.valueService;
+        this.rowRenderer = beans.rowRenderer;
     }
 
     private activeMenu: ContextMenu | null;
@@ -123,7 +134,79 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
         return defaultMenuOptions;
     }
 
-    public onContextMenu(
+    public getContextMenuPosition(rowNode?: RowNode | null, column?: AgColumn | null): { x: number; y: number } {
+        const rowCtrl = this.getRowCtrl(rowNode);
+        const eGui = this.getCellGui(rowCtrl, column);
+
+        if (!eGui) {
+            if (rowCtrl) {
+                return { x: 0, y: rowCtrl.getRowYPosition() };
+            }
+            return { x: 0, y: 0 };
+        }
+
+        const rect = eGui.getBoundingClientRect();
+
+        return {
+            x: rect.x + rect.width / 2,
+            y: rect.y + rect.height / 2,
+        };
+    }
+
+    public showContextMenu(params: EventShowContextMenuParams & { anchorToElement?: HTMLElement }): void {
+        const { rowNode } = params;
+        const column = params.column as AgColumn | null | undefined;
+        let { anchorToElement, value } = params;
+
+        if (rowNode && column && value == null) {
+            value = this.valueService.getValueForDisplay(column, rowNode);
+        }
+
+        if (anchorToElement == null) {
+            anchorToElement = this.getContextMenuAnchorElement(rowNode, column);
+        }
+
+        this.onContextMenu(
+            (params as MouseShowContextMenuParams).mouseEvent ?? null,
+            (params as TouchShowContextMenuParam).touchEvent ?? null,
+            rowNode ?? null,
+            column ?? null,
+            value,
+            anchorToElement
+        );
+    }
+
+    public handleContextMenuMouseEvent(
+        mouseEvent: MouseEvent | undefined,
+        touchEvent: TouchEvent | undefined,
+        rowComp: RowCtrl | null,
+        cellCtrl: CellCtrl
+    ): void {
+        const rowNode = rowComp ? rowComp.getRowNode() : null;
+        const column = cellCtrl ? cellCtrl.getColumn() : null;
+        let value = null;
+
+        if (column) {
+            const event = mouseEvent ? mouseEvent : touchEvent;
+            cellCtrl.dispatchCellContextMenuEvent(event ?? null);
+            value = this.valueService.getValue(column, rowNode);
+        }
+
+        // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
+        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        const anchorToElement = cellCtrl ? cellCtrl.getGui() : gridBodyCon.getGridBodyElement();
+
+        this.showContextMenu({
+            mouseEvent,
+            touchEvent,
+            rowNode,
+            column,
+            value,
+            anchorToElement,
+        } as EventShowContextMenuParams);
+    }
+
+    private onContextMenu(
         mouseEvent: MouseEvent | null,
         touchEvent: TouchEvent | null,
         rowNode: RowNode | null,
@@ -136,7 +219,7 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
         );
     }
 
-    public showMenu(
+    private showMenu(
         node: RowNode | null,
         column: AgColumn | null,
         value: any,
@@ -243,6 +326,47 @@ export class ContextMenuFactory extends BeanStub implements NamedBean, IContextM
             visible,
             source,
         });
+    }
+
+    private getRowCtrl(rowNode?: RowNode | null): RowCtrl | undefined {
+        const { rowIndex, rowPinned } = rowNode || {};
+
+        if (rowIndex == null) {
+            return;
+        }
+
+        return this.rowRenderer.getRowByPosition({ rowIndex, rowPinned }) || undefined;
+    }
+
+    private getCellGui(rowCtrl?: RowCtrl, column?: AgColumn | null): HTMLElement | undefined {
+        if (!rowCtrl || !column) {
+            return;
+        }
+
+        const cellCtrl = rowCtrl.getCellCtrl(column);
+
+        return cellCtrl?.getGui() || undefined;
+    }
+
+    private getContextMenuAnchorElement(rowNode?: RowNode | null, column?: AgColumn | null): HTMLElement {
+        const gridBodyEl = this.ctrlsService.getGridBodyCtrl().getGridBodyElement();
+        const rowCtrl = this.getRowCtrl(rowNode);
+
+        if (!rowCtrl) {
+            return gridBodyEl;
+        }
+
+        const cellGui = this.getCellGui(rowCtrl, column);
+
+        if (cellGui) {
+            return cellGui;
+        }
+
+        if (rowCtrl.isFullWidth()) {
+            return rowCtrl.getFullWidthElement() as HTMLElement;
+        }
+
+        return gridBodyEl;
     }
 }
 

@@ -9,15 +9,15 @@ import type {
     GridApi,
     GridReadyEvent,
     ICellRendererParams,
-    SelectionOptions,
+    RowSelectionOptions,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, CommunityFeaturesModule, ModuleRegistry } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 @Component({
     standalone: true,
     template: ` <i class="far fa-trash-alt" style="cursor: pointer" (click)="applyTransaction()"></i>`,
@@ -68,7 +68,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                             style="height: 100%;"
                             [class]="themeClass"
                             [defaultColDef]="defaultColDef"
-                            [selection]="selection"
+                            [rowSelection]="rowSelection"
                             [rowDragMultiRow]="true"
                             [getRowId]="getRowId"
                             [rowDragManaged]="true"
@@ -116,7 +116,7 @@ export class AppComponent {
         filter: true,
     };
 
-    selection: SelectionOptions = {
+    rowSelection: RowSelectionOptions = {
         mode: 'multiRow',
     };
 

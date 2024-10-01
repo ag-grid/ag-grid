@@ -117,7 +117,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     paginationPageSizeSelector: [100, 500, 1000],
     enableCharts: true,
     localeText: AG_GRID_LOCALE_ZZZ,
-    selection: { mode: 'multiRow' },
+    rowSelection: { mode: 'multiRow' },
 };
 
 // setup the grid after the page has finished loading

@@ -29,8 +29,7 @@ const gridOptions: GridOptions = {
         editable: true,
     },
     rowData: createRowData(),
-    selection: {
-        mode: 'cell',
+    cellSelection: {
         handle: {
             mode: 'fill',
         },

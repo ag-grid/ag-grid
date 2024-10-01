@@ -42,7 +42,7 @@ export interface DialogOptions extends PanelOptions {
 }
 
 export class AgDialog extends AgPanel<DialogOptions> implements FocusableContainer {
-    private popupService: PopupService;
+    private popupService?: PopupService;
     private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection) {
@@ -80,14 +80,14 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
 
         if (postProcessPopupParams) {
             const { type, eventSource, column, mouseEvent, rowNode } = postProcessPopupParams;
-            this.popupService.callPostProcessPopup(type, eGui, eventSource, mouseEvent, column, rowNode);
+            this.popupService?.callPostProcessPopup(type, eGui, eventSource, mouseEvent, column, rowNode);
         }
 
         this.tabGuardFeature = this.createManagedBean(new TabGuardFeature(this));
         this.tabGuardFeature.initialiseTabGuard({
             isFocusableContainer: true,
             onFocusIn: () => {
-                this.popupService.bringPopupToFront(eGui);
+                this.popupService?.bringPopupToFront(eGui);
             },
             onTabKeyDown: (e) => {
                 if (modal) {
@@ -129,7 +129,7 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
         const { alwaysOnTop, modal, title, afterGuiAttached } = this.config;
         const translate = this.localeService.getLocaleTextFunc();
 
-        const addPopupRes = this.popupService.addPopup({
+        const addPopupRes = this.popupService?.addPopup({
             modal,
             eChild: eGui,
             closeOnEsc: true,

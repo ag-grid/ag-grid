@@ -4,21 +4,15 @@ import type { ElementRef } from '@angular/core';
 import { Component, ViewChild } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import type { ChartRef, ColDef, GridReadyEvent, SelectionOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, CommunityFeaturesModule, ModuleRegistry } from 'ag-grid-community';
+import type { ChartRef, ColDef, GridReadyEvent } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { GridChartsModule, MenuModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import './styles.css';
 
-ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    CommunityFeaturesModule,
-    GridChartsModule,
-    MenuModule,
-    RowGroupingModule,
-]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, MenuModule, RowGroupingModule]);
 
 @Component({
     selector: 'my-app',
@@ -29,7 +23,7 @@ ModuleRegistry.registerModules([
             style="width: 100%; height: 300px;"
             [columnDefs]="columnDefs"
             [defaultColDef]="defaultColDef"
-            [selection]="selection"
+            [cellSelection]="true"
             [enableCharts]="true"
             [popupParent]="popupParent"
             [createChartContainer]="createChartContainer"
@@ -58,7 +52,6 @@ export class AppComponent {
         { field: 'total', chartDataType: 'series' },
     ];
     defaultColDef: ColDef = { flex: 1 };
-    selection: SelectionOptions = { mode: 'cell' };
     popupParent: HTMLElement | null = document.body;
     rowData!: any[];
     themeClass =

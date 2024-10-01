@@ -1,8 +1,8 @@
 import type { _EditGridApi } from '../api/gridApi';
 import type { DefaultProvidedCellEditorParams } from '../interfaces/iCellEditor';
-import { _defineModule } from '../interfaces/iModule';
+import { defineCommunityModule } from '../interfaces/iModule';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
-import { VERSION } from '../version';
+import { PopupModule } from '../widgets/popupModule';
 import { CheckboxCellEditor } from './cellEditors/checkboxCellEditor';
 import { DateCellEditor } from './cellEditors/dateCellEditor';
 import { DateStringCellEditor } from './cellEditors/dateStringCellEditor';
@@ -23,15 +23,12 @@ import {
 import { EditService } from './editService';
 import { RowEditService } from './rowEditService';
 
-export const EditCoreModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/edit-core',
+export const EditCoreModule = defineCommunityModule('EditCoreModule', {
     beans: [EditService],
+    dependsOn: [PopupModule],
 });
 
-export const EditApiModule = _defineModule<_EditGridApi<any>>({
-    version: VERSION,
-    moduleName: '@ag-grid-community/edit-api',
+export const EditApiModule = defineCommunityModule<_EditGridApi<any>>('EditApiModule', {
     apiFunctions: {
         undoCellEditing,
         redoCellEditing,
@@ -42,33 +39,25 @@ export const EditApiModule = _defineModule<_EditGridApi<any>>({
         getCurrentUndoSize,
         getCurrentRedoSize,
     },
-    dependantModules: [EditCoreModule],
+    dependsOn: [EditCoreModule],
 });
 
-export const UndoRedoEditModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/undo-redo-edit',
+export const UndoRedoEditModule = defineCommunityModule('UndoRedoEditModule', {
     beans: [UndoRedoService],
-    dependantModules: [EditCoreModule],
+    dependsOn: [EditCoreModule],
 });
 
-export const FullRowEditModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/full-row-edit',
+export const FullRowEditModule = defineCommunityModule('FullRowEditModule', {
     beans: [RowEditService],
-    dependantModules: [EditCoreModule],
+    dependsOn: [EditCoreModule],
 });
 
-export const DefaultEditorModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/default-editor',
+export const DefaultEditorModule = defineCommunityModule('DefaultEditorModule', {
     userComponents: [{ name: 'agCellEditor', classImp: TextCellEditor }],
-    dependantModules: [EditCoreModule],
+    dependsOn: [EditCoreModule],
 });
 
-export const DataTypeEditorsModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/data-type-editors',
+export const DataTypeEditorsModule = defineCommunityModule('DataTypeEditorsModule', {
     userComponents: [
         { name: 'agTextCellEditor', classImp: TextCellEditor },
         {
@@ -82,31 +71,23 @@ export const DataTypeEditorsModule = _defineModule({
         { name: 'agDateStringCellEditor', classImp: DateStringCellEditor },
         { name: 'agCheckboxCellEditor', classImp: CheckboxCellEditor },
     ],
-    dependantModules: [DefaultEditorModule],
+    dependsOn: [DefaultEditorModule],
 });
 
-export const SelectEditorModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/select-editor',
+export const SelectEditorModule = defineCommunityModule('SelectEditorModule', {
     userComponents: [{ name: 'agSelectCellEditor', classImp: SelectCellEditor }],
-    dependantModules: [EditCoreModule],
+    dependsOn: [EditCoreModule],
 });
 
-export const LargeTextEditorModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/large-text-editor',
+export const LargeTextEditorModule = defineCommunityModule('LargeTextEditorModule', {
     userComponents: [{ name: 'agLargeTextCellEditor', classImp: LargeTextCellEditor }],
-    dependantModules: [EditCoreModule],
+    dependsOn: [EditCoreModule],
 });
 
-const AllCommunityEditorsModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/all-editors',
-    dependantModules: [DefaultEditorModule, DataTypeEditorsModule, SelectEditorModule, LargeTextEditorModule],
+const AllCommunityEditorsModule = defineCommunityModule('AllCommunityEditorsModule', {
+    dependsOn: [DefaultEditorModule, DataTypeEditorsModule, SelectEditorModule, LargeTextEditorModule],
 });
 
-export const EditModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/editing',
-    dependantModules: [EditCoreModule, UndoRedoEditModule, FullRowEditModule, AllCommunityEditorsModule, EditApiModule],
+export const EditModule = defineCommunityModule('EditModule', {
+    dependsOn: [EditCoreModule, UndoRedoEditModule, FullRowEditModule, AllCommunityEditorsModule, EditApiModule],
 });

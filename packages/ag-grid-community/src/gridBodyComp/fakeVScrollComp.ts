@@ -10,8 +10,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
     private ctrlsService: CtrlsService;
     private scrollVisibleService: ScrollVisibleService;
 
-    public override wireBeans(beans: BeanCollection) {
-        super.wireBeans(beans);
+    public wireBeans(beans: BeanCollection) {
         this.ctrlsService = beans.ctrlsService;
         this.scrollVisibleService = beans.scrollVisibleService;
     }

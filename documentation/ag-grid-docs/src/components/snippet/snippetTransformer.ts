@@ -295,7 +295,8 @@ const isUseMemoProp = (propName) =>
         'defaultExcelExportParams',
         'excelStyles',
         'popupParent',
-        'selection',
+        'cellSelection',
+        'rowSelection',
         'sideBar',
         'statusBar',
     ].includes(propName);

@@ -2,8 +2,8 @@
 import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
-import type { ColDef, GridApi, GridReadyEvent, SelectionOptions } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridReadyEvent, RowSelectionOptions } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -11,7 +11,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { getData } from './data';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 @Component({
     standalone: true,
@@ -34,7 +34,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModul
                     [class]="themeClass"
                     [columnDefs]="columnDefs"
                     [rowData]="rowData"
-                    [selection]="selection"
+                    [rowSelection]="rowSelection"
                     (gridReady)="onGridReady($event)"
                 />
             }
@@ -57,7 +57,7 @@ export class AppComponent {
     ];
 
     public rowData: any[] | null = getData();
-    public selection: SelectionOptions = {
+    public rowSelection: RowSelectionOptions = {
         mode: 'multiRow',
         checkboxes: false,
         headerCheckbox: false,

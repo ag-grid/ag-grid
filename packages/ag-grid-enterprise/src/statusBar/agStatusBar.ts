@@ -1,15 +1,30 @@
 import type {
     BeanCollection,
     ComponentSelector,
+    ComponentType,
     IStatusPanelComp,
     IStatusPanelParams,
     StatusPanelDef,
+    UserCompDetails,
     UserComponentFactory,
     WithoutGridCommon,
 } from 'ag-grid-community';
 import { AgPromise, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
 
 import type { StatusBarService } from './statusBarService';
+
+function getStatusPanelCompDetails(
+    userComponentFactory: UserComponentFactory,
+    def: StatusPanelDef,
+    params: WithoutGridCommon<IStatusPanelParams>
+): UserCompDetails {
+    return userComponentFactory.getCompDetails(def, StatusPanelComponent, null, params, true)!;
+}
+
+const StatusPanelComponent: ComponentType = {
+    propertyName: 'statusPanel',
+    cellRenderer: false,
+};
 
 export class AgStatusBar extends Component {
     private userComponentFactory: UserComponentFactory;
@@ -151,7 +166,7 @@ export class AgStatusBar extends Component {
             } else {
                 const params: WithoutGridCommon<IStatusPanelParams> = {};
 
-                const compDetails = this.userComponentFactory.getStatusPanelCompDetails(componentConfig, params);
+                const compDetails = getStatusPanelCompDetails(this.userComponentFactory, componentConfig, params);
                 promise = compDetails.newAgStackInstance();
 
                 if (promise == null) {

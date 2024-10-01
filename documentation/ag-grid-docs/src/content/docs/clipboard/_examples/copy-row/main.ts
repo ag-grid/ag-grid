@@ -2,10 +2,10 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import { ClipboardModule } from 'ag-grid-enterprise';
+import { ClipboardModule, RangeSelectionModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, ClipboardModule, MenuModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, ClipboardModule, MenuModule, RangeSelectionModule]);
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -29,10 +29,8 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
 
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
-        checkboxes: false,
-        headerCheckbox: false,
         copySelectedRows: false,
     },
 };
@@ -48,10 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function toggleCopyRows() {
-    gridApi.setGridOption('selection', {
+    gridApi.setGridOption('rowSelection', {
         mode: 'multiRow',
-        checkboxes: false,
-        headerCheckbox: false,
         copySelectedRows: document.querySelector<HTMLInputElement>('#toggle-copy-rows')?.checked ?? false,
     });
 }

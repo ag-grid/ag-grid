@@ -3,7 +3,6 @@ import { basename } from 'path';
 import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
-    addAllCommunityFeatureModule,
     addBindingImports,
     addGenericInterfaceImport,
     addLicenseManager,
@@ -75,9 +74,8 @@ function getModuleImports(
     addGenericInterfaceImport(imports, bindings.tData, bindings);
 
     if (bindings.moduleRegistration) {
-        imports.push(addAllCommunityFeatureModule(bindings.moduleRegistration));
+        imports.push(bindings.moduleRegistration);
     }
-
     return imports;
 }
 

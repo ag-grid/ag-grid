@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 
 import { AgGridAngular } from 'ag-grid-angular';
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { createTheme, iconSetMaterial } from 'ag-grid-community';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, CommunityFeaturesModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const myCustomTheme = createTheme().withPart(iconSetMaterial).withParams({
     accentColor: 'red',
@@ -25,14 +25,14 @@ const myCustomTheme = createTheme().withPart(iconSetMaterial).withParams({
             [defaultColDef]="defaultColDef"
             [rowData]="rowData"
             [theme]="theme"
-            [selection]="selection"
+            [rowSelection]="rowSelection"
         />
     `,
 })
 export class AppComponent {
     theme = myCustomTheme;
 
-    selection = { mode: 'multiRow', checkboxes: true };
+    rowSelection = { mode: 'multiRow', checkboxes: true };
 
     columnDefs: ColDef[] = [{ field: 'make' }, { field: 'model' }, { field: 'price' }];
 

@@ -2,6 +2,7 @@ import type {
     AgColumn,
     AgColumnGroup,
     BeanCollection,
+    CellStyleService,
     ColumnModel,
     ColumnNameService,
     ExcelExportMultipleSheetParams,
@@ -12,7 +13,6 @@ import type {
     FuncColsService,
     IExcelCreator,
     NamedBean,
-    StylingService,
     ValueService,
 } from 'ag-grid-community';
 import { _getHeaderClassesFromColDef, _warnOnce } from 'ag-grid-community';
@@ -231,7 +231,7 @@ export class ExcelCreator
     private columnNameService: ColumnNameService;
     private funcColsService: FuncColsService;
     private valueService: ValueService;
-    private stylingService: StylingService;
+    private cellStyleService?: CellStyleService;
 
     private gridSerializer: GridSerializer;
 
@@ -240,7 +240,7 @@ export class ExcelCreator
         this.columnNameService = beans.columnNameService;
         this.funcColsService = beans.funcColsService;
         this.valueService = beans.valueService;
-        this.stylingService = beans.stylingService;
+        this.cellStyleService = beans.cellStyleService;
         this.gridSerializer = beans.gridSerializer as GridSerializer;
         this.gos = beans.gos;
     }
@@ -387,7 +387,7 @@ export class ExcelCreator
         });
 
         const colDef = (column as AgColumn).getDefinition();
-        this.stylingService.processAllCellClasses(
+        this.cellStyleService?.processAllCellClasses(
             colDef,
             this.gos.addGridCommonParams({
                 value,

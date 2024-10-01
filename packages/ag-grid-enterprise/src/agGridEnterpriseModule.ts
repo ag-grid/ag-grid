@@ -1,17 +1,15 @@
-import { ModuleNames, _defineModule } from 'ag-grid-community';
+import { ModuleNames } from 'ag-grid-community';
 
 import { AggregationModule } from './aggregation/aggregationModule';
 import { LoadingCellRendererModule, SkeletonCellRendererModule } from './cellRenderers/enterpriseCellRendererModule';
 import { ClientSideRowModelExpansionModule } from './expansion/expansionModule';
 import { GridLicenseManager as LicenseManager } from './license/gridLicenseManager';
-import { VERSION } from './version';
+import { defineEnterpriseModule } from './moduleUtils';
 import { AgMenuItemRenderer } from './widgets/agMenuItemRenderer';
 
 export { AgWatermark } from './license/watermark';
 
-export const EnterpriseCoreModule = _defineModule({
-    version: VERSION,
-    moduleName: ModuleNames.EnterpriseCoreModule,
+export const EnterpriseCoreModule = defineEnterpriseModule(ModuleNames.EnterpriseCoreModule, {
     beans: [LicenseManager],
     userComponents: [
         {
@@ -19,7 +17,7 @@ export const EnterpriseCoreModule = _defineModule({
             classImp: AgMenuItemRenderer,
         },
     ],
-    dependantModules: [
+    dependsOn: [
         AggregationModule,
         ClientSideRowModelExpansionModule,
         LoadingCellRendererModule,

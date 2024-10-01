@@ -44,9 +44,7 @@ export class RowDragService extends BeanStub implements NamedBean {
 
     public createRowDragCompForRow(rowNode: RowNode, element: HTMLElement): RowDragComp | undefined {
         if (_isCellSelectionEnabled(this.gos)) {
-            _warnOnce(
-                "Setting `rowDragEntireRow: true` in the gridOptions doesn't work with `selection.mode = 'cell'`"
-            );
+            _warnOnce("Setting `rowDragEntireRow: true` in the gridOptions doesn't work with `cellSelection: true`");
             return undefined;
         }
         const translate = this.localeService.getLocaleTextFunc();

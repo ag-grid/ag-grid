@@ -1,9 +1,6 @@
-import { _defineModule } from '../interfaces/iModule';
-import { VERSION } from '../version';
+import { defineCommunityModule } from '../interfaces/iModule';
 import { ValidationService } from './validationService';
 
-export const ValidationModule = _defineModule({
-    version: VERSION,
-    moduleName: '@ag-grid-community/core-validation',
+export const ValidationModule = defineCommunityModule('ValidationModule', {
     beans: [ValidationService],
 });

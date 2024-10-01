@@ -35,11 +35,11 @@ export function refreshHeader(beans: BeanCollection) {
 }
 
 export function isAnimationFrameQueueEmpty(beans: BeanCollection): boolean {
-    return beans.animationFrameService.isQueueEmpty();
+    return beans.animationFrameService?.isQueueEmpty() ?? true;
 }
 
 export function flushAllAnimationFrames(beans: BeanCollection): void {
-    beans.animationFrameService.flushAllFrames();
+    beans.animationFrameService?.flushAllFrames();
 }
 
 export function getSizesForCurrentTheme(beans: BeanCollection) {

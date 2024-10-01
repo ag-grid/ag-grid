@@ -51,7 +51,7 @@ export interface ScrollPartner {
 
 export class GridBodyScrollFeature extends BeanStub {
     private ctrlsService: CtrlsService;
-    private animationFrameService: AnimationFrameService;
+    private animationFrameService?: AnimationFrameService;
     private paginationService?: PaginationService;
     private pageBoundsService: PageBoundsService;
     private rowModel: IRowModel;
@@ -246,7 +246,7 @@ export class GridBodyScrollFeature extends BeanStub {
         if (this.shouldBlockScrollUpdate(ScrollDirection.Vertical, scrollTop, true)) {
             return;
         }
-        this.animationFrameService.setScrollTop(scrollTop);
+        this.animationFrameService?.setScrollTop(scrollTop);
         this.nextScrollTop = scrollTop;
 
         if (source === CommonSources.Viewport) {
@@ -261,7 +261,7 @@ export class GridBodyScrollFeature extends BeanStub {
         if (this.gos.get('suppressAnimationFrame')) {
             this.scrollGridIfNeeded();
         } else {
-            this.animationFrameService.schedule();
+            this.animationFrameService?.schedule();
         }
 
         this.resetLastVScrollDebounced();
@@ -575,7 +575,7 @@ export class GridBodyScrollFeature extends BeanStub {
             } while (rowGotShiftedDuringOperation);
 
             // so when we return back to user, the cells have rendered
-            this.animationFrameService.flushAllFrames();
+            this.animationFrameService?.flushAllFrames();
         });
     }
 
@@ -610,7 +610,7 @@ export class GridBodyScrollFeature extends BeanStub {
             this.centerRowsCtrl.onHorizontalViewportChanged();
 
             // so when we return back to user, the cells have rendered
-            this.animationFrameService.flushAllFrames();
+            this.animationFrameService?.flushAllFrames();
         });
     }
 
@@ -619,7 +619,7 @@ export class GridBodyScrollFeature extends BeanStub {
             this.centerRowsCtrl.setCenterViewportScrollLeft(left);
             this.setVerticalScrollPosition(top);
             this.rowRenderer.redraw({ afterScroll: true });
-            this.animationFrameService.flushAllFrames();
+            this.animationFrameService?.flushAllFrames();
         });
     }
 

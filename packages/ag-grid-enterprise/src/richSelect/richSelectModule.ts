@@ -1,16 +1,14 @@
-import { ModuleNames, _EditCoreModule, _defineModule } from 'ag-grid-community';
+import { EditCoreModule, ModuleNames } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { VERSION } from '../version';
+import { defineEnterpriseModule } from '../moduleUtils';
 import { RichSelectCellEditor } from './richSelectCellEditor';
 
-export const RichSelectModule = _defineModule({
-    version: VERSION,
-    moduleName: ModuleNames.RichSelectModule,
+export const RichSelectModule = defineEnterpriseModule(ModuleNames.RichSelectModule, {
     beans: [],
     userComponents: [
         { name: 'agRichSelect', classImp: RichSelectCellEditor },
         { name: 'agRichSelectCellEditor', classImp: RichSelectCellEditor },
     ],
-    dependantModules: [EnterpriseCoreModule, _EditCoreModule],
+    dependsOn: [EnterpriseCoreModule, EditCoreModule],
 });

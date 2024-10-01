@@ -1,4 +1,4 @@
-import { ClientSideRowModelModule, CommunityFeaturesModule } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../../test-utils';
@@ -6,7 +6,7 @@ import { GridRows, TestGridsManager, cachedJSONObjects, executeTransactionsAsync
 
 describe('ag-grid tree aggregation', () => {
     const gridsManager = new TestGridsManager({
-        modules: [CommunityFeaturesModule, ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule],
     });
 
     beforeEach(() => {
@@ -36,7 +36,7 @@ describe('ag-grid tree aggregation', () => {
             autoGroupColumnDef: { headerName: 'Path' },
             treeData: true,
             animateRows: false,
-            selection: { mode: 'multiRow' },
+            rowSelection: { mode: 'multiRow' },
             groupDefaultExpanded: -1,
             rowData,
             getRowId: (params) => params.data.id,
@@ -169,7 +169,7 @@ describe('ag-grid tree aggregation', () => {
             aggregateOnlyChangedColumns: true,
             treeData: true,
             animateRows: false,
-            selection: { mode: 'multiRow' },
+            rowSelection: { mode: 'multiRow' },
             groupDefaultExpanded: -1,
             rowData,
             getRowId: (params) => params.data.id,
@@ -329,7 +329,7 @@ describe('ag-grid tree aggregation', () => {
             alwaysAggregateAtRootLevel: true,
             treeData: true,
             animateRows: false,
-            selection: { mode: 'multiRow' },
+            rowSelection: { mode: 'multiRow' },
             groupDefaultExpanded: -1,
             rowData,
             getRowId: (params) => params.data.id,

@@ -4,7 +4,7 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef, HeaderLocation } from '../entities/colDef';
 import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from '../interfaces/iColumn';
-import type { ApplyColumnStateParams, ColumnState } from './columnApplyStateService';
+import type { ApplyColumnStateParams, ColumnState } from './columnStateService';
 
 export function getColumnDef<TValue = any, TData = any>(
     beans: BeanCollection,
@@ -61,27 +61,27 @@ export function getColumns(beans: BeanCollection): Column[] | null {
 }
 
 export function applyColumnState(beans: BeanCollection, params: ApplyColumnStateParams): boolean {
-    return beans.columnApplyStateService.applyColumnState(params, 'api');
+    return beans.columnStateService.applyColumnState(params, 'api');
 }
 
 export function getColumnState(beans: BeanCollection): ColumnState[] {
-    return beans.columnGetStateService.getColumnState();
+    return beans.columnStateService.getColumnState();
 }
 
 export function resetColumnState(beans: BeanCollection): void {
-    beans.columnApplyStateService.resetColumnState('api');
+    beans.columnStateService.resetColumnState('api');
 }
 
 export function getColumnGroupState(beans: BeanCollection): { groupId: string; open: boolean }[] {
-    return beans.columnGroupStateService.getColumnGroupState();
+    return beans.columnStateService.getColumnGroupState();
 }
 
 export function setColumnGroupState(beans: BeanCollection, stateItems: { groupId: string; open: boolean }[]): void {
-    beans.columnGroupStateService.setColumnGroupState(stateItems, 'api');
+    beans.columnStateService.setColumnGroupState(stateItems, 'api');
 }
 
 export function resetColumnGroupState(beans: BeanCollection): void {
-    beans.columnGroupStateService.resetColumnGroupState('api');
+    beans.columnStateService.resetColumnGroupState('api');
 }
 
 export function isPinning(beans: BeanCollection): boolean {

@@ -3,11 +3,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
     ClientSideRowModelModule,
     type ColDef,
-    CommunityFeaturesModule,
     type GetRowIdFunc,
     type GetRowIdParams,
     ModuleRegistry,
-    type SelectionOptions,
     type ValueFormatterFunc,
     type ValueGetterParams,
 } from 'ag-grid-community';
@@ -40,7 +38,6 @@ interface Props {
 }
 
 ModuleRegistry.registerModules([
-    CommunityFeaturesModule,
     ClientSideRowModelModule,
     AdvancedFilterModule,
     ColumnsToolPanelModule,
@@ -169,13 +166,6 @@ export const FinanceExample: React.FC<Props> = ({
         []
     );
 
-    const selection: SelectionOptions = useMemo(
-        () => ({
-            mode: 'cell',
-        }),
-        []
-    );
-
     const getRowId = useCallback<GetRowIdFunc>(({ data: { ticker } }: GetRowIdParams) => ticker, []);
 
     const statusBar = useMemo(
@@ -204,7 +194,7 @@ export const FinanceExample: React.FC<Props> = ({
                 rowData={rowData}
                 columnDefs={colDefs}
                 defaultColDef={defaultColDef}
-                selection={selection}
+                cellSelection={true}
                 enableCharts
                 rowGroupPanelShow={'always'}
                 suppressAggFuncInHeader

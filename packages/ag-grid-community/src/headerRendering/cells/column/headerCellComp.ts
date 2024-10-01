@@ -1,6 +1,6 @@
-import type { UserCompDetails } from '../../../components/framework/userComponentFactory';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { ColumnPinnedType } from '../../../interfaces/iColumn';
+import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { _removeAriaSort, _setAriaSort } from '../../../utils/aria';
 import { RefPlaceholder } from '../../../widgets/component';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
