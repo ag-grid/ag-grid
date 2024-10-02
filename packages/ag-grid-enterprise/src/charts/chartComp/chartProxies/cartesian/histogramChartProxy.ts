@@ -1,4 +1,4 @@
-import type { AgCartesianAxisOptions, AgHistogramSeriesOptions } from 'ag-charts-community';
+import type { AgCartesianAxisOptions, AgHistogramSeriesOptions } from 'ag-charts-types';
 
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';

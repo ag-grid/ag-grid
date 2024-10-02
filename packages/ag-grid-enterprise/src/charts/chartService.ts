@@ -1,5 +1,5 @@
-import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
 import { VERSION as CHARTS_VERSION, _ModuleSupport } from 'ag-charts-community';
+import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-types';
 
 import type {
     BaseCreateChartParams,

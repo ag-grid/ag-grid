@@ -1,4 +1,4 @@
-import type { AgChartThemePalette } from 'ag-charts-community';
+import type { AgChartThemePalette } from 'ag-charts-types';
 
 import {
     Component,

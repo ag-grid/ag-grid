@@ -1,3 +1,4 @@
+import { AgCharts, _ModuleSupport, _Theme } from 'ag-charts-community';
 import type {
     AgChartInstance,
     AgChartOptions,
@@ -6,8 +7,7 @@ import type {
     AgChartThemePalette,
     AgCommonThemeableChartOptions,
     AgCrosshairOptions,
-} from 'ag-charts-community';
-import { AgCharts, _ModuleSupport, _Theme } from 'ag-charts-community';
+} from 'ag-charts-types';
 
 import type { ChartType, SeriesChartType, SeriesGroupType } from 'ag-grid-community';
 

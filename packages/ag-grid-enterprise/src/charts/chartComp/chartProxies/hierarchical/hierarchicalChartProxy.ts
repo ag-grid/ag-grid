@@ -1,4 +1,4 @@
-import type { AgChartThemeOverrides, AgHierarchyChartOptions, AgHierarchySeriesOptions } from 'ag-charts-community';
+import type { AgChartThemeOverrides, AgHierarchyChartOptions, AgHierarchySeriesOptions } from 'ag-charts-types';
 
 import { GROUP_AUTO_COLUMN_ID } from 'ag-grid-community';
 

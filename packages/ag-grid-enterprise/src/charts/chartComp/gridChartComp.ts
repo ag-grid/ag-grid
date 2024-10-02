@@ -1,4 +1,4 @@
-import type { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-community';
+import type { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-types';
 
 import type {
     BeanCollection,

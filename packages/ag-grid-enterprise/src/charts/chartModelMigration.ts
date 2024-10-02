@@ -1,4 +1,4 @@
-import type { AgChartThemeName } from 'ag-charts-community';
+import type { AgChartThemeName } from 'ag-charts-types';
 
 import type { ChartModel } from 'ag-grid-community';
 
