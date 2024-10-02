@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for directory in 'community-modules' 'enterprise-modules' 'packages';
+for directory in 'community-modules' 'packages';
 do
   for moduleDirectory in `ls $directory`;
   do
