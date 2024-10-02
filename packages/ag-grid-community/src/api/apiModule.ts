@@ -1,5 +1,5 @@
-import { ModuleWithApi, baseCommunityModule } from '../interfaces/iModule';
-import type { Module } from '../interfaces/iModule';
+import type { ModuleWithApi } from '../interfaces/iModule';
+import { baseCommunityModule } from '../interfaces/iModule';
 import { destroy, getGridId, getGridOption, isDestroyed, setGridOption, updateGridOptions } from './coreApi';
 import type { _CoreGridApi, _RowGridApi, _ScrollGridApi } from './gridApi';
 import {
