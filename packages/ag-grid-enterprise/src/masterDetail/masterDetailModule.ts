@@ -1,8 +1,8 @@
-import type { _MasterDetailGridApi } from 'ag-grid-community';
+import type { Module, ModuleWithApi, _MasterDetailGridApi } from 'ag-grid-community';
 import { ModuleNames } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { defineEnterpriseModule } from '../moduleUtils';
+import { baseEnterpriseModule } from '../moduleUtils';
 import { GroupCellRenderer } from '../rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from '../rendering/groupCellRendererCtrl';
 import { DetailCellRenderer } from './detailCellRenderer';
@@ -10,7 +10,8 @@ import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 import { DetailGridApiService } from './detailGridApiService';
 import { addDetailGridInfo, forEachDetailGridInfo, getDetailGridInfo, removeDetailGridInfo } from './masterDetailApi';
 
-export const MasterDetailCoreModule = defineEnterpriseModule('MasterDetailCoreModule', {
+export const MasterDetailCoreModule: Module = {
+    ...baseEnterpriseModule('MasterDetailCoreModule'),
     userComponents: [
         {
             name: 'agGroupRowRenderer',
@@ -27,9 +28,10 @@ export const MasterDetailCoreModule = defineEnterpriseModule('MasterDetailCoreMo
         { name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl },
     ],
     dependsOn: [EnterpriseCoreModule],
-});
+};
 
-export const MasterDetailApiModule = defineEnterpriseModule<_MasterDetailGridApi>('MasterDetailApiModule', {
+export const MasterDetailApiModule: ModuleWithApi<_MasterDetailGridApi> = {
+    ...baseEnterpriseModule('MasterDetailApiModule'),
     beans: [DetailGridApiService],
     apiFunctions: {
         addDetailGridInfo,
@@ -38,8 +40,9 @@ export const MasterDetailApiModule = defineEnterpriseModule<_MasterDetailGridApi
         forEachDetailGridInfo,
     },
     dependsOn: [MasterDetailCoreModule],
-});
+};
 
-export const MasterDetailModule = defineEnterpriseModule(ModuleNames.MasterDetailModule, {
+export const MasterDetailModule: Module = {
+    ...baseEnterpriseModule(ModuleNames.MasterDetailModule),
     dependsOn: [MasterDetailCoreModule, MasterDetailApiModule],
-});
+};

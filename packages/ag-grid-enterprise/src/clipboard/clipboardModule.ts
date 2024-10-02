@@ -1,9 +1,9 @@
-import type { _ClipboardGridApi } from 'ag-grid-community';
+import type { Module, ModuleWithApi, _ClipboardGridApi } from 'ag-grid-community';
 import { KeyboardNavigationCoreModule, ModuleNames } from 'ag-grid-community';
 import { CsvExportModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { defineEnterpriseModule } from '../moduleUtils';
+import { baseEnterpriseModule } from '../moduleUtils';
 import {
     copySelectedRangeDown,
     copySelectedRangeToClipboard,
@@ -14,12 +14,14 @@ import {
 } from './clipboardApi';
 import { ClipboardService } from './clipboardService';
 
-export const ClipboardCoreModule = defineEnterpriseModule('ClipboardCoreModule', {
+export const ClipboardCoreModule: Module = {
+    ...baseEnterpriseModule('ClipboardCoreModule'),
     beans: [ClipboardService],
     dependsOn: [EnterpriseCoreModule, CsvExportModule, KeyboardNavigationCoreModule],
-});
+};
 
-export const ClipboardApiModule = defineEnterpriseModule<_ClipboardGridApi>('ClipboardApiModule', {
+export const ClipboardApiModule: ModuleWithApi<_ClipboardGridApi> = {
+    ...baseEnterpriseModule('ClipboardApiModule'),
     apiFunctions: {
         copyToClipboard,
         cutToClipboard,
@@ -29,8 +31,9 @@ export const ClipboardApiModule = defineEnterpriseModule<_ClipboardGridApi>('Cli
         pasteFromClipboard,
     },
     dependsOn: [ClipboardCoreModule],
-});
+};
 
-export const ClipboardModule = defineEnterpriseModule(ModuleNames.ClipboardModule, {
+export const ClipboardModule: Module = {
+    ...baseEnterpriseModule(ModuleNames.ClipboardModule),
     dependsOn: [ClipboardCoreModule, ClipboardApiModule],
-});
+};

@@ -1,8 +1,8 @@
-import type { _RowGroupingGridApi } from 'ag-grid-community';
+import type { Module, ModuleWithApi, _RowGroupingGridApi } from 'ag-grid-community';
 import { ColumnFilterModule, FloatingFilterModule, ModuleNames, PopupModule, StickyRowModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { defineEnterpriseModule } from '../moduleUtils';
+import { baseEnterpriseModule } from '../moduleUtils';
 import { GroupCellRenderer } from '../rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from '../rendering/groupCellRendererCtrl';
 import { AggFuncService } from './aggFuncService';
@@ -41,7 +41,8 @@ import {
 } from './rowGroupingApi';
 import { ShowRowGroupColsService } from './showRowGroupColsService';
 
-export const RowGroupingCoreModule = defineEnterpriseModule('RowGroupingCoreModule', {
+export const RowGroupingCoreModule: Module = {
+    ...baseEnterpriseModule('RowGroupingCoreModule'),
     beans: [
         AggregationStage,
         FilterAggregatesStage,
@@ -67,14 +68,16 @@ export const RowGroupingCoreModule = defineEnterpriseModule('RowGroupingCoreModu
         EnterpriseCoreModule,
         PopupModule, // can be extracted into row group panel module
     ],
-});
+};
 
-export const PivotModule = defineEnterpriseModule('PivotModule', {
+export const PivotModule: Module = {
+    ...baseEnterpriseModule('PivotModule'),
     beans: [PivotResultColsService, PivotColDefService, PivotStage],
     dependsOn: [RowGroupingCoreModule],
-});
+};
 
-export const RowGroupingApiModule = defineEnterpriseModule<_RowGroupingGridApi<any>>('RowGroupingApiModule', {
+export const RowGroupingApiModule: ModuleWithApi<_RowGroupingGridApi<any>> = {
+    ...baseEnterpriseModule('RowGroupingApiModule'),
     apiFunctions: {
         addAggFuncs,
         clearAggFuncs,
@@ -98,19 +101,22 @@ export const RowGroupingApiModule = defineEnterpriseModule<_RowGroupingGridApi<a
         getPivotResultColumns,
     },
     dependsOn: [RowGroupingCoreModule],
-});
+};
 
-export const GroupFilterModule = defineEnterpriseModule('GroupFilterModule', {
+export const GroupFilterModule: Module = {
+    ...baseEnterpriseModule('GroupFilterModule'),
     userComponents: [{ name: 'agGroupColumnFilter', classImp: GroupFilter }],
     dependsOn: [RowGroupingCoreModule, ColumnFilterModule],
-});
+};
 
-export const GroupFloatingFilterModule = defineEnterpriseModule('GroupFloatingFilterModule', {
+export const GroupFloatingFilterModule: Module = {
+    ...baseEnterpriseModule('GroupFloatingFilterModule'),
     userComponents: [{ name: 'agGroupColumnFloatingFilter', classImp: GroupFloatingFilterComp }],
     dependsOn: [GroupFilterModule, FloatingFilterModule],
-});
+};
 
-export const RowGroupingModule = defineEnterpriseModule(ModuleNames.RowGroupingModule, {
+export const RowGroupingModule: Module = {
+    ...baseEnterpriseModule(ModuleNames.RowGroupingModule),
     dependsOn: [
         RowGroupingCoreModule,
         RowGroupingApiModule,
@@ -119,4 +125,4 @@ export const RowGroupingModule = defineEnterpriseModule(ModuleNames.RowGroupingM
         StickyRowModule,
         PivotModule,
     ],
-});
+};
