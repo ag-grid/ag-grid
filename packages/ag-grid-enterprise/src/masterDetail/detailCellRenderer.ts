@@ -8,7 +8,14 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererParams,
 } from 'ag-grid-community';
-import { Component, ModuleRegistry, RefPlaceholder, _missing, _warnOnce, createGrid } from 'ag-grid-community';
+import {
+    Component,
+    RefPlaceholder,
+    _getGridRegisteredModules,
+    _missing,
+    _warnOnce,
+    createGrid,
+} from 'ag-grid-community';
 
 import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 import { DetailFrameworkComponentWrapper } from './detailFrameworkComponentWrapper';
@@ -106,7 +113,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             providedBeanInstances: {
                 frameworkComponentWrapper: frameworkComponentWrapper,
             },
-            modules: ModuleRegistry.__getGridRegisteredModules(this.params.api.getGridId()),
+            modules: _getGridRegisteredModules(this.params.api.getGridId(), gridOptions.rowModelType ?? 'clientSide'),
         } as GridParams);
 
         this.detailApi = api;

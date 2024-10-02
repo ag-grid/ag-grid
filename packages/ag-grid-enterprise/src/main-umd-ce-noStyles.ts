@@ -30,34 +30,30 @@ import {
     ViewportRowModelModule,
 } from './main';
 
-ModuleRegistry.__registerModules(
-    [
-        CommunityFeaturesModule,
-        ClientSideRowModelModule,
-        InfiniteRowModelModule,
-        CsvExportModule,
-        AdvancedFilterModule,
-        GridChartsModule,
-        ClipboardModule,
-        ColumnsToolPanelModule,
-        ExcelExportModule,
-        FiltersToolPanelModule,
-        MasterDetailModule,
-        MenuModule,
-        MultiFilterModule,
-        RangeSelectionModule,
-        RichSelectModule,
-        RowGroupingModule,
-        ServerSideRowModelModule,
-        SetFilterModule,
-        SideBarModule,
-        SparklinesModule,
-        StatusBarModule,
-        ViewportRowModelModule,
-    ],
-    false,
-    undefined
-);
+ModuleRegistry.registerModules([
+    CommunityFeaturesModule,
+    ClientSideRowModelModule,
+    InfiniteRowModelModule,
+    CsvExportModule,
+    AdvancedFilterModule,
+    GridChartsModule,
+    ClipboardModule,
+    ColumnsToolPanelModule,
+    ExcelExportModule,
+    FiltersToolPanelModule,
+    MasterDetailModule,
+    MenuModule,
+    MultiFilterModule,
+    RangeSelectionModule,
+    RichSelectModule,
+    RowGroupingModule,
+    ServerSideRowModelModule,
+    SetFilterModule,
+    SideBarModule,
+    SparklinesModule,
+    StatusBarModule,
+    ViewportRowModelModule,
+]);
 
 export * from 'ag-grid-community';
 export * from './charts-enterprise/main';

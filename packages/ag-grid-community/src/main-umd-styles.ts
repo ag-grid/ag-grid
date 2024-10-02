@@ -24,11 +24,9 @@ import {
     ModuleRegistry,
 } from './main';
 
-ModuleRegistry.__registerModules(
+ModuleRegistry.registerModules(
     // [CommunityFeaturesModule, ClientSideRowModelModule],
-    [CommunityFeaturesModule, ClientSideRowModelModule, InfiniteRowModelModule, CsvExportModule],
-    false,
-    undefined
+    [CommunityFeaturesModule, ClientSideRowModelModule, InfiniteRowModelModule, CsvExportModule]
 );
 
 export * from './main';

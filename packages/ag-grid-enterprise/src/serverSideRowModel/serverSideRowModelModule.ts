@@ -37,7 +37,7 @@ import { StoreUtils } from './stores/storeUtils';
 import { TransactionManager } from './transactionManager';
 
 export const ServerSideRowModelCoreModule = defineEnterpriseModule('ServerSideRowModelCoreModule', {
-    rowModel: 'serverSide',
+    rowModels: ['serverSide'],
     beans: [
         ServerSideRowModel,
         ExpandListener,
@@ -55,19 +55,19 @@ export const ServerSideRowModelCoreModule = defineEnterpriseModule('ServerSideRo
 });
 
 export const ServerSideRowModelRowSelectionModule = defineEnterpriseModule('ServerSideRowModelRowSelectionModule', {
-    rowModel: 'serverSide',
+    rowModels: ['serverSide'],
     beans: [ServerSideSelectionService],
     dependsOn: [ServerSideRowModelCoreModule],
 });
 
 export const ServerSideRowModelRowGroupingModule = defineEnterpriseModule('ServerSideRowModelRowGroupingModule', {
-    rowModel: 'serverSide',
+    rowModels: ['serverSide'],
     beans: [ServerSideExpansionService],
     dependsOn: [ServerSideRowModelCoreModule],
 });
 
 export const ServerSideRowModelSortModule = defineEnterpriseModule('ServerSideRowModelSortModule', {
-    rowModel: 'serverSide',
+    rowModels: ['serverSide'],
     beans: [SortListener],
     dependsOn: [ServerSideRowModelCoreModule, SortModule],
 });
@@ -75,6 +75,7 @@ export const ServerSideRowModelSortModule = defineEnterpriseModule('ServerSideRo
 export const ServerSideRowModelApiModule = defineEnterpriseModule<_ServerSideRowModelGridApi>(
     'ServerSideRowModelApiModule',
     {
+        rowModels: ['serverSide'],
         beans: [RowModelHelperService],
         apiFunctions: {
             getServerSideSelectionState,
@@ -92,6 +93,7 @@ export const ServerSideRowModelApiModule = defineEnterpriseModule<_ServerSideRow
 );
 
 export const ServerSideRowModelModule = defineEnterpriseModule(ModuleNames.ServerSideRowModelModule, {
+    rowModels: ['serverSide'],
     dependsOn: [
         ServerSideRowModelCoreModule,
         ServerSideRowModelApiModule,

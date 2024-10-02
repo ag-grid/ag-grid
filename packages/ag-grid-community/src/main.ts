@@ -997,7 +997,7 @@ export { ZipContainer } from './csvExport/zipContainer/zipContainer';
 // modules
 export { Module, ModuleValidationResult, ModuleWithApi, BaseModule } from './interfaces/iModule';
 export { ModuleNames } from './modules/moduleNames';
-export { ModuleRegistry } from './modules/moduleRegistry';
+export { ModuleRegistry, _getGridRegisteredModules } from './modules/moduleRegistry';
 
 export { ValidationModule } from './validation/validationModule';
 
@@ -1019,7 +1019,7 @@ export {
     SsrmInfiniteSharedApiModule as _SsrmInfiniteSharedApiModule,
 } from './api/sharedApiModule';
 export { CommunityMenuApiModule } from './misc/menu/sharedMenuModule';
-export { CommunityFeaturesModule, GridCoreModule } from './gridCoreModule';
+export { CommunityFeaturesModule } from './communityFeaturesModule';
 export { SortModule } from './sort/sortModule';
 export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
 export { ClientSideRowModelModule, ClientSideRowModelCoreModule } from './clientSideRowModel/clientSideRowModelModule';
