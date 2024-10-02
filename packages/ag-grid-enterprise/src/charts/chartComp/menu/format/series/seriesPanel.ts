@@ -1,4 +1,4 @@
-import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-community';
+import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-types';
 
 import type { AgToggleButtonParams, BeanCollection, ListOption } from 'ag-grid-community';
 import { AgSelect, AgToggleButton, Component, RefPlaceholder, _errorOnce, _removeFromParent } from 'ag-grid-community';

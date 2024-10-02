@@ -3,7 +3,7 @@ import React from 'react';
 import { CustomCellRendererProps } from 'ag-grid-react';
 
 export default (params: CustomCellRendererProps) => {
-    const priceArr: any[] = new Array(params.value ?? 0).fill('');
+    const priceArr: any[] = new Array(Number(params.value) ?? 0).fill('');
 
     return (
         <span className="imgSpan">

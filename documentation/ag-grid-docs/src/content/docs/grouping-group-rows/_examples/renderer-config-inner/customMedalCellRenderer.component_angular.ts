@@ -23,7 +23,7 @@ export class CustomMedalCellRenderer implements ICellRendererAngularComp {
 
     // Return Cell Value
     refresh(params: ICellRendererParams): boolean {
-        this.arr = new Array(params.value ?? 0).fill('');
+        this.arr = new Array(Number(params.value) ?? 0).fill('');
         return true;
     }
 }

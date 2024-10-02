@@ -82,7 +82,9 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "ag-grid-community": "32.2.0",
+    "ag-grid-community": "32.2.0"
+  },
+  "optionalDependencies": {
     "ag-charts-community": "10.2.0-beta.20240929",
     "ag-charts-enterprise": "10.2.0-beta.20240929"
   },

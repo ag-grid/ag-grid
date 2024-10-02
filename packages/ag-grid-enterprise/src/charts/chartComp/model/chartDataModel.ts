@@ -1,4 +1,4 @@
-import type { AgCartesianAxisType } from 'ag-charts-community';
+import type { AgCartesianAxisType } from 'ag-charts-types';
 
 import type {
     AgColumn,

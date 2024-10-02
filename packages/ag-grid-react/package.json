@@ -55,10 +55,10 @@
     "typescript": "~5.1.6"
   },
   "dependencies": {
-    "prop-types": "^15.8.1"
+    "prop-types": "^15.8.1",
+    "ag-grid-community": "32.2.0"
   },
   "peerDependencies": {
-    "ag-grid-community": "32.2.0",
     "react": "^16.3.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.3.0 || ^17.0.0 || ^18.0.0"
   },

@@ -34,6 +34,7 @@ const processPackageFile = (packageJsonFilename) => {
         let updated = updateDependency(packageJson, 'dependencies', chartsVersion);
         updated |= updateDependency(packageJson, 'devDependencies', chartsVersion);
         updated |= updateDependency(packageJson, 'peerDependencies', chartsVersion);
+        updated |= updateDependency(packageJson, 'optionalDependencies', chartsVersion);
 
         if (updated) {
             fs.writeFileSync(packageJsonFilename, JSON.stringify(packageJson, null, 2) + os.EOL, 'utf-8');

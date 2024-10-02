@@ -1,5 +1,5 @@
-import type { FontStyle, FontWeight } from 'ag-charts-community';
 import { _Scene, _Util } from 'ag-charts-community';
+import type { FontStyle, FontWeight } from 'ag-charts-types';
 
 import type { ColumnFormat, ColumnFormatterParams } from 'ag-grid-community';
 

@@ -16,6 +16,7 @@
   "module": "./dist/ag-grid-angular/fesm2022/ag-grid-community-angular.mjs",
   "typings": "./dist/ag-grid-angular/index.d.ts",
   "dependencies": {
+    "ag-grid-community": "32.2.0",
     "@angular/animations": "^16.2.12",
     "@angular/common": "^16.2.12",
     "@angular/compiler": "^16.2.12",

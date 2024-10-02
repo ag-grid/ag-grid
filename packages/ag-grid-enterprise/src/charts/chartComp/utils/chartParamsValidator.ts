@@ -1,5 +1,5 @@
-import type { AgChartThemeOverrides } from 'ag-charts-community';
 import { _ModuleSupport } from 'ag-charts-community';
+import type { AgChartThemeOverrides } from 'ag-charts-types';
 
 import type {
     ChartParamsCellRange,

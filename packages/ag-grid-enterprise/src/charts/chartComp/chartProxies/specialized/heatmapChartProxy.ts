@@ -4,7 +4,7 @@ import type {
     AgHeatmapSeriesOptions,
     AgHeatmapSeriesTooltipRendererParams,
     AgTooltipRendererResult,
-} from 'ag-charts-community';
+} from 'ag-charts-types';
 
 import { flatMap } from '../../utils/array';
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
