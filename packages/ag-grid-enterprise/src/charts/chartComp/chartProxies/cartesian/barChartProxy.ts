@@ -1,4 +1,4 @@
-import type { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-community';
+import type { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-types';
 
 import { _includes } from 'ag-grid-community';
 

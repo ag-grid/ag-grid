@@ -1,4 +1,4 @@
-import type { AgBoxPlotSeriesOptions } from 'ag-charts-community';
+import type { AgBoxPlotSeriesOptions } from 'ag-charts-types';
 
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { StatisticalChartProxy } from './statisticalChartProxy';

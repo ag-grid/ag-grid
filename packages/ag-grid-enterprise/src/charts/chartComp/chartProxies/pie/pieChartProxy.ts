@@ -3,7 +3,7 @@ import type {
     AgPieSeriesOptions,
     AgPolarChartOptions,
     AgPolarSeriesOptions,
-} from 'ag-charts-community';
+} from 'ag-charts-types';
 
 import { changeOpacity } from '../../utils/color';
 import type { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
