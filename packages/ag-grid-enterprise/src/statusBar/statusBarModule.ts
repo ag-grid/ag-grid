@@ -1,5 +1,5 @@
 import type { _StatusBarGridApi } from 'ag-grid-community';
-import { KeyboardNavigationCoreModule, ModuleNames, RowSelectionCoreModule } from 'ag-grid-community';
+import { KeyboardNavigationCoreModule, ModuleNames } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { defineEnterpriseModule } from '../moduleUtils';
@@ -24,7 +24,7 @@ export const StatusBarCoreModule = defineEnterpriseModule('StatusBarCoreModule',
 
 export const StatusBarSelectionModule = defineEnterpriseModule('StatusBarSelectionModule', {
     userComponents: [{ name: 'agSelectedRowCountComponent', classImp: SelectedRowsComp }],
-    dependsOn: [StatusBarCoreModule, RowSelectionCoreModule],
+    dependsOn: [StatusBarCoreModule],
 });
 
 export const StatusBarApiModule = defineEnterpriseModule<_StatusBarGridApi>('StatusBarApiModule', {

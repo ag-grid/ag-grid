@@ -1,8 +1,8 @@
 import type { _ClientSideRowModelGridApi } from '../api/gridApi';
 import { RowModelHelperService } from '../api/rowModelHelperService';
 import { CsrmSsrmSharedApiModule } from '../api/sharedApiModule';
+import { CommunityFeaturesModule } from '../communityFeaturesModule';
 import { FilterCoreModule } from '../filter/filterModule';
-import { CommunityFeaturesModule } from '../gridCoreModule';
 import { defineCommunityModule } from '../interfaces/iModule';
 import { ModuleNames } from '../modules/moduleNames';
 import { SortModule } from '../sort/sortModule';
@@ -27,18 +27,18 @@ import { RowNodeEventThrottle } from './rowNodeEventThrottle';
 import { SortStage } from './sortStage';
 
 export const ClientSideRowModelCoreModule = defineCommunityModule('ClientSideRowModelCoreModule', {
-    rowModel: 'clientSide',
-    beans: [ClientSideNodeManager, ClientSideRowModel, FilterStage, FlattenStage, RowNodeEventThrottle],
+    rowModels: ['clientSide'],
+    beans: [ClientSideNodeManager, ClientSideRowModel, FlattenStage, RowNodeEventThrottle],
 });
 
 export const ClientSideRowModelSortModule = defineCommunityModule('ClientSideRowModelSortModule', {
-    rowModel: 'clientSide',
+    rowModels: ['clientSide'],
     beans: [SortStage],
     dependsOn: [ClientSideRowModelCoreModule, SortModule],
 });
 
 export const ClientSideRowModelFilterModule = defineCommunityModule('ClientSideRowModelFilterModule', {
-    rowModel: 'clientSide',
+    rowModels: ['clientSide'],
     beans: [FilterStage],
     dependsOn: [FilterCoreModule],
 });
@@ -46,6 +46,7 @@ export const ClientSideRowModelFilterModule = defineCommunityModule('ClientSideR
 export const ClientSideRowModelApiModule = defineCommunityModule<_ClientSideRowModelGridApi<any>>(
     'ClientSideRowModelApiModule',
     {
+        rowModels: ['clientSide'],
         beans: [RowModelHelperService],
         apiFunctions: {
             onGroupExpandedOrCollapsed,
@@ -65,6 +66,7 @@ export const ClientSideRowModelApiModule = defineCommunityModule<_ClientSideRowM
 );
 
 export const ClientSideRowModelModule = defineCommunityModule(ModuleNames.ClientSideRowModelModule, {
+    rowModels: ['clientSide'],
     dependsOn: [
         ClientSideRowModelCoreModule,
         ClientSideRowModelApiModule,

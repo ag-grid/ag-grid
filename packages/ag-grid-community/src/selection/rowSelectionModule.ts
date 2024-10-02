@@ -14,11 +14,11 @@ import {
 import { SelectionService } from './selectionService';
 
 export const RowSelectionCoreModule = defineCommunityModule('RowSelectionCoreModule', {
+    rowModels: ['clientSide', 'infinite', 'viewport'],
     beans: [SelectionService],
 });
 
 export const RowSelectionApiModule = defineCommunityModule<_RowSelectionGridApi>('RowSelectionApiModule', {
-    dependsOn: [RowSelectionCoreModule],
     apiFunctions: {
         setNodesSelected,
         selectAll,
@@ -33,5 +33,5 @@ export const RowSelectionApiModule = defineCommunityModule<_RowSelectionGridApi>
 });
 
 export const RowSelectionModule = defineCommunityModule('RowSelectionModule', {
-    dependsOn: [RowSelectionApiModule],
+    dependsOn: [RowSelectionCoreModule, RowSelectionApiModule],
 });
