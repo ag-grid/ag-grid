@@ -172,6 +172,8 @@ export class GridChartComp extends Component {
 
             ctx.lastSelectedChartId = reset ? '' : chartId;
 
+            const selectionModel = ctx.getChartSelectionModel(chartId);
+
             if (reset) {
                 ctx.clearAllSelections();
             } else {
@@ -180,14 +182,15 @@ export class GridChartComp extends Component {
                 const multiSelection = event.event.metaKey || event.event.ctrlKey;
 
                 if (multiSelection) {
-                    ctx.getChartSelectionModel(chartId).toggleSelection(multiSelection, category, value);
+                    if (!selectionModel.hasSelection()) {
+                        selectionModel.selectAll(false);
+                    }
+                    selectionModel.toggleSelection(multiSelection, category, value);
                 } else {
                     ctx.clearAllSelections(false);
-                    ctx.getChartSelectionModel(chartId).toggleSelection(false, category, value);
+                    selectionModel.toggleSelection(false, category, value);
                 }
             }
-
-            // this.crossFilterService.filter(event, reset);
         };
 
         const chartType = this.chartController.getChartType();

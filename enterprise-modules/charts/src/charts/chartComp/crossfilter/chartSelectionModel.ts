@@ -21,6 +21,12 @@ export class ChartSelectionModel {
         return this.available;
     }
 
+    getBooleanSelection(): boolean[] {
+        return this.available.map((entry) =>
+            this.hasSelection() ? this.isSelected(entry.category, entry.value) : true
+        );
+    }
+
     getFlatSelection(): Record<string, string[]> {
         return this.selection.reduce<Record<string, string[]>>((acc, entry) => {
             acc[entry.category] ??= [];
@@ -82,6 +88,10 @@ export class ChartSelectionModel {
 
     public clearSelection(notify = true): void {
         this.setSelection([], notify);
+    }
+
+    public selectAll(notify = true): void {
+        this.setSelection(this.getAvailable(), notify);
     }
 
     setCategory(category: string) {

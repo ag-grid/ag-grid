@@ -101,10 +101,17 @@ export abstract class ChartProxy<
 
     protected abstract getUpdateOptions(params: UpdateParams, commonChartOptions: TOptions): TOptions;
 
+    protected updateSelection(params: UpdateParams): void {
+        const category = params.categories[0].id;
+
+        this.selectionModel.setCategory(category);
+        this.selectionModel.setAvailable(params.data.map((d) => ({ category, value: d[category] })));
+    }
+
     public update(params: UpdateParams): void {
         const updateOptions = this.getUpdateOptions(params, this.getCommonChartOptions(params.updatedOverrides));
 
-        this.selectionModel.setCategory(params.categories[0].id);
+        this.updateSelection(params);
 
         this.getChartRef().update(updateOptions);
     }

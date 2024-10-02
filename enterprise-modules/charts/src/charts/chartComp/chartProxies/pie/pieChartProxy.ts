@@ -108,4 +108,10 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
     public override getCategoryKey(): string {
         return 'calloutLabelKey';
     }
+
+    public override updateSelection(params: UpdateParams): void {
+        super.updateSelection(params);
+        const chart = this.getChart();
+        chart.series?.[0]?.setLegendState?.(this.selectionModel.getBooleanSelection());
+    }
 }

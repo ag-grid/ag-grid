@@ -105,46 +105,40 @@ function createCrossFilterThemeOverrides(
     chartProxyParams: ChartProxyParams,
     seriesType: ChartSeriesType
 ): AgChartThemeOverrides {
-    const legend = {
-        listeners: {
-            legendItemClick: (e: AgChartLegendClickEvent) => {
-                const chart = proxy.getChart();
-                const series: any = chart.series.find((s: any) => s.id === e.seriesId);
-                const item = series?.['nodeData']?.find((i: any) => i.itemId === e.itemId);
-                const datum = item?.datum;
+    const isPieOrDonut = seriesType === 'pie' || seriesType === 'donut';
 
-                const categoryKey = proxy.getCategoryKey();
-                const category = series.properties[categoryKey];
+    const legend = isPieOrDonut
+        ? {
+              listeners: {
+                  legendItemClick: (e: AgChartLegendClickEvent) => {
+                      e?.['preventDefault']?.();
 
-                const newFilterState = series.nodeData
-                    .filter((i: any) => i.enabled)
-                    .map((i: any) => {
-                        return {
-                            category: series.properties[categoryKey],
-                            value: i.datum[category],
-                        };
-                    });
+                      const chart = proxy.getChart();
 
-                chartProxyParams.crossFilteringContext
-                    .getChartSelectionModel(chartProxyParams.chartId)
-                    .setSelection(newFilterState);
+                      const series: any = chart.series.find((s: any) => s.id === e.seriesId);
+                      const nodeData: any[] = series?.nodeData;
+                      const item = nodeData?.find((i: any) => i.itemId === e.itemId);
+                      const datum = item?.datum;
 
-                // chartProxyParams.
+                      const categoryKey = proxy.getCategoryKey();
+                      const category = series.properties[categoryKey];
+                      const value = datum[category];
 
-                // const event = {
-                //     event: { ...e, metaKey: true },
-                //     [categoryKey]: category,
-                //     datum,
-                // };
+                      const selectionModel = chartProxyParams.crossFilteringContext.getChartSelectionModel(
+                          chartProxyParams.chartId
+                      );
 
-                // chartProxyParams.crossFilterCallback(event, false);
+                      if (!selectionModel.hasSelection()) {
+                          selectionModel.selectAll(false);
+                      }
 
-                // chart.series.forEach((s) => {
-                //     s.toggleSeriesItem(e.itemId, e.enabled);
-                // });
-            },
-        },
-    };
+                      selectionModel.toggleSelection(true, category, value);
+
+                      series.setLegendState(selectionModel.getBooleanSelection());
+                  },
+              },
+          }
+        : {};
 
     return {
         [seriesType]: {
