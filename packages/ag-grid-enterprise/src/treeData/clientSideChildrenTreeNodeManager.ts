@@ -70,7 +70,9 @@ export class ClientSideChildrenTreeNodeManager<TData>
             addChild(rootTreeNode, item);
         }
 
-        this.treeNodeManager.commitTree(undefined);
+        if (treeData) {
+            this.treeNodeManager.commitTree(undefined);
+        }
     }
 
     public setMasterForAllRows(rows: RowNode<TData>[] | null | undefined, shouldSetExpanded: boolean): void {
