@@ -243,7 +243,7 @@ const gridOptions: GridOptions = {
     statusBar: {
         statusPanels: [{ statusPanel: 'agAggregationComponent' }],
     },
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         groupSelects: 'descendants',
         selectAll: 'filtered',

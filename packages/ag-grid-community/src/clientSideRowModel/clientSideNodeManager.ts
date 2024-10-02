@@ -217,7 +217,7 @@ export class ClientSideNodeManager {
         // a new node was inserted, so a parent that was previously selected (as all
         // children were selected) should not be tri-state (as new one unselected against
         // all other selected children).
-        this.selectionService?.updateGroupsFromChildrenSelections(source);
+        this.selectionService?.updateGroupsFromChildrenSelections?.(source);
 
         if (selectionChanged) {
             this.eventService.dispatchEvent({

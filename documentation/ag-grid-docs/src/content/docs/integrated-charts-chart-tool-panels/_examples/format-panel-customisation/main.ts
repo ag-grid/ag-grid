@@ -21,7 +21,7 @@ const gridOptions: GridOptions = {
     ],
     defaultColDef: { flex: 1 },
     popupParent: document.body,
-    selection: { mode: 'cell' },
+    cellSelection: true,
     enableCharts: true,
     chartToolPanelsDef: {
         defaultToolPanel: 'format',

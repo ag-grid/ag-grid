@@ -172,25 +172,24 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.addManagedPropertyListeners(
             [
                 'getBusinessKeyForNode',
+
                 'fullWidthCellRenderer',
                 'fullWidthCellRendererParams',
-                'rowStyle',
-                'getRowStyle',
-                'rowClass',
-                'getRowClass',
-                'rowClassRules',
 
                 'suppressStickyTotalRow',
 
                 'groupRowRenderer',
                 'groupRowRendererParams', // maybe only needs to refresh FW rows...
+
                 'loadingCellRenderer',
                 'loadingCellRendererParams',
+
                 'detailCellRenderer',
                 'detailCellRendererParams',
+
                 'enableRangeSelection',
                 'enableCellTextSelection',
-                'selection',
+                'rowSelection',
             ],
             () => this.redrawRows()
         );
@@ -326,7 +325,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.eventService.removeEventListener('columnVisible', onColumnMovedPinnedVisible);
         };
         this.addDestroyFunc(() => removeCellSelectionListeners());
-        this.addManagedPropertyListeners(['enableRangeSelection', 'selection'], () => {
+        this.addManagedPropertyListeners(['enableRangeSelection', 'cellSelection'], () => {
             const isEnabled = _isCellSelectionEnabled(this.gos);
             if (isEnabled) {
                 addCellSelectionListeners();

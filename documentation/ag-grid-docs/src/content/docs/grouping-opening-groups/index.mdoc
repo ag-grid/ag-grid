@@ -1,100 +1,82 @@
 ---
-title: "Row Grouping - Opening Groups"
+title: "Row Grouping - Expanding Groups"
 enterprise: true
 ---
+Configure the initial expanded group row state when using Tree Data.
 
-This section covers different ways to control how row groups are expanded and collapsed.
+## Expanding by Group Level
 
-## Opening Group Levels by Default
+When providing a hierarchy, all levels will default to a collapsed state. This can be configured by setting the `groupDefaultExpanded`
+grid option, providing a number will expand all groups down to that level, or providing -1 will expand all groups.
 
-To open all groups down to a given group level use the `groupDefaultExpanded` grid option as shown below:
+{% gridExampleRunner title="Group Default Expanded" name="group-default-expanded" /%}
+
+The example above uses the following configuration to expand the first level of groups, but no others:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    columnDefs: [
-        { field: 'country', hide: true, rowGroup: true },
-        { field: 'year', hide: true, rowGroup: true },
-        { field: 'sport' },
-        { field: 'total' }
-    ],
-    // all 'country' row groups will be open by default
-    groupDefaultExpanded: 1
+    groupDefaultExpanded: 1,
 }
 ```
 
-In the snippet above, all `country` row groups will be expanded by default as `groupDefaultExpanded = 1`.
+## Expanding via Callback
 
-By default `groupDefaultExpanded = 0` which means no groups are expanded by default. To expand all row groups
-set `groupDefaultExpanded = -1`.
+To granularly determine which groups should be expanded by default, use the `isGroupOpenByDefault` grid callback.
 
-The example below demonstrates the `groupDefaultExpanded` behaviour. Note the following:
+{% apiDocumentation source="grid-options/properties.json" section="rowGrouping" names=["isGroupOpenByDefault"] /%}
 
-* There are two active row groups as the supplied `country` and `year` column definitions have `rowGroup=true` declared.
+{% gridExampleRunner title="Open by Default" name="open-by-default" /%}
 
-* All `country` row groups are expanded by default as `groupDefaultExpanded = 1`.
-
-{% gridExampleRunner title="Group Default Expanded" name="group-default-expanded"  exampleHeight=540 /%}
-
-## Open Groups by Default
-
-To have groups open by default, implement the grid callback `isGroupOpenByDefault`. This callback is invoked
-each time a group is created.
+The example above uses the following configuration to expand the `United States` and `2004` groups by default:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    // expand when year is '2004' or when country is 'United States'
-    isGroupOpenByDefault: params => {
-        return (params.field == 'year' && params.key == '2004') ||
-            (params.field == 'country' && params.key == 'United States');
+    isGroupOpenByDefault: (params) => {
+        return (
+            (params.field === 'year' && params.key === '2004') ||
+            (params.field === 'country' && params.key === 'United States')
+        );
     }
 }
 ```
 
-The params passed to the callback have the `IsGroupOpenByDefaultParams` interface:
+{% note %}
+Row keys are only unique within their groups, so it is recommended to instead use the entire [Row Route](./row-object/#reference-serverSide-getRoute)
+to identify the row.
+{% /note %}
 
-{% interfaceDocumentation interfaceName="IsGroupOpenByDefaultParams" /%}
+## Scrolling Child Rows into View
 
-In the example below, the country 'United States' and year '2004' are expanded by default. Note that year '2004' is expanded for all
-countries, not just 'United States'.
+When expanding a group the vertical scroll does not change, which can result in the child rows not being visible.
+You can use the `ensureIndexVisible()` function on the API to ensure the index is visible, scrolling the table if needed.
 
-{% gridExampleRunner title="Open by Default" name="open-by-default"  exampleHeight=515 /%}
+In the example below, if you expand a group at the bottom, the grid will scroll so that all of the children of the group are visible.
 
-## Expand / Collapse Groups via API
+{% gridExampleRunner title="Row Group Scroll" name="row-group-scroll" exampleHeight=261 /%}
 
-It is possible to expand and collapse all group rows using the `expandAll()` and `collapseAll()` grid API's as shown below:
+## API
 
-{% apiDocumentation source="grid-api/api.json" section="rowGroupsCols" names=["expandAll", "collapseAll"] /%}
+The grid exposes API methods to expand or collapse groups programmatically.
+{% apiDocumentation source="grid-api/api.json" section="rowGroupsCols" names=["setRowNodeExpanded", "expandAll", "collapseAll"] /%}
 
-When more custom behaviour is required, obtain a reference to the rowNode and then call `api.setRowNodeExpanded(rowNode, boolean)`.
+### Expand Row Ancestors
 
-{% apiDocumentation source="grid-api/api.json" section="rowGroupsCols" names=["setRowNodeExpanded"] /%}
+When expanding rows via the API, the `setRowNodeExpanded` function can be used to expand a specific row as well as all of its ancestors.
 
-For example, to expand a group with the name 'United States' would be done as follows:
+{% gridExampleRunner title="Expand to Row" name="expand-collapse-api" /%}
 
-```{% frameworkTransform=true %}
-api.forEachNode(node => {
-    if (node.key === 'United States') {
-        api.setRowNodeExpanded(node, true);
-    }
-});
+The example above uses [Row IDs](./row-ids/#row-ids) to demonstrate the following configuration to expand all of the ancestors of the row with the ID `"2"`:
+
 ```
-
-The following example demonstrates different ways to expand / collapse row groups via the grid API.
-
-{% gridExampleRunner title="Expand / Collapse Groups via API" name="expand-collapse-api"  exampleHeight=515 /%}
-
-
-## Expanding Groups & Vertical Scroll Location
-
-Depending on your scroll position the last item's group data may not be visible when clicking on the expand icon.
-
-You can resolve this by using the function `api.ensureIndexVisible()`. This ensures the index is visible, scrolling the table if needed.
-
-In the example below, if you expand a group at the bottom, the grid will scroll so all the children of the group are visible.
-
-{% gridExampleRunner title="Row Group Scroll" name="row-group-scroll" /%}
+const expandToRow = () => {
+  const node = gridApi.getRowNode('2');
+  if (node) {
+      gridApi.setRowNodeExpanded(node, true, true);
+  }
+}
+```
 
 
 ## Next Up
 
-Continue to the next section to learn about grouping with [Complex Objects](./grouping-complex-objects/).
+Continue to the next section to learn about [Hierarchy Selection](./grouping-row-selection/).

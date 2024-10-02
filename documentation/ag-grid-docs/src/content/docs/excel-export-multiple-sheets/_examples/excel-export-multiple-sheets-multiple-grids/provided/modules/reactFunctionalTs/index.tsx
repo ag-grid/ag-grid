@@ -8,7 +8,7 @@ import type {
     GridApi,
     GridReadyEvent,
     RowDragEndEvent,
-    SelectionOptions,
+    RowSelectionOptions,
 } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { CsvExportModule } from 'ag-grid-community';
@@ -78,7 +78,7 @@ const defaultColDef: ColDef = {
     filter: true,
 };
 
-const selection: SelectionOptions = {
+const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
     checkboxes: false,
     headerCheckbox: false,
@@ -195,7 +195,7 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
-                    selection={id === 0 ? selection : undefined}
+                    rowSelection={id === 0 ? rowSelection : undefined}
                     rowDragMultiRow={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
                     rowData={id === 0 ? leftRowData : rightRowData}

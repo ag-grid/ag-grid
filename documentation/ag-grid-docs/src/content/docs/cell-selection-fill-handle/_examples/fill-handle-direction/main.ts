@@ -27,8 +27,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         editable: true,
         cellDataType: false,
     },
-    selection: {
-        mode: 'cell',
+    cellSelection: {
         handle: {
             mode: 'fill',
             direction: 'x',
@@ -46,8 +45,7 @@ function fillHandleAxis(direction: 'x' | 'y' | 'xy') {
 
     button.classList.add('selected');
 
-    gridApi.setGridOption('selection', {
-        mode: 'cell',
+    gridApi.setGridOption('cellSelection', {
         handle: {
             mode: 'fill',
             direction,

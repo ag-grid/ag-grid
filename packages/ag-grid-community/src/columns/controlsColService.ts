@@ -11,12 +11,8 @@ export class ControlsColService extends BeanStub implements NamedBean {
     beanName = 'controlsColService' as const;
 
     public createControlsCols(): AgColumn[] {
-        const so = this.gos.get('selection');
-        if (!so) {
-            return [];
-        }
-
-        if (so.mode === 'cell') {
+        const so = this.gos.get('rowSelection');
+        if (!so || typeof so === 'string') {
             return [];
         }
 

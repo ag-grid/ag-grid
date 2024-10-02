@@ -20,7 +20,7 @@ const GridExample = () => {
 
     const columnDefs = useMemo(() => [{ field: 'athlete' }, { field: 'sport' }, { field: 'year', maxWidth: 120 }], []);
 
-    const selection = useMemo(
+    const rowSelection = useMemo(
         () => ({
             mode: 'multiRow',
             hideDisabledCheckboxes: true,
@@ -37,7 +37,7 @@ const GridExample = () => {
     };
 
     function toggleHideCheckbox() {
-        grid.current?.api.setGridOption('selection', {
+        grid.current?.api.setGridOption('rowSelection', {
             mode: 'multiRow',
             isRowSelectable: (node) => (node.data ? node.data.year <= 2004 : false),
             hideDisabledCheckboxes: getCheckboxValue('#toggle-hide-checkbox'),
@@ -65,7 +65,7 @@ const GridExample = () => {
                     rowData={rowData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
-                    selection={selection}
+                    rowSelection={rowSelection}
                     onGridReady={onGridReady}
                 />
             </div>

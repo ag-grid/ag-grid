@@ -20,7 +20,7 @@ const GridExample = () => {
     return (
         <AgGridReact
             theme={myCustomTheme}
-            selection={{ mode: 'multiRow', checkboxes: true }}
+            rowSelection={{ mode: 'multiRow', checkboxes: true }}
             columnDefs={columnDefs}
             rowData={rowData}
             defaultColDef={defaultColDef}

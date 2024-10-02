@@ -4,7 +4,7 @@ import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import type { ColDef, IStatusPanel, SelectionOptions, StatusPanelDef } from 'ag-grid-community';
+import type { ColDef, IStatusPanel, RowSelectionOptions, StatusPanelDef } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
@@ -22,7 +22,7 @@ export interface IClickableStatusBar extends IStatusPanel {
     isVisible(): boolean;
 }
 
-const selection: SelectionOptions = {
+const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
     checkboxes: false,
     headerCheckbox: false,
@@ -110,7 +110,7 @@ const GridExample = () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    selection={selection}
+                    rowSelection={rowSelection}
                     statusBar={statusBar}
                 />
             </div>

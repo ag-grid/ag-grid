@@ -377,8 +377,8 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
                     // doing another update
                     const updateRowHeightFunc = () => {
                         props.node.setRowHeight(clientHeight);
-                        if (_isClientSideRowModel(gos) || _isServerSideRowModel(gos)) {
-                            (rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChanged();
+                        if (_isClientSideRowModel(gos, rowModel) || _isServerSideRowModel(gos, rowModel)) {
+                            rowModel.onRowHeightChanged();
                         }
                     };
                     setTimeout(updateRowHeightFunc, 0);

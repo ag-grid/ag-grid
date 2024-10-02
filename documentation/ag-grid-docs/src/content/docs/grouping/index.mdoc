@@ -3,71 +3,30 @@ title: "Row Grouping"
 description: "Enable row grouping in the $framework Data Grid to allow rows to be grouped by columns. Define row groups, use the Grid API, or use the UI to group rows."
 enterprise: true
 ---
+The Grid can group rows with equivalent cell values under shared parent rows.
 
-Row Grouping allows rows to be grouped by columns with the grid performing a 'group by' operation on the rows supplied
-to the grid. This section introduces Row Grouping and provides links to subsections that cover the various ways Row
-Grouping can be configured and customised.
+{% gridExampleRunner title="Kitchen Sink" name="kitchen-sink" /%}
 
-The grid can be configured to initially display rows in a grouped state or rows can be grouped programmatically through
-the grid API's. Users can also manually group rows through the UI as shown below:
+## Enabling Row Grouping
 
-{% imageCaption imagePath="resources/row-grouping.gif" alt="Row Grouping" centered=true constrained=true maxWidth="90%" /%}
+Row Grouping is enabled by setting `rowGroup` to `true` on one or more [Column Definition](./column-definitions/).
+Parent rows are then introduced for each unique value in that column, containing the rows with that value.
 
-## Enabling Default Row Grouping
-
-To group rows by a particular column, enable the `rowGroup` column property as shown below:
-
+The example above uses the following configuration to group rows by their `country` and `year` values:
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true, hide: true },
-        { field: 'year', rowGroup: true, hide: true },
-        { field: 'sport' },
-        { field: 'total' }
+        { field: 'country', rowGroup: true },
+        { field: 'sport', rowGroup: true },
+        // ...other column definitions
     ],
 }
 ```
 
-In the snippet above, rows will be grouped by `country` and `year` as both column definitions have `rowGroup=true` declared.
-
-Note that the [Single Group Column](./grouping-single-group-column/) display type is used by default.
-
-The example below demonstrates the default row grouping behaviour. Note the following:
-
-* There are two active row groups as the supplied `country` and `year` column definitions have `rowGroup=true` declared.
-
-* A group column is added to the left-hand side of the grid as there are active row groups.
-
-* The `country` and `year` columns are hidden as `hide=true` on their column definitions.
-
-{% gridExampleRunner title="Default Row Grouping" name="default-row-grouping"  exampleHeight=540 /%}
-
-## Row Grouping Customisations
-
-The previous example demonstrated the [Default Row Grouping](./grouping/#enabling-default-row-grouping) behavior,
-however extensive Row Grouping customisations are also possible as summarised below:
-
-* **[Display Types](./grouping-display-types/)** - compares the different ways row groups can be displayed in the grid.
-  * _**[Single Group Column](./grouping-single-group-column/)**_ - a single group column is automatically added by the grid for all row groups.
-  * _**[Multiple Group Columns](./grouping-multiple-group-columns/)**_ - group columns are automatically added by the grid for each row group.
-  * _**[Group Rows](./grouping-group-rows/)**_ - group rows are automatically added by the grid containing the row groups instead of group columns.
-  * _**[Custom Group Columns](./grouping-custom-group-columns/)**_ - customise how row groups are displayed without using the built-in display types.
-* **[Row Group Panel](./grouping-group-panel/)** - add a panel above the grid to allow users control which columns the rows are grouped by.
-* **[Locking Group Columns](./grouping-locking-group-columns/)** - Lock Group Columns to prevent ungrouping and rearranging of group columns by user.
-* **[Group Order](./grouping-group-order/)** - control how row groups are ordered.
-* **[Sorting Groups](./grouping-sorting/)** - configure and customise how row groups are sorted.
-* **[Filtering Groups](./grouping-filtering/)** - configure and customise how row groups are filtered.
-* **[Group Totals](./total-rows/)** - add group totals showing totals for each group level.
-* **[Opening Groups](./grouping-opening-groups/)** - control how row groups are expanded and collapsed.
-* **[Complex Objects](./grouping-complex-objects/)** - group rows using row data that contains complex objects.
-* **[Unbalanced Groups](./grouping-unbalanced-groups/)** - group rows when there are `null` or `undefined` group values.
-
 ## API Reference
-
-Row Grouping can be configured using the following grid properties:
 
 {% apiDocumentation source="grid-options/properties.json" section="rowGrouping" /%}
 
 ## Next Up
 
-Continue to the next section to learn about the different Row Grouping [Display Types](./grouping-display-types/).
+Continue to the next section to learn about [Grouping Data](./grouping-data/).

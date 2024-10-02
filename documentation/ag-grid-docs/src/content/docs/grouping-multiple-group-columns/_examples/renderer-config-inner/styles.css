@@ -1,0 +1,13 @@
+.imgSpan {
+    display: flex;
+    height: 40px;
+    width: 100%;
+    align-items: center;
+}
+
+.medalIcon {
+    display: block;
+    width: 15px;
+    height: auto;
+    max-height: 50%;
+}

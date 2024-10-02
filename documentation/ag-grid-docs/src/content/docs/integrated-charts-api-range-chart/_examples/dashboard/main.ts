@@ -26,7 +26,7 @@ const gridOptions: GridOptions = {
         minWidth: 100,
         filter: true,
     },
-    selection: { mode: 'cell' },
+    cellSelection: true,
     enableCharts: true,
     chartToolPanelsDef: { panels: [] },
     popupParent: document.body,

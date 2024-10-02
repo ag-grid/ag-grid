@@ -72,7 +72,7 @@ const gridOptions: GridOptions = {
         minWidth: 140,
         sortable: false,
     },
-    selection: {
+    rowSelection: {
         mode: 'multiRow',
         headerCheckbox: false,
     },

@@ -44,7 +44,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs,
     rowDragText: rowDragTextCallback,
     rowDragMultiRow: true,
-    selection: { mode: 'multiRow' },
+    rowSelection: { mode: 'multiRow' },
 };
 
 // setup the grid after the page has finished loading

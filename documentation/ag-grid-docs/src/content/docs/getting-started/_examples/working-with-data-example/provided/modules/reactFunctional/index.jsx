@@ -13,7 +13,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const gridDiv = document.querySelector('#myGrid');
 
-const selection = {
+const rowSelection = {
     mode: 'multiRow',
     headerCheckbox: false,
 };
@@ -113,7 +113,7 @@ const GridExample = () => {
                 rowData={rowData}
                 columnDefs={columnDefs}
                 defaultColDef={defaultColDef}
-                selection={selection}
+                rowSelection={rowSelection}
                 pagination={true}
                 paginationPageSize={10}
                 paginationPageSizeSelector={[10, 25, 50]}

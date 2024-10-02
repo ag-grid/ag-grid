@@ -25,7 +25,7 @@ const VueExample = {
                 :rowData="rowData"
                 :groupDisplayType="groupDisplayType"
                 :groupDefaultExpanded="groupDefaultExpanded"
-                :selection="selection"></ag-grid-vue>
+                :rowSelection="rowSelection"></ag-grid-vue>
         </div>
     `,
     components: {
@@ -95,7 +95,7 @@ const VueExample = {
             rowData: null,
             groupDisplayType: null,
             groupDefaultExpanded: null,
-            selection: null,
+            rowSelection: null,
             themeClass:
                 /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
                 'ag-theme-quartz' /** DARK MODE END **/,
@@ -105,7 +105,7 @@ const VueExample = {
         this.rowData = getData();
         this.groupDisplayType = 'custom';
         this.groupDefaultExpanded = 1;
-        this.selection = {
+        this.rowSelection = {
             mode: 'multiRow',
             checkboxes: false,
             headerCheckbox: false,

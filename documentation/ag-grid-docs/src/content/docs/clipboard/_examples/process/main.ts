@@ -47,7 +47,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         cellDataType: false,
     },
 
-    selection: { mode: 'cell' },
+    cellSelection: true,
 
     processCellForClipboard: processCellForClipboard,
     processHeaderForClipboard: processHeaderForClipboard,

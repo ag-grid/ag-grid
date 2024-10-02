@@ -13,10 +13,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'country', enableRowGroup: true },
         { field: 'year', enableRowGroup: true },
         { field: 'athlete', minWidth: 180 },
-        { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
-        { field: 'bronze', aggFunc: 'sum' },
-        { field: 'total', aggFunc: 'sum' },
+        { field: 'total' },
     ],
     defaultColDef: {
         flex: 1,
@@ -26,10 +23,29 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 200,
     },
     suppressDragLeaveHidesColumns: true,
-    suppressMakeColumnVisibleAfterUnGroup: true,
-    suppressRowGroupHidesColumns: true,
     rowGroupPanelShow: 'always',
 };
+
+function onPropertyChange() {
+    const prop = (document.querySelector('#input-display-type') as HTMLSelectElement).value;
+    if (prop === 'true' || prop === 'false') {
+        gridApi!.setGridOption('suppressGroupChangesColumnVisibility', prop === 'true');
+    } else {
+        gridApi!.setGridOption(
+            'suppressGroupChangesColumnVisibility',
+            prop as 'suppressHideOnGroup' | 'suppressShowOnUngroup'
+        );
+    }
+}
+
+function resetCols() {
+    gridApi!.setGridOption('columnDefs', [
+        { field: 'country', enableRowGroup: true, hide: false },
+        { field: 'year', enableRowGroup: true, hide: false },
+        { field: 'athlete', minWidth: 180, hide: false },
+        { field: 'total', hide: false },
+    ]);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

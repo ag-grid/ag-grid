@@ -38,7 +38,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 100,
     },
 
-    selection: { mode: 'cell' },
+    cellSelection: true,
 
     onCellValueChanged: onCellValueChanged,
     onCutStart: onCutStart,
