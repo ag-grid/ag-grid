@@ -1,11 +1,8 @@
 import type { UserComponentName } from '../../context/context';
 import type { ClientSideRowModelStep } from '../../interfaces/iClientSideRowModel';
 import type { Column } from '../../interfaces/iColumn';
-<<<<<<< HEAD
 import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
-=======
 import { getErrorLink } from '../logging';
->>>>>>> latest
 
 /**
  * NOTES on setting console messages:
