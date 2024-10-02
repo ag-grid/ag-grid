@@ -7,7 +7,7 @@ import { ViewportRowModel } from './viewportRowModel';
 
 export const ViewportRowModelModule: Module = {
     ...baseEnterpriseModule(ModuleNames.ViewportRowModelModule),
-    rowModel: 'viewport',
+    rowModels: ['viewport'],
     beans: [ViewportRowModel],
     dependsOn: [EnterpriseCoreModule, CommunityFeaturesModule],
 };

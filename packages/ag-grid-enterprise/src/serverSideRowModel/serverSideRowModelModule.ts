@@ -38,7 +38,7 @@ import { TransactionManager } from './transactionManager';
 
 export const ServerSideRowModelCoreModule: Module = {
     ...baseEnterpriseModule('ServerSideRowModelCoreModule'),
-    rowModel: 'serverSide',
+    rowModels: ['serverSide'],
     beans: [
         ServerSideRowModel,
         ExpandListener,
@@ -57,27 +57,28 @@ export const ServerSideRowModelCoreModule: Module = {
 
 export const ServerSideRowModelRowSelectionModule: Module = {
     ...baseEnterpriseModule('ServerSideRowModelRowSelectionModule'),
-    rowModel: 'serverSide',
+    rowModels: ['serverSide'],
     beans: [ServerSideSelectionService],
     dependsOn: [ServerSideRowModelCoreModule],
 };
 
 export const ServerSideRowModelRowGroupingModule: Module = {
     ...baseEnterpriseModule('ServerSideRowModelRowGroupingModule'),
-    rowModel: 'serverSide',
+    rowModels: ['serverSide'],
     beans: [ServerSideExpansionService],
     dependsOn: [ServerSideRowModelCoreModule],
 };
 
 export const ServerSideRowModelSortModule: Module = {
     ...baseEnterpriseModule('ServerSideRowModelSortModule'),
-    rowModel: 'serverSide',
+    rowModels: ['serverSide'],
     beans: [SortListener],
     dependsOn: [ServerSideRowModelCoreModule, SortModule],
 };
 
 export const ServerSideRowModelApiModule: ModuleWithApi<_ServerSideRowModelGridApi> = {
     ...baseEnterpriseModule('ServerSideRowModelApiModule'),
+    rowModels: ['serverSide'],
     beans: [RowModelHelperService],
     apiFunctions: {
         getServerSideSelectionState,
@@ -95,6 +96,7 @@ export const ServerSideRowModelApiModule: ModuleWithApi<_ServerSideRowModelGridA
 
 export const ServerSideRowModelModule: Module = {
     ...baseEnterpriseModule(ModuleNames.ServerSideRowModelModule),
+    rowModels: ['serverSide'],
     dependsOn: [
         ServerSideRowModelCoreModule,
         ServerSideRowModelApiModule,

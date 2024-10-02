@@ -34,7 +34,7 @@ export interface Module {
     beans?: SingletonBean[];
     controllers?: ControllerMeta[];
     userComponents?: ComponentMeta[];
-    rowModel?: RowModelType;
+    rowModels?: RowModelType[];
     dependsOn?: BaseModule[];
 
     apiFunctions?: { [K in ApiFunctionName]: ApiFunction<K> };

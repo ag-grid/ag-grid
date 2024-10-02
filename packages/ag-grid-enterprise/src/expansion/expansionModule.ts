@@ -5,6 +5,6 @@ import { ClientSideExpansionService } from './clientSideExpansionService';
 
 export const ClientSideRowModelExpansionModule: Module = {
     ...baseEnterpriseModule('ClientSideRowModelExpansionModule'),
-    rowModel: 'clientSide',
+    rowModels: ['clientSide'],
     beans: [ClientSideExpansionService],
 };

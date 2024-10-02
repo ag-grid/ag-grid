@@ -1,8 +1,8 @@
 import type { _ClientSideRowModelGridApi } from '../api/gridApi';
 import { RowModelHelperService } from '../api/rowModelHelperService';
 import { CsrmSsrmSharedApiModule } from '../api/sharedApiModule';
+import { CommunityFeaturesModule } from '../communityFeaturesModule';
 import { FilterCoreModule } from '../filter/filterModule';
-import { CommunityFeaturesModule } from '../gridCoreModule';
 import { baseCommunityModule } from '../interfaces/iModule';
 import type { Module, ModuleWithApi } from '../interfaces/iModule';
 import { ModuleNames } from '../modules/moduleNames';
@@ -29,26 +29,27 @@ import { SortStage } from './sortStage';
 
 export const ClientSideRowModelCoreModule: Module = {
     ...baseCommunityModule('ClientSideRowModelCoreModule'),
-    rowModel: 'clientSide',
+    rowModels: ['clientSide'],
     beans: [ClientSideRowModel, FlattenStage, ImmutableService, RowNodeEventThrottle],
 };
 
 export const ClientSideRowModelSortModule: Module = {
     ...baseCommunityModule('ClientSideRowModelSortModule'),
-    rowModel: 'clientSide',
+    rowModels: ['clientSide'],
     beans: [SortStage],
     dependsOn: [ClientSideRowModelCoreModule, SortModule],
 };
 
 export const ClientSideRowModelFilterModule: Module = {
     ...baseCommunityModule('ClientSideRowModelFilterModule'),
-    rowModel: 'clientSide',
+    rowModels: ['clientSide'],
     beans: [FilterStage],
     dependsOn: [FilterCoreModule],
 };
 
 export const ClientSideRowModelApiModule: ModuleWithApi<_ClientSideRowModelGridApi<any>> = {
     ...baseCommunityModule('ClientSideRowModelApiModule'),
+    rowModels: ['clientSide'],
     beans: [RowModelHelperService],
     apiFunctions: {
         onGroupExpandedOrCollapsed,
@@ -68,6 +69,7 @@ export const ClientSideRowModelApiModule: ModuleWithApi<_ClientSideRowModelGridA
 
 export const ClientSideRowModelModule: Module = {
     ...baseCommunityModule(ModuleNames.ClientSideRowModelModule),
+    rowModels: ['clientSide'],
     dependsOn: [
         ClientSideRowModelCoreModule,
         ClientSideRowModelApiModule,

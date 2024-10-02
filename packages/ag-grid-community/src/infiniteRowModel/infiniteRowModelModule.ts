@@ -1,7 +1,7 @@
 import type { _InfiniteRowModelGridApi } from '../api/gridApi';
 import { RowModelHelperService } from '../api/rowModelHelperService';
 import { SsrmInfiniteSharedApiModule } from '../api/sharedApiModule';
-import { CommunityFeaturesModule } from '../gridCoreModule';
+import { CommunityFeaturesModule } from '../communityFeaturesModule';
 import { baseCommunityModule } from '../interfaces/iModule';
 import type { Module, ModuleWithApi } from '../interfaces/iModule';
 import { ModuleNames } from '../modules/moduleNames';
@@ -11,13 +11,14 @@ import { getInfiniteRowCount, purgeInfiniteCache, refreshInfiniteCache } from '.
 
 export const InfiniteRowModelCoreModule: Module = {
     ...baseCommunityModule('InfiniteRowModelCoreModule'),
-    rowModel: 'infinite',
+    rowModels: ['infinite'],
     beans: [InfiniteRowModel],
     dependsOn: [RowNodeBlockModule],
 };
 
 export const InfiniteRowModelApiModule: ModuleWithApi<_InfiniteRowModelGridApi> = {
     ...baseCommunityModule('InfiniteRowModelApiModule'),
+    rowModels: ['infinite'],
     beans: [RowModelHelperService],
     apiFunctions: {
         refreshInfiniteCache,
@@ -29,5 +30,6 @@ export const InfiniteRowModelApiModule: ModuleWithApi<_InfiniteRowModelGridApi> 
 
 export const InfiniteRowModelModule: Module = {
     ...baseCommunityModule(ModuleNames.InfiniteRowModelModule),
+    rowModels: ['infinite'],
     dependsOn: [InfiniteRowModelCoreModule, InfiniteRowModelApiModule, CommunityFeaturesModule],
 };
