@@ -103,8 +103,12 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             this.shotgunResetEverything(details, afterColsChanged);
         }
 
-        this.positionLeafsAndGroups(params.changedPath!);
+        const changedPath = params.changedPath!;
+
+        this.positionLeafsAndGroups(changedPath);
         this.orderGroups(details);
+
+        this.selectionService?.updateSelectableAfterGrouping(changedPath);
     }
 
     private positionLeafsAndGroups(changedPath: ChangedPath) {

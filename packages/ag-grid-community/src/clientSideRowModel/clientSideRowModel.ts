@@ -1094,9 +1094,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         afterColumnsChanged: boolean
     ) {
         const treeData = this.gos.get('treeData');
-        if (treeData) {
-            this.updateSelectableAfterGrouping(changedPath);
-        } else {
+        if (!treeData) {
             const groupStage = this.groupStage;
             if (groupStage) {
                 if (rowNodeTransactions) {
@@ -1113,8 +1111,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                         afterColumnsChanged: afterColumnsChanged,
                     });
                 }
-
-                this.updateSelectableAfterGrouping(changedPath);
             } else {
                 const rootNode: ClientSideRowModelRootNode = this.rootNode;
                 const sibling: ClientSideRowModelRootNode = rootNode.sibling;
@@ -1132,27 +1128,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             this.eventService.dispatchEventOnce({
                 type: 'rowCountReady',
             });
-        }
-    }
-
-    private updateSelectableAfterGrouping(changedPath: ChangedPath | undefined): void {
-        const selectionService = this.selectionService;
-        if (selectionService) {
-            selectionService.updateSelectable(true);
-
-            if (_getGroupSelectsDescendants(this.gos)) {
-                const selectionChanged = selectionService.updateGroupsFromChildrenSelections?.(
-                    'rowGroupChanged',
-                    changedPath
-                );
-
-                if (selectionChanged) {
-                    this.eventService.dispatchEvent({
-                        type: 'selectionChanged',
-                        source: 'rowGroupChanged',
-                    });
-                }
-            }
         }
     }
 
@@ -1217,7 +1192,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const updateRowDataResult = this.nodeManager.setImmutableRowData(rowData);
         if (updateRowDataResult) {
             const { rowNodeTransaction, rowsInserted, rowsOrderChanged } = updateRowDataResult;
-            this.commonUpdateRowData([rowNodeTransaction], rowsInserted || rowsOrderChanged);
+            this.commitTransactions([rowNodeTransaction], rowsInserted || rowsOrderChanged);
         }
     }
 
@@ -1297,7 +1272,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
         });
 
-        this.commonUpdateRowData(rowNodeTrans, orderChanged);
+        this.commitTransactions(rowNodeTrans, orderChanged);
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
@@ -1327,7 +1302,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.rowNodesCountReady = true;
         const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(rowDataTran);
 
-        this.commonUpdateRowData([rowNodeTransaction], rowsInserted);
+        this.commitTransactions([rowNodeTransaction], rowsInserted);
 
         return rowNodeTransaction;
     }
@@ -1341,7 +1316,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * @param rowNodeTrans - the transactions to apply
      * @param orderChanged - whether the order of the rows has changed, either via generated transaction or user provided addIndex
      */
-    private commonUpdateRowData(rowNodeTransactions: RowNodeTransaction[], rowNodesOrderChanged: boolean): void {
+    private commitTransactions(rowNodeTransactions: RowNodeTransaction[], rowNodesOrderChanged: boolean): void {
         if (!this.hasStarted) {
             return;
         }

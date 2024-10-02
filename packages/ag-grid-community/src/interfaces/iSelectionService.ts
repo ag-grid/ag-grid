@@ -43,7 +43,7 @@ export interface ISelectionService {
     createSelectAllFeature(column: AgColumn): SelectAllFeature;
 
     /** Called after grouping / treeData */
-    updateSelectable(skipLeafNodes: boolean): void;
+    updateSelectableAfterGrouping(changedPath: ChangedPath | undefined): void;
 }
 
 interface INodeSelectionParams {

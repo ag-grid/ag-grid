@@ -204,8 +204,6 @@ export class TreeNodeManager extends BeanStub {
                 }
             }
 
-            rootRow.updateHasChildren();
-
             if (isTreeRowPathChanged(rootRow)) {
                 if (details.changedPath?.isActive()) {
                     details.changedPath.addParentNode(rootRow);
@@ -213,9 +211,13 @@ export class TreeNodeManager extends BeanStub {
             }
 
             markTreeRowCommitted(rootRow);
+
+            rootRow.updateHasChildren();
         }
 
         this.commitDestroyedRows();
+
+        this.beans.selectionService?.updateSelectableAfterGrouping(changedPath);
     }
 
     /** Calls commitChild for each invalidated child, recursively. We commit only the invalidated paths. */
