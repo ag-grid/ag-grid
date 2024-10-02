@@ -25,10 +25,15 @@ export class ClientSideChildrenTreeNodeManager<TData>
     }
 
     protected override loadNewRowData(rowData: TData[]): void {
+        const treeData = this.gos.get('treeData');
         const rootRow = this.rootNode;
 
         this.treeNodeManager.clearTree(this.treeNodeManager.root);
-        this.treeNodeManager.initRootNode(rootRow);
+        if (treeData) {
+            this.treeNodeManager.initRootNode(rootRow);
+        } else {
+            this.treeNodeManager.clearRootNode();
+        }
 
         const childrenGetter = this.childrenGetter;
 
@@ -37,7 +42,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
 
         rootRow.allLeafChildren = allLeafChildren;
 
-        const addChild = (parent: TreeNode, item: TData) => {
+        const addChild = (parent: TreeNode | null, item: TData) => {
             if (processedDataSet.has(item)) {
                 return; // Duplicate node
             }
@@ -47,9 +52,10 @@ export class ClientSideChildrenTreeNodeManager<TData>
             const row = this.createRowNode(item, allLeafChildren.length) as TreeRow<TData>;
             allLeafChildren.push(row);
 
-            const treeNode = parent.upsertKey(row.id!);
-
-            this.treeNodeManager.addOrUpdateRow(treeNode, row, false);
+            const treeNode = parent ? parent.upsertKey(row.id!) : null;
+            if (treeNode) {
+                this.treeNodeManager.addOrUpdateRow(treeNode, row, false);
+            }
 
             const children = childrenGetter(item);
             if (children) {
@@ -59,7 +65,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
             }
         };
 
-        const rootTreeNode = this.treeNodeManager.root;
+        const rootTreeNode = treeData ? this.treeNodeManager.root : null;
         for (const item of rowData) {
             addChild(rootTreeNode, item);
         }
