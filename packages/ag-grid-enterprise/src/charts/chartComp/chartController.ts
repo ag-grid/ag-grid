@@ -1,5 +1,5 @@
-import type { AgCartesianAxisType, AgChartThemePalette } from 'ag-charts-community';
 import { _ModuleSupport, _Theme } from 'ag-charts-community';
+import type { AgCartesianAxisType, AgChartThemePalette } from 'ag-charts-types';
 import type { AgChartThemeOverrides } from 'ag-charts-types';
 
 import type {

@@ -1,4 +1,4 @@
-import type { AgAxisGridLineOptions } from 'ag-charts-community';
+import type { AgAxisGridLineOptions } from 'ag-charts-types';
 
 import type { BeanCollection } from 'ag-grid-community';
 import { Component } from 'ag-grid-community';

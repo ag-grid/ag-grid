@@ -1,4 +1,4 @@
-import type { AgCartesianAxisOptions } from 'ag-charts-community';
+import type { AgCartesianAxisOptions } from 'ag-charts-types';
 
 import type { AgSelect, AgSelectParams, BeanCollection, ListOption } from 'ag-grid-community';
 import {

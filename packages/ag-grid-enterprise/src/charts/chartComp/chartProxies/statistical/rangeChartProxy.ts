@@ -1,4 +1,4 @@
-import type { AgRangeAreaSeriesOptions } from 'ag-charts-community';
+import type { AgRangeAreaSeriesOptions } from 'ag-charts-types';
 
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { StatisticalChartProxy } from './statisticalChartProxy';

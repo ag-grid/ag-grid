@@ -8,7 +8,7 @@ import type {
     AgChartThemeName,
     AgLineSeriesOptions,
     AgRangeBarSeriesThemeableOptions,
-} from 'ag-charts-community';
+} from 'ag-charts-types';
 
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
