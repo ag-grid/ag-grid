@@ -89,6 +89,7 @@
     "ag-charts-angular": "10.2.0-beta.20241002.1133",
     "ag-charts-community": "10.2.0-beta.20241002.1133",
     "ag-charts-enterprise": "10.2.0-beta.20241002.1133",
+    "ag-charts-types": "10.2.0-beta.20241002.1133",
     "ag-charts-react": "10.2.0-beta.20241002.1133",
     "ag-charts-vue3": "10.2.0-beta.20241002.1133",
     "prettier-plugin-astro": "^0.12.3",

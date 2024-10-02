@@ -5,9 +5,9 @@ import { pathJoin } from '@utils/pathJoin';
 
 import agChartsAngular from '../../../../../../../node_modules/ag-charts-angular/package.json';
 import agChartsCommunity from '../../../../../../../node_modules/ag-charts-community/package.json';
-import agChartsTypes from '../../../../../../../node_modules/ag-charts-types/package.json';
 import agChartsEnterprise from '../../../../../../../node_modules/ag-charts-enterprise/package.json';
 import agChartsReact from '../../../../../../../node_modules/ag-charts-react/package.json';
+import agChartsTypes from '../../../../../../../node_modules/ag-charts-types/package.json';
 import agChartsVue3 from '../../../../../../../node_modules/ag-charts-vue3/package.json';
 
 interface Props {
