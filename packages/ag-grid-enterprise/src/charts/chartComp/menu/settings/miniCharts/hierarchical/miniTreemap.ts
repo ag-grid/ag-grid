@@ -75,7 +75,7 @@ export class MiniTreemap extends MiniChart {
         this.updateColors(fills, strokes, themeTemplate, isCustomTheme);
 
         const rectGroup = new _Scene.Group();
-        rectGroup.setClipRectInGroupCoordinateSpace(new _Scene.BBox(padding, padding, size - padding, size - padding));
+        rectGroup.setClipRect(new _Scene.BBox(padding, padding, size - padding, size - padding));
         rectGroup.append(this.rects);
         this.root.append(rectGroup);
     }

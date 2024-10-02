@@ -28,9 +28,14 @@ export function getErrorText({ errorCode, params = {} }: { errorCode: ErrorId; p
     if (!errorTextFn) {
         throwDevWarning({ message: `Error code #${errorCode} not found` });
     }
+    try {
+        const textOutput = errorTextFn(cleanParams(params) as any);
+        const textOutputArray = typeof textOutput === 'string' ? [textOutput] : textOutput;
 
-    const textOutput = errorTextFn(cleanParams(params) as any);
-    const textOutputArray = typeof textOutput === 'string' ? [textOutput] : textOutput;
-
-    return textOutputArray.filter(Boolean).join('\n');
+        return textOutputArray.filter(Boolean).join('\n');
+    } catch (_) {
+        // The `errorTextFn` can fail if the function requires params, that
+        // don't exist during static render. Just return nothing in these cases
+        return '';
+    }
 }

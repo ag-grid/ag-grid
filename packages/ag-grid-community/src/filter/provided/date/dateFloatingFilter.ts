@@ -136,6 +136,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         return {
             onDateChanged: _debounce(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams,
+            location: 'floatingFilter',
         };
     }
 
