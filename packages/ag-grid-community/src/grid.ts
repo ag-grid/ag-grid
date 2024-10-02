@@ -9,7 +9,7 @@ import { GridComp } from './gridComp/gridComp';
 import { GridCoreModule } from './gridCoreModule';
 import { getCoercedGridOptions } from './gridOptionsService';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
-import type { Module } from './interfaces/iModule';
+import type { BaseModule, Module } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
@@ -205,8 +205,8 @@ export class GridCoreCreator {
         const mapNames: { [name: string]: boolean } = {};
 
         // adds to list and removes duplicates
-        const addModule = (moduleBased: boolean, mod: Module, gridId: string | undefined) => {
-            const addIndividualModule = (currentModule: Module) => {
+        const addModule = (moduleBased: boolean, mod: BaseModule, gridId: string | undefined) => {
+            const addIndividualModule = (currentModule: BaseModule) => {
                 if (!mapNames[currentModule.moduleName]) {
                     mapNames[currentModule.moduleName] = true;
                     allModules.push(currentModule);

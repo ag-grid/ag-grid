@@ -38,7 +38,8 @@ import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridDestroyService } from './gridDestroyService';
 import { GridOptionsService } from './gridOptionsService';
 import { ColumnGroupHeaderModule, ColumnHeaderModule } from './headerRendering/cells/headerModule';
-import { defineCommunityModule } from './interfaces/iModule';
+import type { Module } from './interfaces/iModule';
+import { baseCommunityModule } from './interfaces/iModule';
 import { LocaleService } from './localeService';
 import { AnimationFrameModule } from './misc/animationFrameModule';
 import { EventApiModule } from './misc/apiEvents/apiEventModule';
@@ -71,7 +72,8 @@ import { CellApiModule, ChangeDetectionModule, ExpressionModule, ValueCacheModul
 import { ValueService } from './valueService/valueService';
 import { PopupModule } from './widgets/popupModule';
 
-export const GridCoreModule = defineCommunityModule(ModuleNames.CommunityCoreModule, {
+export const GridCoreModule: Module = {
+    ...baseCommunityModule(ModuleNames.CommunityCoreModule),
     beans: [
         PositionUtils,
         GridDestroyService,
@@ -105,9 +107,10 @@ export const GridCoreModule = defineCommunityModule(ModuleNames.CommunityCoreMod
         ColumnViewportService,
     ],
     dependsOn: [CoreApiModule],
-});
+};
 
-export const CommunityFeaturesModule = defineCommunityModule('CommunityFeaturesModule', {
+export const CommunityFeaturesModule: Module = {
+    ...baseCommunityModule('CommunityFeaturesModule'),
     dependsOn: [
         ValidationModule,
         EditModule,
@@ -153,4 +156,4 @@ export const CommunityFeaturesModule = defineCommunityModule('CommunityFeaturesM
         CellApiModule,
         CommunityMenuApiModule,
     ],
-});
+};

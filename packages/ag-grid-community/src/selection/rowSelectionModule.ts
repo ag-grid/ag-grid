@@ -1,5 +1,6 @@
 import type { _RowSelectionGridApi } from '../api/gridApi';
-import { defineCommunityModule } from '../interfaces/iModule';
+import { baseCommunityModule } from '../interfaces/iModule';
+import type { Module, ModuleWithApi } from '../interfaces/iModule';
 import {
     deselectAll,
     deselectAllFiltered,
@@ -13,11 +14,13 @@ import {
 } from './rowSelectionApi';
 import { SelectionService } from './selectionService';
 
-export const RowSelectionCoreModule = defineCommunityModule('RowSelectionCoreModule', {
+export const RowSelectionCoreModule: Module = {
+    ...baseCommunityModule('RowSelectionCoreModule'),
     beans: [SelectionService],
-});
+};
 
-export const RowSelectionApiModule = defineCommunityModule<_RowSelectionGridApi>('RowSelectionApiModule', {
+export const RowSelectionApiModule: ModuleWithApi<_RowSelectionGridApi> = {
+    ...baseCommunityModule('RowSelectionApiModule'),
     dependsOn: [RowSelectionCoreModule],
     apiFunctions: {
         setNodesSelected,
@@ -30,8 +33,9 @@ export const RowSelectionApiModule = defineCommunityModule<_RowSelectionGridApi>
         getSelectedNodes,
         getSelectedRows,
     },
-});
+};
 
-export const RowSelectionModule = defineCommunityModule('RowSelectionModule', {
+export const RowSelectionModule: Module = {
+    ...baseCommunityModule('RowSelectionModule'),
     dependsOn: [RowSelectionApiModule],
-});
+};

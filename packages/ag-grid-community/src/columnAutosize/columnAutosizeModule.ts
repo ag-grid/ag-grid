@@ -1,23 +1,27 @@
 import type { _ColumnAutosizeApi } from '../api/gridApi';
-import { defineCommunityModule } from '../interfaces/iModule';
+import { baseCommunityModule } from '../interfaces/iModule';
+import type { Module, ModuleWithApi } from '../interfaces/iModule';
 import { AutoWidthModule } from '../rendering/autoWidthModule';
 import { autoSizeAllColumns, autoSizeColumns, sizeColumnsToFit } from './columnAutosizeApi';
 import { ColumnAutosizeService } from './columnAutosizeService';
 
-export const ColumnAutosizeCoreModule = defineCommunityModule('ColumnAutosizeCoreModule', {
+export const ColumnAutosizeCoreModule: Module = {
+    ...baseCommunityModule('ColumnAutosizeCoreModule'),
     beans: [ColumnAutosizeService],
     dependsOn: [AutoWidthModule],
-});
+};
 
-export const ColumnAutosizeApiModule = defineCommunityModule<_ColumnAutosizeApi>('ColumnAutosizeApiModule', {
+export const ColumnAutosizeApiModule: ModuleWithApi<_ColumnAutosizeApi> = {
+    ...baseCommunityModule('ColumnAutosizeApiModule'),
     apiFunctions: {
         sizeColumnsToFit,
         autoSizeColumns,
         autoSizeAllColumns,
     },
     dependsOn: [ColumnAutosizeCoreModule],
-});
+};
 
-export const ColumnAutosizeModule = defineCommunityModule('ColumnAutosizeModule', {
+export const ColumnAutosizeModule: Module = {
+    ...baseCommunityModule('ColumnAutosizeModule'),
     dependsOn: [ColumnAutosizeApiModule],
-});
+};

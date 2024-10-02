@@ -1,24 +1,28 @@
 import type { _OverlayGridApi } from '../../api/gridApi';
-import { defineCommunityModule } from '../../interfaces/iModule';
+import { baseCommunityModule } from '../../interfaces/iModule';
+import type { Module, ModuleWithApi } from '../../interfaces/iModule';
 import { LoadingOverlayComponent } from './loadingOverlayComponent';
 import { NoRowsOverlayComponent } from './noRowsOverlayComponent';
 import { hideOverlay, showLoadingOverlay, showNoRowsOverlay } from './overlayApi';
 import { OverlayService } from './overlayService';
 
-export const OverlayCoreModule = defineCommunityModule('OverlayCoreModule', {
+export const OverlayCoreModule: Module = {
+    ...baseCommunityModule('OverlayCoreModule'),
     beans: [OverlayService],
-});
+};
 
-export const OverlayApiModule = defineCommunityModule<_OverlayGridApi>('OverlayApiModule', {
+export const OverlayApiModule: ModuleWithApi<_OverlayGridApi> = {
+    ...baseCommunityModule('OverlayApiModule'),
     apiFunctions: {
         showLoadingOverlay,
         showNoRowsOverlay,
         hideOverlay,
     },
     dependsOn: [OverlayCoreModule],
-});
+};
 
-export const LoadingOverlayModule = defineCommunityModule('LoadingOverlayModule', {
+export const LoadingOverlayModule: Module = {
+    ...baseCommunityModule('LoadingOverlayModule'),
     userComponents: [
         {
             classImp: LoadingOverlayComponent,
@@ -26,9 +30,10 @@ export const LoadingOverlayModule = defineCommunityModule('LoadingOverlayModule'
         },
     ],
     dependsOn: [OverlayCoreModule],
-});
+};
 
-export const NoRowsOverlayModule = defineCommunityModule('NoRowsOverlayModule', {
+export const NoRowsOverlayModule: Module = {
+    ...baseCommunityModule('NoRowsOverlayModule'),
     userComponents: [
         {
             classImp: NoRowsOverlayComponent,
@@ -36,8 +41,9 @@ export const NoRowsOverlayModule = defineCommunityModule('NoRowsOverlayModule', 
         },
     ],
     dependsOn: [OverlayCoreModule],
-});
+};
 
-export const OverlayModule = defineCommunityModule('OverlayModule', {
+export const OverlayModule: Module = {
+    ...baseCommunityModule('OverlayModule'),
     dependsOn: [OverlayCoreModule, OverlayApiModule, LoadingOverlayModule, NoRowsOverlayModule],
-});
+};

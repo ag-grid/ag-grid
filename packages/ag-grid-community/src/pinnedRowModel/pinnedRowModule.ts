@@ -1,13 +1,16 @@
 import type { _PinnedRowGridApi } from '../api/gridApi';
-import { defineCommunityModule } from '../interfaces/iModule';
+import { baseCommunityModule } from '../interfaces/iModule';
+import type { Module, ModuleWithApi } from '../interfaces/iModule';
 import { getPinnedBottomRow, getPinnedBottomRowCount, getPinnedTopRow, getPinnedTopRowCount } from './pinnedRowApi';
 import { PinnedRowModel } from './pinnedRowModel';
 
-export const PinnedRowCoreModule = defineCommunityModule('PinnedRowCoreModule', {
+export const PinnedRowCoreModule: Module = {
+    ...baseCommunityModule('PinnedRowCoreModule'),
     beans: [PinnedRowModel],
-});
+};
 
-export const PinnedRowApiModule = defineCommunityModule<_PinnedRowGridApi>('PinnedRowApiModule', {
+export const PinnedRowApiModule: ModuleWithApi<_PinnedRowGridApi> = {
+    ...baseCommunityModule('PinnedRowApiModule'),
     apiFunctions: {
         getPinnedTopRowCount,
         getPinnedBottomRowCount,
@@ -15,8 +18,9 @@ export const PinnedRowApiModule = defineCommunityModule<_PinnedRowGridApi>('Pinn
         getPinnedBottomRow,
     },
     dependsOn: [PinnedRowCoreModule],
-});
+};
 
-export const PinnedRowModule = defineCommunityModule('PinnedRowModule', {
+export const PinnedRowModule: Module = {
+    ...baseCommunityModule('PinnedRowModule'),
     dependsOn: [PinnedRowApiModule],
-});
+};

@@ -1,6 +1,8 @@
-import { defineCommunityModule } from '../../interfaces/iModule';
+import { baseCommunityModule } from '../../interfaces/iModule';
+import type { Module } from '../../interfaces/iModule';
 import { StickyRowService } from './stickyRowService';
 
-export const StickyRowModule = defineCommunityModule('StickyRowModule', {
+export const StickyRowModule: Module = {
+    ...baseCommunityModule('StickyRowModule'),
     beans: [StickyRowService],
-});
+};

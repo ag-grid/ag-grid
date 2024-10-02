@@ -15,7 +15,7 @@ export type ModuleValidationInvalidResult = {
 
 export type ModuleValidationResult = ModuleValidationValidResult | ModuleValidationInvalidResult;
 
-export type BaseModule = Omit<Module, 'apiFunctions' | 'version' | 'moduleName'>;
+export type BaseModule = Omit<Module, 'apiFunctions'>;
 
 export type ModuleWithApi<TGridApi extends Readonly<Partial<GridApi>>> = BaseModule &
     (object extends TGridApi
@@ -35,18 +35,11 @@ export interface Module {
     controllers?: ControllerMeta[];
     userComponents?: ComponentMeta[];
     rowModel?: RowModelType;
-    dependsOn?: Module[];
+    dependsOn?: BaseModule[];
 
     apiFunctions?: { [K in ApiFunctionName]: ApiFunction<K> };
 }
 
-export function defineCommunityModule(name: string, definition: BaseModule): Module;
-export function defineCommunityModule<TGridApi extends Readonly<Partial<GridApi>>>(
-    name: string,
-    definition: ModuleWithApi<TGridApi>
-): Module;
-export function defineCommunityModule(name: string, definition: any): Module {
-    definition.moduleName = name;
-    definition.version = VERSION;
-    return definition;
+export function baseCommunityModule(name: string): Readonly<Pick<Module, 'version' | 'moduleName'>> {
+    return { moduleName: name, version: VERSION };
 }

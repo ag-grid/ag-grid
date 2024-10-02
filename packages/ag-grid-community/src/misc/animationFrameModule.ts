@@ -1,6 +1,8 @@
-import { defineCommunityModule } from '../interfaces/iModule';
+import { baseCommunityModule } from '../interfaces/iModule';
+import type { Module } from '../interfaces/iModule';
 import { AnimationFrameService } from './animationFrameService';
 
-export const AnimationFrameModule = defineCommunityModule('AnimationFrameModule', {
+export const AnimationFrameModule: Module = {
+    ...baseCommunityModule('AnimationFrameModule'),
     beans: [AnimationFrameService],
-});
+};

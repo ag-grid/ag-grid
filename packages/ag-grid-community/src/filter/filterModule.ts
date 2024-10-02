@@ -1,6 +1,8 @@
 import type { _ColumnFilterGridApi, _FilterGridApi, _QuickFilterGridApi } from '../api/gridApi';
 import { HeaderFilterCellCtrl } from '../headerRendering/cells/floatingFilter/headerFilterCellCtrl';
-import { defineCommunityModule } from '../interfaces/iModule';
+import type { ModuleWithApi } from '../interfaces/iModule';
+import { baseCommunityModule } from '../interfaces/iModule';
+import type { Module } from '../interfaces/iModule';
 import { SharedMenuModule } from '../misc/menu/sharedMenuModule';
 import { PopupModule } from '../widgets/popupModule';
 import {
@@ -29,33 +31,39 @@ import { TextFloatingFilter } from './provided/text/textFloatingFilter';
 import { getQuickFilter, isQuickFilterPresent, resetQuickFilter } from './quickFilterApi';
 import { QuickFilterService } from './quickFilterService';
 
-export const FilterCoreModule = defineCommunityModule('FilterCoreModule', {
+export const FilterCoreModule: Module = {
+    ...baseCommunityModule('FilterCoreModule'),
     beans: [FilterManager],
-});
+};
 
-export const FilterApiModule = defineCommunityModule<_FilterGridApi>('FilterApiModule', {
+export const FilterApiModule: ModuleWithApi<_FilterGridApi> = {
+    ...baseCommunityModule('FilterApiModule'),
     apiFunctions: {
         isAnyFilterPresent,
         onFilterChanged,
     },
     dependsOn: [FilterCoreModule],
-});
+};
 
-export const FilterValueModule = defineCommunityModule('FilterValueModule', {
+export const FilterValueModule: Module = {
+    ...baseCommunityModule('FilterValueModule'),
     beans: [FilterValueService],
-});
+};
 
-export const ColumnFilterModule = defineCommunityModule('ColumnFilterModule', {
+export const ColumnFilterModule: Module = {
+    ...baseCommunityModule('ColumnFilterModule'),
     beans: [ColumnFilterService],
     dependsOn: [FilterCoreModule, PopupModule, FilterValueModule],
-});
+};
 
-export const ColumnFilterMenuModule = defineCommunityModule('ColumnFilterMenuModule', {
+export const ColumnFilterMenuModule: Module = {
+    ...baseCommunityModule('ColumnFilterMenuModule'),
     beans: [FilterMenuFactory],
     dependsOn: [ColumnFilterModule, PopupModule, SharedMenuModule],
-});
+};
 
-export const ColumnFilterApiModule = defineCommunityModule<_ColumnFilterGridApi>('ColumnFilterApiModule', {
+export const ColumnFilterApiModule: ModuleWithApi<_ColumnFilterGridApi> = {
+    ...baseCommunityModule('ColumnFilterApiModule'),
     apiFunctions: {
         isColumnFilterPresent,
         getColumnFilterInstance,
@@ -67,23 +75,27 @@ export const ColumnFilterApiModule = defineCommunityModule<_ColumnFilterGridApi>
         showColumnFilter,
     },
     dependsOn: [ColumnFilterModule, FilterApiModule],
-});
+};
 
-export const FloatingFilterCoreModule = defineCommunityModule('FloatingFilterCoreModule', {
+export const FloatingFilterCoreModule: Module = {
+    ...baseCommunityModule('FloatingFilterCoreModule'),
     controllers: [{ name: 'headerFilterCell', classImp: HeaderFilterCellCtrl as any }],
     dependsOn: [ColumnFilterModule],
-});
+};
 
-export const FloatingFilterModule = defineCommunityModule('FloatingFilterModule', {
+export const FloatingFilterModule: Module = {
+    ...baseCommunityModule('FloatingFilterModule'),
     dependsOn: [FloatingFilterCoreModule, ColumnFilterModule],
-});
+};
 
-export const ReadOnlyFloatingFilterModule = defineCommunityModule('ReadOnlyFloatingFilterModule', {
+export const ReadOnlyFloatingFilterModule: Module = {
+    ...baseCommunityModule('ReadOnlyFloatingFilterModule'),
     userComponents: [{ name: 'agReadOnlyFloatingFilter', classImp: ReadOnlyFloatingFilter }],
     dependsOn: [FloatingFilterCoreModule],
-});
+};
 
-export const SimpleFilterModule = defineCommunityModule('SimpleFilterModule', {
+export const SimpleFilterModule: Module = {
+    ...baseCommunityModule('SimpleFilterModule'),
     dependsOn: [ColumnFilterModule],
     userComponents: [
         { name: 'agTextColumnFilter', classImp: TextFilter },
@@ -91,36 +103,41 @@ export const SimpleFilterModule = defineCommunityModule('SimpleFilterModule', {
         { name: 'agDateColumnFilter', classImp: DateFilter },
         { name: 'agDateInput', classImp: DefaultDateComponent },
     ],
-});
+};
 
-export const SimpleFloatingFilterModule = defineCommunityModule('SimpleFloatingFilterModule', {
+export const SimpleFloatingFilterModule: Module = {
+    ...baseCommunityModule('SimpleFloatingFilterModule'),
     dependsOn: [SimpleFilterModule, FloatingFilterCoreModule],
     userComponents: [
         { name: 'agTextColumnFloatingFilter', classImp: TextFloatingFilter },
         { name: 'agNumberColumnFloatingFilter', classImp: NumberFloatingFilter },
         { name: 'agDateColumnFloatingFilter', classImp: DateFloatingFilter },
     ],
-});
+};
 
-export const QuickFilterCoreModule = defineCommunityModule('QuickFilterCoreModulee', {
+export const QuickFilterCoreModule: Module = {
+    ...baseCommunityModule('QuickFilterCoreModulee'),
     beans: [QuickFilterService],
     dependsOn: [FilterCoreModule, FilterValueModule],
-});
+};
 
-export const QuickFilterApiModule = defineCommunityModule<_QuickFilterGridApi>('QuickFilterApiModule', {
+export const QuickFilterApiModule: ModuleWithApi<_QuickFilterGridApi> = {
+    ...baseCommunityModule('QuickFilterApiModule'),
     apiFunctions: {
         isQuickFilterPresent,
         getQuickFilter,
         resetQuickFilter,
     },
     dependsOn: [QuickFilterCoreModule],
-});
+};
 
-export const QuickFilterModule = defineCommunityModule('QuickFilterModule', {
+export const QuickFilterModule: Module = {
+    ...baseCommunityModule('QuickFilterModule'),
     dependsOn: [QuickFilterCoreModule, QuickFilterApiModule],
-});
+};
 
-export const FilterModule = defineCommunityModule('FilterModule', {
+export const FilterModule: Module = {
+    ...baseCommunityModule('FilterModule'),
     dependsOn: [
         SimpleFloatingFilterModule,
         ReadOnlyFloatingFilterModule,
@@ -128,4 +145,4 @@ export const FilterModule = defineCommunityModule('FilterModule', {
         ColumnFilterApiModule,
         ColumnFilterMenuModule,
     ],
-});
+};
