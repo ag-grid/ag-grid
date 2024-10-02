@@ -1,0 +1,108 @@
+---
+title: "Row Grouping - Grouping Data"
+description: "Enable row grouping in the $framework Data Grid to allow rows to be grouped by columns. Define row groups, use the Grid API, or use the UI to group rows."
+enterprise: true
+---
+Enable grouping on a column to group rows by equivalent values.
+
+## Enabling Row Grouping
+
+Row Grouping is enabled by setting `rowGroup` to `true` on one or more [Column Definition](./column-definitions/).
+Parent rows are then introduced for each unique value in that column, containing the rows with that value.
+
+{% gridExampleRunner title="Basic Grouping" name="basic-grouping" /%}
+
+The example above uses the following configuration to group rows by their `country` values:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroup: true },
+        // ...other column definitions
+    ],
+}
+```
+
+## Grouping by Multiple Columns
+
+When grouping on multiple columns using `rowGroup`, the order of columns within the column definitions is used to determine which column to group by first.
+This can be overridden with a custom order by providing the `rowGroupIndex` property in each grouped columns definition.
+
+{% gridExampleRunner title="Grouping by Multiple Columns" name="row-group-index" /%}
+
+The example above demonstrates the following configuration for grouping rows by `year` first, and `country` second:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'country', rowGroupIndex: 1 },
+        { field: 'year', rowGroupIndex: 0 },
+        // ...other column definitions
+    ],
+};
+```
+
+## Grouping on Object Data
+
+When grouping on object data, the grid needs a way to compare items to determine if they are equivalent.
+Setting a `keyCreator` on the grouped column definition provides the grid with string keys it can compare.
+
+{% apiDocumentation source="column-properties/properties.json" section="columns" names=["keyCreator"] /%}
+
+The following example uses a custom set of rows, each containing an `athlete` field that maps to objects with `id`
+and `name` properties.
+
+{% gridExampleRunner title="Grouping by Object Data" name="grouping-object-data" /%}
+
+This demonstrates the following configuration for grouping rows by the `athlete` objects by their `id` property:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'athlete',
+            rowGroup: true,
+            keyCreator: (params) => params.value.id,
+            valueFormatter: (params) => params.value.name,
+        },
+        // ...other column definitions
+    ],
+};
+```
+
+## Grouping on Null and Undefined Data
+
+When grouping `null`, `undefined` or `""` (empty string) values the grid will group these together under the
+heading `(Blanks)` as the final group.
+
+By setting the `groupAllowUnbalanced` property to `true`, the grid will instead display these rows without a group.
+
+{% gridExampleRunner title="Grouping by Null and Undefined Data" name="grouping-null-undefined" /%}
+
+To enable unbalanced grouping, the following configuration is used:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    groupAllowUnbalanced: true,
+};
+```
+
+## Hiding Parents of Individual Rows
+
+Groups with only a single child can be hidden from the grid by setting the `groupHideParentOfSingleChild` grid option to `true`. To only remove
+groups with a single leaf child, instead set to `"leafGroupsOnly"`.
+
+Filtering does not impact which groups get removed. Only groups containing a single child prior to filtering being applied are removed.
+
+{% gridExampleRunner title="Removing Single Children" name="remove-single-children"  exampleHeight=540 /%}
+
+The following is an example of the configuration used to hide all parents of a single row:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    groupHideParentOfSingleChild: true,
+}
+```
+
+{% note %}
+This property `groupHideParentOfSingleChild` and `groupHideOpenParents` are mutually exclusive, and cannot be used together.
+{% /note %}
+
+## Next Up
+
+Continue to the next section to learn about the different Row Grouping [Display Types](./grouping-display-types/).

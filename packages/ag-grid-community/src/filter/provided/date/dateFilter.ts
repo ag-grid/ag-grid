@@ -143,6 +143,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
             {
                 onDateChanged: () => this.onUiChanged(),
                 filterParams: this.dateFilterParams,
+                location: 'filter',
             },
             element
         );

@@ -1034,7 +1034,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
 
             if (_getGroupSelectsDescendants(this.gos)) {
-                const selectionChanged = this.selectionService?.updateGroupsFromChildrenSelections(
+                const selectionChanged = this.selectionService?.updateGroupsFromChildrenSelections?.(
                     'rowGroupChanged',
                     changedPath
                 );

@@ -60,7 +60,6 @@ const orderedCoreBeans: BeanName[] = [
     'sortController',
     'columnHoverService',
     'columnAnimationService',
-    'selectableService',
     'autoColService',
     'controlsColService',
     'changeDetectionService',

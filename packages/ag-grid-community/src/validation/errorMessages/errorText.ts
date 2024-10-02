@@ -1,7 +1,11 @@
 import type { UserComponentName } from '../../context/context';
 import type { ClientSideRowModelStep } from '../../interfaces/iClientSideRowModel';
 import type { Column } from '../../interfaces/iColumn';
+<<<<<<< HEAD
 import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
+=======
+import { getErrorLink } from '../logging';
+>>>>>>> latest
 
 /**
  * NOTES on setting console messages:
@@ -253,5 +257,7 @@ export function getError<TId extends ErrorId, TParams extends GetErrorParams<TId
     }
 
     const errorBody = msgOrFunc(args as any);
-    return Array.isArray(errorBody) ? errorBody : [errorBody];
+    const errorLink = getErrorLink(errorId, args);
+    const errorSuffix = `\nSee ${errorLink}`;
+    return Array.isArray(errorBody) ? (errorBody.concat(errorSuffix) as string[]) : [errorBody, errorSuffix];
 }

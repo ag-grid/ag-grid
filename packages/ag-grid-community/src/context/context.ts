@@ -450,7 +450,6 @@ export type BeanName =
     | 'rowRenderer'
     | 'rowStyleService'
     | 'scrollVisibleService'
-    | 'selectableService'
     | 'selectionController'
     | 'selectionHandleFactory'
     | 'selectionService'

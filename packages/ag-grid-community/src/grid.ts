@@ -6,6 +6,7 @@ import { Context } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import type { GridOptions } from './entities/gridOptions';
 import { GridComp } from './gridComp/gridComp';
+import { GridCoreModule } from './gridCoreModule';
 import { getCoercedGridOptions } from './gridOptionsService';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { Module } from './interfaces/iModule';
@@ -218,6 +219,8 @@ export class GridCoreCreator {
                 mod.dependsOn.forEach((m) => addModule(moduleBased, m, gridId));
             }
         };
+
+        addModule(true, GridCoreModule, gridId);
 
         if (passedViaConstructor) {
             passedViaConstructor.forEach((m) => addModule(true, m, gridId));

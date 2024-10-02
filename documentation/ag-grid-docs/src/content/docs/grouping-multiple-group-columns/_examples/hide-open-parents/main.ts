@@ -20,34 +20,20 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
-        {
-            headerName: 'Year',
-            valueGetter: 'data.year',
-            rowGroup: true,
-            hide: true,
-        },
+        { field: 'year', rowGroup: true, hide: true },
 
         { field: 'athlete', minWidth: 200 },
-        { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
-        { field: 'bronze', aggFunc: 'sum' },
         { field: 'total', aggFunc: 'sum' },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 150,
-        filter: true,
     },
     autoGroupColumnDef: {
         minWidth: 200,
-        filterValueGetter: (params: ValueGetterParams) => {
-            if (params.node) {
-                const colGettingGrouped = params.colDef.showRowGroup + '';
-                return params.api.getCellValue({ colKey: colGettingGrouped, rowNode: params.node });
-            }
-        },
     },
     groupHideOpenParents: true,
+    groupDisplayType: 'multipleColumns',
 };
 
 // setup the grid after the page has finished loading

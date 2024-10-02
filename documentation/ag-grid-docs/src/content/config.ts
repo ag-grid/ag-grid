@@ -97,8 +97,15 @@ const matrixTable = defineCollection({
     schema: z.array(z.record(z.string(), z.any())),
 });
 
+const errors = defineCollection({
+    schema: z.object({
+        description: z.string().optional(),
+    }),
+});
+
 export const collections = {
     docs,
     menu,
     'matrix-table': matrixTable,
+    errors,
 };

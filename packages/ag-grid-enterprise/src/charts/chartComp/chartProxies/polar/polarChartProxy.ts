@@ -3,7 +3,7 @@ import type {
     AgPolarChartOptions,
     AgPolarSeriesOptions,
     AgRadarAreaSeriesOptions,
-} from 'ag-charts-community';
+} from 'ag-charts-types';
 
 import type { SeriesGroupType } from 'ag-grid-community';
 

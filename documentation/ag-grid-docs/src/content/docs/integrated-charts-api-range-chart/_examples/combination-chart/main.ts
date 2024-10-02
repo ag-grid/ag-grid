@@ -1,4 +1,4 @@
-import type { AgAxisCaptionFormatterParams } from 'ag-charts-community';
+import type { AgAxisCaptionFormatterParams } from 'ag-charts-types';
 
 import type { FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid } from 'ag-grid-community';

@@ -12,7 +12,6 @@ import {
     _isUsingNewRowSelectionAPI,
 } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService, ISetNodesSelectedParams } from '../interfaces/iSelectionService';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../interfaces/selectionState';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
@@ -26,11 +25,10 @@ import { RowRangeSelectionContext } from './rowRangeSelectionContext';
 export class SelectionService extends BaseSelectionService implements NamedBean, ISelectionService {
     beanName = 'selectionService' as const;
 
-    private rowModel: IRowModel;
     private pageBoundsService: PageBoundsService;
 
-    public wireBeans(beans: BeanCollection): void {
-        this.rowModel = beans.rowModel;
+    public override wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
         this.pageBoundsService = beans.pageBoundsService;
     }
 
@@ -40,7 +38,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     private groupSelectsChildren: boolean;
     private rowSelectionMode?: RowSelectionMode = undefined;
 
-    public postConstruct(): void {
+    public override postConstruct(): void {
+        super.postConstruct();
         const { gos, rowModel, onRowSelected } = this;
         this.selectionCtx.init(rowModel);
         this.rowSelectionMode = _getRowSelectionMode(gos);
@@ -272,7 +271,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     // should only be called if groupSelectsChildren=true
-    public updateGroupsFromChildrenSelections(source: SelectionEventSourceType, changedPath?: ChangedPath): boolean {
+    public override updateGroupsFromChildrenSelections(
+        source: SelectionEventSourceType,
+        changedPath?: ChangedPath
+    ): boolean {
         // we only do this when group selection state depends on selected children
         if (!this.groupSelectsChildren) {
             return false;

@@ -1,4 +1,4 @@
-import type { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-community';
+import type { AgChartPaddingOptions, AgChartThemeOverrides } from 'ag-charts-types';
 
 import type { BeanCollection } from 'ag-grid-community';
 import { Component, RefPlaceholder } from 'ag-grid-community';

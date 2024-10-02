@@ -1,4 +1,4 @@
-import type { AgChartThemeOverrides } from 'ag-charts-community';
+import type { AgChartThemeOverrides } from 'ag-charts-types';
 
 import type { ChartType, ChartTypeExCombo } from 'ag-grid-community';
 import { ChartMappings } from 'ag-grid-community';
