@@ -1,5 +1,7 @@
+import type { UserComponentName } from '../../context/context';
 import type { ClientSideRowModelStep } from '../../interfaces/iClientSideRowModel';
 import type { Column } from '../../interfaces/iColumn';
+import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
 
 /**
  * NOTES on setting console messages:
@@ -200,6 +202,36 @@ export const AG_GRID_ERRORS = {
         'Since v32, `api.hideOverlay()` does not hide the loading overlay when `loading=true`. Set `loading=false` instead.' as const,
     100: () =>
         'rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead' as const,
+    101: ({
+        propertyName,
+        componentName,
+        agGridDefaults,
+        jsComps,
+    }: {
+        propertyName: string;
+        componentName: string;
+        agGridDefaults: { [key in UserComponentName]?: any };
+        jsComps: { [key: string]: any };
+    }) => {
+        const textOutput = [];
+        const validComponents = [
+            // Don't include the old names / internals in potential suggestions
+            ...Object.keys(agGridDefaults).filter(
+                (k) => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)
+            ),
+            ...Object.keys(jsComps),
+        ];
+        const suggestions = _fuzzySuggestions(componentName, validComponents, true, 0.8).values;
+
+        textOutput.push(
+            `Could not find '${componentName}' component. It was configured as "${propertyName}: '${componentName}'" but it wasn't found in the list of registered components.\n`
+        );
+        if (suggestions.length > 0) {
+            textOutput.push(`         Did you mean: [${suggestions.slice(0, 3)}]?\n`);
+        }
+        textOutput.push(`If using a custom component check it has been registered correctly.`);
+        return textOutput;
+    },
 } as const;
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

@@ -4,6 +4,7 @@ import type { BeanCollection, UserComponentName } from '../../context/context';
 import { ModuleNames } from '../../modules/moduleNames';
 import { TooltipComponent } from '../../rendering/tooltipComponent';
 import { _iterateObject } from '../../utils/object';
+import { _logWarn } from '../../validation/logging';
 import type { ValidationService } from '../../validation/validationService';
 
 export class UserComponentRegistry extends BeanStub implements NamedBean {
@@ -94,7 +95,12 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
         if (moduleForComponent) {
             this.gos.assertModuleRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`);
         } else {
-            this.validationService?.warnAboutMissingComponent(propertyName, name, this.agGridDefaults, this.jsComps);
+            _logWarn(101, {
+                propertyName,
+                componentName: name,
+                agGridDefaults: this.agGridDefaults,
+                jsComps: this.jsComps,
+            });
         }
 
         return null;

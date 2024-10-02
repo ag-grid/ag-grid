@@ -219,34 +219,6 @@ export class ValidationService extends BeanStub implements NamedBean {
     public getConsoleMessage<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>): any[] {
         return getError(id, args);
     }
-
-    public warnAboutMissingComponent(
-        propertyName: string,
-        componentName: string,
-        agGridDefaults: { [key in UserComponentName]?: any },
-        jsComps: { [key: string]: any }
-    ) {
-        _doOnce(() => {
-            const validComponents = [
-                // Don't include the old names / internals in potential suggestions
-                ...Object.keys(agGridDefaults).filter(
-                    (k) => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)
-                ),
-                ...Object.keys(jsComps),
-            ];
-            const suggestions = _fuzzySuggestions(componentName, validComponents, true, 0.8).values;
-
-            _warnOnce(
-                `Could not find '${componentName}' component. It was configured as "${propertyName}: '${componentName}'" but it wasn't found in the list of registered components.`
-            );
-            if (suggestions.length > 0) {
-                _warnOnce(`         Did you mean: [${suggestions.slice(0, 3)}]?`);
-            }
-            _warnOnce(
-                `If using a custom component check it has been registered as described in: ${this.getFrameworkOverrides().getDocLink('components/')}`
-            );
-        }, 'MissingComp' + componentName);
-    }
 }
 
 export function _fuzzyCheckStrings(
