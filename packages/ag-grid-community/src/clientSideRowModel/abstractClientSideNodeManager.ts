@@ -234,7 +234,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
                 // TODO: this code should not be here, see AG-12602
                 // This was a fix for AG-6231, but is not the correct fix
                 // We enable it only for trees that use getDataPath and not the new children field
-                const getDataPath = !!this.gos.get('getDataPath');
+                const getDataPath = this.gos.get('treeData') && this.gos.get('getDataPath');
                 if (getDataPath) {
                     for (let i = 0; i < allLeafChildren.length; i++) {
                         const node = allLeafChildren[i];

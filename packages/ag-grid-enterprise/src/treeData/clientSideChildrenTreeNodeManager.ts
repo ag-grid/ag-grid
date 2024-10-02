@@ -1,16 +1,18 @@
 import type { IClientSideNodeManager, NamedBean, RowNode } from 'ag-grid-community';
-import { AbstractClientSideNodeManager } from 'ag-grid-community';
 
+import { AbstractClientSideTreeNodeManager } from './abstractClientSideTreeNodeManager';
 import { makeFieldPathGetter } from './fieldAccess';
 import type { DataFieldGetter } from './fieldAccess';
+import type { TreeNode } from './treeNodeManager/treeNode';
+import type { TreeRow } from './treeNodeManager/treeRow';
 
 export class ClientSideChildrenTreeNodeManager<TData>
-    extends AbstractClientSideNodeManager<TData>
+    extends AbstractClientSideTreeNodeManager<TData>
     implements IClientSideNodeManager<TData>, NamedBean
 {
     beanName = 'clientSideChildrenTreeNodeManager' as const;
 
-    private childrenGetter: DataFieldGetter;
+    private childrenGetter: DataFieldGetter<TData, TData[] | null | undefined>;
 
     public override initRootNode(rootRowNode: RowNode<TData>): void {
         const oldChildrenGetter = this.childrenGetter;
@@ -20,6 +22,49 @@ export class ClientSideChildrenTreeNodeManager<TData>
         }
 
         super.initRootNode(rootRowNode);
+    }
+
+    protected override loadNewRowData(rowData: TData[]): void {
+        const rootRow = this.rootNode;
+
+        this.treeNodeManager.clearTree(this.treeNodeManager.root);
+        this.treeNodeManager.initRootNode(rootRow);
+
+        const childrenGetter = this.childrenGetter;
+
+        const processedDataSet = new Set<TData>();
+        const allLeafChildren: TreeRow<TData>[] = [];
+
+        rootRow.allLeafChildren = allLeafChildren;
+
+        const addChild = (parent: TreeNode, item: TData) => {
+            if (processedDataSet.has(item)) {
+                return; // Duplicate node
+            }
+
+            processedDataSet.add(item);
+
+            const row = this.createRowNode(item, allLeafChildren.length) as TreeRow<TData>;
+            allLeafChildren.push(row);
+
+            const treeNode = parent.upsertKey(row.id!);
+
+            this.treeNodeManager.addOrUpdateRow(treeNode, row, false);
+
+            const children = childrenGetter(item);
+            if (children) {
+                for (const child of children) {
+                    addChild(treeNode, child);
+                }
+            }
+        };
+
+        const rootTreeNode = this.treeNodeManager.root;
+        for (const item of rowData) {
+            addChild(rootTreeNode, item);
+        }
+
+        this.treeNodeManager.commitTree(undefined);
     }
 
     public setMasterForAllRows(rows: RowNode<TData>[] | null | undefined, shouldSetExpanded: boolean): void {

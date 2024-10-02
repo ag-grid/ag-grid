@@ -56,7 +56,6 @@ export class ClientSidePathTreeNodeManager<TData>
         const getDataPath = this.gos.get('getDataPath');
         for (let i = 0, len = rows?.length ?? 0; i < len; ++i) {
             const row = rows![i];
-            // TODO:
             const node = this.upsertPath(this.getDataPath(getDataPath, row));
             if (node) {
                 this.treeNodeManager.addOrUpdateRow(node, row, update);

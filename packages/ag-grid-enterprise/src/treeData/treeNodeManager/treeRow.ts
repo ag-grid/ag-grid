@@ -9,9 +9,9 @@ import type { ITreeNode, RowNode } from 'ag-grid-community';
  * - treeNode
  * - treeNodeFlags
  */
-export interface TreeRow extends RowNode {
-    allLeafChildren: TreeRow[] | null;
-    childrenAfterGroup: TreeRow[] | null;
+export interface TreeRow<TData = any> extends RowNode<TData> {
+    allLeafChildren: TreeRow<TData>[] | null;
+    childrenAfterGroup: TreeRow<TData>[] | null;
     treeNode: ITreeNode | null;
     treeNodeFlags: number;
 }

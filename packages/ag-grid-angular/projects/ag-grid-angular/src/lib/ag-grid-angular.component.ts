@@ -1136,7 +1136,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Customise the parameters provided to the `groupRowRenderer` component.
      */
     @Input() public groupRowRendererParams: any = undefined;
-    /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.
+    /** Set to `true` to enable the Grid to work with Tree Data.
+     * You must also provide 'treeDataChildrenField' or implement the `getDataPath(data)` callback.
      * @default false
      */
     @Input() public treeData: boolean | undefined = undefined;
