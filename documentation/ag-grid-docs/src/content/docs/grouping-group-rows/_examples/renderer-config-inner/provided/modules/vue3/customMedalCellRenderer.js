@@ -16,7 +16,7 @@ export default {
             this.updateDisplay(params);
         },
         updateDisplay(params) {
-            this.arr = new Array(params.value ?? 0);
+            this.arr = new Array(Number(params.value) ?? 0);
         },
     },
 };
