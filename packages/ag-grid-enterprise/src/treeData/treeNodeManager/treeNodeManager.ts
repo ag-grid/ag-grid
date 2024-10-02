@@ -1,18 +1,15 @@
 import type {
     BeanCollection,
     ChangedPath,
-    GetDataPath,
     IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
-    RowNodeTransaction,
-    StageExecuteParams,
     WithoutGridCommon,
 } from 'ag-grid-community';
 import { BeanStub, _warnOnce } from 'ag-grid-community';
 import { RowNode } from 'ag-grid-community';
 
-import { EMPTY_ARRAY, TreeNode } from './treeNode';
+import { TreeNode } from './treeNode';
 import type { TreeRow } from './treeRow';
 import {
     clearTreeRowFlags,
@@ -36,24 +33,21 @@ export type InitialGroupOrderComparatorCallback =
     | ((params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => number)
     | undefined;
 
-export interface TreeExecutionDetails {
+interface TreeCommitDetails {
     changedPath: ChangedPath | undefined;
     expandByDefault: number;
-    getDataPath: GetDataPath | undefined;
     isGroupOpenByDefault: IsGroupOpenByDefaultCallback;
-    initialGroupOrderComparator: InitialGroupOrderComparatorCallback;
 }
 
-export class TreeStage extends BeanStub {
+export class TreeNodeManager extends BeanStub {
     private beans: BeanCollection;
     private showRowGroupColsService: IShowRowGroupColsService;
-    private oldGroupDisplayColIds: string | undefined;
 
     /** Rows that are pending deletion, this.commitDeletedRows() will finalize removal. */
     private rowsPendingDestruction: Set<RowNode> | null = null;
 
     /** The root node of the tree. */
-    private readonly root: TreeNode = new TreeNode(null, '', -1);
+    public readonly root: TreeNode = new TreeNode(null, '', -1);
 
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;
@@ -61,99 +55,32 @@ export class TreeStage extends BeanStub {
     }
 
     public override destroy(): void {
-        this.clear();
+        this.clearRootNode();
         super.destroy();
     }
 
-    public clear() {
-        const rootRow = this.root.row;
+    public initRootNode(rootRowNode: RowNode): void {
+        this.root.setRow(rootRowNode);
+        rootRowNode.leafGroup = false; // no pivoting with tree data
+        const sibling: TreeRow = rootRowNode.sibling;
+        if (sibling) {
+            sibling.childrenAfterGroup = rootRowNode.childrenAfterGroup;
+            sibling.childrenMapped = rootRowNode.childrenMapped;
+        }
+    }
+
+    public clearRootNode() {
+        const root = this.root;
+        const rootRow = root.row;
         if (rootRow !== null) {
-            this.root.removeRow(rootRow);
+            root.removeRow(rootRow);
             clearTreeRowFlags(rootRow);
         }
-        this.destroyTree(this.root);
+        this.destroyTree(root);
         this.commitDestroyedRows();
     }
 
-    public execute(params: StageExecuteParams): void {
-        const { rowNodeTransactions, rowNodesOrderChanged, changedPath } = params;
-        const rootRow: TreeRow = params.rowNode;
-
-        const gos = this.gos;
-        const details: TreeExecutionDetails = {
-            changedPath,
-            expandByDefault: gos.get('groupDefaultExpanded'),
-            getDataPath: gos.get('getDataPath'),
-            isGroupOpenByDefault: gos.getCallback('isGroupOpenByDefault'),
-            initialGroupOrderComparator: gos.getCallback('initialGroupOrderComparator'),
-        };
-
-        const rootNode = this.root;
-        rootNode.setRow(rootRow);
-        rootRow.leafGroup = false; // no pivoting with tree data
-        const sibling: TreeRow = rootRow.sibling;
-        if (sibling) {
-            sibling.childrenAfterGroup = rootRow.childrenAfterGroup;
-            sibling.childrenMapped = rootRow.childrenMapped;
-        }
-
-        if (rowNodeTransactions) {
-            this.handleTransaction(details, rowNodeTransactions, rowNodesOrderChanged);
-        } else {
-            this.handleRowData(details, rootRow, params.afterColumnsChanged === true);
-        }
-    }
-
-    private handleRowData(details: TreeExecutionDetails, rootRow: RowNode, afterColumnsChanged: boolean): void {
-        const root = this.root;
-
-        if (afterColumnsChanged || this.oldGroupDisplayColIds === undefined) {
-            const newGroupDisplayColIds =
-                this.showRowGroupColsService
-                    ?.getShowRowGroupCols()
-                    ?.map((c) => c.getId())
-                    .join('-') ?? '';
-
-            if (afterColumnsChanged) {
-                // if the group display cols have changed, then we need to update rowNode.groupData
-                // (regardless of tree data or row grouping)
-                if (this.oldGroupDisplayColIds !== newGroupDisplayColIds) {
-                    this.checkAllGroupDataAfterColsChanged(root.row?.childrenAfterGroup);
-                }
-
-                // WARNING: this assumes that an event with afterColumnsChange=true doesn't change the rows
-                return; // No further processing needed, rows didn't change
-            }
-
-            this.oldGroupDisplayColIds = newGroupDisplayColIds;
-        }
-
-        this.clearTree(root);
-
-        this.addOrUpdateRows(details, rootRow.allLeafChildren, false);
-
-        this.commitTree(details);
-    }
-
-    private handleTransaction(
-        details: TreeExecutionDetails,
-        transactions: RowNodeTransaction[],
-        rowNodesOrderChanged: boolean | undefined
-    ): void {
-        for (const { remove, update, add } of transactions) {
-            // the order of [add, remove, update] is the same as in ClientSideNodeManager.
-            // Order is important when a record with the same id is added and removed in the same transaction.
-            this.removeRows(remove as RowNode[] | null);
-            this.addOrUpdateRows(details, update as RowNode[] | null, true);
-            this.addOrUpdateRows(details, add as RowNode[] | null, false);
-        }
-        if (rowNodesOrderChanged) {
-            this.handleRowNodesOrderChanged();
-        }
-        this.commitTree(details); // One single commit for all the transactions
-    }
-
-    private handleRowNodesOrderChanged(): void {
+    public handleRowNodesOrderChanged(): void {
         const rows = this.root.row?.allLeafChildren;
         if (rows) {
             for (let rowIdx = 0, rowsLen = rows.length; rowIdx < rowsLen; ++rowIdx) {
@@ -165,27 +92,8 @@ export class TreeStage extends BeanStub {
         }
     }
 
-    private checkAllGroupDataAfterColsChanged(rowNodes: RowNode[] | null | undefined): void {
-        for (let i = 0, len = rowNodes?.length ?? 0; i < len; ++i) {
-            const rowNode = rowNodes![i];
-            this.setGroupData(rowNode, rowNode.treeNode?.key ?? rowNode.key!);
-            this.checkAllGroupDataAfterColsChanged(rowNode.childrenAfterGroup);
-        }
-    }
-
-    /** Transactional add/update */
-    private addOrUpdateRows(details: TreeExecutionDetails, rows: RowNode[] | null | undefined, update: boolean): void {
-        for (let i = 0, len = rows?.length ?? 0; i < len; ++i) {
-            const row = rows![i];
-            const node = this.upsertPath(this.getDataPath(details, row));
-            if (node) {
-                this.addOrUpdateRow(node, row, update);
-            }
-        }
-    }
-
     /** Transactional removal */
-    private removeRows(rows: RowNode[] | null | undefined): void {
+    public removeRows(rows: RowNode[] | null | undefined): void {
         for (let i = 0, len = rows?.length ?? 0; i < len; ++i) {
             const row = rows![i];
             const node = row.treeNode as TreeNode | null;
@@ -195,34 +103,8 @@ export class TreeStage extends BeanStub {
         }
     }
 
-    private getDataPath({ getDataPath }: TreeExecutionDetails, { data }: RowNode): string[] {
-        const keys = getDataPath?.(data) || EMPTY_ARRAY;
-        if (!keys.length) {
-            _warnOnce(`getDataPath() should not return an empty path`, [data]);
-        }
-        return keys;
-    }
-
-    /**
-     * Gets the last node of a path. Inserts filler nodes where needed.
-     * Note that invalidate() is not called, is up to the caller to call it if needed.
-     */
-    private upsertPath(path: string[]): TreeNode | null {
-        let parent: TreeNode | null = this.root;
-        const stop = path.length - 1;
-        for (let level = 0; level <= stop; ++level) {
-            const node: TreeNode = parent.upsertKey(path[level]);
-            if (level >= stop) {
-                node.invalidate();
-                return node;
-            }
-            parent = node;
-        }
-        return null;
-    }
-
     /** Add or updates the row to a non-root node, preparing the tree correctly for the commit. */
-    private addOrUpdateRow(node: TreeNode, newRow: RowNode, update: boolean): void {
+    public addOrUpdateRow(node: TreeNode, newRow: RowNode, update: boolean): void {
         const { level, row: oldRow } = node;
         if (level < 0) {
             return; // Cannot overwrite the root row
@@ -293,34 +175,41 @@ export class TreeStage extends BeanStub {
     }
 
     /** Commit the changes performed to the tree */
-    private commitTree(details: TreeExecutionDetails) {
+    public commitTree(changedPath: ChangedPath | undefined) {
         const root = this.root;
+
+        const details: TreeCommitDetails = {
+            changedPath,
+            expandByDefault: this.gos.get('groupDefaultExpanded'),
+            isGroupOpenByDefault: this.gos.getCallback('isGroupOpenByDefault'),
+        };
 
         this.commitInvalidatedChildren(details, root);
 
-        const rootRow = root.row!;
-
-        if (root.childrenChanged) {
-            if (root.updateChildrenAfterGroup()) {
-                markTreeRowPathChanged(rootRow);
+        const rootRow = root.row;
+        if (rootRow) {
+            if (root.childrenChanged) {
+                if (root.updateChildrenAfterGroup()) {
+                    markTreeRowPathChanged(rootRow);
+                }
             }
-        }
 
-        rootRow.updateHasChildren();
+            rootRow.updateHasChildren();
 
-        if (isTreeRowPathChanged(rootRow)) {
-            if (details.changedPath?.isActive()) {
-                details.changedPath.addParentNode(rootRow);
+            if (isTreeRowPathChanged(rootRow)) {
+                if (details.changedPath?.isActive()) {
+                    details.changedPath.addParentNode(rootRow);
+                }
             }
-        }
 
-        markTreeRowCommitted(rootRow);
+            markTreeRowCommitted(rootRow);
+        }
 
         this.commitDestroyedRows();
     }
 
     /** Calls commitChild for each invalidated child, recursively. We commit only the invalidated paths. */
-    private commitInvalidatedChildren(details: TreeExecutionDetails, parent: TreeNode): void {
+    private commitInvalidatedChildren(details: TreeCommitDetails, parent: TreeNode): void {
         while (true) {
             const child = parent.dequeueInvalidated();
             if (child === null) {
@@ -333,7 +222,7 @@ export class TreeStage extends BeanStub {
     }
 
     /** Commit the changes performed to a node and its children */
-    private commitChild(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
+    private commitChild(details: TreeCommitDetails, parent: TreeNode, node: TreeNode): void {
         if (node.isEmptyFillerNode()) {
             this.clearTree(node);
             return; // Removed. No need to process children.
@@ -379,7 +268,7 @@ export class TreeStage extends BeanStub {
         }
     }
 
-    private commitNodePostOrder(details: TreeExecutionDetails, parent: TreeNode, node: TreeNode): void {
+    private commitNodePostOrder(details: TreeCommitDetails, parent: TreeNode, node: TreeNode): void {
         const row = node.row!;
         const oldRow = node.oldRow;
 
@@ -526,7 +415,7 @@ export class TreeStage extends BeanStub {
         }
     }
 
-    private getExpandedInitialValue(details: TreeExecutionDetails, row: RowNode): boolean {
+    private getExpandedInitialValue(details: TreeCommitDetails, row: RowNode): boolean {
         const userCallback = details.isGroupOpenByDefault;
         return userCallback
             ? userCallback({
@@ -540,7 +429,11 @@ export class TreeStage extends BeanStub {
     }
 
     /** Called to clear a subtree. */
-    private clearTree(node: TreeNode): void {
+    public clearTree(node: TreeNode | null): void {
+        if (!node) {
+            return;
+        }
+
         const { parent, oldRow, row, level } = node;
         if (parent !== null && oldRow !== null) {
             parent.childrenChanged = true;

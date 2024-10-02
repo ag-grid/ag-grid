@@ -135,20 +135,28 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             this.filterAggregatesStage,
             this.flattenStage,
         ].filter((stage) => !!stage) as IRowNodeStage[];
-        const refreshEverythingFunc = this.refreshModel.bind(this, { step: ClientSideRowModelSteps.EVERYTHING });
+        const refreshEverythingFunc = this.refreshModel.bind(
+            this,
+            { step: ClientSideRowModelSteps.EVERYTHING },
+            undefined
+        );
         const animate = !this.gos.get('suppressAnimationFrame');
-        const refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(this, {
-            step: ClientSideRowModelSteps.EVERYTHING, // after cols change, row grouping (the first stage) could of changed
-            afterColumnsChanged: true,
-            keepRenderedRows: true, // we want animations cos sorting or filtering could be applied
-            animate,
-        });
+        const refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(
+            this,
+            {
+                step: ClientSideRowModelSteps.EVERYTHING, // after cols change, row grouping (the first stage) could of changed
+                afterColumnsChanged: true,
+                keepRenderedRows: true, // we want animations cos sorting or filtering could be applied
+                animate,
+            },
+            undefined
+        );
 
         this.addManagedEventListeners({
             newColumnsLoaded: refreshEverythingAfterColsChangedFunc,
             columnRowGroupChanged: refreshEverythingFunc,
             columnValueChanged: this.onValueChanged.bind(this),
-            columnPivotChanged: this.refreshModel.bind(this, { step: ClientSideRowModelSteps.PIVOT }),
+            columnPivotChanged: this.refreshModel.bind(this, { step: ClientSideRowModelSteps.PIVOT }, undefined),
             filterChanged: this.onFilterChanged.bind(this),
             sortChanged: this.onSortChanged.bind(this),
             columnPivotModeChanged: refreshEverythingFunc,
@@ -686,7 +694,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return modelParams;
     }
 
-    refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void {
+    refreshModel(
+        paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined,
+        changedPath?: ChangedPath | undefined
+    ): void {
         if (!this.hasStarted || this.isRefreshingModel || this.columnModel.isChangeEventsDispatching()) {
             return;
         }
@@ -716,7 +727,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // let start: number;
         // console.log('======= start =======');
 
-        const changedPath: ChangedPath = this.createChangePath(params.rowNodeTransactions);
+        if (!changedPath) {
+            changedPath = this.createChangePath(params.rowNodeTransactions);
+        }
 
         this.isRefreshingModel = true;
 
@@ -1077,29 +1090,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     ) {
         const treeData = this.gos.get('treeData');
         if (treeData) {
-            if (this.nodeManager.executeTreeStage) {
-                // TODO: the TreeStrategy has to be moved in the client side node manager
-                // The tree build should happen during row nodes construction.
-                if (rowNodeTransactions) {
-                    this.nodeManager.executeTreeStage({
-                        rowNode: this.rootNode,
-                        rowNodeTransactions,
-                        rowNodesOrderChanged,
-                        changedPath: changedPath,
-                    });
-                } else {
-                    this.nodeManager.executeTreeStage({
-                        rowNode: this.rootNode,
-                        changedPath: changedPath,
-                        afterColumnsChanged: afterColumnsChanged,
-                    });
-                }
-
-                this.updateSelectableAfterGrouping(changedPath);
-            }
-        }
-
-        if (!treeData) {
+            this.updateSelectableAfterGrouping(changedPath);
+        } else {
             const groupStage = this.groupStage;
             if (groupStage) {
                 if (rowNodeTransactions) {
@@ -1349,20 +1341,27 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return;
         }
 
+        const changedPath = this.createChangePath(rowNodeTransactions);
+
+        this.nodeManager.commitTransactions?.(rowNodeTransactions, changedPath, rowNodesOrderChanged);
+
         const animate = !this.gos.get('suppressAnimationFrame');
 
         this.eventService.dispatchEvent({
             type: 'rowDataUpdated',
         });
 
-        this.refreshModel({
-            step: ClientSideRowModelSteps.EVERYTHING,
-            rowNodeTransactions,
-            rowNodesOrderChanged,
-            keepRenderedRows: true,
-            keepEditingRows: true,
-            animate,
-        });
+        this.refreshModel(
+            {
+                step: ClientSideRowModelSteps.EVERYTHING,
+                rowNodeTransactions,
+                rowNodesOrderChanged,
+                keepRenderedRows: true,
+                keepEditingRows: true,
+                animate,
+            },
+            changedPath
+        );
     }
 
     private doRowsToDisplay() {

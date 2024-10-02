@@ -1,5 +1,5 @@
 import type { RowNode } from '../entities/rowNode';
-import { StageExecuteParams } from './iRowNodeStage';
+import type { ChangedPath } from '../main-umd-noStyles';
 import type { RowDataTransaction } from './rowDataTransaction';
 import type { RowNodeTransaction } from './rowNodeTransaction';
 
@@ -32,6 +32,9 @@ export interface IClientSideNodeManager<TData = any> {
 
     setMasterForAllRows?(rowNodes: RowNode<TData>[] | null | undefined, shouldSetExpanded: boolean): void;
 
-    // TODO: this has to be removed in next PRs
-    executeTreeStage?(params: StageExecuteParams): void;
+    commitTransactions?(
+        transactions: RowNodeTransaction<TData>[],
+        changedPath: ChangedPath | undefined,
+        rowNodesOrderChanged: boolean
+    ): void;
 }
