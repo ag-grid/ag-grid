@@ -5,7 +5,7 @@ import { defineEnterpriseModule } from '../moduleUtils';
 import { ViewportRowModel } from './viewportRowModel';
 
 export const ViewportRowModelModule = defineEnterpriseModule(ModuleNames.ViewportRowModelModule, {
-    rowModel: 'viewport',
+    rowModels: ['viewport'],
     beans: [ViewportRowModel],
     dependsOn: [EnterpriseCoreModule, CommunityFeaturesModule],
 });
