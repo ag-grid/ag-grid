@@ -23,7 +23,9 @@ export class ClientSideChildrenTreeNodeManager<TData>
     }
 
     public setMasterForAllRows(rows: RowNode<TData>[] | null | undefined, shouldSetExpanded: boolean): void {
-        this.beans.detailGridApiService?.setMasterForAllRows(rows, shouldSetExpanded);
+        if (!this.gos.get('treeData')) {
+            this.beans.detailGridApiService?.setMasterForAllRows(rows, shouldSetExpanded);
+        }
     }
 
     protected override createRowNode(data: TData, sourceRowIndex: number): RowNode<TData> {

@@ -1210,7 +1210,8 @@ export interface GridOptions<TData = any> {
     groupRowRendererParams?: any;
 
     /**
-     * Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.
+     * Set to `true` to enable the Grid to work with Tree Data.
+     * You must also provide 'treeDataChildrenField' or implement the `getDataPath(data)` callback.
      * @default false
      */
     treeData?: boolean;

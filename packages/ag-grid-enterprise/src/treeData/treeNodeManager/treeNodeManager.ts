@@ -40,6 +40,16 @@ interface TreeCommitDetails {
 }
 
 export class TreeNodeManager extends BeanStub {
+    checkAllGroupDataAfterColsChanged(rowNodes: RowNode[] | null | undefined) {
+        if (rowNodes) {
+            for (let i = 0, len = rowNodes.length ?? 0; i < len; ++i) {
+                const rowNode = rowNodes[i];
+                this.setGroupData(rowNode, rowNode.treeNode?.key ?? rowNode.key!);
+                this.checkAllGroupDataAfterColsChanged(rowNode.childrenAfterGroup);
+            }
+        }
+    }
+
     private beans: BeanCollection;
     private showRowGroupColsService: IShowRowGroupColsService;
 

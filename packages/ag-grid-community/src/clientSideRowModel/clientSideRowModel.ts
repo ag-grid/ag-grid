@@ -734,13 +734,18 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.isRefreshingModel = true;
 
         switch (params.step) {
-            case ClientSideRowModelSteps.EVERYTHING:
+            case ClientSideRowModelSteps.EVERYTHING: {
+                const afterColumnsChange = !!params.afterColumnsChanged;
+                if (afterColumnsChange) {
+                    this.nodeManager.afterColumnsChanged?.();
+                }
                 this.doRowGrouping(
                     params.rowNodeTransactions,
                     changedPath,
                     !!params.rowNodesOrderChanged,
-                    !!params.afterColumnsChanged
+                    afterColumnsChange
                 );
+            }
             /* eslint-disable no-fallthrough */
             case ClientSideRowModelSteps.FILTER:
                 this.doFilter(changedPath);

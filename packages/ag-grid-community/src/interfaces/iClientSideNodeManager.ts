@@ -32,6 +32,8 @@ export interface IClientSideNodeManager<TData = any> {
 
     setMasterForAllRows?(rowNodes: RowNode<TData>[] | null | undefined, shouldSetExpanded: boolean): void;
 
+    afterColumnsChanged?(): void;
+
     commitTransactions?(
         transactions: RowNodeTransaction<TData>[],
         changedPath: ChangedPath | undefined,
