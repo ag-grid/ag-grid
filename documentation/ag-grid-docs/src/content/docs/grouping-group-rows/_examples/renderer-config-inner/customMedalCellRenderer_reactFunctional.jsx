@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default (params) => {
-    const priceArr = new Array(params.value ?? 0).fill('');
+    const priceArr = new Array(Number(params.value) ?? 0).fill('');
 
     return (
         <span className="imgSpan">
