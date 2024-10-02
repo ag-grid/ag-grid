@@ -12,7 +12,6 @@ const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
         { field: 'year', rowGroup: true, hide: true },
-        { field: 'sport', filter: 'agTextColumnFilter', floatingFilter: true },
         { field: 'gold', aggFunc: 'sum' },
         { field: 'silver', aggFunc: 'sum' },
         { field: 'bronze', aggFunc: 'sum' },
@@ -24,22 +23,21 @@ const gridOptions: GridOptions = {
     autoGroupColumnDef: {
         minWidth: 300,
     },
+    groupDefaultExpanded: -1,
     groupTotalRow: 'bottom',
-    onGridReady: (params) => {
-        params.api.setFilterModel({
-            sport: {
-                type: 'contains',
-                filter: 'Swimming',
-            },
-        });
-    },
+    grandTotalRow: 'bottom',
 };
 
-function toggleProperty() {
-    const enable = document.querySelector<HTMLInputElement>('#suppressAggFilteredOnly')!.checked;
-    gridApi.setGridOption('suppressAggFilteredOnly', enable);
+function onChange() {
+    const suppressStickyTotalRow = document.querySelector<HTMLInputElement>('#input-property-value')!.value;
+    if (suppressStickyTotalRow === 'grand' || suppressStickyTotalRow === 'group') {
+        gridApi.setGridOption('suppressStickyTotalRow', suppressStickyTotalRow);
+    } else if (suppressStickyTotalRow === 'true') {
+        gridApi.setGridOption('suppressStickyTotalRow', true);
+    } else {
+        gridApi.setGridOption('suppressStickyTotalRow', false);
+    }
 }
-
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

@@ -12,7 +12,6 @@ const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
         { field: 'year', rowGroup: true, hide: true },
-        { field: 'sport', filter: 'agTextColumnFilter', floatingFilter: true },
         { field: 'gold', aggFunc: 'sum' },
         { field: 'silver', aggFunc: 'sum' },
         { field: 'bronze', aggFunc: 'sum' },
@@ -25,19 +24,12 @@ const gridOptions: GridOptions = {
         minWidth: 300,
     },
     groupTotalRow: 'bottom',
-    onGridReady: (params) => {
-        params.api.setFilterModel({
-            sport: {
-                type: 'contains',
-                filter: 'Swimming',
-            },
-        });
-    },
+    groupDefaultExpanded: 1,
 };
 
 function toggleProperty() {
-    const enable = document.querySelector<HTMLInputElement>('#suppressAggFilteredOnly')!.checked;
-    gridApi.setGridOption('suppressAggFilteredOnly', enable);
+    const enable = document.querySelector<HTMLInputElement>('#groupSuppressBlankHeader')!.checked;
+    gridApi.setGridOption('groupSuppressBlankHeader', enable);
 }
 
 // setup the grid after the page has finished loading

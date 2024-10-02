@@ -12,7 +12,6 @@ const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
         { field: 'year', rowGroup: true, hide: true },
-        { field: 'sport', filter: 'agTextColumnFilter', floatingFilter: true },
         { field: 'gold', aggFunc: 'sum' },
         { field: 'silver', aggFunc: 'sum' },
         { field: 'bronze', aggFunc: 'sum' },
@@ -23,22 +22,19 @@ const gridOptions: GridOptions = {
     },
     autoGroupColumnDef: {
         minWidth: 300,
+        cellRendererParams: {
+            totalValueGetter: (params: any) => {
+                const isRootLevel = params.node.level === -1;
+                if (isRootLevel) {
+                    return 'Grand Total';
+                }
+                return `Sub Total (${params.value})`;
+            },
+        },
     },
     groupTotalRow: 'bottom',
-    onGridReady: (params) => {
-        params.api.setFilterModel({
-            sport: {
-                type: 'contains',
-                filter: 'Swimming',
-            },
-        });
-    },
+    grandTotalRow: 'bottom',
 };
-
-function toggleProperty() {
-    const enable = document.querySelector<HTMLInputElement>('#suppressAggFilteredOnly')!.checked;
-    gridApi.setGridOption('suppressAggFilteredOnly', enable);
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

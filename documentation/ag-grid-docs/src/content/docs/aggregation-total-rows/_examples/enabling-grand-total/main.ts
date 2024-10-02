@@ -8,11 +8,9 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
 let gridApi: GridApi;
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
-        { field: 'year', rowGroup: true, hide: true },
-        { field: 'sport', filter: 'agTextColumnFilter', floatingFilter: true },
         { field: 'gold', aggFunc: 'sum' },
         { field: 'silver', aggFunc: 'sum' },
         { field: 'bronze', aggFunc: 'sum' },
@@ -24,20 +22,16 @@ const gridOptions: GridOptions = {
     autoGroupColumnDef: {
         minWidth: 300,
     },
-    groupTotalRow: 'bottom',
-    onGridReady: (params) => {
-        params.api.setFilterModel({
-            sport: {
-                type: 'contains',
-                filter: 'Swimming',
-            },
-        });
-    },
+    grandTotalRow: 'bottom',
 };
 
-function toggleProperty() {
-    const enable = document.querySelector<HTMLInputElement>('#suppressAggFilteredOnly')!.checked;
-    gridApi.setGridOption('suppressAggFilteredOnly', enable);
+function onChange() {
+    const grandTotalRow = document.querySelector<HTMLInputElement>('#input-property-value')!.value;
+    if (grandTotalRow === 'bottom' || grandTotalRow === 'top') {
+        gridApi.setGridOption('grandTotalRow', grandTotalRow);
+    } else {
+        gridApi.setGridOption('grandTotalRow', undefined);
+    }
 }
 
 // setup the grid after the page has finished loading

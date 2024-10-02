@@ -1,0 +1,105 @@
+---
+title: "Aggregation - Configure Columns"
+enterprise: true
+---
+Columns can be configured to aggregate data for each level of row grouping or tree data.
+
+{% gridExampleRunner title="Enabling Aggregation" name="enable-aggregation" /%}
+
+## Enabling Aggregation
+An aggregation function can be applied to a column by setting the `aggFunc` grid option to one of: 
+`"sum"`, `"min"`, `"max"`, `"first"`, `"last"`, `"count"`, or `"avg"`.
+
+The example above demonstrates the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'total', aggFunc: 'sum' },
+        { field: 'total', aggFunc: 'avg' },
+        { field: 'total', aggFunc: 'count' },
+        { field: 'total', aggFunc: 'min' },
+        { field: 'total', aggFunc: 'max' },
+        { field: 'total', aggFunc: 'first' },
+        { field: 'total', aggFunc: 'last' },
+        // ... other column definitions
+    ],
+};
+```
+
+{% note %}
+The built-in functions will support `bigint` values if you have them in your data, but the `avg`
+function will lose precision as it can only use integer arithmetic if `bigint` is used.
+{% /note %}
+
+## Configuring via the UI
+Enable users to configure aggregation functions on a column using the [Columns Tool Panel](./tool-panel-columns/)
+and [Column Menu](./column-menu/) by setting the `enableValue` column definition property to `true`.
+
+{% gridExampleRunner title="Directly Supplied Aggregation Functions" name="user-configured" /%}
+
+The example above demonstrates the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'bronze', enableValue: true },
+        { field: 'silver', enableValue: true },
+        { field: 'gold', enableValue: true },
+        { field: 'total', enableValue: true },
+        // ... other column definitions
+    ],
+    sideBar: 'columns',
+};
+```
+
+### Allowed Functions
+To restrict the aggregation functions that can be applied to a column, set the `allowedAggFuncs` column
+definition property to an array of allowed aggregation function names.
+
+{% gridExampleRunner title="Allowed Aggregations" name="user-configured-allowed-aggregations" /%}
+
+The following configuration is an example demonstrating limiting a column to only allow the `"first"` and `"last"`
+aggregation functions:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'total', enableValue: true, allowedAggFuncs: ['first', 'last'] },
+        // ... other column definitions
+    ],
+};
+```
+
+### Default Function
+When right clicked in the [Column Tool Panel](./tool-panel-columns) or dragged into the aggregation panel, the `"sum"` aggregation
+is applied to the column. This default can be changed by setting the `defaultAggFunc` column definition property.
+
+{% gridExampleRunner title="Default Aggregation" name="user-configured-default-aggregations" /%}
+
+The example above demonstrates the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'total', enableValue: true, defaultAggFunc: 'avg' },
+        // ... other column definitions
+    ],
+};
+```
+
+## Omit Function Name in Header
+To omit the aggregation function name from the column header, set the `suppressAggFuncInHeader` option in the 
+column definition.
+
+{% gridExampleRunner title="Suppress Aggregation Function in Header" name="suppress-func-name" /%}
+
+The example above demonstrates the following configuration:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'total', suppressAggFuncInHeader: true },
+        // ... other column definitions
+    ],
+};
+```
+
+## Next Up
+
+Continue to the next section to learn about [Custom Aggregation Functions](./aggregation-custom-functions/).
