@@ -103,11 +103,11 @@ export class MiniBoxPlot extends MiniChartWithAxes {
             (Array.isArray(themeBackgroundColor) ? themeBackgroundColor[0] : themeBackgroundColor) ?? 'white';
 
         this.boxPlotGroups.forEach((group, i) => {
-            group.children?.forEach((node: _Scene.Rect | _Scene.Line) => {
+            for (const node of group.children() as Iterable<_Scene.Rect | _Scene.Line>) {
                 const fill = fills[i % fills.length];
                 node.fill = isCustomTheme ? fill : _Util.interpolateColor(fill, backgroundFill)(0.7);
                 node.stroke = strokes[i % strokes.length];
-            });
+            }
         });
     }
 

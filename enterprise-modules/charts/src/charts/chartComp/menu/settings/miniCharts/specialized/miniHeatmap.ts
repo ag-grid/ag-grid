@@ -63,13 +63,13 @@ export class MiniHeatmap extends MiniChart {
         this.updateColors(fills, strokes, themeTemplate, isCustomTheme);
 
         const rectGroup = new _Scene.Group();
-        rectGroup.setClipRectInGroupCoordinateSpace(new _Scene.BBox(padding, padding, size - padding, size - padding));
+        rectGroup.setClipRect(new _Scene.BBox(padding, padding, size - padding, size - padding));
         rectGroup.append(this.rects);
         this.root.append(rectGroup);
     }
 
     updateColors(fills: string[], strokes: string[], themeTemplate?: ThemeTemplateParameters, isCustomTheme?: boolean) {
-        const defaultColorRange = themeTemplate?.get(_Theme.DEFAULT_DIVERGING_SERIES_COLOUR_RANGE);
+        const defaultColorRange = themeTemplate?.get(_Theme.DEFAULT_DIVERGING_SERIES_COLOR_RANGE);
         const defaultBackgroundColor = themeTemplate?.get(_Theme.DEFAULT_BACKGROUND_COLOUR);
         const backgroundFill =
             (Array.isArray(defaultBackgroundColor) ? defaultBackgroundColor[0] : defaultBackgroundColor) ?? 'white';

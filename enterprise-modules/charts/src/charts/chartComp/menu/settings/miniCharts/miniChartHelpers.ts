@@ -68,9 +68,7 @@ export function createLinePaths(root: _Scene.Group, data: number[][], size: numb
     });
 
     const linesGroup = new _Scene.Group();
-    linesGroup.setClipRectInGroupCoordinateSpace(
-        new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2)
-    );
+    linesGroup.setClipRect(new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
     linesGroup.append(lines);
     root.append(linesGroup);
 
