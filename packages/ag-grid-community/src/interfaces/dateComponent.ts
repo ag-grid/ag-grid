@@ -40,6 +40,8 @@ export interface IDate extends BaseDate {
 
 export interface BaseDateParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     filterParams: DateFilterParams;
+
+    location?: 'filter' | 'floatingFilter';
 }
 
 export interface IDateParams<TData = any, TContext = any> extends BaseDateParams<TData, TContext> {
