@@ -9,9 +9,11 @@ import {
     ModuleRegistry,
 } from './main';
 
-ModuleRegistry.registerModules(
-    // [CommunityFeaturesModule, ClientSideRowModelModule],
-    [CommunityFeaturesModule, ClientSideRowModelModule, InfiniteRowModelModule, CsvExportModule]
-);
+ModuleRegistry.registerModules([
+    CommunityFeaturesModule,
+    ClientSideRowModelModule,
+    InfiniteRowModelModule,
+    CsvExportModule,
+]);
 
 export * from './main';

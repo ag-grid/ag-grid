@@ -210,11 +210,9 @@ export class GridCoreCreator {
     private registerModuleUserComponents(context: Context, registeredModules: Module[]): void {
         const registry = context.getBean('userComponentRegistry');
         registeredModules.forEach((module) => {
-            if (module.userComponents) {
-                module.userComponents.forEach(({ name, classImp, params }) => {
-                    registry.registerDefaultComponent(name, classImp, params);
-                });
-            }
+            module.userComponents?.forEach(({ name, classImp, params }) => {
+                registry.registerDefaultComponent(name, classImp, params);
+            });
         });
     }
 
