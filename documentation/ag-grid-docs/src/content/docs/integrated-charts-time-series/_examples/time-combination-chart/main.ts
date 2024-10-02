@@ -2,7 +2,7 @@ import type {
     AgAxisCaptionFormatterParams,
     AgCartesianSeriesTooltipRendererParams,
     AgCrosshairLabelRendererParams,
-} from 'ag-charts-community';
+} from 'ag-charts-types';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type {

@@ -8,7 +8,7 @@ import type {
     AgChartThemeOverrides,
     AgPolarAxesTheme,
     AgPolarAxisType,
-} from 'ag-charts-community';
+} from 'ag-charts-types';
 
 import type { ChartType } from 'ag-grid-community';
 import { BeanStub, _errorOnce } from 'ag-grid-community';

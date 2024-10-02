@@ -4,7 +4,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { AgColumn } from '../../entities/agColumn';
-import type { CellStyle, ColDef } from '../../entities/colDef';
+import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
 import { _createCellId } from '../../entities/positionUtils';
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
@@ -24,6 +24,7 @@ import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
+import { _requestAnimationFrame } from '../../misc/animationFrameService';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
 import { _setAriaColIndex } from '../../utils/aria';
@@ -370,24 +371,22 @@ export class CellCtrl extends BeanStub {
     }
 
     private showValue(forceNewCellRendererInstance = false): void {
+        const { beans, column, rowNode, cellRangeFeature } = this;
+        const { userComponentFactory, gos } = beans;
         const valueToDisplay = this.getValueToDisplay();
         let compDetails: UserCompDetails | undefined;
 
         // if node is stub, and no group data for this node (groupSelectsChildren can populate group data)
-        const isSsrmLoading = this.rowNode.stub && this.rowNode.groupData?.[this.column.getId()] == null;
+        const isSsrmLoading = rowNode.stub && rowNode.groupData?.[column.getId()] == null;
         if (isSsrmLoading) {
             const params = this.createCellRendererParams();
-            compDetails = _getLoadingCellRendererDetails(
-                this.beans.userComponentFactory,
-                this.column.getColDef(),
-                params
-            );
+            compDetails = _getLoadingCellRendererDetails(userComponentFactory, column.getColDef(), params);
         } else if (this.isCellRenderer()) {
             const params = this.createCellRendererParams();
-            compDetails = _getCellRendererDetails(this.beans.userComponentFactory, this.column.getColDef(), params);
+            compDetails = _getCellRendererDetails(userComponentFactory, column.getColDef(), params);
         }
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
-        this.cellRangeFeature?.refreshHandle();
+        _requestAnimationFrame(gos, () => cellRangeFeature?.refreshHandle());
     }
 
     private setupControlComps(): void {
@@ -416,7 +415,7 @@ export class CellCtrl extends BeanStub {
         return res;
     }
 
-    private isCheckboxSelection(colDef: ColDef): boolean | Function | undefined {
+    private isCheckboxSelection(colDef: ColDef): boolean | CheckboxSelectionCallback | undefined {
         const { rowSelection } = this.beans.gridOptions;
         return (
             colDef.checkboxSelection ||
@@ -468,7 +467,6 @@ export class CellCtrl extends BeanStub {
         }
 
         this.editing = editing;
-        this.cellRangeFeature?.refreshHandle();
     }
 
     // pass in 'true' to cancel the editing.

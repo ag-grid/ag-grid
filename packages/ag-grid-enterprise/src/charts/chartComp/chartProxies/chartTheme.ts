@@ -1,11 +1,11 @@
+import { _Theme } from 'ag-charts-community';
 import type {
     AgChartLegendClickEvent,
     AgChartTheme,
     AgChartThemeName,
     AgChartThemeOverrides,
     AgChartThemePalette,
-} from 'ag-charts-community';
-import { _Theme } from 'ag-charts-community';
+} from 'ag-charts-types';
 
 import { _includes, _warnOnce } from 'ag-grid-community';
 

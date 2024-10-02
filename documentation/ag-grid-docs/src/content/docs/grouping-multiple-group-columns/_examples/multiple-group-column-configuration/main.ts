@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { GridApi, GridOptions, type HeaderValueGetterParams, createGrid } from 'ag-grid-community';
+import { GridApi, GridOptions, HeaderValueGetterParams, createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 

@@ -198,6 +198,10 @@ async function resolvePartials({ pageName, ast, framework }: { pageName: string;
         .flat();
 }
 
+export function getTopHeading(title: string) {
+    return { slug: 'top', depth: 1, text: title };
+}
+
 /**
  * Get headings within markdoc content, resolving headings shown based on framework and adding
  * tab headings
@@ -243,7 +247,7 @@ export async function getHeadings({
         };
     });
 
-    const topHeading = { slug: 'top', depth: 1, text: title };
+    const topHeading = getTopHeading(title);
 
     const headingsWithTabs = addTabsToHeadings({ headings: renderTreeHeadings, markdocAst: ast, getTabItemSlug });
 
