@@ -58,21 +58,28 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
                     calloutLabelKey: category.id,
                     calloutLabel: { enabled: false }, // hide labels on primary series
                     highlightStyle: { item: { fill: undefined } },
+                    title: {
+                        text: f.displayName,
+                        showInLegend: numFields > 1,
+                    },
+                    tooltip: {
+                        renderer: ({ angleKey, calloutLabelKey, datum }: any) => {
+                            return {
+                                content: `${datum[calloutLabelKey]}: ${datum[angleKey]}`,
+                                title: f.displayName,
+                            };
+                        },
+                    },
                     ...(this.crossFiltering && {
                         angleFilterKey: `${f.colId}${CROSS_FILTER_FIELD_POSTFIX}`,
                         listeners: {
                             nodeClick: this.crossFilterCallback,
                         },
                     }),
-                };
+                } as any;
 
                 if (this.chartType === 'donut' || this.chartType === 'doughnut') {
                     const { outerRadiusOffset, innerRadiusOffset } = calculateOffsets(offset);
-                    const title = f.displayName
-                        ? {
-                              title: { text: f.displayName, showInLegend: numFields > 1 },
-                          }
-                        : undefined;
 
                     // augment shared options with 'donut' specific options
                     return {
@@ -80,7 +87,6 @@ export class PieChartProxy extends ChartProxy<AgPolarChartOptions, 'pie' | 'donu
                         type: 'donut',
                         outerRadiusOffset,
                         innerRadiusOffset,
-                        ...title,
                         calloutLine: {
                             colors: this.getChartPalette()?.strokes,
                         },
