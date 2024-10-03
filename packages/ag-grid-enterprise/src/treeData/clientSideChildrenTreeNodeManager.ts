@@ -16,7 +16,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
     private childrenGetter: DataFieldGetter<TData, TData[] | null | undefined>;
 
     public override extractRowData(): TData[] | null | undefined {
-        return this.rootRowNode.allLeafChildren
+        return this.rootNode.allLeafChildren
             ?.filter((row) => !(row as TreeRow<TData>).rowDataLevel)
             .map((row) => row.data!);
     }
@@ -32,7 +32,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
     }
 
     protected override loadNewRowData(rowData: TData[]): void {
-        const { treeData, rootRowNode, treeNodeManager, childrenGetter } = this;
+        const { treeData, rootNode: rootRowNode, treeNodeManager, childrenGetter } = this;
 
         const processedDataSet = new Set<TData>();
         const allLeafChildren: TreeRow<TData>[] = [];

@@ -43,7 +43,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
             if (this.oldGroupDisplayColIds !== newGroupDisplayColIds) {
                 this.oldGroupDisplayColIds = newGroupDisplayColIds;
 
-                this.treeNodeManager.checkAllGroupDataAfterColsChanged(this.rootRowNode.childrenAfterGroup);
+                this.treeNodeManager.checkAllGroupDataAfterColsChanged(this.rootNode.childrenAfterGroup);
             }
         } else {
             this.oldGroupDisplayColIds = '';

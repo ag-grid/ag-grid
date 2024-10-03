@@ -45,7 +45,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     private nextId = 0;
     protected allNodesMap: { [id: string]: RowNode } = {};
 
-    public rootRowNode: AbstractClientSideNodeManager.RootNode<TData>;
+    public rootNode: AbstractClientSideNodeManager.RootNode<TData>;
 
     protected beans: BeanCollection;
 
@@ -58,14 +58,14 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     }
 
     public extractRowData(): TData[] | null | undefined {
-        return this.rootRowNode.allLeafChildren?.map((node) => node.data!);
+        return this.rootNode.allLeafChildren?.map((node) => node.data!);
     }
 
     public setNewRowData(rowData: TData[]): void {
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
-        const rootNode = this.rootRowNode;
-        const sibling = this.rootRowNode.sibling;
+        const rootNode = this.rootNode;
+        const sibling = this.rootNode.sibling;
 
         rootNode.childrenAfterFilter = null;
         rootNode.childrenAfterGroup = null;
@@ -92,7 +92,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     }
 
     protected loadNewRowData(rowData: TData[]): void {
-        this.rootRowNode.allLeafChildren = rowData?.map((dataItem, index) => this.createRowNode(dataItem, index)) ?? [];
+        this.rootNode.allLeafChildren = rowData?.map((dataItem, index) => this.createRowNode(dataItem, index)) ?? [];
     }
 
     public setImmutableRowData(rowData: TData[]): ClientSideNodeManagerUpdateRowDataResult<TData> {
@@ -185,7 +185,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
      * @returns true if the order changed, otherwise false
      */
     private updateRowOrderFromRowData(rowData: TData[]): boolean {
-        const rows = this.rootRowNode.allLeafChildren;
+        const rows = this.rootNode.allLeafChildren;
         const rowsLength = rows?.length ?? 0;
         const rowsOutOfOrder = new Map<TData, AbstractClientSideNodeManager.RowNode<TData>>();
         let firstIndexOutOfOrder = -1;
@@ -228,7 +228,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             return;
         }
 
-        const allLeafChildren = this.rootRowNode.allLeafChildren!;
+        const allLeafChildren = this.rootNode.allLeafChildren!;
         let addIndex = allLeafChildren.length;
 
         if (typeof rowDataTran.addIndex === 'number') {
@@ -266,16 +266,16 @@ export abstract class AbstractClientSideNodeManager<TData = any>
                 nodesAfterIndex[index].sourceRowIndex = nodesAfterIndexFirstIndex + index;
             }
 
-            this.rootRowNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
+            this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
 
             // Mark the result as rows inserted
             result.rowsInserted = true;
         } else {
             // Just append at the end
-            this.rootRowNode.allLeafChildren = allLeafChildren.concat(newNodes);
+            this.rootNode.allLeafChildren = allLeafChildren.concat(newNodes);
         }
 
-        const sibling = this.rootRowNode.sibling;
+        const sibling = this.rootNode.sibling;
         if (sibling) {
             sibling.allLeafChildren = allLeafChildren;
         }
@@ -323,17 +323,17 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             rowNodeTransaction.remove.push(rowNode);
         });
 
-        this.rootRowNode.allLeafChildren =
-            this.rootRowNode.allLeafChildren?.filter((rowNode) => !rowIdsRemoved[rowNode.id!]) ?? null;
+        this.rootNode.allLeafChildren =
+            this.rootNode.allLeafChildren?.filter((rowNode) => !rowIdsRemoved[rowNode.id!]) ?? null;
 
         // after rows have been removed, all following rows need the position index updated
-        this.rootRowNode.allLeafChildren?.forEach((node, idx) => {
+        this.rootNode.allLeafChildren?.forEach((node, idx) => {
             node.sourceRowIndex = idx;
         });
 
-        const sibling = this.rootRowNode.sibling;
+        const sibling = this.rootNode.sibling;
         if (sibling) {
-            sibling.allLeafChildren = this.rootRowNode.allLeafChildren;
+            sibling.allLeafChildren = this.rootNode.allLeafChildren;
         }
     }
 
@@ -365,16 +365,16 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     }
 
     public clearRootRowNode(): void {
-        if (this.rootRowNode) {
+        if (this.rootNode) {
             this.setNewRowData([]);
-            this.rootRowNode = null!;
+            this.rootNode = null!;
         }
     }
 
     public initRootRowNode(rootRowNode: RowNode<TData>): void {
         const rootNode = rootRowNode as ClientSideNodeManagerRootNode<TData>;
 
-        this.rootRowNode = rootNode;
+        this.rootNode = rootNode;
 
         if (rootNode) {
             rootNode.group = true;
@@ -430,7 +430,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     }
 
     protected sanitizeAddIndex(addIndex: number): number {
-        const allChildrenCount = this.rootRowNode.allLeafChildren?.length ?? 0;
+        const allChildrenCount = this.rootNode.allLeafChildren?.length ?? 0;
         if (addIndex < 0 || addIndex >= allChildrenCount || Number.isNaN(addIndex)) {
             return allChildrenCount; // Append. Also for negative values, as it was historically the behavior.
         }
@@ -444,7 +444,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
 
     protected createRowNode(dataItem: TData, sourceRowIndex: number): RowNode<TData> {
         const node: ClientSideNodeManagerRowNode<TData> = new RowNode<TData>(this.beans);
-        node.parent = this.rootRowNode;
+        node.parent = this.rootNode;
         node.level = 0;
         node.group = false;
         node.master = false;
@@ -475,7 +475,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             }
         } else {
             // find rowNode using object references
-            rowNode = this.rootRowNode.allLeafChildren?.find((node) => node.data === data);
+            rowNode = this.rootNode.allLeafChildren?.find((node) => node.data === data);
             if (!rowNode) {
                 _logError(5, { data });
                 return null;
