@@ -105,17 +105,40 @@ function createCrossFilterThemeOverrides(
     chartProxyParams: ChartProxyParams,
     seriesType: ChartSeriesType
 ): AgChartThemeOverrides {
-    const legend = {
-        listeners: {
-            legendItemClick: (e: AgChartLegendClickEvent) => {
-                const chart = proxy.getChart();
-                chart.series.forEach((s) => {
-                    s.toggleSeriesItem(e.itemId, e.enabled);
-                    s.toggleSeriesItem(`${e.itemId}-filtered-out`, e.enabled);
-                });
-            },
-        },
-    };
+    const isPieOrDonut = seriesType === 'pie' || seriesType === 'donut';
+
+    const legend = isPieOrDonut
+        ? {
+              listeners: {
+                  legendItemClick: (e: AgChartLegendClickEvent) => {
+                      (e as any)?.['preventDefault']?.();
+
+                      const chart = proxy.getChart();
+
+                      const series: any = chart.series.find((s: any) => s.id === e.seriesId);
+                      const nodeData: any[] = series?.nodeData;
+                      const item = nodeData?.find((i: any) => i.itemId === e.itemId);
+                      const datum = item?.datum;
+
+                      const categoryKey = proxy.getCategoryKey();
+                      const category = series.properties[categoryKey];
+                      const value = datum[category];
+
+                      const selectionModel = chartProxyParams.crossFilteringContext.getChartSelectionModel(
+                          chartProxyParams.chartId
+                      );
+
+                      if (!selectionModel.hasSelection()) {
+                          selectionModel.selectAll(false);
+                      }
+
+                      selectionModel.toggleSelection(true, category, value);
+
+                      series.setLegendState(selectionModel.getBooleanSelection());
+                  },
+              },
+          }
+        : {};
 
     return {
         [seriesType]: {
@@ -124,7 +147,10 @@ function createCrossFilterThemeOverrides(
             },
             legend,
             listeners: {
-                click: (e: any) => chartProxyParams.crossFilterCallback(e, true),
+                click: (e: any) => {
+                    // clear selection if chart background clicked
+                    chartProxyParams.crossFilterCallback(e, true);
+                },
             },
         },
     };
