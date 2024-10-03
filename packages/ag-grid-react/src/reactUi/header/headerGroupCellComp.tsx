@@ -40,6 +40,34 @@ const HeaderGroupCellComp = ({ ctrl }: { ctrl: HeaderGroupCellCtrl }) => {
                 }
             },
             addOrRemoveCssClass: (name: string, on: boolean) => setCssClasses((prev) => prev.setClass(name, on)),
+            setHeaderWrapperHidden: (hidden: boolean) => {
+                const headerCompWrapper = eHeaderCompWrapper.current;
+
+                if (!headerCompWrapper) {
+                    return;
+                }
+
+                if (hidden) {
+                    headerCompWrapper.style.setProperty('display', 'none');
+                } else {
+                    headerCompWrapper.style.removeProperty('display');
+                }
+            },
+            setHeaderWrapperMaxHeight: (value: number | null) => {
+                const headerCompWrapper = eHeaderCompWrapper.current;
+
+                if (!headerCompWrapper) {
+                    return;
+                }
+
+                if (value != null) {
+                    headerCompWrapper.style.setProperty('max-height', `${value}px`);
+                } else {
+                    headerCompWrapper.style.removeProperty('max-height');
+                }
+
+                headerCompWrapper.classList.toggle('ag-header-cell-comp-wrapper-limited-height', value != null);
+            },
             setUserCompDetails: (compDetails: UserCompDetails) => setUserCompDetails(compDetails),
             setResizableDisplayed: (displayed: boolean) => {
                 setResizableCssClasses((prev) => prev.setClass('ag-hidden', !displayed));

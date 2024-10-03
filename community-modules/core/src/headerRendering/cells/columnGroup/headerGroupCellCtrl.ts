@@ -30,6 +30,8 @@ import type { IHeaderGroupComp, IHeaderGroupParams } from './headerGroupComp';
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     setResizableDisplayed(displayed: boolean): void;
     setWidth(width: string): void;
+    setHeaderWrapperMaxHeight(value: number | null): void;
+    setHeaderWrapperHidden(value: boolean): void;
     setAriaExpanded(expanded: 'true' | 'false' | undefined): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeaderGroupComp | undefined;
@@ -75,6 +77,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.setupUserComp(compBean);
         this.addHeaderMouseListeners(compBean);
 
+        this.addManagedPropertyListener('groupHeaderHeight', this.refreshMaxHeaderHeight.bind(this));
+        this.refreshMaxHeaderHeight();
+
         const pinned = this.getParentRowCtrl().getPinned();
         const leafCols = this.column.getProvidedColumnGroup().getLeafColumns();
 
@@ -98,6 +103,23 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.addResizeAndMoveKeyboardListeners(compBean);
         // Make sure this is the last destroy func as it clears the gui and comp
         compBean.addDestroyFunc(() => this.clearComponent());
+    }
+
+    private refreshMaxHeaderHeight(): void {
+        const { gos, comp } = this;
+
+        const groupHeaderHeight = gos.get('groupHeaderHeight');
+
+        if (groupHeaderHeight != null) {
+            if (groupHeaderHeight === 0) {
+                comp.setHeaderWrapperHidden(true);
+            } else {
+                comp.setHeaderWrapperMaxHeight(groupHeaderHeight);
+            }
+        } else {
+            comp.setHeaderWrapperHidden(false);
+            comp.setHeaderWrapperMaxHeight(null);
+        }
     }
 
     private addHighlightListeners(compBean: BeanStub, columns: AgColumn[]): void {
