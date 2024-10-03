@@ -958,6 +958,7 @@ export {
     _isElementInEventPath,
 } from './utils/event';
 export { _log, _warnOnce, _errorOnce, _debounce, _compose, _doOnce, _waitUntil } from './utils/function';
+export { _logWarn, _logError } from './validation/logging';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export {

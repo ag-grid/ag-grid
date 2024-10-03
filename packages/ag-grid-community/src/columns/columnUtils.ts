@@ -83,8 +83,6 @@ export function convertColumnTypes(type: string | string[]): string[] {
         }
     } else if (typeof type === 'string') {
         typeKeys = type.split(',');
-    } else {
-        _logWarn(43, {});
     }
     return typeKeys;
 }

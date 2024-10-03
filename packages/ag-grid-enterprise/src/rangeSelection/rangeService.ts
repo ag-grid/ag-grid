@@ -9,6 +9,7 @@ import type {
     ColumnModel,
     CtrlsService,
     DragService,
+    GridOptionsService,
     ICellRangeFeature,
     IRangeService,
     IRowModel,
@@ -38,6 +39,7 @@ import {
     _isSameRow,
     _isUsingNewCellSelectionAPI,
     _last,
+    _logWarn,
     _makeNull,
     _missing,
     _shallowCompare,
@@ -367,6 +369,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return;
         }
 
+        if (!this.verifyCellRanges(this.gos)) {
+            return;
+        }
+
         this.removeAllCellRanges(true);
 
         cellRanges.forEach((newRange) => {
@@ -493,13 +499,19 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         };
     }
 
+    private verifyCellRanges(gos: GridOptionsService): boolean {
+        const invalid = _isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && this.cellRanges.length > 0;
+        if (invalid) {
+            _logWarn(93, {});
+        }
+
+        return !invalid;
+    }
+
     public addCellRange(params: CellRangeParams): void {
         const gos = this.gos;
-        if (!_isCellSelectionEnabled(gos)) {
+        if (!_isCellSelectionEnabled(gos) || !this.verifyCellRanges(gos)) {
             return;
-        }
-        if (_isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && this.cellRanges.length > 0) {
-            return _warnOnce('cannot add multiple ranges when `cellSelection.suppressMultiRanges = true`');
         }
 
         const newRange = this.createCellRangeFromCellRangeParams(params);

@@ -87,13 +87,13 @@ export const AG_GRID_ERRORS = {
         `Column type definitions 'columnTypes' with a 'type' attribute are not supported because a column type cannot refer to another column type. Only column definitions 'columnDefs' can use the 'type' attribute to refer to a column type.` as const,
     36: ({ t }: { t: string }) => "colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes",
     37: () => `Changing the column pinning status is not allowed with domLayout='print'` as const,
-    38: () => 'autoHeight columns only work with Client Side Row Model and Server Side Row Model.' as const,
+    38: () => '' as const,
     39: () =>
         'Applying column order broke a group where columns should be married together. Applying new order has been discarded.' as const,
-    40: () => 'Pivot mode not available with treeData.' as const,
-    41: () => 'headerValueGetter must be a function or a string' as const,
+    40: () => '' as const,
+    41: () => '' as const,
     42: () => "if colDef.type is supplied an array it should be of type 'string[]'" as const,
-    43: () => "colDef.type should be of type 'string' | 'string[]'" as const,
+    43: () => '' as const,
     44: () =>
         'Data type definition hierarchies (via the "extendsDataType" property) cannot contain circular references.' as const,
     45: ({ parentCellDataType }: { parentCellDataType: string }) =>
@@ -113,7 +113,7 @@ export const AG_GRID_ERRORS = {
     55: () => 'addRowDropZone - A container target needs to be provided' as const,
     56: () =>
         'addRowDropZone - target already exists in the list of DropZones. Use `removeRowDropZone` before adding it again.' as const,
-    57: () => "Setting `rowDragEntireRow: true` in the gridOptions doesn't work with `cellSelection: true`" as const,
+    57: () => '' as const,
     58: () => 'no values found for select cellEditor' as const,
     59: () => 'cannot select pinned rows' as const,
     60: () => 'cannot select node until id for node is known' as const,
@@ -163,8 +163,7 @@ export const AG_GRID_ERRORS = {
     89: () =>
         `A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)` as const,
     90: () => `datasource is missing getRows method` as const,
-    91: () =>
-        'initialGroupOrderComparator cannot be used with Infinite Row Model as sorting is done on the server side' as const,
+    91: () => '' as const,
     92: ({ methodName }: { methodName: string }) =>
         `AnimationFrameService.${methodName} called but animation frames are off` as const,
     93: () => 'cannot add multiple ranges when `cellSelection.suppressMultiRanges = true`' as const,
@@ -201,8 +200,7 @@ export const AG_GRID_ERRORS = {
         'popup cellEditor does not work with fullRowEdit - you cannot use them both - either turn off fullRowEdit, or stop using popup editors.' as const,
     99: () =>
         'Since v32, `api.hideOverlay()` does not hide the loading overlay when `loading=true`. Set `loading=false` instead.' as const,
-    100: () =>
-        'rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead' as const,
+    100: () => '' as const,
     101: ({
         propertyName,
         componentName,

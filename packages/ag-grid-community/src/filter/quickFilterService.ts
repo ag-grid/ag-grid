@@ -5,7 +5,6 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _exists } from '../utils/generic';
@@ -118,7 +117,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     }
 
     private parseQuickFilter(newFilter?: string): string | null {
-        if (!_exists(newFilter) || !_isClientSideRowModel(this.gos)) {
+        if (!_exists(newFilter)) {
             return null;
         }
 

@@ -55,7 +55,6 @@ import { _isStopPropagationForAgGrid } from '../../utils/event';
 import { _executeNextVMTurn } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
-import { _logWarn } from '../../validation/logging';
 import type { Component } from '../../widgets/component';
 import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
 import { TooltipFeature } from '../../widgets/tooltipFeature';
@@ -1482,11 +1481,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public processStylesFromGridOptions(): RowStyle | undefined {
         // part 1 - rowStyle
         const rowStyle = this.gos.get('rowStyle');
-
-        if (rowStyle && typeof rowStyle === 'function') {
-            _logWarn(100, {});
-            return;
-        }
 
         // part 1 - rowStyleFunc
         const rowStyleFunc = this.gos.getCallback('getRowStyle');

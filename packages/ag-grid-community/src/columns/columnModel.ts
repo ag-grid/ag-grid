@@ -566,11 +566,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         if (this.autoHeightActive) {
             this.autoHeightActiveAtLeastOnce = true;
-
-            const supportedRowModel = _isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos);
-            if (!supportedRowModel) {
-                _logWarn(38, {});
-            }
         }
     }
 

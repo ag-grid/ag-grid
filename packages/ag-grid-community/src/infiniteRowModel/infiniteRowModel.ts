@@ -13,7 +13,6 @@ import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import type { SortController } from '../sort/sortController';
 import { _jsonEquals } from '../utils/generic';
 import { NumberSequence } from '../utils/numberSequence';
-import { _logWarn } from '../validation/logging';
 import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
 
@@ -61,14 +60,6 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
         this.addEventListeners();
 
         this.addDestroyFunc(() => this.destroyCache());
-
-        this.verifyProps();
-    }
-
-    private verifyProps(): void {
-        if (this.gos.exists('initialGroupOrderComparator')) {
-            _logWarn(91, {});
-        }
     }
 
     public start(): void {

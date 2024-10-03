@@ -1,16 +1,13 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection, UserComponentName } from '../../context/context';
+import type { UserComponentName } from '../../context/context';
 import { ModuleNames } from '../../modules/moduleNames';
 import { TooltipComponent } from '../../rendering/tooltipComponent';
 import { _iterateObject } from '../../utils/object';
 import { _logWarn } from '../../validation/logging';
-import type { ValidationService } from '../../validation/validationService';
 
 export class UserComponentRegistry extends BeanStub implements NamedBean {
     beanName = 'userComponentRegistry' as const;
-
-    private validationService?: ValidationService;
 
     private agGridDefaults: { [key in UserComponentName]?: any } = {
         // tooltips
@@ -36,10 +33,6 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
     };
 
     private jsComps: { [key: string]: any } = {};
-
-    public wireBeans(beans: BeanCollection): void {
-        this.validationService = beans.validationService;
-    }
 
     public postConstruct(): void {
         const comps = this.gos.get('components');
