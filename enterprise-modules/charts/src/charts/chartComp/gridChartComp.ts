@@ -53,6 +53,11 @@ import { ChartOptionsService } from './services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from './services/chartTranslationService';
 import { getCanonicalChartType, getSeriesType, isHierarchical } from './utils/seriesTypeMapper';
 
+const EMPTY_IS_ALL_CATEGORIES: Partial<Record<ChartType, boolean>> = {
+    pie: true,
+    donut: true,
+};
+
 export interface GridChartParams {
     chartId: string;
     pivotChart?: boolean;
@@ -178,11 +183,11 @@ export class GridChartComp extends Component {
                 ctx.clearAllSelections();
             } else {
                 const category = event[this.chartProxy.getCategoryKey()];
-                const value = event.datum![category];
+                const value = `${event.datum![category]}`;
                 const multiSelection = event.event.metaKey || event.event.ctrlKey;
 
                 if (multiSelection) {
-                    if (!selectionModel.hasSelection()) {
+                    if (EMPTY_IS_ALL_CATEGORIES[this.params.chartType] && !selectionModel.hasSelection()) {
                         selectionModel.selectAll(false);
                     }
                     selectionModel.toggleSelection(multiSelection, category, value);

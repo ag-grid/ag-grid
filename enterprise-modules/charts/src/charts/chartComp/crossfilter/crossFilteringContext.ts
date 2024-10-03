@@ -29,11 +29,11 @@ export class CrossFilteringContext {
         );
 
         if (notify) {
-            this.updateFromSelection();
+            this.updateFromSelectionModels();
         }
     }
 
-    public updateFromSelection(): void {
+    public updateFromSelectionModels(): void {
         const updates = Object.values(this.chartSelectionModels)
             .map((chartSelectionModel) => chartSelectionModel.getFlatSelection())
             .reduce((acc, flatSelection) => {
@@ -58,18 +58,16 @@ export class CrossFilteringContext {
 
         const updated = Object.entries(index)
             .filter(([, a]) => !!a)
-            .map(([key, value]) =>
-                value.setSelection(
-                    crossFilterUpdate[key].map((v: any) => ({ category: key, value: v })),
-                    false
-                )
-            )
+            .map(([key, value]) => {
+                const selection = crossFilterUpdate[key].map((v: any) => ({ category: key, value: v }));
+                return value.setSelection(selection, false);
+            })
             .filter((a) => a);
 
         if (updated.length > 0) {
             console.warn('setFilters', crossFilterUpdate);
 
-            this.updateFromSelection();
+            this.updateFromSelectionModels();
         }
     }
 }

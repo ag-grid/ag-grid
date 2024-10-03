@@ -51,6 +51,8 @@ interface IData {
     groupChartData?: any[];
 }
 
+const ROW_CHILDREN = '__children';
+
 export class ChartDatasource extends BeanStub {
     private gridRowModel: IRowModel;
     private pivotResultColsService: PivotResultColsService;
@@ -288,7 +290,7 @@ export class ChartDatasource extends BeanStub {
                     let groupItem = currentMap[key];
 
                     if (!groupItem) {
-                        groupItem = { __children: [] };
+                        groupItem = { [ROW_CHILDREN]: [] };
 
                         dimensionCols.forEach((dimCol) => {
                             const dimColId = dimCol.colId;
@@ -299,7 +301,7 @@ export class ChartDatasource extends BeanStub {
                         dataAggregated.push(groupItem);
                     }
 
-                    groupItem.__children.push(data);
+                    groupItem[ROW_CHILDREN].push(data);
                 } else {
                     // map of maps
                     if (!currentMap[key]) {
@@ -320,9 +322,9 @@ export class ChartDatasource extends BeanStub {
                             const colId = valueCol.getColId();
 
                             // filtered data
-                            const dataToAgg = groupItem.__children
-                                .filter((child: any) => typeof child[colId] !== 'undefined')
-                                .map((child: any) => child[colId]);
+                            const dataToAgg = groupItem[ROW_CHILDREN].filter(
+                                (child: any) => typeof child[colId] !== 'undefined'
+                            ).map((child: any) => child[colId]);
 
                             const aggResult: any = aggStage.aggregateValues(dataToAgg, params.aggFunc!);
                             groupItem[valueCol.getId()] =
@@ -330,9 +332,9 @@ export class ChartDatasource extends BeanStub {
 
                             // filtered out data
                             const filteredOutColId = `${colId}${CROSS_FILTER_FIELD_POSTFIX}`;
-                            const dataToAggFiltered = groupItem.__children
-                                .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
-                                .map((child: any) => child[filteredOutColId]);
+                            const dataToAggFiltered = groupItem[ROW_CHILDREN].filter(
+                                (child: any) => typeof child[filteredOutColId] !== 'undefined'
+                            ).map((child: any) => child[filteredOutColId]);
 
                             const aggResultFiltered: any = aggStage.aggregateValues(dataToAggFiltered, params.aggFunc!);
                             groupItem[filteredOutColId] =
@@ -341,7 +343,7 @@ export class ChartDatasource extends BeanStub {
                                     : aggResultFiltered;
                         });
                     } else {
-                        const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
+                        const dataToAgg = groupItem[ROW_CHILDREN].map((child: any) => child[col.getId()]);
                         const aggResult = aggStage.aggregateValues(dataToAgg, params.aggFunc!);
 
                         groupItem[col.getId()] =
@@ -353,7 +355,7 @@ export class ChartDatasource extends BeanStub {
 
         // clean up temporary data before passing to charts
         dataAggregated.forEach((groupItem) => {
-            delete groupItem.__children;
+            delete groupItem[ROW_CHILDREN];
         });
 
         return dataAggregated;

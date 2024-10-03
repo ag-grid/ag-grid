@@ -62,7 +62,7 @@ export class ChartSelectionModel {
         }
 
         if (notify) {
-            this.crossFilteringContext.updateFromSelection();
+            this.crossFilteringContext.updateFromSelectionModels();
         }
     }
 
@@ -80,7 +80,7 @@ export class ChartSelectionModel {
 
         this.selection = entries;
         if (notify) {
-            this.crossFilteringContext.updateFromSelection();
+            this.crossFilteringContext.updateFromSelectionModels();
         }
 
         return true;
