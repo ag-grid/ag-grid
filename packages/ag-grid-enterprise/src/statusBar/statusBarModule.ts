@@ -1,5 +1,5 @@
 import type { _ModuleWithApi, _ModuleWithoutApi, _StatusBarGridApi } from 'ag-grid-community';
-import { KeyboardNavigationCoreModule, ModuleNames } from 'ag-grid-community';
+import { KeyboardNavigationCoreModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
@@ -38,6 +38,6 @@ export const StatusBarApiModule: _ModuleWithApi<_StatusBarGridApi> = {
 };
 
 export const StatusBarModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule(ModuleNames.StatusBarModule),
+    ...baseEnterpriseModule('StatusBarModule'),
     dependsOn: [StatusBarCoreModule, StatusBarApiModule, StatusBarSelectionModule],
 };
