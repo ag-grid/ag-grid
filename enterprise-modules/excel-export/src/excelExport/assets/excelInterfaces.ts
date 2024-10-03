@@ -1,6 +1,6 @@
 import type { ExcelFont, ExcelHeaderFooterImage, ExcelImage } from '@ag-grid-community/core';
 
-export type ImageIdMap = Map</** imageId */ string, { type: string; index: number }>;
+export type ImageIdMap = Map</** imageId */ string, { type: 'jpg' | 'png' | 'gif'; index: number }>;
 export type BorderProperty = string | undefined;
 
 export interface NumberFormat {
