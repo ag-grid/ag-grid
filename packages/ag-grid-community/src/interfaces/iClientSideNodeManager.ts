@@ -18,11 +18,13 @@ export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
 }
 
 export interface IClientSideNodeManager<TData = any> {
-    initRootNode(rootRowNode: RowNode<TData> | null): void;
+    initRootRowNode(rootRowNode: RowNode<TData> | null): void;
 
-    clearRootNode(): void;
+    clearRootRowNode(): void;
 
     getRowNode(id: string): RowNode<TData> | undefined;
+
+    extractRowData(): (TData | undefined)[] | null | undefined;
 
     setNewRowData(rowData: TData[]): void;
 

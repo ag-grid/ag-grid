@@ -193,11 +193,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (oldNodeManager !== nodeManager) {
-            oldNodeManager?.clearRootNode();
+            oldNodeManager?.clearRootRowNode();
             this.nodeManager = nodeManager;
         }
 
-        nodeManager.initRootNode(this.rootNode);
+        nodeManager.initRootRowNode(this.rootNode);
     }
 
     private addPropertyListeners() {
@@ -252,11 +252,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             const rowDataChanged = properties.includes('rowData');
 
             if (arePropertiesImpacted(resetProps)) {
-                let newRowData: any[] | null | undefined;
-                if (rowDataChanged) {
-                    newRowData = this.gos.get('rowData');
-                } else {
-                    newRowData = this.rootNode.allLeafChildren?.map((child) => child.data);
+                let newRowData = this.gos.get('rowData');
+                if (!rowDataChanged) {
+                    newRowData ??= this.nodeManager?.extractRowData();
                 }
                 this.initRowManager();
                 this.setNewRowData(newRowData ?? []);

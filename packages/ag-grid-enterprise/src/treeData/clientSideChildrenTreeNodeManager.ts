@@ -1,4 +1,5 @@
 import type { IClientSideNodeManager, NamedBean, RowNode } from 'ag-grid-community';
+import { _logError } from 'ag-grid-community';
 
 import { AbstractClientSideTreeNodeManager } from './abstractClientSideTreeNodeManager';
 import { makeFieldPathGetter } from './fieldAccess';
@@ -14,76 +15,77 @@ export class ClientSideChildrenTreeNodeManager<TData>
 
     private childrenGetter: DataFieldGetter<TData, TData[] | null | undefined>;
 
-    public override initRootNode(rootRowNode: RowNode<TData>): void {
+    public override extractRowData(): TData[] | null | undefined {
+        return this.rootRowNode.allLeafChildren
+            ?.filter((row) => !(row as TreeRow<TData>).rowDataLevel)
+            .map((row) => row.data!);
+    }
+
+    public override initRootRowNode(rootRowNode: RowNode<TData>): void {
         const oldChildrenGetter = this.childrenGetter;
         const childrenField = this.gos.get('treeDataChildrenField');
         if (!oldChildrenGetter || oldChildrenGetter.path !== childrenField) {
             this.childrenGetter = makeFieldPathGetter(childrenField);
         }
 
-        super.initRootNode(rootRowNode);
+        super.initRootRowNode(rootRowNode);
     }
 
     protected override loadNewRowData(rowData: TData[]): void {
-        const treeData = this.gos.get('treeData');
-        const rootRow = this.rootNode;
-
-        this.treeNodeManager.clearTree(this.treeNodeManager.root);
-        if (treeData) {
-            this.treeNodeManager.initRootNode(rootRow);
-        } else {
-            this.treeNodeManager.clearRootNode();
-        }
-
-        const childrenGetter = this.childrenGetter;
+        const { treeData, rootRowNode, treeNodeManager, childrenGetter } = this;
 
         const processedDataSet = new Set<TData>();
         const allLeafChildren: TreeRow<TData>[] = [];
 
-        rootRow.allLeafChildren = allLeafChildren;
+        rootRowNode.allLeafChildren = allLeafChildren;
 
-        const addChild = (parent: TreeNode | null, item: TData) => {
-            if (processedDataSet.has(item)) {
-                return; // Duplicate node
+        treeNodeManager.clearTree(this.treeNodeManager.root);
+
+        const addChild = (parent: TreeNode, rowDataLevel: number, data: TData) => {
+            if (processedDataSet.has(data)) {
+                _logError(5, { data }); // Duplicate node
+                return;
             }
 
-            processedDataSet.add(item);
+            processedDataSet.add(data);
 
-            const row = this.createRowNode(item, allLeafChildren.length) as TreeRow<TData>;
+            const row = this.createRowNode(data, allLeafChildren.length) as TreeRow<TData>;
+            row.rowDataLevel = rowDataLevel;
             allLeafChildren.push(row);
 
-            const treeNode = parent ? parent.upsertKey(row.id!) : null;
-            if (treeNode) {
-                this.treeNodeManager.addOrUpdateRow(treeNode, row, false);
+            if (treeData) {
+                parent = parent.upsertKey(row.id!);
+                treeNodeManager.addOrUpdateRow(parent, row, false);
             }
 
-            const children = childrenGetter(item);
+            const children = childrenGetter(data);
             if (children) {
-                for (const child of children) {
-                    addChild(treeNode, child);
+                ++rowDataLevel;
+                for (let i = 0, len = children.length; i < len; ++i) {
+                    addChild(parent, rowDataLevel, children[i]);
                 }
             }
         };
 
-        const rootTreeNode = treeData ? this.treeNodeManager.root : null;
-        for (const item of rowData) {
-            addChild(rootTreeNode, item);
+        const rootTreeNode = this.treeNodeManager.root;
+        for (let i = 0, len = rowData.length; i < len; ++i) {
+            addChild(rootTreeNode, 0, rowData[i]);
         }
 
         if (treeData) {
-            this.treeNodeManager.commitTree(undefined);
+            treeNodeManager.commitTree(undefined);
         }
     }
 
     public setMasterForAllRows(rows: RowNode<TData>[] | null | undefined, shouldSetExpanded: boolean): void {
-        if (!this.gos.get('treeData')) {
+        if (!this.treeData) {
             this.beans.detailGridApiService?.setMasterForAllRows(rows, shouldSetExpanded);
         }
     }
 
     protected override createRowNode(data: TData, sourceRowIndex: number): RowNode<TData> {
         const node = super.createRowNode(data, sourceRowIndex);
-        if (!this.gos.get('treeData')) {
+        if (!this.treeData) {
             this.beans.detailGridApiService?.setMasterForRow(node, data, true);
         }
         return node;

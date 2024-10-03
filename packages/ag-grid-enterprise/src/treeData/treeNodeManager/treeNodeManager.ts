@@ -441,11 +441,7 @@ export class TreeNodeManager extends BeanStub {
     }
 
     /** Called to clear a subtree. */
-    public clearTree(node: TreeNode | null): void {
-        if (!node) {
-            return;
-        }
-
+    public clearTree(node: TreeNode): void {
         const { parent, oldRow, row, level } = node;
         if (parent !== null && oldRow !== null) {
             parent.childrenChanged = true;
