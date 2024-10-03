@@ -111,7 +111,7 @@ function createCrossFilterThemeOverrides(
         ? {
               listeners: {
                   legendItemClick: (e: AgChartLegendClickEvent) => {
-                      e?.['preventDefault']?.();
+                      (e as any)?.['preventDefault']?.();
 
                       const chart = proxy.getChart();
 
