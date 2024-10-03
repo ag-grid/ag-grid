@@ -108,7 +108,13 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         const currentColumnGroupIndex = this.groupColumns.indexOf(column);
 
         if (currentColumnGroupIndex !== -1) {
-            if (node.groupData?.[column.getId()] != null) {
+            const groupDataKeyForColumn = node.groupData?.[column.getId()];
+            const suppressGroupMaintainValueType = this.gos.get('suppressGroupMaintainValueType');
+
+            if (
+                (suppressGroupMaintainValueType && groupDataKeyForColumn != null) ||
+                (!suppressGroupMaintainValueType && groupDataKeyForColumn !== undefined)
+            ) {
                 return true;
             }
 
