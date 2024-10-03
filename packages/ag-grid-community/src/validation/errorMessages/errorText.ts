@@ -68,10 +68,9 @@ export const AG_GRID_ERRORS = {
             'Exception = ',
             e,
         ] as const,
-    17: ({ rowModelType }: { rowModelType: string }) =>
-        `Could not find row model for rowModelType = ${rowModelType}` as const,
-    18: () => `alignedGrids contains an undefined option.` as const, // Link should be added getDocLink('aligned-grids')
-    19: () => `alignedGrids - No api found on the linked grid.` as const, // Link should be added getDocLink('aligned-grids')
+    17: () => `` as const,
+    18: () => `alignedGrids contains an undefined option.` as const,
+    19: () => `alignedGrids - No api found on the linked grid.` as const,
     20: () =>
         `You may want to configure via a callback to avoid setup race conditions:
                      "alignedGrids: () => [linkedGrid]"` as const,
