@@ -55,13 +55,21 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-            'ag-grid-charts-enterprise': {
+            'ag-grid-react': {
+                main: './dist/package/index.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-charts-types': {
                 main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-            'ag-grid-react': {
-                main: './dist/package/index.cjs.js',
+            'ag-charts-community/modules': {
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-charts-enterprise/modules': {
                 defaultExtension: 'js',
                 format: 'cjs',
             },

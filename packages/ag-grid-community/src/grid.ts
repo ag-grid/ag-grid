@@ -1,7 +1,7 @@
 import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
-import type { ComponentMeta, ContextParams, SingletonBean } from './context/context';
+import type { ContextParams, SingletonBean } from './context/context';
 import { Context } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import type { GridOptions } from './entities/gridOptions';
@@ -9,10 +9,10 @@ import { GridComp } from './gridComp/gridComp';
 import { GridCoreModule } from './gridCoreModule';
 import { getCoercedGridOptions } from './gridOptionsService';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
-import type { Module } from './interfaces/iModule';
+import type { Module, _ModuleWithApi, _ModuleWithoutApi } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { ModuleNames } from './modules/moduleNames';
-import { ModuleRegistry } from './modules/moduleRegistry';
+import { _assertModuleRegistered, _getRegisteredModules, _registerModule } from './modules/moduleRegistry';
 import { _errorOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
@@ -152,9 +152,11 @@ export class GridCoreCreator {
 
         const gridId = gridOptions.gridId ?? String(nextGridId++);
 
-        const registeredModules = this.getRegisteredModules(params, gridId);
+        const rowModelType = gridOptions.rowModelType ?? 'clientSide';
 
-        const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
+        const registeredModules = this.getRegisteredModules(params, gridId, rowModelType);
+
+        const beanClasses = this.createBeansList(rowModelType, registeredModules, gridId);
         const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
 
         if (!beanClasses) {
@@ -164,9 +166,9 @@ export class GridCoreCreator {
         }
 
         const contextParams: ContextParams = {
-            providedBeanInstances: providedBeanInstances,
-            beanClasses: beanClasses,
-            gridId: gridId,
+            providedBeanInstances,
+            beanClasses,
+            gridId,
             beanInitComparator: gridBeanInitComparator,
             beanDestroyComparator: gridBeanDestroyComparator,
             derivedBeans: [createGridApi],
@@ -197,54 +199,27 @@ export class GridCoreCreator {
         });
     }
 
-    private getRegisteredModules(params: GridParams | undefined, gridId: string): Module[] {
-        const passedViaConstructor: Module[] | undefined | null = params ? params.modules : null;
-        const registered = ModuleRegistry.__getRegisteredModules(gridId);
+    private getRegisteredModules(params: GridParams | undefined, gridId: string, rowModelType: RowModelType): Module[] {
+        _registerModule(GridCoreModule, gridId);
 
-        const allModules: Module[] = [];
-        const mapNames: { [name: string]: boolean } = {};
+        params?.modules?.forEach((m) => _registerModule(m, gridId));
 
-        // adds to list and removes duplicates
-        const addModule = (moduleBased: boolean, mod: Module, gridId: string | undefined) => {
-            const addIndividualModule = (currentModule: Module) => {
-                if (!mapNames[currentModule.moduleName]) {
-                    mapNames[currentModule.moduleName] = true;
-                    allModules.push(currentModule);
-                    ModuleRegistry.__register(currentModule, moduleBased, gridId);
-                }
-            };
-
-            addIndividualModule(mod);
-            if (mod.dependsOn) {
-                mod.dependsOn.forEach((m) => addModule(moduleBased, m, gridId));
-            }
-        };
-
-        addModule(true, GridCoreModule, gridId);
-
-        if (passedViaConstructor) {
-            passedViaConstructor.forEach((m) => addModule(true, m, gridId));
-        }
-
-        if (registered) {
-            registered.forEach((m) => addModule(!ModuleRegistry.__isPackageBased(), m, undefined));
-        }
-
-        return allModules;
+        return _getRegisteredModules(gridId, rowModelType);
     }
 
     private registerModuleUserComponents(context: Context, registeredModules: Module[]): void {
-        const moduleUserComps: ComponentMeta[] = this.extractModuleEntity<ComponentMeta>(registeredModules, (module) =>
-            module.userComponents ? module.userComponents : []
-        );
-
         const registry = context.getBean('userComponentRegistry');
-        moduleUserComps.forEach(({ name, classImp, params }) => {
-            registry.registerDefaultComponent(name, classImp, params);
+        registeredModules.forEach((module) => {
+            module.userComponents?.forEach(({ name, classImp, params }) => {
+                registry.registerDefaultComponent(name, classImp, params);
+            });
         });
     }
 
-    private registerModuleApiFunctions(context: Context, registeredModules: Module[]): void {
+    private registerModuleApiFunctions(
+        context: Context,
+        registeredModules: (_ModuleWithApi<any> | _ModuleWithoutApi)[]
+    ): void {
         const apiFunctionService = context.getBean('apiFunctionService');
         registeredModules.forEach((module) => {
             const apiFunctions = module.apiFunctions;
@@ -278,15 +253,10 @@ export class GridCoreCreator {
     }
 
     private createBeansList(
-        rowModelType: RowModelType | undefined = 'clientSide',
+        rowModelType: RowModelType,
         registeredModules: Module[],
         gridId: string
     ): SingletonBean[] | undefined {
-        // only load beans matching the required row model
-        const rowModelModules = registeredModules.filter(
-            (module) => !module.rowModel || module.rowModel === rowModelType
-        );
-
         // assert that the relevant module has been loaded
         const rowModelModuleNames: Record<RowModelType, ModuleNames> = {
             clientSide: ModuleNames.ClientSideRowModelModule,
@@ -301,33 +271,20 @@ export class GridCoreCreator {
         }
 
         if (
-            !ModuleRegistry.__assertRegistered(
+            !_assertModuleRegistered(
                 rowModelModuleNames[rowModelType],
                 `rowModelType = '${rowModelType}'`,
-                gridId
+                gridId,
+                rowModelType
             )
         ) {
             return;
         }
 
-        const beans: SingletonBean[] = [];
+        const beans: Set<SingletonBean> = new Set();
 
-        const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => (module.beans ? module.beans : []));
-        beans.push(...moduleBeans);
+        registeredModules.forEach((module) => module.beans?.forEach((bean) => beans.add(bean)));
 
-        // check for duplicates, as different modules could include the same beans that
-        // they depend on, eg ClientSideRowModel in enterprise, and ClientSideRowModel in community
-        const beansNoDuplicates: SingletonBean[] = [];
-        beans.forEach((bean) => {
-            if (beansNoDuplicates.indexOf(bean) < 0) {
-                beansNoDuplicates.push(bean);
-            }
-        });
-
-        return beansNoDuplicates;
-    }
-
-    private extractModuleEntity<T>(moduleEntities: Module[], extractor: (module: Module) => T[]) {
-        return ([] as T[]).concat(...moduleEntities.map(extractor));
+        return Array.from(beans);
     }
 }

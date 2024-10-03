@@ -155,9 +155,7 @@ export function createLinePaths(root: _Scene.Group, data: number[][], size: numb
     });
 
     const pathsGroup = new _Scene.Group();
-    pathsGroup.setClipRectInGroupCoordinateSpace(
-        new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2)
-    );
+    pathsGroup.setClipRect(new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
     pathsGroup.append(paths);
     root.append(pathsGroup);
 
@@ -176,9 +174,7 @@ export function createAreaPaths(
     const pathCommands = createAreaPathCommands(createPathCommands(data, xScale, yScale), yScale, stacked);
 
     const areasGroup = new _Scene.Group();
-    areasGroup.setClipRectInGroupCoordinateSpace(
-        new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2)
-    );
+    areasGroup.setClipRect(new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
 
     const paths: _Scene.Path[] = pathCommands.map((commands) => createPath(commands));
     areasGroup.append(paths);

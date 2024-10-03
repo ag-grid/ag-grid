@@ -17,20 +17,18 @@ import type {
     GridApi,
     GridOptions,
     GridParams,
-    IClientSideRowModel,
     IDetailCellRenderer,
     IDetailCellRendererCtrl,
     IDetailCellRendererParams,
-    IServerSideRowModel,
     WrappableInterface,
 } from 'ag-grid-community';
 import {
     BaseComponentWrapper,
     GridCoreCreator,
-    ModuleRegistry,
     VanillaFrameworkOverrides,
     _combineAttributesAndGridOptions,
     _getGlobalGridOption,
+    _getGridRegisteredModules,
     _isClientSideRowModel,
     _isServerSideRowModel,
     _observeResize,
@@ -312,7 +310,10 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
 
     const resizeObserverDestroyFunc = useRef<() => void>();
 
-    const parentModules = useMemo(() => ModuleRegistry.__getGridRegisteredModules(props.api.getGridId()), [props]);
+    const parentModules = useMemo(
+        () => _getGridRegisteredModules(props.api.getGridId(), detailGridOptions?.rowModelType ?? 'clientSide'),
+        [props]
+    );
     const topClassName = useMemo(() => cssClasses.toString() + ' ag-details-row', [cssClasses]);
     const gridClassName = useMemo(() => gridCssClasses.toString() + ' ag-details-grid', [gridCssClasses]);
 

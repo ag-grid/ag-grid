@@ -107,7 +107,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         const currentColumnGroupIndex = this.groupColumns.indexOf(column);
 
         if (currentColumnGroupIndex !== -1) {
-            if (node.groupData?.[column.getId()] != null) {
+            if (node.groupData?.[column.getId()] !== undefined) {
                 return true;
             }
 

@@ -89,14 +89,10 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
         });
 
         const areaGroup = new _Scene.Group();
-        areaGroup.setClipRectInGroupCoordinateSpace(
-            new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2)
-        );
+        areaGroup.setClipRect(new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
 
         const columnGroup = new _Scene.Group();
-        columnGroup.setClipRectInGroupCoordinateSpace(
-            new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2)
-        );
+        columnGroup.setClipRect(new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
 
         areaGroup.append(this.areas);
         columnGroup.append(this.columns);
