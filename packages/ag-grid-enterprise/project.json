@@ -15,6 +15,7 @@
       "dependsOn": ["^build", "build:copy-styles", "build:package"],
       "inputs": [
         "tsDefaults",
+        "styleOutputs",
         {
           "dependentTasksOutputFiles": "**/main.cjs.js",
           "transitive": true
