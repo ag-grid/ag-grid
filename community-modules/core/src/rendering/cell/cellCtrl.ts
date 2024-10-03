@@ -4,7 +4,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellPosition } from '../../entities/cellPositionUtils';
-import type { CellStyle, ColDef } from '../../entities/colDef';
+import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import type { RowPosition } from '../../entities/rowPositionUtils';
 import type { AgEventType } from '../../eventTypes';
@@ -371,23 +371,22 @@ export class CellCtrl extends BeanStub {
     }
 
     private showValue(forceNewCellRendererInstance = false): void {
+        const { beans, column, rowNode, cellRangeFeature, cellComp } = this;
+        const { userComponentFactory, animationFrameService } = beans;
         const valueToDisplay = this.getValueToDisplay();
         let compDetails: UserCompDetails | undefined;
 
         // if node is stub, and no group data for this node (groupSelectsChildren can populate group data)
-        const isSsrmLoading = this.rowNode.stub && this.rowNode.groupData?.[this.column.getId()] == null;
+        const isSsrmLoading = rowNode.stub && rowNode.groupData?.[this.column.getId()] == null;
         if (isSsrmLoading) {
             const params = this.createCellRendererParams();
-            compDetails = this.beans.userComponentFactory.getLoadingCellRendererDetails(
-                this.column.getColDef(),
-                params
-            );
+            compDetails = userComponentFactory.getLoadingCellRendererDetails(column.getColDef(), params);
         } else if (this.isCellRenderer()) {
             const params = this.createCellRendererParams();
-            compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
+            compDetails = userComponentFactory.getCellRendererDetails(column.getColDef(), params);
         }
-        this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
-        this.cellRangeFeature?.refreshHandle();
+        cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
+        animationFrameService.requestAnimationFrame(() => cellRangeFeature?.refreshHandle());
     }
 
     private setupControlComps(): void {
@@ -416,7 +415,7 @@ export class CellCtrl extends BeanStub {
         return res;
     }
 
-    private isCheckboxSelection(colDef: ColDef): boolean | Function | undefined {
+    private isCheckboxSelection(colDef: ColDef): boolean | CheckboxSelectionCallback | undefined {
         const { rowSelection } = this.beans.gridOptions;
         return (
             colDef.checkboxSelection ||
@@ -468,7 +467,6 @@ export class CellCtrl extends BeanStub {
         }
 
         this.editing = editing;
-        this.cellRangeFeature?.refreshHandle();
     }
 
     // pass in 'true' to cancel the editing.
