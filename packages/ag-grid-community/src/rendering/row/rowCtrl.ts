@@ -40,7 +40,6 @@ import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import { RowHighlightPosition } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { ModuleNames } from '../../modules/moduleNames';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import { _setAriaExpanded, _setAriaRowIndex, _setAriaSelected } from '../../utils/aria';
 import { _pushAll } from '../../utils/array';
@@ -397,7 +396,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (this.rowType == 'FullWidthDetail') {
             if (
                 !this.gos.assertModuleRegistered(
-                    ModuleNames.MasterDetailModule,
+                    'MasterDetailCoreModule',
                     "cell renderer 'agDetailCellRenderer' (for master detail)"
                 )
             ) {

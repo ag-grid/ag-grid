@@ -1,5 +1,5 @@
 import type { _ModuleWithApi, _ModuleWithoutApi, _SideBarGridApi } from 'ag-grid-community';
-import { HorizontalResizeModule, ModuleNames } from 'ag-grid-community';
+import { HorizontalResizeModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
@@ -42,6 +42,6 @@ export const SideBarApiModule: _ModuleWithApi<_SideBarGridApi<any>> = {
 };
 
 export const SideBarModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule(ModuleNames.SideBarModule),
+    ...baseEnterpriseModule('SideBarModule'),
     dependsOn: [SideBarCoreModule, SideBarApiModule],
 };

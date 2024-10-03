@@ -26,7 +26,6 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    ModuleNames,
     NumberSequence,
     RowNode,
     _debounce,
@@ -298,7 +297,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     public generateSecondaryColumns(pivotFields: string[]) {
         if (!this.pivotColDefService) {
-            this.gos.assertModuleRegistered(ModuleNames.RowGroupingModule, 'pivotResultFields');
+            this.gos.assertModuleRegistered('PivotModule', 'pivotResultFields');
             return;
         }
 
