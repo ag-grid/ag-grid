@@ -11,11 +11,16 @@ import { getCoercedGridOptions } from './gridOptionsService';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { Module, ModuleName, _ModuleWithApi, _ModuleWithoutApi } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
-import { _assertModuleRegistered, _getRegisteredModules, _registerModule } from './modules/moduleRegistry';
+import {
+    _areModulesGridScoped,
+    _getRegisteredModules,
+    _isModuleRegistered,
+    _registerModule,
+} from './modules/moduleRegistry';
 import { _errorOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
-import { _logError } from './validation/logging';
+import { _logError, _logPreCreationError } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 
 export interface GridParams {
@@ -267,11 +272,23 @@ export class GridCoreCreator {
         const rowModuleModelName = rowModelModuleNames[rowModelType];
 
         if (!rowModuleModelName) {
-            _errorOnce('Could not find row model for rowModelType = ', rowModelType);
+            // can't use validation service here as hasn't been created yet
+            _logPreCreationError(201, { rowModelType }, `Unknown rowModelType ${rowModelType}.`);
             return;
         }
 
-        if (!_assertModuleRegistered(rowModuleModelName, `rowModelType = '${rowModelType}'`, gridId, rowModelType)) {
+        if (!_isModuleRegistered(rowModuleModelName, gridId, rowModelType)) {
+            _logPreCreationError(
+                200,
+                {
+                    reason: `rowModelType = '${rowModelType}'`,
+                    moduleName: rowModuleModelName,
+                    gridScoped: _areModulesGridScoped(),
+                    gridId,
+                    isEnterprise: rowModelType === 'serverSide' || rowModelType === 'viewport',
+                },
+                `Missing module ${rowModuleModelName} for rowModelType ${rowModelType}.`
+            );
             return;
         }
 

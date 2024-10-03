@@ -13,7 +13,7 @@ import type { GridOptionOrDefault } from './gridOptionsDefault';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { ModuleName } from './interfaces/iModule';
 import { LocalEventService } from './localEventService';
-import { _assertModuleRegistered, _isModuleRegistered } from './modules/moduleRegistry';
+import { _isModuleRegistered } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _log, _warnOnce } from './utils/function';
@@ -304,7 +304,11 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     }
 
     public assertModuleRegistered(moduleName: ModuleName, reason: string): boolean {
-        return _assertModuleRegistered(moduleName, reason, this.gridId, this.get('rowModelType'));
+        const registered = this.isModuleRegistered(moduleName);
+        if (!registered) {
+            this.validationService?.missingModule(moduleName, reason, this.gridId);
+        }
+        return registered;
     }
 
     public isModuleRegistered(moduleName: ModuleName): boolean {

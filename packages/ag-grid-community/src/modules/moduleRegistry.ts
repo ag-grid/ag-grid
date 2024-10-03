@@ -83,28 +83,8 @@ export function _isModuleRegistered(moduleName: ModuleName, gridId: string, rowM
     return isRegisteredForRowModel(rowModel) || isRegisteredForRowModel('all');
 }
 
-export function _assertModuleRegistered(
-    moduleName: ModuleName,
-    reason: string,
-    gridId: string,
-    rowModel: RowModelType
-): boolean {
-    if (_isModuleRegistered(moduleName, gridId, rowModel)) {
-        return true;
-    }
-
-    const isEnterprise = false; // TODO - enterprise check
-    const warningMessage = `AG Grid: unable to use ${reason} as ${moduleName} is not registered${areGridScopedModules ? ` for gridId: ${gridId}` : ''}. Check if you have registered the module:
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { ${moduleName} } from '${isEnterprise ? 'ag-grid-enterprise' : 'ag-grid-community'}';
-
-ModuleRegistry.registerModules([ ${moduleName} ]);
-
-For more info see: https://www.ag-grid.com/javascript-grid/modules/`;
-
-    _errorOnce(warningMessage);
-
-    return false;
+export function _areModulesGridScoped(): boolean {
+    return areGridScopedModules;
 }
 
 export function _getRegisteredModules(gridId: string, rowModel: RowModelType): Module[] {

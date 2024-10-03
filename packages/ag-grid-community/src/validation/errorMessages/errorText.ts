@@ -1,6 +1,28 @@
 import type { ClientSideRowModelStep } from '../../interfaces/iClientSideRowModel';
 import type { Column } from '../../interfaces/iColumn';
+import type { ModuleName } from '../../interfaces/iModule';
 import { getErrorLink } from '../logging';
+
+const missingModule = ({
+    reason,
+    moduleName,
+    gridScoped,
+    gridId,
+    isEnterprise,
+}: {
+    reason: string;
+    moduleName: ModuleName;
+    gridScoped: boolean;
+    gridId: string;
+    isEnterprise?: boolean;
+}) =>
+    `Unable to use ${reason} as ${moduleName} is not registered${gridScoped ? ' for gridId: ' + gridId : ''}. Check if you have registered the module:
+import { ModuleRegistry } from 'ag-grid-community';
+import { ${moduleName} } from '${isEnterprise ? 'ag-grid-enterprise' : 'ag-grid-community'}';
+
+ModuleRegistry.registerModules([ ${moduleName} ]);
+
+For more info see: https://www.ag-grid.com/javascript-grid/modules/`;
 
 /**
  * NOTES on setting console messages:
@@ -47,6 +69,9 @@ export const AG_GRID_ERRORS = {
             'Exception = ',
             e,
         ] as const,
+
+    200: missingModule,
+    201: ({ rowModelType }: { rowModelType: string }) => `Could not find row model for rowModelType = ${rowModelType}`,
 } as const;
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

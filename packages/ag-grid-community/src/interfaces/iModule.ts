@@ -45,8 +45,7 @@ export function baseCommunityModule(moduleName: ModuleName): Readonly<Module> {
     return { moduleName, version: VERSION };
 }
 
-export type ModuleName =
-    // community modules
+type CommunityModuleName =
     | 'AlignedGridsModule'
     | 'AllCommunityEditorsModule'
     | 'AnimateShowChangeCellRendererModule'
@@ -158,9 +157,9 @@ export type ModuleName =
     | 'StickyRowModule'
     | 'UndoRedoEditModule'
     | 'ValidationModule'
-    | 'ValueCacheModule'
+    | 'ValueCacheModule';
 
-    // enterprise modules
+export type EnterpriseModuleName =
     | 'AdvancedFilterApiModule'
     | 'AdvancedFilterCoreModule'
     | 'AdvancedFilterModule'
@@ -221,3 +220,5 @@ export type ModuleName =
     | 'StatusBarSelectionModule'
     | 'ViewportRowModelCoreModule'
     | 'ViewportRowModelModule';
+
+export type ModuleName = CommunityModuleName | EnterpriseModuleName;
