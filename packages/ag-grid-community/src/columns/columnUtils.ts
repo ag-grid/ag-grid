@@ -75,12 +75,7 @@ export function convertColumnTypes(type: string | string[]): string[] {
     let typeKeys: string[] = [];
 
     if (type instanceof Array) {
-        const invalidArray = type.some((a) => typeof a !== 'string');
-        if (invalidArray) {
-            _logWarn(42, {});
-        } else {
-            typeKeys = type;
-        }
+        typeKeys = type;
     } else if (typeof type === 'string') {
         typeKeys = type.split(',');
     }

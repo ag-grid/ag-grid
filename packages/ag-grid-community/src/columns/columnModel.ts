@@ -141,11 +141,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private resizeOperationQueue: (() => void)[] = [];
 
     public postConstruct(): void {
-        const pivotMode = this.gos.get('pivotMode');
-
-        if (this.isPivotSettingAllowed(pivotMode)) {
-            this.pivotMode = pivotMode;
-        }
+        this.pivotMode = this.gos.get('pivotMode');
 
         this.addManagedPropertyListeners(
             ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'],
@@ -808,7 +804,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private setPivotMode(pivotMode: boolean, source: ColumnEventType): void {
-        if (pivotMode === this.pivotMode || !this.isPivotSettingAllowed(this.pivotMode)) {
+        if (pivotMode === this.pivotMode) {
             return;
         }
 
@@ -827,16 +823,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.eventService.dispatchEvent({
             type: 'columnPivotModeChanged',
         });
-    }
-
-    private isPivotSettingAllowed(pivot: boolean): boolean {
-        if (pivot && this.gos.get('treeData')) {
-            // Pivot mode not available with treeData.
-            _logWarn(40, {});
-            return false;
-        }
-
-        return true;
     }
 
     // + clientSideRowModel

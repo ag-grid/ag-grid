@@ -95,7 +95,16 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
     type: {
         validate: (_options) => {
             const type = _options.type;
-            if (type instanceof Array || typeof type === 'string') {
+
+            if (type instanceof Array) {
+                const invalidArray = type.some((a) => typeof a !== 'string');
+                if (invalidArray) {
+                    return "if colDef.type is supplied an array it should be of type 'string[]'";
+                }
+                return null;
+            }
+
+            if (typeof type === 'string') {
                 return null;
             }
             return "colDef.type should be of type 'string' | 'string[]'";
