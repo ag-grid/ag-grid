@@ -112,7 +112,7 @@ function createCrossFilterThemeOverrides(
         ? {
               listeners: {
                   legendItemClick: (e: AgChartLegendClickEvent) => {
-                      (e as any)?.['preventDefault']?.();
+                      e.preventDefault();
 
                       const chart = proxy.getChart();
 
@@ -129,13 +129,7 @@ function createCrossFilterThemeOverrides(
                           chartProxyParams.chartId
                       );
 
-                      if (!selectionModel.hasSelection()) {
-                          selectionModel.selectAll(false);
-                      }
-
-                      selectionModel.toggleSelection(true, category, value);
-
-                      series.setLegendState(selectionModel.getBooleanSelection());
+                      selectionModel.setSelection([{ category, value }]);
                   },
               },
           }

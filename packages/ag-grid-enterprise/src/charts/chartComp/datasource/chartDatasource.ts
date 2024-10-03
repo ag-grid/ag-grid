@@ -37,6 +37,7 @@ export interface ChartDatasourceParams {
     crossFiltering: boolean;
     crossFilteringZeroValue?: number;
     crossFilteringIsHighlight?: boolean;
+    showFilteredDataOnly: boolean;
     valueCols: AgColumn[];
     startRow: number;
     endRow: number;
@@ -72,7 +73,7 @@ export class ChartDatasource extends BeanStub {
         this.aggregationStage = beans.aggregationStage as (IRowNodeStage & IAggregationStage) | undefined;
     }
 
-    public getData(params: ChartDatasourceParams, filteredOnly: boolean): IData {
+    public getData(params: ChartDatasourceParams): IData {
         if (params.crossFiltering) {
             if (params.grouping) {
                 _warnOnce('crossing filtering with row grouping is not supported.');
@@ -91,7 +92,7 @@ export class ChartDatasource extends BeanStub {
         }
 
         const filteredNodes = this.getFilteredRowNodes();
-        const allRowNodes = filteredOnly
+        const allRowNodes = params.showFilteredDataOnly
             ? // use only filtered rows, enforce rowIndex sorting as the map doesn't guarantee it
               Object.values(filteredNodes).sort((a, b) => (a.rowIndex ?? 0) - (b.rowIndex ?? 0))
             : this.getAllRowNodes();

@@ -25,6 +25,7 @@ import {
     _warnOnce,
 } from 'ag-grid-community';
 
+import { AgDialog } from '../../widgets/agDialog';
 import { ChartController, DEFAULT_THEMES } from './chartController';
 import { AreaChartProxy } from './chartProxies/cartesian/areaChartProxy';
 import { BarChartProxy } from './chartProxies/cartesian/barChartProxy';

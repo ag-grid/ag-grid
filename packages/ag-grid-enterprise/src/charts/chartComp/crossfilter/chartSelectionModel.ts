@@ -1,5 +1,6 @@
 import type { CrossFilteringContext } from './crossFilteringContext';
-import type { CrossFilterCategoryEntry } from './selectionModelAPI';
+
+type CrossFilterCategoryEntry = { category: string; value: string };
 
 export class ChartSelectionModel {
     public selection: CrossFilterCategoryEntry[] = [];

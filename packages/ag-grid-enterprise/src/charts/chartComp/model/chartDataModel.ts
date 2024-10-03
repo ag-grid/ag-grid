@@ -41,14 +41,15 @@ export interface ChartModelParams {
     unlinkChart?: boolean;
     crossFiltering?: boolean;
     crossFilteringContext: CrossFilteringContext;
-    showFilteredDataOnly?: boolean;
     seriesChartTypes?: SeriesChartType[];
     seriesGroupType?: SeriesGroupType;
 }
 
-export const CROSS_FILTERING_ZERO_VALUE_CHART_TYPES: ChartType[] = ['pie', 'donut', 'doughnut', 'scatter', 'bubble'];
+export const CROSS_FILTERING_ZERO_VALUE_CHART_TYPES: ChartType[] = ['pie', 'donut', 'doughnut', 'bubble', 'scatter'];
 
 export const CROSS_FILTER_IS_HIGHLIGHT: ChartType[] = ['line', 'area'];
+
+export const SHOW_FILTERED_DATA_ONLY_CHART_TYPES = ['bubble', 'scatter'];
 
 export class ChartDataModel extends BeanStub {
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
@@ -120,7 +121,6 @@ export class ChartDataModel extends BeanStub {
             unlinkChart,
             crossFiltering,
             seriesGroupType,
-            showFilteredDataOnly,
         } = params;
         this.chartType = chartType;
         this.pivotChart = pivotChart ?? false;
@@ -133,7 +133,6 @@ export class ChartDataModel extends BeanStub {
         this.unlinked = !!unlinkChart;
         this.crossFiltering = !!crossFiltering;
         this.seriesGroupType = seriesGroupType;
-        this.showFilteredDataOnly = !!showFilteredDataOnly;
     }
 
     public postConstruct(): void {
@@ -217,12 +216,13 @@ export class ChartDataModel extends BeanStub {
             crossFilteringZeroValue: _includes(CROSS_FILTERING_ZERO_VALUE_CHART_TYPES, this.chartType) ? 0 : undefined,
             crossFilteringIsHighlight: isSourceChart && _includes(CROSS_FILTER_IS_HIGHLIGHT, this.chartType),
             valueCols: this.getSelectedValueCols(),
+            showFilteredDataOnly: !isSourceChart && _includes(SHOW_FILTERED_DATA_ONLY_CHART_TYPES, this.chartType),
             startRow,
             endRow,
             isScatter: _includes(['scatter', 'bubble'], this.chartType),
         };
 
-        const { chartData, columnNames, groupChartData } = this.datasource.getData(params, this.showFilteredDataOnly);
+        const { chartData, columnNames, groupChartData } = this.datasource.getData(params);
 
         this.chartData = chartData;
         this.groupChartData = groupChartData;

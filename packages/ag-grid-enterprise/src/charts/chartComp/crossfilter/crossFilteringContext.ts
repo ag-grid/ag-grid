@@ -65,8 +65,6 @@ export class CrossFilteringContext {
             .filter((a) => a);
 
         if (updated.length > 0) {
-            console.warn('setFilters', crossFilterUpdate);
-
             this.updateFromSelectionModels();
         }
     }
