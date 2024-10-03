@@ -59,7 +59,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
     const isFocusWithinCell = () => {
         const activeElement = _getActiveDomElement(gos);
         const eCell = cell.getGui();
-        return activeElement !== eCell && eCell.contains(activeElement);
+        return activeElement !== eCell && !!eCell?.contains(activeElement);
     };
     const forceBrowserFocus = gos.get('stopEditingWhenCellsLoseFocus') && isFocusWithinCell();
     if (forceBrowserFocus || !focusService.isCellFocused(cellPosition)) {

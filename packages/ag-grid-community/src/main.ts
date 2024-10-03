@@ -960,6 +960,7 @@ export {
     _isElementInEventPath,
 } from './utils/event';
 export { _log, _warnOnce, _errorOnce, _debounce, _compose, _doOnce, _waitUntil } from './utils/function';
+export { _logError, _logWarn } from './validation/logging';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export {
@@ -997,7 +998,7 @@ export { XmlFactory } from './csvExport/xmlFactory';
 export { ZipContainer } from './csvExport/zipContainer/zipContainer';
 
 // modules
-export { Module, ModuleValidationResult, ModuleWithApi, BaseModule } from './interfaces/iModule';
+export { Module, ModuleValidationResult, _ModuleWithApi, _ModuleWithoutApi } from './interfaces/iModule';
 export { ModuleNames } from './modules/moduleNames';
 export { ModuleRegistry, _getGridRegisteredModules } from './modules/moduleRegistry';
 

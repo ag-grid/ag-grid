@@ -16,7 +16,8 @@ import { DragAndDropModule, RowDragModule } from './dragAndDrop/dragModule';
 import { EditModule } from './edit/editModule';
 import { FilterModule } from './filter/filterModule';
 import { ColumnGroupHeaderModule, ColumnHeaderModule } from './headerRendering/cells/headerModule';
-import { defineCommunityModule } from './interfaces/iModule';
+import type { _ModuleWithoutApi } from './interfaces/iModule';
+import { baseCommunityModule } from './interfaces/iModule';
 import { AnimationFrameModule } from './misc/animationFrameModule';
 import { EventApiModule } from './misc/apiEvents/apiEventModule';
 import { CommunityMenuApiModule } from './misc/menu/sharedMenuModule';
@@ -40,7 +41,8 @@ import { ValidationModule } from './validation/validationModule';
 import { CellApiModule, ChangeDetectionModule, ExpressionModule, ValueCacheModule } from './valueService/valueModule';
 import { PopupModule } from './widgets/popupModule';
 
-export const CommunityFeaturesModule = defineCommunityModule('CommunityFeaturesModule', {
+export const CommunityFeaturesModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('CommunityFeaturesModule'),
     dependsOn: [
         ValidationModule,
         EditModule,
@@ -86,4 +88,4 @@ export const CommunityFeaturesModule = defineCommunityModule('CommunityFeaturesM
         CellApiModule,
         CommunityMenuApiModule,
     ],
-});
+};

@@ -1,7 +1,7 @@
 import { createGridApi } from './api/apiUtils';
 import type { GridApi } from './api/gridApi';
 import type { ApiFunctionName } from './api/iApiFunction';
-import type { ComponentMeta, ContextParams, SingletonBean } from './context/context';
+import type { ContextParams, SingletonBean } from './context/context';
 import { Context } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import type { GridOptions } from './entities/gridOptions';
@@ -9,7 +9,7 @@ import { GridComp } from './gridComp/gridComp';
 import { GridCoreModule } from './gridCoreModule';
 import { getCoercedGridOptions } from './gridOptionsService';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
-import type { Module } from './interfaces/iModule';
+import type { Module, _ModuleWithApi, _ModuleWithoutApi } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
 import { ModuleNames } from './modules/moduleNames';
 import { _assertModuleRegistered, _getRegisteredModules, _registerModule } from './modules/moduleRegistry';
@@ -216,7 +216,10 @@ export class GridCoreCreator {
         });
     }
 
-    private registerModuleApiFunctions(context: Context, registeredModules: Module[]): void {
+    private registerModuleApiFunctions(
+        context: Context,
+        registeredModules: (_ModuleWithApi<any> | _ModuleWithoutApi)[]
+    ): void {
         const apiFunctionService = context.getBean('apiFunctionService');
         registeredModules.forEach((module) => {
             const apiFunctions = module.apiFunctions;
