@@ -26,6 +26,7 @@ import {
     _warnOnce,
 } from 'ag-grid-community';
 
+import { CROSS_FILTER_FIELD_POSTFIX } from '../crossfilter/crossFilterAPI';
 import type { ColState } from '../model/chartDataModel';
 import { ChartDataModel } from '../model/chartDataModel';
 
@@ -34,6 +35,8 @@ export interface ChartDatasourceParams {
     grouping: boolean;
     pivoting: boolean;
     crossFiltering: boolean;
+    crossFilteringZeroValue?: number;
+    crossFilteringIsHighlight?: boolean;
     valueCols: AgColumn[];
     startRow: number;
     endRow: number;
@@ -47,6 +50,8 @@ interface IData {
     columnNames: { [key: string]: string[] };
     groupChartData?: any[];
 }
+
+const ROW_CHILDREN = '__children';
 
 export class ChartDatasource extends BeanStub {
     private gridRowModel: IRowModel;
@@ -67,7 +72,7 @@ export class ChartDatasource extends BeanStub {
         this.aggregationStage = beans.aggregationStage as (IRowNodeStage & IAggregationStage) | undefined;
     }
 
-    public getData(params: ChartDatasourceParams): IData {
+    public getData(params: ChartDatasourceParams, filteredOnly: boolean): IData {
         if (params.crossFiltering) {
             if (params.grouping) {
                 _warnOnce('crossing filtering with row grouping is not supported.');
@@ -85,12 +90,22 @@ export class ChartDatasource extends BeanStub {
             this.updatePivotKeysForSSRM();
         }
 
-        const result = this.extractRowsFromGridRowModel(params);
+        const filteredNodes = this.getFilteredRowNodes();
+        const allRowNodes = filteredOnly
+            ? // use only filtered rows, enforce rowIndex sorting as the map doesn't guarantee it
+              Object.values(filteredNodes).sort((a, b) => (a.rowIndex ?? 0) - (b.rowIndex ?? 0))
+            : this.getAllRowNodes();
+
+        const result = this.extractRowsFromGridRowModel(params, allRowNodes, filteredNodes);
         result.chartData = this.aggregateRowsByDimension(params, result.chartData);
         return result;
     }
 
-    private extractRowsFromGridRowModel(params: ChartDatasourceParams): IData {
+    private extractRowsFromGridRowModel(
+        params: ChartDatasourceParams,
+        allRowNodes: RowNode[],
+        filteredNodes: { [key: string]: RowNode }
+    ): IData {
         const { crossFiltering, startRow, endRow, valueCols, dimensionCols, grouping } = params;
         let extractedRowData: any[] = [];
         const columnNames: { [key: string]: string[] } = {};
@@ -99,14 +114,8 @@ export class ChartDatasource extends BeanStub {
         const groupNodeIndexes: { [key: string]: number } = {};
         const groupsToRemove: { [key: string]: number } = {};
 
-        // only used when cross filtering
-        let filteredNodes: { [key: string]: RowNode } = {};
-        let allRowNodes: RowNode[] = [];
-
         let numRows;
         if (crossFiltering) {
-            filteredNodes = this.getFilteredRowNodes();
-            allRowNodes = this.getAllRowNodes();
             numRows = allRowNodes.length;
         } else {
             // make sure enough rows in range to chart. if user filters and less rows, then end row will be
@@ -211,19 +220,21 @@ export class ChartDatasource extends BeanStub {
             valueCols.forEach((col) => {
                 const colId = col.getColId();
                 if (crossFiltering) {
-                    const filteredOutColId = colId + '-filtered-out';
+                    const filteredOutColId = colId + CROSS_FILTER_FIELD_POSTFIX;
 
                     // add data value to value column
                     const value = this.valueService.getValue(col, rowNode);
                     const actualValue =
                         value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
 
-                    if (filteredNodes[rowNode.id as string]) {
-                        data[colId] = actualValue;
-                        data[filteredOutColId] = params.aggFunc || params.isScatter ? undefined : 0;
-                    } else {
-                        data[colId] = params.aggFunc || params.isScatter ? undefined : 0;
+                    data[colId] = actualValue ?? 0;
+
+                    if (params.crossFilteringIsHighlight) {
                         data[filteredOutColId] = actualValue;
+                    } else {
+                        data[filteredOutColId] = filteredNodes[rowNode.id as string]
+                            ? actualValue
+                            : params.crossFilteringZeroValue;
                     }
                 } else {
                     // add data value to value column
@@ -279,7 +290,7 @@ export class ChartDatasource extends BeanStub {
                     let groupItem = currentMap[key];
 
                     if (!groupItem) {
-                        groupItem = { __children: [] };
+                        groupItem = { [ROW_CHILDREN]: [] };
 
                         dimensionCols.forEach((dimCol) => {
                             const dimColId = dimCol.colId;
@@ -290,7 +301,7 @@ export class ChartDatasource extends BeanStub {
                         dataAggregated.push(groupItem);
                     }
 
-                    groupItem.__children.push(data);
+                    groupItem[ROW_CHILDREN].push(data);
                 } else {
                     // map of maps
                     if (!currentMap[key]) {
@@ -311,19 +322,19 @@ export class ChartDatasource extends BeanStub {
                             const colId = valueCol.getColId();
 
                             // filtered data
-                            const dataToAgg = groupItem.__children
-                                .filter((child: any) => typeof child[colId] !== 'undefined')
-                                .map((child: any) => child[colId]);
+                            const dataToAgg = groupItem[ROW_CHILDREN].filter(
+                                (child: any) => typeof child[colId] !== 'undefined'
+                            ).map((child: any) => child[colId]);
 
                             const aggResult: any = aggStage.aggregateValues(dataToAgg, params.aggFunc!);
                             groupItem[valueCol.getId()] =
                                 aggResult && typeof aggResult.value !== 'undefined' ? aggResult.value : aggResult;
 
                             // filtered out data
-                            const filteredOutColId = `${colId}-filtered-out`;
-                            const dataToAggFiltered = groupItem.__children
-                                .filter((child: any) => typeof child[filteredOutColId] !== 'undefined')
-                                .map((child: any) => child[filteredOutColId]);
+                            const filteredOutColId = `${colId}${CROSS_FILTER_FIELD_POSTFIX}`;
+                            const dataToAggFiltered = groupItem[ROW_CHILDREN].filter(
+                                (child: any) => typeof child[filteredOutColId] !== 'undefined'
+                            ).map((child: any) => child[filteredOutColId]);
 
                             const aggResultFiltered: any = aggStage.aggregateValues(dataToAggFiltered, params.aggFunc!);
                             groupItem[filteredOutColId] =
@@ -332,7 +343,7 @@ export class ChartDatasource extends BeanStub {
                                     : aggResultFiltered;
                         });
                     } else {
-                        const dataToAgg = groupItem.__children.map((child: any) => child[col.getId()]);
+                        const dataToAgg = groupItem[ROW_CHILDREN].map((child: any) => child[col.getId()]);
                         const aggResult = aggStage.aggregateValues(dataToAgg, params.aggFunc!);
 
                         groupItem[col.getId()] =
@@ -341,6 +352,11 @@ export class ChartDatasource extends BeanStub {
                 })
             );
         }
+
+        // clean up temporary data before passing to charts
+        dataAggregated.forEach((groupItem) => {
+            delete groupItem[ROW_CHILDREN];
+        });
 
         return dataAggregated;
     }

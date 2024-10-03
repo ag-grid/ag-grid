@@ -9,6 +9,7 @@ import type {
     ChartModel,
     ChartModelType,
     ChartType,
+    FilterManager,
     IAggFunc,
     IRangeService,
     PartialCellRange,
@@ -25,6 +26,7 @@ import { isStockTheme } from './chartProxies/chartTheme';
 import type { ChartModelParams, ColState } from './model/chartDataModel';
 import { ChartDataModel } from './model/chartDataModel';
 import { ChartParamsValidator } from './utils/chartParamsValidator';
+import { _mapValues } from './utils/object';
 import type { ChartSeriesType } from './utils/seriesTypeMapper';
 import {
     getMaxNumCategories,
@@ -44,9 +46,11 @@ export type ChartControllerEvent =
     | 'chartLinkedChanged';
 export class ChartController extends BeanStub<ChartControllerEvent> {
     private rangeService: IRangeService;
+    private filterManager?: FilterManager;
 
     public wireBeans(beans: BeanCollection) {
         this.rangeService = beans.rangeService!;
+        this.filterManager = beans.filterManager;
     }
 
     private chartProxy: ChartProxy;
@@ -104,6 +108,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             seriesChartTypes: undefined,
             suppressChartRanges: false,
             crossFiltering: false,
+            crossFilteringContext: this.model.params.crossFilteringContext,
         };
 
         const chartModelParams: ChartModelParams = { ...common };
@@ -137,16 +142,27 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         removeChartCellRanges ? this.rangeService?.setCellRanges([]) : this.setChartRange();
     }
 
-    public updateForGridChange(params?: { maintainColState?: boolean; setColsFromRange?: boolean }): void {
+    public updateForGridChange(params?: any): void {
         if (this.model.unlinked) {
             return;
         }
+
+        this.updateSelectionModels();
 
         const { maintainColState, setColsFromRange } = params ?? {};
 
         this.model.updateCellRanges({ maintainColState, setColsFromRange });
         this.model.updateData();
         this.setChartRange();
+    }
+
+    private updateSelectionModels() {
+        const crossFilterUpdate = _mapValues(
+            this.filterManager?.getFilterModel(),
+            (key, value) => value.filterModels?.[1].values ?? value?.values ?? []
+        );
+
+        this.model.params.crossFilteringContext.setFilters(crossFilterUpdate);
     }
 
     public updateForDataChange(): void {
@@ -198,7 +214,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             })),
             fields,
             chartId: this.getChartId(),
-            getCrossFilteringContext: () => ({ lastSelectedChartId: 'xxx' }), //this.params.crossFilteringContext, //TODO
+            getCrossFilteringContext: () => this.model.params.crossFilteringContext!,
             seriesChartTypes: this.getSeriesChartTypes(),
             updatedOverrides: updatedOverrides,
             seriesGroupType: this.model.seriesGroupType,

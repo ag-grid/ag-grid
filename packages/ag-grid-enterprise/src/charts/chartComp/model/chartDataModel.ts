@@ -13,6 +13,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, CellRangeType, _includes } from 'ag-grid-community';
 
+import type { CrossFilteringContext } from '../crossfilter/crossFilteringContext';
 import type { ChartDatasourceParams } from '../datasource/chartDatasource';
 import { ChartDatasource } from '../datasource/chartDatasource';
 import { ChartColumnService } from '../services/chartColumnService';
@@ -39,9 +40,15 @@ export interface ChartModelParams {
     suppressChartRanges?: boolean;
     unlinkChart?: boolean;
     crossFiltering?: boolean;
+    crossFilteringContext: CrossFilteringContext;
+    showFilteredDataOnly?: boolean;
     seriesChartTypes?: SeriesChartType[];
     seriesGroupType?: SeriesGroupType;
 }
+
+export const CROSS_FILTERING_ZERO_VALUE_CHART_TYPES: ChartType[] = ['pie', 'donut', 'doughnut', 'scatter', 'bubble'];
+
+export const CROSS_FILTER_IS_HIGHLIGHT: ChartType[] = ['line', 'area'];
 
 export class ChartDataModel extends BeanStub {
     public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
@@ -90,6 +97,9 @@ export class ChartDataModel extends BeanStub {
 
     public seriesGroupType?: SeriesGroupType;
 
+    private showFilteredDataOnly: boolean;
+    public lastClickedChartId?: string;
+
     public constructor(params: ChartModelParams) {
         super();
 
@@ -110,6 +120,7 @@ export class ChartDataModel extends BeanStub {
             unlinkChart,
             crossFiltering,
             seriesGroupType,
+            showFilteredDataOnly,
         } = params;
         this.chartType = chartType;
         this.pivotChart = pivotChart ?? false;
@@ -122,6 +133,7 @@ export class ChartDataModel extends BeanStub {
         this.unlinked = !!unlinkChart;
         this.crossFiltering = !!crossFiltering;
         this.seriesGroupType = seriesGroupType;
+        this.showFilteredDataOnly = !!showFilteredDataOnly;
     }
 
     public postConstruct(): void {
@@ -194,19 +206,23 @@ export class ChartDataModel extends BeanStub {
 
         this.grouping = this.isGrouping();
 
+        const isSourceChart = this.chartId === this.params.crossFilteringContext?.lastSelectedChartId;
+
         const params: ChartDatasourceParams = {
             aggFunc: this.aggFunc,
             dimensionCols: this.getSelectedDimensions(),
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
             crossFiltering: this.crossFiltering,
+            crossFilteringZeroValue: _includes(CROSS_FILTERING_ZERO_VALUE_CHART_TYPES, this.chartType) ? 0 : undefined,
+            crossFilteringIsHighlight: isSourceChart && _includes(CROSS_FILTER_IS_HIGHLIGHT, this.chartType),
             valueCols: this.getSelectedValueCols(),
             startRow,
             endRow,
             isScatter: _includes(['scatter', 'bubble'], this.chartType),
         };
 
-        const { chartData, columnNames, groupChartData } = this.datasource.getData(params);
+        const { chartData, columnNames, groupChartData } = this.datasource.getData(params, this.showFilteredDataOnly);
 
         this.chartData = chartData;
         this.groupChartData = groupChartData;
