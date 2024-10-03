@@ -507,6 +507,7 @@ export const AG_GRID_LOCALE_EN = {
     ariaMenuColumn: 'Press ALT DOWN to open column menu',
     ariaFilterColumn: 'Press CTRL ENTER to open filter',
     ariaRowDeselect: 'Press SPACE to deselect this row',
+    ariaHeaderSelection: 'Column with Header Selection',
     ariaRowSelectAll: 'Press Space to toggle all rows selection',
     ariaRowToggleSelection: 'Press Space to toggle row selection',
     ariaRowSelect: 'Press SPACE to select this row',
