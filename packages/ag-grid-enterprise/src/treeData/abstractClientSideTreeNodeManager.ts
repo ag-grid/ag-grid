@@ -15,8 +15,8 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
         this.treeNodeManager = this.createManagedBean(new TreeNodeManager());
     }
 
-    public override initRootRowNode(rootRowNode: RowNode<TData>): void {
-        super.initRootRowNode(rootRowNode);
+    public override initRootNode(rootRowNode: RowNode<TData>): void {
+        super.initRootNode(rootRowNode);
         const treeNodeManager = this.treeNodeManager;
         if (this.gos.get('treeData')) {
             treeNodeManager.initRootNode(rootRowNode);
@@ -25,9 +25,9 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
         }
     }
 
-    public override clearRootRowNode(): void {
+    public override clearRootNode(): void {
         this.treeNodeManager.clearRootNode();
-        super.clearRootRowNode();
+        super.clearRootNode();
     }
 
     public afterColumnsChanged(): void {

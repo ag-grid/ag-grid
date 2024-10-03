@@ -193,11 +193,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (oldNodeManager !== nodeManager) {
-            oldNodeManager?.clearRootRowNode();
+            oldNodeManager?.clearRootNode();
             this.nodeManager = nodeManager;
         }
 
-        nodeManager.initRootRowNode(this.rootNode);
+        nodeManager.initRootNode(this.rootNode);
     }
 
     private addPropertyListeners() {

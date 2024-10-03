@@ -18,9 +18,9 @@ export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
 }
 
 export interface IClientSideNodeManager<TData = any> {
-    initRootRowNode(rootRowNode: RowNode<TData> | null): void;
+    initRootNode(rootRowNode: RowNode<TData> | null): void;
 
-    clearRootRowNode(): void;
+    clearRootNode(): void;
 
     getRowNode(id: string): RowNode<TData> | undefined;
 

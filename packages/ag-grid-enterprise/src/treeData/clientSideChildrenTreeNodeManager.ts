@@ -21,14 +21,14 @@ export class ClientSideChildrenTreeNodeManager<TData>
             .map((row) => row.data!);
     }
 
-    public override initRootRowNode(rootRowNode: RowNode<TData>): void {
+    public override initRootNode(rootRowNode: RowNode<TData>): void {
         const oldChildrenGetter = this.childrenGetter;
         const childrenField = this.gos.get('treeDataChildrenField');
         if (!oldChildrenGetter || oldChildrenGetter.path !== childrenField) {
             this.childrenGetter = makeFieldPathGetter(childrenField);
         }
 
-        super.initRootRowNode(rootRowNode);
+        super.initRootNode(rootRowNode);
     }
 
     protected override loadNewRowData(rowData: TData[]): void {
