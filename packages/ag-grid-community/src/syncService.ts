@@ -50,9 +50,8 @@ export class SyncService extends BeanStub implements NamedBean {
         this.eventService.dispatchEvent({
             type: 'gridReady',
         });
-        const isEnterprise = this.gos.isModuleRegistered('EnterpriseCoreModule');
         if (this.gos.get('debug')) {
-            _log(`initialised successfully, enterprise = ${isEnterprise}`);
+            _log(`initialised successfully, enterprise = ${this.gos.isModuleRegistered('EnterpriseCoreModule')}`);
         }
     }
 
