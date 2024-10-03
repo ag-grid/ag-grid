@@ -1,5 +1,4 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
+import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
@@ -8,7 +7,7 @@ const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree expanded state', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
+        modules: [TreeDataModule],
     });
 
     const gridRowsOptions: GridRowsOptions = {
