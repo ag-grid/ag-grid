@@ -114,13 +114,13 @@ function getRelevantConfig(configuration: Configuration, framework: InternalFram
  * code to load SystemJS and the relevant modules depending on the framework.
  */
 export const SystemJs = ({
-    boilerplatePath,
-    appLocation,
-    startFile,
-    internalFramework,
-    isEnterprise,
-    isDev,
-}: Props) => {
+                             boilerplatePath,
+                             appLocation,
+                             startFile,
+                             internalFramework,
+                             isEnterprise,
+                             isDev,
+                         }: Props) => {
     const systemJsPath = pathJoin(boilerplatePath, `systemjs.config${isDev ? '.dev' : ''}.js`);
 
     let configuration = isUsingPublishedPackages() ? publishedConfiguration : localBuildAndArchiveConfiguration;

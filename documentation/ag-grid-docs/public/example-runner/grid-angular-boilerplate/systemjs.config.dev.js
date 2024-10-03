@@ -76,7 +76,6 @@
                 defaultExtension: 'mjs',
             },
             'ag-charts-types': {
-                main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',
                 format: 'cjs',
             },
@@ -89,7 +88,6 @@
                 format: 'cjs',
             },
             'ag-charts-community': {
-                main: './dist/package/main.cjs.js',
                 defaultExtension: 'js',
                 format: 'cjs',
             },

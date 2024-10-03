@@ -50,13 +50,20 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-            'ag-grid-charts-enterprise': {
-                main: './dist/package/main.cjs.js',
+            'ag-grid-react': {
+                main: './dist/package/index.cjs.js',
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-            'ag-grid-react': {
-                main: './dist/package/index.cjs.js',
+            'ag-charts-types': {
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-charts-community/modules': {
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-charts-enterprise/modules': {
                 defaultExtension: 'js',
                 format: 'cjs',
             },
@@ -64,11 +71,7 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-            'ag-charts-enterprise': {
-                defaultExtension: 'js',
-                format: 'cjs',
-            },
-            '@ag-grid-community/locale': {
+           '@ag-grid-community/locale': {
                 format: 'cjs',
             },
         },
