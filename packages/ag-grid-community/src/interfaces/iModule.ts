@@ -35,9 +35,9 @@ export interface Module {
 
 /** Used to define a module that contains api functions. */
 export type _ModuleWithApi<TGridApi extends Readonly<Partial<GridApi>>> = Module & {
-    apiFunctions: { [K in ApiFunctionName & keyof TGridApi]: ApiFunction<K> };
+    apiFunctions?: { [K in ApiFunctionName & keyof TGridApi]: ApiFunction<K> };
 };
-/**  */
+/** Used to define a module that does not contain api functions. */
 export type _ModuleWithoutApi = Module & {
     apiFunctions?: never;
 };
