@@ -1,5 +1,5 @@
 import type { _GridChartsGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
-import { DragAndDropModule, ModuleNames, PopupModule } from 'ag-grid-community';
+import { DragAndDropModule, PopupModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
@@ -71,6 +71,6 @@ export const GridChartsApiModule: _ModuleWithApi<_GridChartsGridApi> = {
 };
 
 export const GridChartsModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule(ModuleNames.GridChartsModule),
+    ...baseEnterpriseModule('GridChartsModule'),
     dependsOn: [GridChartsCoreModule, GridChartsApiModule],
 };

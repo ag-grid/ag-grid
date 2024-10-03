@@ -6,12 +6,11 @@ import { Context } from './context/context';
 import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gridBeanComparator';
 import type { GridOptions } from './entities/gridOptions';
 import { GridComp } from './gridComp/gridComp';
-import { GridCoreModule } from './gridCoreModule';
+import { CommunityCoreModule } from './gridCoreModule';
 import { getCoercedGridOptions } from './gridOptionsService';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
-import type { Module, _ModuleWithApi, _ModuleWithoutApi } from './interfaces/iModule';
+import type { Module, ModuleName, _ModuleWithApi, _ModuleWithoutApi } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
-import { ModuleNames } from './modules/moduleNames';
 import { _assertModuleRegistered, _getRegisteredModules, _registerModule } from './modules/moduleRegistry';
 import { _errorOnce } from './utils/function';
 import { _missing } from './utils/generic';
@@ -200,7 +199,7 @@ export class GridCoreCreator {
     }
 
     private getRegisteredModules(params: GridParams | undefined, gridId: string, rowModelType: RowModelType): Module[] {
-        _registerModule(GridCoreModule, gridId);
+        _registerModule(CommunityCoreModule, gridId);
 
         params?.modules?.forEach((m) => _registerModule(m, gridId));
 
@@ -258,26 +257,21 @@ export class GridCoreCreator {
         gridId: string
     ): SingletonBean[] | undefined {
         // assert that the relevant module has been loaded
-        const rowModelModuleNames: Record<RowModelType, ModuleNames> = {
-            clientSide: ModuleNames.ClientSideRowModelModule,
-            infinite: ModuleNames.InfiniteRowModelModule,
-            serverSide: ModuleNames.ServerSideRowModelModule,
-            viewport: ModuleNames.ViewportRowModelModule,
+        const rowModelModuleNames: Record<RowModelType, ModuleName> = {
+            clientSide: 'ClientSideRowModelCoreModule',
+            infinite: 'InfiniteRowModelCoreModule',
+            serverSide: 'ServerSideRowModelCoreModule',
+            viewport: 'ViewportRowModelCoreModule',
         };
 
-        if (!rowModelModuleNames[rowModelType]) {
+        const rowModuleModelName = rowModelModuleNames[rowModelType];
+
+        if (!rowModuleModelName) {
             _errorOnce('Could not find row model for rowModelType = ', rowModelType);
             return;
         }
 
-        if (
-            !_assertModuleRegistered(
-                rowModelModuleNames[rowModelType],
-                `rowModelType = '${rowModelType}'`,
-                gridId,
-                rowModelType
-            )
-        ) {
+        if (!_assertModuleRegistered(rowModuleModelName, `rowModelType = '${rowModelType}'`, gridId, rowModelType)) {
             return;
         }
 

@@ -1,7 +1,6 @@
-import type { Module, ModuleValidationInvalidResult } from '../interfaces/iModule';
+import type { Module, ModuleName, ModuleValidationInvalidResult } from '../interfaces/iModule';
 import type { RowModelType } from '../interfaces/iRowModel';
 import { _errorOnce } from '../utils/function';
-import { ModuleNames } from './moduleNames';
 
 interface RowModelModuleStore {
     [name: string]: Module;
@@ -78,14 +77,14 @@ export function _unRegisterGridModules(gridId: string): void {
     delete gridModulesMap[gridId];
 }
 
-export function _isModuleRegistered(moduleName: ModuleNames, gridId: string, rowModel: RowModelType): boolean {
+export function _isModuleRegistered(moduleName: ModuleName, gridId: string, rowModel: RowModelType): boolean {
     const isRegisteredForRowModel = (model: RowModelType | 'all') =>
         !!globalModulesMap[model]?.[moduleName] || !!gridModulesMap[gridId][rowModel]?.[moduleName];
     return isRegisteredForRowModel(rowModel) || isRegisteredForRowModel('all');
 }
 
 export function _assertModuleRegistered(
-    moduleName: ModuleNames,
+    moduleName: ModuleName,
     reason: string,
     gridId: string,
     rowModel: RowModelType
@@ -94,14 +93,12 @@ export function _assertModuleRegistered(
         return true;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const modName = Object.entries(ModuleNames).find(([k, v]) => v === moduleName)?.[0];
-    const warningMessage = `AG Grid: unable to use ${reason} as the ${modName} is not registered${areGridScopedModules ? ` for gridId: ${gridId}` : ''}. Check if you have registered the module:
-       
+    const isEnterprise = false; // TODO - enterprise check
+    const warningMessage = `AG Grid: unable to use ${reason} as ${moduleName} is not registered${areGridScopedModules ? ` for gridId: ${gridId}` : ''}. Check if you have registered the module:
 import { ModuleRegistry } from '@ag-grid-community/core';
-import { ${modName} } from '${moduleName}';
+import { ${moduleName} } from '${isEnterprise ? 'ag-grid-enterprise' : 'ag-grid-community'}';
 
-ModuleRegistry.registerModules([ ${modName} ]);
+ModuleRegistry.registerModules([ ${moduleName} ]);
 
 For more info see: https://www.ag-grid.com/javascript-grid/modules/`;
 

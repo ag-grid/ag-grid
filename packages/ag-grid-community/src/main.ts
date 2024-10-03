@@ -995,8 +995,7 @@ export { XmlFactory } from './csvExport/xmlFactory';
 export { ZipContainer } from './csvExport/zipContainer/zipContainer';
 
 // modules
-export { Module, ModuleValidationResult, _ModuleWithApi, _ModuleWithoutApi } from './interfaces/iModule';
-export { ModuleNames } from './modules/moduleNames';
+export { Module, ModuleValidationResult, _ModuleWithApi, _ModuleWithoutApi, ModuleName } from './interfaces/iModule';
 export { ModuleRegistry, _getGridRegisteredModules } from './modules/moduleRegistry';
 
 export { ValidationModule } from './validation/validationModule';

@@ -11,8 +11,8 @@ import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
 import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
 import type { GridOptionOrDefault } from './gridOptionsDefault';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
+import type { ModuleName } from './interfaces/iModule';
 import { LocalEventService } from './localEventService';
-import type { ModuleNames } from './modules/moduleNames';
 import { _assertModuleRegistered, _isModuleRegistered } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
@@ -303,11 +303,11 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return updatedParams;
     }
 
-    public assertModuleRegistered(moduleName: ModuleNames, reason: string): boolean {
+    public assertModuleRegistered(moduleName: ModuleName, reason: string): boolean {
         return _assertModuleRegistered(moduleName, reason, this.gridId, this.get('rowModelType'));
     }
 
-    public isModuleRegistered(moduleName: ModuleNames): boolean {
+    public isModuleRegistered(moduleName: ModuleName): boolean {
         return _isModuleRegistered(moduleName, this.gridId, this.get('rowModelType'));
     }
 }

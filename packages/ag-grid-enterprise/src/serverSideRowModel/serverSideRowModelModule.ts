@@ -1,7 +1,6 @@
 import type { _ModuleWithApi, _ModuleWithoutApi, _ServerSideRowModelGridApi } from 'ag-grid-community';
 import {
     CommunityFeaturesModule,
-    ModuleNames,
     RowModelHelperService,
     RowNodeBlockModule,
     SortModule,
@@ -95,7 +94,7 @@ export const ServerSideRowModelApiModule: _ModuleWithApi<_ServerSideRowModelGrid
 };
 
 export const ServerSideRowModelModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule(ModuleNames.ServerSideRowModelModule),
+    ...baseEnterpriseModule('ServerSideRowModelModule'),
     rowModels: ['serverSide'],
     dependsOn: [
         ServerSideRowModelCoreModule,
