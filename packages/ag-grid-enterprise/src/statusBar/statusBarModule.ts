@@ -1,4 +1,4 @@
-import type { Module, ModuleWithApi, _StatusBarGridApi } from 'ag-grid-community';
+import type { _ModuleWithApi, _ModuleWithoutApi, _StatusBarGridApi } from 'ag-grid-community';
 import { KeyboardNavigationCoreModule, ModuleNames } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
@@ -11,7 +11,7 @@ import { TotalRowsComp } from './providedPanels/totalRowsComp';
 import { getStatusPanel } from './statusBarApi';
 import { StatusBarService } from './statusBarService';
 
-export const StatusBarCoreModule: Module = {
+export const StatusBarCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('StatusBarCoreModule'),
     beans: [StatusBarService],
     userComponents: [
@@ -23,13 +23,13 @@ export const StatusBarCoreModule: Module = {
     dependsOn: [EnterpriseCoreModule, KeyboardNavigationCoreModule],
 };
 
-export const StatusBarSelectionModule: Module = {
+export const StatusBarSelectionModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('StatusBarSelectionModule'),
     userComponents: [{ name: 'agSelectedRowCountComponent', classImp: SelectedRowsComp }],
     dependsOn: [StatusBarCoreModule],
 };
 
-export const StatusBarApiModule: ModuleWithApi<_StatusBarGridApi> = {
+export const StatusBarApiModule: _ModuleWithApi<_StatusBarGridApi> = {
     ...baseEnterpriseModule('StatusBarApiModule'),
     apiFunctions: {
         getStatusPanel,
@@ -37,7 +37,7 @@ export const StatusBarApiModule: ModuleWithApi<_StatusBarGridApi> = {
     dependsOn: [StatusBarCoreModule],
 };
 
-export const StatusBarModule: Module = {
+export const StatusBarModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule(ModuleNames.StatusBarModule),
     dependsOn: [StatusBarCoreModule, StatusBarApiModule, StatusBarSelectionModule],
 };

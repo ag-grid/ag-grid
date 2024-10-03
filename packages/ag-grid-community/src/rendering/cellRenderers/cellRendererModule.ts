@@ -1,10 +1,10 @@
 import { baseCommunityModule } from '../../interfaces/iModule';
-import type { Module } from '../../interfaces/iModule';
+import type { _ModuleWithoutApi } from '../../interfaces/iModule';
 import { AnimateShowChangeCellRenderer } from './animateShowChangeCellRenderer';
 import { AnimateSlideCellRenderer } from './animateSlideCellRenderer';
 import { CheckboxCellRenderer } from './checkboxCellRenderer';
 
-export const AnimateShowChangeCellRendererModule: Module = {
+export const AnimateShowChangeCellRendererModule: _ModuleWithoutApi = {
     ...baseCommunityModule('AnimateShowChangeCellRendererModule'),
     userComponents: [
         {
@@ -14,7 +14,7 @@ export const AnimateShowChangeCellRendererModule: Module = {
     ],
 };
 
-export const AnimateSlideCellRendererModule: Module = {
+export const AnimateSlideCellRendererModule: _ModuleWithoutApi = {
     ...baseCommunityModule('AnimateSlideCellRendererModule'),
     userComponents: [
         {
@@ -24,7 +24,7 @@ export const AnimateSlideCellRendererModule: Module = {
     ],
 };
 
-export const CheckboxCellRendererModule: Module = {
+export const CheckboxCellRendererModule: _ModuleWithoutApi = {
     ...baseCommunityModule('CheckboxCellRendererModule'),
     userComponents: [
         {

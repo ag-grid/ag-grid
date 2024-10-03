@@ -1,4 +1,4 @@
-import type { Module, ModuleWithApi, _SideBarGridApi } from 'ag-grid-community';
+import type { _ModuleWithApi, _ModuleWithoutApi, _SideBarGridApi } from 'ag-grid-community';
 import { HorizontalResizeModule, ModuleNames } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
@@ -18,13 +18,13 @@ import {
 } from './sideBarApi';
 import { SideBarService } from './sideBarService';
 
-export const SideBarCoreModule: Module = {
+export const SideBarCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('SideBarCoreModule'),
     beans: [ToolPanelColDefService, SideBarService],
     dependsOn: [EnterpriseCoreModule, HorizontalResizeModule],
 };
 
-export const SideBarApiModule: ModuleWithApi<_SideBarGridApi<any>> = {
+export const SideBarApiModule: _ModuleWithApi<_SideBarGridApi<any>> = {
     ...baseEnterpriseModule('SideBarApiModule'),
     apiFunctions: {
         isSideBarVisible,
@@ -41,7 +41,7 @@ export const SideBarApiModule: ModuleWithApi<_SideBarGridApi<any>> = {
     dependsOn: [SideBarCoreModule],
 };
 
-export const SideBarModule: Module = {
+export const SideBarModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule(ModuleNames.SideBarModule),
     dependsOn: [SideBarCoreModule, SideBarApiModule],
 };

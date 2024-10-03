@@ -1,5 +1,5 @@
 import type { _RenderGridApi } from '../api/gridApi';
-import type { ModuleWithApi } from '../interfaces/iModule';
+import type { _ModuleWithApi } from '../interfaces/iModule';
 import { baseCommunityModule } from '../interfaces/iModule';
 import {
     flashCells,
@@ -12,7 +12,7 @@ import {
     setGridAriaProperty,
 } from './renderApi';
 
-export const RenderApiModule: ModuleWithApi<_RenderGridApi<any>> = {
+export const RenderApiModule: _ModuleWithApi<_RenderGridApi<any>> = {
     ...baseCommunityModule('RenderApiModule'),
     apiFunctions: {
         setGridAriaProperty,

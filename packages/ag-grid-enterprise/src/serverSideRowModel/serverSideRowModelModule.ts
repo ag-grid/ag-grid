@@ -1,4 +1,4 @@
-import type { Module, ModuleWithApi, _ServerSideRowModelGridApi } from 'ag-grid-community';
+import type { _ModuleWithApi, _ModuleWithoutApi, _ServerSideRowModelGridApi } from 'ag-grid-community';
 import {
     CommunityFeaturesModule,
     ModuleNames,
@@ -36,7 +36,7 @@ import { StoreFactory } from './stores/storeFactory';
 import { StoreUtils } from './stores/storeUtils';
 import { TransactionManager } from './transactionManager';
 
-export const ServerSideRowModelCoreModule: Module = {
+export const ServerSideRowModelCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('ServerSideRowModelCoreModule'),
     rowModels: ['serverSide'],
     beans: [
@@ -55,28 +55,28 @@ export const ServerSideRowModelCoreModule: Module = {
     dependsOn: [EnterpriseCoreModule, RowNodeBlockModule],
 };
 
-export const ServerSideRowModelRowSelectionModule: Module = {
+export const ServerSideRowModelRowSelectionModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('ServerSideRowModelRowSelectionModule'),
     rowModels: ['serverSide'],
     beans: [ServerSideSelectionService],
     dependsOn: [ServerSideRowModelCoreModule],
 };
 
-export const ServerSideRowModelRowGroupingModule: Module = {
+export const ServerSideRowModelRowGroupingModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('ServerSideRowModelRowGroupingModule'),
     rowModels: ['serverSide'],
     beans: [ServerSideExpansionService],
     dependsOn: [ServerSideRowModelCoreModule],
 };
 
-export const ServerSideRowModelSortModule: Module = {
+export const ServerSideRowModelSortModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('ServerSideRowModelSortModule'),
     rowModels: ['serverSide'],
     beans: [SortListener],
     dependsOn: [ServerSideRowModelCoreModule, SortModule],
 };
 
-export const ServerSideRowModelApiModule: ModuleWithApi<_ServerSideRowModelGridApi> = {
+export const ServerSideRowModelApiModule: _ModuleWithApi<_ServerSideRowModelGridApi> = {
     ...baseEnterpriseModule('ServerSideRowModelApiModule'),
     rowModels: ['serverSide'],
     beans: [RowModelHelperService],
@@ -94,7 +94,7 @@ export const ServerSideRowModelApiModule: ModuleWithApi<_ServerSideRowModelGridA
     dependsOn: [ServerSideRowModelCoreModule, _CsrmSsrmSharedApiModule, _SsrmInfiniteSharedApiModule],
 };
 
-export const ServerSideRowModelModule: Module = {
+export const ServerSideRowModelModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule(ModuleNames.ServerSideRowModelModule),
     rowModels: ['serverSide'],
     dependsOn: [

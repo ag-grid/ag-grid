@@ -1,4 +1,4 @@
-import type { Module } from 'ag-grid-community';
+import type { _ModuleWithoutApi } from 'ag-grid-community';
 import { ModuleNames } from 'ag-grid-community';
 
 import { AggregationModule } from './aggregation/aggregationModule';
@@ -10,7 +10,7 @@ import { AgMenuItemRenderer } from './widgets/agMenuItemRenderer';
 
 export { AgWatermark } from './license/watermark';
 
-export const EnterpriseCoreModule: Module = {
+export const EnterpriseCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule(ModuleNames.EnterpriseCoreModule),
     beans: [LicenseManager],
     userComponents: [

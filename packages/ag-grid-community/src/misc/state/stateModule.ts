@@ -1,15 +1,15 @@
 import type { _StateGridApi } from '../../api/gridApi';
 import { baseCommunityModule } from '../../interfaces/iModule';
-import type { Module, ModuleWithApi } from '../../interfaces/iModule';
+import type { _ModuleWithApi, _ModuleWithoutApi } from '../../interfaces/iModule';
 import { getState } from './stateApi';
 import { StateService } from './stateService';
 
-export const StateCoreModule: Module = {
+export const StateCoreModule: _ModuleWithoutApi = {
     ...baseCommunityModule('StateCoreModule'),
     beans: [StateService],
 };
 
-export const StateApiModule: ModuleWithApi<_StateGridApi> = {
+export const StateApiModule: _ModuleWithApi<_StateGridApi> = {
     ...baseCommunityModule('StateApiModule'),
     apiFunctions: {
         getState,
@@ -17,7 +17,7 @@ export const StateApiModule: ModuleWithApi<_StateGridApi> = {
     dependsOn: [StateCoreModule],
 };
 
-export const StateModule: Module = {
+export const StateModule: _ModuleWithoutApi = {
     ...baseCommunityModule('StateModule'),
     dependsOn: [StateCoreModule, StateApiModule],
 };

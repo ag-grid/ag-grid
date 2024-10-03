@@ -15,31 +15,32 @@ export type ModuleValidationInvalidResult = {
 
 export type ModuleValidationResult = ModuleValidationValidResult | ModuleValidationInvalidResult;
 
-export type BaseModule = Omit<Module, 'apiFunctions'>;
-
-export type ModuleWithApi<TGridApi extends Readonly<Partial<GridApi>>> = BaseModule &
-    (object extends TGridApi
-        ? { apiFunctions: never }
-        : { apiFunctions: { [K in ApiFunctionName & keyof TGridApi]: ApiFunction<K> } });
-
+/** A Module contains all the code related to this feature to enable tree shaking when this module is not used. */
 export interface Module {
+    moduleName: string;
     version: string;
+    enterprise?: boolean;
     /**
      * Validation run when registering the module
      *
      * @return Whether the module is valid or not. If not, a message explaining why it is not valid
      */
     validate?: () => ModuleValidationResult;
-    moduleName: string;
     beans?: SingletonBean[];
     controllers?: ControllerMeta[];
     userComponents?: ComponentMeta[];
     rowModels?: RowModelType[];
-    dependsOn?: BaseModule[];
-
-    apiFunctions?: { [K in ApiFunctionName]: ApiFunction<K> };
+    dependsOn?: Module[];
 }
 
-export function baseCommunityModule(name: string): Readonly<Pick<Module, 'version' | 'moduleName'>> {
+/** Used to define a module that contains api functions. */
+export type _ModuleWithApi<TGridApi extends Readonly<Partial<GridApi>>> = Module & {
+    apiFunctions: { [K in ApiFunctionName & keyof TGridApi]: ApiFunction<K> };
+};
+/**  */
+export type _ModuleWithoutApi = Module & {
+    apiFunctions?: never;
+};
+export function baseCommunityModule(name: string): Readonly<Module> {
     return { moduleName: name, version: VERSION };
 }

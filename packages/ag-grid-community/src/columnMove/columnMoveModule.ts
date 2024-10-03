@@ -1,17 +1,17 @@
 import type { _ColumnMoveApi } from '../api/gridApi';
 import { DragAndDropModule } from '../dragAndDrop/dragModule';
 import { baseCommunityModule } from '../interfaces/iModule';
-import type { Module, ModuleWithApi } from '../interfaces/iModule';
+import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { moveColumnByIndex, moveColumns } from './columnMoveApi';
 import { ColumnMoveService } from './columnMoveService';
 
-export const ColumnMoveCoreModule: Module = {
+export const ColumnMoveCoreModule: _ModuleWithoutApi = {
     ...baseCommunityModule('ColumnMoveCoreModule'),
     beans: [ColumnMoveService],
     dependsOn: [DragAndDropModule],
 };
 
-export const ColumnMoveApiModule: ModuleWithApi<_ColumnMoveApi> = {
+export const ColumnMoveApiModule: _ModuleWithApi<_ColumnMoveApi> = {
     ...baseCommunityModule('ColumnMoveApiModule'),
     apiFunctions: {
         moveColumnByIndex,
@@ -20,7 +20,7 @@ export const ColumnMoveApiModule: ModuleWithApi<_ColumnMoveApi> = {
     dependsOn: [ColumnMoveCoreModule],
 };
 
-export const ColumnMoveModule: Module = {
+export const ColumnMoveModule: _ModuleWithoutApi = {
     ...baseCommunityModule('ColumnMoveModule'),
     dependsOn: [ColumnMoveApiModule],
 };

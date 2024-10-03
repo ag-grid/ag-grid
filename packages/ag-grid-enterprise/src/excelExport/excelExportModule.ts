@@ -1,4 +1,4 @@
-import type { Module, ModuleWithApi, _ExcelExportGridApi } from 'ag-grid-community';
+import type { _ExcelExportGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
 import { CsvExportCoreModule, ModuleNames } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
@@ -12,13 +12,13 @@ import {
     getSheetDataForExcel,
 } from './excelExportApi';
 
-export const ExcelExportCoreModule: Module = {
+export const ExcelExportCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('ExcelExportCoreModule'),
     beans: [ExcelCreator],
     dependsOn: [CsvExportCoreModule, EnterpriseCoreModule],
 };
 
-export const ExcelExportApiModule: ModuleWithApi<_ExcelExportGridApi> = {
+export const ExcelExportApiModule: _ModuleWithApi<_ExcelExportGridApi> = {
     ...baseEnterpriseModule('ExcelExportApiModule'),
     apiFunctions: {
         getDataAsExcel,
@@ -30,7 +30,7 @@ export const ExcelExportApiModule: ModuleWithApi<_ExcelExportGridApi> = {
     dependsOn: [ExcelExportCoreModule],
 };
 
-export const ExcelExportModule: Module = {
+export const ExcelExportModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule(ModuleNames.ExcelExportModule),
     dependsOn: [ExcelExportCoreModule, ExcelExportApiModule],
 };

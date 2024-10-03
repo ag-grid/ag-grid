@@ -1,4 +1,4 @@
-import type { Module, ModuleWithApi, _MasterDetailGridApi } from 'ag-grid-community';
+import type { _MasterDetailGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
 import { ModuleNames } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
@@ -10,7 +10,7 @@ import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 import { DetailGridApiService } from './detailGridApiService';
 import { addDetailGridInfo, forEachDetailGridInfo, getDetailGridInfo, removeDetailGridInfo } from './masterDetailApi';
 
-export const MasterDetailCoreModule: Module = {
+export const MasterDetailCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('MasterDetailCoreModule'),
     userComponents: [
         {
@@ -30,7 +30,7 @@ export const MasterDetailCoreModule: Module = {
     dependsOn: [EnterpriseCoreModule],
 };
 
-export const MasterDetailApiModule: ModuleWithApi<_MasterDetailGridApi> = {
+export const MasterDetailApiModule: _ModuleWithApi<_MasterDetailGridApi> = {
     ...baseEnterpriseModule('MasterDetailApiModule'),
     beans: [DetailGridApiService],
     apiFunctions: {
@@ -42,7 +42,7 @@ export const MasterDetailApiModule: ModuleWithApi<_MasterDetailGridApi> = {
     dependsOn: [MasterDetailCoreModule],
 };
 
-export const MasterDetailModule: Module = {
+export const MasterDetailModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule(ModuleNames.MasterDetailModule),
     dependsOn: [MasterDetailCoreModule, MasterDetailApiModule],
 };

@@ -1,6 +1,6 @@
 import type { _ColumnGridApi, _GetColumnDefsApi } from '../api/gridApi';
 import { baseCommunityModule } from '../interfaces/iModule';
-import type { Module, ModuleWithApi } from '../interfaces/iModule';
+import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { CheckboxCellRendererModule } from '../rendering/cellRenderers/cellRendererModule';
 import {
     applyColumnState,
@@ -41,18 +41,18 @@ import { ColumnFlexService } from './columnFlexService';
 import { ControlsColService } from './controlsColService';
 import { DataTypeService } from './dataTypeService';
 
-export const DataTypeModule: Module = {
+export const DataTypeModule: _ModuleWithoutApi = {
     ...baseCommunityModule('DataTypeModule'),
     beans: [DataTypeService],
     dependsOn: [CheckboxCellRendererModule],
 };
 
-export const ControlsColumnModule: Module = {
+export const ControlsColumnModule: _ModuleWithoutApi = {
     ...baseCommunityModule('ControlsColumnModule'),
     beans: [ControlsColService],
 };
 
-export const GetColumnDefsApiModule: ModuleWithApi<_GetColumnDefsApi<any>> = {
+export const GetColumnDefsApiModule: _ModuleWithApi<_GetColumnDefsApi<any>> = {
     ...baseCommunityModule('GetColumnDefsApiModule'),
     beans: [ColumnDefFactory],
     apiFunctions: {
@@ -60,12 +60,12 @@ export const GetColumnDefsApiModule: ModuleWithApi<_GetColumnDefsApi<any>> = {
     },
 };
 
-export const ColumnFlexModule: Module = {
+export const ColumnFlexModule: _ModuleWithoutApi = {
     ...baseCommunityModule('ColumnFlexModule'),
     beans: [ColumnFlexService],
 };
 
-export const ColumnApiModule: ModuleWithApi<_ColumnGridApi<any>> = {
+export const ColumnApiModule: _ModuleWithApi<_ColumnGridApi<any>> = {
     ...baseCommunityModule('ColumnApiModule'),
     apiFunctions: {
         getColumnDef,

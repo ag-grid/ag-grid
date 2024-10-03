@@ -1,4 +1,4 @@
-import type { Module, ModuleWithApi, _MenuGridApi } from 'ag-grid-community';
+import type { _MenuGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
 import { CommunityMenuApiModule, ModuleNames, PopupModule, SharedMenuModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
@@ -13,7 +13,7 @@ import { hideColumnChooser, showColumnChooser, showContextMenu } from './menuApi
 import { MenuItemMapper } from './menuItemMapper';
 import { MenuUtils } from './menuUtils';
 
-export const MenuCoreModule: Module = {
+export const MenuCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('MenuCoreModule'),
     beans: [MenuItemMapper, ChartMenuItemMapper, MenuUtils],
     dependsOn: [EnterpriseCoreModule, PopupModule, SharedMenuModule],
@@ -25,25 +25,25 @@ export const MenuCoreModule: Module = {
     ],
 };
 
-export const ColumnMenuModule: Module = {
+export const ColumnMenuModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('ColumnMenuModule'),
     beans: [EnterpriseMenuFactory, ColumnMenuFactory],
     dependsOn: [MenuCoreModule],
 };
 
-export const ColumnChooserModule: Module = {
+export const ColumnChooserModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('ColumnChooserModule'),
     beans: [ColumnChooserFactory],
     dependsOn: [MenuCoreModule],
 };
 
-export const ContextMenuModule: Module = {
+export const ContextMenuModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('ContextMenuModule'),
     beans: [ContextMenuService],
     dependsOn: [MenuCoreModule],
 };
 
-export const MenuApiModule: ModuleWithApi<_MenuGridApi> = {
+export const MenuApiModule: _ModuleWithApi<_MenuGridApi> = {
     ...baseEnterpriseModule('MenuApiModule'),
     apiFunctions: {
         showContextMenu,
@@ -53,7 +53,7 @@ export const MenuApiModule: ModuleWithApi<_MenuGridApi> = {
     dependsOn: [ColumnChooserModule, ContextMenuModule, CommunityMenuApiModule],
 };
 
-export const MenuModule: Module = {
+export const MenuModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule(ModuleNames.MenuModule),
     dependsOn: [ColumnMenuModule, ColumnChooserModule, ContextMenuModule, MenuApiModule],
 };

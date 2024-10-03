@@ -1,5 +1,5 @@
 import type { _PaginationGridApi } from '../api/gridApi';
-import type { Module, ModuleWithApi } from '../interfaces/iModule';
+import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { baseCommunityModule } from '../interfaces/iModule';
 import {
     paginationGetCurrentPage,
@@ -16,12 +16,12 @@ import {
 import { PaginationAutoPageSizeService } from './paginationAutoPageSizeService';
 import { PaginationService } from './paginationService';
 
-export const PaginationCoreModule: Module = {
+export const PaginationCoreModule: _ModuleWithoutApi = {
     ...baseCommunityModule('PaginationCoreModule'),
     beans: [PaginationService, PaginationAutoPageSizeService],
 };
 
-export const PaginationApiModule: ModuleWithApi<_PaginationGridApi> = {
+export const PaginationApiModule: _ModuleWithApi<_PaginationGridApi> = {
     ...baseCommunityModule('PaginationApiModule'),
     dependsOn: [PaginationCoreModule],
     apiFunctions: {
@@ -38,7 +38,7 @@ export const PaginationApiModule: ModuleWithApi<_PaginationGridApi> = {
     },
 };
 
-export const PaginationModule: Module = {
+export const PaginationModule: _ModuleWithoutApi = {
     ...baseCommunityModule('PaginationModule'),
     dependsOn: [PaginationCoreModule, PaginationApiModule],
 };

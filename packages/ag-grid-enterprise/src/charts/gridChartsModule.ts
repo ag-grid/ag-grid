@@ -1,4 +1,4 @@
-import type { Module, ModuleWithApi, _GridChartsGridApi } from 'ag-grid-community';
+import type { _GridChartsGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
 import { DragAndDropModule, ModuleNames, PopupModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
@@ -27,7 +27,7 @@ import {
 } from './chartsApi';
 import { validGridChartsVersion } from './utils/validGridChartsVersion';
 
-export const GridChartsCoreModule: Module = {
+export const GridChartsCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('GridChartsCoreModule'),
     validate: () => {
         return validGridChartsVersion({
@@ -52,7 +52,7 @@ export const GridChartsCoreModule: Module = {
     dependsOn: [RangeSelectionModule, EnterpriseCoreModule, DragAndDropModule, PopupModule],
 };
 
-export const GridChartsApiModule: ModuleWithApi<_GridChartsGridApi> = {
+export const GridChartsApiModule: _ModuleWithApi<_GridChartsGridApi> = {
     ...baseEnterpriseModule('GridChartsApiModule'),
     apiFunctions: {
         getChartModels,
@@ -70,7 +70,7 @@ export const GridChartsApiModule: ModuleWithApi<_GridChartsGridApi> = {
     dependsOn: [GridChartsCoreModule],
 };
 
-export const GridChartsModule: Module = {
+export const GridChartsModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule(ModuleNames.GridChartsModule),
     dependsOn: [GridChartsCoreModule, GridChartsApiModule],
 };

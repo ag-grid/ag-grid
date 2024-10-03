@@ -1,9 +1,9 @@
 import { baseCommunityModule } from '../../interfaces/iModule';
-import type { Module } from '../../interfaces/iModule';
+import type { _ModuleWithoutApi } from '../../interfaces/iModule';
 import { HeaderComp } from './column/headerComp';
 import { HeaderGroupComp } from './columnGroup/headerGroupComp';
 
-export const ColumnHeaderModule: Module = {
+export const ColumnHeaderModule: _ModuleWithoutApi = {
     ...baseCommunityModule('ColumnHeaderModule'),
     userComponents: [
         {
@@ -13,7 +13,7 @@ export const ColumnHeaderModule: Module = {
     ],
 };
 
-export const ColumnGroupHeaderModule: Module = {
+export const ColumnGroupHeaderModule: _ModuleWithoutApi = {
     ...baseCommunityModule('ColumnGroupHeaderModule'),
     userComponents: [
         {

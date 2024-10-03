@@ -22,7 +22,7 @@ import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridDestroyService } from './gridDestroyService';
 import { GridOptionsService } from './gridOptionsService';
 import { ColumnGroupHeaderModule, ColumnHeaderModule } from './headerRendering/cells/headerModule';
-import type { Module } from './interfaces/iModule';
+import type { _ModuleWithoutApi } from './interfaces/iModule';
 import { baseCommunityModule } from './interfaces/iModule';
 import { LocaleService } from './localeService';
 import { ModuleNames } from './modules/moduleNames';
@@ -34,7 +34,7 @@ import { RowRenderer } from './rendering/rowRenderer';
 import { SyncService } from './syncService';
 import { ValueService } from './valueService/valueService';
 
-export const GridCoreModule: Module = {
+export const GridCoreModule: _ModuleWithoutApi = {
     ...baseCommunityModule(ModuleNames.CommunityCoreModule),
     beans: [
         PositionUtils,

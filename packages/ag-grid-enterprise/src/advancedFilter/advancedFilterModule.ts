@@ -1,4 +1,4 @@
-import type { Module, ModuleWithApi, _AdvancedFilterGridApi } from 'ag-grid-community';
+import type { _AdvancedFilterGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
 import { DragAndDropModule, FilterCoreModule, FilterValueModule, ModuleNames, PopupModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
@@ -12,13 +12,13 @@ import {
 import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import { AdvancedFilterService } from './advancedFilterService';
 
-export const AdvancedFilterCoreModule: Module = {
+export const AdvancedFilterCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('AdvancedFilterCoreModule'),
     beans: [AdvancedFilterService, AdvancedFilterExpressionService],
     dependsOn: [EnterpriseCoreModule, FilterCoreModule, DragAndDropModule, PopupModule, FilterValueModule],
 };
 
-export const AdvancedFilterApiModule: ModuleWithApi<_AdvancedFilterGridApi> = {
+export const AdvancedFilterApiModule: _ModuleWithApi<_AdvancedFilterGridApi> = {
     ...baseEnterpriseModule('AdvancedFilterApiModule'),
     apiFunctions: {
         getAdvancedFilterModel,
@@ -29,7 +29,7 @@ export const AdvancedFilterApiModule: ModuleWithApi<_AdvancedFilterGridApi> = {
     dependsOn: [AdvancedFilterCoreModule],
 };
 
-export const AdvancedFilterModule: Module = {
+export const AdvancedFilterModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule(ModuleNames.AdvancedFilterModule),
     dependsOn: [AdvancedFilterCoreModule, AdvancedFilterApiModule],
 };

@@ -1,17 +1,17 @@
 import type { _SortGridApi } from '../api/gridApi';
 import { baseCommunityModule } from '../interfaces/iModule';
-import type { Module, ModuleWithApi } from '../interfaces/iModule';
+import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { RowNodeSorter } from './rowNodeSorter';
 import { onSortChanged } from './sortApi';
 import { SortController } from './sortController';
 import { SortIndicatorComp } from './sortIndicatorComp';
 
-export const SortCoreModule: Module = {
+export const SortCoreModule: _ModuleWithoutApi = {
     ...baseCommunityModule('SortCoreModule'),
     beans: [SortController, RowNodeSorter],
 };
 
-export const SortIndicatorCompModule: Module = {
+export const SortIndicatorCompModule: _ModuleWithoutApi = {
     ...baseCommunityModule('SortIndicatorCompModule'),
     userComponents: [
         {
@@ -22,7 +22,7 @@ export const SortIndicatorCompModule: Module = {
     dependsOn: [SortCoreModule],
 };
 
-export const SortApiModule: ModuleWithApi<_SortGridApi> = {
+export const SortApiModule: _ModuleWithApi<_SortGridApi> = {
     ...baseCommunityModule('SortApiModule'),
     apiFunctions: {
         onSortChanged,
@@ -30,7 +30,7 @@ export const SortApiModule: ModuleWithApi<_SortGridApi> = {
     dependsOn: [SortCoreModule],
 };
 
-export const SortModule: Module = {
+export const SortModule: _ModuleWithoutApi = {
     ...baseCommunityModule('SortModule'),
     dependsOn: [SortApiModule, SortIndicatorCompModule],
 };

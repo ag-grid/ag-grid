@@ -4,7 +4,7 @@ import { CsrmSsrmSharedApiModule } from '../api/sharedApiModule';
 import { CommunityFeaturesModule } from '../communityFeaturesModule';
 import { FilterCoreModule } from '../filter/filterModule';
 import { baseCommunityModule } from '../interfaces/iModule';
-import type { Module, ModuleWithApi } from '../interfaces/iModule';
+import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { ModuleNames } from '../modules/moduleNames';
 import { SortModule } from '../sort/sortModule';
 import { ClientSideRowModel } from './clientSideRowModel';
@@ -27,27 +27,27 @@ import { ImmutableService } from './immutableService';
 import { RowNodeEventThrottle } from './rowNodeEventThrottle';
 import { SortStage } from './sortStage';
 
-export const ClientSideRowModelCoreModule: Module = {
+export const ClientSideRowModelCoreModule: _ModuleWithoutApi = {
     ...baseCommunityModule('ClientSideRowModelCoreModule'),
     rowModels: ['clientSide'],
     beans: [ClientSideRowModel, FlattenStage, ImmutableService, RowNodeEventThrottle],
 };
 
-export const ClientSideRowModelSortModule: Module = {
+export const ClientSideRowModelSortModule: _ModuleWithoutApi = {
     ...baseCommunityModule('ClientSideRowModelSortModule'),
     rowModels: ['clientSide'],
     beans: [SortStage],
     dependsOn: [ClientSideRowModelCoreModule, SortModule],
 };
 
-export const ClientSideRowModelFilterModule: Module = {
+export const ClientSideRowModelFilterModule: _ModuleWithoutApi = {
     ...baseCommunityModule('ClientSideRowModelFilterModule'),
     rowModels: ['clientSide'],
     beans: [FilterStage],
     dependsOn: [FilterCoreModule],
 };
 
-export const ClientSideRowModelApiModule: ModuleWithApi<_ClientSideRowModelGridApi<any>> = {
+export const ClientSideRowModelApiModule: _ModuleWithApi<_ClientSideRowModelGridApi<any>> = {
     ...baseCommunityModule('ClientSideRowModelApiModule'),
     rowModels: ['clientSide'],
     beans: [RowModelHelperService],
@@ -67,7 +67,7 @@ export const ClientSideRowModelApiModule: ModuleWithApi<_ClientSideRowModelGridA
     dependsOn: [ClientSideRowModelCoreModule, CsrmSsrmSharedApiModule],
 };
 
-export const ClientSideRowModelModule: Module = {
+export const ClientSideRowModelModule: _ModuleWithoutApi = {
     ...baseCommunityModule(ModuleNames.ClientSideRowModelModule),
     rowModels: ['clientSide'],
     dependsOn: [

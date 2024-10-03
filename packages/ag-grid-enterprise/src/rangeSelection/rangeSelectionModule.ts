@@ -1,4 +1,4 @@
-import type { Module, ModuleWithApi, _RangeSelectionGridApi } from 'ag-grid-community';
+import type { _ModuleWithApi, _ModuleWithoutApi, _RangeSelectionGridApi } from 'ag-grid-community';
 import { KeyboardNavigationCoreModule, ModuleNames } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
@@ -7,13 +7,13 @@ import { addCellRange, clearRangeSelection, getCellRanges } from './rangeSelecti
 import { RangeService } from './rangeService';
 import { SelectionHandleFactory } from './selectionHandleFactory';
 
-export const RangeSelectionCoreModule: Module = {
+export const RangeSelectionCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('RangeSelectionCoreModule'),
     beans: [RangeService, SelectionHandleFactory],
     dependsOn: [EnterpriseCoreModule, KeyboardNavigationCoreModule],
 };
 
-export const RangeSelectionApiModule: ModuleWithApi<_RangeSelectionGridApi> = {
+export const RangeSelectionApiModule: _ModuleWithApi<_RangeSelectionGridApi> = {
     ...baseEnterpriseModule('RangeSelectionApiModule'),
     apiFunctions: {
         getCellRanges,
@@ -24,7 +24,7 @@ export const RangeSelectionApiModule: ModuleWithApi<_RangeSelectionGridApi> = {
     dependsOn: [RangeSelectionCoreModule],
 };
 
-export const RangeSelectionModule: Module = {
+export const RangeSelectionModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule(ModuleNames.RangeSelectionModule),
     dependsOn: [RangeSelectionCoreModule, RangeSelectionApiModule],
 };

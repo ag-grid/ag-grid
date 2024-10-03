@@ -1,4 +1,4 @@
-import type { Module, ModuleWithApi, _RowGroupingGridApi } from 'ag-grid-community';
+import type { _ModuleWithApi, _ModuleWithoutApi, _RowGroupingGridApi } from 'ag-grid-community';
 import { ColumnFilterModule, FloatingFilterModule, ModuleNames, PopupModule, StickyRowModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
@@ -41,7 +41,7 @@ import {
 } from './rowGroupingApi';
 import { ShowRowGroupColsService } from './showRowGroupColsService';
 
-export const RowGroupingCoreModule: Module = {
+export const RowGroupingCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('RowGroupingCoreModule'),
     beans: [
         AggregationStage,
@@ -70,13 +70,13 @@ export const RowGroupingCoreModule: Module = {
     ],
 };
 
-export const PivotModule: Module = {
+export const PivotModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('PivotModule'),
     beans: [PivotResultColsService, PivotColDefService, PivotStage],
     dependsOn: [RowGroupingCoreModule],
 };
 
-export const RowGroupingApiModule: ModuleWithApi<_RowGroupingGridApi<any>> = {
+export const RowGroupingApiModule: _ModuleWithApi<_RowGroupingGridApi<any>> = {
     ...baseEnterpriseModule('RowGroupingApiModule'),
     apiFunctions: {
         addAggFuncs,
@@ -103,19 +103,19 @@ export const RowGroupingApiModule: ModuleWithApi<_RowGroupingGridApi<any>> = {
     dependsOn: [RowGroupingCoreModule],
 };
 
-export const GroupFilterModule: Module = {
+export const GroupFilterModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('GroupFilterModule'),
     userComponents: [{ name: 'agGroupColumnFilter', classImp: GroupFilter }],
     dependsOn: [RowGroupingCoreModule, ColumnFilterModule],
 };
 
-export const GroupFloatingFilterModule: Module = {
+export const GroupFloatingFilterModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('GroupFloatingFilterModule'),
     userComponents: [{ name: 'agGroupColumnFloatingFilter', classImp: GroupFloatingFilterComp }],
     dependsOn: [GroupFilterModule, FloatingFilterModule],
 };
 
-export const RowGroupingModule: Module = {
+export const RowGroupingModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule(ModuleNames.RowGroupingModule),
     dependsOn: [
         RowGroupingCoreModule,
