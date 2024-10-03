@@ -1,4 +1,4 @@
-import type { GridApi, IRowNode } from 'ag-grid-community';
+import type { GridApi, IRowNode, IServerSideGroupSelectionState, IServerSideSelectionState } from 'ag-grid-community';
 import { _areEqual } from 'ag-grid-community';
 
 export function getRowByIndex(index: number): HTMLElement | null {
@@ -36,10 +36,30 @@ export function toggleHeaderCheckboxByIndex(index: number, opts?: MouseEventInit
     getHeaderCheckboxByIndex(index)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
 }
 
+export function expandGroupRowByIndex(index: number, opts?: MouseEventInit): void {
+    getRowByIndex(index)
+        ?.querySelector<HTMLElement>('.ag-group-contracted')
+        ?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
+}
+
 export function assertSelectedRowsByIndex(indices: number[], api: GridApi): void {
     const actual = new Set(api.getSelectedNodes().map((n) => n.rowIndex));
     const expected = new Set(indices);
     expect(actual).toEqual(expected);
+}
+
+export function assertServerSideSelectionState(
+    expected: IServerSideSelectionState | IServerSideGroupSelectionState,
+    api: GridApi
+): void {
+    const actual = api.getServerSideSelectionState();
+    expect(actual).toEqual(expected);
+}
+
+export function assertSelectedRowElementsById(ids: string[], api: GridApi): void {
+    const selected = new Set<string>();
+    api.forEachNode((node) => (node.isSelected() ? selected.add(node.id!) : null));
+    expect(selected).toEqual(new Set(ids));
 }
 
 export function assertSelectedRowNodes(nodes: IRowNode[], api: GridApi): void {
