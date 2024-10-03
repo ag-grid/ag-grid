@@ -1,7 +1,7 @@
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { _getActiveDomElement } from '../gridOptionsUtils';
+import { _getActiveDomElement, _getDocument } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ITooltipComp, ITooltipParams } from '../rendering/tooltipComponent';
 import { _isIOSUserAgent } from '../utils/browser';
@@ -69,6 +69,7 @@ export class TooltipStateManager extends BeanStub {
 
     private onBodyScrollEventCallback: (() => null) | undefined;
     private onColumnMovedEventCallback: (() => null) | undefined;
+    private onDocumentKeyDownCallback: (() => null) | undefined;
 
     constructor(
         private parentComp: TooltipParentComp,
@@ -217,6 +218,11 @@ export class TooltipStateManager extends BeanStub {
     }
 
     private onKeyDown(): void {
+        // if the keydown happens outside of the tooltip, we cancel
+        // the tooltip interaction and hide the tooltip.
+        if (this.isInteractingWithTooltip) {
+            this.isInteractingWithTooltip = false;
+        }
         this.setToDoNothing();
     }
 
@@ -263,6 +269,11 @@ export class TooltipStateManager extends BeanStub {
         if (this.onColumnMovedEventCallback) {
             this.onColumnMovedEventCallback();
             this.onColumnMovedEventCallback = undefined;
+        }
+
+        if (this.onDocumentKeyDownCallback) {
+            this.onDocumentKeyDownCallback();
+            this.onDocumentKeyDownCallback = undefined;
         }
 
         this.clearTimeouts();
@@ -364,6 +375,14 @@ export class TooltipStateManager extends BeanStub {
             [this.tooltipMouseEnterListener, this.tooltipMouseLeaveListener] = this.addManagedElementListeners(eGui, {
                 mouseenter: this.onTooltipMouseEnter.bind(this),
                 mouseleave: this.onTooltipMouseLeave.bind(this),
+            });
+
+            [this.onDocumentKeyDownCallback] = this.addManagedElementListeners(_getDocument(this.gos), {
+                keydown: (e) => {
+                    if (!eGui.contains(e?.target as HTMLElement)) {
+                        this.onKeyDown();
+                    }
+                },
             });
 
             if (this.tooltipTrigger === TooltipTrigger.FOCUS) {
