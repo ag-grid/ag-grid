@@ -84,10 +84,10 @@ export class MiniRadialColumn extends MiniChartWithPolarAxes {
 
     updateColors(fills: string[], strokes: string[]) {
         this.series.forEach((group, i) => {
-            group.children?.forEach((sector: _Scene.Sector) => {
+            for (const sector of group.children() as Iterable<_Scene.Sector>) {
                 sector.fill = fills[i % fills.length];
                 sector.stroke = strokes[i % strokes.length];
-            });
+            }
         });
     }
 }
