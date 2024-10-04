@@ -241,7 +241,12 @@ export const AG_GRID_ERRORS = {
             ),
             ...Object.keys(jsComps),
         ];
-        const suggestions = _fuzzySuggestions(componentName, validComponents, true, 0.8).values;
+        const suggestions = _fuzzySuggestions({
+            inputValue: componentName,
+            allSuggestions: validComponents,
+            hideIrrelevant: true,
+            filterByPercentageOfBestMatch: 0.8,
+        }).values;
 
         textOutput.push(
             `Could not find '${componentName}' component. It was configured as "${propertyName}: '${componentName}'" but it wasn't found in the list of registered components.\n`

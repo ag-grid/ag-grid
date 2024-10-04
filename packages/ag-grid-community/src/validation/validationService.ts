@@ -1,11 +1,11 @@
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, UserComponentName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import type { EnterpriseModuleName, ModuleName } from '../interfaces/iModule';
 import { _areModulesGridScoped } from '../modules/moduleRegistry';
-import { _doOnce, _warnOnce } from '../utils/function';
+import { _warnOnce } from '../utils/function';
 import { _fuzzySuggestions } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
 import { validateApiFunction } from './apiFunctionValidator';
@@ -248,7 +248,8 @@ export function _fuzzyCheckStrings(
 
     if (invalidInputs.length > 0) {
         invalidInputs.forEach(
-            (invalidInput) => (fuzzyMatches[invalidInput] = _fuzzySuggestions(invalidInput, allSuggestions).values)
+            (invalidInput) =>
+                (fuzzyMatches[invalidInput] = _fuzzySuggestions({ inputValue: invalidInput, allSuggestions }).values)
         );
     }
 
