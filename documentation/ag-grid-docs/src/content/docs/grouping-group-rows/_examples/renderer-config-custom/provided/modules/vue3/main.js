@@ -1,13 +1,21 @@
 import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ModuleRegistry } from 'ag-grid-community';
+import {
+    CellDoubleClickedEvent,
+    CellKeyDownEvent,
+    ClientSideRowModelModule,
+    ColDef,
+    GridApi,
+    GridOptions,
+    ModuleRegistry,
+    createGrid,
+} from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
-import CustomMedalCellRenderer from './customMedalCellRenderer.js';
+import CustomGroupCellRenderer from './customGroupCellRenderer.js';
 import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
@@ -20,50 +28,66 @@ const VueExample = {
       :class="themeClass"
       :columnDefs="columnDefs"
       @grid-ready="onGridReady"
+      :groupRowRenderer="groupRowRenderer"
       :defaultColDef="defaultColDef"
-      :autoGroupColumnDef="autoGroupColumnDef"
       :groupDisplayType="groupDisplayType"
-      :rowData="rowData"></ag-grid-vue>
+      :rowData="rowData"
+      @cell-double-clicked="onCellDoubleClicked"
+      @cell-key-down="onCellKeyDown"></ag-grid-vue>
         </div>
     `,
     components: {
         'ag-grid-vue': AgGridVue,
-        CustomMedalCellRenderer,
+        CustomGroupCellRenderer,
     },
     setup(props) {
         const columnDefs = ref([
-            { field: 'total', rowGroup: true },
-            { field: 'country' },
-            { field: 'year' },
+            { field: 'country', hide: true, rowGroup: true },
+            { field: 'year', hide: true, rowGroup: true },
             { field: 'athlete' },
             { field: 'sport' },
+            { field: 'total', aggFunc: 'sum' },
         ]);
         const gridApi = shallowRef();
         const defaultColDef = ref({
             flex: 1,
-            minWidth: 100,
+            minWidth: 120,
         });
-        const autoGroupColumnDef = ref({
-            headerName: 'Gold Medals',
-            minWidth: 220,
-            cellRendererParams: {
-                suppressCount: true,
-                innerRenderer: 'CustomMedalCellRenderer',
-            },
-        });
+
+        const groupRowRenderer = ref(null);
         const groupDisplayType = ref(null);
         const rowData = ref(null);
 
         onBeforeMount(() => {
-            groupDisplayType.value = 'multipleColumns';
+            groupRowRenderer.value = 'CustomGroupCellRenderer';
+            groupDisplayType.value = 'groupRows';
         });
 
+        const onCellDoubleClicked = (params) => {
+            if (params.colDef.showRowGroup) {
+                params.node.setExpanded(!params.node.expanded);
+            }
+        };
+        const onCellKeyDown = (params) => {
+            if (!('colDef' in params)) {
+                return;
+            }
+            if (!(params.event instanceof KeyboardEvent)) {
+                return;
+            }
+            if (params.event.code !== 'Enter') {
+                return;
+            }
+            if (params.colDef.showRowGroup) {
+                params.node.setExpanded(!params.node.expanded);
+            }
+        };
         const onGridReady = (params) => {
             gridApi.value = params.api;
 
             const updateData = (data) => (rowData.value = data);
 
-            fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+            fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
                 .then((resp) => resp.json())
                 .then((data) => updateData(data));
         };
@@ -71,11 +95,13 @@ const VueExample = {
         return {
             columnDefs,
             gridApi,
+            groupRowRenderer,
             defaultColDef,
-            autoGroupColumnDef,
             groupDisplayType,
             rowData,
             onGridReady,
+            onCellDoubleClicked,
+            onCellKeyDown,
             themeClass:
                 /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
                 'ag-theme-quartz' /** DARK MODE END **/,
