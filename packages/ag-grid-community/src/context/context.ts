@@ -23,12 +23,12 @@ import type { ComponentMetadataProvider } from '../components/framework/componen
 import type { FrameworkComponentWrapper } from '../components/framework/frameworkComponentWrapper';
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import type { UserComponentRegistry } from '../components/framework/userComponentRegistry';
-import type { CtrlsFactory } from '../ctrlsFactory';
 import type { CtrlsService } from '../ctrlsService';
 import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import type { DragService } from '../dragAndDrop/dragService';
 import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeService';
 import type { RowDragService } from '../dragAndDrop/rowDragService';
+import type { DynamicBeanFactory } from '../dynamicBeanFactory';
 import type { EditService } from '../edit/editService';
 import type { RowEditService } from '../edit/rowEditService';
 import type { GridOptions } from '../entities/gridOptions';
@@ -47,7 +47,7 @@ import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService'
 import type { GridDestroyService } from '../gridDestroyService';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { IChartService } from '../interfaces/IChartService';
-import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
+import type { IRangeService } from '../interfaces/IRangeService';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
@@ -114,7 +114,13 @@ export interface ContextParams extends GenericContextParams<BeanName, BeanCollec
 
 export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollection> {}
 
-export type ControllerName = 'headerFilterCell' | 'detailCellRenderer' | 'groupCellRendererCtrl';
+export type DynamicBeanName =
+    | 'headerFilterCell'
+    | 'detailCellRenderer'
+    | 'groupCellRendererCtrl'
+    | 'fillHandle'
+    | 'rangeHandle';
+
 export type UserComponentName =
     | 'agDragAndDropImage'
     | 'agColumnHeader'
@@ -168,7 +174,7 @@ export interface NamedClass<TName = string> {
     classImp: new (...args: []) => object;
     name: TName;
 }
-export type ControllerMeta = NamedClass<ControllerName>;
+export type DynamicBeanMeta = NamedClass<DynamicBeanName>;
 export type ComponentMeta = NamedClass<UserComponentName> & {
     /** Default params for provided components */
     params?: any;
@@ -211,14 +217,13 @@ export interface CoreBeanCollection {
     rowStyleService?: RowStyleService;
     rowModel: IRowModel;
     ctrlsService: CtrlsService;
-    ctrlsFactory: CtrlsFactory;
+    dynamicBeanFactory: DynamicBeanFactory;
     valueCache?: ValueCache;
     rowNodeEventThrottle?: RowNodeEventThrottle;
     localeService: LocaleService;
     syncService: SyncService;
     ariaAnnouncementService: AriaAnnouncementService;
     rangeService?: IRangeService;
-    selectionHandleFactory: ISelectionHandleFactory;
     validationService?: ValidationService;
     gridApi: GridApi;
     gridOptions: GridOptions;
@@ -336,6 +341,7 @@ export type BeanName =
     | 'apiEventService'
     | 'autoColService'
     | 'autoWidthCalculator'
+    | 'dynamicBeanFactory'
     | 'beans'
     | 'cellEditorFactory'
     | 'cellNavigationService'
@@ -377,7 +383,6 @@ export type BeanName =
     | 'context'
     | 'contextMenuService'
     | 'controlsColService'
-    | 'ctrlsFactory'
     | 'ctrlsService'
     | 'csvCreator'
     | 'dataTypeService'
@@ -453,7 +458,6 @@ export type BeanName =
     | 'rowStyleService'
     | 'scrollVisibleService'
     | 'selectionController'
-    | 'selectionHandleFactory'
     | 'selectionService'
     | 'showRowGroupColsService'
     | 'sideBarService'

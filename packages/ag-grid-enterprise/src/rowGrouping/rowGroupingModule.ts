@@ -65,7 +65,7 @@ export const RowGroupingCoreModule: _ModuleWithoutApi = {
             classImp: GroupCellRenderer,
         },
     ],
-    controllers: [{ name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl }],
+    dynamicBeans: [{ name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl }],
     dependsOn: [
         EnterpriseCoreModule,
         PopupModule, // can be extracted into row group panel module

@@ -179,9 +179,7 @@ export class GridCoreCreator {
         };
 
         const context = new Context(contextParams);
-        this.registerModuleUserComponents(context, registeredModules);
-        this.registerControllers(context, registeredModules);
-        this.registerModuleApiFunctions(context, registeredModules);
+        this.registerModuleFeatures(context, registeredModules);
 
         createUi(context);
 
@@ -194,15 +192,6 @@ export class GridCoreCreator {
         return context.getBean('gridApi');
     }
 
-    private registerControllers(context: Context, registeredModules: Module[]): void {
-        const factory = context.getBean('ctrlsFactory');
-        registeredModules.forEach((module) => {
-            if (module.controllers) {
-                module.controllers.forEach((meta) => factory.register(meta));
-            }
-        });
-    }
-
     private getRegisteredModules(params: GridParams | undefined, gridId: string, rowModelType: RowModelType): Module[] {
         _registerModule(CommunityCoreModule, gridId);
 
@@ -211,21 +200,21 @@ export class GridCoreCreator {
         return _getRegisteredModules(gridId, rowModelType);
     }
 
-    private registerModuleUserComponents(context: Context, registeredModules: Module[]): void {
+    private registerModuleFeatures(
+        context: Context,
+        registeredModules: (_ModuleWithApi<any> | _ModuleWithoutApi)[]
+    ): void {
         const registry = context.getBean('userComponentRegistry');
+        const factory = context.getBean('dynamicBeanFactory');
+        const apiFunctionService = context.getBean('apiFunctionService');
+
         registeredModules.forEach((module) => {
             module.userComponents?.forEach(({ name, classImp, params }) => {
                 registry.registerDefaultComponent(name, classImp, params);
             });
-        });
-    }
 
-    private registerModuleApiFunctions(
-        context: Context,
-        registeredModules: (_ModuleWithApi<any> | _ModuleWithoutApi)[]
-    ): void {
-        const apiFunctionService = context.getBean('apiFunctionService');
-        registeredModules.forEach((module) => {
+            module.dynamicBeans?.forEach((meta) => factory.register(meta));
+
             const apiFunctions = module.apiFunctions;
             if (apiFunctions) {
                 const names = Object.keys(apiFunctions) as ApiFunctionName[];

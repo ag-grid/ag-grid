@@ -10,8 +10,8 @@ import { VisibleColsService } from './columns/visibleColsService';
 import { ComponentMetadataProvider } from './components/framework/componentMetadataProvider';
 import { UserComponentFactory } from './components/framework/userComponentFactory';
 import { UserComponentRegistry } from './components/framework/userComponentRegistry';
-import { CtrlsFactory } from './ctrlsFactory';
 import { CtrlsService } from './ctrlsService';
+import { DynamicBeanFactory } from './dynamicBeanFactory';
 import { PositionUtils } from './entities/positionUtils';
 import { Environment } from './environment';
 import { EventService } from './eventService';
@@ -58,7 +58,7 @@ export const CommunityCoreModule: _ModuleWithoutApi = {
         ScrollVisibleService,
         CtrlsService,
         PinnedWidthService,
-        CtrlsFactory,
+        DynamicBeanFactory,
         SyncService,
         AriaAnnouncementService,
         ColumnStateService,

@@ -1,6 +1,6 @@
 import type { GridApi } from '../api/gridApi';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
-import type { ComponentMeta, ControllerMeta, SingletonBean } from '../context/context';
+import type { ComponentMeta, DynamicBeanMeta, SingletonBean } from '../context/context';
 import { VERSION } from '../version';
 import type { RowModelType } from './iRowModel';
 
@@ -27,7 +27,7 @@ export interface Module {
      */
     validate?: () => ModuleValidationResult;
     beans?: SingletonBean[];
-    controllers?: ControllerMeta[];
+    dynamicBeans?: DynamicBeanMeta[];
     userComponents?: ComponentMeta[];
     rowModels?: RowModelType[];
     dependsOn?: Module[];
@@ -198,7 +198,9 @@ export type EnterpriseModuleName =
     | 'PivotModule'
     | 'RangeSelectionApiModule'
     | 'RangeSelectionCoreModule'
+    | 'RangeSelectionFillHandleModule'
     | 'RangeSelectionModule'
+    | 'RangeSelectionRangeHandleModule'
     | 'RichSelectModule'
     | 'RowGroupingApiModule'
     | 'RowGroupingCoreModule'

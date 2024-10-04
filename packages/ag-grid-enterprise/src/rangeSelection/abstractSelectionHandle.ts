@@ -5,23 +5,19 @@ import type {
     CellRange,
     CtrlsService,
     DragService,
-    ISelectionHandle,
     MouseEventService,
     RowPosition,
 } from 'ag-grid-community';
-import {
-    Component,
-    SelectionHandleType,
-    _areCellsEqual,
-    _isRowBefore,
-    _isVisible,
-    _last,
-    _setDisplayed,
-} from 'ag-grid-community';
+import { Component, _areCellsEqual, _isRowBefore, _isVisible, _last, _setDisplayed } from 'ag-grid-community';
 
 import type { RangeService } from './rangeService';
 
-export abstract class AbstractSelectionHandle extends Component implements ISelectionHandle {
+export enum SelectionHandleType {
+    FILL,
+    RANGE,
+}
+
+export abstract class AbstractSelectionHandle extends Component {
     protected dragService: DragService;
     protected rangeService: RangeService;
     protected mouseEventService: MouseEventService;

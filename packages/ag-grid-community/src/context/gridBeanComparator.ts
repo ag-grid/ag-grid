@@ -72,7 +72,7 @@ const orderedCoreBeans: BeanName[] = [
     'ctrlsService',
     'pinnedWidthService',
     'rowNodeEventThrottle',
-    'ctrlsFactory',
+    'dynamicBeanFactory',
     'dataTypeService',
     'syncService',
     'overlayService',

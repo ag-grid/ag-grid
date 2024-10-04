@@ -56,6 +56,7 @@ export {
     _getEditorRendererDetails,
 } from './components/framework/userCompUtils';
 export { _unwrapUserComp } from './components/framework/unwrapUserComp';
+export type { DynamicBeanFactory } from './dynamicBeanFactory';
 
 // context
 export { BeanStub } from './context/beanStub';
@@ -505,9 +506,6 @@ export {
     CellRangeParams,
     CellRangeType,
     IRangeService,
-    ISelectionHandle,
-    SelectionHandleType,
-    ISelectionHandleFactory,
     ClearCellRangeParams,
     PartialCellRange,
 } from './interfaces/IRangeService';

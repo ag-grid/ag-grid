@@ -23,7 +23,7 @@ export const MasterDetailCoreModule: _ModuleWithoutApi = {
         },
         { name: 'agDetailCellRenderer', classImp: DetailCellRenderer },
     ],
-    controllers: [
+    dynamicBeans: [
         { name: 'detailCellRenderer', classImp: DetailCellRendererCtrl },
         { name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl },
     ],
