@@ -531,7 +531,7 @@ export function addBindingImports(
 }
 
 export const usesThemingApi = (bindings: ParsedBindings) => {
-    // bindings.imports.some((b) => b.module.includes('ag-grid-community/theming'));
+    // bindings.imports.some((b) => b.module.includes('ag-grid-community/theming')); Update
     return bindings.properties.some((p) => p.name === 'theme') || bindings.exampleName.includes('docs/theming-');
 };
 
