@@ -1,5 +1,7 @@
 import type { AgColumn, BeanCollection, ColumnChooserParams, IContextMenuParams } from 'ag-grid-community';
 
+import type { ColumnChooserFactory } from './columnChooserFactory';
+
 export function showContextMenu(beans: BeanCollection, params?: IContextMenuParams) {
     const { contextMenuService } = beans;
     if (!contextMenuService) {
@@ -25,9 +27,9 @@ export function showContextMenu(beans: BeanCollection, params?: IContextMenuPara
 }
 
 export function showColumnChooser(beans: BeanCollection, params?: ColumnChooserParams): void {
-    beans.columnChooserFactory?.showColumnChooser({ chooserParams: params });
+    (beans.columnChooserFactory as ColumnChooserFactory)?.showColumnChooser({ chooserParams: params });
 }
 
 export function hideColumnChooser(beans: BeanCollection): void {
-    beans.columnChooserFactory?.hideActiveColumnChooser();
+    (beans.columnChooserFactory as ColumnChooserFactory)?.hideActiveColumnChooser();
 }

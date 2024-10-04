@@ -33,7 +33,7 @@ import type { ValueService } from '../valueService/valueService';
 import type { FilterManager } from './filterManager';
 import type { FilterValueService } from './filterValueService';
 import type { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
-import { getDefaultFloatingFilterType } from './floating/floatingFilterMapper';
+import { _getDefaultFloatingFilterType } from './floating/floatingFilterMapper';
 
 const MONTH_LOCALE_TEXT = {
     january: 'January',
@@ -663,7 +663,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             filterParams
         );
 
-        let defaultFloatingFilterType = getDefaultFloatingFilterType(this.frameworkOverrides, colDef, () =>
+        let defaultFloatingFilterType = _getDefaultFloatingFilterType(this.frameworkOverrides, colDef, () =>
             this.getDefaultFloatingFilter(column)
         );
 

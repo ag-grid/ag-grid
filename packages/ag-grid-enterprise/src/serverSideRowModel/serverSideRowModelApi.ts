@@ -8,7 +8,7 @@ import type {
     ServerSideTransaction,
     ServerSideTransactionResult,
 } from 'ag-grid-community';
-import { _warnOnce } from 'ag-grid-community';
+import { _getServerSideRowModel, _warnOnce } from 'ag-grid-community';
 
 export function getServerSideSelectionState(
     beans: BeanCollection
@@ -44,7 +44,7 @@ export function applyServerSideRowData(
         return;
     }
 
-    beans.rowModelHelperService?.getServerSideRowModel()?.applyRowData(params.successParams, startRow, route);
+    _getServerSideRowModel(beans)?.applyRowData(params.successParams, startRow, route);
 }
 
 export function applyServerSideTransactionAsync(
@@ -56,7 +56,7 @@ export function applyServerSideTransactionAsync(
 }
 
 export function retryServerSideLoads(beans: BeanCollection): void {
-    beans.rowModelHelperService?.getServerSideRowModel()?.retryLoads();
+    _getServerSideRowModel(beans)?.retryLoads();
 }
 
 export function flushServerSideAsyncTransactions(beans: BeanCollection): void {
@@ -64,9 +64,9 @@ export function flushServerSideAsyncTransactions(beans: BeanCollection): void {
 }
 
 export function refreshServerSide(beans: BeanCollection, params?: RefreshServerSideParams): void {
-    beans.rowModelHelperService?.getServerSideRowModel()?.refreshStore(params);
+    _getServerSideRowModel(beans)?.refreshStore(params);
 }
 
 export function getServerSideGroupLevelState(beans: BeanCollection): ServerSideGroupLevelState[] {
-    return beans.rowModelHelperService?.getServerSideRowModel()?.getStoreState() ?? [];
+    return _getServerSideRowModel(beans)?.getStoreState() ?? [];
 }

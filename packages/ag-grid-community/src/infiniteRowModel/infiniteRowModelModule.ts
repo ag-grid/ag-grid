@@ -1,5 +1,4 @@
 import type { _InfiniteRowModelGridApi } from '../api/gridApi';
-import { RowModelHelperService } from '../api/rowModelHelperService';
 import { SsrmInfiniteSharedApiModule } from '../api/sharedApiModule';
 import { CommunityFeaturesModule } from '../communityFeaturesModule';
 import { baseCommunityModule } from '../interfaces/iModule';
@@ -18,7 +17,6 @@ export const InfiniteRowModelCoreModule: _ModuleWithoutApi = {
 export const InfiniteRowModelApiModule: _ModuleWithApi<_InfiniteRowModelGridApi> = {
     ...baseCommunityModule('InfiniteRowModelApiModule'),
     rowModels: ['infinite'],
-    beans: [RowModelHelperService],
     apiFunctions: {
         refreshInfiniteCache,
         purgeInfiniteCache,

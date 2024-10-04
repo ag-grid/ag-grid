@@ -1,7 +1,6 @@
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
-import type { RowModelHelperService } from '../api/rowModelHelperService';
 import type { RowNodeEventThrottle } from '../clientSideRowModel/rowNodeEventThrottle';
 import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
 import type { ColumnMoveService } from '../columnMove/columnMoveService';
@@ -51,7 +50,6 @@ import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService'
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
-import type { IColumnChooserFactory } from '../interfaces/iColumnChooserFactory';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import type { IDetailGridApiService } from '../interfaces/iDetailGridApiService';
@@ -68,7 +66,6 @@ import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { ISideBarService } from '../interfaces/iSideBar';
-import type { IStatusBarService } from '../interfaces/iStatusBarService';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { LocaleService } from '../localeService';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -267,13 +264,11 @@ export interface CoreBeanCollection {
     paginationService?: PaginationService;
     pageBoundsService: PageBoundsService;
     apiFunctionService: ApiFunctionService;
-    rowModelHelperService?: RowModelHelperService;
     detailGridApiService?: IDetailGridApiService;
     gridDestroyService: GridDestroyService;
     expansionService?: IExpansionService;
     sideBarService?: ISideBarService;
     ssrmTransactionManager?: IServerSideTransactionManager;
-    columnChooserFactory?: IColumnChooserFactory;
     aggFuncService?: IAggFuncService;
     advancedFilterService: IAdvancedFilterService;
     filterStage?: IRowNodeStage;
@@ -285,7 +280,6 @@ export interface CoreBeanCollection {
     filterAggregatesStage?: IRowNodeStage;
     rowNodeSorter?: RowNodeSorter;
     pivotColDefService?: IPivotColDefService;
-    statusBarService?: IStatusBarService;
     chartService?: IChartService;
     aggColumnNameService?: IAggColumnNameService;
     renderStatusService?: IRenderStatusService;
@@ -445,7 +439,6 @@ export type BeanName =
     | 'rowModel'
     | 'rowNodeBlockLoader'
     | 'rowNodeEventThrottle'
-    | 'rowModelHelperService'
     | 'rowNodeSorter'
     | 'rowRenderer'
     | 'rowStyleService'

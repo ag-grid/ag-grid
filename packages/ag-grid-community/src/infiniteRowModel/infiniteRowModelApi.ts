@@ -1,13 +1,14 @@
+import { _getInfiniteRowModel } from '../api/rowModelApiUtils';
 import type { BeanCollection } from '../context/context';
 
 export function refreshInfiniteCache(beans: BeanCollection): void {
-    beans.rowModelHelperService?.getInfiniteRowModel()?.refreshCache();
+    _getInfiniteRowModel(beans)?.refreshCache();
 }
 
 export function purgeInfiniteCache(beans: BeanCollection): void {
-    beans.rowModelHelperService?.getInfiniteRowModel()?.purgeCache();
+    _getInfiniteRowModel(beans)?.purgeCache();
 }
 
 export function getInfiniteRowCount(beans: BeanCollection): number | undefined {
-    return beans.rowModelHelperService?.getInfiniteRowModel()?.getRowCount();
+    return _getInfiniteRowModel(beans)?.getRowCount();
 }
