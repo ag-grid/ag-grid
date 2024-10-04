@@ -17,10 +17,8 @@ import type { PropertyChangedSource } from '../gridOptionsService';
 import {
     _getCheckboxes,
     _getHeaderCheckbox,
-    _isClientSideRowModel,
     _isDomLayout,
     _isGroupUseEntireRow,
-    _isServerSideRowModel,
     _shouldMaintainColumnOrder,
 } from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -39,8 +37,7 @@ import { dispatchColumnPinnedEvent } from './columnEventUtils';
 import type { ColumnFactory } from './columnFactory';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnState, ColumnStateService } from './columnStateService';
-import { GROUP_AUTO_COLUMN_ID } from './columnUtils';
-import { _destroyColumnTree, _getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
+import { GROUP_AUTO_COLUMN_ID, _destroyColumnTree, _getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
 import type { ControlsColService } from './controlsColService';
 import type { FuncColsService } from './funcColsService';
