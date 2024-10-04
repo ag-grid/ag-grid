@@ -1,10 +1,11 @@
+import { BASE_URL } from '../baseUrl';
 import { _errorOnce as errorLog, _warnOnce as warnLog } from '../utils/function';
 import type { ErrorId, ErrorMap, GetErrorParams } from './errorMessages/errorText';
 import type { ValidationService } from './validationService';
 
 let validationService: ValidationService | null = null;
 let suppressAllLogging = false;
-let baseDocLink = 'https://www.ag-grid.com/javascript-data-grid';
+let baseDocLink = `${BASE_URL}/javascript-data-grid`;
 /**
  * The ValidationService passes itself in if it has been included.
  * @param logger
