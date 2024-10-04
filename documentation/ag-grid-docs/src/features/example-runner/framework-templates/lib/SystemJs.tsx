@@ -44,9 +44,9 @@ const localBuildAndArchiveConfiguration: Configuration = {
         'ag-charts-types': `${localPrefix}/ag-charts-types/dist/package/main.cjs.js`,
         'ag-charts-community': `${localPrefix}/ag-charts-community/dist/package/main.cjs.js`,
         'ag-charts-enterprise': `${localPrefix}/ag-charts-enterprise/dist/package/main.cjs.js`,
-        "ag-charts-community/modules": `${localPrefix}/ag-charts-community/dist/package/main-modules.cjs.js`,
-        "ag-charts-enterprise/modules": `${localPrefix}/ag-charts-enterprise/dist/package/main-modules.cjs.js`,
-        '@ag-grid-community/locale': `${localPrefix}/@ag-grid-community/locale/dist/package/main.cjs.js`
+        'ag-charts-community/modules': `${localPrefix}/ag-charts-community/dist/package/main-modules.cjs.js`,
+        'ag-charts-enterprise/modules': `${localPrefix}/ag-charts-enterprise/dist/package/main-modules.cjs.js`,
+        '@ag-grid-community/locale': `${localPrefix}/@ag-grid-community/locale/dist/package/main.cjs.js`,
     },
 };
 
@@ -115,13 +115,13 @@ function getRelevantConfig(configuration: Configuration, framework: InternalFram
  * code to load SystemJS and the relevant modules depending on the framework.
  */
 export const SystemJs = ({
-                             boilerplatePath,
-                             appLocation,
-                             startFile,
-                             internalFramework,
-                             isEnterprise,
-                             isDev,
-                         }: Props) => {
+    boilerplatePath,
+    appLocation,
+    startFile,
+    internalFramework,
+    isEnterprise,
+    isDev,
+}: Props) => {
     const systemJsPath = pathJoin(boilerplatePath, `systemjs.config${isDev ? '.dev' : ''}.js`);
 
     let configuration = isUsingPublishedPackages() ? publishedConfiguration : localBuildAndArchiveConfiguration;
