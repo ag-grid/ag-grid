@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AllEvents } from '../events';
-import { _warnOnce } from '../utils/function';
+import { _logWarn } from '../validation/logging';
 import type { GridApi } from './gridApi';
 import { gridApiFunctionsMap } from './gridApiFunctions';
 import type { ApiFunction, ApiFunctionName } from './iApiFunction';
@@ -86,15 +86,11 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
     private apiNotFound(fnName: ApiFunctionName): void {
         const { beans, gos, preDestroyLink } = this;
         if (!beans) {
-            _warnOnce(
-                `Grid API function ${fnName}() cannot be called as the grid has been destroyed.\n` +
-                    `Either clear local references to the grid api, when it is destroyed, or check gridApi.isDestroyed() to avoid calling methods against a destroyed grid.\n` +
-                    `To run logic when the grid is about to be destroyed use the gridPreDestroy event. See: ${preDestroyLink}`
-            );
+            _logWarn(26, { fnName, preDestroyLink });
         } else {
             const module = gridApiFunctionsMap[fnName];
             if (gos.assertModuleRegistered(module, `api.${fnName}`)) {
-                _warnOnce(`API function '${fnName}' not registered to module '${module}'`);
+                _logWarn(27, { fnName, module });
             }
         }
     }

@@ -108,9 +108,28 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
             return null;
         },
     },
+    pivotMode: {
+        dependencies: {
+            treeData: {
+                required: [false, undefined],
+                reason: 'Pivot Mode is not supported with Tree Data.',
+            },
+        },
+    },
+    rowDragManaged: {
+        supportedRowModels: ['clientSide'],
+        dependencies: {
+            treeData: {
+                required: [false, undefined],
+            },
+            pagination: {
+                required: [false, undefined],
+            },
+        },
+    },
     masterDetail: { module: 'MasterDetailModule' },
 
-    enableRangeSelection: { module: 'RangeSelectionModule' },
+    enableRangeSelection: { module: 'RangeSelectionModule', rowDragEntireRow: { required: [false, undefined] } },
     enableRangeHandle: {
         dependencies: {
             enableRangeSelection: { required: [true] },
@@ -199,6 +218,24 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     },
     cellSelection: {
         module: 'RangeSelectionModule',
+        dependencies: {
+            rowDragEntireRow: { required: [false, undefined] },
+        },
+    },
+    quickFilterText: {
+        supportedRowModels: ['clientSide'],
+    },
+    initialGroupOrderComparator: {
+        supportedRowModels: ['clientSide'],
+    },
+    rowStyle: {
+        validate: (options) => {
+            const rowStyle = options.rowStyle;
+            if (rowStyle && typeof rowStyle === 'function') {
+                return 'rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead';
+            }
+            return null;
+        },
     },
 
     columnDefs: () => COL_DEF_VALIDATORS,

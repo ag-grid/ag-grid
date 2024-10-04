@@ -6,7 +6,6 @@ import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
-import { _errorOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
 import { _iterateObject } from '../utils/object';
 import type { ClientSideRowModel } from './clientSideRowModel';
@@ -44,7 +43,7 @@ export class ImmutableService extends BeanStub implements NamedBean {
         return getRowIdProvided;
     }
 
-    public setRowData<TData>(rowData: TData[]): void {
+    private setRowData<TData>(rowData: TData[]): void {
         // convert the setRowData data into a transaction object by working out adds, removes and updates
 
         const rowDataTransaction = this.createTransactionForRowData(rowData);
@@ -71,16 +70,7 @@ export class ImmutableService extends BeanStub implements NamedBean {
 
     /** Converts the setRowData() command to a transaction */
     private createTransactionForRowData<TData>(rowData: TData[]): RowDataTransaction | null {
-        if (!_isClientSideRowModel(this.gos, this.rowModel)) {
-            _errorOnce('ImmutableService only works with ClientSideRowModel');
-            return null;
-        }
-
-        const getRowIdFunc = _getRowIdCallback(this.gos);
-        if (getRowIdFunc == null) {
-            _errorOnce('ImmutableService requires getRowId() callback to be implemented, your row data needs IDs!');
-            return null;
-        }
+        const getRowIdFunc = _getRowIdCallback(this.gos)!;
 
         // get a map of the existing data, that we are going to modify as we find rows to not delete
         const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel

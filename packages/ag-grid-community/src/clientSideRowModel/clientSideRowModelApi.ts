@@ -3,7 +3,7 @@ import type { ClientSideRowModelStep } from '../interfaces/iClientSideRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _warnOnce } from '../utils/function';
+import { _logWarn } from '../validation/logging';
 
 export function onGroupExpandedOrCollapsed(beans: BeanCollection): void {
     beans.expansionService?.onGroupExpandedOrCollapsed();
@@ -40,7 +40,7 @@ export function forEachNodeAfterFilterAndSort<TData = any>(
 
 export function resetRowHeights(beans: BeanCollection): void {
     if (beans.columnModel.isAutoRowHeightActive()) {
-        _warnOnce('calling gridApi.resetRowHeights() makes no sense when using Auto Row Height.');
+        _logWarn(3, {});
         return;
     }
     beans.rowModelHelperService?.getClientSideRowModel()?.resetRowHeights();

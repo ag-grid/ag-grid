@@ -3,9 +3,8 @@ import { BeanStub } from '../../context/beanStub';
 import type { UserComponentName } from '../../context/context';
 import type { ModuleName } from '../../interfaces/iModule';
 import { TooltipComponent } from '../../rendering/tooltipComponent';
-import { _doOnce, _warnOnce } from '../../utils/function';
-import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
 import { _iterateObject } from '../../utils/object';
+import { _logWarn } from '../../validation/logging';
 
 export class UserComponentRegistry extends BeanStub implements NamedBean {
     beanName = 'userComponentRegistry' as const;
@@ -89,32 +88,14 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
         if (moduleForComponent) {
             this.gos.assertModuleRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`);
         } else {
-            _doOnce(() => {
-                this.warnAboutMissingComponent(propertyName, name);
-            }, 'MissingComp' + name);
+            _logWarn(101, {
+                propertyName,
+                componentName: name,
+                agGridDefaults: this.agGridDefaults,
+                jsComps: this.jsComps,
+            });
         }
 
         return null;
-    }
-
-    private warnAboutMissingComponent(propertyName: string, componentName: string) {
-        const validComponents = [
-            // Don't include the old names / internals in potential suggestions
-            ...Object.keys(this.agGridDefaults).filter(
-                (k) => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)
-            ),
-            ...Object.keys(this.jsComps),
-        ];
-        const suggestions = _fuzzySuggestions(componentName, validComponents, true, 0.8).values;
-
-        _warnOnce(
-            `Could not find '${componentName}' component. It was configured as "${propertyName}: '${componentName}'" but it wasn't found in the list of registered components.`
-        );
-        if (suggestions.length > 0) {
-            _warnOnce(`         Did you mean: [${suggestions.slice(0, 3)}]?`);
-        }
-        _warnOnce(
-            `If using a custom component check it has been registered as described in: ${this.getFrameworkOverrides().getDocLink('components/')}`
-        );
     }
 }

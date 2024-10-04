@@ -5,7 +5,7 @@ import type { CtrlsService } from '../ctrlsService';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _getWindow } from '../gridOptionsUtils';
 import type { PaginationService } from '../pagination/paginationService';
-import { _warnOnce } from '../utils/function';
+import { _logWarn } from '../validation/logging';
 
 interface TaskItem {
     task: () => void;
@@ -92,7 +92,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     // when it should not.
     private verifyAnimationFrameOn(methodName: string): void {
         if (this.useAnimationFrame === false) {
-            _warnOnce(`AnimationFrameService.${methodName} called but animation frames are off`);
+            _logWarn(92, { methodName });
         }
     }
 
