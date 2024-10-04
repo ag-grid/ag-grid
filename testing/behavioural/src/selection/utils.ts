@@ -1,4 +1,10 @@
-import type { GridApi, IRowNode, IServerSideGroupSelectionState, IServerSideSelectionState } from 'ag-grid-community';
+import type {
+    AgPublicEventType,
+    GridApi,
+    IRowNode,
+    IServerSideGroupSelectionState,
+    IServerSideSelectionState,
+} from 'ag-grid-community';
 import { _areEqual } from 'ag-grid-community';
 
 export function getRowByIndex(index: number): HTMLElement | null {
@@ -101,4 +107,15 @@ export function assertSelectedCellRanges(cellRanges: CellRangeSpec[], api: GridA
         }
     }
     expect(notFound).toEqual([]);
+}
+
+export function waitForEvent(event: AgPublicEventType, api: GridApi, n = 1): Promise<void> {
+    let count = n;
+    return new Promise((resolve) =>
+        api.addEventListener(event, () => {
+            if (--count === 0) {
+                resolve();
+            }
+        })
+    );
 }

@@ -6,7 +6,7 @@ import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise'
 
 import { GridRows, TestGridsManager } from '../test-utils';
 import { GridRowsDiagramTree } from '../test-utils/gridRows/gridRowsDiagramTree';
-import { GROUP_ROW_DATA } from './data';
+import { fakeFetch } from './data';
 import {
     assertSelectedRowElementsById,
     assertSelectedRowsByIndex,
@@ -15,7 +15,14 @@ import {
     selectRowsByIndex,
     toggleCheckboxByIndex,
     toggleHeaderCheckboxByIndex,
+    waitForEvent,
 } from './utils';
+
+function draw(api: GridApi) {
+    const gr = new GridRows(api);
+    const tr = new GridRowsDiagramTree(gr);
+    console.log(tr.diagramToString(false, null));
+}
 
 describe('Row Selection Grid Options', () => {
     const columnDefs = [{ field: 'sport' }];
@@ -1221,7 +1228,8 @@ describe('Row Selection Grid Options', () => {
                 rowModelType: 'serverSide',
                 serverSideDatasource: {
                     getRows(params) {
-                        return params.success({ rowData: GROUP_ROW_DATA, rowCount: GROUP_ROW_DATA.length });
+                        const data = fakeFetch(params.request);
+                        return params.success({ rowData: data, rowCount: data.length });
                     },
                 },
                 getRowId(params) {
@@ -1239,7 +1247,7 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([0], api);
             });
 
-            test.only('clicking group row with `groupSelects = "descendants"` enabled selects that row and all its children', async () => {
+            test('clicking group row with `groupSelects = "descendants"` enabled selects that row and all its children', async () => {
                 const api = await createGridAndWait({
                     ...groupGridOptions,
                     rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
@@ -1247,23 +1255,46 @@ describe('Row Selection Grid Options', () => {
 
                 // Group selects children
                 toggleCheckboxByIndex(0);
+                const updated = waitForEvent('modelUpdated', api, 2); // attach listener first
                 expandGroupRowByIndex(0);
-                const gr = new GridRows(api);
-                const tr = new GridRowsDiagramTree(gr);
-                console.log(tr.diagramToString(false, null));
-                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13], api);
+                await updated;
+
+                assertSelectedRowElementsById(
+                    [
+                        { country: 'United States' },
+                        { sport: 'Swimming' },
+                        { sport: 'Gymnastics' },
+                        { sport: 'Speed Skating' },
+                        { sport: 'Cross Country Skiing' },
+                    ].map((r) => JSON.stringify(r)),
+                    api
+                );
 
                 // Can un-select child row
                 toggleCheckboxByIndex(4);
-                assertSelectedRowsByIndex([2, 3, 5, 6, 7, 8, 9, 10, 11, 13], api);
+                assertSelectedRowElementsById(
+                    [{ sport: 'Swimming' }, { sport: 'Gymnastics' }, { sport: 'Speed Skating' }].map((r) =>
+                        JSON.stringify(r)
+                    ),
+                    api
+                );
 
                 // Toggling group row from indeterminate state selects all children
                 toggleCheckboxByIndex(0);
-                assertSelectedRowsByIndex([2, 3, 5, 6, 7, 8, 9, 10, 11, 13, 4], api);
+                assertSelectedRowElementsById(
+                    [
+                        { country: 'United States' },
+                        { sport: 'Swimming' },
+                        { sport: 'Gymnastics' },
+                        { sport: 'Speed Skating' },
+                        { sport: 'Cross Country Skiing' },
+                    ].map((r) => JSON.stringify(r)),
+                    api
+                );
 
                 // Toggle group row again de-selects all children
                 toggleCheckboxByIndex(0);
-                assertSelectedRowsByIndex([], api);
+                assertSelectedRowElementsById([], api);
             });
 
             test('Cannot select group rows where `isRowSelectable` returns false and `groupSelects` = "self"', async () => {
@@ -1275,14 +1306,21 @@ describe('Row Selection Grid Options', () => {
                     },
                 });
 
+                const updated = waitForEvent('modelUpdated', api, 2); // attach listener first
+                expandGroupRowByIndex(0);
+                await updated;
+
                 toggleCheckboxByIndex(0);
                 assertSelectedRowElementsById([], api);
 
-                toggleCheckboxByIndex(2);
-                assertSelectedRowElementsById(['2'], api);
+                toggleCheckboxByIndex(1);
+                assertSelectedRowElementsById(
+                    [{ sport: 'Swimming' }].map((r) => JSON.stringify(r)),
+                    api
+                );
             });
 
-            test('Can select group rows where `isRowSelectable` returns false and `groupSelects` = "descendants"', async () => {
+            test('Cannot select group rows where `isRowSelectable` returns false and `groupSelects` = "descendants"', async () => {
                 const api = await createGridAndWait({
                     ...groupGridOptions,
                     rowSelection: {
@@ -1292,11 +1330,15 @@ describe('Row Selection Grid Options', () => {
                     },
                 });
 
+                const updated = waitForEvent('modelUpdated', api, 2); // attach listener first
+                expandGroupRowByIndex(0);
+                await updated;
+
                 toggleCheckboxByIndex(0);
-                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11], api);
+                assertSelectedRowElementsById([], api);
             });
 
-            test('Selection state changes when `isRowSelectable` changes', async () => {
+            test.only('Selection state changes when `isRowSelectable` changes', async () => {
                 const api = await createGridAndWait({
                     ...groupGridOptions,
                     rowSelection: {
@@ -1306,14 +1348,23 @@ describe('Row Selection Grid Options', () => {
                     },
                 });
 
-                toggleCheckboxByIndex(0);
-                assertSelectedRowElementsById(['2', '3', '4', '5', '6', '7', '8', '9', '10', '11'], api);
+                const updated = waitForEvent('modelUpdated', api, 2); // attach listener first
+                expandGroupRowByIndex(0);
+                await updated;
 
+                toggleCheckboxByIndex(1);
+                assertSelectedRowElementsById(
+                    [{ sport: 'Swimming' }].map((r) => JSON.stringify(r)),
+                    api
+                );
+
+                draw(api);
                 api.setGridOption('rowSelection', {
                     mode: 'multiRow',
                     groupSelects: 'descendants',
                     isRowSelectable: (node) => node.data?.sport === 'Gymnastics',
                 });
+                draw(api);
 
                 assertSelectedRowElementsById([], api);
             });
