@@ -489,7 +489,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         const { searchType = 'fuzzy', filterList } = this.config;
 
         if (searchType === 'fuzzy') {
-            const fuzzySearchResult = _fuzzySuggestions(searchValue, valueList, true);
+            const fuzzySearchResult = _fuzzySuggestions({
+                inputValue: searchValue,
+                allSuggestions: valueList,
+                hideIrrelevant: true,
+                addSequentialWeight: true,
+            });
             suggestions = fuzzySearchResult.values;
 
             const indices = fuzzySearchResult.indices;
