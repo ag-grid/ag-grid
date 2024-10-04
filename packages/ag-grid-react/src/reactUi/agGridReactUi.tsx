@@ -270,12 +270,12 @@ class ReactFrameworkComponentWrapper
                         return CellRendererComponentWrapper;
                 }
             };
-            const ComponentClass = getComponentClass(componentType.propertyName);
+            const ComponentClass = getComponentClass(componentType.name);
             if (ComponentClass) {
                 return new ComponentClass(UserReactComponent, this.parent, componentType);
             }
         } else {
-            switch (componentType.propertyName) {
+            switch (componentType.name) {
                 case 'filter':
                 case 'floatingFilterComponent':
                 case 'dateComponent':
@@ -291,7 +291,7 @@ class ReactFrameworkComponentWrapper
             }
         }
         // only cell renderers and tool panel should use fallback methods
-        const suppressFallbackMethods = !componentType.cellRenderer && componentType.propertyName !== 'toolPanel';
+        const suppressFallbackMethods = !componentType.cellRenderer && componentType.name !== 'toolPanel';
         return new ReactComponent(UserReactComponent, this.parent, componentType, suppressFallbackMethods);
     }
 }
