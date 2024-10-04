@@ -17,7 +17,6 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    ModuleNames,
     _includes,
     _isClientSideRowModel,
     _isServerSideRowModel,
@@ -314,7 +313,7 @@ export class ChartDatasource extends BeanStub {
             });
         });
 
-        if (this.gos.assertModuleRegistered(ModuleNames.RowGroupingModule, 'Charting Aggregation')) {
+        if (this.gos.assertModuleRegistered('RowGroupingModule', 'Charting Aggregation')) {
             const aggStage = this.aggregationStage!;
             dataAggregated.forEach((groupItem) =>
                 params.valueCols.forEach((col) => {

@@ -1,5 +1,5 @@
 import type { _ModuleWithoutApi } from 'ag-grid-community';
-import { ColumnFilterModule, FloatingFilterModule, ModuleNames } from 'ag-grid-community';
+import { ColumnFilterModule, FloatingFilterModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
@@ -19,6 +19,6 @@ const SetFloatingFilterModule: _ModuleWithoutApi = {
 };
 
 export const SetFilterModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule(ModuleNames.SetFilterModule),
+    ...baseEnterpriseModule('SetFilterModule'),
     dependsOn: [SetFilterCoreModule, SetFloatingFilterModule],
 };

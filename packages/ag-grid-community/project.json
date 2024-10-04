@@ -13,7 +13,7 @@
     "build:umd": {
       "executor": "nx:run-commands",
       "dependsOn": ["^build", "build:copy-styles", "build:package"],
-      "inputs": ["tsDefaults"],
+      "inputs": ["tsDefaults", "styleOutputs"],
       "outputs": [],
       "options": {
         "cwd": "packages/ag-grid-community",

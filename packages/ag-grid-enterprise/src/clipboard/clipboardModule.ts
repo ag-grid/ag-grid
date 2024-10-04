@@ -1,5 +1,5 @@
 import type { _ClipboardGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
-import { KeyboardNavigationCoreModule, ModuleNames } from 'ag-grid-community';
+import { KeyboardNavigationCoreModule } from 'ag-grid-community';
 import { CsvExportModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
@@ -34,6 +34,6 @@ export const ClipboardApiModule: _ModuleWithApi<_ClipboardGridApi> = {
 };
 
 export const ClipboardModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule(ModuleNames.ClipboardModule),
+    ...baseEnterpriseModule('ClipboardModule'),
     dependsOn: [ClipboardCoreModule, ClipboardApiModule],
 };

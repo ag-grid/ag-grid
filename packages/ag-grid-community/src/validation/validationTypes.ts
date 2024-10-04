@@ -1,6 +1,6 @@
 import type { GridOptions } from '../entities/gridOptions';
+import type { ModuleName } from '../interfaces/iModule';
 import type { RowModelType } from '../interfaces/iRowModel';
-import type { ModuleNames } from '../modules/moduleNames';
 
 export interface OptionsValidator<T extends object> {
     objectName: string;
@@ -30,7 +30,7 @@ export type Validations<T extends object> = Partial<{
 
 // Rules object, if present, module is required.
 export interface OptionsValidation<T extends object> {
-    module?: ModuleNames | ModuleNames[];
+    module?: ModuleName | ModuleName[];
     supportedRowModels?: RowModelType[];
     dependencies?: RequiredOptions<T>;
     validate?: (options: T, gridOptions: GridOptions) => string | null;

@@ -1,7 +1,7 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { UserComponentName } from '../../context/context';
-import { ModuleNames } from '../../modules/moduleNames';
+import type { ModuleName } from '../../interfaces/iModule';
 import { TooltipComponent } from '../../rendering/tooltipComponent';
 import { _doOnce, _warnOnce } from '../../utils/function';
 import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
@@ -18,19 +18,19 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
     private agGridDefaultParams: { [key in UserComponentName]?: any } = {};
 
     /** Used to provide useful error messages if a user is trying to use an enterprise component without loading the module. */
-    private enterpriseAgDefaultCompsModule: Record<string, ModuleNames> = {
-        agSetColumnFilter: ModuleNames.SetFilterModule,
-        agSetColumnFloatingFilter: ModuleNames.SetFilterModule,
-        agMultiColumnFilter: ModuleNames.MultiFilterModule,
-        agMultiColumnFloatingFilter: ModuleNames.MultiFilterModule,
-        agGroupColumnFilter: ModuleNames.RowGroupingModule,
-        agGroupColumnFloatingFilter: ModuleNames.RowGroupingModule,
-        agGroupCellRenderer: ModuleNames.RowGroupingModule, // Actually in enterprise core as used by MasterDetail too but best guess is they are grouping
-        agGroupRowRenderer: ModuleNames.RowGroupingModule, // Actually in enterprise core as used by MasterDetail but best guess is they are grouping
-        agRichSelect: ModuleNames.RichSelectModule,
-        agRichSelectCellEditor: ModuleNames.RichSelectModule,
-        agDetailCellRenderer: ModuleNames.MasterDetailModule,
-        agSparklineCellRenderer: ModuleNames.SparklinesModule,
+    private enterpriseAgDefaultCompsModule: Record<string, ModuleName> = {
+        agSetColumnFilter: 'SetFilterModule',
+        agSetColumnFloatingFilter: 'SetFilterModule',
+        agMultiColumnFilter: 'MultiFilterModule',
+        agMultiColumnFloatingFilter: 'MultiFilterModule',
+        agGroupColumnFilter: 'RowGroupingModule',
+        agGroupColumnFloatingFilter: 'RowGroupingModule',
+        agGroupCellRenderer: 'RowGroupingModule', // Actually in enterprise core as used by MasterDetail too but best guess is they are grouping
+        agGroupRowRenderer: 'RowGroupingModule', // Actually in enterprise core as used by MasterDetail but best guess is they are grouping
+        agRichSelect: 'RichSelectModule',
+        agRichSelectCellEditor: 'RichSelectModule',
+        agDetailCellRenderer: 'MasterDetailModule',
+        agSparklineCellRenderer: 'SparklinesModule',
     };
 
     private jsComps: { [key: string]: any } = {};

@@ -1,5 +1,4 @@
 import type { _MasterDetailGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
-import { ModuleNames } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
@@ -43,6 +42,6 @@ export const MasterDetailApiModule: _ModuleWithApi<_MasterDetailGridApi> = {
 };
 
 export const MasterDetailModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule(ModuleNames.MasterDetailModule),
+    ...baseEnterpriseModule('MasterDetailModule'),
     dependsOn: [MasterDetailCoreModule, MasterDetailApiModule],
 };

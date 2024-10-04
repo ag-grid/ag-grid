@@ -25,7 +25,6 @@ import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
-import { ModuleNames } from './modules/moduleNames';
 import { _warnOnce } from './utils/function';
 import { _exists, _missing } from './utils/generic';
 
@@ -502,7 +501,7 @@ export function _getGroupSelectsDescendants(gos: GridOptionsService): boolean {
 }
 
 export function _isSetFilterByDefault(gos: GridOptionsService): boolean {
-    return gos.isModuleRegistered(ModuleNames.SetFilterModule) && !gos.get('suppressSetFilterByDefault');
+    return gos.isModuleRegistered('SetFilterCoreModule') && !gos.get('suppressSetFilterByDefault');
 }
 
 export function _isLegacyMenuEnabled(gos: GridOptionsService): boolean {

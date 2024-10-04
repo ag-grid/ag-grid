@@ -4,6 +4,9 @@ import type { XmlElement } from 'ag-grid-community';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import contentTypeFactory from './contentType';
 
+type ImageExtension = 'jpeg' | 'png' | 'gif';
+export const _normaliseImageExtension = (ext: 'jpg' | 'png' | 'gif'): ImageExtension => (ext === 'jpg' ? 'jpeg' : ext);
+
 const contentTypesFactory: ExcelOOXMLTemplate = {
     getTemplate(sheetLen: number) {
         const worksheets = new Array(sheetLen).fill(undefined).map((v, i) => ({
@@ -15,11 +18,10 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
         const sheetsWithImages = ExcelXlsxFactory.worksheetImages.size;
         const headerFooterImages = ExcelXlsxFactory.worksheetHeaderFooterImages.size;
         const sheetsWithTables = ExcelXlsxFactory.worksheetDataTables.size;
-        const imageTypesObject: { [key: string]: boolean } = {};
+        const imageTypesObject: { [key in ImageExtension]?: boolean } = {};
 
         ExcelXlsxFactory.workbookImageIds.forEach((v) => {
-            const type = v.type === 'jpg' ? 'jpeg' : v.type;
-            imageTypesObject[type] = true;
+            imageTypesObject[_normaliseImageExtension(v.type)] = true;
         });
 
         const imageDocs = new Array(sheetsWithImages).fill(undefined).map((v, i) => ({

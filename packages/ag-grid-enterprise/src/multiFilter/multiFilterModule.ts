@@ -1,5 +1,5 @@
 import type { _ModuleWithoutApi } from 'ag-grid-community';
-import { ColumnFilterModule, ModuleNames, ReadOnlyFloatingFilterModule } from 'ag-grid-community';
+import { ColumnFilterModule, ReadOnlyFloatingFilterModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
@@ -26,6 +26,6 @@ const MultiFloatingFilterModule: _ModuleWithoutApi = {
 };
 
 export const MultiFilterModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule(ModuleNames.MultiFilterModule),
+    ...baseEnterpriseModule('MultiFilterModule'),
     dependsOn: [MultiFilterCoreModule, MultiFloatingFilterModule],
 };

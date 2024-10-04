@@ -7,7 +7,7 @@ import type {
     IToolPanelComp,
     IToolPanelParams,
 } from 'ag-grid-community';
-import { Component, ModuleNames, _clearElement, _last } from 'ag-grid-community';
+import { Component, _clearElement, _last } from 'ag-grid-community';
 
 import { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
@@ -214,7 +214,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private isRowGroupingModuleLoaded(): boolean {
-        return this.gos.assertModuleRegistered(ModuleNames.RowGroupingModule, 'Row Grouping');
+        return this.gos.assertModuleRegistered('RowGroupingCoreModule', 'Row Grouping');
     }
 
     public expandColumnGroups(groupIds?: string[]): void {

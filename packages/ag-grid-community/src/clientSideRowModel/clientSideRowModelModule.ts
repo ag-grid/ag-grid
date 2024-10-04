@@ -5,7 +5,6 @@ import { CommunityFeaturesModule } from '../communityFeaturesModule';
 import { FilterCoreModule } from '../filter/filterModule';
 import { baseCommunityModule } from '../interfaces/iModule';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
-import { ModuleNames } from '../modules/moduleNames';
 import { SortModule } from '../sort/sortModule';
 import { ClientSideRowModel } from './clientSideRowModel';
 import {
@@ -68,7 +67,7 @@ export const ClientSideRowModelApiModule: _ModuleWithApi<_ClientSideRowModelGrid
 };
 
 export const ClientSideRowModelModule: _ModuleWithoutApi = {
-    ...baseCommunityModule(ModuleNames.ClientSideRowModelModule),
+    ...baseCommunityModule('ClientSideRowModelModule'),
     rowModels: ['clientSide'],
     dependsOn: [
         ClientSideRowModelCoreModule,
