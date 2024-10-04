@@ -9,6 +9,7 @@ import {
 } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { LoadingCellRendererModule, SkeletonCellRendererModule } from '../cellRenderers/enterpriseCellRendererModule';
 import { baseEnterpriseModule } from '../moduleUtils';
 import { BlockUtils } from './blocks/blockUtils';
 import { ExpandListener } from './listeners/expandListener';
@@ -102,6 +103,8 @@ export const ServerSideRowModelModule: _ModuleWithoutApi = {
         ServerSideRowModelRowSelectionModule,
         ServerSideRowModelSortModule,
         ServerSideRowModelRowGroupingModule,
+        LoadingCellRendererModule,
+        SkeletonCellRendererModule,
         CommunityFeaturesModule,
     ],
 };

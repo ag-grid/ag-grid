@@ -2,6 +2,8 @@ import type { _ModuleWithApi, _ModuleWithoutApi, _RowGroupingGridApi } from 'ag-
 import { ColumnFilterModule, FloatingFilterModule, PopupModule, StickyRowModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { AggregationModule } from '../aggregation/aggregationModule';
+import { ClientSideRowModelExpansionModule } from '../expansion/expansionModule';
 import { baseEnterpriseModule } from '../moduleUtils';
 import { GroupCellRenderer } from '../rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from '../rendering/groupCellRendererCtrl';
@@ -67,6 +69,7 @@ export const RowGroupingCoreModule: _ModuleWithoutApi = {
     dependsOn: [
         EnterpriseCoreModule,
         PopupModule, // can be extracted into row group panel module
+        AggregationModule,
     ],
 };
 
@@ -124,5 +127,6 @@ export const RowGroupingModule: _ModuleWithoutApi = {
         GroupFloatingFilterModule,
         StickyRowModule,
         PivotModule,
+        ClientSideRowModelExpansionModule,
     ],
 };
