@@ -12,8 +12,8 @@ import type { IPivotResultColsService } from '../interfaces/iPivotResultColsServ
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { SortController } from '../sort/sortController';
 import { _areEqual, _removeFromArray } from '../utils/array';
-import { _warnOnce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
+import { _logWarn } from '../validation/logging';
 import {
     dispatchColumnChangedEvent,
     dispatchColumnPinnedEvent,
@@ -99,10 +99,9 @@ export class ColumnStateService extends BeanStub implements NamedBean {
             return false;
         }
 
-        if (params && params.state && !params.state.forEach) {
-            _warnOnce(
-                'applyColumnState() - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.'
-            );
+        if (!params?.state?.forEach) {
+            // state is not an array
+            _logWarn(32, {});
             return false;
         }
 
@@ -441,11 +440,8 @@ export class ColumnStateService extends BeanStub implements NamedBean {
                 }
             } else {
                 if (_exists(aggFunc)) {
-                    _warnOnce(
-                        'stateItem.aggFunc must be a string. if using your own aggregation ' +
-                            'functions, register the functions first before using them in get/set state. This is because it is ' +
-                            'intended for the column state to be stored and retrieved as simple JSON.'
-                    );
+                    // stateItem.aggFunc must be a string
+                    _logWarn(33, {});
                 }
                 // Note: we do not call column.setAggFunc(null), so that next time we aggregate
                 // by this column (eg drag the column to the agg section int he toolpanel) it will
