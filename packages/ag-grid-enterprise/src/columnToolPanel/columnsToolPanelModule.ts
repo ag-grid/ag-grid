@@ -4,6 +4,7 @@ import { ColumnMoveModule, DragAndDropModule, PopupModule } from 'ag-grid-commun
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
 import { RowGroupingModule } from '../rowGrouping/rowGroupingModule';
+import { ToolPanelColDefService } from '../sideBar/common/toolPanelColDefService';
 import { SideBarModule } from '../sideBar/sideBarModule';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 import { ColumnToolPanel } from './columnToolPanel';
@@ -12,7 +13,7 @@ import { ModelItemUtils } from './modelItemUtils';
 
 export const ColumnsToolPanelCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('ColumnsToolPanelCoreModule'),
-    beans: [ModelItemUtils],
+    beans: [ModelItemUtils, ToolPanelColDefService],
     userComponents: [
         { name: 'agColumnsToolPanel', classImp: ColumnToolPanel },
         {

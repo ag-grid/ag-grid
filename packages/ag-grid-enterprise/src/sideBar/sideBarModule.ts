@@ -3,7 +3,6 @@ import { HorizontalResizeModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
-import { ToolPanelColDefService } from './common/toolPanelColDefService';
 import {
     closeToolPanel,
     getOpenedToolPanel,
@@ -20,7 +19,7 @@ import { SideBarService } from './sideBarService';
 
 export const SideBarCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('SideBarCoreModule'),
-    beans: [ToolPanelColDefService, SideBarService],
+    beans: [SideBarService],
     dependsOn: [EnterpriseCoreModule, HorizontalResizeModule],
 };
 
