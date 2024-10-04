@@ -18,7 +18,6 @@ const orderedCoreBeans: BeanName[] = [
     'gridApi',
     'userComponentRegistry',
     'agComponentUtils',
-    'componentMetadataProvider',
     'userComponentFactory',
     'rowContainerHeightService',
     'horizontalResizeService',

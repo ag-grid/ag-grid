@@ -7,7 +7,6 @@ import { ColumnStateService } from './columns/columnStateService';
 import { ColumnViewportService } from './columns/columnViewportService';
 import { FuncColsService } from './columns/funcColsService';
 import { VisibleColsService } from './columns/visibleColsService';
-import { ComponentMetadataProvider } from './components/framework/componentMetadataProvider';
 import { UserComponentFactory } from './components/framework/userComponentFactory';
 import { UserComponentRegistry } from './components/framework/userComponentRegistry';
 import { CtrlsService } from './ctrlsService';
@@ -39,7 +38,6 @@ export const CommunityCoreModule: _ModuleWithoutApi = {
         GridDestroyService,
         ApiFunctionService,
         UserComponentRegistry,
-        ComponentMetadataProvider,
         UserComponentFactory,
         RowContainerHeightService,
         LocaleService,

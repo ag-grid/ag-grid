@@ -6,10 +6,10 @@ export class DetailFrameworkComponentWrapper implements FrameworkComponentWrappe
 
     public wrap<A extends IComponent<any>>(
         frameworkComponent: { new (): any } | null,
-        methodList: string[],
-        optionalMethodList: string[],
+        mandatoryMethods: string[] | undefined,
+        optionalMethods: string[] | undefined,
         componentType: ComponentType
     ): A {
-        return this.parentWrapper.wrap(frameworkComponent, methodList, optionalMethodList, componentType);
+        return this.parentWrapper.wrap(frameworkComponent, mandatoryMethods, optionalMethods, componentType);
     }
 }

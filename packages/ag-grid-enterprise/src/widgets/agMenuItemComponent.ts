@@ -58,8 +58,8 @@ function getMenuItemCompDetails(
 }
 
 const MenuItemComponent: ComponentType = {
-    propertyName: 'menuItem',
-    cellRenderer: false,
+    name: 'menuItem',
+    optionalMethods: ['setActive', 'select', 'setExpanded', 'configureDefaults'],
 };
 
 export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {

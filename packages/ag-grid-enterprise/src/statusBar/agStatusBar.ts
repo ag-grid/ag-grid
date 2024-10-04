@@ -22,8 +22,8 @@ function getStatusPanelCompDetails(
 }
 
 const StatusPanelComponent: ComponentType = {
-    propertyName: 'statusPanel',
-    cellRenderer: false,
+    name: 'statusPanel',
+    optionalMethods: ['refresh'],
 };
 
 export class AgStatusBar extends Component {

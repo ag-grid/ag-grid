@@ -19,7 +19,6 @@ import type { DataTypeService } from '../columns/dataTypeService';
 import type { FuncColsService } from '../columns/funcColsService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { AgComponentUtils } from '../components/framework/agComponentUtils';
-import type { ComponentMetadataProvider } from '../components/framework/componentMetadataProvider';
 import type { FrameworkComponentWrapper } from '../components/framework/frameworkComponentWrapper';
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
 import type { UserComponentRegistry } from '../components/framework/userComponentRegistry';
@@ -258,7 +257,6 @@ export interface CoreBeanCollection {
     pinnedWidthService: PinnedWidthService;
     expressionService?: ExpressionService;
     autoWidthCalculator?: AutoWidthCalculator;
-    componentMetadataProvider: ComponentMetadataProvider;
     agComponentUtils?: AgComponentUtils;
     frameworkComponentWrapper: FrameworkComponentWrapper;
     horizontalResizeService?: HorizontalResizeService;
@@ -379,7 +377,6 @@ export type BeanName =
     | 'columnToolPanelFactory'
     | 'columnUtils'
     | 'pivotResultColsService'
-    | 'componentMetadataProvider'
     | 'context'
     | 'contextMenuService'
     | 'controlsColService'

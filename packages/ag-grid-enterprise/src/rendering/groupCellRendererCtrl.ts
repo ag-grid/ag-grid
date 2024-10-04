@@ -38,8 +38,9 @@ import {
 } from 'ag-grid-community';
 
 const InnerRendererComponent: ComponentType = {
-    propertyName: 'innerRenderer',
+    name: 'innerRenderer',
     cellRenderer: true,
+    optionalMethods: ['afterGuiAttached'],
 };
 
 function getInnerRendererDetails(
