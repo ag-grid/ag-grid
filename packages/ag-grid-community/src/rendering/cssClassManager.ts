@@ -10,40 +10,11 @@ export class CssClassManager {
     }
 
     public addCssClass(className: string): void {
-        const list = (className || '').split(' ');
-
-        if (list.length > 1) {
-            list.forEach((cls) => this.addCssClass(cls));
-            return;
-        }
-
-        const updateNeeded = this.cssClassStates[className] !== true;
-        if (updateNeeded && className.length) {
-            const eGui = this.getGui();
-            if (eGui) {
-                eGui.classList.add(className);
-            }
-            this.cssClassStates[className] = true;
-        }
+        this.addOrRemoveCssClass(className, true);
     }
 
     public removeCssClass(className: string): void {
-        const list = (className || '').split(' ');
-
-        if (list.length > 1) {
-            list.forEach((cls) => this.removeCssClass(cls));
-            return;
-        }
-
-        const updateNeeded = this.cssClassStates[className] !== false;
-        if (updateNeeded && className.length) {
-            const eGui = this.getGui();
-            if (eGui) {
-                eGui.classList.remove(className);
-            }
-
-            this.cssClassStates[className] = false;
-        }
+        this.addOrRemoveCssClass(className, false);
     }
 
     public containsCssClass(className: string): boolean {
