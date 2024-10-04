@@ -11,7 +11,7 @@ import { AgPromise } from '../../utils/promise';
 import { _logError } from '../../validation/logging';
 import type { AgComponentUtils } from './agComponentUtils';
 import type { FrameworkComponentWrapper } from './frameworkComponentWrapper';
-import type { UserComponentRegistry } from './userComponentRegistry';
+import type { Registry } from './registry';
 
 function doesImplementIComponent(candidate: any): boolean {
     if (!candidate) {
@@ -88,12 +88,12 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
 
     private gridOptions: GridOptions;
     private agComponentUtils?: AgComponentUtils;
-    private userComponentRegistry: UserComponentRegistry;
+    private registry: Registry;
     private frameworkComponentWrapper?: FrameworkComponentWrapper;
 
     public wireBeans(beans: BeanCollection): void {
         this.agComponentUtils = beans.agComponentUtils;
-        this.userComponentRegistry = beans.userComponentRegistry;
+        this.registry = beans.registry;
         this.frameworkComponentWrapper = beans.frameworkComponentWrapper;
         this.gridOptions = beans.gridOptions;
     }
@@ -124,7 +124,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         let defaultCompParams: any;
 
         const lookupFromRegistry = (key: string) => {
-            const item = this.userComponentRegistry.retrieve(name, key);
+            const item = this.registry.getUserComponent(name, key);
             if (item) {
                 jsComp = !item.componentFromFramework ? item.component : undefined;
                 fwComp = item.componentFromFramework ? item.component : undefined;

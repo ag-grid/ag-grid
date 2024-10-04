@@ -9,8 +9,9 @@ globalObj.Node = typeof Node === 'undefined' ? {} : Node;
 globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
 // columns
-export { ColumnFactory } from './columns/columnFactory';
-export { ColumnModel, ColumnCollections as _ColumnCollections, ColKey } from './columns/columnModel';
+export type { ColumnFactory } from './columns/columnFactory';
+export type { ColumnModel } from './columns/columnModel';
+export { ColumnCollections as _ColumnCollections, ColKey } from './columns/columnModel';
 export type { ColumnAutosizeService } from './columnAutosize/columnAutosizeService';
 export type { FuncColsService } from './columns/funcColsService';
 export type { ColumnStateService } from './columns/columnStateService';
@@ -18,7 +19,7 @@ export { ColumnState, ColumnStateParams, ApplyColumnStateParams } from './column
 export type { ColumnMoveService } from './columnMove/columnMoveService';
 export type { ColumnNameService } from './columns/columnNameService';
 export { IAggColumnNameService } from './interfaces/iAggColumnNameService';
-export { IShowRowGroupColsService, IColumnDropZonesService } from './interfaces/iShowRowGroupColsService';
+export { IShowRowGroupColsService } from './interfaces/iShowRowGroupColsService';
 export { IPivotResultColsService } from './interfaces/iPivotResultColsService';
 export { ColumnKeyCreator } from './columns/columnKeyCreator';
 export type { VisibleColsService } from './columns/visibleColsService';
@@ -46,7 +47,7 @@ export { ComponentUtil, _combineAttributesAndGridOptions, _processOnChange } fro
 export { EmptyBean as _EmptyBean } from './components/emptyBean';
 export { ComponentSelector, AgComponentSelector, RefPlaceholder, ComponentEvent } from './widgets/component';
 
-export { UserComponentRegistry } from './components/framework/userComponentRegistry';
+export { Registry } from './components/framework/registry';
 export { UserCompDetails, ComponentType } from './interfaces/iUserCompDetails';
 export type { UserComponentFactory } from './components/framework/userComponentFactory';
 export {
@@ -56,7 +57,6 @@ export {
     _getEditorRendererDetails,
 } from './components/framework/userCompUtils';
 export { _unwrapUserComp } from './components/framework/unwrapUserComp';
-export type { DynamicBeanFactory } from './dynamicBeanFactory';
 
 // context
 export { BeanStub } from './context/beanStub';

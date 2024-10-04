@@ -17,7 +17,6 @@ import {
     _isModuleRegistered,
     _registerModule,
 } from './modules/moduleRegistry';
-import { _errorOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
 import { _logError, _logPreCreationError } from './validation/logging';
@@ -204,16 +203,17 @@ export class GridCoreCreator {
         context: Context,
         registeredModules: (_ModuleWithApi<any> | _ModuleWithoutApi)[]
     ): void {
-        const registry = context.getBean('userComponentRegistry');
-        const factory = context.getBean('dynamicBeanFactory');
+        const registry = context.getBean('registry');
         const apiFunctionService = context.getBean('apiFunctionService');
 
         registeredModules.forEach((module) => {
-            module.userComponents?.forEach(({ name, classImp, params }) => {
-                registry.registerDefaultComponent(name, classImp, params);
-            });
+            module.userComponents?.forEach(({ name, classImp, params }) =>
+                registry.registerUserComponent(name, classImp, params)
+            );
 
-            module.dynamicBeans?.forEach((meta) => factory.register(meta));
+            module.dynamicBeans?.forEach((meta) => registry.registerDynamicBean(meta));
+
+            module.selectors?.forEach((selector) => registry.registerSelector(selector));
 
             const apiFunctions = module.apiFunctions;
             if (apiFunctions) {

@@ -2,6 +2,7 @@ import type { GridApi } from '../api/gridApi';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { ComponentMeta, DynamicBeanMeta, SingletonBean } from '../context/context';
 import { VERSION } from '../version';
+import type { ComponentSelector } from '../widgets/component';
 import type { RowModelType } from './iRowModel';
 
 export type ModuleValidationValidResult = {
@@ -29,6 +30,7 @@ export interface Module {
     beans?: SingletonBean[];
     dynamicBeans?: DynamicBeanMeta[];
     userComponents?: ComponentMeta[];
+    selectors?: ComponentSelector[];
     rowModels?: RowModelType[];
     dependsOn?: Module[];
 }

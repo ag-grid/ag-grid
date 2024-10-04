@@ -298,7 +298,7 @@ class ReactFrameworkComponentWrapper
 
 // Define DetailCellRenderer and ReactFrameworkOverrides here to avoid circular dependency
 const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: any) => {
-    const { dynamicBeanFactory, context, gos, rowModel } = useContext(BeansContext);
+    const { registry, context, gos, rowModel } = useContext(BeansContext);
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [gridCssClasses, setGridCssClasses] = useState<CssClasses>(() => new CssClasses());
@@ -349,7 +349,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
             getGui: () => eGuiRef.current!,
         };
 
-        const ctrl = dynamicBeanFactory.createInstance<IDetailCellRendererCtrl>('detailCellRenderer');
+        const ctrl = registry.createDynamicBean<IDetailCellRendererCtrl>('detailCellRenderer');
         if (!ctrl) {
             return;
         } // should never happen, means master/detail module not loaded

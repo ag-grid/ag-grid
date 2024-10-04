@@ -20,14 +20,13 @@ import type { FuncColsService } from '../columns/funcColsService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { AgComponentUtils } from '../components/framework/agComponentUtils';
 import type { FrameworkComponentWrapper } from '../components/framework/frameworkComponentWrapper';
+import type { Registry } from '../components/framework/registry';
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
-import type { UserComponentRegistry } from '../components/framework/userComponentRegistry';
 import type { CtrlsService } from '../ctrlsService';
 import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import type { DragService } from '../dragAndDrop/dragService';
 import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeService';
 import type { RowDragService } from '../dragAndDrop/rowDragService';
-import type { DynamicBeanFactory } from '../dynamicBeanFactory';
 import type { EditService } from '../edit/editService';
 import type { RowEditService } from '../edit/rowEditService';
 import type { GridOptions } from '../entities/gridOptions';
@@ -67,7 +66,7 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
-import type { IColumnDropZonesService, IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
+import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IStatusBarService } from '../interfaces/iStatusBarService';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
@@ -202,7 +201,7 @@ export interface CoreBeanCollection {
     cellStyleService?: CellStyleService;
     columnHoverService?: ColumnHoverService;
     userComponentFactory: UserComponentFactory;
-    userComponentRegistry: UserComponentRegistry;
+    registry: Registry;
     animationFrameService?: AnimationFrameService;
     dragService?: DragService;
     dragAndDropService?: DragAndDropService;
@@ -216,7 +215,6 @@ export interface CoreBeanCollection {
     rowStyleService?: RowStyleService;
     rowModel: IRowModel;
     ctrlsService: CtrlsService;
-    dynamicBeanFactory: DynamicBeanFactory;
     valueCache?: ValueCache;
     rowNodeEventThrottle?: RowNodeEventThrottle;
     localeService: LocaleService;
@@ -237,7 +235,6 @@ export interface CoreBeanCollection {
     funcColsService: FuncColsService;
     quickFilterService?: QuickFilterService;
     showRowGroupColsService?: IShowRowGroupColsService;
-    columnDropZonesService?: IColumnDropZonesService;
     dataTypeService?: DataTypeService;
     globalEventListener: AgGlobalEventListener;
     globalSyncEventListener: AgGlobalEventListener;
@@ -339,7 +336,6 @@ export type BeanName =
     | 'apiEventService'
     | 'autoColService'
     | 'autoWidthCalculator'
-    | 'dynamicBeanFactory'
     | 'beans'
     | 'cellEditorFactory'
     | 'cellNavigationService'
@@ -359,7 +355,6 @@ export type BeanName =
     | 'columnChooserFactory'
     | 'columnController'
     | 'columnDefFactory'
-    | 'columnDropZonesService'
     | 'columnEditorFactory'
     | 'columnFilterService'
     | 'columnFlexService'
@@ -442,6 +437,7 @@ export type BeanName =
     | 'pageBoundsListener'
     | 'pageBoundsService'
     | 'positionUtils'
+    | 'registry'
     | 'renderStatusService'
     | 'rowContainerHeightService'
     | 'rowDragService'
@@ -478,7 +474,6 @@ export type BeanName =
     | 'toolPanelColDefService'
     | 'undoRedoService'
     | 'userComponentFactory'
-    | 'userComponentRegistry'
     | 'valueCache'
     | 'valueService'
     | 'validationLogger'

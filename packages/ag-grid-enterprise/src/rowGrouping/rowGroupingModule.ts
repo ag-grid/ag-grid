@@ -10,7 +10,7 @@ import { GroupCellRendererCtrl } from '../rendering/groupCellRendererCtrl';
 import { AggFuncService } from './aggFuncService';
 import { AggregationStage } from './aggregationStage';
 import { AutoColService } from './autoColService';
-import { ColumnDropZoneService } from './columnDropZones/columnDropZoneService';
+import { AgGridHeaderDropZonesSelector } from './columnDropZones/agGridHeaderDropZones';
 import { FilterAggregatesStage } from './filterAggregatesStage';
 import { GroupFilter } from './groupFilter/groupFilter';
 import { GroupFloatingFilterComp } from './groupFilter/groupFloatingFilter';
@@ -52,7 +52,6 @@ export const RowGroupingCoreModule: _ModuleWithoutApi = {
         AggFuncService,
         AutoColService,
         ShowRowGroupColsService,
-        ColumnDropZoneService,
         GroupHideOpenParentsService,
     ],
     userComponents: [
@@ -66,6 +65,7 @@ export const RowGroupingCoreModule: _ModuleWithoutApi = {
         },
     ],
     dynamicBeans: [{ name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl }],
+    selectors: [AgGridHeaderDropZonesSelector],
     dependsOn: [
         EnterpriseCoreModule,
         PopupModule, // can be extracted into row group panel module

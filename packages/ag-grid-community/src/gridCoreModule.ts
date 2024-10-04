@@ -7,10 +7,9 @@ import { ColumnStateService } from './columns/columnStateService';
 import { ColumnViewportService } from './columns/columnViewportService';
 import { FuncColsService } from './columns/funcColsService';
 import { VisibleColsService } from './columns/visibleColsService';
+import { Registry } from './components/framework/registry';
 import { UserComponentFactory } from './components/framework/userComponentFactory';
-import { UserComponentRegistry } from './components/framework/userComponentRegistry';
 import { CtrlsService } from './ctrlsService';
-import { DynamicBeanFactory } from './dynamicBeanFactory';
 import { PositionUtils } from './entities/positionUtils';
 import { Environment } from './environment';
 import { EventService } from './eventService';
@@ -37,7 +36,7 @@ export const CommunityCoreModule: _ModuleWithoutApi = {
         PositionUtils,
         GridDestroyService,
         ApiFunctionService,
-        UserComponentRegistry,
+        Registry,
         UserComponentFactory,
         RowContainerHeightService,
         LocaleService,
@@ -56,7 +55,6 @@ export const CommunityCoreModule: _ModuleWithoutApi = {
         ScrollVisibleService,
         CtrlsService,
         PinnedWidthService,
-        DynamicBeanFactory,
         SyncService,
         AriaAnnouncementService,
         ColumnStateService,

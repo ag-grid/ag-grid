@@ -268,9 +268,7 @@ export class CellRangeFeature implements ICellRangeFeature {
 
         if (!this.selectionHandle) {
             this.selectionHandle = this.beans.context.createBean(
-                this.beans.dynamicBeanFactory.createInstance(
-                    type === SelectionHandleType.FILL ? 'fillHandle' : 'rangeHandle'
-                )
+                this.beans.registry.createDynamicBean(type === SelectionHandleType.FILL ? 'fillHandle' : 'rangeHandle')
             );
         }
 
