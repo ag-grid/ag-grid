@@ -20,6 +20,7 @@ import {
     BeanStub,
     NumberSequence,
     ServerSideTransactionResultStatus,
+    _forEachIteratorItem,
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowIdCallback,
@@ -307,67 +308,75 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.heightPx = nextRowTop.value - this.topPx;
     }
 
+    forEachStoreDeep(callback: (store: IServerSideStore, index: number) => void): void {
+        _forEachIteratorItem(this.getStoresDeepIterator(), callback);
+    }
+
     /**
-     * Recursively applies a provided function to every node
+     * Recursively yield every node
      *
      * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeepAfterFilterAndSort
      */
-    forEachStoreDeep(
-        callback: (store: IServerSideStore, index: number) => void,
-        sequence = new NumberSequence()
+    *getStoresDeepIterator(): Generator<IServerSideStore> {
+        yield this;
+        for (const lazyNode of this.cache.getNodes().getIterator()) {
+            const childCache = lazyNode.node.childStore;
+            if (childCache) {
+                yield* childCache.getStoresDeepIterator();
+            }
+        }
+    }
+
+    forEachNodeDeep(callback: (rowNode: RowNode<any>, index: number) => void): void {
+        _forEachIteratorItem(this.getNodesDeepIterator(), callback);
+    }
+
+    /**
+     * Recursively yield every node
+     *
+     * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeepAfterFilterAndSort
+     */
+    *getNodesDeepIterator(): Generator<RowNode> {
+        for (const lazyNode of this.cache.getNodes().getIterator()) {
+            yield lazyNode.node;
+            const childCache = lazyNode.node.childStore;
+            if (childCache) {
+                yield* childCache.getNodesDeepIterator() as Generator<RowNode>;
+            }
+        }
+    }
+
+    forEachNodeDeepAfterFilterAndSort(
+        callback: (rowNode: RowNode<any>, index: number) => void,
+        includeFooterNodes = false
     ): void {
-        callback(this, sequence.next());
-        this.cache.getNodes().forEach((lazyNode) => {
-            const childCache = lazyNode.node.childStore;
-            if (childCache) {
-                childCache.forEachStoreDeep(callback, sequence);
-            }
-        });
+        _forEachIteratorItem(this.getNodesDeepAfterFilterAndSortIterator(includeFooterNodes), callback);
     }
 
     /**
-     * Recursively applies a provided function to every node
-     *
-     * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeepAfterFilterAndSort
-     */
-    forEachNodeDeep(callback: (rowNode: RowNode<any>, index: number) => void, sequence = new NumberSequence()): void {
-        this.cache.getNodes().forEach((lazyNode) => {
-            callback(lazyNode.node, sequence.next());
-            const childCache = lazyNode.node.childStore;
-            if (childCache) {
-                childCache.forEachNodeDeep(callback, sequence);
-            }
-        });
-    }
-
-    /**
-     * Recursively applies a provided function to every node
+     * Recursively yield every node
      *
      * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeep
      */
-    forEachNodeDeepAfterFilterAndSort(
-        callback: (rowNode: RowNode<any>, index: number) => void,
-        sequence = new NumberSequence(),
-        includeFooterNodes = false
-    ): void {
+    *getNodesDeepAfterFilterAndSortIterator(includeFooterNodes = false): Generator<RowNode> {
         const footerNode =
             this.parentRowNode.level > -1 && _getGroupTotalRowCallback(this.gos)({ node: this.parentRowNode });
         if (footerNode === 'top') {
-            callback(this.parentRowNode.sibling, sequence.next());
+            yield this.parentRowNode.sibling;
         }
 
         const orderedNodes = this.cache.getOrderedNodeMap();
         for (const key in orderedNodes) {
             const lazyNode = orderedNodes[key];
-            callback(lazyNode.node, sequence.next());
+            yield lazyNode.node;
             const childCache = lazyNode.node.childStore;
             if (childCache) {
-                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence, includeFooterNodes);
+                yield* childCache.getNodesDeepAfterFilterAndSortIterator(includeFooterNodes) as Generator<RowNode>;
             }
         }
 
         if (footerNode === 'bottom') {
-            callback(this.parentRowNode.sibling, sequence.next());
+            yield this.parentRowNode.sibling;
         }
     }
 

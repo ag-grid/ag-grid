@@ -46,7 +46,7 @@ export class MultiIndexMap<K> {
         this.maps.forEach((map) => map.clear());
     }
 
-    private getIterator(index: keyof K) {
+    public getIterator(index: keyof K = this.indexes[0]) {
         const map = this.maps.get(index);
         if (!map) {
             throw new Error(`AG Grid: ${String(index)} not found`);
@@ -55,7 +55,7 @@ export class MultiIndexMap<K> {
     }
 
     public forEach(callback: (item: K) => void) {
-        const iterator = this.getIterator(this.indexes[0]);
+        const iterator = this.getIterator();
         let pointer: IteratorResult<K, any>;
         while ((pointer = iterator.next())) {
             if (pointer.done) break;
@@ -64,7 +64,7 @@ export class MultiIndexMap<K> {
     }
 
     public find(callback: (item: K) => boolean) {
-        const iterator = this.getIterator(this.indexes[0]);
+        const iterator = this.getIterator();
         let pointer: IteratorResult<K, any>;
         while ((pointer = iterator.next())) {
             if (pointer.done) break;
@@ -75,7 +75,7 @@ export class MultiIndexMap<K> {
     }
 
     public filter(predicate: (item: K) => boolean) {
-        const iterator = this.getIterator(this.indexes[0]);
+        const iterator = this.getIterator();
         let pointer: IteratorResult<K, any>;
         const result: K[] = [];
         while ((pointer = iterator.next())) {

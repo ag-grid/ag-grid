@@ -3,8 +3,8 @@ import { RowModelHelperService } from '../api/rowModelHelperService';
 import { CsrmSsrmSharedApiModule } from '../api/sharedApiModule';
 import { CommunityFeaturesModule } from '../communityFeaturesModule';
 import { FilterCoreModule } from '../filter/filterModule';
-import { baseCommunityModule } from '../interfaces/iModule';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
+import { baseCommunityModule } from '../interfaces/iModule';
 import { SortModule } from '../sort/sortModule';
 import { ClientSideRowModel } from './clientSideRowModel';
 import {
@@ -15,6 +15,9 @@ import {
     forEachNodeAfterFilter,
     forEachNodeAfterFilterAndSort,
     getBestCostNodeSelection,
+    getLeafNodesIterator,
+    getNodesAfterFilterAndSortIterator,
+    getNodesAfterFilterIterator,
     isRowDataEmpty,
     onGroupExpandedOrCollapsed,
     refreshClientSideRowModel,
@@ -55,8 +58,11 @@ export const ClientSideRowModelApiModule: _ModuleWithApi<_ClientSideRowModelGrid
         refreshClientSideRowModel,
         isRowDataEmpty,
         forEachLeafNode,
+        getLeafNodesIterator,
         forEachNodeAfterFilter,
+        getNodesAfterFilterIterator,
         forEachNodeAfterFilterAndSort,
+        getNodesAfterFilterAndSortIterator,
         resetRowHeights,
         applyTransaction,
         applyTransactionAsync,

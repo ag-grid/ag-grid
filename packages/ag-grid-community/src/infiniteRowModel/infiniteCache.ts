@@ -6,7 +6,7 @@ import type { IDatasource } from '../interfaces/iDatasource';
 import type { SortModelItem } from '../interfaces/iSortModelItem';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
-import { _log } from '../utils/function';
+import { _forEachIteratorItem, _log } from '../utils/function';
 import { _exists } from '../utils/generic';
 import { NumberSequence } from '../utils/numberSequence';
 import { _getAllValuesInObject } from '../utils/object';
@@ -243,8 +243,15 @@ export class InfiniteCache extends BeanStub {
     }
 
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void): void {
-        const sequence = new NumberSequence();
-        this.getBlocksInOrder().forEach((block) => block.forEachNode(callback, sequence, this.rowCount));
+        _forEachIteratorItem(this.getNodesDeepIterator(), callback);
+    }
+
+    public *getNodesDeepIterator(): Generator<RowNode> {
+        for (const block of this.getBlocksInOrder()) {
+            for (const rowNode of block.getNodesIterator(this.rowCount)) {
+                yield rowNode;
+            }
+        }
     }
 
     public getBlocksInOrder(): InfiniteBlock[] {
@@ -310,37 +317,28 @@ export class InfiniteCache extends BeanStub {
 
         let lastBlockId = -1;
         let inActiveRange = false;
-        const numberSequence: NumberSequence = new NumberSequence();
 
         let foundGapInSelection = false;
 
-        this.getBlocksInOrder().forEach((block) => {
-            if (foundGapInSelection) {
-                return;
-            }
-
+        for (const block of this.getBlocksInOrder()) {
             if (inActiveRange && lastBlockId + 1 !== block.getId()) {
                 foundGapInSelection = true;
-                return;
+                break;
             }
 
             lastBlockId = block.getId();
 
-            block.forEachNode(
-                (rowNode) => {
-                    const hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
-                    if (inActiveRange || hitFirstOrLast) {
-                        result.push(rowNode);
-                    }
+            for (const rowNode of block.getNodesIterator(this.rowCount)) {
+                const hitFirstOrLast = rowNode === firstInRange || rowNode === lastInRange;
+                if (inActiveRange || hitFirstOrLast) {
+                    result.push(rowNode);
+                }
 
-                    if (hitFirstOrLast) {
-                        inActiveRange = !inActiveRange;
-                    }
-                },
-                numberSequence,
-                this.rowCount
-            );
-        });
+                if (hitFirstOrLast) {
+                    inActiveRange = !inActiveRange;
+                }
+            }
+        }
 
         // inActiveRange will be still true if we never hit the second rowNode
         const invalidRange = foundGapInSelection || inActiveRange;

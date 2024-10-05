@@ -575,15 +575,11 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         const clientSideRowModel = this.rowModel as IClientSideRowModel;
         if (justFiltered) {
-            clientSideRowModel.forEachNodeAfterFilter((node) => {
-                nodes.push(node);
-            });
+            nodes.push(...clientSideRowModel.getNodesAfterFilterIterator());
             return nodes;
         }
 
-        clientSideRowModel.forEachNode((node) => {
-            nodes.push(node);
-        });
+        nodes.push(...clientSideRowModel.getNodesIterator());
         return nodes;
     }
 

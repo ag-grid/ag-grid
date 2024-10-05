@@ -9,13 +9,15 @@ export interface IServerSideStore extends Bean {
     getDisplayIndexEnd(): number | undefined;
     isDisplayIndexInStore(displayIndex: number): boolean;
     setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }, uiLevel: number): void;
-    forEachStoreDeep(callback: (rowNode: IServerSideStore, index: number) => void, sequence?: NumberSequence): void;
-    forEachNodeDeep(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence): void;
+    forEachStoreDeep(callback: (rowNode: IServerSideStore, index: number) => void): void;
+    getStoresDeepIterator(): Generator<IServerSideStore>;
+    forEachNodeDeep(callback: (rowNode: IRowNode, index: number) => void): void;
+    getNodesDeepIterator(): Generator<IRowNode>;
     forEachNodeDeepAfterFilterAndSort(
         callback: (rowNode: IRowNode, index: number) => void,
-        sequence?: NumberSequence,
         includeFooterNodes?: boolean
     ): void;
+    getNodesDeepAfterFilterAndSortIterator(includeFooterNodes?: boolean): Generator<IRowNode>;
     retryLoads(): void;
     getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean): IRowNode | undefined;
     getRowBounds(index: number): RowBounds | null;

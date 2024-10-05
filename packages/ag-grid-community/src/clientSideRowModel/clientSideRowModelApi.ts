@@ -24,6 +24,10 @@ export function forEachLeafNode<TData = any>(
     beans.rowModelHelperService?.getClientSideRowModel()?.forEachLeafNode(callback);
 }
 
+export function getLeafNodesIterator<TData = any>(beans: BeanCollection): Generator<IRowNode<TData>> {
+    return beans.rowModelHelperService?.getClientSideRowModel()?.getLeafNodesIterator() ?? getEmptyGenerator();
+}
+
 export function forEachNodeAfterFilter<TData = any>(
     beans: BeanCollection,
     callback: (rowNode: IRowNode<TData>, index: number) => void
@@ -31,11 +35,22 @@ export function forEachNodeAfterFilter<TData = any>(
     beans.rowModelHelperService?.getClientSideRowModel()?.forEachNodeAfterFilter(callback);
 }
 
+export function getNodesAfterFilterIterator<TData = any>(beans: BeanCollection): Generator<IRowNode<TData>> {
+    return beans.rowModelHelperService?.getClientSideRowModel()?.getNodesAfterFilterIterator() ?? getEmptyGenerator();
+}
+
 export function forEachNodeAfterFilterAndSort<TData = any>(
     beans: BeanCollection,
     callback: (rowNode: IRowNode<TData>, index: number) => void
 ): void {
     beans.rowModelHelperService?.getClientSideRowModel()?.forEachNodeAfterFilterAndSort(callback);
+}
+
+export function getNodesAfterFilterAndSortIterator<TData = any>(beans: BeanCollection): Generator<IRowNode<TData>> {
+    return (
+        beans.rowModelHelperService?.getClientSideRowModel()?.getNodesAfterFilterAndSortIterator() ??
+        getEmptyGenerator()
+    );
 }
 
 export function resetRowHeights(beans: BeanCollection): void {
@@ -74,3 +89,5 @@ export function flushAsyncTransactions(beans: BeanCollection): void {
 export function getBestCostNodeSelection<TData = any>(beans: BeanCollection): IRowNode<TData>[] | undefined {
     return beans.selectionService?.getBestCostNodeSelection();
 }
+
+function* getEmptyGenerator() {}

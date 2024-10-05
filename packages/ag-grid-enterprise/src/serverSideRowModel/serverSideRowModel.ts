@@ -613,6 +613,14 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         rootStore.forEachNodeDeep(callback);
     }
 
+    public *getNodesIterator(): Generator<RowNode> {
+        const rootStore = this.getRootStore();
+        if (!rootStore) {
+            return;
+        }
+        yield* rootStore.getNodesDeepIterator() as Generator<RowNode>;
+    }
+
     public forEachNodeAfterFilterAndSort(
         callback: (node: RowNode, index: number) => void,
         includeFooterNodes = false
@@ -621,7 +629,15 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         if (!rootStore) {
             return;
         }
-        rootStore.forEachNodeDeepAfterFilterAndSort(callback, undefined, includeFooterNodes);
+        rootStore.forEachNodeDeepAfterFilterAndSort(callback, includeFooterNodes);
+    }
+
+    public *getNodesAfterFilterAndSortIterator(includeFooterNodes?: boolean): Generator<RowNode> {
+        const rootStore = this.getRootStore();
+        if (!rootStore) {
+            return;
+        }
+        yield* rootStore.getNodesDeepAfterFilterAndSortIterator(includeFooterNodes) as Generator<RowNode>;
     }
 
     /** @return false if store hasn't started */
@@ -694,16 +710,14 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public getRowNode(id: string): RowNode | undefined {
-        let result: RowNode | undefined;
-        this.forEachNode((rowNode) => {
+        for (const rowNode of this.getNodesIterator()) {
             if (rowNode.id === id) {
-                result = rowNode;
+                return rowNode;
             }
             if (rowNode.detailNode && rowNode.detailNode.id === id) {
-                result = rowNode.detailNode;
+                return rowNode.detailNode;
             }
-        });
-        return result;
+        }
     }
 
     public isRowPresent(rowNode: RowNode): boolean {

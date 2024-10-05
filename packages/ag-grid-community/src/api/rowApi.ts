@@ -50,6 +50,13 @@ export function forEachNode<TData = any>(
     beans.rowModel.forEachNode(callback, includeFooterNodes);
 }
 
+export function getNodesIterator<TData = any>(
+    beans: BeanCollection,
+    includeFooterNodes?: boolean
+): Generator<IRowNode<TData>> {
+    return beans.rowModel.getNodesIterator(includeFooterNodes);
+}
+
 export function getFirstDisplayedRowIndex(beans: BeanCollection): number {
     return beans.rowRenderer.getFirstVirtualRenderedRow();
 }
