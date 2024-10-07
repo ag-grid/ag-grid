@@ -1,5 +1,5 @@
 import type { _ModuleWithoutApi } from 'ag-grid-community';
-import { ColumnMoveModule, DragAndDropModule, ModuleNames, PopupModule } from 'ag-grid-community';
+import { ColumnMoveModule, DragAndDropModule, PopupModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
@@ -10,7 +10,7 @@ import { ColumnToolPanel } from './columnToolPanel';
 import { ModelItemUtils } from './modelItemUtils';
 
 export const ColumnsToolPanelModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule(ModuleNames.ColumnsToolPanelModule),
+    ...baseEnterpriseModule('ColumnsToolPanelModule'),
     beans: [ModelItemUtils],
     userComponents: [
         { name: 'agColumnsToolPanel', classImp: ColumnToolPanel },

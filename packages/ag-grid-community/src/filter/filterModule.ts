@@ -116,7 +116,8 @@ export const SimpleFloatingFilterModule: _ModuleWithoutApi = {
 };
 
 export const QuickFilterCoreModule: _ModuleWithoutApi = {
-    ...baseCommunityModule('QuickFilterCoreModulee'),
+    ...baseCommunityModule('QuickFilterCoreModule'),
+    rowModels: ['clientSide'],
     beans: [QuickFilterService],
     dependsOn: [FilterCoreModule, FilterValueModule],
 };

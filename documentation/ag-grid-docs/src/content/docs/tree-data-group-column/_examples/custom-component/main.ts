@@ -27,17 +27,15 @@ const columnDefs: ColDef[] = [
     },
 ];
 
-const autoGroupColumnDef: ColDef = {
-    cellRenderer: CustomGroupCellRenderer,
-};
-
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     treeData: true,
     getDataPath: (data) => data.path,
     columnDefs: columnDefs,
-    autoGroupColumnDef: autoGroupColumnDef,
+    autoGroupColumnDef: {
+        cellRenderer: CustomGroupCellRenderer,
+    },
     defaultColDef: {
         flex: 1,
         minWidth: 120,

@@ -19,7 +19,7 @@ import type {
 } from '../events';
 import type { AlignedGrid } from '../interfaces/iAlignedGrid';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import { _errorOnce, _warnOnce } from '../utils/function';
+import { _logError, _logWarn } from '../validation/logging';
 
 export class AlignedGridsService extends BeanStub implements NamedBean {
     beanName = 'alignedGridsService' as const;
@@ -47,16 +47,13 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         if (typeof alignedGrids === 'function') {
             alignedGrids = alignedGrids();
         }
-        const seeUrl = () => `See ${this.getFrameworkOverrides().getDocLink('aligned-grids')}`;
         const apis = alignedGrids
             .map((alignedGrid) => {
                 if (!alignedGrid) {
-                    _errorOnce(`alignedGrids contains an undefined option.`);
+                    _logError(18, {});
                     if (!isCallbackConfig) {
-                        _errorOnce(`You may want to configure via a callback to avoid setup race conditions:
-                     "alignedGrids: () => [linkedGrid]"`);
+                        _logError(20, {});
                     }
-                    _errorOnce(seeUrl());
                     return;
                 }
                 if (this.isGridApi(alignedGrid)) {
@@ -69,7 +66,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 }
 
                 if (!refOrComp.api) {
-                    _errorOnce(`alignedGrids - No api found on the linked grid. ${seeUrl()}`);
+                    _logError(19, {});
                 }
                 return refOrComp.api;
             })
@@ -181,10 +178,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 case 'columnPivotChanged':
                     // we cannot support pivoting with aligned grids as the columns will be out of sync as the
                     // grids will have columns created based on the row data of the grid.
-                    _warnOnce(
-                        'pivoting is not supported with aligned grids. ' +
-                            'You can only use one of these features at a time in a grid.'
-                    );
+                    _logWarn(21, {});
                     break;
             }
         });

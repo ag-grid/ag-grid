@@ -1,5 +1,5 @@
 import type { _ExcelExportGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
-import { CsvExportCoreModule, ModuleNames } from 'ag-grid-community';
+import { CsvExportCoreModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
@@ -31,6 +31,6 @@ export const ExcelExportApiModule: _ModuleWithApi<_ExcelExportGridApi> = {
 };
 
 export const ExcelExportModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule(ModuleNames.ExcelExportModule),
+    ...baseEnterpriseModule('ExcelExportModule'),
     dependsOn: [ExcelExportCoreModule, ExcelExportApiModule],
 };

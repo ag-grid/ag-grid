@@ -1,5 +1,5 @@
 import type { _ModuleWithApi, _ModuleWithoutApi, _RowGroupingGridApi } from 'ag-grid-community';
-import { ColumnFilterModule, FloatingFilterModule, ModuleNames, PopupModule, StickyRowModule } from 'ag-grid-community';
+import { ColumnFilterModule, FloatingFilterModule, PopupModule, StickyRowModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
@@ -116,7 +116,7 @@ export const GroupFloatingFilterModule: _ModuleWithoutApi = {
 };
 
 export const RowGroupingModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule(ModuleNames.RowGroupingModule),
+    ...baseEnterpriseModule('RowGroupingModule'),
     dependsOn: [
         RowGroupingCoreModule,
         RowGroupingApiModule,

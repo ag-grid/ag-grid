@@ -75,7 +75,9 @@ const VueExample = {
             groupDisplayType,
             rowData,
             onGridReady,
-            themeClass: 'ag-theme-quartz',
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
 };

@@ -1,5 +1,5 @@
 import type { _MenuGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
-import { CommunityMenuApiModule, ModuleNames, PopupModule, SharedMenuModule } from 'ag-grid-community';
+import { CommunityMenuApiModule, PopupModule, SharedMenuModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
@@ -54,6 +54,6 @@ export const MenuApiModule: _ModuleWithApi<_MenuGridApi> = {
 };
 
 export const MenuModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule(ModuleNames.MenuModule),
+    ...baseEnterpriseModule('MenuModule'),
     dependsOn: [ColumnMenuModule, ColumnChooserModule, ContextMenuModule, MenuApiModule],
 };

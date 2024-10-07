@@ -32,7 +32,6 @@ import type { RowRenderer } from './rendering/rowRenderer';
 import { _last } from './utils/array';
 import { _getTabIndex } from './utils/browser';
 import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR, _isVisible } from './utils/dom';
-import { _warnOnce } from './utils/function';
 import { _makeNull } from './utils/generic';
 import { ManagedFocusFeature } from './widgets/managedFocusFeature';
 import { TabGuardClassNames } from './widgets/tabGuardCtrl';
