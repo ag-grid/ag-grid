@@ -18,8 +18,8 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
 
     private columnModel: ColumnModel;
     private valueService: ValueService;
-    private filterManager?: FilterManager;
     private clientSideRowModel?: IClientSideRowModel;
+    public filterManager?: FilterManager;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
@@ -140,7 +140,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
         return _includes(['agSetColumnFilter', 'agMultiColumnFilter'], filterType);
     }
 
-    private getColumnFilterType(colId: any) {
+    public getColumnFilterType(colId: any) {
         const gridColumn = this.getColumnById(colId);
         if (gridColumn) {
             const colDef = gridColumn.getColDef();

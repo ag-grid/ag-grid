@@ -1,3 +1,5 @@
+import type { FilterModel } from 'ag-grid-community';
+
 import { _mapValues } from '../utils/object';
 import type { ChartCrossFilterService } from './../services/chartCrossFilterService';
 import { ChartSelectionModel } from './chartSelectionModel';
@@ -65,5 +67,24 @@ export class CrossFilteringContext {
         if (updated.length > 0) {
             this.updateFromSelectionModels();
         }
+    }
+
+    public updateFromGrid() {
+        const crossFilterUpdate = _mapValues(
+            this.crossFilterService.filterManager?.getFilterModel(),
+            (colId: string, value: FilterModel) => {
+                const columnFilterType = this.crossFilterService.getColumnFilterType(colId);
+
+                if (columnFilterType === 'agMultiColumnFilter') {
+                    return value.filterModels?.[1].values ?? [];
+                } else if (columnFilterType === 'agSetColumnFilter') {
+                    return value?.values ?? [];
+                }
+
+                return [];
+            }
+        );
+
+        this.setFilters(crossFilterUpdate);
     }
 }

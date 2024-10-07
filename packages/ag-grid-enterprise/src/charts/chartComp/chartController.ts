@@ -148,22 +148,13 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             return;
         }
 
-        this.updateSelectionModels();
+        this.model.params.crossFilteringContext.updateFromGrid();
 
         const { maintainColState, setColsFromRange } = params ?? {};
 
         this.model.updateCellRanges({ maintainColState, setColsFromRange });
         this.model.updateData();
         this.setChartRange();
-    }
-
-    private updateSelectionModels() {
-        const crossFilterUpdate = _mapValues(
-            this.filterManager?.getFilterModel(),
-            (key, value) => value.filterModels?.[1].values ?? value?.values ?? []
-        );
-
-        this.model.params.crossFilteringContext.setFilters(crossFilterUpdate);
     }
 
     public updateForDataChange(): void {
