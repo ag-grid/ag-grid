@@ -237,7 +237,52 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         _warnOnce('calling gridApi.getBestCostNodeSelection() is only possible when using rowModelType=`clientSide`.');
         return undefined;
     }
+
+    /**
+     * Updates the selectable state for a node by invoking isRowSelectable callback.
+     * If the node is not selectable, it will be deselected.
+     *
+     * Callers:
+     *  - property isRowSelectable changed
+     *  - after grouping / treeData
+     */
+    public updateSelectable(skipLeafNodes: boolean) {
+        const { gos } = this;
+
+        const isRowSelecting = _isRowSelection(gos);
+        const isRowSelectable = _getIsRowSelectable(gos);
+
+        if (!isRowSelecting || !isRowSelectable) {
+            return;
+        }
+
+        const nodesToDeselect: RowNode[] = [];
+
+        const nodeCallback = (node: RowNode) => {
+            if (skipLeafNodes && !node.group) {
+                return;
+            }
+
+            const rowSelectable = isRowSelectable?.(node) ?? true;
+            node.setRowSelectable(rowSelectable, true);
+
+            if (!rowSelectable && node.isSelected()) {
+                nodesToDeselect.push(node);
+            }
+        };
+
+        this.rowModel.forEachNode(nodeCallback);
+
+        if (nodesToDeselect.length) {
+            this.setNodesSelected({
+                nodes: nodesToDeselect,
+                newValue: false,
+                source: 'selectableChanged',
+            });
+        }
+    }
 }
+
 function validateSelectionParameters({
     justCurrentPage,
     justFiltered,
