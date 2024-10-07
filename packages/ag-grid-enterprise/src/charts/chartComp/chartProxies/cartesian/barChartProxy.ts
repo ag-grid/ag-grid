@@ -1,6 +1,6 @@
 import type { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-community';
 
-import { CROSS_FILTER_FIELD_POSTFIX } from '../../crossfilter/crossFilterAPI';
+import { CROSS_FILTER_FIELD_POSTFIX } from '../../crossfilter/crossFilter_Api';
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 

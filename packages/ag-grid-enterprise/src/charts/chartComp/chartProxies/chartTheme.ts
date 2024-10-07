@@ -12,7 +12,7 @@ import { _includes, _warnOnce } from 'ag-grid-community';
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
 import { get } from '../utils/object';
 import type { ChartSeriesType } from '../utils/seriesTypeMapper';
-import { getSeriesType } from '../utils/seriesTypeMapper';
+import { getSeriesType, isPieChartSeries } from '../utils/seriesTypeMapper';
 import type { ChartProxy, ChartProxyParams } from './chartProxy';
 
 export function createAgChartTheme(
@@ -106,7 +106,7 @@ function createCrossFilterThemeOverrides(
     chartProxyParams: ChartProxyParams,
     seriesType: ChartSeriesType
 ): AgChartThemeOverrides {
-    const isPieOrDonut = seriesType === 'pie' || seriesType === 'donut';
+    const isPieOrDonut = isPieChartSeries(seriesType);
 
     const legend = isPieOrDonut
         ? {

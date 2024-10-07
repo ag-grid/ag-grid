@@ -143,7 +143,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         removeChartCellRanges ? this.rangeService?.setCellRanges([]) : this.setChartRange();
     }
 
-    public updateForGridChange(params?: any): void {
+    public updateForGridChange(params?: { maintainColState?: boolean; setColsFromRange?: boolean }): void {
         if (this.model.unlinked) {
             return;
         }

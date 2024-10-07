@@ -5,35 +5,17 @@ type CrossFilterCategoryEntry = { category: string; value: string };
 export class ChartSelectionModel {
     public selection: CrossFilterCategoryEntry[] = [];
     public available: CrossFilterCategoryEntry[] = [];
-    public chartId: string;
-    private crossFilteringContext: CrossFilteringContext;
     public category: string;
 
-    public constructor(chartId: string, crossFilteringContext: CrossFilteringContext) {
-        this.chartId = chartId;
-        this.crossFilteringContext = crossFilteringContext;
-    }
-
-    setAvailable(entries: CrossFilterCategoryEntry[]): void {
-        this.available = entries;
-    }
-
-    getAvailable(): CrossFilterCategoryEntry[] {
-        return this.available;
-    }
+    public constructor(
+        public chartId: string,
+        private crossFilteringContext: CrossFilteringContext
+    ) {}
 
     getBooleanSelection(): boolean[] {
         return this.available.map((entry) =>
             this.hasSelection() ? this.isSelected(entry.category, entry.value) : true
         );
-    }
-
-    getFlatSelection(): Record<string, string[]> {
-        return this.selection.reduce<Record<string, string[]>>((acc, entry) => {
-            acc[entry.category] ??= [];
-            acc[entry.category].push((entry['value'] as any)?.value || entry.value);
-            return acc;
-        }, {});
     }
 
     public areAllSelected(category: string): boolean {
@@ -92,10 +74,6 @@ export class ChartSelectionModel {
     }
 
     public selectAll(notify = true): void {
-        this.setSelection(this.getAvailable(), notify);
-    }
-
-    setCategory(category: string) {
-        this.category = category;
+        this.setSelection(this.available, notify);
     }
 }

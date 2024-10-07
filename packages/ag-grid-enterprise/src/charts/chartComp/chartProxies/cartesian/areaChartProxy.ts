@@ -4,7 +4,7 @@ import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { CROSS_FILTER_MARKER_FILL_OPACITY_FACTOR } from './constants';
 import { ContinuousChartProxy } from './continuousChartProxy';
 
-export class AreaChartProxy extends ContinuousChartProxy<'line'> {
+export class AreaChartProxy extends ContinuousChartProxy<'area'> {
     public constructor(params: ChartProxyParams) {
         super(params);
     }

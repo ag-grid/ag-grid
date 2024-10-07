@@ -1,6 +1,6 @@
-import type { AgCartesianAxisOptions } from 'ag-charts-community';
+import type { AgCartesianAxisOptions, AgCartesianSeriesOptions } from 'ag-charts-community';
 
-import { CROSS_FILTER_FIELD_POSTFIX } from '../../crossfilter/crossFilterAPI';
+import { CROSS_FILTER_FIELD_POSTFIX } from '../../crossfilter/crossFilter_Api';
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 import type { CartesianChartTypes } from './cartesianChartProxy';
@@ -24,7 +24,7 @@ export class ContinuousChartProxy<T extends CartesianChartTypes> extends Cartesi
         ];
     }
 
-    protected override getSeries(params: UpdateParams) {
+    protected override getSeries(params: UpdateParams): AgCartesianSeriesOptions[] {
         const [category] = params.categories;
         const selectionSource = params.chartId === params.getCrossFilteringContext().lastSelectedChartId;
 
@@ -40,7 +40,7 @@ export class ContinuousChartProxy<T extends CartesianChartTypes> extends Cartesi
         return this.crossFiltering ? this.applyCrossFilter(series, params) : series;
     }
 
-    protected applyCrossFilter(series: any[], params: UpdateParams) {
+    protected applyCrossFilter(series: any[], params: UpdateParams): AgCartesianSeriesOptions[] {
         const [category] = params.categories;
 
         const anySelected = this.selectionModel.hasSelection();

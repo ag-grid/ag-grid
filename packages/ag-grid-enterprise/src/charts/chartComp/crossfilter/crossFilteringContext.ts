@@ -5,11 +5,8 @@ import { ChartSelectionModel } from './chartSelectionModel';
 export class CrossFilteringContext {
     private chartSelectionModels: Record<string, ChartSelectionModel> = {};
     public lastSelectedChartId: string = '';
-    private crossFilterService: ChartCrossFilterService;
 
-    constructor(crossFilterService: ChartCrossFilterService) {
-        this.crossFilterService = crossFilterService;
-    }
+    constructor(private crossFilterService: ChartCrossFilterService) {}
 
     public getChartSelectionModel(chartId: string): ChartSelectionModel {
         return this.chartSelectionModels[chartId];
@@ -35,14 +32,15 @@ export class CrossFilteringContext {
 
     public updateFromSelectionModels(): void {
         const updates = Object.values(this.chartSelectionModels)
-            .map((chartSelectionModel) => chartSelectionModel.getFlatSelection())
-            .reduce((acc, flatSelection) => {
-                Object.entries(flatSelection).forEach(([category, values]) => {
+            .flatMap((chartSelectionModel) => chartSelectionModel.selection)
+            .reduce(
+                (acc, { category, value }) => {
                     acc[category] ??= [];
-                    acc[category].push(...values);
-                });
-                return acc;
-            });
+                    acc[category].push(value);
+                    return acc;
+                },
+                {} as Record<string, string[]>
+            );
 
         if (Object.getOwnPropertyNames(updates).length === 0) {
             this.crossFilterService.resetFilters(updates, true);
@@ -51,7 +49,7 @@ export class CrossFilteringContext {
         }
     }
 
-    setFilters(crossFilterUpdate: any) {
+    public setFilters(crossFilterUpdate: Record<string, string[]>): void {
         const index: Record<string, ChartSelectionModel> = _mapValues(crossFilterUpdate, (key) =>
             Object.values(this.chartSelectionModels).find((chartSelectionModel) => chartSelectionModel.category === key)
         );

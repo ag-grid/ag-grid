@@ -105,8 +105,8 @@ export abstract class ChartProxy<
     protected updateSelection(params: UpdateParams): void {
         const category = params.categories[0].id;
 
-        this.selectionModel.setCategory(category);
-        this.selectionModel.setAvailable(params.data.map((d) => ({ category, value: d[category] })));
+        this.selectionModel.category = category;
+        this.selectionModel.available = params.data.map((d) => ({ category, value: d[category] }));
     }
 
     public update(params: UpdateParams): void {

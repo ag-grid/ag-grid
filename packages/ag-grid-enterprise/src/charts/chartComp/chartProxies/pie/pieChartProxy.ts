@@ -5,7 +5,7 @@ import type {
     AgPolarSeriesOptions,
 } from 'ag-charts-types';
 
-import { CROSS_FILTER_FIELD_POSTFIX } from '../../crossfilter/crossFilterAPI';
+import { CROSS_FILTER_FIELD_POSTFIX } from '../../crossfilter/crossFilter_Api';
 import type { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
 
