@@ -40,7 +40,6 @@ import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import { RowHighlightPosition } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { ModuleNames } from '../../modules/moduleNames';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import { _setAriaExpanded, _setAriaRowIndex, _setAriaSelected } from '../../utils/aria';
 import { _pushAll } from '../../utils/array';
@@ -52,7 +51,7 @@ import {
     _observeResize,
 } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
-import { _executeNextVMTurn, _warnOnce } from '../../utils/function';
+import { _executeNextVMTurn } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import type { Component } from '../../widgets/component';
@@ -397,7 +396,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (this.rowType == 'FullWidthDetail') {
             if (
                 !this.gos.assertModuleRegistered(
-                    ModuleNames.MasterDetailModule,
+                    'MasterDetailCoreModule',
                     "cell renderer 'agDetailCellRenderer' (for master detail)"
                 )
             ) {
@@ -1481,11 +1480,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public processStylesFromGridOptions(): RowStyle | undefined {
         // part 1 - rowStyle
         const rowStyle = this.gos.get('rowStyle');
-
-        if (rowStyle && typeof rowStyle === 'function') {
-            _warnOnce('rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
-            return;
-        }
 
         // part 1 - rowStyleFunc
         const rowStyleFunc = this.gos.getCallback('getRowStyle');

@@ -1,7 +1,6 @@
 import type { _CsvExportGridApi } from '../api/gridApi';
 import { baseCommunityModule } from '../interfaces/iModule';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
-import { ModuleNames } from '../modules/moduleNames';
 import { CsvCreator } from './csvCreator';
 import { exportDataAsCsv, getDataAsCsv } from './csvExportApi';
 import { GridSerializer } from './gridSerializer';
@@ -21,6 +20,6 @@ export const CsvExportApiModule: _ModuleWithApi<_CsvExportGridApi> = {
 };
 
 export const CsvExportModule: _ModuleWithoutApi = {
-    ...baseCommunityModule(ModuleNames.CsvExportModule),
+    ...baseCommunityModule('CsvExportModule'),
     dependsOn: [CsvExportCoreModule, CsvExportApiModule],
 };

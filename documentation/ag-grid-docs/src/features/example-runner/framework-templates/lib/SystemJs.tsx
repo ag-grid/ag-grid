@@ -32,7 +32,6 @@ const localBuildAndArchiveConfiguration: Configuration = {
     gridMap: {
         'ag-grid-community': `${localPrefix}/ag-grid-community`,
         'ag-grid-enterprise': `${localPrefix}/ag-grid-enterprise`,
-        'ag-grid-charts-enterprise': `${localPrefix}/ag-grid-charts-enterprise`,
         'ag-grid-angular': `${localPrefix}/ag-grid-angular`,
         'ag-grid-react': `${localPrefix}/ag-grid-react`,
         'ag-grid-vue3': `${localPrefix}/ag-grid-vue3`,
@@ -42,9 +41,11 @@ const localBuildAndArchiveConfiguration: Configuration = {
         '@ag-grid-community/locale': `${localPrefix}/@ag-grid-community/locale/dist/package/main.cjs.js`,
     },
     gridEnterprisePaths: {
-        'ag-charts-community': `${localPrefix}/ag-charts-community/dist/package/main.cjs.js`,
         'ag-charts-types': `${localPrefix}/ag-charts-types/dist/package/main.cjs.js`,
+        'ag-charts-community': `${localPrefix}/ag-charts-community/dist/package/main.cjs.js`,
         'ag-charts-enterprise': `${localPrefix}/ag-charts-enterprise/dist/package/main.cjs.js`,
+        'ag-charts-community/modules': `${localPrefix}/ag-charts-community/dist/package/main-modules.cjs.js`,
+        'ag-charts-enterprise/modules': `${localPrefix}/ag-charts-enterprise/dist/package/main-modules.cjs.js`,
         '@ag-grid-community/locale': `${localPrefix}/@ag-grid-community/locale/dist/package/main.cjs.js`,
     },
 };

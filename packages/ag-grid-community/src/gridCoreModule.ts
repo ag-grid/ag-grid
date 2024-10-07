@@ -21,11 +21,9 @@ import { PinnedWidthService } from './gridBodyComp/pinnedWidthService';
 import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridDestroyService } from './gridDestroyService';
 import { GridOptionsService } from './gridOptionsService';
-import { ColumnGroupHeaderModule, ColumnHeaderModule } from './headerRendering/cells/headerModule';
 import type { _ModuleWithoutApi } from './interfaces/iModule';
 import { baseCommunityModule } from './interfaces/iModule';
 import { LocaleService } from './localeService';
-import { ModuleNames } from './modules/moduleNames';
 import { PageBoundsListener } from './pagination/pageBoundsListener';
 import { PageBoundsService } from './pagination/pageBoundsService';
 import { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
@@ -34,8 +32,8 @@ import { RowRenderer } from './rendering/rowRenderer';
 import { SyncService } from './syncService';
 import { ValueService } from './valueService/valueService';
 
-export const GridCoreModule: _ModuleWithoutApi = {
-    ...baseCommunityModule(ModuleNames.CommunityCoreModule),
+export const CommunityCoreModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('CommunityCoreModule'),
     beans: [
         PositionUtils,
         GridDestroyService,

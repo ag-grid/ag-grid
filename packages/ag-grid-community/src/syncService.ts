@@ -7,7 +7,6 @@ import type { CtrlsService } from './ctrlsService';
 import type { ColDef, ColGroupDef } from './entities/colDef';
 import type { PropertyValueChangedEvent } from './gridOptionsService';
 import type { IRowModel } from './interfaces/iRowModel';
-import { ModuleNames } from './modules/moduleNames';
 import { _log } from './utils/function';
 
 export class SyncService extends BeanStub implements NamedBean {
@@ -51,9 +50,8 @@ export class SyncService extends BeanStub implements NamedBean {
         this.eventService.dispatchEvent({
             type: 'gridReady',
         });
-        const isEnterprise = this.gos.isModuleRegistered(ModuleNames.EnterpriseCoreModule);
         if (this.gos.get('debug')) {
-            _log(`initialised successfully, enterprise = ${isEnterprise}`);
+            _log(`initialised successfully, enterprise = ${this.gos.isModuleRegistered('EnterpriseCoreModule')}`);
         }
     }
 

@@ -32,6 +32,7 @@ import { _insertIntoArray, _last, _removeFromArray } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _debounce, _errorOnce, _warnOnce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
+import { _logError } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
 import { updateRowNodeAfterFilter } from './filterStage';
 import { updateRowNodeAfterSort } from './sortStage';
@@ -679,7 +680,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (_missing(paramsStep)) {
-            _errorOnce(`invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}`);
+            _logError(10, { step, stepsMapped });
             return undefined;
         }
         const animate = !this.gos.get('suppressAnimationFrame');
@@ -832,11 +833,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
 
         return result;
-    }
-
-    // eslint-disable-next-line
-    public setDatasource(datasource: any): void {
-        _errorOnce('should never call setDatasource on clientSideRowController');
     }
 
     public getTopLevelNodes(): RowNode[] | null {

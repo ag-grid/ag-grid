@@ -1,5 +1,5 @@
 import type { _ModuleWithoutApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleNames } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 
 import { baseEnterpriseModule } from '../moduleUtils';
 // TODO: we should not include here the whole RowGroupingModule
@@ -19,7 +19,7 @@ export const TreeDataCoreModule: _ModuleWithoutApi = {
 };
 
 export const TreeDataModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule(ModuleNames.TreeDataModule),
+    ...baseEnterpriseModule('TreeDataModule'),
     rowModels: ['clientSide'],
     dependsOn: [TreeDataCoreModule],
 };

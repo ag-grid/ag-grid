@@ -1,5 +1,5 @@
 import type { _ModuleWithApi, _ModuleWithoutApi, _RangeSelectionGridApi } from 'ag-grid-community';
-import { KeyboardNavigationCoreModule, ModuleNames } from 'ag-grid-community';
+import { KeyboardNavigationCoreModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
@@ -25,6 +25,6 @@ export const RangeSelectionApiModule: _ModuleWithApi<_RangeSelectionGridApi> = {
 };
 
 export const RangeSelectionModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule(ModuleNames.RangeSelectionModule),
+    ...baseEnterpriseModule('RangeSelectionModule'),
     dependsOn: [RangeSelectionCoreModule, RangeSelectionApiModule],
 };

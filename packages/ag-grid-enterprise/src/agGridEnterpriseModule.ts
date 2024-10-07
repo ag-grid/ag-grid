@@ -1,5 +1,4 @@
 import type { _ModuleWithoutApi } from 'ag-grid-community';
-import { ModuleNames } from 'ag-grid-community';
 
 import { AggregationModule } from './aggregation/aggregationModule';
 import { LoadingCellRendererModule, SkeletonCellRendererModule } from './cellRenderers/enterpriseCellRendererModule';
@@ -11,7 +10,7 @@ import { AgMenuItemRenderer } from './widgets/agMenuItemRenderer';
 export { AgWatermark } from './license/watermark';
 
 export const EnterpriseCoreModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule(ModuleNames.EnterpriseCoreModule),
+    ...baseEnterpriseModule('EnterpriseCoreModule'),
     beans: [LicenseManager],
     userComponents: [
         {
