@@ -35,6 +35,14 @@ import type { MenuItemActivatedEvent } from '../widgets/agMenuItemComponent';
 import { AgMenuItemComponent } from '../widgets/agMenuItemComponent';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 
+export function getMultiFilterDefs(params: MultiFilterParams): IMultiFilterDef[] {
+    const { filters } = params;
+
+    return filters && filters.length > 0
+        ? filters
+        : [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
+}
+
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
     private filterManager?: FilterManager;
     private userComponentFactory: UserComponentFactory;
@@ -71,17 +79,9 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         });
     }
 
-    public static getFilterDefs(params: MultiFilterParams): IMultiFilterDef[] {
-        const { filters } = params;
-
-        return filters && filters.length > 0
-            ? filters
-            : [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
-    }
-
     public init(params: MultiFilterParams): AgPromise<void> {
         this.params = params;
-        this.filterDefs = MultiFilter.getFilterDefs(params);
+        this.filterDefs = getMultiFilterDefs(params);
 
         const { column, filterChangedCallback } = params;
 

@@ -27,8 +27,6 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         this.rowModel = beans.rowModel as ServerSideRowModel;
     }
 
-    public static DEFAULT_BLOCK_SIZE = 100;
-
     // a map of caches to loading nodes
     private cacheLoadingNodesMap: Map<LazyCache, Set<number>> = new Map();
 

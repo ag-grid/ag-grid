@@ -22,7 +22,7 @@ import {
     _setDisplayed,
 } from 'ag-grid-community';
 
-import { MultiFilter } from './multiFilter';
+import { MultiFilter, getMultiFilterDefs } from './multiFilter';
 
 export class MultiFloatingFilterComp extends Component implements IFloatingFilterComp<MultiFilter> {
     private userComponentFactory: UserComponentFactory;
@@ -107,7 +107,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         const floatingFilterParamsList: IFloatingFilterParams<IFilter>[] = [];
         const filterParams = params.filterParams as MultiFilterParams;
 
-        MultiFilter.getFilterDefs(filterParams).forEach((filterDef, index) => {
+        getMultiFilterDefs(filterParams).forEach((filterDef, index) => {
             const floatingFilterParams: IFloatingFilterParams<IFilter> = {
                 ...params,
                 // set the parent filter instance for each floating filter to the relevant child filter instance
