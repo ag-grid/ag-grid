@@ -11,21 +11,22 @@ import type {
     ExcelRow,
     ExcelStyle,
     FuncColsService,
+    GridSerializer,
     IExcelCreator,
     NamedBean,
     ValueService,
 } from 'ag-grid-community';
 import { _getHeaderClassesFromColDef, _warnOnce } from 'ag-grid-community';
-import type { GridSerializer } from 'ag-grid-community';
-import { BaseCreator, Downloader, RowType, ZipContainer } from 'ag-grid-community';
+import { BaseCreator, RowType, _downloadFile } from 'ag-grid-community';
 
 import type { ExcelGridSerializingParams, StyleLinkerInterface } from './excelSerializingSession';
 import { ExcelSerializingSession } from './excelSerializingSession';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
 import { _normaliseImageExtension } from './files/ooxml/contentTypes';
+import { ZipContainer } from './zipContainer/zipContainer';
 
-const createExcelXMLCoreFolderStructure = (): void => {
-    ZipContainer.addFolders(['_rels/', 'docProps/', 'xl/', 'xl/theme/', 'xl/_rels/', 'xl/worksheets/']);
+const createExcelXMLCoreFolderStructure = (zipContainer: ZipContainer): void => {
+    zipContainer.addFolders(['_rels/', 'docProps/', 'xl/', 'xl/theme/', 'xl/_rels/', 'xl/worksheets/']);
 
     const { images } = ExcelXlsxFactory;
 
@@ -33,7 +34,7 @@ const createExcelXMLCoreFolderStructure = (): void => {
         return;
     }
 
-    ZipContainer.addFolders(['xl/worksheets/_rels', 'xl/drawings/', 'xl/drawings/_rels', 'xl/media/']);
+    zipContainer.addFolders(['xl/worksheets/_rels', 'xl/drawings/', 'xl/drawings/_rels', 'xl/media/']);
 
     let imgCounter = 0;
 
@@ -41,11 +42,11 @@ const createExcelXMLCoreFolderStructure = (): void => {
         const firstImage = value[0].image[0];
         const { base64, imageType } = firstImage;
 
-        ZipContainer.addFile(`xl/media/image${++imgCounter}.${_normaliseImageExtension(imageType)}`, base64, true);
+        zipContainer.addFile(`xl/media/image${++imgCounter}.${_normaliseImageExtension(imageType)}`, base64, true);
     });
 };
 
-const createExcelXmlWorksheets = (data: string[]): void => {
+const createExcelXmlWorksheets = (zipContainer: ZipContainer, data: string[]): void => {
     let imageRelationCounter = 0;
     let headerFooterImageCounter = 0;
     let tableRelationCounter = 0;
@@ -54,7 +55,7 @@ const createExcelXmlWorksheets = (data: string[]): void => {
 
     for (let i = 0; i < data.length; i++) {
         const value = data[i];
-        ZipContainer.addFile(`xl/worksheets/sheet${i + 1}.xml`, value, false);
+        zipContainer.addFile(`xl/worksheets/sheet${i + 1}.xml`, value, false);
 
         const hasImages = images.size > 0 && worksheetImages.has(i);
         const hasTables = worksheetDataTables.size > 0 && worksheetDataTables.has(i);
@@ -69,13 +70,13 @@ const createExcelXmlWorksheets = (data: string[]): void => {
         let vmlDrawingIndex: number | undefined;
 
         if (hasImages) {
-            createExcelXmlDrawings(i, imageRelationCounter);
+            createExcelXmlDrawings(zipContainer, i, imageRelationCounter);
             drawingIndex = imageRelationCounter;
             imageRelationCounter++;
         }
 
         if (hasHeaderFooterImages) {
-            createExcelVmlDrawings(i, headerFooterImageCounter);
+            createExcelVmlDrawings(zipContainer, i, headerFooterImageCounter);
             vmlDrawingIndex = headerFooterImageCounter;
             headerFooterImageCounter++;
         }
@@ -86,7 +87,7 @@ const createExcelXmlWorksheets = (data: string[]): void => {
 
         const worksheetRelFile = `xl/worksheets/_rels/sheet${i + 1}.xml.rels`;
 
-        ZipContainer.addFile(
+        zipContainer.addFile(
             worksheetRelFile,
             ExcelXlsxFactory.createRelationships({
                 tableIndex,
@@ -97,25 +98,25 @@ const createExcelXmlWorksheets = (data: string[]): void => {
     }
 };
 
-const createExcelXmlDrawings = (sheetIndex: number, drawingIndex: number): void => {
+const createExcelXmlDrawings = (zipContainer: ZipContainer, sheetIndex: number, drawingIndex: number): void => {
     const drawingFolder = 'xl/drawings';
     const drawingFileName = `${drawingFolder}/drawing${drawingIndex + 1}.xml`;
     const relFileName = `${drawingFolder}/_rels/drawing${drawingIndex + 1}.xml.rels`;
 
-    ZipContainer.addFile(relFileName, ExcelXlsxFactory.createDrawingRel(sheetIndex));
-    ZipContainer.addFile(drawingFileName, ExcelXlsxFactory.createDrawing(sheetIndex));
+    zipContainer.addFile(relFileName, ExcelXlsxFactory.createDrawingRel(sheetIndex));
+    zipContainer.addFile(drawingFileName, ExcelXlsxFactory.createDrawing(sheetIndex));
 };
 
-const createExcelVmlDrawings = (sheetIndex: number, drawingIndex: number): void => {
+const createExcelVmlDrawings = (zipContainer: ZipContainer, sheetIndex: number, drawingIndex: number): void => {
     const drawingFolder = 'xl/drawings';
     const drawingFileName = `${drawingFolder}/vmlDrawing${drawingIndex + 1}.vml`;
     const relFileName = `${drawingFolder}/_rels/vmlDrawing${drawingIndex + 1}.vml.rels`;
 
-    ZipContainer.addFile(drawingFileName, ExcelXlsxFactory.createVmlDrawing(sheetIndex));
-    ZipContainer.addFile(relFileName, ExcelXlsxFactory.createVmlDrawingRel(sheetIndex));
+    zipContainer.addFile(drawingFileName, ExcelXlsxFactory.createVmlDrawing(sheetIndex));
+    zipContainer.addFile(relFileName, ExcelXlsxFactory.createVmlDrawingRel(sheetIndex));
 };
 
-const createExcelXmlTables = (): void => {
+const createExcelXmlTables = (zipContainer: ZipContainer): void => {
     const { worksheetDataTables } = ExcelXlsxFactory;
 
     const tablesDataByWorksheet = worksheetDataTables;
@@ -129,22 +130,29 @@ const createExcelXmlTables = (): void => {
             continue;
         }
 
-        ZipContainer.addFile(`xl/tables/${dataTable.name}.xml`, ExcelXlsxFactory.createTable(dataTable, i));
+        zipContainer.addFile(`xl/tables/${dataTable.name}.xml`, ExcelXlsxFactory.createTable(dataTable, i));
     }
 };
 
-const createExcelXmlCoreSheets = (fontSize: number, author: string, sheetLen: number, activeTab: number): void => {
-    ZipContainer.addFile('xl/workbook.xml', ExcelXlsxFactory.createWorkbook(activeTab));
-    ZipContainer.addFile('xl/styles.xml', ExcelXlsxFactory.createStylesheet(fontSize));
-    ZipContainer.addFile('xl/sharedStrings.xml', ExcelXlsxFactory.createSharedStrings());
-    ZipContainer.addFile('xl/theme/theme1.xml', ExcelXlsxFactory.createTheme());
-    ZipContainer.addFile('xl/_rels/workbook.xml.rels', ExcelXlsxFactory.createWorkbookRels(sheetLen));
-    ZipContainer.addFile('docProps/core.xml', ExcelXlsxFactory.createCore(author));
-    ZipContainer.addFile('[Content_Types].xml', ExcelXlsxFactory.createContentTypes(sheetLen));
-    ZipContainer.addFile('_rels/.rels', ExcelXlsxFactory.createRels());
+const createExcelXmlCoreSheets = (
+    zipContainer: ZipContainer,
+    fontSize: number,
+    author: string,
+    sheetLen: number,
+    activeTab: number
+): void => {
+    zipContainer.addFile('xl/workbook.xml', ExcelXlsxFactory.createWorkbook(activeTab));
+    zipContainer.addFile('xl/styles.xml', ExcelXlsxFactory.createStylesheet(fontSize));
+    zipContainer.addFile('xl/sharedStrings.xml', ExcelXlsxFactory.createSharedStrings());
+    zipContainer.addFile('xl/theme/theme1.xml', ExcelXlsxFactory.createTheme());
+    zipContainer.addFile('xl/_rels/workbook.xml.rels', ExcelXlsxFactory.createWorkbookRels(sheetLen));
+    zipContainer.addFile('docProps/core.xml', ExcelXlsxFactory.createCore(author));
+    zipContainer.addFile('[Content_Types].xml', ExcelXlsxFactory.createContentTypes(sheetLen));
+    zipContainer.addFile('_rels/.rels', ExcelXlsxFactory.createRels());
 };
 
 const createExcelFileForExcel = (
+    zipContainer: ZipContainer,
     data: string[],
     options: {
         columns?: string[];
@@ -165,10 +173,10 @@ const createExcelFileForExcel = (
     const len = data.length;
     const activeTabWithinBounds = Math.max(Math.min(activeTab, len - 1), 0);
 
-    createExcelXMLCoreFolderStructure();
-    createExcelXmlTables();
-    createExcelXmlWorksheets(data);
-    createExcelXmlCoreSheets(fontSize, author, len, activeTabWithinBounds);
+    createExcelXMLCoreFolderStructure(zipContainer);
+    createExcelXmlTables(zipContainer);
+    createExcelXmlWorksheets(zipContainer, data);
+    createExcelXmlCoreSheets(zipContainer, fontSize, author, len, activeTabWithinBounds);
 
     ExcelXlsxFactory.resetFactory();
 
@@ -178,9 +186,10 @@ const createExcelFileForExcel = (
 const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetParams): Promise<Blob | undefined> => {
     const { data, fontSize, author, activeSheetIndex } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    const zipContainer = new ZipContainer();
 
     if (
-        !createExcelFileForExcel(data, {
+        !createExcelFileForExcel(zipContainer, data, {
             author,
             fontSize,
             activeTab: activeSheetIndex,
@@ -189,15 +198,16 @@ const getMultipleSheetsAsExcelCompressed = (params: ExcelExportMultipleSheetPara
         return Promise.resolve(undefined);
     }
 
-    return ZipContainer.getZipFile(mimeType);
+    return zipContainer.getZipFile(mimeType);
 };
 
 export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams): Blob | undefined => {
     const { data, fontSize, author, activeSheetIndex } = params;
     const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    const zipContainer = new ZipContainer();
 
     if (
-        !createExcelFileForExcel(data, {
+        !createExcelFileForExcel(zipContainer, data, {
             author,
             fontSize,
             activeTab: activeSheetIndex,
@@ -206,7 +216,7 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
         return;
     }
 
-    return ZipContainer.getUncompressedZipFile(mimeType);
+    return zipContainer.getUncompressedZipFile(mimeType);
 };
 
 export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams) => {
@@ -216,7 +226,7 @@ export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetPara
         if (contents) {
             const downloadFileName = typeof fileName === 'function' ? fileName() : fileName;
 
-            Downloader.download(downloadFileName, contents);
+            _downloadFile(downloadFileName, contents);
         }
     });
 };
@@ -279,7 +289,7 @@ export class ExcelCreator
                 const providedFileName =
                     typeof fileName === 'function' ? fileName(this.gos.getGridCommonParams()) : fileName;
 
-                Downloader.download(this.getFileName(providedFileName), packageFile);
+                _downloadFile(this.getFileName(providedFileName), packageFile);
             }
         });
     }

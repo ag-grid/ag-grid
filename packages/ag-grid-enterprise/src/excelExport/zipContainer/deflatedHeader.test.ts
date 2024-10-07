@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 
-import type { ZipFile } from './zipContainer/zipContainer';
-import { getDeflatedHeaderAndContent } from './zipContainer/zipContainerHelper';
+import type { ZipFile } from './zipContainer';
+import { getDeflatedHeaderAndContent } from './zipContainerHelper';
 
 describe('getDeflatedHeaderAndContent', () => {
     const testPath: string = 'test-path/file-name.csv';

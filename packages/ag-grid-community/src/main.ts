@@ -972,12 +972,10 @@ export * from './interfaces/iSparklineCellRendererParams';
 // csv export
 export { BaseCreator } from './csvExport/baseCreator';
 export { BaseGridSerializingSession } from './csvExport/sessions/baseGridSerializingSession';
-export { CsvCreator } from './csvExport/csvCreator';
-export { Downloader } from './csvExport/downloader';
-export { GridSerializer, RowType } from './csvExport/gridSerializer';
+export { _downloadFile } from './csvExport/downloader';
+export type { GridSerializer } from './csvExport/gridSerializer';
+export { RowType } from './csvExport/gridSerializer';
 export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from './csvExport/interfaces';
-export { XmlFactory } from './csvExport/xmlFactory';
-export { ZipContainer } from './csvExport/zipContainer/zipContainer';
 
 // modules
 export { Module, ModuleValidationResult, _ModuleWithApi, _ModuleWithoutApi, ModuleName } from './interfaces/iModule';
