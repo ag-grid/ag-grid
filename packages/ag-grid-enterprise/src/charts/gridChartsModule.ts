@@ -1,7 +1,9 @@
 import type { _GridChartsGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
-import { DragAndDropModule, PopupModule } from 'ag-grid-community';
+import { DragAndDropModule, ModuleRegistry, PopupModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import type { ILicenseManager } from '../license/shared/licenseManager';
+import { LicenseManager } from '../license/shared/licenseManager';
 import { baseEnterpriseModule } from '../moduleUtils';
 import { RangeSelectionModule } from '../rangeSelection/rangeSelectionModule';
 import { VERSION as GRID_VERSION } from '../version';
@@ -12,6 +14,8 @@ import { ChartCrossFilterService } from './chartComp/services/chartCrossFilterSe
 import { ChartMenuService } from './chartComp/services/chartMenuService';
 import { ChartTranslationService } from './chartComp/services/chartTranslationService';
 import { ChartService } from './chartService';
+import type { ChartWrapperParams } from './chartWrapper';
+import { ChartWrapper } from './chartWrapper';
 import {
     closeChartToolPanel,
     createCrossFilterChart,
@@ -32,10 +36,11 @@ export const GridChartsCoreModule: _ModuleWithoutApi = {
     validate: () => {
         return validGridChartsVersion({
             gridVersion: GRID_VERSION,
-            chartsVersion: ChartService.CHARTS_VERSION,
+            chartsVersion: ChartWrapper.CHARTS_VERSION,
         });
     },
     beans: [
+        ChartWrapper,
         ChartService,
         ChartTranslationService,
         ChartCrossFilterService,
@@ -70,7 +75,31 @@ export const GridChartsApiModule: _ModuleWithApi<_GridChartsGridApi> = {
     dependsOn: [GridChartsCoreModule],
 };
 
-export const GridChartsModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule('GridChartsModule'),
-    dependsOn: [GridChartsCoreModule, GridChartsApiModule],
+// export const GridChartsModule: _ModuleWithoutApi = {
+//     ...baseEnterpriseModule('GridChartsModule'),
+//     dependsOn: [GridChartsCoreModule, GridChartsApiModule],
+// };
+
+const buildGridChartsModule: (chartInstance: ChartWrapperParams) => _ModuleWithoutApi = (chartInstance) => {
+    chartInstance.setupModules();
+
+    ChartWrapper.setup(chartInstance);
+
+    return {
+        ...baseEnterpriseModule('GridChartsModule'),
+        beans: [ChartWrapper],
+        dependsOn: [GridChartsCoreModule, GridChartsApiModule],
+    };
+};
+
+export const setupCommunityIntegratedCharts = (chartInstance: ChartWrapperParams) => {
+    ModuleRegistry.registerModules([buildGridChartsModule(chartInstance)]);
+};
+
+export const setupEnterpriseIntegratedCharts = (chartInstance: ChartWrapperParams) => {
+    const charts = chartInstance.AgCharts;
+    charts.setGridContext(true);
+
+    LicenseManager.setChartsLicenseManager(charts as ILicenseManager);
+    setupCommunityIntegratedCharts(chartInstance);
 };
