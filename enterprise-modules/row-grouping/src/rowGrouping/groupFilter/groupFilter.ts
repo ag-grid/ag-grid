@@ -295,7 +295,9 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
         if (this.filterColumnPairs?.some(({ column }) => column.getColId() === colId)) {
             // filter may already be getting recreated, so wait before updating
             setTimeout(() => {
-                this.updateGroups();
+                if (this.isAlive()) {
+                    this.updateGroups();
+                }
             });
         }
     }
