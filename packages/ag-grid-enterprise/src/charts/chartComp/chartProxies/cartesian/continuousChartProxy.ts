@@ -53,10 +53,8 @@ export class ContinuousChartProxy<T extends CartesianChartTypes> extends Cartesi
                 itemStyler: ({ highlighted, fill, size, datum }: any) => ({
                     fill: highlighted ? 'yellow' : fill,
                     fillOpacity:
-                        anySelected && !highlighted
-                            ? this.selectionModel.isSelected(category.id, datum[category.id])
-                                ? FULLY_OPAQUE
-                                : FULLY_TRANSPARENT
+                        anySelected && !highlighted && !this.selectionModel.isSelected(category.id, datum[category.id])
+                            ? FULLY_TRANSPARENT
                             : FULLY_OPAQUE,
                     size: highlighted ? ITEM_HIGHLIGHT_SIZE : size,
                 }),
