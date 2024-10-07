@@ -11,7 +11,9 @@ import type {
 import {
     BaseSelectionService,
     _getGroupSelectsDescendants,
+    _getIsRowSelectable,
     _getRowSelectionMode,
+    _isRowSelection,
     _isUsingNewRowSelectionAPI,
     _warnOnce,
 } from 'ag-grid-community';
@@ -81,9 +83,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         this.dispatchSelectionChanged(source);
     }
 
-    public setNodesSelected(params: ISetNodesSelectedParams): number {
-        const { nodes, ...otherParams } = params;
-
+    public setNodesSelected({ nodes, ...params }: ISetNodesSelectedParams): number {
         if (nodes.length > 1 && this.selectionMode !== 'multiRow') {
             _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
             return 0;
@@ -94,10 +94,14 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             return 0;
         }
 
-        const adjustedParams = {
-            nodes: nodes.filter((node) => node.selectable),
-            ...otherParams,
-        };
+        // Only filter out selectable nodes when attempting to select; we should be able to de-select
+        // unselectable nodes (e.g. when isRowSelectable changes)
+        const adjustedParams = params.newValue
+            ? {
+                  nodes: nodes.filter((node) => node.selectable),
+                  ...params,
+              }
+            : { nodes, ...params };
 
         // if no selectable nodes, then return 0
         if (!adjustedParams.nodes.length) {

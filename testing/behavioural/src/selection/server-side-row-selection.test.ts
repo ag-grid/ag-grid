@@ -1338,7 +1338,7 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowElementsById([], api);
             });
 
-            test.only('Selection state changes when `isRowSelectable` changes', async () => {
+            test('Selection state changes when `isRowSelectable` changes', async () => {
                 const api = await createGridAndWait({
                     ...groupGridOptions,
                     rowSelection: {
