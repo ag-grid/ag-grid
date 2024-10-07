@@ -90,23 +90,24 @@ export class ChartDatasource extends BeanStub {
             this.updatePivotKeysForSSRM();
         }
 
-        const filteredNodes = this.getFilteredRowNodes();
-        const allRowNodes = params.showFilteredDataOnly
-            ? // use only filtered rows, enforce rowIndex sorting as the map doesn't guarantee it
-              Object.values(filteredNodes).sort((a, b) => (a.rowIndex ?? 0) - (b.rowIndex ?? 0))
-            : this.getAllRowNodes();
-
-        const result = this.extractRowsFromGridRowModel(params, allRowNodes, filteredNodes);
+        const result = this.extractRowsFromGridRowModel(params, this.getAllRowNodes());
         result.chartData = this.aggregateRowsByDimension(params, result.chartData);
         return result;
     }
 
-    private extractRowsFromGridRowModel(
-        params: ChartDatasourceParams,
-        allRowNodes: RowNode[],
-        filteredNodes: { [key: string]: RowNode }
-    ): IData {
-        const { crossFiltering, startRow, endRow, valueCols, dimensionCols, grouping } = params;
+    private extractRowsFromGridRowModel(params: ChartDatasourceParams, allRowNodes: RowNode[]): IData {
+        const {
+            crossFiltering,
+            crossFilteringIsHighlight,
+            crossFilteringZeroValue,
+            showFilteredDataOnly,
+            startRow,
+            endRow,
+            valueCols,
+            dimensionCols,
+            grouping,
+        } = params;
+
         let extractedRowData: any[] = [];
         const columnNames: { [key: string]: string[] } = {};
 
@@ -114,9 +115,18 @@ export class ChartDatasource extends BeanStub {
         const groupNodeIndexes: { [key: string]: number } = {};
         const groupsToRemove: { [key: string]: number } = {};
 
+        let rowNodes: RowNode[] = allRowNodes;
+        let filteredNodes: Record<string, RowNode> = {};
+
         let numRows;
         if (crossFiltering) {
-            numRows = allRowNodes.length;
+            filteredNodes = this.getFilteredRowNodes();
+
+            if (showFilteredDataOnly) {
+                rowNodes = Object.values(filteredNodes).sort((a, b) => (a.rowIndex ?? 0) - (b.rowIndex ?? 0));
+            }
+
+            numRows = rowNodes.length;
         } else {
             // make sure enough rows in range to chart. if user filters and less rows, then end row will be
             // the last displayed row, not where the range ends.
@@ -160,7 +170,7 @@ export class ChartDatasource extends BeanStub {
         let id = 0;
 
         for (let i = 0; i < numRows; i++) {
-            const rowNode = crossFiltering ? allRowNodes[i] : this.gridRowModel.getRow(i + startRow)!;
+            const rowNode = crossFiltering ? rowNodes[i] : this.gridRowModel.getRow(i + startRow)!;
 
             if (rowNode.footer || rowNode.detail) {
                 numRemovedNodes++;
@@ -229,12 +239,12 @@ export class ChartDatasource extends BeanStub {
 
                     data[colId] = actualValue ?? 0;
 
-                    if (params.crossFilteringIsHighlight) {
+                    if (crossFilteringIsHighlight) {
                         data[filteredOutColId] = actualValue;
                     } else {
                         data[filteredOutColId] = filteredNodes[rowNode.id as string]
                             ? actualValue
-                            : params.crossFilteringZeroValue;
+                            : crossFilteringZeroValue;
                     }
                 } else {
                     // add data value to value column
