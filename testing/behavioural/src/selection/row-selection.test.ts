@@ -165,6 +165,28 @@ describe('Row Selection Grid Options', () => {
                 toggleCheckboxByIndex(0);
                 assertSelectedRowsByIndex([], api);
             });
+
+            test('can update `isRowSelectable` to `undefined` to make all rows selectable', () => {
+                const api = createGrid({
+                    columnDefs,
+                    rowData,
+                    rowSelection: {
+                        mode: 'singleRow',
+                        isRowSelectable: () => false,
+                    },
+                });
+
+                toggleCheckboxByIndex(0);
+                assertSelectedRowsByIndex([], api);
+
+                api.setGridOption('rowSelection', {
+                    mode: 'singleRow',
+                    isRowSelectable: undefined,
+                });
+
+                toggleCheckboxByIndex(0);
+                assertSelectedRowsByIndex([0], api);
+            });
         });
 
         describe('Multiple Row Selection', () => {
