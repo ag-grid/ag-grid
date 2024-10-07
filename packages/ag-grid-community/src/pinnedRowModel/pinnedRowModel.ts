@@ -1,7 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import { RowNode } from '../entities/rowNode';
+import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED, RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged } from '../events';
 import { _getRowHeightForNode, _getRowIdCallback } from '../gridOptionsUtils';
 import type { RowPinnedType } from '../interfaces/iRowNode';
@@ -91,7 +91,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
         }
 
         const getRowId = _getRowIdCallback(this.gos);
-        const idPrefix = floating === 'top' ? RowNode.ID_PREFIX_TOP_PINNED : RowNode.ID_PREFIX_BOTTOM_PINNED;
+        const idPrefix = floating === 'top' ? ROW_ID_PREFIX_TOP_PINNED : ROW_ID_PREFIX_BOTTOM_PINNED;
 
         // We'll want to remove all nodes that aren't matched to data
         const nodesToRemove = nodes.getIds();
