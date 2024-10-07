@@ -26,7 +26,7 @@ export class SelectableService extends BeanStub implements NamedBean {
     }
 
     public postConstruct() {
-        this.addManagedPropertyListener('isRowSelectable', () => this.updateSelectable());
+        this.addManagedPropertyListeners(['isRowSelectable', 'rowSelection'], () => this.updateSelectable());
     }
 
     /**
