@@ -102,7 +102,7 @@
         "highlights": [
             {
                 "text": "Sticky Group Total and Grand Total Rows",
-                "path": "./total-rows"
+                "path": "./aggregation-total-rows"
             },
             {
                 "text": "Skeleton Content Displayed in Loading Grid Cells",
@@ -235,7 +235,7 @@
             },
             {
                 "text": "Dynamic Group Footer Rows",
-                "path": "./total-rows/#dynamically-display-group-total-rows"
+                "path": "./aggregation-total-rows/#dynamically-display-group-total-rows"
             },
             {
                 "text": "Documentation Examples on CodeSandbox"

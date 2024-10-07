@@ -67,7 +67,7 @@ const TYPE_LINKS: Record<string, string> = {
     AgEventListener: './grid-events/',
     HeaderPosition: './keyboard-navigation/#headerposition',
     HTMLElement: 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement',
-    IAggFunc: './aggregation-custom-functions/#custom-aggregation-functions',
+    IAggFunc: './aggregation-custom-functions/',
     IDatasource: './infinite-scrolling/#datasource-interface',
     IFilterComp: './component-filter/',
     IFloatingFilterComp: './component-floating-filter/',

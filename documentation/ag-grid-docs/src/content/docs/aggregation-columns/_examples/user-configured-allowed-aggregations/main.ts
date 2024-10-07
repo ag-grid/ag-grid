@@ -2,43 +2,41 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
+import { MenuModule } from 'ag-grid-enterprise';
 import { RowGroupingModule } from 'ag-grid-enterprise';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, RowGroupingModule, ColumnsToolPanelModule]);
 
-let gridApi: GridApi;
+let gridApi: GridApi<IOlympicData>;
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
-        { field: 'year', rowGroup: true, hide: true },
-        { field: 'sport', filter: 'agTextColumnFilter', floatingFilter: true },
-        { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
-        { field: 'bronze', aggFunc: 'sum' },
+        {
+            headerName: 'First or Last',
+            field: 'total',
+            aggFunc: 'first',
+            allowedAggFuncs: ['first', 'last'],
+            enableValue: true,
+        },
+        {
+            headerName: 'Min or Max',
+            field: 'total',
+            aggFunc: 'min',
+            allowedAggFuncs: ['min', 'max'],
+            enableValue: true,
+        },
     ],
     defaultColDef: {
         flex: 1,
-        minWidth: 150,
+        minWidth: 100,
     },
     autoGroupColumnDef: {
-        minWidth: 300,
+        minWidth: 200,
     },
-    groupTotalRow: 'bottom',
-    onGridReady: (params) => {
-        params.api.setFilterModel({
-            sport: {
-                type: 'contains',
-                filter: 'Swimming',
-            },
-        });
-    },
+    sideBar: 'columns',
 };
-
-function toggleProperty() {
-    const enable = document.querySelector<HTMLInputElement>('#suppressAggFilteredOnly')!.checked;
-    gridApi.setGridOption('suppressAggFilteredOnly', enable);
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

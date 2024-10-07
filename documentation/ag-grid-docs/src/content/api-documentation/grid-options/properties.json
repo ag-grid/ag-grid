@@ -501,7 +501,7 @@
         "applyQuickFilterBeforePivotOrAgg": {
             "more": {
                 "name": "Pivoting / Group Aggregation Filtering",
-                "url": "./filter-quick/#pivoting--group-aggregation-filtering"
+                "url": "./filter-quick/#pivoting--filtering-aggregated-values"
             }
         },
         "isExternalFilterPresent": {
@@ -1006,7 +1006,7 @@
         "aggFuncs": {
             "more": {
                 "name": "Custom Aggregation Functions",
-                "url": "./aggregation-custom-functions/#custom-aggregation-functions"
+                "url": "./aggregation-custom-functions/"
             }
         },
         "getGroupRowAgg": {
@@ -1018,15 +1018,10 @@
         "suppressAggFuncInHeader": {
             "more": {
                 "name": "Column Headers",
-                "url": "./aggregation-other/#column-headers"
+                "url": "./aggregation-columns/#omit-function-name-in-header"
             }
         },
-        "alwaysAggregateAtRootLevel": {
-            "more": {
-                "name": "Enabling Top Level Aggregations",
-                "url": "./aggregation-other/#enabling-top-level-aggregations"
-            }
-        },
+        "alwaysAggregateAtRootLevel": {},
         "aggregateOnlyChangedColumns": {
             "more": {
                 "name": "Change Detection",
@@ -1036,7 +1031,7 @@
         "suppressAggFilteredOnly": {
             "more": {
                 "name": "Custom Aggregation Functions",
-                "url": "./aggregation-custom-functions/#custom-aggregation-functions"
+                "url": "./aggregation-custom-functions/"
             }
         },
         "groupAggFiltering": {},
@@ -1049,20 +1044,20 @@
         "groupTotalRow": {
             "more": {
                 "name": "Group Total Rows",
-                "url": "./total-rows/#group-total-rows"
+                "url": "./aggregation-total-rows/#enabling-group-total-rows"
             }
         },
         "grandTotalRow": {
             "more": {
                 "name": "Grand Total Row",
-                "url": "./total-rows/#grand-total-row"
+                "url": "./aggregation-total-rows/#enabling-a-grand-total-row"
             }
         },
         "suppressStickyTotalRow": {},
         "groupSuppressBlankHeader": {
             "more": {
                 "name": "Showing Values in Group and Total Rows",
-                "url": "./total-rows/#showing-values-in-group-and-total-rows"
+                "url": "./aggregation-total-rows/#keeping-group-row-values"
             }
         }
     },

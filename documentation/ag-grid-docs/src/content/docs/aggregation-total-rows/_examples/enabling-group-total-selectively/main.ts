@@ -1,6 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { FirstDataRenderedEvent, GridApi, GridOptions } from 'ag-grid-community';
 import { createGrid } from 'ag-grid-community';
+import type { GetGroupIncludeTotalRowParams } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -12,7 +13,6 @@ const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
         { field: 'year', rowGroup: true, hide: true },
-        { field: 'sport', filter: 'agTextColumnFilter', floatingFilter: true },
         { field: 'gold', aggFunc: 'sum' },
         { field: 'silver', aggFunc: 'sum' },
         { field: 'bronze', aggFunc: 'sum' },
@@ -24,21 +24,21 @@ const gridOptions: GridOptions = {
     autoGroupColumnDef: {
         minWidth: 300,
     },
-    groupTotalRow: 'bottom',
-    onGridReady: (params) => {
-        params.api.setFilterModel({
-            sport: {
-                type: 'contains',
-                filter: 'Swimming',
-            },
+    groupTotalRow: (params: GetGroupIncludeTotalRowParams) => {
+        const node = params.node;
+        if (node && node.level === 1) return 'bottom';
+        if (node && node.key === 'United States') return 'bottom';
+
+        return undefined;
+    },
+    onFirstDataRendered: (params: FirstDataRenderedEvent) => {
+        params.api.forEachNode((node) => {
+            if (node.key === 'United States' || node.key === 'Russia') {
+                params.api.setRowNodeExpanded(node, true);
+            }
         });
     },
 };
-
-function toggleProperty() {
-    const enable = document.querySelector<HTMLInputElement>('#suppressAggFilteredOnly')!.checked;
-    gridApi.setGridOption('suppressAggFilteredOnly', enable);
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
@@ -47,5 +47,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data));
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data.slice(0, 50)));
 });
