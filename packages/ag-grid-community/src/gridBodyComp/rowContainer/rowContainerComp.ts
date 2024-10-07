@@ -44,9 +44,9 @@ export class RowContainerComp extends Component {
     private domOrder: boolean;
     private lastPlacedElement: HTMLElement | null;
 
-    constructor() {
+    constructor(params?: { name: string }) {
         super();
-        this.name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
+        this.name = params?.name as RowContainerName;
         this.options = _getRowContainerOptions(this.name);
         this.setTemplate(templateFactory(this.options));
     }

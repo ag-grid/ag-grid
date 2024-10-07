@@ -47,8 +47,6 @@ export class Component<TLocalEvent extends string = ComponentEvent>
         super.preWireBeans(beans);
     }
 
-    public static elementGettingCreated: any;
-
     private eGui: HTMLElement;
     private componentSelectors: Map<AgComponentSelector, ComponentSelector>;
     private suppressDataRefValidation: boolean = false;
@@ -239,7 +237,6 @@ export class Component<TLocalEvent extends string = ComponentEvent>
         const componentSelector = isAgGridComponent ? this.componentSelectors.get(key as AgComponentSelector) : null;
         let newComponent: Component | null = null;
         if (componentSelector) {
-            Component.elementGettingCreated = element;
             const componentParams = paramsMap && elementRef ? paramsMap[elementRef] : undefined;
             newComponent = new componentSelector.component(componentParams);
             newComponent.setParentComponent(this as Component);
