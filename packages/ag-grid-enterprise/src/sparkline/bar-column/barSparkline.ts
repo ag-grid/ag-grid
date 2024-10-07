@@ -1,11 +1,7 @@
-import { _ModuleSupport, _Scale, _Util } from 'ag-charts-community';
-
+import { ChartWrapper } from '../../charts/chartWrapper';
 import type { Point } from '../sparkline';
 import type { RectNodeDatum } from './barColumnSparkline';
 import { BarColumnLabelPlacement, BarColumnSparkline } from './barColumnSparkline';
-
-const { isNumber } = _Util;
-const { BandScale } = _Scale;
 
 interface BarNodeDatum extends RectNodeDatum {}
 export class BarSparkline extends BarColumnSparkline {
@@ -16,7 +12,7 @@ export class BarSparkline extends BarColumnSparkline {
 
     protected updateXScaleRange() {
         const { xScale, seriesRect, paddingOuter, paddingInner } = this;
-        if (xScale instanceof BandScale) {
+        if (xScale instanceof ChartWrapper._Scale.BandScale) {
             xScale.range = [0, seriesRect.height];
             xScale.paddingInner = paddingInner;
             xScale.paddingOuter = paddingOuter;
@@ -70,7 +66,7 @@ export class BarSparkline extends BarColumnSparkline {
         const nodeData: BarNodeDatum[] = [];
 
         const yZero = yScale.convert(0);
-        const continuous = !(xScale instanceof BandScale);
+        const continuous = !(xScale instanceof ChartWrapper._Scale.BandScale);
 
         for (let i = 0, n = yData.length; i < n; i++) {
             let yDatum = yData[i];
@@ -100,7 +96,8 @@ export class BarSparkline extends BarColumnSparkline {
             if (labelFormatter) {
                 labelText = labelFormatter({ value: yDatum });
             } else {
-                labelText = yDatum !== undefined && isNumber(yDatum) ? this.formatLabelValue(yDatum) : '';
+                labelText =
+                    yDatum !== undefined && ChartWrapper._Util.isNumber(yDatum) ? this.formatLabelValue(yDatum) : '';
             }
 
             const labelY: number = y + height / 2;
@@ -122,7 +119,7 @@ export class BarSparkline extends BarColumnSparkline {
                 labelX = x + (isPositiveY ? width - labelPadding : labelPadding);
                 labelTextAlign = isPositiveY ? 'end' : 'start';
 
-                const textSize = _ModuleSupport.CachedTextMeasurerPool.measureText(labelText, {
+                const textSize = ChartWrapper._ModuleSupport.CachedTextMeasurerPool.measureText(labelText, {
                     font: labelFontFamily,
                 });
                 const textWidth = textSize.width || 20;

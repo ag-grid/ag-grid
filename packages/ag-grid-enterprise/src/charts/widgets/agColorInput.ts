@@ -1,9 +1,10 @@
-import { _Util } from 'ag-charts-community';
+import type { _Util } from 'ag-charts-community';
 
 import type { AgInputTextFieldParams, BeanCollection, ComponentSelector } from 'ag-grid-community';
 import { AgInputTextField, RefPlaceholder } from 'ag-grid-community';
 
 import type { ChartTranslationService } from '../chartComp/services/chartTranslationService';
+import { ChartWrapper } from '../chartWrapper';
 
 export type AgColorInputEvent = 'colorChanged';
 export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgColorInputEvent> {
@@ -29,12 +30,12 @@ export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgCol
 
     public setColor(color: _Util.Color): void {
         const rgbaColor = color.toRgbaString();
-        this.setValue(_Util.Color.fromString(rgbaColor).toHexString().toUpperCase(), true);
+        this.setValue(ChartWrapper._Util.Color.fromString(rgbaColor).toHexString().toUpperCase(), true);
         this.eColor.style.backgroundColor = rgbaColor;
     }
 
     public override setValue(value?: string | null | undefined, silent?: boolean | undefined): this {
-        const isValid = _Util.Color.validColorString(value ?? '');
+        const isValid = ChartWrapper._Util.Color.validColorString(value ?? '');
         this.eInput.setCustomValidity(isValid ? '' : this.chartTranslationService.translate('invalidColor'));
         super.setValue(value, silent);
         if (isValid && !silent) {
@@ -44,7 +45,9 @@ export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgCol
     }
 
     public onColorChanged(callback: (color: _Util.Color) => void): void {
-        this.addManagedListeners(this, { colorChanged: () => callback(_Util.Color.fromString(this.value!)) });
+        this.addManagedListeners(this, {
+            colorChanged: () => callback(ChartWrapper._Util.Color.fromString(this.value!)),
+        });
     }
 }
 

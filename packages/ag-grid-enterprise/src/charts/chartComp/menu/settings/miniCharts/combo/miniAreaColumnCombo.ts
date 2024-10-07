@@ -1,7 +1,8 @@
-import { _Scene } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
 
 import type { ChartType } from 'ag-grid-community';
 
+import { ChartWrapper } from '../../../../../chartWrapper';
 import type { CreateColumnRectsParams } from '../miniChartHelpers';
 import { createColumnRects } from '../miniChartHelpers';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
@@ -37,13 +38,13 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
         } as CreateColumnRectsParams);
 
         // scale for area series
-        const xScale = new _Scene.BandScale<number>();
+        const xScale = new ChartWrapper._Scene.BandScale<number>();
         xScale.range = [padding, size - padding];
         xScale.domain = [0, 1, 2, 3, 4];
         xScale.paddingInner = 1;
         xScale.paddingOuter = 0;
 
-        const yScale = new _Scene.LinearScale();
+        const yScale = new ChartWrapper._Scene.LinearScale();
         yScale.range = [size - padding, padding];
         yScale.domain = [0, 6];
 
@@ -78,7 +79,7 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
         });
 
         this.areas = pathData.map((points) => {
-            const area = new _Scene.Path();
+            const area = new ChartWrapper._Scene.Path();
             area.strokeWidth = 0;
             area.fillOpacity = 0.8;
 
@@ -88,11 +89,11 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
             return area;
         });
 
-        const areaGroup = new _Scene.Group();
-        areaGroup.setClipRect(new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
+        const areaGroup = new ChartWrapper._Scene.Group();
+        areaGroup.setClipRect(new ChartWrapper._Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
 
-        const columnGroup = new _Scene.Group();
-        columnGroup.setClipRect(new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
+        const columnGroup = new ChartWrapper._Scene.Group();
+        columnGroup.setClipRect(new ChartWrapper._Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
 
         areaGroup.append(this.areas);
         columnGroup.append(this.columns);

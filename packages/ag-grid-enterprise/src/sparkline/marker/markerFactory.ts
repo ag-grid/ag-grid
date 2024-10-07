@@ -1,14 +1,16 @@
-import { _Scene } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
 
-export function getMarker(shape: string) {
+import { ChartWrapper } from '../../charts/chartWrapper';
+
+export function getMarker(shape: string): typeof _Scene.Circle | typeof _Scene.Square | typeof _Scene.Diamond {
     switch (shape) {
         case 'circle':
-            return _Scene.Circle;
+            return ChartWrapper._Scene.Circle;
         case 'square':
-            return _Scene.Square;
+            return ChartWrapper._Scene.Square;
         case 'diamond':
-            return _Scene.Diamond;
+            return ChartWrapper._Scene.Diamond;
         default:
-            return _Scene.Circle;
+            return ChartWrapper._Scene.Circle;
     }
 }

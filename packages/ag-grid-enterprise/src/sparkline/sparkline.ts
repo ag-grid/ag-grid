@@ -1,15 +1,12 @@
-import { _Scale, _Scene, _Util } from 'ag-charts-community';
+import type { _Scale, _Scene, _Util } from 'ag-charts-community';
 
 import { _errorOnce } from 'ag-grid-community';
 import type { HighlightStyleOptions } from 'ag-grid-community';
 
+import { ChartWrapper } from '../charts/chartWrapper';
 import type { SparklineFactoryOptions } from './agSparkline';
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
 import type { SparklineTooltip, SparklineTooltipMeta } from './tooltip/sparklineTooltip';
-
-const { extent, isNumber, isString, isStringObject, isDate, createId, Padding } = _Util;
-const { LinearScale, BandScale, TimeScale } = _Scale;
-const { Transformable } = _Scene;
 
 /**
  * Constants to declare the expected nominal zIndex for nodes in a sparkline rendering.
@@ -52,7 +49,7 @@ export class SparklineAxis {
     strokeWidth: number = 1;
 }
 export abstract class Sparkline {
-    readonly id: string = createId(this);
+    readonly id: string = ChartWrapper._Util.createId(this);
 
     processedOptions?: SparklineFactoryOptions;
 
@@ -116,7 +113,7 @@ export abstract class Sparkline {
         return this._data;
     }
 
-    padding: _Util.Padding = new Padding(3);
+    padding: _Util.Padding = new ChartWrapper._Util.Padding(3);
 
     xKey: string = 'x';
     yKey: string = 'y';
@@ -131,7 +128,7 @@ export abstract class Sparkline {
     protected max: number | undefined = undefined;
 
     protected xScale!: any;
-    protected yScale: _Scale.LinearScale = new LinearScale();
+    protected yScale: _Scale.LinearScale = new ChartWrapper._Scale.LinearScale();
 
     readonly axis = new SparklineAxis();
     readonly highlightStyle: HighlightStyleOptions = {
@@ -142,14 +139,14 @@ export abstract class Sparkline {
     };
 
     protected constructor() {
-        const root = new _Scene.TranslatableGroup();
+        const root = new ChartWrapper._Scene.TranslatableGroup();
         this.rootGroup = root;
 
         const element = document.createElement('div');
         element.setAttribute('class', 'ag-sparkline-wrapper');
 
         // initialise scene
-        const scene = new _Scene.Scene({});
+        const scene = new ChartWrapper._Scene.Scene({});
         this.scene = scene;
         this.canvasElement = scene.canvas.element;
 
@@ -246,8 +243,8 @@ export abstract class Sparkline {
         const { xData, xScale } = this;
 
         let xMinMax;
-        if (xScale instanceof LinearScale || xScale instanceof TimeScale) {
-            xMinMax = extent(xData);
+        if (xScale instanceof ChartWrapper._Scale.LinearScale || xScale instanceof ChartWrapper._Scale.TimeScale) {
+            xMinMax = ChartWrapper._Util.extent(xData);
         }
 
         this.xScale.domain = xMinMax ? xMinMax.slice() : xData;
@@ -261,12 +258,12 @@ export abstract class Sparkline {
     protected getXScale(type: AxisType = 'category'): ScaleType {
         switch (type) {
             case 'number':
-                return new LinearScale();
+                return new ChartWrapper._Scale.LinearScale();
             case 'time':
-                return new TimeScale();
+                return new ChartWrapper._Scale.TimeScale();
             case 'category':
             default:
-                return new BandScale();
+                return new ChartWrapper._Scale.BandScale();
         }
     }
 
@@ -490,7 +487,7 @@ export abstract class Sparkline {
     private getDataType(data: any): DataType {
         for (const datum of data) {
             if (datum != undefined) {
-                if (isNumber(datum)) {
+                if (ChartWrapper._Util.isNumber(datum)) {
                     return 'number';
                 } else if (Array.isArray(datum)) {
                     return 'array';
@@ -507,6 +504,7 @@ export abstract class Sparkline {
      * @param value
      */
     private getDatum(value: any, type: AxisType): any {
+        const { isNumber, isDate, isString, isStringObject } = ChartWrapper._Util;
         if ((type === 'number' && isNumber(value)) || (type === 'time' && (isNumber(value) || isDate(value)))) {
             return value;
         } else if (type === 'category') {
@@ -586,7 +584,7 @@ export abstract class Sparkline {
     private pickClosestSeriesNodeDatum(x: number, y: number): SeriesNodeDatum | undefined {
         let minDistance = Infinity;
         let closestDatum: SeriesNodeDatum | undefined;
-        const hitPoint = Transformable.fromCanvasPoint(this.rootGroup, x, y);
+        const hitPoint = ChartWrapper._Scene.Transformable.fromCanvasPoint(this.rootGroup, x, y);
         const nodeData = this.getNodeData();
 
         for (let i = 0; i < nodeData.length; i++) {
@@ -688,7 +686,7 @@ export abstract class Sparkline {
 
         if (type === 'number' && typeof datum === 'number') {
             return this.formatNumericDatum(datum);
-        } else if (type === 'time' && (datum instanceof Date || isNumber(datum))) {
+        } else if (type === 'time' && (datum instanceof Date || ChartWrapper._Util.isNumber(datum))) {
             return this.defaultDateFormatter.format(datum);
         } else {
             return String(datum);

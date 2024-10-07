@@ -1,7 +1,8 @@
-import { _Scene } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
 
 import type { ChartType } from 'ag-grid-community';
 
+import { ChartWrapper } from '../../../../../chartWrapper';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniBubble extends MiniChartWithAxes {
@@ -27,11 +28,11 @@ export class MiniBubble extends MiniChartWithAxes {
             ],
         ];
 
-        const xScale = new _Scene.LinearScale();
+        const xScale = new ChartWrapper._Scene.LinearScale();
         xScale.domain = [0, 1];
         xScale.range = [padding * 2, size - padding];
 
-        const yScale = new _Scene.LinearScale();
+        const yScale = new ChartWrapper._Scene.LinearScale();
         yScale.domain = [0, 1];
         yScale.range = [size - padding, padding];
 
@@ -39,7 +40,7 @@ export class MiniBubble extends MiniChartWithAxes {
 
         data.forEach((series) => {
             series.forEach(([x, y, radius]) => {
-                const arc = new _Scene.Arc();
+                const arc = new ChartWrapper._Scene.Arc();
                 arc.strokeWidth = 0;
                 arc.centerX = xScale.convert(x);
                 arc.centerY = yScale.convert(y);
@@ -52,8 +53,8 @@ export class MiniBubble extends MiniChartWithAxes {
         this.points = points;
         this.updateColors(fills, strokes);
 
-        const pointsGroup = new _Scene.Group();
-        pointsGroup.setClipRect(new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
+        const pointsGroup = new ChartWrapper._Scene.Group();
+        pointsGroup.setClipRect(new ChartWrapper._Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
         pointsGroup.append(this.points);
         this.root.append(pointsGroup);
     }

@@ -1,7 +1,8 @@
-import { _Scene, _Theme, _Util } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
 
 import type { ChartType } from 'ag-grid-community';
 
+import { ChartWrapper } from '../../../../../chartWrapper';
 import type { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
@@ -29,14 +30,14 @@ export class MiniBoxPlot extends MiniChartWithAxes {
         const q1Ratio = 0.9;
         const minRatio = 0.8;
 
-        const yScale = new _Scene.LinearScale();
+        const yScale = new ChartWrapper._Scene.LinearScale();
         yScale.domain = [
             data.reduce((a, b) => Math.min(a, b), Infinity) * minRatio,
             data.reduce((a, b) => Math.max(a, b), 0) * maxRatio,
         ];
         yScale.range = [size - 1.5 * padding, padding];
 
-        const xScale = new _Scene.BandScale();
+        const xScale = new ChartWrapper._Scene.BandScale();
         xScale.domain = data.map((_, index) => index);
         xScale.range = [padding, size - padding];
         xScale.paddingInner = 0.4;
@@ -62,14 +63,14 @@ export class MiniBoxPlot extends MiniChartWithAxes {
             const max = Math.round(yScale.convert(maxValue));
             const whiskerX = left + halfBandWidth;
 
-            const boxPlotGroup = new _Scene.Group();
+            const boxPlotGroup = new ChartWrapper._Scene.Group();
 
-            const box = new _Scene.Rect();
-            const median = new _Scene.Line();
-            const topWhisker = new _Scene.Line();
-            const bottomWhisker = new _Scene.Line();
-            const topCap = new _Scene.Line();
-            const bottomCap = new _Scene.Line();
+            const box = new ChartWrapper._Scene.Rect();
+            const median = new ChartWrapper._Scene.Line();
+            const topWhisker = new ChartWrapper._Scene.Line();
+            const bottomWhisker = new ChartWrapper._Scene.Line();
+            const topCap = new ChartWrapper._Scene.Line();
+            const bottomCap = new ChartWrapper._Scene.Line();
 
             box.x = left;
             box.y = top;
@@ -99,14 +100,14 @@ export class MiniBoxPlot extends MiniChartWithAxes {
         themeTemplateParameters?: ThemeTemplateParameters,
         isCustomTheme?: boolean
     ) {
-        const themeBackgroundColor = themeTemplateParameters?.get(_Theme.DEFAULT_BACKGROUND_COLOUR);
+        const themeBackgroundColor = themeTemplateParameters?.get(ChartWrapper._Theme.DEFAULT_BACKGROUND_COLOUR);
         const backgroundFill =
             (Array.isArray(themeBackgroundColor) ? themeBackgroundColor[0] : themeBackgroundColor) ?? 'white';
 
         this.boxPlotGroups.forEach((group, i) => {
             for (const node of group.children() as Iterable<_Scene.Rect | _Scene.Line>) {
                 const fill = fills[i % fills.length];
-                node.fill = isCustomTheme ? fill : _Util.interpolateColor(fill, backgroundFill)(0.7);
+                node.fill = isCustomTheme ? fill : ChartWrapper._Util.interpolateColor(fill, backgroundFill)(0.7);
                 node.stroke = strokes[i % strokes.length];
             }
         });

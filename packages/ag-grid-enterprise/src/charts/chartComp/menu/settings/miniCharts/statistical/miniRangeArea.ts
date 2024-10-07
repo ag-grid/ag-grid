@@ -1,7 +1,8 @@
-import { _Scene } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
 
 import type { ChartType } from 'ag-grid-community';
 
+import { ChartWrapper } from '../../../../../chartWrapper';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniRangeArea extends MiniChartWithAxes {
@@ -65,13 +66,13 @@ export class MiniRangeArea extends MiniChartWithAxes {
             -Infinity
         );
 
-        const xScale = new _Scene.LinearScale();
+        const xScale = new ChartWrapper._Scene.LinearScale();
         xScale.domain = [xMin, xMax];
         xScale.range = [padding, size - padding];
 
         const scalePadding = 2 * padding;
 
-        const yScale = new _Scene.LinearScale();
+        const yScale = new ChartWrapper._Scene.LinearScale();
         yScale.domain = [yMin, yMax];
         yScale.range = [size - scalePadding, scalePadding];
 
@@ -79,9 +80,9 @@ export class MiniRangeArea extends MiniChartWithAxes {
         const areas: _Scene.Path[] = [];
 
         const lowPoints = data.map((series) => {
-            const highLine = new _Scene.Path();
-            const lowLine = new _Scene.Path();
-            const area = new _Scene.Path();
+            const highLine = new ChartWrapper._Scene.Path();
+            const lowLine = new ChartWrapper._Scene.Path();
+            const area = new ChartWrapper._Scene.Path();
 
             lines.push([highLine, lowLine]);
             areas.push(area);

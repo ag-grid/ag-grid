@@ -1,4 +1,3 @@
-import { _Theme } from 'ag-charts-community';
 import type {
     AgChartLegendClickEvent,
     AgChartTheme,
@@ -9,6 +8,7 @@ import type {
 
 import { _includes, _warnOnce } from 'ag-grid-community';
 
+import { ChartWrapper } from '../../chartWrapper';
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
 import { get } from '../utils/object';
 import type { ChartSeriesType } from '../utils/seriesTypeMapper';
@@ -77,7 +77,7 @@ export function createAgChartTheme(
     // Avoid explicitly setting the `theme.palette` property unless we're using the restored theme
     // AND the palette is actually different.
     if (chartPaletteToRestore && themeName === chartThemeToRestore) {
-        const rootThemePalette = _Theme.getChartTheme(rootTheme).palette;
+        const rootThemePalette = ChartWrapper._Theme.getChartTheme(rootTheme).palette;
         if (!isIdenticalPalette(chartPaletteToRestore, rootThemePalette)) {
             theme.palette = chartPaletteToRestore;
         }
@@ -98,7 +98,7 @@ function isIdenticalPalette(paletteA: AgChartThemePalette, paletteB: AgChartThem
 }
 
 export function isStockTheme(themeName: string): boolean {
-    return _includes(Object.keys(_Theme.themes), themeName);
+    return _includes(Object.keys(ChartWrapper._Theme.themes), themeName);
 }
 
 function createCrossFilterThemeOverrides(

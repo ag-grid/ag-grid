@@ -350,6 +350,7 @@ export type BeanName =
     | 'chartMenuService'
     | 'chartTranslationService'
     | 'chartService'
+    | 'chartWrapper'
     | 'clipboardService'
     | 'columnAutosizeService'
     | 'columnChooserFactory'

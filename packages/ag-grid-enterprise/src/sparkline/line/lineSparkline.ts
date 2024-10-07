@@ -1,15 +1,16 @@
-import { _Scale, _Scene, _Util } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
 
 import type { CrosshairLineOptions, MarkerFormat, MarkerFormatterParams } from 'ag-grid-community';
 
+import { ChartWrapper } from '../../charts/chartWrapper';
 import { getMarker } from '../marker/markerFactory';
 import type { Point, SeriesNodeDatum } from '../sparkline';
 import { Sparkline, ZINDICIES } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { getLineDash } from '../util/lineDash';
 
-const { extent } = _Util;
-const { BandScale } = _Scale;
+// const { extent } = _Util;
+// const { BandScale } = _Scale;
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: Point;
@@ -48,16 +49,13 @@ class SparklineCrosshairs {
 }
 
 export class LineSparkline extends Sparkline {
-    protected linePath: _Scene.Path = new _Scene.Path();
-    protected xCrosshairLine: _Scene.Line = new _Scene.Line();
-    protected yCrosshairLine: _Scene.Line = new _Scene.Line();
+    protected linePath = new ChartWrapper._Scene.Path();
+    protected xCrosshairLine = new ChartWrapper._Scene.Line();
+    protected yCrosshairLine = new ChartWrapper._Scene.Line();
 
-    private lineSparklineGroup: _Scene.Group = new _Scene.Group();
-    private markers: _Scene.Group = new _Scene.Group();
-    private markerSelection: _Scene.Selection<_Scene.Marker, LineNodeDatum> = _Scene.Selection.select(
-        this.markers,
-        () => this.markerFactory()
-    );
+    private lineSparklineGroup = new ChartWrapper._Scene.Group();
+    private markers = new ChartWrapper._Scene.Group();
+    private markerSelection = ChartWrapper._Scene.Selection.select(this.markers, () => this.markerFactory());
     private markerSelectionData: LineNodeDatum[] = [];
 
     readonly marker = new SparklineMarker();
@@ -112,7 +110,7 @@ export class LineSparkline extends Sparkline {
     protected override updateYScaleDomain(): void {
         const { yData, yScale } = this;
 
-        const yMinMax = extent(yData as number[]);
+        const yMinMax = ChartWrapper._Util.extent(yData as number[]);
 
         let yMin = 0;
         let yMax = 1;
@@ -139,7 +137,7 @@ export class LineSparkline extends Sparkline {
             return;
         }
 
-        const continuous = !(xScale instanceof BandScale);
+        const continuous = !(xScale instanceof ChartWrapper._Scale.BandScale);
         const offsetX = !continuous ? xScale.bandwidth / 2 : 0;
 
         const nodeData: LineNodeDatum[] = [];
@@ -236,7 +234,7 @@ export class LineSparkline extends Sparkline {
             return;
         }
 
-        const continuous = !(xScale instanceof BandScale);
+        const continuous = !(xScale instanceof ChartWrapper._Scale.BandScale);
         const n = yData.length;
         const offsetX = !continuous ? xScale.bandwidth / 2 : 0;
         let moveTo = true;

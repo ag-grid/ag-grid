@@ -1,7 +1,8 @@
-import { _Scene } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
 
 import type { ChartType } from 'ag-grid-community';
 
+import { ChartWrapper } from '../../../../../chartWrapper';
 import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
 
 export class MiniSunburst extends MiniChartWithPolarAxes {
@@ -73,7 +74,7 @@ export class MiniSunburst extends MiniChartWithPolarAxes {
             data.forEach((child, childIndex, children) => {
                 let childGroup = group;
                 if (!childGroup) {
-                    childGroup = new _Scene.Group();
+                    childGroup = new ChartWrapper._Scene.Group();
                     this.series.push(childGroup);
                 }
 
@@ -84,7 +85,7 @@ export class MiniSunburst extends MiniChartWithPolarAxes {
                 const start = previousAngle;
                 const end = start + availableAngle * angleRatio;
 
-                const sector = new _Scene.Sector();
+                const sector = new ChartWrapper._Scene.Sector();
                 sector.centerX = center;
                 sector.centerY = center;
                 sector.innerRadius = innerRadius;

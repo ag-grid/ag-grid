@@ -1,9 +1,8 @@
-import { _Util } from 'ag-charts-community';
-
 import type { AgPickerFieldParams, ComponentSelector } from 'ag-grid-community';
 import { AgPickerField, _getDocument } from 'ag-grid-community';
 
 import { AgDialog } from '../../widgets/agDialog';
+import { ChartWrapper } from '../chartWrapper';
 import { AgColorPanel } from './agColorPanel';
 
 export interface AgColorPickerParams
@@ -114,7 +113,7 @@ export class AgColorPicker extends AgPickerField<string, AgColorPickerParams & A
         }
 
         this.eDisplayFieldColor.style.backgroundColor = color;
-        this.eDisplayFieldText.textContent = _Util.Color.fromString(color).toHexString().toUpperCase();
+        this.eDisplayFieldText.textContent = ChartWrapper._Util.Color.fromString(color).toHexString().toUpperCase();
 
         return super.setValue(color);
     }

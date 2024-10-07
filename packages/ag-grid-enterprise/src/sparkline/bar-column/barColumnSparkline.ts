@@ -1,14 +1,13 @@
-import { _Scene, _Util } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
 import type { FontStyle, FontWeight } from 'ag-charts-types';
 
 import type { ColumnFormat, ColumnFormatterParams } from 'ag-grid-community';
 
+import { ChartWrapper } from '../../charts/chartWrapper';
 import { Label } from '../label/label';
 import type { SeriesNodeDatum } from '../sparkline';
 import { Sparkline, ZINDICIES } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
-
-const { extent } = _Util;
 
 export interface RectNodeDatum extends SeriesNodeDatum {
     readonly x: number;
@@ -58,20 +57,20 @@ export abstract class BarColumnSparkline extends Sparkline {
     valueAxisDomain: [number, number] | undefined = undefined;
     formatter?: (params: ColumnFormatterParams) => ColumnFormat = undefined;
 
-    protected axisLine: _Scene.Line = new _Scene.Line();
+    protected axisLine: _Scene.Line = new ChartWrapper._Scene.Line();
     protected bandWidth: number = 0;
 
-    private sparklineGroup: _Scene.Group = new _Scene.Group();
-    private rectGroup: _Scene.Group = new _Scene.Group();
-    private labelGroup: _Scene.Group = new _Scene.Group();
+    private sparklineGroup: _Scene.Group = new ChartWrapper._Scene.Group();
+    private rectGroup: _Scene.Group = new ChartWrapper._Scene.Group();
+    private labelGroup: _Scene.Group = new ChartWrapper._Scene.Group();
 
-    private rectSelection: _Scene.Selection<_Scene.Rect, RectNodeDatum> = _Scene.Selection.select(
+    private rectSelection: _Scene.Selection<_Scene.Rect, RectNodeDatum> = ChartWrapper._Scene.Selection.select(
         this.rectGroup,
-        _Scene.Rect
+        ChartWrapper._Scene.Rect
     );
-    private labelSelection: _Scene.Selection<_Scene.Text, RectNodeDatum> = _Scene.Selection.select(
+    private labelSelection: _Scene.Selection<_Scene.Text, RectNodeDatum> = ChartWrapper._Scene.Selection.select(
         this.labelGroup,
-        _Scene.Text
+        ChartWrapper._Scene.Text
     );
 
     private nodeSelectionData: RectNodeDatum[] = [];
@@ -147,7 +146,7 @@ export abstract class BarColumnSparkline extends Sparkline {
     protected override updateYScaleDomain(): void {
         const { yScale, yData, valueAxisDomain } = this;
 
-        const yMinMax = extent(yData as number[]);
+        const yMinMax = ChartWrapper._Util.extent(yData as number[]);
 
         let yMin = 0;
         let yMax = 1;
@@ -232,7 +231,7 @@ export abstract class BarColumnSparkline extends Sparkline {
     private updateLabelSelection(selectionData: RectNodeDatum[]): void {
         this.labelSelection.update(selectionData, (text) => {
             text.tag = BarColumnNodeTag.Label;
-            text.pointerEvents = _Scene.PointerEvents.None;
+            text.pointerEvents = ChartWrapper._Scene.PointerEvents.None;
         });
     }
 
