@@ -293,6 +293,7 @@ export interface PinnedHeightChangedEvent<TData = any, TContext = any>
  * - `rowGroupChanged` - grouping changed which updated the selection
  * - `selectableChanged`- selectable status of row has changed when `rowSelection.groupSelects` is `'descendants'` or `'filteredDescendants'`
  * - `spaceKey` - space key pressed on row
+ * - `keyboardEvent` - some other keyboard event such as e.g. CTRL+A
  * - `uiSelectAll` - select all in header clicked
  * - `uiSelectAllFiltered` - select all in header clicked when `rowSelection.selectAll = 'filtered'`
  * - `uiSelectAllCurrentPage` - select all in header clicked when `rowSelection.selectAll = 'currentPage'`
@@ -309,6 +310,7 @@ export type SelectionEventSourceType =
     | 'rowGroupChanged'
     | 'selectableChanged'
     | 'spaceKey'
+    | 'keyboardEvent'
     | 'uiSelectAll'
     | 'uiSelectAllFiltered'
     | 'uiSelectAllCurrentPage'
