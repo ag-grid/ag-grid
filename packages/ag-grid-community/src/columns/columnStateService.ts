@@ -26,13 +26,23 @@ import { GROUP_AUTO_COLUMN_ID, _getColumnsFromTree } from './columnUtils';
 import type { FuncColsService } from './funcColsService';
 import type { VisibleColsService } from './visibleColsService';
 
-export interface ModifyColumnsNoEventsCallbacks {
-    addGroupCol(col: AgColumn): void;
-    removeGroupCol(col: AgColumn): void;
-    addPivotCol(col: AgColumn): void;
-    removePivotCol(col: AgColumn): void;
+export type ModifyColumnsNoEventsCallbacks = ModifyValueColumnsNoEventsCallbacks &
+    ModifyPivotColumnsNoEventsCallbacks &
+    ModifyRowGroupColumnsNoEventsCallbacks;
+
+export interface ModifyValueColumnsNoEventsCallbacks {
     addValueCol(col: AgColumn): void;
     removeValueCol(col: AgColumn): void;
+}
+
+export interface ModifyPivotColumnsNoEventsCallbacks {
+    addPivotCol(col: AgColumn): void;
+    removePivotCol(col: AgColumn): void;
+}
+
+export interface ModifyRowGroupColumnsNoEventsCallbacks {
+    addGroupCol(col: AgColumn): void;
+    removeGroupCol(col: AgColumn): void;
 }
 
 export interface ColumnStateParams {

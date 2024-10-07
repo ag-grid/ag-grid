@@ -17,6 +17,9 @@ import type { ColumnViewportService } from '../columns/columnViewportService';
 import type { ControlsColService } from '../columns/controlsColService';
 import type { DataTypeService } from '../columns/dataTypeService';
 import type { FuncColsService } from '../columns/funcColsService';
+import type { PivotColsService } from '../columns/pivotColsService';
+import type { RowGroupColsService } from '../columns/rowGroupColsService';
+import type { ValueColsService } from '../columns/valueColsService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { AgComponentUtils } from '../components/framework/agComponentUtils';
 import type { ComponentMetadataProvider } from '../components/framework/componentMetadataProvider';
@@ -231,6 +234,9 @@ export interface CoreBeanCollection {
     columnDefFactory?: ColumnDefFactory;
     columnAutosizeService?: ColumnAutosizeService;
     funcColsService: FuncColsService;
+    rowGroupColsService?: RowGroupColsService;
+    valueColsService?: ValueColsService;
+    pivotColsService?: PivotColsService;
     quickFilterService?: QuickFilterService;
     showRowGroupColsService?: IShowRowGroupColsService;
     columnDropZonesService?: IColumnDropZonesService;
@@ -400,6 +406,9 @@ export type BeanName =
     | 'flattenStage'
     | 'focusService'
     | 'funcColsService'
+    | 'pivotColsService'
+    | 'rowGroupColsService'
+    | 'valueColsService'
     | 'frameworkComponentWrapper'
     | 'frameworkOverrides'
     | 'globalEventListener'

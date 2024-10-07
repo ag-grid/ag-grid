@@ -6,6 +6,9 @@ import { ColumnNameService } from './columns/columnNameService';
 import { ColumnStateService } from './columns/columnStateService';
 import { ColumnViewportService } from './columns/columnViewportService';
 import { FuncColsService } from './columns/funcColsService';
+import { PivotColsService } from './columns/pivotColsService';
+import { RowGroupColsService } from './columns/rowGroupColsService';
+import { ValueColsService } from './columns/valueColsService';
 import { VisibleColsService } from './columns/visibleColsService';
 import { ComponentMetadataProvider } from './components/framework/componentMetadataProvider';
 import { UserComponentFactory } from './components/framework/userComponentFactory';
@@ -62,6 +65,9 @@ export const CommunityCoreModule: _ModuleWithoutApi = {
         SyncService,
         AriaAnnouncementService,
         ColumnStateService,
+        RowGroupColsService,
+        ValueColsService,
+        PivotColsService,
         FuncColsService,
         ColumnNameService,
         ColumnViewportService,
