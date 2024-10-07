@@ -1,10 +1,4 @@
-import type {
-    AgPublicEventType,
-    GridApi,
-    IRowNode,
-    IServerSideGroupSelectionState,
-    IServerSideSelectionState,
-} from 'ag-grid-community';
+import type { AgPublicEventType, GridApi, IRowNode } from 'ag-grid-community';
 import { _areEqual } from 'ag-grid-community';
 
 export function getRowByIndex(index: number): HTMLElement | null {
@@ -51,14 +45,6 @@ export function expandGroupRowByIndex(index: number, opts?: MouseEventInit): voi
 export function assertSelectedRowsByIndex(indices: number[], api: GridApi): void {
     const actual = new Set(api.getSelectedNodes().map((n) => n.rowIndex));
     const expected = new Set(indices);
-    expect(actual).toEqual(expected);
-}
-
-export function assertServerSideSelectionState(
-    expected: IServerSideSelectionState | IServerSideGroupSelectionState,
-    api: GridApi
-): void {
-    const actual = api.getServerSideSelectionState();
     expect(actual).toEqual(expected);
 }
 
