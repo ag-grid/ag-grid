@@ -6,7 +6,7 @@ import type { AgPillSelectChangeParams } from '../../../widgets/agPillSelect';
 import { AgPillSelect } from '../../../widgets/agPillSelect';
 import type { ChartController } from '../../chartController';
 import type { ColState } from '../../model/chartDataModel';
-import { ChartDataModel } from '../../model/chartDataModel';
+import { DEFAULT_CHART_CATEGORY } from '../../model/chartDataModel';
 import type { ChartTranslationKey, ChartTranslationService } from '../../services/chartTranslationService';
 
 export abstract class DragDataPanel extends Component {
@@ -62,7 +62,7 @@ export abstract class DragDataPanel extends Component {
                 });
                 updatedColState.selected = true;
                 // Clear the category aggregation function if the default ordinal category is selected
-                if (updatedColState.colId === ChartDataModel.DEFAULT_CATEGORY) {
+                if (updatedColState.colId === DEFAULT_CHART_CATEGORY) {
                     this.chartController.setAggFunc(undefined, true);
                 }
                 this.chartController.updateForPanelChange({ updatedColState, skipAnimation: skipAnimation?.() });

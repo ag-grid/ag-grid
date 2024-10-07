@@ -1,6 +1,6 @@
 import type { AgCartesianAxisOptions, AgCartesianChartOptions } from 'ag-charts-types';
 
-import { ChartDataModel } from '../../model/chartDataModel';
+import { DEFAULT_CHART_CATEGORY } from '../../model/chartDataModel';
 import { CartesianChartProxy } from '../cartesian/cartesianChartProxy';
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 
@@ -27,7 +27,7 @@ export abstract class StatisticalChartProxy<
     protected computeSeriesStatistics(params: UpdateParams, computeStatsFn: (values: number[]) => any): any[] {
         const { data, fields } = params;
         const [category] = params.categories;
-        const categoryKey = category.id || ChartDataModel.DEFAULT_CATEGORY;
+        const categoryKey = category.id || DEFAULT_CHART_CATEGORY;
         const groupedData = this.groupDataByCategory(categoryKey, data);
 
         return Array.from(groupedData).map(([categoryValue, categoryData]) => {
@@ -52,7 +52,7 @@ export abstract class StatisticalChartProxy<
 
     protected groupDataByCategory(categoryKey: string, data: any[]): Map<any, any[]> {
         const getCategory = (datum: any) => {
-            if (categoryKey === ChartDataModel.DEFAULT_CATEGORY) {
+            if (categoryKey === DEFAULT_CHART_CATEGORY) {
                 return 1;
             }
             const categoryValue = datum[categoryKey];

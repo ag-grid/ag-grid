@@ -22,8 +22,8 @@ import { BeanStub, _warnOnce } from 'ag-grid-community';
 
 import type { ChartProxy, FieldDefinition, UpdateParams } from './chartProxies/chartProxy';
 import { isStockTheme } from './chartProxies/chartTheme';
-import type { ChartModelParams, ColState } from './model/chartDataModel';
-import { ChartDataModel } from './model/chartDataModel';
+import type { ChartDataModel, ChartModelParams, ColState } from './model/chartDataModel';
+import { DEFAULT_CHART_CATEGORY } from './model/chartDataModel';
 import { ChartParamsValidator } from './utils/chartParamsValidator';
 import type { ChartSeriesType } from './utils/seriesTypeMapper';
 import {
@@ -210,7 +210,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     private invertCategorySeriesParams(params: UpdateParams): UpdateParams {
         const [category] = params.categories;
         // Create a single synthetic output category that will contain the series name values
-        const categories = [{ id: ChartDataModel.DEFAULT_CATEGORY, name: '' }];
+        const categories = [{ id: DEFAULT_CHART_CATEGORY, name: '' }];
         // Create an output series corresponding to each row in the input data
         const fields = params.data.map((value, index): FieldDefinition => {
             const categoryKey = `${category.id}:${index}`;
@@ -222,7 +222,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         const data = params.fields.map((field) => {
             // Create a new output row labeled with the series column name
             const row: Record<PropertyKey, any> = {
-                [ChartDataModel.DEFAULT_CATEGORY]: field.displayName,
+                [DEFAULT_CHART_CATEGORY]: field.displayName,
             };
             // Append fields corresponding to each row in the input data
             for (const [index, value] of params.data.entries()) {

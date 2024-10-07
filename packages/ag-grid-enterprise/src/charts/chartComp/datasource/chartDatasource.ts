@@ -26,7 +26,7 @@ import {
 } from 'ag-grid-community';
 
 import type { ColState } from '../model/chartDataModel';
-import { ChartDataModel } from '../model/chartDataModel';
+import { DEFAULT_CHART_CATEGORY } from '../model/chartDataModel';
 
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];
@@ -202,7 +202,7 @@ export class ChartDatasource extends BeanStub {
                     }
                 } else {
                     // introduce a default category when no dimensions exist with a value based off row index (+1)
-                    data[ChartDataModel.DEFAULT_CATEGORY] = i + 1;
+                    data[DEFAULT_CHART_CATEGORY] = i + 1;
                 }
             });
 

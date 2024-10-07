@@ -33,13 +33,13 @@ export interface IHeaderResizeFeature {
 
 export type HeaderCellCtrlInstanceId = BrandedType<string, 'HeaderCellCtrlInstanceId'>;
 
+export const DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
+
 export abstract class AbstractHeaderCellCtrl<
     TComp extends IAbstractHeaderCellComp = any,
     TColumn extends AgColumn | AgColumnGroup = any,
     TFeature extends IHeaderResizeFeature = any,
 > extends BeanStub {
-    public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
-
     public readonly instanceId: HeaderCellCtrlInstanceId;
 
     private pinnedWidthService: PinnedWidthService;
@@ -361,7 +361,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     private addDomData(compBean: BeanStub): void {
-        const key = AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL;
+        const key = DOM_DATA_KEY_HEADER_CTRL;
         _setDomData(this.gos, this.eGui, key, this);
         compBean.addDestroyFunc(() => _setDomData(this.gos, this.eGui, key, null));
     }

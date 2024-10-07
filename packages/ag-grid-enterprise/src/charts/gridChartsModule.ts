@@ -1,3 +1,5 @@
+import { VERSION as CHARTS_VERSION } from 'ag-charts-community';
+
 import type { _GridChartsGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
 import { DragAndDropModule, PopupModule } from 'ag-grid-community';
 
@@ -33,7 +35,7 @@ export const GridChartsCoreModule: _ModuleWithoutApi = {
     validate: () => {
         return validGridChartsVersion({
             gridVersion: GRID_VERSION,
-            chartsVersion: ChartService.CHARTS_VERSION,
+            chartsVersion: CHARTS_VERSION,
         });
     },
     beans: [ChartService, ChartTranslationService, ChartCrossFilterService, ChartMenuListFactory, ChartMenuService],
