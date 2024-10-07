@@ -102,7 +102,7 @@ validatePackages()
       validateCommonDist "$current_root_dir"
 
       current_dist=$current_root_dir/dist
-      count=`find $current_dist -name *.js -maxdepth 1 | wc -l | tr -d ' '`
+      count=`find $current_dist -maxdepth 1 -name *.js | wc -l | tr -d ' '`
       if [[ $count -ne 4 ]]
       then
         echo "ERROR: $current_dist should have 4 umd files"
@@ -139,11 +139,11 @@ validateLocale()
 }
 
 # check all expected modules & packages are there
-validateExpectedDirs "dist/artifacts/contents/community-modules" 10
+validateExpectedDirs "dist/artifacts/contents/community-modules" 11
 validateExpectedDirs "dist/artifacts/contents/enterprise-modules" 21
 validateExpectedDirs "dist/artifacts/contents/packages" 7
 
-validateExpectedDirs "dist/artifacts/community-modules" 10
+validateExpectedDirs "dist/artifacts/community-modules" 11
 validateExpectedDirs "dist/artifacts/enterprise-modules" 21
 validateExpectedDirs "dist/artifacts/packages" 7
 
