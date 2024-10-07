@@ -9,17 +9,15 @@ import { _removeFromArray } from '../utils/array';
 import type { ColumnOrderState, ColumnServiceEventName } from './baseColsService';
 import { BaseColsService } from './baseColsService';
 import type { ColKey, Maybe } from './columnModel';
-import type { ModifyColumnsNoEventsCallback } from './columnStateService';
+import type { ColumnStateParams, GetValueFn, ModifyColumnsNoEventsCallback } from './columnStateService';
 
 export class RowGroupColsService extends BaseColsService implements NamedBean {
     beanName = 'rowGroupColsService' as const;
 
-    public override getModifyColumnsNoEventsCallbacks(): ModifyColumnsNoEventsCallback {
-        return {
-            addCol: (column) => this.columns.push(column),
-            removeCol: (column) => _removeFromArray(this.columns, column),
-        };
-    }
+    private modifyColumnsNoEventsCallbacks: ModifyColumnsNoEventsCallback = {
+        addCol: (column) => this.columns.push(column),
+        removeCol: (column) => _removeFromArray(this.columns, column),
+    };
 
     protected override getEventName(): ColumnServiceEventName {
         return 'columnRowGroupChanged';
@@ -99,6 +97,31 @@ export class RowGroupColsService extends BaseColsService implements NamedBean {
             'rowGroupIndex',
             'initialRowGroupIndex'
         );
+    }
+
+    public syncColumnWithState(
+        column: AgColumn,
+        source: ColumnEventType,
+        getValue: GetValueFn<keyof ColumnStateParams, keyof ColumnStateParams>,
+        rowIndex: { [key: string]: number } | null
+    ): void {
+        const { value1: rowGroup, value2: rowGroupIndex } = getValue('rowGroup', 'rowGroupIndex');
+        if (rowGroup !== undefined || rowGroupIndex !== undefined) {
+            if (typeof rowGroupIndex === 'number' || rowGroup) {
+                if (!column.isRowGroupActive()) {
+                    column.setRowGroupActive(true, source);
+                    this.modifyColumnsNoEventsCallbacks.addCol(column);
+                }
+                if (rowIndex && typeof rowGroupIndex === 'number') {
+                    rowIndex[column.getId()] = rowGroupIndex;
+                }
+            } else {
+                if (column.isRowGroupActive()) {
+                    column.setRowGroupActive(false, source);
+                    this.modifyColumnsNoEventsCallbacks.removeCol(column);
+                }
+            }
+        }
     }
 
     private setRowGroupActive(active: boolean, column: AgColumn, source: ColumnEventType): void {

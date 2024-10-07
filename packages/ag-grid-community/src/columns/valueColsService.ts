@@ -1,4 +1,5 @@
-import type { AgColumn, BeanCollection, ColDef, IAggFunc } from 'ag-grid-community';
+import { _exists, _logWarn } from 'ag-grid-community';
+import type { AgColumn, BeanCollection, ColDef, ColumnStateParams, IAggFunc } from 'ag-grid-community';
 
 import type { NamedBean } from '../context/bean';
 import type { ColumnEventType } from '../events';
@@ -7,7 +8,7 @@ import { BaseColsService } from './baseColsService';
 import type { ColumnOrderState, ColumnServiceEventName } from './baseColsService';
 import { dispatchColumnChangedEvent } from './columnEventUtils';
 import type { ColKey, Maybe } from './columnModel';
-import type { ModifyColumnsNoEventsCallback } from './columnStateService';
+import type { GetValueFn, ModifyColumnsNoEventsCallback } from './columnStateService';
 
 export class ValueColsService extends BaseColsService implements NamedBean {
     beanName = 'valueColsService' as const;
@@ -18,12 +19,10 @@ export class ValueColsService extends BaseColsService implements NamedBean {
         this.visibleColsService = beans.visibleColsService;
     }
 
-    public override getModifyColumnsNoEventsCallbacks(): ModifyColumnsNoEventsCallback {
-        return {
-            addCol: (column) => this.columns.push(column),
-            removeCol: (column) => _removeFromArray(this.columns, column),
-        };
-    }
+    private modifyColumnsNoEventsCallbacks: ModifyColumnsNoEventsCallback = {
+        addCol: (column) => this.columns.push(column),
+        removeCol: (column) => _removeFromArray(this.columns, column),
+    };
 
     protected override getEventName(): ColumnServiceEventName {
         return 'columnPivotChanged';
@@ -104,6 +103,37 @@ export class ValueColsService extends BaseColsService implements NamedBean {
 
     public override orderColumns(columnStateAccumulator: ColumnOrderState): ColumnOrderState {
         return columnStateAccumulator;
+    }
+
+    public override syncColumnWithState(
+        column: AgColumn,
+        source: ColumnEventType,
+        getValue: GetValueFn<keyof ColumnStateParams, keyof ColumnStateParams>
+    ): void {
+        // noop
+        const aggFunc = getValue('aggFunc').value1;
+        if (aggFunc !== undefined) {
+            if (typeof aggFunc === 'string') {
+                column.setAggFunc(aggFunc);
+                if (!column.isValueActive()) {
+                    column.setValueActive(true, source);
+                    this.modifyColumnsNoEventsCallbacks.addCol(column);
+                }
+            } else {
+                if (_exists(aggFunc)) {
+                    // stateItem.aggFunc must be a string
+                    _logWarn(33, {});
+                }
+                // Note: we do not call column.setAggFunc(null), so that next time we aggregate
+                // by this column (eg drag the column to the agg section int he toolpanel) it will
+                // default to the last aggregation function.
+
+                if (column.isValueActive()) {
+                    column.setValueActive(false, source);
+                    this.modifyColumnsNoEventsCallbacks.removeCol(column);
+                }
+            }
+        }
     }
 
     private setValueActive(active: boolean, column: AgColumn, source: ColumnEventType): void {

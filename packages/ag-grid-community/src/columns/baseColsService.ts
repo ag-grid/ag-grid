@@ -9,7 +9,7 @@ import { _removeFromArray } from '../utils/array';
 import { _attrToBoolean, _attrToNumber, _exists, _missingOrEmpty } from '../utils/generic';
 import { dispatchColumnChangedEvent } from './columnEventUtils';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
-import type { ColumnState, ModifyColumnsNoEventsCallback } from './columnStateService';
+import type { ColumnState, ColumnStateParams, GetValueFn, ModifyColumnsNoEventsCallback } from './columnStateService';
 import type { VisibleColsService } from './visibleColsService';
 
 export type ColumnServiceEntityName = 'Value' | 'RowGroup' | 'Pivot';
@@ -30,8 +30,6 @@ export abstract class BaseColsService extends BeanStub {
     }
 
     public columns: AgColumn[] = [];
-
-    public abstract getModifyColumnsNoEventsCallbacks(): ModifyColumnsNoEventsCallback;
 
     public sortColumns(compareFn?: (a: AgColumn, b: AgColumn) => number): void {
         this.columns.sort(compareFn);
@@ -427,6 +425,13 @@ export abstract class BaseColsService extends BeanStub {
 
         return Object.values(existingColumnStateUpdates);
     }
+
+    public abstract syncColumnWithState(
+        column: AgColumn,
+        source: ColumnEventType,
+        getValue: GetValueFn<keyof ColumnStateParams, keyof ColumnStateParams>,
+        rowIndex: { [key: string]: number } | null
+    ): void;
 
     public abstract orderColumns(
         columnStateAccumulator: ColumnOrderState,

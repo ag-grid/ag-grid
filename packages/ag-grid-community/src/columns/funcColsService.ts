@@ -5,7 +5,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { IAggFunc } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
-import type { ColumnState, ModifyColumnsNoEventsCallbacks } from './columnStateService';
+import type { ColumnState } from './columnStateService';
 import type { PivotColsService } from './pivotColsService';
 import type { RowGroupColsService } from './rowGroupColsService';
 import type { ValueColsService } from './valueColsService';
@@ -35,21 +35,6 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
     public get pivotCols(): AgColumn[] {
         return this.pivotColsService.columns;
-    }
-
-    public getModifyColumnsNoEventsCallbacks(): ModifyColumnsNoEventsCallbacks {
-        const rowGroupFns = this.rowGroupColsService.getModifyColumnsNoEventsCallbacks();
-        const pivotFns = this.pivotColsService.getModifyColumnsNoEventsCallbacks();
-        const valueFns = this.valueColsService.getModifyColumnsNoEventsCallbacks();
-
-        return {
-            addPivotCol: pivotFns.addCol,
-            removePivotCol: pivotFns.removeCol,
-            addGroupCol: rowGroupFns.addCol,
-            removeGroupCol: rowGroupFns.removeCol,
-            addValueCol: valueFns.addCol,
-            removeValueCol: valueFns.removeCol,
-        };
     }
 
     public getSourceColumnsForGroupColumn(groupCol: AgColumn): AgColumn[] | null {
