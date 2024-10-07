@@ -102,7 +102,7 @@ validatePackages()
       validateCommonDist "$current_root_dir"
 
       current_dist=$current_root_dir/dist
-      count=`find $current_dist -name *.js -maxdepth 1 | wc -l | tr -d ' '`
+      count=`find $current_dist -maxdepth 1 -name *.js | wc -l | tr -d ' '`
       if [[ $count -ne 4 ]]
       then
         echo "ERROR: $current_dist should have 4 umd files"
