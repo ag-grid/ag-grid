@@ -37,28 +37,26 @@ type Validators = {
 
 type ValidatorFunc = (property: string, value: any, defaultValue?: any) => boolean;
 
-export abstract class AgSparkline {
-    static create(options: SparklineFactoryOptions, tooltip: SparklineTooltip) {
-        // avoid mutating user provided options
-        options = _Util.deepClone(options);
+export function createAgSparkline(options: SparklineFactoryOptions, tooltip: SparklineTooltip) {
+    // avoid mutating user provided options
+    options = _Util.deepClone(options);
 
-        const sparkline = getSparklineInstance(options.type);
+    const sparkline = getSparklineInstance(options.type);
 
-        if (tooltip) {
-            sparkline.tooltip = tooltip;
-        }
-
-        initSparkline(sparkline, options);
-        initSparklineByType(sparkline, options);
-
-        if (options.data) {
-            sparkline.data = options.data;
-        }
-
-        sparkline.processedOptions = options;
-
-        return sparkline;
+    if (tooltip) {
+        sparkline.tooltip = tooltip;
     }
+
+    initSparkline(sparkline, options);
+    initSparklineByType(sparkline, options);
+
+    if (options.data) {
+        sparkline.data = options.data;
+    }
+
+    sparkline.processedOptions = options;
+
+    return sparkline;
 }
 
 function getSparklineInstance(type: string = 'line'): any {

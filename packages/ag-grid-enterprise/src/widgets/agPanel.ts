@@ -30,8 +30,9 @@ function getTemplate(config: PanelOptions) {
     </div>`;
 }
 
+const CLOSE_BTN_TEMPLATE = /* html */ `<div class="ag-button"></div>`;
+
 export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Component {
-    protected static CLOSE_BTN_TEMPLATE = /* html */ `<div class="ag-button"></div>`;
     protected closable = true;
 
     protected closeButtonComp: Component | undefined;
@@ -157,7 +158,7 @@ export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Compon
         }
 
         if (closable) {
-            const closeButtonComp = (this.closeButtonComp = new Component(AgPanel.CLOSE_BTN_TEMPLATE));
+            const closeButtonComp = (this.closeButtonComp = new Component(CLOSE_BTN_TEMPLATE));
             this.createBean(closeButtonComp);
 
             const eGui = closeButtonComp.getGui();

@@ -171,7 +171,7 @@ export class ChartDatasource extends BeanStub {
                         const valueString = valueObject?.toString ? String(valueObject.toString()) : '';
 
                         // traverse parents to extract group label path
-                        const labels = ChartDatasource.getGroupLabels(rowNode, valueString);
+                        const labels = this.getGroupLabels(rowNode, valueString);
 
                         data[colId] = {
                             labels,
@@ -388,7 +388,7 @@ export class ChartDatasource extends BeanStub {
         return extractSeparator(firstSecondaryCol.getParent()!, firstSecondaryCol.getColId());
     }
 
-    private static getGroupLabels(rowNode: RowNode | null, initialLabel: string): string[] {
+    private getGroupLabels(rowNode: RowNode | null, initialLabel: string): string[] {
         const labels = [initialLabel];
         while (rowNode && rowNode.level !== 0) {
             rowNode = rowNode.parent;

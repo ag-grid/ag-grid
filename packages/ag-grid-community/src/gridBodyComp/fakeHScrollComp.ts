@@ -139,11 +139,11 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
             _setFixedHeight(this.eContainer, scrollContainerSize);
             this.setDisplayed(hScrollShowing, { skipAriaHidden: true });
         };
-        clearTimeout(this.setScrollVisibleDebounce);
+        window.clearTimeout(this.setScrollVisibleDebounce);
         if (!hScrollShowing) {
             apply();
         } else {
-            this.setScrollVisibleDebounce = setTimeout(() => {
+            this.setScrollVisibleDebounce = window.setTimeout(() => {
                 apply();
             }, 100);
         }

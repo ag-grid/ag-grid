@@ -11,6 +11,9 @@ import { _exists } from '../utils/generic';
 import { NumberSequence } from '../utils/numberSequence';
 
 const GRID_DOM_KEY = '__ag_grid_instance';
+
+const gridInstanceSequence = new NumberSequence();
+
 export class MouseEventService extends BeanStub implements NamedBean {
     beanName = 'mouseEventService' as const;
 
@@ -20,9 +23,7 @@ export class MouseEventService extends BeanStub implements NamedBean {
         this.ctrlsService = beans.ctrlsService;
     }
 
-    private static gridInstanceSequence = new NumberSequence();
-
-    private gridInstanceId = MouseEventService.gridInstanceSequence.next();
+    private gridInstanceId = gridInstanceSequence.next();
 
     // we put the instance id onto the main DOM element. this is used for events, when grids are inside grids,
     // so the grid can work out if the even came from this grid or a grid inside this one. see the ctrl+v logic

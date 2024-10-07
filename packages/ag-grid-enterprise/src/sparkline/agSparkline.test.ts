@@ -4,7 +4,7 @@ import 'jest-canvas-mock';
 import type { ColumnFormat, ColumnFormatterParams, MarkerFormat, MarkerFormatterParams } from 'ag-grid-community';
 
 import type { SparklineFactoryOptions } from './agSparkline';
-import { AgSparkline } from './agSparkline';
+import { createAgSparkline } from './agSparkline';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
 
 // mock the DOMMatrix
@@ -89,7 +89,7 @@ describe('line sparkline', () => {
     };
 
     beforeAll(() => {
-        sparkline = AgSparkline.create(options, new SparklineTooltip());
+        sparkline = createAgSparkline(options, new SparklineTooltip());
     });
 
     afterAll(() => {
@@ -181,7 +181,7 @@ describe('area sparkline', () => {
     };
 
     beforeAll(() => {
-        sparkline = AgSparkline.create(options, new SparklineTooltip());
+        sparkline = createAgSparkline(options, new SparklineTooltip());
     });
 
     afterAll(() => {
@@ -267,7 +267,7 @@ describe('column sparkline', () => {
     };
 
     beforeAll(() => {
-        sparkline = AgSparkline.create(options, new SparklineTooltip());
+        sparkline = createAgSparkline(options, new SparklineTooltip());
     });
 
     afterAll(() => {

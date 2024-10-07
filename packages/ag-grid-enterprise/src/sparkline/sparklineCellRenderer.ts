@@ -2,7 +2,7 @@ import type { BeanCollection, ICellRenderer, ISparklineCellRendererParams } from
 import { Component, RefPlaceholder, _observeResize } from 'ag-grid-community';
 
 import type { SparklineFactoryOptions } from './agSparkline';
-import { AgSparkline } from './agSparkline';
+import { createAgSparkline } from './agSparkline';
 import type { SparklineTooltipSingleton } from './tooltip/sparklineTooltipSingleton';
 
 export class SparklineCellRenderer extends Component implements ICellRenderer {
@@ -42,7 +42,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                 };
 
                 // create new instance of sparkline
-                this.sparkline = AgSparkline.create(options, this.sparklineTooltipSingleton.getSparklineTooltip());
+                this.sparkline = createAgSparkline(options, this.sparklineTooltipSingleton.getSparklineTooltip());
 
                 // append sparkline canvas to cell renderer element
                 this.eSparkline!.appendChild(this.sparkline.canvasElement);
