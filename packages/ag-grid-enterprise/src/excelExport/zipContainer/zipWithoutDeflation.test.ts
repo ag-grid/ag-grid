@@ -8,8 +8,9 @@ describe('When adding a file to a zip container without deflation', () => {
     const largeContent = 'test-content'.repeat(1000);
 
     it('should handle a single small text header', () => {
-        ZipContainer.addFile(testPath, smallContent, false);
-        const result = ZipContainer.getUncompressedZipFile();
+        const zipContainer = new ZipContainer();
+        zipContainer.addFile(testPath, smallContent, false);
+        const result = zipContainer.getUncompressedZipFile();
 
         const expectedCommonHeaderSize = 26; // bytes
         const expectedLocalFileHeader =
@@ -37,8 +38,9 @@ describe('When adding a file to a zip container without deflation', () => {
     });
 
     it('should handle a single large text header', () => {
-        ZipContainer.addFile(testPath, largeContent, false);
-        const result = ZipContainer.getUncompressedZipFile();
+        const zipContainer = new ZipContainer();
+        zipContainer.addFile(testPath, largeContent, false);
+        const result = zipContainer.getUncompressedZipFile();
 
         const expectedCommonHeaderSize = 26; // bytes
         const expectedLocalFileHeader =
@@ -66,10 +68,11 @@ describe('When adding a file to a zip container without deflation', () => {
     });
 
     it('should handle multiple files', () => {
+        const zipContainer = new ZipContainer();
         const testPath2: string = 'test-path/file-name2.csv';
-        ZipContainer.addFile(testPath, smallContent, false);
-        ZipContainer.addFile(testPath2, largeContent, false);
-        const result = ZipContainer.getUncompressedZipFile();
+        zipContainer.addFile(testPath, smallContent, false);
+        zipContainer.addFile(testPath2, largeContent, false);
+        const result = zipContainer.getUncompressedZipFile();
 
         const expectedCommonHeaderSize = 26; // bytes
         const expectedLocalFileHeader1 =
