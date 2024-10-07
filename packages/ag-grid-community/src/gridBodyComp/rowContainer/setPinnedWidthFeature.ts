@@ -18,8 +18,8 @@ export class SetPinnedWidthFeature extends BeanStub {
     ) {
         super();
         this.getWidth = isLeft
-            ? this.pinnedWidthService.getPinnedLeftWidth.bind(this)
-            : this.pinnedWidthService.getPinnedRightWidth.bind(this);
+            ? () => this.pinnedWidthService.getPinnedLeftWidth()
+            : () => this.pinnedWidthService.getPinnedRightWidth();
     }
 
     public postConstruct(): void {
