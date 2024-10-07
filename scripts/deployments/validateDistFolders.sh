@@ -152,4 +152,3 @@ validateModules "dist/artifacts/contents/enterprise-modules"
 validatePackages "dist/artifacts/contents/packages"
 
 validateLocale "dist/artifacts/contents/community-modules/locale/package"
-
