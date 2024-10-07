@@ -52,5 +52,5 @@ export { SparklinesModule } from './sparkline/sparklinesModule';
 
 // tbd - having these here means all charts will be enterprise
 // once we have independent module imports this issue will go away
-export { GridChartsModule } from './charts/gridChartsModule';
-export { GridChartsModule as GridChartsEnterpriseModule } from './charts-enterprise/gridChartsEnterpriseModule';
+export { setupCommunityIntegratedCharts, setupEnterpriseIntegratedCharts } from './charts/gridChartsModule';
+// export { GridChartsModule as GridChartsEnterpriseModule } from './charts-enterprise/gridChartsEnterpriseModule';
