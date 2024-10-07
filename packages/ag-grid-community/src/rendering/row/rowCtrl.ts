@@ -92,10 +92,10 @@ interface CellCtrlListAndMap {
     map: { [key: ColumnInstanceId]: CellCtrl };
 }
 
+export const DOM_DATA_KEY_ROW_CTRL = 'renderedRow';
+
 export type RowCtrlEvent = RenderedRowEvent;
 export class RowCtrl extends BeanStub<RowCtrlEvent> {
-    public static DOM_DATA_KEY_ROW_CTRL = 'renderedRow';
-
     public readonly instanceId: RowCtrlInstanceId;
 
     private readonly rowNode: RowNode;
@@ -297,8 +297,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.setRowCompRowBusinessKey(comp);
 
         // DOM DATA
-        _setDomData(gos, gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
-        gui.compBean.addDestroyFunc(() => _setDomData(gos, gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null));
+        _setDomData(gos, gui.element, DOM_DATA_KEY_ROW_CTRL, this);
+        gui.compBean.addDestroyFunc(() => _setDomData(gos, gui.element, DOM_DATA_KEY_ROW_CTRL, null));
 
         // adding hover functionality adds listener to this row, so we
         // do it lazily in an animation frame

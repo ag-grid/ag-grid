@@ -394,8 +394,9 @@ export {
 } from './rendering/features/positionableFeature';
 
 // rendering
-export { CellCtrl, ICellComp } from './rendering/cell/cellCtrl';
-export { RowCtrl, IRowComp } from './rendering/row/rowCtrl';
+export { _getCellCtrlForEventTarget } from './rendering/cell/cellCtrl';
+export type { CellCtrl, ICellComp } from './rendering/cell/cellCtrl';
+export type { RowCtrl, IRowComp } from './rendering/row/rowCtrl';
 export type { RowRenderer } from './rendering/rowRenderer';
 export {
     FlashCellsParams,
@@ -939,12 +940,7 @@ export {
     _isNodeOrElement,
     _observeResize,
 } from './utils/dom';
-export {
-    _getCtrlForEventTarget,
-    _stopPropagationForAgGrid,
-    _isStopPropagationForAgGrid,
-    _isElementInEventPath,
-} from './utils/event';
+export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';
 export { _log, _warnOnce, _errorOnce, _debounce, _compose, _doOnce, _waitUntil } from './utils/function';
 export { _logWarn, _logError } from './validation/logging';
 export { _createIcon, _createIconNoSpan } from './utils/icon';

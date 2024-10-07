@@ -4,7 +4,6 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { FocusService } from '../../focusService';
-import { _getDomData } from '../../gridOptionsUtils';
 import type { IRangeService } from '../../interfaces/IRangeService';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
 import type { IContextMenuService } from '../../interfaces/iContextMenu';
@@ -12,8 +11,10 @@ import type { IRowModel } from '../../interfaces/iRowModel';
 import type { RowPinnedType } from '../../interfaces/iRowNode';
 import type { NavigationService } from '../../navigation/navigationService';
 import type { PinnedRowModel } from '../../pinnedRowModel/pinnedRowModel';
-import { CellCtrl } from '../../rendering/cell/cellCtrl';
-import { RowCtrl } from '../../rendering/row/rowCtrl';
+import type { CellCtrl } from '../../rendering/cell/cellCtrl';
+import { _getCellCtrlForEventTarget } from '../../rendering/cell/cellCtrl';
+import type { RowCtrl } from '../../rendering/row/rowCtrl';
+import { DOM_DATA_KEY_ROW_CTRL } from '../../rendering/row/rowCtrl';
 import type { UndoRedoService } from '../../undoRedo/undoRedoService';
 import { _last } from '../../utils/array';
 import { _isIOSUserAgent } from '../../utils/browser';
@@ -87,7 +88,7 @@ export class RowContainerEventsFeature extends BeanStub {
             return;
         }
 
-        const rowComp = this.getRowForEvent(mouseEvent);
+        const rowComp = this.getRowForEvent(mouseEvent.target);
         const cellCtrl = this.mouseEventService.getRenderedCellForEvent(mouseEvent)!;
 
         if (eventName === 'contextmenu') {
@@ -110,7 +111,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
         const touchListener = new TouchListener(this.element);
         const longTapListener = (event: LongTapEvent) => {
-            const rowComp = this.getRowForEvent(event.touchEvent);
+            const rowComp = this.getRowForEvent(event.touchEvent.target);
             const cellComp = this.mouseEventService.getRenderedCellForEvent(event.touchEvent)!;
 
             this.contextMenuService?.handleContextMenuMouseEvent(undefined, event.touchEvent, rowComp, cellComp);
@@ -120,19 +121,8 @@ export class RowContainerEventsFeature extends BeanStub {
         this.addDestroyFunc(() => touchListener.destroy());
     }
 
-    private getRowForEvent(event: Event): RowCtrl | null {
-        let sourceElement: HTMLElement | null = event.target as HTMLElement | null;
-
-        while (sourceElement) {
-            const rowCon = _getDomData(this.gos, sourceElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
-            if (rowCon) {
-                return rowCon;
-            }
-
-            sourceElement = sourceElement.parentElement;
-        }
-
-        return null;
+    private getRowForEvent(eventTarget: EventTarget | null): RowCtrl | null {
+        return _getCtrlForEventTarget(this.gos, eventTarget, DOM_DATA_KEY_ROW_CTRL);
     }
 
     private getControlsForEventTarget(target: EventTarget | null): {
@@ -140,8 +130,8 @@ export class RowContainerEventsFeature extends BeanStub {
         rowCtrl: RowCtrl | null;
     } {
         return {
-            cellCtrl: _getCtrlForEventTarget<CellCtrl>(this.gos, target, CellCtrl.DOM_DATA_KEY_CELL_CTRL),
-            rowCtrl: _getCtrlForEventTarget<RowCtrl>(this.gos, target, RowCtrl.DOM_DATA_KEY_ROW_CTRL),
+            cellCtrl: _getCellCtrlForEventTarget(this.gos, target),
+            rowCtrl: this.getRowForEvent(target),
         };
     }
 

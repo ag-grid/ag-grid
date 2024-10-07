@@ -9,6 +9,7 @@ import { _createCellId } from '../../entities/positionUtils';
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
+import type { GridOptionsService } from '../../gridOptionsService';
 import {
     _getCheckboxes,
     _getDocument,
@@ -29,6 +30,7 @@ import type { CheckboxSelectionComponent } from '../../selection/checkboxSelecti
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
 import { _setAriaColIndex } from '../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../utils/dom';
+import { _getCtrlForEventTarget } from '../../utils/event';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _getValueUsingField } from '../../utils/object';
 import { _escapeString } from '../../utils/string';
@@ -77,12 +79,16 @@ export interface ICellComp {
     ): void;
 }
 
+export const DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
+
+export function _getCellCtrlForEventTarget(gos: GridOptionsService, eventTarget: EventTarget | null): CellCtrl | null {
+    return _getCtrlForEventTarget(gos, eventTarget, DOM_DATA_KEY_CELL_CTRL);
+}
+
 let instanceIdSequence = 0;
 export type CellCtrlInstanceId = BrandedType<string, 'CellCtrlInstanceId'>;
 
 export class CellCtrl extends BeanStub {
-    public static DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
-
     public readonly instanceId: CellCtrlInstanceId;
     public readonly colIdSanitised: string;
 
@@ -744,8 +750,8 @@ export class CellCtrl extends BeanStub {
     private addDomData(compBean: BeanStub): void {
         const element = this.getGui();
 
-        _setDomData(this.beans.gos, element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, this);
-        compBean.addDestroyFunc(() => _setDomData(this.beans.gos, element, CellCtrl.DOM_DATA_KEY_CELL_CTRL, null));
+        _setDomData(this.beans.gos, element, DOM_DATA_KEY_CELL_CTRL, this);
+        compBean.addDestroyFunc(() => _setDomData(this.beans.gos, element, DOM_DATA_KEY_CELL_CTRL, null));
     }
 
     public createEvent<T extends AgEventType>(domEvent: Event | null, eventType: T): CellEvent<T> {
