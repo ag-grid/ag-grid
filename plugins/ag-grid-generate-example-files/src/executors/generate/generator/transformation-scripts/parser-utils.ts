@@ -528,14 +528,11 @@ export function addBindingImports(
             imports.push(fullImportStr);
         }
     });
-    // if (hasEnterpriseModules && convertToPackage) {
-    //     imports.push(`import '${getEnterprisePackageName()}';`);
-    // }
 }
 
 export const usesThemingApi = (bindings: ParsedBindings) => {
-    // bindings.imports.some((b) => b.module.includes('ag-grid-community/theming'));
-    return bindings.properties.some((p) => p.name === 'theme');
+    // bindings.imports.some((b) => b.module.includes('ag-grid-community/theming')); Update
+    return bindings.properties.some((p) => p.name === 'theme') || bindings.exampleName.includes('theming-');
 };
 
 /** Add imports such as "import { colors } from './colors.js';"
