@@ -24,7 +24,7 @@ export abstract class BaseSelectionService extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.addManagedPropertyListener('isRowSelectable', () => this.updateSelectable(false));
+        this.addManagedPropertyListeners(['isRowSelectable', 'rowSelection'], () => this.updateSelectable(false));
     }
 
     public createCheckboxSelectionComponent(): CheckboxSelectionComponent {
