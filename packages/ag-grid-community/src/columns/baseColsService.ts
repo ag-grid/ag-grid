@@ -9,15 +9,16 @@ import { _removeFromArray } from '../utils/array';
 import { _attrToBoolean, _attrToNumber, _exists, _missingOrEmpty } from '../utils/generic';
 import { dispatchColumnChangedEvent } from './columnEventUtils';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
-import type { ColumnState, ModifyColumnsNoEventsCallbacks } from './columnStateService';
+import type { ColumnState, ModifyColumnsNoEventsCallback } from './columnStateService';
 import type { VisibleColsService } from './visibleColsService';
 
 export type ColumnServiceEntityName = 'Value' | 'RowGroup' | 'Pivot';
 export type ColumnServiceEventName = 'columnValueChanged' | 'columnRowGroupChanged' | 'columnPivotChanged';
 export type ColumnServiceSetCallbackFn = (added: boolean, column: AgColumn) => void;
 export type ColumnServiceUpdateCallbackFn = (column: AgColumn) => void;
+export type ColumnOrderState = { [colId: string]: ColumnState };
 
-export abstract class BaseColsService<T extends Partial<ModifyColumnsNoEventsCallbacks>> extends BeanStub {
+export abstract class BaseColsService extends BeanStub {
     protected columnModel: ColumnModel;
     protected aggFuncService?: IAggFuncService;
     protected visibleColsService: VisibleColsService;
@@ -30,7 +31,7 @@ export abstract class BaseColsService<T extends Partial<ModifyColumnsNoEventsCal
 
     public columns: AgColumn[] = [];
 
-    public abstract getModifyColumnsNoEventsCallbacks(): T;
+    public abstract getModifyColumnsNoEventsCallbacks(): ModifyColumnsNoEventsCallback;
 
     public sortColumns(compareFn?: (a: AgColumn, b: AgColumn) => number): void {
         this.columns.sort(compareFn);
@@ -416,14 +417,6 @@ export abstract class BaseColsService<T extends Partial<ModifyColumnsNoEventsCal
 
         // XXX: TODO: need to externalise this logic to a common place
         orderColumns(
-            updatedRowGroupColumnState,
-            this.columns, //this.rowGroupCols,
-            'rowGroup',
-            'initialRowGroup',
-            'rowGroupIndex',
-            'initialRowGroupIndex'
-        );
-        orderColumns(
             updatedPivotColumnState,
             this.columns, //this.pivotCols,
             'pivot',
@@ -433,5 +426,101 @@ export abstract class BaseColsService<T extends Partial<ModifyColumnsNoEventsCal
         );
 
         return Object.values(existingColumnStateUpdates);
+    }
+
+    public abstract orderColumns(
+        columnStateAccumulator: ColumnOrderState,
+        incomingColumnState: ColumnOrderState
+    ): ColumnOrderState;
+
+    protected _orderColumns(
+        columnStateAccumulator: ColumnOrderState,
+        incomingColumnState: ColumnOrderState,
+        colList: AgColumn[],
+        enableProp: 'rowGroup' | 'pivot',
+        initialEnableProp: 'initialRowGroup' | 'initialPivot',
+        indexProp: 'rowGroupIndex' | 'pivotIndex',
+        initialIndexProp: 'initialRowGroupIndex' | 'initialPivotIndex'
+    ): ColumnOrderState {
+        const primaryCols = this.columnModel.getColDefCols();
+        if (!colList.length || !primaryCols) {
+            return columnStateAccumulator;
+        }
+        const updatedColIdArray = Object.keys(incomingColumnState);
+        const updatedColIds = new Set(updatedColIdArray);
+        const newColIds = new Set(updatedColIdArray);
+        const allColIds = new Set(
+            colList
+                .map((column) => {
+                    const colId = column.getColId();
+                    newColIds.delete(colId);
+                    return colId;
+                })
+                .concat(updatedColIdArray)
+        );
+
+        const colIdsInOriginalOrder: string[] = [];
+        const originalOrderMap: { [colId: string]: number } = {};
+        let orderIndex = 0;
+        for (let i = 0; i < primaryCols.length; i++) {
+            const colId = primaryCols[i].getColId();
+            if (allColIds.has(colId)) {
+                colIdsInOriginalOrder.push(colId);
+                originalOrderMap[colId] = orderIndex++;
+            }
+        }
+
+        // follow approach in `resetColumnState`
+        let index = 1000;
+        let hasAddedNewCols = false;
+        let lastIndex = 0;
+
+        const processPrecedingNewCols = (colId: string) => {
+            const originalOrderIndex = originalOrderMap[colId];
+            for (let i = lastIndex; i < originalOrderIndex; i++) {
+                const newColId = colIdsInOriginalOrder[i];
+                if (newColIds.has(newColId)) {
+                    incomingColumnState[newColId][indexProp] = index++;
+                    newColIds.delete(newColId);
+                }
+            }
+            lastIndex = originalOrderIndex;
+        };
+
+        colList.forEach((column) => {
+            const colId = column.getColId();
+            if (updatedColIds.has(colId)) {
+                // New col already exists. Add any other new cols that should be before it.
+                processPrecedingNewCols(colId);
+                incomingColumnState[colId][indexProp] = index++;
+            } else {
+                const colDef = column.getColDef();
+                const missingIndex =
+                    colDef[indexProp] === null || (colDef[indexProp] === undefined && colDef[initialIndexProp] == null);
+                if (missingIndex) {
+                    if (!hasAddedNewCols) {
+                        const propEnabled =
+                            colDef[enableProp] || (colDef[enableProp] === undefined && colDef[initialEnableProp]);
+                        if (propEnabled) {
+                            processPrecedingNewCols(colId);
+                        } else {
+                            // Reached the first manually added column. Add all the new columns now.
+                            newColIds.forEach((newColId) => {
+                                // Rather than increment the index, just use the original order index - doesn't need to be contiguous.
+                                incomingColumnState[newColId][indexProp] = index + originalOrderMap[newColId];
+                            });
+                            index += colIdsInOriginalOrder.length;
+                            hasAddedNewCols = true;
+                        }
+                    }
+                    if (!columnStateAccumulator[colId]) {
+                        columnStateAccumulator[colId] = { colId };
+                    }
+                    columnStateAccumulator[colId][indexProp] = index++;
+                }
+            }
+        });
+
+        return columnStateAccumulator;
     }
 }

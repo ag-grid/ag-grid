@@ -28,9 +28,11 @@ export class FuncColsService extends BeanStub implements NamedBean {
     public get rowGroupCols(): AgColumn[] {
         return this.rowGroupColsService.columns;
     }
+
     public get valueCols(): AgColumn[] {
         return this.valueColsService.columns;
     }
+
     public get pivotCols(): AgColumn[] {
         return this.pivotColsService.columns;
     }
@@ -41,9 +43,12 @@ export class FuncColsService extends BeanStub implements NamedBean {
         const valueFns = this.valueColsService.getModifyColumnsNoEventsCallbacks();
 
         return {
-            ...rowGroupFns,
-            ...pivotFns,
-            ...valueFns,
+            addPivotCol: pivotFns.addCol,
+            removePivotCol: pivotFns.removeCol,
+            addGroupCol: rowGroupFns.addCol,
+            removeGroupCol: rowGroupFns.removeCol,
+            addValueCol: valueFns.addCol,
+            removeValueCol: valueFns.removeCol,
         };
     }
 
@@ -124,115 +129,11 @@ export class FuncColsService extends BeanStub implements NamedBean {
         // Generally columns should appear in the order they were before. For any new columns, these should appear in the original col def order.
         // The exception is for columns that were added via `addGroupColumns`. These should appear at the end.
         // We don't have to worry about full updates, as in this case the arrays are correct, and they won't appear in the updated lists.
+        const updatedState: { [colId: string]: ColumnState } = {};
 
-        const existingColumnStateUpdates: { [colId: string]: ColumnState } = {};
+        this.rowGroupColsService.orderColumns(updatedState, updatedRowGroupColumnState);
+        this.pivotColsService.orderColumns(updatedState, updatedPivotColumnState);
 
-        const orderColumns = (
-            updatedColumnState: { [colId: string]: ColumnState },
-            colList: AgColumn[],
-            enableProp: 'rowGroup' | 'pivot',
-            initialEnableProp: 'initialRowGroup' | 'initialPivot',
-            indexProp: 'rowGroupIndex' | 'pivotIndex',
-            initialIndexProp: 'initialRowGroupIndex' | 'initialPivotIndex'
-        ) => {
-            const primaryCols = this.columnModel.getColDefCols();
-            if (!colList.length || !primaryCols) {
-                return [];
-            }
-            const updatedColIdArray = Object.keys(updatedColumnState);
-            const updatedColIds = new Set(updatedColIdArray);
-            const newColIds = new Set(updatedColIdArray);
-            const allColIds = new Set(
-                colList
-                    .map((column) => {
-                        const colId = column.getColId();
-                        newColIds.delete(colId);
-                        return colId;
-                    })
-                    .concat(updatedColIdArray)
-            );
-
-            const colIdsInOriginalOrder: string[] = [];
-            const originalOrderMap: { [colId: string]: number } = {};
-            let orderIndex = 0;
-            for (let i = 0; i < primaryCols.length; i++) {
-                const colId = primaryCols[i].getColId();
-                if (allColIds.has(colId)) {
-                    colIdsInOriginalOrder.push(colId);
-                    originalOrderMap[colId] = orderIndex++;
-                }
-            }
-
-            // follow approach in `resetColumnState`
-            let index = 1000;
-            let hasAddedNewCols = false;
-            let lastIndex = 0;
-
-            const processPrecedingNewCols = (colId: string) => {
-                const originalOrderIndex = originalOrderMap[colId];
-                for (let i = lastIndex; i < originalOrderIndex; i++) {
-                    const newColId = colIdsInOriginalOrder[i];
-                    if (newColIds.has(newColId)) {
-                        updatedColumnState[newColId][indexProp] = index++;
-                        newColIds.delete(newColId);
-                    }
-                }
-                lastIndex = originalOrderIndex;
-            };
-
-            colList.forEach((column) => {
-                const colId = column.getColId();
-                if (updatedColIds.has(colId)) {
-                    // New col already exists. Add any other new cols that should be before it.
-                    processPrecedingNewCols(colId);
-                    updatedColumnState[colId][indexProp] = index++;
-                } else {
-                    const colDef = column.getColDef();
-                    const missingIndex =
-                        colDef[indexProp] === null ||
-                        (colDef[indexProp] === undefined && colDef[initialIndexProp] == null);
-                    if (missingIndex) {
-                        if (!hasAddedNewCols) {
-                            const propEnabled =
-                                colDef[enableProp] || (colDef[enableProp] === undefined && colDef[initialEnableProp]);
-                            if (propEnabled) {
-                                processPrecedingNewCols(colId);
-                            } else {
-                                // Reached the first manually added column. Add all the new columns now.
-                                newColIds.forEach((newColId) => {
-                                    // Rather than increment the index, just use the original order index - doesn't need to be contiguous.
-                                    updatedColumnState[newColId][indexProp] = index + originalOrderMap[newColId];
-                                });
-                                index += colIdsInOriginalOrder.length;
-                                hasAddedNewCols = true;
-                            }
-                        }
-                        if (!existingColumnStateUpdates[colId]) {
-                            existingColumnStateUpdates[colId] = { colId };
-                        }
-                        existingColumnStateUpdates[colId][indexProp] = index++;
-                    }
-                }
-            });
-        };
-
-        orderColumns(
-            updatedRowGroupColumnState,
-            this.rowGroupCols,
-            'rowGroup',
-            'initialRowGroup',
-            'rowGroupIndex',
-            'initialRowGroupIndex'
-        );
-        orderColumns(
-            updatedPivotColumnState,
-            this.pivotCols,
-            'pivot',
-            'initialPivot',
-            'pivotIndex',
-            'initialPivotIndex'
-        );
-
-        return Object.values(existingColumnStateUpdates);
+        return Object.values(updatedState);
     }
 }

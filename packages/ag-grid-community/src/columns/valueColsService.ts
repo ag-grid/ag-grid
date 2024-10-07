@@ -4,12 +4,12 @@ import type { NamedBean } from '../context/bean';
 import type { ColumnEventType } from '../events';
 import { _removeFromArray } from '../utils/array';
 import { BaseColsService } from './baseColsService';
-import type { ColumnServiceEventName } from './baseColsService';
+import type { ColumnOrderState, ColumnServiceEventName } from './baseColsService';
 import { dispatchColumnChangedEvent } from './columnEventUtils';
 import type { ColKey, Maybe } from './columnModel';
-import type { ModifyValueColumnsNoEventsCallbacks } from './columnStateService';
+import type { ModifyColumnsNoEventsCallback } from './columnStateService';
 
-export class ValueColsService extends BaseColsService<ModifyValueColumnsNoEventsCallbacks> implements NamedBean {
+export class ValueColsService extends BaseColsService implements NamedBean {
     beanName = 'valueColsService' as const;
 
     public override wireBeans(beans: BeanCollection): void {
@@ -18,10 +18,10 @@ export class ValueColsService extends BaseColsService<ModifyValueColumnsNoEvents
         this.visibleColsService = beans.visibleColsService;
     }
 
-    public override getModifyColumnsNoEventsCallbacks(): ModifyValueColumnsNoEventsCallbacks {
+    public override getModifyColumnsNoEventsCallbacks(): ModifyColumnsNoEventsCallback {
         return {
-            addValueCol: (column) => this.columns.push(column),
-            removeValueCol: (column) => _removeFromArray(this.columns, column),
+            addCol: (column) => this.columns.push(column),
+            removeCol: (column) => _removeFromArray(this.columns, column),
         };
     }
 
@@ -100,6 +100,10 @@ export class ValueColsService extends BaseColsService<ModifyValueColumnsNoEvents
         column.setAggFunc(aggFunc);
 
         dispatchColumnChangedEvent(this.eventService, this.getEventName(), [column], source);
+    }
+
+    public override orderColumns(columnStateAccumulator: ColumnOrderState): ColumnOrderState {
+        return columnStateAccumulator;
     }
 
     private setValueActive(active: boolean, column: AgColumn, source: ColumnEventType): void {

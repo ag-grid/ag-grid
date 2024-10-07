@@ -6,18 +6,18 @@ import type { ColDef } from '../entities/colDef';
 import type { AllEventsWithoutGridCommon, ColumnEventType } from '../events';
 import { _shouldUpdateColVisibilityAfterGroup } from '../gridOptionsUtils';
 import { _removeFromArray } from '../utils/array';
-import type { ColumnServiceEventName } from './baseColsService';
+import type { ColumnOrderState, ColumnServiceEventName } from './baseColsService';
 import { BaseColsService } from './baseColsService';
 import type { ColKey, Maybe } from './columnModel';
-import type { ModifyRowGroupColumnsNoEventsCallbacks } from './columnStateService';
+import type { ModifyColumnsNoEventsCallback } from './columnStateService';
 
-export class RowGroupColsService extends BaseColsService<ModifyRowGroupColumnsNoEventsCallbacks> implements NamedBean {
+export class RowGroupColsService extends BaseColsService implements NamedBean {
     beanName = 'rowGroupColsService' as const;
 
-    public override getModifyColumnsNoEventsCallbacks(): ModifyRowGroupColumnsNoEventsCallbacks {
+    public override getModifyColumnsNoEventsCallbacks(): ModifyColumnsNoEventsCallback {
         return {
-            addGroupCol: (column) => this.columns.push(column),
-            removeGroupCol: (column) => _removeFromArray(this.columns, column),
+            addCol: (column) => this.columns.push(column),
+            removeCol: (column) => _removeFromArray(this.columns, column),
         };
     }
 
@@ -84,6 +84,21 @@ export class RowGroupColsService extends BaseColsService<ModifyRowGroupColumnsNo
 
         const column = this.columnModel.getColDefCol(sourceColumnId);
         return column ? [column] : null;
+    }
+
+    public override orderColumns(
+        columnStateAccumulator: ColumnOrderState,
+        incomingColumnState: ColumnOrderState
+    ): ColumnOrderState {
+        return this._orderColumns(
+            columnStateAccumulator,
+            incomingColumnState,
+            this.columns,
+            'rowGroup',
+            'initialRowGroup',
+            'rowGroupIndex',
+            'initialRowGroupIndex'
+        );
     }
 
     private setRowGroupActive(active: boolean, column: AgColumn, source: ColumnEventType): void {

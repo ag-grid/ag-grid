@@ -30,6 +30,11 @@ export type ModifyColumnsNoEventsCallbacks = ModifyValueColumnsNoEventsCallbacks
     ModifyPivotColumnsNoEventsCallbacks &
     ModifyRowGroupColumnsNoEventsCallbacks;
 
+export type ModifyColumnsNoEventsCallback = {
+    addCol(col: AgColumn): void;
+    removeCol(col: AgColumn): void;
+};
+
 export interface ModifyValueColumnsNoEventsCallbacks {
     addValueCol(col: AgColumn): void;
     removeValueCol(col: AgColumn): void;

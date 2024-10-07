@@ -4,17 +4,17 @@ import type { NamedBean } from '../context/bean';
 import type { ColumnEventType } from '../events';
 import { _removeFromArray } from '../utils/array';
 import { BaseColsService } from './baseColsService';
-import type { ColumnServiceEventName } from './baseColsService';
+import type { ColumnOrderState, ColumnServiceEventName } from './baseColsService';
 import type { ColKey } from './columnModel';
-import type { ModifyPivotColumnsNoEventsCallbacks } from './columnStateService';
+import type { ModifyColumnsNoEventsCallback } from './columnStateService';
 
-export class PivotColsService extends BaseColsService<ModifyPivotColumnsNoEventsCallbacks> implements NamedBean {
+export class PivotColsService extends BaseColsService implements NamedBean {
     beanName = 'pivotColsService' as const;
 
-    public override getModifyColumnsNoEventsCallbacks(): ModifyPivotColumnsNoEventsCallbacks {
+    public override getModifyColumnsNoEventsCallbacks(): ModifyColumnsNoEventsCallback {
         return {
-            addPivotCol: (column) => this.columns.push(column),
-            removePivotCol: (column) => _removeFromArray(this.columns, column),
+            addCol: (column) => this.columns.push(column),
+            removeCol: (column) => _removeFromArray(this.columns, column),
         };
     }
 
@@ -32,6 +32,21 @@ export class PivotColsService extends BaseColsService<ModifyPivotColumnsNoEvents
 
     public override removeColumns(colKeys: ColKey[], source: ColumnEventType): void {
         this._removeColumns(colKeys, source, (column) => column.setPivotActive(false, source));
+    }
+
+    public override orderColumns(
+        columnStateAccumulator: ColumnOrderState,
+        incomingColumnState: ColumnOrderState
+    ): ColumnOrderState {
+        return this._orderColumns(
+            columnStateAccumulator,
+            incomingColumnState,
+            this.columns,
+            'pivot',
+            'initialPivot',
+            'pivotIndex',
+            'initialPivotIndex'
+        );
     }
 
     public override extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {
