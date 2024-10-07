@@ -42,10 +42,10 @@ export class RowGroupColsService extends BaseColsService<ModifyRowGroupColumnsNo
             oldProvidedCols,
             this.columns,
             (col, flag) => col.setRowGroupActive(flag, source),
-            (colDef: ColDef) => colDef.pivotIndex,
-            (colDef: ColDef) => colDef.initialPivotIndex,
-            (colDef: ColDef) => colDef.pivot,
-            (colDef: ColDef) => colDef.initialPivot
+            (colDef: ColDef) => colDef.rowGroupIndex,
+            (colDef: ColDef) => colDef.initialRowGroupIndex,
+            (colDef: ColDef) => colDef.rowGroup,
+            (colDef: ColDef) => colDef.initialRowGroup
         );
     }
 
