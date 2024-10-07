@@ -19,9 +19,8 @@ import {
     _isDomLayout,
 } from '../gridOptionsUtils';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
-import type { ICellEditor } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
-import type { Column } from '../interfaces/iColumn';
+import type { RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
@@ -38,7 +37,6 @@ import { _createArrayOfNumbers } from '../utils/number';
 import { _getAllValuesInObject, _iterateObject } from '../utils/object';
 import type { CellCtrl } from './cell/cellCtrl';
 import { DOM_DATA_KEY_CELL_CTRL } from './cell/cellCtrl';
-import type { ICellRenderer } from './cellRenderers/iCellRenderer';
 import type { StickyRowFeature } from './features/stickyRowFeature';
 import type { StickyRowService } from './features/stickyRowService';
 import type { RowCtrlInstanceId } from './row/rowCtrl';
@@ -51,36 +49,6 @@ export type RowCtrlByRowNodeIdMap = Record<string, RowCtrl>;
 
 interface RowNodeMap {
     [id: string]: IRowNode;
-}
-
-export interface GetCellsParams<TData = any> {
-    /** Optional list of row nodes to restrict operation to */
-    rowNodes?: IRowNode<TData>[];
-    /** Optional list of columns to restrict operation to */
-    columns?: (string | Column)[];
-}
-
-export interface RefreshCellsParams<TData = any> extends GetCellsParams<TData> {
-    /** Skip change detection, refresh everything. */
-    force?: boolean;
-    /** Skip cell flashing, if cell flashing is enabled. */
-    suppressFlash?: boolean;
-}
-
-export interface FlashCellsParams<TData = any> extends GetCellsParams<TData> {
-    /** The duration in milliseconds of how long a cell should remain in its "flashed" state. */
-    flashDuration?: number;
-    /** The duration in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `flashDuration` has completed. */
-    fadeDuration?: number;
-}
-
-export interface GetCellRendererInstancesParams<TData = any> extends GetCellsParams<TData> {}
-
-export interface GetCellEditorInstancesParams<TData = any> extends GetCellsParams<TData> {}
-
-export interface RedrawRowsParams<TData = any> {
-    /** Row nodes to redraw */
-    rowNodes?: IRowNode<TData>[];
 }
 
 export class RowRenderer extends BeanStub implements NamedBean {
@@ -737,12 +705,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
         });
     }
 
-    public stopEditing(cancel: boolean = false) {
-        this.getAllRowCtrls().forEach((rowCtrl) => {
-            rowCtrl.stopEditing(cancel);
-        });
-    }
-
     public getAllCellCtrls(): CellCtrl[] {
         const res: CellCtrl[] = [];
         const rowCtrls = this.getAllRowCtrls();
@@ -760,7 +722,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         return res;
     }
 
-    private getAllRowCtrls(): RowCtrl[] {
+    public getAllRowCtrls(): RowCtrl[] {
         const stickyTopRowCtrls = this.getStickyTopRowCtrls();
         const stickyBottomRowCtrls = this.getStickyBottomRowCtrls();
         const res = [...this.topRowCtrls, ...this.bottomRowCtrls, ...stickyTopRowCtrls, ...stickyBottomRowCtrls];
@@ -780,12 +742,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (rowComp) {
             rowComp.addEventListener(eventName, callback);
         }
-    }
-
-    public flashCells(params: FlashCellsParams = {}): void {
-        this.getCellCtrls(params.rowNodes, params.columns as AgColumn[]).forEach((cellCtrl) =>
-            cellCtrl.flashCell(params)
-        );
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -832,119 +788,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
     }
 
-    public getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRenderer[] {
-        const cellRenderers = this.getCellCtrls(params.rowNodes, params.columns as AgColumn[])
-            .map((cellCtrl) => cellCtrl.getCellRenderer())
-            .filter((renderer) => renderer != null) as ICellRenderer[];
-        if (params.columns?.length) {
-            return cellRenderers;
-        }
-
-        const fullWidthRenderers: ICellRenderer[] = [];
-        const rowIdMap = this.mapRowNodes(params.rowNodes);
-
-        this.getAllRowCtrls().forEach((rowCtrl) => {
-            if (rowIdMap && !this.isRowInMap(rowCtrl.getRowNode(), rowIdMap)) {
-                return;
-            }
-
-            if (!rowCtrl.isFullWidth()) {
-                return;
-            }
-
-            const renderers = rowCtrl.getFullWidthCellRenderers();
-            for (let i = 0; i < renderers.length; i++) {
-                const renderer = renderers[i];
-                if (renderer != null) {
-                    fullWidthRenderers.push(renderer);
-                }
-            }
-        });
-
-        return [...fullWidthRenderers, ...cellRenderers];
-    }
-
-    public getCellEditorInstances(params: GetCellRendererInstancesParams): ICellEditor[] {
-        const res: ICellEditor[] = [];
-
-        this.getCellCtrls(params.rowNodes, params.columns as AgColumn[]).forEach((cellCtrl) => {
-            const cellEditor = cellCtrl.getCellEditor() as ICellEditor;
-
-            if (cellEditor) {
-                res.push(cellEditor);
-            }
-        });
-
-        return res;
-    }
-
-    public getEditingCells(): CellPosition[] {
-        const res: CellPosition[] = [];
-
-        this.getAllCellCtrls().forEach((cellCtrl) => {
-            if (cellCtrl.isEditing()) {
-                const cellPosition = cellCtrl.getCellPosition();
-                res.push(cellPosition);
-            }
-        });
-
-        return res;
-    }
-
-    private mapRowNodes(
-        rowNodes?: IRowNode[] | null
-    ): { top: RowNodeMap; bottom: RowNodeMap; normal: RowNodeMap } | undefined {
-        if (!rowNodes) {
-            return;
-        }
-
-        const res: { top: RowNodeMap; bottom: RowNodeMap; normal: RowNodeMap } = {
-            top: {},
-            bottom: {},
-            normal: {},
-        };
-
-        rowNodes.forEach((rowNode) => {
-            const id = rowNode.id!;
-            switch (rowNode.rowPinned) {
-                case 'top':
-                    res.top[id] = rowNode;
-                    break;
-                case 'bottom':
-                    res.bottom[id] = rowNode;
-                    break;
-                default:
-                    res.normal[id] = rowNode;
-                    break;
-            }
-        });
-
-        return res;
-    }
-
-    private isRowInMap(
-        rowNode: RowNode,
-        rowIdsMap: { top: RowNodeMap; bottom: RowNodeMap; normal: RowNodeMap }
-    ): boolean {
-        // skip this row if it is missing from the provided list
-        const id = rowNode.id!;
-        const floating = rowNode.rowPinned;
-
-        switch (floating) {
-            case 'top':
-                return rowIdsMap.top[id] != null;
-            case 'bottom':
-                return rowIdsMap.bottom[id] != null;
-            default:
-                return rowIdsMap.normal[id] != null;
-        }
-    }
-
     /**
      * @param rowNodes if provided, returns the RowCtrls for the provided rowNodes. otherwise returns all RowCtrls.
      */
     public getRowCtrls(rowNodes?: IRowNode[] | null): RowCtrl[] {
-        const rowIdsMap = this.mapRowNodes(rowNodes);
+        const rowIdsMap = mapRowNodes(rowNodes);
         const allRowCtrls = this.getAllRowCtrls();
         if (!rowNodes || !rowIdsMap) {
             return allRowCtrls;
@@ -952,13 +800,13 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         return allRowCtrls.filter((rowCtrl) => {
             const rowNode = rowCtrl.getRowNode();
-            return this.isRowInMap(rowNode, rowIdsMap);
+            return isRowInMap(rowNode, rowIdsMap);
         });
     }
 
     // returns CellCtrl's that match the provided rowNodes and columns. eg if one row node
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
-    private getCellCtrls(rowNodes?: IRowNode[] | null, columns?: (string | AgColumn)[]): CellCtrl[] {
+    public getCellCtrls(rowNodes?: IRowNode[] | null, columns?: (string | AgColumn)[]): CellCtrl[] {
         let colIdsMap: any;
         if (_exists(columns)) {
             colIdsMap = {};
@@ -1235,7 +1083,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     public getFullWidthRowCtrls(rowNodes?: IRowNode[]): RowCtrl[] {
-        const rowNodesMap = this.mapRowNodes(rowNodes);
+        const rowNodesMap = mapRowNodes(rowNodes);
 
         return this.getAllRowCtrls().filter((rowCtrl: RowCtrl) => {
             // include just full width
@@ -1245,7 +1093,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
             // if Row Nodes provided, we exclude where Row Node is missing
             const rowNode = rowCtrl.getRowNode();
-            if (rowNodesMap != null && !this.isRowInMap(rowNode, rowNodesMap)) {
+            if (rowNodesMap != null && !isRowInMap(rowNode, rowNodesMap)) {
                 return false;
             }
 
@@ -1694,4 +1542,53 @@ export interface RefreshViewParams {
     newData?: boolean;
     newPage?: boolean;
     domLayoutChanged?: boolean;
+}
+
+export function mapRowNodes(
+    rowNodes?: IRowNode[] | null
+): { top: RowNodeMap; bottom: RowNodeMap; normal: RowNodeMap } | undefined {
+    if (!rowNodes) {
+        return;
+    }
+
+    const res: { top: RowNodeMap; bottom: RowNodeMap; normal: RowNodeMap } = {
+        top: {},
+        bottom: {},
+        normal: {},
+    };
+
+    rowNodes.forEach((rowNode) => {
+        const id = rowNode.id!;
+        switch (rowNode.rowPinned) {
+            case 'top':
+                res.top[id] = rowNode;
+                break;
+            case 'bottom':
+                res.bottom[id] = rowNode;
+                break;
+            default:
+                res.normal[id] = rowNode;
+                break;
+        }
+    });
+
+    return res;
+}
+
+export function isRowInMap(
+    rowNode: RowNode,
+    rowIdsMap: { top: RowNodeMap; bottom: RowNodeMap; normal: RowNodeMap }
+): boolean {
+    // skip this row if it is missing from the provided list
+    const id = rowNode.id!;
+    const floating = rowNode.rowPinned;
+
+    switch (floating) {
+        case 'top':
+            return rowIdsMap.top[id] != null;
+        case 'bottom':
+            return rowIdsMap.bottom[id] != null;
+        default:
+            return rowIdsMap.normal[id] != null;
+    }
 }

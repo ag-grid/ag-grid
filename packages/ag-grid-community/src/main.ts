@@ -304,7 +304,13 @@ export { AlignedGrid } from './interfaces/iAlignedGrid';
 export type { MenuService } from './misc/menu/menuService';
 
 // editing / cellEditors
-export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from './interfaces/iCellEditor';
+export {
+    ICellEditor,
+    ICellEditorComp,
+    ICellEditorParams,
+    BaseCellEditor,
+    GetCellEditorInstancesParams,
+} from './interfaces/iCellEditor';
 export { ILargeTextEditorParams } from './edit/cellEditors/iLargeTextCellEditor';
 export type { LargeTextCellEditor } from './edit/cellEditors/largeTextCellEditor';
 export type { PopupEditorWrapper } from './edit/cellEditors/popupEditorWrapper';
@@ -336,6 +342,7 @@ export {
     ICellRendererComp,
     ICellRendererParams,
     ISetFilterCellRendererParams,
+    GetCellRendererInstancesParams,
 } from './rendering/cellRenderers/iCellRenderer';
 export {
     GroupCellRendererParams,
@@ -398,13 +405,8 @@ export { _getCellCtrlForEventTarget } from './rendering/cell/cellCtrl';
 export type { CellCtrl, ICellComp } from './rendering/cell/cellCtrl';
 export type { RowCtrl, IRowComp } from './rendering/row/rowCtrl';
 export type { RowRenderer } from './rendering/rowRenderer';
-export {
-    FlashCellsParams,
-    GetCellRendererInstancesParams,
-    RefreshCellsParams,
-    RedrawRowsParams,
-    GetCellEditorInstancesParams,
-} from './rendering/rowRenderer';
+export { RedrawRowsParams } from './interfaces/iRedrawRowsParams';
+export { FlashCellsParams, RefreshCellsParams } from './interfaces/iCellsParams';
 export {
     ILoadingCellRenderer,
     ILoadingCellRendererComp,
