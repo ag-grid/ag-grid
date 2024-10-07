@@ -250,7 +250,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
      *  - property isRowSelectable changed
      *  - after grouping / treeData
      */
-    public updateSelectable(skipLeafNodes: boolean) {
+    public override updateSelectable(skipLeafNodes: boolean): void {
         const { gos } = this;
 
         const isRowSelecting = _isRowSelection(gos);
