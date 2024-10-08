@@ -58,7 +58,7 @@ componentDidMount() {
 {% /if %}
 
 ## Deprecations
-{% metaTag tags=["ChartCreated", "ChartRangeSelectionChanged", "ChartOptionsChanged", "ChartDestroyed", "AsyncTransactionsFlushed", "suppressLoadingOverlay", "showLoadingOverlay", "suppressParentsInRowNode", "enterMovesDown", "enterMovesDownAfterEdit", "excludeHiddenColumnsFromQuickFilter", "suppressAggAtRootLevel", "serverSideFilterAllLevels", "enableChartToolPanelsButton", "functionsPassive", "onColumnRowGroupChangeRequest", "onColumnPivotChangeRequest", "onColumnValueChangeRequest", "onColumnAggFuncChangeRequest"] /%}
+{% metaTag tags=["ChartCreated", "ChartRangeSelectionChanged", "ChartOptionsChanged", "ChartDestroyed", "AsyncTransactionsFlushed", "suppressLoadingOverlay", "showLoadingOverlay"] /%}
 
 This release includes the following deprecations:
 
@@ -90,6 +90,7 @@ The following interfaces are deprecated and replaced with the equivalent interfa
 
 
 ## Breaking Changes
+{% metaTag tags=["ColumnAPI", "suppressParentsInRowNode", "enterMovesDown", "enterMovesDownAfterEdit", "excludeHiddenColumnsFromQuickFilter", "suppressAggAtRootLevel", "serverSideFilterAllLevels", "enableChartToolPanelsButton", "functionsPassive", "onColumnRowGroupChangeRequest", "onColumnPivotChangeRequest", "onColumnValueChangeRequest", "onColumnAggFuncChangeRequest", "CellFocusedEvent", "ChangeDetectionStategyType", "ICellRendererParams.rowIndex", "IProvidedColumn", "IHeaderColumn"] /%}
 
 ### Build Output
 
@@ -278,10 +279,3 @@ Header and grid cells text wrapping uses `word-break:'break-word'` mode instead 
 
 - `auto-params-refresh` / `autoParamsRefresh` removed.
 {% /if %}
-
-
-
-
-
-
-
