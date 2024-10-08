@@ -35,21 +35,12 @@ export type InitialGroupOrderComparatorCallback =
 
 interface TreeCommitDetails {
     changedPath: ChangedPath | undefined;
+    treeData: boolean;
     expandByDefault: number;
     isGroupOpenByDefault: IsGroupOpenByDefaultCallback;
 }
 
 export class TreeNodeManager extends BeanStub {
-    checkAllGroupDataAfterColsChanged(rowNodes: RowNode[] | null | undefined) {
-        if (rowNodes) {
-            for (let i = 0, len = rowNodes.length ?? 0; i < len; ++i) {
-                const rowNode = rowNodes[i];
-                this.setGroupData(rowNode, rowNode.treeNode?.key ?? rowNode.key!);
-                this.checkAllGroupDataAfterColsChanged(rowNode.childrenAfterGroup);
-            }
-        }
-    }
-
     private beans: BeanCollection;
     private showRowGroupColsService: IShowRowGroupColsService;
 
@@ -65,13 +56,12 @@ export class TreeNodeManager extends BeanStub {
     }
 
     public override destroy(): void {
-        this.clearRootNode();
+        this.deactivate();
         super.destroy();
     }
 
-    public initRootNode(rootRowNode: RowNode): void {
+    public activate(rootRowNode: RowNode): void {
         this.root.setRow(rootRowNode);
-        rootRowNode.leafGroup = false; // no pivoting with tree data
         const sibling: TreeRow = rootRowNode.sibling;
         if (sibling) {
             sibling.childrenAfterGroup = rootRowNode.childrenAfterGroup;
@@ -79,7 +69,7 @@ export class TreeNodeManager extends BeanStub {
         }
     }
 
-    public clearRootNode() {
+    public deactivate() {
         const root = this.root;
         const rootRow = root.row;
         if (rootRow !== null) {
@@ -88,6 +78,16 @@ export class TreeNodeManager extends BeanStub {
         }
         this.destroyTree(root);
         this.commitDestroyedRows();
+    }
+
+    public checkAllGroupDataAfterColsChanged(rowNodes: RowNode[] | null | undefined) {
+        if (rowNodes) {
+            for (let i = 0, len = rowNodes.length ?? 0; i < len; ++i) {
+                const rowNode = rowNodes[i];
+                this.setGroupData(rowNode, rowNode.treeNode?.key ?? rowNode.key!);
+                this.checkAllGroupDataAfterColsChanged(rowNode.childrenAfterGroup);
+            }
+        }
     }
 
     public handleRowNodesOrderChanged(): void {
@@ -185,21 +185,28 @@ export class TreeNodeManager extends BeanStub {
     }
 
     /** Commit the changes performed to the tree */
-    public commitTree(changedPath: ChangedPath | undefined) {
+    public commitTree(changedPath?: ChangedPath): void {
         const root = this.root;
+
+        const treeData = this.gos.get('treeData');
 
         const details: TreeCommitDetails = {
             changedPath,
+            treeData,
             expandByDefault: this.gos.get('groupDefaultExpanded'),
             isGroupOpenByDefault: this.gos.getCallback('isGroupOpenByDefault'),
         };
 
-        this.commitInvalidatedChildren(details, root);
+        this.commitChildren(details, root);
 
         const rootRow = root.row;
         if (rootRow) {
+            if (treeData) {
+                rootRow.leafGroup = false; // no pivoting with tree data
+            }
+
             if (root.childrenChanged) {
-                if (root.updateChildrenAfterGroup()) {
+                if (root.updateChildrenAfterGroup(treeData)) {
                     markTreeRowPathChanged(rootRow);
                 }
             }
@@ -212,6 +219,8 @@ export class TreeNodeManager extends BeanStub {
 
             markTreeRowCommitted(rootRow);
 
+            this.resetRowArrays(rootRow);
+
             rootRow.updateHasChildren();
         }
 
@@ -221,7 +230,7 @@ export class TreeNodeManager extends BeanStub {
     }
 
     /** Calls commitChild for each invalidated child, recursively. We commit only the invalidated paths. */
-    private commitInvalidatedChildren(details: TreeCommitDetails, parent: TreeNode): void {
+    private commitChildren(details: TreeCommitDetails, parent: TreeNode): void {
         while (true) {
             const child = parent.dequeueInvalidated();
             if (child === null) {
@@ -231,6 +240,9 @@ export class TreeNodeManager extends BeanStub {
                 this.commitChild(details, parent, child);
             }
         }
+
+        // Ensure the childrenAfterGroup array is up to date with treeData flag
+        parent.childrenChanged ||= (details.treeData ? parent.size : 0) !== parent.row!.childrenAfterGroup?.length;
     }
 
     /** Commit the changes performed to a node and its children */
@@ -240,12 +252,12 @@ export class TreeNodeManager extends BeanStub {
             return; // Removed. No need to process children.
         }
 
-        this.commitNodePreOrder(parent, node);
-        this.commitInvalidatedChildren(details, node);
+        this.commitNodePreOrder(details, parent, node);
+        this.commitChildren(details, node);
         this.commitNodePostOrder(details, parent, node);
     }
 
-    private commitNodePreOrder(parent: TreeNode, node: TreeNode): void {
+    private commitNodePreOrder({ treeData }: TreeCommitDetails, parent: TreeNode, node: TreeNode): void {
         let row = node.row;
 
         if (row === null) {
@@ -259,30 +271,35 @@ export class TreeNodeManager extends BeanStub {
             }
         }
 
-        row.parent = parent.row;
-        if (node.oldRow !== row) {
-            // We need to update children rows parents, as the row changed
-            for (const child of node.enumChildren()) {
-                const childRow = child.row;
-                if (childRow !== null) {
-                    childRow.parent = row;
+        if (treeData) {
+            row.parent = parent.row;
+            if (node.oldRow !== row) {
+                // We need to update children rows parents, as the row changed
+                for (const child of node.enumChildren()) {
+                    const childRow = child.row;
+                    if (childRow !== null) {
+                        childRow.parent = row;
+                    }
                 }
             }
-        }
 
-        const key = node.key;
-        if (row.key !== key) {
-            row.key = key;
-            setTreeRowKeyChanged(row);
-            this.setGroupData(row, key);
-        } else if (!row.groupData) {
-            this.setGroupData(row, key);
+            const key = node.key;
+            if (row.key !== key) {
+                row.key = key;
+                setTreeRowKeyChanged(row);
+                this.setGroupData(row, key);
+            } else if (!row.groupData) {
+                this.setGroupData(row, key);
+            }
+        } else {
+            row.parent = this.root.row;
         }
     }
 
     private commitNodePostOrder(details: TreeCommitDetails, parent: TreeNode, node: TreeNode): void {
         const row = node.row!;
         const oldRow = node.oldRow;
+        const treeData = details.treeData;
 
         if (node.isEmptyFillerNode()) {
             this.clearTree(node);
@@ -290,7 +307,7 @@ export class TreeNodeManager extends BeanStub {
         }
 
         if (node.childrenChanged) {
-            if (node.updateChildrenAfterGroup()) {
+            if (node.updateChildrenAfterGroup(treeData)) {
                 markTreeRowPathChanged(row);
             }
         }
@@ -308,6 +325,7 @@ export class TreeNodeManager extends BeanStub {
         const hasChildren = !!row.childrenAfterGroup?.length;
         const group = hasChildren || !row.data;
         const oldGroup = row.group;
+
         if (oldGroup !== group) {
             markTreeRowPathChanged(row);
             row.setGroup(group); // Internally calls updateHasChildren
@@ -319,7 +337,7 @@ export class TreeNodeManager extends BeanStub {
             row.updateHasChildren();
         }
 
-        if (row.group && !isTreeRowExpandedInitialized(row)) {
+        if (group && !isTreeRowExpandedInitialized(row)) {
             if (
                 oldRow !== row &&
                 oldRow !== null &&
@@ -351,7 +369,7 @@ export class TreeNodeManager extends BeanStub {
 
         if (oldRow !== row) {
             node.oldRow = row;
-            if (oldRow !== null && (oldGroup || node.hasChildren())) {
+            if (oldRow !== null && (oldGroup || node.size !== 0)) {
                 markTreeRowPathChanged(row);
             }
             parent.childrenChanged = true;
@@ -359,22 +377,14 @@ export class TreeNodeManager extends BeanStub {
         }
 
         if (isTreeRowPathChanged(row)) {
-            if (details.changedPath?.isActive()) {
+            if (treeData && details.changedPath?.isActive()) {
                 details.changedPath.addParentNode(row);
+            } else {
+                markTreeRowPathChanged(this.root.row!);
             }
         } else if (!isTreeRowCommitted(row)) {
-            // If this is a new row that was never committed
-            // and path is not changed because this is a leaf,
-            // we still need to be sure arrays are not null
-            if (!row.childrenAfterFilter) {
-                row.childrenAfterFilter = row.childrenAfterGroup!.slice();
-            }
-            if (!row.childrenAfterAggFilter) {
-                row.childrenAfterAggFilter = row.childrenAfterFilter!.slice();
-            }
-            if (!row.childrenAfterSort) {
-                row.childrenAfterSort = row.childrenAfterAggFilter!.slice();
-            }
+            // If this is a new row that was never committed we need to be sure arrays are not null
+            this.resetRowArrays(row);
         }
 
         markTreeRowCommitted(row);
@@ -387,6 +397,13 @@ export class TreeNodeManager extends BeanStub {
                 ...Array.from(node.duplicateRows).map((r) => r.data),
             ]);
         }
+    }
+
+    private resetRowArrays(row: RowNode): void {
+        const childrenAfterGroup = row.childrenAfterGroup;
+        row.childrenAfterFilter = childrenAfterGroup;
+        row.childrenAfterAggFilter = childrenAfterGroup;
+        row.childrenAfterSort = childrenAfterGroup;
     }
 
     private createFillerRow(node: TreeNode): RowNode {
@@ -441,11 +458,7 @@ export class TreeNodeManager extends BeanStub {
     }
 
     /** Called to clear a subtree. */
-    public clearTree(node: TreeNode | null): void {
-        if (!node) {
-            return;
-        }
-
+    public clearTree(node: TreeNode): void {
         const { parent, oldRow, row, level } = node;
         if (parent !== null && oldRow !== null) {
             parent.childrenChanged = true;

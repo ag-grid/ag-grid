@@ -17,7 +17,6 @@ import {
     _isModuleRegistered,
     _registerModule,
 } from './modules/moduleRegistry';
-import { _errorOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
 import { _logError, _logPreCreationError } from './validation/logging';

@@ -57,6 +57,10 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         return this.allNodesMap[id];
     }
 
+    public extractRowData(): TData[] | null | undefined {
+        return this.rootNode.allLeafChildren?.map((node) => node.data!);
+    }
+
     public setNewRowData(rowData: TData[]): void {
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
@@ -234,7 +238,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
                 // TODO: this code should not be here, see AG-12602
                 // This was a fix for AG-6231, but is not the correct fix
                 // We enable it only for trees that use getDataPath and not the new children field
-                const getDataPath = !!this.gos.get('getDataPath');
+                const getDataPath = this.gos.get('treeData') && this.gos.get('getDataPath');
                 if (getDataPath) {
                     for (let i = 0; i < allLeafChildren.length; i++) {
                         const node = allLeafChildren[i];
@@ -360,14 +364,14 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         });
     }
 
-    public clearRootNode(): void {
+    public deactivate(): void {
         if (this.rootNode) {
             this.setNewRowData([]);
             this.rootNode = null!;
         }
     }
 
-    public initRootNode(rootRowNode: RowNode<TData>): void {
+    public activate(rootRowNode: RowNode<TData>): void {
         const rootNode = rootRowNode as ClientSideNodeManagerRootNode<TData>;
 
         this.rootNode = rootNode;

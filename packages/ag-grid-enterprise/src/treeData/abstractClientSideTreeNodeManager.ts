@@ -7,30 +7,37 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
     protected treeNodeManager: TreeNodeManager;
     private oldGroupDisplayColIds: string = '';
 
-    public override initRootNode(rootRowNode: RowNode<TData>): void {
-        this.treeNodeManager ??= this.createManagedBean(new TreeNodeManager());
-        super.initRootNode(rootRowNode);
-        this.treeNodeManager.initRootNode(rootRowNode);
+    public postConstruct(): void {
+        this.treeNodeManager = this.createManagedBean(new TreeNodeManager());
     }
 
-    public override clearRootNode(): void {
-        this.treeNodeManager.clearRootNode();
-        super.clearRootNode();
+    public override activate(rootRowNode: RowNode<TData>): void {
+        super.activate(rootRowNode);
+        this.treeNodeManager.activate(rootRowNode);
+    }
+
+    public override deactivate(): void {
+        this.treeNodeManager.deactivate();
+        super.deactivate();
     }
 
     public afterColumnsChanged(): void {
-        const newGroupDisplayColIds =
-            this.beans.showRowGroupColsService
-                ?.getShowRowGroupCols()
-                ?.map((c) => c.getId())
-                .join('-') ?? '';
+        if (this.gos.get('treeData')) {
+            const newGroupDisplayColIds =
+                this.beans.showRowGroupColsService
+                    ?.getShowRowGroupCols()
+                    ?.map((c) => c.getId())
+                    .join('-') ?? '';
 
-        // if the group display cols have changed, then we need to update rowNode.groupData
-        // (regardless of tree data or row grouping)
-        if (this.oldGroupDisplayColIds !== newGroupDisplayColIds) {
-            this.oldGroupDisplayColIds = newGroupDisplayColIds;
+            // if the group display cols have changed, then we need to update rowNode.groupData
+            // (regardless of tree data or row grouping)
+            if (this.oldGroupDisplayColIds !== newGroupDisplayColIds) {
+                this.oldGroupDisplayColIds = newGroupDisplayColIds;
 
-            this.treeNodeManager.checkAllGroupDataAfterColsChanged(this.rootNode.childrenAfterGroup);
+                this.treeNodeManager.checkAllGroupDataAfterColsChanged(this.rootNode.childrenAfterGroup);
+            }
+        } else {
+            this.oldGroupDisplayColIds = '';
         }
     }
 }
