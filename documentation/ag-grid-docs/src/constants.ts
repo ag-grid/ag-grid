@@ -123,7 +123,7 @@ export const LEGACY_CHARTS_SITE_URL = 'https://charts.ag-grid.com';
 function getChartsUrl() {
     if (SITE_URL == null) return;
 
-    if (SITE_URL?.includes('localhost:4610')) {
+    if (SITE_URL?.includes('localhost')) {
         return 'https://localhost:4600';
     } else if (SITE_URL?.includes(STAGING_SITE_URL)) {
         return 'https://charts-staging.ag-grid.com';
@@ -136,8 +136,8 @@ export const PRODUCTION_GRID_SITE_URL = 'https://ag-grid.com';
 function calculateGridUrl() {
     if (SITE_URL == null) return;
 
-    if (SITE_URL?.includes('localhost:4610')) {
-        return 'https://localhost:4610';
+    if (SITE_URL?.includes('localhost')) {
+        return SITE_URL; // NOTE: Will be different if this is on the charts website
     } else if (SITE_URL?.includes(STAGING_SITE_URL)) {
         return 'https://grid-staging.ag-grid.com';
     }
