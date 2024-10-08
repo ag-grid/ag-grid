@@ -22,6 +22,7 @@ import { BaseCreator, Downloader, RowType, ZipContainer } from 'ag-grid-communit
 import type { ExcelGridSerializingParams, StyleLinkerInterface } from './excelSerializingSession';
 import { ExcelSerializingSession } from './excelSerializingSession';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
+import { _normaliseImageExtension } from './files/ooxml/contentTypes';
 
 const createExcelXMLCoreFolderStructure = (): void => {
     ZipContainer.addFolders(['_rels/', 'docProps/', 'xl/', 'xl/theme/', 'xl/_rels/', 'xl/worksheets/']);
@@ -39,9 +40,8 @@ const createExcelXMLCoreFolderStructure = (): void => {
     images.forEach((value) => {
         const firstImage = value[0].image[0];
         const { base64, imageType } = firstImage;
-        const ext = imageType === 'jpg' ? 'jpeg' : imageType;
 
-        ZipContainer.addFile(`xl/media/image${++imgCounter}.${ext}`, base64, true);
+        ZipContainer.addFile(`xl/media/image${++imgCounter}.${_normaliseImageExtension(imageType)}`, base64, true);
     });
 };
 

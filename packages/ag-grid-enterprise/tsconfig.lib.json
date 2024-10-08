@@ -2,7 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "types": [],
-    "baseUrl": "src"
+    "baseUrl": "src",
+    "module": "node16",
+    "moduleResolution": "node16"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts", "src/**/test/**", "src/**/test-utils/**"]

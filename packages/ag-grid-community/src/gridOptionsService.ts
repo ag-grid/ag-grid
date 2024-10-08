@@ -11,14 +11,15 @@ import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
 import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
 import type { GridOptionOrDefault } from './gridOptionsDefault';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
+import type { ModuleName } from './interfaces/iModule';
 import { LocalEventService } from './localEventService';
-import type { ModuleNames } from './modules/moduleNames';
-import { ModuleRegistry } from './modules/moduleRegistry';
+import { _isModuleRegistered } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
-import { _log, _warnOnce } from './utils/function';
+import { _log } from './utils/function';
 import { _exists, toBoolean } from './utils/generic';
 import { toConstrainedNum, toNumber } from './utils/number';
+import { _logWarn } from './validation/logging';
 import type { ValidationService } from './validation/validationService';
 
 type GetKeys<T, U> = {
@@ -218,7 +219,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
         Object.entries(options).forEach(([key, value]) => {
             if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
-                _warnOnce(`${key} is an initial property and cannot be updated.`);
+                _logWarn(22, { key });
             }
             const coercedValue = getCoercedValue(key as keyof GridOptions, value);
             const shouldForce = force || (typeof coercedValue === 'object' && source === 'api'); // force objects as they could have been mutated.
@@ -303,11 +304,15 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return updatedParams;
     }
 
-    public assertModuleRegistered(moduleName: ModuleNames, reason: string): boolean {
-        return ModuleRegistry.__assertRegistered(moduleName, reason, this.gridId);
+    public assertModuleRegistered(moduleName: ModuleName, reason: string): boolean {
+        const registered = this.isModuleRegistered(moduleName);
+        if (!registered) {
+            this.validationService?.missingModule(moduleName, reason, this.gridId);
+        }
+        return registered;
     }
 
-    public isModuleRegistered(moduleName: ModuleNames): boolean {
-        return ModuleRegistry.__isRegistered(moduleName, this.gridId);
+    public isModuleRegistered(moduleName: ModuleName): boolean {
+        return _isModuleRegistered(moduleName, this.gridId, this.get('rowModelType'));
     }
 }

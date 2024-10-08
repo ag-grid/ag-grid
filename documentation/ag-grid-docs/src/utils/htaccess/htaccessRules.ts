@@ -98,7 +98,10 @@ const modRewriteRules = `
     # Redirect paths after a php file (ie index.php/path/path => index.php)
     # arguments will be carried over (ie index.php?abc=true will stay as is)
     RewriteRule ^(.*)\\.php(\\/.+)$ /$1.php [R=301,L]
-
+ 
+    # temporary redirect for tracking of partnership   
+    RedirectMatch 302 ^/theo/$ https://www.ag-grid.com/
+    
 ${SITE_301_REDIRECTS.map((redirect) => {
     const { from, fromPattern, to } = redirect as any;
     if (!to) {

@@ -1,6 +1,9 @@
-import { defineEnterpriseModule } from '../moduleUtils';
+import type { _ModuleWithoutApi } from 'ag-grid-community';
+
+import { baseEnterpriseModule } from '../moduleUtils';
 import { AggColumnNameService } from './aggColumnNameService';
 
-export const AggregationModule = defineEnterpriseModule('AggregationModule', {
+export const AggregationModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('AggregationModule'),
     beans: [AggColumnNameService],
-});
+};

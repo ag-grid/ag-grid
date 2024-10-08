@@ -4,7 +4,6 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import { _isCellSelectionEnabled, _isClientSideRowModel } from '../gridOptionsUtils';
-import { _warnOnce } from '../utils/function';
 import type { DragAndDropService } from './dragAndDropService';
 import { RowDragComp } from './rowDragComp';
 import { RowDragFeature } from './rowDragFeature';
@@ -44,7 +43,6 @@ export class RowDragService extends BeanStub implements NamedBean {
 
     public createRowDragCompForRow(rowNode: RowNode, element: HTMLElement): RowDragComp | undefined {
         if (_isCellSelectionEnabled(this.gos)) {
-            _warnOnce("Setting `rowDragEntireRow: true` in the gridOptions doesn't work with `cellSelection: true`");
             return undefined;
         }
         const translate = this.localeService.getLocaleTextFunc();
@@ -67,14 +65,8 @@ export class RowDragService extends BeanStub implements NamedBean {
         suppressVisibilityChange?: boolean
     ): RowDragComp | undefined {
         if (this.gos.get('rowDragManaged')) {
-            // row dragging only available in default row model
-            if (!_isClientSideRowModel(this.gos)) {
-                _warnOnce('managed row dragging is only allowed in the Client Side Row Model');
-                return undefined;
-            }
-
-            if (this.gos.get('pagination')) {
-                _warnOnce('managed row dragging is not possible when doing pagination');
+            // row dragging only available in default row model and when not using pagination
+            if (!_isClientSideRowModel(this.gos) || this.gos.get('pagination')) {
                 return undefined;
             }
         }

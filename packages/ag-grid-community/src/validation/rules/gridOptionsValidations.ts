@@ -1,6 +1,5 @@
 import { ComponentUtil } from '../../components/componentUtil';
 import type { GridOptions } from '../../entities/gridOptions';
-import { ModuleNames } from '../../modules/moduleNames';
 import { PropertyKeys } from '../../propertyKeys';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 import { COL_DEF_VALIDATORS } from './colDefValidations';
@@ -84,16 +83,16 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
  * Validation rules for gridOptions
  */
 const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
-    sideBar: { module: ModuleNames.SideBarModule },
-    statusBar: { module: ModuleNames.StatusBarModule },
-    enableCharts: { module: ModuleNames.GridChartsModule },
-    getMainMenuItems: { module: ModuleNames.MenuModule },
-    getContextMenuItems: { module: ModuleNames.MenuModule },
-    allowContextMenuWithControlKey: { module: ModuleNames.MenuModule },
-    enableAdvancedFilter: { module: ModuleNames.AdvancedFilterModule },
+    sideBar: { module: 'SideBarModule' },
+    statusBar: { module: 'StatusBarModule' },
+    enableCharts: { module: 'GridChartsModule' },
+    getMainMenuItems: { module: 'MenuModule' },
+    getContextMenuItems: { module: 'MenuModule' },
+    allowContextMenuWithControlKey: { module: 'MenuModule' },
+    enableAdvancedFilter: { module: 'AdvancedFilterModule' },
     treeData: {
         supportedRowModels: ['clientSide', 'serverSide'],
-        module: ModuleNames.RowGroupingModule,
+        module: 'RowGroupingModule',
         validate: (options) => {
             const rowModel = options.rowModelType ?? 'clientSide';
             switch (rowModel) {
@@ -109,9 +108,28 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
             return null;
         },
     },
-    masterDetail: { module: ModuleNames.MasterDetailModule },
+    pivotMode: {
+        dependencies: {
+            treeData: {
+                required: [false, undefined],
+                reason: 'Pivot Mode is not supported with Tree Data.',
+            },
+        },
+    },
+    rowDragManaged: {
+        supportedRowModels: ['clientSide'],
+        dependencies: {
+            treeData: {
+                required: [false, undefined],
+            },
+            pagination: {
+                required: [false, undefined],
+            },
+        },
+    },
+    masterDetail: { module: 'MasterDetailModule' },
 
-    enableRangeSelection: { module: ModuleNames.RangeSelectionModule },
+    enableRangeSelection: { module: 'RangeSelectionModule', rowDragEntireRow: { required: [false, undefined] } },
     enableRangeHandle: {
         dependencies: {
             enableRangeSelection: { required: [true] },
@@ -156,22 +174,22 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
 
     viewportDatasource: {
         supportedRowModels: ['viewport'],
-        module: ModuleNames.ViewportRowModelModule,
+        module: 'ViewportRowModelModule',
     },
     serverSideDatasource: {
         supportedRowModels: ['serverSide'],
-        module: ModuleNames.ServerSideRowModelModule,
+        module: 'ServerSideRowModelModule',
     },
     cacheBlockSize: {
         supportedRowModels: ['serverSide', 'infinite'],
     },
     datasource: {
         supportedRowModels: ['infinite'],
-        module: ModuleNames.InfiniteRowModelModule,
+        module: 'InfiniteRowModelModule',
     },
     rowData: {
         supportedRowModels: ['clientSide'],
-        module: ModuleNames.ClientSideRowModelModule,
+        module: 'ClientSideRowModelModule',
     },
     paginationPageSizeSelector: {
         validate: (options) => {
@@ -192,11 +210,32 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
             if (rowSelection && typeof rowSelection === 'string') {
                 return 'As of version 32.2.1, using `rowSelection` with the values "single" or "multiple" has been deprecated. Use the object value instead.';
             }
+            if (rowSelection && typeof rowSelection !== 'object') {
+                return 'Expected `RowSelectionOptions` object for the `rowSelection` property.';
+            }
             return null;
         },
     },
     cellSelection: {
-        module: ModuleNames.RangeSelectionModule,
+        module: 'RangeSelectionModule',
+        dependencies: {
+            rowDragEntireRow: { required: [false, undefined] },
+        },
+    },
+    quickFilterText: {
+        supportedRowModels: ['clientSide'],
+    },
+    initialGroupOrderComparator: {
+        supportedRowModels: ['clientSide'],
+    },
+    rowStyle: {
+        validate: (options) => {
+            const rowStyle = options.rowStyle;
+            if (rowStyle && typeof rowStyle === 'function') {
+                return 'rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead';
+            }
+            return null;
+        },
     },
 
     columnDefs: () => COL_DEF_VALIDATORS,

@@ -46,6 +46,12 @@
         "transitive": false
       }
     ],
+    "styleOutputs": [
+      {
+        "dependentTasksOutputFiles": "**/*.*css",
+        "transitive": true
+      }
+    ],
     "allOutputs": [
       {
         "dependentTasksOutputFiles": "**/*",

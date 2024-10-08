@@ -958,6 +958,7 @@ export {
     _isElementInEventPath,
 } from './utils/event';
 export { _log, _warnOnce, _errorOnce, _debounce, _compose, _doOnce, _waitUntil } from './utils/function';
+export { _logWarn, _logError } from './validation/logging';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export {
@@ -995,9 +996,8 @@ export { XmlFactory } from './csvExport/xmlFactory';
 export { ZipContainer } from './csvExport/zipContainer/zipContainer';
 
 // modules
-export { Module, ModuleValidationResult, ModuleWithApi, BaseModule } from './interfaces/iModule';
-export { ModuleNames } from './modules/moduleNames';
-export { ModuleRegistry } from './modules/moduleRegistry';
+export { Module, ModuleValidationResult, _ModuleWithApi, _ModuleWithoutApi, ModuleName } from './interfaces/iModule';
+export { ModuleRegistry, _getGridRegisteredModules } from './modules/moduleRegistry';
 
 export { ValidationModule } from './validation/validationModule';
 
@@ -1019,7 +1019,7 @@ export {
     SsrmInfiniteSharedApiModule as _SsrmInfiniteSharedApiModule,
 } from './api/sharedApiModule';
 export { CommunityMenuApiModule } from './misc/menu/sharedMenuModule';
-export { CommunityFeaturesModule, GridCoreModule } from './gridCoreModule';
+export { CommunityFeaturesModule } from './communityFeaturesModule';
 export { SortModule } from './sort/sortModule';
 export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
 export { ClientSideRowModelModule, ClientSideRowModelCoreModule } from './clientSideRowModel/clientSideRowModelModule';

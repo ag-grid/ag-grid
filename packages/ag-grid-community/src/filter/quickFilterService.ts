@@ -5,11 +5,10 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { GetQuickFilterTextParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowModel } from '../interfaces/iRowModel';
-import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
+import { _logWarn } from '../validation/logging';
 import type { FilterValueService } from './filterValueService';
 
 export type QuickFilterServiceEvent = 'quickFilterChanged';
@@ -122,17 +121,12 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
             return null;
         }
 
-        if (!_isClientSideRowModel(this.gos)) {
-            _warnOnce('Quick filtering only works with the Client-Side Row Model');
-            return null;
-        }
-
         return newFilter.toUpperCase();
     }
 
     private setQuickFilter(newFilter: string | undefined): void {
         if (newFilter != null && typeof newFilter !== 'string') {
-            _warnOnce(`Grid option quickFilterText only supports string inputs, received: ${typeof newFilter}`);
+            _logWarn(70, { newFilter });
             return;
         }
 

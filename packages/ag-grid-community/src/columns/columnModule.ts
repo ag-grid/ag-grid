@@ -1,5 +1,6 @@
 import type { _ColumnGridApi, _GetColumnDefsApi } from '../api/gridApi';
-import { defineCommunityModule } from '../interfaces/iModule';
+import { baseCommunityModule } from '../interfaces/iModule';
+import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { CheckboxCellRendererModule } from '../rendering/cellRenderers/cellRendererModule';
 import {
     applyColumnState,
@@ -40,27 +41,32 @@ import { ColumnFlexService } from './columnFlexService';
 import { ControlsColService } from './controlsColService';
 import { DataTypeService } from './dataTypeService';
 
-export const DataTypeModule = defineCommunityModule('DataTypeModule', {
+export const DataTypeModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('DataTypeModule'),
     beans: [DataTypeService],
     dependsOn: [CheckboxCellRendererModule],
-});
+};
 
-export const ControlsColumnModule = defineCommunityModule('ControlsColumnModule', {
+export const ControlsColumnModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('ControlsColumnModule'),
     beans: [ControlsColService],
-});
+};
 
-export const GetColumnDefsApiModule = defineCommunityModule<_GetColumnDefsApi<any>>('GetColumnDefsApiModule', {
+export const GetColumnDefsApiModule: _ModuleWithApi<_GetColumnDefsApi<any>> = {
+    ...baseCommunityModule('GetColumnDefsApiModule'),
     beans: [ColumnDefFactory],
     apiFunctions: {
         getColumnDefs,
     },
-});
+};
 
-export const ColumnFlexModule = defineCommunityModule('ColumnFlexModule', {
+export const ColumnFlexModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('ColumnFlexModule'),
     beans: [ColumnFlexService],
-});
+};
 
-export const ColumnApiModule = defineCommunityModule<_ColumnGridApi<any>>('ColumnApiModule', {
+export const ColumnApiModule: _ModuleWithApi<_ColumnGridApi<any>> = {
+    ...baseCommunityModule('ColumnApiModule'),
     apiFunctions: {
         getColumnDef,
         setColumnGroupOpened,
@@ -94,4 +100,4 @@ export const ColumnApiModule = defineCommunityModule<_ColumnGridApi<any>>('Colum
         getRightDisplayedColumnGroups,
         getAllDisplayedColumnGroups,
     },
-});
+};

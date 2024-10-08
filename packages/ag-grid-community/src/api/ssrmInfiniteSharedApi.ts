@@ -1,5 +1,5 @@
 import type { BeanCollection } from '../context/context';
-import { _errorOnce } from '../utils/function';
+import { _logError } from '../validation/logging';
 
 export function setRowCount(beans: BeanCollection, rowCount: number, maxRowFound?: boolean): void {
     const serverSideRowModel = beans.rowModelHelperService?.getServerSideRowModel();
@@ -8,7 +8,7 @@ export function setRowCount(beans: BeanCollection, rowCount: number, maxRowFound
             serverSideRowModel.setRowCount(rowCount, maxRowFound);
             return;
         }
-        _errorOnce('setRowCount cannot be used while using row grouping.');
+        _logError(28, {});
         return;
     }
 

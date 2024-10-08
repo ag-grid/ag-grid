@@ -77,7 +77,7 @@ import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEvents/apiEventService';
 import type { MenuService } from '../misc/menu/menuService';
 import type { StateService } from '../misc/state/stateService';
-import { ModuleRegistry } from '../modules/moduleRegistry';
+import { _unRegisterGridModules } from '../modules/moduleRegistry';
 import type { CellNavigationService } from '../navigation/cellNavigationService';
 import type { HeaderNavigationService } from '../navigation/headerNavigationService';
 import type { NavigationService } from '../navigation/navigationService';
@@ -313,7 +313,7 @@ export class Context extends GenericContext<BeanName, BeanCollection> {
     public override destroy(): void {
         super.destroy();
 
-        ModuleRegistry.__unRegisterGridModules(this.gridId);
+        _unRegisterGridModules(this.gridId);
     }
 
     public getGridId(): string {

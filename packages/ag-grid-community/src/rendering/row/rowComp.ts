@@ -4,7 +4,6 @@ import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContai
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _setAriaRole } from '../../utils/aria';
 import { _addStylesToElement, _setDomChildOrder } from '../../utils/dom';
-import { _errorOnce } from '../../utils/function';
 import { _getAllValuesInObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
 import { CellComp } from '../cell/cellComp';
@@ -145,10 +144,6 @@ export class RowComp extends Component {
     }
 
     private setFullWidthRowComp(fullWidthRowComponent: ICellRendererComp): void {
-        if (this.fullWidthCellRenderer) {
-            _errorOnce('should not be setting fullWidthRowComponent twice');
-        }
-
         this.fullWidthCellRenderer = fullWidthRowComponent;
         this.addDestroyFunc(() => {
             this.fullWidthCellRenderer = this.beans.context.destroyBean(this.fullWidthCellRenderer);

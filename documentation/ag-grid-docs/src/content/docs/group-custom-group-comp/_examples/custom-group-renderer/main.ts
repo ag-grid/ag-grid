@@ -28,15 +28,13 @@ const columnDefs: ColDef[] = [
     },
 ];
 
-const autoGroupColumnDef: ColDef = {
-    cellRenderer: CustomGroupCellRenderer,
-};
-
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
-    autoGroupColumnDef: autoGroupColumnDef,
+    autoGroupColumnDef: {
+        cellRenderer: CustomGroupCellRenderer,
+    },
     defaultColDef: {
         flex: 1,
         minWidth: 120,

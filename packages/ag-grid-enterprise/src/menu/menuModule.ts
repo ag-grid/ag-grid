@@ -1,8 +1,8 @@
-import type { _MenuGridApi } from 'ag-grid-community';
-import { CommunityMenuApiModule, ModuleNames, PopupModule, SharedMenuModule } from 'ag-grid-community';
+import type { _MenuGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
+import { CommunityMenuApiModule, PopupModule, SharedMenuModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { defineEnterpriseModule } from '../moduleUtils';
+import { baseEnterpriseModule } from '../moduleUtils';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
 import { ColumnChooserFactory } from './columnChooserFactory';
@@ -13,7 +13,8 @@ import { hideColumnChooser, showColumnChooser, showContextMenu } from './menuApi
 import { MenuItemMapper } from './menuItemMapper';
 import { MenuUtils } from './menuUtils';
 
-export const MenuCoreModule = defineEnterpriseModule('MenuCoreModule', {
+export const MenuCoreModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('MenuCoreModule'),
     beans: [MenuItemMapper, ChartMenuItemMapper, MenuUtils],
     dependsOn: [EnterpriseCoreModule, PopupModule, SharedMenuModule],
     userComponents: [
@@ -22,32 +23,37 @@ export const MenuCoreModule = defineEnterpriseModule('MenuCoreModule', {
             classImp: AgMenuItemRenderer,
         },
     ],
-});
+};
 
-export const ColumnMenuModule = defineEnterpriseModule('ColumnMenuModule', {
+export const ColumnMenuModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('ColumnMenuModule'),
     beans: [EnterpriseMenuFactory, ColumnMenuFactory],
     dependsOn: [MenuCoreModule],
-});
+};
 
-export const ColumnChooserModule = defineEnterpriseModule('ColumnChooserModule', {
+export const ColumnChooserModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('ColumnChooserModule'),
     beans: [ColumnChooserFactory],
     dependsOn: [MenuCoreModule],
-});
+};
 
-export const ContextMenuModule = defineEnterpriseModule('ContextMenuModule', {
+export const ContextMenuModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('ContextMenuModule'),
     beans: [ContextMenuService],
     dependsOn: [MenuCoreModule],
-});
+};
 
-export const MenuApiModule = defineEnterpriseModule<_MenuGridApi>('MenuApiModule', {
+export const MenuApiModule: _ModuleWithApi<_MenuGridApi> = {
+    ...baseEnterpriseModule('MenuApiModule'),
     apiFunctions: {
         showContextMenu,
         showColumnChooser,
         hideColumnChooser,
     },
     dependsOn: [ColumnChooserModule, ContextMenuModule, CommunityMenuApiModule],
-});
+};
 
-export const MenuModule = defineEnterpriseModule(ModuleNames.MenuModule, {
+export const MenuModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('MenuModule'),
     dependsOn: [ColumnMenuModule, ColumnChooserModule, ContextMenuModule, MenuApiModule],
-});
+};

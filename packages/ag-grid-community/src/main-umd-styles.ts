@@ -24,11 +24,11 @@ import {
     ModuleRegistry,
 } from './main';
 
-ModuleRegistry.__registerModules(
-    // [CommunityFeaturesModule, ClientSideRowModelModule],
-    [CommunityFeaturesModule, ClientSideRowModelModule, InfiniteRowModelModule, CsvExportModule],
-    false,
-    undefined
-);
+ModuleRegistry.registerModules([
+    CommunityFeaturesModule,
+    ClientSideRowModelModule,
+    InfiniteRowModelModule,
+    CsvExportModule,
+]);
 
 export * from './main';

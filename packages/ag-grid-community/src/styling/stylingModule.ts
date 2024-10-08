@@ -1,11 +1,14 @@
-import { defineCommunityModule } from '../interfaces/iModule';
+import { baseCommunityModule } from '../interfaces/iModule';
+import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { CellStyleService } from './cellStyleService';
 import { RowStyleService } from './rowStyleService';
 
-export const CellStyleModule = defineCommunityModule('CellStyleModule', {
+export const CellStyleModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('CellStyleModule'),
     beans: [CellStyleService],
-});
+};
 
-export const RowStyleModule = defineCommunityModule('RowStyleModule', {
+export const RowStyleModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('RowStyleModule'),
     beans: [RowStyleService],
-});
+};

@@ -48,8 +48,16 @@
                 defaultExtension: 'js',
                 format: 'cjs',
             },
-            'ag-grid-charts-enterprise': {
+            'ag-charts-types': {
                 main: './dist/package/main.cjs.js',
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-charts-community/modules': {
+                defaultExtension: 'js',
+                format: 'cjs',
+            },
+            'ag-charts-enterprise/modules': {
                 defaultExtension: 'js',
                 format: 'cjs',
             },

@@ -102,7 +102,9 @@ const VueExample = {
                 filter: true,
             },
             rowData: null,
-            themeClass: 'ag-theme-quartz',
+            themeClass:
+                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+                'ag-theme-quartz' /** DARK MODE END **/,
             frostPrefix: false,
         };
     },

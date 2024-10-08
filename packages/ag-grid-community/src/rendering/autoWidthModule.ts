@@ -1,6 +1,8 @@
-import { defineCommunityModule } from '../interfaces/iModule';
+import { baseCommunityModule } from '../interfaces/iModule';
+import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { AutoWidthCalculator } from './autoWidthCalculator';
 
-export const AutoWidthModule = defineCommunityModule('AutoWidthModule', {
+export const AutoWidthModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('AutoWidthModule'),
     beans: [AutoWidthCalculator],
-});
+};

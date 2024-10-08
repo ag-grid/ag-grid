@@ -1,5 +1,6 @@
 import type { _RenderGridApi } from '../api/gridApi';
-import { defineCommunityModule } from '../interfaces/iModule';
+import type { _ModuleWithApi } from '../interfaces/iModule';
+import { baseCommunityModule } from '../interfaces/iModule';
 import {
     flashCells,
     flushAllAnimationFrames,
@@ -11,7 +12,8 @@ import {
     setGridAriaProperty,
 } from './renderApi';
 
-export const RenderApiModule = defineCommunityModule<_RenderGridApi<any>>('RenderApiModule', {
+export const RenderApiModule: _ModuleWithApi<_RenderGridApi<any>> = {
+    ...baseCommunityModule('RenderApiModule'),
     apiFunctions: {
         setGridAriaProperty,
         refreshCells,
@@ -22,4 +24,4 @@ export const RenderApiModule = defineCommunityModule<_RenderGridApi<any>>('Rende
         getSizesForCurrentTheme,
         getCellRendererInstances,
     },
-});
+};

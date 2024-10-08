@@ -25,7 +25,7 @@ import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { SortController } from '../sort/sortController';
 import { _last } from '../utils/array';
-import { _warnOnce } from '../utils/function';
+import { _logWarn } from '../validation/logging';
 import type { DragAndDropIcon, DragAndDropService, DraggingEvent, DropTarget } from './dragAndDropService';
 import { DragSourceType } from './dragAndDropService';
 
@@ -310,14 +310,12 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     public addRowDropZone(params: RowDropZoneParams & { fromGrid?: boolean }): void {
         if (!params.getContainer()) {
-            _warnOnce('addRowDropZone - A container target needs to be provided');
+            _logWarn(55, {});
             return;
         }
 
         if (this.dragAndDropService.findExternalZone(params)) {
-            _warnOnce(
-                'addRowDropZone - target already exists in the list of DropZones. Use `removeRowDropZone` before adding it again.'
-            );
+            _logWarn(56, {});
             return;
         }
 

@@ -3,8 +3,8 @@ import type { PaginationChangedEvent } from '../../events';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _areEqual } from '../../utils/array';
 import { _clearElement } from '../../utils/dom';
-import { _warnOnce } from '../../utils/function';
 import { _missingOrEmpty } from '../../utils/generic';
+import { _logWarn } from '../../validation/logging';
 import type { ListOption } from '../../widgets/agList';
 import { AgSelect } from '../../widgets/agSelect';
 import type { ComponentSelector } from '../../widgets/component';
@@ -139,13 +139,9 @@ export class PageSizeSelectorComp extends Component {
             const pageSizeSet = this.gos.exists('paginationPageSize');
             const pageSizesSet = this.gos.get(paginationPageSizeSelector) !== true;
 
-            _warnOnce(
-                `'paginationPageSize=${paginationPageSizeOption}'${pageSizeSet ? '' : ' (default value)'}, but ${paginationPageSizeOption} is not included in${pageSizesSet ? '' : ' the default'} paginationPageSizeSelector=[${pageSizeOptions.join(', ')}].`
-            );
+            _logWarn(94, { pageSizeSet, pageSizesSet, pageSizeOptions, paginationPageSizeOption });
             if (!pageSizesSet) {
-                _warnOnce(
-                    `Either set '${paginationPageSizeSelector}' to an array that includes ${paginationPageSizeOption} or to 'false' to disable the page size selector.`
-                );
+                _logWarn(95, { paginationPageSizeOption, paginationPageSizeSelector });
             }
             // When the paginationPageSize option is set to a value that is
             // not in the list of page size options.

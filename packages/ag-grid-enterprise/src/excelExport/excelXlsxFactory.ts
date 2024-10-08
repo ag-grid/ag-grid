@@ -19,7 +19,7 @@ import type {
 } from './assets/excelInterfaces';
 import { createXmlPart, setExcelImageTotalHeight, setExcelImageTotalWidth } from './assets/excelUtils';
 import type { ExcelGridSerializingParams } from './excelSerializingSession';
-import contentTypesFactory from './files/ooxml/contentTypes';
+import contentTypesFactory, { _normaliseImageExtension } from './files/ooxml/contentTypes';
 import coreFactory from './files/ooxml/core';
 import drawingFactory from './files/ooxml/drawing';
 import relationshipsFactory from './files/ooxml/relationships';
@@ -389,10 +389,12 @@ export class ExcelXlsxFactory {
         const XMLArr: ExcelRelationship[] = [];
 
         for (const [key, value] of worksheetImageIds) {
+            const { index, type } = value;
+
             XMLArr.push({
-                Id: `rId${value.index + 1}`,
+                Id: `rId${index + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
-                Target: `../media/image${this.workbookImageIds.get(key)!.index + 1}.${value.type}`,
+                Target: `../media/image${this.workbookImageIds.get(key)!.index + 1}.${_normaliseImageExtension(type)}`,
             });
         }
 
@@ -416,12 +418,11 @@ export class ExcelXlsxFactory {
             }
 
             const { index, type } = workbookImage;
-            const imageType = type === 'jpg' ? 'jpeg' : type;
 
             XMLArr.push({
                 Id: `rId${i + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
-                Target: `../media/image${index + 1}.${imageType}`,
+                Target: `../media/image${index + 1}.${_normaliseImageExtension(type)}`,
             });
         }
 

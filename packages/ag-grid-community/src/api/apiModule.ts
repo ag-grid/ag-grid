@@ -1,4 +1,5 @@
-import { defineCommunityModule } from '../interfaces/iModule';
+import type { _ModuleWithApi } from '../interfaces/iModule';
+import { baseCommunityModule } from '../interfaces/iModule';
 import { destroy, getGridId, getGridOption, isDestroyed, setGridOption, updateGridOptions } from './coreApi';
 import type { _CoreGridApi, _RowGridApi, _ScrollGridApi } from './gridApi';
 import {
@@ -21,7 +22,8 @@ import {
     getVerticalPixelRange,
 } from './scrollApi';
 
-export const CoreApiModule = defineCommunityModule<_CoreGridApi>('CoreApiModule', {
+export const CoreApiModule: _ModuleWithApi<_CoreGridApi> = {
+    ...baseCommunityModule('CoreApiModule'),
     apiFunctions: {
         getGridId,
         destroy,
@@ -30,9 +32,10 @@ export const CoreApiModule = defineCommunityModule<_CoreGridApi>('CoreApiModule'
         setGridOption,
         updateGridOptions,
     },
-});
+};
 
-export const RowApiModule = defineCommunityModule<_RowGridApi<any>>('RowApiModule', {
+export const RowApiModule: _ModuleWithApi<_RowGridApi<any>> = {
+    ...baseCommunityModule('RowApiModule'),
     apiFunctions: {
         redrawRows,
         setRowNodeExpanded,
@@ -45,9 +48,10 @@ export const RowApiModule = defineCommunityModule<_RowGridApi<any>>('RowApiModul
         getDisplayedRowAtIndex,
         getDisplayedRowCount,
     },
-});
+};
 
-export const ScrollApiModule = defineCommunityModule<_ScrollGridApi<any>>('ScrollApiModule', {
+export const ScrollApiModule: _ModuleWithApi<_ScrollGridApi<any>> = {
+    ...baseCommunityModule('ScrollApiModule'),
     apiFunctions: {
         getVerticalPixelRange,
         getHorizontalPixelRange,
@@ -55,4 +59,4 @@ export const ScrollApiModule = defineCommunityModule<_ScrollGridApi<any>>('Scrol
         ensureIndexVisible,
         ensureNodeVisible,
     },
-});
+};

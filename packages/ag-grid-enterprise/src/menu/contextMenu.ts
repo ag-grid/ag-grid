@@ -23,7 +23,6 @@ import type {
 import {
     BeanStub,
     Component,
-    ModuleNames,
     _areCellsEqual,
     _exists,
     _isIOSUserAgent,
@@ -75,7 +74,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     ): (MenuItemDef | string)[] | undefined {
         const defaultMenuOptions: string[] = [];
 
-        if (_exists(node) && this.gos.isModuleRegistered(ModuleNames.ClipboardModule)) {
+        if (_exists(node) && this.gos.isModuleRegistered('ClipboardCoreModule')) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
                 if (!this.gos.get('suppressCutToClipboard')) {
@@ -85,7 +84,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             }
         }
 
-        if (this.gos.get('enableCharts') && this.gos.isModuleRegistered(ModuleNames.GridChartsModule)) {
+        if (this.gos.get('enableCharts') && this.gos.isModuleRegistered('GridChartsCoreModule')) {
             if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -97,8 +96,8 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         if (_exists(node)) {
             // if user clicks a cell
-            const csvModuleMissing = !this.gos.isModuleRegistered(ModuleNames.CsvExportModule);
-            const excelModuleMissing = !this.gos.isModuleRegistered(ModuleNames.ExcelExportModule);
+            const csvModuleMissing = !this.gos.isModuleRegistered('CsvExportCoreModule');
+            const excelModuleMissing = !this.gos.isModuleRegistered('ExcelExportCoreModule');
             const suppressExcel = this.gos.get('suppressExcelExport') || excelModuleMissing;
             const suppressCsv = this.gos.get('suppressCsvExport') || csvModuleMissing;
             const onIPad = _isIOSUserAgent();

@@ -6,9 +6,9 @@ import type { GridOptions } from '../../entities/gridOptions';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { _errorOnce } from '../../utils/function';
 import { _mergeDeep } from '../../utils/object';
 import { AgPromise } from '../../utils/promise';
+import { _logError } from '../../validation/logging';
 import type { AgComponentUtils } from './agComponentUtils';
 import type { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
 import type { FrameworkComponentWrapper } from './frameworkComponentWrapper';
@@ -152,7 +152,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
 
         if (!jsComp && !fwComp) {
             if (mandatory) {
-                _errorOnce(`Could not find component ${compName}, did you forget to configure this component?`);
+                _logError(50, { compName });
             }
             return;
         }

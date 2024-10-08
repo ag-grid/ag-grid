@@ -22,9 +22,17 @@ export function setValidationDocLink(docLink: string) {
 
 type LogFn = (message: string, ...args: any[]) => void;
 
-function getMsgOrDefault<TId extends ErrorId>(logger: LogFn, id: TId, args: GetErrorParams<TId>) {
+function getMsgOrDefault<TId extends ErrorId>(
+    logger: LogFn,
+    id: TId,
+    args: GetErrorParams<TId>,
+    defaultMessage?: string
+) {
     if (suppressAllLogging) return;
-    logger(`error #${id}`, ...(validationService?.getConsoleMessage(id, args) ?? [minifiedLog(id, args)]));
+    logger(
+        `error #${id}`,
+        ...(validationService?.getConsoleMessage(id, args) ?? [minifiedLog(id, args, defaultMessage)])
+    );
 }
 
 /**
@@ -60,16 +68,16 @@ export function getErrorLink(errorNum: ErrorId, args: GetErrorParams<any>) {
     return `${baseDocLink}/errors/${errorNum}?${params.toString()}`;
 }
 
-const minifiedLog = (errorNum: ErrorId, args: GetErrorParams<any>) => {
+const minifiedLog = (errorNum: ErrorId, args: GetErrorParams<any>, defaultMessage?: string) => {
     const errorLink = getErrorLink(errorNum, args);
-    return `Visit ${errorLink} \n  Alternatively register the ValidationModule to see the full message in the console.`;
+    return `${defaultMessage ? defaultMessage + ' \n' : ''}Visit ${errorLink}${defaultMessage ? '' : ' \n  Alternatively register the ValidationModule to see the full message in the console.'}`;
 };
 
 export function _logWarn<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
->(id: TId, args: GetErrorParams<TId>) {
+>(id: TId, args: GetErrorParams<TId>): void {
     getMsgOrDefault(warnLog, id!, args as any);
 }
 
@@ -79,4 +87,13 @@ export function _logError<
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(id: TId, args: GetErrorParams<TId>) {
     getMsgOrDefault(errorLog, id!, args as any);
+}
+
+/** Used for messages before the ValidationService has been created */
+export function _logPreCreationError<
+    TId extends ErrorId,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    TShowMessageAtCallLocation = ErrorMap[TId],
+>(id: TId, args: GetErrorParams<TId>, defaultMessage: string) {
+    getMsgOrDefault(errorLog, id!, args as any, defaultMessage);
 }

@@ -7,6 +7,7 @@ import agChartsAngular from '../../../../../../../node_modules/ag-charts-angular
 import agChartsCommunity from '../../../../../../../node_modules/ag-charts-community/package.json';
 import agChartsEnterprise from '../../../../../../../node_modules/ag-charts-enterprise/package.json';
 import agChartsReact from '../../../../../../../node_modules/ag-charts-react/package.json';
+import agChartsTypes from '../../../../../../../node_modules/ag-charts-types/package.json';
 import agChartsVue3 from '../../../../../../../node_modules/ag-charts-vue3/package.json';
 
 interface Props {
@@ -31,7 +32,6 @@ const localBuildAndArchiveConfiguration: Configuration = {
     gridMap: {
         'ag-grid-community': `${localPrefix}/ag-grid-community`,
         'ag-grid-enterprise': `${localPrefix}/ag-grid-enterprise`,
-        'ag-grid-charts-enterprise': `${localPrefix}/ag-grid-charts-enterprise`,
         'ag-grid-angular': `${localPrefix}/ag-grid-angular`,
         'ag-grid-react': `${localPrefix}/ag-grid-react`,
         'ag-grid-vue3': `${localPrefix}/ag-grid-vue3`,
@@ -41,8 +41,11 @@ const localBuildAndArchiveConfiguration: Configuration = {
         '@ag-grid-community/locale': `${localPrefix}/@ag-grid-community/locale/dist/package/main.cjs.js`,
     },
     gridEnterprisePaths: {
+        'ag-charts-types': `${localPrefix}/ag-charts-types/dist/package/main.cjs.js`,
         'ag-charts-community': `${localPrefix}/ag-charts-community/dist/package/main.cjs.js`,
         'ag-charts-enterprise': `${localPrefix}/ag-charts-enterprise/dist/package/main.cjs.js`,
+        'ag-charts-community/modules': `${localPrefix}/ag-charts-community/dist/package/main-modules.cjs.js`,
+        'ag-charts-enterprise/modules': `${localPrefix}/ag-charts-enterprise/dist/package/main-modules.cjs.js`,
         '@ag-grid-community/locale': `${localPrefix}/@ag-grid-community/locale/dist/package/main.cjs.js`,
     },
 };
@@ -54,6 +57,7 @@ const publishedConfiguration: Configuration = {
         'ag-charts-angular': `${NPM_CDN}/ag-charts-angular@${agChartsAngular.version}/`,
         'ag-charts-vue3': `${NPM_CDN}/ag-charts-vue3@${agChartsVue3.version}/`,
         'ag-charts-community': `${NPM_CDN}/ag-charts-community@${agChartsCommunity.version}/`,
+        'ag-charts-types': `${NPM_CDN}/ag-charts-types@${agChartsTypes.version}/`,
         '@ag-grid-community/locale': `${NPM_CDN}/@ag-grid-community/locale@${agGridVersion}/dist/package/main.cjs.js`,
     },
     gridEnterprisePaths: {
@@ -61,6 +65,7 @@ const publishedConfiguration: Configuration = {
         'ag-charts-angular': `${NPM_CDN}/ag-charts-angular@${agChartsAngular.version}/`,
         'ag-charts-vue3': `${NPM_CDN}/ag-charts-vue3@${agChartsVue3.version}/`,
         'ag-charts-community': `${NPM_CDN}/ag-charts-community@${agChartsCommunity.version}/dist/package/main.cjs.js`,
+        'ag-charts-types': `${NPM_CDN}/ag-charts-types@${agChartsTypes.version}/`,
         'ag-charts-enterprise': `${NPM_CDN}/ag-charts-enterprise@${agChartsEnterprise.version}/dist/package/main.cjs.js`,
         '@ag-grid-community/locale': `${NPM_CDN}/@ag-grid-community/locale@${agGridVersion}/dist/package/main.cjs.js`,
     },
@@ -118,12 +123,15 @@ export const SystemJs = ({
     isDev,
 }: Props) => {
     const systemJsPath = pathJoin(boilerplatePath, `systemjs.config${isDev ? '.dev' : ''}.js`);
+
     let configuration = isUsingPublishedPackages() ? publishedConfiguration : localBuildAndArchiveConfiguration;
 
     if (isDev) {
         configuration.gridMap = {
             ...configuration.gridMap,
             'ag-charts-community': `${localPrefix}/ag-charts-community`,
+            'ag-charts-enterprise': `${localPrefix}/ag-charts-enterprise`,
+            'ag-charts-types': `${localPrefix}/ag-charts-types`,
             '@ag-grid-community/locale': `${localPrefix}/@ag-grid-community/locale`,
         };
     }

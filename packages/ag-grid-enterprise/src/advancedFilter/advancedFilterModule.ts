@@ -1,8 +1,8 @@
-import type { _AdvancedFilterGridApi } from 'ag-grid-community';
-import { DragAndDropModule, FilterCoreModule, FilterValueModule, ModuleNames, PopupModule } from 'ag-grid-community';
+import type { _AdvancedFilterGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
+import { DragAndDropModule, FilterCoreModule, FilterValueModule, PopupModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { defineEnterpriseModule } from '../moduleUtils';
+import { baseEnterpriseModule } from '../moduleUtils';
 import {
     getAdvancedFilterModel,
     hideAdvancedFilterBuilder,
@@ -12,12 +12,14 @@ import {
 import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import { AdvancedFilterService } from './advancedFilterService';
 
-export const AdvancedFilterCoreModule = defineEnterpriseModule('AdvancedFilterCoreModule', {
+export const AdvancedFilterCoreModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('AdvancedFilterCoreModule'),
     beans: [AdvancedFilterService, AdvancedFilterExpressionService],
     dependsOn: [EnterpriseCoreModule, FilterCoreModule, DragAndDropModule, PopupModule, FilterValueModule],
-});
+};
 
-export const AdvancedFilterApiModule = defineEnterpriseModule<_AdvancedFilterGridApi>('AdvancedFilterApiModule', {
+export const AdvancedFilterApiModule: _ModuleWithApi<_AdvancedFilterGridApi> = {
+    ...baseEnterpriseModule('AdvancedFilterApiModule'),
     apiFunctions: {
         getAdvancedFilterModel,
         setAdvancedFilterModel,
@@ -25,8 +27,9 @@ export const AdvancedFilterApiModule = defineEnterpriseModule<_AdvancedFilterGri
         hideAdvancedFilterBuilder,
     },
     dependsOn: [AdvancedFilterCoreModule],
-});
+};
 
-export const AdvancedFilterModule = defineEnterpriseModule(ModuleNames.AdvancedFilterModule, {
+export const AdvancedFilterModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('AdvancedFilterModule'),
     dependsOn: [AdvancedFilterCoreModule, AdvancedFilterApiModule],
-});
+};

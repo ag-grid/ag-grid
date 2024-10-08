@@ -1,7 +1,6 @@
-import type { _ServerSideRowModelGridApi } from 'ag-grid-community';
+import type { _ModuleWithApi, _ModuleWithoutApi, _ServerSideRowModelGridApi } from 'ag-grid-community';
 import {
     CommunityFeaturesModule,
-    ModuleNames,
     RowModelHelperService,
     RowNodeBlockModule,
     SortModule,
@@ -10,7 +9,7 @@ import {
 } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { defineEnterpriseModule } from '../moduleUtils';
+import { baseEnterpriseModule } from '../moduleUtils';
 import { BlockUtils } from './blocks/blockUtils';
 import { ExpandListener } from './listeners/expandListener';
 import { FilterListener } from './listeners/filterListener';
@@ -36,8 +35,9 @@ import { StoreFactory } from './stores/storeFactory';
 import { StoreUtils } from './stores/storeUtils';
 import { TransactionManager } from './transactionManager';
 
-export const ServerSideRowModelCoreModule = defineEnterpriseModule('ServerSideRowModelCoreModule', {
-    rowModel: 'serverSide',
+export const ServerSideRowModelCoreModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('ServerSideRowModelCoreModule'),
+    rowModels: ['serverSide'],
     beans: [
         ServerSideRowModel,
         ExpandListener,
@@ -52,46 +52,50 @@ export const ServerSideRowModelCoreModule = defineEnterpriseModule('ServerSideRo
         LazyBlockLoadingService,
     ],
     dependsOn: [EnterpriseCoreModule, RowNodeBlockModule],
-});
+};
 
-export const ServerSideRowModelRowSelectionModule = defineEnterpriseModule('ServerSideRowModelRowSelectionModule', {
-    rowModel: 'serverSide',
+export const ServerSideRowModelRowSelectionModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('ServerSideRowModelRowSelectionModule'),
+    rowModels: ['serverSide'],
     beans: [ServerSideSelectionService],
     dependsOn: [ServerSideRowModelCoreModule],
-});
+};
 
-export const ServerSideRowModelRowGroupingModule = defineEnterpriseModule('ServerSideRowModelRowGroupingModule', {
-    rowModel: 'serverSide',
+export const ServerSideRowModelRowGroupingModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('ServerSideRowModelRowGroupingModule'),
+    rowModels: ['serverSide'],
     beans: [ServerSideExpansionService],
     dependsOn: [ServerSideRowModelCoreModule],
-});
+};
 
-export const ServerSideRowModelSortModule = defineEnterpriseModule('ServerSideRowModelSortModule', {
-    rowModel: 'serverSide',
+export const ServerSideRowModelSortModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('ServerSideRowModelSortModule'),
+    rowModels: ['serverSide'],
     beans: [SortListener],
     dependsOn: [ServerSideRowModelCoreModule, SortModule],
-});
+};
 
-export const ServerSideRowModelApiModule = defineEnterpriseModule<_ServerSideRowModelGridApi>(
-    'ServerSideRowModelApiModule',
-    {
-        beans: [RowModelHelperService],
-        apiFunctions: {
-            getServerSideSelectionState,
-            setServerSideSelectionState,
-            applyServerSideTransaction,
-            applyServerSideTransactionAsync,
-            applyServerSideRowData,
-            retryServerSideLoads,
-            flushServerSideAsyncTransactions,
-            refreshServerSide,
-            getServerSideGroupLevelState,
-        },
-        dependsOn: [ServerSideRowModelCoreModule, _CsrmSsrmSharedApiModule, _SsrmInfiniteSharedApiModule],
-    }
-);
+export const ServerSideRowModelApiModule: _ModuleWithApi<_ServerSideRowModelGridApi> = {
+    ...baseEnterpriseModule('ServerSideRowModelApiModule'),
+    rowModels: ['serverSide'],
+    beans: [RowModelHelperService],
+    apiFunctions: {
+        getServerSideSelectionState,
+        setServerSideSelectionState,
+        applyServerSideTransaction,
+        applyServerSideTransactionAsync,
+        applyServerSideRowData,
+        retryServerSideLoads,
+        flushServerSideAsyncTransactions,
+        refreshServerSide,
+        getServerSideGroupLevelState,
+    },
+    dependsOn: [ServerSideRowModelCoreModule, _CsrmSsrmSharedApiModule, _SsrmInfiniteSharedApiModule],
+};
 
-export const ServerSideRowModelModule = defineEnterpriseModule(ModuleNames.ServerSideRowModelModule, {
+export const ServerSideRowModelModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('ServerSideRowModelModule'),
+    rowModels: ['serverSide'],
     dependsOn: [
         ServerSideRowModelCoreModule,
         ServerSideRowModelApiModule,
@@ -100,4 +104,4 @@ export const ServerSideRowModelModule = defineEnterpriseModule(ModuleNames.Serve
         ServerSideRowModelRowGroupingModule,
         CommunityFeaturesModule,
     ],
-});
+};

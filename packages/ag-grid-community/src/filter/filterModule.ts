@@ -1,6 +1,8 @@
 import type { _ColumnFilterGridApi, _FilterGridApi, _QuickFilterGridApi } from '../api/gridApi';
 import { HeaderFilterCellCtrl } from '../headerRendering/cells/floatingFilter/headerFilterCellCtrl';
-import { defineCommunityModule } from '../interfaces/iModule';
+import type { _ModuleWithApi } from '../interfaces/iModule';
+import { baseCommunityModule } from '../interfaces/iModule';
+import type { _ModuleWithoutApi } from '../interfaces/iModule';
 import { SharedMenuModule } from '../misc/menu/sharedMenuModule';
 import { PopupModule } from '../widgets/popupModule';
 import {
@@ -29,33 +31,39 @@ import { TextFloatingFilter } from './provided/text/textFloatingFilter';
 import { getQuickFilter, isQuickFilterPresent, resetQuickFilter } from './quickFilterApi';
 import { QuickFilterService } from './quickFilterService';
 
-export const FilterCoreModule = defineCommunityModule('FilterCoreModule', {
+export const FilterCoreModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('FilterCoreModule'),
     beans: [FilterManager],
-});
+};
 
-export const FilterApiModule = defineCommunityModule<_FilterGridApi>('FilterApiModule', {
+export const FilterApiModule: _ModuleWithApi<_FilterGridApi> = {
+    ...baseCommunityModule('FilterApiModule'),
     apiFunctions: {
         isAnyFilterPresent,
         onFilterChanged,
     },
     dependsOn: [FilterCoreModule],
-});
+};
 
-export const FilterValueModule = defineCommunityModule('FilterValueModule', {
+export const FilterValueModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('FilterValueModule'),
     beans: [FilterValueService],
-});
+};
 
-export const ColumnFilterModule = defineCommunityModule('ColumnFilterModule', {
+export const ColumnFilterModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('ColumnFilterModule'),
     beans: [ColumnFilterService],
     dependsOn: [FilterCoreModule, PopupModule, FilterValueModule],
-});
+};
 
-export const ColumnFilterMenuModule = defineCommunityModule('ColumnFilterMenuModule', {
+export const ColumnFilterMenuModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('ColumnFilterMenuModule'),
     beans: [FilterMenuFactory],
     dependsOn: [ColumnFilterModule, PopupModule, SharedMenuModule],
-});
+};
 
-export const ColumnFilterApiModule = defineCommunityModule<_ColumnFilterGridApi>('ColumnFilterApiModule', {
+export const ColumnFilterApiModule: _ModuleWithApi<_ColumnFilterGridApi> = {
+    ...baseCommunityModule('ColumnFilterApiModule'),
     apiFunctions: {
         isColumnFilterPresent,
         getColumnFilterInstance,
@@ -67,23 +75,27 @@ export const ColumnFilterApiModule = defineCommunityModule<_ColumnFilterGridApi>
         showColumnFilter,
     },
     dependsOn: [ColumnFilterModule, FilterApiModule],
-});
+};
 
-export const FloatingFilterCoreModule = defineCommunityModule('FloatingFilterCoreModule', {
+export const FloatingFilterCoreModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('FloatingFilterCoreModule'),
     controllers: [{ name: 'headerFilterCell', classImp: HeaderFilterCellCtrl as any }],
     dependsOn: [ColumnFilterModule],
-});
+};
 
-export const FloatingFilterModule = defineCommunityModule('FloatingFilterModule', {
+export const FloatingFilterModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('FloatingFilterModule'),
     dependsOn: [FloatingFilterCoreModule, ColumnFilterModule],
-});
+};
 
-export const ReadOnlyFloatingFilterModule = defineCommunityModule('ReadOnlyFloatingFilterModule', {
+export const ReadOnlyFloatingFilterModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('ReadOnlyFloatingFilterModule'),
     userComponents: [{ name: 'agReadOnlyFloatingFilter', classImp: ReadOnlyFloatingFilter }],
     dependsOn: [FloatingFilterCoreModule],
-});
+};
 
-export const SimpleFilterModule = defineCommunityModule('SimpleFilterModule', {
+export const SimpleFilterModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('SimpleFilterModule'),
     dependsOn: [ColumnFilterModule],
     userComponents: [
         { name: 'agTextColumnFilter', classImp: TextFilter },
@@ -91,36 +103,42 @@ export const SimpleFilterModule = defineCommunityModule('SimpleFilterModule', {
         { name: 'agDateColumnFilter', classImp: DateFilter },
         { name: 'agDateInput', classImp: DefaultDateComponent },
     ],
-});
+};
 
-export const SimpleFloatingFilterModule = defineCommunityModule('SimpleFloatingFilterModule', {
+export const SimpleFloatingFilterModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('SimpleFloatingFilterModule'),
     dependsOn: [SimpleFilterModule, FloatingFilterCoreModule],
     userComponents: [
         { name: 'agTextColumnFloatingFilter', classImp: TextFloatingFilter },
         { name: 'agNumberColumnFloatingFilter', classImp: NumberFloatingFilter },
         { name: 'agDateColumnFloatingFilter', classImp: DateFloatingFilter },
     ],
-});
+};
 
-export const QuickFilterCoreModule = defineCommunityModule('QuickFilterCoreModulee', {
+export const QuickFilterCoreModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('QuickFilterCoreModule'),
+    rowModels: ['clientSide'],
     beans: [QuickFilterService],
     dependsOn: [FilterCoreModule, FilterValueModule],
-});
+};
 
-export const QuickFilterApiModule = defineCommunityModule<_QuickFilterGridApi>('QuickFilterApiModule', {
+export const QuickFilterApiModule: _ModuleWithApi<_QuickFilterGridApi> = {
+    ...baseCommunityModule('QuickFilterApiModule'),
     apiFunctions: {
         isQuickFilterPresent,
         getQuickFilter,
         resetQuickFilter,
     },
     dependsOn: [QuickFilterCoreModule],
-});
+};
 
-export const QuickFilterModule = defineCommunityModule('QuickFilterModule', {
+export const QuickFilterModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('QuickFilterModule'),
     dependsOn: [QuickFilterCoreModule, QuickFilterApiModule],
-});
+};
 
-export const FilterModule = defineCommunityModule('FilterModule', {
+export const FilterModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('FilterModule'),
     dependsOn: [
         SimpleFloatingFilterModule,
         ReadOnlyFloatingFilterModule,
@@ -128,4 +146,4 @@ export const FilterModule = defineCommunityModule('FilterModule', {
         ColumnFilterApiModule,
         ColumnFilterMenuModule,
     ],
-});
+};

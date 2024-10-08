@@ -13,8 +13,8 @@
     "build:umd": {
       "executor": "nx:run-commands",
       "dependsOn": ["^build", "build:copy-styles", "build:package"],
-      "inputs": ["tsDefaults"],
-      "outputs": [],
+      "inputs": ["tsDefaults", "styleOutputs"],
+      "outputs": ["{projectRoot}/dist/ag-grid-community*.js"],
       "options": {
         "cwd": "packages/ag-grid-community",
         "commands": ["./webpackBuild.sh"]

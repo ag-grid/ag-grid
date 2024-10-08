@@ -1,6 +1,5 @@
-import type { ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
+import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
 import type { GridOptions } from '../../entities/gridOptions';
-import { ModuleNames } from '../../modules/moduleNames';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 
 const COLUMN_DEFINITION_DEPRECATIONS: Deprecations<ColDef | ColGroupDef> = {
@@ -25,7 +24,7 @@ const COLUMN_DEFINITION_DEPRECATIONS: Deprecations<ColDef | ColGroupDef> = {
 
 const CSRM_REQUIRES_ROW_GROUP_MODULE = (_options: never, gridOptions: GridOptions) => {
     if ((gridOptions.rowModelType ?? 'clientSide') === 'clientSide') {
-        return { module: ModuleNames.RowGroupingModule };
+        return { module: 'RowGroupingCoreModule' as const };
     }
     return null;
 };
@@ -43,7 +42,7 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
 
     cellEditor: (options) => {
         if (options.cellEditor === 'agRichSelect' || options.cellEditor === 'agRichSelectCellEditor') {
-            return { module: ModuleNames.RichSelectModule };
+            return { module: 'RichSelectModule' };
         }
         return null;
     },
@@ -52,13 +51,13 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
         const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
         if (options.menuTabs?.some((tab) => enterpriseMenuTabs.includes(tab))) {
             return {
-                module: ModuleNames.MenuModule,
+                module: 'MenuModule',
             };
         }
         return null;
     },
     columnChooserParams: {
-        module: [ModuleNames.MenuModule, ModuleNames.ColumnsToolPanelModule],
+        module: ['MenuModule', 'ColumnsToolPanelModule'],
     },
 
     headerCheckboxSelection: {
@@ -79,6 +78,37 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
             rowSelection === 'multiple'
                 ? null
                 : 'headerCheckboxSelectionCurrentPageOnly is only supported with rowSelection=multiple',
+    },
+
+    autoHeight: {
+        supportedRowModels: ['clientSide', 'serverSide'],
+    },
+    headerValueGetter: {
+        validate: (_options: AbstractColDef) => {
+            const headerValueGetter = _options.headerValueGetter;
+            if (typeof headerValueGetter === 'function' || typeof headerValueGetter === 'string') {
+                return null;
+            }
+            return 'headerValueGetter must be a function or a valid string expression';
+        },
+    },
+    type: {
+        validate: (_options) => {
+            const type = _options.type;
+
+            if (type instanceof Array) {
+                const invalidArray = type.some((a) => typeof a !== 'string');
+                if (invalidArray) {
+                    return "if colDef.type is supplied an array it should be of type 'string[]'";
+                }
+                return null;
+            }
+
+            if (typeof type === 'string') {
+                return null;
+            }
+            return "colDef.type should be of type 'string' | 'string[]'";
+        },
     },
 
     children: () => COL_DEF_VALIDATORS,

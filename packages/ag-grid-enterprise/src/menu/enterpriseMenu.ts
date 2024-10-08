@@ -24,7 +24,6 @@ import {
     BeanStub,
     Component,
     FilterWrapperComp,
-    ModuleNames,
     RefPlaceholder,
     _createIconNoSpan,
     _isColumnMenuAnchoringEnabled,
@@ -442,7 +441,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
 
     private isModuleLoaded(menuTabName: string): boolean {
         if (menuTabName === TAB_COLUMNS) {
-            return this.gos.isModuleRegistered(ModuleNames.ColumnsToolPanelModule);
+            return this.gos.isModuleRegistered('ColumnsToolPanelModule');
         }
 
         return true;

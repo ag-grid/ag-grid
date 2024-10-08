@@ -3,13 +3,16 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
+import type { EnterpriseModuleName, ModuleName } from '../interfaces/iModule';
+import { _areModulesGridScoped } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
-import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
+import { _fuzzySuggestions } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
 import { validateApiFunction } from './apiFunctionValidator';
+import { ENTERPRISE_MODULE_NAMES } from './enterpriseModuleNames';
 import type { ErrorId, GetErrorParams } from './errorMessages/errorText';
 import { getError } from './errorMessages/errorText';
-import { provideValidationServiceLogger } from './logging';
+import { _logError, provideValidationServiceLogger } from './logging';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import type { DependentValues, OptionsValidation, OptionsValidator, RequiredOptions } from './validationTypes';
 
@@ -38,6 +41,18 @@ export class ValidationService extends BeanStub implements NamedBean {
         apiFunction: ApiFunction<TFunctionName>
     ): ApiFunction<TFunctionName> {
         return validateApiFunction(functionName, apiFunction, this.beans);
+    }
+
+    public missingModule(moduleName: ModuleName, reason: string, gridId: string): void {
+        const gridScoped = _areModulesGridScoped();
+        const isEnterprise = ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName];
+        _logError(200, {
+            reason,
+            moduleName,
+            gridScoped,
+            gridId,
+            isEnterprise,
+        });
     }
 
     private processOptions<T extends object>(options: T, validator: OptionsValidator<T>): void {
@@ -109,7 +124,9 @@ export class ValidationService extends BeanStub implements NamedBean {
             if (supportedRowModels) {
                 const rowModel = this.gridOptions.rowModelType ?? 'clientSide';
                 if (!supportedRowModels.includes(rowModel)) {
-                    warnings.add(`${String(key)} is not supported with the '${rowModel}' row model.`);
+                    warnings.add(
+                        `${String(key)} is not supported with the '${rowModel}' row model. It is only valid with: ${supportedRowModels.join(', ')}.`
+                    );
                     return;
                 }
             }
@@ -217,4 +234,24 @@ export class ValidationService extends BeanStub implements NamedBean {
     public getConsoleMessage<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>): any[] {
         return getError(id, args);
     }
+}
+
+export function _fuzzyCheckStrings(
+    inputValues: string[],
+    validValues: string[],
+    allSuggestions: string[]
+): { [p: string]: string[] } {
+    const fuzzyMatches: { [p: string]: string[] } = {};
+    const invalidInputs: string[] = inputValues.filter(
+        (inputValue) => !validValues.some((validValue) => validValue === inputValue)
+    );
+
+    if (invalidInputs.length > 0) {
+        invalidInputs.forEach(
+            (invalidInput) =>
+                (fuzzyMatches[invalidInput] = _fuzzySuggestions({ inputValue: invalidInput, allSuggestions }).values)
+        );
+    }
+
+    return fuzzyMatches;
 }

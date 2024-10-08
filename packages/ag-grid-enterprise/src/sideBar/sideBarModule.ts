@@ -1,8 +1,8 @@
-import type { _SideBarGridApi } from 'ag-grid-community';
-import { HorizontalResizeModule, ModuleNames } from 'ag-grid-community';
+import type { _ModuleWithApi, _ModuleWithoutApi, _SideBarGridApi } from 'ag-grid-community';
+import { HorizontalResizeModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { defineEnterpriseModule } from '../moduleUtils';
+import { baseEnterpriseModule } from '../moduleUtils';
 import { ToolPanelColDefService } from './common/toolPanelColDefService';
 import {
     closeToolPanel,
@@ -18,12 +18,14 @@ import {
 } from './sideBarApi';
 import { SideBarService } from './sideBarService';
 
-export const SideBarCoreModule = defineEnterpriseModule('SideBarCoreModule', {
+export const SideBarCoreModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('SideBarCoreModule'),
     beans: [ToolPanelColDefService, SideBarService],
     dependsOn: [EnterpriseCoreModule, HorizontalResizeModule],
-});
+};
 
-export const SideBarApiModule = defineEnterpriseModule<_SideBarGridApi<any>>('SideBarApiModule', {
+export const SideBarApiModule: _ModuleWithApi<_SideBarGridApi<any>> = {
+    ...baseEnterpriseModule('SideBarApiModule'),
     apiFunctions: {
         isSideBarVisible,
         setSideBarVisible,
@@ -37,8 +39,9 @@ export const SideBarApiModule = defineEnterpriseModule<_SideBarGridApi<any>>('Si
         getSideBar,
     },
     dependsOn: [SideBarCoreModule],
-});
+};
 
-export const SideBarModule = defineEnterpriseModule(ModuleNames.SideBarModule, {
+export const SideBarModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('SideBarModule'),
     dependsOn: [SideBarCoreModule, SideBarApiModule],
-});
+};

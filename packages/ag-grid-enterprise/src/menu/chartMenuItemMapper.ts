@@ -8,7 +8,7 @@ import type {
     MenuItemDef,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, ModuleNames, _createIconNoSpan, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _createIconNoSpan, _warnOnce } from 'ag-grid-community';
 
 export class ChartMenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'chartMenuItemMapper' as const;
@@ -21,7 +21,7 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
 
     public getChartItems(key: 'pivotChart' | 'chartRange'): MenuItemDef | undefined {
         if (!this.chartService) {
-            this.gos.assertModuleRegistered(ModuleNames.GridChartsModule, `the Context Menu key "${key}"`);
+            this.gos.assertModuleRegistered('GridChartsCoreModule', `the Context Menu key "${key}"`);
             return undefined;
         }
 

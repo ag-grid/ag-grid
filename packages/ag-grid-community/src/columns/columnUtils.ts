@@ -1,10 +1,10 @@
 import type { Context } from '../context/context';
-import { isColumn } from '../entities/agColumn';
 import type { AgColumn } from '../entities/agColumn';
-import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import { isColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
-import { _warnOnce } from '../utils/function';
+import { _logWarn } from '../validation/logging';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import { CONTROLS_COLUMN_ID_PREFIX } from './controlsColService';
 
@@ -75,16 +75,9 @@ export function convertColumnTypes(type: string | string[]): string[] {
     let typeKeys: string[] = [];
 
     if (type instanceof Array) {
-        const invalidArray = type.some((a) => typeof a !== 'string');
-        if (invalidArray) {
-            _warnOnce("if colDef.type is supplied an array it should be of type 'string[]'");
-        } else {
-            typeKeys = type;
-        }
+        typeKeys = type;
     } else if (typeof type === 'string') {
         typeKeys = type.split(',');
-    } else {
-        _warnOnce("colDef.type should be of type 'string' | 'string[]'");
     }
     return typeKeys;
 }

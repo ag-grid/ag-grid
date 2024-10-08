@@ -1,10 +1,10 @@
 import type { _ClientSideRowModelGridApi } from '../api/gridApi';
 import { RowModelHelperService } from '../api/rowModelHelperService';
 import { CsrmSsrmSharedApiModule } from '../api/sharedApiModule';
+import { CommunityFeaturesModule } from '../communityFeaturesModule';
 import { FilterCoreModule } from '../filter/filterModule';
-import { CommunityFeaturesModule } from '../gridCoreModule';
-import { defineCommunityModule } from '../interfaces/iModule';
-import { ModuleNames } from '../modules/moduleNames';
+import { baseCommunityModule } from '../interfaces/iModule';
+import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { SortModule } from '../sort/sortModule';
 import { ClientSideRowModel } from './clientSideRowModel';
 import {
@@ -26,45 +26,49 @@ import { ImmutableService } from './immutableService';
 import { RowNodeEventThrottle } from './rowNodeEventThrottle';
 import { SortStage } from './sortStage';
 
-export const ClientSideRowModelCoreModule = defineCommunityModule('ClientSideRowModelCoreModule', {
-    rowModel: 'clientSide',
+export const ClientSideRowModelCoreModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('ClientSideRowModelCoreModule'),
+    rowModels: ['clientSide'],
     beans: [ClientSideRowModel, FlattenStage, ImmutableService, RowNodeEventThrottle],
-});
+};
 
-export const ClientSideRowModelSortModule = defineCommunityModule('ClientSideRowModelSortModule', {
-    rowModel: 'clientSide',
+export const ClientSideRowModelSortModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('ClientSideRowModelSortModule'),
+    rowModels: ['clientSide'],
     beans: [SortStage],
     dependsOn: [ClientSideRowModelCoreModule, SortModule],
-});
+};
 
-export const ClientSideRowModelFilterModule = defineCommunityModule('ClientSideRowModelFilterModule', {
-    rowModel: 'clientSide',
+export const ClientSideRowModelFilterModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('ClientSideRowModelFilterModule'),
+    rowModels: ['clientSide'],
     beans: [FilterStage],
     dependsOn: [FilterCoreModule],
-});
+};
 
-export const ClientSideRowModelApiModule = defineCommunityModule<_ClientSideRowModelGridApi<any>>(
-    'ClientSideRowModelApiModule',
-    {
-        beans: [RowModelHelperService],
-        apiFunctions: {
-            onGroupExpandedOrCollapsed,
-            refreshClientSideRowModel,
-            isRowDataEmpty,
-            forEachLeafNode,
-            forEachNodeAfterFilter,
-            forEachNodeAfterFilterAndSort,
-            resetRowHeights,
-            applyTransaction,
-            applyTransactionAsync,
-            flushAsyncTransactions,
-            getBestCostNodeSelection,
-        },
-        dependsOn: [ClientSideRowModelCoreModule, CsrmSsrmSharedApiModule],
-    }
-);
+export const ClientSideRowModelApiModule: _ModuleWithApi<_ClientSideRowModelGridApi<any>> = {
+    ...baseCommunityModule('ClientSideRowModelApiModule'),
+    rowModels: ['clientSide'],
+    beans: [RowModelHelperService],
+    apiFunctions: {
+        onGroupExpandedOrCollapsed,
+        refreshClientSideRowModel,
+        isRowDataEmpty,
+        forEachLeafNode,
+        forEachNodeAfterFilter,
+        forEachNodeAfterFilterAndSort,
+        resetRowHeights,
+        applyTransaction,
+        applyTransactionAsync,
+        flushAsyncTransactions,
+        getBestCostNodeSelection,
+    },
+    dependsOn: [ClientSideRowModelCoreModule, CsrmSsrmSharedApiModule],
+};
 
-export const ClientSideRowModelModule = defineCommunityModule(ModuleNames.ClientSideRowModelModule, {
+export const ClientSideRowModelModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('ClientSideRowModelModule'),
+    rowModels: ['clientSide'],
     dependsOn: [
         ClientSideRowModelCoreModule,
         ClientSideRowModelApiModule,
@@ -72,4 +76,4 @@ export const ClientSideRowModelModule = defineCommunityModule(ModuleNames.Client
         ClientSideRowModelFilterModule,
         CommunityFeaturesModule,
     ],
-});
+};

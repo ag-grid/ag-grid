@@ -21,12 +21,13 @@ export const urlWithPrefix = ({
     let path = url;
     const urlHasTrailingSlash = url.endsWith('/');
     const hasFileExt = Boolean(getFileExtension(url));
+    const isExternal = isExternalLink(url);
     if (url.startsWith('./')) {
         const frameworkPath = getFrameworkPath(framework!);
         path = pathJoin('/', siteBaseUrl, frameworkPath, url.slice('./'.length));
     } else if (url.startsWith('/')) {
         path = pathJoin('/', siteBaseUrl, url);
-    } else if (!url.startsWith('#') && !isExternalLink(url)) {
+    } else if (!url.startsWith('#') && !isExternal) {
         const errorMessage = `Invalid url: ${url} - use './' for framework urls, '/' for root urls, '#' for anchor links, and http/mailto for external urls`;
         if (getIsDev()) {
             // eslint-disable-next-line no-console
@@ -36,7 +37,15 @@ export const urlWithPrefix = ({
         }
     }
 
-    if ((trailingSlash || urlHasTrailingSlash) && !path.includes('#') && !isExternalLink(url) && !hasFileExt) {
+    if (
+        (trailingSlash ||
+            // Add the trailing slash back if input had one
+            urlHasTrailingSlash) &&
+        !path.includes('#') &&
+        !path.includes('?') &&
+        !isExternal &&
+        !hasFileExt
+    ) {
         path = path + '/';
     }
 

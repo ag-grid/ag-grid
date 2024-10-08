@@ -1,4 +1,4 @@
-import { ModuleNames } from '../modules/moduleNames';
+import type { ModuleName } from '../interfaces/iModule';
 import type {
     GridApi,
     _AdvancedFilterGridApi,
@@ -19,9 +19,9 @@ import type {
 } from './gridApi';
 
 const mod = <TGridApi extends Partial<GridApi>>(
-    moduleName: ModuleNames,
+    moduleName: ModuleName,
     input: Record<keyof TGridApi, 0>
-): Record<keyof TGridApi, ModuleNames> => {
+): Record<keyof TGridApi, ModuleName> => {
     for (const key in input) {
         (input as any)[key] = moduleName;
     }
@@ -29,7 +29,7 @@ const mod = <TGridApi extends Partial<GridApi>>(
 };
 
 export const gridApiFunctionsMap = {
-    ...mod<_CoreModuleGridApi<any>>(ModuleNames.CommunityCoreModule, {
+    ...mod<_CoreModuleGridApi<any>>('CommunityCoreModule', {
         dispatchEvent: 0,
         destroy: 0,
         getGridId: 0,
@@ -178,7 +178,7 @@ export const gridApiFunctionsMap = {
         isLastRowIndexKnown: 0,
     }),
 
-    ...mod<_ClientSideRowModelGridApi<any>>(ModuleNames.ClientSideRowModelModule, {
+    ...mod<_ClientSideRowModelGridApi<any>>('ClientSideRowModelApiModule', {
         onGroupExpandedOrCollapsed: 0,
         refreshClientSideRowModel: 0,
         isRowDataEmpty: 0,
@@ -192,25 +192,25 @@ export const gridApiFunctionsMap = {
         getBestCostNodeSelection: 0,
     }),
 
-    ...mod<_CsvExportGridApi>(ModuleNames.CsvExportModule, {
+    ...mod<_CsvExportGridApi>('CsvExportApiModule', {
         getDataAsCsv: 0,
         exportDataAsCsv: 0,
     }),
 
-    ...mod<_InfiniteRowModelGridApi>(ModuleNames.InfiniteRowModelModule, {
+    ...mod<_InfiniteRowModelGridApi>('InfiniteRowModelApiModule', {
         refreshInfiniteCache: 0,
         purgeInfiniteCache: 0,
         getInfiniteRowCount: 0,
     }),
 
-    ...mod<_AdvancedFilterGridApi>(ModuleNames.AdvancedFilterModule, {
+    ...mod<_AdvancedFilterGridApi>('AdvancedFilterApiModule', {
         getAdvancedFilterModel: 0,
         setAdvancedFilterModel: 0,
         showAdvancedFilterBuilder: 0,
         hideAdvancedFilterBuilder: 0,
     }),
 
-    ...mod<_GridChartsGridApi>(ModuleNames.GridChartsModule, {
+    ...mod<_GridChartsGridApi>('GridChartsApiModule', {
         getChartModels: 0,
         getChartRef: 0,
         getChartImageDataURL: 0,
@@ -224,7 +224,7 @@ export const gridApiFunctionsMap = {
         restoreChart: 0,
     }),
 
-    ...mod<_ClipboardGridApi>(ModuleNames.ClipboardModule, {
+    ...mod<_ClipboardGridApi>('ClipboardApiModule', {
         copyToClipboard: 0,
         cutToClipboard: 0,
         copySelectedRowsToClipboard: 0,
@@ -233,7 +233,7 @@ export const gridApiFunctionsMap = {
         pasteFromClipboard: 0,
     }),
 
-    ...mod<_ExcelExportGridApi>(ModuleNames.ExcelExportModule, {
+    ...mod<_ExcelExportGridApi>('ExcelExportApiModule', {
         getDataAsExcel: 0,
         exportDataAsExcel: 0,
         getSheetDataForExcel: 0,
@@ -241,27 +241,27 @@ export const gridApiFunctionsMap = {
         exportMultipleSheetsAsExcel: 0,
     }),
 
-    ...mod<_MasterDetailGridApi>(ModuleNames.MasterDetailModule, {
+    ...mod<_MasterDetailGridApi>('MasterDetailApiModule', {
         addDetailGridInfo: 0,
         removeDetailGridInfo: 0,
         getDetailGridInfo: 0,
         forEachDetailGridInfo: 0,
     }),
 
-    ...mod<_MenuGridApi>(ModuleNames.MenuModule, {
+    ...mod<_MenuGridApi>('MenuApiModule', {
         showContextMenu: 0,
         showColumnChooser: 0,
         hideColumnChooser: 0,
     }),
 
-    ...mod<_RangeSelectionGridApi>(ModuleNames.RangeSelectionModule, {
+    ...mod<_RangeSelectionGridApi>('RangeSelectionApiModule', {
         getCellRanges: 0,
         addCellRange: 0,
         clearRangeSelection: 0,
         clearCellSelection: 0,
     }),
 
-    ...mod<_RowGroupingGridApi<any>>(ModuleNames.RowGroupingModule, {
+    ...mod<_RowGroupingGridApi<any>>('RowGroupingApiModule', {
         addAggFuncs: 0,
         clearAggFuncs: 0,
         setColumnAggFunc: 0,
@@ -284,7 +284,7 @@ export const gridApiFunctionsMap = {
         getPivotResultColumns: 0,
     }),
 
-    ...mod<_ServerSideRowModelGridApi>(ModuleNames.ServerSideRowModelModule, {
+    ...mod<_ServerSideRowModelGridApi>('ServerSideRowModelApiModule', {
         getServerSideSelectionState: 0,
         setServerSideSelectionState: 0,
         applyServerSideTransaction: 0,
@@ -296,7 +296,7 @@ export const gridApiFunctionsMap = {
         getServerSideGroupLevelState: 0,
     }),
 
-    ...mod<_SideBarGridApi<any>>(ModuleNames.SideBarModule, {
+    ...mod<_SideBarGridApi<any>>('SideBarApiModule', {
         isSideBarVisible: 0,
         setSideBarVisible: 0,
         setSideBarPosition: 0,
@@ -309,7 +309,7 @@ export const gridApiFunctionsMap = {
         getSideBar: 0,
     }),
 
-    ...mod<_StatusBarGridApi>(ModuleNames.StatusBarModule, {
+    ...mod<_StatusBarGridApi>('StatusBarApiModule', {
         getStatusPanel: 0,
     }),
 };

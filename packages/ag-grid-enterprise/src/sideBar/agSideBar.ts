@@ -14,7 +14,6 @@ import {
     Component,
     KeyCode,
     ManagedFocusFeature,
-    ModuleNames,
     RefPlaceholder,
     _addFocusableContainerListener,
     _getActiveDomElement,
@@ -286,20 +285,14 @@ export class AgSideBar extends Component implements ISideBar {
 
         // helpers, in case user doesn't have the right module loaded
         if (def.toolPanel === 'agColumnsToolPanel') {
-            const moduleMissing = !this.gos.assertModuleRegistered(
-                ModuleNames.ColumnsToolPanelModule,
-                'Column Tool Panel'
-            );
+            const moduleMissing = !this.gos.assertModuleRegistered('ColumnsToolPanelModule', 'Column Tool Panel');
             if (moduleMissing) {
                 return false;
             }
         }
 
         if (def.toolPanel === 'agFiltersToolPanel') {
-            const moduleMissing = !this.gos.assertModuleRegistered(
-                ModuleNames.FiltersToolPanelModule,
-                'Filters Tool Panel'
-            );
+            const moduleMissing = !this.gos.assertModuleRegistered('FiltersToolPanelModule', 'Filters Tool Panel');
             if (moduleMissing) {
                 return false;
             }

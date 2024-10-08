@@ -24,6 +24,7 @@ const myTheme = themeQuartz.withParams({
 
 const gridOptions: GridOptions<IOlympicData> = {
     theme: myTheme,
+    loadThemeGoogleFonts: true,
     rowData: null,
     columnDefs: columnDefs,
     defaultColDef: {
