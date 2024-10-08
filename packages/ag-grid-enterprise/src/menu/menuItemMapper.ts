@@ -10,7 +10,6 @@ import type {
     FuncColsService,
     IAggFuncService,
     IClipboardService,
-    IColumnChooserFactory,
     ICsvCreator,
     IExcelCreator,
     IExpansionService,
@@ -23,6 +22,7 @@ import type {
 import { BeanStub, _createIconNoSpan, _escapeString, _exists, _warnOnce } from 'ag-grid-community';
 
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
+import type { ColumnChooserFactory } from './columnChooserFactory';
 
 export class MenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'menuItemMapper' as const;
@@ -42,7 +42,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private aggFuncService?: IAggFuncService;
     private csvCreator?: ICsvCreator;
     private excelCreator?: IExcelCreator;
-    private columnChooserFactory?: IColumnChooserFactory;
+    private columnChooserFactory?: ColumnChooserFactory;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
@@ -60,7 +60,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         this.aggFuncService = beans.aggFuncService;
         this.csvCreator = beans.csvCreator;
         this.excelCreator = beans.excelCreator;
-        this.columnChooserFactory = beans.columnChooserFactory;
+        this.columnChooserFactory = beans.columnChooserFactory as ColumnChooserFactory;
     }
 
     public mapWithStockItems(
@@ -355,7 +355,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return null;
                 }
             case 'columnChooser':
-                if (this.gos.isModuleRegistered('ColumnsToolPanelModule')) {
+                if (this.gos.isModuleRegistered('ColumnsToolPanelCoreModule')) {
                     return {
                         name: localeTextFunc('columnChooser', 'Choose Columns'),
                         icon: _createIconNoSpan('columns', this.gos, null),

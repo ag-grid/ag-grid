@@ -1,6 +1,7 @@
 import type { _MasterDetailGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { ClientSideRowModelExpansionModule } from '../expansion/expansionModule';
 import { baseEnterpriseModule } from '../moduleUtils';
 import { GroupCellRenderer } from '../rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from '../rendering/groupCellRendererCtrl';
@@ -22,8 +23,8 @@ export const MasterDetailCoreModule: _ModuleWithoutApi = {
         },
         { name: 'agDetailCellRenderer', classImp: DetailCellRenderer },
     ],
-    controllers: [
-        { name: 'detailCellRenderer', classImp: DetailCellRendererCtrl },
+    dynamicBeans: [
+        { name: 'detailCellRendererCtrl', classImp: DetailCellRendererCtrl },
         { name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl },
     ],
     dependsOn: [EnterpriseCoreModule],
@@ -43,5 +44,5 @@ export const MasterDetailApiModule: _ModuleWithApi<_MasterDetailGridApi> = {
 
 export const MasterDetailModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('MasterDetailModule'),
-    dependsOn: [MasterDetailCoreModule, MasterDetailApiModule],
+    dependsOn: [MasterDetailCoreModule, MasterDetailApiModule, ClientSideRowModelExpansionModule],
 };

@@ -1,4 +1,3 @@
-import type { Bean } from '../context/bean';
 import type { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { Column } from '../interfaces/iColumn';
@@ -40,21 +39,6 @@ export interface IRangeService {
     clearCellRangeCellValues(params: ClearCellRangeParams): void;
     createDragListenerFeature(eContainer: HTMLElement): BeanStub;
     createCellRangeFeature(beans: BeanCollection, ctrl: CellCtrl): ICellRangeFeature;
-}
-
-export interface ISelectionHandle extends Bean {
-    getGui(): HTMLElement;
-    getType(): SelectionHandleType;
-    refresh(cellCtrl: CellCtrl): void;
-}
-
-export interface ISelectionHandleFactory {
-    createSelectionHandle(type: SelectionHandleType): ISelectionHandle;
-}
-
-export enum SelectionHandleType {
-    FILL,
-    RANGE,
 }
 
 export enum CellRangeType {

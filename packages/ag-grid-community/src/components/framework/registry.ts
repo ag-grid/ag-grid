@@ -1,13 +1,14 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { UserComponentName } from '../../context/context';
-import type { ModuleName } from '../../interfaces/iModule';
+import type { DynamicBeanMeta, DynamicBeanName, UserComponentName } from '../../context/context';
+import type { Module, ModuleName } from '../../interfaces/iModule';
 import { TooltipComponent } from '../../rendering/tooltipComponent';
 import { _iterateObject } from '../../utils/object';
 import { _logWarn } from '../../validation/logging';
+import type { AgComponentSelector, ComponentSelector } from '../../widgets/component';
 
-export class UserComponentRegistry extends BeanStub implements NamedBean {
-    beanName = 'userComponentRegistry' as const;
+export class Registry extends BeanStub implements NamedBean {
+    beanName = 'registry' as const;
 
     private agGridDefaults: { [key in UserComponentName]?: any } = {
         // tooltips
@@ -34,6 +35,10 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
 
     private jsComps: { [key: string]: any } = {};
 
+    private dynamicBeans: { [K in DynamicBeanName]?: new (args?: any[]) => object } = {};
+
+    private selectors: { [name in AgComponentSelector]?: ComponentSelector } = {};
+
     public postConstruct(): void {
         const comps = this.gos.get('components');
         if (comps != null) {
@@ -41,7 +46,17 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
         }
     }
 
-    public registerDefaultComponent(name: UserComponentName, component: any, params?: any) {
+    public registerModule(module: Module): void {
+        module.userComponents?.forEach(({ name, classImp, params }) =>
+            this.registerUserComponent(name, classImp, params)
+        );
+
+        module.dynamicBeans?.forEach((meta) => this.registerDynamicBean(meta));
+
+        module.selectors?.forEach((selector) => this.registerSelector(selector));
+    }
+
+    private registerUserComponent(name: UserComponentName, component: any, params?: any) {
         this.agGridDefaults[name] = component;
         if (params) {
             this.agGridDefaultParams[name] = params;
@@ -52,7 +67,7 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
         this.jsComps[name] = component;
     }
 
-    public retrieve(
+    public getUserComponent(
         propertyName: string,
         name: string
     ): { componentFromFramework: boolean; component: any; params?: any } | null {
@@ -97,5 +112,27 @@ export class UserComponentRegistry extends BeanStub implements NamedBean {
         }
 
         return null;
+    }
+
+    private registerDynamicBean(meta: DynamicBeanMeta): void {
+        this.dynamicBeans[meta.name] = meta.classImp;
+    }
+
+    public createDynamicBean<T>(name: DynamicBeanName, ...args: any[]): T | undefined {
+        const BeanClass = this.dynamicBeans[name];
+
+        if (BeanClass == null) {
+            return undefined;
+        }
+
+        return new BeanClass(...args) as any;
+    }
+
+    private registerSelector(selector: ComponentSelector): void {
+        this.selectors[selector.selector] = selector;
+    }
+
+    public getSelector(name: AgComponentSelector): ComponentSelector | undefined {
+        return this.selectors[name];
     }
 }
