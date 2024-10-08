@@ -14,24 +14,22 @@ import type {
     RowNode,
     RowNodeBlockLoader,
     RowNodeSorter,
-    SelectionChangedEvent,
     ServerSideGroupLevelParams,
     ServerSideGroupLevelState,
     ServerSideTransaction,
     ServerSideTransactionResult,
     SortController,
     StoreRefreshAfterParams,
-    StoreUpdatedEvent,
     WithoutGridCommon,
 } from 'ag-grid-community';
 import {
     NumberSequence,
     RowNodeBlock,
     ServerSideTransactionResultStatus,
-    _errorOnce,
     _getAllValuesInObject,
     _getRowIdCallback,
     _insertIntoArray,
+    _logError,
     _missing,
     _missingOrEmpty,
     _warnOnce,
@@ -747,7 +745,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             });
             const rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                _errorOnce(`could not find row id=${id}, data item was not found for this id`);
+                _logError(4, { id });
                 return null;
             }
             return rowNode;
@@ -755,7 +753,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             // find rowNode using object references
             const rowNode = this.allRowNodes.find((currentRowNode) => currentRowNode.data === data)!;
             if (!rowNode) {
-                _errorOnce(`could not find data item as object was not found`, data);
+                _logError(5, { data });
                 return null;
             }
             return rowNode;

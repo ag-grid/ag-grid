@@ -22,7 +22,7 @@ import { showJsComp } from '../jsComp';
 import { CssClasses } from '../utils';
 
 const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
-    const { ctrlsFactory, context } = useContext(BeansContext);
+    const { registry, context } = useContext(BeansContext);
 
     const eGui = useRef<HTMLElement | null>(null);
     const eValueRef = useRef<HTMLElement>(null);
@@ -72,7 +72,7 @@ const GroupCellRenderer = forwardRef((props: GroupCellRendererParams, ref) => {
             setCheckboxVisible: (visible) => setCheckboxCssClasses((prev) => prev.setClass('ag-invisible', !visible)),
         };
 
-        const groupCellRendererCtrl = ctrlsFactory.getInstance('groupCellRendererCtrl') as IGroupCellRendererCtrl;
+        const groupCellRendererCtrl = registry.createDynamicBean<IGroupCellRendererCtrl>('groupCellRendererCtrl');
         if (groupCellRendererCtrl) {
             ctrlRef.current = context.createBean(groupCellRendererCtrl);
             ctrlRef.current.init(

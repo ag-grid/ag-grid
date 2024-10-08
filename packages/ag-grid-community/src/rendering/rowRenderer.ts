@@ -36,12 +36,13 @@ import { _executeInAWhile } from '../utils/function';
 import { _exists } from '../utils/generic';
 import { _createArrayOfNumbers } from '../utils/number';
 import { _getAllValuesInObject, _iterateObject } from '../utils/object';
-import { CellCtrl } from './cell/cellCtrl';
+import type { CellCtrl } from './cell/cellCtrl';
+import { DOM_DATA_KEY_CELL_CTRL } from './cell/cellCtrl';
 import type { ICellRenderer } from './cellRenderers/iCellRenderer';
 import type { StickyRowFeature } from './features/stickyRowFeature';
 import type { StickyRowService } from './features/stickyRowService';
 import type { RowCtrlInstanceId } from './row/rowCtrl';
-import { RowCtrl } from './row/rowCtrl';
+import { DOM_DATA_KEY_ROW_CTRL, RowCtrl } from './row/rowCtrl';
 import type { RowContainerHeightService } from './rowContainerHeightService';
 
 type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
@@ -591,8 +592,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // the cell, and not the textfield. that means if the user is in a text field, and the grid refreshes,
         // the focus is lost from the text field. we do not want this.
         const activeElement = _getActiveDomElement(this.gos);
-        const cellDomData = _getDomData(this.gos, activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
-        const rowDomData = _getDomData(this.gos, activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
+        const cellDomData = _getDomData(this.gos, activeElement, DOM_DATA_KEY_CELL_CTRL);
+        const rowDomData = _getDomData(this.gos, activeElement, DOM_DATA_KEY_ROW_CTRL);
 
         const gridElementFocused = cellDomData || rowDomData;
 

@@ -19,8 +19,9 @@ import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } fr
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import { _last } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
-import { _errorOnce, _warnOnce } from '../utils/function';
+import { _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
+import { _logError } from '../validation/logging';
 import { BaseSelectionService } from './baseSelectionService';
 import { RowRangeSelectionContext } from './rowRangeSelectionContext';
 
@@ -462,7 +463,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         if (justCurrentPage || justFiltered) {
             if (!rowModelClientSide) {
-                _errorOnce("selecting just filtered only works when gridOptions.rowModelType='clientSide'");
+                _logError(102, {});
                 return;
             }
             this.getNodesToSelect(justFiltered, justCurrentPage).forEach(callback);
@@ -641,9 +642,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         source: SelectionEventSourceType
     ): void {
         if (!Array.isArray(state)) {
-            return _errorOnce(
-                'Invalid selection state. When using client-side row model, the state must conform to `string[]`.'
-            );
+            _logError(103, {});
+            return;
         }
         const rowIds = new Set(state);
         const nodes: RowNode[] = [];

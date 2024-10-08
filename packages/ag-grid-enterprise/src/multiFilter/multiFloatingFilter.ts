@@ -16,10 +16,10 @@ import {
     AgPromise,
     Component,
     _clearElement,
+    _getDefaultFloatingFilterType,
     _getFloatingFilterCompDetails,
     _mergeDeep,
     _setDisplayed,
-    getDefaultFloatingFilterType,
 } from 'ag-grid-community';
 
 import { MultiFilter } from './multiFilter';
@@ -173,7 +173,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
 
     private getCompDetails(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
         const defaultComponentName =
-            getDefaultFloatingFilterType(this.frameworkOverrides, filterDef, () =>
+            _getDefaultFloatingFilterType(this.frameworkOverrides, filterDef, () =>
                 this.filterManager!.getDefaultFloatingFilter(this.params.column as AgColumn)
             ) ?? 'agReadOnlyFloatingFilter';
 

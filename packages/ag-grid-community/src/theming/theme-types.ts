@@ -1,4 +1,4 @@
-import { _errorOnce } from '../utils/function';
+import { _logError } from '../validation/logging';
 import type { CoreParams } from './core/core-css';
 import { clamp, memoize, paramToVariableExpression } from './theme-utils';
 
@@ -380,9 +380,7 @@ const durationValueToCss = (value: DurationValue, param: string): string | false
     if (typeof value === 'string') return value;
     if (typeof value === 'number') {
         if (value > 50) {
-            _errorOnce(
-                `Numeric value ${value} passed to ${param} param will be interpreted as ${value} seconds. If this is intentional use "${value}s" to silence this warning.`
-            );
+            _logError(104, { value, param });
         }
         return `${value}s`;
     }
