@@ -140,6 +140,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.addManagedPropertyListener('suppressCellFocus', (e) => this.onSuppressCellFocusChanged(e.currentValue));
         this.addManagedPropertyListeners(
             [
+                'groupSuppressBlankHeader',
                 'getBusinessKeyForNode',
 
                 'fullWidthCellRenderer',

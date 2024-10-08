@@ -21,7 +21,7 @@
           "transitive": true
         }
       ],
-      "outputs": [],
+      "outputs": ["{projectRoot}/dist/ag-grid-enterprise*.js", "{projectRoot}/dist/ag-grid-charts-enterprise*.js"],
       "options": {
         "cwd": "packages/ag-grid-enterprise",
         "commands": ["./webpackBuild.sh"]

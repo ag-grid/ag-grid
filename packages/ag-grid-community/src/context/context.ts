@@ -111,7 +111,7 @@ export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollec
 
 export type DynamicBeanName =
     | 'headerFilterCell'
-    | 'detailCellRenderer'
+    | 'detailCellRendererCtrl'
     | 'groupCellRendererCtrl'
     | 'fillHandle'
     | 'rangeHandle';

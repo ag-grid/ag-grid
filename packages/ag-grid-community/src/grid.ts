@@ -207,13 +207,7 @@ export class GridCoreCreator {
         const apiFunctionService = context.getBean('apiFunctionService');
 
         registeredModules.forEach((module) => {
-            module.userComponents?.forEach(({ name, classImp, params }) =>
-                registry.registerUserComponent(name, classImp, params)
-            );
-
-            module.dynamicBeans?.forEach((meta) => registry.registerDynamicBean(meta));
-
-            module.selectors?.forEach((selector) => registry.registerSelector(selector));
+            registry.registerModule(module);
 
             const apiFunctions = module.apiFunctions;
             if (apiFunctions) {
