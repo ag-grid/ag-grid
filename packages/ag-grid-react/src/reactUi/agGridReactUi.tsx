@@ -270,12 +270,12 @@ class ReactFrameworkComponentWrapper
                         return CellRendererComponentWrapper;
                 }
             };
-            const ComponentClass = getComponentClass(componentType.propertyName);
+            const ComponentClass = getComponentClass(componentType.name);
             if (ComponentClass) {
                 return new ComponentClass(UserReactComponent, this.parent, componentType);
             }
         } else {
-            switch (componentType.propertyName) {
+            switch (componentType.name) {
                 case 'filter':
                 case 'floatingFilterComponent':
                 case 'dateComponent':
@@ -291,14 +291,14 @@ class ReactFrameworkComponentWrapper
             }
         }
         // only cell renderers and tool panel should use fallback methods
-        const suppressFallbackMethods = !componentType.cellRenderer && componentType.propertyName !== 'toolPanel';
+        const suppressFallbackMethods = !componentType.cellRenderer && componentType.name !== 'toolPanel';
         return new ReactComponent(UserReactComponent, this.parent, componentType, suppressFallbackMethods);
     }
 }
 
 // Define DetailCellRenderer and ReactFrameworkOverrides here to avoid circular dependency
 const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: any) => {
-    const { ctrlsFactory, context, gos, rowModel } = useContext(BeansContext);
+    const { registry, context, gos, rowModel } = useContext(BeansContext);
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [gridCssClasses, setGridCssClasses] = useState<CssClasses>(() => new CssClasses());
@@ -349,7 +349,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
             getGui: () => eGuiRef.current!,
         };
 
-        const ctrl = ctrlsFactory.getInstance('detailCellRenderer') as IDetailCellRendererCtrl;
+        const ctrl = registry.createDynamicBean<IDetailCellRendererCtrl>('detailCellRendererCtrl');
         if (!ctrl) {
             return;
         } // should never happen, means master/detail module not loaded

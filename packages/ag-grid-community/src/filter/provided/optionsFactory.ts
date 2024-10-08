@@ -60,11 +60,11 @@ export class OptionsFactory {
                 this.defaultOption = firstFilterOption.displayKey;
             } else {
                 // invalid FilterOptionDef supplied as it doesn't contain a 'displayKey
-                _logWarn(73, {});
+                _logWarn(73);
             }
         } else {
             //no filter options for filter
-            _logWarn(74, {});
+            _logWarn(74);
         }
     }
 

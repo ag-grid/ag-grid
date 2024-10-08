@@ -2662,10 +2662,10 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/client-side-model/', to: '/react-data-grid/row-models/' },
     { from: '/vue-data-grid/client-side-model/', to: '/vue-data-grid/row-models/' },
 
-    { from: '/javascript-data-grid/grouping-footers/', to: '/javascript-data-grid/total-rows/' },
-    { from: '/angular-data-grid/grouping-footers/', to: '/angular-data-grid/total-rows/' },
-    { from: '/react-data-grid/grouping-footers/', to: '/react-data-grid/total-rows/' },
-    { from: '/vue-data-grid/grouping-footers/', to: '/vue-data-grid/total-rows/' },
+    { from: '/javascript-data-grid/grouping-footers/', to: '/javascript-data-grid/aggregation-total-rows/' },
+    { from: '/angular-data-grid/grouping-footers/', to: '/angular-data-grid/aggregation-total-rows/' },
+    { from: '/react-data-grid/grouping-footers/', to: '/react-data-grid/aggregation-total-rows/' },
+    { from: '/vue-data-grid/grouping-footers/', to: '/vue-data-grid/aggregation-total-rows/' },
 
     { from: '/javascript-data-grid/scrolling-scenarios/', to: '/javascript-data-grid/scrolling-performance/' },
     { from: '/angular-data-grid/scrolling-scenarios/', to: '/angular-data-grid/scrolling-performance/' },
@@ -2772,4 +2772,14 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-data-grid/grouping-unbalanced-groups', to: '/angular-data-grid/grouping' },
     { from: '/react-data-grid/grouping-unbalanced-groups', to: '/react-data-grid/grouping' },
     { from: '/vue-data-grid/grouping-unbalanced-groups', to: '/vue-data-grid/grouping' },
+
+    { from: '/javascript-data-grid/total-rows', to: '/javascript-data-grid/aggregation-total-rows' },
+    { from: '/angular-data-grid/total-rows', to: '/javascript-data-grid/aggregation-total-rows' },
+    { from: '/react-data-grid/total-rows', to: '/javascript-data-grid/aggregation-total-rows' },
+    { from: '/vue-data-grid/total-rows', to: '/javascript-data-grid/aggregation-total-rows' },
+
+    { from: '/javascript-data-grid/aggregation-other', to: '/javascript-data-grid/aggregation' },
+    { from: '/angular-data-grid/aggregation-other', to: '/javascript-data-grid/aggregation' },
+    { from: '/react-data-grid/aggregation-other', to: '/javascript-data-grid/aggregation' },
+    { from: '/vue-data-grid/aggregation-other', to: '/javascript-data-grid/aggregation' },
 ];

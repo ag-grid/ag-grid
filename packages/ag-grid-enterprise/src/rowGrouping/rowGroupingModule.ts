@@ -2,13 +2,15 @@ import type { _ModuleWithApi, _ModuleWithoutApi, _RowGroupingGridApi } from 'ag-
 import { ColumnFilterModule, FloatingFilterModule, PopupModule, StickyRowModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { AggregationModule } from '../aggregation/aggregationModule';
+import { ClientSideRowModelExpansionModule } from '../expansion/expansionModule';
 import { baseEnterpriseModule } from '../moduleUtils';
 import { GroupCellRenderer } from '../rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from '../rendering/groupCellRendererCtrl';
 import { AggFuncService } from './aggFuncService';
 import { AggregationStage } from './aggregationStage';
 import { AutoColService } from './autoColService';
-import { ColumnDropZoneService } from './columnDropZones/columnDropZoneService';
+import { AgGridHeaderDropZonesSelector } from './columnDropZones/agGridHeaderDropZones';
 import { FilterAggregatesStage } from './filterAggregatesStage';
 import { GroupFilter } from './groupFilter/groupFilter';
 import { GroupFloatingFilterComp } from './groupFilter/groupFloatingFilter';
@@ -53,7 +55,6 @@ export const RowGroupingCoreModule: _ModuleWithoutApi = {
         AggFuncService,
         AutoColService,
         ShowRowGroupColsService,
-        ColumnDropZoneService,
         GroupHideOpenParentsService,
         RowGroupColsService,
     ],
@@ -67,10 +68,12 @@ export const RowGroupingCoreModule: _ModuleWithoutApi = {
             classImp: GroupCellRenderer,
         },
     ],
-    controllers: [{ name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl }],
+    dynamicBeans: [{ name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl }],
+    selectors: [AgGridHeaderDropZonesSelector],
     dependsOn: [
         EnterpriseCoreModule,
         PopupModule, // can be extracted into row group panel module
+        AggregationModule,
     ],
 };
 
@@ -128,5 +131,6 @@ export const RowGroupingModule: _ModuleWithoutApi = {
         GroupFloatingFilterModule,
         StickyRowModule,
         PivotModule,
+        ClientSideRowModelExpansionModule,
     ],
 };

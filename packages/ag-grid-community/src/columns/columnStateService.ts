@@ -104,7 +104,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
         if (!params?.state?.forEach) {
             // state is not an array
-            _logWarn(32, {});
+            _logWarn(32);
             return false;
         }
 

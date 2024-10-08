@@ -90,7 +90,7 @@ export class ClientSideNodeManager {
 
     public setRowData(rowData: any[]): RowNode[] | undefined {
         if (typeof rowData === 'string') {
-            _logWarn(1, {});
+            _logWarn(1);
             return;
         }
         this.rowCountReady = true;

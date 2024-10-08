@@ -87,7 +87,7 @@ export function _getRowHeightForNode(
 
         if (isNumeric(height)) {
             if (height === 0) {
-                _logWarn(23, {});
+                _logWarn(23);
             }
             return { height: Math.max(1, height), estimated: false };
         }
@@ -135,7 +135,7 @@ export function _getRowHeightAsNumber(gos: GridOptionsService): number {
         return rowHeight;
     }
 
-    _logWarn(24, {});
+    _logWarn(24);
     return environment.getDefaultRowHeight();
 }
 

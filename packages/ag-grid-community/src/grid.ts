@@ -17,7 +17,6 @@ import {
     _isModuleRegistered,
     _registerModule,
 } from './modules/moduleRegistry';
-import { _errorOnce } from './utils/function';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
 import { _logError, _logPreCreationError } from './validation/logging';
@@ -121,7 +120,7 @@ export function createGrid<TData>(
 ): GridApi<TData> {
     if (!gridOptions) {
         // No gridOptions provided, abort creating the grid
-        _logError(11, {});
+        _logError(11);
         return {} as GridApi;
     }
     const api = new GridCoreCreator().create(
@@ -179,9 +178,7 @@ export class GridCoreCreator {
         };
 
         const context = new Context(contextParams);
-        this.registerModuleUserComponents(context, registeredModules);
-        this.registerControllers(context, registeredModules);
-        this.registerModuleApiFunctions(context, registeredModules);
+        this.registerModuleFeatures(context, registeredModules);
 
         createUi(context);
 
@@ -194,15 +191,6 @@ export class GridCoreCreator {
         return context.getBean('gridApi');
     }
 
-    private registerControllers(context: Context, registeredModules: Module[]): void {
-        const factory = context.getBean('ctrlsFactory');
-        registeredModules.forEach((module) => {
-            if (module.controllers) {
-                module.controllers.forEach((meta) => factory.register(meta));
-            }
-        });
-    }
-
     private getRegisteredModules(params: GridParams | undefined, gridId: string, rowModelType: RowModelType): Module[] {
         _registerModule(CommunityCoreModule, gridId);
 
@@ -211,21 +199,16 @@ export class GridCoreCreator {
         return _getRegisteredModules(gridId, rowModelType);
     }
 
-    private registerModuleUserComponents(context: Context, registeredModules: Module[]): void {
-        const registry = context.getBean('userComponentRegistry');
-        registeredModules.forEach((module) => {
-            module.userComponents?.forEach(({ name, classImp, params }) => {
-                registry.registerDefaultComponent(name, classImp, params);
-            });
-        });
-    }
-
-    private registerModuleApiFunctions(
+    private registerModuleFeatures(
         context: Context,
         registeredModules: (_ModuleWithApi<any> | _ModuleWithoutApi)[]
     ): void {
+        const registry = context.getBean('registry');
         const apiFunctionService = context.getBean('apiFunctionService');
+
         registeredModules.forEach((module) => {
+            registry.registerModule(module);
+
             const apiFunctions = module.apiFunctions;
             if (apiFunctions) {
                 const names = Object.keys(apiFunctions) as ApiFunctionName[];

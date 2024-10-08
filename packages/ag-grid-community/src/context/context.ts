@@ -1,7 +1,6 @@
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
-import type { RowModelHelperService } from '../api/rowModelHelperService';
 import type { RowNodeEventThrottle } from '../clientSideRowModel/rowNodeEventThrottle';
 import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
 import type { ColumnMoveService } from '../columnMove/columnMoveService';
@@ -19,11 +18,9 @@ import type { DataTypeService } from '../columns/dataTypeService';
 import type { FuncColsService } from '../columns/funcColsService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { AgComponentUtils } from '../components/framework/agComponentUtils';
-import type { ComponentMetadataProvider } from '../components/framework/componentMetadataProvider';
 import type { FrameworkComponentWrapper } from '../components/framework/frameworkComponentWrapper';
+import type { Registry } from '../components/framework/registry';
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
-import type { UserComponentRegistry } from '../components/framework/userComponentRegistry';
-import type { CtrlsFactory } from '../ctrlsFactory';
 import type { CtrlsService } from '../ctrlsService';
 import type { DragAndDropService } from '../dragAndDrop/dragAndDropService';
 import type { DragService } from '../dragAndDrop/dragService';
@@ -47,7 +44,7 @@ import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService'
 import type { GridDestroyService } from '../gridDestroyService';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { IChartService } from '../interfaces/IChartService';
-import type { IRangeService, ISelectionHandleFactory } from '../interfaces/IRangeService';
+import type { IRangeService } from '../interfaces/IRangeService';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
@@ -69,9 +66,8 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
-import type { IColumnDropZonesService, IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
+import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { ISideBarService } from '../interfaces/iSideBar';
-import type { IStatusBarService } from '../interfaces/iStatusBarService';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { LocaleService } from '../localeService';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -115,7 +111,13 @@ export interface ContextParams extends GenericContextParams<BeanName, BeanCollec
 
 export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollection> {}
 
-export type ControllerName = 'headerFilterCell' | 'detailCellRenderer' | 'groupCellRendererCtrl';
+export type DynamicBeanName =
+    | 'headerFilterCell'
+    | 'detailCellRendererCtrl'
+    | 'groupCellRendererCtrl'
+    | 'fillHandle'
+    | 'rangeHandle';
+
 export type UserComponentName =
     | 'agDragAndDropImage'
     | 'agColumnHeader'
@@ -169,7 +171,7 @@ export interface NamedClass<TName = string> {
     classImp: new (...args: []) => object;
     name: TName;
 }
-export type ControllerMeta = NamedClass<ControllerName>;
+export type DynamicBeanMeta = NamedClass<DynamicBeanName>;
 export type ComponentMeta = NamedClass<UserComponentName> & {
     /** Default params for provided components */
     params?: any;
@@ -198,7 +200,7 @@ export interface CoreBeanCollection {
     cellStyleService?: CellStyleService;
     columnHoverService?: ColumnHoverService;
     userComponentFactory: UserComponentFactory;
-    userComponentRegistry: UserComponentRegistry;
+    registry: Registry;
     animationFrameService?: AnimationFrameService;
     dragService?: DragService;
     dragAndDropService?: DragAndDropService;
@@ -212,14 +214,12 @@ export interface CoreBeanCollection {
     rowStyleService?: RowStyleService;
     rowModel: IRowModel;
     ctrlsService: CtrlsService;
-    ctrlsFactory: CtrlsFactory;
     valueCache?: ValueCache;
     rowNodeEventThrottle?: RowNodeEventThrottle;
     localeService: LocaleService;
     syncService: SyncService;
     ariaAnnouncementService: AriaAnnouncementService;
     rangeService?: IRangeService;
-    selectionHandleFactory: ISelectionHandleFactory;
     validationService?: ValidationService;
     gridApi: GridApi;
     gridOptions: GridOptions;
@@ -237,7 +237,6 @@ export interface CoreBeanCollection {
     pivotColsService?: IColsService;
     quickFilterService?: QuickFilterService;
     showRowGroupColsService?: IShowRowGroupColsService;
-    columnDropZonesService?: IColumnDropZonesService;
     dataTypeService?: DataTypeService;
     globalEventListener: AgGlobalEventListener;
     globalSyncEventListener: AgGlobalEventListener;
@@ -257,7 +256,6 @@ export interface CoreBeanCollection {
     pinnedWidthService: PinnedWidthService;
     expressionService?: ExpressionService;
     autoWidthCalculator?: AutoWidthCalculator;
-    componentMetadataProvider: ComponentMetadataProvider;
     agComponentUtils?: AgComponentUtils;
     frameworkComponentWrapper: FrameworkComponentWrapper;
     horizontalResizeService?: HorizontalResizeService;
@@ -271,13 +269,11 @@ export interface CoreBeanCollection {
     paginationService?: PaginationService;
     pageBoundsService: PageBoundsService;
     apiFunctionService: ApiFunctionService;
-    rowModelHelperService?: RowModelHelperService;
     detailGridApiService?: IDetailGridApiService;
     gridDestroyService: GridDestroyService;
     expansionService?: IExpansionService;
     sideBarService?: ISideBarService;
     ssrmTransactionManager?: IServerSideTransactionManager;
-    columnChooserFactory?: IColumnChooserFactory;
     aggFuncService?: IAggFuncService;
     advancedFilterService: IAdvancedFilterService;
     filterStage?: IRowNodeStage;
@@ -289,7 +285,6 @@ export interface CoreBeanCollection {
     filterAggregatesStage?: IRowNodeStage;
     rowNodeSorter?: RowNodeSorter;
     pivotColDefService?: IPivotColDefService;
-    statusBarService?: IStatusBarService;
     chartService?: IChartService;
     aggColumnNameService?: IAggColumnNameService;
     renderStatusService?: IRenderStatusService;
@@ -359,7 +354,6 @@ export type BeanName =
     | 'columnChooserFactory'
     | 'columnController'
     | 'columnDefFactory'
-    | 'columnDropZonesService'
     | 'columnEditorFactory'
     | 'columnFilterService'
     | 'columnFlexService'
@@ -374,13 +368,12 @@ export type BeanName =
     | 'columnNameService'
     | 'columnViewportService'
     | 'columnStateService'
+    | 'columnToolPanelFactory'
     | 'columnUtils'
     | 'pivotResultColsService'
-    | 'componentMetadataProvider'
     | 'context'
     | 'contextMenuService'
     | 'controlsColService'
-    | 'ctrlsFactory'
     | 'ctrlsService'
     | 'csvCreator'
     | 'dataTypeService'
@@ -394,6 +387,7 @@ export type BeanName =
     | 'environment'
     | 'eventService'
     | 'eGridDiv'
+    | 'enterpriseChartProxyFactory'
     | 'expansionService'
     | 'expressionService'
     | 'filterAggregatesStage'
@@ -445,6 +439,7 @@ export type BeanName =
     | 'pageBoundsListener'
     | 'pageBoundsService'
     | 'positionUtils'
+    | 'registry'
     | 'renderStatusService'
     | 'rowContainerHeightService'
     | 'rowDragService'
@@ -452,13 +447,11 @@ export type BeanName =
     | 'rowModel'
     | 'rowNodeBlockLoader'
     | 'rowNodeEventThrottle'
-    | 'rowModelHelperService'
     | 'rowNodeSorter'
     | 'rowRenderer'
     | 'rowStyleService'
     | 'scrollVisibleService'
     | 'selectionController'
-    | 'selectionHandleFactory'
     | 'selectionService'
     | 'showRowGroupColsService'
     | 'sideBarService'
@@ -482,7 +475,6 @@ export type BeanName =
     | 'toolPanelColDefService'
     | 'undoRedoService'
     | 'userComponentFactory'
-    | 'userComponentRegistry'
     | 'valueCache'
     | 'valueService'
     | 'validationLogger'

@@ -1,6 +1,7 @@
 import type {
     AgColumn,
     BeanCollection,
+    CellCtrl,
     CellNavigationService,
     CellPosition,
     CellRange,
@@ -25,12 +26,11 @@ import type {
 import {
     AutoScrollService,
     BeanStub,
-    CellCtrl,
     _areCellsEqual,
     _areEqual,
     _exists,
     _existsAndNotEmpty,
-    _getCtrlForEventTarget,
+    _getCellCtrlForEventTarget,
     _getSuppressMultiRanges,
     _includes,
     _isCellSelectionEnabled,
@@ -502,7 +502,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private verifyCellRanges(gos: GridOptionsService): boolean {
         const invalid = _isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && this.cellRanges.length > 0;
         if (invalid) {
-            _logWarn(93, {});
+            _logWarn(93);
         }
 
         return !invalid;
@@ -868,7 +868,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     private updateValuesOnMove(eventTarget: EventTarget | null) {
-        const cellCtrl = _getCtrlForEventTarget<CellCtrl>(this.gos, eventTarget, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        const cellCtrl = _getCellCtrlForEventTarget(this.gos, eventTarget);
         const cell = cellCtrl?.getCellPosition();
 
         this.cellHasChanged = false;

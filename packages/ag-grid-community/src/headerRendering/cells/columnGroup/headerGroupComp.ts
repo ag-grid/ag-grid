@@ -76,7 +76,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         const paramsAny = this.params as any;
 
         if (paramsAny.template) {
-            _logWarn(89, {});
+            _logWarn(89);
         }
     }
 

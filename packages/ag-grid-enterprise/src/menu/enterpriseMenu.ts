@@ -441,7 +441,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
 
     private isModuleLoaded(menuTabName: string): boolean {
         if (menuTabName === TAB_COLUMNS) {
-            return this.gos.isModuleRegistered('ColumnsToolPanelModule');
+            return this.gos.isModuleRegistered('ColumnsToolPanelCoreModule');
         }
 
         return true;

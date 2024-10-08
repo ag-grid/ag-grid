@@ -11,6 +11,8 @@ export interface UserCompDetails {
 }
 
 export interface ComponentType {
-    propertyName: string;
-    cellRenderer: boolean;
+    name: string;
+    cellRenderer?: boolean;
+    mandatoryMethods?: string[];
+    optionalMethods?: string[];
 }

@@ -2,289 +2,106 @@
 title: "Aggregation - Custom Functions"
 enterprise: true
 ---
-
 This section covers how custom aggregation functions can be supplied and used in the grid.
 
-## Directly Supplied Functions
+{% gridExampleRunner title="Registering Functions" name="registering-functions" /%}
 
-Custom aggregation functions can be supplied directly to `colDef.aggFunc` as shown below:
+## Registering Custom Functions
+Custom functions can be registered to the grid by name via the `aggFuncs` grid option. The functions can
+then be applied to columns by referencing the function name in the column definition. The default values of
+`"sum"`, `"min"`, `"max"`, `"first"`, `"last"`, `"count"` and `"avg"` can also be overwritten with custom
+implementations.
 
+The above example demonstrates the following configuration to register a custom `"range"` function and applies
+it to the `total` column:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'total', aggFunc: 'range' },
+    ],
+    aggFuncs: {
+        'range': params => {
+            const values = params.values;
+            return values.length > 0 ? Math.max(...values) - Math.min(...values) : null;
+        }
+    },
+}
+```
+
+## Directly Applied Functions
+For columns not [Configured via the UI](./aggregation-columns/#configuring-via-the-ui), it can be simpler to directly
+apply custom functions to columns. This can be done by passing a custom function directly to the column `aggFunc`
+property.
+
+{% warning %}
+Direct functions will not appear in the [Columns Tool Panel](./tool-panel-columns/) or work when [Saving and Applying Column State](./column-state/#save-and-apply).
+{% /warning %}
+
+{% gridExampleRunner title="Directly Applied Functions" name="applied-functions" /%}
+
+The above example demonstrates the following configuration to apply a custom `"range"` function to the `total` column:
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
         {
             field: 'total',
             aggFunc: params => {
-                let total = 0;
-                params.values.forEach(value => total += value);
-                return total;
+                const values = params.values;
+                return values.length > 0 ? Math.max(...values) - Math.min(...values) : null;
             }
         }
     ]
 }
 ```
 
-As shown above, a custom agg function is supplied directly to the `aggFunc` property. The custom function uses the
-provided `values` to perform the custom aggregation. See [Aggregation API Reference](./aggregation/#api-reference) to
-learn more about the supplied `params`.
+## Multiple Group Levels
+When aggregations are applied across multiple levels of grouping, the aggregation function is called recursively.
+This has the effect where some groups aggregate the results of other aggregations, causing incorrect results.
 
-This is the simplest way to supply custom functions, however it has limitations compared with
-[Registering Custom Functions](./aggregation-custom-functions/#registering-custom-functions).
+To handle this, the aggregation function should return an object containing relevant meta data for the next level of aggregation,
+and a `"value"` field representing the result for this level.
 
-{% note %}
-Direct Functions will not appear in the [Columns Tool Panel](./tool-panel-columns/) or work when [Saving and Applying Column State](./column-state/#save-and-apply).
-{% /note %}
+{% gridExampleRunner title="Multiple Group Levels" name="multi-group-levels" /%}
 
-The example below uses the direct `aggFunc` approach shown in the above snippet. Note the following:
-
-* Rows are grouped by the **Country** and **Year** columns by enabling the `rowGroup` column definition property.
-* `func(Total)` is displayed in the column header by default as it's a direct function.
-* `agg(Total)` appears in the Columns Tool Panel, but it's omitted from the drop-down list as it's not registered with the grid.
-
-{% gridExampleRunner title="Directly Supplied Aggregation Functions" name="direct-functions"  exampleHeight=540 /%}
-
-## Registering Custom Functions
-
-Custom functions that are registered with the grid can be referenced by name in column definitions and will
-appear in the [Columns Tool Panel](./tool-panel-columns/) just like any [Built-In Function](./aggregation/#enabling-aggregation),
-and is done using the `aggFuncs` grid option:
-
-{% apiDocumentation source="grid-options/properties.json" section="rowPivoting" names=["aggFuncs"] /%}
-
-The following snippet shows how to register custom functions using the `aggFuncs` grid option:
-
+The above example demonstrates the following configuration to apply a custom `"range"` function which works with multiple
+levels of row grouping:
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
-        { field: 'sales', aggFunc: 'mySum' },
+      { field: 'total', aggFunc: 'range' },
+      // ... other column definitions
     ],
     aggFuncs: {
-        'mySum': params => {
-            let sum = 0;
-            params.values.forEach(value => sum += value);
-            return sum;
+      range: params => {
+        const values = params.values;
+        // aggregate leaf rows
+        if (params.rowNode.leafGroup) {
+            const max = Math.max(...values);
+            const min = Math.min(...values);
+            return {
+                max: max,
+                min: min,
+                value: max - min,
+            }
         }
+
+        // aggregate group rows
+        let max = values[0].max;
+        let min = values[0].min;
+        values.forEach(groupResult => {
+            max = Math.max(max, groupResult.max);
+            min = Math.min(min, groupResult.min);
+        });
+        return {
+            max: max,
+            min: min,
+            value: max - min,
+        };
+      }
     },
 }
 ```
 
-As shown above, a custom function is registered with in the grid with the name 'mySum' and is referenced by name in
-the column definition using the `aggFunc` property.
-
-Note that custom aggregation functions can also be registered using `gridApi.addAggFuncs({ mySum: mySumFunc })`.
-
-{% apiDocumentation source="grid-api/api.json" section="rowPivoting" names=["addAggFuncs"] /%}
-
-The example below uses the `aggFuncs` approach shown in the snippet above. Note the following:
-
-* Rows are grouped by the **Country** and **Year** columns by enabling the `rowGroup` column definition property.
-* `mySum(Total)` is displayed in the column header by default as it uses the registered function name.
-* `mySum(Total)` appears in the Columns Tool Panel and appears in the drop-down list just like a built-in function.
-
-{% gridExampleRunner title="Registering Custom Aggregation Functions" name="registered-function"  exampleHeight=540 /%}
-
-## Custom Aggregation Functions
-
-It is possible to add your own custom aggregation to the grid. Custom aggregation functions can be applied directly to
-the column or registered to the grid and reference by name (similar to grid provided functions).
-
-{% apiDocumentation source="grid-options/properties.json" section="rowPivoting" names=["aggFuncs"] /%}
-
-A custom aggregation function takes values to aggregate and aggregates them.
-
-{% note %}
-Javascript doesn't always represent decimal numbers correctly (e.g `0.2 + 0.1 = 0.30000000000000004`). For this
-reason, if your aggregations rely on decimal values, it's better to add logic to enforce the amount of decimal
-numbers that will be displayed in the cell (see the Rounded Average on Age Column in the example below).
-{% /note %}
-
-The next example shows many custom aggregation functions configured in a variety of ways and demonstrating different things aggregation functions can do.
-
-The following can be noted from the example:
-
-* **Min/Max on Age Column**: The function creates an aggregation over age giving a min and a max age. The function knows whether it is working with leaf nodes (original row data items) or aggregated nodes (ie groups) by checking the type of the value. If the value is a number, it's a row data item, otherwise it's a group. This is because the result of the aggregation has two values based on one input value.
-
-  The min/max function is then set by placing the function directly as the `colDef.aggFunc`.
-* **Average on Age Column**: The age columns is aggregated a second time with a custom average function. The average function also needs to know if it is working with leaf nodes or group nodes, as if it's group nodes then the average is weighted. The grid also provides an average function that works in the same way, so there is no value in providing your own average function like this, it is done in this example for demonstration purposes.
-
-  The average function is also set by placing the function directly as the `colDef.aggFunc`.
-* **Rounded Average on Age Column**: This is the same as `Average on Age Column` but forcing the values to display a maximum of two decimal numbers.
-* **Sum on Gold**: The gold column gets a custom `sum` aggregated function. The new sum function doesn't do anything different to the built in sum function, however it serves as a demonstration on how you can override. Maybe you want to provide a sum function that uses for example the `math.js` library.
-
-  The sum function is set using a `gridOptions` property.
-* **'123' on Silver**: The '123' function ignores the inputs and always returns the value 123. Because it is registered as an aggregation function, it can be reference by name in the column definitions. Having a function return the same thing isn't very useful, however for the example it demonstrates easily where in the grid the function was used.
-
-  The '123' function, like 'sum', is set using a `gridOptions` property.
-* **'xyz' on Bronze**: The 'xyz' function is another function with much use, however it demonstrates you can return anythin from an aggregation function - as long as your aggregation function can handle the result (if you have groups inside groups) and as long as your cell renderer can render the result (if using `cellRenderer`).
-
-  The 'xyz' function is set using the API. Note that we also set 'xyz' in the grid options as otherwise the grid would complain 'Function not found' as it tries to use the function before it is set via the API.
-
-{% gridExampleRunner title="Custom Aggregation Functions" name="custom-agg-functions" /%}
-
-Note that custom aggregations will get called for the top level rows to calculate a 'Grand Total', not just for row groups. For example if you have 10 rows in the grid, the grid will still call the aggregation with 10 values to get a grand total aggregation.
-
-The grand total aggregation is normally not seen, unless the grid is configured with [Grand Total Row](./total-rows/#grand-total-row). The grand total row display the result of the aggregation for top level, for example displaying a grand total even if no row grouping is active.
-
-When the grid is empty, the aggregations are still called once with an empty set. This is to calculate the grand total aggregation for the top level.
-
-## Multi-Level Custom Aggregation Functions
-
-In row grouping situations, there are some important nuances to consider when defining custom aggregation functions.
-Since data rows are modelled as a tree, custom aggregation functions are applied using a depth-first recursive approach.
-If you are unaware of the tree-like nature, your custom aggregation functions may behave differently to how you expect.
-
-For example, with the simple mean average function below:
-
-```{% frameworkTransform=true %}
-const simpleAvg = (params) => {
-  const values = params.values;
-  const sum = values.reduce((a,b) => a + b, 0);
-  return sum / values.length;
-}
-```
-
-The `simpleAvg` will behave as expected with the lowest level group, averaging the values. However, with a group of groups,
-`simpleAvg` will be the average of the averages. In the code example below, for `simpleAvg` the country average would be the average of the year group averages.
-
-To create a custom aggregation function, which is applied to all leaf rows, the function needs to behave differently when being applied to a group row versus a leaf row. An object needs to be returned containing all the information needed for the calculations for parent groups.
-
-For example, the following function would create average over all leaf rows:
-
-```{% frameworkTransform=true %}
- const avgAggFunction = (params) => {
-   // the average will be the sum / count
-   let sum = 0;
-   let count = 0;
-
-   params.values.forEach((value) => {
-     const groupNode = value !== null && value !== undefined && typeof value === 'object';
-     if (groupNode) {
-       // we are aggregating groups, so we take the
-       // aggregated values to calculated a weighted average
-       sum += value.sum;
-       count += value.count;
-     } else {
-       // skip values that are not numbers (ie skip empty values)
-       if (typeof value === 'number') {
-         sum += value;
-         count++;
-       }
-     }
-   });
-
-   // avoid divide by zero error
-   let avg = null;
-   if (count !== 0) {
-     avg = sum / count;
-   }
-
-   // the result will be an object. when this cell is rendered, only the avg is shown.
-   // however when this cell is part of another aggregation, the count is also needed
-   // to create a weighted average for the next level.
-   const result = {
-     sum: sum,
-     count: count,
-     value: avg,
-   };
-
-   return result;
- }
-```
-
-Note in the snippet of `avgAggFunction` above that:
-
-* `sum`, `value` and `count` are returned wrapped as an object
-* `sum` and `count` are needed for calculations by parent groups.
-* `value` is the result value shown in the grid
-
-In the code example below, you can see how `avgAggFunction()` and `simpleAvg()` provide different values at country level but same values at the year group level:
-
-{% gridExampleRunner title="Multi-Level Custom Function Aggregation" name="custom-avg-function" /%}
-
-## Multi-Column Aggregation
-
-This section provides an example of how to calculate a ratio using values from multiple columns.
-
-When values from multiple columns are required, a value object containing all the required values across multiple columns
-should be passed around instead of a simple value. This value object should also contain a `toString()` method, so it can
-also be resolved by the grid to a single value. This is shown in the code snippet below:
-
-```{% frameworkTransform=true spaceBetweenProperties=true %}
-const gridOptions = {
-    columnDefs: [
-        { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
-        {
-            headerName: 'Ratio',
-            colId: 'ratio',
-            valueGetter: params => {
-                if (!params.node.group) {
-                    // no need to handle group levels - calculated in the 'ratioAggFunc'
-                    return {
-                        gold: params.data.gold,
-                        silver: params.data.silver,
-                        toString: () => (gold && silver) ? gold / silver : 0,
-                    }
-                }
-            },
-            aggFunc: (params) => {
-                var goldSum = 0;
-                var silverSum = 0;
-                params.values.forEach(value => {
-                    if (value && value.gold) {
-                        goldSum += value.gold;
-                    }
-                    if (value && value.silver) {
-                        silverSum += value.silver;
-                    }
-                });
-                return {
-                    gold: goldSum,
-                    silver: silverSum,
-                    toString: () => {
-                        return goldSum && silverSum ? goldSum / silverSum : 0;
-                    },
-                }
-            }
-        }
-    ]
-}
-```
-
-The following example demonstrates this approach in action:
-
-{% gridExampleRunner title="Multi-Column Aggregation" name="multi-column-aggregation" /%}
-
-## Custom Full Row Aggregation
-
-Using `colDef.aggFunc` is the preferred way of doing aggregations. However you may find scenarios where you cannot define your aggregations with respect to individual column values. Maybe you are aggregating sales records in different currencies and you need to read the value from one column and the currency code from another column and then convert the record to a common currency for aggregation - the point being you need data from more than just one column, or you want to put the results into different columns to the inputs for the calculation. For that reason, you can take control of the row aggregation by providing a `getGroupRowAgg` function as a grid callback.
-
-{% note %}
-Using `colDef.aggFunc` is the preferred way of doing aggregations, only use `getGroupRowAgg`
-if you cannot achieve what you want as it will make your code more complex. Also note that `getGroupRowAgg`
-will not work when pivoting.
-{% /note %}
-
-For groups, when aggregating, the grid stores the results in the colId of the column. For example, if you have a group defined as follows:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        {
-            field: 'abby',
-            valueGetter: 'data.a + data.b',
-            colId: 'aaa'
-        }
-    ]
-}
-```
-
-Then the result of the aggregation will be stored in `data.aaa` and not in 'abby'. Most of the time this will not matter for you as the colId, if not provided, will default to the field. In order for the grid to display the aggregation result, it must be stored in the correct field name.
-
-Below shows an  example using `getGroupRowAgg`. The example doesn't represent a real world scenario, it's contrived for demonstration. It takes the number of medals as inputs and creates two outputs, one as a normal sum and another by multiplying the result by `Math.PI`.
-
-{% gridExampleRunner title="Custom Full Row Aggregation" name="custom-full-row-aggregation"  exampleHeight=620 /%}
-
 ## Next Up
 
-Continue to the next section to learn about [Aggregation Filtering](./aggregation-filtering/).
+Continue to the next section to learn about [Total Rows](./aggregation-total-rows/).

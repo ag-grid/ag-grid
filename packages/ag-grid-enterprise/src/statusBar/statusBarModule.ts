@@ -3,6 +3,7 @@ import { KeyboardNavigationCoreModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
+import { AgStatusBarSelector } from './agStatusBar';
 import { AggregationComp } from './providedPanels/aggregationComp';
 import { FilteredRowsComp } from './providedPanels/filteredRowsComp';
 import { SelectedRowsComp } from './providedPanels/selectedRowsComp';
@@ -20,6 +21,7 @@ export const StatusBarCoreModule: _ModuleWithoutApi = {
         { name: 'agFilteredRowCountComponent', classImp: FilteredRowsComp },
         { name: 'agTotalAndFilteredRowCountComponent', classImp: TotalAndFilteredRowsComp },
     ],
+    selectors: [AgStatusBarSelector],
     dependsOn: [EnterpriseCoreModule, KeyboardNavigationCoreModule],
 };
 

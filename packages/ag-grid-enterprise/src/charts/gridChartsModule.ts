@@ -6,6 +6,7 @@ import { baseEnterpriseModule } from '../moduleUtils';
 import { RangeSelectionModule } from '../rangeSelection/rangeSelectionModule';
 import { VERSION as GRID_VERSION } from '../version';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
+import { EnterpriseChartProxyFactory } from './chartComp/chartProxies/enterpriseChartProxyFactory';
 import { AdvancedSettingsMenuFactory } from './chartComp/menu/advancedSettings/advancedSettingsMenuFactory';
 import { ChartMenuListFactory } from './chartComp/menu/chartMenuList';
 import { ChartCrossFilterService } from './chartComp/services/chartCrossFilterService';
@@ -35,14 +36,7 @@ export const GridChartsCoreModule: _ModuleWithoutApi = {
             chartsVersion: ChartService.CHARTS_VERSION,
         });
     },
-    beans: [
-        ChartService,
-        ChartTranslationService,
-        ChartCrossFilterService,
-        ChartMenuListFactory,
-        ChartMenuService,
-        AdvancedSettingsMenuFactory,
-    ],
+    beans: [ChartService, ChartTranslationService, ChartCrossFilterService, ChartMenuListFactory, ChartMenuService],
     userComponents: [
         {
             name: 'agMenuItem',
@@ -70,7 +64,12 @@ export const GridChartsApiModule: _ModuleWithApi<_GridChartsGridApi> = {
     dependsOn: [GridChartsCoreModule],
 };
 
+export const GridChartsEnterpriseFeaturesModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('GridChartsEnterpriseFeaturesModule'),
+    beans: [EnterpriseChartProxyFactory, AdvancedSettingsMenuFactory],
+};
+
 export const GridChartsModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('GridChartsModule'),
-    dependsOn: [GridChartsCoreModule, GridChartsApiModule],
+    dependsOn: [GridChartsCoreModule, GridChartsApiModule, GridChartsEnterpriseFeaturesModule],
 };

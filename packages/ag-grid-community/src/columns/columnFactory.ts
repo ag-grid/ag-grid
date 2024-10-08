@@ -510,7 +510,7 @@ export class ColumnFactory extends BeanStub implements NamedBean {
                 const colType = value as any;
                 if (colType.type) {
                     // type should not be defined in column types
-                    _logWarn(35, {});
+                    _logWarn(35);
                 }
 
                 allColumnTypes[key] = value;

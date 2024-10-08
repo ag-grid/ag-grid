@@ -12,17 +12,9 @@ import type {
     ValueService,
     VisibleColsService,
 } from 'ag-grid-community';
-import {
-    SelectionHandleType,
-    _getFillHandle,
-    _isRowBefore,
-    _isSameRow,
-    _last,
-    _toStringOrNull,
-    _warnOnce,
-} from 'ag-grid-community';
+import { _getFillHandle, _isRowBefore, _isSameRow, _last, _toStringOrNull, _warnOnce } from 'ag-grid-community';
 
-import { AbstractSelectionHandle } from './abstractSelectionHandle';
+import { AbstractSelectionHandle, SelectionHandleType } from './abstractSelectionHandle';
 import { findLineByLeastSquares } from './utils';
 
 interface FillValues {
