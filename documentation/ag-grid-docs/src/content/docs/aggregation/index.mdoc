@@ -2,63 +2,42 @@
 title: "Aggregation"
 enterprise: true
 ---
+Apply custom or provided functions to values to calculate group values in the grid.
 
-When [Row Grouping](./grouping/), aggregation functions can be applied to any column to populate the group row with values.
+{% gridExampleRunner title="Aggregation Overview" name="aggregation-overview"  exampleHeight=540 /%}
 
 ## Enabling Aggregation
 
-There are two ways to enable aggregation.
+Aggregations can be enabled in the grid by setting the `aggFunc` column definition value to one of: `sum`, `min`, `max`, `count`, `avg`, `first`, or `last`.
 
-You can set `colDef.enableValue=true` to enable aggregation via the column menu and dragging in the columns tool panel.
-
-Another way to enable aggregations is with the built-in aggregation functions: `sum`, `min`, `max`, `count`, `avg`, `first`, and `last`. The following snippet shows how these agg functions can be applied to columns via `colDef.aggFunc`:
-
+The following configuration demonstrates how to enable aggregation on a column:
 ```{% frameworkTransform=true %}
 const gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true, hide: true },
-        { field: 'year', rowGroup: true, hide: true }, 
         { field: 'gold', aggFunc: 'sum' },
         { field: 'silver', aggFunc: 'max' },
         { field: 'bronze', aggFunc: 'avg' },
+        // ... other column definitions
     ],
 }
 ```
 
-The example below uses the same built-in aggregation functions shown in the snippet above. Note the following:
-
-* Rows are grouped by the **Country** and **Year** columns by enabling the `rowGroup` column definition property.
-
-* The **Gold**, **Silver** and **Bronze** value columns have different agg functions applied via `colDef.aggFunc`.
-
-{% gridExampleRunner title="Enabling Aggregation" name="enabling-aggregation"  exampleHeight=540 /%}
-
-{% note %}
-The built-in functions will support `bigint` values if you have them in your data, but the `avg`
-function will lose precision as it can only use integer arithmetic if `bigint` is used.
-{% /note %}
-
-## Customisations
-
-The previous example demonstrated how the built-in agg functions can be used, however extensive Aggregation customisations
-are also possible as summarised below:
-
-* **[Custom Functions](./aggregation-custom-functions/)** - provide custom aggregations to the grid.
-* **[Aggregation Filtering](./aggregation-filtering/)** - configure and customise how aggregations are filtered.
-* **[Other Customisations](./aggregation-other/)** - other ways to customise aggregations.
-
 ## API Reference
 
-Aggregations can be configured using the following column property:
+Aggregations can be configured using the following column properties:
 
 {% apiDocumentation source="column-properties/properties.json" section="grouping" names=["aggFunc", "defaultAggFunc", "allowedAggFuncs"] /%}
 
-{% br /%}
-
-Aggregation functions can be registered with the grid using the following grid option:
+Aggregation functions can be registered with the grid using the following grid options:
 
 {% apiDocumentation source="grid-options/properties.json" section="rowPivoting" names=["aggFuncs", "suppressAggFilteredOnly", "groupAggFiltering","suppressAggFuncInHeader"] /%}
 
+After the grid is initialised aggregations can be applied / retrieved / removed via the `api` with the following methods:
+
+{% apiDocumentation source="grid-api/api.json" section="rowPivoting" names=["getValueColumns", "addValueColumns", "removeValueColumns", "setValueColumns", "setColumnAggFunc"] /%}
+
+When the grid initialises, any column definitions that have `aggFunc` set will be automatically added as a value column.
+
 ## Next Up
 
-Continue to the next section to learn about [Custom Functions](./aggregation-custom-functions/).
+Continue to the next section to learn how to [Configure Columns](./aggregation-columns/).

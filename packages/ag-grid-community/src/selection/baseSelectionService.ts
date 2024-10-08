@@ -1,7 +1,9 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import type { IsRowSelectable } from '../entities/gridOptions';
 import type { SelectionEventSourceType } from '../events';
+import { _getIsRowSelectable } from '../gridOptionsUtils';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISetNodesSelectedParams } from '../interfaces/iSelectionService';
 import type { ChangedPath } from '../utils/changedPath';
@@ -11,12 +13,22 @@ import { SelectAllFeature } from './selectAllFeature';
 export abstract class BaseSelectionService extends BeanStub {
     protected rowModel: IRowModel;
 
+    private isRowSelectable?: IsRowSelectable;
+
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
     }
 
     public postConstruct(): void {
-        this.addManagedPropertyListeners(['isRowSelectable', 'rowSelection'], () => this.updateSelectable(false));
+        this.addManagedPropertyListeners(['isRowSelectable', 'rowSelection'], () => {
+            const callback = _getIsRowSelectable(this.gos);
+            if (callback !== this.isRowSelectable) {
+                this.isRowSelectable = callback;
+                this.updateSelectable(false);
+            }
+        });
+
+        this.isRowSelectable = _getIsRowSelectable(this.gos);
     }
 
     public createCheckboxSelectionComponent(): CheckboxSelectionComponent {

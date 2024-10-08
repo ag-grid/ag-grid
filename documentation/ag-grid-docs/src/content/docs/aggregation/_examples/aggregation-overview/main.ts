@@ -2,43 +2,46 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
+import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { FiltersToolPanelModule } from 'ag-grid-enterprise';
+import { MenuModule } from 'ag-grid-enterprise';
 import { RowGroupingModule } from 'ag-grid-enterprise';
+import { SetFilterModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    ColumnsToolPanelModule,
+    FiltersToolPanelModule,
+    MenuModule,
+    RowGroupingModule,
+    SetFilterModule,
+]);
 
-let gridApi: GridApi;
+let gridApi: GridApi<IOlympicData>;
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
-        { field: 'year', rowGroup: true, hide: true },
-        { field: 'sport', filter: 'agTextColumnFilter', floatingFilter: true },
-        { field: 'gold', aggFunc: 'sum' },
-        { field: 'silver', aggFunc: 'sum' },
         { field: 'bronze', aggFunc: 'sum' },
+        { field: 'silver', aggFunc: '2x+1' },
+        { field: 'gold', aggFunc: 'avg' },
     ],
     defaultColDef: {
         flex: 1,
-        minWidth: 150,
+        minWidth: 100,
     },
     autoGroupColumnDef: {
-        minWidth: 300,
+        minWidth: 200,
     },
+    grandTotalRow: 'bottom',
     groupTotalRow: 'bottom',
-    onGridReady: (params) => {
-        params.api.setFilterModel({
-            sport: {
-                type: 'contains',
-                filter: 'Swimming',
-            },
-        });
+    aggFuncs: {
+        '2x+1': (params) => {
+            const value = params.values[0];
+            return 2 * value + 1;
+        },
     },
 };
-
-function toggleProperty() {
-    const enable = document.querySelector<HTMLInputElement>('#suppressAggFilteredOnly')!.checked;
-    gridApi.setGridOption('suppressAggFilteredOnly', enable);
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
