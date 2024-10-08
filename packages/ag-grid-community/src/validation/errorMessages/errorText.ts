@@ -260,7 +260,7 @@ export const AG_GRID_ERRORS = {
     105: ({ e }: { e: any }) => [`chart rendering failed`, e] as const,
     106: () => 'both Theming API and the ag-grid.css are used on the same page, styling will be incorrect' as const,
     107: ({ key, value }: { key: string; value: string }) => `Invalid value for param ${key} - ${value}` as const,
-    108: ({ e }: { e: any }) => ['- chart update failed', e] as const,
+    108: ({ e }: { e: any }) => ['chart update failed', e] as const,
     109: ({ aggFuncOrString }: { aggFuncOrString: any }) =>
         `unrecognised aggregation function ${aggFuncOrString}` as const,
     110: () => 'groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup' as const,
