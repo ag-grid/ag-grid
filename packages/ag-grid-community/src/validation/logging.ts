@@ -1,4 +1,5 @@
 import { _errorOnce as errorLog, _warnOnce as warnLog } from '../utils/function';
+import { VERSION } from '../version';
 import type { ErrorId, ErrorMap, GetErrorParams } from './errorMessages/errorText';
 import type { ValidationService } from './validationService';
 
@@ -66,6 +67,7 @@ export function getErrorLink(errorNum: ErrorId, args: GetErrorParams<any>) {
             params.append(key, stringifyValue(value));
         });
     }
+    params.append('_version_', VERSION);
     return `${baseDocLink}/errors/${errorNum}?${params.toString()}`;
 }
 
