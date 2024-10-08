@@ -3,6 +3,7 @@ import { CommunityMenuApiModule, PopupModule, SharedMenuModule } from 'ag-grid-c
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
+import { ToolPanelColDefService } from '../sideBar/common/toolPanelColDefService';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
 import { ColumnChooserFactory } from './columnChooserFactory';
@@ -33,7 +34,7 @@ export const ColumnMenuModule: _ModuleWithoutApi = {
 
 export const ColumnChooserModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('ColumnChooserModule'),
-    beans: [ColumnChooserFactory],
+    beans: [ColumnChooserFactory, ToolPanelColDefService],
     dependsOn: [MenuCoreModule],
 };
 

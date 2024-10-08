@@ -21,8 +21,8 @@ function getToolPanelCompDetails(
 }
 
 const ToolPanelComponent: ComponentType = {
-    propertyName: 'toolPanel',
-    cellRenderer: false,
+    name: 'toolPanel',
+    optionalMethods: ['refresh', 'getState'],
 };
 
 export class ToolPanelWrapper extends Component {

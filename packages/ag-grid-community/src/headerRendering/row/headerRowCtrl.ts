@@ -295,7 +295,7 @@ export class HeaderRowCtrl extends BeanStub {
             switch (this.type) {
                 case HeaderRowType.FLOATING_FILTER: {
                     headerCtrl = this.createBean(
-                        this.beans.ctrlsFactory.getInstance<HeaderFilterCellCtrl>(
+                        this.beans.registry.createDynamicBean<HeaderFilterCellCtrl>(
                             'headerFilterCell',
                             headerColumn as AgColumn,
                             this.beans,

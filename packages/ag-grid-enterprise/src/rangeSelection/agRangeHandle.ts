@@ -1,7 +1,7 @@
 import type { CellPosition, CellRange } from 'ag-grid-community';
-import { CellRangeType, SelectionHandleType, _isSameRow, _last } from 'ag-grid-community';
+import { CellRangeType, _isSameRow, _last } from 'ag-grid-community';
 
-import { AbstractSelectionHandle } from './abstractSelectionHandle';
+import { AbstractSelectionHandle, SelectionHandleType } from './abstractSelectionHandle';
 
 export class AgRangeHandle extends AbstractSelectionHandle {
     protected type = SelectionHandleType.RANGE;

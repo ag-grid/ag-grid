@@ -16,46 +16,90 @@ import type { ITooltipParams } from '../../rendering/tooltipComponent';
 import { _getUserCompKeys } from './userComponentFactory';
 import type { UserComponentFactory } from './userComponentFactory';
 
-function createComponentType(propertyName: string, cellRenderer: boolean = false): ComponentType {
-    return {
-        propertyName,
-        cellRenderer,
-    };
-}
+const DateComponent: ComponentType = {
+    name: 'dateComponent',
+    mandatoryMethods: ['getDate', 'setDate'],
+    optionalMethods: ['afterGuiAttached', 'setInputPlaceholder', 'setInputAriaLabel', 'setDisabled', 'refresh'],
+};
 
-const DateComponent = createComponentType('dateComponent');
+const DragAndDropImageComponent: ComponentType = {
+    name: 'dragAndDropImageComponent',
+    mandatoryMethods: ['setIcon', 'setLabel'],
+};
 
-const DragAndDropImageComponent = createComponentType('dragAndDropImageComponent');
+const HeaderComponent: ComponentType = { name: 'headerComponent', optionalMethods: ['refresh'] };
 
-const HeaderComponent = createComponentType('headerComponent');
+const HeaderGroupComponent: ComponentType = { name: 'headerGroupComponent' };
 
-const HeaderGroupComponent = createComponentType('headerGroupComponent');
+const CellRendererComponent: ComponentType = {
+    name: 'cellRenderer',
+    optionalMethods: ['refresh', 'afterGuiAttached'],
+    cellRenderer: true,
+};
 
-const CellRendererComponent = createComponentType('cellRenderer', true);
+const EditorRendererComponent: ComponentType = {
+    name: 'cellRenderer',
+    optionalMethods: ['refresh', 'afterGuiAttached'],
+};
 
-const EditorRendererComponent = createComponentType('cellRenderer');
+const LoadingCellRendererComponent: ComponentType = { name: 'loadingCellRenderer', cellRenderer: true };
 
-const LoadingCellRendererComponent = createComponentType('loadingCellRenderer', true);
+const CellEditorComponent: ComponentType = {
+    name: 'cellEditor',
+    mandatoryMethods: ['getValue'],
+    optionalMethods: [
+        'isPopup',
+        'isCancelBeforeStart',
+        'isCancelAfterEnd',
+        'getPopupPosition',
+        'focusIn',
+        'focusOut',
+        'afterGuiAttached',
+        'refresh',
+    ],
+};
 
-const CellEditorComponent = createComponentType('cellEditor');
+const LoadingOverlayComponent: ComponentType = { name: 'loadingOverlayComponent', optionalMethods: ['refresh'] };
 
-const LoadingOverlayComponent = createComponentType('loadingOverlayComponent');
+const NoRowsOverlayComponent: ComponentType = { name: 'noRowsOverlayComponent', optionalMethods: ['refresh'] };
 
-const NoRowsOverlayComponent = createComponentType('noRowsOverlayComponent');
+const TooltipComponent: ComponentType = { name: 'tooltipComponent' };
 
-const TooltipComponent = createComponentType('tooltipComponent');
+const FilterComponent: ComponentType = {
+    name: 'filter',
+    mandatoryMethods: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
+    optionalMethods: [
+        'afterGuiAttached',
+        'afterGuiDetached',
+        'onNewRowsLoaded',
+        'getModelAsString',
+        'onFloatingFilterChanged',
+        'onAnyFilterChanged',
+        'refresh',
+    ],
+};
 
-const FilterComponent = createComponentType('filter');
+const FloatingFilterComponent: ComponentType = {
+    name: 'floatingFilterComponent',
+    mandatoryMethods: ['onParentModelChanged'],
+    optionalMethods: ['afterGuiAttached', 'refresh'],
+};
 
-const FloatingFilterComponent = createComponentType('floatingFilterComponent');
+const FullWidth: ComponentType = {
+    name: 'fullWidthCellRenderer',
+    optionalMethods: ['refresh', 'afterGuiAttached'],
+    cellRenderer: true,
+};
 
-const FullWidth = createComponentType('fullWidthCellRenderer', true);
+const FullWidthLoading: ComponentType = { name: 'loadingCellRenderer', cellRenderer: true };
 
-const FullWidthLoading = createComponentType('loadingCellRenderer', true);
+const FullWidthGroup: ComponentType = {
+    name: 'groupRowRenderer',
+    optionalMethods: ['afterGuiAttached'],
+    cellRenderer: true,
+};
 
-const FullWidthGroup = createComponentType('groupRowRenderer', true);
-
-const FullWidthDetail = createComponentType('detailCellRenderer', true);
+const FullWidthDetail: ComponentType = { name: 'detailCellRenderer', optionalMethods: ['refresh'], cellRenderer: true };
 
 export function _getDragAndDropImageCompDetails(
     userComponentFactory: UserComponentFactory,

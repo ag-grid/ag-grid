@@ -1,9 +1,7 @@
-import type { ComponentSelector, IStatusBarService, IStatusPanelComp, NamedBean } from 'ag-grid-community';
+import type { IStatusPanelComp, NamedBean } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
-import { AgStatusBarSelector } from './agStatusBar';
-
-export class StatusBarService extends BeanStub implements NamedBean, IStatusBarService {
+export class StatusBarService extends BeanStub implements NamedBean {
     beanName = 'statusBarService' as const;
 
     private allComponents: Map<string, IStatusPanelComp> = new Map();
@@ -27,10 +25,6 @@ export class StatusBarService extends BeanStub implements NamedBean, IStatusBarS
 
     public getStatusPanel(key: string): IStatusPanelComp {
         return this.allComponents.get(key)!;
-    }
-
-    public getStatusPanelSelector(): ComponentSelector {
-        return AgStatusBarSelector;
     }
 
     public override destroy(): void {

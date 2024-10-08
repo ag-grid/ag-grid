@@ -79,7 +79,7 @@ export const ColumnFilterApiModule: _ModuleWithApi<_ColumnFilterGridApi> = {
 
 export const FloatingFilterCoreModule: _ModuleWithoutApi = {
     ...baseCommunityModule('FloatingFilterCoreModule'),
-    controllers: [{ name: 'headerFilterCell', classImp: HeaderFilterCellCtrl as any }],
+    dynamicBeans: [{ name: 'headerFilterCell', classImp: HeaderFilterCellCtrl as any }],
     dependsOn: [ColumnFilterModule],
 };
 

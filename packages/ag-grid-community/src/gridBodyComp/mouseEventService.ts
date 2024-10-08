@@ -5,8 +5,8 @@ import type { CtrlsService } from '../ctrlsService';
 import type { DraggingEvent } from '../dragAndDrop/dragAndDropService';
 import { _isDomLayout } from '../gridOptionsUtils';
 import type { CellPosition } from '../interfaces/iCellPosition';
-import { CellCtrl } from '../rendering/cell/cellCtrl';
-import { _getCtrlForEventTarget } from '../utils/event';
+import type { CellCtrl } from '../rendering/cell/cellCtrl';
+import { _getCellCtrlForEventTarget } from '../rendering/cell/cellCtrl';
 import { _exists } from '../utils/generic';
 import { NumberSequence } from '../utils/numberSequence';
 
@@ -32,7 +32,7 @@ export class MouseEventService extends BeanStub implements NamedBean {
     }
 
     public getRenderedCellForEvent(event: Event): CellCtrl | null {
-        return _getCtrlForEventTarget<CellCtrl>(this.gos, event.target, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        return _getCellCtrlForEventTarget(this.gos, event.target);
     }
 
     // walks the path of the event, and returns true if this grid is the first one that it finds. if doing

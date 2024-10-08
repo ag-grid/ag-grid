@@ -1,12 +1,12 @@
 import type { GridTheme, GridThemeUseArgs } from '../entities/gridOptions';
-import { _errorOnce, _warnOnce } from '../utils/function';
+import { _logError, _logWarn } from '../validation/logging';
 import { Params } from './Params';
 import type { Part } from './Part';
 import { asPartImpl } from './Part';
-import { coreCSS, coreDefaults } from './core/core-css';
 import type { CoreParams } from './core/core-css';
-import { paramValueToCss } from './theme-types';
+import { coreCSS, coreDefaults } from './core/core-css';
 import type { CssFragment } from './theme-types';
+import { paramValueToCss } from './theme-types';
 import { paramToVariableName } from './theme-utils';
 
 export type Theme<TParams = unknown> = GridTheme & {
@@ -118,7 +118,7 @@ class ThemeImpl<TParams = unknown> implements Theme {
 
             const legacyStylesLoaded = getComputedStyle(document.body).getPropertyValue('--ag-legacy-styles-loaded');
             if (legacyStylesLoaded) {
-                _errorOnce('both Theming API and the ag-grid.css are used on the same page, styling will be incorrect');
+                _logError(106, {});
             }
         }
 
@@ -137,9 +137,7 @@ class ThemeImpl<TParams = unknown> implements Theme {
             if (loadThemeGoogleFonts) {
                 loadGoogleFont(googleFont);
             } else if (loadThemeGoogleFonts == null) {
-                _warnOnce(
-                    `theme uses google font ${googleFont} but no value for loadThemeGoogleFonts was provided. Pass true to load fonts from ${googleFontsDomain} or false to silence this warning.`
-                );
+                _logWarn(112, { googleFont, googleFontsDomain });
             }
         }
 
@@ -238,7 +236,7 @@ const makeVariablesChunk = (themeArg: Theme): ThemeCssChunk => {
         for (const [key, value] of Object.entries(params.getValues(mode))) {
             const cssValue = paramValueToCss(key, value);
             if (cssValue === false) {
-                _errorOnce(`Invalid value for param ${key} - ${describeValue(value)}`);
+                _logError(107, { key, value: describeValue(value) });
             } else {
                 const cssName = paramToVariableName(key);
                 const inheritedName = cssName.replace('--ag-', '--ag-inherited-');
