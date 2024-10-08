@@ -1,5 +1,7 @@
 import type { BeanCollection, ColDef, ColGroupDef, Column, IAggFunc } from 'ag-grid-community';
 
+import type { ValueColsService } from './valueColsService';
+
 export function addAggFuncs(beans: BeanCollection, aggFuncs: { [key: string]: IAggFunc }): void {
     if (beans.aggFuncService) {
         beans.aggFuncService.addAggFuncs(aggFuncs);
@@ -17,7 +19,7 @@ export function setColumnAggFunc(
     key: string | ColDef | Column,
     aggFunc: string | IAggFunc | null | undefined
 ): void {
-    beans.funcColsService.setColumnAggFunc(key, aggFunc, 'api');
+    (beans.valueColsService as ValueColsService).setColumnAggFunc(key, aggFunc, 'api');
 }
 
 export function isPivotMode(beans: BeanCollection): boolean {

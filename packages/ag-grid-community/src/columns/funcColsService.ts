@@ -1,13 +1,9 @@
-import type { PivotColsService } from '../../../ag-grid-enterprise/src/rowGrouping/pivotColsService';
-import type { RowGroupColsService } from '../../../ag-grid-enterprise/src/rowGrouping/rowGroupColsService';
-import type { ValueColsService } from '../../../ag-grid-enterprise/src/rowGrouping/valueColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { IAggFunc } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
-import { IColsService } from './baseColsService';
+import type { IColsService } from '../interfaces/iColsService';
 import type { ColKey, Maybe } from './columnModel';
 import type { ColumnState } from './columnStateService';
 
@@ -50,14 +46,6 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
     public isRowGroupEmpty(): boolean {
         return this.rowGroupColsService.isRowGroupEmpty();
-    }
-
-    public setColumnAggFunc(
-        key: Maybe<ColKey>,
-        aggFunc: string | IAggFunc | null | undefined,
-        source: ColumnEventType
-    ): void {
-        this.valueColsService.setColumnAggFunc(key, aggFunc, source);
     }
 
     public setRowGroupColumns(colKeys: ColKey[], source: ColumnEventType): void {

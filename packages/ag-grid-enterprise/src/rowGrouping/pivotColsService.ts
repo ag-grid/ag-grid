@@ -1,23 +1,24 @@
-import type { AgColumn, ColDef, ColumnStateParams } from 'ag-grid-community';
+import type {
+    AgColumn,
+    ColDef,
+    ColKey,
+    ColumnEventType,
+    ColumnState,
+    ColumnStateParams,
+    IColsService,
+    NamedBean,
+} from 'ag-grid-community';
+import { _BaseColsService, _removeFromArray } from 'ag-grid-community';
 
-import { BaseColsService } from '../../../ag-grid-community/src/columns/baseColsService';
-import type { ColumnOrderState, ColumnServiceEventName } from '../../../ag-grid-community/src/columns/baseColsService';
-import type { ColKey } from '../../../ag-grid-community/src/columns/columnModel';
-import type { ModifyColumnsNoEventsCallback } from '../../../ag-grid-community/src/columns/columnStateService';
-import type { GetValueFn } from '../../../ag-grid-community/src/columns/columnUtils';
-import type { NamedBean } from '../../../ag-grid-community/src/context/bean';
-import type { ColumnEventType } from '../../../ag-grid-community/src/events';
-import { _removeFromArray } from '../../../ag-grid-community/src/utils/array';
-
-export class PivotColsService extends BaseColsService implements NamedBean {
+export class PivotColsService extends _BaseColsService implements NamedBean, IColsService {
     beanName = 'pivotColsService' as const;
 
-    private modifyColumnsNoEventsCallbacks: ModifyColumnsNoEventsCallback = {
-        addCol: (column) => this.columns.push(column),
-        removeCol: (column) => _removeFromArray(this.columns, column),
+    private modifyColumnsNoEventsCallbacks = {
+        addCol: (column: AgColumn) => this.columns.push(column),
+        removeCol: (column: AgColumn) => _removeFromArray(this.columns, column),
     };
 
-    protected override getEventName(): ColumnServiceEventName {
+    protected override getEventName(): 'columnPivotChanged' {
         return 'columnPivotChanged';
     }
 
@@ -34,9 +35,9 @@ export class PivotColsService extends BaseColsService implements NamedBean {
     }
 
     public override orderColumns(
-        columnStateAccumulator: ColumnOrderState,
-        incomingColumnState: ColumnOrderState
-    ): ColumnOrderState {
+        columnStateAccumulator: { [colId: string]: ColumnState },
+        incomingColumnState: { [colId: string]: ColumnState }
+    ): { [colId: string]: ColumnState } {
         return this._orderColumns(
             columnStateAccumulator,
             incomingColumnState,
@@ -63,7 +64,10 @@ export class PivotColsService extends BaseColsService implements NamedBean {
     public syncColumnWithState(
         column: AgColumn,
         source: ColumnEventType,
-        getValue: GetValueFn<keyof ColumnStateParams, keyof ColumnStateParams>,
+        getValue: <U extends keyof ColumnStateParams, S extends keyof ColumnStateParams>(
+            key1: U,
+            key2?: S
+        ) => { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined },
         rowIndex: { [key: string]: number } | null
     ): void {
         const { value1: pivot, value2: pivotIndex } = getValue('pivot', 'pivotIndex');

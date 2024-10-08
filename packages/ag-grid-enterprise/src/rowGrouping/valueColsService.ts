@@ -1,16 +1,18 @@
-import { _exists, _logWarn } from 'ag-grid-community';
-import type { AgColumn, BeanCollection, ColDef, ColumnStateParams, IAggFunc } from 'ag-grid-community';
-import { BaseColsService } from 'ag-grid-community/src/columns/baseColsService';
-import type { ColumnOrderState, ColumnServiceEventName } from 'ag-grid-community/src/columns/baseColsService';
-import { dispatchColumnChangedEvent } from 'ag-grid-community/src/columns/columnEventUtils';
-import type { ColKey, Maybe } from 'ag-grid-community/src/columns/columnModel';
-import type { ModifyColumnsNoEventsCallback } from 'ag-grid-community/src/columns/columnStateService';
-import type { GetValueFn } from 'ag-grid-community/src/columns/columnUtils';
-import type { NamedBean } from 'ag-grid-community/src/context/bean';
-import type { ColumnEventType } from 'ag-grid-community/src/events';
-import { _removeFromArray } from 'ag-grid-community/src/utils/array';
+import type {
+    AgColumn,
+    BeanCollection,
+    ColDef,
+    ColKey,
+    ColumnEventType,
+    ColumnState,
+    ColumnStateParams,
+    IAggFunc,
+    IColsService,
+    NamedBean,
+} from 'ag-grid-community';
+import { _BaseColsService, _exists, _logWarn, _removeFromArray } from 'ag-grid-community';
 
-export class ValueColsService extends BaseColsService implements NamedBean {
+export class ValueColsService extends _BaseColsService implements NamedBean, IColsService {
     beanName = 'valueColsService' as const;
 
     public override wireBeans(beans: BeanCollection): void {
@@ -19,12 +21,12 @@ export class ValueColsService extends BaseColsService implements NamedBean {
         this.visibleColsService = beans.visibleColsService;
     }
 
-    private modifyColumnsNoEventsCallbacks: ModifyColumnsNoEventsCallback = {
-        addCol: (column) => this.columns.push(column),
-        removeCol: (column) => _removeFromArray(this.columns, column),
+    private modifyColumnsNoEventsCallbacks = {
+        addCol: (column: AgColumn) => this.columns.push(column),
+        removeCol: (column: AgColumn) => _removeFromArray(this.columns, column),
     };
 
-    protected override getEventName(): ColumnServiceEventName {
+    protected override getEventName(): 'columnValueChanged' {
         return 'columnValueChanged';
     }
 
@@ -82,11 +84,7 @@ export class ValueColsService extends BaseColsService implements NamedBean {
         });
     }
 
-    public setColumnAggFunc(
-        key: Maybe<ColKey>,
-        aggFunc: string | IAggFunc | null | undefined,
-        source: ColumnEventType
-    ): void {
+    public setColumnAggFunc(key: ColKey, aggFunc: string | IAggFunc | null | undefined, source: ColumnEventType): void {
         if (!key) {
             return;
         }
@@ -98,17 +96,22 @@ export class ValueColsService extends BaseColsService implements NamedBean {
 
         column.setAggFunc(aggFunc);
 
-        dispatchColumnChangedEvent(this.eventService, this.getEventName(), [column], source);
+        this.dispatchColumnChangedEvent(this.eventService, this.getEventName(), [column], source);
     }
 
-    public override orderColumns(columnStateAccumulator: ColumnOrderState): ColumnOrderState {
+    public override orderColumns(columnStateAccumulator: { [colId: string]: ColumnState }): {
+        [colId: string]: ColumnState;
+    } {
         return columnStateAccumulator;
     }
 
     public override syncColumnWithState(
         column: AgColumn,
         source: ColumnEventType,
-        getValue: GetValueFn<keyof ColumnStateParams, keyof ColumnStateParams>
+        getValue: <U extends keyof ColumnStateParams, S extends keyof ColumnStateParams>(
+            key1: U,
+            key2?: S
+        ) => { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined }
     ): void {
         // noop
         const aggFunc = getValue('aggFunc').value1;

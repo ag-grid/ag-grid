@@ -6,7 +6,6 @@ import type { RowNodeEventThrottle } from '../clientSideRowModel/rowNodeEventThr
 import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
 import type { ColumnMoveService } from '../columnMove/columnMoveService';
 import type { ColumnResizeService } from '../columnResize/columnResizeService';
-import type { IColsService } from '../columns/baseColsService';
 import type { ColumnDefFactory } from '../columns/columnDefFactory';
 import type { ColumnFactory } from '../columns/columnFactory';
 import type { ColumnFlexService } from '../columns/columnFlexService';
@@ -54,6 +53,7 @@ import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService'
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
+import type { IColsService } from '../interfaces/iColsService';
 import type { IColumnChooserFactory } from '../interfaces/iColumnChooserFactory';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';

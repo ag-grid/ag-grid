@@ -1,28 +1,30 @@
-import { _missingOrEmpty } from 'ag-grid-community';
-import type { ColumnOrderState, ColumnServiceEventName } from 'ag-grid-community/src/columns/baseColsService';
-import { BaseColsService } from 'ag-grid-community/src/columns/baseColsService';
-import type { ColKey, Maybe } from 'ag-grid-community/src/columns/columnModel';
 import type {
+    AgColumn,
+    AllEventsWithoutGridCommon,
+    ColDef,
+    ColKey,
+    ColumnEventType,
+    ColumnState,
     ColumnStateParams,
-    ModifyColumnsNoEventsCallback,
-} from 'ag-grid-community/src/columns/columnStateService';
-import type { GetValueFn } from 'ag-grid-community/src/columns/columnUtils';
-import type { NamedBean } from 'ag-grid-community/src/context/bean';
-import type { AgColumn } from 'ag-grid-community/src/entities/agColumn';
-import type { ColDef } from 'ag-grid-community/src/entities/colDef';
-import type { AllEventsWithoutGridCommon, ColumnEventType } from 'ag-grid-community/src/events';
-import { _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community/src/gridOptionsUtils';
-import { _removeFromArray } from 'ag-grid-community/src/utils/array';
+    IColsService,
+    NamedBean,
+} from 'ag-grid-community';
+import {
+    _BaseColsService,
+    _missingOrEmpty,
+    _removeFromArray,
+    _shouldUpdateColVisibilityAfterGroup,
+} from 'ag-grid-community';
 
-export class RowGroupColsService extends BaseColsService implements NamedBean {
+export class RowGroupColsService extends _BaseColsService implements NamedBean, IColsService {
     beanName = 'rowGroupColsService' as const;
 
-    private modifyColumnsNoEventsCallbacks: ModifyColumnsNoEventsCallback = {
-        addCol: (column) => this.columns.push(column),
-        removeCol: (column) => _removeFromArray(this.columns, column),
+    private modifyColumnsNoEventsCallbacks = {
+        addCol: (column: AgColumn) => this.columns.push(column),
+        removeCol: (column: AgColumn) => _removeFromArray(this.columns, column),
     };
 
-    protected override getEventName(): ColumnServiceEventName {
+    protected override getEventName(): 'columnRowGroupChanged' {
         return 'columnRowGroupChanged';
     }
 
@@ -30,11 +32,11 @@ export class RowGroupColsService extends BaseColsService implements NamedBean {
         this._setColumns(colKeys, source, (added, column) => this.setRowGroupActive(added, column, source));
     }
 
-    public override addColumns(colKeys: Maybe<ColKey>[], source: ColumnEventType): void {
+    public override addColumns(colKeys: (ColKey | null | undefined)[], source: ColumnEventType): void {
         this._addColumns(colKeys, source, (column) => this.setRowGroupActive(true, column, source));
     }
 
-    public override removeColumns(colKeys: Maybe<ColKey>[] | null, source: ColumnEventType): void {
+    public override removeColumns(colKeys: (ColKey | null | undefined)[] | null, source: ColumnEventType): void {
         this._removeColumns(colKeys, source, (column) => this.setRowGroupActive(false, column, source));
     }
 
@@ -50,11 +52,11 @@ export class RowGroupColsService extends BaseColsService implements NamedBean {
         );
     }
 
-    public isRowGroupEmpty(): boolean {
+    public override isRowGroupEmpty(): boolean {
         return _missingOrEmpty(this.columns);
     }
 
-    public moveColumn(fromIndex: number, toIndex: number, source: ColumnEventType): void {
+    public override moveColumn(fromIndex: number, toIndex: number, source: ColumnEventType): void {
         if (this.isRowGroupEmpty()) {
             return;
         }
@@ -73,7 +75,7 @@ export class RowGroupColsService extends BaseColsService implements NamedBean {
         } as AllEventsWithoutGridCommon);
     }
 
-    public getSourceColumnsForGroupColumn(groupCol: AgColumn): AgColumn[] | null {
+    public override getSourceColumnsForGroupColumn(groupCol: AgColumn): AgColumn[] | null {
         const sourceColumnId = groupCol.getColDef().showRowGroup;
         if (!sourceColumnId) {
             return null;
@@ -88,9 +90,9 @@ export class RowGroupColsService extends BaseColsService implements NamedBean {
     }
 
     public override orderColumns(
-        columnStateAccumulator: ColumnOrderState,
-        incomingColumnState: ColumnOrderState
-    ): ColumnOrderState {
+        columnStateAccumulator: { [colId: string]: ColumnState },
+        incomingColumnState: { [colId: string]: ColumnState }
+    ): { [colId: string]: ColumnState } {
         return this._orderColumns(
             columnStateAccumulator,
             incomingColumnState,
@@ -105,7 +107,10 @@ export class RowGroupColsService extends BaseColsService implements NamedBean {
     public syncColumnWithState(
         column: AgColumn,
         source: ColumnEventType,
-        getValue: GetValueFn<keyof ColumnStateParams, keyof ColumnStateParams>,
+        getValue: <U extends keyof ColumnStateParams, S extends keyof ColumnStateParams>(
+            key1: U,
+            key2?: S
+        ) => { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined },
         rowIndex: { [key: string]: number } | null
     ): void {
         const { value1: rowGroup, value2: rowGroupIndex } = getValue('rowGroup', 'rowGroupIndex');

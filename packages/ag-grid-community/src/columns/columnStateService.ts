@@ -1,6 +1,3 @@
-import type { PivotColsService } from '../../../ag-grid-enterprise/src/rowGrouping/pivotColsService';
-import type { RowGroupColsService } from '../../../ag-grid-enterprise/src/rowGrouping/rowGroupColsService';
-import type { ValueColsService } from '../../../ag-grid-enterprise/src/rowGrouping/valueColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -9,6 +6,7 @@ import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { IAggFunc } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType } from '../events';
+import type { IColsService } from '../interfaces/iColsService';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
@@ -17,7 +15,6 @@ import type { SortController } from '../sort/sortController';
 import { _areEqual, _removeFromArray } from '../utils/array';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
 import { _logWarn } from '../validation/logging';
-import { IColsService } from './baseColsService';
 import {
     dispatchColumnChangedEvent,
     dispatchColumnPinnedEvent,

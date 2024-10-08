@@ -3,10 +3,6 @@
   "compilerOptions": {
     "types": []
   },
-  "include": [
-    "src/**/*.ts",
-    "../ag-grid-enterprise/src/rowGrouping/pivotColsService.ts",
-    "../ag-grid-enterprise/src/rowGrouping/rowGroupColsService.ts",
-    "../ag-../ag-grid-enterprise/src/pivot/valueColsService.ts
+  "include": ["src/**/*.ts"],
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts", "src/**/test/**", "src/**/test-utils/**"]
 }

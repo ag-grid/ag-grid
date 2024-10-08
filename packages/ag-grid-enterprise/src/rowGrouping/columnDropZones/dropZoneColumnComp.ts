@@ -6,7 +6,6 @@ import type {
     DragAndDropIcon,
     DragItem,
     DropTarget,
-    FuncColsService,
     IAggFuncService,
     PopupService,
     SortController,
@@ -16,6 +15,7 @@ import { Component, DragSourceType, KeyCode, RefPlaceholder, _loadTemplate } fro
 
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { VirtualList } from '../../widgets/virtualList';
+import type { ValueColsService } from '../valueColsService';
 import type { TDropZone } from './baseDropZonePanel';
 
 export class DropZoneColumnComp extends PillDragComp<AgColumn> {
@@ -23,7 +23,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     private sortController?: SortController;
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
-    private funcColsService: FuncColsService;
+    private valueColsService: ValueColsService;
     private aggFuncService?: IAggFuncService;
 
     public override wireBeans(beans: BeanCollection) {
@@ -32,7 +32,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         this.sortController = beans.sortController;
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
-        this.funcColsService = beans.funcColsService;
+        this.valueColsService = beans.valueColsService as ValueColsService;
         this.aggFuncService = beans.aggFuncService;
     }
 
@@ -331,7 +331,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     private createAggSelect(hidePopup: () => void, value: any): Component {
         const itemSelected = () => {
             hidePopup();
-            this.funcColsService.setColumnAggFunc(this.column, value, 'toolPanelDragAndDrop');
+            this.valueColsService.setColumnAggFunc(this.column, value, 'toolPanelDragAndDrop');
         };
 
         const localeTextFunc = this.localeService.getLocaleTextFunc();

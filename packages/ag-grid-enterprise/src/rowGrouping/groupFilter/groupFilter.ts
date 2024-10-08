@@ -4,7 +4,6 @@ import type {
     ColumnNameService,
     FilterDestroyedEvent,
     FilterManager,
-    FuncColsService,
     IAfterGuiAttachedParams,
     IFilterComp,
     IFilterParams,
@@ -21,6 +20,8 @@ import {
     _warnOnce,
 } from 'ag-grid-community';
 
+import type { RowGroupColsService } from '../rowGroupColsService';
+
 interface FilterColumnPair {
     filter: IFilterComp;
     column: AgColumn;
@@ -30,12 +31,12 @@ export type GroupFilterEvent = 'columnRowGroupChanged' | 'selectedColumnChanged'
 export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilterComp {
     private filterManager?: FilterManager;
     private columnNameService: ColumnNameService;
-    private funcColsService: FuncColsService;
+    private rowGroupColsService: RowGroupColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.filterManager = beans.filterManager;
         this.columnNameService = beans.columnNameService;
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService as RowGroupColsService;
     }
 
     private readonly eGroupField: HTMLElement = RefPlaceholder;
@@ -115,7 +116,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
             );
             return [];
         }
-        const sourceColumns = this.funcColsService.getSourceColumnsForGroupColumn(this.groupColumn);
+        const sourceColumns = this.rowGroupColsService.getSourceColumnsForGroupColumn(this.groupColumn);
         if (!sourceColumns) {
             _warnOnce('Group Column Filter only works on group columns. Please use a different filter.');
             return [];

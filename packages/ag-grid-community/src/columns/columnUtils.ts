@@ -83,19 +83,12 @@ export function convertColumnTypes(type: string | string[]): string[] {
     return typeKeys;
 }
 
-export type GetValueFn<U extends keyof ColumnStateParams, S extends keyof ColumnStateParams> = (
-    key1: U,
-    key2?: S
-) => GetValueResult<U, S>;
-
-export type GetValueResult<U extends keyof ColumnStateParams, S extends keyof ColumnStateParams> = {
-    value1: ColumnStateParams[U] | undefined;
-    value2: ColumnStateParams[S] | undefined;
-};
-
 export const getValueFactory =
     (stateItem: ColumnState | null, defaultState: ColumnStateParams | undefined) =>
-    <U extends keyof ColumnStateParams, S extends keyof ColumnStateParams>(key1: U, key2?: S): GetValueResult<U, S> => {
+    <U extends keyof ColumnStateParams, S extends keyof ColumnStateParams>(
+        key1: U,
+        key2?: S
+    ): { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined } => {
         const obj: { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined } = {
             value1: undefined,
             value2: undefined,

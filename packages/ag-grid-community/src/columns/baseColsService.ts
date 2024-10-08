@@ -4,27 +4,22 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
+import type { IColsService } from '../interfaces/iColsService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _removeFromArray } from '../utils/array';
 import { _attrToBoolean, _attrToNumber, _exists, _missingOrEmpty } from '../utils/generic';
 import { dispatchColumnChangedEvent } from './columnEventUtils';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateService';
-import type { GetValueFn } from './columnUtils';
 import type { VisibleColsService } from './visibleColsService';
 
-export type ColumnServiceEntityName = 'Value' | 'RowGroup' | 'Pivot';
-export type ColumnServiceEventName = 'columnValueChanged' | 'columnRowGroupChanged' | 'columnPivotChanged';
-export type ColumnServiceSetCallbackFn = (added: boolean, column: AgColumn) => void;
-export type ColumnServiceUpdateCallbackFn = (column: AgColumn) => void;
-export type ColumnOrderState = { [colId: string]: ColumnState };
-
-export type IColsService = typeof BaseColsService;
-
-export abstract class BaseColsService extends BeanStub {
+export abstract class _BaseColsService extends BeanStub implements IColsService {
     protected columnModel: ColumnModel;
     protected aggFuncService?: IAggFuncService;
     protected visibleColsService: VisibleColsService;
+    protected dispatchColumnChangedEvent = dispatchColumnChangedEvent;
+
+    public columns: AgColumn[] = [];
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
@@ -32,17 +27,19 @@ export abstract class BaseColsService extends BeanStub {
         this.visibleColsService = beans.visibleColsService;
     }
 
-    public columns: AgColumn[] = [];
-
     public sortColumns(compareFn?: (a: AgColumn, b: AgColumn) => number): void {
         this.columns.sort(compareFn);
     }
 
-    protected abstract getEventName(): ColumnServiceEventName;
+    protected abstract getEventName(): 'columnValueChanged' | 'columnRowGroupChanged' | 'columnPivotChanged';
 
     public abstract setColumns(colKeys: ColKey[], source: ColumnEventType): void;
 
-    protected _setColumns(colKeys: ColKey[], source: ColumnEventType, processColumn: ColumnServiceSetCallbackFn): void {
+    protected _setColumns(
+        colKeys: ColKey[],
+        source: ColumnEventType,
+        processColumn: (added: boolean, column: AgColumn) => void
+    ): void {
         this.setColList(colKeys, this.columns, this.getEventName(), true, true, processColumn, source);
     }
 
@@ -51,7 +48,7 @@ export abstract class BaseColsService extends BeanStub {
     protected _addColumns(
         keys: Maybe<ColKey>[],
         source: ColumnEventType,
-        processColumn: ColumnServiceUpdateCallbackFn
+        processColumn: (column: AgColumn) => void
     ): void {
         this.updateColList(keys, this.columns, true, true, processColumn, this.getEventName(), source);
     }
@@ -69,10 +66,10 @@ export abstract class BaseColsService extends BeanStub {
     protected setColList(
         colKeys: ColKey[],
         masterList: AgColumn[],
-        eventName: ColumnServiceEventName,
+        eventName: ReturnType<_BaseColsService['getEventName']>,
         detectOrderChange: boolean,
         autoGroupsNeedBuilding: boolean,
-        columnCallback: ColumnServiceSetCallbackFn,
+        columnCallback: (added: boolean, column: AgColumn) => void,
         source: ColumnEventType
     ): void {
         const gridColumns = this.columnModel.getCols();
@@ -123,7 +120,7 @@ export abstract class BaseColsService extends BeanStub {
 
         this.visibleColsService.refresh(source);
 
-        dispatchColumnChangedEvent(this.eventService, eventName, [...changes.keys()], source);
+        this.dispatchColumnChangedEvent(this.eventService, eventName, [...changes.keys()], source);
     }
 
     protected updateColList(
@@ -132,7 +129,7 @@ export abstract class BaseColsService extends BeanStub {
         actionIsAdd: boolean,
         autoGroupsNeedBuilding: boolean,
         columnCallback: (column: AgColumn) => void,
-        eventType: ColumnServiceEventName,
+        eventType: ReturnType<_BaseColsService['getEventName']>,
         source: ColumnEventType
     ) {
         if (!keys || _missingOrEmpty(keys)) {
@@ -317,139 +314,30 @@ export abstract class BaseColsService extends BeanStub {
         return res;
     }
 
-    public generateColumnStateForRowGroupAndPivotIndexes(
-        updatedRowGroupColumnState: { [colId: string]: ColumnState },
-        updatedPivotColumnState: { [colId: string]: ColumnState }
-    ): ColumnState[] {
-        // Generally columns should appear in the order they were before. For any new columns, these should appear in the original col def order.
-        // The exception is for columns that were added via `addGroupColumns`. These should appear at the end.
-        // We don't have to worry about full updates, as in this case the arrays are correct, and they won't appear in the updated lists.
-
-        const existingColumnStateUpdates: { [colId: string]: ColumnState } = {};
-
-        const orderColumns = (
-            updatedColumnState: { [colId: string]: ColumnState },
-            colList: AgColumn[],
-            enableProp: 'rowGroup' | 'pivot',
-            initialEnableProp: 'initialRowGroup' | 'initialPivot',
-            indexProp: 'rowGroupIndex' | 'pivotIndex',
-            initialIndexProp: 'initialRowGroupIndex' | 'initialPivotIndex'
-        ) => {
-            const primaryCols = this.columnModel.getColDefCols();
-            if (!colList.length || !primaryCols) {
-                return [];
-            }
-            const updatedColIdArray = Object.keys(updatedColumnState);
-            const updatedColIds = new Set(updatedColIdArray);
-            const newColIds = new Set(updatedColIdArray);
-            const allColIds = new Set(
-                colList
-                    .map((column) => {
-                        const colId = column.getColId();
-                        newColIds.delete(colId);
-                        return colId;
-                    })
-                    .concat(updatedColIdArray)
-            );
-
-            const colIdsInOriginalOrder: string[] = [];
-            const originalOrderMap: { [colId: string]: number } = {};
-            let orderIndex = 0;
-            for (let i = 0; i < primaryCols.length; i++) {
-                const colId = primaryCols[i].getColId();
-                if (allColIds.has(colId)) {
-                    colIdsInOriginalOrder.push(colId);
-                    originalOrderMap[colId] = orderIndex++;
-                }
-            }
-
-            // follow approach in `resetColumnState`
-            let index = 1000;
-            let hasAddedNewCols = false;
-            let lastIndex = 0;
-
-            const processPrecedingNewCols = (colId: string) => {
-                const originalOrderIndex = originalOrderMap[colId];
-                for (let i = lastIndex; i < originalOrderIndex; i++) {
-                    const newColId = colIdsInOriginalOrder[i];
-                    if (newColIds.has(newColId)) {
-                        updatedColumnState[newColId][indexProp] = index++;
-                        newColIds.delete(newColId);
-                    }
-                }
-                lastIndex = originalOrderIndex;
-            };
-
-            colList.forEach((column) => {
-                const colId = column.getColId();
-                if (updatedColIds.has(colId)) {
-                    // New col already exists. Add any other new cols that should be before it.
-                    processPrecedingNewCols(colId);
-                    updatedColumnState[colId][indexProp] = index++;
-                } else {
-                    const colDef = column.getColDef();
-                    const missingIndex =
-                        colDef[indexProp] === null ||
-                        (colDef[indexProp] === undefined && colDef[initialIndexProp] == null);
-                    if (missingIndex) {
-                        if (!hasAddedNewCols) {
-                            const propEnabled =
-                                colDef[enableProp] || (colDef[enableProp] === undefined && colDef[initialEnableProp]);
-                            if (propEnabled) {
-                                processPrecedingNewCols(colId);
-                            } else {
-                                // Reached the first manually added column. Add all the new columns now.
-                                newColIds.forEach((newColId) => {
-                                    // Rather than increment the index, just use the original order index - doesn't need to be contiguous.
-                                    updatedColumnState[newColId][indexProp] = index + originalOrderMap[newColId];
-                                });
-                                index += colIdsInOriginalOrder.length;
-                                hasAddedNewCols = true;
-                            }
-                        }
-                        if (!existingColumnStateUpdates[colId]) {
-                            existingColumnStateUpdates[colId] = { colId };
-                        }
-                        existingColumnStateUpdates[colId][indexProp] = index++;
-                    }
-                }
-            });
-        };
-
-        // XXX: TODO: need to externalise this logic to a common place
-        orderColumns(
-            updatedPivotColumnState,
-            this.columns, //this.pivotCols,
-            'pivot',
-            'initialPivot',
-            'pivotIndex',
-            'initialPivotIndex'
-        );
-
-        return Object.values(existingColumnStateUpdates);
-    }
-
     public abstract syncColumnWithState(
         column: AgColumn,
         source: ColumnEventType,
-        getValue: GetValueFn<keyof ColumnStateParams, keyof ColumnStateParams>,
+        getValue: <U extends keyof ColumnStateParams, S extends keyof ColumnStateParams>(
+            key1: U,
+            key2?: S
+        ) => { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined },
         rowIndex: { [key: string]: number } | null
     ): void;
 
     public abstract orderColumns(
-        columnStateAccumulator: ColumnOrderState,
-        incomingColumnState: ColumnOrderState
-    ): ColumnOrderState;
+        columnStateAccumulator: { [colId: string]: ColumnState },
+        incomingColumnState: { [colId: string]: ColumnState }
+    ): { [colId: string]: ColumnState };
 
     protected _orderColumns(
-        columnStateAccumulator: ColumnOrderState,
-        incomingColumnState: ColumnOrderState,
+        columnStateAccumulator: { [colId: string]: ColumnState },
+        incomingColumnState: { [colId: string]: ColumnState },
         colList: AgColumn[],
         enableProp: 'rowGroup' | 'pivot',
         initialEnableProp: 'initialRowGroup' | 'initialPivot',
         indexProp: 'rowGroupIndex' | 'pivotIndex',
         initialIndexProp: 'initialRowGroupIndex' | 'initialPivotIndex'
-    ): ColumnOrderState {
+    ): { [colId: string]: ColumnState } {
         const primaryCols = this.columnModel.getColDefCols();
         if (!colList.length || !primaryCols) {
             return columnStateAccumulator;
@@ -530,5 +418,18 @@ export abstract class BaseColsService extends BeanStub {
         });
 
         return columnStateAccumulator;
+    }
+
+    // ValueColsService signature methods, pending refactor
+    public isRowGroupEmpty(): boolean {
+        return false;
+    }
+
+    public getSourceColumnsForGroupColumn(_groupCol: AgColumn<any>): AgColumn<any>[] | null {
+        return null;
+    }
+
+    public moveColumn(_fromIndex: number, _toIndex: number, _source: ColumnEventType): void {
+        // NOP
     }
 }

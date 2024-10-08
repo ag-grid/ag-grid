@@ -1,6 +1,3 @@
-import { PivotColsService } from '../../ag-grid-enterprise/src/rowGrouping/pivotColsService';
-import { RowGroupColsService } from '../../ag-grid-enterprise/src/rowGrouping/rowGroupColsService';
-import { ValueColsService } from '../../ag-grid-enterprise/src/rowGrouping/valueColsService';
 import { ApiFunctionService } from './api/apiFunctionService';
 import { CoreApiModule } from './api/apiModule';
 import { ColumnFactory } from './columns/columnFactory';
