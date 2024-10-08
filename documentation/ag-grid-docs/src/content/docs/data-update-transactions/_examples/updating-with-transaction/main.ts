@@ -1,7 +1,5 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridApi, GridOptions, RowNodeTransaction } from 'ag-grid-community';
-import { createGrid } from 'ag-grid-community';
-import { ModuleRegistry } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid } from 'ag-grid-community';
 
 import { getData } from './data';
 
@@ -72,16 +70,16 @@ function addItems(addIndex: number | undefined) {
 function updateItems() {
     // update the first 2 items
     const itemsToUpdate: any[] = [];
-    gridApi!.forEachNodeAfterFilterAndSort(function (rowNode, index) {
+    for (const rowNode of gridApi!.getNodesAfterFilterAndSortIterator()) {
         // only do first 2
-        if (index >= 2) {
+        if (itemsToUpdate.length === 2) {
             return;
         }
 
         const data = rowNode.data;
         data.price = Math.floor(Math.random() * 20000 + 20000);
         itemsToUpdate.push(data);
-    });
+    }
     const res = gridApi!.applyTransaction({ update: itemsToUpdate })!;
     printResult(res);
 }

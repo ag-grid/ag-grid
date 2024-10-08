@@ -14,14 +14,12 @@ import type {
     RowNode,
     RowNodeBlockLoader,
     RowNodeSorter,
-    SelectionChangedEvent,
     ServerSideGroupLevelParams,
     ServerSideGroupLevelState,
     ServerSideTransaction,
     ServerSideTransactionResult,
     SortController,
     StoreRefreshAfterParams,
-    StoreUpdatedEvent,
     WithoutGridCommon,
 } from 'ag-grid-community';
 import {
@@ -29,6 +27,7 @@ import {
     RowNodeBlock,
     ServerSideTransactionResultStatus,
     _errorOnce,
+    _forEachIteratorItem,
     _getAllValuesInObject,
     _getRowIdCallback,
     _insertIntoArray,
@@ -420,44 +419,52 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.heightPx = nextRowTop.value - this.topPx;
     }
 
-    public forEachStoreDeep(
-        callback: (store: IServerSideStore, index: number) => void,
-        sequence = new NumberSequence()
-    ): void {
-        callback(this, sequence.next());
+    public forEachStoreDeep(callback: (store: IServerSideStore, index: number) => void): void {
+        _forEachIteratorItem(this.getStoresDeepIterator(), callback);
+    }
+
+    *getStoresDeepIterator(): Generator<IServerSideStore> {
+        yield this;
         this.allRowNodes.forEach((rowNode) => {
             const childCache = rowNode.childStore;
             if (childCache) {
-                childCache.forEachStoreDeep(callback, sequence);
+                childCache.getStoresDeepIterator();
             }
         });
     }
 
-    public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
-        this.allRowNodes.forEach((rowNode) => {
-            callback(rowNode, sequence.next());
+    public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void): void {
+        _forEachIteratorItem(this.getNodesDeepIterator(), callback);
+    }
+
+    *getNodesDeepIterator(): Generator<RowNode> {
+        for (const rowNode of this.allRowNodes) {
+            yield rowNode;
             const childCache = rowNode.childStore;
             if (childCache) {
-                childCache.forEachNodeDeep(callback, sequence);
+                yield* childCache.getNodesDeepIterator() as Generator<RowNode>;
             }
-        });
+        }
     }
 
     public forEachNodeDeepAfterFilterAndSort(
         callback: (rowNode: RowNode, index: number) => void,
-        sequence = new NumberSequence(),
         includeFooterNodes = false
     ): void {
-        this.nodesAfterSort.forEach((rowNode) => {
-            callback(rowNode, sequence.next());
+        _forEachIteratorItem(this.getNodesDeepAfterFilterAndSortIterator(includeFooterNodes), callback);
+    }
+
+    *getNodesDeepAfterFilterAndSortIterator(includeFooterNodes = false): Generator<RowNode> {
+        for (const rowNode of this.nodesAfterSort) {
+            yield rowNode;
             const childCache = rowNode.childStore;
             if (childCache) {
-                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence, includeFooterNodes);
+                yield* childCache.getNodesDeepAfterFilterAndSortIterator(includeFooterNodes) as Generator<RowNode>;
             }
-        });
+        }
 
         if (includeFooterNodes && this.parentRowNode.sibling) {
-            callback(this.parentRowNode.sibling, sequence.next());
+            yield this.parentRowNode.sibling;
         }
     }
 

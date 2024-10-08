@@ -408,10 +408,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private getAllRowNodes() {
-        const allRowNodes: RowNode[] = [];
-        this.gridRowModel.forEachNode((rowNode: RowNode) => {
-            allRowNodes.push(rowNode);
-        });
+        const allRowNodes: RowNode[] = Array.from(this.gridRowModel.getNodesIterator());
         return this.sortRowNodes(allRowNodes);
     }
 

@@ -23,9 +23,13 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     setRowData(rowData: any[]): void;
     refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void;
     forEachLeafNode(callback: (node: RowNode, index: number) => void): void;
+    getLeafNodesIterator(): Generator<RowNode>;
     forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
+    getNodesAfterFilterIterator(includeFooterNodes?: boolean): Generator<RowNode>;
     forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
+    getNodesAfterFilterAndSortIterator(includeFooterNodes?: boolean): Generator<RowNode>;
     forEachPivotNode(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
+    getPivotNodesIterator(includeFooterNodes?: boolean): Generator<RowNode>;
     resetRowHeights(): void;
     onRowHeightChanged(): void;
     onRowHeightChangedDebounced(): void;

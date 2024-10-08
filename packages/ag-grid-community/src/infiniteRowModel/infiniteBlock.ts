@@ -4,7 +4,6 @@ import type { IGetRowsParams } from '../interfaces/iDatasource';
 import type { LoadSuccessParams } from '../rowNodeCache/iRowNodeBlock';
 import { RowNodeBlock } from '../rowNodeCache/rowNodeBlock';
 import { _exists, _missing } from '../utils/generic';
-import type { NumberSequence } from '../utils/numberSequence';
 import { _logWarn } from '../validation/logging';
 import type { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
 
@@ -99,17 +98,8 @@ export class InfiniteBlock extends RowNodeBlock {
         return params;
     }
 
-    public forEachNode(
-        callback: (rowNode: RowNode, index: number) => void,
-        sequence: NumberSequence,
-        rowCount: number
-    ): void {
-        this.rowNodes.forEach((rowNode: RowNode, index: number) => {
-            const rowIndex = this.startRow + index;
-            if (rowIndex < rowCount) {
-                callback(rowNode, sequence.next());
-            }
-        });
+    public *getNodesIterator(rowCount?: number): Generator<RowNode> {
+        yield* this.rowNodes.slice(0, rowCount);
     }
 
     public getLastAccessed(): number {

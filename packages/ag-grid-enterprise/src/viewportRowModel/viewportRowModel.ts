@@ -8,7 +8,15 @@ import type {
     RowModelType,
     RowRenderer,
 } from 'ag-grid-community';
-import { BeanStub, RowNode, _getRowHeightAsNumber, _iterateObject, _missing, _warnOnce } from 'ag-grid-community';
+import {
+    BeanStub,
+    RowNode,
+    _forEachIteratorItem,
+    _getRowHeightAsNumber,
+    _iterateObject,
+    _missing,
+    _warnOnce,
+} from 'ag-grid-community';
 
 export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
@@ -191,13 +199,11 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     }
 
     public getRowNode(id: string): RowNode | undefined {
-        let result: RowNode | undefined;
-        this.forEachNode((rowNode) => {
+        for (const rowNode of this.getNodesIterator()) {
             if (rowNode.id === id) {
-                result = rowNode;
+                return rowNode;
             }
-        });
-        return result;
+        }
     }
 
     public getRowCount(): number {
@@ -275,14 +281,15 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     }
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
-        let callbackCount = 0;
+        _forEachIteratorItem(this.getNodesIterator(), callback);
+    }
 
-        Object.keys(this.rowNodesByIndex).forEach((indexStr) => {
+    public *getNodesIterator(): Generator<RowNode> {
+        for (const indexStr of Object.keys(this.rowNodesByIndex)) {
             const index = parseInt(indexStr, 10);
             const rowNode: RowNode = this.rowNodesByIndex[index];
-            callback(rowNode, callbackCount);
-            callbackCount++;
-        });
+            yield rowNode;
+        }
     }
 
     private setRowData(rowData: { [key: number]: any }): void {

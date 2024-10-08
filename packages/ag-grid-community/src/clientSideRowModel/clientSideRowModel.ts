@@ -30,7 +30,7 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _insertIntoArray, _last, _removeFromArray } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
-import { _debounce, _errorOnce } from '../utils/function';
+import { _debounce, _forEachIteratorItem } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
 import { _logError } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
@@ -720,36 +720,30 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
         let started = false;
-        let finished = false;
 
         const result: RowNode[] = [];
 
         const groupsSelectChildren = _getGroupSelectsDescendants(this.gos);
 
-        this.forEachNodeAfterFilterAndSort((rowNode) => {
-            // range has been closed, skip till end
-            if (finished) {
-                return;
-            }
-
+        for (const rowNode of this.getNodesAfterFilterAndSortIterator()) {
             if (started) {
                 if (rowNode === lastInRange || rowNode === firstInRange) {
                     // check if this is the last node we're going to be adding
-                    finished = true;
 
                     // if the final node was a group node, and we're doing groupSelectsChildren
                     // make the exception to select all of it's descendants too
                     if (rowNode.group && groupsSelectChildren) {
                         result.push(...rowNode.allLeafChildren!);
-                        return;
                     }
+
+                    return result;
                 }
             }
 
             if (!started) {
                 if (rowNode !== lastInRange && rowNode !== firstInRange) {
                     // still haven't hit a boundary node, keep searching
-                    return;
+                    continue;
                 }
                 started = true;
             }
@@ -758,9 +752,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             const includeThisNode = !rowNode.group || !groupsSelectChildren;
             if (includeThisNode) {
                 result.push(rowNode);
-                return;
+                continue;
             }
-        });
+        }
 
         return result;
     }
@@ -839,17 +833,23 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public forEachLeafNode(callback: (node: RowNode, index: number) => void): void {
+        _forEachIteratorItem(this.getLeafNodesIterator(), callback);
+    }
+
+    public *getLeafNodesIterator(): Generator<RowNode> {
         if (this.rootNode.allLeafChildren) {
-            this.rootNode.allLeafChildren.forEach((rowNode, index) => callback(rowNode, index));
+            yield* this.rootNode.allLeafChildren;
         }
     }
 
     public forEachNode(callback: (node: RowNode, index: number) => void, includeFooterNodes: boolean = false): void {
-        this.recursivelyWalkNodesAndCallback({
+        _forEachIteratorItem(this.getNodesIterator(includeFooterNodes), callback);
+    }
+
+    public getNodesIterator(includeFooterNodes: boolean = false): Generator<RowNode> {
+        return this._getNodesIterator({
             nodes: [...(this.rootNode.childrenAfterGroup || [])],
-            callback,
             recursionType: RecursionType.Normal,
-            index: 0,
             includeFooterNodes,
         });
     }
@@ -858,11 +858,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         callback: (node: RowNode, index: number) => void,
         includeFooterNodes: boolean = false
     ): void {
-        this.recursivelyWalkNodesAndCallback({
+        _forEachIteratorItem(this.getNodesAfterFilterIterator(includeFooterNodes), callback);
+    }
+
+    public getNodesAfterFilterIterator(includeFooterNodes: boolean = false): Generator<RowNode> {
+        return this._getNodesIterator({
             nodes: [...(this.rootNode.childrenAfterAggFilter || [])],
-            callback,
-            recursionType: RecursionType.AfterFilter,
-            index: 0,
+            recursionType: RecursionType.Normal,
             includeFooterNodes,
         });
     }
@@ -871,11 +873,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         callback: (node: RowNode, index: number) => void,
         includeFooterNodes: boolean = false
     ): void {
-        this.recursivelyWalkNodesAndCallback({
+        _forEachIteratorItem(this.getNodesAfterFilterAndSortIterator(includeFooterNodes), callback);
+    }
+
+    public getNodesAfterFilterAndSortIterator(includeFooterNodes: boolean = false): Generator<RowNode> {
+        return this._getNodesIterator({
             nodes: [...(this.rootNode.childrenAfterSort || [])],
-            callback,
-            recursionType: RecursionType.AfterFilterAndSort,
-            index: 0,
+            recursionType: RecursionType.Normal,
             includeFooterNodes,
         });
     }
@@ -884,11 +888,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         callback: (node: RowNode, index: number) => void,
         includeFooterNodes: boolean = false
     ): void {
-        this.recursivelyWalkNodesAndCallback({
+        _forEachIteratorItem(this.getPivotNodesIterator(includeFooterNodes), callback);
+    }
+
+    public getPivotNodesIterator(includeFooterNodes: boolean = false): Generator<RowNode> {
+        return this._getNodesIterator({
             nodes: [this.rootNode],
-            callback,
-            recursionType: RecursionType.PivotNodes,
-            index: 0,
+            recursionType: RecursionType.Normal,
             includeFooterNodes,
         });
     }
@@ -898,45 +904,43 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     // callback - the user provided callback
     // recursion type - need this to know what child nodes to recurse, eg if looking at all nodes, or filtered notes etc
     // index - works similar to the index in forEach in javascript's array function
-    private recursivelyWalkNodesAndCallback(params: {
+    private *_getNodesIterator(params: {
         nodes: RowNode[];
-        callback: (node: RowNode, index: number) => void;
         recursionType: RecursionType;
-        index: number;
         includeFooterNodes: boolean;
-    }): number {
-        const { nodes, callback, recursionType, includeFooterNodes } = params;
-        let { index } = params;
+    }): Generator<RowNode> {
+        const { nodes, recursionType, includeFooterNodes } = params;
 
-        const addFooters = (position: 'top' | 'bottom') => {
+        const that = this; // generators can't be arrow function
+        function* addFooters(position: 'top' | 'bottom'): Generator<RowNode> {
             const parentNode = nodes[0]?.parent;
 
             if (!parentNode) return;
 
-            const grandTotal = includeFooterNodes && _getGrandTotalRow(this.gos);
-            const isGroupIncludeFooter = _getGroupTotalRowCallback(this.gos);
+            const grandTotal = includeFooterNodes && _getGrandTotalRow(that.gos);
+            const isGroupIncludeFooter = _getGroupTotalRowCallback(that.gos);
             const groupTotal = includeFooterNodes && isGroupIncludeFooter({ node: parentNode });
 
-            const isRootNode = parentNode === this.rootNode;
+            const isRootNode = parentNode === that.rootNode;
             if (isRootNode) {
                 if (grandTotal === position) {
                     parentNode.createFooter();
-                    callback(parentNode.sibling, index++);
+                    yield parentNode.sibling;
                 }
                 return;
             }
 
             if (groupTotal === position) {
                 parentNode.createFooter();
-                callback(parentNode.sibling, index++);
+                yield parentNode.sibling;
             }
-        };
+        }
 
-        addFooters('top');
+        yield* addFooters('top');
 
         for (let i = 0; i < nodes.length; i++) {
             const node = nodes[i];
-            callback(node, index++);
+            yield node;
             // go to the next level if it is a group
             if (node.hasChildren() && !node.footer) {
                 // depending on the recursion type, we pick a difference set of children
@@ -957,18 +961,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                         break;
                 }
                 if (nodeChildren) {
-                    index = this.recursivelyWalkNodesAndCallback({
+                    yield* this._getNodesIterator({
                         nodes: [...nodeChildren],
-                        callback,
                         recursionType,
-                        index,
                         includeFooterNodes,
                     });
                 }
             }
         }
-        addFooters('bottom');
-        return index;
+
+        yield* addFooters('bottom');
     }
 
     // it's possible to recompute the aggregate without doing the other parts
@@ -1094,13 +1096,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             // this working for normal rows. so have done quick implementation. if users complain
             // about performance, then GroupStage should store / manage created groups in a map,
             // which is a chunk of work.
-            let res: RowNode | undefined = undefined;
-            this.forEachNode((node) => {
+            for (const node of this.getNodesIterator()) {
                 if (node.id === id) {
-                    res = node;
+                    return node;
                 }
-            });
-            return res;
+            }
         }
 
         return this.nodeManager.getRowNode(id);

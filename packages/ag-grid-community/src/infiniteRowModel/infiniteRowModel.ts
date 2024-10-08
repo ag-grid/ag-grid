@@ -1,3 +1,5 @@
+import { _forEachIteratorItem } from 'ag-grid-community';
+
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -256,18 +258,20 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
     }
 
     public getRowNode(id: string): RowNode | undefined {
-        let result: RowNode | undefined;
-        this.forEachNode((rowNode) => {
+        for (const rowNode of this.getNodesIterator()) {
             if (rowNode.id === id) {
-                result = rowNode;
+                return rowNode;
             }
-        });
-        return result;
+        }
     }
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
+        _forEachIteratorItem(this.getNodesIterator(), callback);
+    }
+
+    public *getNodesIterator(): Generator<RowNode> {
         if (this.infiniteCache) {
-            this.infiniteCache.forEachNodeDeep(callback);
+            yield* this.infiniteCache?.getNodesDeepIterator();
         }
     }
 

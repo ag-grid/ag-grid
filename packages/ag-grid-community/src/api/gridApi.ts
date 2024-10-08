@@ -221,6 +221,13 @@ export interface _RowGridApi<TData> {
      */
     forEachNode(callback: (rowNode: IRowNode<TData>, index: number) => void, includeFooterNodes?: boolean): void;
 
+    /**
+     * Iterates through each node (row) in the grid.
+     * This is called for every node, ignoring any filtering or sorting applied within the grid.
+     * If using the Infinite Row Model, then this gets called for each page loaded in the page cache.
+     */
+    getNodesIterator(includeFooterNodes?: boolean): Generator<IRowNode<TData>>;
+
     /** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */
     getFirstDisplayedRowIndex(): number;
 
@@ -393,11 +400,25 @@ export interface _ClientSideRowModelGridApi<TData> {
      */
     forEachLeafNode(callback: (rowNode: IRowNode<TData>) => void): void;
 
+    /**
+     * Similar to `forEachNode`, except lists all the leaf nodes.
+     * This effectively goes through all the data that you provided to the grid before the grid performed any grouping.
+     * If using tree data, goes through all the nodes for the data you provided, including nodes that have children,
+     * but excluding groups the grid created where gaps were missing in the hierarchy.
+     */
+    getLeafNodesIterator(): Generator<IRowNode<TData>>;
+
     /** Similar to `forEachNode`, except skips any filtered out data. */
     forEachNodeAfterFilter(callback: (rowNode: IRowNode<TData>, index: number) => void): void;
 
+    /** Similar to `forEachNode`, except skips any filtered out data. */
+    getNodesAfterFilterIterator(): Generator<IRowNode<TData>>;
+
     /** Similar to `forEachNodeAfterFilter`, except the callbacks are called in the order the rows are displayed in the grid. */
     forEachNodeAfterFilterAndSort(callback: (rowNode: IRowNode<TData>, index: number) => void): void;
+
+    /** Similar to `forEachNodeAfterFilter`, except the callbacks are called in the order the rows are displayed in the grid. */
+    getNodesAfterFilterAndSortIterator(): Generator<IRowNode<TData>>;
 
     /** Tells the grid to recalculate the row heights. */
     resetRowHeights(): void;

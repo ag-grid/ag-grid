@@ -154,3 +154,11 @@ export function _compose<T>(...fns: ((...args: T[]) => T)[]) {
 export const noop = () => {
     return;
 };
+
+export function _forEachIteratorItem<T>(iterator: Generator<T>, callback: (rowNode: T, index: number) => void): number {
+    let index = 0;
+    for (const item of iterator) {
+        callback(item, index++);
+    }
+    return index;
+}

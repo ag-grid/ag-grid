@@ -17,6 +17,7 @@ export interface IServerSideRowModel extends IRowModel {
         callback: (node: IRowNode, index: number) => void,
         includeFooterNodes?: boolean
     ): void;
+    getNodesAfterFilterAndSortIterator(includeFooterNodes?: boolean): Generator<IRowNode>;
     resetRootStore(): void;
     getBlockStates(): void;
     setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void;
