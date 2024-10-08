@@ -679,9 +679,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         const { gos } = this;
 
         const isRowSelecting = _isRowSelection(gos);
-        const isRowSelectable = _getIsRowSelectable(gos);
 
-        if (!isRowSelecting || !isRowSelectable) {
+        if (!isRowSelecting) {
             return;
         }
 
@@ -702,7 +701,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 return;
             }
 
-            const rowSelectable = isRowSelectable?.(node) ?? true;
+            const rowSelectable = this.isRowSelectable?.(node) ?? true;
             node.setRowSelectable(rowSelectable, true);
 
             if (!rowSelectable && node.isSelected()) {

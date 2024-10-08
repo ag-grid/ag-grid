@@ -13,7 +13,7 @@ import { SelectAllFeature } from './selectAllFeature';
 export abstract class BaseSelectionService extends BeanStub {
     protected rowModel: IRowModel;
 
-    private isRowSelectable?: IsRowSelectable;
+    protected isRowSelectable?: IsRowSelectable;
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
