@@ -8,7 +8,6 @@ The following packages are MIT licensed:
 + @ag-grid-community/angular
 + @ag-grid-community/client-side-row-model
 + @ag-grid-community/core
-+ @ag-grid-community/theming
 + @ag-grid-community/csv-export
 + @ag-grid-community/infinite-row-model
 + @ag-grid-community/locale
