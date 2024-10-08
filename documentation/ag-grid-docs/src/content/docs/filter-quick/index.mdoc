@@ -125,9 +125,9 @@ The example also demonstrates having the Quick Filter cache turned on. The grid 
 
 {% gridExampleRunner title="Quick Filter Configuration" name="quick-filter-configuration" /%}
 
-## Pivoting / Group Aggregation Filtering
+## Pivoting / Filtering Aggregated Values
 
-When [Pivoting](./pivoting/) or [Group Aggregation Filtering](./aggregation-filtering/#filtering-group-aggregations) are enabled, Quick Filter is applied by default to the data after pivoting/aggregating has been performed. This means that filtering will not change the aggregated values, and only columns that are being used for pivoting can be used for filtering.
+When [Pivoting](./pivoting/) or [Filtering Aggregated Values](./aggregation-filtering/#filtering-for-aggregated-values) are enabled, Quick Filter is applied by default to the data after pivoting/aggregating has been performed. This means that filtering will not change the aggregated values, and only columns that are being used for pivoting can be used for filtering.
 
 It is possible to instead filter the data before pivoting/aggregating are applied. This can be done by setting the grid option `applyQuickFilterBeforePivotOrAgg = true`.
 
