@@ -26,12 +26,7 @@ describe('ag-grid treeDataChildrenField', () => {
         ];
 
         const gridOptions: GridOptions = {
-            columnDefs: [
-                {
-                    field: 'groupType',
-                    valueGetter: (params) => (params.data ? 'Provided' : 'Filler'),
-                },
-            ],
+            columnDefs: [{ field: 'x' }],
             autoGroupColumnDef: {
                 headerName: 'Organisation Hierarchy',
                 cellRendererParams: { suppressCount: true },
@@ -77,6 +72,108 @@ describe('ag-grid treeDataChildrenField', () => {
             ├── LEAF id:2
             ├── LEAF id:3
             └── LEAF id:4
+        `);
+    });
+
+    test('ag-grid treeDataChildrenField is reactive', async () => {
+        const rowData = [
+            {
+                id: '1',
+                x: 'a',
+                children1: [
+                    { id: 'x1', x: 'x1' },
+                    { id: 'x2', x: 'x2' },
+                ],
+                subObject: {
+                    children2: [
+                        { id: 'y1', x: 'y1' },
+                        { id: 'y2', x: 'y2' },
+                    ],
+                },
+            },
+            { id: '2', x: 'b' },
+            {
+                id: '4',
+                x: 'd',
+                children1: [
+                    { id: 'z1', x: 'z1' },
+                    { id: 'z2', x: 'z2' },
+                ],
+                subObject: {
+                    children2: [
+                        { id: 'w1', x: 'w1' },
+                        { id: 'w2', x: 'w2' },
+                    ],
+                },
+            },
+        ];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'x' }],
+            autoGroupColumnDef: {
+                headerName: 'Organisation Hierarchy',
+                cellRendererParams: { suppressCount: true },
+            },
+            animateRows: false,
+            // treeData: true,
+            groupDefaultExpanded: -1,
+            rowData,
+            getRowId: (params) => params.data.id,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        const gridRowsOptions: GridRowsOptions = {
+            checkDom: true,
+        };
+
+        let gridRows = new GridRows(api, 'data', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1
+            ├── LEAF id:2
+            └── LEAF id:4
+        `);
+
+        api.updateGridOptions({
+            treeData: true,
+            treeDataChildrenField: 'children1',
+        });
+
+        gridRows = new GridRows(api, 'data', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ 1 GROUP id:1
+            │ ├── x1 LEAF id:x1
+            │ └── x2 LEAF id:x2
+            ├── 2 LEAF id:2
+            └─┬ 4 GROUP id:4
+            · ├── z1 LEAF id:z1
+            · └── z2 LEAF id:z2
+        `);
+
+        api.setGridOption('treeDataChildrenField', 'subObject.children2');
+
+        gridRows = new GridRows(api, 'data', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ 1 GROUP id:1
+            │ ├── y1 LEAF id:y1
+            │ └── y2 LEAF id:y2
+            ├── 2 LEAF id:2
+            └─┬ 4 GROUP id:4
+            · ├── w1 LEAF id:w1
+            · └── w2 LEAF id:w2
+        `);
+
+        api.setGridOption('treeDataChildrenField', 'xxx');
+
+        gridRows = new GridRows(api, 'data', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            ├── 1 LEAF id:1
+            ├── 2 LEAF id:2
+            └── 4 LEAF id:4
         `);
     });
 });

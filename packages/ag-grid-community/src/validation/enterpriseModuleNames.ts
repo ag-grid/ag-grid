@@ -59,6 +59,7 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, boolean> = {
     StatusBarCoreModule: true,
     StatusBarModule: true,
     StatusBarSelectionModule: true,
+    TreeDataModule: true,
     ViewportRowModelCoreModule: true,
     ViewportRowModelModule: true,
 };
