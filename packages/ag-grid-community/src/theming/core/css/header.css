@@ -182,6 +182,20 @@
     }
 }
 
+:where(.ag-header-cell:not(.ag-right-aligned-header)) {
+    .ag-header-label-icon,
+    .ag-header-menu-icon {
+        margin-left: var(--ag-spacing);
+    }
+}
+
+:where(.ag-header-cell.ag-right-aligned-header) {
+    .ag-header-label-icon,
+    .ag-header-menu-icon {
+        margin-right: var(--ag-spacing);
+    }
+}
+
 /* COLUMN SEPARATOR */
 
 .ag-header-cell::after,
