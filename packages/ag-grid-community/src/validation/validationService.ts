@@ -45,7 +45,7 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public missingModule(moduleName: ModuleName, reason: string, gridId: string): void {
         const gridScoped = _areModulesGridScoped();
-        const isEnterprise = ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName];
+        const isEnterprise = ENTERPRISE_MODULE_NAMES.has(moduleName as EnterpriseModuleName);
         _logError(200, {
             reason,
             moduleName,
