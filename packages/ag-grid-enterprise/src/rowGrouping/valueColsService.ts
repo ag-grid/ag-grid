@@ -1,15 +1,14 @@
 import { _exists, _logWarn } from 'ag-grid-community';
 import type { AgColumn, BeanCollection, ColDef, ColumnStateParams, IAggFunc } from 'ag-grid-community';
-
-import type { NamedBean } from '../context/bean';
-import type { ColumnEventType } from '../events';
-import { _removeFromArray } from '../utils/array';
-import { BaseColsService } from './baseColsService';
-import type { ColumnOrderState, ColumnServiceEventName } from './baseColsService';
-import { dispatchColumnChangedEvent } from './columnEventUtils';
-import type { ColKey, Maybe } from './columnModel';
-import type { ModifyColumnsNoEventsCallback } from './columnStateService';
-import type { GetValueFn } from './columnUtils';
+import { BaseColsService } from 'ag-grid-community/src/columns/baseColsService';
+import type { ColumnOrderState, ColumnServiceEventName } from 'ag-grid-community/src/columns/baseColsService';
+import { dispatchColumnChangedEvent } from 'ag-grid-community/src/columns/columnEventUtils';
+import type { ColKey, Maybe } from 'ag-grid-community/src/columns/columnModel';
+import type { ModifyColumnsNoEventsCallback } from 'ag-grid-community/src/columns/columnStateService';
+import type { GetValueFn } from 'ag-grid-community/src/columns/columnUtils';
+import type { NamedBean } from 'ag-grid-community/src/context/bean';
+import type { ColumnEventType } from 'ag-grid-community/src/events';
+import { _removeFromArray } from 'ag-grid-community/src/utils/array';
 
 export class ValueColsService extends BaseColsService implements NamedBean {
     beanName = 'valueColsService' as const;
@@ -26,7 +25,7 @@ export class ValueColsService extends BaseColsService implements NamedBean {
     };
 
     protected override getEventName(): ColumnServiceEventName {
-        return 'columnPivotChanged';
+        return 'columnValueChanged';
     }
 
     public override setColumns(colKeys: ColKey[], source: ColumnEventType): void {

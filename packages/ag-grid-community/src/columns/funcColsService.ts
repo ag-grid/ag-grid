@@ -1,21 +1,22 @@
+import type { PivotColsService } from '../../../ag-grid-enterprise/src/rowGrouping/pivotColsService';
+import type { RowGroupColsService } from '../../../ag-grid-enterprise/src/rowGrouping/rowGroupColsService';
+import type { ValueColsService } from '../../../ag-grid-enterprise/src/rowGrouping/valueColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { IAggFunc } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
+import { IColsService } from './baseColsService';
 import type { ColKey, Maybe } from './columnModel';
 import type { ColumnState } from './columnStateService';
-import type { PivotColsService } from './pivotColsService';
-import type { RowGroupColsService } from './rowGroupColsService';
-import type { ValueColsService } from './valueColsService';
 
 export class FuncColsService extends BeanStub implements NamedBean {
     beanName = 'funcColsService' as const;
 
-    private rowGroupColsService: RowGroupColsService;
-    private valueColsService: ValueColsService;
-    private pivotColsService: PivotColsService;
+    private rowGroupColsService: IColsService;
+    private valueColsService: IColsService;
+    private pivotColsService: IColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowGroupColsService = beans.rowGroupColsService!;

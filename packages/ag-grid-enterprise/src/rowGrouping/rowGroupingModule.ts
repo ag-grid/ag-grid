@@ -15,8 +15,10 @@ import { GroupFloatingFilterComp } from './groupFilter/groupFloatingFilter';
 import { GroupHideOpenParentsService } from './groupHideOpenParentsService';
 import { GroupStage } from './groupStage/groupStage';
 import { PivotColDefService } from './pivotColDefService';
+import { PivotColsService } from './pivotColsService';
 import { PivotResultColsService } from './pivotResultColsService';
 import { PivotStage } from './pivotStage';
+import { RowGroupColsService } from './rowGroupColsService';
 import {
     addAggFuncs,
     addPivotColumns,
@@ -40,6 +42,7 @@ import {
     setValueColumns,
 } from './rowGroupingApi';
 import { ShowRowGroupColsService } from './showRowGroupColsService';
+import { ValueColsService } from './valueColsService';
 
 export const RowGroupingCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('RowGroupingCoreModule'),
@@ -52,6 +55,7 @@ export const RowGroupingCoreModule: _ModuleWithoutApi = {
         ShowRowGroupColsService,
         ColumnDropZoneService,
         GroupHideOpenParentsService,
+        RowGroupColsService,
     ],
     userComponents: [
         {
@@ -72,7 +76,7 @@ export const RowGroupingCoreModule: _ModuleWithoutApi = {
 
 export const PivotModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('PivotModule'),
-    beans: [PivotResultColsService, PivotColDefService, PivotStage],
+    beans: [PivotResultColsService, PivotColDefService, PivotStage, PivotColsService, ValueColsService],
     dependsOn: [RowGroupingCoreModule],
 };
 

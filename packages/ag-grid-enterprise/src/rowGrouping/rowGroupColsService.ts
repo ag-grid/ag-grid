@@ -1,16 +1,18 @@
 import { _missingOrEmpty } from 'ag-grid-community';
-
-import type { NamedBean } from '../context/bean';
-import type { AgColumn } from '../entities/agColumn';
-import type { ColDef } from '../entities/colDef';
-import type { AllEventsWithoutGridCommon, ColumnEventType } from '../events';
-import { _shouldUpdateColVisibilityAfterGroup } from '../gridOptionsUtils';
-import { _removeFromArray } from '../utils/array';
-import type { ColumnOrderState, ColumnServiceEventName } from './baseColsService';
-import { BaseColsService } from './baseColsService';
-import type { ColKey, Maybe } from './columnModel';
-import type { ColumnStateParams, ModifyColumnsNoEventsCallback } from './columnStateService';
-import type { GetValueFn } from './columnUtils';
+import type { ColumnOrderState, ColumnServiceEventName } from 'ag-grid-community/src/columns/baseColsService';
+import { BaseColsService } from 'ag-grid-community/src/columns/baseColsService';
+import type { ColKey, Maybe } from 'ag-grid-community/src/columns/columnModel';
+import type {
+    ColumnStateParams,
+    ModifyColumnsNoEventsCallback,
+} from 'ag-grid-community/src/columns/columnStateService';
+import type { GetValueFn } from 'ag-grid-community/src/columns/columnUtils';
+import type { NamedBean } from 'ag-grid-community/src/context/bean';
+import type { AgColumn } from 'ag-grid-community/src/entities/agColumn';
+import type { ColDef } from 'ag-grid-community/src/entities/colDef';
+import type { AllEventsWithoutGridCommon, ColumnEventType } from 'ag-grid-community/src/events';
+import { _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community/src/gridOptionsUtils';
+import { _removeFromArray } from 'ag-grid-community/src/utils/array';
 
 export class RowGroupColsService extends BaseColsService implements NamedBean {
     beanName = 'rowGroupColsService' as const;

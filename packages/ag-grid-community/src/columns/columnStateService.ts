@@ -1,3 +1,6 @@
+import type { PivotColsService } from '../../../ag-grid-enterprise/src/rowGrouping/pivotColsService';
+import type { RowGroupColsService } from '../../../ag-grid-enterprise/src/rowGrouping/rowGroupColsService';
+import type { ValueColsService } from '../../../ag-grid-enterprise/src/rowGrouping/valueColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -14,6 +17,7 @@ import type { SortController } from '../sort/sortController';
 import { _areEqual, _removeFromArray } from '../utils/array';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
 import { _logWarn } from '../validation/logging';
+import { IColsService } from './baseColsService';
 import {
     dispatchColumnChangedEvent,
     dispatchColumnPinnedEvent,
@@ -24,9 +28,6 @@ import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnModel } from './columnModel';
 import { GROUP_AUTO_COLUMN_ID, _getColumnsFromTree, getValueFactory } from './columnUtils';
 import type { FuncColsService } from './funcColsService';
-import type { PivotColsService } from './pivotColsService';
-import type { RowGroupColsService } from './rowGroupColsService';
-import type { ValueColsService } from './valueColsService';
 import type { VisibleColsService } from './visibleColsService';
 
 export type ModifyColumnsNoEventsCallback = {
@@ -82,9 +83,9 @@ export class ColumnStateService extends BeanStub implements NamedBean {
     private visibleColsService: VisibleColsService;
     private columnAnimationService?: ColumnAnimationService;
     private pivotResultColsService?: IPivotResultColsService;
-    private rowGroupColsService?: RowGroupColsService;
-    private valueColsService?: ValueColsService;
-    private pivotColsService?: PivotColsService;
+    private rowGroupColsService?: IColsService;
+    private valueColsService?: IColsService;
+    private pivotColsService?: IColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;

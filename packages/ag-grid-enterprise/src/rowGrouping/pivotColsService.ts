@@ -1,13 +1,13 @@
 import type { AgColumn, ColDef, ColumnStateParams } from 'ag-grid-community';
 
-import type { NamedBean } from '../context/bean';
-import type { ColumnEventType } from '../events';
-import { _removeFromArray } from '../utils/array';
-import { BaseColsService } from './baseColsService';
-import type { ColumnOrderState, ColumnServiceEventName } from './baseColsService';
-import type { ColKey } from './columnModel';
-import type { ModifyColumnsNoEventsCallback } from './columnStateService';
-import type { GetValueFn } from './columnUtils';
+import { BaseColsService } from '../../../ag-grid-community/src/columns/baseColsService';
+import type { ColumnOrderState, ColumnServiceEventName } from '../../../ag-grid-community/src/columns/baseColsService';
+import type { ColKey } from '../../../ag-grid-community/src/columns/columnModel';
+import type { ModifyColumnsNoEventsCallback } from '../../../ag-grid-community/src/columns/columnStateService';
+import type { GetValueFn } from '../../../ag-grid-community/src/columns/columnUtils';
+import type { NamedBean } from '../../../ag-grid-community/src/context/bean';
+import type { ColumnEventType } from '../../../ag-grid-community/src/events';
+import { _removeFromArray } from '../../../ag-grid-community/src/utils/array';
 
 export class PivotColsService extends BaseColsService implements NamedBean {
     beanName = 'pivotColsService' as const;

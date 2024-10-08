@@ -19,6 +19,8 @@ export type ColumnServiceSetCallbackFn = (added: boolean, column: AgColumn) => v
 export type ColumnServiceUpdateCallbackFn = (column: AgColumn) => void;
 export type ColumnOrderState = { [colId: string]: ColumnState };
 
+export type IColsService = typeof BaseColsService;
+
 export abstract class BaseColsService extends BeanStub {
     protected columnModel: ColumnModel;
     protected aggFuncService?: IAggFuncService;
