@@ -50,7 +50,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         const apis = alignedGrids
             .map((alignedGrid) => {
                 if (!alignedGrid) {
-                    _logError(1);
+                    _logError(18);
                     if (!isCallbackConfig) {
                         _logError(20);
                     }
