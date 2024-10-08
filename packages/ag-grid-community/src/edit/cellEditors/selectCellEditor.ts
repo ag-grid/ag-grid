@@ -46,7 +46,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         const { values, value, eventKey } = params;
 
         if (_missing(values)) {
-            _logWarn(58, {});
+            _logWarn(58);
             return;
         }
 

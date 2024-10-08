@@ -105,7 +105,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.showInitialOverlay = false;
 
         if (this.gos.get('loading')) {
-            _logWarn(99, {});
+            _logWarn(99);
             return;
         }
 

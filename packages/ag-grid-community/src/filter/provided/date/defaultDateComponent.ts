@@ -95,11 +95,11 @@ export class DefaultDateComponent extends Component implements IDateComp {
         const { minValidYear, maxValidYear, minValidDate, maxValidDate, buttons } = params.filterParams || {};
 
         if (minValidDate && minValidYear) {
-            _logWarn(85, {});
+            _logWarn(85);
         }
 
         if (maxValidDate && maxValidYear) {
-            _logWarn(86, {});
+            _logWarn(86);
         }
 
         if (minValidDate && maxValidDate) {
@@ -112,7 +112,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
                 parsedMaxValidDate &&
                 parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()
             ) {
-                _logWarn(87, {});
+                _logWarn(87);
             }
         }
 
