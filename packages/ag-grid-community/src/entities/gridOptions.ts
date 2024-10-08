@@ -2597,7 +2597,7 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any> extends Com
      */
     selectAll?: SelectAllMode;
     /**
-     * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
+     * If `true` a 'select all' checkbox will be put into the header.
      * @default true
      */
     headerCheckbox?: boolean;

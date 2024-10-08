@@ -37,6 +37,7 @@ See the [Codemods](./codemods/) documentation for more details.
 
 {% if isFramework("react") %}
 ## Migrating Custom Components to Use reactiveCustomComponents Option
+{% metaTag tags=["getValue", "useImperativeHandle", "getDate", "setDate", "isFilterActive", "getModel", "setModel", "filterModifiedCallback", "api.getFilterInstance", "onParentModelChanged", "api.getStatusPanel"] /%}
 {% /if %}
 
 {% if isFramework("react") %}
@@ -103,6 +104,7 @@ See [Implementing a Floating Filter Component](./component-floating-filter/#impl
 {% /if %}
 
 ## Deprecations
+{% metaTag tags=["AgReactUiProps", "AgGridReactProps.disableStaticMarkup", "AgGridReactProps.legacyComponentRendering", "getReactContainerStyle", "getReactContainerClasses", "IHeaderGroupReactComp", "IHeaderReactComp", "IDateReactComp", "IFilterReactComp", "IFloatingFilterReactComp", "ICellRendererReactComp", "ICellEditorReactComp", "ILoadingCellRendererReactComp", "ILoadingOverlayReactComp", "INoRowsOverlayReactComp", "IStatusPanelReactComp", "IToolPanelReactComp", "ITooltipReactComp", "gridOptions.cellFlashDelay", "gridOptions.cellFadeDelay", "colDef.floatingFilterComponentParams.suppressFilterButton", "suppressServerSideInfiniteScroll", "serverSideSortOnServer", "serverSideFilterOnServer", "api.getFilterInstance", "suppressMenu", "columnsMenuParams", "column.getMenuTabs", "getModel", "getModel().getRow(index)", "getModel().getRowNode(id)", "getModel().getRowCount()", "getModel().isEmpty()", "getModel().forEachNode()", "getFirstDisplayedRow", "getLastDisplayedRow", "flashCells", "flashDelay", "fadeDelay", "showColumnMenuAfterButtonClick", "showColumnMenuAfterMouseClick", "removeRowGroupColumn", "addRowGroupColumn", "setColumnPinned", "removePivotColumn", "addPivotColumn", "addAggFunc", "removeValueColumn", "addValueColumn", "autoSizeColumn", "moveColumn", "setColumnWidth", "setColumnVisible", "IDate.onParamsUpdated", "IFloatingFilter.onParamsUpdated"] /%}
 
 This release includes the following deprecations:
 
