@@ -259,12 +259,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 treeDataChildrenFieldChanged || (treeDataChanged && !this.gos.get('treeDataChildrenField'));
 
             if (needFullReload) {
+                // If we are here, it means that the row manager need to be changed or fully reloaded
+
                 let newRowData = this.gos.get('rowData');
                 if (!rowDataChanged) {
+                    // No new rowData was passed, so to include user executed transaction we need to extract
+                    // the row data from the node manager as it might be different from the original rowData
                     newRowData = this.nodeManager?.extractRowData() ?? newRowData;
                 }
                 this.initRowManager();
                 if (newRowData) {
+                    // We have new rowData to load from scratch
                     this.setNewRowData(newRowData);
                     return;
                 }
@@ -285,11 +290,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             let refreshModelStep: ClientSideRowModelSteps | undefined;
 
             if (treeDataChanged) {
+                // We need to notify the nodeManager that the treeData property has changed, and refresh everything
                 this.nodeManager.onTreeDataChanged?.();
                 refreshModelStep = ClientSideRowModelSteps.EVERYTHING;
             }
 
             if (masterDetailChanged) {
+                // We need to set the master/detail for all rows at this stage, before the refresh
                 this.nodeManager.setMasterForAllRows?.(this.rootNode.allLeafChildren, true);
                 refreshModelStep = ClientSideRowModelSteps.EVERYTHING;
             }
