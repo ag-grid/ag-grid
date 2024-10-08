@@ -53,38 +53,7 @@ function getModuleImports(bindings: ParsedBindings): string[] {
     return imports;
 }
 
-function getPackageImports(bindings: ParsedBindings): string[] {
-    const { inlineGridStyles, imports: bindingImports, properties } = bindings;
-    const imports = [];
-
-    if (!usesThemingApi(bindings)) {
-        imports.push("import 'ag-grid-community/styles/ag-grid.css';");
-
-        // to account for the (rare) example that has more than one class...just default to quartz if it does
-        // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
-        // "source" non dark version
-        const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
-        imports.push(`import "ag-grid-community/styles/${theme}.css";`);
-    }
-
-    const propertyInterfaces = getPropertyInterfaces(properties);
-    const bImports = [...(bindingImports || [])];
-    bImports.push({
-        module: `'ag-grid-community'`,
-        isNamespaced: false,
-        imports: [...propertyInterfaces],
-    });
-
-    if (bImports.length > 0) {
-        addBindingImports(bImports, imports, true, false);
-    }
-
-    addGenericInterfaceImport(imports, bindings.tData, bindings);
-
-    return imports;
-}
-
-function getImports(bindings: ParsedBindings, importType: ImportType): string[] {
+function getImports(bindings: ParsedBindings): string[] {
     const imports = [];
 
     const localeImport = findLocaleImport(bindings.imports);
@@ -92,11 +61,7 @@ function getImports(bindings: ParsedBindings, importType: ImportType): string[] 
         imports.push(`import { ${localeImport.imports[0]} } from '@ag-grid-community/locale';`);
     }
 
-    if (importType === 'packages') {
-        imports.push(...getPackageImports(bindings));
-    } else {
-        imports.push(...getModuleImports(bindings));
-    }
+    imports.push(...getModuleImports(bindings));
 
     return imports;
 }
@@ -135,7 +100,7 @@ export function vanillaToTypescript(
     }
 
     return (importType) => {
-        const importStrings = getImports(bindings, importType);
+        const importStrings = getImports(bindings);
         const formattedImports = `${importStrings.join('\n')}\n`;
 
         // Remove the original import statements

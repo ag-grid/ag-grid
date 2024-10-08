@@ -967,23 +967,23 @@
                                 "isEnterprise": true
                             },
                             {
+                                "title": "Configure Columns",
+                                "path": "aggregation-columns",
+                                "isEnterprise": true
+                            },
+                            {
                                 "title": "Custom Functions",
                                 "path": "aggregation-custom-functions",
                                 "isEnterprise": true
                             },
                             {
+                                "title": "Total Rows",
+                                "path": "aggregation-total-rows",
+                                "isEnterprise": true
+                            },
+                            {
                                 "title": "Filtering ",
                                 "path": "aggregation-filtering",
-                                "isEnterprise": true
-                            },
-                            {
-                                "title": "Total Rows",
-                                "path": "total-rows",
-                                "isEnterprise": true
-                            },
-                            {
-                                "title": "Other",
-                                "path": "aggregation-other",
                                 "isEnterprise": true
                             }
                         ]
@@ -1437,6 +1437,10 @@
                     {
                         "title": "Migration",
                         "items": [
+                            {
+                                "title": "Upgrading to AG Grid 32.3",
+                                "path": "upgrading-to-ag-grid-32-3"
+                            },
                             {
                                 "title": "Upgrading to AG Grid 32.2",
                                 "path": "upgrading-to-ag-grid-32-2"

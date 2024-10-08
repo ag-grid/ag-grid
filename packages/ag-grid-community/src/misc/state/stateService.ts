@@ -8,14 +8,8 @@ import type { CtrlsService } from '../../ctrlsService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { FilterManager } from '../../filter/filterManager';
 import type { FocusService } from '../../focusService';
-import {
-    _getSuppressMultiRanges,
-    _isCellSelectionEnabled,
-    _isClientSideRowModel,
-    _isUsingNewCellSelectionAPI,
-} from '../../gridOptionsUtils';
+import { _isCellSelectionEnabled, _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { CellRange, IRangeService } from '../../interfaces/IRangeService';
-import type { AdvancedFilterModel } from '../../interfaces/advancedFilterModel';
 import type {
     AggregationColumnState,
     AggregationState,
@@ -47,7 +41,7 @@ import type { SortModelItem } from '../../interfaces/iSortModelItem';
 import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from '../../interfaces/selectionState';
 import type { PaginationService } from '../../pagination/paginationService';
 import type { ColumnAnimationService } from '../../rendering/columnAnimationService';
-import { _debounce, _warnOnce } from '../../utils/function';
+import { _debounce } from '../../utils/function';
 import { _jsonEquals } from '../../utils/generic';
 import { migrateGridStateModel } from './stateModelMigration';
 
@@ -620,10 +614,6 @@ export class StateService extends BeanStub implements NamedBean {
                 startColumn,
             });
         });
-
-        if (_isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && cellRanges.length > 1) {
-            return _warnOnce('cannot add multiple ranges when `cellSelection.suppressMultiRanges = true`');
-        }
 
         rangeService.setCellRanges(cellRanges);
     }

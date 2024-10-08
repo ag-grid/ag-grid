@@ -4,7 +4,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';
-import { _isFunction, _warnOnce } from '../utils/function';
+import { _isFunction } from '../utils/function';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
 import type { DragSource } from './dragAndDropService';
@@ -43,8 +43,6 @@ export class RowDragComp extends Component {
             this.setDragElement(this.customGui, this.dragStartPixels);
         }
 
-        this.checkCompatibility();
-
         if (!this.suppressVisibilityChange) {
             const strategy = this.gos.get('rowDragManaged')
                 ? new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column)
@@ -70,16 +68,6 @@ export class RowDragComp extends Component {
         const selection = this.beans.selectionService?.getSelectedNodes() ?? [];
 
         return selection.indexOf(this.rowNode) !== -1 ? selection : [this.rowNode];
-    }
-
-    // returns true if all compatibility items work out
-    private checkCompatibility(): void {
-        const managed = this.gos.get('rowDragManaged');
-        const treeData = this.gos.get('treeData');
-
-        if (treeData && managed) {
-            _warnOnce('If using row drag with tree data, you cannot have rowDragManaged=true');
-        }
     }
 
     private getDragItem(): IRowDragItem {

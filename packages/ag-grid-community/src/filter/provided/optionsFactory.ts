@@ -1,5 +1,5 @@
 import type { IFilterOptionDef } from '../../interfaces/iFilter';
-import { _warnOnce } from '../../utils/function';
+import { _logWarn } from '../../validation/logging';
 import type { ScalarFilterParams } from './iScalarFilter';
 import type { SimpleFilterParams } from './iSimpleFilter';
 
@@ -32,7 +32,7 @@ export class OptionsFactory {
             const requiredProperties = [['displayKey'], ['displayName'], ['predicate', 'test']];
             const propertyCheck = (keys: [keyof IFilterOptionDef]) => {
                 if (!keys.some((key) => filterOption[key] != null)) {
-                    _warnOnce(`ignoring FilterOptionDef as it doesn't contain one of '${keys}'`);
+                    _logWarn(72, { keys });
                     return false;
                 }
 
@@ -59,10 +59,12 @@ export class OptionsFactory {
             } else if (firstFilterOption.displayKey) {
                 this.defaultOption = firstFilterOption.displayKey;
             } else {
-                _warnOnce(`invalid FilterOptionDef supplied as it doesn't contain a 'displayKey'`);
+                // invalid FilterOptionDef supplied as it doesn't contain a 'displayKey
+                _logWarn(73);
             }
         } else {
-            _warnOnce('no filter options for filter');
+            //no filter options for filter
+            _logWarn(74);
         }
     }
 

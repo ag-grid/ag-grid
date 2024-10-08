@@ -1,4 +1,4 @@
-import type { ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
+import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 
@@ -57,7 +57,7 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
         return null;
     },
     columnChooserParams: {
-        module: ['MenuModule', 'ColumnsToolPanelModule'],
+        module: ['MenuModule', 'ColumnsToolPanelCoreModule'],
     },
 
     headerCheckboxSelection: {
@@ -78,6 +78,37 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
             rowSelection === 'multiple'
                 ? null
                 : 'headerCheckboxSelectionCurrentPageOnly is only supported with rowSelection=multiple',
+    },
+
+    autoHeight: {
+        supportedRowModels: ['clientSide', 'serverSide'],
+    },
+    headerValueGetter: {
+        validate: (_options: AbstractColDef) => {
+            const headerValueGetter = _options.headerValueGetter;
+            if (typeof headerValueGetter === 'function' || typeof headerValueGetter === 'string') {
+                return null;
+            }
+            return 'headerValueGetter must be a function or a valid string expression';
+        },
+    },
+    type: {
+        validate: (_options) => {
+            const type = _options.type;
+
+            if (type instanceof Array) {
+                const invalidArray = type.some((a) => typeof a !== 'string');
+                if (invalidArray) {
+                    return "if colDef.type is supplied an array it should be of type 'string[]'";
+                }
+                return null;
+            }
+
+            if (typeof type === 'string') {
+                return null;
+            }
+            return "colDef.type should be of type 'string' | 'string[]'";
+        },
     },
 
     children: () => COL_DEF_VALIDATORS,

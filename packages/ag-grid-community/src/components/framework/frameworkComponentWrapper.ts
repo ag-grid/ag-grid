@@ -1,6 +1,6 @@
 import type { IComponent } from '../../interfaces/iComponent';
 import type { ComponentType } from '../../interfaces/iUserCompDetails';
-import { _warnOnce } from '../../utils/function';
+import { _logWarn } from '../../validation/logging';
 
 /**
  * B the business interface (ie IHeader)
@@ -9,8 +9,8 @@ import { _warnOnce } from '../../utils/function';
 export interface FrameworkComponentWrapper {
     wrap<A extends IComponent<any>>(
         frameworkComponent: { new (): any } | null,
-        methodList: string[],
-        optionalMethodList: string[],
+        mandatoryMethods: string[] | undefined,
+        optionalMethods: string[] | undefined,
         componentType: ComponentType
     ): A;
 }
@@ -26,17 +26,17 @@ export interface WrappableInterface {
 export abstract class BaseComponentWrapper<F extends WrappableInterface> implements FrameworkComponentWrapper {
     public wrap<A extends IComponent<any>>(
         OriginalConstructor: { new (): any },
-        mandatoryMethodList: string[],
-        optionalMethodList: string[] = [],
+        mandatoryMethods: string[] | undefined,
+        optionalMethods: string[] | undefined,
         componentType: ComponentType
     ): A {
         const wrapper: F = this.createWrapper(OriginalConstructor, componentType);
 
-        mandatoryMethodList.forEach((methodName) => {
+        mandatoryMethods?.forEach((methodName) => {
             this.createMethod(wrapper, methodName, true);
         });
 
-        optionalMethodList.forEach((methodName) => {
+        optionalMethods?.forEach((methodName) => {
             this.createMethod(wrapper, methodName, false);
         });
 
@@ -57,7 +57,7 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
             }
 
             if (mandatory) {
-                _warnOnce('Framework component is missing the method ' + methodName + '()');
+                _logWarn(49, { methodName });
             }
             // multiple features rely on this returning `null` rather than `undefined`,
             // so that they can differentiate whether the underlying component has implemented a void method or not

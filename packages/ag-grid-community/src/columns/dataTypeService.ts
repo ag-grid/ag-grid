@@ -21,9 +21,9 @@ import type { ColumnEventName } from '../interfaces/iColumn';
 import type { IEventListener } from '../interfaces/iEventEmitter';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
-import { _warnOnce } from '../utils/function';
 import { _toStringOrNull } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
+import { _logWarn } from '../validation/logging';
 import type { ValueService } from '../valueService/valueService';
 import type { ColumnModel } from './columnModel';
 import { convertSourceType } from './columnModel';
@@ -184,9 +184,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             mergedDataTypeDefinition = this.mergeDataTypeDefinitions(baseDataTypeDefinition, dataTypeDefinition);
         } else {
             if (alreadyProcessedDataTypes.includes(extendsCellDataType)) {
-                _warnOnce(
-                    'Data type definition hierarchies (via the "extendsDataType" property) cannot contain circular references.'
-                );
+                _logWarn(44);
                 return undefined;
             }
             const extendedDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
@@ -220,11 +218,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
         parentCellDataType: string
     ): boolean {
         if (!parentDataTypeDefinition) {
-            _warnOnce(`The data type definition ${parentCellDataType} does not exist.`);
+            _logWarn(45, { parentCellDataType });
             return false;
         }
         if (parentDataTypeDefinition.baseDataType !== dataTypeDefinition.baseDataType) {
-            _warnOnce('The "baseDataType" property of a data type definition must match that of its parent.');
+            _logWarn(46);
             return false;
         }
         return true;
@@ -311,7 +309,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
         const dataTypeDefinition = this.dataTypeDefinitions[cellDataType as string];
         if (!dataTypeDefinition) {
-            _warnOnce(`Missing data type definition - "${cellDataType}"`);
+            _logWarn(47, { cellDataType });
             return undefined;
         }
         colDef.cellDataType = cellDataType;
@@ -575,10 +573,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     public validateColDef(colDef: ColDef): void {
-        const warning = (property: 'Formatter' | 'Parser') =>
-            _warnOnce(
-                `Cell data type is "object" but no Value ${property} has been provided. Please either provide an object data type definition with a Value ${property}, or set "colDef.value${property}"`
-            );
+        const warning = (property: 'Formatter' | 'Parser') => _logWarn(48, { property });
         if (colDef.cellDataType === 'object') {
             if (
                 colDef.valueFormatter === this.dataTypeDefinitions.object.groupSafeValueFormatter &&

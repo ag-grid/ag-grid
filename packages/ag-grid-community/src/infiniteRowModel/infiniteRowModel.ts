@@ -5,19 +5,17 @@ import type { RowNode } from '../entities/rowNode';
 import type { FilterManager } from '../filter/filterManager';
 import { _getRowHeightAsNumber, _getRowIdCallback } from '../gridOptionsUtils';
 import type { IDatasource } from '../interfaces/iDatasource';
-import type { IInfiniteRowModel } from '../interfaces/iInfiniteRowModel';
 import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import type { SortController } from '../sort/sortController';
-import { _warnOnce } from '../utils/function';
 import { _jsonEquals } from '../utils/generic';
 import { NumberSequence } from '../utils/numberSequence';
 import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
 
-export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRowModel {
+export class InfiniteRowModel extends BeanStub implements NamedBean {
     beanName = 'rowModel' as const;
 
     private filterManager?: FilterManager;
@@ -61,16 +59,6 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IInfiniteRo
         this.addEventListeners();
 
         this.addDestroyFunc(() => this.destroyCache());
-
-        this.verifyProps();
-    }
-
-    private verifyProps(): void {
-        if (this.gos.exists('initialGroupOrderComparator')) {
-            _warnOnce(
-                'initialGroupOrderComparator cannot be used with Infinite Row Model as sorting is done on the server side'
-            );
-        }
     }
 
     public start(): void {

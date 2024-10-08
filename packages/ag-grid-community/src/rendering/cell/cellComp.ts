@@ -11,9 +11,9 @@ import type { CheckboxSelectionComponent } from '../../selection/checkboxSelecti
 import { _setAriaRole } from '../../utils/aria';
 import { _browserSupportsPreventScroll } from '../../utils/browser';
 import { _addStylesToElement, _clearElement, _removeFromParent } from '../../utils/dom';
-import { _warnOnce } from '../../utils/function';
 import { _missing } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
+import { _logWarn } from '../../validation/logging';
 import { Component } from '../../widgets/component';
 import type { TooltipParentComp } from '../../widgets/tooltipStateManager';
 import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';
@@ -442,7 +442,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         if (!cellEditor.getGui) {
-            _warnOnce(`cellEditor for column ${this.column.getId()} is missing getGui() method`);
+            _logWarn(97, { colId: this.column.getId() });
             this.beans.context.destroyBean(cellEditor);
             return;
         }
@@ -494,10 +494,8 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private addPopupCellEditor(params: ICellEditorParams, position?: 'over' | 'under'): void {
         if (this.beans.gos.get('editType') === 'fullRow') {
-            _warnOnce(
-                'popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
-                    '- either turn off fullRowEdit, or stop using popup editors.'
-            );
+            //popup cellEditor does not work with fullRowEdit
+            _logWarn(98);
         }
 
         const cellEditor = this.cellEditor!;

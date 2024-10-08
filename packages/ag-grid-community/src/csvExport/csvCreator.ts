@@ -5,7 +5,7 @@ import type { NamedBean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
 import type { CsvCustomContent, CsvExportParams } from '../interfaces/exportParams';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
-import { _warnOnce } from '../utils/function';
+import { _logWarn } from '../validation/logging';
 import type { ValueService } from '../valueService/valueService';
 import { BaseCreator } from './baseCreator';
 import { Downloader } from './downloader';
@@ -46,7 +46,8 @@ export class CsvCreator
 
     protected export(userParams?: CsvExportParams): void {
         if (this.isExportSuppressed()) {
-            _warnOnce(`Export cancelled. Export is not allowed as per your configuration.`);
+            // Export cancelled.
+            _logWarn(51);
             return;
         }
 

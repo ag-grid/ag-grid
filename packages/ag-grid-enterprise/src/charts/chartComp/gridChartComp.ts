@@ -29,18 +29,12 @@ import { AgDialog } from '../../widgets/agDialog';
 import { ChartController, DEFAULT_THEMES } from './chartController';
 import { AreaChartProxy } from './chartProxies/cartesian/areaChartProxy';
 import { BarChartProxy } from './chartProxies/cartesian/barChartProxy';
-import { HistogramChartProxy } from './chartProxies/cartesian/histogramChartProxy';
 import { LineChartProxy } from './chartProxies/cartesian/lineChartProxy';
 import { ScatterChartProxy } from './chartProxies/cartesian/scatterChartProxy';
-import { WaterfallChartProxy } from './chartProxies/cartesian/waterfallChartProxy';
 import type { ChartProxy, ChartProxyParams } from './chartProxies/chartProxy';
 import { ComboChartProxy } from './chartProxies/combo/comboChartProxy';
-import { HierarchicalChartProxy } from './chartProxies/hierarchical/hierarchicalChartProxy';
+import type { EnterpriseChartProxyFactory } from './chartProxies/enterpriseChartProxyFactory';
 import { PieChartProxy } from './chartProxies/pie/pieChartProxy';
-import { PolarChartProxy } from './chartProxies/polar/polarChartProxy';
-import { HeatmapChartProxy } from './chartProxies/specialized/heatmapChartProxy';
-import { BoxPlotChartProxy } from './chartProxies/statistical/boxPlotChartProxy';
-import { RangeChartProxy } from './chartProxies/statistical/rangeChartProxy';
 import type { CrossFilteringContext } from './crossfilter/crossFilteringContext';
 import { ChartMenu } from './menu/chartMenu';
 import type { ChartMenuContext } from './menu/chartMenuContext';
@@ -80,6 +74,7 @@ export class GridChartComp extends Component {
     private chartMenuService: ChartMenuService;
     private focusService: FocusService;
     private popupService: PopupService;
+    private enterpriseChartProxyFactory?: EnterpriseChartProxyFactory;
 
     public wireBeans(beans: BeanCollection): void {
         this.crossFilterService = beans.chartCrossFilterService as ChartCrossFilterService;
@@ -87,6 +82,7 @@ export class GridChartComp extends Component {
         this.chartMenuService = beans.chartMenuService as ChartMenuService;
         this.focusService = beans.focusService;
         this.popupService = beans.popupService!;
+        this.enterpriseChartProxyFactory = beans.enterpriseChartProxyFactory as EnterpriseChartProxyFactory;
     }
 
     private readonly eChart: HTMLElement = RefPlaceholder;
@@ -220,7 +216,7 @@ export class GridChartComp extends Component {
         // set local state used to detect when chart changes
         this.chartType = chartType;
 
-        this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
+        this.chartProxy = this.createChartProxy(chartProxyParams);
         if (!this.chartProxy) {
             _warnOnce('invalid chart type supplied: ' + chartProxyParams.chartType);
             return;
@@ -260,7 +256,7 @@ export class GridChartComp extends Component {
         return this.gos.get('chartThemeOverrides');
     }
 
-    private static createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy {
+    private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy {
         switch (chartProxyParams.chartType) {
             case 'column':
             case 'bar':
@@ -286,33 +282,16 @@ export class GridChartComp extends Component {
             case 'scatter':
             case 'bubble':
                 return new ScatterChartProxy(chartProxyParams);
-            case 'histogram':
-                return new HistogramChartProxy(chartProxyParams);
-            case 'radarLine':
-            case 'radarArea':
-            case 'nightingale':
-            case 'radialColumn':
-            case 'radialBar':
-                return new PolarChartProxy(chartProxyParams);
-            case 'rangeBar':
-            case 'rangeArea':
-                return new RangeChartProxy(chartProxyParams);
-            case 'boxPlot':
-                return new BoxPlotChartProxy(chartProxyParams);
-            case 'treemap':
-            case 'sunburst':
-                return new HierarchicalChartProxy(chartProxyParams);
-            case 'heatmap':
-                return new HeatmapChartProxy(chartProxyParams);
-            case 'waterfall':
-                return new WaterfallChartProxy(chartProxyParams);
             case 'columnLineCombo':
             case 'areaColumnCombo':
             case 'customCombo':
                 return new ComboChartProxy(chartProxyParams);
-            default:
-                throw `AG Grid: Unable to create chart as an invalid chartType = '${chartProxyParams.chartType}' was supplied.`;
         }
+        const enterpriseChartProxy = this.enterpriseChartProxyFactory?.createChartProxy(chartProxyParams);
+        if (!enterpriseChartProxy) {
+            throw `AG Grid: Unable to create chart as an invalid chartType = '${chartProxyParams.chartType}' was supplied.`;
+        }
+        return enterpriseChartProxy;
     }
 
     private addDialog(): void {

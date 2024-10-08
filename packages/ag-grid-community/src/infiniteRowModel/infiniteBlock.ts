@@ -3,9 +3,9 @@ import { RowNode } from '../entities/rowNode';
 import type { IGetRowsParams } from '../interfaces/iDatasource';
 import type { LoadSuccessParams } from '../rowNodeCache/iRowNodeBlock';
 import { RowNodeBlock } from '../rowNodeCache/rowNodeBlock';
-import { _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
 import type { NumberSequence } from '../utils/numberSequence';
+import { _logWarn } from '../validation/logging';
 import type { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
 
 export class InfiniteBlock extends RowNodeBlock {
@@ -68,7 +68,7 @@ export class InfiniteBlock extends RowNodeBlock {
     protected loadFromDatasource(): void {
         const params = this.createLoadParams();
         if (_missing(this.params.datasource.getRows)) {
-            _warnOnce(`datasource is missing getRows method`);
+            _logWarn(90);
             return;
         }
 

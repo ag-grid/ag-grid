@@ -7,9 +7,9 @@ import type { ColDef, ColGroupDef } from '../entities/colDef';
 import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
 import type { ColumnEventType } from '../events';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
-import { _warnOnce } from '../utils/function';
 import { _attrToBoolean, _attrToNumber } from '../utils/generic';
 import { _iterateObject, _mergeDeep } from '../utils/object';
+import { _logWarn } from '../validation/logging';
 import { ColumnKeyCreator } from './columnKeyCreator';
 import { convertColumnTypes } from './columnUtils';
 import type { DataTypeService } from './dataTypeService';
@@ -504,15 +504,13 @@ export class ColumnFactory extends BeanStub implements NamedBean {
 
         _iterateObject(userTypes, (key, value) => {
             if (key in allColumnTypes) {
-                _warnOnce(`the column type '${key}' is a default column type and cannot be overridden.`);
+                // default column types cannot be overridden
+                _logWarn(34, { key });
             } else {
                 const colType = value as any;
                 if (colType.type) {
-                    _warnOnce(
-                        `Column type definitions 'columnTypes' with a 'type' attribute are not supported ` +
-                            `because a column type cannot refer to another column type. Only column definitions ` +
-                            `'columnDefs' can use the 'type' attribute to refer to a column type.`
-                    );
+                    // type should not be defined in column types
+                    _logWarn(35);
                 }
 
                 allColumnTypes[key] = value;
@@ -524,7 +522,7 @@ export class ColumnFactory extends BeanStub implements NamedBean {
             if (typeColDef) {
                 _mergeDeep(colDefMerged, typeColDef, false, true);
             } else {
-                _warnOnce("colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
+                _logWarn(36, { t });
             }
         });
     }

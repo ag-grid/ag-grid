@@ -1,6 +1,13 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { CellDoubleClickedEvent, CellKeyDownEvent, ColDef, GridApi, GridOptions, createGrid } from 'ag-grid-community';
-import { ModuleRegistry } from 'ag-grid-community';
+import {
+    CellDoubleClickedEvent,
+    CellKeyDownEvent,
+    ClientSideRowModelModule,
+    ColDef,
+    GridApi,
+    GridOptions,
+    ModuleRegistry,
+    createGrid,
+} from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { CustomGroupCellRenderer } from './customGroupCellRenderer_typescript';
@@ -27,15 +34,13 @@ const columnDefs: ColDef[] = [
     },
 ];
 
-const autoGroupColumnDef: ColDef = {
-    cellRenderer: CustomGroupCellRenderer,
-};
-
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
-    autoGroupColumnDef: autoGroupColumnDef,
+    autoGroupColumnDef: {
+        cellRenderer: CustomGroupCellRenderer,
+    },
     defaultColDef: {
         flex: 1,
         minWidth: 120,

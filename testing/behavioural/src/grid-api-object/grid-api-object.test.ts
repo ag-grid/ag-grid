@@ -139,8 +139,13 @@ describe('ag-grid overlays state', () => {
         expect(api.getRowNode('123')).toBe(undefined);
 
         expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
-        expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('getRowNode()'));
-        expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('destroyed'));
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+            'AG Grid: error #26',
+            `Grid API function getRowNode() cannot be called as the grid has been destroyed.
+ Either clear local references to the grid api, when it is destroyed, or check gridApi.isDestroyed() to avoid calling methods against a destroyed grid.
+ To run logic when the grid is about to be destroyed use the gridPreDestroy event. See: https://www.ag-grid.com/javascript-data-grid/grid-lifecycle/#grid-pre-destroyed`,
+            '\nSee https://www.ag-grid.com/javascript-data-grid/errors/26?fnName=getRowNode&preDestroyLink=https%3A%2F%2Fwww.ag-grid.com%2Fjavascript-data-grid%2Fgrid-lifecycle%2F%23grid-pre-destroyed'
+        );
 
         expect(api.getRowNode('123')).toBe(undefined);
 
@@ -172,8 +177,13 @@ describe('ag-grid overlays state', () => {
 
         expect(api.exportDataAsExcel()).toBeUndefined();
         expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
-        expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('exportDataAsExcel()'));
-        expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('destroyed'));
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+            'AG Grid: error #26',
+            `Grid API function exportDataAsExcel() cannot be called as the grid has been destroyed.
+ Either clear local references to the grid api, when it is destroyed, or check gridApi.isDestroyed() to avoid calling methods against a destroyed grid.
+ To run logic when the grid is about to be destroyed use the gridPreDestroy event. See: https://www.ag-grid.com/javascript-data-grid/grid-lifecycle/#grid-pre-destroyed`,
+            '\nSee https://www.ag-grid.com/javascript-data-grid/errors/26?fnName=exportDataAsExcel&preDestroyLink=https%3A%2F%2Fwww.ag-grid.com%2Fjavascript-data-grid%2Fgrid-lifecycle%2F%23grid-pre-destroyed'
+        );
 
         expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
     });

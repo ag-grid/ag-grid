@@ -1,11 +1,11 @@
-import { _warnOnce } from '../utils/function';
+import { _logWarn } from '../validation/logging';
 
 export class Downloader {
     public static download(fileName: string, content: Blob) {
         const win = document.defaultView || window;
 
         if (!win) {
-            _warnOnce('There is no `window` associated with the current `document`');
+            _logWarn(52);
             return;
         }
 

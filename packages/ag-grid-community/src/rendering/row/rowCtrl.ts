@@ -51,7 +51,7 @@ import {
     _observeResize,
 } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
-import { _executeNextVMTurn, _warnOnce } from '../../utils/function';
+import { _executeNextVMTurn } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import type { Component } from '../../widgets/component';
@@ -92,10 +92,10 @@ interface CellCtrlListAndMap {
     map: { [key: ColumnInstanceId]: CellCtrl };
 }
 
+export const DOM_DATA_KEY_ROW_CTRL = 'renderedRow';
+
 export type RowCtrlEvent = RenderedRowEvent;
 export class RowCtrl extends BeanStub<RowCtrlEvent> {
-    public static DOM_DATA_KEY_ROW_CTRL = 'renderedRow';
-
     public readonly instanceId: RowCtrlInstanceId;
 
     private readonly rowNode: RowNode;
@@ -297,8 +297,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.setRowCompRowBusinessKey(comp);
 
         // DOM DATA
-        _setDomData(gos, gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
-        gui.compBean.addDestroyFunc(() => _setDomData(gos, gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null));
+        _setDomData(gos, gui.element, DOM_DATA_KEY_ROW_CTRL, this);
+        gui.compBean.addDestroyFunc(() => _setDomData(gos, gui.element, DOM_DATA_KEY_ROW_CTRL, null));
 
         // adding hover functionality adds listener to this row, so we
         // do it lazily in an animation frame
@@ -1480,11 +1480,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public processStylesFromGridOptions(): RowStyle | undefined {
         // part 1 - rowStyle
         const rowStyle = this.gos.get('rowStyle');
-
-        if (rowStyle && typeof rowStyle === 'function') {
-            _warnOnce('rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead');
-            return;
-        }
 
         // part 1 - rowStyleFunc
         const rowStyleFunc = this.gos.getCallback('getRowStyle');

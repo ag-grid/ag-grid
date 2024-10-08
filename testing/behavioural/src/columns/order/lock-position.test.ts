@@ -142,8 +142,11 @@ describe('lockPosition Column Order', () => {
 
                 if (idx === 2) {
                     expect(consoleWarnSpy).toHaveBeenCalledWith(
-                        expect.stringContaining('AG Grid: tried to insert columns in invalid location, toIndex ='),
-                        idx
+                        'AG Grid: error #30',
+                        'tried to insert columns in invalid location, toIndex = ',
+                        2,
+                        'remember that you should not count the moving columns when calculating the new index',
+                        '\nSee https://www.ag-grid.com/javascript-data-grid/errors/30?toIndex=2'
                     );
                 }
 

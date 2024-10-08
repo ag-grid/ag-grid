@@ -1,0 +1,116 @@
+---
+title: "Aggregation - Total Rows"
+enterprise: true
+---
+This section shows how to include group and grand total rows in the grid.
+
+## Enabling a Grand Total Row
+A grand total row can be included in the grid by setting the `grandTotalRow` grid option to either `"top"` or `"bottom"`.
+The provided value determines whether the grand total row will be included as the first or last row in the grid.
+
+{% gridExampleRunner title="Enabling Grand Total Row" name="enabling-grand-total" /%}
+
+The following configuration shows how grand total rows can be included at the bottom of the grid:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    // adds subtotals to the bottom of each row group
+    grandTotalRow: 'bottom',
+}
+```
+
+## Enabling Group Total Rows
+A total row can be included in every group when using [Row Grouping](./grouping/) or [Tree Data](./tree-data/) by setting
+the `groupTotalRow` grid option to either `"top"` or `"bottom"`.
+The provided value determines whether the total row will be included as the first or last row in the group.
+
+{% gridExampleRunner title="Enabling Group Total Row" name="enabling-group-total" /%}
+
+The following configuration shows how group total rows can be included at the bottom of every group:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    // adds subtotals to the bottom of each row group
+    groupTotalRow: 'bottom',
+}
+```
+
+### Selectively Display Group Total Rows
+Total rows can be applied to certain groups selectively by providing a callback to the `groupTotalRow` grid option.
+This callback should return `"top"`, `"bottom"` or `undefined` and will be called for each row group to determine
+whether the group should display a total row.
+
+{% gridExampleRunner title="Selectively Enabling Group Footers" name="enabling-group-total-selectively" /%}
+
+The example above demonstrates the following configuration to display total rows for the `"United States"` group,
+and the rows grouped by the `"year"` field:
+```{% frameworkTransform=true %}
+const gridOptions = {
+   groupTotalRow: (params) => {
+       const node = params.node;
+       if (node && node.level === 1) return 'bottom';
+       if (node && node.key === 'United States') return 'bottom';
+       return undefined;
+   }
+}
+```
+
+### Keeping Group Row Values
+When a total row is visible, the group row values are hidden. This behaviour can be prevented by setting
+the `groupSuppressBlankHeader` grid option to `true`.
+
+{% gridExampleRunner title="Suppress Blank Groups" name="suppress-blank-groups" /%}
+
+The configuration below demonstrates the configuration for preventing the hiding of group row values:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    groupSuppressBlankHeader: true,
+}
+```
+
+## Group Column Cell Values
+When using [Row Grouping](./grouping-display-types/) or [Tree Data](./tree-data-group-column/) with group columns, the group
+cell will display `"Total"` by default in the footer rows.
+
+The default `agGroupCellRenderer.cellRendererParams` can be provided with a `totalValueGetter` to configure the value
+displayed in this cell.
+
+{% gridExampleRunner title="Customising Footer Values" name="customising-footer-values" /%}
+
+The example above demonstrates using the following configuration to display custom group column values for grand total and group total
+rows:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    autoGroupColumnDef: { 
+        cellRendererParams: {
+            totalValueGetter: params =>  {
+                const isRootLevel = params.node.level === -1;
+                if (isRootLevel) {
+                    return 'Grand Total';
+                }
+                return `Sub Total (${params.value})`;
+            },
+        }
+    },
+}
+```
+{% note %}
+When exporting or copying custom footers with custom group cell values, the custom content must also be added
+using [processRowGroupCallback](./excel-export-customising-content/) for export or
+[processCellForClipboard](./clipboard/#processing-individual-cells) for copying to clipboard.
+{% /note %}
+
+## Suppress Sticky Rows
+All total rows stick to the top or bottom of the viewport when scrolling. This behaviour can be configured by using the `suppressStickyTotalRow`
+grid option.
+
+{% gridExampleRunner title="Suppress Sticky Total Rows" name="suppress-sticky-total-rows" /%}
+
+The following configuration demonstrates how to suppress sticky behaviour for both grand and group total rows:
+```{% frameworkTransform=true %}
+const gridOptions = {
+    suppressStickyTotalRow: true,
+}
+```
+
+## Next Up
+
+Continue to the next section to learn about [Filtering with Aggregations](./aggregation-filtering/).

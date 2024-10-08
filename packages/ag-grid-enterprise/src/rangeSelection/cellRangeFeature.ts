@@ -6,18 +6,12 @@ import type {
     ICellComp,
     ICellRangeFeature,
     IRangeService,
-    ISelectionHandle,
-    ISelectionHandleFactory,
 } from 'ag-grid-community';
-import {
-    CellRangeType,
-    SelectionHandleType,
-    _includes,
-    _isSameRow,
-    _last,
-    _missing,
-    _setAriaSelected,
-} from 'ag-grid-community';
+import { CellRangeType, _includes, _isSameRow, _last, _missing, _setAriaSelected } from 'ag-grid-community';
+
+import { SelectionHandleType } from './abstractSelectionHandle';
+import type { AgFillHandle } from './agFillHandle';
+import type { AgRangeHandle } from './agRangeHandle';
 
 const CSS_CELL_RANGE_SELECTED = 'ag-cell-range-selected';
 const CSS_CELL_RANGE_CHART = 'ag-cell-range-chart';
@@ -53,7 +47,6 @@ function _isFillHandleEnabled(gos: GridOptionsService): boolean {
 export class CellRangeFeature implements ICellRangeFeature {
     private beans: BeanCollection;
     private rangeService: IRangeService;
-    private selectionHandleFactory: ISelectionHandleFactory;
     private cellComp: ICellComp;
     private cellCtrl: CellCtrl;
     private eGui: HTMLElement;
@@ -61,13 +54,12 @@ export class CellRangeFeature implements ICellRangeFeature {
     private rangeCount: number;
     private hasChartRange: boolean;
 
-    private selectionHandle: ISelectionHandle | null | undefined;
+    private selectionHandle: AgFillHandle | AgRangeHandle | null | undefined;
 
     constructor(beans: BeanCollection, ctrl: CellCtrl) {
         this.beans = beans;
         // We know these are defined otherwise the feature wouldn't be registered
         this.rangeService = beans.rangeService!;
-        this.selectionHandleFactory = beans.selectionHandleFactory!;
         this.cellCtrl = ctrl;
     }
 
@@ -275,10 +267,12 @@ export class CellRangeFeature implements ICellRangeFeature {
         }
 
         if (!this.selectionHandle) {
-            this.selectionHandle = this.selectionHandleFactory.createSelectionHandle(type);
+            this.selectionHandle = this.beans.context.createBean(
+                this.beans.registry.createDynamicBean(type === SelectionHandleType.FILL ? 'fillHandle' : 'rangeHandle')
+            );
         }
 
-        this.selectionHandle.refresh(this.cellCtrl);
+        this.selectionHandle?.refresh(this.cellCtrl);
     }
 
     public destroy(): void {

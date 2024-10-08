@@ -6,7 +6,6 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { AbstractColDef, ColDef, HeaderLocation, HeaderValueGetterParams } from '../entities/colDef';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
-import { _warnOnce } from '../utils/function';
 import { _camelCaseToHumanText } from '../utils/string';
 import type { ExpressionService } from '../valueService/expressionService';
 
@@ -83,7 +82,6 @@ export class ColumnNameService extends BeanStub implements NamedBean {
                 // valueGetter is an expression, so execute the expression
                 return this.expressionService?.evaluate(headerValueGetter, params) ?? null;
             }
-            _warnOnce('headerValueGetter must be a function or a string');
             return '';
         } else if (colDef.headerName != null) {
             return colDef.headerName;

@@ -1,18 +1,19 @@
 import type { BeanCollection } from '../context/context';
-import { _errorOnce } from '../utils/function';
+import { _logError } from '../validation/logging';
+import { _getInfiniteRowModel, _getServerSideRowModel } from './rowModelApiUtils';
 
 export function setRowCount(beans: BeanCollection, rowCount: number, maxRowFound?: boolean): void {
-    const serverSideRowModel = beans.rowModelHelperService?.getServerSideRowModel();
+    const serverSideRowModel = _getServerSideRowModel(beans);
     if (serverSideRowModel) {
         if (beans.funcColsService.isRowGroupEmpty()) {
             serverSideRowModel.setRowCount(rowCount, maxRowFound);
             return;
         }
-        _errorOnce('setRowCount cannot be used while using row grouping.');
+        _logError(28);
         return;
     }
 
-    const infiniteRowModel = beans.rowModelHelperService?.getInfiniteRowModel();
+    const infiniteRowModel = _getInfiniteRowModel(beans);
     if (infiniteRowModel) {
         infiniteRowModel.setRowCount(rowCount, maxRowFound);
         return;

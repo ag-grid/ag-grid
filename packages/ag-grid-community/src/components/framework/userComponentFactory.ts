@@ -6,13 +6,12 @@ import type { GridOptions } from '../../entities/gridOptions';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { _errorOnce } from '../../utils/function';
 import { _mergeDeep } from '../../utils/object';
 import { AgPromise } from '../../utils/promise';
+import { _logError } from '../../validation/logging';
 import type { AgComponentUtils } from './agComponentUtils';
-import type { ComponentMetadata, ComponentMetadataProvider } from './componentMetadataProvider';
 import type { FrameworkComponentWrapper } from './frameworkComponentWrapper';
-import type { UserComponentRegistry } from './userComponentRegistry';
+import type { Registry } from './registry';
 
 function doesImplementIComponent(candidate: any): boolean {
     if (!candidate) {
@@ -34,7 +33,7 @@ export function _getUserCompKeys<TDefinition>(
     popupFromSelector?: boolean;
     popupPositionFromSelector?: 'over' | 'under';
 } {
-    const { propertyName } = type;
+    const { name } = type;
 
     let compName: string | undefined;
     let jsComp: any;
@@ -54,7 +53,7 @@ export function _getUserCompKeys<TDefinition>(
         const defObjectAny = defObject as any;
 
         // if selector, use this
-        const selectorFunc: CellEditorSelectorFunc | CellRendererSelectorFunc = defObjectAny[propertyName + 'Selector'];
+        const selectorFunc: CellEditorSelectorFunc | CellRendererSelectorFunc = defObjectAny[name + 'Selector'];
         const selectorRes = selectorFunc ? selectorFunc(params) : null;
 
         const assignComp = (providedJsComp: any) => {
@@ -77,7 +76,7 @@ export function _getUserCompKeys<TDefinition>(
             popupPositionFromSelector = (selectorRes as CellEditorSelectorResult).popupPosition;
         } else {
             // if no selector, or result of selector is empty, take from defObject
-            assignComp(defObjectAny[propertyName]);
+            assignComp(defObjectAny[name]);
         }
     }
 
@@ -89,14 +88,12 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
 
     private gridOptions: GridOptions;
     private agComponentUtils?: AgComponentUtils;
-    private componentMetadataProvider: ComponentMetadataProvider;
-    private userComponentRegistry: UserComponentRegistry;
+    private registry: Registry;
     private frameworkComponentWrapper?: FrameworkComponentWrapper;
 
     public wireBeans(beans: BeanCollection): void {
         this.agComponentUtils = beans.agComponentUtils;
-        this.componentMetadataProvider = beans.componentMetadataProvider;
-        this.userComponentRegistry = beans.userComponentRegistry;
+        this.registry = beans.registry;
         this.frameworkComponentWrapper = beans.frameworkComponentWrapper;
         this.gridOptions = beans.gridOptions;
     }
@@ -117,7 +114,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         params: any,
         mandatory = false
     ): UserCompDetails | undefined {
-        const { propertyName, cellRenderer } = type;
+        const { name, cellRenderer } = type;
 
         // eslint-disable-next-line prefer-const
         let { compName, jsComp, fwComp, paramsFromSelector, popupFromSelector, popupPositionFromSelector } =
@@ -127,7 +124,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         let defaultCompParams: any;
 
         const lookupFromRegistry = (key: string) => {
-            const item = this.userComponentRegistry.retrieve(propertyName, key);
+            const item = this.registry.getUserComponent(name, key);
             if (item) {
                 jsComp = !item.componentFromFramework ? item.component : undefined;
                 fwComp = item.componentFromFramework ? item.component : undefined;
@@ -147,12 +144,12 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
 
         // if we have a comp option, and it's a function, replace it with an object equivalent adaptor
         if (jsComp && cellRenderer && !doesImplementIComponent(jsComp)) {
-            jsComp = this.agComponentUtils?.adaptFunction(propertyName, jsComp);
+            jsComp = this.agComponentUtils?.adaptFunction(type, jsComp);
         }
 
         if (!jsComp && !fwComp) {
             if (mandatory) {
-                _errorOnce(`Could not find component ${compName}, did you forget to configure this component?`);
+                _logError(50, { compName });
             }
             return;
         }
@@ -186,7 +183,6 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         params: any,
         type: ComponentType
     ): AgPromise<any> {
-        const propertyName = type.propertyName;
         const jsComponent = !componentFromFramework;
         // using javascript component
         let instance: any;
@@ -195,11 +191,10 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
             instance = new ComponentClass();
         } else {
             // Using framework component
-            const thisComponentConfig: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
             instance = this.frameworkComponentWrapper!.wrap(
                 ComponentClass,
-                thisComponentConfig.mandatoryMethodList,
-                thisComponentConfig.optionalMethodList,
+                type.mandatoryMethods,
+                type.optionalMethods,
                 type
             );
         }
@@ -231,7 +226,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
         // pull user params from either the old prop name and new prop name
         // eg either cellRendererParams and cellCompParams
         const defObjectAny = defObject as any;
-        const userParams = defObjectAny && defObjectAny[type.propertyName + 'Params'];
+        const userParams = defObjectAny && defObjectAny[type.name + 'Params'];
 
         if (typeof userParams === 'function') {
             const userParamsFromFunc = userParams(paramsFromGrid);

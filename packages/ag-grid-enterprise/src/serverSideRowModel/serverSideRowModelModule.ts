@@ -1,7 +1,6 @@
 import type { _ModuleWithApi, _ModuleWithoutApi, _ServerSideRowModelGridApi } from 'ag-grid-community';
 import {
     CommunityFeaturesModule,
-    RowModelHelperService,
     RowNodeBlockModule,
     SortModule,
     _CsrmSsrmSharedApiModule,
@@ -9,6 +8,7 @@ import {
 } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { LoadingCellRendererModule, SkeletonCellRendererModule } from '../cellRenderers/enterpriseCellRendererModule';
 import { baseEnterpriseModule } from '../moduleUtils';
 import { BlockUtils } from './blocks/blockUtils';
 import { ExpandListener } from './listeners/expandListener';
@@ -78,7 +78,6 @@ export const ServerSideRowModelSortModule: _ModuleWithoutApi = {
 export const ServerSideRowModelApiModule: _ModuleWithApi<_ServerSideRowModelGridApi> = {
     ...baseEnterpriseModule('ServerSideRowModelApiModule'),
     rowModels: ['serverSide'],
-    beans: [RowModelHelperService],
     apiFunctions: {
         getServerSideSelectionState,
         setServerSideSelectionState,
@@ -102,6 +101,8 @@ export const ServerSideRowModelModule: _ModuleWithoutApi = {
         ServerSideRowModelRowSelectionModule,
         ServerSideRowModelSortModule,
         ServerSideRowModelRowGroupingModule,
+        LoadingCellRendererModule,
+        SkeletonCellRendererModule,
         CommunityFeaturesModule,
     ],
 };

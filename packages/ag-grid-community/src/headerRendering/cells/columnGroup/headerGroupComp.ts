@@ -6,10 +6,10 @@ import type { AgGridCommon } from '../../../interfaces/iCommon';
 import type { IComponent } from '../../../interfaces/iComponent';
 import { _setDisplayed } from '../../../utils/dom';
 import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../../utils/event';
-import { _warnOnce } from '../../../utils/function';
 import { _exists } from '../../../utils/generic';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _escapeString } from '../../../utils/string';
+import { _logWarn } from '../../../validation/logging';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 import { TouchListener } from '../../../widgets/touchListener';
 
@@ -76,9 +76,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         const paramsAny = this.params as any;
 
         if (paramsAny.template) {
-            _warnOnce(
-                `A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)`
-            );
+            _logWarn(89);
         }
     }
 

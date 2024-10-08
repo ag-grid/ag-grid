@@ -7,9 +7,10 @@ import type { IRowModel } from '../../interfaces/iRowModel';
 import type { IRowNode } from '../../interfaces/iRowNode';
 import { PositionableFeature } from '../../rendering/features/positionableFeature';
 import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '../../utils/dom';
-import { _debounce, _warnOnce } from '../../utils/function';
+import { _debounce } from '../../utils/function';
 import { _jsonEquals } from '../../utils/generic';
 import type { AgPromise } from '../../utils/promise';
+import { _logWarn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
@@ -216,7 +217,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                     };
                     break;
                 default:
-                    _warnOnce('Unknown button type specified');
+                    _logWarn(75);
                     return;
             }
 

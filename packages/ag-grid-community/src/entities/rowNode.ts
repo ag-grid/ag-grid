@@ -26,9 +26,9 @@ import type {
 import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
 import { LocalEventService } from '../localEventService';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
-import { _debounce, _warnOnce } from '../utils/function';
+import { _debounce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
-import { _logError } from '../validation/logging';
+import { _logError, _logWarn } from '../validation/logging';
 import type { AgColumn } from './agColumn';
 
 /**
@@ -358,7 +358,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public getRowIndexString(): string | null {
         if (this.rowIndex == null) {
             // Row has been removed so no index
-            _logError(13, {});
+            _logError(13);
             return null;
         }
 
@@ -946,13 +946,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      * @param source - Source property that will appear in the `selectionChanged` event.
      */
     public setSelected(newValue: boolean, clearSelection: boolean = false, source: SelectionEventSourceType = 'api') {
-        if (typeof source === 'boolean') {
-            _warnOnce(
-                'since version v30, rowNode.setSelected() property `suppressFinishActions` has been removed, please use `gridApi.setNodesSelected()` for bulk actions, and the event `source` property for ignoring events instead.'
-            );
-            return;
-        }
-
         this.setSelectedParams({
             newValue,
             clearSelection,
@@ -967,12 +960,12 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             return 0;
         }
         if (this.rowPinned) {
-            _warnOnce('cannot select pinned rows');
+            _logWarn(59);
             return 0;
         }
 
         if (this.id === undefined) {
-            _warnOnce('cannot select node until id for node is known');
+            _logWarn(60);
             return 0;
         }
 
@@ -1034,9 +1027,8 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      * - `false` if the node is not a full width cell
      */
     public isFullWidthCell(): boolean {
-        _warnOnce(
-            'since version v32.2.0, rowNode.isFullWidthCell() has been deprecated. Instead check `rowNode.detail` followed by the user provided `isFullWidthRow` grid option.'
-        );
+        // log deprecation
+        _logWarn(61);
 
         if (this.detail) {
             return true;

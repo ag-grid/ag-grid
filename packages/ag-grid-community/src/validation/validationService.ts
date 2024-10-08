@@ -6,7 +6,7 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { EnterpriseModuleName, ModuleName } from '../interfaces/iModule';
 import { _areModulesGridScoped } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
-import { _fuzzyCheckStrings } from '../utils/fuzzyMatch';
+import { _fuzzySuggestions } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
 import { validateApiFunction } from './apiFunctionValidator';
 import { ENTERPRISE_MODULE_NAMES } from './enterpriseModuleNames';
@@ -45,7 +45,7 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public missingModule(moduleName: ModuleName, reason: string, gridId: string): void {
         const gridScoped = _areModulesGridScoped();
-        const isEnterprise = ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName];
+        const isEnterprise = ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName] === 1;
         _logError(200, {
             reason,
             moduleName,
@@ -124,7 +124,9 @@ export class ValidationService extends BeanStub implements NamedBean {
             if (supportedRowModels) {
                 const rowModel = this.gridOptions.rowModelType ?? 'clientSide';
                 if (!supportedRowModels.includes(rowModel)) {
-                    warnings.add(`${String(key)} is not supported with the '${rowModel}' row model.`);
+                    warnings.add(
+                        `${String(key)} is not supported with the '${rowModel}' row model. It is only valid with: ${supportedRowModels.join(', ')}.`
+                    );
                     return;
                 }
             }
@@ -232,4 +234,24 @@ export class ValidationService extends BeanStub implements NamedBean {
     public getConsoleMessage<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>): any[] {
         return getError(id, args);
     }
+}
+
+export function _fuzzyCheckStrings(
+    inputValues: string[],
+    validValues: string[],
+    allSuggestions: string[]
+): { [p: string]: string[] } {
+    const fuzzyMatches: { [p: string]: string[] } = {};
+    const invalidInputs: string[] = inputValues.filter(
+        (inputValue) => !validValues.some((validValue) => validValue === inputValue)
+    );
+
+    if (invalidInputs.length > 0) {
+        invalidInputs.forEach(
+            (invalidInput) =>
+                (fuzzyMatches[invalidInput] = _fuzzySuggestions({ inputValue: invalidInput, allSuggestions }).values)
+        );
+    }
+
+    return fuzzyMatches;
 }

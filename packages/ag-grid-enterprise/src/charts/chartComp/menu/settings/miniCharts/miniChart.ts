@@ -1,12 +1,11 @@
 import { _Scene } from 'ag-charts-community';
 
 import type { BeanCollection } from 'ag-grid-community';
-import { Component, _errorOnce } from 'ag-grid-community';
+import { Component, _logError } from 'ag-grid-community';
 
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
 
 const CANVAS_CLASS = 'ag-chart-mini-thumbnail-canvas';
-const ERROR_MESSAGE = 'AG Grid - chart update failed';
 
 export abstract class MiniChart extends Component {
     private chartTranslationService: ChartTranslationService;
@@ -43,7 +42,7 @@ export abstract class MiniChart extends Component {
 
         // Necessary to force scene graph render as we are not using the standalone factory.
         this.scene.render().catch((e: Error) => {
-            _errorOnce(`${ERROR_MESSAGE}`, e);
+            _logError(108, { e });
         });
     }
 

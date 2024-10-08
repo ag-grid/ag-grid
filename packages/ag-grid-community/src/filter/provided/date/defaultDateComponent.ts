@@ -3,7 +3,7 @@ import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _getSafariVersion, _isBrowserChrome, _isBrowserFirefox, _isBrowserSafari } from '../../../utils/browser';
 import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
-import { _warnOnce } from '../../../utils/function';
+import { _logWarn } from '../../../validation/logging';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { Component, RefPlaceholder } from '../../../widgets/component';
@@ -95,15 +95,11 @@ export class DefaultDateComponent extends Component implements IDateComp {
         const { minValidYear, maxValidYear, minValidDate, maxValidDate, buttons } = params.filterParams || {};
 
         if (minValidDate && minValidYear) {
-            _warnOnce(
-                'DateFilter should not have both minValidDate and minValidYear parameters set at the same time! minValidYear will be ignored.'
-            );
+            _logWarn(85);
         }
 
         if (maxValidDate && maxValidYear) {
-            _warnOnce(
-                'DateFilter should not have both maxValidDate and maxValidYear parameters set at the same time! maxValidYear will be ignored.'
-            );
+            _logWarn(86);
         }
 
         if (minValidDate && maxValidDate) {
@@ -116,9 +112,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
                 parsedMaxValidDate &&
                 parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()
             ) {
-                _warnOnce(
-                    'DateFilter parameter minValidDate should always be lower than or equal to parameter maxValidDate.'
-                );
+                _logWarn(87);
             }
         }
 

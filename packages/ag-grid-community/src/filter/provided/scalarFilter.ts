@@ -1,4 +1,4 @@
-import { _warnOnce } from '../../utils/function';
+import { _logWarn } from '../../validation/logging';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
 import type { Comparator, ScalarFilterParams } from './iScalarFilter';
 import type { ISimpleFilterModel, ISimpleFilterModelType, Tuple } from './iSimpleFilter';
@@ -95,11 +95,7 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
                 return !this.isBlank(cellValue);
 
             default:
-                _warnOnce(
-                    'Unexpected type of filter "' +
-                        filterModel.type +
-                        '", it looks like the filter was configured with incorrect Filter Options'
-                );
+                _logWarn(76, { filterModelType: filterModel.type });
                 return true;
         }
     }

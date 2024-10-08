@@ -27,12 +27,11 @@ import { getHeaderIndexToFocus } from './navigation/headerNavigationService';
 import type { HeaderNavigationService } from './navigation/headerNavigationService';
 import type { NavigationService } from './navigation/navigationService';
 import type { OverlayService } from './rendering/overlays/overlayService';
-import { RowCtrl } from './rendering/row/rowCtrl';
+import { DOM_DATA_KEY_ROW_CTRL } from './rendering/row/rowCtrl';
 import type { RowRenderer } from './rendering/rowRenderer';
 import { _last } from './utils/array';
 import { _getTabIndex } from './utils/browser';
 import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR, _isVisible } from './utils/dom';
-import { _warnOnce } from './utils/function';
 import { _makeNull } from './utils/generic';
 import { ManagedFocusFeature } from './widgets/managedFocusFeature';
 import { TabGuardClassNames } from './widgets/tabGuardCtrl';
@@ -175,7 +174,7 @@ export class FocusService extends BeanStub implements NamedBean {
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about. we check for ROW data, as this covers both focused Rows (for Full Width Rows)
         // and Cells (covers cells as cells live in rows)
-        if (this.isDomDataMissingInHierarchy(_getActiveDomElement(this.gos), RowCtrl.DOM_DATA_KEY_ROW_CTRL)) {
+        if (this.isDomDataMissingInHierarchy(_getActiveDomElement(this.gos), DOM_DATA_KEY_ROW_CTRL)) {
             return null;
         }
 

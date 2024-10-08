@@ -1,24 +1,15 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection } from '../../context/context';
 import type { IComponent } from '../../interfaces/iComponent';
+import type { ComponentType } from '../../interfaces/iUserCompDetails';
 import type { ICellRendererComp, ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
 import { _loadTemplate } from '../../utils/dom';
-import type { ComponentMetadataProvider } from './componentMetadataProvider';
 
 export class AgComponentUtils extends BeanStub implements NamedBean {
     beanName = 'agComponentUtils' as const;
 
-    private componentMetadataProvider: ComponentMetadataProvider;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.componentMetadataProvider = beans.componentMetadataProvider;
-    }
-
-    public adaptFunction(propertyName: string, jsCompFunc: any): any {
-        return this.componentMetadataProvider.retrieve(propertyName)?.adaptFunction
-            ? this.adaptCellRendererFunction(jsCompFunc)
-            : null;
+    public adaptFunction(type: ComponentType, jsCompFunc: any): any {
+        return type.cellRenderer ? this.adaptCellRendererFunction(jsCompFunc) : null;
     }
 
     private adaptCellRendererFunction(callback: any): { new (): IComponent<ICellRendererParams> } {

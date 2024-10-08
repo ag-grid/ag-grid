@@ -1,49 +1,50 @@
+import { _getClientSideRowModel } from '../api/rowModelApiUtils';
 import type { BeanCollection } from '../context/context';
 import type { ClientSideRowModelStep } from '../interfaces/iClientSideRowModel';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _warnOnce } from '../utils/function';
+import { _logWarn } from '../validation/logging';
 
 export function onGroupExpandedOrCollapsed(beans: BeanCollection): void {
     beans.expansionService?.onGroupExpandedOrCollapsed();
 }
 
 export function refreshClientSideRowModel(beans: BeanCollection, step?: ClientSideRowModelStep): void {
-    beans.rowModelHelperService?.getClientSideRowModel()?.refreshModel(step);
+    _getClientSideRowModel(beans)?.refreshModel(step);
 }
 
 export function isRowDataEmpty(beans: BeanCollection): boolean {
-    return beans.rowModelHelperService?.getClientSideRowModel()?.isEmpty() ?? true;
+    return _getClientSideRowModel(beans)?.isEmpty() ?? true;
 }
 
 export function forEachLeafNode<TData = any>(
     beans: BeanCollection,
     callback: (rowNode: IRowNode<TData>) => void
 ): void {
-    beans.rowModelHelperService?.getClientSideRowModel()?.forEachLeafNode(callback);
+    _getClientSideRowModel(beans)?.forEachLeafNode(callback);
 }
 
 export function forEachNodeAfterFilter<TData = any>(
     beans: BeanCollection,
     callback: (rowNode: IRowNode<TData>, index: number) => void
 ): void {
-    beans.rowModelHelperService?.getClientSideRowModel()?.forEachNodeAfterFilter(callback);
+    _getClientSideRowModel(beans)?.forEachNodeAfterFilter(callback);
 }
 
 export function forEachNodeAfterFilterAndSort<TData = any>(
     beans: BeanCollection,
     callback: (rowNode: IRowNode<TData>, index: number) => void
 ): void {
-    beans.rowModelHelperService?.getClientSideRowModel()?.forEachNodeAfterFilterAndSort(callback);
+    _getClientSideRowModel(beans)?.forEachNodeAfterFilterAndSort(callback);
 }
 
 export function resetRowHeights(beans: BeanCollection): void {
     if (beans.columnModel.isAutoRowHeightActive()) {
-        _warnOnce('calling gridApi.resetRowHeights() makes no sense when using Auto Row Height.');
+        _logWarn(3);
         return;
     }
-    beans.rowModelHelperService?.getClientSideRowModel()?.resetRowHeights();
+    _getClientSideRowModel(beans)?.resetRowHeights();
 }
 
 export function applyTransaction<TData = any>(
@@ -51,7 +52,7 @@ export function applyTransaction<TData = any>(
     rowDataTransaction: RowDataTransaction<TData>
 ): RowNodeTransaction<TData> | null | undefined {
     return beans.frameworkOverrides.wrapIncoming(() =>
-        beans.rowModelHelperService?.getClientSideRowModel()?.updateRowData(rowDataTransaction)
+        _getClientSideRowModel(beans)?.updateRowData(rowDataTransaction)
     );
 }
 
@@ -61,14 +62,12 @@ export function applyTransactionAsync<TData = any>(
     callback?: (res: RowNodeTransaction<TData>) => void
 ): void {
     beans.frameworkOverrides.wrapIncoming(() =>
-        beans.rowModelHelperService?.getClientSideRowModel()?.batchUpdateRowData(rowDataTransaction, callback)
+        _getClientSideRowModel(beans)?.batchUpdateRowData(rowDataTransaction, callback)
     );
 }
 
 export function flushAsyncTransactions(beans: BeanCollection): void {
-    beans.frameworkOverrides.wrapIncoming(() =>
-        beans.rowModelHelperService?.getClientSideRowModel()?.flushAsyncTransactions()
-    );
+    beans.frameworkOverrides.wrapIncoming(() => _getClientSideRowModel(beans)?.flushAsyncTransactions());
 }
 
 export function getBestCostNodeSelection<TData = any>(beans: BeanCollection): IRowNode<TData>[] | undefined {

@@ -1,10 +1,10 @@
-import { _warnOnce } from '../../../utils/function';
+import { _logWarn } from '../../../validation/logging';
 import type { ProvidedFilterParams } from '../../provided/iProvidedFilter';
 
 export function getDebounceMs(params: ProvidedFilterParams, debounceDefault: number): number {
     if (isUseApplyButton(params)) {
         if (params.debounceMs != null) {
-            _warnOnce('debounceMs is ignored when apply button is present');
+            _logWarn(71);
         }
 
         return 0;

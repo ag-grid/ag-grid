@@ -5,9 +5,9 @@ import type { FilterDestroyedEvent } from '../events';
 import type { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import type { IFilterComp } from '../interfaces/iFilter';
 import { _clearElement } from '../utils/dom';
-import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
+import { _logWarn } from '../validation/logging';
 import { Component } from '../widgets/component';
 import type { FilterWrapper } from './columnFilterService';
 import type { FilterManager } from './filterManager';
@@ -71,7 +71,7 @@ export class FilterWrapperComp extends Component {
             const guiFromFilter = filter!.getGui();
 
             if (!_exists(guiFromFilter)) {
-                _warnOnce(`getGui method from filter returned ${guiFromFilter}; it should be a DOM element.`);
+                _logWarn(69, { guiFromFilter });
             }
 
             this.appendChild(guiFromFilter);

@@ -61,10 +61,11 @@ function stringifyValue(value: any) {
 
 export function getErrorLink(errorNum: ErrorId, args: GetErrorParams<any>) {
     const params = new URLSearchParams();
-    Object.entries(args as any).forEach(([key, value]) => {
-        params.append(key, stringifyValue(value));
-    });
-
+    if (args) {
+        Object.entries(args).forEach(([key, value]) => {
+            params.append(key, stringifyValue(value));
+        });
+    }
     return `${baseDocLink}/errors/${errorNum}?${params.toString()}`;
 }
 
@@ -77,16 +78,16 @@ export function _logWarn<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
->(id: TId, args: GetErrorParams<TId>) {
-    getMsgOrDefault(warnLog, id!, args as any);
+>(...args: undefined extends GetErrorParams<TId> ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
+    getMsgOrDefault(warnLog, args[0], args[1] as any);
 }
 
 export function _logError<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
->(id: TId, args: GetErrorParams<TId>) {
-    getMsgOrDefault(errorLog, id!, args as any);
+>(...args: undefined extends GetErrorParams<TId> ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
+    getMsgOrDefault(errorLog, args[0], args[1] as any);
 }
 
 /** Used for messages before the ValidationService has been created */

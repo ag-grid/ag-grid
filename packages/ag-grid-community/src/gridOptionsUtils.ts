@@ -25,8 +25,8 @@ import type { WithoutGridCommon } from './interfaces/iCommon';
 import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
-import { _warnOnce } from './utils/function';
 import { _exists, _missing } from './utils/generic';
+import { _logWarn } from './validation/logging';
 
 function isRowModelType(gos: GridOptionsService, rowModelType: RowModelType): boolean {
     return gos.get('rowModelType') === rowModelType;
@@ -87,9 +87,7 @@ export function _getRowHeightForNode(
 
         if (isNumeric(height)) {
             if (height === 0) {
-                _warnOnce(
-                    'The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.'
-                );
+                _logWarn(23);
             }
             return { height: Math.max(1, height), estimated: false };
         }
@@ -137,7 +135,7 @@ export function _getRowHeightAsNumber(gos: GridOptionsService): number {
         return rowHeight;
     }
 
-    _warnOnce('row height must be a number if not using standard row model');
+    _logWarn(24);
     return environment.getDefaultRowHeight();
 }
 
@@ -289,7 +287,7 @@ export function _getRowIdCallback<TData = any>(
         let id = getRowId(params);
 
         if (typeof id !== 'string') {
-            _warnOnce(`The getRowId callback must return a string. The ID `, id, ` is being cast to a string.`);
+            _logWarn(25, { id });
             id = String(id);
         }
 

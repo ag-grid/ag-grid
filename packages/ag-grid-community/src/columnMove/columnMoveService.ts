@@ -17,7 +17,7 @@ import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
 import type { DragItem } from '../interfaces/iDragItem';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { _last, _moveInArray, _removeFromArray } from '../utils/array';
-import { _warnOnce } from '../utils/function';
+import { _logWarn } from '../validation/logging';
 import { BodyDropTarget } from './columnDrag/bodyDropTarget';
 import { doesMovePassMarryChildren } from './columnMoveUtils';
 import { attemptMoveColumns, normaliseX, setColumnsMoving } from './internalColumnMoveUtils';
@@ -68,8 +68,8 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         }
 
         if (toIndex > gridColumns.length - columnsToMoveKeys.length) {
-            _warnOnce('tried to insert columns in invalid location, toIndex = ', toIndex);
-            _warnOnce('remember that you should not count the moving columns when calculating the new index');
+            // Trying to insert in invalid position
+            _logWarn(30, { toIndex });
             return;
         }
 

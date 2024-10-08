@@ -19,9 +19,9 @@ import type {
 import {
     BeanStub,
     ClientSideRowModelSteps,
-    _errorOnce,
     _getGrandTotalRow,
     _getGroupAggFiltering,
+    _logError,
     _missingOrEmpty,
 } from 'ag-grid-community';
 
@@ -306,7 +306,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
             typeof aggFuncOrString === 'string' ? this.aggFuncService.getAggFunc(aggFuncOrString) : aggFuncOrString;
 
         if (typeof aggFunc !== 'function') {
-            _errorOnce(`unrecognised aggregation function ${aggFuncOrString}`);
+            _logError(109, { aggFuncOrString });
             return null;
         }
 

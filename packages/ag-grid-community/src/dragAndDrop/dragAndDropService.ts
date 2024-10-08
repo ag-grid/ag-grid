@@ -13,8 +13,9 @@ import type { DragItem } from '../interfaces/iDragItem';
 import { _flatten, _removeFromArray } from '../utils/array';
 import { _getBodyHeight, _getBodyWidth } from '../utils/browser';
 import { _getElementRectWithOffset } from '../utils/dom';
-import { _isFunction, _warnOnce } from '../utils/function';
+import { _isFunction } from '../utils/function';
 import type { AgPromise } from '../utils/promise';
+import { _logWarn } from '../validation/logging';
 import type { DragAndDropImageComponent } from './dragAndDropImageComponent';
 import type { DragListenerParams, DragService } from './dragService';
 import type { RowDropZoneParams } from './rowDragFeature';
@@ -653,7 +654,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.dragAndDropImageParent = targetEl;
 
         if (!targetEl) {
-            _warnOnce('Could not find document body, it is needed for drag and drop.');
+            _logWarn(54);
         } else {
             targetEl.appendChild(eGui);
         }

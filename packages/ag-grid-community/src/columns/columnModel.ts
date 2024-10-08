@@ -6,8 +6,8 @@ import type { BeanCollection, Context } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
-import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
@@ -17,10 +17,8 @@ import type { PropertyChangedSource } from '../gridOptionsService';
 import {
     _getCheckboxes,
     _getHeaderCheckbox,
-    _isClientSideRowModel,
     _isDomLayout,
     _isGroupUseEntireRow,
-    _isServerSideRowModel,
     _shouldMaintainColumnOrder,
 } from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
@@ -31,16 +29,15 @@ import type { IPivotResultColsService } from '../interfaces/iPivotResultColsServ
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { _areEqual, _includes, _insertIntoArray, _moveInArray } from '../utils/array';
-import { _warnOnce } from '../utils/function';
 import { _missingOrEmpty } from '../utils/generic';
+import { _logWarn } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
 import type { ColumnDefFactory } from './columnDefFactory';
 import { dispatchColumnPinnedEvent } from './columnEventUtils';
 import type { ColumnFactory } from './columnFactory';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnState, ColumnStateService } from './columnStateService';
-import { GROUP_AUTO_COLUMN_ID } from './columnUtils';
-import { _destroyColumnTree, _getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
+import { GROUP_AUTO_COLUMN_ID, _destroyColumnTree, _getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
 import type { ControlsColService } from './controlsColService';
 import type { FuncColsService } from './funcColsService';
@@ -141,11 +138,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private resizeOperationQueue: (() => void)[] = [];
 
     public postConstruct(): void {
-        const pivotMode = this.gos.get('pivotMode');
-
-        if (this.isPivotSettingAllowed(pivotMode)) {
-            this.pivotMode = pivotMode;
-        }
+        this.pivotMode = this.gos.get('pivotMode');
 
         this.addManagedPropertyListeners(
             ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'],
@@ -465,7 +458,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         if (_isDomLayout(this.gos, 'print')) {
-            _warnOnce(`Changing the column pinning status is not allowed with domLayout='print'`);
+            _logWarn(37);
             return;
         }
 
@@ -566,11 +559,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         if (this.autoHeightActive) {
             this.autoHeightActiveAtLeastOnce = true;
-
-            const supportedRowModel = _isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos);
-            if (!supportedRowModel) {
-                _warnOnce('autoHeight columns only work with Client Side Row Model and Server Side Row Model.');
-            }
         }
     }
 
@@ -687,9 +675,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         newOrder = placeLockedColumns(newOrder, this.gos);
 
         if (!doesMovePassMarryChildren(newOrder, this.getColTree())) {
-            _warnOnce(
-                'Applying column order broke a group where columns should be married together. Applying new order has been discarded.'
-            );
+            _logWarn(39);
             return;
         }
 
@@ -815,7 +801,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private setPivotMode(pivotMode: boolean, source: ColumnEventType): void {
-        if (pivotMode === this.pivotMode || !this.isPivotSettingAllowed(this.pivotMode)) {
+        if (pivotMode === this.pivotMode) {
             return;
         }
 
@@ -834,15 +820,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.eventService.dispatchEvent({
             type: 'columnPivotModeChanged',
         });
-    }
-
-    private isPivotSettingAllowed(pivot: boolean): boolean {
-        if (pivot && this.gos.get('treeData')) {
-            _warnOnce('Pivot mode not available with treeData.');
-            return false;
-        }
-
-        return true;
     }
 
     // + clientSideRowModel
