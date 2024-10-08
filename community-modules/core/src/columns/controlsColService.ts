@@ -28,7 +28,7 @@ export class ControlsColService extends BeanStub implements NamedBean, IControls
             const enableRTL = gos.get('enableRtl');
             const colDef: ColDef = {
                 // overridable properties
-                maxWidth: 50,
+                width: 50,
                 resizable: false,
                 suppressHeaderMenuButton: true,
                 sortable: false,
