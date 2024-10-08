@@ -30,7 +30,7 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _insertIntoArray, _last, _removeFromArray } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
-import { _debounce } from '../utils/function';
+import { _debounce, _warnOnce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
 import { _logError } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
@@ -184,9 +184,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         let nodeManager: IClientSideNodeManager<any> | undefined;
         if (isTree) {
             nodeManager = childrenField ? beans.clientSideChildrenTreeNodeManager : beans.clientSidePathTreeNodeManager;
-            if (!nodeManager) {
-                _warnOnce('Tree data requires tree enterprise module to be loaded'); // TODO: improve this warning
-            }
         }
 
         if (!nodeManager) {
@@ -1208,7 +1205,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // - clears selection, done before we set row data to ensure it isn't readded via `selectionService.syncInOldRowNode`
         this.selectionService?.reset('rowDataChanged');
 
-        if (typeof rowData === 'string') {
+        if (!Array.isArray(rowData)) {
             _warnOnce('rowData must be an array.');
         } else {
             this.rowNodesCountReady = true;
