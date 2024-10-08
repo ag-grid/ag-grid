@@ -1,4 +1,3 @@
-import { AgCharts, _ModuleSupport, _Theme } from 'ag-charts-community';
 import type {
     AgChartInstance,
     AgChartOptions,
@@ -12,6 +11,7 @@ import type {
 import type { ChartType, SeriesChartType, SeriesGroupType } from 'ag-grid-community';
 
 import type { CrossFilteringContext } from '../../chartService';
+import { ChartWrapper } from '../../chartWrapper';
 import { deproxy } from '../utils/integration';
 import { get } from '../utils/object';
 import type { ChartSeriesType } from '../utils/seriesTypeMapper';
@@ -77,7 +77,7 @@ export abstract class ChartProxy<
     protected clearThemeOverrides = false;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
-        this.isEnterpriseCharts = _ModuleSupport.enterpriseModule.isEnterprise;
+        this.isEnterpriseCharts = ChartWrapper._ModuleSupport.enterpriseModule.isEnterprise;
         this.chart = chartProxyParams.chartInstance!;
         this.chartType = chartProxyParams.chartType;
         this.crossFiltering = chartProxyParams.crossFiltering;
@@ -85,7 +85,7 @@ export abstract class ChartProxy<
         this.standaloneChartType = getSeriesType(this.chartType) as TSeries;
 
         if (this.chart == null) {
-            this.chart = AgCharts.create(this.getCommonChartOptions());
+            this.chart = ChartWrapper.AgCharts.create(this.getCommonChartOptions());
         } else {
             // On chart change, reset formatting panel changes.
             this.clearThemeOverrides = true;
@@ -137,7 +137,7 @@ export abstract class ChartProxy<
     }
 
     public getChartPalette(): AgChartThemePalette | undefined {
-        return _Theme.getChartTheme(this.getChartOptions().theme).palette;
+        return ChartWrapper._Theme.getChartTheme(this.getChartOptions().theme).palette;
     }
 
     public setPaired(paired: boolean) {

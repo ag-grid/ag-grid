@@ -1,13 +1,13 @@
-import { AgCharts, time } from 'ag-charts-community';
-import { setupCommunityModules } from 'ag-charts-community/modules';
+// import { AgCharts, time } from 'ag-charts-community';
+// import { setupCommunityModules } from 'ag-charts-community/modules';
 
-export { GridChartsModule } from './gridChartsModule';
+// export { GridChartsModule } from './gridChartsModule';
 
-export * from 'ag-charts-types';
+// export * from 'ag-charts-types';
 
-setupCommunityModules();
+// setupCommunityModules();
 
-export const agCharts = {
-    time,
-    AgCharts,
-};
+// // export const agCharts = {
+// //     time,
+// //     AgCharts,
+// // };

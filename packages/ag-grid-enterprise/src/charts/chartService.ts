@@ -1,4 +1,3 @@
-import { VERSION as CHARTS_VERSION, _ModuleSupport } from 'ag-charts-community';
 import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-types';
 
 import type {
@@ -35,6 +34,7 @@ import { GridChartComp } from './chartComp/gridChartComp';
 import { ChartParamsValidator } from './chartComp/utils/chartParamsValidator';
 import { getCanonicalChartType } from './chartComp/utils/seriesTypeMapper';
 import { upgradeChartModel } from './chartModelMigration';
+import { ChartWrapper } from './chartWrapper';
 
 export interface CrossFilteringContext {
     lastSelectedChartId: string;
@@ -69,8 +69,6 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         this.focusService = beans.focusService;
     }
 
-    public static CHARTS_VERSION = CHARTS_VERSION;
-
     // we destroy all charts bound to this grid when grid is destroyed. activeCharts contains all charts, including
     // those in developer provided containers.
     private activeCharts = new Set<ChartRef>();
@@ -81,7 +79,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         lastSelectedChartId: '',
     };
 
-    public isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;
+    public isEnterprise = () => ChartWrapper._ModuleSupport.enterpriseModule.isEnterprise;
 
     public updateChart(params: UpdateChartParams): void {
         if (this.activeChartComps.size === 0) {

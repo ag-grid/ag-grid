@@ -1,4 +1,4 @@
-import { _ModuleSupport, _Theme } from 'ag-charts-community';
+import type { _Theme } from 'ag-charts-community';
 import type { AgCartesianAxisType, AgChartThemePalette } from 'ag-charts-types';
 import type { AgChartThemeOverrides } from 'ag-charts-types';
 
@@ -20,6 +20,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _warnOnce } from 'ag-grid-community';
 
+import { ChartWrapper } from '../chartWrapper';
 import type { ChartProxy, FieldDefinition, UpdateParams } from './chartProxies/chartProxy';
 import { isStockTheme } from './chartProxies/chartTheme';
 import type { ChartModelParams, ColState } from './model/chartDataModel';
@@ -388,7 +389,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         return themeNames.map((themeName) => {
             const stockTheme = isStockTheme(themeName);
             const theme = stockTheme ? themeName : this.chartProxy.lookupCustomChartTheme(themeName);
-            return _Theme.getChartTheme(theme);
+            return ChartWrapper._Theme.getChartTheme(theme);
         });
     }
 
@@ -562,7 +563,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         return getSeriesType(ct);
     }
 
-    public isEnterprise = () => _ModuleSupport.enterpriseModule.isEnterprise;
+    public isEnterprise = () => ChartWrapper._ModuleSupport.enterpriseModule.isEnterprise;
 
     private getCellRanges(): CellRange[] {
         return [this.model.dimensionCellRange!, this.model.valueCellRange!].filter((r) => r);

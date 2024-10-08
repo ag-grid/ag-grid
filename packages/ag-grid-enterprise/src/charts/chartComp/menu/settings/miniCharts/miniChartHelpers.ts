@@ -1,7 +1,8 @@
-import { _Scene } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
 
 import { _last } from 'ag-grid-community';
 
+import { ChartWrapper } from '../../../../chartWrapper';
 import type { CommandSegment } from './miniChartApi';
 
 export interface CreateColumnRectsParams {
@@ -18,20 +19,20 @@ export interface CreateColumnRectsParams {
 export function createColumnRects(params: CreateColumnRectsParams) {
     const { stacked, size, padding, xScalePadding, xScaleDomain, yScaleDomain } = params;
 
-    const xScale = new _Scene.BandScale<number>();
+    const xScale = new ChartWrapper._Scene.BandScale<number>();
     xScale.domain = xScaleDomain;
     xScale.range = [padding, size - padding];
     xScale.paddingInner = xScalePadding;
     xScale.paddingOuter = xScalePadding;
 
-    const yScale = new _Scene.LinearScale();
+    const yScale = new ChartWrapper._Scene.LinearScale();
     yScale.domain = yScaleDomain;
     yScale.range = [size - padding, padding];
 
     const createBars = (series: number[], xScale: _Scene.BandScale<number>, yScale: _Scene.LinearScale) => {
         return series.map((datum: number, i: number) => {
             const top = yScale.convert(datum);
-            const rect = new _Scene.Rect();
+            const rect = new ChartWrapper._Scene.Rect();
             rect.x = xScale.convert(i);
             rect.y = top;
             rect.width = xScale.bandwidth;
@@ -72,11 +73,11 @@ export function prepareLinearScene(data: number[][], size: number, padding: numb
     yDomain[0]--;
     yDomain[yDomain.length - 1]++;
 
-    const xScale = new _Scene.LinearScale();
+    const xScale = new ChartWrapper._Scene.LinearScale();
     xScale.domain = xDomain;
     xScale.range = [padding, size - padding];
 
-    const yScale = new _Scene.LinearScale();
+    const yScale = new ChartWrapper._Scene.LinearScale();
     yScale.domain = yDomain;
     yScale.range = [size - padding, padding];
 
@@ -98,7 +99,7 @@ export function createPathCommands(
 }
 
 export function createPath(commands: CommandSegment[]): _Scene.Path {
-    const path = new _Scene.Path();
+    const path = new ChartWrapper._Scene.Path();
     commands.forEach(([command, x, y]: CommandSegment) => path.path[command](x, y));
     return path;
 }
@@ -154,8 +155,8 @@ export function createLinePaths(root: _Scene.Group, data: number[][], size: numb
         return path;
     });
 
-    const pathsGroup = new _Scene.Group();
-    pathsGroup.setClipRect(new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
+    const pathsGroup = new ChartWrapper._Scene.Group();
+    pathsGroup.setClipRect(new ChartWrapper._Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
     pathsGroup.append(paths);
     root.append(pathsGroup);
 
@@ -173,8 +174,8 @@ export function createAreaPaths(
 
     const pathCommands = createAreaPathCommands(createPathCommands(data, xScale, yScale), yScale, stacked);
 
-    const areasGroup = new _Scene.Group();
-    areasGroup.setClipRect(new _Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
+    const areasGroup = new ChartWrapper._Scene.Group();
+    areasGroup.setClipRect(new ChartWrapper._Scene.BBox(padding, padding, size - padding * 2, size - padding * 2));
 
     const paths: _Scene.Path[] = pathCommands.map((commands) => createPath(commands));
     areasGroup.append(paths);
@@ -202,11 +203,11 @@ export function createPolarPaths(
     innerRadius: number,
     markerSize: number = 0
 ): { paths: _Scene.Path[]; markers: _Scene.Circle[] } {
-    const angleScale = new _Scene.LinearScale();
+    const angleScale = new ChartWrapper._Scene.LinearScale();
     angleScale.domain = [0, 7];
     angleScale.range = [-Math.PI, Math.PI].map((angle) => angle + Math.PI / 2);
 
-    const radiusScale = new _Scene.LinearScale();
+    const radiusScale = new ChartWrapper._Scene.LinearScale();
     radiusScale.domain = [0, 10];
     radiusScale.range = [radius, innerRadius];
 
@@ -214,7 +215,7 @@ export function createPolarPaths(
     const center = size / 2;
 
     const paths: _Scene.Path[] = data.map((series) => {
-        const path = new _Scene.Path();
+        const path = new ChartWrapper._Scene.Path();
         path.strokeWidth = 1;
         path.strokeOpacity = 0.5;
         path.lineCap = 'round';
@@ -231,7 +232,7 @@ export function createPolarPaths(
             path.path[i > 0 ? 'lineTo' : 'moveTo'](x, y);
 
             if (markerSize > 0) {
-                const marker = new _Scene.Circle();
+                const marker = new ChartWrapper._Scene.Circle();
                 marker.x = x;
                 marker.y = y;
                 marker.size = markerSize;
@@ -243,7 +244,7 @@ export function createPolarPaths(
         return path;
     });
 
-    const group = new _Scene.Group();
+    const group = new ChartWrapper._Scene.Group();
 
     group.append([...paths, ...markers]);
     root.append(group);

@@ -1,15 +1,13 @@
-import { _Scale, _Scene, _Util } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
 
 import type { CrosshairLineOptions, MarkerFormat, MarkerFormatterParams } from 'ag-grid-community';
 
+import { ChartWrapper } from '../../charts/chartWrapper';
 import { getMarker } from '../marker/markerFactory';
 import type { Point, SeriesNodeDatum } from '../sparkline';
 import { Sparkline, ZINDICIES } from '../sparkline';
 import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { getLineDash } from '../util/lineDash';
-
-const { extent } = _Util;
-const { BandScale } = _Scale;
 
 interface AreaNodeDatum extends SeriesNodeDatum {}
 
@@ -51,15 +49,15 @@ class SparklineCrosshairs {
 export class AreaSparkline extends Sparkline {
     fill: string = 'rgba(124, 181, 236, 0.25)';
 
-    protected strokePath: _Scene.Path = new _Scene.Path();
-    protected fillPath: _Scene.Path = new _Scene.Path();
-    protected xCrosshairLine: _Scene.Line = new _Scene.Line();
-    protected yCrosshairLine: _Scene.Line = new _Scene.Line();
+    protected strokePath: _Scene.Path = new ChartWrapper._Scene.Path();
+    protected fillPath: _Scene.Path = new ChartWrapper._Scene.Path();
+    protected xCrosshairLine: _Scene.Line = new ChartWrapper._Scene.Line();
+    protected yCrosshairLine: _Scene.Line = new ChartWrapper._Scene.Line();
 
-    private areaSparklineGroup: _Scene.Group = new _Scene.Group();
-    private xAxisLine: _Scene.Line = new _Scene.Line();
-    private markers: _Scene.Group = new _Scene.Group();
-    private markerSelection: _Scene.Selection<_Scene.Marker, AreaNodeDatum> = _Scene.Selection.select(
+    private areaSparklineGroup: _Scene.Group = new ChartWrapper._Scene.Group();
+    private xAxisLine: _Scene.Line = new ChartWrapper._Scene.Line();
+    private markers: _Scene.Group = new ChartWrapper._Scene.Group();
+    private markerSelection: _Scene.Selection<_Scene.Marker, AreaNodeDatum> = ChartWrapper._Scene.Selection.select(
         this.markers,
         () => this.markerFactory()
     );
@@ -120,7 +118,7 @@ export class AreaSparkline extends Sparkline {
 
     protected override updateYScaleDomain(): void {
         const { yData, yScale } = this;
-        const yMinMax = extent(yData as number[]);
+        const yMinMax = ChartWrapper._Util.extent(yData as number[]);
 
         let yMin = 0;
         let yMax = 1;
@@ -148,7 +146,7 @@ export class AreaSparkline extends Sparkline {
             return;
         }
 
-        const continuous = !(xScale instanceof BandScale);
+        const continuous = !(xScale instanceof ChartWrapper._Scale.BandScale);
 
         const offsetX = !continuous ? xScale.bandwidth / 2 : 0;
         const n = yData.length;

@@ -1,7 +1,8 @@
-import { _Scene } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
 
 import type { ChartType } from 'ag-grid-community';
 
+import { ChartWrapper } from '../../../../../chartWrapper';
 import { accumulateData } from '../miniChartHelpers';
 import { MiniChartWithPolarAxes } from '../miniChartWithPolarAxes';
 
@@ -22,7 +23,7 @@ export class MiniNightingale extends MiniChartWithPolarAxes {
 
         const radius = (this.size - this.padding * 2) / 2;
 
-        const angleScale = new _Scene.BandScale();
+        const angleScale = new ChartWrapper._Scene.BandScale();
         angleScale.domain = this.data[0].map((_, index) => index);
         angleScale.range = [-Math.PI, Math.PI];
         angleScale.paddingInner = 0;
@@ -31,7 +32,7 @@ export class MiniNightingale extends MiniChartWithPolarAxes {
 
         const { processedData, max } = accumulateData(this.data);
 
-        const radiusScale = new _Scene.LinearScale();
+        const radiusScale = new ChartWrapper._Scene.LinearScale();
         radiusScale.domain = [0, max];
         radiusScale.range = [0, radius];
 
@@ -39,7 +40,7 @@ export class MiniNightingale extends MiniChartWithPolarAxes {
         this.series = processedData.map((series, index) => {
             const previousSeries = index < 0 ? undefined : processedData[index - 1];
 
-            const seriesGroup = new _Scene.Group({ zIndex: 1000_000 });
+            const seriesGroup = new ChartWrapper._Scene.Group({ zIndex: 1000_000 });
             const seriesSectors = series.map((datum: number, i: number) => {
                 const previousDatum = previousSeries?.[i];
                 const outerRadius = radiusScale.convert(datum);
@@ -47,7 +48,7 @@ export class MiniNightingale extends MiniChartWithPolarAxes {
                 const startAngle = angleScale.convert(i);
                 const endAngle = startAngle + bandwidth;
 
-                const sector = new _Scene.Sector();
+                const sector = new ChartWrapper._Scene.Sector();
                 sector.centerX = center;
                 sector.centerY = center;
                 sector.innerRadius = innerRadius;

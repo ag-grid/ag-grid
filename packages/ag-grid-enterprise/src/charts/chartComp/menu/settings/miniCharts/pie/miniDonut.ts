@@ -1,12 +1,12 @@
-import { _Scene } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
 
 import type { ChartType } from 'ag-grid-community';
 
+import { ChartWrapper } from '../../../../../chartWrapper';
 import type { ChartTranslationKey } from '../../../../services/chartTranslationService';
 import type { ThemeTemplateParameters } from '../../miniChartsContainer';
 import { MiniChart } from '../miniChart';
 
-const toRadians = _Scene.toRadians;
 export class MiniDonut extends MiniChart {
     static chartType: ChartType = 'donut';
     private readonly sectors: _Scene.Sector[];
@@ -24,6 +24,8 @@ export class MiniDonut extends MiniChart {
 
         const radius = (this.size - this.padding * 2) / 2;
         const center = radius + this.padding;
+        const toRadians = ChartWrapper._Scene.toRadians;
+
         const angles = [
             [toRadians(-90), toRadians(30)],
             [toRadians(30), toRadians(120)],
@@ -34,7 +36,7 @@ export class MiniDonut extends MiniChart {
         ];
 
         this.sectors = angles.map(([startAngle, endAngle]) => {
-            const sector = new _Scene.Sector();
+            const sector = new ChartWrapper._Scene.Sector();
             sector.centerX = center;
             sector.centerY = center;
             sector.innerRadius = radius * centerRadiusScaler;

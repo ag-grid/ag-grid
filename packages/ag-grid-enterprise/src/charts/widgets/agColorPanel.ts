@@ -1,7 +1,8 @@
-import { _Util } from 'ag-charts-community';
+import type { _Util } from 'ag-charts-community';
 
 import { Component, KeyCode, RefPlaceholder, _exists, _setDisplayed } from 'ag-grid-community';
 
+import { ChartWrapper } from '../chartWrapper';
 import type { AgColorInput } from './agColorInput';
 import { AgColorInputSelector } from './agColorInput';
 import type { AgColorPicker } from './agColorPicker';
@@ -281,17 +282,17 @@ export class AgColorPanel extends Component {
 
     private update(suppressColorInputUpdate?: boolean) {
         const hue = this.H * 360;
-        const color = _Util.Color.fromHSB(hue, this.S, this.B, this.A);
+        const color = ChartWrapper._Util.Color.fromHSB(hue, this.S, this.B, this.A);
         const rgbaColor = color.toRgbaString();
-        const colorWithoutAlpha = _Util.Color.fromHSB(hue, this.S, this.B);
+        const colorWithoutAlpha = ChartWrapper._Util.Color.fromHSB(hue, this.S, this.B);
         const rgbaColorWithoutAlpha = colorWithoutAlpha.toRgbaString();
-        const spectrumColor = _Util.Color.fromHSB(hue, 1, 1);
+        const spectrumColor = ChartWrapper._Util.Color.fromHSB(hue, 1, 1);
         const spectrumRgbaColor = spectrumColor.toRgbaString();
 
         // the recent color list needs to know color has actually changed
         const colorPicker = this.picker as AgColorPicker;
 
-        const existingColor = _Util.Color.fromString(colorPicker.getValue());
+        const existingColor = ChartWrapper._Util.Color.fromString(colorPicker.getValue());
         if (existingColor.toRgbaString() !== rgbaColor) {
             this.colorChanged = true;
         }
@@ -305,7 +306,7 @@ export class AgColorPanel extends Component {
 
         this.spectrumAlpha.style.setProperty(
             '--ag-internal-spectrum-alpha-color-from',
-            _Util.Color.fromHSB(hue, this.S, this.B, 0).toRgbaString()
+            ChartWrapper._Util.Color.fromHSB(hue, this.S, this.B, 0).toRgbaString()
         );
         this.spectrumAlpha.style.setProperty('--ag-internal-spectrum-alpha-color-to', rgbaColorWithoutAlpha);
         this.spectrumAlpha.style.setProperty('--ag-internal-spectrum-alpha-color', rgbaColor);
@@ -364,7 +365,7 @@ export class AgColorPanel extends Component {
     }
 
     public setValue(val: string): void {
-        const color: _Util.Color = _Util.Color.fromString(val);
+        const color: _Util.Color = ChartWrapper._Util.Color.fromString(val);
         this.setColor(color, true);
     }
 
@@ -397,7 +398,7 @@ export class AgColorPanel extends Component {
     }
 
     private addRecentColor() {
-        const color = _Util.Color.fromHSB(this.H * 360, this.S, this.B, this.A);
+        const color = ChartWrapper._Util.Color.fromHSB(this.H * 360, this.S, this.B, this.A);
         const rgbaColor = color.toRgbaString();
 
         let recentColors = AgColorPanel.recentColors;

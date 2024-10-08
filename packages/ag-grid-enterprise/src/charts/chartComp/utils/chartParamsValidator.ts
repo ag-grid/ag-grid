@@ -1,4 +1,3 @@
-import { _ModuleSupport } from 'ag-charts-community';
 import type { AgChartThemeOverrides } from 'ag-charts-types';
 
 import type {
@@ -13,6 +12,7 @@ import type {
 import { _warnOnce } from 'ag-grid-community';
 
 import type { CommonCreateChartParams } from '../../chartService';
+import { ChartWrapper } from '../../chartWrapper';
 import { getCanonicalChartType, getSeriesTypeIfExists, isComboChart, isEnterpriseChartType } from './seriesTypeMapper';
 
 const validateIfDefined = <I, O = never>(validationFn: (value: NonNullable<I>) => boolean | O) => {
@@ -55,7 +55,7 @@ export class ChartParamsValidator {
     ] as const;
 
     private static isEnterprise(): boolean {
-        return _ModuleSupport.enterpriseModule.isEnterprise;
+        return ChartWrapper._ModuleSupport.enterpriseModule.isEnterprise;
     }
 
     private static isValidChartType(value: string): value is ChartType {

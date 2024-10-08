@@ -1,7 +1,8 @@
-import { _Scene } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
 
 import type { ChartType } from 'ag-grid-community';
 
+import { ChartWrapper } from '../../../../../chartWrapper';
 import { MiniChartWithAxes } from '../miniChartWithAxes';
 
 export class MiniBar extends MiniChartWithAxes {
@@ -15,13 +16,13 @@ export class MiniBar extends MiniChartWithAxes {
         const size = this.size;
         const data = [2, 3, 4];
 
-        const yScale = new _Scene.BandScale<number>();
+        const yScale = new ChartWrapper._Scene.BandScale<number>();
         yScale.domain = [0, 1, 2];
         yScale.range = [padding, size - padding];
         yScale.paddingInner = 0.3;
         yScale.paddingOuter = 0.3;
 
-        const xScale = new _Scene.LinearScale();
+        const xScale = new ChartWrapper._Scene.LinearScale();
         xScale.domain = [0, 4];
         xScale.range = [size - padding, padding];
 
@@ -29,7 +30,7 @@ export class MiniBar extends MiniChartWithAxes {
         const height = yScale.bandwidth;
 
         this.bars = data.map((datum, i) => {
-            const rect = new _Scene.Rect();
+            const rect = new ChartWrapper._Scene.Rect();
             rect.x = padding;
             rect.y = yScale.convert(i);
             rect.width = bottom - xScale.convert(datum);

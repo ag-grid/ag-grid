@@ -1,7 +1,8 @@
-import { _Scene } from 'ag-charts-community';
+import type { _Scene } from 'ag-charts-community';
 
 import type { ChartType } from 'ag-grid-community';
 
+import { ChartWrapper } from '../../../../../chartWrapper';
 import { MiniChart } from '../miniChart';
 import type { CreateColumnRectsParams } from '../miniChartHelpers';
 import { createColumnRects, createLinePaths } from '../miniChartHelpers';
@@ -39,21 +40,21 @@ export class MiniCustomCombo extends MiniChart {
         const axisStroke = 'grey';
         const axisOvershoot = 3;
 
-        const leftAxis = new _Scene.Line();
+        const leftAxis = new ChartWrapper._Scene.Line();
         leftAxis.x1 = padding;
         leftAxis.y1 = padding;
         leftAxis.x2 = padding;
         leftAxis.y2 = size - padding + axisOvershoot;
         leftAxis.stroke = axisStroke;
 
-        const bottomAxis = new _Scene.Line();
+        const bottomAxis = new ChartWrapper._Scene.Line();
         bottomAxis.x1 = padding - axisOvershoot + 1;
         bottomAxis.y1 = size - padding;
         bottomAxis.x2 = size - padding + 1;
         bottomAxis.y2 = size - padding;
         bottomAxis.stroke = axisStroke;
 
-        const penIcon = new _Scene.Path();
+        const penIcon = new ChartWrapper._Scene.Path();
         this.buildPenIconPath(penIcon);
         penIcon.fill = 'whitesmoke';
         penIcon.stroke = 'darkslategrey';

@@ -1,5 +1,3 @@
-import { _Util } from 'ag-charts-community';
-
 import type {
     CrosshairLineOptions,
     HighlightStyleOptions,
@@ -11,6 +9,7 @@ import type {
 } from 'ag-grid-community';
 import { _warnOnce } from 'ag-grid-community';
 
+import { ChartWrapper } from '../charts/chartWrapper';
 import { AreaSparkline } from './area/areaSparkline';
 import type { BarColumnLabel } from './bar-column/barColumnSparkline';
 import { BarSparkline } from './bar-column/barSparkline';
@@ -18,8 +17,6 @@ import { ColumnSparkline } from './bar-column/columnSparkline';
 import { LineSparkline } from './line/lineSparkline';
 import type { SparklineAxis } from './sparkline';
 import type { SparklineTooltip } from './tooltip/sparklineTooltip';
-
-const { isNumber } = _Util;
 
 export type SparklineFactoryOptions = SparklineOptions & {
     data: any[];
@@ -40,7 +37,7 @@ type ValidatorFunc = (property: string, value: any, defaultValue?: any) => boole
 export abstract class AgSparkline {
     static create(options: SparklineFactoryOptions, tooltip: SparklineTooltip) {
         // avoid mutating user provided options
-        options = _Util.deepClone(options);
+        options = ChartWrapper._Util.deepClone(options);
 
         const sparkline = getSparklineInstance(options.type);
 
@@ -225,7 +222,7 @@ function initCrosshairLineOptions(target: CrosshairLineOptions, options: any) {
 }
 
 const offsetValidator = (property: string, value: number, defaultOffset?: number): boolean => {
-    if (isNumber(value)) {
+    if (ChartWrapper._Util.isNumber(value)) {
         return true;
     }
 
