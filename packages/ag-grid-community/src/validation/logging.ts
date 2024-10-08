@@ -62,12 +62,12 @@ function stringifyValue(value: any) {
 
 export function getErrorLink(errorNum: ErrorId, args: GetErrorParams<any>) {
     const params = new URLSearchParams();
+    params.append('_version_', VERSION);
     if (args) {
         Object.entries(args).forEach(([key, value]) => {
             params.append(key, stringifyValue(value));
         });
     }
-    params.append('_version_', VERSION);
     return `${baseDocLink}/errors/${errorNum}?${params.toString()}`;
 }
 

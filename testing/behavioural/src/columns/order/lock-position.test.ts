@@ -5,6 +5,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../../test-utils';
+import { VERSION } from '../../version';
 import { getColumnOrder, getColumnOrderFromState } from '../column-test-utils';
 
 describe('lockPosition Column Order', () => {
@@ -146,7 +147,7 @@ describe('lockPosition Column Order', () => {
                         'tried to insert columns in invalid location, toIndex = ',
                         2,
                         'remember that you should not count the moving columns when calculating the new index',
-                        '\nSee https://www.ag-grid.com/javascript-data-grid/errors/30?toIndex=2'
+                        `\nSee https://www.ag-grid.com/javascript-data-grid/errors/30?_version_=${VERSION}&toIndex=2`
                     );
                 }
 

@@ -1,6 +1,7 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
 import { TestGridsManager } from '../test-utils';
+import { VERSION } from '../version';
 
 describe('Pinned rows', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
@@ -190,7 +191,7 @@ describe('Pinned rows', () => {
                 'found for pinned row with data',
                 topData[0],
                 'When `getRowId` is defined, it must return unique IDs for all pinned rows. Use the `rowPinned` parameter.',
-                '\nSee https://www.ag-grid.com/javascript-data-grid/errors/96?id=%7B%22athlete%22%3A%22Top+Athlete%22%2C%22sport%22%3A%22Top+Sport%22%2C%22age%22%3A11%7D&data=%7B%7D'
+                `\nSee https://www.ag-grid.com/javascript-data-grid/errors/96?_version_=${VERSION}&id=%7B%22athlete%22%3A%22Top+Athlete%22%2C%22sport%22%3A%22Top+Sport%22%2C%22age%22%3A11%7D&data=%7B%7D`
             );
             consoleWarnSpy.mockRestore();
         });
@@ -352,7 +353,7 @@ describe('Pinned rows', () => {
                 'found for pinned row with data',
                 bottomData[0],
                 'When `getRowId` is defined, it must return unique IDs for all pinned rows. Use the `rowPinned` parameter.',
-                '\nSee https://www.ag-grid.com/javascript-data-grid/errors/96?id=%7B%22athlete%22%3A%22Bottom+Athlete%22%2C%22sport%22%3A%22Bottom+Sport%22%2C%22age%22%3A22%7D&data=%7B%7D'
+                `\nSee https://www.ag-grid.com/javascript-data-grid/errors/96?_version_=${VERSION}&id=%7B%22athlete%22%3A%22Bottom+Athlete%22%2C%22sport%22%3A%22Bottom+Sport%22%2C%22age%22%3A22%7D&data=%7B%7D`
             );
             consoleWarnSpy.mockRestore();
         });
