@@ -1,7 +1,5 @@
 import type { ReactPortal } from 'react';
 
-import { _errorOnce } from 'ag-grid-community';
-
 import type { ReactComponent } from './reactComponent';
 
 const MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component

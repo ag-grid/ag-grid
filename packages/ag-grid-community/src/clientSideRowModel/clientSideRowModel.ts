@@ -30,7 +30,7 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _insertIntoArray, _last, _removeFromArray } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
-import { _debounce, _errorOnce } from '../utils/function';
+import { _debounce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
 import { _logError } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
