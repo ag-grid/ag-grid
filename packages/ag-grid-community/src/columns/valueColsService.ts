@@ -8,7 +8,8 @@ import { BaseColsService } from './baseColsService';
 import type { ColumnOrderState, ColumnServiceEventName } from './baseColsService';
 import { dispatchColumnChangedEvent } from './columnEventUtils';
 import type { ColKey, Maybe } from './columnModel';
-import type { GetValueFn, ModifyColumnsNoEventsCallback } from './columnStateService';
+import type { ModifyColumnsNoEventsCallback } from './columnStateService';
+import type { GetValueFn } from './columnUtils';
 
 export class ValueColsService extends BaseColsService implements NamedBean {
     beanName = 'valueColsService' as const;

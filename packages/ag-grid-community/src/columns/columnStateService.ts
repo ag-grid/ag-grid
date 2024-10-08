@@ -22,7 +22,7 @@ import {
 } from './columnEventUtils';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnModel } from './columnModel';
-import { GROUP_AUTO_COLUMN_ID, _getColumnsFromTree } from './columnUtils';
+import { GROUP_AUTO_COLUMN_ID, _getColumnsFromTree, getValueFactory } from './columnUtils';
 import type { FuncColsService } from './funcColsService';
 import type { PivotColsService } from './pivotColsService';
 import type { RowGroupColsService } from './rowGroupColsService';
@@ -72,47 +72,6 @@ export interface ApplyColumnStateParams {
     /** State to apply to columns where state is missing for those columns */
     defaultState?: ColumnStateParams;
 }
-
-export type GetValueFn<U extends keyof ColumnStateParams, S extends keyof ColumnStateParams> = (
-    key1: U,
-    key2?: S
-) => GetValueResult<U, S>;
-export type GetValueResult<U extends keyof ColumnStateParams, S extends keyof ColumnStateParams> = {
-    value1: ColumnStateParams[U] | undefined;
-    value2: ColumnStateParams[S] | undefined;
-};
-
-const getValueFactory =
-    (stateItem: ColumnState | null, defaultState: ColumnStateParams | undefined) =>
-    <U extends keyof ColumnStateParams, S extends keyof ColumnStateParams>(key1: U, key2?: S): GetValueResult<U, S> => {
-        const obj: { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined } = {
-            value1: undefined,
-            value2: undefined,
-        };
-        let calculated: boolean = false;
-
-        if (stateItem) {
-            if (stateItem[key1] !== undefined) {
-                obj.value1 = stateItem[key1];
-                calculated = true;
-            }
-            if (_exists(key2) && stateItem[key2] !== undefined) {
-                obj.value2 = stateItem[key2];
-                calculated = true;
-            }
-        }
-
-        if (!calculated && defaultState) {
-            if (defaultState[key1] !== undefined) {
-                obj.value1 = defaultState[key1];
-            }
-            if (_exists(key2) && defaultState[key2] !== undefined) {
-                obj.value2 = defaultState[key2];
-            }
-        }
-
-        return obj;
-    };
 
 export class ColumnStateService extends BeanStub implements NamedBean {
     beanName = 'columnStateService' as const;

@@ -4,7 +4,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { IAggFunc } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
-import type { ColKey, ColumnModel, Maybe } from './columnModel';
+import type { ColKey, Maybe } from './columnModel';
 import type { ColumnState } from './columnStateService';
 import type { PivotColsService } from './pivotColsService';
 import type { RowGroupColsService } from './rowGroupColsService';
@@ -13,13 +13,11 @@ import type { ValueColsService } from './valueColsService';
 export class FuncColsService extends BeanStub implements NamedBean {
     beanName = 'funcColsService' as const;
 
-    private columnModel: ColumnModel;
     private rowGroupColsService: RowGroupColsService;
     private valueColsService: ValueColsService;
     private pivotColsService: PivotColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
         this.rowGroupColsService = beans.rowGroupColsService!;
         this.valueColsService = beans.valueColsService!;
         this.pivotColsService = beans.pivotColsService!;
@@ -73,6 +71,10 @@ export class FuncColsService extends BeanStub implements NamedBean {
         this.rowGroupColsService.removeColumns(keys, source);
     }
 
+    public moveRowGroupColumn(fromIndex: number, toIndex: number, source: ColumnEventType): void {
+        this.rowGroupColsService.moveColumn(fromIndex, toIndex, source);
+    }
+
     public addPivotColumns(keys: ColKey[], source: ColumnEventType): void {
         this.pivotColsService.addColumns(keys, source);
     }
@@ -95,10 +97,6 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
     public removeValueColumns(keys: ColKey[], source: ColumnEventType): void {
         this.valueColsService.removeColumns(keys, source);
-    }
-
-    public moveRowGroupColumn(fromIndex: number, toIndex: number, source: ColumnEventType): void {
-        this.rowGroupColsService.moveColumn(fromIndex, toIndex, source);
     }
 
     public extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {

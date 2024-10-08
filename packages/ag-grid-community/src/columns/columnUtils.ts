@@ -4,8 +4,9 @@ import { isColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
-import { _logWarn } from '../validation/logging';
+import { _exists } from '../main-umd-noStyles';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
+import type { ColumnState, ColumnStateParams } from './columnStateService';
 import { CONTROLS_COLUMN_ID_PREFIX } from './controlsColService';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn' as const;
@@ -81,3 +82,45 @@ export function convertColumnTypes(type: string | string[]): string[] {
     }
     return typeKeys;
 }
+
+export type GetValueFn<U extends keyof ColumnStateParams, S extends keyof ColumnStateParams> = (
+    key1: U,
+    key2?: S
+) => GetValueResult<U, S>;
+
+export type GetValueResult<U extends keyof ColumnStateParams, S extends keyof ColumnStateParams> = {
+    value1: ColumnStateParams[U] | undefined;
+    value2: ColumnStateParams[S] | undefined;
+};
+
+export const getValueFactory =
+    (stateItem: ColumnState | null, defaultState: ColumnStateParams | undefined) =>
+    <U extends keyof ColumnStateParams, S extends keyof ColumnStateParams>(key1: U, key2?: S): GetValueResult<U, S> => {
+        const obj: { value1: ColumnStateParams[U] | undefined; value2: ColumnStateParams[S] | undefined } = {
+            value1: undefined,
+            value2: undefined,
+        };
+        let calculated: boolean = false;
+
+        if (stateItem) {
+            if (stateItem[key1] !== undefined) {
+                obj.value1 = stateItem[key1];
+                calculated = true;
+            }
+            if (_exists(key2) && stateItem[key2] !== undefined) {
+                obj.value2 = stateItem[key2];
+                calculated = true;
+            }
+        }
+
+        if (!calculated && defaultState) {
+            if (defaultState[key1] !== undefined) {
+                obj.value1 = defaultState[key1];
+            }
+            if (_exists(key2) && defaultState[key2] !== undefined) {
+                obj.value2 = defaultState[key2];
+            }
+        }
+
+        return obj;
+    };

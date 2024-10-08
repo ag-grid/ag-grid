@@ -6,7 +6,8 @@ import { _removeFromArray } from '../utils/array';
 import { BaseColsService } from './baseColsService';
 import type { ColumnOrderState, ColumnServiceEventName } from './baseColsService';
 import type { ColKey } from './columnModel';
-import type { GetValueFn, ModifyColumnsNoEventsCallback } from './columnStateService';
+import type { ModifyColumnsNoEventsCallback } from './columnStateService';
+import type { GetValueFn } from './columnUtils';
 
 export class PivotColsService extends BaseColsService implements NamedBean {
     beanName = 'pivotColsService' as const;

@@ -9,7 +9,8 @@ import { _removeFromArray } from '../utils/array';
 import type { ColumnOrderState, ColumnServiceEventName } from './baseColsService';
 import { BaseColsService } from './baseColsService';
 import type { ColKey, Maybe } from './columnModel';
-import type { ColumnStateParams, GetValueFn, ModifyColumnsNoEventsCallback } from './columnStateService';
+import type { ColumnStateParams, ModifyColumnsNoEventsCallback } from './columnStateService';
+import type { GetValueFn } from './columnUtils';
 
 export class RowGroupColsService extends BaseColsService implements NamedBean {
     beanName = 'rowGroupColsService' as const;

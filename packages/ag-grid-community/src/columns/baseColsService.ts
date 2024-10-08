@@ -9,7 +9,8 @@ import { _removeFromArray } from '../utils/array';
 import { _attrToBoolean, _attrToNumber, _exists, _missingOrEmpty } from '../utils/generic';
 import { dispatchColumnChangedEvent } from './columnEventUtils';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
-import type { ColumnState, ColumnStateParams, GetValueFn, ModifyColumnsNoEventsCallback } from './columnStateService';
+import type { ColumnState, ColumnStateParams } from './columnStateService';
+import type { GetValueFn } from './columnUtils';
 import type { VisibleColsService } from './visibleColsService';
 
 export type ColumnServiceEntityName = 'Value' | 'RowGroup' | 'Pivot';
