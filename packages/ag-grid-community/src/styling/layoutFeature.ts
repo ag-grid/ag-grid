@@ -1,6 +1,4 @@
 import { BeanStub } from '../context/beanStub';
-import type { DomLayoutType } from '../entities/gridOptions';
-import { _warnOnce } from '../utils/function';
 
 export interface LayoutView {
     updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams): void;
@@ -32,7 +30,7 @@ export class LayoutFeature extends BeanStub {
     }
 
     private updateLayoutClasses(): void {
-        const domLayout = this.getDomLayout();
+        const domLayout = this.gos.get('domLayout') ?? 'normal';
         const params = {
             autoHeight: domLayout === 'autoHeight',
             normal: domLayout === 'normal',
@@ -44,18 +42,5 @@ export class LayoutFeature extends BeanStub {
               ? LayoutCssClasses.PRINT
               : LayoutCssClasses.NORMAL;
         this.view.updateLayoutClasses(cssClass, params);
-    }
-
-    // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
-    private getDomLayout(): DomLayoutType {
-        const domLayout: DomLayoutType = this.gos.get('domLayout') ?? 'normal';
-        const validLayouts: DomLayoutType[] = ['normal', 'print', 'autoHeight'];
-
-        if (validLayouts.indexOf(domLayout) === -1) {
-            _warnOnce(`${domLayout} is not valid for DOM Layout, valid values are 'normal', 'autoHeight', 'print'.`);
-            return 'normal';
-        }
-
-        return domLayout;
     }
 }
