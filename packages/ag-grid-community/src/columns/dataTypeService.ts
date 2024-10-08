@@ -184,7 +184,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             mergedDataTypeDefinition = this.mergeDataTypeDefinitions(baseDataTypeDefinition, dataTypeDefinition);
         } else {
             if (alreadyProcessedDataTypes.includes(extendsCellDataType)) {
-                _logWarn(44, {});
+                _logWarn(44);
                 return undefined;
             }
             const extendedDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
@@ -222,7 +222,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             return false;
         }
         if (parentDataTypeDefinition.baseDataType !== dataTypeDefinition.baseDataType) {
-            _logWarn(46, {});
+            _logWarn(46);
             return false;
         }
         return true;

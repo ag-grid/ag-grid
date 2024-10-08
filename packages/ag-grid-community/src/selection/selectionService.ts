@@ -463,7 +463,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         if (justCurrentPage || justFiltered) {
             if (!rowModelClientSide) {
-                _logError(102, {});
+                _logError(102);
                 return;
             }
             this.getNodesToSelect(justFiltered, justCurrentPage).forEach(callback);
@@ -642,7 +642,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         source: SelectionEventSourceType
     ): void {
         if (!Array.isArray(state)) {
-            _logError(103, {});
+            _logError(103);
             return;
         }
         const rowIds = new Set(state);

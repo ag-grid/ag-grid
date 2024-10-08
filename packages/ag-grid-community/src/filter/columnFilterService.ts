@@ -187,7 +187,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         return new AgPromise<void>((resolve) => {
             filterPromise.then((filter) => {
                 if (typeof filter!.setModel !== 'function') {
-                    _logWarn(65, {});
+                    _logWarn(65);
                     resolve();
                 }
 
@@ -228,7 +228,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         const { filter } = filterWrapper;
         if (filter) {
             if (typeof filter.getModel !== 'function') {
-                _logWarn(66, {});
+                _logWarn(66);
                 return null;
             }
 
@@ -271,7 +271,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                 return false;
             } // this never happens, including to avoid compile error
             if (!filter.isFilterActive) {
-                _logWarn(67, {});
+                _logWarn(67);
                 return false;
             }
             return filter.isFilterActive();

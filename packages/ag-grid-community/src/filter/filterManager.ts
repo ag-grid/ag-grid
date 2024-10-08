@@ -378,7 +378,7 @@ export class FilterManager extends BeanStub implements NamedBean {
 
     private warnAdvancedFilters(): void {
         // Column Filter API methods have been disabled as Advanced Filters are enabled
-        _logWarn(68, {});
+        _logWarn(68);
     }
 
     public setupAdvancedFilterHeaderComp(eCompToInsertBefore: HTMLElement): void {

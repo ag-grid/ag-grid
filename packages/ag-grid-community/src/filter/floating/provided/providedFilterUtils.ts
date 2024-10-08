@@ -4,7 +4,7 @@ import type { ProvidedFilterParams } from '../../provided/iProvidedFilter';
 export function getDebounceMs(params: ProvidedFilterParams, debounceDefault: number): number {
     if (isUseApplyButton(params)) {
         if (params.debounceMs != null) {
-            _logWarn(71, {});
+            _logWarn(71);
         }
 
         return 0;
