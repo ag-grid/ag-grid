@@ -59,13 +59,13 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
         if (typeof state !== 'object') {
             // The provided selection state should be an object
-            _logError(115, {});
+            _logError(115);
             return;
         }
 
         if (!('selectAll' in state)) {
             //'Invalid selection state. The state must conform to `IServerSideSelectionState`.'
-            _logError(116, {});
+            _logError(116);
             return;
         }
 
@@ -73,7 +73,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             newState.selectAll = state.selectAll;
         } else {
             //selectAll must be of boolean type.
-            _logError(117, {});
+            _logError(117);
             return;
         }
 
