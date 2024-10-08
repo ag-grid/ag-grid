@@ -247,13 +247,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 return;
             }
 
-            const arePropertiesImpacted = (propSet: Set<keyof GridOptions>) =>
-                properties.some((prop) => propSet.has(prop));
+            const propertiesSet = new Set(properties);
 
-            const rowDataChanged = properties.includes('rowData');
-            const treeDataChanged = properties.includes('treeData');
-            const masterDetailChanged = properties.includes('masterDetail');
-            const treeDataChildrenFieldChanged = properties.includes('treeDataChildrenField');
+            const rowDataChanged = propertiesSet.has('rowData');
+            const treeDataChanged = propertiesSet.has('treeData');
+            const masterDetailChanged = propertiesSet.has('masterDetail');
+            const treeDataChildrenFieldChanged = propertiesSet.has('treeDataChildrenField');
 
             const needFullReload =
                 treeDataChildrenFieldChanged || (treeDataChanged && !this.gos.get('treeDataChildrenField'));
@@ -302,9 +301,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
 
             if (!refreshModelStep) {
-                for (const stage of this.orderedStages) {
-                    if (arePropertiesImpacted(stage.refreshProps)) {
-                        refreshModelStep = stage.step;
+                for (const { refreshProps, step } of this.orderedStages) {
+                    if (properties.some((prop) => refreshProps.has(prop))) {
+                        refreshModelStep = step;
                         break;
                     }
                 }
