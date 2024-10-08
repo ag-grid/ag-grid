@@ -719,7 +719,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
                 return;
             }
             // Infinite scrolling must be enabled in order to set the row count.
-            _logError(118, {});
+            _logError(118);
         }
     }
 

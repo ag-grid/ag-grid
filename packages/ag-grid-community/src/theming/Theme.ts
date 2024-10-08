@@ -118,7 +118,7 @@ class ThemeImpl<TParams = unknown> implements Theme {
 
             const legacyStylesLoaded = getComputedStyle(document.body).getPropertyValue('--ag-legacy-styles-loaded');
             if (legacyStylesLoaded) {
-                _logError(106, {});
+                _logError(106);
             }
         }
 

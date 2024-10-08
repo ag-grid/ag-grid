@@ -454,7 +454,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
         existingValues?: Map<string | null, V | null>;
     } | null {
         if (!this.clientSideValuesExtractor) {
-            _logError(113, {});
+            _logError(113);
             return null;
         }
 

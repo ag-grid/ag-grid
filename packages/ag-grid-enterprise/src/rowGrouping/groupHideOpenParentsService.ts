@@ -59,7 +59,7 @@ export class GroupHideOpenParentsService extends BeanStub implements IGroupHideO
             groupDisplayCols.forEach((groupDisplayCol) => {
                 const showRowGroup = groupDisplayCol.getColDef().showRowGroup;
                 if (typeof showRowGroup !== 'string') {
-                    _logError(110, {});
+                    _logError(110);
                     return;
                 }
 

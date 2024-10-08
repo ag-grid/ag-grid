@@ -104,7 +104,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         this.maxValidYear = yearParser('maxValidYear', DEFAULT_MAX_YEAR);
 
         if (this.minValidYear > this.maxValidYear) {
-            _logWarn(83, {});
+            _logWarn(83);
         }
 
         if (params.minValidDate) {
@@ -126,7 +126,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         }
 
         if (this.minValidDate && this.maxValidDate && this.minValidDate > this.maxValidDate) {
-            _logWarn(84, {});
+            _logWarn(84);
         }
 
         this.filterModelFormatter = new DateFilterModelFormatter(

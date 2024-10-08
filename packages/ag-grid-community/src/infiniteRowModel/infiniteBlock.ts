@@ -68,7 +68,7 @@ export class InfiniteBlock extends RowNodeBlock {
     protected loadFromDatasource(): void {
         const params = this.createLoadParams();
         if (_missing(this.params.datasource.getRows)) {
-            _logWarn(90, {});
+            _logWarn(90);
             return;
         }
 

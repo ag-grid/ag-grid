@@ -358,7 +358,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public getRowIndexString(): string | null {
         if (this.rowIndex == null) {
             // Row has been removed so no index
-            _logError(13, {});
+            _logError(13);
             return null;
         }
 
@@ -960,12 +960,12 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             return 0;
         }
         if (this.rowPinned) {
-            _logWarn(59, {});
+            _logWarn(59);
             return 0;
         }
 
         if (this.id === undefined) {
-            _logWarn(60, {});
+            _logWarn(60);
             return 0;
         }
 
@@ -1028,7 +1028,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      */
     public isFullWidthCell(): boolean {
         // log deprecation
-        _logWarn(61, {});
+        _logWarn(61);
 
         if (this.detail) {
             return true;

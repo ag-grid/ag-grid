@@ -120,7 +120,7 @@ export function createGrid<TData>(
 ): GridApi<TData> {
     if (!gridOptions) {
         // No gridOptions provided, abort creating the grid
-        _logError(11, {});
+        _logError(11);
         return {} as GridApi;
     }
     const api = new GridCoreCreator().create(

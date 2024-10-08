@@ -217,7 +217,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                     };
                     break;
                 default:
-                    _logWarn(75, {});
+                    _logWarn(75);
                     return;
             }
 

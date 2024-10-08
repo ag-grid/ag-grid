@@ -9,7 +9,7 @@ export function setRowCount(beans: BeanCollection, rowCount: number, maxRowFound
             serverSideRowModel.setRowCount(rowCount, maxRowFound);
             return;
         }
-        _logError(28, {});
+        _logError(28);
         return;
     }
 
