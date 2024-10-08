@@ -458,7 +458,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         if (_isDomLayout(this.gos, 'print')) {
-            _logWarn(37, {});
+            _logWarn(37);
             return;
         }
 
@@ -675,7 +675,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         newOrder = placeLockedColumns(newOrder, this.gos);
 
         if (!doesMovePassMarryChildren(newOrder, this.getColTree())) {
-            _logWarn(39, {});
+            _logWarn(39);
             return;
         }
 

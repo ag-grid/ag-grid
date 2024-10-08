@@ -101,7 +101,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
         if (!params?.state?.forEach) {
             // state is not an array
-            _logWarn(32, {});
+            _logWarn(32);
             return false;
         }
 
@@ -441,7 +441,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
             } else {
                 if (_exists(aggFunc)) {
                     // stateItem.aggFunc must be a string
-                    _logWarn(33, {});
+                    _logWarn(33);
                 }
                 // Note: we do not call column.setAggFunc(null), so that next time we aggregate
                 // by this column (eg drag the column to the agg section int he toolpanel) it will

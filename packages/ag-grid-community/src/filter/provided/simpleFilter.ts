@@ -250,7 +250,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             let conditions = combinedModel.conditions;
             if (conditions == null) {
                 conditions = [];
-                _logWarn(77, {});
+                _logWarn(77);
             }
 
             const numConditions = this.validateAndUpdateConditions(conditions);
@@ -297,7 +297,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         if (numConditions > this.maxNumConditions) {
             conditions.splice(this.maxNumConditions);
             // 'Filter Model contains more conditions than "filterParams.maxNumConditions". Additional conditions have been ignored.'
-            _logWarn(78, {});
+            _logWarn(78);
             numConditions = this.maxNumConditions;
         }
         return numConditions;
@@ -351,16 +351,16 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     private setNumConditions(params: SimpleFilterParams): void {
         this.maxNumConditions = params.maxNumConditions ?? 2;
         if (this.maxNumConditions < 1) {
-            _logWarn(79, {});
+            _logWarn(79);
             this.maxNumConditions = 1;
         }
         this.numAlwaysVisibleConditions = params.numAlwaysVisibleConditions ?? 1;
         if (this.numAlwaysVisibleConditions < 1) {
-            _logWarn(80, {});
+            _logWarn(80);
             this.numAlwaysVisibleConditions = 1;
         }
         if (this.numAlwaysVisibleConditions > this.maxNumConditions) {
-            _logWarn(81, {});
+            _logWarn(81);
             this.numAlwaysVisibleConditions = this.maxNumConditions;
         }
     }

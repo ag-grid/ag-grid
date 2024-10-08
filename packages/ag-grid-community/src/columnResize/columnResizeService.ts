@@ -150,7 +150,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
                 if (loopCount > 1000) {
                     // this should never happen, but in the future, someone might introduce a bug here,
                     // so we stop the browser from hanging and report bug properly
-                    _logError(31, {});
+                    _logError(31);
                     break;
                 }
 

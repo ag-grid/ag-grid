@@ -294,11 +294,7 @@ export type ErrorId = keyof ErrorMap;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =
-    ErrorValue<TId> extends (params: infer P) => any
-        ? P extends Record<string, any>
-            ? P
-            : Record<string, never>
-        : never;
+    ErrorValue<TId> extends (params: infer P) => any ? (P extends Record<string, any> ? P : undefined) : never;
 
 export function getError<TId extends ErrorId, TParams extends GetErrorParams<TId>>(errorId: TId, args: TParams): any[] {
     const msgOrFunc: ErrorMap[TId] = AG_GRID_ERRORS[errorId];

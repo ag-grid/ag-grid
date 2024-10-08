@@ -4,7 +4,7 @@ export function _downloadFile(fileName: string, content: Blob) {
     const win = document.defaultView || window;
 
     if (!win) {
-        _logWarn(52, {});
+        _logWarn(52);
         return;
     }
 

@@ -17,7 +17,7 @@
         "tsDefaults",
         "styleOutputs",
         {
-          "dependentTasksOutputFiles": "**/main.cjs.js",
+          "dependentTasksOutputFiles": "**/*.js",
           "transitive": true
         }
       ],
@@ -160,5 +160,6 @@
       }
     }
   },
-  "tags": ["package", "enterprise", "framework"]
+  "tags": ["package", "enterprise", "framework"],
+  "implicitDependencies": ["ag-grid-community"]
 }

@@ -1,5 +1,33 @@
 [
     {
+        "version": "32.3.0",
+        "date": "October 22nd 2024",
+        "landingPageHighlight": "React 19 Support, new Theming API & Custom Drag & Drop Image",
+        "highlights": [
+            {
+                "text": "React 19 Support",
+                "path": "https://www.ag-grid.com/react-data-grid/compatibility/"
+            },
+            {
+                "text": "New Theming API",
+                "path": "./theming-api"
+            },
+            {
+                "text": "New Selection API",
+                "path": "./row-selection"
+            },
+            {
+                "text": "Custom Drag & Drop Image",
+                "path": "./row-dragging/#custom-drag-and-drop-image"
+            },
+            {
+                "text": "Deferred Column Moving Mode",
+                "path": "./column-moving/#suppress-move-when-dragging"
+            }
+        ],
+        "notesPath": "./upgrading-to-ag-grid-32-3"
+    },
+    {
         "version": "32.2.0",
         "date": "September 17th 2024",
         "landingPageHighlight": "React 19 Support, new Theming API & Custom Drag & Drop Image",

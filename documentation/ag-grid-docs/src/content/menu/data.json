@@ -1438,6 +1438,10 @@
                         "title": "Migration",
                         "items": [
                             {
+                                "title": "Upgrading to AG Grid 32.3",
+                                "path": "upgrading-to-ag-grid-32-3"
+                            },
+                            {
                                 "title": "Upgrading to AG Grid 32.2",
                                 "path": "upgrading-to-ag-grid-32-2"
                             },
