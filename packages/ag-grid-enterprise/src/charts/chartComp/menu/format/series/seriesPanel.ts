@@ -1,7 +1,7 @@
 import type { AgRangeBarSeriesLabelPlacement } from 'ag-charts-types';
 
 import type { AgToggleButtonParams, BeanCollection, ListOption } from 'ag-grid-community';
-import { AgSelect, AgToggleButton, Component, RefPlaceholder, _errorOnce, _removeFromParent } from 'ag-grid-community';
+import { AgSelect, AgToggleButton, Component, RefPlaceholder, _logError, _removeFromParent } from 'ag-grid-community';
 
 import type { AgGroupComponent, AgGroupComponentParams } from '../../../../../widgets/agGroupComponent';
 import { AgGroupComponentSelector } from '../../../../../widgets/agGroupComponent';
@@ -163,7 +163,7 @@ export class SeriesPanel extends Component {
                     this.activePanels.push(widget);
                 });
             })
-            .catch((e) => _errorOnce(`chart rendering failed`, e));
+            .catch((e) => _logError(105, { e }));
     }
 
     private initSeriesSelect() {
