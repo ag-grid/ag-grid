@@ -1,4 +1,4 @@
-import type { AgAreaSeriesOptions } from 'ag-charts-community';
+import type { AgAreaSeriesOptions } from 'ag-charts-types';
 
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { CROSS_FILTER_MARKER_FILL_OPACITY_FACTOR } from './constants';

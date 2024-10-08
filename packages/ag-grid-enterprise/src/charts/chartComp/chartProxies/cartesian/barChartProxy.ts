@@ -1,4 +1,4 @@
-import type { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-community';
+import type { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-types';
 
 import { CROSS_FILTER_FIELD_POSTFIX } from '../../crossfilter/crossFilterApi';
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
