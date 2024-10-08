@@ -26,7 +26,6 @@ import {
 } from 'ag-grid-community';
 
 import { AgDialog } from '../../widgets/agDialog';
-import type { CrossFilteringContext } from '../chartService';
 import { ChartController, DEFAULT_THEMES } from './chartController';
 import { AreaChartProxy } from './chartProxies/cartesian/areaChartProxy';
 import { BarChartProxy } from './chartProxies/cartesian/barChartProxy';
@@ -36,6 +35,7 @@ import type { ChartProxy, ChartProxyParams } from './chartProxies/chartProxy';
 import { ComboChartProxy } from './chartProxies/combo/comboChartProxy';
 import type { EnterpriseChartProxyFactory } from './chartProxies/enterpriseChartProxyFactory';
 import { PieChartProxy } from './chartProxies/pie/pieChartProxy';
+import type { CrossFilteringContext } from './crossfilter/crossFilteringContext';
 import { ChartMenu } from './menu/chartMenu';
 import type { ChartMenuContext } from './menu/chartMenuContext';
 import { ChartMenuParamsFactory } from './menu/chartMenuParamsFactory';
@@ -66,7 +66,6 @@ export interface GridChartParams {
     chartOptionsToRestore?: AgChartThemeOverrides;
     chartPaletteToRestore?: AgChartThemePalette;
     seriesChartTypes?: SeriesChartType[];
-    crossFilteringResetCallback?: () => void;
 }
 
 export class GridChartComp extends Component {
@@ -165,16 +164,32 @@ export class GridChartComp extends Component {
         }
 
         const crossFilterCallback = (event: any, reset: boolean) => {
+            const chartId = this.params.chartId;
             const ctx = this.params.crossFilteringContext;
-            ctx.lastSelectedChartId = reset ? '' : this.chartController.getChartId();
+
+            ctx.lastSelectedChartId = reset ? '' : chartId;
+
+            const selectionModel = ctx.getChartSelectionModel(chartId);
+
             if (reset) {
-                this.params.crossFilteringResetCallback!();
+                ctx.clearAllSelections();
+            } else {
+                const category = event[this.chartProxy.getCategoryKey()];
+                const value = `${event.datum![category]}`;
+                const multiSelection = event.event.metaKey || event.event.ctrlKey;
+
+                if (multiSelection) {
+                    selectionModel.toggleSelection(multiSelection, category, value);
+                } else {
+                    ctx.clearAllSelections(false);
+                    selectionModel.toggleSelection(false, category, value);
+                }
             }
-            this.crossFilterService.filter(event, reset);
         };
 
         const chartType = this.chartController.getChartType();
         const chartProxyParams: ChartProxyParams = {
+            chartId: this.params.chartId,
             chartType,
             chartInstance,
             getChartThemeName: this.getChartThemeName.bind(this),
@@ -183,6 +198,7 @@ export class GridChartComp extends Component {
             getGridOptionsChartThemeOverrides: () => this.getGridOptionsChartThemeOverrides(),
             getExtraPaddingDirections: () => this.chartMenu?.getExtraPaddingDirections() ?? [],
             apiChartThemeOverrides: this.params.chartThemeOverrides,
+            crossFilteringContext: this.params.crossFilteringContext,
             crossFiltering: this.params.crossFiltering ?? false,
             crossFilterCallback,
             parentElement: this.eChart,
@@ -504,10 +520,6 @@ export class GridChartComp extends Component {
 
     public getUnderlyingChart() {
         return this.chartProxy.getChartRef();
-    }
-
-    public crossFilteringReset(): void {
-        this.chartProxy.crossFilteringReset();
     }
 
     private setActiveChartCellRange(focusEvent: FocusEvent): void {

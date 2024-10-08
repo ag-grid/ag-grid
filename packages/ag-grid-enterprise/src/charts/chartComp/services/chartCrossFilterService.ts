@@ -10,13 +10,16 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _includes, _isClientSideRowModel, _warnOnce } from 'ag-grid-community';
 
+import { CROSS_FILTER_FIELD_POSTFIX } from '../crossfilter/crossFilterApi';
+import { _mapValues } from '../utils/object';
+
 export class ChartCrossFilterService extends BeanStub implements NamedBean {
     beanName = 'chartCrossFilterService' as const;
 
     private columnModel: ColumnModel;
     private valueService: ValueService;
-    private filterManager?: FilterManager;
     private clientSideRowModel?: IClientSideRowModel;
+    public filterManager?: FilterManager;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
@@ -36,7 +39,14 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
             return;
         }
 
-        const colId = ChartCrossFilterService.extractFilterColId(event);
+        let colId = ChartCrossFilterService.extractFilterColId(event);
+
+        if (colId.endsWith(CROSS_FILTER_FIELD_POSTFIX)) {
+            // remove CROSS_FILTER_FIELD_POSTFIX suffix if present - this handles the area/line chart
+            // highlighting rather than filtering behaviour
+            colId = colId.replace(CROSS_FILTER_FIELD_POSTFIX, '');
+        }
+
         if (this.isValidColumnFilter(colId)) {
             // update filters based on current chart selections
             this.updateFilters(filterModel, event, colId);
@@ -50,9 +60,9 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
         }
     }
 
-    private resetFilters(filterModel: any) {
+    public resetFilters(filterModel: any, force = false) {
         const filtersExist = Object.keys(filterModel).length > 0;
-        if (filtersExist) {
+        if (filtersExist || force) {
             // only reset filters / charts when necessary to prevent undesirable flickering effect
             this.filterManager?.setFilterModel(null);
             this.filterManager?.onFilterChanged({ source: 'api' });
@@ -89,6 +99,12 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
         this.filterManager?.setFilterModel(filterModel);
     }
 
+    setFilters(updates: Record<string, any[]>) {
+        this.filterManager?.setFilterModel(
+            _mapValues(updates, (key, values) => this.getUpdatedFilterModel(key, values))
+        );
+    }
+
     private getUpdatedFilterModel(colId: any, updatedValues: any[]) {
         const columnFilterType = this.getColumnFilterType(colId);
         if (columnFilterType === 'agMultiColumnFilter') {
@@ -115,11 +131,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
         return event.xKey || event.calloutLabelKey;
     }
 
-    private isValidColumnFilter(colId: any) {
-        if (colId.indexOf('-filtered-out')) {
-            colId = colId.replace('-filtered-out', '');
-        }
-
+    private isValidColumnFilter(colId: string) {
         const filterType = this.getColumnFilterType(colId);
         if (typeof filterType === 'boolean') {
             return filterType;
@@ -128,7 +140,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
         return _includes(['agSetColumnFilter', 'agMultiColumnFilter'], filterType);
     }
 
-    private getColumnFilterType(colId: any) {
+    public getColumnFilterType(colId: any) {
         const gridColumn = this.getColumnById(colId);
         if (gridColumn) {
             const colDef = gridColumn.getColDef();

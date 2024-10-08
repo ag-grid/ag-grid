@@ -9,6 +9,7 @@ import type {
     ChartModel,
     ChartModelType,
     ChartType,
+    FilterManager,
     IAggFunc,
     IRangeService,
     PartialCellRange,
@@ -18,13 +19,14 @@ import type {
     UpdateCrossFilterChartParams,
     UpdateRangeChartParams,
 } from 'ag-grid-community';
-import { BeanStub, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _includes, _warnOnce } from 'ag-grid-community';
 
 import type { ChartProxy, FieldDefinition, UpdateParams } from './chartProxies/chartProxy';
 import { isStockTheme } from './chartProxies/chartTheme';
 import type { ChartModelParams, ColState } from './model/chartDataModel';
 import { ChartDataModel } from './model/chartDataModel';
 import { ChartParamsValidator } from './utils/chartParamsValidator';
+import { _mapValues } from './utils/object';
 import type { ChartSeriesType } from './utils/seriesTypeMapper';
 import {
     getMaxNumCategories,
@@ -42,11 +44,14 @@ export type ChartControllerEvent =
     | 'chartTypeChanged'
     | 'chartSeriesChartTypeChanged'
     | 'chartLinkedChanged';
+
 export class ChartController extends BeanStub<ChartControllerEvent> {
     private rangeService: IRangeService;
+    private filterManager?: FilterManager;
 
     public wireBeans(beans: BeanCollection) {
         this.rangeService = beans.rangeService!;
+        this.filterManager = beans.filterManager;
     }
 
     private chartProxy: ChartProxy;
@@ -104,6 +109,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             seriesChartTypes: undefined,
             suppressChartRanges: false,
             crossFiltering: false,
+            crossFilteringContext: this.model.params.crossFilteringContext,
         };
 
         const chartModelParams: ChartModelParams = { ...common };
@@ -141,6 +147,8 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         if (this.model.unlinked) {
             return;
         }
+
+        this.model.params.crossFilteringContext.updateFromGrid();
 
         const { maintainColState, setColsFromRange } = params ?? {};
 
@@ -198,7 +206,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             })),
             fields,
             chartId: this.getChartId(),
-            getCrossFilteringContext: () => ({ lastSelectedChartId: 'xxx' }), //this.params.crossFilteringContext, //TODO
+            getCrossFilteringContext: () => this.model.params.crossFilteringContext!,
             seriesChartTypes: this.getSeriesChartTypes(),
             updatedOverrides: updatedOverrides,
             seriesGroupType: this.model.seriesGroupType,

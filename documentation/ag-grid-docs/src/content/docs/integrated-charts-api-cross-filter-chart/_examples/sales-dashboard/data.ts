@@ -36,7 +36,20 @@ const generateData = () => {
     });
 };
 
-const getRandomNumber = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1) + min);
+const getRandomNumber = (min: number, max: number): number => Math.floor(pRandom() * (max - min + 1) + min);
 
 const randomDate = (start: Date, end: Date): Date =>
-    new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+    new Date(start.getTime() + pRandom() * (end.getTime() - start.getTime()));
+
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();
