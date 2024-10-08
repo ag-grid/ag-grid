@@ -685,10 +685,10 @@ export class ColumnStateService extends BeanStub implements NamedBean {
     }
 
     private createStateItemFromColumn(column: AgColumn): ColumnState {
-        const rowGorupColumns = this.funcColsService.rowGroupCols;
+        const rowGroupColumns = this.funcColsService.rowGroupCols;
         const pivotColumns = this.funcColsService.pivotCols;
 
-        const rowGroupIndex = column.isRowGroupActive() ? rowGorupColumns.indexOf(column) : null;
+        const rowGroupIndex = column.isRowGroupActive() ? rowGroupColumns.indexOf(column) : null;
         const pivotIndex = column.isPivotActive() ? pivotColumns.indexOf(column) : null;
 
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;
