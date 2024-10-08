@@ -2,7 +2,7 @@ import { _getFilterCompKeys } from '../../components/framework/userCompUtils';
 import type { IFilterDef } from '../../interfaces/iFilter';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 
-export function getDefaultFloatingFilterType(
+export function _getDefaultFloatingFilterType(
     frameworkOverrides: IFrameworkOverrides,
     def: IFilterDef,
     getFromDefault: () => string
@@ -17,22 +17,11 @@ export function getDefaultFloatingFilterType(
 
     if (compName) {
         const floatingFilterTypeMap: { [p: string]: string } = {
-            set: 'agSetColumnFloatingFilter',
             agSetColumnFilter: 'agSetColumnFloatingFilter',
-
-            multi: 'agMultiColumnFloatingFilter',
             agMultiColumnFilter: 'agMultiColumnFloatingFilter',
-
-            group: 'agGroupColumnFloatingFilter',
             agGroupColumnFilter: 'agGroupColumnFloatingFilter',
-
-            number: 'agNumberColumnFloatingFilter',
             agNumberColumnFilter: 'agNumberColumnFloatingFilter',
-
-            date: 'agDateColumnFloatingFilter',
             agDateColumnFilter: 'agDateColumnFloatingFilter',
-
-            text: 'agTextColumnFloatingFilter',
             agTextColumnFilter: 'agTextColumnFloatingFilter',
         };
         // will be undefined if not in the map

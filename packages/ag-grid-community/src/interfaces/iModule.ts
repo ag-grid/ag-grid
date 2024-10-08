@@ -1,7 +1,8 @@
 import type { GridApi } from '../api/gridApi';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
-import type { ComponentMeta, ControllerMeta, SingletonBean } from '../context/context';
+import type { ComponentMeta, DynamicBeanMeta, SingletonBean } from '../context/context';
 import { VERSION } from '../version';
+import type { ComponentSelector } from '../widgets/component';
 import type { RowModelType } from './iRowModel';
 
 export type ModuleValidationValidResult = {
@@ -26,9 +27,14 @@ export interface Module {
      * @return Whether the module is valid or not. If not, a message explaining why it is not valid
      */
     validate?: () => ModuleValidationResult;
+    /** singleton beans which are created once on grid init */
     beans?: SingletonBean[];
-    controllers?: ControllerMeta[];
+    /** beans which can have many instances, and can be created/destroyed at any time */
+    dynamicBeans?: DynamicBeanMeta[];
+    /** components which can be overridden by the user (e.g. cell renderers). These are the default grid provided versions */
     userComponents?: ComponentMeta[];
+    /** selectors for grid components that can be defined in templates and created by AG stack */
+    selectors?: ComponentSelector[];
     rowModels?: RowModelType[];
     dependsOn?: Module[];
 }
@@ -170,7 +176,9 @@ export type EnterpriseModuleName =
     | 'ClipboardModule'
     | 'ColumnChooserModule'
     | 'ColumnMenuModule'
+    | 'ColumnsToolPanelCoreModule'
     | 'ColumnsToolPanelModule'
+    | 'ColumnsToolPanelRowGroupingModule'
     | 'ContextMenuModule'
     | 'EnterpriseCoreModule'
     | 'ExcelExportApiModule'
@@ -179,6 +187,7 @@ export type EnterpriseModuleName =
     | 'FiltersToolPanelModule'
     | 'GridChartsApiModule'
     | 'GridChartsCoreModule'
+    | 'GridChartsEnterpriseFeaturesModule'
     | 'GridChartsModule'
     | 'GroupFilterModule'
     | 'GroupFloatingFilterModule'
@@ -195,7 +204,9 @@ export type EnterpriseModuleName =
     | 'PivotModule'
     | 'RangeSelectionApiModule'
     | 'RangeSelectionCoreModule'
+    | 'RangeSelectionFillHandleModule'
     | 'RangeSelectionModule'
+    | 'RangeSelectionRangeHandleModule'
     | 'RichSelectModule'
     | 'RowGroupingApiModule'
     | 'RowGroupingCoreModule'

@@ -12,7 +12,6 @@ import type { Column } from '../../interfaces/iColumn';
 import type { IContextMenuService } from '../../interfaces/iContextMenu';
 import type { IMenuFactory } from '../../interfaces/iMenuFactory';
 import { _isIOSUserAgent } from '../../utils/browser';
-import { _warnOnce } from '../../utils/function';
 import { _requestAnimationFrame } from '../animationFrameService';
 
 interface BaseShowColumnMenuParams {

@@ -1,5 +1,4 @@
 import type { _ClientSideRowModelGridApi } from '../api/gridApi';
-import { RowModelHelperService } from '../api/rowModelHelperService';
 import { CsrmSsrmSharedApiModule } from '../api/sharedApiModule';
 import { CommunityFeaturesModule } from '../communityFeaturesModule';
 import { FilterCoreModule } from '../filter/filterModule';
@@ -49,7 +48,6 @@ export const ClientSideRowModelFilterModule: _ModuleWithoutApi = {
 export const ClientSideRowModelApiModule: _ModuleWithApi<_ClientSideRowModelGridApi<any>> = {
     ...baseCommunityModule('ClientSideRowModelApiModule'),
     rowModels: ['clientSide'],
-    beans: [RowModelHelperService],
     apiFunctions: {
         onGroupExpandedOrCollapsed,
         refreshClientSideRowModel,

@@ -9,8 +9,8 @@ import { _logWarn } from '../../validation/logging';
 export interface FrameworkComponentWrapper {
     wrap<A extends IComponent<any>>(
         frameworkComponent: { new (): any } | null,
-        methodList: string[],
-        optionalMethodList: string[],
+        mandatoryMethods: string[] | undefined,
+        optionalMethods: string[] | undefined,
         componentType: ComponentType
     ): A;
 }
@@ -26,17 +26,17 @@ export interface WrappableInterface {
 export abstract class BaseComponentWrapper<F extends WrappableInterface> implements FrameworkComponentWrapper {
     public wrap<A extends IComponent<any>>(
         OriginalConstructor: { new (): any },
-        mandatoryMethodList: string[],
-        optionalMethodList: string[] = [],
+        mandatoryMethods: string[] | undefined,
+        optionalMethods: string[] | undefined,
         componentType: ComponentType
     ): A {
         const wrapper: F = this.createWrapper(OriginalConstructor, componentType);
 
-        mandatoryMethodList.forEach((methodName) => {
+        mandatoryMethods?.forEach((methodName) => {
             this.createMethod(wrapper, methodName, true);
         });
 
-        optionalMethodList.forEach((methodName) => {
+        optionalMethods?.forEach((methodName) => {
             this.createMethod(wrapper, methodName, false);
         });
 

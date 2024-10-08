@@ -25,7 +25,7 @@ import { CellCtrl } from '../rendering/cell/cellCtrl';
 import { RowCtrl } from '../rendering/row/rowCtrl';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import { _last } from '../utils/array';
-import { _throttle, _warnOnce } from '../utils/function';
+import { _throttle } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
 import type { CellNavigationService } from './cellNavigationService';
 import type { HeaderNavigationService } from './headerNavigationService';

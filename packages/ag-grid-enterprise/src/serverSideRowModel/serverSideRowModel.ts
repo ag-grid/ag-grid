@@ -29,12 +29,12 @@ import {
     NumberSequence,
     RowNode,
     _debounce,
-    _errorOnce,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
     _isGetRowHeightFunction,
     _isRowSelection,
     _jsonEquals,
+    _logError,
     _warnOnce,
 } from 'ag-grid-community';
 
@@ -718,7 +718,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
                 rootStore.setRowCount(rowCount, lastRowIndexKnown);
                 return;
             }
-            _errorOnce('Infinite scrolling must be enabled in order to set the row count.');
+            // Infinite scrolling must be enabled in order to set the row count.
+            _logError(118, {});
         }
     }
 
