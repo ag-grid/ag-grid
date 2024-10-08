@@ -53,6 +53,8 @@ export interface ITreeNode {
 
     /** Updated during commit to be the same as row.sourceRowIndex */
     readonly oldSourceRowIndex: number;
+
+    invalidate(): void;
 }
 
 export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IRowNode<TData> {

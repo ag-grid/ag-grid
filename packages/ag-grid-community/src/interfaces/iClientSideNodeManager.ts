@@ -18,9 +18,9 @@ export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
 }
 
 export interface IClientSideNodeManager<TData = any> {
-    initRootNode(rootRowNode: RowNode<TData> | null): void;
+    activate(rootRowNode: RowNode<TData> | null): void;
 
-    clearRootNode(): void;
+    deactivate(): void;
 
     getRowNode(id: string): RowNode<TData> | undefined;
 
@@ -33,6 +33,8 @@ export interface IClientSideNodeManager<TData = any> {
     updateRowData(rowDataTran: RowDataTransaction<TData>): ClientSideNodeManagerUpdateRowDataResult<TData>;
 
     setMasterForAllRows?(rowNodes: RowNode<TData>[] | null | undefined, shouldSetExpanded: boolean): void;
+
+    onTreeDataChanged?(): void;
 
     afterColumnsChanged?(): void;
 

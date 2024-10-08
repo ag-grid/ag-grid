@@ -14,9 +14,6 @@ export interface TreeRow<TData = any> extends RowNode<TData> {
     childrenAfterGroup: TreeRow<TData>[] | null;
     treeNode: ITreeNode | null;
     treeNodeFlags: number;
-
-    /** The level in the original rowData, when using the childrenFieldGetter */
-    rowDataLevel?: number;
 }
 
 const enum Flags {

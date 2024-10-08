@@ -16,32 +16,31 @@ export class ClientSideChildrenTreeNodeManager<TData>
     private childrenGetter: DataFieldGetter<TData, TData[] | null | undefined>;
 
     public override extractRowData(): TData[] | null | undefined {
-        return this.rootNode.allLeafChildren
-            ?.filter((row) => !(row as TreeRow<TData>).rowDataLevel)
-            .map((row) => row.data!);
+        return Array.from(this.treeNodeManager.root.enumChildren(), (node) => node.row!.data);
     }
 
-    public override initRootNode(rootRowNode: RowNode<TData>): void {
+    public override activate(rootRowNode: RowNode<TData>): void {
         const oldChildrenGetter = this.childrenGetter;
         const childrenField = this.gos.get('treeDataChildrenField');
         if (!oldChildrenGetter || oldChildrenGetter.path !== childrenField) {
             this.childrenGetter = makeFieldPathGetter(childrenField);
         }
 
-        super.initRootNode(rootRowNode);
+        super.activate(rootRowNode);
     }
 
     protected override loadNewRowData(rowData: TData[]): void {
-        const { treeData, rootNode: rootRowNode, treeNodeManager, childrenGetter } = this;
+        const { rootNode: rootRowNode, treeNodeManager, childrenGetter } = this;
 
         const processedDataSet = new Set<TData>();
         const allLeafChildren: TreeRow<TData>[] = [];
 
         rootRowNode.allLeafChildren = allLeafChildren;
 
+        treeNodeManager.activate(rootRowNode);
         treeNodeManager.clearTree(this.treeNodeManager.root);
 
-        const addChild = (parent: TreeNode, rowDataLevel: number, data: TData) => {
+        const addChild = (parent: TreeNode, data: TData) => {
             if (processedDataSet.has(data)) {
                 _logError(5, { data }); // Duplicate node
                 return;
@@ -49,43 +48,47 @@ export class ClientSideChildrenTreeNodeManager<TData>
 
             processedDataSet.add(data);
 
-            const row = this.createRowNode(data, allLeafChildren.length) as TreeRow<TData>;
-            row.rowDataLevel = rowDataLevel;
+            const row = this.createRowNode(data, allLeafChildren.length);
             allLeafChildren.push(row);
 
-            if (treeData) {
-                parent = parent.upsertKey(row.id!);
-                treeNodeManager.addOrUpdateRow(parent, row, false);
-            }
+            parent = parent.upsertKey(row.id!);
+            treeNodeManager.addOrUpdateRow(parent, row, false);
 
             const children = childrenGetter(data);
             if (children) {
-                ++rowDataLevel;
                 for (let i = 0, len = children.length; i < len; ++i) {
-                    addChild(parent, rowDataLevel, children[i]);
+                    addChild(parent, children[i]);
                 }
             }
         };
 
         const rootTreeNode = this.treeNodeManager.root;
         for (let i = 0, len = rowData.length; i < len; ++i) {
-            addChild(rootTreeNode, 0, rowData[i]);
+            addChild(rootTreeNode, rowData[i]);
         }
 
-        if (treeData) {
-            treeNodeManager.commitTree(undefined);
-        }
+        treeNodeManager.commitTree();
     }
 
     public setMasterForAllRows(rows: RowNode<TData>[] | null | undefined, shouldSetExpanded: boolean): void {
-        if (!this.treeData) {
+        if (!this.gos.get('treeData')) {
             this.beans.detailGridApiService?.setMasterForAllRows(rows, shouldSetExpanded);
         }
     }
 
-    protected override createRowNode(data: TData, sourceRowIndex: number): RowNode<TData> {
-        const node = super.createRowNode(data, sourceRowIndex);
-        if (!this.treeData) {
+    public onTreeDataChanged() {
+        const { rootNode } = this;
+        this.treeNodeManager.activate(rootNode);
+        const allLeafChildren = this.rootNode.allLeafChildren!;
+        for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
+            (allLeafChildren[i] as TreeRow<TData>).treeNode?.invalidate();
+        }
+        this.treeNodeManager.commitTree();
+    }
+
+    protected override createRowNode(data: TData, sourceRowIndex: number): TreeRow<TData> {
+        const node: TreeRow<TData> = super.createRowNode(data, sourceRowIndex);
+        if (!this.gos.get('treeData')) {
             this.beans.detailGridApiService?.setMasterForRow(node, data, true);
         }
         return node;

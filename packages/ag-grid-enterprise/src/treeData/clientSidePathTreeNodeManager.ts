@@ -15,7 +15,7 @@ export class ClientSidePathTreeNodeManager<TData>
         const rootNode = this.rootNode;
 
         this.treeNodeManager.clearTree(this.treeNodeManager.root);
-        this.treeNodeManager.initRootNode(rootNode);
+        this.treeNodeManager.activate(rootNode);
 
         super.loadNewRowData(rowData);
 
@@ -28,7 +28,7 @@ export class ClientSidePathTreeNodeManager<TData>
             }
         }
 
-        this.treeNodeManager.commitTree(undefined);
+        this.treeNodeManager.commitTree();
     }
 
     public commitTransactions(
@@ -36,7 +36,7 @@ export class ClientSidePathTreeNodeManager<TData>
         changedPath: ChangedPath | undefined,
         rowNodesOrderChanged: boolean
     ): void {
-        this.treeNodeManager.initRootNode(this.rootNode);
+        this.treeNodeManager.activate(this.rootNode);
 
         for (const { remove, update, add } of transactions) {
             // the order of [add, remove, update] is the same as in ClientSideNodeManager.

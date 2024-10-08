@@ -364,14 +364,14 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         });
     }
 
-    public clearRootNode(): void {
+    public deactivate(): void {
         if (this.rootNode) {
             this.setNewRowData([]);
             this.rootNode = null!;
         }
     }
 
-    public initRootNode(rootRowNode: RowNode<TData>): void {
+    public activate(rootRowNode: RowNode<TData>): void {
         const rootNode = rootRowNode as ClientSideNodeManagerRootNode<TData>;
 
         this.rootNode = rootNode;

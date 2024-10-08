@@ -7,31 +7,22 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
     protected treeNodeManager: TreeNodeManager;
     private oldGroupDisplayColIds: string = '';
 
-    public get treeData(): boolean {
-        return !!this.treeNodeManager.root.row;
-    }
-
     public postConstruct(): void {
         this.treeNodeManager = this.createManagedBean(new TreeNodeManager());
     }
 
-    public override initRootNode(rootRowNode: RowNode<TData>): void {
-        super.initRootNode(rootRowNode);
-        const treeNodeManager = this.treeNodeManager;
-        if (this.gos.get('treeData')) {
-            treeNodeManager.initRootNode(rootRowNode);
-        } else {
-            treeNodeManager.clearRootNode();
-        }
+    public override activate(rootRowNode: RowNode<TData>): void {
+        super.activate(rootRowNode);
+        this.treeNodeManager.activate(rootRowNode);
     }
 
-    public override clearRootNode(): void {
-        this.treeNodeManager.clearRootNode();
-        super.clearRootNode();
+    public override deactivate(): void {
+        this.treeNodeManager.deactivate();
+        super.deactivate();
     }
 
     public afterColumnsChanged(): void {
-        if (this.treeData) {
+        if (this.gos.get('treeData')) {
             const newGroupDisplayColIds =
                 this.beans.showRowGroupColsService
                     ?.getShowRowGroupCols()
