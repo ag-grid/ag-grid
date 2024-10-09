@@ -192,7 +192,7 @@ describe('Pinned rows', () => {
                 topData[0],
                 'When `getRowId` is defined, it must return unique IDs for all pinned rows. Use the `rowPinned` parameter.',
                 expect.stringContaining(
-                    '/javascript-data-grid/errors/96?_version_=${VERSION}&id=%7B%22athlete%22%3A%22Top+Athlete%22%2C%22sport%22%3A%22Top+Sport%22%2C%22age%22%3A11%7D&data=%7B%7D'
+                    `/javascript-data-grid/errors/96?_version_=${VERSION}&id=%7B%22athlete%22%3A%22Top+Athlete%22%2C%22sport%22%3A%22Top+Sport%22%2C%22age%22%3A11%7D&data=%7B%7D`
                 )
             );
             consoleWarnSpy.mockRestore();
@@ -356,7 +356,7 @@ describe('Pinned rows', () => {
                 bottomData[0],
                 'When `getRowId` is defined, it must return unique IDs for all pinned rows. Use the `rowPinned` parameter.',
                 expect.stringContaining(
-                    '/javascript-data-grid/errors/96?_version_=${VERSION}&id=%7B%22athlete%22%3A%22Bottom+Athlete%22%2C%22sport%22%3A%22Bottom+Sport%22%2C%22age%22%3A22%7D&data=%7B%7D'
+                    `/javascript-data-grid/errors/96?_version_=${VERSION}&id=%7B%22athlete%22%3A%22Bottom+Athlete%22%2C%22sport%22%3A%22Bottom+Sport%22%2C%22age%22%3A22%7D&data=%7B%7D`
                 )
             );
             consoleWarnSpy.mockRestore();
