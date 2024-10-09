@@ -3,7 +3,7 @@
 if [ "$#" -ne 1 ]
   then
     echo "You must supply a version file to upload"
-    echo "For example: ./scripts/release/uploadReleaseZip.sh release_20190222_v2010.zip"
+    echo "For example: ./scripts/deployments/release/uploadReleaseZip.sh release_20190222_v2010.zip"
     exit 1
 fi
 

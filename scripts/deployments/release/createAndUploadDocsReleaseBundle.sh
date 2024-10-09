@@ -3,7 +3,7 @@
 if [ "$#" -lt 1 ]
   then
     echo "You must supply a release version number"
-    echo "For example: ./scripts/release/createAndUploadDocsReleaseBundle.sh 19.1.2"
+    echo "For example: ./scripts/deployments/release/createAndUploadDocsReleaseBundle.sh 19.1.2"
     exit 1
 fi
 
@@ -17,31 +17,28 @@ FILENAME=release_"$TIMESTAMP"_v"$VERSION".zip
 echo "************************************************************************"
 echo "******************** Create Release Bundle *****************************"
 echo "************************************************************************"
-./scripts/release/createDocsReleaseBundle.sh $RAW_VERSION
+./scripts/deployments/release/createDocsReleaseBundle.sh $RAW_VERSION
 echo "************************************************************************"
 echo "******************** Uploading Release Bundle **************************"
 echo "************************************************************************"
-./scripts/release/uploadReleaseZip.sh $FILENAME
+./scripts/deployments/release/uploadReleaseZip.sh $FILENAME
 echo "************************************************************************"
 echo "******************** Archiving Current Release *************************"
 echo "************************************************************************"
-./scripts/release/archiveCurrentRelease.sh
+./scripts/deployments/release/archiveCurrentRelease.sh
 echo "************************************************************************"
 echo "******************** Preparing For New Deployment **********************"
 echo "************************************************************************"
-./scripts/release/prepareNewDeployment.sh $FILENAME
+./scripts/deployments/release/prepareNewDeployment.sh $FILENAME
 echo "************************************************************************"
 echo "******************** Switch To New Release *****************************"
 echo "************************************************************************"
-./scripts/release/switchRelease.sh $TIMESTAMP $2
+./scripts/deployments/release/switchRelease.sh $TIMESTAMP $2
 echo "************************************************************************"
 echo "******************** Download Changelog Data *****************************"
 echo "************************************************************************"
-./scripts/release/downloadChangelog.sh
-echo "************************************************************************"
-echo "******************** Update Algolia Indices *****************************"
-echo "************************************************************************"
-./scripts/release/updateAlgoliaIndices.sh
+./scripts/deployments/release/downloadChangelog.sh
+echo
 echo "************************************************************************"
 echo "*********************** Tag Docs Release *******************************"
 echo "************************************************************************"

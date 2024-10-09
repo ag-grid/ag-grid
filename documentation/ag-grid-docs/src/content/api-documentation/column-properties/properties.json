@@ -452,24 +452,65 @@
                 "name": "Custom Group Columns",
                 "url": "./grouping-custom-group-columns/"
             }
+        }
+    },
+    "aggregation": {
+        "meta": {
+            "displayName": "Columns: Aggregation",
+            "description": "(Enterprise only) See [Aggregation](./aggregation-columns/)"
         },
-        "enableValue": {},
-        "aggFunc": {},
+        "aggFunc": {
+            "more": {
+                "name": "Enabling Aggregation",
+                "url": "./aggregation-columns/#enabling-aggregation"
+            }
+        },
         "initialAggFunc": {},
-        "allowedAggFuncs": {},
-        "defaultAggFunc": {}
+        "enableValue": {
+            "more": {
+                "name": "Configuring via the UI",
+                "url": "./aggregation-columns/#configuring-via-the-ui"
+            }
+        },
+        "allowedAggFuncs": {
+            "more": {
+                "name": "Allowed Functions",
+                "url": "./aggregation-columns/#allowed-functions"
+            }
+        },
+        "defaultAggFunc": {
+            "more": {
+                "name": "Default Function",
+                "url": "./aggregation-columns/#default-function"
+            }
+        }
     },
     "pivoting": {
         "meta": {
             "displayName": "Columns: Pivoting",
             "description": "(Enterprise only) See [Pivoting](./pivoting/)"
         },
-        "pivot": {},
+        "pivot": {
+            "more": {
+                "name": "Enabling Pivoting",
+                "url": "./aggregation-columns/#default-function"
+            }
+        },
         "initialPivot": {},
         "pivotIndex": {},
         "initialPivotIndex": {},
-        "pivotComparator": {},
-        "enablePivot": {}
+        "enablePivot": {
+            "more": {
+                "name": "Configuring via the UI",
+                "url": "./pivoting/#configuring-via-the-ui"
+            }
+        },
+        "pivotComparator": {
+            "more": {
+                "name": "Ordering Pivot Result Groups",
+                "url": "./pivoting-column-groups/#ordering-groups"
+            }
+        }
     },
     "row dragging": {
         "meta": {

@@ -3,7 +3,7 @@
 if [ "$#" -lt 1 ]
   then
     echo "You must supply a release version number"
-    echo "For example: ./scripts/release/createDocsReleaseBundle.sh 19.1.2"
+    echo "For example: ./scripts/deployments/release/createDocsReleaseBundle.sh 19.1.2"
     exit 1
 fi
 
@@ -12,9 +12,6 @@ VERSION=""${RAW_VERSION//./}""
 
 ARCHIVE_FILENAME="archive_`date +%Y%m%d`_$RAW_VERSION.tar"
 rm $ARCHIVE_FILENAME
-
-echo "Adding robots.txt and github version info"
-node scripts/release/patchDocs.js
 
 cd documentation/ag-grid-docs/dist
 tar -cvf ../../../$ARCHIVE_FILENAME .
