@@ -1220,7 +1220,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // - clears selection, done before we set row data to ensure it isn't readded via `selectionService.syncInOldRowNode`
         this.selectionService?.reset('rowDataChanged');
 
-        this.oldMasterDetail = this.gos.get('masterDetail');
+        // Reset the oldMasterDetail state as we do not need to recompute set master detail during refresh when new data is set
+        this.oldMasterDetail = this.nodeManager.isMasterDetail();
 
         if (!Array.isArray(rowData)) {
             _logWarn(1);
