@@ -277,7 +277,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             if (rowDataChanged) {
                 const rowData = this.gos.get('rowData');
                 if (rowData) {
-                    if (this.isImmutableRowDataActive()) {
+                    const getRowIdProvided =
+                        this.gos.exists('getRowId') &&
+                        // this property is a backwards compatibility property, for those who want
+                        // the old behaviour of Row IDs but NOT Immutable Data.
+                        !this.gos.get('resetRowDataOnUpdate');
+
+                    if (getRowIdProvided) {
                         this.setImmutableRowData(rowData);
                     } else {
                         this.setNewRowData(rowData);
@@ -1198,18 +1204,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         return this.nodeManager.getRowNode(id);
-    }
-
-    private isImmutableRowDataActive(): boolean {
-        const getRowIdProvided = this.gos.exists('getRowId');
-        // this property is a backwards compatibility property, for those who want
-        // the old behaviour of Row IDs but NOT Immutable Data.
-        const resetRowDataOnUpdate = this.gos.get('resetRowDataOnUpdate');
-
-        if (resetRowDataOnUpdate) {
-            return false;
-        }
-        return getRowIdProvided;
     }
 
     // rows: the rows to put into the model
