@@ -117,7 +117,7 @@ describe('Row Selection Legacy Grid Options', () => {
                     columnDefs,
                     rowData,
                     rowSelection: 'single',
-                    isRowSelectable: (node) => node.data.sport !== 'football',
+                    isRowSelectable: (node) => node.data?.sport !== 'football',
                 });
 
                 clickRowByIndex(0);
@@ -131,7 +131,7 @@ describe('Row Selection Legacy Grid Options', () => {
                     columnDefs,
                     rowData,
                     rowSelection: 'multiple',
-                    isRowSelectable: (node) => node.data.sport !== 'football',
+                    isRowSelectable: (node) => node.data?.sport !== 'football',
                 });
 
                 clickRowByIndex(0);
@@ -433,7 +433,7 @@ describe('Row Selection Legacy Grid Options', () => {
                     })),
                     rowData,
                     rowSelection: 'multiple',
-                    isRowSelectable: (node) => node.data.sport !== 'golf',
+                    isRowSelectable: (node) => node.data?.sport !== 'golf',
                 });
 
                 toggleCheckboxByIndex(4);
@@ -740,7 +740,7 @@ describe('Row Selection Legacy Grid Options', () => {
                     })),
                     rowData,
                     rowSelection: 'multiple',
-                    isRowSelectable: (node) => node.data.sport !== 'football',
+                    isRowSelectable: (node) => node.data?.sport !== 'football',
                 });
 
                 toggleHeaderCheckboxByIndex(0);

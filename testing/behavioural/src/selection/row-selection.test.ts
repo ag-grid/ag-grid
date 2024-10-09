@@ -158,7 +158,7 @@ describe('Row Selection Grid Options', () => {
                     rowData,
                     rowSelection: {
                         mode: 'singleRow',
-                        isRowSelectable: (node) => node.data.sport !== 'football',
+                        isRowSelectable: (node) => node.data?.sport !== 'football',
                     },
                 });
 
@@ -194,7 +194,7 @@ describe('Row Selection Grid Options', () => {
                 const api = createGrid({
                     columnDefs,
                     rowData,
-                    rowSelection: { mode: 'multiRow', isRowSelectable: (node) => node.data.sport !== 'football' },
+                    rowSelection: { mode: 'multiRow', isRowSelectable: (node) => node.data?.sport !== 'football' },
                 });
 
                 toggleCheckboxByIndex(0);
@@ -581,7 +581,7 @@ describe('Row Selection Grid Options', () => {
                     rowSelection: {
                         mode: 'multiRow',
                         checkboxes: true,
-                        isRowSelectable: (node) => node.data.sport !== 'golf',
+                        isRowSelectable: (node) => node.data?.sport !== 'golf',
                     },
                 });
 
@@ -993,7 +993,7 @@ describe('Row Selection Grid Options', () => {
                     rowSelection: {
                         mode: 'multiRow',
                         headerCheckbox: true,
-                        isRowSelectable: (node) => node.data.sport !== 'football',
+                        isRowSelectable: (node) => node.data?.sport !== 'football',
                     },
                 });
 
