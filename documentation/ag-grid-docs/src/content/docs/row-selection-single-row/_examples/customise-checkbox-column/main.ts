@@ -19,8 +19,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowSelection: { mode: 'singleRow' },
     selectionColumnDef: {
         sortable: true,
+        resizable: true,
         width: 100,
-        maxWidth: 100,
         suppressHeaderMenuButton: false,
         headerTooltip: 'Checkboxes indicate selection',
     },

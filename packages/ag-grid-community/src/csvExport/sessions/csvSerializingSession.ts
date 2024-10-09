@@ -120,7 +120,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         } else if (typeof value.toString === 'function') {
             stringValue = value.toString();
         } else {
-            _logWarn(53, {});
+            _logWarn(53);
             stringValue = '';
         }
 

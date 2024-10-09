@@ -5,7 +5,7 @@ export class Downloader {
         const win = document.defaultView || window;
 
         if (!win) {
-            _logWarn(52, {});
+            _logWarn(52);
             return;
         }
 

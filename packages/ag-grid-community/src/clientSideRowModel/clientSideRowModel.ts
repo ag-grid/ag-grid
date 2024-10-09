@@ -32,7 +32,7 @@ import { _insertIntoArray, _last, _removeFromArray } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _debounce, _warnOnce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
-import { _logError } from '../validation/logging';
+import { _logError, _logWarn } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
 import { updateRowNodeAfterFilter } from './filterStage';
 import { updateRowNodeAfterSort } from './sortStage';
@@ -1206,7 +1206,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.selectionService?.reset('rowDataChanged');
 
         if (!Array.isArray(rowData)) {
-            _warnOnce('rowData must be an array.');
+            _logWarn(1);
         } else {
             this.rowNodesCountReady = true;
             this.nodeManager.setNewRowData(rowData);
