@@ -5,11 +5,12 @@ import { baseCommunityModule } from '../interfaces/iModule';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { InfiniteRowModel } from './infiniteRowModel';
 import { getInfiniteRowCount, purgeInfiniteCache, refreshInfiniteCache } from './infiniteRowModelApi';
+import { RowNodeBlockLoader } from './rowNodeBlockLoader';
 
 export const InfiniteRowModelCoreModule: _ModuleWithoutApi = {
     ...baseCommunityModule('InfiniteRowModelCoreModule'),
     rowModels: ['infinite'],
-    beans: [InfiniteRowModel],
+    beans: [InfiniteRowModel, RowNodeBlockLoader],
     dependsOn: [],
 };
 
