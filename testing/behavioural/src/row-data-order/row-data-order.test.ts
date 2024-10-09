@@ -5,6 +5,7 @@ import type { GridOptions, RowDataTransaction } from 'ag-grid-community';
 
 import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager, cachedJSONObjects, executeTransactionsAsync } from '../test-utils';
+import { VERSION } from '../version';
 
 const defaultGridRowsOptions: GridRowsOptions = {
     columns: ['x'],
@@ -178,7 +179,7 @@ describe('ag-grid rows-ordering', () => {
         expect(consoleWarnSpy).toHaveBeenCalledWith(
             'AG Grid: error #2',
             "Duplicate node id '9' detected from getRowId callback, this could cause issues in your grid.",
-            expect.stringContaining('/javascript-data-grid/errors/2?nodeId=9')
+            expect.stringContaining(`/javascript-data-grid/errors/2?_version_=${VERSION}&nodeId=9`)
         );
 
         consoleWarnSpy.mockRestore();
@@ -645,7 +646,7 @@ describe('ag-grid rows-ordering', () => {
             expect(consoleErrorSpy).toHaveBeenCalledWith(
                 'AG Grid: error #4',
                 'Could not find row id=jhDjSi3Ec-3, data item was not found for this id',
-                expect.stringContaining('/javascript-data-grid/errors/4?id=jhDjSi3Ec-3')
+                expect.stringContaining(`/javascript-data-grid/errors/4?_version_=${VERSION}&id=jhDjSi3Ec-3`)
             );
 
             await executeTransactionsAsync({ update: [{ id: 'jhDjSi3Ec-4', x: 4 }] }, api);
@@ -653,7 +654,7 @@ describe('ag-grid rows-ordering', () => {
             expect(consoleErrorSpy).toHaveBeenCalledWith(
                 'AG Grid: error #4',
                 'Could not find row id=jhDjSi3Ec-4, data item was not found for this id',
-                expect.stringContaining('/javascript-data-grid/errors/4?id=jhDjSi3Ec-4')
+                expect.stringContaining(`/javascript-data-grid/errors/4?_version_=${VERSION}&id=jhDjSi3Ec-4`)
             );
 
             consoleErrorSpy.mockRestore();

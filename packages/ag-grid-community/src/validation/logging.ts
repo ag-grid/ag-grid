@@ -1,5 +1,6 @@
 import { BASE_URL } from '../baseUrl';
 import { _errorOnce as errorLog, _warnOnce as warnLog } from '../utils/function';
+import { VERSION } from '../version';
 import type { ErrorId, ErrorMap, GetErrorParams } from './errorMessages/errorText';
 import type { ValidationService } from './validationService';
 
@@ -62,6 +63,7 @@ function stringifyValue(value: any) {
 
 export function getErrorLink(errorNum: ErrorId, args: GetErrorParams<any>) {
     const params = new URLSearchParams();
+    params.append('_version_', VERSION);
     if (args) {
         Object.entries(args).forEach(([key, value]) => {
             params.append(key, stringifyValue(value));

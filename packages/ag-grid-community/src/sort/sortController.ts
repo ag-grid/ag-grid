@@ -11,11 +11,10 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { SortModelItem } from '../interfaces/iSortModelItem';
 import type { SortOption } from '../interfaces/iSortOption';
-import { _warnOnce } from '../utils/function';
 import type { Component, ComponentSelector } from '../widgets/component';
 import { SortIndicatorComp, SortIndicatorSelector } from './sortIndicatorComp';
 
-const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
+export const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
 export class SortController extends BeanStub implements NamedBean {
     beanName = 'sortController' as const;
 
@@ -145,39 +144,14 @@ export class SortController extends BeanStub implements NamedBean {
     }
 
     private getNextSortDirection(column: AgColumn): SortDirection {
-        let sortingOrder: SortDirection[] | null | undefined;
-
-        if (column.getColDef().sortingOrder) {
-            sortingOrder = column.getColDef().sortingOrder;
-        } else if (this.gos.get('sortingOrder')) {
-            sortingOrder = this.gos.get('sortingOrder');
-        } else {
-            sortingOrder = DEFAULT_SORTING_ORDER;
-        }
-
-        if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
-            _warnOnce(`sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`);
-            return null;
-        }
+        const sortingOrder: SortDirection[] | null | undefined =
+            column.getColDef().sortingOrder ?? this.gos.get('sortingOrder') ?? DEFAULT_SORTING_ORDER;
 
         const currentIndex = sortingOrder.indexOf(column.getSort()!);
         const notInArray = currentIndex < 0;
         const lastItemInArray = currentIndex == sortingOrder.length - 1;
-        let result: SortDirection;
 
-        if (notInArray || lastItemInArray) {
-            result = sortingOrder[0];
-        } else {
-            result = sortingOrder[currentIndex + 1];
-        }
-
-        // verify the sort type exists, as the user could provide the sortingOrder, need to make sure it's valid
-        if (DEFAULT_SORTING_ORDER.indexOf(result) < 0) {
-            _warnOnce('invalid sort type ', result);
-            return null;
-        }
-
-        return result;
+        return notInArray || lastItemInArray ? sortingOrder[0] : sortingOrder[currentIndex + 1];
     }
 
     /**
