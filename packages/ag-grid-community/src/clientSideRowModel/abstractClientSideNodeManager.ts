@@ -97,15 +97,15 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     public setNewRowData(rowData: TData[]): void {
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
-        const rootNode = this.rootRow;
+        const rootRow = this.rootRow;
         const sibling = this.rootRow.sibling;
 
-        rootNode.childrenAfterFilter = null;
-        rootNode.childrenAfterGroup = null;
-        rootNode.childrenAfterAggFilter = null;
-        rootNode.childrenAfterSort = null;
-        rootNode.childrenMapped = null;
-        rootNode.updateHasChildren();
+        rootRow.childrenAfterFilter = null;
+        rootRow.childrenAfterGroup = null;
+        rootRow.childrenAfterAggFilter = null;
+        rootRow.childrenAfterSort = null;
+        rootRow.childrenMapped = null;
+        rootRow.updateHasChildren();
 
         // Clear internal maps
 
@@ -115,12 +115,12 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         this.loadNewRowData(rowData);
 
         if (sibling) {
-            sibling.childrenAfterFilter = rootNode.childrenAfterFilter;
-            sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
-            sibling.childrenAfterAggFilter = rootNode.childrenAfterAggFilter;
-            sibling.childrenAfterSort = rootNode.childrenAfterSort;
-            sibling.childrenMapped = rootNode.childrenMapped;
-            sibling.allLeafChildren = rootNode.allLeafChildren;
+            sibling.childrenAfterFilter = rootRow.childrenAfterFilter;
+            sibling.childrenAfterGroup = rootRow.childrenAfterGroup;
+            sibling.childrenAfterAggFilter = rootRow.childrenAfterAggFilter;
+            sibling.childrenAfterSort = rootRow.childrenAfterSort;
+            sibling.childrenMapped = rootRow.childrenMapped;
+            sibling.allLeafChildren = rootRow.allLeafChildren;
         }
     }
 
