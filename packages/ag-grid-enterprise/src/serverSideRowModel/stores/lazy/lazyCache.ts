@@ -27,7 +27,7 @@ interface LazyStoreNode {
     node: RowNode;
 }
 
-const DEFAULT_BLOCK_SIZE = 100;
+const DEFAULT_BLOCK_SIZE = 100 as const;
 
 export class LazyCache extends BeanStub {
     private rowRenderer: RowRenderer;
