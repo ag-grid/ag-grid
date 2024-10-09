@@ -2,7 +2,7 @@ import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _warnOnce } from '../utils/function';
+import { _logWarn } from '../validation/logging';
 
 export function setNodesSelected(
     beans: BeanCollection,
@@ -10,12 +10,12 @@ export function setNodesSelected(
 ) {
     const allNodesValid = params.nodes.every((node) => {
         if (node.rowPinned) {
-            _warnOnce('cannot select pinned rows');
+            _logWarn(119);
             return false;
         }
 
         if (node.id === undefined) {
-            _warnOnce('cannot select node until id for node is known');
+            _logWarn(120);
             return false;
         }
         return true;

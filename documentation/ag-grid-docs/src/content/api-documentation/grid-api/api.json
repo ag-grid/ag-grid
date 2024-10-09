@@ -152,20 +152,6 @@
         "getRightDisplayedColumnGroups": {},
         "isColumnHovered": {}
     },
-    "Pivoting": {
-        "meta": {
-            "displayName": "Pivoting",
-            "description": "See [Pivoting](./pivoting/)"
-        },
-        "isPivotMode": {},
-        "getPivotColumns": {},
-        "setPivotColumns": {},
-        "addPivotColumns": {},
-        "removePivotColumns": {},
-        "getPivotResultColumn": {},
-        "setPivotResultColumns": {},
-        "getPivotResultColumns": {}
-    },
     "pinned": {
         "meta": {
             "displayName": "Row Pinning",
@@ -577,13 +563,10 @@
             }
         }
     },
-    "rowGroupsCols": {
+    "rowExpansion": {
         "meta": {
-            "displayName": "Row Grouping",
-            "page": {
-                "name": "Row Grouping",
-                "url": "./grouping/"
-            }
+            "displayName": "Row Expand and Collapse",
+            "description": "See [Row Grouping](./grouping-opening-groups/) or [Tree Data](./tree-data-opening-groups/) for more information"
         },
         "expandAll": {},
         "collapseAll": {},
@@ -593,7 +576,16 @@
                 "url": "./grouping-opening-groups/#expand-row-ancestors"
             }
         },
-        "onGroupExpandedOrCollapsed": {},
+        "onGroupExpandedOrCollapsed": {}
+    },
+    "rowGroupsCols": {
+        "meta": {
+            "displayName": "Row Grouping",
+            "page": {
+                "name": "Row Grouping",
+                "url": "./grouping/"
+            }
+        },
         "getRowGroupColumns": {},
         "setRowGroupColumns": {},
         "addRowGroupColumns": {},
@@ -797,10 +789,10 @@
         "getCurrentUndoSize": {},
         "getCurrentRedoSize": {}
     },
-    "rowPivoting": {
+    "aggregation": {
         "meta": {
-            "displayName": "Pivot and Aggregation",
-            "description": "See [Pivot](./pivoting/) and [Aggregation](./aggregation/) for more information"
+            "displayName": "Row Aggregation",
+            "description": "See [Aggregation](./aggregation/) for more information"
         },
         "getValueColumns": {},
         "addValueColumns": {},
@@ -814,6 +806,20 @@
             }
         },
         "clearAggFuncs": {}
+    },
+    "rowPivoting": {
+        "meta": {
+            "displayName": "Row Pivoting",
+            "description": "See [Pivot](./pivoting/)  for more information"
+        },
+        "isPivotMode": {},
+        "getPivotColumns": {},
+        "setPivotColumns": {},
+        "addPivotColumns": {},
+        "removePivotColumns": {},
+        "getPivotResultColumn": {},
+        "setPivotResultColumns": {},
+        "getPivotResultColumns": {}
     },
     "accessories": {
         "meta": {

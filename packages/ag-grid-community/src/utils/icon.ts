@@ -1,8 +1,8 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { GridOptionsService } from '../gridOptionsService';
+import { _logWarn } from '../validation/logging';
 import { _setAriaRole } from './aria';
 import { _isNodeOrElement, _loadTemplate } from './dom';
-import { _warnOnce } from './function';
 
 //
 // IMPORTANT NOTE!
@@ -241,7 +241,7 @@ export function _createIconNoSpan(
             return rendererResult as Element;
         }
 
-        _warnOnce('iconRenderer should return back a string or a dom object');
+        _logWarn(133);
     } else {
         const span = document.createElement('span');
         let cssClass: string =
@@ -249,7 +249,7 @@ export function _createIconNoSpan(
 
         if (!cssClass) {
             if (!forceCreate) {
-                _warnOnce(`Did not find icon ${iconName}`);
+                _logWarn(134, { iconName });
                 cssClass = '';
             } else {
                 cssClass = iconName;

@@ -10,8 +10,8 @@ fi
 VERSION=$1
 
 # store the command output so that we can capture the archive filename
-./scripts/release/createDocsArchiveBundle.sh $VERSION
+./scripts/deployments/prep_and_archive/createDocsArchiveBundle.sh $VERSION
 ARCHIVE_FILENAME="archive_`date +%Y%m%d`_$VERSION.tar.gz"
 
 # $2 is optional skipWarning argument
-./scripts/release/uploadAndUnzipArchive.sh $VERSION $ARCHIVE_FILENAME $2
+./scripts/deployments/prep_and_archive/uploadAndUnzipArchive.sh $VERSION $ARCHIVE_FILENAME $2

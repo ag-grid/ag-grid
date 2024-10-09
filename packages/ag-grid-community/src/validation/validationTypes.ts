@@ -13,7 +13,7 @@ export interface OptionsValidator<T extends object> {
 
 // Deprecations, if renamed then old value is copied.
 export type Deprecations<T extends object> = Partial<{
-    [key in keyof T]: { version: string; message?: string } | { version: string; renamed: keyof T };
+    [key in keyof T]: { version: string; message?: string };
 }>;
 
 // Util, if array, type of array. Else T.

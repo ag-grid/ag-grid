@@ -1,12 +1,12 @@
 import type { BeanCollection } from '../context/context';
 import { RowNode } from '../entities/rowNode';
 import type { IGetRowsParams } from '../interfaces/iDatasource';
-import type { LoadSuccessParams } from '../rowNodeCache/iRowNodeBlock';
-import { RowNodeBlock } from '../rowNodeCache/rowNodeBlock';
+import type { LoadSuccessParams } from '../interfaces/iServerSideRowModel';
 import { _exists, _missing } from '../utils/generic';
 import type { NumberSequence } from '../utils/numberSequence';
 import { _logWarn } from '../validation/logging';
 import type { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
+import { RowNodeBlock } from './rowNodeBlock';
 
 export class InfiniteBlock extends RowNodeBlock {
     private beans: BeanCollection;
