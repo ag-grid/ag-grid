@@ -3,14 +3,14 @@ import { BeanStub } from '../context/beanStub';
 import { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import { _getCheckboxes, _getHeaderCheckbox } from '../gridOptionsUtils';
-import { isColumnControlsCol } from './columnUtils';
+import { isColumnSelectionCol } from './columnUtils';
 
-export const CONTROLS_COLUMN_ID_PREFIX = 'ag-Grid-ControlsColumn' as const;
+export const CONTROLS_COLUMN_ID_PREFIX = 'ag-Grid-SelectionColumn' as const;
 
-export class ControlsColService extends BeanStub implements NamedBean {
-    beanName = 'controlsColService' as const;
+export class SelectionColService extends BeanStub implements NamedBean {
+    beanName = 'selectionColService' as const;
 
-    public createControlsCols(): AgColumn[] {
+    public createSelectionCols(): AgColumn[] {
         const { gos } = this;
         const so = gos.get('rowSelection');
         if (!so || typeof so !== 'object') {
@@ -51,12 +51,12 @@ export class ControlsColService extends BeanStub implements NamedBean {
         return [];
     }
 
-    public putControlColsFirstInList(list: AgColumn[], cols?: AgColumn[] | null): AgColumn[] | null {
+    public putSelectionColsFirstInList(list: AgColumn[], cols?: AgColumn[] | null): AgColumn[] | null {
         if (!cols) {
             return null;
         }
-        // we use colId, and not instance, to remove old controlsCols
-        const colsFiltered = cols.filter((col) => !isColumnControlsCol(col));
+        // we use colId, and not instance, to remove old selectionCols
+        const colsFiltered = cols.filter((col) => !isColumnSelectionCol(col));
         return [...list, ...colsFiltered];
     }
 }

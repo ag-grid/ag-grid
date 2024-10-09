@@ -6,7 +6,7 @@ import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColKey } from './columnModel';
-import { CONTROLS_COLUMN_ID_PREFIX } from './controlsColService';
+import { CONTROLS_COLUMN_ID_PREFIX } from './selectionColService';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn' as const;
 
@@ -67,7 +67,7 @@ export function isColumnGroupAutoCol(col: AgColumn): boolean {
     return colId.startsWith(GROUP_AUTO_COLUMN_ID);
 }
 
-export function isColumnControlsCol(col: ColKey): boolean {
+export function isColumnSelectionCol(col: ColKey): boolean {
     const id = typeof col === 'string' ? col : 'getColId' in col ? col.getColId() : col.colId;
     return id?.startsWith(CONTROLS_COLUMN_ID_PREFIX) ?? false;
 }

@@ -22,7 +22,7 @@ import {
 } from './columnEventUtils';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnModel } from './columnModel';
-import { GROUP_AUTO_COLUMN_ID, _getColumnsFromTree, isColumnControlsCol } from './columnUtils';
+import { GROUP_AUTO_COLUMN_ID, _getColumnsFromTree, isColumnSelectionCol } from './columnUtils';
 import type { FuncColsService } from './funcColsService';
 import type { VisibleColsService } from './visibleColsService';
 
@@ -140,7 +140,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
                     return;
                 }
 
-                if (isColumnControlsCol(colId)) {
+                if (isColumnSelectionCol(colId)) {
                     selectionColStates.push(state);
                     unmatchedAndAutoStates.push(state);
                     return;
