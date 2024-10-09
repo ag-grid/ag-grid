@@ -1,36 +1,6 @@
 import type { Bean } from '../context/bean';
-import type { NumberSequence } from '../utils/numberSequence';
-import type { RowBounds } from './iRowModel';
-import type { IRowNode } from './iRowNode';
-import type { ServerSideTransaction, ServerSideTransactionResult } from './serverSideTransaction';
 
 export interface IServerSideStore extends Bean {
-    clearDisplayIndexes(): void;
-    getDisplayIndexEnd(): number | undefined;
-    isDisplayIndexInStore(displayIndex: number): boolean;
-    setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }, uiLevel: number): void;
-    forEachStoreDeep(callback: (rowNode: IServerSideStore, index: number) => void, sequence?: NumberSequence): void;
-    forEachNodeDeep(callback: (rowNode: IRowNode, index: number) => void, sequence?: NumberSequence): void;
-    forEachNodeDeepAfterFilterAndSort(
-        callback: (rowNode: IRowNode, index: number) => void,
-        sequence?: NumberSequence,
-        includeFooterNodes?: boolean
-    ): void;
-    retryLoads(): void;
-    getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean): IRowNode | undefined;
-    getRowBounds(index: number): RowBounds | null;
-    isPixelInRange(pixel: number): boolean;
-    getRowIndexAtPixel(pixel: number): number | null;
-    getChildStore(keys: string[]): IServerSideStore | null;
-    refreshAfterSort(params: StoreRefreshAfterParams): void;
-    refreshAfterFilter(params: StoreRefreshAfterParams): void;
-    applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult;
-    refreshStore(purge: boolean): void;
-    getRowCount(): number;
-    getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
-    isLastRowIndexKnown(): boolean;
-    getRowNodesInRange(firstInRange: IRowNode, lastInRange: IRowNode): IRowNode[];
-    addStoreStates(result: ServerSideGroupLevelState[]): void;
     getStoreBounds(): { topPx: number; heightPx: number };
 }
 
@@ -41,8 +11,6 @@ export interface StoreRefreshAfterParams {
 }
 
 export interface ServerSideGroupLevelState {
-    /** True if suppressing infinite scrolling and loading all the data at the current level */
-    suppressInfiniteScroll: boolean;
     /** The route that identifies this level. */
     route: string[];
     /** How many rows the level has. This includes 'loading rows'. */
