@@ -33,12 +33,11 @@ import {
     _isGetRowHeightFunction,
     _isRowSelection,
     _jsonEquals,
-    _logError,
     _warnOnce,
 } from 'ag-grid-community';
 
 import type { NodeManager } from './nodeManager';
-import { LazyStore } from './stores/lazy/lazyStore';
+import type { LazyStore } from './stores/lazy/lazyStore';
 import type { StoreFactory } from './stores/storeFactory';
 
 export interface SSRMParams {

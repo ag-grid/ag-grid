@@ -11,7 +11,7 @@ import { BeanStub, _getMaxConcurrentDatasourceRequests } from 'ag-grid-community
 
 import type { ServerSideRowModel } from '../../serverSideRowModel';
 import type { LazyCache } from './lazyCache';
-import { LazyStore } from './lazyStore';
+import type { LazyStore } from './lazyStore';
 
 export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     beanName = 'lazyBlockLoadingService' as const;

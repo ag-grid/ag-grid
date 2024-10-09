@@ -3,8 +3,6 @@ import type { MockInstance } from 'vitest';
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid } from 'ag-grid-community';
 
-import { VERSION } from '../version';
-
 describe('ag-grid overlays state', () => {
     let consoleWarnSpy: MockInstance | undefined;
     let consoleErrorSpy: MockInstance | undefined;
