@@ -304,7 +304,16 @@ export class RowContainerEventsFeature extends BeanStub {
         } else if (selectionService) {
             const justFiltered = _getSelectAllFiltered(gos);
             const justCurrentPage = _getSelectAllCurrentPage(gos);
-            selectionService?.selectAllRowNodes({ source: 'keyboardEvent', justFiltered, justCurrentPage });
+            const source = justCurrentPage
+                ? 'keyboardSelectAllCurrentPage'
+                : justFiltered
+                  ? 'keyboardSelectAllFiltered'
+                  : 'keyboardSelectAll';
+            selectionService?.selectAllRowNodes({
+                source,
+                justFiltered,
+                justCurrentPage,
+            });
         }
 
         event.preventDefault();
