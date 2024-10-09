@@ -74,16 +74,8 @@ export class ValidationService extends BeanStub implements NamedBean {
         optionKeys.forEach((key: keyof T) => {
             const deprecation = deprecations[key];
             if (deprecation) {
-                if ('renamed' in deprecation) {
-                    const { renamed, version } = deprecation;
-                    warnings.add(
-                        `As of v${version}, ${String(key)} is deprecated. Please use ${String(renamed)} instead.`
-                    );
-                    options[renamed] = options[key];
-                } else {
-                    const { message, version } = deprecation;
-                    warnings.add(`As of v${version}, ${String(key)} is deprecated. ${message ?? ''}`);
-                }
+                const { message, version } = deprecation;
+                warnings.add(`As of v${version}, ${String(key)} is deprecated. ${message ?? ''}`);
             }
 
             const value = options[key];
