@@ -935,6 +935,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return this.autoCols?.list ?? null;
     }
 
+    public getSelectionCol(key: ColKey): AgColumn | null {
+        return this.controlsCols?.list.find((col) => columnsMatch(col, key)) ?? null;
+    }
+
+    public getSelectionCols(): AgColumn[] | null {
+        return this.controlsCols?.list ?? null;
+    }
+
     public setColHeaderHeight(col: AgColumn | AgColumnGroup, height: number): void {
         const changed = col.setAutoHeaderHeight(height);
 
