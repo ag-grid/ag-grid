@@ -1,11 +1,11 @@
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 
 export class Downloader {
     public static download(fileName: string, content: Blob) {
         const win = document.defaultView || window;
 
         if (!win) {
-            _logWarn(52);
+            _warn(52);
             return;
         }
 

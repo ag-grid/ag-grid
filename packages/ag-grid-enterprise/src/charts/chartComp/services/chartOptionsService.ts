@@ -11,7 +11,7 @@ import type {
 } from 'ag-charts-types';
 
 import type { ChartType } from 'ag-grid-community';
-import { BeanStub, _logError } from 'ag-grid-community';
+import { BeanStub, _error } from 'ag-grid-community';
 
 import type { ChartController } from '../chartController';
 import type { AgChartActual, AgChartAxisType } from '../utils/integration';
@@ -283,7 +283,7 @@ export class ChartOptionsService extends BeanStub {
         chart
             .waitForUpdate()
             .then(() => func())
-            .catch((e) => _logError(108, { e }));
+            .catch((e) => _error(108, { e }));
     }
 
     private getAxisProperty<T = string>(expression: string): T {

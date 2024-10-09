@@ -5,7 +5,7 @@ import { RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged } from '../events';
 import { _getRowHeightForNode, _getRowIdCallback } from '../gridOptionsUtils';
 import type { RowPinnedType } from '../interfaces/iRowNode';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 
 export class PinnedRowModel extends BeanStub implements NamedBean {
     beanName = 'pinnedRowModel' as const;
@@ -108,7 +108,7 @@ export class PinnedRowModel extends BeanStub implements NamedBean {
             const id = getRowId?.({ data, level: 0, rowPinned: floating }) ?? idPrefix + this.nextId++;
 
             if (dataIds.has(id)) {
-                _logWarn(96, { id, data });
+                _warn(96, { id, data });
                 continue;
             }
 

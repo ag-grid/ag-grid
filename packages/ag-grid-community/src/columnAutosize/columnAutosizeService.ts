@@ -17,7 +17,7 @@ import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import { _removeFromArray } from '../utils/array';
 import { _getInnerWidth } from '../utils/dom';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import { TouchListener } from '../widgets/touchListener';
 
 export class ColumnAutosizeService extends BeanStub implements NamedBean {
@@ -270,7 +270,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             }, 500);
         } else {
             // Grid coming back with zero width, maybe the grid is not visible yet on the screen?
-            _logWarn(29);
+            _warn(29);
         }
     }
 

@@ -26,7 +26,7 @@ import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
 import { _exists, _missing } from './utils/generic';
-import { _logWarn } from './validation/logging';
+import { _warn } from './validation/logging';
 
 function isRowModelType(gos: GridOptionsService, rowModelType: RowModelType): boolean {
     return gos.get('rowModelType') === rowModelType;
@@ -87,7 +87,7 @@ export function _getRowHeightForNode(
 
         if (isNumeric(height)) {
             if (height === 0) {
-                _logWarn(23);
+                _warn(23);
             }
             return { height: Math.max(1, height), estimated: false };
         }
@@ -135,7 +135,7 @@ export function _getRowHeightAsNumber(gos: GridOptionsService): number {
         return rowHeight;
     }
 
-    _logWarn(24);
+    _warn(24);
     return environment.getDefaultRowHeight();
 }
 
@@ -287,7 +287,7 @@ export function _getRowIdCallback<TData = any>(
         let id = getRowId(params);
 
         if (typeof id !== 'string') {
-            _logWarn(25, { id });
+            _warn(25, { id });
             id = String(id);
         }
 

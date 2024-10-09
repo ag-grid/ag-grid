@@ -77,7 +77,7 @@ const minifiedLog = (errorNum: ErrorId, args: GetErrorParams<any>, defaultMessag
     return `${defaultMessage ? defaultMessage + ' \n' : ''}Visit ${errorLink}${defaultMessage ? '' : ' \n  Alternatively register the ValidationModule to see the full message in the console.'}`;
 };
 
-export function _logWarn<
+export function _warn<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
@@ -85,7 +85,7 @@ export function _logWarn<
     getMsgOrDefault(warnLog, args[0], args[1] as any);
 }
 
-export function _logError<
+export function _error<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],

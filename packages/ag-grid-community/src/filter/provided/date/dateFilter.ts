@@ -3,7 +3,7 @@ import type { BeanCollection, Context } from '../../../context/context';
 import { _getDocument } from '../../../gridOptionsUtils';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
-import { _logWarn } from '../../../validation/logging';
+import { _warn } from '../../../validation/logging';
 import type { FILTER_LOCALE_TEXT } from '../../filterLocaleText';
 import type { Comparator } from '../iScalarFilter';
 import type { ISimpleFilterModel, Tuple } from '../iSimpleFilter';
@@ -93,7 +93,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
                 if (!isNaN(params[param])) {
                     return params[param] == null ? fallback : Number(params[param]);
                 } else {
-                    _logWarn(82, { param });
+                    _warn(82, { param });
                 }
             }
 
@@ -104,7 +104,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         this.maxValidYear = yearParser('maxValidYear', DEFAULT_MAX_YEAR);
 
         if (this.minValidYear > this.maxValidYear) {
-            _logWarn(83);
+            _warn(83);
         }
 
         if (params.minValidDate) {
@@ -126,7 +126,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         }
 
         if (this.minValidDate && this.maxValidDate && this.minValidDate > this.maxValidDate) {
-            _logWarn(84);
+            _warn(84);
         }
 
         this.filterModelFormatter = new DateFilterModelFormatter(

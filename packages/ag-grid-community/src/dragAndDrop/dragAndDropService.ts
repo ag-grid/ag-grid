@@ -15,7 +15,7 @@ import { _getBodyHeight, _getBodyWidth } from '../utils/browser';
 import { _getElementRectWithOffset } from '../utils/dom';
 import { _isFunction } from '../utils/function';
 import type { AgPromise } from '../utils/promise';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import type { DragAndDropImageComponent } from './dragAndDropImageComponent';
 import type { DragListenerParams, DragService } from './dragService';
 import type { RowDropZoneParams } from './rowDragFeature';
@@ -654,7 +654,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         this.dragAndDropImageParent = targetEl;
 
         if (!targetEl) {
-            _logWarn(54);
+            _warn(54);
         } else {
             targetEl.appendChild(eGui);
         }

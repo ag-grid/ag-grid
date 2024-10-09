@@ -1,7 +1,7 @@
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
 
 import type { HighlightStyleOptions } from 'ag-grid-community';
-import { _logError } from 'ag-grid-community';
+import { _error } from 'ag-grid-community';
 
 import type { SparklineFactoryOptions } from './agSparkline';
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
@@ -334,7 +334,7 @@ export abstract class Sparkline {
     }
 
     private renderScene() {
-        this.scene.render().catch((e) => _logError(105, { e }));
+        this.scene.render().catch((e) => _error(105, { e }));
     }
 
     private updateHitPoint(event: MouseEvent) {

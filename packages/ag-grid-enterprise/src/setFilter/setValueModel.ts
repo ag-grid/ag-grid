@@ -19,9 +19,9 @@ import {
     AgPromise,
     LocalEventService,
     _defaultComparator,
+    _error,
     _exists,
     _isClientSideRowModel,
-    _logError,
     _makeNull,
     _warnOnce,
 } from 'ag-grid-community';
@@ -454,7 +454,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
         existingValues?: Map<string | null, V | null>;
     } | null {
         if (!this.clientSideValuesExtractor) {
-            _logError(113);
+            _error(113);
             return null;
         }
 

@@ -10,7 +10,7 @@ import type {
     NewColumnsLoadedEvent,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _exists, _isClientSideRowModel, _isServerSideRowModel, _logWarn } from 'ag-grid-community';
+import { BeanStub, _exists, _isClientSideRowModel, _isServerSideRowModel, _warn } from 'ag-grid-community';
 
 import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
@@ -158,7 +158,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         const previousValue = this.enabled;
         const isValidRowModel = _isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos);
         if (enabled && !isValidRowModel) {
-            _logWarn(123);
+            _warn(123);
         }
         this.enabled = enabled && isValidRowModel;
         if (!silent && this.enabled !== previousValue) {
