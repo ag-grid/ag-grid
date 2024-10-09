@@ -12,6 +12,7 @@ import {
     BaseSelectionService,
     _getGroupSelectsDescendants,
     _getRowSelectionMode,
+    _isRowSelection,
     _isUsingNewRowSelectionAPI,
     _warnOnce,
 } from 'ag-grid-community';
@@ -81,9 +82,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         this.dispatchSelectionChanged(source);
     }
 
-    public setNodesSelected(params: ISetNodesSelectedParams): number {
-        const { nodes, ...otherParams } = params;
-
+    public setNodesSelected({ nodes, ...params }: ISetNodesSelectedParams): number {
         if (nodes.length > 1 && this.selectionMode !== 'multiRow') {
             _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
             return 0;
@@ -94,10 +93,14 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             return 0;
         }
 
-        const adjustedParams = {
-            nodes: nodes.filter((node) => node.selectable),
-            ...otherParams,
-        };
+        // Only filter out selectable nodes when attempting to select; we should be able to de-select
+        // unselectable nodes (e.g. when isRowSelectable changes)
+        const adjustedParams = params.newValue
+            ? {
+                  nodes: nodes.filter((node) => node.selectable),
+                  ...params,
+              }
+            : { nodes, ...params };
 
         // if no selectable nodes, then return 0
         if (!adjustedParams.nodes.length) {
@@ -237,7 +240,51 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         _warnOnce('calling gridApi.getBestCostNodeSelection() is only possible when using rowModelType=`clientSide`.');
         return undefined;
     }
+
+    /**
+     * Updates the selectable state for a node by invoking isRowSelectable callback.
+     * If the node is not selectable, it will be deselected.
+     *
+     * Callers:
+     *  - property isRowSelectable changed
+     *  - after grouping / treeData
+     */
+    public override updateSelectable(skipLeafNodes: boolean): void {
+        const { gos } = this;
+
+        const isRowSelecting = _isRowSelection(gos);
+
+        if (!isRowSelecting) {
+            return;
+        }
+
+        const nodesToDeselect: RowNode[] = [];
+
+        const nodeCallback = (node: RowNode) => {
+            if (skipLeafNodes && !node.group) {
+                return;
+            }
+
+            const rowSelectable = this.isRowSelectable?.(node) ?? true;
+            node.setRowSelectable(rowSelectable, true);
+
+            if (!rowSelectable && node.isSelected()) {
+                nodesToDeselect.push(node);
+            }
+        };
+
+        this.rowModel.forEachNode(nodeCallback);
+
+        if (nodesToDeselect.length) {
+            this.setNodesSelected({
+                nodes: nodesToDeselect,
+                newValue: false,
+                source: 'selectableChanged',
+            });
+        }
+    }
 }
+
 function validateSelectionParameters({
     justCurrentPage,
     justFiltered,

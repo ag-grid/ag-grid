@@ -1,3 +1,5 @@
+import type { IServerSideGetRowsRequest } from 'ag-grid-community';
+
 export const GROUP_ROW_DATA = [
     {
         athlete: 'Michael Phelps',
@@ -240,3 +242,64 @@ export const GROUP_ROW_DATA = [
         total: 4,
     },
 ];
+
+type RowData = typeof GROUP_ROW_DATA;
+type Row = RowData[number];
+type GroupedRowData = Record<string | number, RowData>;
+
+export function fakeFetch(params: IServerSideGetRowsRequest) {
+    const grouped = group(params, where(params));
+
+    if (Array.isArray(grouped)) {
+        return select(params, grouped);
+    } else {
+        return Object.entries(grouped)
+            .map(([, rows]) => {
+                const selected = select(params, rows);
+                return selected[0];
+            })
+            .flat();
+    }
+}
+
+// Ignore valueCols for tests
+function select({ rowGroupCols, groupKeys }: IServerSideGetRowsRequest, rows: RowData): Partial<Row>[] {
+    if (rowGroupCols.length > groupKeys.length) {
+        const groupCol = rowGroupCols[groupKeys.length];
+        const field = groupCol.field! as keyof Row;
+        return rows.map((row) => ({ [field]: row[field] }));
+    }
+    return rows;
+}
+
+function where({ rowGroupCols, groupKeys }: IServerSideGetRowsRequest): RowData {
+    if (groupKeys.length) {
+        GROUP_ROW_DATA.filter((row) => {
+            for (let i = 0; i < groupKeys.length; i++) {
+                const field = rowGroupCols[i].field! as keyof Row;
+                if (row[field] === groupKeys[i]) {
+                    return true;
+                }
+            }
+            return false;
+        });
+    }
+    return GROUP_ROW_DATA;
+}
+
+function group({ rowGroupCols, groupKeys }: IServerSideGetRowsRequest, rows: RowData): RowData | GroupedRowData {
+    if (rowGroupCols.length > groupKeys.length) {
+        const groupCol = rowGroupCols[groupKeys.length];
+        return groupBy(rows, groupCol.field! as keyof Row);
+    }
+    return rows;
+}
+
+function groupBy(objs: RowData, key: keyof Row): GroupedRowData {
+    return objs.reduce((acc, obj) => {
+        const value = obj[key];
+        acc[value] ||= [];
+        acc[value].push(obj);
+        return acc;
+    }, {});
+}
