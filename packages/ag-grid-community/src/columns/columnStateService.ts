@@ -189,10 +189,10 @@ export class ColumnStateService extends BeanStub implements NamedBean {
             this.columnModel.refreshCols(false);
 
             // sync newly created auto group columns with ColumnState
-            const autoCols = this.columnModel.getAutoCols()?.slice() ?? [];
+            const autoColsCopy = this.columnModel.getAutoCols()?.slice() ?? [];
             autoColStates.forEach((stateItem) => {
                 const autoCol = this.columnModel.getAutoCol(stateItem.colId);
-                _removeFromArray(autoCols, autoCol);
+                _removeFromArray(autoColsCopy, autoCol);
                 this.syncColumnWithStateItem(
                     autoCol,
                     stateItem,
@@ -205,7 +205,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
                 );
             });
             // autogroup cols with nothing else, apply the default
-            autoCols.forEach(applyDefaultsFunc);
+            autoColsCopy.forEach(applyDefaultsFunc);
 
             // sync selection cols with ColumnState
             const selectionCols = this.columnModel.getAutoCols()?.slice() ?? [];
