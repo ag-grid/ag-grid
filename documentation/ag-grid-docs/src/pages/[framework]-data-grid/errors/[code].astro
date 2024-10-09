@@ -95,16 +95,24 @@ const headings = errorPage
 <script>
     import { getErrorText } from '@utils/getErrorText';
     import type { ErrorId } from '../../../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
+    import { VERSION } from '../../../../../../packages/ag-grid-community/src/version';
+    import { getErrorRedirectBaseUrl } from '@utils/getErrorRedirectBaseUrl';
+    import { pathJoin } from '@utils/pathJoin';
 
     // Get errorCode from url, so it doesn't need to be passed
     // in from Astro and we can import in this script
     const errorCode = parseInt(window.location.pathname.split('/').filter(Boolean).slice(-1)[0], 10) as ErrorId;
     const searchParams = new URLSearchParams(window.location.search);
-    const params = Object.fromEntries(searchParams.entries());
+    const { _version_, ...params } = Object.fromEntries(searchParams.entries());
     const errorText = getErrorText({ errorCode, params });
+    const errorRedirectBaseUrl = getErrorRedirectBaseUrl({ errorVersion: _version_, pageVersion: VERSION });
+
+    if (errorRedirectBaseUrl) {
+        const redirectUrl = pathJoin(errorRedirectBaseUrl, window.location.pathname, window.location.search);
+        window.location.replace(redirectUrl);
+    }
 
     const errorCodeTextEl = document.getElementById('errorCodeText');
-
     if (errorCodeTextEl) {
         errorCodeTextEl.textContent = errorText;
     }
