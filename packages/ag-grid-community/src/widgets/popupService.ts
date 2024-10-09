@@ -16,9 +16,9 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import { _setAriaLabel, _setAriaRole } from '../utils/aria';
 import { _getAbsoluteHeight, _getAbsoluteWidth, _getElementRectWithOffset, _observeResize } from '../utils/dom';
 import { _isElementInEventPath, _isStopPropagationForAgGrid } from '../utils/event';
-import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
+import { _logWarn } from '../validation/logging';
 
 interface AgPopup {
     element: HTMLElement;
@@ -448,7 +448,7 @@ export class PopupService extends BeanStub implements NamedBean {
         const { eChild, ariaLabel, alwaysOnTop, positionCallback, anchorToElement } = params;
 
         if (!eDocument) {
-            _warnOnce('could not find the document, document is empty');
+            _logWarn(122);
             return { hideFunc: () => {} };
         }
 

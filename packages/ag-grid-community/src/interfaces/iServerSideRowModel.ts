@@ -1,4 +1,3 @@
-import type { LoadSuccessParams } from '../rowNodeCache/iRowNodeBlock';
 import type { ServerSideGroupLevelState } from './IServerSideStore';
 import type { IRowModel } from './iRowModel';
 import type { IRowNode } from './iRowNode';
@@ -44,4 +43,23 @@ export interface RefreshServerSideParams {
      * If false, then all rows at the level getting refreshed are kept until rows are loaded (no 'loading' rows appear).
      */
     purge?: boolean;
+}
+
+export interface LoadSuccessParams {
+    /**
+     * Data retrieved from the server as requested by the grid.
+     */
+    rowData: any[];
+    /**
+     * The last row, if known, to help Infinite Scroll.
+     */
+    rowCount?: number;
+    /**
+     * Any extra information for the grid to associate with this load.
+     */
+    groupLevelInfo?: any;
+    /**
+     * The pivot fields in the response - if provided the grid will attempt to generate secondary columns.
+     */
+    pivotResultFields?: string[];
 }

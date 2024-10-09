@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-excluded=("react" "vue3" "angular" "ag-grid-react" "ag-grid-vue3" "ag-grid-angular" "styles" "theming" "locale")
-frameworks=("react" "vue3" "angular" "ag-grid-react" "ag-grid-vue3" "ag-grid-angular")
+excluded=("ag-grid-react" "ag-grid-vue3" "ag-grid-angular" "styles" "locale")
+frameworks=("ag-grid-react" "ag-grid-vue3" "ag-grid-angular")
 
 validatePackageJsonExists()
 {

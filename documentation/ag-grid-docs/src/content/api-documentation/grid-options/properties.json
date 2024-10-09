@@ -941,10 +941,67 @@
             }
         }
     },
+    "aggregation": {
+        "meta": {
+            "displayName": "Row Aggregation",
+            "description": "See [Aggregation](./aggregation/) for more information"
+        },
+        "aggFuncs": {
+            "more": {
+                "name": "Custom Aggregation Functions",
+                "url": "./aggregation-custom-functions/"
+            }
+        },
+        "groupTotalRow": {
+            "more": {
+                "name": "Group Total Rows",
+                "url": "./aggregation-total-rows/#enabling-group-total-rows"
+            }
+        },
+        "grandTotalRow": {
+            "more": {
+                "name": "Grand Total Row",
+                "url": "./aggregation-total-rows/#enabling-a-grand-total-row"
+            }
+        },
+        "suppressAggFuncInHeader": {
+            "more": {
+                "name": "Omit Function Name from Header",
+                "url": "./aggregation-columns/#omit-function-name-in-header"
+            }
+        },
+        "aggregateOnlyChangedColumns": {
+            "more": {
+                "name": "Change Detection",
+                "url": "./change-detection/#tree-path-selection"
+            }
+        },
+        "suppressAggFilteredOnly": {
+            "more": {
+                "name": "Aggregate Before Filtering",
+                "url": "./aggregation-custom-functions/"
+            }
+        },
+        "groupAggFiltering": {
+            "more": {
+                "name": "Filtering for Aggregate Values",
+                "url": "./aggregation-filtering/#filtering-for-aggregated-values"
+            }
+        },
+        "groupSuppressBlankHeader": {
+            "more": {
+                "name": "Showing Values in Group and Total Rows",
+                "url": "./aggregation-total-rows/#keeping-group-row-values"
+            }
+        },
+        "suppressStickyTotalRow": {},
+        "alwaysAggregateAtRootLevel": {},
+        "getGroupRowAgg": {}
+    },
     "rowPivoting": {
         "meta": {
-            "displayName": "Pivot and Aggregation",
-            "description": "See [Pivot](./pivoting/) and [Aggregation](./aggregation/) for more information"
+            "displayName": "Row Pivoting",
+            "description": "See [Pivot](./pivoting/) for more information"
         },
         "pivotMode": {
             "more": {
@@ -1003,61 +1060,10 @@
                 "url": "./tool-panel-columns/#read-only-functions"
             }
         },
-        "aggFuncs": {
-            "more": {
-                "name": "Custom Aggregation Functions",
-                "url": "./aggregation-custom-functions/"
-            }
-        },
-        "getGroupRowAgg": {
-            "more": {
-                "name": "Custom Full Row Aggregation",
-                "url": "./aggregation/"
-            }
-        },
-        "suppressAggFuncInHeader": {
-            "more": {
-                "name": "Column Headers",
-                "url": "./aggregation-columns/#omit-function-name-in-header"
-            }
-        },
-        "alwaysAggregateAtRootLevel": {},
-        "aggregateOnlyChangedColumns": {
-            "more": {
-                "name": "Change Detection",
-                "url": "./change-detection/#tree-path-selection"
-            }
-        },
-        "suppressAggFilteredOnly": {
-            "more": {
-                "name": "Custom Aggregation Functions",
-                "url": "./aggregation-custom-functions/"
-            }
-        },
-        "groupAggFiltering": {},
         "removePivotHeaderRowWhenSingleValueColumn": {
             "more": {
                 "name": "Hiding Repeated Value Column Labels",
                 "url": "./pivoting-column-groups/#hide-group-with-single-value-column"
-            }
-        },
-        "groupTotalRow": {
-            "more": {
-                "name": "Group Total Rows",
-                "url": "./aggregation-total-rows/#enabling-group-total-rows"
-            }
-        },
-        "grandTotalRow": {
-            "more": {
-                "name": "Grand Total Row",
-                "url": "./aggregation-total-rows/#enabling-a-grand-total-row"
-            }
-        },
-        "suppressStickyTotalRow": {},
-        "groupSuppressBlankHeader": {
-            "more": {
-                "name": "Showing Values in Group and Total Rows",
-                "url": "./aggregation-total-rows/#keeping-group-row-values"
             }
         }
     },
@@ -1211,71 +1217,10 @@
                 "url": "./grouping-display-types/"
             }
         },
-        "groupDefaultExpanded": {
-            "more": {
-                "name": "Opening Group Levels by Default",
-                "url": "./grouping-opening-groups/#expanding-by-group-level"
-            }
-        },
         "autoGroupColumnDef": {
             "more": {
                 "name": "Group Column Configuration",
                 "url": "./grouping-single-group-column/#configuration"
-            }
-        },
-        "groupMaintainOrder": {},
-        "groupLockGroupColumns": {
-            "more": {
-                "name": "Group Lock Group Columns",
-                "url": "./grouping-group-panel/#prevent-changes-to-group-order"
-            }
-        },
-        "showOpenedGroup": {
-            "more": {
-                "name": "Showing Open Groups",
-                "url": "./grouping-multiple-group-columns/#display-the-parent-group-value"
-            }
-        },
-        "isGroupOpenByDefault": {
-            "more": {
-                "name": "Open Groups by Default",
-                "url": "./grouping-opening-groups/#expanding-via-callback"
-            }
-        },
-        "initialGroupOrderComparator": {
-            "more": {
-                "name": "Initial Group Order",
-                "url": "./grouping-sorting/#unsorted-group-order"
-            }
-        },
-        "groupHideParentOfSingleChild": {
-            "more": {
-                "name": "Remove Single Children",
-                "url": "./grouping-data/#hiding-parents-of-individual-rows"
-            }
-        },
-        "groupHideOpenParents": {
-            "more": {
-                "name": "Hide Open Parents",
-                "url": "./grouping-multiple-group-columns/#hiding-expanded-parent-rows"
-            }
-        },
-        "groupAllowUnbalanced": {
-            "more": {
-                "name": "Enabling Unbalanced Groups",
-                "url": "./grouping-data/#grouping-on-null-and-undefined-data"
-            }
-        },
-        "rowGroupPanelShow": {
-            "more": {
-                "name": "Enabling Row Group Panel",
-                "url": "./grouping-group-panel/#enabling-the-row-group-panel"
-            }
-        },
-        "rowGroupPanelSuppressSort": {
-            "more": {
-                "name": "Suppress Sorting",
-                "url": "./grouping-group-panel/#prevent-sorting"
             }
         },
         "groupRowRenderer": {
@@ -1291,10 +1236,71 @@
                 "url": "./grouping-group-rows/#cell-renderer"
             }
         },
+        "showOpenedGroup": {
+            "more": {
+                "name": "Showing Open Groups",
+                "url": "./grouping-multiple-group-columns/#display-the-parent-group-value"
+            }
+        },
+        "groupHideOpenParents": {
+            "more": {
+                "name": "Hide Open Parents",
+                "url": "./grouping-multiple-group-columns/#hiding-expanded-parent-rows"
+            }
+        },
+        "groupHideParentOfSingleChild": {
+            "more": {
+                "name": "Remove Single Children",
+                "url": "./grouping-data/#hiding-parents-of-individual-rows"
+            }
+        },
+        "initialGroupOrderComparator": {
+            "more": {
+                "name": "Initial Group Order",
+                "url": "./grouping-sorting/#unsorted-group-order"
+            }
+        },
+        "groupAllowUnbalanced": {
+            "more": {
+                "name": "Enabling Unbalanced Groups",
+                "url": "./grouping-data/#grouping-on-null-and-undefined-data"
+            }
+        },
+        "groupMaintainOrder": {},
+        "groupDefaultExpanded": {
+            "more": {
+                "name": "Opening Group Levels by Default",
+                "url": "./grouping-opening-groups/#expanding-by-group-level"
+            }
+        },
+        "isGroupOpenByDefault": {
+            "more": {
+                "name": "Open Groups by Default",
+                "url": "./grouping-opening-groups/#expanding-via-callback"
+            }
+        },
         "suppressGroupRowsSticky": {
             "more": {
                 "name": "Suppressing Sticky Groups",
                 "url": "./server-side-model-grouping/#suppressing-sticky-groups"
+            }
+        },
+        "rowGroupPanelShow": {
+            "more": {
+                "name": "Enabling Row Group Panel",
+                "url": "./grouping-group-panel/#enabling-the-row-group-panel"
+            }
+        },
+        "rowGroupPanelSuppressSort": {
+            "more": {
+                "name": "Suppress Sorting",
+                "url": "./grouping-group-panel/#prevent-sorting"
+            }
+        },
+        "groupLockGroupColumns": {
+            "more": {
+                "name": "Group Lock Group Columns",
+                "url": "./grouping-group-panel/#prevent-changes-to-group-order"
             }
         },
         "suppressDragLeaveHidesColumns": {
@@ -1330,6 +1336,30 @@
             "more": {
                 "name": "Tree Data",
                 "url": "./tree-data/"
+            }
+        },
+        "autoGroupColumnDef": {
+            "more": {
+                "name": "Group Column Configuration",
+                "url": "./grouping-single-group-column/#configuration"
+            }
+        },
+        "groupDefaultExpanded": {
+            "more": {
+                "name": "Opening Group Levels by Default",
+                "url": "./grouping-opening-groups/#expanding-by-group-level"
+            }
+        },
+        "isGroupOpenByDefault": {
+            "more": {
+                "name": "Open Groups by Default",
+                "url": "./grouping-opening-groups/#expanding-via-callback"
+            }
+        },
+        "suppressGroupRowsSticky": {
+            "more": {
+                "name": "Suppressing Sticky Groups",
+                "url": "./server-side-model-grouping/#suppressing-sticky-groups"
             }
         }
     },

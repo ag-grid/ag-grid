@@ -4,7 +4,6 @@ import type { BeanCollection } from '../context/context';
 import type { RowClassParams } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import { _warnOnce } from '../utils/function';
 import type { ExpressionService } from '../valueService/expressionService';
 import { processClassRules } from './stylingUtils';
 
@@ -40,10 +39,6 @@ export class RowStyleService extends BeanStub implements NamedBean {
         // part 1 - rowClass
         const rowClass = this.gos.get('rowClass');
         if (rowClass) {
-            if (typeof rowClass === 'function') {
-                _warnOnce('rowClass should not be a function, please use getRowClass instead');
-                return [];
-            }
             process(rowClass);
         }
 
