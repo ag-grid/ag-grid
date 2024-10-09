@@ -165,11 +165,11 @@ export class LazyCache extends BeanStub {
             // if hiding open groups, the first node in this expanded store may not be
             // the first displayed node, as it could be hidden, so need to DFS first.
             const nextParent = this.nodeMap.find(
-                (lazyNode) => !!lazyNode.node.childStore?.isDisplayIndexInStore(displayIndex)
+                (lazyNode) => !!(lazyNode.node.childStore as LazyStore | undefined)?.isDisplayIndexInStore(displayIndex)
             );
             // if belongs to child store, search that first
             if (nextParent) {
-                return nextParent.node.childStore?.getRowUsingDisplayIndex(displayIndex);
+                return (nextParent.node.childStore as LazyStore | undefined)?.getRowUsingDisplayIndex(displayIndex);
             }
         }
 
@@ -191,9 +191,11 @@ export class LazyCache extends BeanStub {
             // if previous row is expanded group, this node will belong to that group.
             if (
                 contiguouslyPreviousNode.expanded &&
-                contiguouslyPreviousNode.childStore?.isDisplayIndexInStore(displayIndex)
+                (contiguouslyPreviousNode.childStore as LazyStore | undefined)?.isDisplayIndexInStore(displayIndex)
             ) {
-                return contiguouslyPreviousNode.childStore?.getRowUsingDisplayIndex(displayIndex);
+                return (contiguouslyPreviousNode.childStore as LazyStore | undefined)?.getRowUsingDisplayIndex(
+                    displayIndex
+                );
             }
 
             // otherwise, row must be a stub node
@@ -215,9 +217,9 @@ export class LazyCache extends BeanStub {
         if (
             previousNode &&
             previousNode.node.expanded &&
-            previousNode.node.childStore?.isDisplayIndexInStore(displayIndex)
+            (previousNode.node.childStore as LazyStore | undefined)?.isDisplayIndexInStore(displayIndex)
         ) {
-            return previousNode.node.childStore?.getRowUsingDisplayIndex(displayIndex);
+            return (previousNode.node.childStore as LazyStore | undefined)?.getRowUsingDisplayIndex(displayIndex);
         }
 
         // if we have the node after this node, we can calculate the store index of this node by the difference
@@ -435,7 +437,9 @@ export class LazyCache extends BeanStub {
         }
 
         const storeIndexDiff = storeIndex - previousNode.index;
-        const previousDisplayIndex = previousNode.node.childStore?.getDisplayIndexEnd() ?? previousNode.node.rowIndex!;
+        const previousDisplayIndex =
+            (previousNode.node.childStore as LazyStore | undefined)?.getDisplayIndexEnd() ??
+            previousNode.node.rowIndex!;
         return previousDisplayIndex + storeIndexDiff;
     }
 
