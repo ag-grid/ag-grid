@@ -41,7 +41,7 @@ export class SelectionColService extends BeanStub implements NamedBean {
                 // overrides
                 ...selectionColumnDef,
                 // non-overridable properties
-                colId: `${CONTROLS_COLUMN_ID_PREFIX}`,
+                colId: CONTROLS_COLUMN_ID_PREFIX,
             };
             const col = new AgColumn(colDef, null, colDef.colId!, false);
             this.createBean(col);
