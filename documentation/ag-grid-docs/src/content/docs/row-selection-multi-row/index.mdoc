@@ -106,14 +106,14 @@ The checkbox column may be customised in a similar way to any other column, by s
 {% apiDocumentation source="grid-options/properties.json" section="selection" names=["selectionColumnDef"] /%}
 
 The `SelectionColumnDef` allows for a great deal of customisation, including custom renderers, sorting, tooltips and more.
-The example below demonstrates allowing sorting using the default sort order (selected first) via the header, changing the default width of the column, and pinning it to the left.
+The example below demonstrates allowing sorting using the default sort order (selected first) via the header, changing the default width of the column, allowing resizing, and pinning it to the left.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     selectionColumnDef: {
         sortable: true,
+        resizable: true,
         width: 120,
-        maxWidth: 120,
         suppressHeaderMenuButton: false,
         pinned: 'left',
     }
@@ -121,10 +121,6 @@ const gridOptions = {
 ```
 
 {% gridExampleRunner title="Customising Checkbox Column" name="customise-checkbox-column" /%}
-
-{% note %}
-The checkbox column has a default `maxWidth` set. To make the column resizable (when setting `resizable: true`), or to set a `width`/`initialWidth`, the max width must also be overridden.
-{% /note %}
 
 ## Enable Click Selection & Deselection
 

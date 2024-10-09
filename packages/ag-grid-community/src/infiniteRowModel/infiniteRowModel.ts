@@ -8,12 +8,12 @@ import type { IDatasource } from '../interfaces/iDatasource';
 import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowRenderer } from '../rendering/rowRenderer';
-import type { RowNodeBlockLoader } from '../rowNodeCache/rowNodeBlockLoader';
 import type { SortController } from '../sort/sortController';
 import { _jsonEquals } from '../utils/generic';
 import { NumberSequence } from '../utils/numberSequence';
 import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
+import type { RowNodeBlockLoader } from './rowNodeBlockLoader';
 
 export class InfiniteRowModel extends BeanStub implements NamedBean {
     beanName = 'rowModel' as const;

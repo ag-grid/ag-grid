@@ -3,18 +3,14 @@ import type {
     ColumnModel,
     ColumnVO,
     GridOptions,
-    IServerSideGetRowsParams,
-    IServerSideGetRowsRequest,
-    IServerSideStore,
-    LoadSuccessParams,
     NamedBean,
     RowNode,
-    RowNodeBlock,
     StoreRefreshAfterParams,
 } from 'ag-grid-community';
 import { BeanStub, _isServerSideRowModel, _missingOrEmpty, _warnOnce } from 'ag-grid-community';
 
-import type { SSRMParams, ServerSideRowModel } from '../serverSideRowModel';
+import type { ServerSideRowModel } from '../serverSideRowModel';
+import type { LazyStore } from './lazy/lazyStore';
 import type { StoreFactory } from './storeFactory';
 
 export class StoreUtils extends BeanStub implements NamedBean {
@@ -30,56 +26,11 @@ export class StoreUtils extends BeanStub implements NamedBean {
         this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
     }
 
-    public loadFromDatasource(p: {
-        storeParams: SSRMParams;
-        parentNode: RowNode;
-        parentBlock: RowNodeBlock;
-        success: (params: LoadSuccessParams) => void;
-        fail: () => void;
-        startRow?: number;
-        endRow?: number;
-    }): void {
-        const { storeParams, parentBlock, parentNode } = p;
-        const groupKeys = parentNode.getRoute() ?? [];
-
-        if (!storeParams.datasource) {
-            return;
-        }
-
-        const request: IServerSideGetRowsRequest = {
-            startRow: p.startRow,
-            endRow: p.endRow,
-            rowGroupCols: storeParams.rowGroupCols,
-            valueCols: storeParams.valueCols,
-            pivotCols: storeParams.pivotCols,
-            pivotMode: storeParams.pivotMode,
-            groupKeys: groupKeys,
-            filterModel: storeParams.filterModel,
-            sortModel: storeParams.sortModel,
-        };
-
-        const getRowsParams: IServerSideGetRowsParams = this.gos.addGridCommonParams({
-            success: p.success,
-            fail: p.fail,
-            request: request,
-            parentNode: p.parentNode,
-        });
-
-        window.setTimeout(() => {
-            if (!storeParams.datasource || !parentBlock.isAlive()) {
-                // failCallback() is important, to reduce the 'RowNodeBlockLoader.activeBlockLoadsCount' count
-                p.fail();
-                return;
-            }
-            storeParams.datasource.getRows(getRowsParams);
-        }, 0);
-    }
-
     public getChildStore(
         keys: string[],
-        currentCache: IServerSideStore,
+        currentCache: LazyStore,
         findNodeFunc: (key: string) => RowNode | null
-    ): IServerSideStore | null {
+    ): LazyStore | null {
         if (_missingOrEmpty(keys)) {
             return currentCache;
         }
@@ -96,7 +47,7 @@ export class StoreUtils extends BeanStub implements NamedBean {
             }
 
             const keyListForNextLevel = keys.slice(1, keys.length);
-            const nextStore = nextNode.childStore;
+            const nextStore = nextNode.childStore as LazyStore | undefined;
             return nextStore ? nextStore.getChildStore(keyListForNextLevel) : null;
         }
 
@@ -149,17 +100,11 @@ export class StoreUtils extends BeanStub implements NamedBean {
         }
         return true;
     }
-    private assertNotTreeData(key: keyof GridOptions) {
-        if (this.gos.get('treeData')) {
-            _warnOnce(`The '${key}' property cannot be used while using tree data.`);
-            return false;
-        }
-        return true;
-    }
 
     public isServerSideSortAllLevels() {
         return this.gos.get('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
     }
+
     public isServerSideOnlyRefreshFilteredGroups() {
         return (
             this.gos.get('serverSideOnlyRefreshFilteredGroups') &&

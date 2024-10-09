@@ -45,8 +45,7 @@
   "files.exclude": {
     "**/vitest.config.*.timestamp*": true,
     "**/.git": true,
-    "**/.DS_Store": true,
-    "**/node_modules": true
+    "**/.DS_Store": true
   },
   "[scss]": {
     "editor.detectIndentation": false,

@@ -25,8 +25,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowSelection: { mode: 'multiRow' },
     selectionColumnDef: {
         sortable: true,
+        resizable: true,
         width: 120,
-        maxWidth: 120,
         suppressHeaderMenuButton: false,
         pinned: 'left',
     },

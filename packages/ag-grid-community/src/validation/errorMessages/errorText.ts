@@ -1,3 +1,4 @@
+import { BASE_URL } from '../../baseUrl';
 import type { UserComponentName } from '../../context/context';
 import type { ClientSideRowModelStep } from '../../interfaces/iClientSideRowModel';
 import type { Column } from '../../interfaces/iColumn';
@@ -24,7 +25,7 @@ import { ${moduleName} } from '${isEnterprise ? 'ag-grid-enterprise' : 'ag-grid-
 
 ModuleRegistry.registerModules([ ${moduleName} ]);
 
-For more info see: https://www.ag-grid.com/javascript-grid/modules/`;
+For more info see: ${BASE_URL}/javascript-grid/modules/`;
 
 /**
  * NOTES on setting console messages:

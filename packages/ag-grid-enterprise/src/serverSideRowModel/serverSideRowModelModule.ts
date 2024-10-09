@@ -1,7 +1,6 @@
 import type { _ModuleWithApi, _ModuleWithoutApi, _ServerSideRowModelGridApi } from 'ag-grid-community';
 import {
     CommunityFeaturesModule,
-    RowNodeBlockModule,
     SortModule,
     _CsrmSsrmSharedApiModule,
     _SsrmInfiniteSharedApiModule,
@@ -51,7 +50,7 @@ export const ServerSideRowModelCoreModule: _ModuleWithoutApi = {
         ServerSideSelectionService,
         LazyBlockLoadingService,
     ],
-    dependsOn: [EnterpriseCoreModule, RowNodeBlockModule],
+    dependsOn: [EnterpriseCoreModule],
 };
 
 export const ServerSideRowModelRowSelectionModule: _ModuleWithoutApi = {
