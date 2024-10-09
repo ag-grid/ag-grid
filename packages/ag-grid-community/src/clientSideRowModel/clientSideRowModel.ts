@@ -1228,9 +1228,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private dispatchUpdateEventsAndRefresh(): void {
         // this event kicks off:
         // - shows 'no rows' overlay if needed
-        this.eventService.dispatchEvent({
-            type: 'rowDataUpdated',
-        });
+        this.eventService.dispatchEvent({ type: 'rowDataUpdated' });
 
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
