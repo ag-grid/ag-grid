@@ -58,7 +58,6 @@ export class AppComponent {
     columnDefs: ColDef[] = [{ field: 'make' }, { field: 'model' }, { field: 'price' }];
 
     defaultColDef: ColDef = {
-        editable: true,
         flex: 1,
         minWidth: 100,
         filter: true,

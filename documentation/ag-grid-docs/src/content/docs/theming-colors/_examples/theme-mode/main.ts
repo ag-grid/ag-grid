@@ -1,12 +1,15 @@
 'use strict';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ModuleRegistry } from 'ag-grid-community';
 import type { ColDef, GridOptions } from 'ag-grid-community';
-import { createGrid } from 'ag-grid-community';
-import { themeQuartz } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid, themeQuartz } from 'ag-grid-community';
+import { ColumnsToolPanelModule, FiltersToolPanelModule, SideBarModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    SideBarModule,
+    ColumnsToolPanelModule,
+    FiltersToolPanelModule,
+]);
 
 const myTheme = themeQuartz
     .withParams(
@@ -39,7 +42,6 @@ const rowData: any[] = (() => {
 })();
 
 const defaultColDef = {
-    editable: true,
     flex: 1,
     minWidth: 100,
     filter: true,

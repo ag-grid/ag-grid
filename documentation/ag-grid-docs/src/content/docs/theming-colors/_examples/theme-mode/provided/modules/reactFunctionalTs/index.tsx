@@ -3,12 +3,8 @@
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ModuleRegistry } from 'ag-grid-community';
-import { themeQuartz } from 'ag-grid-community';
-import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
-import { FiltersToolPanelModule } from 'ag-grid-enterprise';
-import { SideBarModule } from 'ag-grid-enterprise';
+import { ClientSideRowModelModule, ModuleRegistry, themeQuartz } from 'ag-grid-community';
+import { ColumnsToolPanelModule, FiltersToolPanelModule, SideBarModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
 ModuleRegistry.registerModules([
@@ -77,7 +73,6 @@ const rowData: any[] = (() => {
 const columnDefs = [{ field: 'make' }, { field: 'model' }, { field: 'price' }];
 
 const defaultColDef = {
-    editable: true,
     flex: 1,
     minWidth: 100,
     filter: true,

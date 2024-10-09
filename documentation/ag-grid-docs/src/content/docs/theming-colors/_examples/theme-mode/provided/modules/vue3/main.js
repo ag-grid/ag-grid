@@ -1,13 +1,7 @@
-import { computed, createApp, onBeforeMount, ref, shallowRef } from 'vue';
+import { createApp } from 'vue';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { ModuleRegistry } from 'ag-grid-community';
-import { themeAlpine, themeBalham, themeQuartz } from 'ag-grid-community';
-import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
-import { ExcelExportModule } from 'ag-grid-enterprise';
-import { FiltersToolPanelModule } from 'ag-grid-enterprise';
-import { MenuModule } from 'ag-grid-enterprise';
-import { SideBarModule } from 'ag-grid-enterprise';
+import { ClientSideRowModelModule, ModuleRegistry, themeQuartz } from 'ag-grid-community';
+import { ColumnsToolPanelModule, FiltersToolPanelModule, SideBarModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
 ModuleRegistry.registerModules([
@@ -16,8 +10,6 @@ ModuleRegistry.registerModules([
     SideBarModule,
     ColumnsToolPanelModule,
     FiltersToolPanelModule,
-    ExcelExportModule,
-    MenuModule,
 ]);
 
 const VueExample = {
@@ -72,7 +64,6 @@ const VueExample = {
 
             columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'price' }],
             defaultColDef: {
-                editable: true,
                 flex: 1,
                 minWidth: 100,
                 filter: true,
