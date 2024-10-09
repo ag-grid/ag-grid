@@ -4,8 +4,8 @@ import { _logError } from 'ag-grid-community';
 import { AbstractClientSideTreeNodeManager } from './abstractClientSideTreeNodeManager';
 import { makeFieldPathGetter } from './fieldAccess';
 import type { DataFieldGetter } from './fieldAccess';
-import type { TreeNode } from './treeNodeManager/treeNode';
-import type { TreeRow } from './treeNodeManager/treeRow';
+import type { TreeNode } from './treeNode';
+import type { TreeRow } from './treeRow';
 
 export class ClientSideChildrenTreeNodeManager<TData>
     extends AbstractClientSideTreeNodeManager<TData>
@@ -16,7 +16,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
     private childrenGetter: DataFieldGetter<TData, TData[] | null | undefined>;
 
     public override extractRowData(): TData[] | null | undefined {
-        return Array.from(this.treeNodeManager.root.enumChildren(), (node) => node.row!.data);
+        return Array.from(this.treeRoot.enumChildren(), (node) => node.row!.data);
     }
 
     public override activate(rootRow: RowNode<TData>): void {
@@ -30,15 +30,15 @@ export class ClientSideChildrenTreeNodeManager<TData>
     }
 
     protected override loadNewRowData(rowData: TData[]): void {
-        const { rootRow, treeNodeManager, childrenGetter } = this;
+        const { rootRow, childrenGetter } = this;
 
         const processedDataSet = new Set<TData>();
         const allLeafChildren: TreeRow<TData>[] = [];
 
         rootRow.allLeafChildren = allLeafChildren;
 
-        treeNodeManager.activate(rootRow);
-        treeNodeManager.clearTree(this.treeNodeManager.root);
+        this.clearTree(this.treeRoot);
+        this.treeRoot.setRow(rootRow);
 
         const addChild = (parent: TreeNode, data: TData) => {
             if (processedDataSet.has(data)) {
@@ -52,7 +52,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
             allLeafChildren.push(row);
 
             parent = parent.upsertKey(row.id!);
-            treeNodeManager.addOrUpdateRow(parent, row, false);
+            this.treeUpsert(parent, row, false);
 
             const children = childrenGetter(data);
             if (children) {
@@ -62,21 +62,21 @@ export class ClientSideChildrenTreeNodeManager<TData>
             }
         };
 
-        const rootTreeNode = this.treeNodeManager.root;
+        const rootTreeNode = this.treeRoot;
         for (let i = 0, len = rowData.length; i < len; ++i) {
             addChild(rootTreeNode, rowData[i]);
         }
 
-        treeNodeManager.commitTree();
+        this.treeCommit();
     }
 
     public onTreeDataChanged() {
         const { rootRow } = this;
-        this.treeNodeManager.activate(rootRow);
+        this.treeRoot.setRow(rootRow);
         const allLeafChildren = this.rootRow.allLeafChildren!;
         for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
             (allLeafChildren[i] as TreeRow<TData>).treeNode?.invalidate();
         }
-        this.treeNodeManager.commitTree();
+        this.treeCommit();
     }
 }

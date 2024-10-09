@@ -43,7 +43,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     implements IClientSideNodeManager<TData>
 {
     private nextId = 0;
-    protected allNodesMap: { [id: string]: RowNode } = {};
+    protected allNodesMap: { [id: string]: RowNode<TData> } = {};
 
     public rootRow: AbstractClientSideNodeManager.RootNode<TData>;
 
@@ -62,7 +62,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         );
     }
 
-    public getRowNode(id: string): RowNode | undefined {
+    public getRowNode(id: string): RowNode<TData> | undefined {
         return this.allNodesMap[id];
     }
 
@@ -92,6 +92,11 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             this.setNewRowData([]);
             this.rootRow = null!;
         }
+    }
+
+    public override destroy(): void {
+        this.deactivate();
+        super.destroy();
     }
 
     public setNewRowData(rowData: TData[]): void {
@@ -285,7 +290,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         }
 
         // create new row nodes for each data item
-        const newNodes: RowNode[] = add!.map((item, index) => this.createRowNode(item, addIndex + index));
+        const newNodes: RowNode<TData>[] = add!.map((item, index) => this.createRowNode(item, addIndex + index));
 
         if (addIndex < allLeafChildren.length) {
             // Insert at the specified index
@@ -321,7 +326,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         getRowIdFunc: ((data: any) => string) | undefined,
         rowDataTran: RowDataTransaction,
         { rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult<TData>,
-        nodesToUnselect: RowNode[]
+        nodesToUnselect: RowNode<TData>[]
     ): void {
         const { remove } = rowDataTran;
 
@@ -374,7 +379,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         getRowIdFunc: ((data: any) => string) | undefined,
         rowDataTran: RowDataTransaction,
         { rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult<TData>,
-        nodesToUnselect: RowNode[]
+        nodesToUnselect: RowNode<TData>[]
     ): void {
         const { update } = rowDataTran;
         if (_missingOrEmpty(update)) {
@@ -470,7 +475,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         return node;
     }
 
-    protected lookupRowNode(getRowIdFunc: ((data: any) => string) | undefined, data: TData): RowNode | null {
+    protected lookupRowNode(getRowIdFunc: ((data: any) => string) | undefined, data: TData): RowNode<TData> | null {
         let rowNode: RowNode | undefined;
         if (getRowIdFunc) {
             // find rowNode using id
