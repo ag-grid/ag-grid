@@ -1437,11 +1437,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private onGridReady(): void {
-        if (this.hasStarted) {
-            return;
+        if (!this.hasStarted) {
+            // App can start using API to add transactions, so need to add data into the node manager if not started
+            this.setInitialData();
         }
-        // App can start using API to add transactions, so need to add data into the node manager if not started
-        this.setInitialData();
     }
 
     public isRowDataLoaded(): boolean {
