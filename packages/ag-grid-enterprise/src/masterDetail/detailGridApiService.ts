@@ -19,32 +19,27 @@ export class DetailGridApiService extends BeanStub implements NamedBean, IDetail
 
     private detailGridInfoMap: { [id: string]: DetailGridInfo | undefined } = {};
 
-    public setMasterForAllRows<TData = any>(rows: RowNode<TData>[] | null | undefined): void {
-        if (rows) {
-            for (let i = 0, len = rows.length; i < len; i++) {
-                const rowNode = rows[i];
-                const data = rowNode.data;
-                if (data) {
-                    this.setMasterForRow(rowNode, data, true);
-                }
-            }
-        }
-    }
-
-    public setMasterForRow<TData = any>(rowNode: RowNode<TData>, data: TData, shouldSetExpanded: boolean): void {
+    public setMasterForRow<TData = any>(
+        rowNode: RowNode<TData>,
+        data: TData,
+        master: boolean,
+        shouldSetExpanded: boolean
+    ): void {
+        const gos = this.gos;
         const oldMaster = rowNode.master;
-        let master = false;
 
-        if (this.gos.get('masterDetail')) {
+        if (master) {
             // if we are doing master detail, then the default is that everything can be a Master Row.
-            const isRowMasterFunc = this.gos.get('isRowMaster');
+            const isRowMasterFunc = gos.get('isRowMaster');
             master = !isRowMasterFunc || !!isRowMasterFunc(data);
         }
+        // TODO: AG-1752 Allow tree data leaf rows to serve as master rows for detail grids (Tree Data hosting Master/Detail)
 
         if (shouldSetExpanded) {
             let expanded = false;
             if (master) {
-                const expandByDefault = this.gos.get('groupDefaultExpanded');
+                const expandByDefault = gos.get('groupDefaultExpanded');
+                // TODO: AG-11476 isGroupOpenByDefault callback doesn't apply to master/detail grid
                 if (expandByDefault === -1) {
                     expanded = true;
                 } else {
@@ -61,7 +56,9 @@ export class DetailGridApiService extends BeanStub implements NamedBean, IDetail
 
         if (oldMaster !== master) {
             rowNode.master = master;
-            rowNode.dispatchRowEvent('masterChanged');
+            if (master || oldMaster !== undefined) {
+                rowNode.dispatchRowEvent('masterChanged');
+            }
         }
     }
 
