@@ -1,11 +1,11 @@
 'use strict';
 
-import React, { StrictMode, useMemo, useState } from 'react';
+import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import { themeAlpine, themeBalham, themeQuartz } from 'ag-grid-community';
+import { themeQuartz } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { FiltersToolPanelModule } from 'ag-grid-enterprise';
 import { SideBarModule } from 'ag-grid-enterprise';
@@ -19,15 +19,31 @@ ModuleRegistry.registerModules([
     FiltersToolPanelModule,
 ]);
 
-const themes = [themeQuartz, themeBalham, themeAlpine];
+const theme = themeQuartz
+    .withParams(
+        {
+            backgroundColor: '#FFE8E0',
+            foregroundColor: '#361008CC',
+            browserColorScheme: 'light',
+        },
+        'light-red'
+    )
+    .withParams(
+        {
+            backgroundColor: '#201008',
+            foregroundColor: '#FFFFFFCC',
+            browserColorScheme: 'dark',
+        },
+        'dark-red'
+    );
 
 const GridExample = () => {
-    const [theme, setBaseTheme] = useState(themes[0]);
-
     return (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <p style={{ flex: 0 }}>
-                Theme: <PartSelector options={themes} value={theme} setValue={setBaseTheme} />
+                <label>
+                    Dark mode: <input type="checkbox" onChange={(e) => setDarkMode(e.target.checked)} />
+                </label>
             </p>
             <div style={{ flex: 1 }}>
                 <AgGridReact
@@ -43,19 +59,10 @@ const GridExample = () => {
     );
 };
 
-const PartSelector = ({ options, value, setValue }) => (
-    <select
-        onChange={(e) => setValue(options.find((t) => t?.id === e.currentTarget.value) || null)}
-        style={{ marginRight: 16 }}
-        value={value?.id}
-    >
-        {options.map((option, i) => (
-            <option key={i} value={option?.id}>
-                {option?.variant || option?.id || '(unchanged)'}
-            </option>
-        ))}
-    </select>
-);
+function setDarkMode(enabled) {
+    document.body.dataset.agThemeMode = enabled ? 'dark-red' : 'light-red';
+}
+setDarkMode(false);
 
 const rowData = (() => {
     const rowData = [];
