@@ -1,4 +1,4 @@
-const { BASE_URL_FILE_PATH, getBaseUrl } = require('./prep_and_archive/baseUrlUtils');
+const { FILES_TO_CHECK_BASE_URL, getBaseUrl } = require('./prep_and_archive/baseUrlUtils');
 const fs = require('fs');
 const path = require('path');
 
@@ -9,7 +9,7 @@ function getUsageInfo() {
         '\tFor staging: node scripts/deployments/sanityCheckBaseUrl.js staging',
         '\tFor archive eg, on v32.3.0: node scripts/deployments/sanityCheckBaseUrl.js archive 32.3.0',
         '\tFor production: node scripts/deployments/sanityCheckBaseUrl.js production',
-        'Note: This script should be run from the root of the monorepo',
+        'Note: This script should be run from the root of the monorepo, and run *after* a build',
     ];
 
     return usageInfo.join('\n');
@@ -21,7 +21,7 @@ function getBaseUrlFromFile(baseUrlFilePath) {
     }
 
     const contents = fs.readFileSync(baseUrlFilePath, { encoding: 'utf8' });
-    const regex = /(export const BASE_URL =)(.*)'(?<baseUrl>.*)';$/m;
+    const regex = /(BASE_URL =)(.*)["'](?<baseUrl>.*)["'];$/m;
 
     return contents.match(regex)?.groups.baseUrl;
 }
@@ -45,14 +45,25 @@ function main() {
         '******************************************************************************************************************************'
     );
 
-    const baseUrlFilePath = path.resolve(process.cwd(), BASE_URL_FILE_PATH);
-    const fileBaseUrl = getBaseUrlFromFile(baseUrlFilePath);
+    const baseUrlErrors = FILES_TO_CHECK_BASE_URL.map((file) => {
+        const baseUrlFilePath = path.resolve(process.cwd(), file);
+        const fileBaseUrl = getBaseUrlFromFile(baseUrlFilePath);
 
-    if (fileBaseUrl === baseUrl) {
-        console.log(`'${baseUrlFilePath}' is correctly set.`);
-    } else {
-        console.error(`ERROR: '${baseUrlFilePath}' is not set to '${baseUrl}'`);
+        if (fileBaseUrl !== baseUrl) {
+            return {
+                file,
+                fileBaseUrl,
+            };
+        }
+    }).filter(Boolean);
+
+    if (baseUrlErrors.length) {
+        baseUrlErrors.forEach(({ file, fileBaseUrl }) => {
+            console.error(`ERROR: '${file}' has BASE_URL '${fileBaseUrl}' but should be '${baseUrl}'`);
+        });
         process.exit(1);
+    } else {
+        console.log(`BASE_URL is correctly set in\n${FILES_TO_CHECK_BASE_URL.join('\n')}`);
     }
 }
 

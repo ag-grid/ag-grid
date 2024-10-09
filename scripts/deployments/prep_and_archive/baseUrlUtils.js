@@ -8,6 +8,13 @@ const ENV_BASE_URLS = {
 // `baseUrl.ts` file path relative to root of monorepo
 const BASE_URL_FILE_PATH = 'packages/ag-grid-community/src/baseUrl.ts';
 
+const FILES_TO_CHECK_BASE_URL = [
+    BASE_URL_FILE_PATH,
+    'packages/ag-grid-community/dist/ag-grid-community.js',
+    'packages/ag-grid-community/dist/package/main.cjs.js',
+    'packages/ag-grid-enterprise/dist/ag-grid-enterprise.js',
+];
+
 function getBaseUrl({ env, archiveVersion }) {
     let output;
     if (!Object.keys(ENV_BASE_URLS).includes(env)) {
@@ -35,5 +42,6 @@ function getBaseUrl({ env, archiveVersion }) {
 
 module.exports = {
     BASE_URL_FILE_PATH,
+    FILES_TO_CHECK_BASE_URL,
     getBaseUrl,
 };
