@@ -502,7 +502,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private verifyCellRanges(gos: GridOptionsService): boolean {
         const invalid = _isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && this.cellRanges.length > 0;
         if (invalid) {
-            _logWarn(93, {});
+            _logWarn(93);
         }
 
         return !invalid;

@@ -279,12 +279,16 @@
                                         "path": "theming-css"
                                     },
                                     {
-                                        "title": "Color Schemes & Dark Mode",
+                                        "title": "Colors & Dark Mode",
                                         "path": "theming-colors"
                                     },
                                     {
                                         "title": "Borders",
                                         "path": "theming-borders"
+                                    },
+                                    {
+                                        "title": "Distributing Shared Themes",
+                                        "path": "theming-distribution"
                                     },
                                     {
                                         "title": "Migration",
@@ -1437,6 +1441,10 @@
                     {
                         "title": "Migration",
                         "items": [
+                            {
+                                "title": "Upgrading to AG Grid 32.3",
+                                "path": "upgrading-to-ag-grid-32-3"
+                            },
                             {
                                 "title": "Upgrading to AG Grid 32.2",
                                 "path": "upgrading-to-ag-grid-32-2"

@@ -17,9 +17,8 @@ import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } fr
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import { _last } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
-import { _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
-import { _logError } from '../validation/logging';
+import { _logError, _logWarn } from '../validation/logging';
 import { BaseSelectionService } from './baseSelectionService';
 import { RowRangeSelectionContext } from './rowRangeSelectionContext';
 
@@ -91,7 +90,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         if (nodes.length === 0) return 0;
 
         if (nodes.length > 1 && !this.isMultiSelect()) {
-            _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
+            _logWarn(130);
             return 0;
         }
 
@@ -104,7 +103,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         if (rangeSelect) {
             if (filteredNodes.length > 1) {
-                _warnOnce('cannot range select while selecting multiple rows');
+                _logWarn(131);
                 return 0;
             }
 
@@ -461,7 +460,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         if (justCurrentPage || justFiltered) {
             if (!rowModelClientSide) {
-                _logError(102, {});
+                _logError(102);
                 return;
             }
             this.getNodesToSelect(justFiltered, justCurrentPage).forEach(callback);
@@ -605,7 +604,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         justCurrentPage?: boolean;
     }) {
         if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
-            return _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
+            _logWarn(132);
+            return;
         }
         this.validateSelectAllType();
 
@@ -640,7 +640,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         source: SelectionEventSourceType
     ): void {
         if (!Array.isArray(state)) {
-            _logError(103, {});
+            _logError(103);
             return;
         }
         const rowIds = new Set(state);

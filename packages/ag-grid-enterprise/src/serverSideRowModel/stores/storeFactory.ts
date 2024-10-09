@@ -3,7 +3,6 @@ import type {
     ColumnModel,
     FuncColsService,
     GetServerSideGroupLevelParamsParams,
-    IServerSideStore,
     NamedBean,
     RowNode,
     ServerSideGroupLevelParams,
@@ -12,7 +11,6 @@ import type {
 import { BeanStub, _warnOnce } from 'ag-grid-community';
 
 import type { SSRMParams } from '../serverSideRowModel';
-import { FullStore } from './fullStore';
 import { LazyStore } from './lazy/lazyStore';
 
 export class StoreFactory extends BeanStub implements NamedBean {
@@ -26,24 +24,20 @@ export class StoreFactory extends BeanStub implements NamedBean {
         this.funcColsService = beans.funcColsService;
     }
 
-    public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
+    public createStore(ssrmParams: SSRMParams, parentNode: RowNode): LazyStore {
         const storeParams = this.getStoreParams(ssrmParams, parentNode);
 
-        const CacheClass = storeParams.suppressInfiniteScroll ? FullStore : LazyStore;
-
-        return new CacheClass(ssrmParams, storeParams, parentNode);
+        return new LazyStore(ssrmParams, storeParams, parentNode);
     }
 
     private getStoreParams(ssrmParams: SSRMParams, parentNode: RowNode): ServerSideGroupLevelParams {
         const userStoreParams = this.getLevelSpecificParams(parentNode);
 
         // if user provided overrideParams, we take infiniteScroll from there if it exists
-        const infiniteScroll = this.isInfiniteScroll(userStoreParams);
-        const cacheBlockSize = this.getBlockSize(infiniteScroll, userStoreParams);
-        const maxBlocksInCache = this.getMaxBlocksInCache(infiniteScroll, ssrmParams, userStoreParams);
+        const cacheBlockSize = this.getBlockSize(userStoreParams);
+        const maxBlocksInCache = this.getMaxBlocksInCache(ssrmParams, userStoreParams);
 
         const storeParams: ServerSideGroupLevelParams = {
-            suppressInfiniteScroll: !infiniteScroll,
             cacheBlockSize,
             maxBlocksInCache,
         };
@@ -52,14 +46,9 @@ export class StoreFactory extends BeanStub implements NamedBean {
     }
 
     private getMaxBlocksInCache(
-        infiniteScroll: boolean,
         ssrmParams: SSRMParams,
         userStoreParams?: ServerSideGroupLevelParams
     ): number | undefined {
-        if (!infiniteScroll) {
-            return undefined;
-        }
-
         const maxBlocksInCache =
             userStoreParams && userStoreParams.maxBlocksInCache != null
                 ? userStoreParams.maxBlocksInCache
@@ -90,11 +79,7 @@ export class StoreFactory extends BeanStub implements NamedBean {
         return maxBlocksInCache;
     }
 
-    private getBlockSize(infiniteScroll: boolean, userStoreParams?: ServerSideGroupLevelParams): number | undefined {
-        if (!infiniteScroll) {
-            return undefined;
-        }
-
+    private getBlockSize(userStoreParams?: ServerSideGroupLevelParams): number | undefined {
         const blockSize =
             userStoreParams && userStoreParams.cacheBlockSize != null
                 ? userStoreParams.cacheBlockSize
@@ -124,10 +109,5 @@ export class StoreFactory extends BeanStub implements NamedBean {
         const res = callback(params);
 
         return res;
-    }
-
-    private isInfiniteScroll(storeParams?: ServerSideGroupLevelParams): boolean {
-        const res = storeParams?.suppressInfiniteScroll ?? false;
-        return !res;
     }
 }

@@ -45,7 +45,7 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public missingModule(moduleName: ModuleName, reason: string, gridId: string): void {
         const gridScoped = _areModulesGridScoped();
-        const isEnterprise = ENTERPRISE_MODULE_NAMES.has(moduleName as EnterpriseModuleName);
+        const isEnterprise = ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName] === 1;
         _logError(200, {
             reason,
             moduleName,
@@ -74,16 +74,8 @@ export class ValidationService extends BeanStub implements NamedBean {
         optionKeys.forEach((key: keyof T) => {
             const deprecation = deprecations[key];
             if (deprecation) {
-                if ('renamed' in deprecation) {
-                    const { renamed, version } = deprecation;
-                    warnings.add(
-                        `As of v${version}, ${String(key)} is deprecated. Please use ${String(renamed)} instead.`
-                    );
-                    options[renamed] = options[key];
-                } else {
-                    const { message, version } = deprecation;
-                    warnings.add(`As of v${version}, ${String(key)} is deprecated. ${message ?? ''}`);
-                }
+                const { message, version } = deprecation;
+                warnings.add(`As of v${version}, ${String(key)} is deprecated. ${message ?? ''}`);
             }
 
             const value = options[key];

@@ -47,7 +47,7 @@ export class CsvCreator
     protected export(userParams?: CsvExportParams): void {
         if (this.isExportSuppressed()) {
             // Export cancelled.
-            _logWarn(51, {});
+            _logWarn(51);
             return;
         }
 

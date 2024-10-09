@@ -40,7 +40,7 @@ import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../inter
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
-import type { RefreshServerSideParams } from '../interfaces/iServerSideRowModel';
+import type { LoadSuccessParams, RefreshServerSideParams } from '../interfaces/iServerSideRowModel';
 import type { IServerSideGroupSelectionState, IServerSideSelectionState } from '../interfaces/iServerSideSelection';
 import type { SideBarDef } from '../interfaces/iSideBar';
 import type { IStatusPanel } from '../interfaces/iStatusPanel';
@@ -57,7 +57,6 @@ import type {
     RedrawRowsParams,
     RefreshCellsParams,
 } from '../rendering/rowRenderer';
-import type { LoadSuccessParams } from '../rowNodeCache/iRowNodeBlock';
 
 export interface DetailGridInfo {
     /**

@@ -10,7 +10,7 @@
 if [ "$#" -lt 1 ]
   then
     echo "You must supply a release version"
-    echo "For example: deployAgGridReleaseRemote.sh 28.0.0"
+    echo "For example: ./scripts/deployments/release/prepareNewDeploymentRemote.sh 28.0.0"
     exit 1
 fi
 

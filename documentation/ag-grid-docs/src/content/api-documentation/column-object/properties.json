@@ -35,12 +35,25 @@
         "meta": {
             "displayName": "Row Grouping"
         },
-        "isAllowValue": {},
-        "isValueActive": {},
         "isAllowRowGroup": {},
         "isRowGroupActive": {},
-        "getAggFunc": {},
         "isRowGroupDisplayed": {}
+    },
+    "rowAggregation": {
+        "meta": {
+            "displayName": "Row Aggregation"
+        },
+        "isAllowValue": {},
+        "isValueActive": {},
+        "getAggFunc": {}
+    },
+    "pivoting": {
+        "meta": {
+            "displayName": "Row Pivoting"
+        },
+        "isAllowPivot": {},
+        "isPivotActive": {},
+        "isPrimary": {}
     },
     "columnGroups": {
         "meta": {
@@ -104,14 +117,6 @@
             "displayName": "Clipboard"
         },
         "isSuppressPaste": {}
-    },
-    "pivoting": {
-        "meta": {
-            "displayName": "Pivoting"
-        },
-        "isAllowPivot": {},
-        "isPivotActive": {},
-        "isPrimary": {}
     },
     "pinning": {
         "meta": {

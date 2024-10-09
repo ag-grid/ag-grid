@@ -10,7 +10,7 @@
 if [ "$#" -lt 1 ]
   then
     echo "You must supply a timestamp"
-    echo "For example: ./scripts/release/switchReleaseRemote.sh 20191210"
+    echo "For example: ./scripts/deployments/release/switchReleaseRemote.sh 20191210"
     exit 1
 fi
 

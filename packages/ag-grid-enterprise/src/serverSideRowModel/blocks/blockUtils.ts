@@ -1,7 +1,6 @@
 import type {
     AgColumn,
     BeanCollection,
-    IRowNode,
     IShowRowGroupColsService,
     NamedBean,
     NumberSequence,
@@ -16,13 +15,13 @@ import {
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
-    _missing,
     _warnOnce,
 } from 'ag-grid-community';
 
 import type { NodeManager } from '../nodeManager';
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { ServerSideExpansionService } from '../services/serverSideExpansionService';
+import type { LazyStore } from '../stores/lazy/lazyStore';
 import type { StoreFactory } from '../stores/storeFactory';
 
 export const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey' as const;
@@ -79,12 +78,6 @@ export class BlockUtils extends BeanStub implements NamedBean {
         }
 
         return rowNode;
-    }
-
-    public destroyRowNodes(rowNodes: RowNode[]): void {
-        if (rowNodes) {
-            rowNodes.forEach((row) => this.destroyRowNode(row));
-        }
     }
 
     public destroyRowNode(rowNode: RowNode, preserveStore: boolean = false): void {
@@ -260,10 +253,9 @@ export class BlockUtils extends BeanStub implements NamedBean {
     public clearDisplayIndex(rowNode: RowNode): void {
         rowNode.clearRowTopAndRowIndex();
 
-        const hasChildStore = rowNode.hasChildren() && _exists(rowNode.childStore);
+        const hasChildStore = rowNode.hasChildren() && !!rowNode.childStore;
         if (hasChildStore) {
-            const childStore = rowNode.childStore;
-            childStore!.clearDisplayIndexes();
+            (rowNode.childStore as LazyStore | undefined)?.clearDisplayIndexes();
         }
 
         const hasDetailNode = rowNode.master && rowNode.detailNode;
@@ -308,9 +300,9 @@ export class BlockUtils extends BeanStub implements NamedBean {
         }
 
         // set children for SSRM child rows
-        const hasChildStore = rowNode.hasChildren() && _exists(rowNode.childStore);
+        const hasChildStore = rowNode.hasChildren() && !!rowNode.childStore;
         if (hasChildStore) {
-            const childStore = rowNode.childStore;
+            const childStore = rowNode.childStore as LazyStore;
             // unbalanced group always behaves as if it was expanded
             if (rowNode.expanded || isUnbalancedGroup) {
                 childStore!.setDisplayIndexes(displayIndexSeq, nextRowTop, isUnbalancedGroup ? uiLevel : uiLevel + 1);
@@ -318,50 +310,6 @@ export class BlockUtils extends BeanStub implements NamedBean {
                 // we need to clear the row tops, as the row renderer depends on
                 // this to know if the row should be faded out
                 childStore!.clearDisplayIndexes();
-            }
-        }
-    }
-
-    public binarySearchForDisplayIndex(displayRowIndex: number, rowNodes: RowNode[]): IRowNode | undefined {
-        let bottomPointer = 0;
-        let topPointer = rowNodes.length - 1;
-
-        if (_missing(topPointer) || _missing(bottomPointer)) {
-            _warnOnce(`error: topPointer = ${topPointer}, bottomPointer = ${bottomPointer}`);
-            return undefined;
-        }
-
-        while (true) {
-            const midPointer = Math.floor((bottomPointer + topPointer) / 2);
-            const currentRowNode = rowNodes[midPointer];
-
-            // first check current row for index
-            if (currentRowNode.rowIndex === displayRowIndex) {
-                return currentRowNode;
-            }
-
-            // then check if current row contains a detail row with the index
-            const expandedMasterRow = currentRowNode.master && currentRowNode.expanded;
-            const detailNode = currentRowNode.detailNode;
-
-            if (expandedMasterRow && detailNode && detailNode.rowIndex === displayRowIndex) {
-                return currentRowNode.detailNode;
-            }
-
-            // then check if child cache contains index
-            const childStore = currentRowNode.childStore;
-            if (currentRowNode.expanded && childStore && childStore.isDisplayIndexInStore(displayRowIndex)) {
-                return childStore.getRowUsingDisplayIndex(displayRowIndex);
-            }
-
-            // otherwise adjust pointers to continue searching for index
-            if (currentRowNode.rowIndex! < displayRowIndex) {
-                bottomPointer = midPointer + 1;
-            } else if (currentRowNode.rowIndex! > displayRowIndex) {
-                topPointer = midPointer - 1;
-            } else {
-                _warnOnce(`error: unable to locate rowIndex = ${displayRowIndex} in cache`);
-                return undefined;
             }
         }
     }
@@ -376,12 +324,12 @@ export class BlockUtils extends BeanStub implements NamedBean {
             return extractRowBounds(rowNode);
         }
 
-        if (rowNode.hasChildren() && rowNode.expanded && _exists(rowNode.childStore)) {
-            const childStore = rowNode.childStore;
+        if (rowNode.hasChildren() && rowNode.expanded && !!rowNode.childStore) {
+            const childStore = rowNode.childStore as LazyStore;
             if (childStore.isDisplayIndexInStore(index)) {
                 return childStore.getRowBounds(index)!;
             }
-        } else if (rowNode.master && rowNode.expanded && _exists(rowNode.detailNode)) {
+        } else if (rowNode.master && rowNode.expanded && rowNode.detailNode) {
             if (rowNode.detailNode.rowIndex === index) {
                 return extractRowBounds(rowNode.detailNode);
             }
@@ -410,8 +358,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
         }
 
         // then check if it's a group row with a child cache with pixel in range
-        if (rowNode.hasChildren() && rowNode.expanded && _exists(rowNode.childStore)) {
-            const childStore = rowNode.childStore;
+        if (rowNode.hasChildren() && rowNode.expanded && !!rowNode.childStore) {
+            const childStore = rowNode.childStore as LazyStore;
             if (childStore.isPixelInRange(pixel)) {
                 return childStore.getRowIndexAtPixel(pixel);
             }

@@ -87,7 +87,7 @@ export function _getRowHeightForNode(
 
         if (isNumeric(height)) {
             if (height === 0) {
-                _logWarn(23, {});
+                _logWarn(23);
             }
             return { height: Math.max(1, height), estimated: false };
         }
@@ -135,7 +135,7 @@ export function _getRowHeightAsNumber(gos: GridOptionsService): number {
         return rowHeight;
     }
 
-    _logWarn(24, {});
+    _logWarn(24);
     return environment.getDefaultRowHeight();
 }
 
@@ -311,6 +311,12 @@ export function _canSkipShowingRowGroup(gos: GridOptionsService, node: RowNode):
         return true;
     }
     return false;
+}
+
+export function _getMaxConcurrentDatasourceRequests(gos: GridOptionsService): number | undefined {
+    const res = gos.get('maxConcurrentDatasourceRequests');
+    // negative number, eg -1, means no max restriction
+    return res > 0 ? res : undefined;
 }
 
 /** Get the selection checkbox configuration. Defaults to enabled. */
