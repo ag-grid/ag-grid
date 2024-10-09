@@ -30,7 +30,7 @@ export class LayoutFeature extends BeanStub {
     }
 
     private updateLayoutClasses(): void {
-        const domLayout = this.gos.get('domLayout') ?? 'normal';
+        const domLayout = this.gos.get('domLayout');
         const params = {
             autoHeight: domLayout === 'autoHeight',
             normal: domLayout === 'normal',
