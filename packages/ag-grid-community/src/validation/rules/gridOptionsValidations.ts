@@ -62,7 +62,7 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
 
     groupRemoveSingleChildren: {
         version: '32.3',
-        renamed: 'groupHideParentOfSingleChild',
+        message: 'Use `groupHideParentOfSingleChild` instead.',
     },
     groupRemoveLowestSingleChildren: {
         version: '32.3',

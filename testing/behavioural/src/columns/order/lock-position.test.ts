@@ -146,7 +146,7 @@ describe('lockPosition Column Order', () => {
                         'tried to insert columns in invalid location, toIndex = ',
                         2,
                         'remember that you should not count the moving columns when calculating the new index',
-                        '\nSee https://www.ag-grid.com/javascript-data-grid/errors/30?toIndex=2'
+                        '\nSee https://localhost:4610/javascript-data-grid/errors/30?toIndex=2'
                     );
                 }
 
