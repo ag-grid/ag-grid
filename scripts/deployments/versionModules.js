@@ -11,8 +11,8 @@ const ROOT_PACKAGE_JSON = '../../package.json';
 const packageDirectories = require(ROOT_PACKAGE_JSON).workspaces.packages;
 
 if (process.argv.length < 4) {
-    console.log('Usage: node scripts/release/versionModules.js [Grid Version] [Charts Version]');
-    console.log('For example: node scripts/release/versionModules.js 19.1.0 1.0.0');
+    console.log('Usage: node scripts/deployments/versionModules.js [Grid Version] [Charts Version]');
+    console.log('For example: node scripts/deployments/versionModules.js 19.1.0 1.0.0');
     console.log('Note: This script should be run from the root of the monorepo');
     process.exit(1);
 }
