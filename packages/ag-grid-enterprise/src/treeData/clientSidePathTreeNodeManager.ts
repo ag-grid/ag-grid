@@ -12,14 +12,14 @@ export class ClientSidePathTreeNodeManager<TData>
     beanName = 'clientSidePathTreeNodeManager' as const;
 
     protected override loadNewRowData(rowData: TData[]): void {
-        const rootNode = this.rootRow;
+        const rootRow = this.rootRow;
 
         this.clearTree(this.treeRoot);
         this.treeRoot.setRow(this.rootRow);
 
         super.loadNewRowData(rowData);
 
-        this.addOrUpdateRows(rootNode.allLeafChildren!, false);
+        this.addOrUpdateRows(rootRow.allLeafChildren!, false);
 
         this.treeCommit();
     }
