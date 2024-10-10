@@ -1,11 +1,8 @@
 ---
 import { getEntry } from 'astro:content';
 import WhatsNew from '@ag-website-shared/components/whats-new/pages/whats-new.astro';
-import type { MenuSection } from '@ag-grid-types';
 
 const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
-const { data: menu } = await getEntry('menu', 'data');
-const allMenuSections = menu.main.sections as MenuSection[];
 ---
 
-<WhatsNew site="grid" versionsData={versionsData} allMenuSections={allMenuSections} />
+<WhatsNew site="grid" versionsData={versionsData} />
