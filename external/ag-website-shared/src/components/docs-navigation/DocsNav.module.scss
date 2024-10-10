@@ -212,9 +212,9 @@
     }
 }
 
-.itemIcon:global(.icon) {
+.itemIcon:global(.icon),
+.externalIcon:global(.icon) {
     fill: var(--color-fg-secondary);
-    margin-right: $spacing-size-2;
     transition: fill $transition-default-timing;
 
     .item:hover &,
@@ -223,9 +223,17 @@
     }
 }
 
-.enterpriseIcon:global(.icon) {
+.itemIcon:global(.icon) {
+    margin-right: $spacing-size-2;
+}
+
+.enterpriseIcon:global(.icon),
+.externalIcon:global(.icon) {
     width: $spacing-size-5;
     height: $spacing-size-5;
     margin-left: $spacing-size-1;
+}
+
+.enterpriseIcon:global(.icon) {
     fill: var(--color-enterprise-icon);
 }
