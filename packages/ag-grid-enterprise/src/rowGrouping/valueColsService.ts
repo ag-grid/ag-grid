@@ -10,7 +10,7 @@ import type {
     IColsService,
     NamedBean,
 } from 'ag-grid-community';
-import { _BaseColsService, _exists, _logWarn, _removeFromArray } from 'ag-grid-community';
+import { _BaseColsService, _exists, _removeFromArray, _warn } from 'ag-grid-community';
 
 export class ValueColsService extends _BaseColsService implements NamedBean, IColsService {
     beanName = 'valueColsService' as const;
@@ -125,7 +125,7 @@ export class ValueColsService extends _BaseColsService implements NamedBean, ICo
             } else {
                 if (_exists(aggFunc)) {
                     // stateItem.aggFunc must be a string
-                    _logWarn(33);
+                    _warn(33);
                 }
                 // Note: we do not call column.setAggFunc(null), so that next time we aggregate
                 // by this column (eg drag the column to the agg section int he toolpanel) it will
