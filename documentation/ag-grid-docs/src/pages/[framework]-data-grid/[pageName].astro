@@ -51,9 +51,10 @@ const isApiPage = isApiMenuPath({
     menuData: menu,
 });
 
+const { data: docsNavData } = await getEntry('docs-nav', 'docsNav');
 const { data: apiNavData } = await getEntry('api-nav', 'apiNav');
 
-const menuSections = isApiPage ? apiMenuSections : frameworkMenuSections;
+const menuData = isApiPage ? apiNavData : docsNavData;
 
 const { Content } = await page.render();
 const headings =
@@ -78,18 +79,8 @@ const headings =
     showDocsNav={true}
 >
     <div class:list={[hidePageMenu && styles.noLeftMenu, styles.contentViewport, 'layout-grid']}>
-        {
-            !hidePageMenu && !isApiPage ? (
-                <PagesNavigation
-                    client:load
-                    menuSections={menuSections}
-                    framework={currentFramework}
-                    pageName={pageName}
-                />
-            ) : (
-                <DocsNav client:load menuData={apiNavData} framework={currentFramework} pageName={pageName} />
-            )
-        }
+        {!hidePageMenu && <DocsNav client:load menuData={menuData} framework={currentFramework} pageName={pageName} />}
+
         <div
             id="doc-content"
             class:list={[
@@ -105,7 +96,7 @@ const headings =
                 framework={currentFramework}
                 isEnterprise={enterprise}
                 path={path}
-                menuItems={menuSections as MenuItem[]}
+                menuItems={menuData}
             />
 
             {/* Wrapping div is a hack to target "intro" section of docs page */}
