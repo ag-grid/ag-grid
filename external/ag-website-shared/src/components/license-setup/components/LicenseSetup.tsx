@@ -1,4 +1,4 @@
-import type { Framework, ImportType, Library, MenuItem } from '@ag-grid-types';
+import type { Framework, ImportType, Library } from '@ag-grid-types';
 import Note from '@ag-website-shared/components/alert/Note';
 import Success from '@ag-website-shared/components/alert/Success';
 import Warning from '@ag-website-shared/components/alert/Warning';
@@ -28,7 +28,6 @@ interface Props {
     library: Library;
     framework: Framework;
     path: string;
-    menuItems: MenuItem[];
     seedRepos: SeedRepo[];
 }
 
@@ -43,7 +42,7 @@ const EmailSales = () => {
     );
 };
 
-export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, path, menuItems, seedRepos }) => {
+export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, path, seedRepos }) => {
     const {
         userLicense,
         setUserLicense,
@@ -191,11 +190,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                             <div className={styles.frameworkImportContainer}>
                                 <div className={styles.frameworkContainer}>
                                     <label>Framework</label>
-                                    <FrameworkSelectorInsideDocs
-                                        path={path}
-                                        currentFramework={framework}
-                                        menuItems={menuItems}
-                                    />
+                                    <FrameworkSelectorInsideDocs path={path} currentFramework={framework} />
                                 </div>
 
                                 <span className={styles.divider}></span>

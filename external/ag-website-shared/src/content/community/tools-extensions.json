@@ -347,16 +347,5 @@
         "link": "https://codesandbox.io/p/sandbox/ag-grid-server-side-row-model-sample-zqujt",
         "frameworks": ["TypeScript"],
         "tags": ["Framework"]
-    },
-    {
-        "title": "AG Grid Symphony UX Bundle",
-        "description": "This bundle implements AG Grid into Symphony UX: a JavaScript ecosystem for Symphony PHP components.",
-        "repo": "https://github.com/oh-deer-bundles/ag-grid-ux-bundle",
-        "open_source": true,
-        "stars": 1,
-        "type": "Wrapper",
-        "link": "https://github.com/oh-deer-bundles/ag-grid-ux-bundle",
-        "frameworks": ["PHP"],
-        "tags": ["Wrapper"]
     }
 ]

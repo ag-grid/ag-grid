@@ -1,26 +1,10 @@
 ---
 import { LicenseSetup } from '@ag-website-shared/components/license-setup/components/LicenseSetup';
-import { getEntry } from 'astro:content';
 import { getFrameworkFromPath } from '@features/docs/utils/urlPaths';
 import seedRepos from '@ag-website-shared/content/seed-projects/grid-seed-projects.json';
-import { getFilteredMenuSections } from '@components/pages-navigation/utils/getFilteredMenuSections';
-import type { MenuSection } from '@ag-grid-types';
 
 const { pathname } = Astro.url;
 const framework = getFrameworkFromPath(pathname);
-
-const { data: menuData } = await getEntry('menu', 'data');
-const menuItems: MenuSection[] = getFilteredMenuSections({
-    menuSections: menuData.main.sections,
-    framework,
-});
 ---
 
-<LicenseSetup
-    client:only="react"
-    library="grid"
-    framework={framework}
-    path={pathname}
-    menuItems={menuItems}
-    seedRepos={seedRepos}
-/>
+<LicenseSetup client:only="react" library="grid" framework={framework} path={pathname} seedRepos={seedRepos} />
