@@ -95,9 +95,9 @@ export function createXlsxExcel(
     return createWorksheet(worksheet, newConfig);
 }
 
-    private static showExcelTableNonCompatibleFeaturesWarning(featureName: string) {
-        _warn(163, { featureName });
-    }
+export function showExcelTableNonCompatibleFeaturesWarning(featureName: string) {
+    _warn(163, { featureName });
+}
 
 export function getXlsxTableNameFromIndex(idx: number) {
     return `table${idx + 1}`;

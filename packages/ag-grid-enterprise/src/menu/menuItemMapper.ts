@@ -19,7 +19,7 @@ import type {
     PositionUtils,
     SortController,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, _escapeString, _exists, _warn, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _createIconNoSpan, _escapeString, _exists, _warn } from 'ag-grid-community';
 
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 import type { ColumnChooserFactory } from './columnChooserFactory';

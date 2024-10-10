@@ -18,7 +18,7 @@ import {
     _clearElement,
     _loadTemplate,
     _setDisplayed,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 interface FilterColumnPair {
@@ -79,27 +79,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
 
     private updateParams(params: IFilterParams): AgPromise<void> {
         this.params = params;
-        this.validateParams();
         return this.updateGroups();
-    }
-
-    private validateParams(): void {
-        const { colDef } = this.params;
-        if (colDef.field) {
-            _warnOnce(
-                'Group Column Filter does not work with the colDef property "field". This property will be ignored.'
-            );
-        }
-        if (colDef.filterValueGetter) {
-            _warnOnce(
-                'Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.'
-            );
-        }
-        if (colDef.filterParams) {
-            _warnOnce(
-                'Group Column Filter does not work with the colDef property "filterParams". This property will be ignored.'
-            );
-        }
     }
 
     private updateGroups(): AgPromise<void> {
@@ -110,14 +90,11 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
     private getSourceColumns(): AgColumn[] {
         this.groupColumn = this.params.column as AgColumn;
         if (this.gos.get('treeData')) {
-            _warnOnce(
-                'Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.'
-            );
             return [];
         }
         const sourceColumns = this.funcColsService.getSourceColumnsForGroupColumn(this.groupColumn);
         if (!sourceColumns) {
-            _warnOnce('Group Column Filter only works on group columns. Please use a different filter.');
+            _warn(183);
             return [];
         }
         return sourceColumns;

@@ -135,6 +135,39 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
         },
     },
 
+    filter: {
+        validate: (colDef, gridOptions) => {
+            const { filter, field, filterValueGetter, filterParams } = colDef;
+            if (filter === 'agGroupColumnFilter') {
+                const warnings = [];
+                if (field) {
+                    warnings.push(
+                        'Group Column Filter does not work with the colDef property "field". This property will be ignored.'
+                    );
+                }
+                if (filterValueGetter) {
+                    warnings.push(
+                        'Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.'
+                    );
+                }
+                if (filterParams) {
+                    warnings.push(
+                        'Group Column Filter does not work with the colDef property "filterParams". This property will be ignored.'
+                    );
+                }
+                if (gridOptions.treeData) {
+                    warnings.push(
+                        'Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.'
+                    );
+                }
+                if (warnings.length > 0) {
+                    return warnings.join(' ');
+                }
+            }
+            return null;
+        },
+    },
+
     children: () => COL_DEF_VALIDATORS,
 };
 

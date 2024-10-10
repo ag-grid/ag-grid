@@ -387,25 +387,101 @@ export const AG_GRID_ERRORS = {
         'agRichSelectCellEditor cannot have `multiSelect` and `allowTyping` set to `true`. AllowTyping has been turned off.' as const,
     182: () =>
         'you cannot mix groupDisplayType = "multipleColumns" with treeData, only one column can be used to display groups when doing tree data' as const,
-    183: () => '' as const,
-    184: () => '' as const,
-    185: () => '' as const,
-    186: () => '' as const,
-    187: () => '' as const,
-    188: () => '' as const,
-    189: () => '' as const,
-    190: () => '' as const,
-    191: () => '' as const,
-    192: () => '' as const,
-    193: () => '' as const,
-    194: () => '' as const,
-    195: () => '' as const,
-    196: () => '' as const,
-    197: () => '' as const,
-    198: () => '' as const,
+    183: () => 'Group Column Filter only works on group columns. Please use a different filter.' as const,
+    184: ({ parentGroupData, childNodeData }: { parentGroupData: any; childNodeData: any }) =>
+        [`duplicate group keys for row data, keys should be unique`, [parentGroupData, childNodeData]] as const,
+    185: ({ data }: { data: any }) => [`getDataPath() should not return an empty path`, [data]] as const,
+    186: ({
+        rowId,
+        rowData,
+        duplicateRowsData,
+    }: {
+        rowId: string | undefined;
+        rowData: any;
+        duplicateRowsData: any[];
+    }) => [`duplicate group keys for row data, keys should be unique`, rowId, rowData, ...duplicateRowsData] as const,
+    187: ({ rowId, firstData, secondData }: { rowId: string; firstData: any; secondData: any }) =>
+        [
+            `Duplicate node id ${rowId}. Row IDs are provided via the getRowId() callback. Please modify the getRowId() callback code to provide unique row id values.`,
+            'first instance',
+            firstData,
+            'second instance',
+            secondData,
+        ] as const,
+    188: () => `getRowId callback must be provided for Server Side Row Model selection to work correctly.` as const,
+    189: ({ startRow }: { startRow: number }) =>
+        `invalid value ${startRow} for startRow, the value should be >= 0` as const,
+    190: ({ rowGroupId, data }: { rowGroupId: string | undefined; data: any }) =>
+        [
+            `null and undefined values are not allowed for server side row model keys`,
+            rowGroupId ? `column = ${rowGroupId}` : ``,
+            `data is `,
+            data,
+        ] as const,
+    191: () => `cannot multi select unless selection mode is 'multiRow'` as const,
+    192: () => `cannot use range selection when multi selecting rows` as const,
+    193: () => "cannot multi select unless selection mode is 'multiRow'" as const,
+    194: () =>
+        'calling gridApi.getBestCostNodeSelection() is only possible when using rowModelType=`clientSide`.' as const,
+    195: ({ justCurrentPage }: { justCurrentPage: boolean | undefined }) =>
+        `selecting just ${justCurrentPage ? 'current page' : 'filtered'} only works when gridOptions.rowModelType='clientSide'` as const,
+    196: ({ key }: { key: string }) => `Provided ids must be of string type. Invalid id provided: ${key}` as const,
+    197: () => '`toggledNodes` must be an array of string ids.' as const,
+    198: () => `cannot multi select unless selection mode is 'multiRow'` as const,
+    199: () =>
+        `getSelectedNodes and getSelectedRows functions cannot be used with select all functionality with the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
 
     200: missingModule,
     201: ({ rowModelType }: { rowModelType: string }) => `Could not find row model for rowModelType = ${rowModelType}`,
+
+    202: () =>
+        `\`getSelectedNodes\` and \`getSelectedRows\` functions cannot be used with \`groupSelectsChildren\` and the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
+    203: () =>
+        'Server Side Row Model does not support Dynamic Row Height and Cache Purging. Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.' as const,
+    204: () =>
+        'Server Side Row Model does not support Auto Row Height and Cache Purging. Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.' as const,
+    205: ({ duplicateIdText }: { duplicateIdText: string }) =>
+        `Unable to display rows as duplicate row ids (${duplicateIdText}) were returned by the getRowId callback. Please modify the getRowId callback to provide unique ids.` as const,
+    206: () => 'getRowId callback must be implemented for transactions to work. Transaction was ignored.' as const,
+    207: () =>
+        'The Set Filter Parameter "defaultToNothingSelected" value was ignored because it does not work when "excelMode" is used.' as const,
+    208: () =>
+        `Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects.` as const,
+    209: () =>
+        'Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types' as const,
+    210: () =>
+        'Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects?' as const,
+    211: () =>
+        'property treeList=true for Set Filter params, but you did not provide a treeListPathGetter or values of type Date.' as const,
+    212: () =>
+        `please review all your toolPanel components, it seems like at least one of them doesn't have an id` as const,
+    213: () => 'Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.' as const,
+    214: ({ key }: { key: string }) => `unable to lookup Tool Panel as invalid key supplied: ${key}` as const,
+    215: ({ key, defaultByKey }: { key: string; defaultByKey: object }) =>
+        `the key ${key} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(defaultByKey).join(',')}` as const,
+    216: ({ id }: { id: string }) =>
+        `error processing tool panel component ${id}. You need to specify 'toolPanel'` as const,
+    217: ({ invalidColIds }: { invalidColIds: any[] }) =>
+        ['unable to find grid columns for the supplied colDef(s):', invalidColIds] as const,
+    218: ({ property, defaultOffset }: { property: string; defaultOffset: number | undefined }) =>
+        `${property} must be a number, the value you provided is not a valid number. Using the default of ${defaultOffset}px.` as const,
+    219: ({ property }: { property: string }) => `Property ${property} does not exist on the target object.` as const,
+    220: ({ lineDash }: { lineDash: string }) => `'${lineDash}' is not a valid 'lineDash' option.` as const,
+    221: () => `agAggregationComponent should only be used with the client and server side row model.` as const,
+    222: () => `agFilteredRowCountComponent should only be used with the client side row model.` as const,
+    223: () => `agSelectedRowCountComponent should only be used with the client and server side row model.` as const,
+    224: () => `agTotalAndFilteredRowCountComponent should only be used with the client side row model.` as const,
+    225: () => 'agTotalRowCountComponent should only be used with the client side row model.' as const,
+    226: () => 'viewport is missing init method.' as const,
+    227: () => 'menu item icon must be DOM node or string' as const,
+    228: ({ menuItemOrString }: { menuItemOrString: string }) => `unrecognised menu item ${menuItemOrString}` as const,
+    229: ({ index }: { index: number }) => ['invalid row index for ensureIndexVisible: ', index] as const,
+    230: () =>
+        'detailCellRendererParams.template is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://ag-grid.com/react-data-grid/master-detail-custom-detail/' as const,
+    231: () => 'As of v32, using custom components with `reactiveCustomComponents = false` is deprecated.' as const,
+    232: () => 'Using both rowData and v-model. rowData will be ignored.' as const,
+    233: ({ methodName }: { methodName: string }) =>
+        `Framework component is missing the method ${methodName}()` as const,
 } as const;
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

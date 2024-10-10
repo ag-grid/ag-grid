@@ -16,7 +16,7 @@ import type {
     NamedBean,
     ValueService,
 } from 'ag-grid-community';
-import { BaseCreator, RowType, _getHeaderClassesFromColDef, _warn } from 'ag-grid-community';
+import { BaseCreator, RowType, _downloadFile, _getHeaderClassesFromColDef, _warn } from 'ag-grid-community';
 
 import type { ExcelGridSerializingParams, StyleLinkerInterface } from './excelSerializingSession';
 import { ExcelSerializingSession } from './excelSerializingSession';

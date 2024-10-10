@@ -17,7 +17,7 @@ import {
     _errorOnce,
     _isMultiRowSelection,
     _last,
-    _warnOnce,
+    _warn,
     isSelectionUIEvent,
 } from 'ag-grid-community';
 
@@ -390,10 +390,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     }
 
     public getSelectedNodes(): RowNode<any>[] {
-        _warnOnce(
-            `\`getSelectedNodes\` and \`getSelectedRows\` functions cannot be used with \`groupSelectsChildren\` and the server-side row model.
-            Use \`api.getServerSideSelectionState()\` instead.`
-        );
+        _warn(202);
 
         const selectedNodes: RowNode[] = [];
         this.rowModel.forEachNode((node) => {
