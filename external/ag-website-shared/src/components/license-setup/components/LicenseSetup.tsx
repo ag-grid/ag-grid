@@ -1,4 +1,4 @@
-import type { Framework, ImportType, Library, MenuItem } from '@ag-grid-types';
+import type { Framework, ImportType, Library } from '@ag-grid-types';
 import Note from '@ag-website-shared/components/alert/Note';
 import Success from '@ag-website-shared/components/alert/Success';
 import Warning from '@ag-website-shared/components/alert/Warning';
@@ -42,7 +42,7 @@ const EmailSales = () => {
     );
 };
 
-export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, path, menuItems, seedRepos }) => {
+export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, path, seedRepos }) => {
     const {
         userLicense,
         setUserLicense,
