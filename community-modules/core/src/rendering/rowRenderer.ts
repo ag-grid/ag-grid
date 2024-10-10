@@ -177,22 +177,21 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.addManagedPropertyListeners(
             [
                 'getBusinessKeyForNode',
+
                 'fullWidthCellRenderer',
                 'fullWidthCellRendererParams',
-                'rowStyle',
-                'getRowStyle',
-                'rowClass',
-                'getRowClass',
-                'rowClassRules',
 
                 'suppressStickyTotalRow',
 
                 'groupRowRenderer',
                 'groupRowRendererParams', // maybe only needs to refresh FW rows...
+
                 'loadingCellRenderer',
                 'loadingCellRendererParams',
+
                 'detailCellRenderer',
                 'detailCellRendererParams',
+
                 'enableRangeSelection',
                 'enableCellTextSelection',
                 'rowSelection',
