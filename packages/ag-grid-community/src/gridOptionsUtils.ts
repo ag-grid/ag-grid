@@ -7,6 +7,7 @@ import type {
     MultiRowSelectionOptions,
     RowSelectionMode,
     RowSelectionOptions,
+    SelectAllMode,
     SingleRowSelectionOptions,
 } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
@@ -499,22 +500,12 @@ export function _getGroupSelection(gos: GridOptionsService): GroupSelectionMode 
     return selection?.mode === 'multiRow' ? selection.groupSelects : undefined;
 }
 
-export function _getSelectAllFiltered(gos: GridOptionsService): boolean {
+export function _getSelectAll(gos: GridOptionsService): SelectAllMode {
     const rowSelection = gos.get('rowSelection');
-    if (typeof rowSelection === 'string') {
-        return false;
-    } else {
-        return rowSelection?.mode === 'multiRow' ? rowSelection.selectAll === 'filtered' : false;
+    if (typeof rowSelection !== 'object') {
+        return 'all';
     }
-}
-
-export function _getSelectAllCurrentPage(gos: GridOptionsService): boolean {
-    const rowSelection = gos.get('rowSelection');
-    if (typeof rowSelection === 'string') {
-        return false;
-    } else {
-        return rowSelection?.mode === 'multiRow' ? rowSelection.selectAll === 'currentPage' : false;
-    }
+    return (rowSelection.mode === 'multiRow' && rowSelection.selectAll) || 'all';
 }
 
 export function _getGroupSelectsDescendants(gos: GridOptionsService): boolean {
