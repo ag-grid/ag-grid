@@ -28,7 +28,6 @@ interface Props {
     library: Library;
     framework: Framework;
     path: string;
-    menuItems: MenuItem[];
     seedRepos: SeedRepo[];
 }
 
@@ -191,11 +190,7 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                             <div className={styles.frameworkImportContainer}>
                                 <div className={styles.frameworkContainer}>
                                     <label>Framework</label>
-                                    <FrameworkSelectorInsideDocs
-                                        path={path}
-                                        currentFramework={framework}
-                                        menuItems={menuItems}
-                                    />
+                                    <FrameworkSelectorInsideDocs path={path} currentFramework={framework} />
                                 </div>
 
                                 <span className={styles.divider}></span>
