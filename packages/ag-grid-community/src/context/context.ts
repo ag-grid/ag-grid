@@ -51,6 +51,7 @@ import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService'
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { IClipboardService } from '../interfaces/iClipboardService';
+import type { IColsService } from '../interfaces/iColsService';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import type { IDetailGridApiService } from '../interfaces/iDetailGridApiService';
@@ -230,6 +231,9 @@ export interface CoreBeanCollection {
     columnDefFactory?: ColumnDefFactory;
     columnAutosizeService?: ColumnAutosizeService;
     funcColsService: FuncColsService;
+    rowGroupColsService?: IColsService;
+    valueColsService?: IColsService;
+    pivotColsService?: IColsService;
     quickFilterService?: QuickFilterService;
     showRowGroupColsService?: IShowRowGroupColsService;
     dataTypeService?: DataTypeService;
@@ -393,6 +397,9 @@ export type BeanName =
     | 'flattenStage'
     | 'focusService'
     | 'funcColsService'
+    | 'pivotColsService'
+    | 'rowGroupColsService'
+    | 'valueColsService'
     | 'frameworkComponentWrapper'
     | 'frameworkOverrides'
     | 'globalEventListener'
