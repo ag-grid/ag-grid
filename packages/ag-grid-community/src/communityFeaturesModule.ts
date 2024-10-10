@@ -7,9 +7,9 @@ import { ColumnHoverModule } from './columns/columnHover/columnHoverModule';
 import {
     ColumnApiModule,
     ColumnFlexModule,
-    ControlsColumnModule,
     DataTypeModule,
     GetColumnDefsApiModule,
+    SelectionColumnModule,
 } from './columns/columnModule';
 import { CellRendererFunctionModule } from './components/framework/cellRendererFunctionModule';
 import { DragAndDropModule, RowDragModule } from './dragAndDrop/dragModule';
@@ -57,7 +57,7 @@ export const CommunityFeaturesModule: _ModuleWithoutApi = {
         RenderApiModule,
         ColumnMoveModule,
         ColumnAutosizeModule,
-        ControlsColumnModule,
+        SelectionColumnModule,
         ColumnResizeModule,
         DragAndDropModule,
         RowDragModule,

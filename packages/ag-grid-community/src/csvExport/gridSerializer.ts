@@ -1,6 +1,6 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnNameService } from '../columns/columnNameService';
-import { isColumnControlsCol, isColumnGroupAutoCol } from '../columns/columnUtils';
+import { isColumnGroupAutoCol, isColumnSelectionCol } from '../columns/columnUtils';
 import { GroupInstanceIdCreator } from '../columns/groupInstanceIdCreator';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { NamedBean } from '../context/bean';
@@ -377,7 +377,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
         if (skipRowGroups && !isTreeData) {
             columnsToExport = columnsToExport.filter(
-                (column) => isColumnGroupAutoCol(column) || isColumnControlsCol(column)
+                (column) => isColumnGroupAutoCol(column) || isColumnSelectionCol(column)
             );
         }
 

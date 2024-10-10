@@ -26,7 +26,7 @@ export type { VisibleColsService } from './columns/visibleColsService';
 export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
 export {
     GROUP_AUTO_COLUMN_ID,
-    isColumnControlsCol,
+    isColumnSelectionCol,
     isColumnGroupAutoCol,
     _destroyColumnTree,
     _getColumnsFromTree,

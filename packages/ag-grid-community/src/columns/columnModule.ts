@@ -38,8 +38,8 @@ import {
 } from './columnApi';
 import { ColumnDefFactory } from './columnDefFactory';
 import { ColumnFlexService } from './columnFlexService';
-import { ControlsColService } from './controlsColService';
 import { DataTypeService } from './dataTypeService';
+import { SelectionColService } from './selectionColService';
 
 export const DataTypeModule: _ModuleWithoutApi = {
     ...baseCommunityModule('DataTypeModule'),
@@ -47,9 +47,9 @@ export const DataTypeModule: _ModuleWithoutApi = {
     dependsOn: [CheckboxCellRendererModule],
 };
 
-export const ControlsColumnModule: _ModuleWithoutApi = {
-    ...baseCommunityModule('ControlsColumnModule'),
-    beans: [ControlsColService],
+export const SelectionColumnModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('SelectionColumnModule'),
+    beans: [SelectionColService],
 };
 
 export const GetColumnDefsApiModule: _ModuleWithApi<_GetColumnDefsApi<any>> = {

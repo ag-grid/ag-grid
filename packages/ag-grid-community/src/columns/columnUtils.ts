@@ -4,9 +4,9 @@ import { isColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
-import { _warn } from '../validation/logging';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
-import { CONTROLS_COLUMN_ID_PREFIX } from './controlsColService';
+import type { ColKey } from './columnModel';
+import { CONTROLS_COLUMN_ID_PREFIX } from './selectionColService';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn' as const;
 
@@ -67,8 +67,9 @@ export function isColumnGroupAutoCol(col: AgColumn): boolean {
     return colId.startsWith(GROUP_AUTO_COLUMN_ID);
 }
 
-export function isColumnControlsCol(col: AgColumn): boolean {
-    return col.getColId().startsWith(CONTROLS_COLUMN_ID_PREFIX);
+export function isColumnSelectionCol(col: ColKey): boolean {
+    const id = typeof col === 'string' ? col : 'getColId' in col ? col.getColId() : col.colId;
+    return id?.startsWith(CONTROLS_COLUMN_ID_PREFIX) ?? false;
 }
 
 export function convertColumnTypes(type: string | string[]): string[] {

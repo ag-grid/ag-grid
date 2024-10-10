@@ -1,4 +1,4 @@
-import { isColumnControlsCol } from '../../columns/columnUtils';
+import { isColumnSelectionCol } from '../../columns/columnUtils';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -425,7 +425,7 @@ export class CellCtrl extends BeanStub {
         const { rowSelection } = this.beans.gridOptions;
         return (
             colDef.checkboxSelection ||
-            (isColumnControlsCol(this.column) &&
+            (isColumnSelectionCol(this.column) &&
                 rowSelection &&
                 typeof rowSelection !== 'string' &&
                 _getCheckboxes(rowSelection))
