@@ -186,19 +186,6 @@ function onFlushTransactions() {
     gridApi!.flushAsyncTransactions();
 }
 
-const pRandom = (() => {
-    // From https://stackoverflow.com/a/3062783
-    let seed = 123_456_789;
-    const m = 2 ** 32;
-    const a = 1_103_515_245;
-    const c = 12_345;
-
-    return () => {
-        seed = (a * seed + c) % m;
-        return seed / m;
-    };
-})();
-
 function startFeed(api: GridApi) {
     let count = 1;
 
@@ -208,7 +195,7 @@ function startFeed(api: GridApi) {
         const newItems: any[] = [];
         for (let i = 0; i < UPDATE_COUNT; i++) {
             // pick one index at random
-            const index = Math.floor(pRandom() * globalRowData.length);
+            const index = Math.floor(Math.random() * globalRowData.length);
             // dont do same index twice, otherwise two updates for same row in one transaction
             if (updatedIndexes[index]) {
                 continue;
@@ -218,7 +205,7 @@ function startFeed(api: GridApi) {
             // copy previous to current value
             newItem.previous = newItem.current;
             // then create new current value
-            newItem.current = Math.floor(pRandom() * 100000) + 100;
+            newItem.current = Math.floor(Math.random() * 100000) + 100;
             newItems.push(newItem);
         }
         const resultCallback = () => {

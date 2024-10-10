@@ -19,7 +19,7 @@ function b137ValueGetter(params: ValueGetterParams) {
     return params.data.b * 137;
 }
 function randomValueGetter() {
-    return Math.floor(pRandom() * 1000);
+    return Math.floor(Math.random() * 1000);
 }
 function chainValueGetter(params: ValueGetterParams) {
     return params.getValue('a&b') * 1000;
@@ -91,16 +91,3 @@ document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });
-
-const pRandom = (() => {
-    // From https://stackoverflow.com/a/3062783
-    let seed = 123_456_789;
-    const m = 2 ** 32;
-    const a = 1_103_515_245;
-    const c = 12_345;
-
-    return () => {
-        seed = (a * seed + c) % m;
-        return seed / m;
-    };
-})();

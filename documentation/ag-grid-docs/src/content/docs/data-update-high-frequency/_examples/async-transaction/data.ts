@@ -68,26 +68,13 @@ export function getData() {
     }
 }
 
-const pRandom = (() => {
-    // From https://stackoverflow.com/a/3062783
-    let seed = 123_456_789;
-    const m = 2 ** 32;
-    const a = 1_103_515_245;
-    const c = 12_345;
-
-    return () => {
-        seed = (a * seed + c) % m;
-        return seed / m;
-    };
-})();
-
 function randomBetween(min: number, max: number) {
-    return Math.floor(pRandom() * (max - min + 1)) + min;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 function createTradeRecord(product: string, portfolio: string, book: string) {
-    const current = Math.floor(pRandom() * 100000) + 100;
-    const previous = current + Math.floor(pRandom() * 10000) - 2000;
+    const current = Math.floor(Math.random() * 100000) + 100;
+    const previous = current + Math.floor(Math.random() * 10000) - 2000;
     const trade = {
         product: product,
         portfolio: portfolio,
@@ -95,8 +82,8 @@ function createTradeRecord(product: string, portfolio: string, book: string) {
         trade: createTradeId(),
         submitterID: randomBetween(10, 1000),
         submitterDealID: randomBetween(10, 1000),
-        dealType: pRandom() < 0.2 ? 'Physical' : 'Financial',
-        bidFlag: pRandom() < 0.5 ? 'Buy' : 'Sell',
+        dealType: Math.random() < 0.2 ? 'Physical' : 'Financial',
+        bidFlag: Math.random() < 0.5 ? 'Buy' : 'Sell',
         current: current,
         previous: previous,
         pl1: randomBetween(100, 1000),

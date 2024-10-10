@@ -6,26 +6,13 @@ import { RowGroupingModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
-const pRandom = (() => {
-    // From https://stackoverflow.com/a/3062783
-    let seed = 123_456_789;
-    const m = 2 ** 32;
-    const a = 1_103_515_245;
-    const c = 12_345;
-
-    return () => {
-        seed = (a * seed + c) % m;
-        return seed / m;
-    };
-})();
-
 let lastGen = 0;
 const generateItem = (id = lastGen++) => {
     return {
         id,
-        sort: Math.floor(pRandom() * 3 + 2000),
-        sort1: Math.floor(pRandom() * 3 + 2000),
-        sort2: Math.floor(pRandom() * 100000 + 2000),
+        sort: Math.floor(Math.random() * 3 + 2000),
+        sort1: Math.floor(Math.random() * 3 + 2000),
+        sort2: Math.floor(Math.random() * 100000 + 2000),
     };
 };
 

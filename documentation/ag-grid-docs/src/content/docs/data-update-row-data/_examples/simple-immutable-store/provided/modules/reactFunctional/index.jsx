@@ -23,7 +23,7 @@ function createUniqueRandomSymbol(data) {
         symbol = '';
         // create symbol
         for (let i = 0; i < 3; i++) {
-            symbol += possible.charAt(Math.floor(pRandom() * possible.length));
+            symbol += possible.charAt(Math.floor(Math.random() * possible.length));
         }
         // check uniqueness
         isUnique = true;
@@ -46,9 +46,9 @@ function getInitialData() {
 
 function createItem(data) {
     const item = {
-        group: ['A', 'B', 'C'][Math.floor(pRandom() * 3)],
+        group: ['A', 'B', 'C'][Math.floor(Math.random() * 3)],
         symbol: createUniqueRandomSymbol(data),
-        price: Math.floor(pRandom() * 100),
+        price: Math.floor(Math.random() * 100),
     };
     return item;
 }
@@ -83,19 +83,6 @@ const rowSelection = {
     groupSelects: 'descendants',
     headerCheckbox: false,
 };
-
-const pRandom = (() => {
-    // From https://stackoverflow.com/a/3062783
-    let seed = 123_456_789;
-    const m = 2 ** 32;
-    const a = 1_103_515_245;
-    const c = 12_345;
-
-    return () => {
-        seed = (a * seed + c) % m;
-        return seed / m;
-    };
-})();
 
 const GridExample = () => {
     const gridRef = useRef(null);
@@ -193,7 +180,7 @@ const GridExample = () => {
                 // group also stays the same
                 group: item.group,
                 // add random price
-                price: Math.floor(pRandom() * 100),
+                price: Math.floor(Math.random() * 100),
             });
         });
         setRowData(newStore);

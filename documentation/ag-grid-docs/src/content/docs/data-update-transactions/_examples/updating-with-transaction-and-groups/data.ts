@@ -1,16 +1,3 @@
-const pRandom = (() => {
-    // From https://stackoverflow.com/a/3062783
-    let seed = 123_456_789;
-    const m = 2 ** 32;
-    const a = 1_103_515_245;
-    const c = 12_345;
-
-    return () => {
-        seed = (a * seed + c) % m;
-        return seed / m;
-    };
-})();
-
 export function getData(): any[] {
     const rowData = [];
 
@@ -41,9 +28,9 @@ export function createNewRowData(category: string) {
     const newData = {
         // use make if provided, otherwise select random make
         category: category,
-        model: models[Math.floor(pRandom() * models.length)],
-        price: Math.floor(pRandom() * 800000) + 20000,
-        zombies: names[Math.floor(pRandom() * names.length)],
+        model: models[Math.floor(Math.random() * models.length)],
+        price: Math.floor(Math.random() * 800000) + 20000,
+        zombies: names[Math.floor(Math.random() * names.length)],
         style: 'Smooth',
         clothes: 'Jeans',
     };

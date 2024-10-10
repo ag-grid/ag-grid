@@ -164,19 +164,6 @@ const gridOptions: GridOptions = {
     },
 };
 
-const pRandom = (() => {
-    // From https://stackoverflow.com/a/3062783
-    let seed = 123_456_789;
-    const m = 2 ** 32;
-    const a = 1_103_515_245;
-    const c = 12_345;
-
-    return () => {
-        seed = (a * seed + c) % m;
-        return seed / m;
-    };
-})();
-
 function onNormalUpdate() {
     const startMillis = new Date().getTime();
 
@@ -185,13 +172,13 @@ function onNormalUpdate() {
     for (let i = 0; i < UPDATE_COUNT; i++) {
         setTimeout(() => {
             // pick one index at random
-            const index = Math.floor(pRandom() * globalRowData.length);
+            const index = Math.floor(Math.random() * globalRowData.length);
             const itemToUpdate = globalRowData[index];
             const newItem = copyObject(itemToUpdate);
             // copy previous to current value
             newItem.previous = newItem.current;
             // then create new current value
-            newItem.current = Math.floor(pRandom() * 100000) + 100;
+            newItem.current = Math.floor(Math.random() * 100000) + 100;
             // do normal update. update is done before method returns
             gridApi.applyTransaction({ update: [newItem] });
         }, 0);
@@ -221,13 +208,13 @@ function onAsyncUpdate() {
     for (let i = 0; i < UPDATE_COUNT; i++) {
         setTimeout(() => {
             // pick one index at random
-            const index = Math.floor(pRandom() * globalRowData.length);
+            const index = Math.floor(Math.random() * globalRowData.length);
             const itemToUpdate = globalRowData[index];
             const newItem = copyObject(itemToUpdate);
             // copy previous to current value
             newItem.previous = newItem.current;
             // then create new current value
-            newItem.current = Math.floor(pRandom() * 100000) + 100;
+            newItem.current = Math.floor(Math.random() * 100000) + 100;
 
             // update using async method. passing the callback is
             // optional, we are doing it here so we know when the update

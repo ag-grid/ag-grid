@@ -57,25 +57,12 @@ const LAPTOPS = ['Hewlett Packard', 'Lenovo', 'Dell', 'Asus', 'Apple', 'Acer', '
 
 let idCounter = 0;
 
-export const pRandom = (() => {
-    // From https://stackoverflow.com/a/3062783
-    let seed = 123_456_789;
-    const m = 2 ** 32;
-    const a = 1_103_515_245;
-    const c = 12_345;
-
-    return () => {
-        seed = (a * seed + c) % m;
-        return seed / m;
-    };
-})();
-
 function letter(i: number) {
     return 'abcdefghijklmnopqrstuvwxyz'.substring(i, i + 1);
 }
 
 function randomLetter() {
-    return letter(Math.floor(pRandom() * 26 + 1));
+    return letter(Math.floor(Math.random() * 26 + 1));
 }
 
 export function createDataItem(
@@ -110,9 +97,9 @@ export function getData() {
             randomLetter() +
             randomLetter();
         const city = CITIES[i % CITIES.length];
-        const distro = LINUX_DISTROS[i % LINUX_DISTROS.length] + ' v' + Math.floor(pRandom() * 100 + 1) / 10;
+        const distro = LINUX_DISTROS[i % LINUX_DISTROS.length] + ' v' + Math.floor(Math.random() * 100 + 1) / 10;
         const university = LAPTOPS[i % LAPTOPS.length];
-        const value = Math.floor(pRandom() * 100) + 10; // between 10 and 110
+        const value = Math.floor(Math.random() * 100) + 10; // between 10 and 110
         myRowData.push(createDataItem(name, distro, university, city, value));
     }
     return myRowData;

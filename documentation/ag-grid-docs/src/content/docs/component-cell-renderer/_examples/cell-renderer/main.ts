@@ -109,19 +109,6 @@ const createImageSpan = (imageMultiplier: number, image: string) => {
     return resultElement;
 };
 
-const pRandom = (() => {
-    // From https://stackoverflow.com/a/3062783
-    let seed = 123_456_789;
-    const m = 2 ** 32;
-    const a = 1_103_515_245;
-    const c = 12_345;
-
-    return () => {
-        seed = (a * seed + c) % m;
-        return seed / m;
-    };
-})();
-
 /**
  * Updates the Days of Air Frost column - adjusts the value which in turn will demonstrate the Component refresh functionality
  * After a data update, cellRenderer Components.refresh method will be called to re-render the altered Cells
@@ -129,7 +116,7 @@ const pRandom = (() => {
 function randomiseFrost() {
     // iterate over the "days of air frost" and make each a random number.
     gridApi!.forEachNode((rowNode) => {
-        rowNode.setDataValue('Days of air frost (days)', Math.floor(pRandom() * 4) + 1);
+        rowNode.setDataValue('Days of air frost (days)', Math.floor(Math.random() * 4) + 1);
     });
 }
 

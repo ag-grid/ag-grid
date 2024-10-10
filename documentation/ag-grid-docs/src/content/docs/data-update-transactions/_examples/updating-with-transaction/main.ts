@@ -69,19 +69,6 @@ function addItems(addIndex: number | undefined) {
     printResult(res);
 }
 
-const pRandom = (() => {
-    // From https://stackoverflow.com/a/3062783
-    let seed = 123_456_789;
-    const m = 2 ** 32;
-    const a = 1_103_515_245;
-    const c = 12_345;
-
-    return () => {
-        seed = (a * seed + c) % m;
-        return seed / m;
-    };
-})();
-
 function updateItems() {
     // update the first 2 items
     const itemsToUpdate: any[] = [];
@@ -92,7 +79,7 @@ function updateItems() {
         }
 
         const data = rowNode.data;
-        data.price = Math.floor(pRandom() * 20000 + 20000);
+        data.price = Math.floor(Math.random() * 20000 + 20000);
         itemsToUpdate.push(data);
     });
     const res = gridApi!.applyTransaction({ update: itemsToUpdate })!;

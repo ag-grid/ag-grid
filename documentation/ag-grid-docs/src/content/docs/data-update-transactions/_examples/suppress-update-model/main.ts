@@ -13,7 +13,7 @@ import {
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { createDataItem, getData, pRandom } from './data';
+import { createDataItem, getData } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
@@ -39,8 +39,8 @@ const columnDefs: ColDef[] = [
 function onBtnApply() {
     const updatedItems: any[] = [];
     gridApi.forEachNode((rowNode) => {
-        const newValue = Math.floor(pRandom() * 100) + 10;
-        const newBoolean = Boolean(Math.round(pRandom()));
+        const newValue = Math.floor(Math.random() * 100) + 10;
+        const newBoolean = Boolean(Math.round(Math.random()));
         const newItem = createDataItem(rowNode.data.name, rowNode.data.laptop, newBoolean, newValue, rowNode.data.id);
         updatedItems.push(newItem);
     });

@@ -53,19 +53,6 @@ const insertItemsAt2 = (count: number) => {
     return newDataItems;
 };
 
-const pRandom = (() => {
-    // From https://stackoverflow.com/a/3062783
-    let seed = 123_456_789;
-    const m = 2 ** 32;
-    const a = 1_103_515_245;
-    const c = 12_345;
-
-    return () => {
-        seed = (a * seed + c) % m;
-        return seed / m;
-    };
-})();
-
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
@@ -193,13 +180,13 @@ const GridExample = () => {
     // function just gives new prices to the row data, it does not update the grid
     const setPricesHigh = useCallback(() => {
         allOfTheData.forEach(function (dataItem) {
-            dataItem.price = Math.round(55500 + 400 * (0.5 + pRandom()));
+            dataItem.price = Math.round(55500 + 400 * (0.5 + Math.random()));
         });
     }, [allOfTheData]);
 
     const setPricesLow = useCallback(() => {
         allOfTheData.forEach(function (dataItem) {
-            dataItem.price = Math.round(1000 + 100 * (0.5 + pRandom()));
+            dataItem.price = Math.round(1000 + 100 * (0.5 + Math.random()));
         });
     }, [allOfTheData]);
 

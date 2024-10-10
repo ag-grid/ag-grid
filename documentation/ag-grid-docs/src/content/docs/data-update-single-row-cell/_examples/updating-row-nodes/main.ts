@@ -39,28 +39,15 @@ function updateFilter() {
     gridApi!.refreshClientSideRowModel('filter');
 }
 
-const pRandom = (() => {
-    // From https://stackoverflow.com/a/3062783
-    let seed = 123_456_789;
-    const m = 2 ** 32;
-    const a = 1_103_515_245;
-    const c = 12_345;
-
-    return () => {
-        seed = (a * seed + c) % m;
-        return seed / m;
-    };
-})();
-
 function setPriceOnToyota() {
     const rowNode = gridApi!.getRowNode('aa')!;
-    const newPrice = Math.floor(pRandom() * 100000);
+    const newPrice = Math.floor(Math.random() * 100000);
     rowNode.setDataValue('price', newPrice);
 }
 
 function generateNewFordData() {
-    const newPrice = Math.floor(pRandom() * 100000);
-    const newModel = 'T-' + Math.floor(pRandom() * 1000);
+    const newPrice = Math.floor(Math.random() * 100000);
+    const newModel = 'T-' + Math.floor(Math.random() * 1000);
     return {
         id: 'bb',
         make: 'Ford',

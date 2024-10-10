@@ -15,25 +15,12 @@ import './styles.css';
 // Register shared Modules globally
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule]);
 
-const pRandom = (() => {
-    // From https://stackoverflow.com/a/3062783
-    let seed = 123_456_789;
-    const m = 2 ** 32;
-    const a = 1_103_515_245;
-    const c = 12_345;
-
-    return () => {
-        seed = (a * seed + c) % m;
-        return seed / m;
-    };
-})();
-
 let rowIdSequence = 100;
 const createRowBlock = () =>
     ['Red', 'Green', 'Blue'].map((color) => ({
         id: rowIdSequence++,
         color: color,
-        value1: Math.floor(pRandom() * 100),
+        value1: Math.floor(Math.random() * 100),
     }));
 
 const VueExample = {

@@ -19,19 +19,6 @@ interface ColumnWidth {
     width: number;
 }
 
-const pRandom = (() => {
-    // From https://stackoverflow.com/a/3062783
-    let seed = 123_456_789;
-    const m = 2 ** 32;
-    const a = 1_103_515_245;
-    const c = 12_345;
-
-    return () => {
-        seed = (a * seed + c) % m;
-        return seed / m;
-    };
-})();
-
 @Component({
     standalone: true,
     imports: [AgGridAngular],
@@ -118,7 +105,7 @@ export class AppComponent {
             return;
         }
         const newWidths = this.gridApi.getColumns()!.map((column) => {
-            return { key: column.getColId(), newWidth: Math.round((150 + pRandom() * 100) * 100) / 100 };
+            return { key: column.getColId(), newWidth: Math.round((150 + Math.random() * 100) * 100) / 100 };
         });
         this.gridApi.setColumnWidths(newWidths);
     }

@@ -33,26 +33,13 @@ const gridOptions: GridOptions = {
     },
 };
 
-const pRandom = (() => {
-    // From https://stackoverflow.com/a/3062783
-    let seed = 123_456_789;
-    const m = 2 ** 32;
-    const a = 1_103_515_245;
-    const c = 12_345;
-
-    return () => {
-        seed = (a * seed + c) % m;
-        return seed / m;
-    };
-})();
-
 function createRowData() {
     const data = [];
     for (let i = 0; i < 20; i++) {
         data.push({
-            height: Math.floor(pRandom() * 100),
-            width: Math.floor(pRandom() * 100),
-            depth: Math.floor(pRandom() * 100),
+            height: Math.floor(Math.random() * 100),
+            width: Math.floor(Math.random() * 100),
+            depth: Math.floor(Math.random() * 100),
         });
     }
     return data;

@@ -2,8 +2,6 @@ import React from 'react';
 
 import type { CustomCellRendererProps } from 'ag-grid-react';
 
-import { pRandom } from './random';
-
 export default (props: CustomCellRendererProps) => {
     const onAdd = () => {
         const oldData = props.node.data;
@@ -12,12 +10,12 @@ export default (props: CustomCellRendererProps) => {
 
         const newCallRecords: any[] = oldCallRecords.slice(0); // make a copy
         newCallRecords.push({
-            name: ['Bob', 'Paul', 'David', 'John'][Math.floor(pRandom() * 4)],
-            callId: Math.floor(pRandom() * 1000),
-            duration: Math.floor(pRandom() * 100) + 1,
+            name: ['Bob', 'Paul', 'David', 'John'][Math.floor(Math.random() * 4)],
+            callId: Math.floor(Math.random() * 1000),
+            duration: Math.floor(Math.random() * 100) + 1,
             switchCode: 'SW5',
             direction: 'Out',
-            number: '(02) ' + Math.floor(pRandom() * 1000000),
+            number: '(02) ' + Math.floor(Math.random() * 1000000),
         }); // add one item
 
         let minutes = 0;
