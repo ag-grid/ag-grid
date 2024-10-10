@@ -5,7 +5,7 @@ import type { Framework, MenuItem, MenuSection } from '@ag-grid-types';
 import { FRAMEWORKS } from '@constants';
 import { getFilteredMenuSections } from '@components/pages-navigation/utils/getFilteredMenuSections';
 import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
-import { PagesNavigation } from '@components/pages-navigation/components/PagesNavigation';
+import { DocsNav } from '@ag-website-shared/components/docs-navigation/DocsNav';
 import { Header } from '@features/docs/components/Header';
 import { getErrorText } from '@utils/getErrorText';
 import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
@@ -52,11 +52,8 @@ const description = errorPage?.data.description ? errorPage?.data.description : 
 
 const { Content } = errorPage ? await errorPage.render() : { Content: undefined };
 
-const { data: menu } = await getEntry('menu', 'data');
-const menuSections: MenuSection[] = getFilteredMenuSections({
-    menuSections: menu.main.sections,
-    framework,
-});
+const { data: docsNavData } = await getEntry('docs-nav', 'docsNav');
+
 const path = Astro.url.pathname;
 const pageName = `errors/${code}`;
 const defaultErrorText = getErrorText({ errorCode });
@@ -79,15 +76,10 @@ const headings = errorPage
 
 <Layout title={title} description={description} showSearchBar={true} showDocsNav={true}>
     <div class:list={[styles.contentViewport, 'layout-grid']}>
-        <PagesNavigation client:load menuSections={menuSections} framework={framework} pageName={pageName} />
+        <DocsNav client:load menuData={docsNavData} framework={framework} pageName={pageName} />
+
         <div id="doc-content" class:list={[styles.docPage, styles.errorPage]}>
-            <Header
-                client:load
-                title={title}
-                framework={framework}
-                path={path}
-                menuItems={menuSections as MenuItem[]}
-            />
+            <Header client:load title={title} framework={framework} path={path} menuItems={docsNavData.sections} />
             <div class={styles.pageSections}>
                 {Content ? <Content framework={framework} /> : undefined}
 
