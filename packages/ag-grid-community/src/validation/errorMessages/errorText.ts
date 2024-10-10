@@ -482,6 +482,14 @@ export const AG_GRID_ERRORS = {
     232: () => 'Using both rowData and v-model. rowData will be ignored.' as const,
     233: ({ methodName }: { methodName: string }) =>
         `Framework component is missing the method ${methodName}()` as const,
+    234: () =>
+        'Group Column Filter does not work with the colDef property "field". This property will be ignored.' as const,
+    235: () =>
+        'Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.' as const,
+    236: () =>
+        'Group Column Filter does not work with the colDef property "filterParams". This property will be ignored.' as const,
+    237: () =>
+        'Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.' as const,
 } as const;
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
