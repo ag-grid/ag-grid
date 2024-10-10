@@ -1,10 +1,9 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import Layout from '@layouts/Layout.astro';
-import { PagesNavigation } from '@components/pages-navigation/components/PagesNavigation';
 import { Header } from '@features/docs/components/Header';
 import { getFrameworkDisplayText } from '@utils/framework';
-import type { Framework, MenuItem, MenuSection } from '@ag-grid-types';
+import type { Framework, MenuSection } from '@ag-grid-types';
 import { getDocsPages } from '@features/docs/utils/pageData';
 import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
 import { getFirstParagraphText } from '@utils/markdoc/getFirstParagraphText';
