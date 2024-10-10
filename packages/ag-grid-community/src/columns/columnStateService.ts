@@ -188,42 +188,41 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
             this.columnModel.refreshCols(false);
 
-            // sync newly created auto group columns with ColumnState
-            const autoColsCopy = this.columnModel.getAutoCols()?.slice() ?? [];
-            autoColStates.forEach((stateItem) => {
-                const autoCol = this.columnModel.getAutoCol(stateItem.colId);
-                _removeFromArray(autoColsCopy, autoCol);
-                this.syncColumnWithStateItem(
-                    autoCol,
-                    stateItem,
-                    params.defaultState,
-                    null,
-                    null,
-                    true,
-                    source,
-                    callbacks
-                );
-            });
-            // autogroup cols with nothing else, apply the default
-            autoColsCopy.forEach(applyDefaultsFunc);
+            const syncColStates = (
+                getCol: (colId: string) => AgColumn | null,
+                colStates: ColumnState[],
+                columns: AgColumn[] = []
+            ) => {
+                colStates.forEach((stateItem) => {
+                    const col = getCol(stateItem.colId);
+                    _removeFromArray(columns, col);
+                    this.syncColumnWithStateItem(
+                        col,
+                        stateItem,
+                        params.defaultState,
+                        null,
+                        null,
+                        true,
+                        source,
+                        callbacks
+                    );
+                });
+                columns.forEach(applyDefaultsFunc);
+            };
 
-            // sync selection cols with ColumnState
-            const selectionCols = this.columnModel.getSelectionCols()?.slice() ?? [];
-            selectionColStates.forEach((stateItem) => {
-                const selectionCol = this.columnModel.getSelectionCol(stateItem.colId);
-                _removeFromArray(selectionCols, selectionCol);
-                this.syncColumnWithStateItem(
-                    selectionCol,
-                    stateItem,
-                    params.defaultState,
-                    null,
-                    null,
-                    true,
-                    source,
-                    callbacks
-                );
-            });
-            selectionCols.forEach(applyDefaultsFunc);
+            // sync newly created auto group columns with ColumnState
+            syncColStates(
+                (colId: string) => this.columnModel.getAutoCol(colId),
+                autoColStates,
+                this.columnModel.getAutoCols()?.slice()
+            );
+
+            // sync selection columns with ColumnState
+            syncColStates(
+                (colId: string) => this.columnModel.getSelectionCol(colId),
+                selectionColStates,
+                this.columnModel.getSelectionCols()?.slice()
+            );
 
             this.orderLiveColsLikeState(params);
             this.visibleColsService.refresh(source);
