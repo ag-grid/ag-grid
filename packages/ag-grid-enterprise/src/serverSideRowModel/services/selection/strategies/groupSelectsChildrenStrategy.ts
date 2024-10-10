@@ -11,15 +11,7 @@ import type {
     RowNode,
     SelectionEventSourceType,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    _error,
-    _errorOnce,
-    _isMultiRowSelection,
-    _last,
-    _warn,
-    isSelectionUIEvent,
-} from 'ag-grid-community';
+import { BeanStub, _error, _isMultiRowSelection, _last, _warn, isSelectionUIEvent } from 'ag-grid-community';
 
 import type { LazyStore } from '../../../stores/lazy/lazyStore';
 import { ServerSideRowRangeSelectionContext } from '../serverSideRowRangeSelectionContext';
@@ -138,7 +130,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         try {
             this.selectedState = recursivelyDeserializeState(state, !!state.selectAllChildren);
         } catch (e) {
-            _errorOnce(e.message);
+            _error(238, { message: e.message });
         }
     }
 

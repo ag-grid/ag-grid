@@ -490,6 +490,7 @@ export const AG_GRID_ERRORS = {
         'Group Column Filter does not work with the colDef property "filterParams". This property will be ignored.' as const,
     237: () =>
         'Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.' as const,
+    238: ({ message }: { message: string }) => ['Failed to deserialize state with error ', message] as const,
 } as const;
 
 export type ErrorMap = typeof AG_GRID_ERRORS;
