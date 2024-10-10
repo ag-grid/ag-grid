@@ -48,16 +48,6 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
         }
         return null;
     },
-    editable: {
-        validate: (options) => {
-            const { field, valueSetter } = options;
-
-            if (_missing(field) && _missing(valueSetter)) {
-                return 'you need either field or valueSetter set on colDef for editing to work';
-            }
-            return null;
-        },
-    },
     menuTabs: (options) => {
         const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
         if (options.menuTabs?.some((tab) => enterpriseMenuTabs.includes(tab))) {

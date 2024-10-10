@@ -76,7 +76,7 @@ export const AG_GRID_ERRORS = {
             'Exception = ',
             e,
         ] as const,
-    // 17: () => '' as const,
+    17: () => 'you need either field or valueSetter set on colDef for editing to work' as const,
     18: () => `alignedGrids contains an undefined option.` as const,
     19: () => `alignedGrids - No api found on the linked grid.` as const,
     20: () =>
