@@ -39,36 +39,43 @@ function getLinkUrl({ framework, path, url }: { framework: Framework; path?: str
 
 function Item({ itemData, framework, pageName }: { itemData?: any; framework: Framework; pageName: string }) {
     const linkUrl = getLinkUrl({ framework, path: itemData.path });
+    const isCorrectFramework = !itemData.frameworks
+        ? true
+        : itemData.frameworks.filter((f) => {
+              return f === framework;
+          }).length > 0;
     const isActive = pageName === itemData.path;
 
     const className = classnames(styles.item, itemData.icon ? styles.hasIcon : '', isActive ? styles.isIsActive : '');
 
     return (
-        <>
-            <a href={linkUrl} className={className}>
-                {itemData.icon && <Icon name={itemData.icon} svgClasses={styles.itemIcon} />}
+        isCorrectFramework && (
+            <>
+                <a href={linkUrl} className={className}>
+                    {itemData.icon && <Icon name={itemData.icon} svgClasses={styles.itemIcon} />}
 
-                <span>
-                    {itemData.title}
-                    {itemData.isEnterprise && <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />}
-                </span>
-            </a>
+                    <span>
+                        {itemData.title}
+                        {itemData.isEnterprise && <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />}
+                    </span>
+                </a>
 
-            {itemData.children && (
-                <div className={styles.nestedItems}>
-                    {itemData.children.map((childData) => {
-                        return (
-                            <Item
-                                key={childData.title}
-                                itemData={childData}
-                                framework={framework}
-                                pageName={pageName}
-                            />
-                        );
-                    })}
-                </div>
-            )}
-        </>
+                {itemData.children && (
+                    <div className={styles.nestedItems}>
+                        {itemData.children.map((childData) => {
+                            return (
+                                <Item
+                                    key={childData.title}
+                                    itemData={childData}
+                                    framework={framework}
+                                    pageName={pageName}
+                                />
+                            );
+                        })}
+                    </div>
+                )}
+            </>
+        )
     );
 }
 
