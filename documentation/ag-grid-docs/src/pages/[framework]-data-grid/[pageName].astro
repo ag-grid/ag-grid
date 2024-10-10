@@ -12,6 +12,8 @@ import { DOCS_TAB_ITEM_ID_PREFIX } from '@ag-website-shared/constants';
 import { getFilteredMenuSections } from '@components/pages-navigation/utils/getFilteredMenuSections';
 import { getHeadings } from '@utils/markdoc/getHeadings';
 import { isApiMenuPath } from '@utils/apiMenuPath';
+import { DocsNav } from '@ag-website-shared/components/docs-navigation/DocsNav';
+
 import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
 
 export async function getStaticPaths() {
@@ -48,6 +50,9 @@ const isApiPage = isApiMenuPath({
     pageName,
     menuData: menu,
 });
+
+const { data: apiNavData } = await getEntry('api-nav', 'apiNav');
+
 const menuSections = isApiPage ? apiMenuSections : frameworkMenuSections;
 
 const { Content } = await page.render();
@@ -74,13 +79,15 @@ const headings =
 >
     <div class:list={[hidePageMenu && styles.noLeftMenu, styles.contentViewport, 'layout-grid']}>
         {
-            !hidePageMenu && (
+            !hidePageMenu && !isApiPage ? (
                 <PagesNavigation
                     client:load
                     menuSections={menuSections}
                     framework={currentFramework}
                     pageName={pageName}
                 />
+            ) : (
+                <DocsNav client:load menuData={apiNavData} framework={currentFramework} pageName={pageName} />
             )
         }
         <div
