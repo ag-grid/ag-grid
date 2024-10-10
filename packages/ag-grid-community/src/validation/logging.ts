@@ -60,6 +60,13 @@ function stringifyValue(value: any) {
     }
     return output;
 }
+/**
+ * Correctly formats a string or undefined or null value into a human readable string
+ * @param input
+ */
+export function toStringWithNullUndefined(str: string | null | undefined) {
+    return str === undefined ? 'undefined' : str === null ? 'null' : str;
+}
 
 export function getErrorLink(errorNum: ErrorId, args: GetErrorParams<any>) {
     const params = new URLSearchParams();
