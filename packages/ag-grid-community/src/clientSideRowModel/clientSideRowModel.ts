@@ -30,7 +30,7 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _insertIntoArray, _last, _removeFromArray } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
-import { _debounce, _warnOnce } from '../utils/function';
+import { _debounce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
 import { _logError, _logWarn } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
@@ -65,6 +65,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     beanName = 'rowModel' as const;
 
     private beans: BeanCollection;
+
+    /** Use to detect masterDetail enabled change during refresh */
+    private oldMasterDetail: boolean = false;
 
     private columnModel: ColumnModel;
     private selectionService?: ISelectionService;
@@ -274,8 +277,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             if (rowDataChanged) {
                 const rowData = this.gos.get('rowData');
                 if (rowData) {
-                    if (this.isImmutableRowDataActive()) {
-                        this.setImmutableRowData(rowData, masterDetailChanged);
+                    const getRowIdProvided =
+                        this.gos.exists('getRowId') &&
+                        // this property is a backwards compatibility property, for those who want
+                        // the old behaviour of Row IDs but NOT Immutable Data.
+                        !this.gos.get('resetRowDataOnUpdate');
+
+                    if (getRowIdProvided) {
+                        this.setImmutableRowData(rowData);
                     } else {
                         this.setNewRowData(rowData);
                     }
@@ -292,8 +301,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
 
             if (masterDetailChanged) {
-                // We need to set the master/detail for all rows at this stage, before the refresh
-                this.nodeManager.setMasterForAllRows?.(this.rootNode.allLeafChildren, true);
                 refreshModelStep = ClientSideRowModelSteps.EVERYTHING;
             }
 
@@ -757,10 +764,24 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         switch (params.step) {
             case ClientSideRowModelSteps.EVERYTHING: {
+                const masterDetail = this.nodeManager.isMasterDetail();
+                if (this.oldMasterDetail !== masterDetail) {
+                    this.oldMasterDetail = masterDetail;
+                    const detailGridApiService = this.beans.detailGridApiService;
+                    if (detailGridApiService) {
+                        const rows = this.rootNode.allLeafChildren;
+                        for (let i = 0, len = rows!.length; i < len; i++) {
+                            const rowNode = rows![i];
+                            detailGridApiService.setMasterForRow(rowNode, rowNode.data, masterDetail, true);
+                        }
+                    }
+                }
+
                 const afterColumnsChange = !!params.afterColumnsChanged;
                 if (afterColumnsChange) {
                     this.nodeManager.afterColumnsChanged?.();
                 }
+
                 this.doRowGrouping(
                     params.rowNodeTransactions,
                     changedPath,
@@ -1185,18 +1206,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return this.nodeManager.getRowNode(id);
     }
 
-    private isImmutableRowDataActive(): boolean {
-        const getRowIdProvided = this.gos.exists('getRowId');
-        // this property is a backwards compatibility property, for those who want
-        // the old behaviour of Row IDs but NOT Immutable Data.
-        const resetRowDataOnUpdate = this.gos.get('resetRowDataOnUpdate');
-
-        if (resetRowDataOnUpdate) {
-            return false;
-        }
-        return getRowIdProvided;
-    }
-
     // rows: the rows to put into the model
     private setNewRowData(rowData: any[]): void {
         // no need to invalidate cache, as the cache is stored on the rowNode,
@@ -1204,6 +1213,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         // - clears selection, done before we set row data to ensure it isn't readded via `selectionService.syncInOldRowNode`
         this.selectionService?.reset('rowDataChanged');
+
+        // Reset the oldMasterDetail state as we do not need to recompute set master detail during refresh when new data is set
+        this.oldMasterDetail = this.nodeManager.isMasterDetail();
 
         if (!Array.isArray(rowData)) {
             _logWarn(1);
@@ -1217,11 +1229,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 
-    private setImmutableRowData(rowData: any[], masterDetailChanged: boolean): void {
+    private setImmutableRowData(rowData: any[]): void {
         const updateRowDataResult = this.nodeManager.setImmutableRowData(rowData);
         if (updateRowDataResult) {
             const { rowNodeTransaction, rowsInserted, rowsOrderChanged } = updateRowDataResult;
-            this.commitTransactions([rowNodeTransaction], rowsInserted || rowsOrderChanged, masterDetailChanged);
+            this.commitTransactions([rowNodeTransaction], rowsInserted || rowsOrderChanged);
         }
     }
 
@@ -1279,7 +1291,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
         });
 
-        this.commitTransactions(rowNodeTrans, orderChanged, false);
+        this.commitTransactions(rowNodeTrans, orderChanged);
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
@@ -1309,7 +1321,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.rowNodesCountReady = true;
         const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(rowDataTran);
 
-        this.commitTransactions([rowNodeTransaction], rowsInserted, false);
+        this.commitTransactions([rowNodeTransaction], rowsInserted);
 
         return rowNodeTransaction;
     }
@@ -1323,11 +1335,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * @param rowNodeTrans - the transactions to apply
      * @param orderChanged - whether the order of the rows has changed, either via generated transaction or user provided addIndex
      */
-    private commitTransactions(
-        rowNodeTransactions: RowNodeTransaction[],
-        rowNodesOrderChanged: boolean,
-        masterDetailChanged: boolean
-    ): void {
+    private commitTransactions(rowNodeTransactions: RowNodeTransaction[], rowNodesOrderChanged: boolean): void {
         if (!this.hasStarted) {
             return;
         }
@@ -1335,10 +1343,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const changedPath = this.createChangePath(rowNodeTransactions);
 
         this.nodeManager.commitTransactions?.(rowNodeTransactions, changedPath, rowNodesOrderChanged);
-
-        if (masterDetailChanged) {
-            this.nodeManager.setMasterForAllRows?.(this.rootNode.allLeafChildren, true);
-        }
 
         const animate = !this.gos.get('suppressAnimationFrame');
 
@@ -1427,11 +1431,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private onGridReady(): void {
-        if (this.hasStarted) {
-            return;
+        if (!this.hasStarted) {
+            // App can start using API to add transactions, so need to add data into the node manager if not started
+            this.setInitialData();
         }
-        // App can start using API to add transactions, so need to add data into the node manager if not started
-        this.setInitialData();
     }
 
     public isRowDataLoaded(): boolean {

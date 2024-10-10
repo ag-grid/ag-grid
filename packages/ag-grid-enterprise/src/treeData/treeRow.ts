@@ -14,6 +14,7 @@ export interface TreeRow<TData = any> extends RowNode<TData> {
     childrenAfterGroup: TreeRow<TData>[] | null;
     treeNode: ITreeNode | null;
     treeNodeFlags: number;
+    sibling: TreeRow<TData>;
 }
 
 const enum Flags {
@@ -79,8 +80,25 @@ export const markTreeRowPathChanged = (row: TreeRow): void => {
 
 /** Called when the row is committed. */
 export const markTreeRowCommitted = (row: TreeRow): void => {
-    row.treeNodeFlags =
-        Flags.Committed | (row.treeNodeFlags & ~(Flags.RowUpdated | Flags.KeyChanged | Flags.PathChanged));
+    const isRoot = row.level < 0;
+    const oldFlags = row.treeNodeFlags;
+    const wasCommitted = (oldFlags & Flags.Committed) !== 0;
+    row.treeNodeFlags = Flags.Committed | (oldFlags & ~(Flags.RowUpdated | Flags.KeyChanged | Flags.PathChanged));
+    if (!wasCommitted || isRoot) {
+        // We need to ensure that arrays are not null if the row was never committed or is the root
+        const childrenAfterGroup = row.childrenAfterGroup;
+        row.childrenAfterFilter = childrenAfterGroup;
+        row.childrenAfterAggFilter = childrenAfterGroup;
+        row.childrenAfterSort = childrenAfterGroup;
+    }
+
+    if (isRoot) {
+        const sibling = row.sibling;
+        if (sibling) {
+            sibling.childrenAfterGroup = row.childrenAfterGroup;
+            sibling.childrenMapped = row.childrenMapped;
+        }
+    }
 };
 
 /** Clears all the flags, called when the row is deleted from the tree */
