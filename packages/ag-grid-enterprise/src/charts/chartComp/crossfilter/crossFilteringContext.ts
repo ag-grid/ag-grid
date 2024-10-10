@@ -52,17 +52,21 @@ export class CrossFilteringContext {
     }
 
     public setFilters(crossFilterUpdate: Record<string, string[]>): void {
+        const selectionModels = Object.values(this.chartSelectionModels);
         const index: Record<string, ChartSelectionModel> = _mapValues(crossFilterUpdate, (key) =>
-            Object.values(this.chartSelectionModels).find((chartSelectionModel) => chartSelectionModel.category === key)
+            selectionModels.find((chartSelectionModel) => chartSelectionModel.category === key)
         );
 
-        const updated = Object.entries(index)
-            .filter(([, a]) => !!a)
-            .map(([key, value]) => {
-                const selection = crossFilterUpdate[key].map((v: any) => ({ category: key, value: v }));
-                return value.setSelection(selection, false);
-            })
-            .filter((a) => a);
+        const updated = [];
+        const entries = Object.entries(index);
+
+        for (const [key, value] of entries) {
+            if (value) {
+                const selection = crossFilterUpdate[key].map((v) => ({ category: key, value: v }));
+                const wasUpdated = value.setSelection(selection, false);
+                updated.push(wasUpdated);
+            }
+        }
 
         if (updated.length > 0) {
             this.updateFromSelectionModels();
