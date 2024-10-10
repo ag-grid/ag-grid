@@ -18,7 +18,7 @@ import { _getAbsoluteHeight, _getAbsoluteWidth, _getElementRectWithOffset, _obse
 import { _isElementInEventPath, _isStopPropagationForAgGrid } from '../utils/event';
 import { _exists } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 
 interface AgPopup {
     element: HTMLElement;
@@ -448,7 +448,7 @@ export class PopupService extends BeanStub implements NamedBean {
         const { eChild, ariaLabel, alwaysOnTop, positionCallback, anchorToElement } = params;
 
         if (!eDocument) {
-            _logWarn(122);
+            _warn(122);
             return { hideFunc: () => {} };
         }
 

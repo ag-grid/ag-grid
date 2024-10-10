@@ -9,7 +9,7 @@ import { _isStopPropagationForAgGrid, _stopPropagationForAgGrid } from '../../..
 import { _exists } from '../../../utils/generic';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { _escapeString } from '../../../utils/string';
-import { _logWarn } from '../../../validation/logging';
+import { _warn } from '../../../validation/logging';
 import { Component, RefPlaceholder } from '../../../widgets/component';
 import { TouchListener } from '../../../widgets/touchListener';
 
@@ -76,7 +76,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         const paramsAny = this.params as any;
 
         if (paramsAny.template) {
-            _logWarn(89);
+            _warn(89);
         }
     }
 

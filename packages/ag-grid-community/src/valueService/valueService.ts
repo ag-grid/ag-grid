@@ -17,7 +17,7 @@ import { _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
 import { _exists, _missing } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import type { ExpressionService } from './expressionService';
 import type { ValueCache } from './valueCache';
 
@@ -295,7 +295,7 @@ export class ValueService extends BeanStub implements NamedBean {
         const { field, valueSetter } = column.getColDef();
 
         if (this.dataTypeService && !this.dataTypeService.checkType(column, newValue)) {
-            _logWarn(135);
+            _warn(135);
             return false;
         }
 
@@ -498,7 +498,7 @@ export class ValueService extends BeanStub implements NamedBean {
         result = String(result);
 
         if (result === '[object Object]') {
-            _logWarn(121);
+            _warn(121);
         }
 
         return result;

@@ -28,7 +28,7 @@ import type { RowRenderer } from '../rendering/rowRenderer';
 import { _exists, _jsonEquals } from '../utils/generic';
 import { _cloneObject } from '../utils/object';
 import { AgPromise } from '../utils/promise';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import type { ValueService } from '../valueService/valueService';
 import type { FilterManager } from './filterManager';
 import type { FilterValueService } from './filterValueService';
@@ -142,18 +142,18 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                 const column = this.columnModel.getColDefCol(colId) || this.columnModel.getCol(colId);
 
                 if (!column) {
-                    _logWarn(62, { colId });
+                    _warn(62, { colId });
                     return;
                 }
 
                 if (!column.isFilterAllowed()) {
-                    _logWarn(63, { colId });
+                    _warn(63, { colId });
                     return;
                 }
 
                 const filterWrapper = this.getOrCreateFilterWrapper(column);
                 if (!filterWrapper) {
-                    _logWarn(64, { colId });
+                    _warn(64, { colId });
                     return;
                 }
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, model[colId]));
@@ -187,7 +187,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         return new AgPromise<void>((resolve) => {
             filterPromise.then((filter) => {
                 if (typeof filter!.setModel !== 'function') {
-                    _logWarn(65);
+                    _warn(65);
                     resolve();
                 }
 
@@ -228,7 +228,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         const { filter } = filterWrapper;
         if (filter) {
             if (typeof filter.getModel !== 'function') {
-                _logWarn(66);
+                _warn(66);
                 return null;
             }
 
@@ -271,7 +271,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                 return false;
             } // this never happens, including to avoid compile error
             if (!filter.isFilterActive) {
-                _logWarn(67);
+                _warn(67);
                 return false;
             }
             return filter.isFilterActive();

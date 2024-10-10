@@ -28,7 +28,7 @@ import { LocalEventService } from '../localEventService';
 import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
 import { _debounce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
-import { _logError, _logWarn } from '../validation/logging';
+import { _error, _warn } from '../validation/logging';
 import type { AgColumn } from './agColumn';
 
 /**
@@ -358,7 +358,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public getRowIndexString(): string | null {
         if (this.rowIndex == null) {
             // Row has been removed so no index
-            _logError(13);
+            _error(13);
             return null;
         }
 
@@ -459,7 +459,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
                 // make sure id provided doesn't start with 'row-group-' as this is reserved.
                 if (this.id.startsWith(ROW_ID_PREFIX_ROW_GROUP)) {
-                    _logError(14, {
+                    _error(14, {
                         groupPrefix: ROW_ID_PREFIX_ROW_GROUP,
                     });
                 }
@@ -960,12 +960,12 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             return 0;
         }
         if (this.rowPinned) {
-            _logWarn(59);
+            _warn(59);
             return 0;
         }
 
         if (this.id === undefined) {
-            _logWarn(60);
+            _warn(60);
             return 0;
         }
 
@@ -1028,7 +1028,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      */
     public isFullWidthCell(): boolean {
         // log deprecation
-        _logWarn(61);
+        _warn(61);
 
         if (this.detail) {
             return true;

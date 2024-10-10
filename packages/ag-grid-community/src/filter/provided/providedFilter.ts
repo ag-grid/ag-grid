@@ -10,7 +10,7 @@ import { _clearElement, _loadTemplate, _removeFromParent, _setDisabled } from '.
 import { _debounce } from '../../utils/function';
 import { _jsonEquals } from '../../utils/generic';
 import type { AgPromise } from '../../utils/promise';
-import { _logWarn } from '../../validation/logging';
+import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
@@ -217,7 +217,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                     };
                     break;
                 default:
-                    _logWarn(75);
+                    _warn(75);
                     return;
             }
 

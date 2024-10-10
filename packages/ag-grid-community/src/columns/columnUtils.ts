@@ -4,7 +4,7 @@ import { isColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import { CONTROLS_COLUMN_ID_PREFIX } from './controlsColService';
 

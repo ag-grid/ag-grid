@@ -16,7 +16,7 @@ import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interf
 import type { UserCompDetails } from '../interfaces/iUserCompDetails';
 import { _mergeDeep } from '../utils/object';
 import { AgPromise } from '../utils/promise';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import type { ColumnFilterService, FilterWrapper } from './columnFilterService';
 import type { QuickFilterService } from './quickFilterService';
 
@@ -378,7 +378,7 @@ export class FilterManager extends BeanStub implements NamedBean {
 
     private warnAdvancedFilters(): void {
         // Column Filter API methods have been disabled as Advanced Filters are enabled
-        _logWarn(68);
+        _warn(68);
     }
 
     public setupAdvancedFilterHeaderComp(eCompToInsertBefore: HTMLElement): void {
