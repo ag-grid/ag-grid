@@ -1,7 +1,8 @@
-import { LicenseManager } from '@ag-grid-enterprise/core';
 import type { ImportType, Library } from '@ag-grid-types';
 import { AgCharts } from 'ag-charts-enterprise';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { LicenseManager } from 'ag-grid-enterprise';
 
 import type { LicenseDetails, LicensedProducts } from '../types';
 import { hasValue } from './hasValue';
