@@ -29,8 +29,9 @@ import type { ISizeColumnsToFitParams } from '../interfaces/autoSize';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState } from '../interfaces/gridState';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
-import type { ICellEditor } from '../interfaces/iCellEditor';
+import type { GetCellEditorInstancesParams, ICellEditor } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
+import type { FlashCellsParams, RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { ClientSideRowModelStep } from '../interfaces/iClientSideRowModel';
 import type { IClipboardCopyParams, IClipboardCopyRowsParams } from '../interfaces/iClipboardService';
 import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from '../interfaces/iColumn';
@@ -39,6 +40,7 @@ import type { IContextMenuParams } from '../interfaces/iContextMenu';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
+import type { RedrawRowsParams } from '../interfaces/iRedrawRowsParams';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { LoadSuccessParams, RefreshServerSideParams } from '../interfaces/iServerSideRowModel';
 import type { IServerSideGroupSelectionState, IServerSideSelectionState } from '../interfaces/iServerSideSelection';
@@ -49,14 +51,7 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { ServerSideTransaction, ServerSideTransactionResult } from '../interfaces/serverSideTransaction';
 import type { ManagedGridOptionKey, ManagedGridOptions } from '../propertyKeys';
-import type { ICellRenderer } from '../rendering/cellRenderers/iCellRenderer';
-import type {
-    FlashCellsParams,
-    GetCellEditorInstancesParams,
-    GetCellRendererInstancesParams,
-    RedrawRowsParams,
-    RefreshCellsParams,
-} from '../rendering/rowRenderer';
+import type { GetCellRendererInstancesParams, ICellRenderer } from '../rendering/cellRenderers/iCellRenderer';
 
 export interface DetailGridInfo {
     /**

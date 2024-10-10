@@ -4,23 +4,20 @@ import type {
     ChangedPath,
     ColumnModel,
     FuncColsService,
-    GridOptions,
-    IRowNodeStage,
     ISelectionService,
     IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
     KeyCreatorParams,
-    NamedBean,
     RowNodeTransaction,
     StageExecuteParams,
     ValueService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { ClientSideRowModelSteps, _ROW_ID_PREFIX_ROW_GROUP } from 'ag-grid-community';
 import {
     BeanStub,
     RowNode,
+    _ROW_ID_PREFIX_ROW_GROUP,
     _areEqual,
     _exists,
     _existsAndNotEmpty,
@@ -56,18 +53,7 @@ interface GroupingDetails {
     keyCreators: (((params: KeyCreatorParams) => string) | undefined)[];
 }
 
-export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
-    beanName = 'groupStage' as const;
-
-    public refreshProps: Set<keyof GridOptions<any>> = new Set([
-        'groupDefaultExpanded',
-        'groupAllowUnbalanced',
-        'initialGroupOrderComparator',
-        'groupHideOpenParents',
-        'groupDisplayType',
-    ]);
-    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.EVERYTHING;
-
+export class GroupStrategy extends BeanStub {
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
     private valueService: ValueService;
@@ -103,12 +89,8 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             this.shotgunResetEverything(details, afterColsChanged);
         }
 
-        const changedPath = params.changedPath!;
-
-        this.positionLeafsAndGroups(changedPath);
+        this.positionLeafsAndGroups(params.changedPath!);
         this.orderGroups(details);
-
-        this.selectionService?.updateSelectableAfterGrouping(changedPath);
     }
 
     private positionLeafsAndGroups(changedPath: ChangedPath) {

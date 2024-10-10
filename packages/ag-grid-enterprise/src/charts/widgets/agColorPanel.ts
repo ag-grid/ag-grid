@@ -6,6 +6,10 @@ import type { AgColorInput } from './agColorInput';
 import { AgColorInputSelector } from './agColorInput';
 import type { AgColorPicker } from './agColorPicker';
 
+const maxRecentColors = 8;
+
+let sharedRecentColors: string[] = [];
+
 export class AgColorPanel extends Component {
     private H = 1; // in the [0, 1] range
     private S = 1; // in the [0, 1] range
@@ -24,8 +28,6 @@ export class AgColorPanel extends Component {
     private picker: Component;
 
     private colorChanged = false;
-    private static maxRecentColors = 8;
-    private static recentColors: string[] = [];
     private tabIndex: string;
 
     private readonly spectrumColor: HTMLElement = RefPlaceholder;
@@ -354,7 +356,7 @@ export class AgColorPanel extends Component {
     }
 
     private initRecentColors() {
-        const recentColors = AgColorPanel.recentColors;
+        const recentColors = sharedRecentColors;
         const innerHtml = recentColors.map((color: string, index: number) => {
             return /* html */ `<div class="ag-recent-color" id=${index} style="background-color: ${color}; width: 15px; height: 15px;" recent-color="${color}" tabIndex="${this.tabIndex}"></div>`;
         });
@@ -392,7 +394,7 @@ export class AgColorPanel extends Component {
 
         const id = parseInt(target.id, 10);
 
-        this.setValue(AgColorPanel.recentColors[id]);
+        this.setValue(sharedRecentColors[id]);
         this.destroy();
     }
 
@@ -400,7 +402,7 @@ export class AgColorPanel extends Component {
         const color = _Util.Color.fromHSB(this.H * 360, this.S, this.B, this.A);
         const rgbaColor = color.toRgbaString();
 
-        let recentColors = AgColorPanel.recentColors;
+        let recentColors = sharedRecentColors;
 
         if (!this.colorChanged || recentColors[0] === rgbaColor) {
             return;
@@ -413,11 +415,11 @@ export class AgColorPanel extends Component {
         recentColors = [rgbaColor].concat(recentColors);
 
         // ensure we don't exceed max number of recent colors
-        if (recentColors.length > AgColorPanel.maxRecentColors) {
-            recentColors = recentColors.slice(0, AgColorPanel.maxRecentColors);
+        if (recentColors.length > maxRecentColors) {
+            recentColors = recentColors.slice(0, maxRecentColors);
         }
 
-        AgColorPanel.recentColors = recentColors;
+        sharedRecentColors = recentColors;
     }
 
     public override destroy(): void {

@@ -1,7 +1,7 @@
 import type { AgColumn, TextFormatter, ValueFormatterParams, ValueService } from 'ag-grid-community';
 
 import type { ISetDisplayValueModel } from './iSetDisplayValueModel';
-import { SetFilterDisplayValue } from './iSetDisplayValueModel';
+import { SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSetDisplayValueModel';
 
 export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     /** All keys that are currently displayed, after the mini-filter has been applied. */
@@ -64,11 +64,11 @@ export class FlatSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     }
 
     getSelectAllItem(): string {
-        return SetFilterDisplayValue.SELECT_ALL;
+        return SET_FILTER_SELECT_ALL;
     }
 
     getAddSelectionToFilterItem(): string {
-        return SetFilterDisplayValue.ADD_SELECTION_TO_FILTER;
+        return SET_FILTER_ADD_SELECTION_TO_FILTER;
     }
 
     public getDisplayedKeys(): (string | null)[] {

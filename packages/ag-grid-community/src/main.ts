@@ -129,7 +129,7 @@ export { Column, ColumnPinnedType, ColumnGroup, ProvidedColumnGroup, ColumnGroup
 export { AgColumn, isColumn } from './entities/agColumn';
 export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
-export { type ITreeNode, RowNode } from './entities/rowNode';
+export { type ITreeNode, RowNode, ROW_ID_PREFIX_ROW_GROUP as _ROW_ID_PREFIX_ROW_GROUP } from './entities/rowNode';
 export {
     RowHighlightPosition,
     RowPinnedType,
@@ -304,7 +304,13 @@ export { AlignedGrid } from './interfaces/iAlignedGrid';
 export type { MenuService } from './misc/menu/menuService';
 
 // editing / cellEditors
-export { ICellEditor, ICellEditorComp, ICellEditorParams, BaseCellEditor } from './interfaces/iCellEditor';
+export {
+    ICellEditor,
+    ICellEditorComp,
+    ICellEditorParams,
+    BaseCellEditor,
+    GetCellEditorInstancesParams,
+} from './interfaces/iCellEditor';
 export { ILargeTextEditorParams } from './edit/cellEditors/iLargeTextCellEditor';
 export type { LargeTextCellEditor } from './edit/cellEditors/largeTextCellEditor';
 export type { PopupEditorWrapper } from './edit/cellEditors/popupEditorWrapper';
@@ -336,6 +342,7 @@ export {
     ICellRendererComp,
     ICellRendererParams,
     ISetFilterCellRendererParams,
+    GetCellRendererInstancesParams,
 } from './rendering/cellRenderers/iCellRenderer';
 export {
     GroupCellRendererParams,
@@ -398,13 +405,8 @@ export { _getCellCtrlForEventTarget } from './rendering/cell/cellCtrl';
 export type { CellCtrl, ICellComp } from './rendering/cell/cellCtrl';
 export type { RowCtrl, IRowComp } from './rendering/row/rowCtrl';
 export type { RowRenderer } from './rendering/rowRenderer';
-export {
-    FlashCellsParams,
-    GetCellRendererInstancesParams,
-    RefreshCellsParams,
-    RedrawRowsParams,
-    GetCellEditorInstancesParams,
-} from './rendering/rowRenderer';
+export { RedrawRowsParams } from './interfaces/iRedrawRowsParams';
+export { FlashCellsParams, RefreshCellsParams } from './interfaces/iCellsParams';
 export {
     ILoadingCellRenderer,
     ILoadingCellRendererComp,
@@ -973,12 +975,10 @@ export * from './interfaces/iSparklineCellRendererParams';
 // csv export
 export { BaseCreator } from './csvExport/baseCreator';
 export { BaseGridSerializingSession } from './csvExport/sessions/baseGridSerializingSession';
-export { CsvCreator } from './csvExport/csvCreator';
-export { Downloader } from './csvExport/downloader';
-export { GridSerializer, RowType } from './csvExport/gridSerializer';
+export { _downloadFile } from './csvExport/downloader';
+export type { GridSerializer } from './csvExport/gridSerializer';
+export { RowType } from './csvExport/gridSerializer';
 export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from './csvExport/interfaces';
-export { XmlFactory } from './csvExport/xmlFactory';
-export { ZipContainer } from './csvExport/zipContainer/zipContainer';
 
 // modules
 export { Module, ModuleValidationResult, _ModuleWithApi, _ModuleWithoutApi, ModuleName } from './interfaces/iModule';
