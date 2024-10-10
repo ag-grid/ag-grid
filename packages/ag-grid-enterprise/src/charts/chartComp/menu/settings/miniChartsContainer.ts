@@ -1,5 +1,5 @@
 import type { BeanCollection, ChartGroupsDef, ChartType } from 'ag-grid-community';
-import { Component, KeyCode, _setAriaLabel, _warnOnce } from 'ag-grid-community';
+import { Component, KeyCode, _setAriaLabel, _warn } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
 import type { ChartController } from '../../chartController';
@@ -191,7 +191,7 @@ export class MiniChartsContainer extends Component {
                     group in miniChartMapping ? miniChartMapping[group as keyof typeof miniChartMapping] : undefined;
                 if (!menuGroup) {
                     // User has specified an invalid chart group in the chartGroupsDef config
-                    _warnOnce(`invalid chartGroupsDef config '${group}'`);
+                    _warn(148, { group });
                     return null;
                 }
 
@@ -206,7 +206,7 @@ export class MiniChartsContainer extends Component {
 
                         if (!menuItem) {
                             // User has specified an invalid chart type in the chartGroupsDef config
-                            _warnOnce(`invalid chartGroupsDef config '${group}.${chartType}'`);
+                            _warn(149, { group, chartType });
                             return null;
                         }
 

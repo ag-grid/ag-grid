@@ -11,13 +11,12 @@ import type {
     ExcelRow,
     ExcelStyle,
     FuncColsService,
+    GridSerializer,
     IExcelCreator,
     NamedBean,
     ValueService,
 } from 'ag-grid-community';
-import { _getHeaderClassesFromColDef, _warnOnce } from 'ag-grid-community';
-import type { GridSerializer } from 'ag-grid-community';
-import { BaseCreator, Downloader, RowType, ZipContainer } from 'ag-grid-community';
+import { BaseCreator, Downloader, RowType, ZipContainer, _getHeaderClassesFromColDef, _warn } from 'ag-grid-community';
 
 import type { ExcelGridSerializingParams, StyleLinkerInterface } from './excelSerializingSession';
 import { ExcelSerializingSession } from './excelSerializingSession';
@@ -155,7 +154,7 @@ const createExcelFileForExcel = (
     } = {}
 ): boolean => {
     if (!data || data.length === 0) {
-        _warnOnce('Invalid params supplied to createExcelFileForExcel() - `ExcelExportParams.data` is empty.');
+        _warn(159);
         ExcelXlsxFactory.resetFactory();
         return false;
     }
@@ -259,7 +258,7 @@ export class ExcelCreator
 
     protected export(userParams?: ExcelExportParams): void {
         if (this.isExportSuppressed()) {
-            _warnOnce(`Export cancelled. Export is not allowed as per your configuration.`);
+            _warn(160);
             return;
         }
 

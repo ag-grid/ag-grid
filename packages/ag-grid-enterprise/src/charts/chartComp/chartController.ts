@@ -1,6 +1,5 @@
 import { _ModuleSupport, _Theme } from 'ag-charts-community';
-import type { AgCartesianAxisType, AgChartThemePalette } from 'ag-charts-types';
-import type { AgChartThemeOverrides } from 'ag-charts-types';
+import type { AgCartesianAxisType, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-types';
 
 import type {
     BeanCollection,
@@ -18,7 +17,7 @@ import type {
     UpdateCrossFilterChartParams,
     UpdateRangeChartParams,
 } from 'ag-grid-community';
-import { BeanStub, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _warn } from 'ag-grid-community';
 
 import type { ChartProxy, FieldDefinition, UpdateParams } from './chartProxies/chartProxy';
 import { isStockTheme } from './chartProxies/chartTheme';
@@ -579,9 +578,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
 
     private validUpdateType(params: UpdateChartParams): boolean {
         if (!params.type) {
-            _warnOnce(
-                `Unable to update chart as the 'type' is missing. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.`
-            );
+            _warn(136);
             return false;
         }
 
@@ -597,9 +594,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
             params.type === `${currentChartType[0].toLowerCase()}${currentChartType.slice(1).replace(/ /g, '')}Update`;
 
         if (!valid) {
-            _warnOnce(
-                `Unable to update chart as a '${params.type}' update type is not permitted on a ${currentChartType}.`
-            );
+            _warn(137, { currentChartType, type: params.type });
         }
         return valid;
     }

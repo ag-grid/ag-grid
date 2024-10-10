@@ -11,12 +11,13 @@ import type {
     ExcelStyle,
     ExcelWorksheet,
     ExcelWorksheetConfigParams,
+    GridSerializingParams,
+    RowAccumulator,
     RowHeightCallbackParams,
     RowNode,
+    RowSpanningAccumulator,
 } from 'ag-grid-community';
-import { _last, _mergeDeep, _warnOnce } from 'ag-grid-community';
-import type { GridSerializingParams, RowAccumulator, RowSpanningAccumulator } from 'ag-grid-community';
-import { BaseGridSerializingSession, RowType } from 'ag-grid-community';
+import { BaseGridSerializingSession, RowType, _last, _mergeDeep, _warn } from 'ag-grid-community';
 
 import { getHeightFromProperty } from './assets/excelUtils';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
@@ -455,7 +456,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 case 'boolean':
                     return 'b';
                 default:
-                    _warnOnce(`Unrecognized data type for excel export [${style.id}.dataType=${style.dataType}]`);
+                    _warn(162, { id: style.id, dataType: style.dataType });
             }
         }
 

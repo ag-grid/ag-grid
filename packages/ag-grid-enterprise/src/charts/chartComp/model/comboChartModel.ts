@@ -1,5 +1,5 @@
 import type { ChartType, SeriesChartType } from 'ag-grid-community';
-import { BeanStub, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _warn } from 'ag-grid-community';
 
 import type { ChartDataModel, ColState } from './chartDataModel';
 
@@ -65,15 +65,13 @@ export class ComboChartModel extends BeanStub {
     private updateSeriesChartTypesForCustomCombo() {
         const seriesChartTypesSupplied = this.seriesChartTypes && this.seriesChartTypes.length > 0;
         if (!seriesChartTypesSupplied && !this.suppressComboChartWarnings) {
-            _warnOnce(`'seriesChartTypes' are required when the 'customCombo' chart type is specified.`);
+            _warn(150);
         }
 
         // ensure correct chartTypes are supplied
         this.seriesChartTypes = this.seriesChartTypes.map((s) => {
             if (!ComboChartModel.SUPPORTED_COMBO_CHART_TYPES.includes(s.chartType)) {
-                _warnOnce(
-                    `invalid chartType '${s.chartType}' supplied in 'seriesChartTypes', converting to 'line' instead.`
-                );
+                _warn(151, { chartType: s.chartType });
                 s.chartType = 'line';
             }
             return s;
@@ -87,7 +85,7 @@ export class ComboChartModel extends BeanStub {
             const providedSeriesChartType = this.savedCustomSeriesChartTypes.find((s) => s.colId === valueCol.colId);
             if (!providedSeriesChartType) {
                 if (valueCol.selected && !this.suppressComboChartWarnings) {
-                    _warnOnce(`no 'seriesChartType' found for colId = '${valueCol.colId}', defaulting to 'line'.`);
+                    _warn(152, { colId: valueCol.colId });
                 }
                 return {
                     colId: valueCol.colId,

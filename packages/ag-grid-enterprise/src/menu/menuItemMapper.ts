@@ -19,7 +19,7 @@ import type {
     PositionUtils,
     SortController,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, _escapeString, _exists, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _createIconNoSpan, _escapeString, _exists, _warn, _warnOnce } from 'ag-grid-community';
 
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 import type { ColumnChooserFactory } from './columnChooserFactory';
@@ -384,7 +384,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     action: () => this.sortController?.setSortForColumn(column!, null, false, source),
                 };
             default: {
-                _warnOnce(`unknown menu item type ${key}`);
+                _warn(176, { key });
                 return null;
             }
         }

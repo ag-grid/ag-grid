@@ -27,6 +27,13 @@ ModuleRegistry.registerModules([ ${moduleName} ]);
 
 For more info see: ${BASE_URL}/javascript-grid/modules/`;
 
+const clipboardApiError = (method: string) =>
+    `AG Grid: Unable to use the Clipboard API (navigator.clipboard.${method}()). ` +
+    'The reason why it could not be used has been logged in the previous line. ' +
+    "For this reason the grid has defaulted to using a workaround which doesn't perform as well. " +
+    'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
+    'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.';
+
 /**
  * NOTES on setting console messages:
  * 1. The message is a function that returns either a string or an array of any type.
@@ -112,9 +119,10 @@ export const AG_GRID_ERRORS = {
     // 38: () => '' as const,
     39: () =>
         'Applying column order broke a group where columns should be married together. Applying new order has been discarded.' as const,
-    // 40: () => '' as const,
-    // 41: () => '' as const,
-    // 42: () => '' as const,
+    40: ({ e, method }: { e: any; method: string }) => `${e}\n${clipboardApiError(method)}` as const,
+    41: () =>
+        "Browser did not allow document.execCommand('copy'). Ensure 'api.copySelectedRowsToClipboard() is invoked via a user event, i.e. button click, otherwise the browser will prevent it for security reasons." as const,
+    42: () => "Browser does not support document.execCommand('copy') for clipboard operations" as const,
     // 43: () => '' as const,
     44: () =>
         'Data type definition hierarchies (via the "extendsDataType" property) cannot contain circular references.' as const,
@@ -304,15 +312,97 @@ export const AG_GRID_ERRORS = {
     133: () => 'iconRenderer should return back a string or a dom object' as const,
     134: ({ iconName }: { iconName: string }) => `Did not find icon ${iconName}` as const,
     135: () => `Data type of the new value does not match the cell data type of the column` as const,
-    136: () => '' as const,
-    137: () => '' as const,
-    138: () => '' as const,
-    139: () => '' as const,
-    140: () => '' as const,
-    141: () => '' as const,
-    142: () => '' as const,
-    143: () => '' as const,
-    144: () => '' as const,
+    136: () =>
+        `Unable to update chart as the 'type' is missing. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.` as const,
+    137: ({ type, currentChartType }: { type: string; currentChartType: string }) =>
+        `Unable to update chart as a '${type}' update type is not permitted on a ${currentChartType}.` as const,
+    138: ({ chartType }: { chartType: string }) => `invalid chart type supplied: ${chartType}` as const,
+    139: ({ customThemeName }: { customThemeName: string }) =>
+        `a custom chart theme with the name ${customThemeName} has been supplied but not added to the 'chartThemes' list` as const,
+    140: ({ name }: { name: string }) =>
+        `no stock theme exists with the name '${name}' and no custom chart theme with that name was supplied to 'customChartThemes'` as const,
+    141: () => 'crossing filtering with row grouping is not supported.' as const,
+    142: () => 'crossing filtering is only supported in the client side row model.' as const,
+    143: ({ panel }: { panel: string | undefined }) => `'${panel}' is not a valid Chart Tool Panel name` as const,
+    144: ({ type }: { type: string }) => `Invalid charts data panel group name supplied: '${type}'` as const,
+    145: ({ group }: { group: string }) =>
+        `As of v32, only one charts customize panel group can be expanded at a time. '${group}' will not be expanded.` as const,
+    146: () =>
+        `'navigator' is now displayed in the charts advanced settings instead of the customize panel, and this setting will be ignored.` as const,
+    147: ({ group }: { group: string }) => `Invalid charts customize panel group name supplied: '${group}'` as const,
+    148: ({ group }: { group: string }) => `invalid chartGroupsDef config '${group}'` as const,
+    149: ({ group, chartType }: { group: string; chartType: string }) =>
+        `invalid chartGroupsDef config '${group}.${chartType}'` as const,
+    150: () => `'seriesChartTypes' are required when the 'customCombo' chart type is specified.` as const,
+    151: ({ chartType }: { chartType: string }) =>
+        `invalid chartType '${chartType}' supplied in 'seriesChartTypes', converting to 'line' instead.` as const,
+    152: ({ colId }: { colId: string }) =>
+        `no 'seriesChartType' found for colId = '${colId}', defaulting to 'line'.` as const,
+    153: ({ chartDataType }: { chartDataType: string }) =>
+        `unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'` as const,
+    154: ({ colId }: { colId: string }) =>
+        `cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' to be defined on the column with id: ${colId}` as const,
+    155: ({ option }: { option: string }) => `'${option}' is not a valid Chart Toolbar Option` as const,
+    156: ({ panel }: { panel: string }) => `Invalid panel in chartToolPanelsDef.panels: '${panel}'` as const,
+    157: ({ unrecognisedGroupIds }: { unrecognisedGroupIds: string[] }) =>
+        ['unable to find group(s) for supplied groupIds:', unrecognisedGroupIds] as const,
+    158: () => 'can not expand a column item that does not represent a column group header' as const,
+    159: () => 'Invalid params supplied to createExcelFileForExcel() - `ExcelExportParams.data` is empty.' as const,
+    160: () => `Export cancelled. Export is not allowed as per your configuration.` as const,
+    161: () =>
+        "The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'" as const,
+    162: ({ id, dataType }: { id: string; dataType: string }) =>
+        `Unrecognized data type for excel export [${id}.dataType=${dataType}]` as const,
+    163: ({ featureName }: { featureName: string }) =>
+        `Excel table export does not work with ${featureName}. The exported Excel file will not contain any Excel tables.\n Please turn off ${featureName} to enable Excel table exports.` as const,
+    164: () => 'Unable to add data table to Excel sheet: A table already exists.' as const,
+    165: () => 'Unable to add data table to Excel sheet: Missing required parameters.' as const,
+    166: ({ unrecognisedGroupIds }: { unrecognisedGroupIds: string[] }) =>
+        ['unable to find groups for these supplied groupIds:', unrecognisedGroupIds] as const,
+    167: ({ unrecognisedColIds }: { unrecognisedColIds: string[] }) =>
+        ['unable to find columns for these supplied colIds:', unrecognisedColIds] as const,
+    168: () => 'detailCellRendererParams.template should be function or string' as const,
+    169: () =>
+        'Reference to eDetailGrid was missing from the details template. Please add data-ref="eDetailGrid" to the template.' as const,
+    170: ({ providedStrategy }: { providedStrategy: string }) =>
+        `invalid cellRendererParams.refreshStrategy = ${providedStrategy} supplied, defaulting to refreshStrategy = 'rows'.` as const,
+    171: () =>
+        'could not find detail grid options for master detail, please set gridOptions.detailCellRendererParams.detailGridOptions' as const,
+    172: () =>
+        'could not find getDetailRowData for master / detail, please set gridOptions.detailCellRendererParams.getDetailRowData' as const,
+    173: ({ group }: { group: string }) => `invalid chartGroupsDef config '${group}'` as const,
+    174: ({ group, chartType }: { group: string; chartType: string }) =>
+        `invalid chartGroupsDef config '${group}.${chartType}'` as const,
+    175: ({ menuTabName, itemsToConsider }: { menuTabName: string; itemsToConsider: string[] }) =>
+        [
+            `Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of `,
+            itemsToConsider,
+        ] as const,
+    176: ({ key }: { key: string }) => `unknown menu item type ${key}` as const,
+    177: () => `valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.` as const,
+    178: ({ colId }: { colId: string }) => `column ${colId} is not visible` as const,
+    179: () => 'totalValueGetter should be either a function or a string (expression)' as const,
+    180: () => 'agRichSelectCellEditor requires cellEditorParams.values to be set' as const,
+    181: () =>
+        'agRichSelectCellEditor cannot have `multiSelect` and `allowTyping` set to `true`. AllowTyping has been turned off.' as const,
+    182: () =>
+        'you cannot mix groupDisplayType = "multipleColumns" with treeData, only one column can be used to display groups when doing tree data' as const,
+    183: () => '' as const,
+    184: () => '' as const,
+    185: () => '' as const,
+    186: () => '' as const,
+    187: () => '' as const,
+    188: () => '' as const,
+    189: () => '' as const,
+    190: () => '' as const,
+    191: () => '' as const,
+    192: () => '' as const,
+    193: () => '' as const,
+    194: () => '' as const,
+    195: () => '' as const,
+    196: () => '' as const,
+    197: () => '' as const,
+    198: () => '' as const,
 
     200: missingModule,
     201: ({ rowModelType }: { rowModelType: string }) => `Could not find row model for rowModelType = ${rowModelType}`,
