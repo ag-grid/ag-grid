@@ -15,7 +15,7 @@ import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
-import { createDataItem, getData } from './data';
+import { createDataItem, getData, pRandom } from './data';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
 
@@ -136,7 +136,7 @@ function onBtUpdate() {
 
     const updatedItems: any[] = [];
     selectedRows.forEach((oldItem) => {
-        const newValue = Math.floor(Math.random() * 100) + 10;
+        const newValue = Math.floor(pRandom() * 100) + 10;
         const newItem = createDataItem(
             oldItem.name,
             oldItem.distro,

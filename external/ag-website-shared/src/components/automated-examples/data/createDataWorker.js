@@ -24,6 +24,19 @@ export function createDataWorker() {
         hasInitialised = true;
     };
 
+    const pRandom = (() => {
+        // From https://stackoverflow.com/a/3062783
+        let seed = 123_456_789;
+        const m = 2 ** 32;
+        const a = 1_103_515_245;
+        const c = 12_345;
+
+        return () => {
+            seed = (a * seed + c) % m;
+            return seed / m;
+        };
+    })();
+
     const createRecords = (config) => {
         const categoriesData = config.categories;
         const categories = Object.keys(config.categories);
@@ -37,7 +50,7 @@ export function createDataWorker() {
             const { products } = category;
             portfolios.forEach((portfolio) => {
                 products.forEach((product) => {
-                    const tradeCount = Math.floor(Math.random() * maxTradeCount + 1); // At least 1 trade
+                    const tradeCount = Math.floor(pRandom() * maxTradeCount + 1); // At least 1 trade
 
                     for (let t = 0; t < tradeCount; t++) {
                         const rowData = createRowData({ id, category: categoryName, product, portfolio });
@@ -52,10 +65,10 @@ export function createDataWorker() {
     };
 
     const createRowData = ({ id, category, product, portfolio }) => {
-        const current = Math.floor(Math.random() * 10000) + (Math.random() < 0.45 ? 500 : 19000);
-        const previous = current + (Math.random() < 0.5 ? 500 : 19000);
+        const current = Math.floor(pRandom() * 10000) + (pRandom() < 0.45 ? 500 : 19000);
+        const previous = current + (pRandom() < 0.5 ? 500 : 19000);
         const gainDx = randomBetween(35000, 1000);
-        const dealType = Math.random() < 0.2 ? 'Physical' : 'Financial';
+        const dealType = pRandom() < 0.2 ? 'Physical' : 'Financial';
 
         return {
             id,
@@ -70,7 +83,7 @@ export function createDataWorker() {
     };
 
     function randomBetween(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
+        return Math.floor(pRandom() * (max - min + 1)) + min;
     }
 
     function updateSomeRecords({ recordsToUpdate, updateCount }) {
@@ -79,9 +92,9 @@ export function createDataWorker() {
             if (recordsToUpdate.length === 0) {
                 continue;
             }
-            const indexToUpdate = Math.floor(Math.random() * recordsToUpdate.length);
+            const indexToUpdate = Math.floor(pRandom() * recordsToUpdate.length);
 
-            const field = VALUE_FIELDS[Math.floor(Math.random() * VALUE_FIELDS.length)];
+            const field = VALUE_FIELDS[Math.floor(pRandom() * VALUE_FIELDS.length)];
             recordsToUpdate[indexToUpdate][field] += randomBetween(-8000, 8200);
 
             itemsToUpdate.push(recordsToUpdate[indexToUpdate]);

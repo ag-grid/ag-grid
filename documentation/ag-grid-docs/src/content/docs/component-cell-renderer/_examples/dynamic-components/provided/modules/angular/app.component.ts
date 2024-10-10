@@ -16,6 +16,19 @@ import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();
+
 @Component({
     selector: 'my-app',
     standalone: true,
@@ -106,7 +119,7 @@ export class AppComponent {
     refreshEvenRowsCurrencyData() {
         this.gridApi.forEachNode((rowNode: IRowNode) => {
             if (rowNode.data.value % 2 === 0) {
-                rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
+                rowNode.setDataValue('currency', rowNode.data.value + Number(pRandom().toFixed(2)));
             }
         });
         this.gridApi.refreshCells({ columns: ['currency'] });
@@ -126,7 +139,7 @@ export class AppComponent {
             rowData.push({
                 row: 'Row ' + i,
                 value: i,
-                currency: i + Number(Math.random().toFixed(2)),
+                currency: i + Number(pRandom().toFixed(2)),
             });
         }
         return rowData;

@@ -24,14 +24,27 @@ const gridOptions: GridOptions = {
     rowData: createRowData(),
 };
 
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();
+
 function onUpdateSomeValues() {
     const rowCount = gridApi!.getDisplayedRowCount();
     // pick 20 cells at random to update
     for (let i = 0; i < 20; i++) {
-        const row = Math.floor(Math.random() * rowCount);
+        const row = Math.floor(pRandom() * rowCount);
         const rowNode = gridApi!.getDisplayedRowAtIndex(row)!;
         const col = ['a', 'b', 'c', 'd', 'e', 'f'][i % 6];
-        rowNode.setDataValue(col, Math.floor(Math.random() * 10000));
+        rowNode.setDataValue(col, Math.floor(pRandom() * 10000));
     }
 }
 

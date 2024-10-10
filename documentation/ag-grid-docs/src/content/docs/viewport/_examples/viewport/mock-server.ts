@@ -46,11 +46,11 @@ export function createMockServer() {
         makeSomeVolumeChanges(changes) {
             for (let i = 0; i < 10; i++) {
                 // pick a data item at random
-                const index = Math.floor(this.allData.length * Math.random());
+                const index = Math.floor(this.allData.length * pRandom());
                 const dataItem = this.allData[index];
 
                 // change by a value between -5 and 5
-                const move = Math.floor(10 * Math.random()) - 5;
+                const move = Math.floor(10 * pRandom()) - 5;
                 const newValue = dataItem.volume + move;
                 dataItem.volume = newValue;
 
@@ -65,11 +65,11 @@ export function createMockServer() {
         makeSomePriceChanges(changes) {
             // randomly update data for some rows
             for (let i = 0; i < 10; i++) {
-                const index = Math.floor(this.allData.length * Math.random());
+                const index = Math.floor(this.allData.length * pRandom());
 
                 const dataItem = this.allData[index];
                 // change by a value between -1 and 2 with one decimal place
-                const move = Math.floor(30 * Math.random()) / 10 - 1;
+                const move = Math.floor(30 * pRandom()) / 10 - 1;
                 const newValue = dataItem.mid + move;
                 dataItem.mid = newValue;
 
@@ -100,10 +100,10 @@ export function createMockServer() {
             const that = this;
             this.allData.forEach(function (dataItem) {
                 // have volume a random between 100 and 10,000
-                dataItem.volume = Math.floor(Math.random() * 10000 + 100);
+                dataItem.volume = Math.floor(pRandom() * 10000 + 100);
 
                 // have mid random from 20 to 300
-                dataItem.mid = Math.random() * 300 + 20;
+                dataItem.mid = pRandom() * 300 + 20;
 
                 that.setBidAndAsk(dataItem);
             });
@@ -207,3 +207,16 @@ export function createMockServer() {
     }
     return new MockServer();
 }
+
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();

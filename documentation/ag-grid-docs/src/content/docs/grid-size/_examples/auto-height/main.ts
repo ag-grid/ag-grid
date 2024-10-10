@@ -52,23 +52,36 @@ const gridOptions: GridOptions = {
     popupParent: document.body,
 };
 
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();
+
 function createRow(index: number) {
     const makes = ['Toyota', 'Ford', 'BMW', 'Phantom', 'Porsche'];
 
     return {
         id: 'D' + (1000 + index),
-        make: makes[Math.floor(Math.random() * makes.length)],
-        price: Math.floor(Math.random() * 100000),
-        val1: Math.floor(Math.random() * 1000),
-        val2: Math.floor(Math.random() * 1000),
-        val3: Math.floor(Math.random() * 1000),
-        val4: Math.floor(Math.random() * 1000),
-        val5: Math.floor(Math.random() * 1000),
-        val6: Math.floor(Math.random() * 1000),
-        val7: Math.floor(Math.random() * 1000),
-        val8: Math.floor(Math.random() * 1000),
-        val9: Math.floor(Math.random() * 1000),
-        val10: Math.floor(Math.random() * 1000),
+        make: makes[Math.floor(pRandom() * makes.length)],
+        price: Math.floor(pRandom() * 100000),
+        val1: Math.floor(pRandom() * 1000),
+        val2: Math.floor(pRandom() * 1000),
+        val3: Math.floor(pRandom() * 1000),
+        val4: Math.floor(pRandom() * 1000),
+        val5: Math.floor(pRandom() * 1000),
+        val6: Math.floor(pRandom() * 1000),
+        val7: Math.floor(pRandom() * 1000),
+        val8: Math.floor(pRandom() * 1000),
+        val9: Math.floor(pRandom() * 1000),
+        val10: Math.floor(pRandom() * 1000),
     };
 }
 

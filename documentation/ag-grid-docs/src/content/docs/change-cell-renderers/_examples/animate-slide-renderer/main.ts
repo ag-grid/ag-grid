@@ -69,13 +69,26 @@ function formatNumber(number: number) {
     return Math.floor(number).toLocaleString();
 }
 
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();
+
 function onUpdateSomeValues() {
     const rowCount = gridApi!.getDisplayedRowCount();
     for (let i = 0; i < 10; i++) {
-        const row = Math.floor(Math.random() * rowCount);
+        const row = Math.floor(pRandom() * rowCount);
         const rowNode = gridApi!.getDisplayedRowAtIndex(row)!;
-        rowNode.setDataValue('c', Math.floor(Math.random() * 10000));
-        rowNode.setDataValue('d', Math.floor(Math.random() * 10000));
+        rowNode.setDataValue('c', Math.floor(pRandom() * 10000));
+        rowNode.setDataValue('d', Math.floor(pRandom() * 10000));
     }
 }
 

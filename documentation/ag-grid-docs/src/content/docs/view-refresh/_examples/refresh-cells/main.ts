@@ -134,10 +134,10 @@ function scramble() {
 function scrambleItem(item: any) {
     ['a', 'b', 'c', 'd', 'e', 'f'].forEach((colId) => {
         // skip 50% of the cells so updates are random
-        if (Math.random() > 0.5) {
+        if (pRandom() > 0.5) {
             return;
         }
-        item[colId] = Math.floor(Math.random() * 100);
+        item[colId] = Math.floor(pRandom() * 100);
     });
 }
 
@@ -146,3 +146,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });
+
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();

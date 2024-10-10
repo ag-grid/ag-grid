@@ -76,6 +76,19 @@ function groupTreeListFormatter(pathKey: string | null, level: number, _parentPa
     return pathKey || '(Blanks)';
 }
 
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
@@ -89,11 +102,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 ...data.map((row) => {
                     // generate pseudo-random dates
                     const dateParts = row.date.split('/');
-                    const randomMonth = parseInt(dateParts[1]) - Math.floor(Math.random() * 3);
+                    const randomMonth = parseInt(dateParts[1]) - Math.floor(pRandom() * 3);
                     const newDate = new Date(
                         parseInt(dateParts[2]),
                         randomMonth,
-                        randomMonth + randomDays[Math.floor(Math.random() * 5)]
+                        randomMonth + randomDays[Math.floor(pRandom() * 5)]
                     );
                     return { ...row, date: newDate };
                 }),

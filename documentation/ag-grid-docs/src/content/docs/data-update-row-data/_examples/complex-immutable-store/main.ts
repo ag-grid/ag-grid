@@ -248,13 +248,26 @@ function createRowData() {
     }
 }
 
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();
+
 function randomBetween(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return Math.floor(pRandom() * (max - min + 1)) + min;
 }
 
 function createTradeRecord(product: any, portfolio: any, book: any, batch: any) {
-    const current = Math.floor(Math.random() * 100000) + 100;
-    const previous = current + Math.floor(Math.random() * 10000) - 2000;
+    const current = Math.floor(pRandom() * 100000) + 100;
+    const previous = current + Math.floor(pRandom() * 10000) - 2000;
     const trade = {
         product: product,
         portfolio: portfolio,
@@ -262,8 +275,8 @@ function createTradeRecord(product: any, portfolio: any, book: any, batch: any) 
         trade: createTradeId(),
         submitterID: randomBetween(10, 1000),
         submitterDealID: randomBetween(10, 1000),
-        dealType: Math.random() < 0.2 ? 'Physical' : 'Financial',
-        bidFlag: Math.random() < 0.5 ? 'Buy' : 'Sell',
+        dealType: pRandom() < 0.2 ? 'Physical' : 'Financial',
+        bidFlag: pRandom() < 0.5 ? 'Buy' : 'Sell',
         current: current,
         previous: previous,
         pl1: randomBetween(100, 1000),
@@ -332,7 +345,7 @@ function updateSomeItems() {
         if (globalRowData.length === 0) {
             continue;
         }
-        const indexToUpdate = Math.floor(Math.random() * globalRowData.length);
+        const indexToUpdate = Math.floor(pRandom() * globalRowData.length);
         const itemToUpdate = globalRowData[indexToUpdate];
 
         // make a copy of the item, and make some changes, so we are behaving
@@ -353,10 +366,10 @@ function addSomeItems() {
     const itemsToAdd = [];
     const batch = nextBatchId++;
     for (let j = 0; j < addCount; j++) {
-        const portfolio = portfolios[Math.floor(Math.random() * portfolios.length)];
+        const portfolio = portfolios[Math.floor(pRandom() * portfolios.length)];
         const books = productToPortfolioToBooks['Palm Oil'][portfolio];
-        const book = books[Math.floor(Math.random() * books.length)];
-        const product = products[Math.floor(Math.random() * products.length)];
+        const book = books[Math.floor(pRandom() * books.length)];
+        const product = products[Math.floor(pRandom() * products.length)];
         const trade = createTradeRecord(product, portfolio, book, batch);
         itemsToAdd.push(trade);
         globalRowData.push(trade);

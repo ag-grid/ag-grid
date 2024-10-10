@@ -24,7 +24,7 @@ function createUniqueRandomSymbol(data: any[]) {
         symbol = '';
         // create symbol
         for (let i = 0; i < 3; i++) {
-            symbol += possible.charAt(Math.floor(Math.random() * possible.length));
+            symbol += possible.charAt(Math.floor(pRandom() * possible.length));
         }
         // check uniqueness
         isUnique = true;
@@ -45,11 +45,24 @@ function getInitialData() {
     return data;
 }
 
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();
+
 function createItem(data: any[]) {
     const item = {
-        group: ['A', 'B', 'C'][Math.floor(Math.random() * 3)],
+        group: ['A', 'B', 'C'][Math.floor(pRandom() * 3)],
         symbol: createUniqueRandomSymbol(data),
-        price: Math.floor(Math.random() * 100),
+        price: Math.floor(pRandom() * 100),
     };
     return item;
 }
@@ -181,7 +194,7 @@ const GridExample = () => {
                 // group also stays the same
                 group: item.group,
                 // add random price
-                price: Math.floor(Math.random() * 100),
+                price: Math.floor(pRandom() * 100),
             });
         });
         setRowData(newStore);

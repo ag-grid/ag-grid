@@ -61,6 +61,19 @@ const numberFormatter: ValueFormatterFunc = ({ value }) => {
     return value == null ? '' : formatter.format(value);
 };
 
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();
+
 export const FinanceExample: React.FC<Props> = ({
     gridTheme = 'ag-theme-quartz',
     isDarkMode = false,
@@ -73,12 +86,10 @@ export const FinanceExample: React.FC<Props> = ({
         const intervalId = setInterval(() => {
             setRowData((rowData) =>
                 rowData.map((item) =>
-                    Math.random() < 0.1
+                    pRandom() < 0.1
                         ? {
                               ...item,
-                              price:
-                                  item.price +
-                                  item.price * ((Math.random() * 4 + 1) / 100) * (Math.random() > 0.5 ? 1 : -1),
+                              price: item.price + item.price * ((pRandom() * 4 + 1) / 100) * (pRandom() > 0.5 ? 1 : -1),
                           }
                         : item
                 )

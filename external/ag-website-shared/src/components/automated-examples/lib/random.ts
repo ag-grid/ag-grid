@@ -1,18 +1,20 @@
-// From http://stackoverflow.com/questions/3062746/special-simple-random-number-generator
-let seed = 123456789;
-const m = Math.pow(2, 32);
-const a = 1103515245;
-const c = 12345;
+export const pseudoRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
 
-export const pseudoRandom = () => {
-    seed = (a * seed + c) % m;
-    return seed / m;
-};
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();
 
 export function randomBetween(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return Math.floor(pseudoRandom() * (max - min + 1)) + min;
 }
 
 export function simpleRandomSort<T>(array: T[]): T[] {
-    return array.sort(() => (Math.random() > 0.5 ? 1 : -1));
+    return array.sort(() => (pseudoRandom() > 0.5 ? 1 : -1));
 }

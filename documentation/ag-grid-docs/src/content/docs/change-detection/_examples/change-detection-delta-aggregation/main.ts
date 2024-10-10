@@ -124,14 +124,27 @@ function updateOneRecord() {
     rowNodeToUpdate.setDataValue(randomColumnId, randomValue);
 }
 
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();
+
 function pickRandomColumn() {
     const letters = ['a', 'b', 'c', 'd'];
-    const randomIndex = Math.floor(Math.random() * letters.length);
+    const randomIndex = Math.floor(pRandom() * letters.length);
     return letters[randomIndex];
 }
 
 function createRandomNumber() {
-    return Math.floor(Math.random() * 100);
+    return Math.floor(pRandom() * 100);
 }
 
 function pickExistingRowItemAtRandom(api: GridApi) {
@@ -148,7 +161,7 @@ function pickExistingRowNodeAtRandom(api: GridApi): IRowNode | undefined {
     if (allItems.length === 0) {
         return undefined;
     }
-    const result = allItems[Math.floor(Math.random() * allItems.length)];
+    const result = allItems[Math.floor(pRandom() * allItems.length)];
 
     return result;
 }
@@ -189,9 +202,9 @@ function removeUsingTransaction() {
 }
 
 function addUsingTransaction() {
-    const i = Math.floor(Math.random() * 2);
-    const j = Math.floor(Math.random() * 5);
-    const k = Math.floor(Math.random() * 3);
+    const i = Math.floor(pRandom() * 2);
+    const j = Math.floor(pRandom() * 5);
+    const k = Math.floor(pRandom() * 3);
     const newItem = createRowItem(i, j, k);
 
     const transaction = {

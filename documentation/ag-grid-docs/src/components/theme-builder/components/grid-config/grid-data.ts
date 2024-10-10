@@ -132,12 +132,25 @@ const countryNames = [
     'Luxembourg',
 ];
 
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();
+
 const getRandomFromList = <T>(list: T[]): T => {
-    return list[Math.floor(Math.random() * list.length)];
+    return list[Math.floor(pRandom() * list.length)];
 };
 
 const getRandomCash = (min: number, max: number) => {
-    return Math.floor((Math.random() * (max - min) + min) * 100);
+    return Math.floor((pRandom() * (max - min) + min) * 100);
 };
 
 const getRandomRow = () => {

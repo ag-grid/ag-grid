@@ -14,9 +14,22 @@ import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();
+
 const GridExample = () => {
     const gridRef = useRef();
-    const [gridKey, setGridKey] = useState(`grid-key-${Math.random()}`);
+    const [gridKey, setGridKey] = useState(`grid-key-${pRandom()}`);
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '100%', width: '100%' }), []);
     const [rowData, setRowData] = useState(getData());
@@ -42,7 +55,7 @@ const GridExample = () => {
 
     const reloadGrid = useCallback(() => {
         // Trigger re-load by assigning a new key to the Grid React component
-        setGridKey(`grid-key-${Math.random()}`);
+        setGridKey(`grid-key-${pRandom()}`);
     }, []);
 
     return (

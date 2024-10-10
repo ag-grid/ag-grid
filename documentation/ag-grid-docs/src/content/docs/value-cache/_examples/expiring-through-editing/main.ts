@@ -110,11 +110,11 @@ function onRefreshCells() {
 }
 
 function onUpdateOneValue() {
-    const randomId = Math.floor(Math.random() * 10) + '';
+    const randomId = Math.floor(pRandom() * 10) + '';
     const rowNode = gridApi!.getRowNode(randomId);
     if (rowNode) {
-        const randomCol = ['q1', 'q2', 'q3', 'q4'][Math.floor(Math.random() * 4)];
-        const newValue = Math.floor(Math.random() * 1000);
+        const randomCol = ['q1', 'q2', 'q3', 'q4'][Math.floor(pRandom() * 4)];
+        const newValue = Math.floor(pRandom() * 1000);
         console.log('onUpdateOneValue -> start');
         rowNode.setDataValue(randomCol, newValue);
         console.log('onUpdateOneValue -> end');
@@ -126,3 +126,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });
+
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();

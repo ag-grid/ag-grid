@@ -75,7 +75,7 @@ function updatePrices() {
             // group also stays the same
             group: item.group,
             // add random price
-            price: Math.floor(Math.random() * 100),
+            price: Math.floor(pRandom() * 100),
         });
     });
     immutableStore = newStore;
@@ -94,9 +94,9 @@ function filter(list: any[], callback: any) {
 
 function createItem() {
     const item = {
-        group: ['A', 'B', 'C'][Math.floor(Math.random() * 3)],
+        group: ['A', 'B', 'C'][Math.floor(pRandom() * 3)],
         symbol: createUniqueRandomSymbol(),
-        price: Math.floor(Math.random() * 100),
+        price: Math.floor(pRandom() * 100),
     };
     return item;
 }
@@ -131,6 +131,19 @@ function setItemVisible(id: string, visible: boolean) {
     element.style.display = visible ? 'inline' : 'none';
 }
 
+const pRandom = (() => {
+    // From https://stackoverflow.com/a/3062783
+    let seed = 123_456_789;
+    const m = 2 ** 32;
+    const a = 1_103_515_245;
+    const c = 12_345;
+
+    return () => {
+        seed = (a * seed + c) % m;
+        return seed / m;
+    };
+})();
+
 // creates a unique symbol, eg 'ADG' or 'ZJD'
 function createUniqueRandomSymbol() {
     let symbol: any;
@@ -141,7 +154,7 @@ function createUniqueRandomSymbol() {
         symbol = '';
         // create symbol
         for (let i = 0; i < 3; i++) {
-            symbol += possible.charAt(Math.floor(Math.random() * possible.length));
+            symbol += possible.charAt(Math.floor(pRandom() * possible.length));
         }
         // check uniqueness
         isUnique = true;
