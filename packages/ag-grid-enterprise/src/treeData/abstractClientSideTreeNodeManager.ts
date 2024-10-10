@@ -4,7 +4,7 @@ import type {
     IsGroupOpenByDefaultParams,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { RowNode } from 'ag-grid-community';
+import { RowNode, _ROW_ID_PREFIX_ROW_GROUP } from 'ag-grid-community';
 import { AbstractClientSideNodeManager, _warnOnce } from 'ag-grid-community';
 
 import { TreeNode } from './treeNode';
@@ -409,7 +409,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
             id = `${p.level}-${p.key}-${id}`;
             p = parent;
         }
-        row.id = RowNode.ID_PREFIX_ROW_GROUP + id;
+        row.id = _ROW_ID_PREFIX_ROW_GROUP + id;
 
         return row;
     }

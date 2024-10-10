@@ -17,7 +17,7 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { ClientSideRowModelSteps } from 'ag-grid-community';
+import { ClientSideRowModelSteps, _ROW_ID_PREFIX_ROW_GROUP } from 'ag-grid-community';
 import {
     BeanStub,
     RowNode,
@@ -605,7 +605,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
 
         // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
         // for top pinned and bottom pinned rows.
-        return RowNode.ID_PREFIX_ROW_GROUP + createGroupId(node, parent, level);
+        return _ROW_ID_PREFIX_ROW_GROUP + createGroupId(node, parent, level);
     }
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo, details: GroupingDetails): void {
