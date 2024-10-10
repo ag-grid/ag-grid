@@ -22,9 +22,9 @@ interface Props {
 }
 
 const { data: metadata } = await getEntry('metadata', 'metadata');
-const { data: menuData } = await getEntry('menu', 'data');
+const { data: apiNavData } = await getEntry('api-nav', 'apiNav');
 const { data: footerItems } = await getEntry('footer', 'data');
-const apiPaths = getApiPaths(menuData);
+const apiPaths = getApiPaths(apiNavData);
 
 const isProduction = getIsProduction();
 const isArchive = getIsArchive();
