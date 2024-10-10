@@ -22,7 +22,7 @@ export function getCellEditorInstances<TData = any>(
 ): ICellEditor[] {
     const res: ICellEditor[] = [];
 
-    beans.rowRenderer.forMatchingCellCtrls(params.rowNodes, params.columns as AgColumn[], (cellCtrl) => {
+    beans.rowRenderer.someMatchingCellCtrls(params.rowNodes, params.columns as AgColumn[], (cellCtrl) => {
         const cellEditor = cellCtrl.getCellEditor() as ICellEditor;
 
         if (cellEditor) {
@@ -36,7 +36,7 @@ export function getCellEditorInstances<TData = any>(
 export function getEditingCells(beans: BeanCollection): CellPosition[] {
     const res: CellPosition[] = [];
 
-    beans.rowRenderer.forEveryCellCtrl((cellCtrl) => {
+    beans.rowRenderer.someCellCtrls((cellCtrl) => {
         if (cellCtrl.isEditing()) {
             const cellPosition = cellCtrl.getCellPosition();
             res.push(cellPosition);

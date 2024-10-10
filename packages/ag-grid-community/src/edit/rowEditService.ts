@@ -15,7 +15,7 @@ export class RowEditService extends BeanStub implements NamedBean {
     ): boolean {
         let preventDefault = true;
         let atLeastOneEditing = false;
-        rowCtrl.forEveryCellCtrl((cellCtrl: CellCtrl) => {
+        rowCtrl.someCellCtrls((cellCtrl: CellCtrl) => {
             const cellStartedEdit = cellCtrl === sourceRenderedCell;
             if (cellStartedEdit) {
                 preventDefault = cellCtrl.startEditing(key, cellStartedEdit, event);
@@ -37,7 +37,7 @@ export class RowEditService extends BeanStub implements NamedBean {
         rowCtrl.setStoppingRowEdit(true);
 
         let fireRowEditEvent = false;
-        rowCtrl.forEveryCellCtrl((ctrl) => {
+        rowCtrl.someCellCtrls((ctrl) => {
             const valueChanged = ctrl.stopEditing(cancel);
             if (isRowEdit && !cancel && !fireRowEditEvent && valueChanged) {
                 fireRowEditEvent = true;

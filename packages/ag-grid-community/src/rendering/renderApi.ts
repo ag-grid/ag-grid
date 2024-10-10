@@ -26,7 +26,7 @@ export function refreshCells<TData = any>(beans: BeanCollection, params: Refresh
 
 export function flashCells<TData = any>(beans: BeanCollection, params: FlashCellsParams<TData> = {}): void {
     beans.frameworkOverrides.wrapIncoming(() => {
-        beans.rowRenderer.forMatchingCellCtrls(params.rowNodes, params.columns as AgColumn[], (cellCtrl) =>
+        beans.rowRenderer.someMatchingCellCtrls(params.rowNodes, params.columns as AgColumn[], (cellCtrl) =>
             cellCtrl.flashCell(params)
         );
     });
@@ -58,7 +58,7 @@ export function getCellRendererInstances<TData = any>(
     params: GetCellRendererInstancesParams<TData> = {}
 ): ICellRenderer[] {
     const cellRenderers: ICellRenderer[] = [];
-    beans.rowRenderer.forMatchingCellCtrls(params.rowNodes, params.columns as AgColumn[], (cellCtrl) => {
+    beans.rowRenderer.someMatchingCellCtrls(params.rowNodes, params.columns as AgColumn[], (cellCtrl) => {
         const cellRenderer = cellCtrl.getCellRenderer();
         if (cellRenderer != null) {
             cellRenderers.push(_unwrapUserComp(cellRenderer));
@@ -71,7 +71,7 @@ export function getCellRendererInstances<TData = any>(
     const fullWidthRenderers: ICellRenderer[] = [];
     const rowIdMap = mapRowNodes(params.rowNodes);
 
-    beans.rowRenderer.forEveryRowCtrl((rowCtrl) => {
+    beans.rowRenderer.someRowCtrls((rowCtrl) => {
         if (rowIdMap && !isRowInMap(rowCtrl.getRowNode(), rowIdMap)) {
             return;
         }
