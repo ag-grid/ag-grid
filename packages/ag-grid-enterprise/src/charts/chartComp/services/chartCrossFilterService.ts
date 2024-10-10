@@ -10,7 +10,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _includes, _isClientSideRowModel, _warnOnce } from 'ag-grid-community';
 
-import { CROSS_FILTER_FIELD_POSTFIX } from '../crossfilter/crossFilterApi';
+import { CROSS_FILTER_FIELD_POSTFIX, isMultiSelection } from '../crossfilter/crossFilterApi';
 import { _mapValues } from '../utils/object';
 
 export class ChartCrossFilterService extends BeanStub implements NamedBean {
@@ -78,7 +78,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
 
         const selectedValue = rawValue.toString();
 
-        if (event.event.metaKey || event.event.ctrlKey) {
+        if (isMultiSelection(event.event)) {
             const existingGridValues = this.getCurrentGridValuesForCategory(colId);
             const valueAlreadyExists = _includes(existingGridValues, selectedValue);
 

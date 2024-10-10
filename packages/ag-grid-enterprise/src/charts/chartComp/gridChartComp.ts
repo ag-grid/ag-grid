@@ -35,6 +35,7 @@ import type { ChartProxy, ChartProxyParams } from './chartProxies/chartProxy';
 import { ComboChartProxy } from './chartProxies/combo/comboChartProxy';
 import type { EnterpriseChartProxyFactory } from './chartProxies/enterpriseChartProxyFactory';
 import { PieChartProxy } from './chartProxies/pie/pieChartProxy';
+import { isMultiSelection } from './crossfilter/crossFilterApi';
 import type { CrossFilteringContext } from './crossfilter/crossFilteringContext';
 import { ChartMenu } from './menu/chartMenu';
 import type { ChartMenuContext } from './menu/chartMenuContext';
@@ -176,7 +177,8 @@ export class GridChartComp extends Component {
             } else {
                 const category = event[this.chartProxy.getCategoryKey()];
                 const value = `${event.datum![category]}`;
-                const multiSelection = event.event.metaKey || event.event.ctrlKey;
+
+                const multiSelection = isMultiSelection(event.event);
 
                 if (multiSelection) {
                     selectionModel.toggleSelection(multiSelection, category, value);

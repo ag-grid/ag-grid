@@ -9,6 +9,7 @@ import type {
 
 import { _includes, _warnOnce } from 'ag-grid-community';
 
+import { isMultiSelection } from '../crossfilter/crossFilterApi';
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
 import { get } from '../utils/object';
 import type { ChartSeriesType } from '../utils/seriesTypeMapper';
@@ -129,7 +130,11 @@ function createCrossFilterThemeOverrides(
                           chartProxyParams.chartId
                       );
 
-                      selectionModel.setSelection([{ category, value }]);
+                      if (isMultiSelection(e.event)) {
+                          selectionModel.toggleSelection(true, category, value);
+                      } else {
+                          selectionModel.setSelection([{ category, value }]);
+                      }
                   },
               },
           }
