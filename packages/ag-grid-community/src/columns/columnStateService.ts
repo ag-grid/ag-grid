@@ -208,7 +208,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
             autoColsCopy.forEach(applyDefaultsFunc);
 
             // sync selection cols with ColumnState
-            const selectionCols = this.columnModel.getAutoCols()?.slice() ?? [];
+            const selectionCols = this.columnModel.getSelectionCols()?.slice() ?? [];
             selectionColStates.forEach((stateItem) => {
                 const selectionCol = this.columnModel.getSelectionCol(stateItem.colId);
                 _removeFromArray(selectionCols, selectionCol);
