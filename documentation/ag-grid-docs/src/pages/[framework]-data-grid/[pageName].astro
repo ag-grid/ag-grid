@@ -79,7 +79,17 @@ const headings =
     showDocsNav={true}
 >
     <div class:list={[hidePageMenu && styles.noLeftMenu, styles.contentViewport, 'layout-grid']}>
-        {!hidePageMenu && <DocsNav client:load menuData={menuData} framework={currentFramework} pageName={pageName} />}
+        {
+            !hidePageMenu && (
+                <DocsNav
+                    client:load
+                    menuData={menuData}
+                    framework={currentFramework}
+                    pageName={pageName}
+                    showWhatsNew={!isApiPage}
+                />
+            )
+        }
 
         <div
             id="doc-content"

@@ -1,7 +1,7 @@
 {
     "sections": [
         {
-            "title": "Grid API",
+            "hideTitle": true,
             "children": [
                 {
                     "type": "item",

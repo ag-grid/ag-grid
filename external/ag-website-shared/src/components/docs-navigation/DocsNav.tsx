@@ -146,7 +146,7 @@ function Section({
 }) {
     return (
         <div className={styles.section}>
-            <h5 className={styles.sectionTitle}>{sectionData.title}</h5>
+            {sectionData.hideTitle ?? <h5 className={styles.sectionTitle}>{sectionData.title}</h5>}
 
             {sectionData.children.map((childData) => {
                 return (
@@ -170,7 +170,17 @@ function Section({
     );
 }
 
-export function DocsNav({ menuData, framework, pageName }: { menuData?: any; framework: Framework; pageName: string }) {
+export function DocsNav({
+    menuData,
+    framework,
+    pageName,
+    showWhatsNew = true,
+}: {
+    menuData?: any;
+    framework: Framework;
+    pageName: string;
+    showWhatsNew?: boolean;
+}) {
     const pageOpenGroup = getOpenGroup({ menuData, pageName });
 
     const [openGroup, setOpenGroup] = useState(pageOpenGroup);
@@ -194,9 +204,11 @@ export function DocsNav({ menuData, framework, pageName }: { menuData?: any; fra
         <Collapsible id="docs-mobile-nav-collapser" isOpen={mobileNavOpen}>
             <div className={styles.docsNavOuter}>
                 <div className={styles.docsNavInner}>
-                    <div className={styles.whatsNewLink}>
-                        <a href={urlWithBaseUrl('/whats-new')}>What's New</a>
-                    </div>
+                    {showWhatsNew && (
+                        <div className={styles.whatsNewLink}>
+                            <a href={urlWithBaseUrl('/whats-new')}>What's New</a>
+                        </div>
+                    )}
 
                     {menuData.sections.map((sectionData, i) => {
                         return (
