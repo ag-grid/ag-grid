@@ -121,26 +121,6 @@
             },
             {
                 "label": {
-                    "name": "Radial Gauge",
-                    "icon": "chartsRadialGauge",
-                    "link": "https://ag-grid.com/charts/react/radial-gague/"
-                },
-                "community": false,
-                "enterprise": true,
-                "chartsGrid": true
-            },
-            {
-                "label": {
-                    "name": "Linear Gauge",
-                    "icon": "chartsLinearGauge",
-                    "link": "https://ag-grid.com/charts/react/linear-gauge/"
-                },
-                "community": false,
-                "enterprise": true,
-                "chartsGrid": true
-            },
-            {
-                "label": {
                     "name": "Candlestick",
                     "icon": "chartsCandlestick",
                     "link": "https://ag-grid.com/charts/react/candlestick-series/"
@@ -294,6 +274,26 @@
                     "name": "Chord",
                     "icon": "chartsChord",
                     "link": "https://ag-grid.com/charts/react/chord-series/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Radial Gauge",
+                    "icon": "chartsRadialGauge",
+                    "link": "https://ag-grid.com/charts/react/radial-gague/"
+                },
+                "community": false,
+                "enterprise": true,
+                "chartsGrid": true
+            },
+            {
+                "label": {
+                    "name": "Linear Gauge",
+                    "icon": "chartsLinearGauge",
+                    "link": "https://ag-grid.com/charts/react/linear-gauge/"
                 },
                 "community": false,
                 "enterprise": true,
