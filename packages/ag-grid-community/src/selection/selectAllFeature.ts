@@ -238,14 +238,14 @@ export class SelectAllFeature extends BeanStub {
 
     private getSelectAllMode(): SelectAllMode {
         const so = this.selectionOptions;
-        if (so !== undefined) {
+        if (so) {
             return (so.mode === 'multiRow' && so.selectAll) || 'all';
         }
-        const colDef = this.column.getColDef();
-        if (colDef.headerCheckboxSelectionCurrentPageOnly) {
+        const { headerCheckboxSelectionCurrentPageOnly, headerCheckboxSelectionFilteredOnly } = this.column.getColDef();
+        if (headerCheckboxSelectionCurrentPageOnly) {
             return 'currentPage';
         }
-        if (colDef.headerCheckboxSelectionFilteredOnly) {
+        if (headerCheckboxSelectionFilteredOnly) {
             return 'filtered';
         }
         return 'all';
