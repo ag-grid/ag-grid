@@ -13,7 +13,7 @@ import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
 import type { GridCtrl } from './gridComp/gridCtrl';
 import { _getActiveDomElement, _getDocument, _getDomData } from './gridOptionsUtils';
-import { AbstractHeaderCellCtrl } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
+import { DOM_DATA_KEY_HEADER_CTRL } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl } from './headerRendering/cells/column/headerCellCtrl';
 import type { IRangeService } from './interfaces/IRangeService';
 import type { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
@@ -33,7 +33,7 @@ import { _last } from './utils/array';
 import { _getTabIndex } from './utils/browser';
 import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR, _isVisible } from './utils/dom';
 import { _makeNull } from './utils/generic';
-import { ManagedFocusFeature } from './widgets/managedFocusFeature';
+import { FOCUS_MANAGED_CLASS } from './widgets/managedFocusFeature';
 import { TabGuardClassNames } from './widgets/tabGuardCtrl';
 
 export class FocusService extends BeanStub implements NamedBean {
@@ -188,12 +188,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about
-        if (
-            this.isDomDataMissingInHierarchy(
-                _getActiveDomElement(this.gos),
-                AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL
-            )
-        ) {
+        if (this.isDomDataMissingInHierarchy(_getActiveDomElement(this.gos), DOM_DATA_KEY_HEADER_CTRL)) {
             return null;
         }
 
@@ -683,7 +678,7 @@ export class FocusService extends BeanStub implements NamedBean {
             return false;
         }
 
-        const managedContainers = rootNode.querySelectorAll(`.${ManagedFocusFeature.FOCUS_MANAGED_CLASS}`);
+        const managedContainers = rootNode.querySelectorAll(`.${FOCUS_MANAGED_CLASS}`);
 
         if (!managedContainers.length) {
             return false;

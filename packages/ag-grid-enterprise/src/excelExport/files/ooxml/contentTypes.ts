@@ -1,7 +1,13 @@
 import type { ExcelOOXMLTemplate } from 'ag-grid-community';
 import type { XmlElement } from 'ag-grid-community';
 
-import { ExcelXlsxFactory } from '../../excelXlsxFactory';
+import {
+    XLSX_WORKBOOK_IMAGE_IDS,
+    XLSX_WORKSHEET_DATA_TABLES,
+    XLSX_WORKSHEET_HEADER_FOOTER_IMAGES,
+    XLSX_WORKSHEET_IMAGES,
+    getXlsxTableNameFromIndex,
+} from '../../excelXlsxFactory';
 import contentTypeFactory from './contentType';
 
 type ImageExtension = 'jpeg' | 'png' | 'gif';
@@ -15,12 +21,12 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
             PartName: `/xl/worksheets/sheet${i + 1}.xml`,
         }));
 
-        const sheetsWithImages = ExcelXlsxFactory.worksheetImages.size;
-        const headerFooterImages = ExcelXlsxFactory.worksheetHeaderFooterImages.size;
-        const sheetsWithTables = ExcelXlsxFactory.worksheetDataTables.size;
+        const sheetsWithImages = XLSX_WORKSHEET_IMAGES.size;
+        const headerFooterImages = XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.size;
+        const sheetsWithTables = XLSX_WORKSHEET_DATA_TABLES.size;
         const imageTypesObject: { [key in ImageExtension]?: boolean } = {};
 
-        ExcelXlsxFactory.workbookImageIds.forEach((v) => {
+        XLSX_WORKBOOK_IMAGE_IDS.forEach((v) => {
             imageTypesObject[_normaliseImageExtension(v.type)] = true;
         });
 
@@ -33,7 +39,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
         const tableDocs = new Array(sheetsWithTables).fill(undefined).map((v, i) => ({
             name: 'Override',
             ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.table+xml',
-            PartName: `/xl/tables/${ExcelXlsxFactory.getTableNameFromIndex(i)}.xml`,
+            PartName: `/xl/tables/${getXlsxTableNameFromIndex(i)}.xml`,
         }));
 
         const imageTypes = Object.keys(imageTypesObject).map((ext) => ({

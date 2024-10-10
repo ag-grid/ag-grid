@@ -234,7 +234,7 @@ export const AG_GRID_ERRORS = {
         agGridDefaults: { [key in UserComponentName]?: any };
         jsComps: { [key: string]: any };
     }) => {
-        const textOutput = [];
+        const textOutput: string[] = [];
         const validComponents = [
             // Don't include the old names / internals in potential suggestions
             ...Object.keys(agGridDefaults).filter(

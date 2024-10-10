@@ -16,7 +16,12 @@ import { _compose, _escapeString, _iterateObject } from 'ag-grid-community';
 import type { ExcelDataTable, ExcelHeaderFooterPosition } from '../../assets/excelInterfaces';
 import { getExcelColumnName } from '../../assets/excelUtils';
 import type { ExcelGridSerializingParams } from '../../excelSerializingSession';
-import { ExcelXlsxFactory } from '../../excelXlsxFactory';
+import {
+    XLSX_WORKSHEET_DATA_TABLES,
+    XLSX_WORKSHEET_HEADER_FOOTER_IMAGES,
+    XLSX_WORKSHEET_IMAGES,
+    addXlsxHeaderFooterImageToMap,
+} from '../../excelXlsxFactory';
 import columnFactory from './column';
 import mergeCellFactory from './mergeCell';
 import rowFactory from './row';
@@ -228,7 +233,7 @@ const processHeaderFooterContent = (
         const { image } = curr;
         if (curr.value === '&[Picture]' && image) {
             const imagePosition: ExcelHeaderFooterPosition = `${pos}${location}${rule}`;
-            ExcelXlsxFactory.addHeaderFooterImageToMap(image, imagePosition);
+            addXlsxHeaderFooterImageToMap(image, imagePosition);
         }
 
         return `${output}${_escapeString(replaceHeaderFooterTokens(curr.value))}`;
@@ -394,7 +399,7 @@ const addExcelTableRel = (excelTable?: ExcelDataTable) => {
 
 const addDrawingRel = (currentSheet: number) => {
     return (params: ComposedWorksheetParams) => {
-        const worksheetImages = ExcelXlsxFactory.worksheetImages.get(currentSheet);
+        const worksheetImages = XLSX_WORKSHEET_IMAGES.get(currentSheet);
         if (worksheetImages?.length) {
             params.children.push({
                 name: 'drawing',
@@ -412,7 +417,7 @@ const addDrawingRel = (currentSheet: number) => {
 
 const addVmlDrawingRel = (currentSheet: number) => {
     return (params: ComposedWorksheetParams) => {
-        if (ExcelXlsxFactory.worksheetHeaderFooterImages.get(currentSheet)) {
+        if (XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.get(currentSheet)) {
             params.children.push({
                 name: 'legacyDrawingHF',
                 properties: {
@@ -533,8 +538,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         const mergedCells =
             columns && columns.length ? getMergedCellsAndAddColumnGroups(rows, columns, !!suppressColumnOutline) : [];
 
-        const { worksheetDataTables } = ExcelXlsxFactory;
-        const worksheetExcelTables = worksheetDataTables.get(currentSheet);
+        const worksheetExcelTables = XLSX_WORKSHEET_DATA_TABLES.get(currentSheet);
 
         const createWorksheetChildren = _compose<ComposedWorksheetParams>(
             addSheetPr(),

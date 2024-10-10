@@ -279,12 +279,16 @@
                                         "path": "theming-css"
                                     },
                                     {
-                                        "title": "Color Schemes & Dark Mode",
+                                        "title": "Colors & Dark Mode",
                                         "path": "theming-colors"
                                     },
                                     {
                                         "title": "Borders",
                                         "path": "theming-borders"
+                                    },
+                                    {
+                                        "title": "Distributing Shared Themes",
+                                        "path": "theming-distribution"
                                     },
                                     {
                                         "title": "Migration",

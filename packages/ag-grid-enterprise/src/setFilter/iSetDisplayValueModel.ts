@@ -34,10 +34,8 @@ export interface ISetDisplayValueModel<V> {
     refresh(): void;
 }
 
-export class SetFilterDisplayValue {
-    public static readonly SELECT_ALL = '__AG_SELECT_ALL__';
-    public static readonly ADD_SELECTION_TO_FILTER = '__AG_ADD_SELECTION_TO_FILTER__';
-}
+export const SET_FILTER_SELECT_ALL = '__AG_SELECT_ALL__';
+export const SET_FILTER_ADD_SELECTION_TO_FILTER = '__AG_ADD_SELECTION_TO_FILTER__';
 
 export interface SetFilterModelTreeItem {
     treeKey: string | null;

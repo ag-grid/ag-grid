@@ -9,6 +9,9 @@ import { ChartDataPanel } from './data/chartDataPanel';
 import { FormatPanel } from './format/formatPanel';
 import { ChartSettingsPanel } from './settings/chartSettingsPanel';
 
+const TAB_DATA = 'data';
+const TAB_FORMAT = 'format';
+
 export type TabbedChartMenuEvent = 'closed';
 export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
     private chartTranslationService: ChartTranslationService;
@@ -16,9 +19,6 @@ export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
     public wireBeans(beans: BeanCollection): void {
         this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
-
-    public static TAB_DATA = 'data';
-    public static TAB_FORMAT = 'format';
 
     private tabbedLayout: TabbedLayout;
     private tabs: TabbedItem[] = [];
@@ -106,9 +106,9 @@ export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
 
     private createPanel(panelType: string): Component {
         switch (panelType) {
-            case TabbedChartMenu.TAB_DATA:
+            case TAB_DATA:
                 return new ChartDataPanel(this.chartMenuContext);
-            case TabbedChartMenu.TAB_FORMAT:
+            case TAB_FORMAT:
                 return new FormatPanel(this.chartMenuContext);
             default:
                 return new ChartSettingsPanel(this.chartMenuContext.chartController);

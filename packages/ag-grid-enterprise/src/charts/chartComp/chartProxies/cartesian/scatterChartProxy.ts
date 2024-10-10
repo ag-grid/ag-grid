@@ -1,6 +1,6 @@
 import type { AgBubbleSeriesOptions, AgCartesianAxisOptions, AgScatterSeriesOptions } from 'ag-charts-types';
 
-import { ChartDataModel } from '../../model/chartDataModel';
+import { DEFAULT_CHART_CATEGORY } from '../../model/chartDataModel';
 import type { ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 
@@ -32,7 +32,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
         const [category] = params.categories;
         const paired = this.isPaired();
         const seriesDefinitions = this.getSeriesDefinitions(params.fields, paired);
-        const labelFieldDefinition = category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : category;
+        const labelFieldDefinition = category.id === DEFAULT_CHART_CATEGORY ? undefined : category;
 
         const series = seriesDefinitions.map((seriesDefinition) => {
             if (seriesDefinition?.sizeField) {
