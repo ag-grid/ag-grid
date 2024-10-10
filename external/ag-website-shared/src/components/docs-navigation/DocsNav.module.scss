@@ -228,9 +228,4 @@
     height: $spacing-size-5;
     margin-left: $spacing-size-1;
     fill: var(--color-enterprise-icon);
-
-    .groupTitle & {
-        position: relative;
-        top: 1px;
-    }
 }

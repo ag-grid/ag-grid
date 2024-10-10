@@ -102,8 +102,6 @@ function Group({
                 <Icon name="chevronRight" svgClasses={styles.groupChevron} />
 
                 <span>{groupData.title}</span>
-
-                {groupData.isEnterprise && <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />}
             </button>
 
             <Collapsible id={groupData.title} isOpen={isOpen}>
