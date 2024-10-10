@@ -79,7 +79,21 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
 
     private updateParams(params: IFilterParams): AgPromise<void> {
         this.params = params;
+        this.validateParams();
         return this.updateGroups();
+    }
+
+    private validateParams(): void {
+        const { colDef } = this.params;
+        if (colDef.field) {
+            _warn(234);
+        }
+        if (colDef.filterValueGetter) {
+            _warn(235);
+        }
+        if (colDef.filterParams) {
+            _warn(236);
+        }
     }
 
     private updateGroups(): AgPromise<void> {
@@ -90,6 +104,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
     private getSourceColumns(): AgColumn[] {
         this.groupColumn = this.params.column as AgColumn;
         if (this.gos.get('treeData')) {
+            _warn(237);
             return [];
         }
         const sourceColumns = this.funcColsService.getSourceColumnsForGroupColumn(this.groupColumn);
