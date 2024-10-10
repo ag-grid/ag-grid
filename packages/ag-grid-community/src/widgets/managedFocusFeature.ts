@@ -12,14 +12,14 @@ export interface ManagedFocusCallbacks {
     onFocusOut?: (e: FocusEvent) => void;
 }
 
+export const FOCUS_MANAGED_CLASS = 'ag-focus-managed';
+
 export class ManagedFocusFeature extends BeanStub {
     private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
         this.focusService = beans.focusService;
     }
-
-    public static FOCUS_MANAGED_CLASS = 'ag-focus-managed';
 
     constructor(
         private readonly eFocusableElement: HTMLElement,
@@ -47,7 +47,7 @@ export class ManagedFocusFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.eFocusableElement.classList.add(ManagedFocusFeature.FOCUS_MANAGED_CLASS);
+        this.eFocusableElement.classList.add(FOCUS_MANAGED_CLASS);
 
         this.addKeyDownListeners(this.eFocusableElement);
 

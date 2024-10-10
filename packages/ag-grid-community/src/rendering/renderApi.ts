@@ -1,8 +1,10 @@
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
 import { _getRowHeightAsNumber } from '../gridOptionsUtils';
-import type { ICellRenderer } from './cellRenderers/iCellRenderer';
-import type { FlashCellsParams, GetCellRendererInstancesParams, RefreshCellsParams } from './rowRenderer';
+import type { FlashCellsParams, RefreshCellsParams } from '../interfaces/iCellsParams';
+import type { GetCellRendererInstancesParams, ICellRenderer } from './cellRenderers/iCellRenderer';
+import { isRowInMap, mapRowNodes } from './rowRenderer';
 
 export function setGridAriaProperty(beans: BeanCollection, property: string, value: string | null): void {
     if (!property) {
@@ -23,7 +25,11 @@ export function refreshCells<TData = any>(beans: BeanCollection, params: Refresh
 }
 
 export function flashCells<TData = any>(beans: BeanCollection, params: FlashCellsParams<TData> = {}): void {
-    beans.frameworkOverrides.wrapIncoming(() => beans.rowRenderer.flashCells(params));
+    beans.frameworkOverrides.wrapIncoming(() => {
+        beans.rowRenderer
+            .getCellCtrls(params.rowNodes, params.columns as AgColumn[])
+            .forEach((cellCtrl) => cellCtrl.flashCell(params));
+    });
 }
 
 export function refreshHeader(beans: BeanCollection) {
@@ -51,7 +57,37 @@ export function getCellRendererInstances<TData = any>(
     beans: BeanCollection,
     params: GetCellRendererInstancesParams<TData> = {}
 ): ICellRenderer[] {
-    const res = beans.rowRenderer.getCellRendererInstances(params);
-    const unwrapped = res.map(_unwrapUserComp);
-    return unwrapped;
+    const cellRenderers: ICellRenderer[] = [];
+    beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]).forEach((cellCtrl) => {
+        const cellRenderer = cellCtrl.getCellRenderer();
+        if (cellRenderer != null) {
+            cellRenderers.push(_unwrapUserComp(cellRenderer));
+        }
+    });
+    if (params.columns?.length) {
+        return cellRenderers;
+    }
+
+    const fullWidthRenderers: ICellRenderer[] = [];
+    const rowIdMap = mapRowNodes(params.rowNodes);
+
+    beans.rowRenderer.getAllRowCtrls().forEach((rowCtrl) => {
+        if (rowIdMap && !isRowInMap(rowCtrl.getRowNode(), rowIdMap)) {
+            return;
+        }
+
+        if (!rowCtrl.isFullWidth()) {
+            return;
+        }
+
+        const renderers = rowCtrl.getFullWidthCellRenderers();
+        for (let i = 0; i < renderers.length; i++) {
+            const renderer = renderers[i];
+            if (renderer != null) {
+                fullWidthRenderers.push(_unwrapUserComp(renderer));
+            }
+        }
+    });
+
+    return [...fullWidthRenderers, ...cellRenderers];
 }

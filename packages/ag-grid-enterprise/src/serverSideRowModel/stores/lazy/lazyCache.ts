@@ -17,7 +17,7 @@ import type {
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { NodeManager } from '../../nodeManager';
 import type { ServerSideRowModel } from '../../serverSideRowModel';
-import { LazyBlockLoadingService } from './lazyBlockLoadingService';
+import type { LazyBlockLoadingService } from './lazyBlockLoadingService';
 import type { LazyStore } from './lazyStore';
 import { MultiIndexMap } from './multiIndexMap';
 
@@ -26,6 +26,8 @@ interface LazyStoreNode {
     index: number;
     node: RowNode;
 }
+
+const DEFAULT_BLOCK_SIZE = 100 as const;
 
 export class LazyCache extends BeanStub {
     private rowRenderer: RowRenderer;
@@ -1199,7 +1201,7 @@ export class LazyCache extends BeanStub {
      * Return the block size configured for this cache
      */
     public getBlockSize() {
-        return this.storeParams.cacheBlockSize || LazyBlockLoadingService.DEFAULT_BLOCK_SIZE;
+        return this.storeParams.cacheBlockSize || DEFAULT_BLOCK_SIZE;
     }
 
     /**

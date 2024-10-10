@@ -6,11 +6,15 @@ import { BeanStub } from '../context/beanStub';
 import type { CoreBeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
+import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { NavigationService } from '../navigation/navigationService';
 import type { CellCtrl, ICellComp } from '../rendering/cell/cellCtrl';
+import type { RowRenderer } from '../rendering/rowRenderer';
+import { _getTabIndex } from '../utils/browser';
 import type { ValueService } from '../valueService/valueService';
+import type { PopupService } from '../widgets/popupService';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 
 export class EditService extends BeanStub implements NamedBean {
@@ -19,11 +23,16 @@ export class EditService extends BeanStub implements NamedBean {
     private navigationService?: NavigationService;
     private userComponentFactory: UserComponentFactory;
     private valueService: ValueService;
+    private rowRenderer: RowRenderer;
+    private mouseEventService: MouseEventService;
+    private popupService?: PopupService;
 
     public wireBeans(beans: CoreBeanCollection): void {
         this.navigationService = beans.navigationService;
         this.userComponentFactory = beans.userComponentFactory;
         this.valueService = beans.valueService;
+        this.rowRenderer = beans.rowRenderer;
+        this.popupService = beans.popupService;
     }
 
     public startEditing(
@@ -125,6 +134,49 @@ export class EditService extends BeanStub implements NamedBean {
 
     public createPopupEditorWrapper(params: ICellEditorParams): PopupEditorWrapper {
         return new PopupEditorWrapper(params);
+    }
+
+    public stopAllEditing(cancel: boolean = false): void {
+        this.rowRenderer.getAllRowCtrls().forEach((rowCtrl) => {
+            rowCtrl.stopEditing(cancel);
+        });
+    }
+
+    public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
+        if (!this.gos.get('stopEditingWhenCellsLoseFocus')) {
+            return;
+        }
+
+        const focusOutListener = (event: FocusEvent): void => {
+            // this is the element the focus is moving to
+            const elementWithFocus = event.relatedTarget as HTMLElement;
+
+            if (_getTabIndex(elementWithFocus) === null) {
+                this.stopAllEditing();
+                return;
+            }
+
+            let clickInsideGrid =
+                // see if click came from inside the viewports
+                viewports.some((viewport) => viewport.contains(elementWithFocus)) &&
+                // and also that it's not from a detail grid
+                this.mouseEventService.isElementInThisGrid(elementWithFocus);
+
+            if (!clickInsideGrid) {
+                const popupService = this.popupService;
+
+                clickInsideGrid =
+                    !!popupService &&
+                    (popupService.getActivePopups().some((popup) => popup.contains(elementWithFocus)) ||
+                        popupService.isElementWithinCustomPopup(elementWithFocus));
+            }
+
+            if (!clickInsideGrid) {
+                this.stopAllEditing();
+            }
+        };
+
+        viewports.forEach((viewport) => this.addManagedElementListeners(viewport, { focusout: focusOutListener }));
     }
 
     private takeValueFromCellEditor(cancel: boolean, cellComp: ICellComp): { newValue?: any; newValueExists: boolean } {

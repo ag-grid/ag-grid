@@ -43,9 +43,9 @@ class ColumnParser implements Parser {
     ) {}
 
     public parse(char: string, position: number): boolean | undefined {
-        if (char === ColFilterExpressionParser.COL_START_CHAR && !this.colName) {
+        if (char === COL_FILTER_EXPRESSION_START_CHAR && !this.colName) {
             this.hasStartChar = true;
-        } else if (char === ColFilterExpressionParser.COL_END_CHAR && this.hasStartChar) {
+        } else if (char === COL_FILTER_EXPRESSION_END_CHAR && this.hasStartChar) {
             const isMatch = this.parseColumn(false, position);
             if (isMatch) {
                 this.hasEndChar = true;
@@ -61,9 +61,9 @@ class ColumnParser implements Parser {
 
     public getDisplayValue(): string {
         return (
-            (this.hasStartChar ? ColFilterExpressionParser.COL_START_CHAR : '') +
+            (this.hasStartChar ? COL_FILTER_EXPRESSION_START_CHAR : '') +
             this.colName +
-            (this.hasEndChar ? ColFilterExpressionParser.COL_END_CHAR : '')
+            (this.hasEndChar ? COL_FILTER_EXPRESSION_END_CHAR : '')
         );
     }
 
@@ -292,10 +292,10 @@ class OperandParser implements Parser {
     }
 }
 
-export class ColFilterExpressionParser {
-    public static readonly COL_START_CHAR = '[';
-    public static readonly COL_END_CHAR = ']';
+export const COL_FILTER_EXPRESSION_START_CHAR = '[';
+export const COL_FILTER_EXPRESSION_END_CHAR = ']';
 
+export class ColFilterExpressionParser {
     private endPosition: number | undefined;
     private isAwaiting = true;
     private parser: Parser | undefined;

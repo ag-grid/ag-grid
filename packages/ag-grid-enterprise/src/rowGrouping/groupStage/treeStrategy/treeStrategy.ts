@@ -2,7 +2,6 @@ import type {
     BeanCollection,
     ChangedPath,
     GetDataPath,
-    IRowNodeStage,
     IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
@@ -10,7 +9,7 @@ import type {
     StageExecuteParams,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _ROW_ID_PREFIX_ROW_GROUP, _warnOnce } from 'ag-grid-community';
 import { RowNode } from 'ag-grid-community';
 
 import { EMPTY_ARRAY, TreeNode } from './treeNode';
@@ -505,7 +504,7 @@ export class TreeStrategy extends BeanStub {
             id = `${p.level}-${p.key}-${id}`;
             p = parent;
         }
-        row.id = RowNode.ID_PREFIX_ROW_GROUP + id;
+        row.id = _ROW_ID_PREFIX_ROW_GROUP + id;
 
         return row;
     }
