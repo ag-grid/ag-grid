@@ -5,29 +5,27 @@ import type {
     LoadSuccessParams,
     NamedBean,
     RowNode,
-    RowNodeBlockLoader,
     RowRenderer,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, _getMaxConcurrentDatasourceRequests } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../../serverSideRowModel';
 import type { LazyCache } from './lazyCache';
-import { LazyStore } from './lazyStore';
+import type { LazyStore } from './lazyStore';
 
 export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     beanName = 'lazyBlockLoadingService' as const;
 
-    private rowNodeBlockLoader: RowNodeBlockLoader;
+    private outboundRequests: number = 0;
+    private maxOutboundRequests: number | undefined;
+
     private rowRenderer: RowRenderer;
     private rowModel: ServerSideRowModel;
 
     public wireBeans(beans: BeanCollection) {
-        this.rowNodeBlockLoader = beans.rowNodeBlockLoader!;
         this.rowRenderer = beans.rowRenderer;
         this.rowModel = beans.rowModel as ServerSideRowModel;
     }
-
-    public static DEFAULT_BLOCK_SIZE = 100;
 
     // a map of caches to loading nodes
     private cacheLoadingNodesMap: Map<LazyCache, Set<number>> = new Map();
@@ -40,9 +38,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     private loaderTimeout?: number;
 
     public postConstruct() {
-        // after a block is loaded, check if we have a block to load now that
-        // `maxConcurrentDatasourceRequests` has changed
-        this.addManagedListeners(this.rowNodeBlockLoader, { blockLoaded: () => this.queueLoadCheck() });
+        this.maxOutboundRequests = _getMaxConcurrentDatasourceRequests(this.gos);
     }
 
     public subscribe(cache: LazyCache) {
@@ -65,6 +61,18 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             this.queueLoadAction();
             this.isCheckQueued = false;
         });
+    }
+
+    private onLoadComplete(): void {
+        this.outboundRequests -= 1;
+        this.queueLoadCheck();
+    }
+
+    private hasAvailableLoadBandwidth() {
+        if (this.maxOutboundRequests === undefined) {
+            return true;
+        }
+        return this.outboundRequests < this.maxOutboundRequests;
     }
 
     private queueLoadAction() {
@@ -102,13 +110,12 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     }
 
     private attemptLoad(cache: LazyCache, start: number, end: number) {
-        const availableLoadingCount = this.rowNodeBlockLoader.getAvailableLoadingCount();
+        const hasBandwidth = this.hasAvailableLoadBandwidth();
         // too many loads already, ignore the request as a successful request will requeue itself anyway
-        if (availableLoadingCount != null && availableLoadingCount === 0) {
+        if (!hasBandwidth) {
             return;
         }
 
-        this.rowNodeBlockLoader.registerLoads(1);
         this.executeLoad(cache, start, end);
 
         // requeue a load action before waiting for a response, this is to enable
@@ -144,13 +151,13 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         };
 
         const success = (params: LoadSuccessParams) => {
-            this.rowNodeBlockLoader.loadComplete();
+            this.onLoadComplete();
             cache.onLoadSuccess(startRow, endRow - startRow, params);
             removeNodesFromLoadingMap();
         };
 
         const fail = () => {
-            this.rowNodeBlockLoader.loadComplete();
+            this.onLoadComplete();
             cache.onLoadFailed(startRow, endRow - startRow);
             removeNodesFromLoadingMap();
         };
@@ -163,6 +170,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         });
 
         addNodesToLoadingMap();
+        this.outboundRequests += 1;
         cache.getSsrmParams().datasource?.getRows(params);
     }
 
@@ -177,8 +185,8 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
                 continue;
             }
 
-            const store = row.parent && row.parent.childStore;
-            if (!store || !(store instanceof LazyStore)) {
+            const store = row.parent?.childStore as LazyStore | undefined;
+            if (!store) {
                 continue;
             }
 

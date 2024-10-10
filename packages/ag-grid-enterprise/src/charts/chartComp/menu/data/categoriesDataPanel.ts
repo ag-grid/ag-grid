@@ -4,7 +4,7 @@ import { AgSelect, AgToggleButton } from 'ag-grid-community';
 import { AgGroupComponent } from '../../../../widgets/agGroupComponent';
 import type { ChartController } from '../../chartController';
 import type { ColState } from '../../model/chartDataModel';
-import { ChartDataModel } from '../../model/chartDataModel';
+import { DEFAULT_CHART_CATEGORY } from '../../model/chartDataModel';
 import { DragDataPanel } from './dragDataPanel';
 
 type AggFuncPreset = 'count' | 'sum' | 'min' | 'max' | 'avg' | 'first' | 'last';
@@ -102,7 +102,7 @@ export class CategoriesDataPanel extends DragDataPanel {
 
     private refreshAggFuncControls(dimensionCols: ColState[], aggFunc: string | IAggFunc | undefined): void {
         const selectedDimensions = dimensionCols.filter((col) => col.selected);
-        const supportsAggregation = selectedDimensions.some((col) => col.colId !== ChartDataModel.DEFAULT_CATEGORY);
+        const supportsAggregation = selectedDimensions.some((col) => col.colId !== DEFAULT_CHART_CATEGORY);
         this.aggFuncToggle?.setValue(aggFunc != undefined);
         this.aggFuncSelect?.setValue(typeof aggFunc === 'string' ? aggFunc : undefined, true);
         this.aggFuncToggle?.setDisplayed(supportsAggregation);

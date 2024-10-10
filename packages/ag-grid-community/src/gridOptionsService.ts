@@ -19,7 +19,7 @@ import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _log } from './utils/function';
 import { _exists, toBoolean } from './utils/generic';
 import { toConstrainedNum, toNumber } from './utils/number';
-import { _logWarn } from './validation/logging';
+import { _warn } from './validation/logging';
 import type { ValidationService } from './validation/validationService';
 
 type GetKeys<T, U> = {
@@ -115,6 +115,8 @@ export function getCoercedGridOptions(gridOptions: GridOptions): GridOptions {
     return newGo;
 }
 
+let changeSetId = 0;
+
 export class GridOptionsService extends BeanStub implements NamedBean {
     beanName = 'gos' as const;
 
@@ -204,7 +206,6 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return callback;
     }
 
-    private static changeSetId = 0;
     public updateGridOptions({
         options,
         force,
@@ -214,12 +215,12 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         force?: boolean;
         source?: PropertyChangedSource;
     }): void {
-        const changeSet: PropertyChangeSet = { id: GridOptionsService.changeSetId++, properties: [] };
+        const changeSet: PropertyChangeSet = { id: changeSetId++, properties: [] };
         // all events are fired after grid options has finished updating.
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
         Object.entries(options).forEach(([key, value]) => {
             if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
-                _logWarn(22, { key });
+                _warn(22, { key });
             }
             const coercedValue = getCoercedValue(key as keyof GridOptions, value);
             const shouldForce = force || (typeof coercedValue === 'object' && source === 'api'); // force objects as they could have been mutated.

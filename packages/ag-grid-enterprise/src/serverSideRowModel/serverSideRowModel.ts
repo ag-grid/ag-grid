@@ -12,7 +12,6 @@ import type {
     IPivotResultColsService,
     IServerSideDatasource,
     IServerSideRowModel,
-    IServerSideStore,
     LoadSuccessParams,
     NamedBean,
     RefreshServerSideParams,
@@ -34,13 +33,11 @@ import {
     _isGetRowHeightFunction,
     _isRowSelection,
     _jsonEquals,
-    _logError,
     _warnOnce,
 } from 'ag-grid-community';
 
 import type { NodeManager } from './nodeManager';
-import { FullStore } from './stores/fullStore';
-import { LazyStore } from './stores/lazy/lazyStore';
+import type { LazyStore } from './stores/lazy/lazyStore';
 import type { StoreFactory } from './stores/storeFactory';
 
 export interface SSRMParams {
@@ -195,11 +192,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             return;
         }
 
-        if (storeToExecuteOn instanceof LazyStore) {
-            storeToExecuteOn.applyRowData(rowDataParams, startRow, rowDataParams.rowData.length);
-        } else if (storeToExecuteOn instanceof FullStore) {
-            storeToExecuteOn.processServerResult(rowDataParams);
-        }
+        storeToExecuteOn.applyRowData(rowDataParams, startRow, rowDataParams.rowData.length);
     }
 
     public isLastRowIndexKnown(): boolean {
@@ -519,10 +512,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.onStoreUpdated();
     }
 
-    public getRootStore(): IServerSideStore | undefined {
-        if (this.rootNode && this.rootNode.childStore) {
-            return this.rootNode.childStore;
-        }
+    public getRootStore(): LazyStore | undefined {
+        return this.rootNode?.childStore as LazyStore | undefined;
     }
 
     public getRowCount(): number {
@@ -570,16 +561,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
         const states: any = {};
         root.forEachStoreDeep((store) => {
-            if (store instanceof FullStore) {
-                const { id, state } = store.getBlockStateJson();
-                states[id] = state;
-            } else if (store instanceof LazyStore) {
-                Object.entries(store.getBlockStates()).forEach(([block, state]) => {
-                    states[block] = state;
-                });
-            } else {
-                throw new Error('AG Grid: Unsupported store type');
-            }
+            Object.entries(store.getBlockStates()).forEach(([block, state]) => {
+                states[block] = state;
+            });
         });
         return states;
     }
@@ -625,7 +609,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     /** @return false if store hasn't started */
-    public executeOnStore(route: string[], callback: (cache: IServerSideStore) => void): boolean {
+    public executeOnStore(route: string[], callback: (cache: LazyStore) => void): boolean {
         if (!this.started) {
             return false;
         }
@@ -713,14 +697,10 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     public setRowCount(rowCount: number, lastRowIndexKnown?: boolean): void {
         const rootStore = this.getRootStore();
-        if (rootStore) {
-            if (rootStore instanceof LazyStore) {
-                rootStore.setRowCount(rowCount, lastRowIndexKnown);
-                return;
-            }
-            // Infinite scrolling must be enabled in order to set the row count.
-            _logError(118);
+        if (!rootStore) {
+            return;
         }
+        rootStore.setRowCount(rowCount, lastRowIndexKnown);
     }
 
     public override destroy(): void {

@@ -1,9 +1,9 @@
 import type { AgColumn, RowHeightCallbackParams, XmlElement } from 'ag-grid-community';
 import { _escapeString } from 'ag-grid-community';
-import { XmlFactory } from 'ag-grid-community';
 
 import { INCH_TO_EMU } from './excelConstants';
 import type { ExcelCalculatedImage } from './excelInterfaces';
+import { createXml, createXmlHeader } from './xmlFactory';
 
 export const pointsToPixel = (points: number): number => {
     return Math.round((points * 96) / 72);
@@ -100,12 +100,12 @@ export const setExcelImageTotalHeight = (
 };
 
 export const createXmlPart = (body: XmlElement, skipHeader?: boolean): string => {
-    const header = XmlFactory.createHeader({
+    const header = createXmlHeader({
         encoding: 'UTF-8',
         standalone: 'yes',
     });
 
-    const xmlBody = XmlFactory.createXml(body);
+    const xmlBody = createXml(body);
 
     if (skipHeader) {
         return xmlBody;

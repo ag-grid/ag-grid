@@ -1,6 +1,7 @@
 import { ComponentUtil } from '../../components/componentUtil';
-import type { GridOptions } from '../../entities/gridOptions';
+import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
 import { PropertyKeys } from '../../propertyKeys';
+import { DEFAULT_SORTING_ORDER } from '../../sort/sortController';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 import { COL_DEF_VALIDATORS } from './colDefValidations';
 
@@ -62,7 +63,7 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
 
     groupRemoveSingleChildren: {
         version: '32.3',
-        renamed: 'groupHideParentOfSingleChild',
+        message: 'Use `groupHideParentOfSingleChild` instead.',
     },
     groupRemoveLowestSingleChildren: {
         version: '32.3',
@@ -233,6 +234,55 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
             const rowStyle = options.rowStyle;
             if (rowStyle && typeof rowStyle === 'function') {
                 return 'rowStyle should be an object of key/value styles, not be a function, use getRowStyle() instead';
+            }
+            return null;
+        },
+    },
+    rowClass: {
+        validate: (options) => {
+            const rowClass = options.rowClass;
+            if (typeof rowClass === 'function') {
+                return 'rowClass should not be a function, please use getRowClass instead';
+            }
+            return null;
+        },
+    },
+
+    tooltipShowDelay: {
+        validate: (options) => {
+            if (options.tooltipShowDelay && options.tooltipShowDelay < 0) {
+                return 'tooltipShowDelay should not be lower than 0';
+            }
+            return null;
+        },
+    },
+    tooltipHideDelay: {
+        validate: (options) => {
+            if (options.tooltipHideDelay && options.tooltipHideDelay < 0) {
+                return 'tooltipHideDelay should not be lower than 0';
+            }
+            return null;
+        },
+    },
+    sortingOrder: {
+        validate: (_options) => {
+            const sortingOrder = _options.sortingOrder;
+
+            if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
+                sortingOrder.some((a) => !DEFAULT_SORTING_ORDER.includes(a));
+                return `sortingOrder must be an array with elements from [${DEFAULT_SORTING_ORDER.join(', ')}], currently it includes ${sortingOrder}`;
+            } else if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
+                return `sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`;
+            }
+            return null;
+        },
+    },
+    domLayout: {
+        validate: (options) => {
+            const domLayout = options.domLayout;
+            const validLayouts: DomLayoutType[] = ['autoHeight', 'normal', 'print'];
+            if (domLayout && !validLayouts.includes(domLayout)) {
+                return `domLayout must be one of [${validLayouts.join()}], currently it's ${domLayout}`;
             }
             return null;
         },

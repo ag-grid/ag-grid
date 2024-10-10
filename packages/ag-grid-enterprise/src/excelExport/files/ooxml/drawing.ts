@@ -2,7 +2,7 @@ import type { ExcelImage, ExcelOOXMLTemplate, XmlElement } from 'ag-grid-communi
 
 import type { ExcelCalculatedImage, ImageAnchor, ImageBoxSize, ImageColor } from '../../assets/excelInterfaces';
 import { pixelsToEMU } from '../../assets/excelUtils';
-import { ExcelXlsxFactory } from '../../excelXlsxFactory';
+import { XLSX_WORKSHEET_IMAGES, XLSX_WORKSHEET_IMAGE_IDS } from '../../excelXlsxFactory';
 
 const getAnchor = (name: string, imageAnchor: ImageAnchor): XmlElement => ({
     name: `xdr:${name}`,
@@ -332,8 +332,8 @@ const getPicture = (
 const drawingFactory: ExcelOOXMLTemplate = {
     getTemplate(config: { sheetIndex: number }) {
         const { sheetIndex } = config;
-        const sheetImages = ExcelXlsxFactory.worksheetImages.get(sheetIndex);
-        const sheetImageIds = ExcelXlsxFactory.worksheetImageIds.get(sheetIndex);
+        const sheetImages = XLSX_WORKSHEET_IMAGES.get(sheetIndex);
+        const sheetImageIds = XLSX_WORKSHEET_IMAGE_IDS.get(sheetIndex);
 
         const children = sheetImages!.map((image, idx) => {
             const boxSize = getImageBoxSize(image);
