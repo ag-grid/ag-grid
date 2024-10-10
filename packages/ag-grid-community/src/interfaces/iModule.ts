@@ -27,9 +27,13 @@ export interface Module {
      * @return Whether the module is valid or not. If not, a message explaining why it is not valid
      */
     validate?: () => ModuleValidationResult;
+    /** singleton beans which are created once on grid init */
     beans?: SingletonBean[];
+    /** beans which can have many instances, and can be created/destroyed at any time */
     dynamicBeans?: DynamicBeanMeta[];
+    /** components which can be overridden by the user (e.g. cell renderers). These are the default grid provided versions */
     userComponents?: ComponentMeta[];
+    /** selectors for grid components that can be defined in templates and created by AG stack */
     selectors?: ComponentSelector[];
     rowModels?: RowModelType[];
     dependsOn?: Module[];

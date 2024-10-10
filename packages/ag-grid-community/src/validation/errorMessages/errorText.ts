@@ -1,3 +1,4 @@
+import { BASE_URL } from '../../baseUrl';
 import type { UserComponentName } from '../../context/context';
 import type { ClientSideRowModelStep } from '../../interfaces/iClientSideRowModel';
 import type { Column } from '../../interfaces/iColumn';
@@ -24,7 +25,7 @@ import { ${moduleName} } from '${isEnterprise ? 'ag-grid-enterprise' : 'ag-grid-
 
 ModuleRegistry.registerModules([ ${moduleName} ]);
 
-For more info see: https://www.ag-grid.com/javascript-grid/modules/`;
+For more info see: ${BASE_URL}/javascript-grid/modules/`;
 
 /**
  * NOTES on setting console messages:
@@ -241,7 +242,12 @@ export const AG_GRID_ERRORS = {
             ),
             ...Object.keys(jsComps),
         ];
-        const suggestions = _fuzzySuggestions(componentName, validComponents, true, 0.8).values;
+        const suggestions = _fuzzySuggestions({
+            inputValue: componentName,
+            allSuggestions: validComponents,
+            hideIrrelevant: true,
+            filterByPercentageOfBestMatch: 0.8,
+        }).values;
 
         textOutput.push(
             `Could not find '${componentName}' component. It was configured as "${propertyName}: '${componentName}'" but it wasn't found in the list of registered components.\n`
@@ -252,6 +258,61 @@ export const AG_GRID_ERRORS = {
         textOutput.push(`If using a custom component check it has been registered correctly.`);
         return textOutput;
     },
+    102: () => "selecting just filtered only works when gridOptions.rowModelType='clientSide'" as const,
+    103: () =>
+        'Invalid selection state. When using client-side row model, the state must conform to `string[]`.' as const,
+    104: ({ value, param }: { value: number; param: string }) =>
+        `Numeric value ${value} passed to ${param} param will be interpreted as ${value} seconds. If this is intentional use "${value}s" to silence this warning.` as const,
+    105: ({ e }: { e: any }) => [`chart rendering failed`, e] as const,
+    106: () => 'both Theming API and the ag-grid.css are used on the same page, styling will be incorrect' as const,
+    107: ({ key, value }: { key: string; value: string }) => `Invalid value for param ${key} - ${value}` as const,
+    108: ({ e }: { e: any }) => ['chart update failed', e] as const,
+    109: ({ aggFuncOrString }: { aggFuncOrString: any }) =>
+        `unrecognised aggregation function ${aggFuncOrString}` as const,
+    110: () => 'groupHideOpenParents only works when specifying specific columns for colDef.showRowGroup' as const,
+    111: () =>
+        'Invalid selection state. When `groupSelectsChildren` is enabled, the state must conform to `IServerSideGroupSelectionState`.' as const,
+    112: ({ googleFont, googleFontsDomain }: { googleFont: string; googleFontsDomain: string }) =>
+        `theme uses google font ${googleFont} but no value for loadThemeGoogleFonts was provided. Pass true to load fonts from ${googleFontsDomain} or false to silence this warning.` as const,
+    113: () =>
+        'Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values' as const,
+    114: ({ component }: { component: string }) =>
+        `Could not find component with name of ${component}. Is it in Vue.components?` as const,
+    115: () => 'The provided selection state should be an object.' as const,
+    116: () => 'Invalid selection state. The state must conform to `IServerSideSelectionState`.' as const,
+    117: () => 'selectAll must be of boolean type.' as const,
+    118: () => 'Infinite scrolling must be enabled in order to set the row count.' as const,
+    119: () => 'cannot select pinned rows' as const,
+    120: () => 'cannot select node until id for node is known' as const,
+    121: () =>
+        'a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (see AG Grid docs) or b) to toString() on the object to return a key' as const,
+    122: () => 'could not find the document, document is empty' as const,
+    123: () => 'Advanced Filter is only supported with the Client-Side Row Model or Server-Side Row Model.' as const,
+    124: () => 'No active charts to update.' as const,
+    125: ({ chartId }: { chartId: string }) =>
+        `Unable to update chart. No active chart found with ID: ${chartId}.` as const,
+    126: () => 'unable to restore chart as no chart model is provided' as const,
+    127: ({ allRange }: { allRange?: boolean }) =>
+        `unable to create chart as ${allRange ? 'there are no columns in the grid' : 'no range is selected'}.` as const,
+    128: ({ feature }: { feature: string }) =>
+        `${feature} is only available if using 'multiRow' selection mode.` as const,
+    129: ({ feature, rowModel }: { feature: string; rowModel: string }) =>
+        `${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${rowModel}.` as const,
+    130: () => 'cannot multi select unless selection mode is "multiRow"' as const,
+    131: () => 'cannot range select while selecting multiple rows' as const,
+    132: () => `cannot multi select unless selection mode is 'multiRow'` as const,
+    133: () => 'iconRenderer should return back a string or a dom object' as const,
+    134: ({ iconName }: { iconName: string }) => `Did not find icon ${iconName}` as const,
+    135: () => `Data type of the new value does not match the cell data type of the column` as const,
+    136: () => '' as const,
+    137: () => '' as const,
+    138: () => '' as const,
+    139: () => '' as const,
+    140: () => '' as const,
+    141: () => '' as const,
+    142: () => '' as const,
+    143: () => '' as const,
+    144: () => '' as const,
 
     200: missingModule,
     201: ({ rowModelType }: { rowModelType: string }) => `Could not find row model for rowModelType = ${rowModelType}`,
@@ -262,11 +323,7 @@ export type ErrorId = keyof ErrorMap;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =
-    ErrorValue<TId> extends (params: infer P) => any
-        ? P extends Record<string, any>
-            ? P
-            : Record<string, never>
-        : never;
+    ErrorValue<TId> extends (params: infer P) => any ? (P extends Record<string, any> ? P : undefined) : never;
 
 export function getError<TId extends ErrorId, TParams extends GetErrorParams<TId>>(errorId: TId, args: TParams): any[] {
     const msgOrFunc: ErrorMap[TId] = AG_GRID_ERRORS[errorId];

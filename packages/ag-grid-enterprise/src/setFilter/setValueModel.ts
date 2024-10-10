@@ -19,9 +19,9 @@ import {
     AgPromise,
     LocalEventService,
     _defaultComparator,
-    _errorOnce,
     _exists,
     _isClientSideRowModel,
+    _logError,
     _makeNull,
     _warnOnce,
 } from 'ag-grid-community';
@@ -454,9 +454,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
         existingValues?: Map<string | null, V | null>;
     } | null {
         if (!this.clientSideValuesExtractor) {
-            _errorOnce(
-                'Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values'
-            );
+            _logError(113);
             return null;
         }
 

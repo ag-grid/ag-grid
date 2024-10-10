@@ -4,7 +4,7 @@ const { execSync } = require('child_process');
 const LICENSE_MANAGER_FILE = 'enterprise-modules/core/src/license/shared/licenseManager.ts';
 
 if (process.argv.length !== 3) {
-    console.log('Usage: node scripts/release/updateLicenseManager.js NEW_LICENSE');
+    console.log('Usage: node scripts/deployments/prep_and_archive/updateLicenseManager.js NEW_LICENSE');
     console.log('Note: This script should be run from the root of the monorepo');
     process.exit(1);
 }

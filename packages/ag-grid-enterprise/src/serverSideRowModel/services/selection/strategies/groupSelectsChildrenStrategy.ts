@@ -11,8 +11,17 @@ import type {
     RowNode,
     SelectionEventSourceType,
 } from 'ag-grid-community';
-import { BeanStub, _errorOnce, _isMultiRowSelection, _last, _warnOnce, isSelectionUIEvent } from 'ag-grid-community';
+import {
+    BeanStub,
+    _errorOnce,
+    _isMultiRowSelection,
+    _last,
+    _logError,
+    _warnOnce,
+    isSelectionUIEvent,
+} from 'ag-grid-community';
 
+import type { LazyStore } from '../../../stores/lazy/lazyStore';
 import { ServerSideRowRangeSelectionContext } from '../serverSideRowRangeSelectionContext';
 import type { ISelectionStrategy } from './iSelectionStrategy';
 
@@ -76,9 +85,9 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
     public setSelectedState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void {
         if ('selectAll' in state) {
-            return _errorOnce(
-                'Invalid selection state. When `groupSelectsChildren` is enabled, the state must conform to `IServerSideGroupSelectionState`.'
-            );
+            // 'Invalid selection state. When `groupSelectsChildren` is enabled, the state must conform to `IServerSideGroupSelectionState`.'
+            _logError(111);
+            return;
         }
 
         const recursivelyDeserializeState = (
@@ -298,7 +307,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
 
             if (thisKey) {
                 const thisRow = this.rowModel.getRowNode(thisKey);
-                const thisRowStore = thisRow?.childStore;
+                const thisRowStore = thisRow?.childStore as LazyStore | undefined;
                 const isStoreSizeKnown = thisRowStore?.isLastRowIndexKnown();
                 if (isStoreSizeKnown) {
                     // have to check greater than, as we may have stale state still, if so all visible rows may not be

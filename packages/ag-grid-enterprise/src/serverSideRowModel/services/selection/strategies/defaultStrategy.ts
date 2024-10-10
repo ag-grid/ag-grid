@@ -9,10 +9,10 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    _errorOnce,
     _isMultiRowSelection,
     _isUsingNewRowSelectionAPI,
     _last,
+    _logError,
     _warnOnce,
     isSelectionUIEvent,
 } from 'ag-grid-community';
@@ -58,17 +58,23 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
         };
 
         if (typeof state !== 'object') {
-            return _errorOnce('The provided selection state should be an object.');
+            // The provided selection state should be an object
+            _logError(115);
+            return;
         }
 
         if (!('selectAll' in state)) {
-            return _errorOnce('Invalid selection state. The state must conform to `IServerSideSelectionState`.');
+            //'Invalid selection state. The state must conform to `IServerSideSelectionState`.'
+            _logError(116);
+            return;
         }
 
         if (typeof state.selectAll === 'boolean') {
             newState.selectAll = state.selectAll;
         } else {
-            return _errorOnce('selectAll must be of boolean type.');
+            //selectAll must be of boolean type.
+            _logError(117);
+            return;
         }
 
         if ('toggledNodes' in state && Array.isArray(state.toggledNodes)) {

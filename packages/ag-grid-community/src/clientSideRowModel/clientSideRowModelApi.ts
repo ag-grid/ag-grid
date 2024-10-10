@@ -41,7 +41,7 @@ export function forEachNodeAfterFilterAndSort<TData = any>(
 
 export function resetRowHeights(beans: BeanCollection): void {
     if (beans.columnModel.isAutoRowHeightActive()) {
-        _logWarn(3, {});
+        _logWarn(3);
         return;
     }
     _getClientSideRowModel(beans)?.resetRowHeights();

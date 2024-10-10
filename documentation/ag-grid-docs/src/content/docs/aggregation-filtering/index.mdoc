@@ -2,115 +2,53 @@
 title: "Aggregation - Filtering"
 enterprise: true
 ---
+Filtering can be configured to impact aggregate values in the grid.
 
-This section describes the different ways that aggregated values can be filtered in the grid.
-
-## Default Filtering with Aggregated Values
-
-By default, when using [Filters](./filtering-overview/) and [Aggregations](./aggregation/) the filtering will only apply to the cell values in leaf-level rows, and not to any of the aggregated values in the group rows. Also, when a column filter is applied, the aggregated values shown in the group rows will be updated based on the filtered rows only.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    columnDefs: [
-        { field: 'country', rowGroup: true },
-        { field: 'athlete', rowGroup: true },
-        { field: 'year' },
-        { field: 'total', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
-    ]
-}
-```
-
-In the snippet above, rows are grouped by **country** and **athlete**. The [Built-In Function](./aggregation/#enabling-aggregation) `sum` is used to aggregate the **total** values.
-
-The example below demonstrates how aggregated values update to reflect the applied filters.
-
-* Apply a filter for the **total** column with the value **4**.
-* Note how the value in the **total** column for the United States is now **12** instead of **38**, reflecting the now filtered leaf rows.
+## Ignore Filters when Aggregating
+When using [Filters](./filtering-overview/) and [Aggregations](./aggregation/) together, the aggregated values reflect
+only the rows which have passed the filter. This can be changed to instead ignore applied filters by using the
+`suppressAggFilteredOnly` grid option.
 
 {% gridExampleRunner title="Aggregation and Filters" name="filters" /%}
 
-## Suppressing Aggregation Updates When Filtering
-
-To prevent the [Default Behaviour](./aggregation-filtering/#default-filtering-with-aggregated-values) of [Aggregated](./aggregation/) values being calculated from the [Filtered](./filtering-overview/) results only, and instead calculate them from the pre-filtered data, enable the `suppressAggFilteredOnly` option.
-
+The example above demonstrates the impact of the `suppressAggFilteredOnly` grid option. This can be enabled as shown:
 ```{% frameworkTransform=true %}
 const gridOptions = {
     suppressAggFilteredOnly: true,
 }
 ```
 
-The example below demonstrates this behaviour - when a filter is applied, group row aggregated values remain unchanged and show their original values representing the original unfiltered data.
+## Filtering for Aggregated Values
+The grid only applies filters to leaf level rows, this can be toggled to instead also apply filtering
+to group rows by enabling the `groupAggFiltering` grid option, allowing filters to also apply against
+the aggregated values.
 
-* Apply a filter for the **year** column with the value **2008**.
-* Note how the values in the **total** column _do not_ update to reflect the filtered data.
+{% gridExampleRunner title="Group and Leaf Aggregate Filtering" name="agg-filtering-all" /%}
 
-{% gridExampleRunner title="Suppress Filtered Only" name="suppress-filtered-only" /%}
+{% note %}
+Take note of the following while using `groupAggFiltering`:
+- When a group row passes a filter, it also includes all of its descendent rows in the filtered results.
+- The `suppressAggFilteredOnly` grid option will be implicitly enabled.
+- [Set Filters](./filter-set/) will only work with leaf rows.
+{% /note %}
 
-## Filtering Group Aggregations
-
-The [Default Behaviour](./aggregation-filtering/#default-filtering-with-aggregated-values) of [Filtering](./filtering-overview/) is to only filter the leaf-level rows and to ignore cell values in [Group Rows](./grouping/). This prevents filtering group rows based on [Aggregation](./aggregation/) values.
-
-### Enabling Group Aggregation Filtering
-
-By default, column filters are not applied to cell values shown in [Group Rows](./grouping/) as they do not usually
-have any data of their own. However when using [Aggregation](./aggregation/), group rows will show aggregated values computed based on their child rows.
-
-You can filter the grid based on the group row aggregated values by setting the `groupAggFiltering` grid option as shown below:
-
+The following configuration demonstrates how to enable group aggregation filtering:
 ```{% frameworkTransform=true %}
 const gridOptions = {
     groupAggFiltering: true,
 }
 ```
 
-With this option set, when an aggregated value in a group row matches the filter, the matching group row will be shown as well as:
+### Configure by Callback
+When filtering for aggregated values the filter applies to all group rows by default. This can be configured more
+granularly by instead providing the `groupAggFiltering` grid option with a callback function.
 
-* all the parent group rows of the matching group row up to the root level
-* all the child and leaf-level rows of the matching group row
+The example below demonstrates a grid configured to apply filters only to aggregated values, and not the leaf rows:
+{% gridExampleRunner title="Group-only Aggregate filtering" name="agg-filtering-group" /%}
 
-The example below demonstrates the behaviour when filtering aggregated values. Please go through the list of filtering scenarios below to better understand this functionality.
-
-Note the following:
-
-1. Using the **total** column apply a filter for the value **6**. Note in the filtered grid the leaf row **Natalie Coughlin** is displayed with all of its parent group rows.
-1. Using the **total** column, now apply a filter for the value **38**. Note that as the aggregated value of the **United States** group row matches the filter, all of its child and leaf-level rows as shown. Specifically, note that both **United States-Swimming** and **United States-Gymnastics** row groups are displayed under the **United States** row group.
-1. Using the **total** column, now apply a filter for the value **34**. Note that as the aggregated value of the **United States-Swimming** group row matches the filter, the **United States-Swimming** group row and all its leaf-level rows are shown. However, unlike the previous filtering scenario, the **United States-Gymnastics** group row is not displayed any more, because the filter match is the **United States-Swimming** group row only.
-
-{% gridExampleRunner title="Group and Leaf Aggregate Filtering" name="agg-filtering-all" /%}
-
-{% note %}
-Take note of the following while using `groupAggFiltering`:
-- [Set Filters](./filter-set/) are not fully supported in conjunction with this feature. Only leaf values will be displayed in the Filter List.
-- When `groupAggFiltering` is enabled, [Suppressing Filtered Aggregation](./aggregation-filtering/#suppressing-aggregation-updates-when-filtering) is enabled by default.
-{% /note %}
-
-### Custom Group Aggregation Filtering
-
-As seen above, the default behaviour of [Filtering Group Aggregations](./aggregation-filtering/#filtering-group-aggregations) is to apply the filter to all row group levels. If you’d like to change this behaviour and apply the filter only to specific group row levels, or specific grouped columns (regardless of the level at which these group columns appear), a callback can be provided to the `groupAggFiltering` property.
-
-See an example implementation of this callback below.
-
+The configuration below demonstrates how to only apply test filters against group rows, and not leaf rows:
 ```{% frameworkTransform=true %}
 const gridOptions = {
     groupAggFiltering: (params) => !!params.node.group,
 }
 ```
-
-The snippet above demonstrates how the callback can be used to selectively apply filters. In this example, the filter condition is applied to group level rows only.
-
-The example below demonstrates this specific scenario.
-
-* Using the **total** column apply a filter for the value **6**.
-* Note that no rows are displayed despite some leaf rows containing the value **6** - the row for Natalie Coughlin, for example. This is because the filter is applied to group rows only and there are no group rows with value **6**.
-* Using the **total** column now apply a filter for the value **38**.
-* Note that the group row **United States** matches this filter due to its aggregated value, and also displays all of its child and leaf rows.
-
-{% gridExampleRunner title="Group-only Aggregate filtering" name="agg-filtering-group" /%}
-
-The properties of the [Row Node](./row-object/) provided by the `groupAggFiltering` callback parameters can be used to further customise row group filtering behaviour.
-
-{% apiDocumentation source="aggregation-filtering/properties.json" section="rowNodeAttributes" /%}
-
-## Next Up
-
-Continue to the next section to learn about [Total Rows](./total-rows/).

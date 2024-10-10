@@ -495,7 +495,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private addPopupCellEditor(params: ICellEditorParams, position?: 'over' | 'under'): void {
         if (this.beans.gos.get('editType') === 'fullRow') {
             //popup cellEditor does not work with fullRowEdit
-            _logWarn(98, {});
+            _logWarn(98);
         }
 
         const cellEditor = this.cellEditor!;

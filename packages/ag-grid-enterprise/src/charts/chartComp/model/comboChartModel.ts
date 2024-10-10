@@ -3,7 +3,7 @@ import { BeanStub, _warnOnce } from 'ag-grid-community';
 
 import type { ChartDataModel, ColState } from './chartDataModel';
 
-const SUPPORTED_COMBO_CHART_TYPES = ['line', 'groupedColumn', 'stackedColumn', 'area', 'stackedArea'];
+const SUPPORTED_COMBO_CHART_TYPES = new Set(['line', 'groupedColumn', 'stackedColumn', 'area', 'stackedArea']);
 
 export class ComboChartModel extends BeanStub {
     public seriesChartTypes: SeriesChartType[];
@@ -70,7 +70,7 @@ export class ComboChartModel extends BeanStub {
 
         // ensure correct chartTypes are supplied
         this.seriesChartTypes = this.seriesChartTypes.map((s) => {
-            if (!SUPPORTED_COMBO_CHART_TYPES.includes(s.chartType)) {
+            if (!SUPPORTED_COMBO_CHART_TYPES.has(s.chartType)) {
                 _warnOnce(
                     `invalid chartType '${s.chartType}' supplied in 'seriesChartTypes', converting to 'line' instead.`
                 );

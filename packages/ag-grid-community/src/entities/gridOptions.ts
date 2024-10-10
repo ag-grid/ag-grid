@@ -2447,10 +2447,6 @@ export interface ChartRefParams<TData = any> extends AgGridCommon<TData, any>, C
 
 export interface ServerSideGroupLevelParams {
     /**
-     * Whether to have infinite scroll active or not for the level.
-     */
-    suppressInfiniteScroll?: boolean;
-    /**
      * For Infinite Scroll only.
      * How many blocks to keep in cache.
      * If missing, defaults to grid options `maxBlocksInCache`.
@@ -2581,7 +2577,7 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any> extends Com
      */
     selectAll?: SelectAllMode;
     /**
-     * If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.
+     * If `true` a 'select all' checkbox will be put into the header.
      * @default true
      */
     headerCheckbox?: boolean;

@@ -1,11 +1,11 @@
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection, UserComponentName } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import type { EnterpriseModuleName, ModuleName } from '../interfaces/iModule';
 import { _areModulesGridScoped } from '../modules/moduleRegistry';
-import { _doOnce, _warnOnce } from '../utils/function';
+import { _warnOnce } from '../utils/function';
 import { _fuzzySuggestions } from '../utils/fuzzyMatch';
 import { _iterateObject } from '../utils/object';
 import { validateApiFunction } from './apiFunctionValidator';
@@ -45,7 +45,7 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public missingModule(moduleName: ModuleName, reason: string, gridId: string): void {
         const gridScoped = _areModulesGridScoped();
-        const isEnterprise = ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName];
+        const isEnterprise = ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName] === 1;
         _logError(200, {
             reason,
             moduleName,
@@ -74,16 +74,8 @@ export class ValidationService extends BeanStub implements NamedBean {
         optionKeys.forEach((key: keyof T) => {
             const deprecation = deprecations[key];
             if (deprecation) {
-                if ('renamed' in deprecation) {
-                    const { renamed, version } = deprecation;
-                    warnings.add(
-                        `As of v${version}, ${String(key)} is deprecated. Please use ${String(renamed)} instead.`
-                    );
-                    options[renamed] = options[key];
-                } else {
-                    const { message, version } = deprecation;
-                    warnings.add(`As of v${version}, ${String(key)} is deprecated. ${message ?? ''}`);
-                }
+                const { message, version } = deprecation;
+                warnings.add(`As of v${version}, ${String(key)} is deprecated. ${message ?? ''}`);
             }
 
             const value = options[key];
@@ -248,7 +240,8 @@ export function _fuzzyCheckStrings(
 
     if (invalidInputs.length > 0) {
         invalidInputs.forEach(
-            (invalidInput) => (fuzzyMatches[invalidInput] = _fuzzySuggestions(invalidInput, allSuggestions).values)
+            (invalidInput) =>
+                (fuzzyMatches[invalidInput] = _fuzzySuggestions({ inputValue: invalidInput, allSuggestions }).values)
         );
     }
 

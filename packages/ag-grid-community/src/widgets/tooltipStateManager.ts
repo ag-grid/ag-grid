@@ -6,7 +6,6 @@ import { _getActiveDomElement, _getDocument } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ITooltipComp, ITooltipParams } from '../rendering/tooltipComponent';
 import { _isIOSUserAgent } from '../utils/browser';
-import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
 import type { PopupService } from './popupService';
 
@@ -117,9 +116,6 @@ export class TooltipStateManager extends BeanStub {
 
     private getGridOptionsTooltipDelay(delayOption: 'tooltipShowDelay' | 'tooltipHideDelay'): number {
         const delay = this.gos.get(delayOption);
-        if (delay < 0) {
-            _warnOnce(`${delayOption} should not be lower than 0`);
-        }
         return Math.max(200, delay);
     }
 

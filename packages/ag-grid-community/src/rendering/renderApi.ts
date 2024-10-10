@@ -59,13 +59,13 @@ export function getCellRendererInstances<TData = any>(
 ): ICellRenderer[] {
     const cellRenderers: ICellRenderer[] = [];
     beans.rowRenderer.forMatchingCellCtrls(params.rowNodes, params.columns as AgColumn[], (cellCtrl) => {
-        const renderer = cellCtrl.getCellRenderer();
-        if (renderer != null) {
-            cellRenderers.push(renderer);
+        const cellRenderer = cellCtrl.getCellRenderer();
+        if (cellRenderer != null) {
+            cellRenderers.push(_unwrapUserComp(cellRenderer));
         }
     });
     if (params.columns?.length) {
-        return cellRenderers.map(_unwrapUserComp);
+        return cellRenderers;
     }
 
     const fullWidthRenderers: ICellRenderer[] = [];
@@ -84,10 +84,10 @@ export function getCellRendererInstances<TData = any>(
         for (let i = 0; i < renderers.length; i++) {
             const renderer = renderers[i];
             if (renderer != null) {
-                fullWidthRenderers.push(renderer);
+                fullWidthRenderers.push(_unwrapUserComp(renderer));
             }
         }
     });
 
-    return [...fullWidthRenderers, ...cellRenderers].map(_unwrapUserComp);
+    return [...fullWidthRenderers, ...cellRenderers];
 }
