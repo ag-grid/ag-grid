@@ -405,8 +405,7 @@
                         {
                             "type": "item",
                             "title": "See AG Charts",
-                            "url": "https://ag-grid.com/charts",
-                            "newWindow": true
+                            "url": "https://ag-grid.com/charts"
                         }
                     ]
                 }

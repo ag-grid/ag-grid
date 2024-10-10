@@ -38,7 +38,8 @@ function getLinkUrl({ framework, path, url }: { framework: Framework; path?: str
 }
 
 function Item({ itemData, framework, pageName }: { itemData?: any; framework: Framework; pageName: string }) {
-    const linkUrl = getLinkUrl({ framework, path: itemData.path });
+    const linkUrl = itemData.path ? getLinkUrl({ framework, path: itemData.path }) : itemData.url;
+    const isExternalURL = itemData.url;
     const isCorrectFramework = !itemData.frameworks
         ? true
         : itemData.frameworks.filter((f) => {
@@ -51,12 +52,13 @@ function Item({ itemData, framework, pageName }: { itemData?: any; framework: Fr
     return (
         isCorrectFramework && (
             <>
-                <a href={linkUrl} className={className}>
+                <a href={linkUrl} className={className} {...(isExternalURL && { target: '_blank' })}>
                     {itemData.icon && <Icon name={itemData.icon} svgClasses={styles.itemIcon} />}
 
                     <span>
                         {itemData.title}
                         {itemData.isEnterprise && <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />}
+                        {isExternalURL && <Icon name="newTab" svgClasses={styles.externalIcon} />}
                     </span>
                 </a>
 
