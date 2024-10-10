@@ -45,16 +45,16 @@ function Item({ itemData, framework, pageName }: { itemData?: any; framework: Fr
 
     return (
         <>
-            {!itemData.children ? (
-                <a href={linkUrl} className={className}>
-                    {itemData.icon && <Icon name={itemData.icon} svgClasses={styles.itemIcon} />}
+            <a href={linkUrl} className={className}>
+                {itemData.icon && <Icon name={itemData.icon} svgClasses={styles.itemIcon} />}
 
-                    <span>
-                        {itemData.title}
-                        {itemData.isEnterprise && <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />}
-                    </span>
-                </a>
-            ) : (
+                <span>
+                    {itemData.title}
+                    {itemData.isEnterprise && <Icon name="enterprise" svgClasses={styles.enterpriseIcon} />}
+                </span>
+            </a>
+
+            {itemData.children && (
                 <div className={styles.nestedItems}>
                     {itemData.children.map((childData) => {
                         return (
