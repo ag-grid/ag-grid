@@ -10,14 +10,14 @@ export interface ZipFile {
 }
 
 export class ZipContainer {
-    private static folders: ZipFile[] = [];
-    private static files: ZipFile[] = [];
+    private folders: ZipFile[] = [];
+    private files: ZipFile[] = [];
 
-    public static addFolders(paths: string[]): void {
+    public addFolders(paths: string[]): void {
         paths.forEach(this.addFolder.bind(this));
     }
 
-    private static addFolder(path: string): void {
+    private addFolder(path: string): void {
         this.folders.push({
             path,
             created: new Date(),
@@ -26,7 +26,7 @@ export class ZipContainer {
         });
     }
 
-    public static addFile(path: string, content: string, isBase64 = false): void {
+    public addFile(path: string, content: string, isBase64 = false): void {
         this.files.push({
             path,
             created: new Date(),
@@ -36,24 +36,24 @@ export class ZipContainer {
         });
     }
 
-    public static async getZipFile(mimeType: string = 'application/zip'): Promise<Blob> {
+    public async getZipFile(mimeType: string = 'application/zip'): Promise<Blob> {
         const textOutput = await this.buildCompressedFileStream();
         this.clearStream();
         return new Blob([textOutput], { type: mimeType });
     }
 
-    public static getUncompressedZipFile(mimeType: string = 'application/zip'): Blob {
+    public getUncompressedZipFile(mimeType: string = 'application/zip'): Blob {
         const textOutput = this.buildFileStream();
         this.clearStream();
         return new Blob([textOutput], { type: mimeType });
     }
 
-    private static clearStream(): void {
+    private clearStream(): void {
         this.folders = [];
         this.files = [];
     }
 
-    private static packageFiles(files: ProcessedZipFile[]) {
+    private packageFiles(files: ProcessedZipFile[]) {
         let fileLen: number = 0;
         let folderLen: number = 0;
 
@@ -96,7 +96,7 @@ export class ZipContainer {
         return result;
     }
 
-    private static async buildCompressedFileStream(): Promise<Uint8Array> {
+    private async buildCompressedFileStream(): Promise<Uint8Array> {
         const totalFiles: ZipFile[] = [...this.folders, ...this.files];
         const readyFiles: ProcessedZipFile[] = [];
         let lL = 0;
@@ -111,7 +111,7 @@ export class ZipContainer {
         return this.packageFiles(readyFiles);
     }
 
-    private static buildFileStream(): Uint8Array {
+    private buildFileStream(): Uint8Array {
         const totalFiles: ZipFile[] = [...this.folders, ...this.files];
         const readyFiles: ProcessedZipFile[] = [];
         let lL = 0;

@@ -3,6 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { RowDragService } from '../dragAndDrop/rowDragService';
+import type { EditService } from '../edit/editService';
 import type { Environment } from '../environment';
 import type { FilterManager } from '../filter/filterManager';
 import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
@@ -11,10 +12,9 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import { _requestAnimationFrame } from '../misc/animationFrameService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
-import type { RowRenderer } from '../rendering/rowRenderer';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
-import { _getTabIndex, _isIOSUserAgent, _isInvisibleScrollbar } from '../utils/browser';
+import { _isIOSUserAgent, _isInvisibleScrollbar } from '../utils/browser';
 import { _isElementChildOfClass, _isVerticalScrollShowing } from '../utils/dom';
 import type { PopupService } from '../widgets/popupService';
 import type { LongTapEvent } from '../widgets/touchListener';
@@ -61,7 +61,7 @@ export class GridBodyCtrl extends BeanStub {
     private contextMenuService?: IContextMenuService;
     private rowDragService?: RowDragService;
     private pinnedRowModel?: PinnedRowModel;
-    private rowRenderer: RowRenderer;
+    private editService?: EditService;
     private popupService?: PopupService;
     private mouseEventService: MouseEventService;
     private rowModel: IRowModel;
@@ -76,7 +76,7 @@ export class GridBodyCtrl extends BeanStub {
         this.contextMenuService = beans.contextMenuService;
         this.rowDragService = beans.rowDragService;
         this.pinnedRowModel = beans.pinnedRowModel;
-        this.rowRenderer = beans.rowRenderer;
+        this.editService = beans.editService;
         this.popupService = beans.popupService;
         this.mouseEventService = beans.mouseEventService;
         this.rowModel = beans.rowModel;
@@ -275,42 +275,13 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addStopEditingWhenGridLosesFocus(): void {
-        if (!this.gos.get('stopEditingWhenCellsLoseFocus')) {
-            return;
-        }
-
-        const focusOutListener = (event: FocusEvent): void => {
-            // this is the element the focus is moving to
-            const elementWithFocus = event.relatedTarget as HTMLElement;
-
-            if (_getTabIndex(elementWithFocus) === null) {
-                this.rowRenderer.stopEditing();
-                return;
-            }
-
-            let clickInsideGrid =
-                // see if click came from inside the viewports
-                viewports.some((viewport) => viewport.contains(elementWithFocus)) &&
-                // and also that it's not from a detail grid
-                this.mouseEventService.isElementInThisGrid(elementWithFocus);
-
-            if (!clickInsideGrid) {
-                const popupService = this.popupService;
-
-                clickInsideGrid =
-                    !!popupService &&
-                    (popupService.getActivePopups().some((popup) => popup.contains(elementWithFocus)) ||
-                        popupService.isElementWithinCustomPopup(elementWithFocus));
-            }
-
-            if (!clickInsideGrid) {
-                this.rowRenderer.stopEditing();
-            }
-        };
-
-        const viewports = [this.eBodyViewport, this.eBottom, this.eTop, this.eStickyTop, this.eStickyBottom];
-
-        viewports.forEach((viewport) => this.addManagedElementListeners(viewport, { focusout: focusOutListener }));
+        this.editService?.addStopEditingWhenGridLosesFocus([
+            this.eBodyViewport,
+            this.eBottom,
+            this.eTop,
+            this.eStickyTop,
+            this.eStickyBottom,
+        ]);
     }
 
     public updateRowCount(): void {

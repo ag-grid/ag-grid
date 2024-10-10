@@ -3,7 +3,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
-import { RowNode } from '../entities/rowNode';
+import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
 import type { Environment } from '../environment';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
 import {
@@ -1187,7 +1187,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public getRowNode(id: string): RowNode | undefined {
         // although id is typed a string, this could be called by the user, and they could have passed a number
-        const idIsGroup = typeof id == 'string' && id.indexOf(RowNode.ID_PREFIX_ROW_GROUP) == 0;
+        const idIsGroup = typeof id == 'string' && id.indexOf(ROW_ID_PREFIX_ROW_GROUP) == 0;
 
         if (idIsGroup) {
             // only one users complained about getRowNode not working for groups, after years of
