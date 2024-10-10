@@ -2,6 +2,7 @@ import { ComponentUtil } from '../../components/componentUtil';
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
 import { PropertyKeys } from '../../propertyKeys';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortController';
+import { toStringWithNullUndefined } from '../logging';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 import { COL_DEF_VALIDATORS } from './colDefValidations';
 
@@ -269,8 +270,10 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
             const sortingOrder = _options.sortingOrder;
 
             if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
-                sortingOrder.some((a) => !DEFAULT_SORTING_ORDER.includes(a));
-                return `sortingOrder must be an array with elements from [${DEFAULT_SORTING_ORDER.join(', ')}], currently it includes ${sortingOrder}`;
+                const invalidItems = sortingOrder.filter((a) => !DEFAULT_SORTING_ORDER.includes(a));
+                if (invalidItems.length > 0) {
+                    return `sortingOrder must be an array with elements from [${DEFAULT_SORTING_ORDER.map(toStringWithNullUndefined).join()}], currently it includes [${invalidItems.map(toStringWithNullUndefined).join()}]`;
+                }
             } else if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
                 return `sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`;
             }

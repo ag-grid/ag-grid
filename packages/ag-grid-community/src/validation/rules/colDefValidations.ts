@@ -2,6 +2,7 @@ import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../e
 import type { GridOptions } from '../../entities/gridOptions';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortController';
 import { _missing } from '../../utils/generic';
+import { toStringWithNullUndefined } from '../logging';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 
 const COLUMN_DEFINITION_DEPRECATIONS: Deprecations<ColDef | ColGroupDef> = {
@@ -116,8 +117,10 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
             const sortingOrder = _options.sortingOrder;
 
             if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
-                sortingOrder.some((a) => !DEFAULT_SORTING_ORDER.includes(a));
-                return `sortingOrder must be an array with elements from [${DEFAULT_SORTING_ORDER.join(', ')}], currently it includes ${sortingOrder}`;
+                const invalidItems = sortingOrder.filter((a) => !DEFAULT_SORTING_ORDER.includes(a));
+                if (invalidItems.length > 0) {
+                    return `sortingOrder must be an array with elements from [${DEFAULT_SORTING_ORDER.map(toStringWithNullUndefined).join()}], currently it includes [${invalidItems.map(toStringWithNullUndefined).join()}]`;
+                }
             } else if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
                 return `sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`;
             }
