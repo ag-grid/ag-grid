@@ -19,7 +19,7 @@ import {
     _getActiveDomElement,
     _removeFromParent,
     _setAriaControls,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import type { AgSideBarButtons, SideBarButtonClickedEvent } from './agSideBarButtons';
@@ -277,9 +277,7 @@ export class AgSideBar extends Component implements ISideBar {
 
     private validateDef(def: ToolPanelDef): boolean {
         if (def.id == null) {
-            _warnOnce(
-                `please review all your toolPanel components, it seems like at least one of them doesn't have an id`
-            );
+            _warn(212);
             return false;
         }
 
@@ -297,9 +295,7 @@ export class AgSideBar extends Component implements ISideBar {
                 return false;
             }
             if (this.filterManager?.isAdvancedFilterEnabled()) {
-                _warnOnce(
-                    'Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.'
-                );
+                _warn(213);
                 return false;
             }
         }
@@ -367,7 +363,7 @@ export class AgSideBar extends Component implements ISideBar {
         const toolPanelWrapper = this.toolPanelWrappers.filter((toolPanel) => toolPanel.getToolPanelId() === key)[0];
 
         if (!toolPanelWrapper) {
-            _warnOnce(`unable to lookup Tool Panel as invalid key supplied: ${key}`);
+            _warn(214, { key });
             return;
         }
 

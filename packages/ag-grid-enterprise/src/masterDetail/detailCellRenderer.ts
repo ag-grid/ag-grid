@@ -8,14 +8,7 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererParams,
 } from 'ag-grid-community';
-import {
-    Component,
-    RefPlaceholder,
-    _getGridRegisteredModules,
-    _missing,
-    _warnOnce,
-    createGrid,
-} from 'ag-grid-community';
+import { Component, RefPlaceholder, _getGridRegisteredModules, _missing, _warn, createGrid } from 'ag-grid-community';
 
 import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 import { DetailFrameworkComponentWrapper } from './detailFrameworkComponentWrapper';
@@ -83,16 +76,13 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
                 const template = templateFunc(this.params);
                 this.setTemplate(template, []);
             } else {
-                _warnOnce('detailCellRendererParams.template should be function or string');
+                _warn(168);
                 setDefaultTemplate();
             }
         }
 
         if (this.eDetailGrid == null) {
-            _warnOnce(
-                'Reference to eDetailGrid was missing from the details template. ' +
-                    'Please add data-ref="eDetailGrid" to the template.'
-            );
+            _warn(169);
         }
     }
 

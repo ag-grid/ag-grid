@@ -15,7 +15,7 @@ import {
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import type { NodeManager } from '../nodeManager';
@@ -120,12 +120,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
         if (rowNode.key === null || rowNode.key === undefined) {
             _doOnce(() => {
-                _warnOnce(`null and undefined values are not allowed for server side row model keys`);
-                if (rowNode.rowGroupColumn) {
-                    _warnOnce(`column = ${rowNode.rowGroupColumn.getId()}`);
-                }
-                _warnOnce(`data is ` + rowNode.data);
-            }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
+                _warn(190, { rowGroupId: rowNode.rowGroupColumn?.getId(), data: rowNode.data });
+            }, 'SSBlock-BadKey');
         }
 
         const isUnbalancedGroup = this.gos.get('groupAllowUnbalanced') && rowNode.key === '';

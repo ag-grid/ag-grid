@@ -8,7 +8,7 @@ import type {
     MenuItemDef,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _createIconNoSpan, _warn } from 'ag-grid-community';
 
 export class ChartMenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'chartMenuItemMapper' as const;
@@ -100,7 +100,7 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
             if (chartConfigGroup === null) return;
 
             if (chartConfigGroup == undefined) {
-                _warnOnce(`invalid chartGroupsDef config '${group}'`);
+                _warn(173, { group });
                 return undefined;
             }
 
@@ -111,7 +111,7 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
                         .map((chartType) => {
                             const itemKey = (chartConfigGroup as any)[chartType];
                             if (itemKey == undefined) {
-                                _warnOnce(`invalid chartGroupsDef config '${group}.${chartType}'`);
+                                _warn(174, { group, chartType });
                                 return undefined;
                             }
                             return menuItemLookup[itemKey];

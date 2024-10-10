@@ -43,7 +43,6 @@ import {
     _missing,
     _shallowCompare,
     _warn,
-    _warnOnce,
 } from 'ag-grid-community';
 
 import { CellRangeFeature } from './cellRangeFeature';
@@ -972,16 +971,15 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const isSameColumn = columnFrom === columnTo;
         const fromIndex = allColumns.indexOf(columnFrom as AgColumn);
 
-        const logMissing = (column: AgColumn) => _warnOnce(`column ${column.getId()} is not visible`);
         if (fromIndex < 0) {
-            logMissing(columnFrom);
+            _warn(178, { colId: columnFrom.getId() });
             return;
         }
 
         const toIndex = isSameColumn ? fromIndex : allColumns.indexOf(columnTo as AgColumn);
 
         if (toIndex < 0) {
-            logMissing(columnTo);
+            _warn(178, { colId: columnTo.getId() });
             return;
         }
 

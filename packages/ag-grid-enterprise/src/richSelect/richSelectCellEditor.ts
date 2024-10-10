@@ -6,7 +6,7 @@ import type {
     RichCellEditorParams,
     RichSelectParams,
 } from 'ag-grid-community';
-import { PopupComponent, _missing, _warnOnce } from 'ag-grid-community';
+import { PopupComponent, _missing, _warn } from 'ag-grid-community';
 
 import { AgRichSelect } from '../widgets/agRichSelect';
 
@@ -25,7 +25,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         const { cellStartedEdit, values } = params;
 
         if (_missing(values)) {
-            _warnOnce('agRichSelectCellEditor requires cellEditorParams.values to be set');
+            _warn(180);
         }
 
         const { params: richSelectParams, valuesPromise } = this.buildRichSelectParams();
@@ -119,9 +119,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
 
         if (multiSelect && allowTyping) {
             this.params.allowTyping = ret.allowTyping = false;
-            _warnOnce(
-                'agRichSelectCellEditor cannot have `multiSelect` and `allowTyping` set to `true`. AllowTyping has been turned off.'
-            );
+            _warn(181);
         }
 
         return { params: ret, valuesPromise };

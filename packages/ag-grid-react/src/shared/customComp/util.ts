@@ -1,5 +1,5 @@
 import type { ICellEditor, IFilter, IStatusPanel, IToolPanel } from 'ag-grid-community';
-import { AgPromise, _warnOnce } from 'ag-grid-community';
+import { AgPromise, _warn } from 'ag-grid-community';
 
 /**
  * Function to retrieve the React component from an instance returned by the grid.
@@ -19,5 +19,5 @@ export function getInstance<
 }
 
 export function warnReactiveCustomComponents(): void {
-    _warnOnce('As of v32, using custom components with `reactiveCustomComponents = false` is deprecated.');
+    _warn(231);
 }

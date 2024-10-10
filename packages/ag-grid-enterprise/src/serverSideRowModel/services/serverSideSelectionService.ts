@@ -14,7 +14,7 @@ import {
     _getRowSelectionMode,
     _isMultiRowSelection,
     _isUsingNewRowSelectionAPI,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import { DefaultStrategy } from './selection/strategies/defaultStrategy';
@@ -86,12 +86,12 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         const { nodes, ...otherParams } = params;
 
         if (nodes.length > 1 && this.selectionMode !== 'multiRow') {
-            _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
+            _warn(191);
             return 0;
         }
 
         if (nodes.length > 1 && params.rangeSelect) {
-            _warnOnce(`cannot use range selection when multi selecting rows`);
+            _warn(192);
             return 0;
         }
 
@@ -193,7 +193,8 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }): void {
         validateSelectionParameters(params);
         if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
-            return _warnOnce("cannot multi select unless selection mode is 'multiRow'");
+            _warn(193);
+            return;
         }
 
         this.selectionStrategy.selectAllRowNodes(params);
@@ -235,7 +236,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
     // used by CSRM
     public getBestCostNodeSelection(): RowNode<any>[] | undefined {
-        _warnOnce('calling gridApi.getBestCostNodeSelection() is only possible when using rowModelType=`clientSide`.');
+        _warn(194);
         return undefined;
     }
 }
@@ -248,8 +249,6 @@ function validateSelectionParameters({
     justCurrentPage?: boolean | undefined;
 }) {
     if (justCurrentPage || justFiltered) {
-        _warnOnce(
-            `selecting just ${justCurrentPage ? 'current page' : 'filtered'} only works when gridOptions.rowModelType='clientSide'`
-        );
+        _warn(195, { justCurrentPage });
     }
 }

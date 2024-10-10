@@ -8,7 +8,7 @@ import type {
     UserComponentFactory,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { Component, _warnOnce } from 'ag-grid-community';
+import { Component, _warn } from 'ag-grid-community';
 
 import { AgHorizontalResize } from './agHorizontalResize';
 
@@ -68,7 +68,7 @@ export class ToolPanelWrapper extends Component {
         this.params = compDetails.params;
 
         if (componentPromise == null) {
-            _warnOnce(`error processing tool panel component ${id}. You need to specify 'toolPanel'`);
+            _warn(216, { id });
             return;
         }
         componentPromise.then(this.setToolPanelComponent.bind(this));

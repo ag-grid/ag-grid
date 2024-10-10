@@ -23,7 +23,7 @@ import {
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowIdCallback,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import type { BlockUtils } from '../../blocks/blockUtils';
@@ -124,7 +124,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
         const idFunc = _getRowIdCallback(this.gos);
         if (!idFunc) {
-            _warnOnce('getRowId callback must be implemented for transactions to work. Transaction was ignored.');
+            _warn(206);
             return {
                 status: ServerSideTransactionResultStatus.Cancelled,
             };

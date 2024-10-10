@@ -2,12 +2,11 @@ import type {
     BeanCollection,
     ColumnModel,
     ColumnVO,
-    GridOptions,
     NamedBean,
     RowNode,
     StoreRefreshAfterParams,
 } from 'ag-grid-community';
-import { BeanStub, _isServerSideRowModel, _missingOrEmpty, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _isServerSideRowModel, _missingOrEmpty } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { LazyStore } from './lazy/lazyStore';
@@ -93,22 +92,11 @@ export class StoreUtils extends BeanStub implements NamedBean {
         return this.gos.get('serverSideInitialRowCount');
     }
 
-    private assertRowModelIsServerSide(key: keyof GridOptions) {
-        if (!_isServerSideRowModel(this.gos)) {
-            _warnOnce(`The '${key}' property can only be used with the Server Side Row Model.`);
-            return false;
-        }
-        return true;
-    }
-
     public isServerSideSortAllLevels() {
-        return this.gos.get('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
+        return this.gos.get('serverSideSortAllLevels') && _isServerSideRowModel(this.gos);
     }
 
     public isServerSideOnlyRefreshFilteredGroups() {
-        return (
-            this.gos.get('serverSideOnlyRefreshFilteredGroups') &&
-            this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups')
-        );
+        return this.gos.get('serverSideOnlyRefreshFilteredGroups') && _isServerSideRowModel(this.gos);
     }
 }

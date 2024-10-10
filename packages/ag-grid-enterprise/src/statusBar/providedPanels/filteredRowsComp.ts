@@ -1,5 +1,5 @@
 import type { BeanCollection, IClientSideRowModel, IRowModel, IStatusPanelComp } from 'ag-grid-community';
-import { _formatNumberCommas, _isClientSideRowModel, _warnOnce } from 'ag-grid-community';
+import { _formatNumberCommas, _isClientSideRowModel, _warn } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
 
@@ -14,7 +14,7 @@ export class FilteredRowsComp extends AgNameValue implements IStatusPanelComp {
         this.setLabel('filteredRows', 'Filtered');
 
         if (!_isClientSideRowModel(this.gos)) {
-            _warnOnce(`agFilteredRowCountComponent should only be used with the client side row model.`);
+            _warn(222);
             return;
         }
 

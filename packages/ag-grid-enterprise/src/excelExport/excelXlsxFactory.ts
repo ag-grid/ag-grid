@@ -8,7 +8,7 @@ import type {
     ExcelWorksheet,
     RowHeightCallbackParams,
 } from 'ag-grid-community';
-import { ExcelFactoryMode, _escapeString, _warnOnce } from 'ag-grid-community';
+import { ExcelFactoryMode, _escapeString, _warn } from 'ag-grid-community';
 
 import type {
     ExcelCalculatedImage,
@@ -95,12 +95,8 @@ export function createXlsxExcel(
     return createWorksheet(worksheet, newConfig);
 }
 
-function showExcelTableNonCompatibleFeaturesWarning(featureName: string) {
-    _warnOnce(
-        `Excel table export does not work with ${featureName}. ` +
-            `The exported Excel file will not contain any Excel tables.\n` +
-            `Please turn off ${featureName} to enable Excel table exports.`
-    );
+export function showExcelTableNonCompatibleFeaturesWarning(featureName: string) {
+    _warn(163, { featureName });
 }
 
 export function getXlsxTableNameFromIndex(idx: number) {
@@ -116,7 +112,7 @@ export function getXlsxSanitizedTableName(name: string) {
 
 export function addXlsxTableToSheet(sheetIndex: number, table: ExcelDataTable): void {
     if (XLSX_WORKSHEET_DATA_TABLES.has(sheetIndex)) {
-        _warnOnce('Unable to add data table to Excel sheet: A table already exists.');
+        _warn(164);
         return;
     }
 
@@ -164,7 +160,7 @@ function processTableConfig(worksheet: ExcelWorksheet, config: ExcelGridSerializ
     }
 
     if (!tableColumns || !tableColumns.length || !tableRowCount || !tableName) {
-        _warnOnce('Unable to add data table to Excel sheet: Missing required parameters.');
+        _warn(165);
         return;
     }
 

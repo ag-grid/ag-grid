@@ -1,5 +1,5 @@
 import type { BeanCollection, ChartDataPanel as ChartDataPanelType, ChartType, IChartService } from 'ag-grid-community';
-import { AgToggleButton, Component, _getDocument, _setDisplayed, _warnOnce } from 'ag-grid-community';
+import { AgToggleButton, Component, _getDocument, _setDisplayed, _warn } from 'ag-grid-community';
 
 import type { ChartController } from '../../chartController';
 import type { ColState } from '../../model/chartDataModel';
@@ -159,7 +159,7 @@ export class ChartDataPanel extends Component {
                 this.chartSpecificPanel = this.createBean(new ChartSpecificDataPanel(this.chartMenuContext, isOpen));
                 this.panels.push(this.chartSpecificPanel);
             } else {
-                _warnOnce(`Invalid charts data panel group name supplied: '${type}'`);
+                _warn(144, { type });
             }
         });
 

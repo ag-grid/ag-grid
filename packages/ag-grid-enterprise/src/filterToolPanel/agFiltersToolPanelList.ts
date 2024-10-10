@@ -16,7 +16,7 @@ import {
     _includes,
     _mergeDeep,
     _setAriaLabel,
-    _warnOnce,
+    _warn,
     isProvidedColumnGroup,
 } from 'ag-grid-community';
 
@@ -350,7 +350,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         if (groupIds) {
             const unrecognisedGroupIds = groupIds.filter((groupId) => updatedGroupIds.indexOf(groupId) < 0);
             if (unrecognisedGroupIds.length > 0) {
-                _warnOnce('unable to find groups for these supplied groupIds:', unrecognisedGroupIds);
+                _warn(166, { unrecognisedGroupIds });
             }
         }
     }
@@ -395,7 +395,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         if (colIds) {
             const unrecognisedColIds = colIds.filter((colId) => updatedColIds.indexOf(colId) < 0);
             if (unrecognisedColIds.length > 0) {
-                _warnOnce('unable to find columns for these supplied colIds:' + unrecognisedColIds);
+                _warn(167, { unrecognisedColIds });
             }
         }
     }

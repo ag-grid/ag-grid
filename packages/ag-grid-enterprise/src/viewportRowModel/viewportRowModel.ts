@@ -8,7 +8,7 @@ import type {
     RowModelType,
     RowRenderer,
 } from 'ag-grid-community';
-import { BeanStub, RowNode, _getRowHeightAsNumber, _iterateObject, _missing, _warnOnce } from 'ag-grid-community';
+import { BeanStub, RowNode, _getRowHeightAsNumber, _iterateObject, _missing, _warn } from 'ag-grid-community';
 
 export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
@@ -168,7 +168,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         this.rowCount = -1;
 
         if (!viewportDatasource.init) {
-            _warnOnce('viewport is missing init method.');
+            _warn(226);
         } else {
             viewportDatasource.init({
                 setRowCount: this.setRowCount.bind(this),

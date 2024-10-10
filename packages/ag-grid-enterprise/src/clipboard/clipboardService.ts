@@ -40,7 +40,7 @@ import {
     _isSameRow,
     _last,
     _removeFromArray,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 interface RowCallback {
@@ -70,13 +70,6 @@ enum CellClearType {
     SelectedRows,
     FocusedCell,
 }
-
-const apiError = (method: string) =>
-    `AG Grid: Unable to use the Clipboard API (navigator.clipboard.${method}()). ` +
-    'The reason why it could not be used has been logged in the previous line. ' +
-    "For this reason the grid has defaulted to using a workaround which doesn't perform as well. " +
-    'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
-    'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.';
 
 // This will parse a delimited string into an array of arrays.
 export function stringToArray(strData: string, delimiter = ','): string[][] {
@@ -214,7 +207,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 .readText()
                 .then(this.processClipboardData.bind(this))
                 .catch((e) => {
-                    _warnOnce(`${e}\n${apiError('readText')}`);
+                    _warn(40, { e, method: 'readText' });
                     this.navigatorApiFailed = true;
                     this.pasteFromClipboardLegacy();
                 });
@@ -1178,7 +1171,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const allowNavigator = !this.gos.get('suppressClipboardApi');
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.writeText(data).catch((e) => {
-                _warnOnce(`${e}\n${apiError('writeText')}`);
+                _warn(40, { e, method: 'writeText' });
                 this.copyDataToClipboardLegacy(data);
             });
             return;
@@ -1200,11 +1193,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             const result = eDocument.execCommand('copy');
 
             if (!result) {
-                _warnOnce(
-                    "Browser did not allow document.execCommand('copy'). Ensure " +
-                        'api.copySelectedRowsToClipboard() is invoked via a user event, i.e. button click, otherwise ' +
-                        'the browser will prevent it for security reasons.'
-                );
+                _warn(41);
             }
 
             if (focusedElementBefore != null && focusedElementBefore.focus != null) {
@@ -1238,7 +1227,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         try {
             callbackNow(eTempInput);
         } catch (err) {
-            _warnOnce("Browser does not support document.execCommand('copy') for clipboard operations");
+            _warn(42);
         }
 
         //It needs 100 otherwise OS X seemed to not always be able to paste... Go figure...

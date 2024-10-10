@@ -22,7 +22,7 @@ import {
     _mergeDeep,
     _removeFromParent,
     _setDisplayed,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import { AgDialog } from '../../widgets/agDialog';
@@ -202,7 +202,7 @@ export class GridChartComp extends Component {
 
         this.chartProxy = this.createChartProxy(chartProxyParams);
         if (!this.chartProxy) {
-            _warnOnce('invalid chart type supplied: ' + chartProxyParams.chartType);
+            _warn(138, { chartType: chartProxyParams.chartType });
             return;
         }
 
@@ -548,12 +548,7 @@ export class GridChartComp extends Component {
         if (customChartThemes) {
             this.getAllKeysInObjects([customChartThemes]).forEach((customThemeName) => {
                 if (!_includes(suppliedThemes, customThemeName)) {
-                    _warnOnce(
-                        "a custom chart theme with the name '" +
-                            customThemeName +
-                            "' has been " +
-                            "supplied but not added to the 'chartThemes' list"
-                    );
+                    _warn(139, { customThemeName });
                 }
             });
         }

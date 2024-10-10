@@ -9,7 +9,7 @@ import type {
     SparklineMarkerOptions,
     SparklineOptions,
 } from 'ag-grid-community';
-import { _warnOnce } from 'ag-grid-community';
+import { _warn } from 'ag-grid-community';
 
 import { AreaSparkline } from './area/areaSparkline';
 import type { BarColumnLabel } from './bar-column/barColumnSparkline';
@@ -227,9 +227,7 @@ const offsetValidator = (property: string, value: number, defaultOffset?: number
         return true;
     }
 
-    _warnOnce(
-        `${property} must be a number, the value you provided is not a valid number. Using the default of ${defaultOffset}px.`
-    );
+    _warn(218, { property, defaultOffset });
     return false;
 };
 
@@ -249,7 +247,7 @@ function setValueIfPropertyExists(target: any, property: string, value: any, opt
                 target[property] = value;
             }
         } else {
-            _warnOnce(`Property ${property} does not exist on the target object.`);
+            _warn(219, { property });
         }
     }
 }

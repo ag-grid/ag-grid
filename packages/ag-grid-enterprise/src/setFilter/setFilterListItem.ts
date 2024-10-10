@@ -28,7 +28,7 @@ import {
     _setAriaLevel,
     _setDisplayed,
     _toStringOrNull,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
@@ -435,9 +435,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
                 ? this.cellRendererParams.value
                 : this.cellRendererParams.valueFormatted) ?? this.translate('blanks');
         if (typeof valueToRender !== 'string') {
-            _warnOnce(
-                `Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects. See ${this.getFrameworkOverrides().getDocLink('filter-set-filter-list/#filter-value-types')}`
-            );
+            _warn(208);
             valueToRender = '';
         }
 

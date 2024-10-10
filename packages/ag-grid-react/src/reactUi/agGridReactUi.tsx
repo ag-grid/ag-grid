@@ -33,7 +33,7 @@ import {
     _isServerSideRowModel,
     _observeResize,
     _processOnChange,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import GroupCellRenderer from '../reactUi/cellRenderer/groupCellRenderer';
@@ -326,9 +326,7 @@ const DetailCellRenderer = forwardRef((props: IDetailCellRendererParams, ref: an
     }
 
     if (props.template) {
-        _warnOnce(
-            'detailCellRendererParams.template is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://ag-grid.com/react-data-grid/master-detail-custom-detail/'
-        );
+        _warn(230);
     }
 
     const setRef = useCallback((eRef: HTMLDivElement | null) => {

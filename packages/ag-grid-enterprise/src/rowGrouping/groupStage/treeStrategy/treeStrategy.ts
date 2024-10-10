@@ -9,8 +9,7 @@ import type {
     StageExecuteParams,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _ROW_ID_PREFIX_ROW_GROUP, _warnOnce } from 'ag-grid-community';
-import { RowNode } from 'ag-grid-community';
+import { BeanStub, RowNode, _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
 
 import { EMPTY_ARRAY, TreeNode } from './treeNode';
 import type { TreeRow } from './treeRow';
@@ -194,7 +193,7 @@ export class TreeStrategy extends BeanStub {
     private getDataPath({ getDataPath }: TreeExecutionDetails, { data }: RowNode): string[] {
         const keys = getDataPath?.(data) || EMPTY_ARRAY;
         if (!keys.length) {
-            _warnOnce(`getDataPath() should not return an empty path`, [data]);
+            _warn(185, { data });
         }
         return keys;
     }
@@ -476,11 +475,11 @@ export class TreeStrategy extends BeanStub {
 
         if (node.duplicateRows?.size && !node.duplicateRowsWarned) {
             node.duplicateRowsWarned = true;
-            _warnOnce(`duplicate group keys for row data, keys should be unique`, [
-                row.id,
-                row.data,
-                ...Array.from(node.duplicateRows).map((r) => r.data),
-            ]);
+            _warn(186, {
+                rowId: row.id,
+                rowData: row.data,
+                duplicateRowsData: Array.from(node.duplicateRows).map((r) => r.data),
+            });
         }
     }
 

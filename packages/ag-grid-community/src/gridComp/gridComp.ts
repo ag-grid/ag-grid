@@ -5,7 +5,7 @@ import type { ISideBar } from '../interfaces/iSideBar';
 import type { UpdateLayoutClassesParams } from '../styling/layoutFeature';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _isVisible } from '../utils/dom';
-import { _log } from '../utils/function';
+import { _logIfDebug } from '../utils/function';
 import type { ComponentSelector } from '../widgets/component';
 import { RefPlaceholder } from '../widgets/component';
 import type { Component } from '../widgets/component';
@@ -66,9 +66,7 @@ export class GridComp extends TabGuardComp {
         this.eGridDiv.appendChild(eGui);
         this.addDestroyFunc(() => {
             this.eGridDiv.removeChild(eGui);
-            if (this.gos.get('debug')) {
-                _log('Grid removed from DOM');
-            }
+            _logIfDebug(this.gos, 'Grid removed from DOM');
         });
     }
 
