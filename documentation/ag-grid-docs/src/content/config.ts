@@ -80,9 +80,6 @@ const sectionItem = z.object({
 const menu = defineCollection({
     type: 'data',
     schema: z.object({
-        header: z.object({
-            items: z.array(level1MenuItem),
-        }),
         api: z.object({
             sections: z.array(sectionItem),
         }),

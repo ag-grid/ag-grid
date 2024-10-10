@@ -1,38 +1,4 @@
 {
-    "header": {
-        "items": [
-            {
-                "title": "Demos",
-                "path": "/example"
-            },
-            {
-                "title": "Theme Builder",
-                "path": "/theme-builder"
-            },
-            {
-                "title": "Docs",
-                "path": "./getting-started"
-            },
-            {
-                "title": "API",
-                "path": "./reference"
-            },
-            {
-                "title": "Community",
-                "path": "/community"
-            },
-            {
-                "title": "Pricing",
-                "path": "/license-pricing"
-            },
-            {
-                "title": "Github",
-                "url": "https://github.com/ag-grid/ag-grid",
-                "icon": "github",
-                "github": "true"
-            }
-        ]
-    },
     "api": {
         "sections": [
             {
