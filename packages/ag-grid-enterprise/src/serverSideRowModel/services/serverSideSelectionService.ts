@@ -12,6 +12,7 @@ import {
     BaseSelectionService,
     _getGroupSelectsDescendants,
     _getRowSelectionMode,
+    _isMultiRowSelection,
     _isUsingNewRowSelectionAPI,
     _warn,
 } from 'ag-grid-community';
@@ -191,7 +192,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         justCurrentPage?: boolean | undefined;
     }): void {
         validateSelectionParameters(params);
-        if (_isUsingNewRowSelectionAPI(this.gos) && _getRowSelectionMode(this.gos) !== 'multiRow') {
+        if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
             _warn(193);
             return;
         }

@@ -10,6 +10,7 @@ import type {
 import {
     BeanStub,
     _error,
+    _error,
     _isMultiRowSelection,
     _isUsingNewRowSelectionAPI,
     _last,
