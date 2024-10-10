@@ -969,7 +969,7 @@ export interface _RangeSelectionGridApi {
     clearCellSelection(): void;
 }
 
-export interface _ServerSideRowModelGridApi {
+export interface _ServerSideRowModelGridApi<TData> {
     /**
      * Returns an object containing rules matching the selected rows in the SSRM.
      *
@@ -987,18 +987,22 @@ export interface _ServerSideRowModelGridApi {
     setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
 
     /** Apply transactions to the server side row model. */
-    applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined;
+    applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult<TData> | undefined;
     /** Batch apply transactions to the server side row model. */
     applyServerSideTransactionAsync(
         transaction: ServerSideTransaction,
-        callback?: (res: ServerSideTransactionResult) => void
+        callback?: (res: ServerSideTransactionResult<TData>) => void
     ): void;
 
     /**
      * Applies row data to a server side store.
      * New rows will overwrite rows at the same index in the same way as if provided by a datasource success callback.
      */
-    applyServerSideRowData(params: { successParams: LoadSuccessParams; route?: string[]; startRow?: number }): void;
+    applyServerSideRowData(params: {
+        successParams: LoadSuccessParams<TData>;
+        route?: string[];
+        startRow?: number;
+    }): void;
 
     /** Gets all failed server side loads to retry. */
     retryServerSideLoads(): void;
@@ -1175,7 +1179,7 @@ export interface GridApi<TData = any>
         _CsvExportGridApi,
         _RowGroupingGridApi<TData>,
         _RangeSelectionGridApi,
-        _ServerSideRowModelGridApi,
+        _ServerSideRowModelGridApi<TData>,
         _MenuGridApi,
         _MasterDetailGridApi,
         _ExcelExportGridApi,

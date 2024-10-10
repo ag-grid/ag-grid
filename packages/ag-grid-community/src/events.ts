@@ -1030,7 +1030,7 @@ export interface AsyncTransactionsFlushedEvent<TData = any, TContext = any>
      * Array of result objects. for SSRM it's always list of `ServerSideTransactionResult`.
      * For Client-Side Row Model it's a list of `RowNodeTransaction`.
      */
-    results: (RowNodeTransaction<TData> | ServerSideTransactionResult)[];
+    results: (RowNodeTransaction<TData> | ServerSideTransactionResult<TData>)[];
 }
 /** @deprecated v32 Use AsyncTransactionsFlushedEvent */
 export interface AsyncTransactionsFlushed<TData = any, TContext = any>

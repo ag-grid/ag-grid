@@ -284,7 +284,7 @@ export const gridApiFunctionsMap = {
         getPivotResultColumns: 0,
     }),
 
-    ...mod<_ServerSideRowModelGridApi>('ServerSideRowModelApiModule', {
+    ...mod<_ServerSideRowModelGridApi<any>>('ServerSideRowModelApiModule', {
         getServerSideSelectionState: 0,
         setServerSideSelectionState: 0,
         applyServerSideTransaction: 0,

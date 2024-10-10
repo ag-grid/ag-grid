@@ -1,6 +1,6 @@
 import type { IRowNode } from './iRowNode';
 
-export interface ServerSideTransaction {
+export interface ServerSideTransaction<TData = any> {
     /**
      * The Row Store to apply the transaction to, ie what group level.
      * eg ['Ireland','2002'] to update the child store found after expanding Ireland and 2002 groups.
@@ -10,22 +10,22 @@ export interface ServerSideTransaction {
     /** Index position to add at. If missing, rows will be added to the end. */
     addIndex?: number;
     /** Rows to add */
-    add?: any[];
+    add?: TData[];
     /** Rows to remove */
-    remove?: any[];
+    remove?: TData[];
     /** Rows to update */
-    update?: any[];
+    update?: TData[];
 }
 
-export interface ServerSideTransactionResult {
+export interface ServerSideTransactionResult<TData = any> {
     /** The status of applying the transaction. */
     status: ServerSideTransactionResultStatus;
     /** If rows were added, the newly created Row Nodes for those rows. */
-    add?: IRowNode[];
+    add?: IRowNode<TData>[];
     /** If rows were removed, the deleted Row Nodes. */
-    remove?: IRowNode[];
+    remove?: IRowNode<TData>[];
     /** If rows were updated, the updated Row Nodes. */
-    update?: IRowNode[];
+    update?: IRowNode<TData>[];
 }
 
 export enum ServerSideTransactionResultStatus {

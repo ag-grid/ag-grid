@@ -26,16 +26,16 @@ export function setServerSideSelectionState(
     beans.selectionService?.setSelectionState(state, 'api');
 }
 
-export function applyServerSideTransaction(
+export function applyServerSideTransaction<TData = any>(
     beans: BeanCollection,
-    transaction: ServerSideTransaction
-): ServerSideTransactionResult | undefined {
+    transaction: ServerSideTransaction<TData>
+): ServerSideTransactionResult<TData> | undefined {
     return beans.ssrmTransactionManager?.applyTransaction(transaction);
 }
 
-export function applyServerSideRowData(
+export function applyServerSideRowData<TData = any>(
     beans: BeanCollection,
-    params: { successParams: LoadSuccessParams; route?: string[]; startRow?: number }
+    params: { successParams: LoadSuccessParams<TData>; route?: string[]; startRow?: number }
 ): void {
     const startRow = params.startRow ?? 0;
     const route = params.route ?? [];
@@ -47,10 +47,10 @@ export function applyServerSideRowData(
     _getServerSideRowModel(beans)?.applyRowData(params.successParams, startRow, route);
 }
 
-export function applyServerSideTransactionAsync(
+export function applyServerSideTransactionAsync<TData = any>(
     beans: BeanCollection,
-    transaction: ServerSideTransaction,
-    callback?: (res: ServerSideTransactionResult) => void
+    transaction: ServerSideTransaction<TData>,
+    callback?: (res: ServerSideTransactionResult<TData>) => void
 ): void {
     return beans.ssrmTransactionManager?.applyTransactionAsync(transaction, callback);
 }
