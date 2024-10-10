@@ -499,6 +499,24 @@ export function _getGroupSelection(gos: GridOptionsService): GroupSelectionMode 
     return selection?.mode === 'multiRow' ? selection.groupSelects : undefined;
 }
 
+export function _getSelectAllFiltered(gos: GridOptionsService): boolean {
+    const rowSelection = gos.get('rowSelection');
+    if (typeof rowSelection === 'string') {
+        return false;
+    } else {
+        return rowSelection?.mode === 'multiRow' ? rowSelection.selectAll === 'filtered' : false;
+    }
+}
+
+export function _getSelectAllCurrentPage(gos: GridOptionsService): boolean {
+    const rowSelection = gos.get('rowSelection');
+    if (typeof rowSelection === 'string') {
+        return false;
+    } else {
+        return rowSelection?.mode === 'multiRow' ? rowSelection.selectAll === 'currentPage' : false;
+    }
+}
+
 export function _getGroupSelectsDescendants(gos: GridOptionsService): boolean {
     const groupSelection = _getGroupSelection(gos);
     return groupSelection === 'descendants' || groupSelection === 'filteredDescendants';
