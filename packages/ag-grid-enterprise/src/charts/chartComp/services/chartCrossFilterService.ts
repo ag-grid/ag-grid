@@ -36,7 +36,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
             return;
         }
 
-        const colId = ChartCrossFilterService.extractFilterColId(event);
+        const colId = this.extractFilterColId(event);
         if (this.isValidColumnFilter(colId)) {
             // update filters based on current chart selections
             this.updateFilters(filterModel, event, colId);
@@ -55,7 +55,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
     }
 
     private updateFilters(filterModel: any, event: any, colId: string) {
-        const dataKey = ChartCrossFilterService.extractFilterColId(event);
+        const dataKey = this.extractFilterColId(event);
         const rawValue = event.datum[dataKey];
         if (rawValue === undefined) {
             return;
@@ -106,7 +106,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
         return filteredValues;
     }
 
-    private static extractFilterColId(event: any): string {
+    private extractFilterColId(event: any): string {
         return event.xKey || event.calloutLabelKey;
     }
 

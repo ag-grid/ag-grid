@@ -43,9 +43,9 @@ export interface ChartModelParams {
     seriesGroupType?: SeriesGroupType;
 }
 
-export class ChartDataModel extends BeanStub {
-    public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
+export const DEFAULT_CHART_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
+export class ChartDataModel extends BeanStub {
     private rangeService: IRangeService;
     private chartTranslationService: ChartTranslationService;
 
@@ -348,7 +348,7 @@ export class ChartDataModel extends BeanStub {
         });
 
         const defaultCategory = {
-            colId: ChartDataModel.DEFAULT_CATEGORY,
+            colId: DEFAULT_CHART_CATEGORY,
             displayName: this.chartTranslationService.translate('defaultCategory'),
             selected: !hasSelectedDimension, // if no dimensions in range select the default
             order: 0,
@@ -475,7 +475,7 @@ export class ChartDataModel extends BeanStub {
 
         const isDefaultCategory =
             selectedDimensionColStates.length === 1
-                ? selectedDimensionColStates[0].colId === ChartDataModel.DEFAULT_CATEGORY
+                ? selectedDimensionColStates[0].colId === DEFAULT_CHART_CATEGORY
                 : false;
         const selectedColumns = selectedDimensionColStates
             .map(({ column }) => column)

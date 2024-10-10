@@ -1,7 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
+import type { RedrawRowsParams } from '../interfaces/iRedrawRowsParams';
 import type { IRowNode } from '../interfaces/iRowNode';
-import type { RedrawRowsParams } from '../rendering/rowRenderer';
 
 export function redrawRows<TData = any>(beans: BeanCollection, params: RedrawRowsParams<TData> = {}): void {
     const rowNodes = params ? params.rowNodes : undefined;

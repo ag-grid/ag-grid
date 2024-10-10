@@ -45,7 +45,7 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
 
         const chartGroupsDef = this.gos.get('chartToolPanelsDef')?.settingsPanel?.chartGroupsDef;
         if (chartGroupsDef) {
-            topLevelMenuItem = ChartMenuItemMapper.filterAndOrderChartMenu(
+            topLevelMenuItem = this.filterAndOrderChartMenu(
                 topLevelMenuItem,
                 chartGroupsDef,
                 builder.getConfigLookup()
@@ -70,7 +70,7 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
         return removeKeys(menuItem);
     }
 
-    private static buildLookup<T extends MenuItemDefWithKey<any>>(menuItem: T) {
+    private buildLookup<T extends MenuItemDefWithKey<any>>(menuItem: T) {
         const itemLookup: Record<any, T> = {} as any;
         const addItem = (item: T) => {
             itemLookup[item._key] = item;
@@ -85,7 +85,7 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
     /**
      * Make the MenuItem match the charts provided and their ordering on the ChartGroupsDef config object as provided by the user.
      */
-    private static filterAndOrderChartMenu<TKeys extends string>(
+    private filterAndOrderChartMenu<TKeys extends string>(
         topLevelMenuItem: MenuItemDefWithKey<TKeys>,
         chartGroupsDef: ChartGroupsDef,
         configLookup: ChartDefToMenuItems<TKeys>

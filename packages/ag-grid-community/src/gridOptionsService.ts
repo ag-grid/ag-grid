@@ -115,6 +115,8 @@ export function getCoercedGridOptions(gridOptions: GridOptions): GridOptions {
     return newGo;
 }
 
+let changeSetId = 0;
+
 export class GridOptionsService extends BeanStub implements NamedBean {
     beanName = 'gos' as const;
 
@@ -204,7 +206,6 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return callback;
     }
 
-    private static changeSetId = 0;
     public updateGridOptions({
         options,
         force,
@@ -214,7 +215,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         force?: boolean;
         source?: PropertyChangedSource;
     }): void {
-        const changeSet: PropertyChangeSet = { id: GridOptionsService.changeSetId++, properties: [] };
+        const changeSet: PropertyChangeSet = { id: changeSetId++, properties: [] };
         // all events are fired after grid options has finished updating.
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
         Object.entries(options).forEach(([key, value]) => {
