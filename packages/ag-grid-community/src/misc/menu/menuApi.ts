@@ -1,12 +1,12 @@
 import type { BeanCollection } from '../../context/context';
 import type { Column } from '../../interfaces/iColumn';
-import { _logError } from '../../validation/logging';
+import { _error } from '../../validation/logging';
 
 export function showColumnMenu(beans: BeanCollection, colKey: string | Column): void {
     const column = beans.columnModel.getCol(colKey);
     if (!column) {
         // No column found, can't show menu
-        _logError(12, { colKey });
+        _error(12, { colKey });
         return;
     }
     beans.menuService?.showColumnMenu({

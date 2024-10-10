@@ -1,5 +1,6 @@
 import type { ColDef } from '../entities/colDef';
 import type { Column } from '../interfaces/iColumn';
+import type { GetCellsParams } from './iCellsParams';
 import type { AgGridCommon } from './iCommon';
 import type { IPopupComponent } from './iPopupComponent';
 import type { IRowNode } from './iRowNode';
@@ -105,3 +106,5 @@ export interface ICellEditorComp<TData = any, TValue = any, TContext = any>
 export interface DefaultProvidedCellEditorParams {
     suppressPreventDefault?: boolean;
 }
+
+export interface GetCellEditorInstancesParams<TData = any> extends GetCellsParams<TData> {}

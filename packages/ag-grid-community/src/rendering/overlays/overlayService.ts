@@ -9,7 +9,7 @@ import type { GridOptions } from '../../entities/gridOptions';
 import { _isClientSideRowModel } from '../../gridOptionsUtils';
 import type { IRowModel } from '../../interfaces/iRowModel';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
-import { _logWarn } from '../../validation/logging';
+import { _warn } from '../../validation/logging';
 import type { ComponentSelector } from '../../widgets/component';
 import { OverlayWrapperComponent, OverlayWrapperSelector } from './overlayWrapperComponent';
 
@@ -105,7 +105,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.showInitialOverlay = false;
 
         if (this.gos.get('loading')) {
-            _logWarn(99);
+            _warn(99);
             return;
         }
 

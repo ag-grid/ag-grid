@@ -136,7 +136,6 @@
     border: solid 1px var(--ag-border-color);
     border-radius: var(--ag-border-radius);
     box-shadow: var(--ag-dropdown-shadow);
-    padding: var(--ag-spacing);
     background: var(--ag-background-color);
     height: calc(var(--ag-spacing) * 5 * 3.5);
     padding: 0;
@@ -151,7 +150,7 @@
     }
 
     &:focus-visible {
-        shadow: var(--ag-focus-shadow);
+        box-shadow: var(--ag-focus-shadow);
     }
 }
 

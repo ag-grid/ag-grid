@@ -15,9 +15,9 @@ import type { RowNode } from '../entities/rowNode';
 import type { CellValueChangedEvent } from '../events';
 import { _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
+import { _warn } from '../validation/logging';
 import type { ExpressionService } from './expressionService';
 import type { ValueCache } from './valueCache';
 
@@ -294,13 +294,8 @@ export class ValueService extends BeanStub implements NamedBean {
 
         const { field, valueSetter } = column.getColDef();
 
-        if (_missing(field) && _missing(valueSetter)) {
-            _warnOnce(`you need either field or valueSetter set on colDef for editing to work`);
-            return false;
-        }
-
         if (this.dataTypeService && !this.dataTypeService.checkType(column, newValue)) {
-            _warnOnce(`Data type of the new value does not match the cell data type of the column`);
+            _warn(135);
             return false;
         }
 
@@ -503,9 +498,7 @@ export class ValueService extends BeanStub implements NamedBean {
         result = String(result);
 
         if (result === '[object Object]') {
-            _warnOnce(
-                'a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se AG Grid docs) or b) to toString() on the object to return a key'
-            );
+            _warn(121);
         }
 
         return result;

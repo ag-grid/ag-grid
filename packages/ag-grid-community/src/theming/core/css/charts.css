@@ -95,9 +95,12 @@
 
 .ag-chart-settings-card-item {
     cursor: pointer;
-    width: 10px;
-    height: 10px;
     position: relative;
+    background-color: var(--ag-foreground-color);
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+
     &.ag-not-selected {
         opacity: 0.2;
     }
@@ -117,11 +120,6 @@
         width: 20px;
         height: 20px;
     }
-
-    background-color: var(--ag-foreground-color);
-    width: 8px;
-    height: 8px;
-    border-radius: 4px;
 
     &.ag-selected {
         background-color: var(--ag-accent-color);
@@ -276,7 +274,6 @@
 }
 
 .ag-chart-menu-icon {
-    opacity: 0.5;
     margin: 2px 0;
     cursor: pointer;
     border-radius: var(--ag-border-radius);

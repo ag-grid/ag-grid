@@ -1,5 +1,5 @@
 import { BeanStub } from '../context/beanStub';
-import type { LoadCompleteEvent, LoadSuccessParams } from './iRowNodeBlock';
+import type { LoadSuccessParams } from '../interfaces/iServerSideRowModel';
 
 type RowNodeBlockState = 'needsLoading' | 'loading' | 'loaded' | 'failed';
 
@@ -54,7 +54,7 @@ export abstract class RowNodeBlock extends BeanStub<RowNodeBlockEvent> {
             this.processServerFail();
         }
 
-        this.dispatchLoadCompleted(false);
+        this.dispatchLocalEvent({ type: 'loadComplete' });
     }
 
     protected success(version: number, params: LoadSuccessParams): void {
@@ -81,7 +81,7 @@ export abstract class RowNodeBlock extends BeanStub<RowNodeBlockEvent> {
         // need to dispatch load complete before processing the data, as PaginationComp checks
         // RowNodeBlockLoader to see if it is still loading, so the RowNodeBlockLoader needs to
         // be updated first (via LoadComplete event) before PaginationComp updates (via processServerResult method)
-        this.dispatchLoadCompleted();
+        this.dispatchLocalEvent({ type: 'loadComplete' });
 
         const requestMostRecentAndLive = this.isRequestMostRecentAndLive(version);
 
@@ -89,17 +89,5 @@ export abstract class RowNodeBlock extends BeanStub<RowNodeBlockEvent> {
             this.state = 'loaded';
             this.processServerResult(params);
         }
-    }
-
-    private dispatchLoadCompleted(success = true) {
-        // we fire event regardless of processing data or now, as we want
-        // the concurrentLoadRequests count to be reduced in BlockLoader
-        const event: LoadCompleteEvent = {
-            type: 'loadComplete',
-            success: success,
-            block: this,
-        };
-
-        this.dispatchLocalEvent(event);
     }
 }

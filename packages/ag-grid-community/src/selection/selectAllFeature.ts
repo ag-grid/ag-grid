@@ -15,7 +15,7 @@ import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellC
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import { _setAriaHidden, _setAriaRole } from '../utils/aria';
-import { _warnOnce } from '../utils/function';
+import { _warn } from '../validation/logging';
 import { AgCheckbox } from '../widgets/agCheckbox';
 
 export class SelectAllFeature extends BeanStub {
@@ -164,7 +164,7 @@ export class SelectAllFeature extends BeanStub {
         const isMultiSelect = _isMultiRowSelection(this.gos);
 
         if (!isMultiSelect) {
-            _warnOnce(`${feature} is only available if using 'multiRow' selection mode.`);
+            _warn(128, { feature });
             return false;
         }
         return true;
@@ -174,9 +174,7 @@ export class SelectAllFeature extends BeanStub {
         const rowModelMatches = _isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos);
 
         if (!rowModelMatches) {
-            _warnOnce(
-                `${feature} is only available if using 'clientSide' or 'serverSide' rowModelType, you are using ${this.rowModel.getType()}.`
-            );
+            _warn(129, { feature, rowModel: this.rowModel.getType() });
             return false;
         }
         return true;

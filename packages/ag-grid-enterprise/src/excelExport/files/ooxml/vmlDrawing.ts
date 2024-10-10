@@ -1,7 +1,7 @@
 import type { ExcelOOXMLTemplate, XmlElement } from 'ag-grid-community';
 
 import type { ExcelHeaderFooterCalculatedImage } from '../../assets/excelInterfaces';
-import { ExcelXlsxFactory } from '../../excelXlsxFactory';
+import { XLSX_WORKSHEET_HEADER_FOOTER_IMAGES } from '../../excelXlsxFactory';
 
 const getShapeLayout = (): XmlElement => ({
     name: 'o:shapelayout',
@@ -240,7 +240,7 @@ const getShape = (image: ExcelHeaderFooterCalculatedImage, idx: number): XmlElem
 
 const vmlDrawingFactory: ExcelOOXMLTemplate = {
     getTemplate(params: { sheetIndex: number }) {
-        const headerFooterImages = ExcelXlsxFactory.worksheetHeaderFooterImages.get(params.sheetIndex) || [];
+        const headerFooterImages = XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.get(params.sheetIndex) || [];
         const children: XmlElement[] = [
             getShapeLayout(),
             getShapeType(),

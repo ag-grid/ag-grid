@@ -17,7 +17,7 @@ import type { RowRenderer } from '../rendering/rowRenderer';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _getInnerHeight, _getScrollLeft, _isRtlNegativeScroll, _setScrollLeft } from '../utils/dom';
 import { _debounce } from '../utils/function';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 
 enum ScrollDirection {
@@ -501,7 +501,7 @@ export class GridBodyScrollFeature extends BeanStub {
         const rowCount = this.rowModel.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= rowCount) {
-            _logWarn(88, { index });
+            _warn(88, { index });
             return;
         }
 

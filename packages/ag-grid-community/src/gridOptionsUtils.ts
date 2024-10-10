@@ -26,7 +26,7 @@ import type { IRowModel, RowModelType } from './interfaces/iRowModel';
 import type { IRowNode } from './interfaces/iRowNode';
 import type { IServerSideRowModel } from './interfaces/iServerSideRowModel';
 import { _exists, _missing } from './utils/generic';
-import { _logWarn } from './validation/logging';
+import { _warn } from './validation/logging';
 
 function isRowModelType(gos: GridOptionsService, rowModelType: RowModelType): boolean {
     return gos.get('rowModelType') === rowModelType;
@@ -87,7 +87,7 @@ export function _getRowHeightForNode(
 
         if (isNumeric(height)) {
             if (height === 0) {
-                _logWarn(23);
+                _warn(23);
             }
             return { height: Math.max(1, height), estimated: false };
         }
@@ -135,7 +135,7 @@ export function _getRowHeightAsNumber(gos: GridOptionsService): number {
         return rowHeight;
     }
 
-    _logWarn(24);
+    _warn(24);
     return environment.getDefaultRowHeight();
 }
 
@@ -287,7 +287,7 @@ export function _getRowIdCallback<TData = any>(
         let id = getRowId(params);
 
         if (typeof id !== 'string') {
-            _logWarn(25, { id });
+            _warn(25, { id });
             id = String(id);
         }
 
@@ -311,6 +311,12 @@ export function _canSkipShowingRowGroup(gos: GridOptionsService, node: RowNode):
         return true;
     }
     return false;
+}
+
+export function _getMaxConcurrentDatasourceRequests(gos: GridOptionsService): number | undefined {
+    const res = gos.get('maxConcurrentDatasourceRequests');
+    // negative number, eg -1, means no max restriction
+    return res > 0 ? res : undefined;
 }
 
 /** Get the selection checkbox configuration. Defaults to enabled. */
@@ -491,6 +497,24 @@ export function _getGroupSelection(gos: GridOptionsService): GroupSelectionMode 
     }
 
     return selection?.mode === 'multiRow' ? selection.groupSelects : undefined;
+}
+
+export function _getSelectAllFiltered(gos: GridOptionsService): boolean {
+    const rowSelection = gos.get('rowSelection');
+    if (typeof rowSelection === 'string') {
+        return false;
+    } else {
+        return rowSelection?.mode === 'multiRow' ? rowSelection.selectAll === 'filtered' : false;
+    }
+}
+
+export function _getSelectAllCurrentPage(gos: GridOptionsService): boolean {
+    const rowSelection = gos.get('rowSelection');
+    if (typeof rowSelection === 'string') {
+        return false;
+    } else {
+        return rowSelection?.mode === 'multiRow' ? rowSelection.selectAll === 'currentPage' : false;
+    }
 }
 
 export function _getGroupSelectsDescendants(gos: GridOptionsService): boolean {

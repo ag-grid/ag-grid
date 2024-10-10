@@ -14,7 +14,7 @@ import type { ColumnAnimationService } from '../rendering/columnAnimationService
 import type { SortController } from '../sort/sortController';
 import { _areEqual, _removeFromArray } from '../utils/array';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import {
     dispatchColumnChangedEvent,
     dispatchColumnPinnedEvent,
@@ -104,7 +104,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
         if (!params?.state?.forEach) {
             // state is not an array
-            _logWarn(32);
+            _warn(32);
             return false;
         }
 

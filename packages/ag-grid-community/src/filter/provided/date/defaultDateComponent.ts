@@ -3,7 +3,7 @@ import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _getSafariVersion, _isBrowserChrome, _isBrowserFirefox, _isBrowserSafari } from '../../../utils/browser';
 import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
-import { _logWarn } from '../../../validation/logging';
+import { _warn } from '../../../validation/logging';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
 import { AgInputTextFieldSelector } from '../../../widgets/agInputTextField';
 import { Component, RefPlaceholder } from '../../../widgets/component';
@@ -95,11 +95,11 @@ export class DefaultDateComponent extends Component implements IDateComp {
         const { minValidYear, maxValidYear, minValidDate, maxValidDate, buttons } = params.filterParams || {};
 
         if (minValidDate && minValidYear) {
-            _logWarn(85);
+            _warn(85);
         }
 
         if (maxValidDate && maxValidYear) {
-            _logWarn(86);
+            _warn(86);
         }
 
         if (minValidDate && maxValidDate) {
@@ -112,7 +112,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
                 parsedMaxValidDate &&
                 parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()
             ) {
-                _logWarn(87);
+                _warn(87);
             }
         }
 

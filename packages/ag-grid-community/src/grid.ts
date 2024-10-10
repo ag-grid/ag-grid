@@ -19,7 +19,7 @@ import {
 } from './modules/moduleRegistry';
 import { _missing } from './utils/generic';
 import { _mergeDeep } from './utils/object';
-import { _logError, _logPreCreationError } from './validation/logging';
+import { _error, _logPreCreationError } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 
 export interface GridParams {
@@ -120,7 +120,7 @@ export function createGrid<TData>(
 ): GridApi<TData> {
     if (!gridOptions) {
         // No gridOptions provided, abort creating the grid
-        _logError(11);
+        _error(11);
         return {} as GridApi;
     }
     const api = new GridCoreCreator().create(

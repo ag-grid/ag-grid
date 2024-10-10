@@ -8,7 +8,7 @@ import type { RowNode } from '../entities/rowNode';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { _exists } from '../utils/generic';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import type { FilterValueService } from './filterValueService';
 
 export type QuickFilterServiceEvent = 'quickFilterChanged';
@@ -126,7 +126,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
 
     private setQuickFilter(newFilter: string | undefined): void {
         if (newFilter != null && typeof newFilter !== 'string') {
-            _logWarn(70, { newFilter });
+            _warn(70, { newFilter });
             return;
         }
 

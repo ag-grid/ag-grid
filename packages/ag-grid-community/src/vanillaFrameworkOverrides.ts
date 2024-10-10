@@ -1,3 +1,4 @@
+import { BASE_URL } from './baseUrl';
 import type { FrameworkOverridesIncomingSource, IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import { _includes } from './utils/array';
 import { AgPromise } from './utils/promise';
@@ -11,7 +12,7 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     private baseDocLink: string;
 
     constructor(private frameworkName: 'javascript' | 'angular' | 'react' | 'vue' = 'javascript') {
-        this.baseDocLink = `https://www.ag-grid.com/${this.frameworkName}-data-grid`;
+        this.baseDocLink = `${BASE_URL}/${this.frameworkName}-data-grid`;
         setValidationDocLink(this.baseDocLink);
     }
 

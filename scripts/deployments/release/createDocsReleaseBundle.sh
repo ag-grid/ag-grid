@@ -3,7 +3,7 @@
 if [ "$#" -lt 1 ]
   then
     echo "You must supply a release version number"
-    echo "For example: ./scripts/release/createDocsReleaseBundle.sh 19.1.2"
+    echo "For example: ./scripts/deployments/release/createDocsReleaseBundle.sh 19.1.2"
     exit 1
 fi
 
