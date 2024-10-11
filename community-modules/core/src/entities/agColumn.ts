@@ -644,7 +644,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
 
     public isSpanHeaderHeight(): boolean {
         const colDef = this.getColDef();
-        return !colDef.suppressSpanHeaderHeight && !colDef.autoHeaderHeight;
+        return !colDef.suppressSpanHeaderHeight;
     }
 
     public getColumnGroupPaddingInfo(): { numberOfParents: number; isSpanningTotal: boolean } {
