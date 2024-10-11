@@ -9,11 +9,10 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { GridOptions } from '../entities/gridOptions';
 import type { Environment } from '../environment';
 import type { ColumnEventType } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
-import { _getCheckboxes, _getHeaderCheckbox, _isDomLayout, _shouldMaintainColumnOrder } from '../gridOptionsUtils';
+import { _isDomLayout, _shouldMaintainColumnOrder } from '../gridOptionsUtils';
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderRowCtrl } from '../headerRendering/row/headerRowCtrl';
 import type { IAutoColService } from '../interfaces/iAutoColService';
@@ -31,12 +30,10 @@ import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnState, ColumnStateService } from './columnStateService';
 import {
     GROUP_AUTO_COLUMN_ID,
-    _areColIdsEqual,
     _columnsMatch,
     _convertColumnEventSourceType,
     _destroyColumnTree,
     _getColumnsFromTree,
-    _updateColsMap,
     isColumnGroupAutoCol,
 } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
@@ -105,9 +102,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // this doesn't change (including order) unless columnDefs prop changses.
     private colDefCols: ColumnCollections;
 
-    // selection checkbox columns
-    private selectionCols: ColumnCollections | null;
-
     // [providedCols OR pivotResultCols] PLUS autoGroupCols PLUS selectionCols
     // this cols.list maintains column order.
     private cols: ColumnCollections;
@@ -142,13 +136,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
             ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'],
             (event) => this.refreshAll(_convertColumnEventSourceType(event.source))
         );
-        this.addManagedPropertyListener('rowSelection', (event) => {
-            this.onSelectionOptionsChanged(
-                event.currentValue,
-                event.previousValue,
-                _convertColumnEventSourceType(event.source)
-            );
-        });
         this.addManagedPropertyListeners(
             ['defaultColDef', 'defaultColGroupDef', 'columnTypes', 'suppressFieldDotNotation'],
             (event) => this.recreateColumnDefs(_convertColumnEventSourceType(event.source))
@@ -238,7 +225,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.autoColService?.addAutoCols(this.cols);
 
         this.createSelectionCols();
-        this.addSelectionCols();
+        this.selectionColService?.addSelectionCols(this.cols);
 
         const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
         if (!newColDefs || shouldSortNewColDefs) {
@@ -319,52 +306,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private createSelectionCols(): void {
-        const destroyCollection = () => {
-            _destroyColumnTree(this.context, this.selectionCols?.tree);
-            this.selectionCols = null;
-        };
-
-        if (!this.selectionColService) {
-            destroyCollection();
-        }
-
-        // the new tree dept will equal the current tree dept of cols
-        const newTreeDepth = this.cols.treeDepth;
-        const oldTreeDepth = this.selectionCols?.treeDepth ?? -1;
-        const treeDeptSame = oldTreeDepth == newTreeDepth;
-
-        const list = this.selectionColService?.createSelectionCols() ?? [];
-        const areSame = _areColIdsEqual(list, this.selectionCols?.list ?? []);
-
-        if (areSame && treeDeptSame) {
-            return;
-        }
-
-        destroyCollection();
-        const treeDepth = this.columnFactory.findDepth(this.cols.tree);
-        const tree = this.autoColService?.balanceTreeForAutoCols(list, treeDepth) ?? [];
-        this.selectionCols = {
-            list,
-            tree,
-            treeDepth,
-            map: {},
-        };
-
-        this.lastOrder = this.selectionColService?.putSelectionColsFirstInList(list, this.lastOrder) ?? null;
-        this.lastPivotOrder = this.selectionColService?.putSelectionColsFirstInList(list, this.lastPivotOrder) ?? null;
-    }
-
-    private addSelectionCols(): void {
-        if (this.selectionCols == null) {
-            return;
-        }
-        this.cols.list = this.selectionCols.list.concat(this.cols.list);
-        this.cols.tree = this.selectionCols.tree.concat(this.cols.tree);
-        _updateColsMap(this.cols);
+        this.selectionColService?.createSelectionCols(this.cols, (updateOrder) => {
+            this.lastOrder = updateOrder(this.lastOrder) ?? null;
+            this.lastPivotOrder = updateOrder(this.lastPivotOrder) ?? null;
+        });
     }
 
     // on events 'groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'
-    private refreshAll(source: ColumnEventType) {
+    public refreshAll(source: ColumnEventType) {
         if (!this.isReady()) {
             return;
         }
@@ -476,17 +425,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const rowGroupCols = this.funcColsService.rowGroupCols;
         const colIndex = rowGroupCols.findIndex((groupCol) => groupCol.getColId() === column.getColId());
         return groupLockGroupColumns > colIndex;
-    }
-
-    public isSuppressAutoCol() {
-        const groupDisplayType = this.gos.get('groupDisplayType');
-        const isCustomRowGroups = groupDisplayType === 'custom';
-        if (isCustomRowGroups) {
-            return true;
-        }
-
-        const treeDataDisplayType = this.gos.get('treeDataDisplayType');
-        return treeDataDisplayType === 'custom';
     }
 
     private setAutoHeightActive(): void {
@@ -781,7 +719,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     public override destroy(): void {
         _destroyColumnTree(this.context, this.colDefCols?.tree);
-        _destroyColumnTree(this.context, this.selectionCols?.tree);
         super.destroy();
     }
 
@@ -811,7 +748,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return [
             this.colDefCols?.list ?? [],
             this.autoColService?.autoCols?.list ?? [],
-            this.selectionCols?.list ?? [],
+            this.selectionColService?.selectionCols?.list ?? [],
             pivotResultColsList ?? [],
         ].flat();
     }
@@ -868,11 +805,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public getSelectionCol(key: ColKey): AgColumn | null {
-        return this.selectionCols?.list.find((col) => _columnsMatch(col, key)) ?? null;
+        return this.selectionColService?.getSelectionCol(key) ?? null;
     }
 
     public getSelectionCols(): AgColumn[] | null {
-        return this.selectionCols?.list ?? null;
+        return this.selectionColService?.getSelectionCols() ?? null;
     }
 
     public setColHeaderHeight(col: AgColumn | AgColumnGroup, height: number): void {
@@ -971,23 +908,5 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
     public getPivotGroupHeaderHeight(): number {
         return this.gos.get('pivotGroupHeaderHeight') ?? this.getGroupHeaderHeight();
-    }
-
-    private onSelectionOptionsChanged(
-        current: GridOptions['rowSelection'],
-        prev: GridOptions['rowSelection'],
-        source: ColumnEventType
-    ) {
-        const prevCheckbox = prev && typeof prev !== 'string' ? _getCheckboxes(prev) : undefined;
-        const currCheckbox = current && typeof current !== 'string' ? _getCheckboxes(current) : undefined;
-        const checkboxHasChanged = prevCheckbox !== currCheckbox;
-
-        const prevHeaderCheckbox = prev && typeof prev !== 'string' ? _getHeaderCheckbox(prev) : undefined;
-        const currHeaderCheckbox = current && typeof current !== 'string' ? _getHeaderCheckbox(current) : undefined;
-        const headerCheckboxHasChanged = prevHeaderCheckbox !== currHeaderCheckbox;
-
-        if (checkboxHasChanged || headerCheckboxHasChanged) {
-            this.refreshAll(source);
-        }
     }
 }

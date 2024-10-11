@@ -133,17 +133,6 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         updateOrders(putAutoColsFirstInList);
     }
 
-    public isSuppressAutoCol() {
-        const groupDisplayType = this.gos.get('groupDisplayType');
-        const isCustomRowGroups = groupDisplayType === 'custom';
-        if (isCustomRowGroups) {
-            return true;
-        }
-
-        const treeDataDisplayType = this.gos.get('treeDataDisplayType');
-        return treeDataDisplayType === 'custom';
-    }
-
     /**
      * Inserts dummy group columns in the hierarchy above auto-generated columns
      * in order to ensure auto-generated columns are leaf nodes (and therefore are
@@ -213,6 +202,17 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         if (this.autoCols) {
             this.autoCols.list.forEach((col, index) => this.updateOneAutoCol(col, index, source));
         }
+    }
+
+    private isSuppressAutoCol() {
+        const groupDisplayType = this.gos.get('groupDisplayType');
+        const isCustomRowGroups = groupDisplayType === 'custom';
+        if (isCustomRowGroups) {
+            return true;
+        }
+
+        const treeDataDisplayType = this.gos.get('treeDataDisplayType');
+        return treeDataDisplayType === 'custom';
     }
 
     // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
