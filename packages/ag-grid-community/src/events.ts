@@ -293,6 +293,7 @@ export interface PinnedHeightChangedEvent<TData = any, TContext = any>
  * - `rowGroupChanged` - grouping changed which updated the selection
  * - `selectableChanged`- selectable status of row has changed when `rowSelection.groupSelects` is `'descendants'` or `'filteredDescendants'`
  * - `spaceKey` - space key pressed on row
+ * - `keyboardSelectAll` - select all via keyboard shortcut (CTRL+A)
  * - `uiSelectAll` - select all in header clicked
  * - `uiSelectAllFiltered` - select all in header clicked when `rowSelection.selectAll = 'filtered'`
  * - `uiSelectAllCurrentPage` - select all in header clicked when `rowSelection.selectAll = 'currentPage'`
@@ -309,6 +310,7 @@ export type SelectionEventSourceType =
     | 'rowGroupChanged'
     | 'selectableChanged'
     | 'spaceKey'
+    | 'keyboardSelectAll'
     | 'uiSelectAll'
     | 'uiSelectAllFiltered'
     | 'uiSelectAllCurrentPage'
@@ -1028,7 +1030,7 @@ export interface AsyncTransactionsFlushedEvent<TData = any, TContext = any>
      * Array of result objects. for SSRM it's always list of `ServerSideTransactionResult`.
      * For Client-Side Row Model it's a list of `RowNodeTransaction`.
      */
-    results: (RowNodeTransaction<TData> | ServerSideTransactionResult)[];
+    results: (RowNodeTransaction<TData> | ServerSideTransactionResult<TData>)[];
 }
 /** @deprecated v32 Use AsyncTransactionsFlushedEvent */
 export interface AsyncTransactionsFlushed<TData = any, TContext = any>

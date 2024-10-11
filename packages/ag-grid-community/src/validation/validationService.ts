@@ -12,7 +12,7 @@ import { validateApiFunction } from './apiFunctionValidator';
 import { ENTERPRISE_MODULE_NAMES } from './enterpriseModuleNames';
 import type { ErrorId, GetErrorParams } from './errorMessages/errorText';
 import { getError } from './errorMessages/errorText';
-import { _logError, provideValidationServiceLogger } from './logging';
+import { _error, provideValidationServiceLogger } from './logging';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import type { DependentValues, OptionsValidation, OptionsValidator, RequiredOptions } from './validationTypes';
 
@@ -46,7 +46,7 @@ export class ValidationService extends BeanStub implements NamedBean {
     public missingModule(moduleName: ModuleName, reason: string, gridId: string): void {
         const gridScoped = _areModulesGridScoped();
         const isEnterprise = ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName] === 1;
-        _logError(200, {
+        _error(200, {
             reason,
             moduleName,
             gridScoped,

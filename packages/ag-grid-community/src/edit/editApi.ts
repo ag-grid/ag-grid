@@ -6,7 +6,7 @@ import type { AgColumn } from '../entities/agColumn';
 import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { GetCellEditorInstancesParams, ICellEditor } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 
 export function undoCellEditing(beans: BeanCollection): void {
     beans.undoRedoService?.undo('api');
@@ -53,7 +53,7 @@ export function stopEditing(beans: BeanCollection, cancel: boolean = false): voi
 export function startEditingCell(beans: BeanCollection, params: StartEditingCellParams): void {
     const column = beans.columnModel.getCol(params.colKey);
     if (!column) {
-        _logWarn(12, { colKey: params.colKey });
+        _warn(12, { colKey: params.colKey });
         return;
     }
     const cellPosition: CellPosition = {

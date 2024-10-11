@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AllEvents } from '../events';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import type { GridApi } from './gridApi';
 import { gridApiFunctionsMap } from './gridApiFunctions';
 import type { ApiFunction, ApiFunctionName } from './iApiFunction';
@@ -86,11 +86,11 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
     private apiNotFound(fnName: ApiFunctionName): void {
         const { beans, gos, preDestroyLink } = this;
         if (!beans) {
-            _logWarn(26, { fnName, preDestroyLink });
+            _warn(26, { fnName, preDestroyLink });
         } else {
             const module = gridApiFunctionsMap[fnName];
             if (gos.assertModuleRegistered(module, `api.${fnName}`)) {
-                _logWarn(27, { fnName, module });
+                _warn(27, { fnName, module });
             }
         }
     }

@@ -1,7 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import { _isServerSideRowModel } from '../gridOptionsUtils';
 import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
-import { _logError } from '../validation/logging';
+import { _error } from '../validation/logging';
 import { _getInfiniteRowModel, _getServerSideRowModel } from './rowModelApiUtils';
 
 export function setRowCount(beans: BeanCollection, rowCount: number, maxRowFound?: boolean): void {
@@ -11,7 +11,7 @@ export function setRowCount(beans: BeanCollection, rowCount: number, maxRowFound
             serverSideRowModel.setRowCount(rowCount, maxRowFound);
             return;
         }
-        _logError(28);
+        _error(28);
         return;
     }
 

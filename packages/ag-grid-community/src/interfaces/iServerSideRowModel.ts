@@ -4,29 +4,29 @@ import type { IRowNode } from './iRowNode';
 import type { IServerSideDatasource } from './iServerSideDatasource';
 import type { ServerSideTransaction, ServerSideTransactionResult } from './serverSideTransaction';
 
-export interface IServerSideRowModel extends IRowModel {
+export interface IServerSideRowModel<TData = any> extends IRowModel {
     refreshStore(params?: RefreshServerSideParams): void;
     onRowHeightChanged(): void;
     onRowHeightChangedDebounced(): void;
     getStoreState(): ServerSideGroupLevelState[];
     retryLoads(): void;
     expandAll(value: boolean): void;
-    setDatasource(datasource: IServerSideDatasource): void;
+    setDatasource(datasource: IServerSideDatasource<TData>): void;
     forEachNodeAfterFilterAndSort(
-        callback: (node: IRowNode, index: number) => void,
+        callback: (node: IRowNode<TData>, index: number) => void,
         includeFooterNodes?: boolean
     ): void;
     resetRootStore(): void;
     getBlockStates(): void;
     setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void;
-    applyRowData(rowDataParams: LoadSuccessParams, startRow: number, route: string[]): void;
+    applyRowData(rowDataParams: LoadSuccessParams<TData>, startRow: number, route: string[]): void;
 }
 
-export interface IServerSideTransactionManager {
-    applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined;
+export interface IServerSideTransactionManager<TData = any> {
+    applyTransaction(transaction: ServerSideTransaction<TData>): ServerSideTransactionResult<TData> | undefined;
     applyTransactionAsync(
-        transaction: ServerSideTransaction,
-        callback?: (res: ServerSideTransactionResult) => void
+        transaction: ServerSideTransaction<TData>,
+        callback?: (res: ServerSideTransactionResult<TData>) => void
     ): void;
     flushAsyncTransactions(): void;
 }
@@ -45,11 +45,11 @@ export interface RefreshServerSideParams {
     purge?: boolean;
 }
 
-export interface LoadSuccessParams {
+export interface LoadSuccessParams<TData = any> {
     /**
      * Data retrieved from the server as requested by the grid.
      */
-    rowData: any[];
+    rowData: TData[];
     /**
      * The last row, if known, to help Infinite Scroll.
      */

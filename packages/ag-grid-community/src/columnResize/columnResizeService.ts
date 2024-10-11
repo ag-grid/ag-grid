@@ -12,7 +12,7 @@ import type { ColumnEventType } from '../events';
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
 import type { IHeaderGroupCellComp } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
-import { _logError } from '../validation/logging';
+import { _error } from '../validation/logging';
 import { GroupResizeFeature } from './groupResizeFeature';
 import { ResizeFeature } from './resizeFeature';
 
@@ -150,7 +150,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
                 if (loopCount > 1000) {
                     // this should never happen, but in the future, someone might introduce a bug here,
                     // so we stop the browser from hanging and report bug properly
-                    _logError(31);
+                    _error(31);
                     break;
                 }
 

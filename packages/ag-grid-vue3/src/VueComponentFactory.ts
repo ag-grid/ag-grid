@@ -1,6 +1,6 @@
 import { createVNode, defineComponent, render } from 'vue';
 
-import { _logError } from 'ag-grid-community';
+import { _error } from 'ag-grid-community';
 
 export class VueComponentFactory {
     private static getComponentDefinition(component: any, parent: any) {
@@ -14,7 +14,7 @@ export class VueComponentFactory {
             componentDefinition = { extends: defineComponent({ ...component }) };
         }
         if (!componentDefinition) {
-            _logError(114, { component });
+            _error(114, { component });
         }
 
         if (componentDefinition.extends) {
@@ -118,7 +118,7 @@ export class VueComponentFactory {
         }
 
         if (!componentInstance && !suppressError) {
-            _logError(114, { component });
+            _error(114, { component });
             return null;
         }
         return componentInstance;

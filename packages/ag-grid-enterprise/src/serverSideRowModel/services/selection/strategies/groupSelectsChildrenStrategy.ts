@@ -13,10 +13,10 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
+    _error,
     _errorOnce,
     _isMultiRowSelection,
     _last,
-    _logError,
     _warnOnce,
     isSelectionUIEvent,
 } from 'ag-grid-community';
@@ -86,7 +86,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     public setSelectedState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void {
         if ('selectAll' in state) {
             // 'Invalid selection state. When `groupSelectsChildren` is enabled, the state must conform to `IServerSideGroupSelectionState`.'
-            _logError(111);
+            _error(111);
             return;
         }
 

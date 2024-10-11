@@ -16,7 +16,7 @@ import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import { _last } from '../utils/array';
 import { _missing } from '../utils/generic';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 
 export class CellNavigationService extends BeanStub implements NamedBean {
     beanName = 'cellNavigationService' as const;
@@ -101,7 +101,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                 default:
                     pointer = null;
                     // unknown key, do nothing
-                    _logWarn(8, { key });
+                    _warn(8, { key });
                     break;
             }
 

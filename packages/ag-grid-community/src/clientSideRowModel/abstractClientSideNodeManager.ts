@@ -10,7 +10,7 @@ import type {
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import { _exists, _missingOrEmpty } from '../utils/generic';
 import { _cloneObject, _iterateObject } from '../utils/object';
-import { _logError, _logWarn } from '../validation/logging';
+import { _error, _warn } from '../validation/logging';
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
 
@@ -454,7 +454,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         node.setDataAndId(dataItem, String(this.nextId));
 
         if (this.allNodesMap[node.id!]) {
-            _logWarn(2, { nodeId: node.id });
+            _warn(2, { nodeId: node.id });
         }
         this.allNodesMap[node.id!] = node;
 
@@ -470,14 +470,14 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             const id = getRowIdFunc({ data, level: 0 });
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                _logError(4, { id });
+                _error(4, { id });
                 return null;
             }
         } else {
             // find rowNode using object references
             rowNode = this.rootNode.allLeafChildren?.find((node) => node.data === data);
             if (!rowNode) {
-                _logError(5, { data });
+                _error(5, { data });
                 return null;
             }
         }

@@ -192,7 +192,7 @@
 .ag-advanced-filter-builder-pill,
 .ag-advanced-filter-builder-item-button {
     &:focus-visible {
-        shadow: var(--ag-focus-shadow);
+        box-shadow: var(--ag-focus-shadow);
     }
 }
 
