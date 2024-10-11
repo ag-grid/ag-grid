@@ -64,7 +64,7 @@ function Item({ itemData, framework, pageName }: { itemData?: any; framework: Fr
 
                 {itemData.children && (
                     <div className={styles.nestedItems}>
-                        {itemData.children.map((childData, i) => {
+                        {itemData.children.map((childData) => {
                             return (
                                 <Item
                                     key={childData.title}
