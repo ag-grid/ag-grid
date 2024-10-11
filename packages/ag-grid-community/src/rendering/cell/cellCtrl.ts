@@ -557,12 +557,14 @@ export class CellCtrl extends BeanStub {
         this.beans.editService?.setFocusInOnEditor(this);
     }
 
-    public onCellChanged(event: CellChangedEvent): void {
+    public onCellChanged(event: CellChangedEvent): boolean {
         const eventImpactsThisCell = event.column === this.column;
 
         if (eventImpactsThisCell) {
             this.refreshCell({});
         }
+
+        return eventImpactsThisCell;
     }
 
     public refreshOrDestroyCell(params?: { suppressFlash?: boolean; newData?: boolean; forceRefresh?: boolean }): void {

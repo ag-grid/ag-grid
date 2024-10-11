@@ -22,13 +22,13 @@ export function getCellEditorInstances<TData = any>(
 ): ICellEditor[] {
     const res: ICellEditor[] = [];
 
-    beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]).forEach((cellCtrl) => {
+    for (const cellCtrl of beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[])) {
         const cellEditor = cellCtrl.getCellEditor() as ICellEditor;
 
         if (cellEditor) {
             res.push(_unwrapUserComp(cellEditor));
         }
-    });
+    }
 
     return res;
 }
@@ -36,12 +36,12 @@ export function getCellEditorInstances<TData = any>(
 export function getEditingCells(beans: BeanCollection): CellPosition[] {
     const res: CellPosition[] = [];
 
-    beans.rowRenderer.getAllCellCtrls().forEach((cellCtrl) => {
+    for (const cellCtrl of beans.rowRenderer.getAllCellCtrls()) {
         if (cellCtrl.isEditing()) {
             const cellPosition = cellCtrl.getCellPosition();
             res.push(cellPosition);
         }
-    });
+    }
 
     return res;
 }

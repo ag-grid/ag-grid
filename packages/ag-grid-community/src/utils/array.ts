@@ -131,3 +131,21 @@ export function _forEachReverse<T>(list: T[], action: (value: T, index: number) 
         action(list[i], i);
     }
 }
+
+export function _some<T>(iterator: Iterable<T>, predicate: (item: T) => boolean): boolean {
+    for (const item of iterator) {
+        if (predicate(item)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+export function _find<T>(iterator: Iterable<T>, predicate: (item: T) => boolean): T | undefined {
+    for (const item of iterator) {
+        if (predicate(item)) {
+            return item;
+        }
+    }
+    return undefined;
+}
