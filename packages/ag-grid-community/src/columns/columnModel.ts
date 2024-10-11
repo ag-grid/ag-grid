@@ -3,12 +3,10 @@ import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/col
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, Context } from '../context/context';
-import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { Environment } from '../environment';
 import type { ColumnEventType } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import { _isDomLayout, _shouldMaintainColumnOrder } from '../gridOptionsUtils';
@@ -55,7 +53,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     beanName = 'columnModel' as const;
 
     private context: Context;
-    private ctrlsService: CtrlsService;
     private columnFactory: ColumnFactory;
     private visibleColsService: VisibleColsService;
     private columnViewportService: ColumnViewportService;
@@ -70,11 +67,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private funcColsService: FuncColsService;
     private quickFilterService?: QuickFilterService;
     private showRowGroupColsService?: IShowRowGroupColsService;
-    private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
         this.context = beans.context;
-        this.ctrlsService = beans.ctrlsService;
         this.columnFactory = beans.columnFactory;
         this.visibleColsService = beans.visibleColsService;
         this.columnViewportService = beans.columnViewportService;
@@ -89,7 +84,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.funcColsService = beans.funcColsService;
         this.quickFilterService = beans.quickFilterService;
         this.showRowGroupColsService = beans.showRowGroupColsService;
-        this.environment = beans.environment;
     }
 
     // as provided by gridProp columnsDefs
@@ -113,18 +107,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private lastPivotOrder: AgColumn[] | null;
 
     // true if we are doing column spanning
-    private colSpanActive: boolean;
+    public colSpanActive: boolean;
 
     // grid columns that have colDef.autoHeight set
-    private autoHeightActive: boolean;
-    private autoHeightActiveAtLeastOnce = false;
+    public autoRowHeightActive: boolean;
+    public wasAutoRowHeightEverActive = false;
 
-    private ready = false;
-    private changeEventsDispatching = false;
-
-    // when we're waiting for cell data types to be inferred, we need to defer column resizing
-    private shouldQueueResizeOperations: boolean = false;
-    private resizeOperationQueue: (() => void)[] = [];
+    public ready = false;
+    public changeEventsDispatching = false;
 
     public postConstruct(): void {
         this.pivotMode = this.gos.get('pivotMode');
@@ -278,7 +268,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // pivot mode is on, but we are not pivoting, so we only
         // show columns we are aggregating on
 
-        const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.isShowingPivotResult();
+        const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.showingPivotResult;
         const valueColumns = this.funcColsService.valueCols;
 
         const res = this.cols.list.filter((col) => {
@@ -311,7 +301,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     // on events 'groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'
     public refreshAll(source: ColumnEventType) {
-        if (!this.isReady()) {
+        if (!this.ready) {
             return;
         }
         this.refreshCols(false);
@@ -425,10 +415,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private setAutoHeightActive(): void {
-        this.autoHeightActive = this.cols.list.some((col) => col.isVisible() && col.isAutoHeight());
+        this.autoRowHeightActive = this.cols.list.some((col) => col.isVisible() && col.isAutoHeight());
 
-        if (this.autoHeightActive) {
-            this.autoHeightActiveAtLeastOnce = true;
+        if (this.autoRowHeightActive) {
+            this.wasAutoRowHeightEverActive = true;
         }
     }
 
@@ -581,24 +571,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return true;
     }
 
-    public queueResizeOperations(): void {
-        this.shouldQueueResizeOperations = true;
-    }
-
-    public isShouldQueueResizeOperations(): boolean {
-        return this.shouldQueueResizeOperations;
-    }
-
-    public processResizeOperations(): void {
-        this.shouldQueueResizeOperations = false;
-        this.resizeOperationQueue.forEach((resizeOperation) => resizeOperation());
-        this.resizeOperationQueue = [];
-    }
-
-    public pushResizeOperation(func: () => void): void {
-        this.resizeOperationQueue.push(func);
-    }
-
     public moveInCols(movedColumns: AgColumn[], toIndex: number, source: ColumnEventType): void {
         _moveInArray(this.cols?.list, movedColumns, toIndex);
         this.visibleColsService.refresh(source);
@@ -627,19 +599,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
             : undefined;
     }
 
-    public isShowingPivotResult(): boolean {
-        return this.showingPivotResult;
-    }
-
-    // called by clientSideRowModel.refreshModel
-    public isChangeEventsDispatching(): boolean {
-        return this.changeEventsDispatching;
-    }
-
-    public isColSpanActive(): boolean {
-        return this.colSpanActive;
-    }
-
     // used by Column Tool Panel
     public isProvidedColGroupsPresent(): boolean {
         return this.colDefCols?.treeDepth > 0;
@@ -649,21 +608,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.colSpanActive = this.cols.list.some((col) => col.getColDef().colSpan != null);
     }
 
-    public isAutoRowHeightActive(): boolean {
-        return this.autoHeightActive;
-    }
-
-    public wasAutoRowHeightEverActive(): boolean {
-        return this.autoHeightActiveAtLeastOnce;
-    }
-
     // + gridPanel -> for resizing the body and setting top margin
     public getHeaderRowCount(): number {
         return this.cols ? this.cols.treeDepth + 1 : -1;
-    }
-
-    public isReady(): boolean {
-        return this.ready;
     }
 
     public isPivotMode(): boolean {

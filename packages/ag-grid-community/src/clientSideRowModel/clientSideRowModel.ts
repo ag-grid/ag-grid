@@ -634,7 +634,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void {
-        if (!this.hasStarted || this.isRefreshingModel || this.columnModel.isChangeEventsDispatching()) {
+        if (!this.hasStarted || this.isRefreshingModel || this.columnModel.changeEventsDispatching) {
             return;
         }
 
@@ -711,7 +711,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public isEmpty(): boolean {
         const rowsMissing = _missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
-        return _missing(this.rootNode) || rowsMissing || !this.columnModel.isReady();
+        return _missing(this.rootNode) || rowsMissing || !this.columnModel.ready;
     }
 
     public isRowsToRender(): boolean {
@@ -1308,7 +1308,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private onGridStylesChanges(e: CssVariablesChanged) {
         if (e.rowHeightChanged) {
-            if (this.columnModel.isAutoRowHeightActive()) {
+            if (this.columnModel.autoRowHeightActive) {
                 return;
             }
 

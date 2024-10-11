@@ -295,7 +295,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     public getLeftColsForRow(rowNode: RowNode): AgColumn[] {
-        const colSpanActive = this.columnModel.isColSpanActive();
+        const colSpanActive = this.columnModel.colSpanActive;
         if (!colSpanActive) {
             return this.leftCols;
         }
@@ -304,7 +304,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     public getRightColsForRow(rowNode: RowNode): AgColumn[] {
-        const colSpanActive = this.columnModel.isColSpanActive();
+        const colSpanActive = this.columnModel.colSpanActive;
         if (!colSpanActive) {
             return this.rightCols;
         }

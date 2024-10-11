@@ -125,7 +125,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             return this.createComponentFromItem(item, listItemElement);
         });
 
-        if (this.columnModel.isReady()) {
+        if (this.columnModel.ready) {
             this.onColumnsChanged();
         }
 

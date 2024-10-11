@@ -68,7 +68,7 @@ export class StoreFactory extends BeanStub implements NamedBean {
             return undefined;
         }
 
-        if (this.columnModel.isAutoRowHeightActive()) {
+        if (this.columnModel.autoRowHeightActive) {
             const message =
                 'Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
                 'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.';

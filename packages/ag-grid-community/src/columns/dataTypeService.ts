@@ -1,3 +1,4 @@
+import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
 import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -43,6 +44,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private valueService: ValueService;
     private columnStateService: ColumnStateService;
     private filterManager?: FilterManager;
+    private columnAutosizeService?: ColumnAutosizeService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
@@ -51,6 +53,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.valueService = beans.valueService;
         this.columnStateService = beans.columnStateService;
         this.filterManager = beans.filterManager;
+        this.columnAutosizeService = beans.columnAutosizeService;
     }
 
     private dataTypeDefinitions: {
@@ -441,8 +444,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
         this.isWaitingForRowData = true;
         const columnTypeOverridesExist = this.isColumnTypeOverrideInDataTypeDefinitions;
-        if (columnTypeOverridesExist) {
-            this.columnModel.queueResizeOperations();
+        if (columnTypeOverridesExist && this.columnAutosizeService) {
+            this.columnAutosizeService.shouldQueueResizeOperations = true;
         }
         const [destroyFunc] = this.addManagedEventListeners({
             rowDataUpdateStarted: (event) => {
@@ -455,7 +458,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 this.processColumnsPendingInference(firstRowData, columnTypeOverridesExist);
                 this.columnStateUpdatesPendingInference = {};
                 if (columnTypeOverridesExist) {
-                    this.columnModel.processResizeOperations();
+                    this.columnAutosizeService?.processResizeOperations();
                 }
                 this.eventService.dispatchEvent({
                     type: 'dataTypesInferred',

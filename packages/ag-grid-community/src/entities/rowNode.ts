@@ -560,7 +560,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             if (cellHeight == null) {
                 // If column spanning is active a column may not provide auto height for a row if that
                 // cell is not present for the given row due to a previous cell spanning over the auto height column.
-                if (this.beans.columnModel.isColSpanActive()) {
+                if (this.beans.columnModel.colSpanActive) {
                     let activeColsForRow: AgColumn[] = [];
                     switch (col.getPinned()) {
                         case 'left':

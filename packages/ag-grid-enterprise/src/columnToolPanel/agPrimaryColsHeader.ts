@@ -98,7 +98,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
         this.eSelect.setReadOnly(readOnly);
         this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
 
-        if (this.columnModel.isReady()) {
+        if (this.columnModel.ready) {
             this.showOrHideOptions();
         }
     }

@@ -89,7 +89,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             },
         });
 
-        if (this.columnModel.isReady()) {
+        if (this.columnModel.ready) {
             this.onColumnsChanged();
         }
     }

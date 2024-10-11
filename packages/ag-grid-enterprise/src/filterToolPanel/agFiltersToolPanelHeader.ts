@@ -69,7 +69,7 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
     public init(params: ToolPanelFiltersCompParams): void {
         this.params = params;
 
-        if (this.columnModel.isReady()) {
+        if (this.columnModel.ready) {
             this.showOrHideOptions();
         }
     }
