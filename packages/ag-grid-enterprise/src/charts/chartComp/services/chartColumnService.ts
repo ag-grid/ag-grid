@@ -12,7 +12,7 @@ import type {
     ValueService,
     VisibleColsService,
 } from 'ag-grid-community';
-import { BeanStub, _missingOrEmpty, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _warnOnce } from 'ag-grid-community';
 
 export class ChartColumnService extends BeanStub implements NamedBean {
     beanName = 'chartColumnService' as const;
@@ -63,8 +63,8 @@ export class ChartColumnService extends BeanStub implements NamedBean {
                     return;
                 }
                 const colGroupName = this.columnNameService.getDisplayNameForColumnGroup(colGroup, headerLocation);
-                if (!_missingOrEmpty(colGroupName)) {
-                    displayNames.unshift(colGroupName!);
+                if (colGroupName?.length) {
+                    displayNames.unshift(colGroupName);
                     getDisplayName(colGroup.getParent());
                 }
             };

@@ -5,7 +5,6 @@ import type {
     GetRowIdParams,
     IRowNode,
     LoadSuccessParams,
-    NumberSequence,
     RowNode,
     RowNodeSorter,
     RowRenderer,
@@ -273,7 +272,7 @@ export class LazyCache extends BeanStub {
      */
     private skipDisplayIndexes(
         numberOfRowsToSkip: number,
-        displayIndexSeq: NumberSequence,
+        displayIndexSeq: { value: number },
         nextRowTop: { value: number }
     ) {
         if (numberOfRowsToSkip === 0) {
@@ -281,7 +280,7 @@ export class LazyCache extends BeanStub {
         }
         const defaultRowHeight = _getRowHeightAsNumber(this.gos);
 
-        displayIndexSeq.skip(numberOfRowsToSkip);
+        displayIndexSeq.value += numberOfRowsToSkip;
         nextRowTop.value += numberOfRowsToSkip * defaultRowHeight;
     }
 
@@ -289,7 +288,7 @@ export class LazyCache extends BeanStub {
      * @param displayIndexSeq the number sequence for generating the display index of each row
      * @param nextRowTop an object containing the next row top value intended to be modified by ref per row
      */
-    public setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }, uiLevel: number): void {
+    public setDisplayIndexes(displayIndexSeq: { value: number }, nextRowTop: { value: number }, uiLevel: number): void {
         // Create a map of display index nodes for access speed
         this.nodeDisplayIndexMap.clear();
 
@@ -528,7 +527,7 @@ export class LazyCache extends BeanStub {
         // node doesn't exist, create a new one
         const newNode = this.blockUtils.createRowNode(this.store.getRowDetails());
         if (data != null) {
-            const defaultId = this.getPrefixedId(this.store.getIdSequence().next());
+            const defaultId = this.getPrefixedId(this.store.getIdSequence().value++);
             this.blockUtils.setDataIntoRowNode(newNode, data, defaultId, undefined);
 
             // don't allow the SSRM to listen to the dispatched row event, as it will

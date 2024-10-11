@@ -67,6 +67,7 @@ import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { ISideBarService } from '../interfaces/iSideBar';
+import type { IMasterDetailService } from '../interfaces/masterDetail';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { LocaleService } from '../localeService';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -84,6 +85,7 @@ import type { PaginationService } from '../pagination/paginationService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
+import type { FlashCellService } from '../rendering/cell/flashCellService';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { StickyRowService } from '../rendering/features/stickyRowService';
 import type { OverlayService } from '../rendering/overlays/overlayService';
@@ -110,10 +112,11 @@ export interface ContextParams extends GenericContextParams<BeanName, BeanCollec
 export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollection> {}
 
 export type DynamicBeanName =
-    | 'headerFilterCell'
     | 'detailCellRendererCtrl'
-    | 'groupCellRendererCtrl'
     | 'fillHandle'
+    | 'groupCellRendererCtrl'
+    | 'headerFilterCellCtrl'
+    | 'headerGroupCellCtrl'
     | 'rangeHandle';
 
 export type UserComponentName =
@@ -287,6 +290,8 @@ export interface CoreBeanCollection {
     stickyRowService?: StickyRowService;
     groupHideOpenParentsService?: IGroupHideOpenParentsService;
     filterValueService?: FilterValueService;
+    flashCellService?: FlashCellService;
+    masterDetailService?: IMasterDetailService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -390,6 +395,7 @@ export type BeanName =
     | 'filterMenuFactory'
     | 'filterStage'
     | 'filterValueService'
+    | 'flashCellService'
     | 'flattenStage'
     | 'focusService'
     | 'funcColsService'
@@ -412,6 +418,7 @@ export type BeanName =
     | 'licenseManager'
     | 'localeService'
     | 'loggerFactory'
+    | 'masterDetailService'
     | 'menuItemMapper'
     | 'menuService'
     | 'menuUtils'

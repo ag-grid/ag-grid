@@ -7,8 +7,7 @@ import type { ColDef, ColGroupDef } from '../entities/colDef';
 import { DefaultColumnTypes } from '../entities/defaultColumnTypes';
 import type { ColumnEventType } from '../events';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
-import { _attrToBoolean, _attrToNumber } from '../utils/generic';
-import { _iterateObject, _mergeDeep } from '../utils/object';
+import { _mergeDeep } from '../utils/object';
 import { _warn } from '../validation/logging';
 import { ColumnKeyCreator } from './columnKeyCreator';
 import { convertColumnTypes } from './columnUtils';
@@ -345,18 +344,16 @@ export class ColumnFactory extends BeanStub implements NamedBean {
 
     public applyColumnState(column: AgColumn, colDef: ColDef, source: ColumnEventType): void {
         // flex
-        const flex = _attrToNumber(colDef.flex);
-        if (flex !== undefined) {
-            column.setFlex(flex);
+        if (colDef.flex !== undefined) {
+            column.setFlex(colDef.flex);
         }
 
         // width - we only set width if column is not flexing
         const noFlexThisCol = column.getFlex() != null;
         if (noFlexThisCol) {
             // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
-            const width = _attrToNumber(colDef.width);
-            if (width != null) {
-                column.setActualWidth(width, source);
+            if (colDef.width != null) {
+                column.setActualWidth(colDef.width, source);
             } else {
                 // otherwise set the width again, in case min or max width has changed,
                 // and width needs to be adjusted.
@@ -375,15 +372,13 @@ export class ColumnFactory extends BeanStub implements NamedBean {
         }
 
         // sorted at - anything but undefined, thus null will clear the sortIndex
-        const sortIndex = _attrToNumber(colDef.sortIndex);
-        if (sortIndex !== undefined) {
-            column.setSortIndex(sortIndex);
+        if (colDef.sortIndex !== undefined) {
+            column.setSortIndex(colDef.sortIndex);
         }
 
         // hide - anything but undefined, thus null will clear the hide
-        const hide = _attrToBoolean(colDef.hide);
-        if (hide !== undefined) {
-            column.setVisible(!hide, source);
+        if (colDef.hide !== undefined) {
+            column.setVisible(!colDef.hide, source);
         }
 
         // pinned - anything but undefined, thus null or empty string will remove pinned
@@ -502,7 +497,7 @@ export class ColumnFactory extends BeanStub implements NamedBean {
         const allColumnTypes = Object.assign({}, DefaultColumnTypes);
         const userTypes = this.gos.get('columnTypes') || {};
 
-        _iterateObject(userTypes, (key, value) => {
+        Object.entries(userTypes).forEach(([key, value]) => {
             if (key in allColumnTypes) {
                 // default column types cannot be overridden
                 _warn(34, { key });

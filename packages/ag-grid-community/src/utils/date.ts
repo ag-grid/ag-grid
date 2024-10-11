@@ -1,4 +1,6 @@
-import { _padStartWidthZeros } from './number';
+function _padStartWidthZeros(value: number, totalStringSize: number): string {
+    return value.toString().padStart(totalStringSize, '0');
+}
 
 /**
  * Serialises a Date to a string of format `yyyy-MM-dd HH:mm:ss`.

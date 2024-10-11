@@ -16,10 +16,7 @@ import {
     _areEqual,
     _clearElement,
     _createIconNoSpan,
-    _existsAndNotEmpty,
     _getActiveDomElement,
-    _includes,
-    _insertArrayIntoArray,
     _last,
     _setAriaHidden,
     _setAriaLabel,
@@ -37,6 +34,18 @@ export interface PillDropZonePanelParams {
 }
 
 type PillState = 'notDragging' | 'newItemsIn' | 'rearrangeItems';
+
+function _insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number) {
+    if (dest == null || src == null) {
+        return;
+    }
+
+    // put items in backwards, otherwise inserted items end up in reverse order
+    for (let i = src.length - 1; i >= 0; i--) {
+        const item = src[i];
+        dest.splice(toIndex, 0, item);
+    }
+}
 
 export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem> extends Component {
     private focusService: FocusService;
@@ -323,7 +332,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     }
 
     protected isPotentialDndItems(): boolean {
-        return _existsAndNotEmpty(this.potentialDndItems);
+        return !!this.potentialDndItems?.length;
     }
 
     protected handleDragLeaveEnd(draggingEvent: DraggingEvent): void {}
@@ -376,7 +385,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     }
 
     private removeItems(itemsToRemove: TItem[]): void {
-        const newItemList = this.getExistingItems().filter((item) => !_includes(itemsToRemove, item));
+        const newItemList = this.getExistingItems().filter((item) => !itemsToRemove.includes(item));
         this.updateItems(newItemList);
     }
 
@@ -490,7 +499,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const existingItems = this.getExistingItems();
 
         if (this.isPotentialDndItems()) {
-            return existingItems.filter((item) => !_includes(this.potentialDndItems, item));
+            return existingItems.filter((item) => !this.potentialDndItems.includes(item));
         }
         return existingItems;
     }

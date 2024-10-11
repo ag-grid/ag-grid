@@ -4,7 +4,6 @@ import { ALL_EVENTS, PUBLIC_EVENTS } from '../eventTypes';
 import type { ComponentStateChangedEvent, GridOptionsChangedEvent } from '../events';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { PropertyKeys } from '../propertyKeys';
-import { _iterateObject } from '../utils/object';
 
 export class ComponentUtil {
     public static VUE_OMITTED_PROPERTY = 'AG-VUE-OMITTED-PROPERTY';
@@ -54,7 +53,7 @@ export function _processOnChange(changes: any, api: GridApi): void {
     }
 
     // Only process changes to properties that are part of the gridOptions
-    const gridChanges: any = {};
+    const gridChanges: Record<string, any> = {};
     let hasChanges = false;
     Object.keys(changes)
         .filter((key) => ComponentUtil.ALL_PROPERTIES_AND_CALLBACKS_SET.has(key))
@@ -76,11 +75,8 @@ export function _processOnChange(changes: any, api: GridApi): void {
     // copy gridChanges into an event for dispatch
     const event: WithoutGridCommon<ComponentStateChangedEvent> = {
         type: 'componentStateChanged',
+        ...gridChanges,
     };
-
-    _iterateObject(gridChanges, (key: string, value: any) => {
-        (event as any)[key] = value;
-    });
 
     api.dispatchEvent(event);
 }

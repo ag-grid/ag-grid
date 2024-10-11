@@ -13,7 +13,7 @@ import type {
     StageExecuteParams,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, ClientSideRowModelSteps, _iterateObject, _missing } from 'ag-grid-community';
+import { BeanStub, ClientSideRowModelSteps, _missing } from 'ag-grid-community';
 
 import type { PivotColDefService } from './pivotColDefService';
 
@@ -224,7 +224,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         pivotIndex: number,
         uniqueValues: any
     ): Record<string, any> {
-        const mappedChildren: Record<string, any> = {};
+        const mappedChildren: Record<string, RowNode[]> = {};
         const pivotColumn = pivotColumns[pivotIndex];
 
         // map the children out based on the pivot column
@@ -259,7 +259,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         } else {
             const result: Record<string, any> = {};
 
-            _iterateObject(mappedChildren, (key: string, value: RowNode[]) => {
+            Object.entries(mappedChildren).forEach(([key, value]) => {
                 result[key] = this.bucketChildren(value, pivotColumns, pivotIndex + 1, uniqueValues[key]);
             });
 

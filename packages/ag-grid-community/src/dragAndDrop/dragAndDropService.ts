@@ -10,10 +10,8 @@ import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import { _getDocument, _getRootNode } from '../gridOptionsUtils';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { DragItem } from '../interfaces/iDragItem';
-import { _flatten, _removeFromArray } from '../utils/array';
-import { _getBodyHeight, _getBodyWidth } from '../utils/browser';
+import { _removeFromArray } from '../utils/array';
 import { _getElementRectWithOffset } from '../utils/dom';
-import { _isFunction } from '../utils/function';
 import type { AgPromise } from '../utils/promise';
 import { _warn } from '../validation/logging';
 import type { DragAndDropImageComponent } from './dragAndDropImageComponent';
@@ -26,6 +24,14 @@ export enum DragSourceType {
     RowDrag,
     ChartPanel,
     AdvancedFilterBuilder,
+}
+
+function _getBodyWidth(): number {
+    return document.body?.clientWidth ?? (window.innerHeight || document.documentElement?.clientWidth || -1);
+}
+
+function _getBodyHeight(): number {
+    return document.body?.clientHeight ?? (window.innerHeight || document.documentElement?.clientHeight || -1);
 }
 
 export interface DragSource {
@@ -366,7 +372,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         // loop over the sorted elementStack to find which dropTarget comes first
         for (const el of elementStack) {
             for (const dropTarget of validDropTargets) {
-                const containers = _flatten(this.getAllContainersFromDropTarget(dropTarget));
+                const containers = this.getAllContainersFromDropTarget(dropTarget).flatMap((a) => a);
                 if (containers.indexOf(el) !== -1) {
                     return dropTarget;
                 }
@@ -617,7 +623,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
 
         let { dragItemName } = dragSource;
 
-        if (_isFunction<string>(dragItemName)) {
+        if (typeof dragItemName === 'function') {
             dragItemName = dragItemName();
         }
 

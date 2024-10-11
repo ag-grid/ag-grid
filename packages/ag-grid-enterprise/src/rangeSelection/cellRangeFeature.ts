@@ -7,7 +7,7 @@ import type {
     ICellRangeFeature,
     IRangeService,
 } from 'ag-grid-community';
-import { CellRangeType, _includes, _isSameRow, _last, _missing, _setAriaSelected } from 'ag-grid-community';
+import { CellRangeType, _isSameRow, _last, _missing, _setAriaSelected } from 'ag-grid-community';
 
 import { SelectionHandleType } from './abstractSelectionHandle';
 import type { AgFillHandle } from './agFillHandle';
@@ -123,7 +123,7 @@ export class CellRangeFeature implements ICellRangeFeature {
 
         return (
             cellRanges.length > 0 &&
-            cellRanges.every((range) => _includes([CellRangeType.DIMENSION, CellRangeType.VALUE], range.type))
+            cellRanges.every((range) => [CellRangeType.DIMENSION, CellRangeType.VALUE].includes(range.type!))
         );
     }
 

@@ -16,14 +16,7 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    ClientSideRowModelSteps,
-    _error,
-    _getGrandTotalRow,
-    _getGroupAggFiltering,
-    _missingOrEmpty,
-} from 'ag-grid-community';
+import { BeanStub, ClientSideRowModelSteps, _error, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
 
 import type { AggFuncService } from './aggFuncService';
 
@@ -70,7 +63,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         // and there is no cleanup to be done (as value columns don't change between transactions or change
         // detections). if no value columns and no changed path, means we have to go through all nodes in
         // case we need to clean up agg data from before.
-        const noValueColumns = _missingOrEmpty(this.funcColsService.valueCols);
+        const noValueColumns = !this.funcColsService.valueCols?.length;
         const noUserAgg = !this.gos.getCallback('getGroupRowAgg');
         const changedPathActive = params.changedPath && params.changedPath.isActive();
         if (noValueColumns && noUserAgg && changedPathActive) {

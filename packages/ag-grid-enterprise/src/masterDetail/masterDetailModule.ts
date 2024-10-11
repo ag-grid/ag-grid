@@ -9,9 +9,11 @@ import { DetailCellRenderer } from './detailCellRenderer';
 import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 import { DetailGridApiService } from './detailGridApiService';
 import { addDetailGridInfo, forEachDetailGridInfo, getDetailGridInfo, removeDetailGridInfo } from './masterDetailApi';
+import { MasterDetailService } from './masterDetailService';
 
 export const MasterDetailCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('MasterDetailCoreModule'),
+    beans: [MasterDetailService],
     userComponents: [
         {
             name: 'agGroupRowRenderer',

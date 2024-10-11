@@ -8,7 +8,7 @@ import { _shouldUpdateColVisibilityAfterGroup } from '../gridOptionsUtils';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _removeFromArray } from '../utils/array';
-import { _attrToBoolean, _attrToNumber, _exists, _missingOrEmpty } from '../utils/generic';
+import { _exists } from '../utils/generic';
 import { dispatchColumnChangedEvent } from './columnEventUtils';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
 import type { ColumnState, ModifyColumnsNoEventsCallbacks } from './columnStateService';
@@ -65,7 +65,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
     }
 
     public isRowGroupEmpty(): boolean {
-        return _missingOrEmpty(this.rowGroupCols);
+        return !this.rowGroupCols?.length;
     }
 
     public setColumnAggFunc(
@@ -310,7 +310,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
         eventType: 'columnValueChanged' | 'columnPivotChanged' | 'columnRowGroupChanged',
         source: ColumnEventType
     ) {
-        if (!keys || _missingOrEmpty(keys)) {
+        if (!keys?.length) {
             return;
         }
 
@@ -460,10 +460,10 @@ export class FuncColsService extends BeanStub implements NamedBean {
             const colIsNew = oldProvidedCols.indexOf(col) < 0;
             const colDef = col.getColDef();
 
-            const value = _attrToBoolean(getValueFunc(colDef));
-            const initialValue = _attrToBoolean(getInitialValueFunc(colDef));
-            const index = _attrToNumber(getIndexFunc(colDef));
-            const initialIndex = _attrToNumber(getInitialIndexFunc(colDef));
+            const value = getValueFunc(colDef);
+            const initialValue = getInitialValueFunc(colDef);
+            const index = getIndexFunc(colDef);
+            const initialIndex = getInitialIndexFunc(colDef);
 
             let include: boolean;
 

@@ -1,7 +1,7 @@
 import { _getActiveDomElement } from '../../../gridOptionsUtils';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import { _getSafariVersion, _isBrowserChrome, _isBrowserFirefox, _isBrowserSafari } from '../../../utils/browser';
+import { _isBrowserSafari } from '../../../utils/browser';
 import { _dateToFormattedString, _parseDateTimeFromString, _serialiseDate } from '../../../utils/date';
 import { _warn } from '../../../validation/logging';
 import type { AgInputTextField } from '../../../widgets/agInputTextField';
@@ -179,6 +179,6 @@ export class DefaultDateComponent extends Component implements IDateComp {
             return params.filterParams.browserDatePicker;
         }
 
-        return _isBrowserChrome() || _isBrowserFirefox() || (_isBrowserSafari() && _getSafariVersion() >= 14.1);
+        return true;
     }
 }

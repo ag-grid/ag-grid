@@ -6,10 +6,9 @@ import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { _isDomLayout } from '../../gridOptionsUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn';
-import { _values } from '../../utils/generic';
 import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
-import { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
+import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
 import { HeaderRowType } from './headerRowComp';
 
@@ -130,7 +129,7 @@ export class HeaderRowCtrl extends BeanStub {
         if (!this.headerCellCtrls) {
             return;
         }
-        return _values(this.headerCellCtrls).find((cellCtrl) => cellCtrl.getColumnGroupChild() === column);
+        return Array.from(this.headerCellCtrls.values()).find((cellCtrl) => cellCtrl.getColumnGroupChild() === column);
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -296,7 +295,7 @@ export class HeaderRowCtrl extends BeanStub {
                 case HeaderRowType.FLOATING_FILTER: {
                     headerCtrl = this.createBean(
                         this.beans.registry.createDynamicBean<HeaderFilterCellCtrl>(
-                            'headerFilterCell',
+                            'headerFilterCellCtrl',
                             headerColumn as AgColumn,
                             this.beans,
                             this
@@ -306,7 +305,12 @@ export class HeaderRowCtrl extends BeanStub {
                 }
                 case HeaderRowType.COLUMN_GROUP:
                     headerCtrl = this.createBean(
-                        new HeaderGroupCellCtrl(headerColumn as AgColumnGroup, this.beans, this)
+                        this.beans.registry.createDynamicBean<HeaderGroupCellCtrl>(
+                            'headerGroupCellCtrl',
+                            headerColumn as AgColumnGroup,
+                            this.beans,
+                            this
+                        )!
                     );
                     break;
                 default:

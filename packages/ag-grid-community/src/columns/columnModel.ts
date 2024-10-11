@@ -28,8 +28,7 @@ import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
-import { _areEqual, _includes, _insertIntoArray, _moveInArray } from '../utils/array';
-import { _missingOrEmpty } from '../utils/generic';
+import { _areEqual, _moveInArray } from '../utils/array';
 import { _warn } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
 import type { ColumnDefFactory } from './columnDefFactory';
@@ -301,7 +300,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const res = this.cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
             if (showAutoGroupAndValuesOnly) {
-                const isValueCol = valueColumns && _includes(valueColumns, col);
+                const isValueCol = valueColumns && valueColumns.includes(col);
                 return isAutoGroupCol || isValueCol;
             } else {
                 // keep col if a) it's auto-group or b) it's visible
@@ -453,7 +452,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (!this.cols) {
             return;
         }
-        if (_missingOrEmpty(keys)) {
+        if (!keys?.length) {
             return;
         }
 
@@ -621,7 +620,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             const indexes = siblings.map((col) => res.indexOf(col));
             const lastIndex = Math.max(...indexes);
 
-            _insertIntoArray(res, newCol, lastIndex + 1);
+            res.splice(lastIndex + 1, 0, newCol);
         });
 
         this.cols.list = res;
@@ -661,7 +660,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 // it's common to have autoGroup missing, as grouping could be on by default
                 // on a column, but the user could of since removed the grouping via the UI.
                 // if we don't inc the insert index, autoGroups will be inserted in reverse order
-                _insertIntoArray(newOrder, col, autoGroupInsertIndex++);
+                newOrder.splice(autoGroupInsertIndex++, 0, col);
             } else {
                 // normal columns, if missing from state list, are added at the end
                 newOrder.push(col);
@@ -825,7 +824,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // + clientSideRowModel
     public isPivotActive(): boolean {
         const pivotColumns = this.funcColsService.pivotCols;
-        return this.pivotMode && !_missingOrEmpty(pivotColumns);
+        return this.pivotMode && !!pivotColumns?.length;
     }
 
     // called when dataTypes change

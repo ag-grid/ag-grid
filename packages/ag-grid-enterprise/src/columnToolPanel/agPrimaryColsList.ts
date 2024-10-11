@@ -10,15 +10,7 @@ import type {
     ColumnToolPanelState,
     ComponentSelector,
 } from 'ag-grid-community';
-import {
-    Component,
-    _exists,
-    _includes,
-    _setAriaLabel,
-    _setAriaLevel,
-    _warnOnce,
-    isProvidedColumnGroup,
-} from 'ag-grid-community';
+import { Component, _exists, _setAriaLabel, _setAriaLevel, _warnOnce, isProvidedColumnGroup } from 'ag-grid-community';
 
 import type { ToolPanelColDefService } from '../sideBar/common/toolPanelColDefService';
 import type { VirtualListModel } from '../widgets/iVirtualList';
@@ -433,7 +425,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             }
         });
 
-        const unrecognisedGroupIds = groupIds.filter((groupId) => !_includes(expandedGroupIds, groupId));
+        const unrecognisedGroupIds = groupIds.filter((groupId) => !expandedGroupIds.includes(groupId));
         if (unrecognisedGroupIds.length > 0) {
             _warnOnce('unable to find group(s) for supplied groupIds:', unrecognisedGroupIds);
         }

@@ -8,7 +8,7 @@ import type {
     RowModelType,
     RowRenderer,
 } from 'ag-grid-community';
-import { BeanStub, RowNode, _getRowHeightAsNumber, _iterateObject, _missing, _warnOnce } from 'ag-grid-community';
+import { BeanStub, RowNode, _getRowHeightAsNumber, _missing, _warnOnce } from 'ag-grid-community';
 
 export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
@@ -286,7 +286,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     }
 
     private setRowData(rowData: { [key: number]: any }): void {
-        _iterateObject(rowData, (indexStr: string, dataItem: any) => {
+        Object.entries(rowData).forEach(([indexStr, dataItem]) => {
             const index = parseInt(indexStr, 10);
             // we should never keep rows that we didn't specifically ask for, this
             // guarantees the contract we have with the server.

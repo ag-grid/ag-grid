@@ -28,10 +28,7 @@ export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     private onDataChanged() {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
-        const thousandSeparator = localeTextFunc('thousandSeparator', ',');
-        const decimalSeparator = localeTextFunc('decimalSeparator', '.');
-        this.setValue(_formatNumberCommas(this.getRowCountValue(), thousandSeparator, decimalSeparator));
+        this.setValue(_formatNumberCommas(this.getRowCountValue(), this.localeService));
     }
 
     private getRowCountValue(): number {

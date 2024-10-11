@@ -3,7 +3,6 @@ import { BeanStub } from '../../context/beanStub';
 import type { DynamicBeanMeta, DynamicBeanName, UserComponentName } from '../../context/context';
 import type { Module, ModuleName } from '../../interfaces/iModule';
 import { TooltipComponent } from '../../rendering/tooltipComponent';
-import { _iterateObject } from '../../utils/object';
 import { _warn } from '../../validation/logging';
 import type { AgComponentSelector, ComponentSelector } from '../../widgets/component';
 
@@ -42,7 +41,7 @@ export class Registry extends BeanStub implements NamedBean {
     public postConstruct(): void {
         const comps = this.gos.get('components');
         if (comps != null) {
-            _iterateObject(comps, (key, component) => this.registerJsComponent(key, component));
+            Object.entries(comps).forEach(([key, component]) => this.registerJsComponent(key, component));
         }
     }
 

@@ -1,5 +1,5 @@
 import type { _ClipboardGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
-import { KeyboardNavigationCoreModule } from 'ag-grid-community';
+import { FlashCellModule, KeyboardNavigationCoreModule } from 'ag-grid-community';
 import { CsvExportModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
@@ -17,7 +17,7 @@ import { ClipboardService } from './clipboardService';
 export const ClipboardCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('ClipboardCoreModule'),
     beans: [ClipboardService],
-    dependsOn: [EnterpriseCoreModule, CsvExportModule, KeyboardNavigationCoreModule],
+    dependsOn: [EnterpriseCoreModule, CsvExportModule, KeyboardNavigationCoreModule, FlashCellModule],
 };
 
 export const ClipboardApiModule: _ModuleWithApi<_ClipboardGridApi> = {

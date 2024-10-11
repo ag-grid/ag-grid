@@ -11,6 +11,7 @@ import type { DefaultProvidedCellEditorParams, ICellEditorParams } from '../inte
 import type { CellPosition } from '../interfaces/iCellPosition';
 import type { NavigationService } from '../navigation/navigationService';
 import type { CellCtrl, ICellComp } from '../rendering/cell/cellCtrl';
+import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import { _getTabIndex } from '../utils/browser';
 import type { ValueService } from '../valueService/valueService';
@@ -137,9 +138,7 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     public stopAllEditing(cancel: boolean = false): void {
-        this.rowRenderer.getAllRowCtrls().forEach((rowCtrl) => {
-            rowCtrl.stopEditing(cancel);
-        });
+        this.rowRenderer.someRowCtrls((rowCtrl) => rowCtrl.stopEditing(cancel));
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
@@ -177,6 +176,14 @@ export class EditService extends BeanStub implements NamedBean {
         };
 
         viewports.forEach((viewport) => this.addManagedElementListeners(viewport, { focusout: focusOutListener }));
+    }
+
+    public setInlineEditingCss(rowCtrl: RowCtrl): void {
+        const editing = rowCtrl.isEditing() || rowCtrl.someCellCtrls((cellCtrl) => cellCtrl.isEditing());
+        rowCtrl.forEachGui(undefined, (gui) => {
+            gui.rowComp.addOrRemoveCssClass('ag-row-inline-editing', editing);
+            gui.rowComp.addOrRemoveCssClass('ag-row-not-inline-editing', !editing);
+        });
     }
 
     private takeValueFromCellEditor(cancel: boolean, cellComp: ICellComp): { newValue?: any; newValueExists: boolean } {
