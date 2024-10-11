@@ -1,7 +1,4 @@
 function findSectionPaths(sections) {
-    // TODO: Understand why this is necessary
-    if (!Array.isArray(sections)) return;
-
     return sections.flatMap((section) => {
         return section.children ? findSectionPaths(section.children) : section.path;
     });
