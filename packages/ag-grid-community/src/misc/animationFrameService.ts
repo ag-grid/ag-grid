@@ -21,7 +21,11 @@ interface TaskList {
 export function _requestAnimationFrame(gos: GridOptionsService, callback: any) {
     const win = _getWindow(gos);
 
-    if (win.requestAnimationFrame) {
+    if ((win as any).__zone_symbol__requestAnimationFrame) {
+        (win as any).__zone_symbol__requestAnimationFrame(callback);
+    } else if ((win as any).__zone_symbol__webkitRequestAnimationFrame) {
+        (win as any).__zone_symbol__webkitRequestAnimationFrame;
+    } else if (win.requestAnimationFrame) {
         win.requestAnimationFrame(callback);
     } else if ((win as any).webkitRequestAnimationFrame) {
         (win as any).webkitRequestAnimationFrame(callback);

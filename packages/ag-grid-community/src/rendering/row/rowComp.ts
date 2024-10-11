@@ -60,7 +60,8 @@ export class RowComp extends Component {
 
     private getInitialStyle(containerType: RowContainerType): string {
         const transform = this.rowCtrl.getInitialTransform(containerType);
-        return transform ? `transform: ${transform}` : `top: ${this.rowCtrl.getInitialRowTop(containerType)}`;
+        const result = transform ? `transform: ${transform}` : `top: ${this.rowCtrl.getInitialRowTop(containerType)}`;
+        return result + '; contain-intrinsic-height: 42px;content-visibility: auto;';
     }
 
     private showFullWidth(compDetails: UserCompDetails): void {

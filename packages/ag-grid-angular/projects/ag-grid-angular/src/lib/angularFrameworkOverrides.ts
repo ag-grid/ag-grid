@@ -1,7 +1,9 @@
 import { Injectable, NgZone } from '@angular/core';
 
 import type { FrameworkOverridesIncomingSource } from 'ag-grid-community';
-import { VanillaFrameworkOverrides } from 'ag-grid-community';
+import { VanillaFrameworkOverrides, _includes } from 'ag-grid-community';
+
+export const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
 
 @Injectable()
 export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
@@ -45,6 +47,22 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
     // Used to distinguish between user code and AG Grid code setting up events against RowNodes and Columns
     get shouldWrapOutgoing() {
         return this._ngZone && NgZone.isInAngularZone();
+    }
+
+    addEventListener(
+        element: HTMLElement,
+        type: string,
+        listener: EventListenerOrEventListenerObject,
+        useCapture?: boolean
+    ): void {
+        const isPassive = _includes(PASSIVE_EVENTS, type);
+        if (type === 'scroll') {
+            this.runOutside(() => {
+                element.addEventListener(type, listener, { capture: !!useCapture, passive: isPassive });
+            });
+        } else {
+            element.addEventListener(type, listener, { capture: !!useCapture, passive: isPassive });
+        }
     }
 
     /**

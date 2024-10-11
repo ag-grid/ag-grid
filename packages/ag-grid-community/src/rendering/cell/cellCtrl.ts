@@ -1002,6 +1002,11 @@ export class CellCtrl extends BeanStub {
         const autoHeight = this.column.isAutoHeight() == true;
         this.cellComp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, autoHeight);
         this.cellComp.addOrRemoveCssClass(CSS_NORMAL_HEIGHT, !autoHeight);
+
+        this.cellComp.setUserStyles({
+            'contain-intrinsic-height': '42px',
+            'content-visibility': 'auto',
+        });
     }
 
     public onColumnHover(): void {
