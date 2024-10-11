@@ -39,8 +39,8 @@ import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnState, ColumnStateService } from './columnStateService';
 import { GROUP_AUTO_COLUMN_ID, _destroyColumnTree, _getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
-import type { ControlsColService } from './controlsColService';
 import type { FuncColsService } from './funcColsService';
+import type { SelectionColService } from './selectionColService';
 import type { VisibleColsService } from './visibleColsService';
 
 export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
@@ -67,7 +67,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private pivotResultColsService?: IPivotResultColsService;
     private columnAnimationService?: ColumnAnimationService;
     private autoColService?: IAutoColService;
-    private controlsColService?: ControlsColService;
+    private selectionColService?: SelectionColService;
     private valueCache?: ValueCache;
     private columnDefFactory?: ColumnDefFactory;
     private columnStateService: ColumnStateService;
@@ -86,7 +86,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.pivotResultColsService = beans.pivotResultColsService;
         this.columnAnimationService = beans.columnAnimationService;
         this.autoColService = beans.autoColService;
-        this.controlsColService = beans.controlsColService;
+        this.selectionColService = beans.selectionColService;
         this.valueCache = beans.valueCache;
         this.columnDefFactory = beans.columnDefFactory;
         this.columnStateService = beans.columnStateService;
@@ -107,10 +107,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // group auto columns
     private autoCols: ColumnCollections | null;
 
-    // control element columns
-    private controlsCols: ColumnCollections | null;
+    // selection checkbox columns
+    private selectionCols: ColumnCollections | null;
 
-    // [providedCols OR pivotResultCols] PLUS autoGroupCols PLUS controlsCols
+    // [providedCols OR pivotResultCols] PLUS autoGroupCols PLUS selectionCols
     // this cols.list maintains column order.
     private cols: ColumnCollections;
 
@@ -238,8 +238,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.createAutoCols();
         this.addAutoCols();
 
-        this.createControlsCols();
-        this.addControlsCols();
+        this.createSelectionCols();
+        this.addSelectionCols();
 
         const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
         if (!newColDefs || shouldSortNewColDefs) {
@@ -384,23 +384,23 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.lastPivotOrder = putAutocolsFirstInList(this.lastPivotOrder);
     }
 
-    private createControlsCols(): void {
+    private createSelectionCols(): void {
         const destroyCollection = () => {
-            _destroyColumnTree(this.context, this.controlsCols?.tree);
-            this.controlsCols = null;
+            _destroyColumnTree(this.context, this.selectionCols?.tree);
+            this.selectionCols = null;
         };
 
-        if (!this.controlsColService) {
+        if (!this.selectionColService) {
             destroyCollection();
         }
 
         // the new tree dept will equal the current tree dept of cols
         const newTreeDepth = this.cols.treeDepth;
-        const oldTreeDepth = this.controlsCols?.treeDepth ?? -1;
+        const oldTreeDepth = this.selectionCols?.treeDepth ?? -1;
         const treeDeptSame = oldTreeDepth == newTreeDepth;
 
-        const list = this.controlsColService?.createControlsCols() ?? [];
-        const areSame = areColIdsEqual(list, this.controlsCols?.list ?? []);
+        const list = this.selectionColService?.createSelectionCols() ?? [];
+        const areSame = areColIdsEqual(list, this.selectionCols?.list ?? []);
 
         if (areSame && treeDeptSame) {
             return;
@@ -408,23 +408,23 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         destroyCollection();
         const [tree, treeDepth] = this.columnFactory.balanceTreeForAutoCols(list, this.cols.tree);
-        this.controlsCols = {
+        this.selectionCols = {
             list,
             tree,
             treeDepth,
             map: {},
         };
 
-        this.lastOrder = this.controlsColService?.putControlColsFirstInList(list, this.lastOrder) ?? null;
-        this.lastPivotOrder = this.controlsColService?.putControlColsFirstInList(list, this.lastPivotOrder) ?? null;
+        this.lastOrder = this.selectionColService?.putSelectionColsFirstInList(list, this.lastOrder) ?? null;
+        this.lastPivotOrder = this.selectionColService?.putSelectionColsFirstInList(list, this.lastPivotOrder) ?? null;
     }
 
-    private addControlsCols(): void {
-        if (this.controlsCols == null) {
+    private addSelectionCols(): void {
+        if (this.selectionCols == null) {
             return;
         }
-        this.cols.list = this.controlsCols.list.concat(this.cols.list);
-        this.cols.tree = this.controlsCols.tree.concat(this.cols.tree);
+        this.cols.list = this.selectionCols.list.concat(this.cols.list);
+        this.cols.tree = this.selectionCols.tree.concat(this.cols.tree);
         updateColsMap(this.cols);
     }
 
@@ -849,7 +849,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public override destroy(): void {
         _destroyColumnTree(this.context, this.colDefCols?.tree);
         _destroyColumnTree(this.context, this.autoCols?.tree);
-        _destroyColumnTree(this.context, this.controlsCols?.tree);
+        _destroyColumnTree(this.context, this.selectionCols?.tree);
         super.destroy();
     }
 
@@ -879,7 +879,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return [
             this.colDefCols?.list ?? [],
             this.autoCols?.list ?? [],
-            this.controlsCols?.list ?? [],
+            this.selectionCols?.list ?? [],
             pivotResultColsList ?? [],
         ].flat();
     }
@@ -933,6 +933,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     public getAutoCols(): AgColumn[] | null {
         return this.autoCols?.list ?? null;
+    }
+
+    public getSelectionCol(key: ColKey): AgColumn | null {
+        return this.selectionCols?.list.find((col) => columnsMatch(col, key)) ?? null;
+    }
+
+    public getSelectionCols(): AgColumn[] | null {
+        return this.selectionCols?.list ?? null;
     }
 
     public setColHeaderHeight(col: AgColumn | AgColumnGroup, height: number): void {

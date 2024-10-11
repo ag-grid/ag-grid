@@ -1,4 +1,4 @@
-import { isColumnControlsCol } from '../columns/columnUtils';
+import { isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
@@ -217,7 +217,7 @@ export class SelectAllFeature extends BeanStub {
      */
     private isCheckboxSelection(): boolean {
         const so = this.selectionOptions;
-        const newHeaderCheckbox = so && _getHeaderCheckbox(so) && isColumnControlsCol(this.column);
+        const newHeaderCheckbox = so && _getHeaderCheckbox(so) && isColumnSelectionCol(this.column);
         const headerCheckboxSelection = this.column.getColDef().headerCheckboxSelection;
 
         let result = false;
