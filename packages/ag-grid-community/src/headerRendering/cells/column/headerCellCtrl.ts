@@ -16,6 +16,7 @@ import type { ColumnSortState } from '../../../utils/aria';
 import { _getAriaSortState } from '../../../utils/aria';
 import { _setDisplayed } from '../../../utils/dom';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
+import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
@@ -479,7 +480,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private refreshSpanHeaderHeight() {
         const { eGui, column, comp, beans } = this;
-        const groupHeaderHeight = this.beans.columnModel.getGroupRowsHeight();
+        const groupHeaderHeight = getGroupRowsHeight(this.beans);
         const isZeroGroupHeight = groupHeaderHeight.reduce((total, next) => (total += next), 0) === 0;
 
         comp.addOrRemoveCssClass('ag-header-parent-hidden', isZeroGroupHeight);
@@ -496,9 +497,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
         comp.addOrRemoveCssClass('ag-header-span-height', numberOfParents > 0);
 
-        const { columnModel } = beans;
-
-        const headerHeight = columnModel.getColumnHeaderRowHeight();
+        const headerHeight = getColumnHeaderRowHeight(beans);
 
         if (numberOfParents === 0) {
             // if spanning has stopped then need to reset these values.

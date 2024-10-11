@@ -5,7 +5,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, Context } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
@@ -13,8 +12,6 @@ import type { Environment } from '../environment';
 import type { ColumnEventType } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import { _isDomLayout, _shouldMaintainColumnOrder } from '../gridOptionsUtils';
-import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
-import type { HeaderRowCtrl } from '../headerRendering/row/headerRowCtrl';
 import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
@@ -810,103 +807,5 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     public getSelectionCols(): AgColumn[] | null {
         return this.selectionColService?.getSelectionCols() ?? null;
-    }
-
-    public setColHeaderHeight(col: AgColumn | AgColumnGroup, height: number): void {
-        const changed = col.setAutoHeaderHeight(height);
-
-        if (changed) {
-            if (col.isColumn) {
-                this.eventService.dispatchEvent({
-                    type: 'columnHeaderHeightChanged',
-                    column: col,
-                    columns: [col],
-                    source: 'autosizeColumnHeaderHeight',
-                });
-            } else {
-                this.eventService.dispatchEvent({
-                    type: 'columnGroupHeaderHeightChanged',
-                    columnGroup: col,
-                    source: 'autosizeColumnGroupHeaderHeight',
-                });
-            }
-        }
-    }
-
-    public getGroupRowsHeight(): number[] {
-        const heights: number[] = [];
-        const headerRowContainerCtrls = this.ctrlsService.getHeaderRowContainerCtrls();
-
-        for (const headerRowContainerCtrl of headerRowContainerCtrls) {
-            if (!headerRowContainerCtrl) {
-                continue;
-            }
-
-            const groupRowCount = headerRowContainerCtrl.getGroupRowCount() || 0;
-
-            for (let i = 0; i < groupRowCount; i++) {
-                const headerRowCtrl = headerRowContainerCtrl.getGroupRowCtrlAtIndex(i);
-
-                const currentHeightAtPos = heights[i];
-                if (headerRowCtrl) {
-                    const newHeight = this.getColumnGroupHeaderRowHeight(headerRowCtrl);
-                    if (currentHeightAtPos == null || newHeight > currentHeightAtPos) {
-                        heights[i] = newHeight;
-                    }
-                }
-            }
-        }
-
-        return heights;
-    }
-
-    private getColumnGroupHeaderRowHeight(headerRowCtrl: HeaderRowCtrl): number {
-        const defaultHeight: number = (
-            this.isPivotMode() ? this.getPivotGroupHeaderHeight() : this.getGroupHeaderHeight()
-        ) as number;
-
-        let displayedHeights = 0;
-        const headerRowCellCtrls = headerRowCtrl.getHeaderCtrls() as HeaderGroupCellCtrl[];
-        for (const headerCellCtrl of headerRowCellCtrls) {
-            const column = headerCellCtrl.getColumn();
-            if (column.isAutoHeaderHeight()) {
-                const height = column.getAutoHeaderHeight();
-                if (height != null && height > displayedHeights) {
-                    displayedHeights = height;
-                }
-            }
-        }
-
-        return Math.max(defaultHeight, displayedHeights);
-    }
-
-    public getColumnHeaderRowHeight(): number {
-        const defaultHeight: number = (
-            this.isPivotMode() ? this.getPivotHeaderHeight() : this.getHeaderHeight()
-        ) as number;
-
-        const allDisplayedCols = this.visibleColsService.allCols;
-
-        const displayedHeights = allDisplayedCols
-            .filter((col) => col.isAutoHeaderHeight())
-            .map((col) => col.getAutoHeaderHeight() || 0);
-
-        return Math.max(defaultHeight, ...displayedHeights);
-    }
-
-    public getHeaderHeight(): number {
-        return this.gos.get('headerHeight') ?? this.environment.getDefaultHeaderHeight();
-    }
-    public getFloatingFiltersHeight(): number {
-        return this.gos.get('floatingFiltersHeight') ?? this.getHeaderHeight();
-    }
-    public getGroupHeaderHeight(): number {
-        return this.gos.get('groupHeaderHeight') ?? this.getHeaderHeight();
-    }
-    private getPivotHeaderHeight(): number {
-        return this.gos.get('pivotHeaderHeight') ?? this.getHeaderHeight();
-    }
-    public getPivotGroupHeaderHeight(): number {
-        return this.gos.get('pivotGroupHeaderHeight') ?? this.getGroupHeaderHeight();
     }
 }

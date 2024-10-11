@@ -2,6 +2,7 @@ import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _getRowHeightAsNumber } from '../gridOptionsUtils';
+import { getHeaderHeight } from '../headerRendering/headerUtils';
 import type { FlashCellsParams, RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { GetCellRendererInstancesParams, ICellRenderer } from './cellRenderers/iCellRenderer';
 import { isRowInMap, mapRowNodes } from './rowRenderer';
@@ -53,7 +54,7 @@ export function flushAllAnimationFrames(beans: BeanCollection): void {
 export function getSizesForCurrentTheme(beans: BeanCollection) {
     return {
         rowHeight: _getRowHeightAsNumber(beans.gos),
-        headerHeight: beans.columnModel.getHeaderHeight(),
+        headerHeight: getHeaderHeight(beans),
     };
 }
 

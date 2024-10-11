@@ -10,6 +10,7 @@ import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeade
 import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
+import { getColumnHeaderRowHeight, getFloatingFiltersHeight, getGroupRowsHeight } from '../headerUtils';
 import { HeaderRowType } from './headerRowComp';
 
 export interface IHeaderRowComp {
@@ -179,17 +180,17 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     public getTopAndHeight() {
-        const { columnModel, filterManager } = this.beans;
+        const { filterManager } = this.beans;
         const sizes: number[] = [];
 
-        const groupHeadersHeight = columnModel.getGroupRowsHeight();
-        const headerHeight = columnModel.getColumnHeaderRowHeight();
+        const groupHeadersHeight = getGroupRowsHeight(this.beans);
+        const headerHeight = getColumnHeaderRowHeight(this.beans);
 
         sizes.push(...groupHeadersHeight);
         sizes.push(headerHeight);
 
         if (filterManager?.hasFloatingFilters()) {
-            sizes.push(columnModel.getFloatingFiltersHeight() as number);
+            sizes.push(getFloatingFiltersHeight(this.beans) as number);
         }
 
         let topOffset = 0;

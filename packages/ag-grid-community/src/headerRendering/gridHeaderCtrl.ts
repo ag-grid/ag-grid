@@ -16,6 +16,7 @@ import { _exists } from '../utils/generic';
 import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
 import type { LongTapEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
+import { getColumnHeaderRowHeight, getFloatingFiltersHeight, getGroupRowsHeight } from './headerUtils';
 
 export interface IGridHeaderComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -23,6 +24,7 @@ export interface IGridHeaderComp {
 }
 
 export class GridHeaderCtrl extends BeanStub {
+    private beans: BeanCollection;
     private headerNavigationService?: HeaderNavigationService;
     private focusService: FocusService;
     private columnModel: ColumnModel;
@@ -32,6 +34,7 @@ export class GridHeaderCtrl extends BeanStub {
     private menuService?: MenuService;
 
     public wireBeans(beans: BeanCollection) {
+        this.beans = beans;
         this.headerNavigationService = beans.headerNavigationService;
         this.focusService = beans.focusService;
         this.columnModel = beans.columnModel;
@@ -105,15 +108,15 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private setHeaderHeight(): void {
-        const { columnModel } = this;
+        const { beans } = this;
 
         let totalHeaderHeight: number = 0;
 
-        const groupHeight = this.columnModel.getGroupRowsHeight().reduce((prev, curr) => prev + curr, 0);
-        const headerHeight = this.columnModel.getColumnHeaderRowHeight();
+        const groupHeight = getGroupRowsHeight(beans).reduce((prev, curr) => prev + curr, 0);
+        const headerHeight = getColumnHeaderRowHeight(this.beans);
 
         if (this.filterManager?.hasFloatingFilters()) {
-            totalHeaderHeight += columnModel.getFloatingFiltersHeight()!;
+            totalHeaderHeight += getFloatingFiltersHeight(beans)!;
         }
 
         totalHeaderHeight += groupHeight;

@@ -151,7 +151,7 @@ export abstract class AbstractHeaderCellCtrl<
         compBean: BeanStub;
     }) {
         const { wrapperElement, checkMeasuringCallback, compBean } = params;
-        const { columnModel, gos } = this.beans;
+        const { gos } = this.beans;
         const measureHeight = (timesCalled: number) => {
             if (!this.isAlive() || !compBean.isAlive()) {
                 return;
@@ -179,7 +179,7 @@ export abstract class AbstractHeaderCellCtrl<
                 }
             }
 
-            columnModel.setColHeaderHeight(this.column, autoHeight);
+            this.setColHeaderHeight(this.column, autoHeight);
         };
 
         let isMeasuring = false;
@@ -442,6 +442,26 @@ export abstract class AbstractHeaderCellCtrl<
             type: eventType,
             column,
         });
+    }
+
+    private setColHeaderHeight(col: AgColumn | AgColumnGroup, height: number): void {
+        if (!col.setAutoHeaderHeight(height)) {
+            return;
+        }
+        if (col.isColumn) {
+            this.eventService.dispatchEvent({
+                type: 'columnHeaderHeightChanged',
+                column: col,
+                columns: [col],
+                source: 'autosizeColumnHeaderHeight',
+            });
+        } else {
+            this.eventService.dispatchEvent({
+                type: 'columnGroupHeaderHeightChanged',
+                columnGroup: col,
+                source: 'autosizeColumnGroupHeaderHeight',
+            });
+        }
     }
 
     protected clearComponent(): void {

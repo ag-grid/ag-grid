@@ -300,6 +300,7 @@ export type {
     IAbstractHeaderCellComp,
 } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 export { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerCtrl';
+export { getFloatingFiltersHeight as _getFloatingFiltersHeight } from './headerRendering/headerUtils';
 
 // misc
 export { _requestAnimationFrame } from './misc/animationFrameService';
