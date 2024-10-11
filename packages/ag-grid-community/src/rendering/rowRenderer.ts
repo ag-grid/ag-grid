@@ -1080,7 +1080,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.redraw({ afterScroll: true });
     }
 
-    public *getFullWidthRowCtrls(): Generator<RowCtrl, any, undefined> {
+    public *getFullWidthRowCtrls(): Iterable<RowCtrl, any, undefined> {
         for (const rowCtrl of this.getAllRowCtrls()) {
             if (rowCtrl.isFullWidth()) {
                 yield rowCtrl;
