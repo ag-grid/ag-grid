@@ -4,15 +4,14 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
-import type { TooltipParentComp } from './tooltipStateManager';
+import type { GridOptionsService } from '../gridOptionsService';
+import type { TooltipLocation } from './tooltipComponent';
 import { TooltipStateManager } from './tooltipStateManager';
 
-export interface ITooltipFeatureCtrl {
-    getTooltipValue(): any;
+export interface ITooltipCtrl {
+    getTooltipValue?(): any;
     getGui(): HTMLElement;
-    getLocation(): TooltipLocation;
+    getLocation?(): TooltipLocation;
 
     getColumn?(): AgColumn | AgColumnGroup;
     getColDef?(): ColDef | ColGroupDef;
@@ -24,6 +23,31 @@ export interface ITooltipFeatureCtrl {
     getTooltipShowDelayOverride?(): number;
     getTooltipHideDelayOverride?(): number;
     shouldDisplayTooltip?(): boolean;
+
+    /** Additional params to be passed to the tooltip */
+    getAdditionalParams?(): Record<string, any>;
+}
+
+export function _isShowTooltipWhenTruncated(gos: GridOptionsService): boolean {
+    return gos.get('tooltipShowMode') === 'whenTruncated';
+}
+
+export function _getShouldDisplayTooltip(
+    gos: GridOptionsService,
+    getElement: () => HTMLElement | undefined
+): (() => boolean) | undefined {
+    return _isShowTooltipWhenTruncated(gos) ? _shouldDisplayTooltip(getElement) : undefined;
+}
+
+export function _shouldDisplayTooltip(getElement: () => HTMLElement | undefined): () => boolean {
+    return () => {
+        const element = getElement();
+        if (!element) {
+            // show tooltip by default
+            return true;
+        }
+        return element.scrollWidth > element.clientWidth;
+    };
 }
 
 export class TooltipFeature extends BeanStub {
@@ -39,7 +63,7 @@ export class TooltipFeature extends BeanStub {
     private browserTooltips: boolean;
 
     constructor(
-        private readonly ctrl: ITooltipFeatureCtrl,
+        private readonly ctrl: ITooltipCtrl,
         beans?: BeanCollection
     ) {
         super();
@@ -50,7 +74,7 @@ export class TooltipFeature extends BeanStub {
     }
 
     public postConstruct() {
-        this.refreshToolTip();
+        this.refreshTooltip();
     }
 
     private setBrowserTooltip(tooltip: string | null) {
@@ -69,7 +93,10 @@ export class TooltipFeature extends BeanStub {
     }
 
     private updateTooltipText(): void {
-        this.tooltip = this.ctrl.getTooltipValue();
+        const { getTooltipValue } = this.ctrl;
+        if (getTooltipValue) {
+            this.tooltip = getTooltipValue();
+        }
     }
 
     private createTooltipFeatureIfNeeded(): void {
@@ -77,23 +104,18 @@ export class TooltipFeature extends BeanStub {
             return;
         }
 
-        const parent: TooltipParentComp = {
-            getTooltipParams: () => this.getTooltipParams(),
-            getGui: () => this.ctrl.getGui(),
-        };
-
         this.tooltipManager = this.createBean(
-            new TooltipStateManager(
-                parent,
-                this.ctrl.getTooltipShowDelayOverride?.(),
-                this.ctrl.getTooltipHideDelayOverride?.(),
-                this.ctrl.shouldDisplayTooltip
-            ),
+            new TooltipStateManager(this.ctrl, () => this.tooltip),
             this.beans.context
         );
     }
 
-    public refreshToolTip() {
+    public setTooltipAndRefresh(tooltip: any): void {
+        this.tooltip = tooltip;
+        this.refreshTooltip();
+    }
+
+    public refreshTooltip(): void {
         this.browserTooltips = this.beans.gos.get('enableBrowserTooltips');
         this.updateTooltipText();
 
@@ -106,29 +128,6 @@ export class TooltipFeature extends BeanStub {
             this.setBrowserTooltip(null);
             this.createTooltipFeatureIfNeeded();
         }
-    }
-
-    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
-        const ctrl = this.ctrl;
-        const column = ctrl.getColumn?.();
-        const colDef = ctrl.getColDef?.();
-        const rowNode = ctrl.getRowNode?.();
-
-        return {
-            location: ctrl.getLocation(), //'cell',
-            colDef: colDef,
-            column: column,
-            rowIndex: ctrl.getRowIndex?.(),
-            node: rowNode,
-            data: rowNode?.data,
-            value: this.getTooltipText(),
-            valueFormatted: ctrl.getValueFormatted?.(),
-            hideTooltipCallback: () => this.tooltipManager?.hideTooltip(true),
-        };
-    }
-
-    private getTooltipText() {
-        return this.tooltip;
     }
 
     // overriding to make public, as we don't dispose this bean via context

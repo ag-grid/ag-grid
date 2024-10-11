@@ -39,6 +39,7 @@ import { RenderApiModule } from './rendering/renderModule';
 import { RowSelectionModule } from './selection/rowSelectionModule';
 import { SortModule } from './sort/sortModule';
 import { CellStyleModule, RowStyleModule } from './styling/stylingModule';
+import { TooltipModule } from './tooltip/tooltipModule';
 import { ValidationModule } from './validation/validationModule';
 import { CellApiModule, ChangeDetectionModule, ExpressionModule, ValueCacheModule } from './valueService/valueModule';
 import { PopupModule } from './widgets/popupModule';
@@ -91,5 +92,6 @@ export const CommunityFeaturesModule: _ModuleWithoutApi = {
         CellApiModule,
         CommunityMenuApiModule,
         CellFlashModule,
+        TooltipModule,
     ],
 };

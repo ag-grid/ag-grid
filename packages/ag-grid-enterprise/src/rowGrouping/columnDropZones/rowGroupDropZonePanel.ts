@@ -1,4 +1,4 @@
-import type { AgColumn, DragAndDropIcon, DraggingEvent, ITooltipParams, WithoutGridCommon } from 'ag-grid-community';
+import type { AgColumn, DragAndDropIcon, DraggingEvent } from 'ag-grid-community';
 import { _createIconNoSpan } from 'ag-grid-community';
 
 import { BaseDropZonePanel } from './baseDropZonePanel';
@@ -27,13 +27,6 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
         const label = translate('ariaRowGroupDropZonePanelLabel', 'Row Groups');
 
         return label;
-    }
-
-    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
-        const res = super.getTooltipParams();
-        res.location = 'rowGroupColumnsList';
-
-        return res;
     }
 
     protected isItemDroppable(column: AgColumn, draggingEvent: DraggingEvent): boolean {
