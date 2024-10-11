@@ -114,7 +114,7 @@ export const FILES_BASE_PATH = '/files';
  */
 export const CHARTS_ROBOTS_DISALLOW_JSON_URL = import.meta.env?.CHARTS_ROBOTS_DISALLOW_JSON_URL;
 
-export const PRODUCTION_CHARTS_SITE_URL = 'https://ag-grid.com/charts';
+export const PRODUCTION_CHARTS_SITE_URL = 'https://www.ag-grid.com/charts';
 export const LEGACY_CHARTS_SITE_URL = 'https://charts.ag-grid.com';
 
 /*
@@ -132,7 +132,7 @@ function getChartsUrl() {
 }
 export const CHARTS_SITE_URL = getChartsUrl();
 
-export const PRODUCTION_GRID_SITE_URL = 'https://ag-grid.com';
+export const PRODUCTION_GRID_SITE_URL = 'https://www.ag-grid.com';
 export const GRID_ARCHIVE_BASE_URL = `${PRODUCTION_GRID_SITE_URL}/archive`;
 function calculateGridUrl() {
     if (SITE_URL == null) return;
