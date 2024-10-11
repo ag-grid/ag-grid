@@ -1,8 +1,8 @@
 ---
 import Layout from '@layouts/Layout.astro';
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
-import type { Framework, MenuItem, MenuSection } from '@ag-grid-types';
-import { FRAMEWORKS } from '@constants';
+import type { Framework } from '@ag-grid-types';
+import { FRAMEWORKS, PRODUCTION_GRID_SITE_URL } from '@constants';
 import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
 import { DocsNav } from '@ag-website-shared/components/docs-navigation/DocsNav';
 import { Header } from '@features/docs/components/Header';
@@ -15,6 +15,8 @@ import {
     type ErrorId,
 } from '../../../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
 import Note from '@ag-website-shared/components/alert/Note';
+import { getIsArchive } from '@utils/env';
+import Warning from '@ag-website-shared/components/alert/Warning';
 
 interface Params {
     framework: Framework;
@@ -71,6 +73,9 @@ const headings = errorPage
           })
       ).concat(fullErrorTextHeading)
     : [topHeading, fullErrorTextHeading];
+const isArchive = getIsArchive();
+// TODO: Update this when we have a migration page
+const migrationUrl = PRODUCTION_GRID_SITE_URL;
 ---
 
 <Layout title={title} description={description} showSearchBar={true} showDocsNav={true}>
@@ -79,6 +84,14 @@ const headings = errorPage
 
         <div id="doc-content" class:list={[styles.docPage, styles.errorPage]}>
             <Header client:load title={title} framework={framework} path={path} menuItems={docsNavData.sections} />
+            {
+                isArchive && (
+                    <Warning>
+                        You are using an older version of AG Grid. To upgrade, please see the{' '}
+                        <a href={migrationUrl}>migration guide</a>.
+                    </Warning>
+                )
+            }
             <div class={styles.pageSections}>
                 {Content ? <Content framework={framework} /> : undefined}
 
@@ -95,16 +108,24 @@ const headings = errorPage
 <script>
     import { getErrorText } from '@utils/getErrorText';
     import type { ErrorId } from '../../../../../../packages/ag-grid-community/src/validation/errorMessages/errorText';
+    import { VERSION } from '../../../../../../packages/ag-grid-community/src/version';
+    import { getErrorRedirectBaseUrl } from '@utils/getErrorRedirectBaseUrl';
+    import { pathJoin } from '@utils/pathJoin';
 
     // Get errorCode from url, so it doesn't need to be passed
     // in from Astro and we can import in this script
     const errorCode = parseInt(window.location.pathname.split('/').filter(Boolean).slice(-1)[0], 10) as ErrorId;
     const searchParams = new URLSearchParams(window.location.search);
-    const params = Object.fromEntries(searchParams.entries());
+    const { _version_, ...params } = Object.fromEntries(searchParams.entries());
     const errorText = getErrorText({ errorCode, params });
+    const errorRedirectBaseUrl = getErrorRedirectBaseUrl({ errorVersion: _version_, pageVersion: VERSION });
+
+    if (errorRedirectBaseUrl) {
+        const redirectUrl = pathJoin(errorRedirectBaseUrl, window.location.pathname, window.location.search);
+        window.location.replace(redirectUrl);
+    }
 
     const errorCodeTextEl = document.getElementById('errorCodeText');
-
     if (errorCodeTextEl) {
         errorCodeTextEl.textContent = errorText;
     }
