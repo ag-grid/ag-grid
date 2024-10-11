@@ -6,8 +6,8 @@ export interface IDetailGridApiService {
     setMasterForRow<TData = any>(
         rowNode: RowNode<TData>,
         data: TData,
-        master: boolean,
-        shouldSetExpanded: boolean
+        shouldSetExpanded: boolean,
+        master?: boolean
     ): void;
 
     addDetailGridInfo(id: string, gridInfo: DetailGridInfo): void;

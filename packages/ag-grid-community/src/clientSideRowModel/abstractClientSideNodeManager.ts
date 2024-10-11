@@ -53,15 +53,6 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         this.beans = beans;
     }
 
-    public isMasterDetail(): boolean {
-        const gos = this.gos;
-        return (
-            gos.get('masterDetail') &&
-            // TODO: AG-1752 Allow tree data leaf rows to serve as master rows for detail grids (Tree Data hosting Master/Detail)
-            !gos.get('treeData')
-        );
-    }
-
     public getRowNode(id: string): RowNode | undefined {
         return this.allNodesMap[id];
     }
@@ -395,7 +386,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
 
             rowNodeTransaction.update.push(rowNode);
 
-            this.beans.detailGridApiService?.setMasterForRow(rowNode, rowNode.data, this.isMasterDetail(), false);
+            this.beans.detailGridApiService?.setMasterForRow(rowNode, rowNode.data, false);
         });
     }
 
@@ -463,9 +454,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
 
         this.nextId++;
 
-        if (this.isMasterDetail()) {
-            this.beans.detailGridApiService?.setMasterForRow(node, data, true, true);
-        }
+        this.beans.detailGridApiService?.setMasterForRow(node, data, true);
 
         return node;
     }
