@@ -134,6 +134,14 @@ describe('ag-grid master detail', () => {
             · · · ├── LEAF id:0 x:"a"
             · · · └── LEAF id:1 x:"b"
         `);
+
+        api.setGridOption('masterDetail', false);
+
+        gridRows = new GridRows(api, 'data', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 k:"1"
+        `);
     });
 
     test('masterDetail set rowData (without id)', async () => {
