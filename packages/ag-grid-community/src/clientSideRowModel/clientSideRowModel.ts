@@ -66,9 +66,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private beans: BeanCollection;
 
-    /** Use to detect masterDetail enabled change during refresh */
-    private oldMasterDetail: boolean = false;
-
     private columnModel: ColumnModel;
     private selectionService?: ISelectionService;
     private valueCache?: ValueCache;
@@ -764,19 +761,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         switch (params.step) {
             case ClientSideRowModelSteps.EVERYTHING: {
-                const masterDetail = this.nodeManager.isMasterDetail();
-                if (this.oldMasterDetail !== masterDetail) {
-                    this.oldMasterDetail = masterDetail;
-                    const detailGridApiService = this.beans.detailGridApiService;
-                    if (detailGridApiService) {
-                        const rows = this.rootNode.allLeafChildren;
-                        for (let i = 0, len = rows!.length; i < len; i++) {
-                            const rowNode = rows![i];
-                            detailGridApiService.setMasterForRow(rowNode, rowNode.data, masterDetail, true);
-                        }
-                    }
-                }
-
                 const afterColumnsChange = !!params.afterColumnsChanged;
                 if (afterColumnsChange) {
                     this.nodeManager.afterColumnsChanged?.();
@@ -1213,9 +1197,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         // - clears selection, done before we set row data to ensure it isn't readded via `selectionService.syncInOldRowNode`
         this.selectionService?.reset('rowDataChanged');
-
-        // Reset the oldMasterDetail state as we do not need to recompute set master detail during refresh when new data is set
-        this.oldMasterDetail = this.nodeManager.isMasterDetail();
 
         if (!Array.isArray(rowData)) {
             _logWarn(1);

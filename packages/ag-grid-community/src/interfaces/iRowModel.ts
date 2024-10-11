@@ -44,6 +44,9 @@ export interface IRowModel {
      * all nodes. For serverSide, goes through what's loaded in memory. */
     forEachNode(callback: (rowNode: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
 
+    /** Iterates through all root.allLeafChildren if this is a ClientSideRowModel, otherwise is undefined */
+    forEachLeafNode?(callback: (node: RowNode, index: number) => void): void;
+
     /** The base class returns the type. We use this instead of 'instanceof' as the client might provide
      * their own implementation of the models in the future. */
     getType(): RowModelType;

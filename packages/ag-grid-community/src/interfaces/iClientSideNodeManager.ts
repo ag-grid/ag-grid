@@ -18,8 +18,6 @@ export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
 }
 
 export interface IClientSideNodeManager<TData = any> {
-    isMasterDetail(): boolean;
-
     activate(rootRowNode: RowNode<TData> | null): void;
 
     deactivate(): void;

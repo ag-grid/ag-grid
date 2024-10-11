@@ -3,18 +3,42 @@ import type {
     DetailGridInfo,
     FuncColsService,
     IDetailGridApiService,
+    IRowModel,
     NamedBean,
     RowNode,
 } from 'ag-grid-community';
-import { BeanStub, _exists, _iterateObject } from 'ag-grid-community';
+import { BeanStub, _exists, _isClientSideRowModel, _iterateObject } from 'ag-grid-community';
 
 export class DetailGridApiService extends BeanStub implements NamedBean, IDetailGridApiService {
     beanName = 'detailGridApiService' as const;
 
+    private rowModel: IRowModel;
     private funcColsService: FuncColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.funcColsService = beans.funcColsService;
+        this.rowModel = beans.rowModel;
+    }
+
+    private isMasterDetailEnabled() {
+        const gos = this.gos;
+        return gos.get('masterDetail') && !gos.get('treeData');
+    }
+
+    public postConstruct(): void {
+        let enabled = this.isMasterDetailEnabled();
+        this.addManagedPropertyListeners(['treeData', 'masterDetail'], (params) => {
+            const properties = params.changeSet?.properties;
+            if (properties && _isClientSideRowModel(this.gos)) {
+                const newEnabled = this.isMasterDetailEnabled();
+                if (enabled !== newEnabled) {
+                    enabled = newEnabled;
+                    this.rowModel.forEachLeafNode!((node) => {
+                        this.setMasterForRow(node, node.data, true, newEnabled);
+                    });
+                }
+            }
+        });
     }
 
     private detailGridInfoMap: { [id: string]: DetailGridInfo | undefined } = {};
@@ -22,8 +46,8 @@ export class DetailGridApiService extends BeanStub implements NamedBean, IDetail
     public setMasterForRow<TData = any>(
         rowNode: RowNode<TData>,
         data: TData,
-        master: boolean,
-        shouldSetExpanded: boolean
+        shouldSetExpanded: boolean,
+        master = this.isMasterDetailEnabled()
     ): void {
         const gos = this.gos;
         const oldMaster = rowNode.master;
