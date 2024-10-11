@@ -11,12 +11,12 @@ a#{$selector-exclude-grid} {
         color: var(--color-link-hover);
     }
 
-    > .icon {
+    > :where(.icon) {
         --icon-size: 1.5em;
         --color-icon: var(--color-link);
     }
 
-    &:hover > .icon {
+    &:hover > :where(.icon) {
         --color-icon: var(--color-link-hover);
     }
 }
