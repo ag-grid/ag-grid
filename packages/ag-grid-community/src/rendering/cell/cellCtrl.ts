@@ -27,14 +27,12 @@ import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _requestAnimationFrame } from '../../misc/animationFrameService';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
+import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _setAriaColIndex } from '../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../utils/dom';
 import { _getCtrlForEventTarget } from '../../utils/event';
-import { _exists, _makeNull } from '../../utils/generic';
-import { _getValueUsingField } from '../../utils/object';
+import { _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
-import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
-import { TooltipFeature } from '../../widgets/tooltipFeature';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
@@ -185,63 +183,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private enableTooltipFeature(value?: string, shouldDisplayTooltip?: () => boolean): void {
-        const getTooltipValue = () => {
-            const colDef = this.column.getColDef();
-            const data = this.rowNode.data;
-
-            if (colDef.tooltipField && _exists(data)) {
-                return _getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
-            }
-
-            const valueGetter = colDef.tooltipValueGetter;
-
-            if (valueGetter) {
-                return valueGetter(
-                    this.beans.gos.addGridCommonParams({
-                        location: 'cell',
-                        colDef: this.column.getColDef(),
-                        column: this.column,
-                        rowIndex: this.cellPosition.rowIndex,
-                        node: this.rowNode,
-                        data: this.rowNode.data,
-                        value: this.value,
-                        valueFormatted: this.valueFormatted,
-                    })
-                );
-            }
-
-            return null;
-        };
-
-        const isTooltipWhenTruncated = this.beans.gos.get('tooltipShowMode') === 'whenTruncated';
-
-        if (!shouldDisplayTooltip && isTooltipWhenTruncated && !this.isCellRenderer()) {
-            shouldDisplayTooltip = () => {
-                const eGui = this.getGui();
-                const textEl = eGui.children.length === 0 ? eGui : eGui.querySelector('.ag-cell-value');
-                if (!textEl) {
-                    return true;
-                }
-
-                return textEl.scrollWidth > textEl.clientWidth;
-            };
-        }
-
-        const tooltipCtrl: ITooltipFeatureCtrl = {
-            getColumn: () => this.column,
-            getColDef: () => this.column.getColDef(),
-            getRowIndex: () => this.cellPosition.rowIndex,
-            getRowNode: () => this.rowNode,
-            getGui: () => this.getGui(),
-            getLocation: () => 'cell',
-            getTooltipValue: value != null ? () => value : getTooltipValue,
-
-            // this makes no sense, why is the cell formatted value passed to the tooltip???
-            getValueFormatted: () => this.valueFormatted,
-            shouldDisplayTooltip,
-        };
-
-        this.tooltipFeature = new TooltipFeature(tooltipCtrl, this.beans);
+        this.tooltipFeature = this.beans.tooltipService?.enableCellTooltipFeature(this, value, shouldDisplayTooltip);
     }
 
     private disableTooltipFeature() {
@@ -283,7 +225,7 @@ export class CellCtrl extends BeanStub {
 
         this.cellPositionFeature?.setComp(eGui);
         this.cellCustomStyleFeature?.setComp(comp);
-        this.tooltipFeature?.refreshToolTip();
+        this.tooltipFeature?.refreshTooltip();
         this.cellKeyboardListenerFeature?.setComp(this.eGui);
 
         if (this.cellRangeFeature) {
@@ -534,7 +476,7 @@ export class CellCtrl extends BeanStub {
                     this.disableTooltipFeature();
                 }
                 this.enableTooltipFeature(value, shouldDisplayTooltip);
-                this.tooltipFeature?.refreshToolTip();
+                this.tooltipFeature?.refreshTooltip();
             },
         });
 
@@ -626,7 +568,7 @@ export class CellCtrl extends BeanStub {
             this.cellCustomStyleFeature?.applyClassesFromColDef();
         }
 
-        this.tooltipFeature?.refreshToolTip();
+        this.tooltipFeature?.refreshTooltip();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
@@ -680,6 +622,10 @@ export class CellCtrl extends BeanStub {
 
     public getValue(): any {
         return this.value;
+    }
+
+    public getValueFormatted(): any {
+        return this.valueFormatted;
     }
 
     private addDomData(compBean: BeanStub): void {
@@ -952,8 +898,7 @@ export class CellCtrl extends BeanStub {
             return;
         }
 
-        const isTooltipEnabled = this.column.isTooltipEnabled();
-        if (isTooltipEnabled) {
+        if (this.column.isTooltipEnabled()) {
             this.disableTooltipFeature();
             this.enableTooltipFeature();
         } else {

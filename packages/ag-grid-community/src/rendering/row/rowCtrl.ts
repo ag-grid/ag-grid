@@ -35,6 +35,7 @@ import { RowHighlightPosition } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { calculateRowLevel } from '../../styling/rowStyleService';
+import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _setAriaExpanded, _setAriaRowIndex } from '../../utils/aria';
 import { _addOrRemoveAttribute, _isElementChildOfClass, _isFocusableFormField, _isVisible } from '../../utils/dom';
 import { _isStopPropagationForAgGrid } from '../../utils/event';
@@ -42,8 +43,6 @@ import { _executeNextVMTurn } from '../../utils/function';
 import { _exists, _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import type { Component } from '../../widgets/component';
-import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
-import { TooltipFeature } from '../../widgets/tooltipFeature';
 import { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import type { CtrlFunc } from '../renderUtils';
@@ -727,9 +726,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         this.addDestroyFunc(() => {
             this.rowDragComps = this.destroyBeans(this.rowDragComps, this.beans.context);
-            if (this.tooltipFeature) {
-                this.tooltipFeature = this.destroyBean(this.tooltipFeature, this.beans.context);
-            }
+            this.tooltipFeature = this.destroyBean(this.tooltipFeature, this.beans.context);
         });
 
         this.addManagedPropertyListeners(
@@ -1122,18 +1119,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        const tooltipParams: ITooltipFeatureCtrl = {
-            getGui: () => this.fullWidthGui!.element,
-            getTooltipValue: () => value,
-            getLocation: () => 'fullWidthRow',
-            shouldDisplayTooltip,
-        };
-
-        if (this.tooltipFeature) {
-            this.destroyBean(this.tooltipFeature, this.beans.context);
-        }
-
-        this.tooltipFeature = this.createBean(new TooltipFeature(tooltipParams, this.beans));
+        this.tooltipFeature = this.beans.tooltipService?.refreshRowTooltip(
+            this.tooltipFeature,
+            this,
+            value,
+            shouldDisplayTooltip
+        );
     }
 
     private addFullWidthRowDragging(

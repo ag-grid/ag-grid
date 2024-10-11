@@ -265,6 +265,11 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
         }
     }
 
+    /** doesn't throw an error if `bean` is undefined */
+    public createOptionalManagedBean<T extends Bean | null | undefined>(bean: T, context?: Context): T | undefined {
+        return bean ? this.createManagedBean(bean, context) : undefined;
+    }
+
     public createManagedBean<T extends Bean | null | undefined>(bean: T, context?: Context): T {
         const res = this.createBean(bean, context);
         this.addDestroyFunc(this.destroyBean.bind(this, bean, context));
