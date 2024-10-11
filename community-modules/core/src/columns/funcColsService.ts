@@ -264,7 +264,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
         source: ColumnEventType
     ): void {
         // defer grid init until cols are present. array size does not matter, only presence.
-        if (this.columnModel.getCols()) {
+        if (!this.columnModel.getCols()) {
             return;
         }
 
