@@ -26,9 +26,8 @@ import { _getValueUsingField } from '../utils/object';
 import { _warn } from '../validation/logging';
 import type { ValueService } from '../valueService/valueService';
 import type { ColumnModel } from './columnModel';
-import { convertSourceType } from './columnModel';
 import type { ColumnState, ColumnStateParams, ColumnStateService } from './columnStateService';
-import { convertColumnTypes } from './columnUtils';
+import { _convertColumnEventSourceType, convertColumnTypes } from './columnUtils';
 import type { FuncColsService } from './funcColsService';
 
 interface GroupSafeValueFormatter {
@@ -78,7 +77,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
         this.addManagedPropertyListener('dataTypeDefinitions', (event) => {
             this.processDataTypeDefinitions();
-            this.columnModel.recreateColumnDefs(convertSourceType(event.source));
+            this.columnModel.recreateColumnDefs(_convertColumnEventSourceType(event.source));
         });
     }
 

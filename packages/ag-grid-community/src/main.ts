@@ -30,6 +30,10 @@ export {
     isColumnGroupAutoCol,
     _destroyColumnTree,
     _getColumnsFromTree,
+    _areColIdsEqual,
+    _updateColsMap,
+    _convertColumnEventSourceType,
+    _columnsMatch,
 } from './columns/columnUtils';
 export { IAutoColService } from './interfaces/iAutoColService';
 export {
