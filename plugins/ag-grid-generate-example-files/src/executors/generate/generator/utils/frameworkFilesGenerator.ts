@@ -105,40 +105,12 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         const entryFileName = getEntryFileName(internalFramework)!;
         let mainJs = readAsJsFile(entryFile, 'vanilla');
 
-        // Variables imported from ag grid packages to convert to agGrid.<variable> syntax
-        const convertedImportNames = [
-            'createGrid',
-            'LicenseManager.setLicenseKey',
-            'themeQuartz',
-            'themeAlpine',
-            'themeBalham',
-            'createTheme',
-            'createPart',
-            'colorSchemeLight',
-            'colorSchemeLightCold',
-            'colorSchemeLightWarm',
-            'colorSchemeDark',
-            'colorSchemeDarkBlue',
-            'colorSchemeDarkWarm',
-            'iconSetQuartz',
-            'iconSetQuartzLight',
-            'iconSetQuartzBold',
-            'iconSetQuartzRegular',
-            'iconSetAlpine',
-            'iconSetMaterial',
-            'checkboxStyleDefault',
-            'inputStyleBase',
-            'inputStyleBordered',
-            'inputStyleUnderlined',
-            'tabStyleBase',
-            'tabStyleQuartz',
-            'tabStyleMaterial',
-            'tabStyleAlpine',
-            'tabStyleRolodex',
-            // ...(bindings.imports.find((i) => i.module.includes('@ag-grid-community/theming'))?.imports || []),
-        ];
+        const symbolsImportedGridPackage = bindings.imports
+            .filter((i) => i.module.includes('ag-grid-'))
+            .filter((i) => !i.module.includes('@ag-grid-community/locale'))
+            .flatMap((i) => i.imports);
 
-        const importNamePattern = '\\b(' + convertedImportNames.map(regExpEscape).join('|') + ')\\b';
+        const importNamePattern = '\\b(' + symbolsImportedGridPackage.map(regExpEscape).join('|') + ')\\b';
         mainJs = mainJs.replace(new RegExp(importNamePattern, 'g'), 'agGrid.$&');
 
         // Javascript is packages only

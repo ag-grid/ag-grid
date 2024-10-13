@@ -3,7 +3,7 @@ import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { GridTheme } from './entities/gridOptions';
 import { _observeResize } from './utils/dom';
-import { _logWarn } from './validation/logging';
+import { _warn } from './validation/logging';
 
 const ROW_HEIGHT: Variable = {
     cssName: '--ag-row-height',
@@ -167,7 +167,7 @@ export class Environment extends BeanStub implements NamedBean {
 
         if (lastMeasurement === 'no-styles') {
             // No value for the variable
-            _logWarn(9, { variable });
+            _warn(9, { variable });
         }
 
         const unsubscribe = _observeResize(this.gos, sizeEl, () => {

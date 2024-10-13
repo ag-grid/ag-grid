@@ -5,10 +5,10 @@ import type { NamedBean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
 import type { CsvCustomContent, CsvExportParams } from '../interfaces/exportParams';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import type { ValueService } from '../valueService/valueService';
 import { BaseCreator } from './baseCreator';
-import { Downloader } from './downloader';
+import { _downloadFile } from './downloader';
 import type { GridSerializer } from './gridSerializer';
 import { CsvSerializingSession } from './sessions/csvSerializingSession';
 
@@ -47,7 +47,7 @@ export class CsvCreator
     protected export(userParams?: CsvExportParams): void {
         if (this.isExportSuppressed()) {
             // Export cancelled.
-            _logWarn(51);
+            _warn(51);
             return;
         }
 
@@ -61,7 +61,7 @@ export class CsvCreator
                 ? mergedParams.fileName(this.gos.getGridCommonParams())
                 : mergedParams.fileName;
 
-        Downloader.download(this.getFileName(fileName), packagedFile);
+        _downloadFile(this.getFileName(fileName), packagedFile);
     }
 
     public exportDataAsCsv(params?: CsvExportParams): void {

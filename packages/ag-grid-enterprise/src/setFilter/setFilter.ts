@@ -36,7 +36,7 @@ import {
 import type { VirtualListModel } from '../widgets/iVirtualList';
 import { VirtualList } from '../widgets/virtualList';
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
-import { SetFilterDisplayValue } from './iSetDisplayValueModel';
+import { SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSetDisplayValueModel';
 import type { ISetFilterLocaleText } from './localeText';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
 import type {
@@ -654,7 +654,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         const groupsExist = this.valueModel.hasGroups();
 
         // Select all option
-        if (item.key === SetFilterDisplayValue.SELECT_ALL) {
+        if (item.key === SET_FILTER_SELECT_ALL) {
             return {
                 value: () => this.getSelectAllLabel(),
                 isGroup: groupsExist,
@@ -667,7 +667,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
 
         // Add selection to filter option
-        if (item.key === SetFilterDisplayValue.ADD_SELECTION_TO_FILTER) {
+        if (item.key === SET_FILTER_ADD_SELECTION_TO_FILTER) {
             return {
                 value: () => this.getAddSelectionToFilterLabel(),
                 depth: item.depth,
@@ -725,7 +725,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
 
         // List item - 'Select All'
-        if (item === SetFilterDisplayValue.SELECT_ALL) {
+        if (item === SET_FILTER_SELECT_ALL) {
             return {
                 value: () => this.getSelectAllLabel(),
                 selectedListener: (e: SetFilterListItemSelectionChangedEvent<string>) => this.onSelectAll(e.isSelected),
@@ -733,7 +733,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
 
         // List item - 'Add selection to filter'
-        if (item === SetFilterDisplayValue.ADD_SELECTION_TO_FILTER) {
+        if (item === SET_FILTER_ADD_SELECTION_TO_FILTER) {
             return {
                 value: () => this.getAddSelectionToFilterLabel(),
                 selectedListener: (e: SetFilterListItemSelectionChangedEvent<string | null>) => {
@@ -766,9 +766,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         let isExpanded: boolean | undefined;
         if (this.isSetFilterModelTreeItem(item)) {
             isExpanded = item.expanded;
-            if (item.key === SetFilterDisplayValue.SELECT_ALL) {
+            if (item.key === SET_FILTER_SELECT_ALL) {
                 isSelected = this.isSelectAllSelected();
-            } else if (item.key === SetFilterDisplayValue.ADD_SELECTION_TO_FILTER) {
+            } else if (item.key === SET_FILTER_ADD_SELECTION_TO_FILTER) {
                 isSelected = this.valueModel!.isAddCurrentSelectionToFilterChecked();
             } else if (item.children) {
                 isSelected = this.areAllChildrenSelected(item);
@@ -776,9 +776,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                 isSelected = this.valueModel!.isKeySelected(item.key!);
             }
         } else {
-            if (item === SetFilterDisplayValue.SELECT_ALL) {
+            if (item === SET_FILTER_SELECT_ALL) {
                 isSelected = this.isSelectAllSelected();
-            } else if (item === SetFilterDisplayValue.ADD_SELECTION_TO_FILTER) {
+            } else if (item === SET_FILTER_ADD_SELECTION_TO_FILTER) {
                 isSelected = this.valueModel!.isAddCurrentSelectionToFilterChecked();
             } else {
                 isSelected = this.valueModel!.isKeySelected(item);

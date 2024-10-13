@@ -3,7 +3,7 @@ import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import { _missing } from '../../utils/generic';
-import { _logWarn } from '../../validation/logging';
+import { _warn } from '../../validation/logging';
 import type { ValueService } from '../../valueService/valueService';
 import type { ListOption } from '../../widgets/agList';
 import type { AgSelect } from '../../widgets/agSelect';
@@ -46,7 +46,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         const { values, value, eventKey } = params;
 
         if (_missing(values)) {
-            _logWarn(58);
+            _warn(58);
             return;
         }
 

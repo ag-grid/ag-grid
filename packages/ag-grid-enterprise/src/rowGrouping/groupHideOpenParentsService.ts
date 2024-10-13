@@ -9,7 +9,7 @@ import type {
     IShowRowGroupColsService,
     RowNode,
 } from 'ag-grid-community';
-import { BeanStub, _logError, _missing, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _error, _missing, _warnOnce } from 'ag-grid-community';
 
 export class GroupHideOpenParentsService extends BeanStub implements IGroupHideOpenParentsService {
     beanName = 'groupHideOpenParentsService' as const;
@@ -59,7 +59,7 @@ export class GroupHideOpenParentsService extends BeanStub implements IGroupHideO
             groupDisplayCols.forEach((groupDisplayCol) => {
                 const showRowGroup = groupDisplayCol.getColDef().showRowGroup;
                 if (typeof showRowGroup !== 'string') {
-                    _logError(110);
+                    _error(110);
                     return;
                 }
 

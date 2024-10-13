@@ -29,8 +29,9 @@ import type { ISizeColumnsToFitParams } from '../interfaces/autoSize';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState } from '../interfaces/gridState';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
-import type { ICellEditor } from '../interfaces/iCellEditor';
+import type { GetCellEditorInstancesParams, ICellEditor } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
+import type { FlashCellsParams, RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { ClientSideRowModelStep } from '../interfaces/iClientSideRowModel';
 import type { IClipboardCopyParams, IClipboardCopyRowsParams } from '../interfaces/iClipboardService';
 import type { Column, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from '../interfaces/iColumn';
@@ -39,6 +40,7 @@ import type { IContextMenuParams } from '../interfaces/iContextMenu';
 import type { ExcelExportMultipleSheetParams, ExcelExportParams } from '../interfaces/iExcelCreator';
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
+import type { RedrawRowsParams } from '../interfaces/iRedrawRowsParams';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { LoadSuccessParams, RefreshServerSideParams } from '../interfaces/iServerSideRowModel';
 import type { IServerSideGroupSelectionState, IServerSideSelectionState } from '../interfaces/iServerSideSelection';
@@ -49,14 +51,7 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { ServerSideTransaction, ServerSideTransactionResult } from '../interfaces/serverSideTransaction';
 import type { ManagedGridOptionKey, ManagedGridOptions } from '../propertyKeys';
-import type { ICellRenderer } from '../rendering/cellRenderers/iCellRenderer';
-import type {
-    FlashCellsParams,
-    GetCellEditorInstancesParams,
-    GetCellRendererInstancesParams,
-    RedrawRowsParams,
-    RefreshCellsParams,
-} from '../rendering/rowRenderer';
+import type { GetCellRendererInstancesParams, ICellRenderer } from '../rendering/cellRenderers/iCellRenderer';
 
 export interface DetailGridInfo {
     /**
@@ -974,7 +969,7 @@ export interface _RangeSelectionGridApi {
     clearCellSelection(): void;
 }
 
-export interface _ServerSideRowModelGridApi {
+export interface _ServerSideRowModelGridApi<TData> {
     /**
      * Returns an object containing rules matching the selected rows in the SSRM.
      *
@@ -992,18 +987,22 @@ export interface _ServerSideRowModelGridApi {
     setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
 
     /** Apply transactions to the server side row model. */
-    applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined;
+    applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult<TData> | undefined;
     /** Batch apply transactions to the server side row model. */
     applyServerSideTransactionAsync(
         transaction: ServerSideTransaction,
-        callback?: (res: ServerSideTransactionResult) => void
+        callback?: (res: ServerSideTransactionResult<TData>) => void
     ): void;
 
     /**
      * Applies row data to a server side store.
      * New rows will overwrite rows at the same index in the same way as if provided by a datasource success callback.
      */
-    applyServerSideRowData(params: { successParams: LoadSuccessParams; route?: string[]; startRow?: number }): void;
+    applyServerSideRowData(params: {
+        successParams: LoadSuccessParams<TData>;
+        route?: string[];
+        startRow?: number;
+    }): void;
 
     /** Gets all failed server side loads to retry. */
     retryServerSideLoads(): void;
@@ -1180,7 +1179,7 @@ export interface GridApi<TData = any>
         _CsvExportGridApi,
         _RowGroupingGridApi<TData>,
         _RangeSelectionGridApi,
-        _ServerSideRowModelGridApi,
+        _ServerSideRowModelGridApi<TData>,
         _MenuGridApi,
         _MasterDetailGridApi,
         _ExcelExportGridApi,

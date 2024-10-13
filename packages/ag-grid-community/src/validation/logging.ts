@@ -60,6 +60,13 @@ function stringifyValue(value: any) {
     }
     return output;
 }
+/**
+ * Correctly formats a string or undefined or null value into a human readable string
+ * @param input
+ */
+export function toStringWithNullUndefined(str: string | null | undefined) {
+    return str === undefined ? 'undefined' : str === null ? 'null' : str;
+}
 
 export function getErrorLink(errorNum: ErrorId, args: GetErrorParams<any>) {
     const params = new URLSearchParams();
@@ -77,7 +84,7 @@ const minifiedLog = (errorNum: ErrorId, args: GetErrorParams<any>, defaultMessag
     return `${defaultMessage ? defaultMessage + ' \n' : ''}Visit ${errorLink}${defaultMessage ? '' : ' \n  Alternatively register the ValidationModule to see the full message in the console.'}`;
 };
 
-export function _logWarn<
+export function _warn<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
@@ -85,7 +92,7 @@ export function _logWarn<
     getMsgOrDefault(warnLog, args[0], args[1] as any);
 }
 
-export function _logError<
+export function _error<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],

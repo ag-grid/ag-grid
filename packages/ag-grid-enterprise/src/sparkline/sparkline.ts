@@ -1,7 +1,7 @@
 import { _Scale, _Scene, _Util } from 'ag-charts-community';
 
 import type { HighlightStyleOptions } from 'ag-grid-community';
-import { _logError } from 'ag-grid-community';
+import { _error } from 'ag-grid-community';
 
 import type { SparklineFactoryOptions } from './agSparkline';
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
@@ -51,6 +51,9 @@ export class SparklineAxis {
     stroke: string = 'rgb(204, 214, 235)';
     strokeWidth: number = 1;
 }
+
+const tooltipDocuments: Document[] = [];
+
 export abstract class Sparkline {
     readonly id: string = createId(this);
 
@@ -61,7 +64,6 @@ export abstract class Sparkline {
     readonly rootGroup: _Scene.TranslatableGroup;
     // Only one tooltip instance for all sparkline instances.
     tooltip!: SparklineTooltip;
-    private static tooltipDocuments: Document[] = [];
 
     private mouseMoveEvent: MouseEvent;
 
@@ -160,7 +162,7 @@ export abstract class Sparkline {
         this.resizeAndSetDimensions(this.width, this.height);
 
         // one style element for tooltip styles per document
-        if (!Sparkline.tooltipDocuments.includes(document)) {
+        if (!tooltipDocuments.includes(document)) {
             this.initialiseTooltipStyles();
         }
 
@@ -177,7 +179,7 @@ export abstract class Sparkline {
         const styleElement = document.createElement('style');
         styleElement.innerHTML = defaultTooltipCss;
         document.head.insertBefore(styleElement, document.head.querySelector('style'));
-        Sparkline.tooltipDocuments.push(document);
+        tooltipDocuments.push(document);
     }
 
     private _width: number = 100;
@@ -334,7 +336,7 @@ export abstract class Sparkline {
     }
 
     private renderScene() {
-        this.scene.render().catch((e) => _logError(105, { e }));
+        this.scene.render().catch((e) => _error(105, { e }));
     }
 
     private updateHitPoint(event: MouseEvent) {

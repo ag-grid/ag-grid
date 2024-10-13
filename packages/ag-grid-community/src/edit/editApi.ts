@@ -2,11 +2,11 @@ import type { StartEditingCellParams } from '../api/gridApi';
 import { ensureColumnVisible, ensureIndexVisible } from '../api/scrollApi';
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
 import { _getActiveDomElement } from '../gridOptionsUtils';
-import type { ICellEditor } from '../interfaces/iCellEditor';
+import type { GetCellEditorInstancesParams, ICellEditor } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
-import type { GetCellEditorInstancesParams } from '../rendering/rowRenderer';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 
 export function undoCellEditing(beans: BeanCollection): void {
     beans.undoRedoService?.undo('api');
@@ -20,23 +20,40 @@ export function getCellEditorInstances<TData = any>(
     beans: BeanCollection,
     params: GetCellEditorInstancesParams<TData> = {}
 ): ICellEditor[] {
-    const res = beans.rowRenderer.getCellEditorInstances(params);
-    const unwrapped = res.map(_unwrapUserComp);
-    return unwrapped;
+    const res: ICellEditor[] = [];
+
+    beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]).forEach((cellCtrl) => {
+        const cellEditor = cellCtrl.getCellEditor() as ICellEditor;
+
+        if (cellEditor) {
+            res.push(_unwrapUserComp(cellEditor));
+        }
+    });
+
+    return res;
 }
 
 export function getEditingCells(beans: BeanCollection): CellPosition[] {
-    return beans.rowRenderer.getEditingCells();
+    const res: CellPosition[] = [];
+
+    beans.rowRenderer.getAllCellCtrls().forEach((cellCtrl) => {
+        if (cellCtrl.isEditing()) {
+            const cellPosition = cellCtrl.getCellPosition();
+            res.push(cellPosition);
+        }
+    });
+
+    return res;
 }
 
 export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
-    beans.rowRenderer.stopEditing(cancel);
+    beans.editService?.stopAllEditing(cancel);
 }
 
 export function startEditingCell(beans: BeanCollection, params: StartEditingCellParams): void {
     const column = beans.columnModel.getCol(params.colKey);
     if (!column) {
-        _logWarn(12, { colKey: params.colKey });
+        _warn(12, { colKey: params.colKey });
         return;
     }
     const cellPosition: CellPosition = {

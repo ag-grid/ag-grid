@@ -1,4 +1,4 @@
-import { isColumnControlsCol } from '../../columns/columnUtils';
+import { isColumnSelectionCol } from '../../columns/columnUtils';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -22,6 +22,7 @@ import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
+import type { FlashCellsParams } from '../../interfaces/iCellsParams';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
@@ -39,7 +40,6 @@ import { TooltipFeature } from '../../widgets/tooltipFeature';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
-import type { FlashCellsParams } from '../rowRenderer';
 import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
 import { CellMouseListenerFeature } from './cellMouseListenerFeature';
 import { CellPositionFeature } from './cellPositionFeature';
@@ -425,7 +425,7 @@ export class CellCtrl extends BeanStub {
         const { rowSelection } = this.beans.gridOptions;
         return (
             colDef.checkboxSelection ||
-            (isColumnControlsCol(this.column) &&
+            (isColumnSelectionCol(this.column) &&
                 rowSelection &&
                 typeof rowSelection !== 'string' &&
                 _getCheckboxes(rowSelection))

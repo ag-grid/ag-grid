@@ -17,6 +17,7 @@ import type {
 import {
     BeanStub,
     RowNode,
+    _ROW_ID_PREFIX_ROW_GROUP,
     _areEqual,
     _exists,
     _existsAndNotEmpty,
@@ -586,7 +587,7 @@ export class GroupStrategy extends BeanStub {
 
         // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
         // for top pinned and bottom pinned rows.
-        return RowNode.ID_PREFIX_ROW_GROUP + createGroupId(node, parent, level);
+        return _ROW_ID_PREFIX_ROW_GROUP + createGroupId(node, parent, level);
     }
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo, details: GroupingDetails): void {

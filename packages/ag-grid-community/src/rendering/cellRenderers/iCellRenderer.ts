@@ -1,4 +1,5 @@
 import type { ColDef } from '../../entities/colDef';
+import type { GetCellsParams } from '../../interfaces/iCellsParams';
 import type { Column } from '../../interfaces/iColumn';
 import type { AgGridCommon } from '../../interfaces/iCommon';
 import type { IComponent } from '../../interfaces/iComponent';
@@ -83,3 +84,5 @@ export interface ICellRendererComp<TData = any> extends IComponent<ICellRenderer
 export interface ICellRendererFunc<TData = any> {
     (params: ICellRendererParams<TData>): HTMLElement | string;
 }
+
+export interface GetCellRendererInstancesParams<TData = any> extends GetCellsParams<TData> {}

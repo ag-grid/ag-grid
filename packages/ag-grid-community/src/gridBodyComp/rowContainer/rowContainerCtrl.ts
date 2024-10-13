@@ -22,8 +22,7 @@ import type { ScrollPartner } from '../gridBodyScrollFeature';
 import { ViewportSizeFeature } from '../viewportSizeFeature';
 import { RowContainerEventsFeature } from './rowContainerEventsFeature';
 import { SetHeightFeature } from './setHeightFeature';
-import { SetPinnedLeftWidthFeature } from './setPinnedLeftWidthFeature';
-import { SetPinnedRightWidthFeature } from './setPinnedRightWidthFeature';
+import { SetPinnedWidthFeature } from './setPinnedWidthFeature';
 
 export type RowContainerName =
     | 'left'
@@ -253,7 +252,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     private enableRtl: boolean;
 
     private viewportSizeFeature: ViewportSizeFeature | undefined; // only center has this
-    private pinnedWidthFeature: SetPinnedLeftWidthFeature | SetPinnedRightWidthFeature | undefined;
+    private pinnedWidthFeature: SetPinnedWidthFeature | undefined;
     private visible: boolean = true;
     // Maintaining a constant reference enables optimization in React.
     private EMPTY_CTRLS = [];
@@ -310,11 +309,11 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
 
         const pinnedWidthChanged = () => this.onPinnedWidthChanged();
         this.forContainers(allLeft, () => {
-            this.pinnedWidthFeature = this.createManagedBean(new SetPinnedLeftWidthFeature(this.eContainer));
+            this.pinnedWidthFeature = this.createManagedBean(new SetPinnedWidthFeature(this.eContainer, true));
             this.addManagedEventListeners({ leftPinnedWidthChanged: pinnedWidthChanged });
         });
         this.forContainers(allRight, () => {
-            this.pinnedWidthFeature = this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer));
+            this.pinnedWidthFeature = this.createManagedBean(new SetPinnedWidthFeature(this.eContainer, true));
             this.addManagedEventListeners({ rightPinnedWidthChanged: pinnedWidthChanged });
         });
         this.forContainers(allMiddle, () =>

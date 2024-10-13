@@ -7,7 +7,7 @@ import type { IFilterComp } from '../interfaces/iFilter';
 import { _clearElement } from '../utils/dom';
 import { _exists } from '../utils/generic';
 import { AgPromise } from '../utils/promise';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import { Component } from '../widgets/component';
 import type { FilterWrapper } from './columnFilterService';
 import type { FilterManager } from './filterManager';
@@ -71,7 +71,7 @@ export class FilterWrapperComp extends Component {
             const guiFromFilter = filter!.getGui();
 
             if (!_exists(guiFromFilter)) {
-                _logWarn(69, { guiFromFilter });
+                _warn(69, { guiFromFilter });
             }
 
             this.appendChild(guiFromFilter);

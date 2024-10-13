@@ -69,7 +69,7 @@ export const AG_GRID_ERRORS = {
             'Exception = ',
             e,
         ] as const,
-    // 17: () => '' as const,
+    17: () => 'you need either field or valueSetter set on colDef for editing to work' as const,
     18: () => `alignedGrids contains an undefined option.` as const,
     19: () => `alignedGrids - No api found on the linked grid.` as const,
     20: () =>
@@ -234,7 +234,7 @@ export const AG_GRID_ERRORS = {
         agGridDefaults: { [key in UserComponentName]?: any };
         jsComps: { [key: string]: any };
     }) => {
-        const textOutput = [];
+        const textOutput: string[] = [];
         const validComponents = [
             // Don't include the old names / internals in potential suggestions
             ...Object.keys(agGridDefaults).filter(

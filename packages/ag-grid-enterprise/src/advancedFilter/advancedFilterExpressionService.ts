@@ -14,7 +14,7 @@ import { BeanStub, _exists, _parseDateTimeFromString, _serialiseDate, _toStringO
 
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
-import { ColFilterExpressionParser } from './colFilterExpressionParser';
+import { COL_FILTER_EXPRESSION_END_CHAR, COL_FILTER_EXPRESSION_START_CHAR } from './colFilterExpressionParser';
 import type {
     DataTypeFilterExpressionOperators,
     FilterExpressionEvaluatorParams,
@@ -343,7 +343,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     public getColumnValue({ displayValue }: AutocompleteEntry): string {
-        return `${ColFilterExpressionParser.COL_START_CHAR}${displayValue}${ColFilterExpressionParser.COL_END_CHAR}`;
+        return `${COL_FILTER_EXPRESSION_START_CHAR}${displayValue}${COL_FILTER_EXPRESSION_END_CHAR}`;
     }
 
     private generateExpressionJoinOperators(): { AND: string; OR: string } {

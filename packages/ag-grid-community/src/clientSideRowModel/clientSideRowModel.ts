@@ -4,7 +4,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
-import { RowNode } from '../entities/rowNode';
+import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
 import type { Environment } from '../environment';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
 import {
@@ -32,7 +32,7 @@ import { _insertIntoArray, _last, _removeFromArray } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _debounce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
-import { _logError } from '../validation/logging';
+import { _error } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
 import { ClientSideNodeManager } from './clientSideNodeManager';
 import { updateRowNodeAfterFilter } from './filterStage';
@@ -620,7 +620,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (_missing(paramsStep)) {
-            _logError(10, { step, stepsMapped });
+            _error(10, { step, stepsMapped });
             return undefined;
         }
         const animate = !this.gos.get('suppressAnimationFrame');
@@ -1087,7 +1087,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public getRowNode(id: string): RowNode | undefined {
         // although id is typed a string, this could be called by the user, and they could have passed a number
-        const idIsGroup = typeof id == 'string' && id.indexOf(RowNode.ID_PREFIX_ROW_GROUP) == 0;
+        const idIsGroup = typeof id == 'string' && id.indexOf(ROW_ID_PREFIX_ROW_GROUP) == 0;
 
         if (idIsGroup) {
             // only one users complained about getRowNode not working for groups, after years of
