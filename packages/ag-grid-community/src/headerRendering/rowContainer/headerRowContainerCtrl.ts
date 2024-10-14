@@ -10,10 +10,10 @@ import type { FilterManager } from '../../filter/filterManager';
 import type { FocusService } from '../../focusService';
 import { CenterWidthFeature } from '../../gridBodyComp/centerWidthFeature';
 import type { ScrollPartner } from '../../gridBodyComp/gridBodyScrollFeature';
-import type { PinnedWidthService } from '../../gridBodyComp/pinnedWidthService';
 import type { ScrollVisibleService } from '../../gridBodyComp/scrollVisibleService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { HeaderPosition } from '../../interfaces/iHeaderPosition';
+import type { PinnedWidthService } from '../../pinnedColumns/pinnedWidthService';
 import { HeaderRowType } from '../row/headerRowComp';
 import { HeaderRowCtrl } from '../row/headerRowCtrl';
 
@@ -28,7 +28,7 @@ export interface IHeaderRowContainerComp {
 export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     private ctrlsService: CtrlsService;
     private scrollVisibleService: ScrollVisibleService;
-    private pinnedWidthService: PinnedWidthService;
+    private pinnedWidthService?: PinnedWidthService;
     private columnModel: ColumnModel;
     private focusService: FocusService;
     private filterManager?: FilterManager;
@@ -294,7 +294,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     private setupPinnedWidth(): void {
-        if (this.pinned == null) {
+        if (this.pinned == null || !this.pinnedWidthService) {
             return;
         }
 
@@ -305,8 +305,8 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
 
         const listener = () => {
             const width = pinningLeft
-                ? this.pinnedWidthService.getPinnedLeftWidth()
-                : this.pinnedWidthService.getPinnedRightWidth();
+                ? this.pinnedWidthService!.getPinnedLeftWidth()
+                : this.pinnedWidthService!.getPinnedRightWidth();
             if (width == null) {
                 return;
             } // can happen at initialisation, width not yet set

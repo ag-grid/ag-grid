@@ -1,7 +1,7 @@
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
+import type { PinnedWidthService } from '../../pinnedColumns/pinnedWidthService';
 import { _setDisplayed, _setFixedWidth } from '../../utils/dom';
-import type { PinnedWidthService } from '../pinnedWidthService';
 
 export class SetPinnedWidthFeature extends BeanStub {
     private pinnedWidthService: PinnedWidthService;
@@ -9,7 +9,7 @@ export class SetPinnedWidthFeature extends BeanStub {
     public readonly getWidth: () => number;
 
     public wireBeans(beans: BeanCollection): void {
-        this.pinnedWidthService = beans.pinnedWidthService;
+        this.pinnedWidthService = beans.pinnedWidthService!;
     }
 
     constructor(

@@ -9,12 +9,12 @@ import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
 import type { SuppressHeaderKeyboardEventParams } from '../../../entities/colDef';
 import type { FocusService } from '../../../focusService';
-import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
 import { _getActiveDomElement, _getDocument, _setDomData } from '../../../gridOptionsUtils';
 import type { BrandedType } from '../../../interfaces/brandedType';
 import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import { _requestAnimationFrame } from '../../../misc/animationFrameService';
 import type { MenuService } from '../../../misc/menu/menuService';
+import type { PinnedWidthService } from '../../../pinnedColumns/pinnedWidthService';
 import { _setAriaColIndex } from '../../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize, _getInnerWidth, _observeResize } from '../../../utils/dom';
 import { _exists } from '../../../utils/generic';
@@ -43,7 +43,7 @@ export abstract class AbstractHeaderCellCtrl<
 > extends BeanStub {
     public readonly instanceId: HeaderCellCtrlInstanceId;
 
-    private pinnedWidthService: PinnedWidthService;
+    private pinnedWidthService?: PinnedWidthService;
     protected focusService: FocusService;
     protected userComponentFactory: UserComponentFactory;
     protected ctrlsService: CtrlsService;
@@ -313,8 +313,8 @@ export abstract class AbstractHeaderCellCtrl<
 
         const pinned = this.column.getPinned();
         if (pinned) {
-            const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
-            const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
+            const leftWidth = this.pinnedWidthService?.getPinnedLeftWidth() ?? 0;
+            const rightWidth = this.pinnedWidthService?.getPinnedRightWidth() ?? 0;
             const bodyWidth = _getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
 
             if (leftWidth + rightWidth + diff > bodyWidth) {

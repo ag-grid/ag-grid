@@ -25,6 +25,7 @@ import { CommunityMenuApiModule } from './misc/menu/sharedMenuModule';
 import { StateModule } from './misc/state/stateModule';
 import { KeyboardNavigationModule } from './navigation/navigationModule';
 import { PaginationModule } from './pagination/paginationModule';
+import { PinnedColumnModule } from './pinnedColumns/pinnedColumnModules';
 import { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
 import { FlashCellModule } from './rendering/cell/flashCellModule';
 import {
@@ -93,5 +94,6 @@ export const CommunityFeaturesModule: _ModuleWithoutApi = {
         CommunityMenuApiModule,
         FlashCellModule,
         TooltipModule,
+        PinnedColumnModule,
     ],
 };

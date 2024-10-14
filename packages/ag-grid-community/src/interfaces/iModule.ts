@@ -130,6 +130,7 @@ type CommunityModuleName =
     | 'PaginationApiModule'
     | 'PaginationCoreModule'
     | 'PaginationModule'
+    | 'PinnedColumnModule'
     | 'PinnedRowApiModule'
     | 'PinnedRowCoreModule'
     | 'PinnedRowModule'

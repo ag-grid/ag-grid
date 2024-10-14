@@ -15,7 +15,6 @@ import { Environment } from './environment';
 import { EventService } from './eventService';
 import { FocusService } from './focusService';
 import { MouseEventService } from './gridBodyComp/mouseEventService';
-import { PinnedWidthService } from './gridBodyComp/pinnedWidthService';
 import { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 import { GridDestroyService } from './gridDestroyService';
 import { GridOptionsService } from './gridOptionsService';
@@ -54,7 +53,6 @@ export const CommunityCoreModule: _ModuleWithoutApi = {
         Environment,
         ScrollVisibleService,
         CtrlsService,
-        PinnedWidthService,
         SyncService,
         AriaAnnouncementService,
         ColumnStateService,

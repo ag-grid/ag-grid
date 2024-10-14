@@ -4,16 +4,16 @@ import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeService';
 import type { AgColumn } from '../entities/agColumn';
-import type { PinnedWidthService } from '../gridBodyComp/pinnedWidthService';
 import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
+import type { PinnedWidthService } from '../pinnedColumns/pinnedWidthService';
 import { _getInnerWidth, _setDisplayed } from '../utils/dom';
 import type { ColumnResizeService } from './columnResizeService';
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private horizontalResizeService: HorizontalResizeService;
-    private pinnedWidthService: PinnedWidthService;
+    private pinnedWidthService?: PinnedWidthService;
     private ctrlsService: CtrlsService;
     private columnResizeService?: ColumnResizeService;
     private columnAutosizeService?: ColumnAutosizeService;
@@ -109,8 +109,8 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         const columnWidths = [{ key, newWidth }];
 
         if (this.column.getPinned()) {
-            const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
-            const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
+            const leftWidth = this.pinnedWidthService?.getPinnedLeftWidth() ?? 0;
+            const rightWidth = this.pinnedWidthService?.getPinnedRightWidth() ?? 0;
             const bodyWidth = _getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
 
             if (leftWidth + rightWidth + (resizeAmountNormalised - lastResizeAmount) > bodyWidth) {
