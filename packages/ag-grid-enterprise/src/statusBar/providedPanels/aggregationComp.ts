@@ -3,13 +3,10 @@ import type {
     AggregationStatusPanelAggFunc,
     AggregationStatusPanelParams,
     BeanCollection,
-    CellNavigationService,
     IRangeService,
     IStatusPanelComp,
     LocaleService,
-    PositionUtils,
     RowPosition,
-    ValueService,
 } from 'ag-grid-community';
 import {
     Component,
@@ -17,6 +14,7 @@ import {
     _createCellId,
     _exists,
     _formatNumberCommas,
+    _getRowNode,
     _isClientSideRowModel,
     _isRowBefore,
     _isServerSideRowModel,
@@ -36,15 +34,11 @@ function _formatNumberTwoDecimalPlacesAndCommas(value: number, localeService: Lo
 }
 
 export class AggregationComp extends Component implements IStatusPanelComp {
-    private valueService: ValueService;
-    private cellNavigationService: CellNavigationService;
-    private positionUtils: PositionUtils;
+    private beans: BeanCollection;
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection) {
-        this.valueService = beans.valueService;
-        this.cellNavigationService = beans.cellNavigationService!;
-        this.positionUtils = beans.positionUtils;
+        this.beans = beans;
         this.rangeService = beans.rangeService;
     }
 
@@ -177,12 +171,12 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
                         cellsSoFar[cellId] = true;
 
-                        const rowNode = this.positionUtils.getRowNode(currentRow);
+                        const rowNode = _getRowNode(this.beans, currentRow);
                         if (_missing(rowNode)) {
                             return;
                         }
 
-                        let value = this.valueService.getValue(col, rowNode);
+                        let value = this.beans.valueService.getValue(col, rowNode);
 
                         // if empty cell, skip it, doesn't impact count or anything
                         if (_missing(value) || value === '') {
@@ -220,7 +214,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
                     });
 
-                    currentRow = this.cellNavigationService.getRowBelow(currentRow);
+                    currentRow = this.beans.cellNavigationService!.getRowBelow(currentRow);
                 }
             }
         }

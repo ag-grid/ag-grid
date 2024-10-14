@@ -684,8 +684,14 @@ export { IAggFuncService } from './interfaces/iAggFuncService';
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from './interfaces/iClipboardService';
 export { IMenuFactory } from './interfaces/iMenuFactory';
 export { CellPosition } from './interfaces/iCellPosition';
-export type { PositionUtils } from './entities/positionUtils';
-export { _areCellsEqual, _createCellId, _isRowBefore, _isSameRow } from './entities/positionUtils';
+export {
+    _areCellsEqual,
+    _createCellId,
+    _isRowBefore,
+    _isSameRow,
+    _getRowNode,
+    _getCellByPosition,
+} from './entities/positionUtils';
 export { RowPosition } from './interfaces/iRowPosition';
 export { HeaderPosition } from './interfaces/iHeaderPosition';
 export type { HeaderNavigationService } from './navigation/headerNavigationService';

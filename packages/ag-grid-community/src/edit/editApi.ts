@@ -3,6 +3,7 @@ import { ensureColumnVisible, ensureIndexVisible } from '../api/scrollApi';
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import { _getCellByPosition } from '../entities/positionUtils';
 import { _getActiveDomElement } from '../gridOptionsUtils';
 import type { GetCellEditorInstancesParams, ICellEditor } from '../interfaces/iCellEditor';
 import type { CellPosition } from '../interfaces/iCellPosition';
@@ -68,7 +69,7 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
 
     ensureColumnVisible(beans, params.colKey);
 
-    const cell = beans.positionUtils.getCellByPosition(cellPosition);
+    const cell = _getCellByPosition(beans, cellPosition);
     if (!cell) {
         return;
     }

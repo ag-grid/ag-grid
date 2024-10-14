@@ -29,7 +29,6 @@ import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { EditService } from '../edit/editService';
 import type { RowEditService } from '../edit/rowEditService';
 import type { GridOptions } from '../entities/gridOptions';
-import type { PositionUtils } from '../entities/positionUtils';
 import type { Environment } from '../environment';
 import type { EventService } from '../eventService';
 import type { AgGlobalEventListener } from '../events';
@@ -212,7 +211,6 @@ export interface CoreBeanCollection {
     filterManager?: FilterManager;
     rowContainerHeightService: RowContainerHeightService;
     frameworkOverrides: IFrameworkOverrides;
-    positionUtils: PositionUtils;
     selectionService?: ISelectionService;
     rowStyleService?: RowStyleService;
     rowModel: IRowModel;
@@ -440,7 +438,6 @@ export type BeanName =
     | 'rangeService'
     | 'pageBoundsListener'
     | 'pageBoundsService'
-    | 'positionUtils'
     | 'registry'
     | 'renderStatusService'
     | 'rowContainerHeightService'

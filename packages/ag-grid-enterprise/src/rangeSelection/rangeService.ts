@@ -17,10 +17,8 @@ import type {
     NamedBean,
     PartialCellRange,
     PinnedRowModel,
-    PositionUtils,
     RowPinnedType,
     RowPosition,
-    ValueService,
     VisibleColsService,
 } from 'ag-grid-community';
 import {
@@ -30,6 +28,7 @@ import {
     _areEqual,
     _exists,
     _getCellCtrlForEventTarget,
+    _getRowNode,
     _getSuppressMultiRanges,
     _isCellSelectionEnabled,
     _isDomLayout,
@@ -48,26 +47,24 @@ import { DragListenerFeature } from './dragListenerFeature';
 export class RangeService extends BeanStub implements NamedBean, IRangeService {
     beanName = 'rangeService' as const;
 
+    private beans: BeanCollection;
     private rowModel: IRowModel;
     private dragService: DragService;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
     private cellNavigationService: CellNavigationService;
     private pinnedRowModel?: PinnedRowModel;
-    private positionUtils: PositionUtils;
     private ctrlsService: CtrlsService;
-    private valueService: ValueService;
 
     public wireBeans(beans: BeanCollection) {
+        this.beans = beans;
         this.rowModel = beans.rowModel;
         this.dragService = beans.dragService!;
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
         this.cellNavigationService = beans.cellNavigationService!;
         this.pinnedRowModel = beans.pinnedRowModel;
-        this.positionUtils = beans.positionUtils;
         this.ctrlsService = beans.ctrlsService;
-        this.valueService = beans.valueService;
     }
 
     private cellRanges: CellRange[] = [];
@@ -411,7 +408,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         cellRanges.forEach((cellRange) => {
             this.forEachRowInRange(cellRange, (rowPosition) => {
-                const rowNode = this.positionUtils.getRowNode(rowPosition);
+                const rowNode = _getRowNode(this.beans, rowPosition);
                 if (!rowNode) {
                     return;
                 }
@@ -420,7 +417,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                     if (!column || !column.isCellEditable(rowNode)) {
                         continue;
                     }
-                    const emptyValue = this.valueService.getDeleteValue(column, rowNode);
+                    const emptyValue = this.beans.valueService.getDeleteValue(column, rowNode);
                     rowNode.setDataValue(column, emptyValue, cellEventSource);
                 }
             });

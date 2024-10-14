@@ -1,14 +1,8 @@
-import type { NamedBean } from '../context/bean';
-import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CellPosition } from '../interfaces/iCellPosition';
-import type { IRowModel } from '../interfaces/iRowModel';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
-import type { PageBoundsService } from '../pagination/pageBoundsService';
-import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
-import type { RowRenderer } from '../rendering/rowRenderer';
 import { _exists } from '../utils/generic';
 import type { AgColumn } from './agColumn';
 import type { RowNode } from './rowNode';
@@ -63,75 +57,59 @@ export function _isSameRow(rowA: RowPosition | undefined, rowB: RowPosition | un
     return rowA!.rowIndex === rowB!.rowIndex && rowA!.rowPinned == rowB!.rowPinned;
 }
 
-export class PositionUtils extends BeanStub implements NamedBean {
-    beanName = 'positionUtils' as const;
+export function _getFirstRow(beans: BeanCollection): RowPosition | null {
+    let rowIndex = 0;
+    let rowPinned: RowPinnedType;
 
-    private rowModel: IRowModel;
-    private pinnedRowModel?: PinnedRowModel;
-    private pageBoundsService: PageBoundsService;
-    private rowRenderer: RowRenderer;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.rowModel = beans.rowModel;
-        this.pinnedRowModel = beans.pinnedRowModel;
-        this.pageBoundsService = beans.pageBoundsService;
-        this.rowRenderer = beans.rowRenderer;
+    if (beans.pinnedRowModel?.getPinnedTopRowCount()) {
+        rowPinned = 'top';
+    } else if (beans.rowModel.getRowCount()) {
+        rowPinned = null;
+        rowIndex = beans.pageBoundsService.getFirstRow();
+    } else if (beans.pinnedRowModel?.getPinnedBottomRowCount()) {
+        rowPinned = 'bottom';
     }
 
-    public getFirstRow(): RowPosition | null {
-        let rowIndex = 0;
-        let rowPinned: RowPinnedType;
+    return rowPinned === undefined ? null : { rowIndex, rowPinned };
+}
 
-        if (this.pinnedRowModel?.getPinnedTopRowCount()) {
-            rowPinned = 'top';
-        } else if (this.rowModel.getRowCount()) {
-            rowPinned = null;
-            rowIndex = this.pageBoundsService.getFirstRow();
-        } else if (this.pinnedRowModel?.getPinnedBottomRowCount()) {
-            rowPinned = 'bottom';
-        }
+export function _getLastRow(beans: BeanCollection): RowPosition | null {
+    let rowIndex;
+    let rowPinned: RowPinnedType = null;
 
-        return rowPinned === undefined ? null : { rowIndex, rowPinned };
+    const pinnedBottomCount = beans.pinnedRowModel?.getPinnedBottomRowCount();
+    const pinnedTopCount = beans.pinnedRowModel?.getPinnedTopRowCount();
+
+    if (pinnedBottomCount) {
+        rowPinned = 'bottom';
+        rowIndex = pinnedBottomCount - 1;
+    } else if (beans.rowModel.getRowCount()) {
+        rowPinned = null;
+        rowIndex = beans.pageBoundsService.getLastRow();
+    } else if (pinnedTopCount) {
+        rowPinned = 'top';
+        rowIndex = pinnedTopCount - 1;
     }
 
-    public getLastRow(): RowPosition | null {
-        let rowIndex;
-        let rowPinned: RowPinnedType = null;
+    return rowIndex === undefined ? null : { rowIndex, rowPinned };
+}
 
-        const pinnedBottomCount = this.pinnedRowModel?.getPinnedBottomRowCount();
-        const pinnedTopCount = this.pinnedRowModel?.getPinnedTopRowCount();
+export function _getRowNode(beans: BeanCollection, gridRow: RowPosition): RowNode | undefined {
+    switch (gridRow.rowPinned) {
+        case 'top':
+            return beans.pinnedRowModel?.getPinnedTopRow(gridRow.rowIndex);
+        case 'bottom':
+            return beans.pinnedRowModel?.getPinnedBottomRow(gridRow.rowIndex);
+        default:
+            return beans.rowModel.getRow(gridRow.rowIndex);
+    }
+}
 
-        if (pinnedBottomCount) {
-            rowPinned = 'bottom';
-            rowIndex = pinnedBottomCount - 1;
-        } else if (this.rowModel.getRowCount()) {
-            rowPinned = null;
-            rowIndex = this.pageBoundsService.getLastRow();
-        } else if (pinnedTopCount) {
-            rowPinned = 'top';
-            rowIndex = pinnedTopCount - 1;
-        }
-
-        return rowIndex === undefined ? null : { rowIndex, rowPinned };
+export function _getCellByPosition(beans: BeanCollection, cellPosition: CellPosition): CellCtrl | null {
+    const rowCtrl = beans.rowRenderer.getRowByPosition(cellPosition);
+    if (!rowCtrl) {
+        return null;
     }
 
-    public getRowNode(gridRow: RowPosition): RowNode | undefined {
-        switch (gridRow.rowPinned) {
-            case 'top':
-                return this.pinnedRowModel?.getPinnedTopRow(gridRow.rowIndex);
-            case 'bottom':
-                return this.pinnedRowModel?.getPinnedBottomRow(gridRow.rowIndex);
-            default:
-                return this.rowModel.getRow(gridRow.rowIndex);
-        }
-    }
-
-    public getCellByPosition(cellPosition: CellPosition): CellCtrl | null {
-        const rowCtrl = this.rowRenderer.getRowByPosition(cellPosition);
-        if (!rowCtrl) {
-            return null;
-        }
-
-        return rowCtrl.getCellCtrl(cellPosition.column as AgColumn);
-    }
+    return rowCtrl.getCellCtrl(cellPosition.column as AgColumn);
 }

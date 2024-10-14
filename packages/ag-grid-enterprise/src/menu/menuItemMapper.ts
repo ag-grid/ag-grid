@@ -5,21 +5,15 @@ import type {
     ColumnEventType,
     ColumnModel,
     ColumnNameService,
-    ColumnStateService,
-    FocusService,
     FuncColsService,
     IAggFuncService,
     IClipboardService,
-    ICsvCreator,
-    IExcelCreator,
     IExpansionService,
     MenuItemDef,
-    MenuService,
     NamedBean,
-    PositionUtils,
     SortController,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, _escapeString, _exists, _warn } from 'ag-grid-community';
+import { BeanStub, _createIconNoSpan, _escapeString, _exists, _getRowNode, _warn } from 'ag-grid-community';
 
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 import type { ColumnChooserFactory } from './columnChooserFactory';
@@ -27,39 +21,29 @@ import type { ColumnChooserFactory } from './columnChooserFactory';
 export class MenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'menuItemMapper' as const;
 
+    private beans: BeanCollection;
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
-    private columnStateService: ColumnStateService;
     private funcColsService: FuncColsService;
-    private focusService: FocusService;
-    private positionUtils: PositionUtils;
     private chartMenuItemMapper: ChartMenuItemMapper;
-    private menuService: MenuService;
     private sortController?: SortController;
     private columnAutosizeService?: ColumnAutosizeService;
     private expansionService?: IExpansionService;
     private clipboardService?: IClipboardService;
     private aggFuncService?: IAggFuncService;
-    private csvCreator?: ICsvCreator;
-    private excelCreator?: IExcelCreator;
     private columnChooserFactory?: ColumnChooserFactory;
 
     public wireBeans(beans: BeanCollection) {
+        this.beans = beans;
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
-        this.columnStateService = beans.columnStateService;
         this.funcColsService = beans.funcColsService;
-        this.focusService = beans.focusService;
-        this.positionUtils = beans.positionUtils;
         this.chartMenuItemMapper = beans.chartMenuItemMapper as ChartMenuItemMapper;
-        this.menuService = beans.menuService!;
         this.sortController = beans.sortController;
         this.columnAutosizeService = beans.columnAutosizeService;
         this.expansionService = beans.expansionService;
         this.clipboardService = beans.clipboardService;
         this.aggFuncService = beans.aggFuncService;
-        this.csvCreator = beans.csvCreator;
-        this.excelCreator = beans.excelCreator;
         this.columnChooserFactory = beans.columnChooserFactory as ColumnChooserFactory;
     }
 
@@ -230,7 +214,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             case 'resetColumns':
                 return {
                     name: localeTextFunc('resetColumns', 'Reset Columns'),
-                    action: () => this.columnStateService.resetColumnState(source),
+                    action: () => this.beans.columnStateService.resetColumnState(source),
                 };
             case 'expandAll':
                 return {
@@ -278,8 +262,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 }
             case 'cut':
                 if (this.gos.assertModuleRegistered('ClipboardCoreModule', 'Cut from Menu')) {
-                    const focusedCell = this.focusService.getFocusedCell();
-                    const rowNode = focusedCell ? this.positionUtils.getRowNode(focusedCell) : null;
+                    const focusedCell = this.beans.focusService.getFocusedCell();
+                    const rowNode = focusedCell ? _getRowNode(this.beans, focusedCell) : null;
                     const isEditable = rowNode ? focusedCell?.column.isCellEditable(rowNode) : false;
                     return {
                         name: localeTextFunc('cut', 'Cut'),
@@ -325,13 +309,13 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 return {
                     name: localeTextFunc('csvExport', 'CSV Export'),
                     icon: _createIconNoSpan('csvExport', this.gos, null),
-                    action: () => this.csvCreator?.exportDataAsCsv(),
+                    action: () => this.beans.csvCreator?.exportDataAsCsv(),
                 };
             case 'excelExport':
                 return {
                     name: localeTextFunc('excelExport', 'Excel Export'),
                     icon: _createIconNoSpan('excelExport', this.gos, null),
-                    action: () => this.excelCreator?.exportDataAsExcel(),
+                    action: () => this.beans.excelCreator?.exportDataAsExcel(),
                 };
             case 'separator':
                 return 'separator';
@@ -344,7 +328,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         name: localeTextFunc('columnFilter', 'Column Filter'),
                         icon: _createIconNoSpan('filter', this.gos, null),
                         action: () =>
-                            this.menuService.showFilterMenu({
+                            this.beans.menuService!.showFilterMenu({
                                 column,
                                 buttonElement: sourceElement(),
                                 containerType: 'columnFilter',

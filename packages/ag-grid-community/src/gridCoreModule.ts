@@ -10,7 +10,6 @@ import { VisibleColsService } from './columns/visibleColsService';
 import { Registry } from './components/framework/registry';
 import { UserComponentFactory } from './components/framework/userComponentFactory';
 import { CtrlsService } from './ctrlsService';
-import { PositionUtils } from './entities/positionUtils';
 import { Environment } from './environment';
 import { EventService } from './eventService';
 import { FocusService } from './focusService';
@@ -32,7 +31,6 @@ import { ValueService } from './valueService/valueService';
 export const CommunityCoreModule: _ModuleWithoutApi = {
     ...baseCommunityModule('CommunityCoreModule'),
     beans: [
-        PositionUtils,
         GridDestroyService,
         ApiFunctionService,
         Registry,
