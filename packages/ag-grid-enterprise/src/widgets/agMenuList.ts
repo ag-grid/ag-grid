@@ -6,7 +6,7 @@ import {
     _last,
     _loadTemplate,
     _stopPropagationForAgGrid,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import type { AgMenuItemComponentEvent, CloseMenuEvent, MenuItemActivatedEvent } from './agMenuItemComponent';
@@ -120,7 +120,7 @@ export class AgMenuList extends TabGuardComp<AgMenuListEvent> {
                 if (menuItemOrString === 'separator') {
                     return AgPromise.resolve({ eGui: this.createSeparator() });
                 } else if (typeof menuItemOrString === 'string') {
-                    _warnOnce(`unrecognised menu item ${menuItemOrString}`);
+                    _warn(228, { menuItemOrString });
                     return AgPromise.resolve({ eGui: null });
                 } else {
                     return this.addItem(menuItemOrString);

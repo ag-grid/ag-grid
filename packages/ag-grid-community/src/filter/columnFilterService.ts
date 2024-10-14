@@ -64,6 +64,16 @@ const MONTH_KEYS: (keyof typeof MONTH_LOCALE_TEXT)[] = [
     'december',
 ];
 
+function setFilterNumberComparator(a: string, b: string): number {
+    if (a == null) {
+        return -1;
+    }
+    if (b == null) {
+        return 1;
+    }
+    return parseFloat(a) - parseFloat(b);
+}
+
 export class ColumnFilterService extends BeanStub implements NamedBean {
     beanName: BeanName = 'columnFilterService';
 
@@ -914,12 +924,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             case 'number': {
                 if (usingSetFilter) {
                     mergeFilterParams({
-                        comparator: (a: string, b: string) => {
-                            const valA = a == null ? 0 : parseInt(a);
-                            const valB = b == null ? 0 : parseInt(b);
-                            if (valA === valB) return 0;
-                            return valA > valB ? 1 : -1;
-                        },
+                        comparator: setFilterNumberComparator,
                     });
                 }
                 break;
