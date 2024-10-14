@@ -186,7 +186,7 @@
         border-color $transition-default-timing;
 
     &:hover,
-    &.isIsActive {
+    &.isActive {
         background-color: var(--item-active-bg-color);
         color: var(--item-active-color);
     }
@@ -206,7 +206,11 @@
         padding-left: calc(var(--indent-initial-offset) + var(--indent-border-offset));
         border-left: 1px solid var(--item-border-color);
 
-        &.isIsActive {
+        &:not(:hover, .isActive) {
+            color: var(--color-fg-secondary);
+        }
+
+        &.isActive {
             border-left: 1px solid var(--item-active-border-color);
         }
     }
@@ -218,7 +222,7 @@
     transition: fill $transition-default-timing;
 
     .item:hover &,
-    .item.isIsActive & {
+    .item.isActive & {
         fill: var(--item-active-color);
     }
 }
