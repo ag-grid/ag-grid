@@ -1,4 +1,5 @@
 import type { AgColumn } from '../entities/agColumn';
+import type { SelectAllMode } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
 import type { RowCtrl, RowGui } from '../rendering/row/rowCtrl';
@@ -24,22 +25,13 @@ export interface ISelectionService {
     getBestCostNodeSelection(): RowNode[] | undefined;
     isEmpty(): boolean;
     /**
-     * @param justFiltered whether to just include nodes which have passed the filter
-     * @param justCurrentPage whether to just include nodes on the current page
+     * @param selectAll See `MultiRowSelectionOptions.selectAll`
      * @returns all nodes including unselectable nodes which are the target of this selection attempt
      */
-    getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean): boolean | null;
-    hasNodesToSelect(justFiltered?: boolean, justCurrentPage?: boolean): boolean;
-    selectAllRowNodes(params: {
-        source: SelectionEventSourceType;
-        justFiltered?: boolean;
-        justCurrentPage?: boolean;
-    }): void;
-    deselectAllRowNodes(params: {
-        source: SelectionEventSourceType;
-        justFiltered?: boolean;
-        justCurrentPage?: boolean;
-    }): void;
+    getSelectAllState(selectAll?: SelectAllMode): boolean | null;
+    hasNodesToSelect(selectAll?: SelectAllMode): boolean;
+    selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
+    deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
     createCheckboxSelectionComponent(): CheckboxSelectionComponent;
     createSelectAllFeature(column: AgColumn): SelectAllFeature;
     handleRowClick(rowNode: RowNode, mouseEvent: MouseEvent): void;

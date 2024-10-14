@@ -4,6 +4,7 @@ import type {
     IServerSideSelectionState,
     ISetNodesSelectedParams,
     RowNode,
+    SelectAllMode,
     SelectionEventSourceType,
 } from 'ag-grid-community';
 
@@ -17,16 +18,8 @@ export interface ISelectionStrategy extends Bean {
     getSelectedRows(): any[];
     getSelectionCount(): number;
     isEmpty(): boolean;
-    selectAllRowNodes(params: {
-        source: SelectionEventSourceType;
-        justFiltered?: boolean | undefined;
-        justCurrentPage?: boolean | undefined;
-    }): void;
-    deselectAllRowNodes(params: {
-        source: SelectionEventSourceType;
-        justFiltered?: boolean | undefined;
-        justCurrentPage?: boolean | undefined;
-    }): void;
-    getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean): boolean | null;
+    selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
+    deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
+    getSelectAllState(selectAll?: SelectAllMode): boolean | null;
     deleteSelectionStateFromParent(parentRoute: string[], removedNodeIds: string[]): boolean;
 }
