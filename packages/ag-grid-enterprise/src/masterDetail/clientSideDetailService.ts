@@ -2,40 +2,52 @@ import type {
     BeanCollection,
     FuncColsService,
     IClientSideDetailService,
+    IClientSideRowModel,
     IRowModel,
     NamedBean,
     RowNode,
+    RowRenderer,
 } from 'ag-grid-community';
-import { BeanStub, _isClientSideRowModel } from 'ag-grid-community';
+import { BeanStub, ClientSideRowModelSteps, _isClientSideRowModel } from 'ag-grid-community';
 
 export class ClientSideDetailService extends BeanStub implements NamedBean, IClientSideDetailService {
     beanName = 'clientSideDetailService' as const;
 
     private rowModel: IRowModel;
     private funcColsService: FuncColsService;
+    private rowRenderer: RowRenderer;
 
     public wireBeans(beans: BeanCollection): void {
         this.funcColsService = beans.funcColsService;
         this.rowModel = beans.rowModel;
+        this.rowRenderer = beans.rowRenderer;
     }
 
-    private isMasterDetailEnabled() {
+    private isEnabled() {
         const gos = this.gos;
         return gos.get('masterDetail') && !gos.get('treeData');
     }
 
     public postConstruct(): void {
         if (_isClientSideRowModel(this.gos)) {
-            let enabled = this.isMasterDetailEnabled();
+            let enabled = this.isEnabled();
             this.addManagedPropertyListeners(['treeData', 'masterDetail'], (params) => {
                 const properties = params.changeSet?.properties;
                 if (properties) {
-                    const newEnabled = this.isMasterDetailEnabled();
+                    const newEnabled = this.isEnabled();
                     if (enabled !== newEnabled) {
                         enabled = newEnabled;
-                        this.rowModel.forEachLeafNode!((node) => {
-                            this.setMasterForRow(node, node.data, true, newEnabled);
+                        const rowModel = this.rowModel as IClientSideRowModel;
+                        let changed = false;
+                        rowModel.forEachLeafNode!((node) => {
+                            if (this.setMasterForRow(node, node.data, true, newEnabled)) {
+                                changed = true;
+                            }
                         });
+
+                        if (changed) {
+                            rowModel.refreshModel({ step: ClientSideRowModelSteps.MAP });
+                        }
                     }
                 }
             });
@@ -46,8 +58,8 @@ export class ClientSideDetailService extends BeanStub implements NamedBean, ICli
         rowNode: RowNode<TData>,
         data: TData,
         shouldSetExpanded: boolean,
-        master = this.isMasterDetailEnabled()
-    ): void {
+        master = this.isEnabled()
+    ): boolean {
         const gos = this.gos;
         const oldMaster = rowNode.master;
 
@@ -81,7 +93,10 @@ export class ClientSideDetailService extends BeanStub implements NamedBean, ICli
             rowNode.master = master;
             if (master || oldMaster !== undefined) {
                 rowNode.dispatchRowEvent('masterChanged');
+                return true;
             }
         }
+
+        return false;
     }
 }

@@ -233,7 +233,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const allProps: (keyof GridOptions)[] = [
             'rowData',
-            'masterDetail',
             ...resetProps,
             ...this.orderedStages.flatMap(({ refreshProps }) => [...refreshProps]),
         ];
@@ -248,7 +247,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
             const rowDataChanged = propertiesSet.has('rowData');
             const treeDataChanged = propertiesSet.has('treeData');
-            const masterDetailChanged = propertiesSet.has('masterDetail');
             const treeDataChildrenFieldChanged = propertiesSet.has('treeDataChildrenField');
 
             const needFullReload =
@@ -294,10 +292,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             if (treeDataChanged) {
                 // We need to notify the nodeManager that the treeData property has changed, and refresh everything
                 this.nodeManager.onTreeDataChanged?.();
-                refreshModelStep = ClientSideRowModelSteps.EVERYTHING;
-            }
-
-            if (masterDetailChanged) {
                 refreshModelStep = ClientSideRowModelSteps.EVERYTHING;
             }
 
@@ -701,6 +695,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             aggregate: ClientSideRowModelSteps.AGGREGATE,
             sort: ClientSideRowModelSteps.SORT,
             pivot: ClientSideRowModelSteps.PIVOT,
+            nothing: ClientSideRowModelSteps.NOTHING,
         };
         if (_exists(step)) {
             paramsStep = stepsMapped[step];
@@ -1147,9 +1142,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (this.rowNodesCountReady) {
             // only if row data has been set
             this.rowCountReady = true;
-            this.eventService.dispatchEventOnce({
-                type: 'rowCountReady',
-            });
+            this.eventService.dispatchEventOnce({ type: 'rowCountReady' });
         }
     }
 
