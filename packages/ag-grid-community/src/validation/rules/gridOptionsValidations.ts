@@ -293,6 +293,12 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
             return null;
         },
     },
+    serverSideSortAllLevels: {
+        supportedRowModels: ['serverSide'],
+    },
+    serverSideOnlyRefreshFilteredGroups: {
+        supportedRowModels: ['serverSide'],
+    },
 
     columnDefs: () => COL_DEF_VALIDATORS,
     defaultColDef: () => COL_DEF_VALIDATORS,
