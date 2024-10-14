@@ -90,7 +90,7 @@ export class AgSideBar extends Component implements ISideBar {
         const target = e.target as HTMLElement;
 
         if (!openPanel) {
-            return;
+            return focusService.focusNextGridCoreContainer(e.shiftKey, true);
         }
 
         if (sideBarGui.contains(activeElement)) {
