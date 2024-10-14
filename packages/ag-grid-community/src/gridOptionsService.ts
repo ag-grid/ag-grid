@@ -16,7 +16,7 @@ import { LocalEventService } from './localEventService';
 import { _isModuleRegistered } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
-import { _log } from './utils/function';
+import { _logIfDebug } from './utils/function';
 import { _exists } from './utils/generic';
 import { _warn } from './validation/logging';
 import type { ValidationService } from './validation/validationService';
@@ -283,9 +283,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         changeSet.properties = events.map((event) => event.type);
 
         events.forEach((event) => {
-            if (this.gridOptions.debug) {
-                _log(`Updated property ${event.type} from`, event.previousValue, ` to `, event.currentValue);
-            }
+            _logIfDebug(this, `Updated property ${event.type} from`, event.previousValue, ` to `, event.currentValue);
             this.propertyEventService.dispatchEvent(event);
         });
     }

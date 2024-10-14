@@ -17,7 +17,6 @@ import {
     _setDisplayed,
     _setVisible,
 } from '../utils/dom';
-import { _warnOnce } from '../utils/function';
 import { TooltipFeature } from './tooltipFeature';
 
 let compIdSequence = 0;
@@ -176,7 +175,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
                     // 3. The property is on a child component and not available on the parent during construction.
                     //    In which case you may need to pass the template via setTemplate() instead of in the super constructor.
                     // 4. The data-ref is not used by the component and should be removed from the template.
-                    _warnOnce(`Issue with data-ref: ${elementRef} on ${this.constructor.name} with ${current}`);
+                    throw new Error(`Issue with data-ref: ${elementRef} on ${this.constructor.name} with ${current}`);
                 }
             }
         }
@@ -242,7 +241,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
 
             this.createBean(newComponent, null, afterPreCreateCallback);
         } else if (isAgGridComponent) {
-            _warnOnce(`Missing selector: ${key}`);
+            throw new Error(`Missing selector: ${key}`);
         }
 
         this.applyElementsToComponent(element, elementRef, paramsMap, newComponent);

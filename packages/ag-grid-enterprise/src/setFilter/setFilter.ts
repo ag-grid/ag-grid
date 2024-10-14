@@ -30,7 +30,7 @@ import {
     _makeNull,
     _setDisplayed,
     _toStringOrNull,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import type { VirtualListModel } from '../widgets/iVirtualList';
@@ -447,9 +447,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
         if (params.excelMode && params.defaultToNothingSelected) {
             params.defaultToNothingSelected = false;
-            _warnOnce(
-                'The Set Filter Parameter "defaultToNothingSelected" value was ignored because it does not work when "excelMode" is used.'
-            );
+            _warn(207);
         }
     }
 

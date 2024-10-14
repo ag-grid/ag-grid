@@ -47,8 +47,8 @@ export const Extras = ({ extras }: Props) => {
     extras.forEach((extra) => {
         requiredExtras.add(extra);
 
-        if (extra === 'bootstrap' || extra === 'jqueryui') {
-            // bootstrap and jQuery UI require jQuery
+        if (extra === 'jqueryui') {
+            // jQuery UI require jQuery
             requiredExtras.add('jquery');
         }
     });

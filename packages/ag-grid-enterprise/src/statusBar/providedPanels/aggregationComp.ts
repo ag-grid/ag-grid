@@ -21,7 +21,7 @@ import {
     _isRowBefore,
     _isServerSideRowModel,
     _missing,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import type { AgNameValue } from './agNameValue';
@@ -77,7 +77,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
     public postConstruct(): void {
         if (!_isClientSideRowModel(this.gos) && !_isServerSideRowModel(this.gos)) {
-            _warnOnce(`agAggregationComponent should only be used with the client and server side row model.`);
+            _warn(221);
             return;
         }
 

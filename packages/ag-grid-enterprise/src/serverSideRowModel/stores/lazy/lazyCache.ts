@@ -1,4 +1,3 @@
-import { BeanStub, _getRowHeightAsNumber, _getRowIdCallback, _warnOnce } from 'ag-grid-community';
 import type {
     BeanCollection,
     FocusService,
@@ -12,6 +11,7 @@ import type {
     SortController,
     WithoutGridCommon,
 } from 'ag-grid-community';
+import { BeanStub, _getRowHeightAsNumber, _getRowIdCallback, _warn } from 'ag-grid-community';
 
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { NodeManager } from '../../nodeManager';
@@ -828,9 +828,7 @@ export class LazyCache extends BeanStub {
             const duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
                 const duplicateIdText = duplicates.join(', ');
-                _warnOnce(
-                    `Unable to display rows as duplicate row ids (${duplicateIdText}) were returned by the getRowId callback. Please modify the getRowId callback to provide unique ids.`
-                );
+                _warn(205, { duplicateIdText });
                 this.onLoadFailed(firstRowIndex, numberOfRowsExpected);
                 return;
             }

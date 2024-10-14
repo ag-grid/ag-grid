@@ -1,12 +1,12 @@
+import type { IMenuItemComp, IMenuItemParams } from 'ag-grid-community';
 import {
     Component,
     _createIconNoSpan,
     _isNodeOrElement,
     _loadTemplate,
     _setAriaExpanded,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
-import type { IMenuItemComp, IMenuItemParams } from 'ag-grid-community';
 
 interface AgMenuItemRendererParams {
     cssClassPrefix?: string;
@@ -56,7 +56,7 @@ export class AgMenuItemRenderer extends Component implements IMenuItemComp {
             } else if (typeof icon === 'string') {
                 iconWrapper.innerHTML = icon;
             } else {
-                _warnOnce('menu item icon must be DOM node or string');
+                _warn(227);
             }
         }
 

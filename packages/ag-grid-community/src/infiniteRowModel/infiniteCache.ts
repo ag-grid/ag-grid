@@ -5,7 +5,7 @@ import type { FocusService } from '../focusService';
 import type { IDatasource } from '../interfaces/iDatasource';
 import type { SortModelItem } from '../interfaces/iSortModelItem';
 import type { RowRenderer } from '../rendering/rowRenderer';
-import { _log } from '../utils/function';
+import { _logIfDebug } from '../utils/function';
 import { _exists } from '../utils/generic';
 import { InfiniteBlock } from './infiniteBlock';
 import type { RowNodeBlockLoader } from './rowNodeBlockLoader';
@@ -118,9 +118,7 @@ export class InfiniteCache extends BeanStub {
             return;
         }
 
-        if (this.gos.get('debug')) {
-            _log(`InfiniteCache - onPageLoaded: page = ${block.getId()}, lastRow = ${lastRow}`);
-        }
+        _logIfDebug(this.gos, `InfiniteCache - onPageLoaded: page = ${block.getId()}, lastRow = ${lastRow}`);
 
         this.checkRowCount(block, lastRow);
         // we fire cacheUpdated even if the row count has not changed, as some items need updating even
