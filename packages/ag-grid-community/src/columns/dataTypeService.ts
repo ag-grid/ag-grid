@@ -650,7 +650,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     private getDefaultDataTypes(): { [key: string]: CoreDataTypeDefinition } {
         const defaultDateFormatMatcher = (value: string) => !!value.match('^\\d{4}-\\d{2}-\\d{2}$');
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         return {
             number: {
                 baseDataType: 'number',

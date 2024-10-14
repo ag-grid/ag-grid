@@ -4,7 +4,6 @@ import type {
     ChartType,
     GridOptionsService,
     IChartService,
-    LocaleService,
     MenuItemDef,
     NamedBean,
 } from 'ag-grid-community';
@@ -25,10 +24,11 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
             return undefined;
         }
 
+        const getLocaleTextFunc = this.getLocaleTextFunc.bind(this);
         const builder =
             key === 'pivotChart'
-                ? new PivotMenuItemMapper(this.gos, this.chartService, this.localeService)
-                : new RangeMenuItemMapper(this.gos, this.chartService, this.localeService);
+                ? new PivotMenuItemMapper(this.gos, this.chartService, getLocaleTextFunc)
+                : new RangeMenuItemMapper(this.gos, this.chartService, getLocaleTextFunc);
 
         const isEnterprise = this.chartService.isEnterprise();
 
@@ -191,11 +191,11 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
     constructor(
         private gos: GridOptionsService,
         private chartService: IChartService,
-        private localeService: LocaleService
+        private getLocaleTextFunc: () => (key: string, defaultValue: string, variableValues?: string[]) => string
     ) {}
 
     getMenuItem(): MenuItemDefWithKey<PivotMenuOptionName> {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         const getMenuItem = (
             localeKey: string,
             defaultText: string,
@@ -411,11 +411,11 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
     constructor(
         private gos: GridOptionsService,
         private chartService: IChartService,
-        private localeService: LocaleService
+        private getLocaleTextFunc: () => (key: string, defaultValue: string, variableValues?: string[]) => string
     ) {}
 
     getMenuItem(): MenuItemDefWithKey<RangeMenuOptionName> {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         const getMenuItem = (
             localeKey: string,
             defaultText: string,

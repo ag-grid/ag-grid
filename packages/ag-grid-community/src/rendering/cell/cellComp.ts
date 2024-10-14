@@ -7,6 +7,7 @@ import { _getActiveDomElement } from '../../gridOptionsUtils';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { PopupPositionParams } from '../../interfaces/iPopup';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
+import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { _setAriaRole } from '../../utils/aria';
 import { _addStylesToElement, _clearElement, _removeFromParent } from '../../utils/dom';
@@ -529,7 +530,7 @@ export class CellComp extends Component {
 
         const positionCallback = popupService.positionPopupByComponent.bind(popupService, positionParams);
 
-        const translate = this.beans.localeService.getLocaleTextFunc();
+        const translate = _getLocaleTextFunc(this.beans.localeService);
 
         const addPopupRes = popupService.addPopup({
             modal: useModelPopup,

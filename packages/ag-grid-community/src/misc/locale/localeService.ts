@@ -1,12 +1,12 @@
-import type { NamedBean } from './context/bean';
-import { BeanStub } from './context/beanStub';
-import type { GetLocaleTextParams } from './interfaces/iCallbackParams';
-import type { WithoutGridCommon } from './interfaces/iCommon';
+import type { NamedBean } from '../../context/bean';
+import { BeanStub } from '../../context/beanStub';
+import type { GetLocaleTextParams } from '../../interfaces/iCallbackParams';
+import type { WithoutGridCommon } from '../../interfaces/iCommon';
 
 export class LocaleService extends BeanStub implements NamedBean {
     beanName = 'localeService' as const;
 
-    public getLocaleTextFunc(): (key: string, defaultValue: string, variableValues?: string[]) => string {
+    public override getLocaleTextFunc(): (key: string, defaultValue: string, variableValues?: string[]) => string {
         const getLocaleText = this.gos.getCallback('getLocaleText');
         if (getLocaleText) {
             //key: string, defaultValue: string, variableValues?: string[]

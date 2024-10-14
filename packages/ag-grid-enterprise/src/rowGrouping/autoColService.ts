@@ -286,7 +286,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
 
     private createBaseColDef(rowGroupCol?: AgColumn): ColDef {
         const userDef = this.gos.get('autoGroupColumnDef');
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
 
         const res: ColDef = {
             headerName: localeTextFunc('group', 'Group'),

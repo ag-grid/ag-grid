@@ -67,9 +67,9 @@ import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsSe
 import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IMasterDetailService } from '../interfaces/masterDetail';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
-import type { LocaleService } from '../localeService';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEvents/apiEventService';
+import type { LocaleService } from '../misc/locale/localeService';
 import type { MenuService } from '../misc/menu/menuService';
 import type { StateService } from '../misc/state/stateService';
 import { _unRegisterGridModules } from '../modules/moduleRegistry';
@@ -217,7 +217,7 @@ export interface CoreBeanCollection {
     ctrlsService: CtrlsService;
     valueCache?: ValueCache;
     rowNodeEventThrottle?: RowNodeEventThrottle;
-    localeService: LocaleService;
+    localeService?: LocaleService;
     syncService: SyncService;
     ariaAnnouncementService: AriaAnnouncementService;
     rangeService?: IRangeService;

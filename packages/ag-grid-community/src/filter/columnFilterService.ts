@@ -908,7 +908,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         formatValue: DataTypeFormatValueFunc
     ): void {
         const usingSetFilter = _isSetFilterByDefault(this.gos);
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const mergeFilterParams = (params: any) => {
             const { filterParams } = colDef;
             colDef.filterParams =

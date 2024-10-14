@@ -21,6 +21,7 @@ import type { _ModuleWithoutApi } from './interfaces/iModule';
 import { baseCommunityModule } from './interfaces/iModule';
 import { AnimationFrameModule } from './misc/animationFrameModule';
 import { EventApiModule } from './misc/apiEvents/apiEventModule';
+import { LocaleModule } from './misc/locale/localeModule';
 import { CommunityMenuApiModule } from './misc/menu/sharedMenuModule';
 import { StateModule } from './misc/state/stateModule';
 import { KeyboardNavigationModule } from './navigation/navigationModule';
@@ -95,5 +96,6 @@ export const CommunityFeaturesModule: _ModuleWithoutApi = {
         FlashCellModule,
         TooltipModule,
         PinnedColumnModule,
+        LocaleModule,
     ],
 };

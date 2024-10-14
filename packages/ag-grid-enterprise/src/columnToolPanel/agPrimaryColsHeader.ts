@@ -77,7 +77,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
 
         this.addManagedEventListeners({ newColumnsLoaded: this.showOrHideOptions.bind(this) });
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         this.eSelect.setInputAriaLabel(translate('ariaColumnSelectAll', 'Toggle All Columns Visibility'));
         this.eFilterTextField.setInputAriaLabel(translate('ariaFilterColumnsInput', 'Filter Columns Input'));
@@ -121,7 +121,7 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
         const showSelect = !this.params.suppressColumnSelectAll;
         const showExpand = !this.params.suppressColumnExpandAll;
         const groupsPresent = this.columnModel.isProvidedColGroupsPresent();
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 

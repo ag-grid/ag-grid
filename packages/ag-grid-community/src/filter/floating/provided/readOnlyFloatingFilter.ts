@@ -40,7 +40,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
     public init(params: IFloatingFilterParams): void {
         this.params = params;
         const displayName = this.columnNameService.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         this.eFloatingFilterText
             .setDisabled(true)
             .setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);

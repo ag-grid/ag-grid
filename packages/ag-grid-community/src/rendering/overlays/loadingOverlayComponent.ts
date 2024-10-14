@@ -23,7 +23,7 @@ export class LoadingOverlayComponent
         );
 
         if (!customTemplate) {
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const localeTextFunc = this.getLocaleTextFunc();
             // setTimeout is used because some screen readers only announce `aria-live` text when
             // there is a "text change", so we force a change from empty.
             setTimeout(() => {

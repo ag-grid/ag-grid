@@ -114,7 +114,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private setupAria(): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         _setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
     }
 

@@ -145,7 +145,7 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private refreshSelectAllLabel(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const checked = this.cbSelectAll.getValue();
         const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
         const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');

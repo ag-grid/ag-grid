@@ -19,7 +19,6 @@ import { GridDestroyService } from './gridDestroyService';
 import { GridOptionsService } from './gridOptionsService';
 import type { _ModuleWithoutApi } from './interfaces/iModule';
 import { baseCommunityModule } from './interfaces/iModule';
-import { LocaleService } from './localeService';
 import { PageBoundsListener } from './pagination/pageBoundsListener';
 import { PageBoundsService } from './pagination/pageBoundsService';
 import { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
@@ -36,7 +35,6 @@ export const CommunityCoreModule: _ModuleWithoutApi = {
         Registry,
         UserComponentFactory,
         RowContainerHeightService,
-        LocaleService,
         VisibleColsService,
         EventService,
         GridOptionsService,

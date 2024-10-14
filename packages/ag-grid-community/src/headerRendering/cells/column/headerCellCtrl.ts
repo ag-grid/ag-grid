@@ -520,7 +520,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private refreshAriaSort(): void {
         if (this.sortable) {
-            const translate = this.localeService.getLocaleTextFunc();
+            const translate = this.getLocaleTextFunc();
             const sort = this.beans.sortController?.getDisplaySortForColumn(this.column) || null;
             this.comp.setAriaSort(_getAriaSortState(sort));
             this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort'));
@@ -532,7 +532,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private refreshAriaMenu(): void {
         if (this.menuEnabled) {
-            const translate = this.localeService.getLocaleTextFunc();
+            const translate = this.getLocaleTextFunc();
             this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press ALT DOWN to open column menu'));
         } else {
             this.setAriaDescriptionProperty('menu', null);
@@ -541,7 +541,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private refreshAriaFilterButton(): void {
         if (this.openFilterEnabled && !_isLegacyMenuEnabled(this.gos)) {
-            const translate = this.localeService.getLocaleTextFunc();
+            const translate = this.getLocaleTextFunc();
             this.setAriaDescriptionProperty(
                 'filterButton',
                 translate('ariaFilterColumn', 'Press CTRL ENTER to open filter')
@@ -552,7 +552,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private refreshAriaFiltered(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const isFilterActive = this.column.isFilterActive();
         if (isFilterActive) {
             this.setAriaDescriptionProperty('filter', translate('ariaColumnFiltered', 'Column Filtered'));

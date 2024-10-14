@@ -1,5 +1,3 @@
-import type { LocaleService } from '../localeService';
-
 /**
  * the native method number.toLocaleString(undefined, {minimumFractionDigits: 0})
  * puts in decimal places in IE, so we use this method instead
@@ -7,12 +5,15 @@ import type { LocaleService } from '../localeService';
  * @param {number} value
  * @returns {string}
  */
-export function _formatNumberCommas(value: number, localeService: LocaleService): string {
+export function _formatNumberCommas(
+    value: number,
+    getLocaleTextFunc: () => (key: string, defaultValue: string, variableValues?: string[]) => string
+): string {
     if (typeof value !== 'number') {
         return '';
     }
 
-    const localeTextFunc = localeService.getLocaleTextFunc();
+    const localeTextFunc = getLocaleTextFunc();
     const thousandSeparator = localeTextFunc('thousandSeparator', ',');
     const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 

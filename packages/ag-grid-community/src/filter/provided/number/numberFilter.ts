@@ -54,7 +54,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
         super.setParams(params);
         this.filterModelFormatter = new NumberFilterModelFormatter(
-            this.localeService,
+            this.getLocaleTextFunc.bind(this),
             this.optionsFactory,
             this.numberFilterParams.numberFormatter
         );

@@ -123,6 +123,7 @@ type CommunityModuleName =
     | 'KeyboardNavigationModule'
     | 'LargeTextEditorModule'
     | 'LoadingOverlayModule'
+    | 'LocaleModule'
     | 'NoRowsOverlayModule'
     | 'OverlayApiModule'
     | 'OverlayCoreModule'

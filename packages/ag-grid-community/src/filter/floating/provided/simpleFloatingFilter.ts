@@ -151,7 +151,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
 
     protected getAriaLabel(params: IFloatingFilterParams): string {
         const displayName = this.columnNameService.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         return `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`;
     }
 }

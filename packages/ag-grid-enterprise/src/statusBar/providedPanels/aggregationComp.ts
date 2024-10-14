@@ -5,7 +5,6 @@ import type {
     BeanCollection,
     IRangeService,
     IStatusPanelComp,
-    LocaleService,
     RowPosition,
 } from 'ag-grid-community';
 import {
@@ -25,12 +24,15 @@ import {
 import type { AgNameValue } from './agNameValue';
 import { AgNameValueSelector } from './agNameValue';
 
-function _formatNumberTwoDecimalPlacesAndCommas(value: number, localeService: LocaleService): string {
+function _formatNumberTwoDecimalPlacesAndCommas(
+    value: number,
+    getLocaleTextFunc: () => (key: string, defaultValue: string, variableValues?: string[]) => string
+): string {
     if (typeof value !== 'number') {
         return '';
     }
 
-    return _formatNumberCommas(Math.round(value * 100) / 100, localeService);
+    return _formatNumberCommas(Math.round(value * 100) / 100, getLocaleTextFunc);
 }
 
 export class AggregationComp extends Component implements IStatusPanelComp {
@@ -104,7 +106,9 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     ) {
         const statusBarValueComponent = this.getAllowedAggregationValueComponent(aggFuncName);
         if (_exists(statusBarValueComponent) && statusBarValueComponent) {
-            statusBarValueComponent.setValue(_formatNumberTwoDecimalPlacesAndCommas(value!, this.localeService));
+            statusBarValueComponent.setValue(
+                _formatNumberTwoDecimalPlacesAndCommas(value!, this.getLocaleTextFunc.bind(this))
+            );
             statusBarValueComponent.setDisplayed(visible);
         } else {
             // might have previously been visible, so hide now

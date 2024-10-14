@@ -53,7 +53,7 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
             [AgInputTextFieldSelector]
         );
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         this.eFilterTextField
             .setAutoComplete(false)
@@ -86,7 +86,7 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
     private showOrHideOptions(): void {
         const showFilterSearch = !this.params.suppressFilterSearch;
         const showExpand = !this.params.suppressExpandAll;
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 

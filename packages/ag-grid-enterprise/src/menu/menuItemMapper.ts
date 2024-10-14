@@ -94,7 +94,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         sourceElement: () => HTMLElement,
         source: ColumnEventType
     ): MenuItemDef | string | null {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
 
         switch (key) {
@@ -375,7 +375,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     }
 
     private createAggregationSubMenu(column: AgColumn, aggFuncService: IAggFuncService): MenuItemDef[] {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
 
         let columnToUse: AgColumn | undefined;
         if (column.isPrimary()) {
