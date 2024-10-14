@@ -74,6 +74,10 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState,
         source: SelectionEventSourceType
     ): void {
+        if (!this.isRowSelection) {
+            _warn(241);
+            return;
+        }
         if (Array.isArray(state)) {
             return;
         }
@@ -84,6 +88,11 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 
     public setNodesSelected(params: ISetNodesSelectedParams): number {
+        if (!this.isRowSelection) {
+            _warn(241);
+            return 0;
+        }
+
         const { nodes, ...otherParams } = params;
 
         if (nodes.length > 1 && this.selectionMode !== 'multiRow') {
@@ -188,6 +197,11 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
     }
 
     public selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void {
+        if (!this.isRowSelection) {
+            _warn(241);
+            return;
+        }
+
         validateSelectionParameters(params);
         if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
             _warn(193);
