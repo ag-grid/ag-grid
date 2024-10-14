@@ -60,21 +60,21 @@ export class TreeNodeManager extends BeanStub {
         super.destroy();
     }
 
-    public activate(rootRowNode: RowNode): void {
-        this.root.setRow(rootRowNode);
-        const sibling: TreeRow = rootRowNode.sibling;
+    public activate(rootNode: RowNode): void {
+        this.root.setRow(rootNode);
+        const sibling: TreeRow = rootNode.sibling;
         if (sibling) {
-            sibling.childrenAfterGroup = rootRowNode.childrenAfterGroup;
-            sibling.childrenMapped = rootRowNode.childrenMapped;
+            sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
+            sibling.childrenMapped = rootNode.childrenMapped;
         }
     }
 
     public deactivate() {
         const root = this.root;
-        const rootRow = root.row;
-        if (rootRow !== null) {
-            root.removeRow(rootRow);
-            clearTreeRowFlags(rootRow);
+        const rootNode = root.row;
+        if (rootNode !== null) {
+            root.removeRow(rootNode);
+            clearTreeRowFlags(rootNode);
         }
         this.destroyTree(root);
         this.commitDestroyedRows();
@@ -199,29 +199,29 @@ export class TreeNodeManager extends BeanStub {
 
         this.commitChildren(details, root);
 
-        const rootRow = root.row;
-        if (rootRow) {
+        const rootNode = root.row;
+        if (rootNode) {
             if (treeData) {
-                rootRow.leafGroup = false; // no pivoting with tree data
+                rootNode.leafGroup = false; // no pivoting with tree data
             }
 
             if (root.childrenChanged) {
                 if (root.updateChildrenAfterGroup(treeData)) {
-                    markTreeRowPathChanged(rootRow);
+                    markTreeRowPathChanged(rootNode);
                 }
             }
 
-            if (isTreeRowPathChanged(rootRow)) {
+            if (isTreeRowPathChanged(rootNode)) {
                 if (details.changedPath?.isActive()) {
-                    details.changedPath.addParentNode(rootRow);
+                    details.changedPath.addParentNode(rootNode);
                 }
             }
 
-            markTreeRowCommitted(rootRow);
+            markTreeRowCommitted(rootNode);
 
-            this.resetRowArrays(rootRow);
+            this.resetRowArrays(rootNode);
 
-            rootRow.updateHasChildren();
+            rootNode.updateHasChildren();
         }
 
         this.commitDestroyedRows();

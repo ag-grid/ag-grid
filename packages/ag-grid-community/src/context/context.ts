@@ -70,6 +70,7 @@ import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsSe
 import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { LocaleService } from '../localeService';
+import type { IDetailService } from '../main-umd-noStyles';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEvents/apiEventService';
 import type { MenuService } from '../misc/menu/menuService';
@@ -266,6 +267,7 @@ export interface CoreBeanCollection {
     pageBoundsService: PageBoundsService;
     apiFunctionService: ApiFunctionService;
     detailGridApiService?: IDetailGridApiService;
+    detailService?: IDetailService;
     gridDestroyService: GridDestroyService;
     expansionService?: IExpansionService;
     sideBarService?: ISideBarService;
@@ -377,6 +379,7 @@ export type BeanName =
     | 'csvCreator'
     | 'dataTypeService'
     | 'visibleColsService'
+    | 'detailService'
     | 'detailGridApiService'
     | 'dragAndDropService'
     | 'dragService'

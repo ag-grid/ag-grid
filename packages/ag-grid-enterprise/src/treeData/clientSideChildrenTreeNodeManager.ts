@@ -19,25 +19,25 @@ export class ClientSideChildrenTreeNodeManager<TData>
         return Array.from(this.treeNodeManager.root.enumChildren(), (node) => node.row!.data);
     }
 
-    public override activate(rootRow: RowNode<TData>): void {
+    public override activate(rootNode: RowNode<TData>): void {
         const oldChildrenGetter = this.childrenGetter;
         const childrenField = this.gos.get('treeDataChildrenField');
         if (!oldChildrenGetter || oldChildrenGetter.path !== childrenField) {
             this.childrenGetter = makeFieldPathGetter(childrenField);
         }
 
-        super.activate(rootRow);
+        super.activate(rootNode);
     }
 
     protected override loadNewRowData(rowData: TData[]): void {
-        const { rootRow, treeNodeManager, childrenGetter } = this;
+        const { rootNode, treeNodeManager, childrenGetter } = this;
 
         const processedDataSet = new Set<TData>();
         const allLeafChildren: TreeRow<TData>[] = [];
 
-        rootRow.allLeafChildren = allLeafChildren;
+        rootNode.allLeafChildren = allLeafChildren;
 
-        treeNodeManager.activate(rootRow);
+        treeNodeManager.activate(rootNode);
         treeNodeManager.clearTree(this.treeNodeManager.root);
 
         const addChild = (parent: TreeNode, data: TData) => {
@@ -71,9 +71,9 @@ export class ClientSideChildrenTreeNodeManager<TData>
     }
 
     public onTreeDataChanged() {
-        const { rootRow } = this;
-        this.treeNodeManager.activate(rootRow);
-        const allLeafChildren = this.rootRow.allLeafChildren!;
+        const { rootNode } = this;
+        this.treeNodeManager.activate(rootNode);
+        const allLeafChildren = this.rootNode.allLeafChildren!;
         for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
             (allLeafChildren[i] as TreeRow<TData>).treeNode?.invalidate();
         }

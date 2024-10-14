@@ -18,7 +18,7 @@ export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
 }
 
 export interface IClientSideNodeManager<TData = any> {
-    activate(rootRowNode: RowNode<TData> | null): void;
+    activate(rootNode: RowNode<TData> | null): void;
 
     deactivate(): void;
 

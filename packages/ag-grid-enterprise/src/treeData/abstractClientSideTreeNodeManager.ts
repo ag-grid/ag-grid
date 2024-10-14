@@ -11,9 +11,9 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
         this.treeNodeManager = this.createManagedBean(new TreeNodeManager());
     }
 
-    public override activate(rootRowNode: RowNode<TData>): void {
-        super.activate(rootRowNode);
-        this.treeNodeManager.activate(rootRowNode);
+    public override activate(rootNode: RowNode<TData>): void {
+        super.activate(rootNode);
+        this.treeNodeManager.activate(rootNode);
     }
 
     public override deactivate(): void {
@@ -34,7 +34,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
             if (this.oldGroupDisplayColIds !== newGroupDisplayColIds) {
                 this.oldGroupDisplayColIds = newGroupDisplayColIds;
 
-                this.treeNodeManager.checkAllGroupDataAfterColsChanged(this.rootRow.childrenAfterGroup);
+                this.treeNodeManager.checkAllGroupDataAfterColsChanged(this.rootNode.childrenAfterGroup);
             }
         } else {
             this.oldGroupDisplayColIds = '';
