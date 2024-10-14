@@ -304,7 +304,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         if (rowWasMoved) {
             this.focusService.clearFocusedCell();
-            this.rangeService?.removeAllCellRanges();
         }
     }
 
