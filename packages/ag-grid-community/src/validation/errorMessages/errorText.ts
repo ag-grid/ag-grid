@@ -321,8 +321,8 @@ export const AG_GRID_ERRORS = {
         `a custom chart theme with the name ${customThemeName} has been supplied but not added to the 'chartThemes' list` as const,
     140: ({ name }: { name: string }) =>
         `no stock theme exists with the name '${name}' and no custom chart theme with that name was supplied to 'customChartThemes'` as const,
-    141: () => 'crossing filtering with row grouping is not supported.' as const,
-    142: () => 'crossing filtering is only supported in the client side row model.' as const,
+    141: () => 'cross filtering with row grouping is not supported.' as const,
+    142: () => 'cross filtering is only supported in the client side row model.' as const,
     143: ({ panel }: { panel: string | undefined }) => `'${panel}' is not a valid Chart Tool Panel name` as const,
     144: ({ type }: { type: string }) => `Invalid charts data panel group name supplied: '${type}'` as const,
     145: ({ group }: { group: string }) =>
@@ -478,6 +478,7 @@ export const AG_GRID_ERRORS = {
     229: ({ index }: { index: number }) => ['invalid row index for ensureIndexVisible: ', index] as const,
     230: () =>
         'detailCellRendererParams.template is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://ag-grid.com/react-data-grid/master-detail-custom-detail/' as const,
+    // @deprecated v32 mark for removal as part of v32 deprecated features
     231: () => 'As of v32, using custom components with `reactiveCustomComponents = false` is deprecated.' as const,
     232: () => 'Using both rowData and v-model. rowData will be ignored.' as const,
     233: ({ methodName }: { methodName: string }) =>
