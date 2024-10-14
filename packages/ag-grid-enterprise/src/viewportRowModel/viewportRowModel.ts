@@ -286,7 +286,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     }
 
     private setRowData(rowData: { [key: number]: any }): void {
-        Object.entries(rowData).forEach(([indexStr, dataItem]) => {
+        for (const [indexStr, dataItem] of Object.entries(rowData)) {
             const index = parseInt(indexStr, 10);
             // we should never keep rows that we didn't specifically ask for, this
             // guarantees the contract we have with the server.
@@ -306,7 +306,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
                 // of put a placeholder node in place.
                 rowNode.setDataAndId(dataItem, index.toString());
             }
-        });
+        }
     }
 
     private createBlankRowNode(rowIndex: number): RowNode {

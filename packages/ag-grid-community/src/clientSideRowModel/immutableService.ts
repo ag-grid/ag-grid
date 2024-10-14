@@ -104,11 +104,11 @@ export class ImmutableService extends BeanStub implements NamedBean {
         }
 
         // at this point, all rows that are left, should be removed
-        Object.values(existingNodesMap).forEach((rowNode) => {
+        for (const rowNode of Object.values(existingNodesMap)) {
             if (rowNode) {
                 remove.push(rowNode.data);
             }
-        });
+        }
 
         return { remove, update, add };
     }

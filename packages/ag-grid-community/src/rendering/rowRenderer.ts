@@ -852,20 +852,20 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private getRowsToRecycle(): RowCtrlByRowNodeIdMap {
         // remove all stub nodes, they can't be reused, as no rowNode id
         const stubNodeIndexes: string[] = [];
-        Object.entries(this.rowCtrlsByRowIndex).forEach(([index, rowCtrl]) => {
+        for (const [index, rowCtrl] of Object.entries(this.rowCtrlsByRowIndex)) {
             const stubNode = rowCtrl.getRowNode().id == null;
             if (stubNode) {
                 stubNodeIndexes.push(index);
             }
-        });
+        }
         this.removeRowCtrls(stubNodeIndexes);
 
         // then clear out rowCompsByIndex, but before that take a copy, but index by id, not rowIndex
         const ctrlsByIdMap: RowCtrlByRowNodeIdMap = {};
-        Object.values(this.rowCtrlsByRowIndex).forEach((rowCtrl) => {
+        for (const rowCtrl of Object.values(this.rowCtrlsByRowIndex)) {
             const rowNode = rowCtrl.getRowNode();
             ctrlsByIdMap[rowNode.id!] = rowCtrl;
-        });
+        }
         this.rowCtrlsByRowIndex = {};
 
         return ctrlsByIdMap;
@@ -978,11 +978,15 @@ export class RowRenderer extends BeanStub implements NamedBean {
         };
 
         // if we are redrawing due to scrolling change, then old rows are in this.rowCompsByIndex
-        Object.values(this.rowCtrlsByRowIndex).forEach(checkRowToDraw);
+        for (const rowCtrl of Object.values(this.rowCtrlsByRowIndex)) {
+            checkRowToDraw(rowCtrl);
+        }
 
         // if we are redrawing due to model update, then old rows are in rowsToRecycle
         if (rowsToRecycle) {
-            Object.values(rowsToRecycle).forEach(checkRowToDraw);
+            for (const rowCtrl of Object.values(rowsToRecycle)) {
+                checkRowToDraw(rowCtrl);
+            }
         }
 
         indexesToDraw.sort((a, b) => a - b);
@@ -1155,29 +1159,31 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private destroyRowCtrls(rowCtrlsMap: RowCtrlIdMap | null | undefined, animate: boolean): void {
         const executeInAWhileFuncs: (() => void)[] = [];
-        Object.values(rowCtrlsMap ?? []).forEach((rowCtrl) => {
-            // if row was used, then it's null
-            if (!rowCtrl) {
-                return;
-            }
+        if (rowCtrlsMap) {
+            for (const rowCtrl of Object.values(rowCtrlsMap)) {
+                // if row was used, then it's null
+                if (!rowCtrl) {
+                    continue;
+                }
 
-            if (this.cachedRowCtrls && rowCtrl.isCacheable()) {
-                this.cachedRowCtrls.addRow(rowCtrl);
-                return;
-            }
+                if (this.cachedRowCtrls && rowCtrl.isCacheable()) {
+                    this.cachedRowCtrls.addRow(rowCtrl);
+                    continue;
+                }
 
-            rowCtrl.destroyFirstPass(!animate);
-            if (animate) {
-                const instanceId = rowCtrl.instanceId;
-                this.zombieRowCtrls[instanceId] = rowCtrl;
-                executeInAWhileFuncs.push(() => {
+                rowCtrl.destroyFirstPass(!animate);
+                if (animate) {
+                    const instanceId = rowCtrl.instanceId;
+                    this.zombieRowCtrls[instanceId] = rowCtrl;
+                    executeInAWhileFuncs.push(() => {
+                        rowCtrl.destroySecondPass();
+                        delete this.zombieRowCtrls[instanceId];
+                    });
+                } else {
                     rowCtrl.destroySecondPass();
-                    delete this.zombieRowCtrls[instanceId];
-                });
-            } else {
-                rowCtrl.destroySecondPass();
+                }
             }
-        });
+        }
         if (animate) {
             // this ensures we fire displayedRowsChanged AFTER all the 'executeInAWhileFuncs' get
             // executed, as we added it to the end of the list.
