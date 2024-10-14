@@ -137,9 +137,7 @@ export class EditService extends BeanStub implements NamedBean {
     }
 
     public stopAllEditing(cancel: boolean = false): void {
-        this.rowRenderer.getAllRowCtrls().forEach((rowCtrl) => {
-            rowCtrl.stopEditing(cancel);
-        });
+        this.rowRenderer.someRowCtrls((rowCtrl) => rowCtrl.stopEditing(cancel));
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
