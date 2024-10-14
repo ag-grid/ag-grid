@@ -6,8 +6,7 @@ import type {
     IsGroupOpenByDefaultParams,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _ROW_ID_PREFIX_ROW_GROUP, _warnOnce } from 'ag-grid-community';
-import { RowNode } from 'ag-grid-community';
+import { BeanStub, RowNode, _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
 
 import { TreeNode } from './treeNode';
 import type { TreeRow } from './treeRow';
@@ -391,11 +390,11 @@ export class TreeNodeManager extends BeanStub {
 
         if (node.duplicateRows?.size && !node.duplicateRowsWarned) {
             node.duplicateRowsWarned = true;
-            _warnOnce(`duplicate group keys for row data, keys should be unique`, [
-                row.id,
-                row.data,
-                ...Array.from(node.duplicateRows).map((r) => r.data),
-            ]);
+            _warn(186, {
+                rowId: row.id,
+                rowData: row.data,
+                duplicateRowsData: Array.from(node.duplicateRows).map((r) => r.data),
+            });
         }
     }
 

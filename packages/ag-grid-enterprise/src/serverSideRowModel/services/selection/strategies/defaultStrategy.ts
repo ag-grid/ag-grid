@@ -9,11 +9,11 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
+    _error,
     _isMultiRowSelection,
     _isUsingNewRowSelectionAPI,
     _last,
-    _logError,
-    _warnOnce,
+    _warn,
     isSelectionUIEvent,
 } from 'ag-grid-community';
 
@@ -59,13 +59,13 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
         if (typeof state !== 'object') {
             // The provided selection state should be an object
-            _logError(115);
+            _error(115);
             return;
         }
 
         if (!('selectAll' in state)) {
             //'Invalid selection state. The state must conform to `IServerSideSelectionState`.'
-            _logError(116);
+            _error(116);
             return;
         }
 
@@ -73,7 +73,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             newState.selectAll = state.selectAll;
         } else {
             //selectAll must be of boolean type.
-            _logError(117);
+            _error(117);
             return;
         }
 
@@ -82,16 +82,18 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 if (typeof key === 'string') {
                     newState.toggledNodes.add(key);
                 } else {
-                    _warnOnce(`Provided ids must be of string type. Invalid id provided: ${key}`);
+                    _warn(196, { key });
                 }
             });
         } else {
-            return _warnOnce('`toggledNodes` must be an array of string ids.');
+            _warn(197);
+            return;
         }
 
         const isSelectingMultipleRows = newState.selectAll || newState.toggledNodes.size > 1;
         if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos) && isSelectingMultipleRows) {
-            return _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
+            _warn(198);
+            return;
         }
 
         this.selectedState = newState;
@@ -218,10 +220,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
     public getSelectedNodes(): RowNode<any>[] {
         if (this.selectAllUsed) {
-            _warnOnce(
-                `getSelectedNodes and getSelectedRows functions cannot be used with select all functionality with the server-side row model.
-                Use \`api.getServerSideSelectionState()\` instead.`
-            );
+            _warn(199);
         }
         return Object.values(this.selectedNodes);
     }

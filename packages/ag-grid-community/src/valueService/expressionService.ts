@@ -1,6 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import { _logError } from '../validation/logging';
+import { _error } from '../validation/logging';
 
 export class ExpressionService extends BeanStub implements NamedBean {
     beanName = 'expressionService' as const;
@@ -12,7 +12,7 @@ export class ExpressionService extends BeanStub implements NamedBean {
             // valueGetter is an expression, so execute the expression
             return this.evaluateExpression(expression, params);
         } else {
-            _logError(15, { expression });
+            _error(15, { expression });
         }
     }
 
@@ -40,7 +40,7 @@ export class ExpressionService extends BeanStub implements NamedBean {
         } catch (e) {
             // the expression failed, which can happen, as it's the client that
             // provides the expression. so print a nice message
-            _logError(16, { expression, params, e });
+            _error(16, { expression, params, e });
             return null;
         }
     }

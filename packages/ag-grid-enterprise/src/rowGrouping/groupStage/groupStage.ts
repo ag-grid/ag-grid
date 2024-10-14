@@ -17,16 +17,8 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { ClientSideRowModelSteps, _ROW_ID_PREFIX_ROW_GROUP } from 'ag-grid-community';
-import {
-    BeanStub,
-    RowNode,
-    _areEqual,
-    _exists,
-    _existsAndNotEmpty,
-    _removeFromArray,
-    _warnOnce,
-} from 'ag-grid-community';
+import { ClientSideRowModelSteps, _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
+import { BeanStub, RowNode, _areEqual, _exists, _existsAndNotEmpty, _removeFromArray } from 'ag-grid-community';
 
 import { BatchRemover } from './batchRemover';
 import type { GroupRow } from './groupRow';
@@ -507,7 +499,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         const parentGroup = this.findParentForNode(childNode, path, details, batchRemover);
 
         if (!parentGroup.group) {
-            _warnOnce(`duplicate group keys for row data, keys should be unique`, [parentGroup.data, childNode.data]);
+            _warn(184, { parentGroupData: parentGroup.data, childNodeData: childNode.data });
         }
         childNode.parent = parentGroup;
         childNode.level = path.length;

@@ -1,5 +1,5 @@
 import type { AbstractColDef, AgColumn, BeanCollection, ColDef, ColumnModel, NamedBean } from 'ag-grid-community';
-import { AgProvidedColumnGroup, BeanStub, _warnOnce, isProvidedColumnGroup } from 'ag-grid-community';
+import { AgProvidedColumnGroup, BeanStub, _warn, isProvidedColumnGroup } from 'ag-grid-community';
 
 import { isColGroupDef, mergeLeafPathTrees } from './sideBarUtils';
 
@@ -58,7 +58,7 @@ export class ToolPanelColDefService extends BeanStub implements NamedBean {
         });
 
         if (invalidColIds.length > 0) {
-            _warnOnce('unable to find grid columns for the supplied colDef(s):', invalidColIds);
+            _warn(217, { invalidColIds });
         }
 
         return mappedResults;

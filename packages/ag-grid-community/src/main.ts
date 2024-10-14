@@ -26,7 +26,7 @@ export type { VisibleColsService } from './columns/visibleColsService';
 export { GroupInstanceIdCreator } from './columns/groupInstanceIdCreator';
 export {
     GROUP_AUTO_COLUMN_ID,
-    isColumnControlsCol,
+    isColumnSelectionCol,
     isColumnGroupAutoCol,
     _destroyColumnTree,
     _getColumnsFromTree,
@@ -421,33 +421,33 @@ export type { PinnedRowModel } from './pinnedRowModel/pinnedRowModel';
 export { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 export { RowDataTransaction } from './interfaces/rowDataTransaction';
 export {
-    ServerSideTransaction,
-    ServerSideTransactionResult,
-    ServerSideTransactionResultStatus,
-} from './interfaces/serverSideTransaction';
-export { IClientSideNodeManager, ClientSideNodeManagerUpdateRowDataResult } from './interfaces/iClientSideNodeManager';
-export { AbstractClientSideNodeManager } from './clientSideRowModel/abstractClientSideNodeManager';
-export {
     IClientSideRowModel,
     ClientSideRowModelSteps,
     ClientSideRowModelStep,
     RefreshModelParams,
 } from './interfaces/iClientSideRowModel';
+export { IClientSideNodeManager, ClientSideNodeManagerUpdateRowDataResult } from './interfaces/iClientSideNodeManager';
+export { AbstractClientSideNodeManager } from './clientSideRowModel/abstractClientSideNodeManager';
 export { IGroupHideOpenParentsService } from './interfaces/iGroupHideOpenParentsService';
 
 export { ColumnVO } from './interfaces/iColumnVO';
 
+export {
+    IServerSideRowModel,
+    IServerSideTransactionManager,
+    RefreshServerSideParams,
+    LoadSuccessParams,
+} from './interfaces/iServerSideRowModel';
 export {
     IServerSideDatasource,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
 } from './interfaces/iServerSideDatasource';
 export {
-    IServerSideRowModel,
-    IServerSideTransactionManager,
-    LoadSuccessParams,
-    RefreshServerSideParams,
-} from './interfaces/iServerSideRowModel';
+    ServerSideTransaction,
+    ServerSideTransactionResult,
+    ServerSideTransactionResultStatus,
+} from './interfaces/serverSideTransaction';
 export { IServerSideStore, StoreRefreshAfterParams, ServerSideGroupLevelState } from './interfaces/IServerSideStore';
 
 export { ISideBarService, ISideBar, SideBarDef, ToolPanelDef } from './interfaces/iSideBar';
@@ -945,8 +945,8 @@ export {
     _observeResize,
 } from './utils/dom';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';
-export { _log, _warnOnce, _errorOnce, _debounce, _compose, _doOnce, _waitUntil } from './utils/function';
-export { _logWarn, _logError } from './validation/logging';
+export { _warnOnce, _debounce, _compose, _doOnce, _waitUntil } from './utils/function';
+export { _warn as _warn, _error as _error } from './validation/logging';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export {

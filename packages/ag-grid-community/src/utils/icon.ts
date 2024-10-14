@@ -1,6 +1,6 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { GridOptionsService } from '../gridOptionsService';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import { _setAriaRole } from './aria';
 import { _isNodeOrElement, _loadTemplate } from './dom';
 
@@ -241,7 +241,7 @@ export function _createIconNoSpan(
             return rendererResult as Element;
         }
 
-        _logWarn(133);
+        _warn(133);
     } else {
         const span = document.createElement('span');
         let cssClass: string =
@@ -249,7 +249,7 @@ export function _createIconNoSpan(
 
         if (!cssClass) {
             if (!forceCreate) {
-                _logWarn(134, { iconName });
+                _warn(134, { iconName });
                 cssClass = '';
             } else {
                 cssClass = iconName;

@@ -32,7 +32,7 @@ import { _insertIntoArray, _last, _removeFromArray } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _debounce } from '../utils/function';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
-import { _logError, _logWarn } from '../validation/logging';
+import { _error, _warn } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
 import { updateRowNodeAfterFilter } from './filterStage';
 import { updateRowNodeAfterSort } from './sortStage';
@@ -707,7 +707,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (_missing(paramsStep)) {
-            _logError(10, { step, stepsMapped });
+            _error(10, { step, stepsMapped });
             return undefined;
         }
         const animate = !this.gos.get('suppressAnimationFrame');
@@ -1199,7 +1199,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.selectionService?.reset('rowDataChanged');
 
         if (!Array.isArray(rowData)) {
-            _logWarn(1);
+            _warn(1);
         } else {
             this.rowNodesCountReady = true;
             this.nodeManager.setNewRowData(rowData);

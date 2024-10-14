@@ -8,7 +8,7 @@ import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _mergeDeep } from '../../utils/object';
 import { AgPromise } from '../../utils/promise';
-import { _logError } from '../../validation/logging';
+import { _error } from '../../validation/logging';
 import type { AgComponentUtils } from './agComponentUtils';
 import type { FrameworkComponentWrapper } from './frameworkComponentWrapper';
 import type { Registry } from './registry';
@@ -149,7 +149,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
 
         if (!jsComp && !fwComp) {
             if (mandatory) {
-                _logError(50, { compName });
+                _error(50, { compName });
             }
             return;
         }

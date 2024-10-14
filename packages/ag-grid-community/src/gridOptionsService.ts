@@ -16,10 +16,10 @@ import { LocalEventService } from './localEventService';
 import { _isModuleRegistered } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
-import { _log } from './utils/function';
+import { _logIfDebug } from './utils/function';
 import { _exists, toBoolean } from './utils/generic';
 import { toConstrainedNum, toNumber } from './utils/number';
-import { _logWarn } from './validation/logging';
+import { _warn } from './validation/logging';
 import type { ValidationService } from './validation/validationService';
 
 type GetKeys<T, U> = {
@@ -220,7 +220,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
         Object.entries(options).forEach(([key, value]) => {
             if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
-                _logWarn(22, { key });
+                _warn(22, { key });
             }
             const coercedValue = getCoercedValue(key as keyof GridOptions, value);
             const shouldForce = force || (typeof coercedValue === 'object' && source === 'api'); // force objects as they could have been mutated.
@@ -245,9 +245,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         changeSet.properties = events.map((event) => event.type);
 
         events.forEach((event) => {
-            if (this.gridOptions.debug) {
-                _log(`Updated property ${event.type} from`, event.previousValue, ` to `, event.currentValue);
-            }
+            _logIfDebug(this, `Updated property ${event.type} from`, event.previousValue, ` to `, event.currentValue);
             this.propertyEventService.dispatchEvent(event);
         });
     }

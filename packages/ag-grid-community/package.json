@@ -92,7 +92,7 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "ag-charts-types": "10.2.0-beta.20241009"
+    "ag-charts-types": "10.2.0-beta.20241013"
   },
   "devDependencies": {
     "@types/postcss-import": "^14.0.3",

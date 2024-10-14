@@ -74,7 +74,7 @@ export const ServerSideRowModelSortModule: _ModuleWithoutApi = {
     dependsOn: [ServerSideRowModelCoreModule, SortModule],
 };
 
-export const ServerSideRowModelApiModule: _ModuleWithApi<_ServerSideRowModelGridApi> = {
+export const ServerSideRowModelApiModule: _ModuleWithApi<_ServerSideRowModelGridApi<any>> = {
     ...baseEnterpriseModule('ServerSideRowModelApiModule'),
     rowModels: ['serverSide'],
     apiFunctions: {

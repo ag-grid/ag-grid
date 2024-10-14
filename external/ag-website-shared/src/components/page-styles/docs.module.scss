@@ -201,9 +201,3 @@ blockquote:where(:not(:last-child)) {
 .sideMenu {
     padding-top: $spacing-size-8 + $spacing-size-1;
 }
-
-.errorPage {
-    pre {
-        background-color: rgb(254 226 226); // TODO: Find better color
-    }
-}

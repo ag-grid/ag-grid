@@ -2,7 +2,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { Column } from '../interfaces/iColumn';
 import type { FilterModel, IFilter } from '../interfaces/iFilter';
-import { _logError } from '../validation/logging';
+import { _error } from '../validation/logging';
 
 export function isColumnFilterPresent(beans: BeanCollection): boolean {
     return !!beans.filterManager?.isColumnFilterPresent() || !!beans.filterManager?.isAggregateFilterPresent();
@@ -46,7 +46,7 @@ export function showColumnFilter(beans: BeanCollection, colKey: string | Column)
     const column = beans.columnModel.getCol(colKey);
     if (!column) {
         // Column not found, can't show filter
-        _logError(12, { colKey });
+        _error(12, { colKey });
         return;
     }
     beans.menuService?.showFilterMenu({

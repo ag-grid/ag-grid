@@ -13,7 +13,7 @@ import type { ColumnAnimationService } from '../rendering/columnAnimationService
 import type { SortController } from '../sort/sortController';
 import { _areEqual, _removeFromArray } from '../utils/array';
 import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import {
     dispatchColumnChangedEvent,
     dispatchColumnPinnedEvent,
@@ -22,7 +22,7 @@ import {
 } from './columnEventUtils';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnModel } from './columnModel';
-import { GROUP_AUTO_COLUMN_ID, _getColumnsFromTree } from './columnUtils';
+import { GROUP_AUTO_COLUMN_ID, _getColumnsFromTree, isColumnSelectionCol } from './columnUtils';
 import type { FuncColsService } from './funcColsService';
 import type { VisibleColsService } from './visibleColsService';
 
@@ -101,7 +101,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
         if (!params?.state?.forEach) {
             // state is not an array
-            _logWarn(32);
+            _warn(32);
             return false;
         }
 
@@ -120,6 +120,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
             const rowGroupIndexes: { [key: string]: number } = {};
             const pivotIndexes: { [key: string]: number } = {};
             const autoColStates: ColumnState[] = [];
+            const selectionColStates: ColumnState[] = [];
             // If pivoting is modified, these are the states we try to reapply after
             // the pivot result cols are re-generated
             const unmatchedAndAutoStates: ColumnState[] = [];
@@ -128,13 +129,19 @@ export class ColumnStateService extends BeanStub implements NamedBean {
             const previousRowGroupCols = this.funcColsService.rowGroupCols.slice();
             const previousPivotCols = this.funcColsService.pivotCols.slice();
 
-            states.forEach((state: ColumnState) => {
-                const colId = state.colId || '';
+            states.forEach((state) => {
+                const colId = state.colId;
 
                 // auto group columns are re-created so deferring syncing with ColumnState
                 const isAutoGroupColumn = colId.startsWith(GROUP_AUTO_COLUMN_ID);
                 if (isAutoGroupColumn) {
                     autoColStates.push(state);
+                    unmatchedAndAutoStates.push(state);
+                    return;
+                }
+
+                if (isColumnSelectionCol(colId)) {
+                    selectionColStates.push(state);
                     unmatchedAndAutoStates.push(state);
                     return;
                 }
@@ -181,25 +188,41 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
             this.columnModel.refreshCols(false);
 
+            const syncColStates = (
+                getCol: (colId: string) => AgColumn | null,
+                colStates: ColumnState[],
+                columns: AgColumn[] = []
+            ) => {
+                colStates.forEach((stateItem) => {
+                    const col = getCol(stateItem.colId);
+                    _removeFromArray(columns, col);
+                    this.syncColumnWithStateItem(
+                        col,
+                        stateItem,
+                        params.defaultState,
+                        null,
+                        null,
+                        true,
+                        source,
+                        callbacks
+                    );
+                });
+                columns.forEach(applyDefaultsFunc);
+            };
+
             // sync newly created auto group columns with ColumnState
-            const autoCols = this.columnModel.getAutoCols() || [];
-            const autoColsCopy = autoCols.slice();
-            autoColStates.forEach((stateItem) => {
-                const autoCol = this.columnModel.getAutoCol(stateItem.colId!);
-                _removeFromArray(autoColsCopy, autoCol);
-                this.syncColumnWithStateItem(
-                    autoCol,
-                    stateItem,
-                    params.defaultState,
-                    null,
-                    null,
-                    true,
-                    source,
-                    callbacks
-                );
-            });
-            // autogroup cols with nothing else, apply the default
-            autoColsCopy.forEach(applyDefaultsFunc);
+            syncColStates(
+                (colId: string) => this.columnModel.getAutoCol(colId),
+                autoColStates,
+                this.columnModel.getAutoCols()?.slice()
+            );
+
+            // sync selection columns with ColumnState
+            syncColStates(
+                (colId: string) => this.columnModel.getSelectionCol(colId),
+                selectionColStates,
+                this.columnModel.getSelectionCols()?.slice()
+            );
 
             this.orderLiveColsLikeState(params);
             this.visibleColsService.refresh(source);
@@ -222,10 +245,10 @@ export class ColumnStateService extends BeanStub implements NamedBean {
         // If there are still states left over, see if we can apply them to newly generated
         // pivot result cols or auto cols. Also if defaults exist, ensure they are applied to pivot resul cols
         if (unmatchedAndAutoStates.length > 0 || _exists(params.defaultState)) {
-            const pivotResultColsList = this.pivotResultColsService?.getPivotResultCols()?.list;
+            const pivotResultColsList = this.pivotResultColsService?.getPivotResultCols()?.list ?? [];
             unmatchedCount = applyStates(
                 unmatchedAndAutoStates,
-                pivotResultColsList || [],
+                pivotResultColsList,
                 (id) => this.pivotResultColsService?.getPivotResultCol(id) ?? null
             ).unmatchedCount;
         }
@@ -441,7 +464,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
             } else {
                 if (_exists(aggFunc)) {
                     // stateItem.aggFunc must be a string
-                    _logWarn(33);
+                    _warn(33);
                 }
                 // Note: we do not call column.setAggFunc(null), so that next time we aggregate
                 // by this column (eg drag the column to the agg section int he toolpanel) it will
@@ -685,10 +708,10 @@ export class ColumnStateService extends BeanStub implements NamedBean {
     }
 
     private createStateItemFromColumn(column: AgColumn): ColumnState {
-        const rowGorupColumns = this.funcColsService.rowGroupCols;
+        const rowGroupColumns = this.funcColsService.rowGroupCols;
         const pivotColumns = this.funcColsService.pivotCols;
 
-        const rowGroupIndex = column.isRowGroupActive() ? rowGorupColumns.indexOf(column) : null;
+        const rowGroupIndex = column.isRowGroupActive() ? rowGroupColumns.indexOf(column) : null;
         const pivotIndex = column.isPivotActive() ? pivotColumns.indexOf(column) : null;
 
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;

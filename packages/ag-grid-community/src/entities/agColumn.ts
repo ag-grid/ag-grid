@@ -1,6 +1,6 @@
 import type { ColumnHoverService } from '../columns/columnHover/columnHoverService';
 import type { ColumnState } from '../columns/columnStateService';
-import { isColumnControlsCol } from '../columns/columnUtils';
+import { isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgEvent, ColumnEvent, ColumnEventType } from '../events';
@@ -410,7 +410,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
         const so = this.gos.get('rowSelection');
 
         if (so && typeof so !== 'string') {
-            const checkbox = isColumnControlsCol(this) && _getCheckboxes(so);
+            const checkbox = isColumnSelectionCol(this) && _getCheckboxes(so);
             return this.isColumnFunc(rowNode, checkbox);
         } else {
             return this.isColumnFunc(rowNode, this.colDef.checkboxSelection);
