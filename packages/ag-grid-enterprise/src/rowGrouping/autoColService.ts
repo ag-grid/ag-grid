@@ -1,13 +1,3 @@
-import {
-    AgColumn,
-    BeanStub,
-    GROUP_AUTO_COLUMN_ID,
-    _isColumnsSortingCoupledToGroup,
-    _isGroupMultiAutoColumn,
-    _mergeDeep,
-    _missing,
-    _warnOnce,
-} from 'ag-grid-community';
 import type {
     BeanCollection,
     ColDef,
@@ -17,6 +7,16 @@ import type {
     ColumnNameService,
     IAutoColService,
     NamedBean,
+} from 'ag-grid-community';
+import {
+    AgColumn,
+    BeanStub,
+    GROUP_AUTO_COLUMN_ID,
+    _isColumnsSortingCoupledToGroup,
+    _isGroupMultiAutoColumn,
+    _mergeDeep,
+    _missing,
+    _warn,
 } from 'ag-grid-community';
 
 export class AutoColService extends BeanStub implements NamedBean, IAutoColService {
@@ -39,9 +39,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         let doingMultiAutoColumn = _isGroupMultiAutoColumn(this.gos);
 
         if (doingTreeData && doingMultiAutoColumn) {
-            _warnOnce(
-                'you cannot mix groupDisplayType = "multipleColumns" with treeData, only one column can be used to display groups when doing tree data'
-            );
+            _warn(182);
             doingMultiAutoColumn = false;
         }
 
