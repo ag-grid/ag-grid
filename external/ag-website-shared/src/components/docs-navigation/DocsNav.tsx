@@ -47,7 +47,7 @@ function Item({ itemData, framework, pageName }: { itemData?: any; framework: Fr
           }).length > 0;
     const isActive = pageName === itemData.path;
 
-    const className = classnames(styles.item, itemData.icon ? styles.hasIcon : '', isActive ? styles.isIsActive : '');
+    const className = classnames(styles.item, itemData.icon ? styles.hasIcon : '', isActive ? styles.isActive : '');
 
     return (
         isCorrectFramework && (
