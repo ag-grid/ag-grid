@@ -226,7 +226,7 @@ export class CellMouseListenerFeature extends BeanStub {
     private containsWidget(target: HTMLElement): boolean {
         return (
             _isElementChildOfClass(target, 'ag-selection-checkbox', 3) ||
-            _isElementChildOfClass(target, 'ag-drag-handle')
+            _isElementChildOfClass(target, 'ag-drag-handle', 3)
         );
     }
 
