@@ -26,9 +26,9 @@ export function refreshCells<TData = any>(beans: BeanCollection, params: Refresh
 
 export function flashCells<TData = any>(beans: BeanCollection, params: FlashCellsParams<TData> = {}): void {
     beans.frameworkOverrides.wrapIncoming(() => {
-        beans.rowRenderer
-            .getCellCtrls(params.rowNodes, params.columns as AgColumn[])
-            .forEach((cellCtrl) => cellCtrl.flashCell(params));
+        for (const cellCtrl of beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[])) {
+            cellCtrl.flashCell(params);
+        }
     });
 }
 
@@ -58,12 +58,12 @@ export function getCellRendererInstances<TData = any>(
     params: GetCellRendererInstancesParams<TData> = {}
 ): ICellRenderer[] {
     const cellRenderers: ICellRenderer[] = [];
-    beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[]).forEach((cellCtrl) => {
+    for (const cellCtrl of beans.rowRenderer.getCellCtrls(params.rowNodes, params.columns as AgColumn[])) {
         const cellRenderer = cellCtrl.getCellRenderer();
         if (cellRenderer != null) {
             cellRenderers.push(_unwrapUserComp(cellRenderer));
         }
-    });
+    }
     if (params.columns?.length) {
         return cellRenderers;
     }
@@ -71,13 +71,13 @@ export function getCellRendererInstances<TData = any>(
     const fullWidthRenderers: ICellRenderer[] = [];
     const rowIdMap = mapRowNodes(params.rowNodes);
 
-    beans.rowRenderer.getAllRowCtrls().forEach((rowCtrl) => {
+    for (const rowCtrl of beans.rowRenderer.getAllRowCtrls()) {
         if (rowIdMap && !isRowInMap(rowCtrl.getRowNode(), rowIdMap)) {
-            return;
+            continue;
         }
 
         if (!rowCtrl.isFullWidth()) {
-            return;
+            continue;
         }
 
         const renderers = rowCtrl.getFullWidthCellRenderers();
@@ -87,7 +87,7 @@ export function getCellRendererInstances<TData = any>(
                 fullWidthRenderers.push(_unwrapUserComp(renderer));
             }
         }
-    });
+    }
 
     return [...fullWidthRenderers, ...cellRenderers];
 }

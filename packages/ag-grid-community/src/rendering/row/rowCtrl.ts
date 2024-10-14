@@ -42,7 +42,7 @@ import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import { _setAriaExpanded, _setAriaRowIndex, _setAriaSelected } from '../../utils/aria';
-import { _pushAll } from '../../utils/array';
+import { _find, _pushAll, _some } from '../../utils/array';
 import {
     _addOrRemoveAttribute,
     _isElementChildOfClass,
@@ -775,10 +775,16 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private addListenersForCellComps(): void {
         this.addManagedListeners(this.rowNode, {
             rowIndexChanged: () => {
-                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onRowIndexChanged());
+                for (const cellCtrl of this.getAllCellCtrls()) {
+                    cellCtrl.onRowIndexChanged();
+                }
             },
             cellChanged: (event) => {
-                this.getAllCellCtrls().forEach((cellCtrl) => cellCtrl.onCellChanged(event));
+                for (const cellCtrl of this.getAllCellCtrls()) {
+                    if (cellCtrl.onCellChanged(event)) {
+                        return;
+                    }
+                }
             },
         });
     }
@@ -803,12 +809,12 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
         // into the cellRenderer refresh method. otherwise this might be completely new data, in which case
         // we will want to completely replace the cells
-        this.getAllCellCtrls().forEach((cellCtrl) =>
+        for (const cellCtrl of this.getAllCellCtrls()) {
             cellCtrl.refreshCell({
                 suppressFlash: !event.update,
                 newData: !event.update,
-            })
-        );
+            });
+        }
 
         // as data has changed update the dom row id attributes
         this.allRowGuis.forEach((gui) => {
@@ -1332,7 +1338,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public setInlineEditingCss(): void {
-        const editing = this.editingRow || this.getAllCellCtrls().some((cellCtrl) => cellCtrl.isEditing());
+        const editing = this.editingRow || _some(this.getAllCellCtrls(), (cellCtrl) => cellCtrl.isEditing());
         this.allRowGuis.forEach((gui) => {
             gui.rowComp.addOrRemoveCssClass('ag-row-inline-editing', editing);
             gui.rowComp.addOrRemoveCssClass('ag-row-not-inline-editing', !editing);
@@ -1356,12 +1362,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return this.beans.rowEditService?.startEditing(this, key, sourceRenderedCell, event) ?? true;
     }
 
-    public getAllCellCtrls(): CellCtrl[] {
-        if (this.leftCellCtrls.list.length === 0 && this.rightCellCtrls.list.length === 0) {
-            return this.centerCellCtrls.list;
-        }
-        const res = [...this.centerCellCtrls.list, ...this.leftCellCtrls.list, ...this.rightCellCtrls.list];
-        return res;
+    public *getAllCellCtrls(): Iterable<CellCtrl> {
+        yield* this.centerCellCtrls.list;
+        yield* this.leftCellCtrls.list;
+        yield* this.rightCellCtrls.list;
     }
 
     private postProcessClassesFromGridOptions(): void {
@@ -1811,30 +1815,17 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public getCellCtrl(column: AgColumn): CellCtrl | null {
-        // first up, check for cell directly linked to this column
-        let res: CellCtrl | null = null;
-        this.getAllCellCtrls().forEach((cellCtrl) => {
-            if (cellCtrl.getColumn() == column) {
-                res = cellCtrl;
-            }
-        });
-
-        if (res != null) {
-            return res;
-        }
-
+        // first up, check for cell directly linked to this column.
         // second up, if not found, then check for spanned cols.
         // we do this second (and not at the same time) as this is
         // more expensive, as spanning cols is a
         // infrequently used feature so we don't need to do this most
         // of the time
-        this.getAllCellCtrls().forEach((cellCtrl) => {
-            if (cellCtrl.getColSpanningList().indexOf(column) >= 0) {
-                res = cellCtrl;
-            }
-        });
-
-        return res;
+        return (
+            _find(this.getAllCellCtrls(), (cellCtrl) => cellCtrl.getColumn() == column) ??
+            _find(this.getAllCellCtrls(), (cellCtrl) => cellCtrl.getColSpanningList().indexOf(column) >= 0) ??
+            null
+        );
     }
 
     private onRowIndexChanged(): void {
