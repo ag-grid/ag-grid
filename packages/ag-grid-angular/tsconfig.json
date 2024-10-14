@@ -19,15 +19,9 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "ES2022",
-    "lib": [
-      "ES2022",
-      "dom"
-    ],
+    "lib": ["ES2022", "dom"],
     "paths": {
-      "ag-grid-angular": [
-        "dist/ag-grid-angular/ag-grid-angular",
-        "dist/ag-grid-angular"
-      ]
+      "ag-grid-angular": ["dist/ag-grid-angular/ag-grid-angular", "dist/ag-grid-angular"]
     },
     "useDefineForClassFields": false
   },
