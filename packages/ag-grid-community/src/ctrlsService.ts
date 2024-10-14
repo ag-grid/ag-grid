@@ -46,6 +46,8 @@ interface ReadyParams {
     rightHeader: HeaderRowContainerCtrl;
 }
 
+const NUM_CTRLS = 23;
+
 type CtrlType = keyof ReadyParams;
 
 type BeanDestroyFunc = Pick<BeanStub<any>, 'addDestroyFunc'>;
@@ -53,38 +55,7 @@ type BeanDestroyFunc = Pick<BeanStub<any>, 'addDestroyFunc'>;
 export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     beanName = 'ctrlsService' as const;
 
-    private params: ReadyParams = {
-        gridCtrl: undefined!,
-        gridBodyCtrl: undefined!,
-
-        center: undefined!,
-        left: undefined!,
-        right: undefined!,
-
-        bottomCenter: undefined!,
-        bottomLeft: undefined!,
-        bottomRight: undefined!,
-
-        topCenter: undefined!,
-        topLeft: undefined!,
-        topRight: undefined!,
-
-        stickyTopCenter: undefined!,
-        stickyTopLeft: undefined!,
-        stickyTopRight: undefined!,
-
-        stickyBottomCenter: undefined!,
-        stickyBottomLeft: undefined!,
-        stickyBottomRight: undefined!,
-
-        fakeHScrollComp: undefined!,
-        fakeVScrollComp: undefined!,
-        gridHeaderCtrl: undefined!,
-
-        centerHeader: undefined!,
-        leftHeader: undefined!,
-        rightHeader: undefined!,
-    };
+    private params: ReadyParams = {} as any;
     private ready = false;
     private readyCallbacks: ((p: ReadyParams) => void)[] = [];
 
@@ -113,9 +84,12 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
         );
     }
     private updateReady(): void {
-        this.ready = Object.values(this.params).every((ctrl: BeanStub<any> | undefined) => {
-            return ctrl?.isAlive() ?? false;
-        });
+        const values = Object.values(this.params);
+        this.ready =
+            values.length === NUM_CTRLS &&
+            values.every((ctrl: BeanStub<any> | undefined) => {
+                return ctrl?.isAlive() ?? false;
+            });
     }
 
     public whenReady(caller: BeanDestroyFunc, callback: (p: ReadyParams) => void): void {
