@@ -14,7 +14,7 @@ import type { PinnedWidthService } from '../../gridBodyComp/pinnedWidthService';
 import type { ScrollVisibleService } from '../../gridBodyComp/scrollVisibleService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { HeaderPosition } from '../../interfaces/iHeaderPosition';
-import { NumberSequence } from '../../utils/numberSequence';
+import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { HeaderRowType } from '../row/headerRowComp';
 import { HeaderRowCtrl } from '../row/headerRowCtrl';
 
@@ -99,7 +99,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     public refresh(keepColumns = false): void {
-        const sequence = new NumberSequence();
+        let sequence = 0;
         const focusedHeaderPosition = this.focusService.getFocusHeaderToUseAfterRefresh();
 
         const refreshColumnGroups = () => {
@@ -108,15 +108,13 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
 
             for (let i = 0; i < groupRowCount; i++) {
-                const ctrl = this.createBean(
-                    new HeaderRowCtrl(sequence.next(), this.pinned, HeaderRowType.COLUMN_GROUP)
-                );
+                const ctrl = this.createBean(new HeaderRowCtrl(sequence++, this.pinned, HeaderRowType.COLUMN_GROUP));
                 this.groupsRowCtrls.push(ctrl);
             }
         };
 
         const refreshColumns = () => {
-            const rowIndex = sequence.next();
+            const rowIndex = sequence++;
 
             const needNewInstance =
                 !this.hidden &&
@@ -144,7 +142,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
                 return;
             }
 
-            const rowIndex = sequence.next();
+            const rowIndex = sequence++;
 
             if (this.filtersRowCtrl) {
                 const rowIndexMismatch = this.filtersRowCtrl.getRowIndex() !== rowIndex;
@@ -170,7 +168,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         this.restoreFocusOnHeader(focusedHeaderPosition);
     }
 
-    public getHeaderCtrlForColumn(column: AgColumn | AgColumnGroup): any {
+    public getHeaderCtrlForColumn(column: AgColumn | AgColumnGroup): AbstractHeaderCellCtrl | undefined {
         if (isColumn(column)) {
             return this.columnsRowCtrl?.getHeaderCellCtrl(column);
         }

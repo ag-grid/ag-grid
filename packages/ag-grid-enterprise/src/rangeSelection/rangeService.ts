@@ -29,10 +29,8 @@ import {
     _areCellsEqual,
     _areEqual,
     _exists,
-    _existsAndNotEmpty,
     _getCellCtrlForEventTarget,
     _getSuppressMultiRanges,
-    _includes,
     _isCellSelectionEnabled,
     _isDomLayout,
     _isRowBefore,
@@ -41,7 +39,6 @@ import {
     _last,
     _makeNull,
     _missing,
-    _shallowCompare,
     _warn,
 } from 'ag-grid-community';
 
@@ -364,7 +361,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public setCellRanges(cellRanges: CellRange[]): void {
-        if (_shallowCompare(this.cellRanges, cellRanges)) {
+        if (_areEqual(this.cellRanges, cellRanges)) {
             return;
         }
 
@@ -637,7 +634,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean {
-        const columnInRange = range.columns !== null && _includes(range.columns, cell.column);
+        const columnInRange = range.columns !== null && range.columns.includes(cell.column);
         const rowInRange = this.isRowInRange(cell.rowIndex, cell.rowPinned, range);
 
         return columnInRange && rowInRange;
@@ -712,7 +709,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const isMultiKey = ctrlKey || metaKey;
         const allowMulti = !_getSuppressMultiRanges(this.gos);
         const isMultiSelect = allowMulti ? isMultiKey : false;
-        const extendRange = shiftKey && _existsAndNotEmpty(this.cellRanges);
+        const extendRange = shiftKey && !!this.cellRanges?.length;
 
         if (!isMultiSelect && (!extendRange || _exists(_last(this.cellRanges)!.type))) {
             this.removeAllCellRanges(true);
@@ -814,7 +811,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             if (intersectCols.length > 0) {
                 const middle: CellRange = {
                     columns: intersectCols,
-                    startColumn: _includes(intersectCols, lastRange.startColumn)
+                    startColumn: intersectCols.includes(lastRange.startColumn)
                         ? lastRange.startColumn
                         : intersectCols[0],
                     startRow: this.rowMax([{ ...intersectionStartRow }, { ...startRow }]),

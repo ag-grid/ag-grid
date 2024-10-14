@@ -7,7 +7,6 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import { _exists } from '../utils/generic';
-import { _iterateObject } from '../utils/object';
 import type { ClientSideRowModel } from './clientSideRowModel';
 
 export class ImmutableService extends BeanStub implements NamedBean {
@@ -105,11 +104,11 @@ export class ImmutableService extends BeanStub implements NamedBean {
         }
 
         // at this point, all rows that are left, should be removed
-        _iterateObject(existingNodesMap, (id, rowNode) => {
+        for (const rowNode of Object.values(existingNodesMap)) {
             if (rowNode) {
                 remove.push(rowNode.data);
             }
-        });
+        }
 
         return { remove, update, add };
     }

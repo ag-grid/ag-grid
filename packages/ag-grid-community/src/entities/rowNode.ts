@@ -12,6 +12,7 @@ import {
 import type { IServerSideStore } from '../interfaces/IServerSideStore';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
+import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
 import type {
     AgRowNodeEventListener,
     CellChangedEvent,
@@ -25,7 +26,6 @@ import type {
 } from '../interfaces/iRowNode';
 import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
 import { LocalEventService } from '../localEventService';
-import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
 import { _debounce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
 import { _error, _warn } from '../validation/logging';
@@ -288,7 +288,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     private selected: boolean | undefined = false;
     /** If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES` */
     private localEventService: LocalEventService<RowNodeEventType> | null;
-    private frameworkEventListenerService: FrameworkEventListenerService<any, any> | null;
+    private frameworkEventListenerService?: IFrameworkEventListenerService<any, any>;
 
     private beans: BeanCollection;
 
@@ -986,10 +986,10 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         if (!this.localEventService) {
             this.localEventService = new LocalEventService();
         }
-        if (this.beans.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
-            this.localEventService.setFrameworkOverrides(this.beans.frameworkOverrides);
-            this.frameworkEventListenerService = new FrameworkEventListenerService(this.beans.frameworkOverrides);
-        }
+        this.frameworkEventListenerService = this.beans.frameworkOverrides.createLocalEventListenerWrapper?.(
+            this.frameworkEventListenerService,
+            this.localEventService
+        );
 
         const listener = this.frameworkEventListenerService?.wrap(userListener) ?? userListener;
         this.localEventService.addEventListener(eventType, listener);

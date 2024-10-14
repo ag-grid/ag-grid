@@ -1,7 +1,8 @@
 import type { AgColumn } from '../entities/agColumn';
+import type { SelectAllMode } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
-import type { SelectAllMode } from '../main-umd-noStyles';
+import type { RowCtrl, RowGui } from '../rendering/row/rowCtrl';
 import type { CheckboxSelectionComponent } from '../selection/checkboxSelectionComponent';
 import type { SelectAllFeature } from '../selection/selectAllFeature';
 import type { ChangedPath } from '../utils/changedPath';
@@ -33,6 +34,9 @@ export interface ISelectionService {
     deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
     createCheckboxSelectionComponent(): CheckboxSelectionComponent;
     createSelectAllFeature(column: AgColumn): SelectAllFeature;
+    handleRowClick(rowNode: RowNode, mouseEvent: MouseEvent): void;
+    onRowCtrlSelected(rowCtrl: RowCtrl, hasFocusFunc: (gui: RowGui) => void, gui?: RowGui): void;
+    announceAriaRowSelection(rowNode: RowNode): void;
 
     /** Called after grouping / treeData */
     updateSelectable(skipLeafNodes: boolean): void;

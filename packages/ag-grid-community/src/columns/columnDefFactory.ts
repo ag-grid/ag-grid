@@ -4,8 +4,43 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import { _deepCloneDefinition } from '../utils/object';
+import { SKIP_JS_BUILTINS } from '../utils/object';
 import type { FuncColsService } from './funcColsService';
+
+// returns copy of an object, doing a deep clone of any objects with that object.
+// this is used for eg creating copies of Column Definitions, where we want to
+// deep copy all objects, but do not want to deep copy functions (eg when user provides
+// a function or class for colDef.cellRenderer)
+export function _deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | undefined {
+    if (!object) {
+        return;
+    }
+
+    const obj = object as any;
+    const res: any = {};
+
+    Object.keys(obj).forEach((key) => {
+        if ((keysToSkip && keysToSkip.indexOf(key) >= 0) || SKIP_JS_BUILTINS.has(key)) {
+            return;
+        }
+
+        const value = obj[key];
+
+        // 'simple object' means a bunch of key/value pairs, eg {filter: 'myFilter'}. it does
+        // NOT include the following:
+        // 1) arrays
+        // 2) functions or classes (eg api instance)
+        const sourceIsSimpleObject = typeof value === 'object' && value !== null && value.constructor === Object;
+
+        if (sourceIsSimpleObject) {
+            res[key] = _deepCloneDefinition(value);
+        } else {
+            res[key] = value;
+        }
+    });
+
+    return res;
+}
 
 export class ColumnDefFactory extends BeanStub implements NamedBean {
     beanName = 'columnDefFactory' as const;

@@ -6,7 +6,7 @@ import type {
     NamedBean,
     RowNode,
 } from 'ag-grid-community';
-import { BeanStub, _exists, _iterateObject } from 'ag-grid-community';
+import { BeanStub, _exists } from 'ag-grid-community';
 
 export class DetailGridApiService extends BeanStub implements NamedBean, IDetailGridApiService {
     beanName = 'detailGridApiService' as const;
@@ -67,7 +67,7 @@ export class DetailGridApiService extends BeanStub implements NamedBean, IDetail
 
     public forEachDetailGridInfo(callback: (gridInfo: DetailGridInfo, index: number) => void) {
         let index = 0;
-        _iterateObject(this.detailGridInfoMap, (id: string, gridInfo: DetailGridInfo) => {
+        Object.values(this.detailGridInfoMap).forEach((gridInfo: DetailGridInfo) => {
             // check for undefined, as old references will still be lying around
             if (_exists(gridInfo)) {
                 callback(gridInfo, index);

@@ -6,7 +6,6 @@ import type { OverlayService } from '../rendering/overlays/overlayService';
 import { LayoutCssClasses } from '../styling/layoutFeature';
 import { _setAriaColCount, _setAriaMultiSelectable, _setAriaRowCount } from '../utils/aria';
 import { _observeResize } from '../utils/dom';
-import { _capitalise } from '../utils/string';
 import type { ComponentSelector } from '../widgets/component';
 import { Component, RefPlaceholder } from '../widgets/component';
 import { FakeHScrollSelector } from './fakeHScrollComp';
@@ -19,7 +18,7 @@ import type { RowContainerName } from './rowContainer/rowContainerCtrl';
 function makeRowContainers(paramsMap: Record<string, { name: string }>, names: RowContainerName[]): string {
     return names
         .map((name) => {
-            const refName = `e${_capitalise(name)}RowContainer`;
+            const refName = `e${name[0].toUpperCase() + name.substring(1)}RowContainer`;
             paramsMap[refName] = { name };
             return /* html */ `<ag-row-container name="${name}" data-ref="${refName}"></ag-row-container>`;
         })

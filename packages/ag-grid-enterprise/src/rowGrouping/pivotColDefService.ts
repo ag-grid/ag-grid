@@ -9,7 +9,7 @@ import type {
     IPivotColDefService,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _cloneObject, _iterateObject } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 export interface PivotColDefServiceResult {
     pivotColumnGroupDefs: (ColDef | ColGroupDef)[];
@@ -76,7 +76,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         // we clone, so the colDefs in pivotColumnsGroupDefs and pivotColumnDefs are not shared. this is so that
         // any changes the user makes (via processSecondaryColumnDefinitions) don't impact the internal aggregations,
         // as these use the col defs also
-        const pivotColumnDefsClone: ColDef[] = pivotColumnDefs.map((colDef) => _cloneObject(colDef));
+        const pivotColumnDefsClone: ColDef[] = pivotColumnDefs.map((colDef) => ({ ...colDef }));
 
         return {
             pivotColumnGroupDefs: pivotColumnGroupDefs,
@@ -123,18 +123,18 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         ) {
             const leafCols: ColDef[] = [];
 
-            _iterateObject(uniqueValue, (key) => {
+            for (const key of Object.keys(uniqueValue)) {
                 const newPivotKeys = [...pivotKeys, key];
                 const colDef = this.createColDef(measureColumns[0], key, newPivotKeys);
                 colDef.columnGroupShow = 'open';
                 leafCols.push(colDef);
-            });
+            }
             leafCols.sort(comparator);
             return leafCols;
         }
         // Recursive case
         const groups: ColGroupDef[] = [];
-        _iterateObject(uniqueValue, (key, value) => {
+        for (const [key, value] of Object.entries(uniqueValue)) {
             // expand group by default based on depth of group. (pivotDefaultExpanded provides desired level of depth for expanding group by default)
             const openByDefault = this.pivotDefaultExpanded === -1 || index < this.pivotDefaultExpanded;
 
@@ -147,7 +147,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                 openByDefault: openByDefault,
                 groupId: this.generateColumnGroupId(newPivotKeys),
             });
-        });
+        }
         groups.sort(comparator);
         return groups;
     }

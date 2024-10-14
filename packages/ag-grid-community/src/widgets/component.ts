@@ -17,10 +17,9 @@ import {
     _setDisplayed,
     _setVisible,
 } from '../utils/dom';
-import { NumberSequence } from '../utils/numberSequence';
 import { TooltipFeature } from './tooltipFeature';
 
-const compIdSequence = new NumberSequence();
+let compIdSequence = 0;
 
 /** The RefPlaceholder is used to control when data-ref attribute should be applied to the component
  * There are hanging data-refs in the DOM that are not being used internally by the component which we don't want to apply to the component.
@@ -61,7 +60,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     // unique id for this row component. this is used for getting a reference to the HTML dom.
     // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
     // around as we create a new rowComp instance for the same row node).
-    private compId = compIdSequence.next();
+    private compId = compIdSequence++;
 
     private cssClassManager: CssClassManager;
 

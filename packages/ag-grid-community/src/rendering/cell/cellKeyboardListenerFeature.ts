@@ -4,9 +4,19 @@ import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import { _getGroupSelection, _isCellSelectionEnabled, _isRowSelection } from '../../gridOptionsUtils';
-import { _isDeleteKey } from '../../utils/keyboard';
+import { _isMacOsUserAgent } from '../../utils/browser';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellCtrl } from './cellCtrl';
+
+function _isDeleteKey(key: string, alwaysReturnFalseOnBackspace = false) {
+    if (key === KeyCode.DELETE) {
+        return true;
+    }
+    if (!alwaysReturnFalseOnBackspace && key === KeyCode.BACKSPACE) {
+        return _isMacOsUserAgent();
+    }
+    return false;
+}
 
 export class CellKeyboardListenerFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;

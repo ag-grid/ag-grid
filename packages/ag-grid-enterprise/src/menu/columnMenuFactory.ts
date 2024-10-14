@@ -8,12 +8,27 @@ import type {
     MenuService,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _isClientSideRowModel, _isLegacyMenuEnabled, _removeRepeatsFromArray } from 'ag-grid-community';
+import { BeanStub, _isClientSideRowModel, _isLegacyMenuEnabled } from 'ag-grid-community';
 
 import { AgMenuList } from '../widgets/agMenuList';
 import type { MenuItemMapper } from './menuItemMapper';
 
 const MENU_ITEM_SEPARATOR = 'separator';
+
+function _removeRepeatsFromArray<T>(array: T[], object: T) {
+    if (!array) {
+        return;
+    }
+
+    for (let index = array.length - 2; index >= 0; index--) {
+        const thisOneMatches = array[index] === object;
+        const nextOneMatches = array[index + 1] === object;
+
+        if (thisOneMatches && nextOneMatches) {
+            array.splice(index + 1, 1);
+        }
+    }
+}
 
 export class ColumnMenuFactory extends BeanStub implements NamedBean {
     beanName = 'columnMenuFactory' as const;
