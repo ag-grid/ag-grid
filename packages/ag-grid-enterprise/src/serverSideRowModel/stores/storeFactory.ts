@@ -8,7 +8,7 @@ import type {
     ServerSideGroupLevelParams,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _warn } from 'ag-grid-community';
 
 import type { SSRMParams } from '../serverSideRowModel';
 import { LazyStore } from './lazy/lazyStore';
@@ -57,22 +57,16 @@ export class StoreFactory extends BeanStub implements NamedBean {
         const maxBlocksActive = maxBlocksInCache != null && maxBlocksInCache >= 0;
 
         if (!maxBlocksActive) {
-            return undefined;
+            return;
         }
 
         if (ssrmParams.dynamicRowHeight) {
-            const message =
-                'Server Side Row Model does not support Dynamic Row Height and Cache Purging. ' +
-                'Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.';
-            _warnOnce(message);
-            return undefined;
+            _warn(203);
+            return;
         }
 
         if (this.columnModel.autoRowHeightActive) {
-            const message =
-                'Server Side Row Model does not support Auto Row Height and Cache Purging. ' +
-                'Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.';
-            _warnOnce(message);
+            _warn(204);
             return undefined;
         }
 

@@ -462,7 +462,7 @@ export class ColumnFactory extends BeanStub implements NamedBean {
         const allColumnTypes = Object.assign({}, DefaultColumnTypes);
         const userTypes = this.gos.get('columnTypes') || {};
 
-        Object.entries(userTypes).forEach(([key, value]) => {
+        for (const [key, value] of Object.entries(userTypes)) {
             if (key in allColumnTypes) {
                 // default column types cannot be overridden
                 _warn(34, { key });
@@ -475,7 +475,7 @@ export class ColumnFactory extends BeanStub implements NamedBean {
 
                 allColumnTypes[key] = value;
             }
-        });
+        }
 
         typeKeys.forEach((t) => {
             const typeColDef = allColumnTypes[t.trim()];

@@ -8,7 +8,7 @@ import type {
     RowNode,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _isClientSideRowModel, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _isClientSideRowModel, _warn } from 'ag-grid-community';
 
 export class ChartCrossFilterService extends BeanStub implements NamedBean {
     beanName = 'chartCrossFilterService' as const;
@@ -41,12 +41,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
             // update filters based on current chart selections
             this.updateFilters(filterModel, event, colId);
         } else {
-            _warnOnce(
-                "cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' " +
-                    "to be defined on the column with id: '" +
-                    colId +
-                    "'"
-            );
+            _warn(154, { colId });
         }
     }
 

@@ -123,18 +123,18 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         ) {
             const leafCols: ColDef[] = [];
 
-            Object.keys(uniqueValue).forEach((key) => {
+            for (const key of Object.keys(uniqueValue)) {
                 const newPivotKeys = [...pivotKeys, key];
                 const colDef = this.createColDef(measureColumns[0], key, newPivotKeys);
                 colDef.columnGroupShow = 'open';
                 leafCols.push(colDef);
-            });
+            }
             leafCols.sort(comparator);
             return leafCols;
         }
         // Recursive case
         const groups: ColGroupDef[] = [];
-        Object.entries(uniqueValue).forEach(([key, value]) => {
+        for (const [key, value] of Object.entries(uniqueValue)) {
             // expand group by default based on depth of group. (pivotDefaultExpanded provides desired level of depth for expanding group by default)
             const openByDefault = this.pivotDefaultExpanded === -1 || index < this.pivotDefaultExpanded;
 
@@ -147,7 +147,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                 openByDefault: openByDefault,
                 groupId: this.generateColumnGroupId(newPivotKeys),
             });
-        });
+        }
         groups.sort(comparator);
         return groups;
     }

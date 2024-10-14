@@ -1,5 +1,5 @@
 import type { ChartFormatPanel, ChartFormatPanelGroup } from 'ag-grid-community';
-import { Component, _warnOnce } from 'ag-grid-community';
+import { Component, _warn } from 'ag-grid-community';
 
 import type { AgGroupComponent } from '../../../../widgets/agGroupComponent';
 import type { ChartSeriesType } from '../../utils/seriesTypeMapper';
@@ -55,9 +55,7 @@ export class FormatPanel extends Component {
 
             if (isExpandedOnInit) {
                 if (panelExpandedOnInit) {
-                    _warnOnce(
-                        `As of v32, only one charts customize panel group can be expanded at a time. '${group}' will not be expanded.`
-                    );
+                    _warn(145, { group });
                 }
                 panelExpandedOnInit = true;
             }
@@ -101,12 +99,10 @@ export class FormatPanel extends Component {
                     this.chartPanelFeature.addComponent(new SeriesPanel(opts));
                     break;
                 case 'navigator':
-                    _warnOnce(
-                        `'navigator' is now displayed in the charts advanced settings instead of the customize panel, and this setting will be ignored.`
-                    );
+                    _warn(146);
                     break;
                 default:
-                    _warnOnce(`Invalid charts customize panel group name supplied: '${group}'`);
+                    _warn(147, { group });
             }
         });
     }

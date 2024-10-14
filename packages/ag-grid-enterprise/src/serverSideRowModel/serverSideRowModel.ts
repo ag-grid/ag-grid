@@ -32,7 +32,7 @@ import {
     _isGetRowHeightFunction,
     _isRowSelection,
     _jsonEquals,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import type { NodeManager } from './nodeManager';
@@ -156,11 +156,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     private verifyProps(): void {
-        if (this.gos.exists('initialGroupOrderComparator')) {
-            _warnOnce(`initialGroupOrderComparator cannot be used with Server Side Row Model.`);
-        }
         if (_isRowSelection(this.gos) && !this.gos.exists('getRowId')) {
-            _warnOnce(`getRowId callback must be provided for Server Side Row Model selection to work correctly.`);
+            _warn(188);
         }
     }
 

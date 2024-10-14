@@ -33,7 +33,7 @@ import {
     _removeAriaExpanded,
     _setAriaExpanded,
     _stopPropagationForAgGrid,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 const InnerRendererComponent: ComponentType = {
@@ -401,7 +401,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
                     ? this.expressionService.evaluate(totalValueGetter, paramsClone)
                     : '';
             } else {
-                _warnOnce('totalValueGetter should be either a function or a string (expression)');
+                _warn(179);
             }
         } else {
             const localeTextFunc = this.localeService.getLocaleTextFunc();

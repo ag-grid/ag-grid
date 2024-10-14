@@ -12,7 +12,7 @@ import type {
     ValueService,
     VisibleColsService,
 } from 'ag-grid-community';
-import { _getFillHandle, _isRowBefore, _isSameRow, _last, _toStringOrNull, _warnOnce } from 'ag-grid-community';
+import { _getFillHandle, _isRowBefore, _isSameRow, _last, _toStringOrNull, _warn } from 'ag-grid-community';
 
 import { AbstractSelectionHandle, SelectionHandleType } from './abstractSelectionHandle';
 import { findLineByLeastSquares } from './utils';
@@ -175,7 +175,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         if (direction !== 'x' && direction !== 'y' && direction !== 'xy') {
-            _warnOnce(`valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.`);
+            _warn(177);
             return 'xy';
         }
 

@@ -21,7 +21,7 @@ import {
     _areEqual,
     _exists,
     _removeFromArray,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import { BatchRemover } from './batchRemover';
@@ -488,7 +488,7 @@ export class GroupStrategy extends BeanStub {
         const parentGroup = this.findParentForNode(childNode, path, details, batchRemover);
 
         if (!parentGroup.group) {
-            _warnOnce(`duplicate group keys for row data, keys should be unique`, [parentGroup.data, childNode.data]);
+            _warn(184, { parentGroupData: parentGroup.data, childNodeData: childNode.data });
         }
         childNode.parent = parentGroup;
         childNode.level = path.length;
