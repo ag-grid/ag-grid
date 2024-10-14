@@ -100,8 +100,11 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     /** `true` if this row is getting dragged */
     public dragging: boolean;
 
-    /** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail) */
-    public master: boolean;
+    /**
+     * `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail)
+     * Note: This field is initially set to undefined so that ClientSideDetailService knows that this is a new row to be initialised.
+     */
+    public master: boolean = undefined!;
 
     /** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/
     public detail: boolean | undefined;

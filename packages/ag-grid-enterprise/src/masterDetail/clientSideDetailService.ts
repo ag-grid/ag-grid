@@ -1,80 +1,114 @@
 import type {
     BeanCollection,
     FuncColsService,
-    IClientSideDetailService,
     IClientSideRowModel,
     IRowModel,
     NamedBean,
     RowNode,
-    RowRenderer,
 } from 'ag-grid-community';
 import { BeanStub, ClientSideRowModelSteps, _isClientSideRowModel } from 'ag-grid-community';
 
-export class ClientSideDetailService extends BeanStub implements NamedBean, IClientSideDetailService {
+export class ClientSideDetailService extends BeanStub implements NamedBean {
     beanName = 'clientSideDetailService' as const;
 
     private rowModel: IRowModel;
     private funcColsService: FuncColsService;
-    private rowRenderer: RowRenderer;
 
     public wireBeans(beans: BeanCollection): void {
         this.funcColsService = beans.funcColsService;
         this.rowModel = beans.rowModel;
-        this.rowRenderer = beans.rowRenderer;
-    }
-
-    private isEnabled() {
-        const gos = this.gos;
-        return gos.get('masterDetail') && !gos.get('treeData');
     }
 
     public postConstruct(): void {
         if (_isClientSideRowModel(this.gos)) {
-            let enabled = this.isEnabled();
             this.addManagedPropertyListeners(['treeData', 'masterDetail'], (params) => {
                 const properties = params.changeSet?.properties;
                 if (properties) {
-                    const newEnabled = this.isEnabled();
-                    if (enabled !== newEnabled) {
-                        enabled = newEnabled;
-                        const rowModel = this.rowModel as IClientSideRowModel;
+                    const enabled = this.gos.get('masterDetail');
+                    const masterDetailChanged = properties.includes('masterDetail');
+                    let needUpdate = false;
+
+                    if (enabled && properties.includes('treeData')) {
+                        needUpdate = true; // When treeData and masterDetail are enabled, we need to check if leafs/groups changed
+                    } else if (masterDetailChanged) {
+                        needUpdate = true; // When masterDetail changes, we need to update all rows
+                    }
+
+                    if (needUpdate) {
                         let changed = false;
-                        rowModel.forEachLeafNode!((node) => {
-                            if (this.setMasterForRow(node, node.data, true, newEnabled)) {
+                        (this.rowModel as IClientSideRowModel).forEachLeafNode!((node) => {
+                            if (this.updateMaster(node, masterDetailChanged, true)) {
                                 changed = true;
                             }
                         });
 
                         if (changed) {
-                            rowModel.refreshModel({ step: ClientSideRowModelSteps.MAP });
+                            // We need to refresh the model to ensure all row components are rerendered
+                            (this.rowModel as IClientSideRowModel).refreshModel({ step: ClientSideRowModelSteps.MAP });
                         }
                     }
                 }
             });
+
+            this.addManagedEventListeners({
+                rowDataUpdated: ({ transactions }) => {
+                    if (transactions && transactions.length) {
+                        // Row data transactional update
+                        const updatedNodes = new Set<RowNode>();
+                        for (const transaction of transactions) {
+                            for (const rowNode of transaction.update) {
+                                updatedNodes.add(rowNode as RowNode);
+                            }
+                        }
+                        (this.rowModel as IClientSideRowModel).forEachLeafNode!((node) => {
+                            this.updateMaster(node, false, updatedNodes.has(node));
+                        });
+                    } else {
+                        // New row data
+                        (this.rowModel as IClientSideRowModel).forEachLeafNode!((node) => {
+                            this.updateMaster(node, true, false);
+                        });
+                    }
+
+                    // Note that CSRM will invoke refreshModel after this event
+                },
+            });
         }
     }
 
-    public setMasterForRow<TData = any>(
-        rowNode: RowNode<TData>,
-        data: TData,
-        shouldSetExpanded: boolean,
-        master = this.isEnabled()
-    ): boolean {
+    private updateMaster<TData = any>(row: RowNode<TData>, overrideExpanded: boolean, updated: boolean): boolean {
         const gos = this.gos;
-        const oldMaster = rowNode.master;
+        const oldMaster = row.master;
+        const newRow = oldMaster === undefined;
+
+        let master = gos.get('masterDetail');
+
+        const treeGroup = row.group && !!row.treeNode;
+
+        if (treeGroup) {
+            master = false; // Tree groups cannot be master rows
+        }
 
         if (master) {
-            // if we are doing master detail, then the default is that everything can be a Master Row.
-            const isRowMasterFunc = gos.get('isRowMaster');
-            master = !isRowMasterFunc || !!isRowMasterFunc(data);
+            if (newRow || updated) {
+                const data = row.data;
+                if (data) {
+                    // if we are doing master detail, then the default is that everything can be a Master Row.
+                    const isRowMasterFunc = gos.get('isRowMaster');
+                    master = !isRowMasterFunc || !!isRowMasterFunc(row.data);
+                }
+            } else {
+                master = oldMaster;
+            }
         }
-        // TODO: AG-1752 Allow tree data leaf rows to serve as master rows for detail grids (Tree Data hosting Master/Detail)
 
-        if (shouldSetExpanded) {
+        if ((overrideExpanded || newRow) && !treeGroup) {
             let expanded = false;
             if (master) {
                 const expandByDefault = gos.get('groupDefaultExpanded');
+
                 // TODO: AG-11476 isGroupOpenByDefault callback doesn't apply to master/detail grid
+
                 if (expandByDefault === -1) {
                     expanded = true;
                 } else {
@@ -83,20 +117,21 @@ export class ClientSideDetailService extends BeanStub implements NamedBean, ICli
                     expanded = masterRowLevel < expandByDefault;
                 }
             }
-            rowNode.expanded = expanded;
+            row.expanded = expanded;
         } else if (oldMaster && !master) {
             // if changing AWAY from master, then un-expand, otherwise next time it's shown it is expanded again
-            rowNode.expanded = false;
+            row.expanded = false;
         }
 
-        if (oldMaster !== master) {
-            rowNode.master = master;
-            if (master || oldMaster !== undefined) {
-                rowNode.dispatchRowEvent('masterChanged');
-                return true;
-            }
+        if (oldMaster === master) {
+            return false; // No changes
         }
 
-        return false;
+        row.master = master;
+        if (!newRow) {
+            row.dispatchRowEvent('masterChanged');
+        }
+
+        return true;
     }
 }

@@ -383,8 +383,6 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             }
 
             rowNodeTransaction.update.push(rowNode);
-
-            this.beans.clientSideDetailService?.setMasterForRow(rowNode, rowNode.data, false);
         });
     }
 
@@ -439,7 +437,6 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         node.parent = this.rootNode;
         node.level = 0;
         node.group = false;
-        node.master = false;
         node.expanded = false;
         node.sourceRowIndex = sourceRowIndex;
 
@@ -451,8 +448,6 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         this.allNodesMap[node.id!] = node;
 
         this.nextId++;
-
-        this.beans.clientSideDetailService?.setMasterForRow(node, data, true);
 
         return node;
     }

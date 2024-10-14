@@ -270,7 +270,9 @@ export interface DisplayedColumnsChangedEvent<TData = any, TContext = any>
 }
 
 export interface RowDataUpdatedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'rowDataUpdated', TData, TContext> {}
+    extends AgGlobalEvent<'rowDataUpdated', TData, TContext> {
+    transactions?: RowNodeTransaction[];
+}
 
 export interface RowDataUpdateStartedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowDataUpdateStarted', TData, TContext> {

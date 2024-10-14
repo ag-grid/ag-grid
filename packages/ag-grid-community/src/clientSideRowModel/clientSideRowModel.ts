@@ -695,7 +695,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             aggregate: ClientSideRowModelSteps.AGGREGATE,
             sort: ClientSideRowModelSteps.SORT,
             pivot: ClientSideRowModelSteps.PIVOT,
-            nothing: ClientSideRowModelSteps.NOTHING,
         };
         if (_exists(step)) {
             paramsStep = stepsMapped[step];
@@ -1309,23 +1308,23 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * @param rowNodeTrans - the transactions to apply
      * @param orderChanged - whether the order of the rows has changed, either via generated transaction or user provided addIndex
      */
-    private commitTransactions(rowNodeTransactions: RowNodeTransaction[], rowNodesOrderChanged: boolean): void {
+    private commitTransactions(transactions: RowNodeTransaction[], rowNodesOrderChanged: boolean): void {
         if (!this.hasStarted) {
             return;
         }
 
-        const changedPath = this.createChangePath(rowNodeTransactions);
+        const changedPath = this.createChangePath(transactions);
 
-        this.nodeManager.commitTransactions?.(rowNodeTransactions, changedPath, rowNodesOrderChanged);
+        this.nodeManager.commitTransactions?.(transactions, changedPath, rowNodesOrderChanged);
 
         const animate = !this.gos.get('suppressAnimationFrame');
 
-        this.eventService.dispatchEvent({ type: 'rowDataUpdated' });
+        this.eventService.dispatchEvent({ type: 'rowDataUpdated', transactions });
 
         this.refreshModel(
             {
                 step: ClientSideRowModelSteps.EVERYTHING,
-                rowNodeTransactions,
+                rowNodeTransactions: transactions,
                 rowNodesOrderChanged,
                 keepRenderedRows: true,
                 keepEditingRows: true,

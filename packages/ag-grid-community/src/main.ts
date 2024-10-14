@@ -588,7 +588,6 @@ export {
     _StatusBarGridApi,
     _AdvancedFilterGridApi,
 } from './api/gridApi';
-export { IClientSideDetailService } from './interfaces/IClientSideDetailService';
 export { IDetailGridApiService } from './interfaces/iDetailGridApiService';
 export { _getServerSideRowModel } from './api/rowModelApiUtils';
 export { AgEventType, AgPublicEventType } from './eventTypes';

@@ -102,6 +102,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
 
         for (let i = 0; i < rowsToFlatten!.length; i++) {
             const rowNode = rowsToFlatten![i];
+
             // check all these cases, for working out if this row should be included in the final mapped list
             const isParent = rowNode.hasChildren();
 
@@ -173,6 +174,10 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
             } else if (rowNode.master && rowNode.expanded) {
                 const detailNode = this.createDetailNode(rowNode);
                 this.addRowNodeToRowsToDisplay(details, detailNode, result, uiLevel);
+            }
+
+            if (rowNode.master === undefined && rowNode.data) {
+                rowNode.master = false; // Ensure the flag is not undefined for non-filler nodes - just to maintain the legacy behaviour
             }
         }
     }

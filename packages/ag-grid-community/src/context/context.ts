@@ -45,7 +45,6 @@ import type { GridDestroyService } from '../gridDestroyService';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { RowNodeBlockLoader } from '../infiniteRowModel/rowNodeBlockLoader';
 import type { IChartService } from '../interfaces/IChartService';
-import type { IClientSideDetailService } from '../interfaces/IClientSideDetailService';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
@@ -267,7 +266,6 @@ export interface CoreBeanCollection {
     pageBoundsService: PageBoundsService;
     apiFunctionService: ApiFunctionService;
     detailGridApiService?: IDetailGridApiService;
-    clientSideDetailService?: IClientSideDetailService;
     gridDestroyService: GridDestroyService;
     expansionService?: IExpansionService;
     sideBarService?: ISideBarService;
