@@ -110,7 +110,7 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
 
 function addTypeCoercionHints(result, boolProps, skippableProperties) {
     result += `${EOL}    // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"' ${EOL}`;
-    result += `    // https://angular.io/guide/template-typecheck#input-setter-coercion ${EOL}`;
+    result += `    // https://angular.dev/tools/cli/template-typecheck#input-setter-coercion ${EOL}`;
     boolProps.forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
             result += `    static ngAcceptInputType_${property}: boolean | null | '';${EOL}`;
