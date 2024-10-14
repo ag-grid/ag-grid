@@ -30,7 +30,7 @@ export class AngularFrameworkComponentWrapper
             extends BaseGuiComponent<any, AgFrameworkComponent<any>>
             implements WrappableInterface
         {
-            init(params: any): void {
+            override init(params: any): void {
                 angularFrameworkOverrides.runInsideAngular(() => {
                     super.init(params);
                     this._componentRef.changeDetectorRef.detectChanges();
