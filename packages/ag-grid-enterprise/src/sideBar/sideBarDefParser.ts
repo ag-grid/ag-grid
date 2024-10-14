@@ -1,5 +1,5 @@
-import { _warnOnce } from 'ag-grid-community';
 import type { SideBarDef, ToolPanelDef } from 'ag-grid-community';
+import { _warn } from 'ag-grid-community';
 
 const DEFAULT_COLUMN_COMP: ToolPanelDef = {
     id: 'columns',
@@ -44,7 +44,7 @@ export function parseSideBarDef(
         toParse.forEach((key) => {
             const lookupResult = DEFAULT_BY_KEY[key];
             if (!lookupResult) {
-                logMissingKey(key);
+                _warn(215, { key, defaultByKey: DEFAULT_BY_KEY });
                 return;
             }
 
@@ -71,12 +71,6 @@ export function parseSideBarDef(
     return result;
 }
 
-function logMissingKey(key: string) {
-    _warnOnce(
-        `the key ${key} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(DEFAULT_BY_KEY).join(',')}`
-    );
-}
-
 function parseComponents(from?: (ToolPanelDef | string)[]): ToolPanelDef[] {
     const result: ToolPanelDef[] = [];
 
@@ -89,7 +83,7 @@ function parseComponents(from?: (ToolPanelDef | string)[]): ToolPanelDef[] {
         if (typeof it === 'string') {
             const lookupResult = DEFAULT_BY_KEY[it];
             if (!lookupResult) {
-                logMissingKey(it);
+                _warn(215, { key: it, defaultByKey: DEFAULT_BY_KEY });
                 return;
             }
 

@@ -16,7 +16,7 @@ import {
     _includes,
     _setAriaLabel,
     _setAriaLevel,
-    _warnOnce,
+    _warn,
     isProvidedColumnGroup,
 } from 'ag-grid-community';
 
@@ -435,7 +435,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         const unrecognisedGroupIds = groupIds.filter((groupId) => !_includes(expandedGroupIds, groupId));
         if (unrecognisedGroupIds.length > 0) {
-            _warnOnce('unable to find group(s) for supplied groupIds:', unrecognisedGroupIds);
+            _warn(157, { unrecognisedGroupIds });
         }
     }
 
