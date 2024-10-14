@@ -175,10 +175,6 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     private shouldUseBrowserDatePicker(params: IDateParams): boolean {
-        if (params.filterParams && params.filterParams.browserDatePicker != null) {
-            return params.filterParams.browserDatePicker;
-        }
-
-        return true;
+        return params?.filterParams?.browserDatePicker ?? true;
     }
 }
