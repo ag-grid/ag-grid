@@ -35,8 +35,6 @@ import type { CellCtrl } from './cell/cellCtrl';
 import { DOM_DATA_KEY_CELL_CTRL } from './cell/cellCtrl';
 import type { StickyRowFeature } from './features/stickyRowFeature';
 import type { StickyRowService } from './features/stickyRowService';
-import type { CtrlFunc } from './renderUtils';
-import { iterateCtrls } from './renderUtils';
 import type { RowCtrlInstanceId } from './row/rowCtrl';
 import { DOM_DATA_KEY_ROW_CTRL, RowCtrl } from './row/rowCtrl';
 import type { RowContainerHeightService } from './rowContainerHeightService';
@@ -48,6 +46,8 @@ export type RowCtrlByRowNodeIdMap = Record<string, RowCtrl>;
 interface RowNodeMap {
     [id: string]: IRowNode;
 }
+
+const ROW_ANIMATION_TIMEOUT = 400 as const;
 
 export class RowRenderer extends BeanStub implements NamedBean {
     beanName = 'rowRenderer' as const;
@@ -1191,7 +1191,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 this.updateAllRowCtrls();
                 this.dispatchDisplayedRowsChanged();
             });
-            window.setTimeout(() => executeInAWhileFuncs.forEach((func) => func()), 400);
+            window.setTimeout(() => executeInAWhileFuncs.forEach((func) => func()), ROW_ANIMATION_TIMEOUT);
         }
     }
 
