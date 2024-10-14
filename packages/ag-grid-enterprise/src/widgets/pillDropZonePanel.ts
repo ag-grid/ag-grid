@@ -40,11 +40,7 @@ function _insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number) {
         return;
     }
 
-    // put items in backwards, otherwise inserted items end up in reverse order
-    for (let i = src.length - 1; i >= 0; i--) {
-        const item = src[i];
-        dest.splice(toIndex, 0, item);
-    }
+    dest.splice(toIndex, 0, ...src);
 }
 
 export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem> extends Component {

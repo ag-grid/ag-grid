@@ -6,8 +6,8 @@ import type { FlashCellsParams } from '../../interfaces/iCellsParams';
 import { _exists } from '../../utils/generic';
 import type { CellCtrl } from './cellCtrl';
 
-export class FlashCellService extends BeanStub implements NamedBean {
-    beanName = 'flashCellService' as const;
+export class CellFlashService extends BeanStub implements NamedBean {
+    beanName = 'cellFlashService' as const;
 
     public onFlashCells(cellCtrl: CellCtrl, event: FlashCellsEvent): void {
         if (!cellCtrl.getComp()) {

@@ -85,7 +85,7 @@ import type { PaginationService } from '../pagination/paginationService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
-import type { FlashCellService } from '../rendering/cell/flashCellService';
+import type { CellFlashService } from '../rendering/cell/cellFlashService';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { StickyRowService } from '../rendering/features/stickyRowService';
 import type { OverlayService } from '../rendering/overlays/overlayService';
@@ -290,7 +290,7 @@ export interface CoreBeanCollection {
     stickyRowService?: StickyRowService;
     groupHideOpenParentsService?: IGroupHideOpenParentsService;
     filterValueService?: FilterValueService;
-    flashCellService?: FlashCellService;
+    cellFlashService?: CellFlashService;
     masterDetailService?: IMasterDetailService;
 }
 
@@ -337,6 +337,7 @@ export type BeanName =
     | 'autoWidthCalculator'
     | 'beans'
     | 'cellEditorFactory'
+    | 'cellFlashService'
     | 'cellNavigationService'
     | 'cellRendererFactory'
     | 'cellRendererService'
@@ -395,7 +396,6 @@ export type BeanName =
     | 'filterMenuFactory'
     | 'filterStage'
     | 'filterValueService'
-    | 'flashCellService'
     | 'flattenStage'
     | 'focusService'
     | 'funcColsService'

@@ -14,6 +14,7 @@ import type { PinnedWidthService } from '../../gridBodyComp/pinnedWidthService';
 import type { ScrollVisibleService } from '../../gridBodyComp/scrollVisibleService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { HeaderPosition } from '../../interfaces/iHeaderPosition';
+import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { HeaderRowType } from '../row/headerRowComp';
 import { HeaderRowCtrl } from '../row/headerRowCtrl';
 
@@ -167,7 +168,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         this.restoreFocusOnHeader(focusedHeaderPosition);
     }
 
-    public getHeaderCtrlForColumn(column: AgColumn | AgColumnGroup): any {
+    public getHeaderCtrlForColumn(column: AgColumn | AgColumnGroup): AbstractHeaderCellCtrl | undefined {
         if (isColumn(column)) {
             return this.columnsRowCtrl?.getHeaderCellCtrl(column);
         }
