@@ -12,7 +12,7 @@ import type { IPivotResultColsService } from '../interfaces/iPivotResultColsServ
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { SortController } from '../sort/sortController';
 import { _areEqual, _removeFromArray } from '../utils/array';
-import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
+import { _exists, _missing } from '../utils/generic';
 import { _warn } from '../validation/logging';
 import {
     dispatchColumnChangedEvent,
@@ -95,7 +95,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
     public applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType): boolean {
         const providedCols = this.columnModel.getColDefCols() || [];
-        if (_missingOrEmpty(providedCols)) {
+        if (!providedCols?.length) {
             return false;
         }
 
@@ -259,7 +259,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
     public resetColumnState(source: ColumnEventType): void {
         const primaryCols = this.columnModel.getColDefCols();
-        if (_missingOrEmpty(primaryCols)) {
+        if (!primaryCols?.length) {
             return;
         }
 

@@ -9,7 +9,6 @@ import type { PopupPositionParams } from '../../interfaces/iPopup';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { _setAriaRole } from '../../utils/aria';
-import { _browserSupportsPreventScroll } from '../../utils/browser';
 import { _addStylesToElement, _clearElement, _removeFromParent } from '../../utils/dom';
 import { _missing } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
@@ -471,7 +470,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.addOrRemoveCssClass('ag-cell-popup-editing', editing && !!isPopup);
         this.addOrRemoveCssClass('ag-cell-not-inline-editing', !editing || !!isPopup);
 
-        this.rowCtrl?.setInlineEditingCss();
+        this.cellCtrl.setInlineEditingCss();
     }
 
     private addInCellEditor(): void {
@@ -573,7 +572,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
-        if (eGui.contains(_getActiveDomElement(this.beans.gos)) && _browserSupportsPreventScroll()) {
+        if (eGui.contains(_getActiveDomElement(this.beans.gos))) {
             eGui.focus({ preventScroll: true });
         }
 

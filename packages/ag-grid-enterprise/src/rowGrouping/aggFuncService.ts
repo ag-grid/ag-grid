@@ -1,5 +1,5 @@
 import type { AgColumn, IAggFunc, IAggFuncParams, IAggFuncService, NamedBean } from 'ag-grid-community';
-import { BeanStub, _exists, _existsAndNotEmpty, _includes, _iterateObject, _last } from 'ag-grid-community';
+import { BeanStub, _exists, _last } from 'ag-grid-community';
 
 const defaultAggFuncNames = {
     sum: 'Sum',
@@ -45,7 +45,7 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
 
     private isAggFuncPossible(column: AgColumn, func: string): boolean {
         const allKeys = this.getFuncNames(column);
-        const allowed = _includes(allKeys, func);
+        const allowed = allKeys.includes(func);
         const funcExists = _exists(this.aggFuncsMap[func]);
         return allowed && funcExists;
     }
@@ -66,12 +66,15 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
         }
 
         const allKeys = this.getFuncNames(column);
-        return _existsAndNotEmpty(allKeys) ? allKeys[0] : null;
+        return allKeys?.length ? allKeys[0] : null;
     }
 
     public addAggFuncs(aggFuncs?: { [key: string]: IAggFunc }): void {
         this.init();
-        _iterateObject(aggFuncs, (key: string, aggFunc: IAggFunc) => {
+        if (!aggFuncs) {
+            return;
+        }
+        Object.entries(aggFuncs).forEach(([key, aggFunc]) => {
             this.aggFuncsMap[key] = aggFunc;
         });
     }

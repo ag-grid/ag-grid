@@ -8,8 +8,6 @@ import { _getRowIdCallback } from '../gridOptionsUtils';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _missingOrEmpty } from '../utils/generic';
-import { _cloneObject } from '../utils/object';
 import { _error, _warn } from '../validation/logging';
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
@@ -81,7 +79,9 @@ export class ClientSideNodeManager {
     }
 
     public getCopyOfNodesMap(): { [id: string]: RowNode } {
-        return _cloneObject(this.allNodesMap);
+        return {
+            ...this.allNodesMap,
+        };
     }
 
     public getRowNode(id: string): RowNode | undefined {
@@ -229,7 +229,7 @@ export class ClientSideNodeManager {
 
     private executeAdd(rowDataTran: RowDataTransaction, result: ClientSideNodeManagerUpdateRowDataResult): void {
         const add = rowDataTran.add;
-        if (_missingOrEmpty(add)) {
+        if (!add?.length) {
             return;
         }
 
@@ -308,7 +308,7 @@ export class ClientSideNodeManager {
     ): void {
         const { remove } = rowDataTran;
 
-        if (_missingOrEmpty(remove)) {
+        if (!remove?.length) {
             return;
         }
 
@@ -359,7 +359,7 @@ export class ClientSideNodeManager {
         nodesToUnselect: RowNode[]
     ): void {
         const { update } = rowDataTran;
-        if (_missingOrEmpty(update)) {
+        if (!update?.length) {
             return;
         }
 

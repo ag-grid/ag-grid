@@ -11,9 +11,7 @@ import {
     Component,
     _clearElement,
     _exists,
-    _flatten,
     _getActiveDomElement,
-    _includes,
     _mergeDeep,
     _setAriaLabel,
     _warn,
@@ -170,10 +168,10 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         depth: number,
         expansionState: Map<string, boolean>
     ): (ToolPanelFilterGroupComp | ToolPanelFilterComp)[] {
-        return _flatten(
-            tree.map((child) => {
+        return tree
+            .map((child) => {
                 if (isProvidedColumnGroup(child)) {
-                    return _flatten(this.recursivelyAddFilterGroupComps(child, depth, expansionState)!);
+                    return this.recursivelyAddFilterGroupComps(child, depth, expansionState)?.flatMap((a) => a) ?? [];
                 }
 
                 const column = child;
@@ -206,7 +204,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
                 }
                 return filterGroupComp;
             })
-        );
+            .flatMap((a) => a);
     }
 
     private refreshAriaLabel(): void {
@@ -240,8 +238,8 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         }
 
         const newDepth = columnGroup.isPadding() ? depth : depth + 1;
-        const childFilterComps = _flatten(
-            this.recursivelyAddComps(columnGroup.getChildren(), newDepth, expansionState)
+        const childFilterComps = this.recursivelyAddComps(columnGroup.getChildren(), newDepth, expansionState).flatMap(
+            (a) => a
         );
 
         if (columnGroup.isPadding()) {
@@ -323,7 +321,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
         const updateGroupExpandState = (filterGroup: ToolPanelFilterGroupComp) => {
             const groupId = filterGroup.getFilterGroupId();
-            const shouldExpandOrCollapse = !groupIds || _includes(groupIds, groupId);
+            const shouldExpandOrCollapse = !groupIds || groupIds.includes(groupId);
             if (shouldExpandOrCollapse) {
                 // don't expand 'column groups', i.e. top level columns wrapped in a group
                 if (expand && filterGroup.isColumnGroup()) {
@@ -377,7 +375,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             }
 
             const colId = filterComp.getColumn().getColId();
-            const updateFilterExpandState = !colIds || _includes(colIds, colId);
+            const updateFilterExpandState = !colIds || colIds.includes(colId);
 
             if (updateFilterExpandState) {
                 expand ? filterComp.expand() : filterComp.collapse();

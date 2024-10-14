@@ -3,7 +3,6 @@ import type {
     BeanCollection,
     IShowRowGroupColsService,
     NamedBean,
-    NumberSequence,
     RowBounds,
     ValueService,
 } from 'ag-grid-community';
@@ -262,7 +261,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
     public setDisplayIndex(
         rowNode: RowNode,
-        displayIndexSeq: NumberSequence,
+        displayIndexSeq: { value: number },
         nextRowTop: { value: number },
         uiLevel: number
     ): void {
@@ -273,7 +272,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
             rowNode.setRowTop(null);
         } else {
             // set this row
-            rowNode.setRowIndex(displayIndexSeq.next());
+            rowNode.setRowIndex(displayIndexSeq.value++);
             rowNode.setRowTop(nextRowTop.value);
             nextRowTop.value += rowNode.rowHeight!;
         }
@@ -287,7 +286,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         const hasDetailRow = rowNode.master;
         if (hasDetailRow) {
             if (rowNode.expanded && rowNode.detailNode) {
-                rowNode.detailNode.setRowIndex(displayIndexSeq.next());
+                rowNode.detailNode.setRowIndex(displayIndexSeq.value++);
                 rowNode.detailNode.setRowTop(nextRowTop.value);
                 nextRowTop.value += rowNode.detailNode.rowHeight!;
             } else if (rowNode.detailNode) {

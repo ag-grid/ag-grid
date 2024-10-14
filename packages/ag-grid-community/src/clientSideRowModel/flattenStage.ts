@@ -9,7 +9,7 @@ import type { GetGroupIncludeFooterParams } from '../interfaces/iCallbackParams'
 import { ClientSideRowModelSteps } from '../interfaces/iClientSideRowModel';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
-import { _exists, _missingOrEmpty } from '../utils/generic';
+import { _exists } from '../utils/generic';
 
 interface FlattenDetails {
     hideOpenParents: boolean;
@@ -96,7 +96,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
         skipLeafNodes: boolean,
         uiLevel: number
     ) {
-        if (_missingOrEmpty(rowsToFlatten)) {
+        if (!rowsToFlatten?.length) {
             return;
         }
 

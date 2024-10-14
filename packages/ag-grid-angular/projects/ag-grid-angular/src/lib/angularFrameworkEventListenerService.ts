@@ -1,6 +1,6 @@
-import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
+import type { AngularFrameworkOverrides } from './angularFrameworkOverrides';
 
-export class FrameworkEventListenerService<
+export class AngularFrameworkEventListenerService<
     TEventListener extends (e: any) => void,
     TGlobalEventListener extends (name: string, e: any) => void,
 > {
@@ -8,7 +8,7 @@ export class FrameworkEventListenerService<
     private wrappedListeners: Map<TEventListener, TEventListener> = new Map();
     private wrappedGlobalListeners: Map<TGlobalEventListener, TGlobalEventListener> = new Map();
 
-    constructor(private frameworkOverrides: IFrameworkOverrides) {}
+    constructor(private frameworkOverrides: AngularFrameworkOverrides) {}
 
     public wrap(userListener: TEventListener): TEventListener {
         let listener: any = userListener;

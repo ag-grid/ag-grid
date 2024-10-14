@@ -3,7 +3,7 @@ import { _exists } from './generic';
 // Prevents the risk of prototype pollution
 export const SKIP_JS_BUILTINS = new Set<string>(['__proto__', 'constructor', 'prototype']);
 
-export function _iterateObject<T>(
+function _iterateObject<T>(
     object: { [p: string]: T } | T[] | null | undefined,
     callback: (key: string, value: T) => void
 ) {
@@ -21,77 +21,6 @@ export function _iterateObject<T>(
     for (const [key, value] of Object.entries<T>(object)) {
         callback(key, value);
     }
-}
-
-export function _cloneObject<T extends object>(object: T): T {
-    const copy = {} as T;
-    const keys = Object.keys(object);
-
-    for (let i = 0; i < keys.length; i++) {
-        if (SKIP_JS_BUILTINS.has(keys[i])) {
-            continue;
-        }
-
-        const key = keys[i];
-        const value = (object as any)[key];
-        (copy as any)[key] = value;
-    }
-
-    return copy;
-}
-
-// returns copy of an object, doing a deep clone of any objects with that object.
-// this is used for eg creating copies of Column Definitions, where we want to
-// deep copy all objects, but do not want to deep copy functions (eg when user provides
-// a function or class for colDef.cellRenderer)
-export function _deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | undefined {
-    if (!object) {
-        return;
-    }
-
-    const obj = object as any;
-    const res: any = {};
-
-    Object.keys(obj).forEach((key) => {
-        if ((keysToSkip && keysToSkip.indexOf(key) >= 0) || SKIP_JS_BUILTINS.has(key)) {
-            return;
-        }
-
-        const value = obj[key];
-
-        // 'simple object' means a bunch of key/value pairs, eg {filter: 'myFilter'}. it does
-        // NOT include the following:
-        // 1) arrays
-        // 2) functions or classes (eg api instance)
-        const sourceIsSimpleObject = _isNonNullObject(value) && value.constructor === Object;
-
-        if (sourceIsSimpleObject) {
-            res[key] = _deepCloneDefinition(value);
-        } else {
-            res[key] = value;
-        }
-    });
-
-    return res;
-}
-
-export function _getAllValuesInObject<T extends object, K extends keyof T, O extends T[K]>(obj: T): O[] {
-    if (!obj) {
-        return [];
-    }
-    const anyObject = Object as any;
-    if (typeof anyObject.values === 'function') {
-        return anyObject.values(obj);
-    }
-
-    const ret: any[] = [];
-    for (const key in obj) {
-        if (obj.hasOwnProperty(key) && obj.propertyIsEnumerable(key)) {
-            ret.push(obj[key]);
-        }
-    }
-
-    return ret;
 }
 
 export function _mergeDeep(dest: any, source: any, copyUndefined = true, makeCopyOfSimpleObjects = false): void {
@@ -120,10 +49,10 @@ export function _mergeDeep(dest: any, source: any, copyUndefined = true, makeCop
             if (objectIsDueToBeCopied) {
                 // 'simple object' means a bunch of key/value pairs, eg {filter: 'myFilter'}, as opposed
                 // to a Class instance (such as api instance).
-                const sourceIsSimpleObject = typeof sourceValue === 'object' && sourceValue.constructor === Object;
-                const dontCopy = sourceIsSimpleObject;
+                const doNotCopyAsSourceIsSimpleObject =
+                    typeof sourceValue === 'object' && sourceValue.constructor === Object;
 
-                if (dontCopy) {
+                if (doNotCopyAsSourceIsSimpleObject) {
                     destValue = {};
                     dest[key] = destValue;
                 }
@@ -162,6 +91,6 @@ export function _getValueUsingField(data: any, field: string, fieldContainsDots:
     return currentObject;
 }
 
-export function _isNonNullObject(value: any): boolean {
+function _isNonNullObject(value: any): boolean {
     return typeof value === 'object' && value !== null;
 }

@@ -29,25 +29,6 @@ export function _errorOnce(msg: string, ...args: any[]) {
     _doOnce(() => console.error('AG Grid: ' + msg, ...args), msg + args?.join(''));
 }
 
-export function _getFunctionName(funcConstructor: any) {
-    // for every other browser in the world
-    if (funcConstructor.name) {
-        return funcConstructor.name;
-    }
-
-    // eslint-disable-next-line
-    const matches = /function\s+([^\(]+)/.exec(funcConstructor.toString());
-    return matches && matches.length === 2 ? matches[1].trim() : null;
-}
-
-export function _isFunction<T>(val: any): val is () => T {
-    return !!(val && val.constructor && val.call && val.apply);
-}
-
-export function _executeInAWhile(funcs: ((...args: any[]) => any)[]): void {
-    _executeAfter(funcs, 400);
-}
-
 const executeNextVMTurnFuncs: ((...args: any[]) => any)[] = [];
 let executeNextVMTurnPending = false;
 
@@ -65,12 +46,6 @@ export function _executeNextVMTurn(func: () => void): void {
         executeNextVMTurnPending = false;
         funcsCopy.forEach((func) => func());
     }, 0);
-}
-
-export function _executeAfter(funcs: ((...args: any[]) => any)[], milliseconds = 0): void {
-    if (funcs.length > 0) {
-        window.setTimeout(() => funcs.forEach((func) => func()), milliseconds);
-    }
 }
 
 /**
@@ -150,11 +125,3 @@ export function _waitUntil(
         interval = window.setInterval(internalCallback, 10);
     }
 }
-
-export function _compose<T>(...fns: ((...args: T[]) => T)[]) {
-    return (arg: T) => fns.reduce<T>((composed, f) => f(composed), arg);
-}
-
-export const noop = () => {
-    return;
-};
