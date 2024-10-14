@@ -56,13 +56,16 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
         useCapture?: boolean
     ): void {
         const isPassive = _includes(PASSIVE_EVENTS, type);
-        if (type === 'scroll') {
-            this.runOutside(() => {
+        this.runOutside(() => {
+            if ((element as any).__zone_symbol__addEventListener) {
+                (element as any).__zone_symbol__addEventListener(type, listener, {
+                    capture: !!useCapture,
+                    passive: isPassive,
+                });
+            } else {
                 element.addEventListener(type, listener, { capture: !!useCapture, passive: isPassive });
-            });
-        } else {
-            element.addEventListener(type, listener, { capture: !!useCapture, passive: isPassive });
-        }
+            }
+        });
     }
 
     /**
