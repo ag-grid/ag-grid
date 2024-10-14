@@ -136,7 +136,7 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
 interface MenuItem {
     title: string;
     path?: string;
-    items?: MenuItem[];
+    children?: MenuItem[];
 }
 
 const getDocsMenuData = () => {
@@ -160,7 +160,11 @@ export interface FlattenedMenuItem {
     breadcrumb: string;
 }
 
-const getFlattenedMenuItems = (menuItems, result: FlattenedMenuItem[] = [], prefix?: string): FlattenedMenuItem[] => {
+const getFlattenedMenuItems = (
+    menuItems: MenuItem[],
+    result: FlattenedMenuItem[] = [],
+    prefix?: string
+): FlattenedMenuItem[] => {
     menuItems.forEach((item) => {
         if (item.path) {
             result.push({
@@ -171,7 +175,7 @@ const getFlattenedMenuItems = (menuItems, result: FlattenedMenuItem[] = [], pref
             });
         }
         if (item.children) {
-            getFlattenedMenuItems(item.items, result, prefix ? `${prefix} > ${item.title}` : item.title);
+            getFlattenedMenuItems(item.children, result, prefix ? `${prefix} > ${item.title}` : item.title);
         }
     });
     return result;
