@@ -5,10 +5,10 @@ import { ClientSideRowModelExpansionModule } from '../expansion/expansionModule'
 import { baseEnterpriseModule } from '../moduleUtils';
 import { GroupCellRenderer } from '../rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from '../rendering/groupCellRendererCtrl';
+import { ClientSideDetailService } from './clientSideDetailService';
 import { DetailCellRenderer } from './detailCellRenderer';
 import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 import { DetailGridApiService } from './detailGridApiService';
-import { DetailService } from './detailService';
 import { addDetailGridInfo, forEachDetailGridInfo, getDetailGridInfo, removeDetailGridInfo } from './masterDetailApi';
 
 export const MasterDetailCoreModule: _ModuleWithoutApi = {
@@ -28,7 +28,7 @@ export const MasterDetailCoreModule: _ModuleWithoutApi = {
         { name: 'detailCellRendererCtrl', classImp: DetailCellRendererCtrl },
         { name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl },
     ],
-    beans: [DetailService],
+    beans: [ClientSideDetailService],
     dependsOn: [EnterpriseCoreModule],
 };
 

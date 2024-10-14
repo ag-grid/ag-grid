@@ -1,6 +1,6 @@
 import type { RowNode } from 'ag-grid-community';
 
-export interface IDetailService {
+export interface IClientSideDetailService {
     /** Called by CSRM to initialize a node as master */
     setMasterForRow<TData = any>(
         rowNode: RowNode<TData>,

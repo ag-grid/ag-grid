@@ -1,8 +1,15 @@
-import type { BeanCollection, FuncColsService, IDetailService, IRowModel, NamedBean, RowNode } from 'ag-grid-community';
+import type {
+    BeanCollection,
+    FuncColsService,
+    IClientSideDetailService,
+    IRowModel,
+    NamedBean,
+    RowNode,
+} from 'ag-grid-community';
 import { BeanStub, _isClientSideRowModel } from 'ag-grid-community';
 
-export class DetailService extends BeanStub implements NamedBean, IDetailService {
-    beanName = 'detailService' as const;
+export class ClientSideDetailService extends BeanStub implements NamedBean, IClientSideDetailService {
+    beanName = 'clientSideDetailService' as const;
 
     private rowModel: IRowModel;
     private funcColsService: FuncColsService;
