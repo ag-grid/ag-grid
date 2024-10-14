@@ -13,9 +13,9 @@ import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnNameService } from '../columns/columnNameService';
 import type { ColumnStateService } from '../columns/columnStateService';
 import type { ColumnViewportService } from '../columns/columnViewportService';
-import type { ControlsColService } from '../columns/controlsColService';
 import type { DataTypeService } from '../columns/dataTypeService';
 import type { FuncColsService } from '../columns/funcColsService';
+import type { SelectionColService } from '../columns/selectionColService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { AgComponentUtils } from '../components/framework/agComponentUtils';
 import type { FrameworkComponentWrapper } from '../components/framework/frameworkComponentWrapper';
@@ -226,7 +226,7 @@ export interface CoreBeanCollection {
     columnFactory: ColumnFactory;
     pivotResultColsService?: IPivotResultColsService;
     autoColService?: IAutoColService;
-    controlsColService?: ControlsColService;
+    selectionColService?: SelectionColService;
     columnDefFactory?: ColumnDefFactory;
     columnAutosizeService?: ColumnAutosizeService;
     funcColsService: FuncColsService;
@@ -368,7 +368,7 @@ export type BeanName =
     | 'pivotResultColsService'
     | 'context'
     | 'contextMenuService'
-    | 'controlsColService'
+    | 'selectionColService'
     | 'ctrlsService'
     | 'csvCreator'
     | 'dataTypeService'

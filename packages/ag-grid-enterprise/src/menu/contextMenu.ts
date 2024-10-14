@@ -153,7 +153,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     }
 
     public showContextMenu(params: EventShowContextMenuParams & { anchorToElement?: HTMLElement }): void {
-        const { rowNode } = params;
+        const rowNode = params.rowNode as RowNode | null | undefined;
         const column = params.column as AgColumn | null | undefined;
         let { anchorToElement, value } = params;
 

@@ -1,4 +1,4 @@
-import type { AgColumn, BeanCollection, ColumnChooserParams, IContextMenuParams } from 'ag-grid-community';
+import type { AgColumn, BeanCollection, ColumnChooserParams, IContextMenuParams, RowNode } from 'ag-grid-community';
 
 import type { ColumnChooserFactory } from './columnChooserFactory';
 
@@ -8,7 +8,7 @@ export function showContextMenu(beans: BeanCollection, params?: IContextMenuPara
         return;
     }
     const { rowNode, column, value, x, y } = params || {};
-    let { x: clientX, y: clientY } = contextMenuService.getContextMenuPosition(rowNode, column as AgColumn);
+    let { x: clientX, y: clientY } = contextMenuService.getContextMenuPosition(rowNode as RowNode, column as AgColumn);
 
     if (x != null) {
         clientX = x;
