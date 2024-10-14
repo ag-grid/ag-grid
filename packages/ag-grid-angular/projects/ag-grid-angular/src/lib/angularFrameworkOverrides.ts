@@ -44,10 +44,8 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
     // This also means that if a user calls an AG Grid API method from within their component
     // the internal side effects will not trigger change detection. Without this the events would
     // run inside Angular and trigger change detection as the source of the event was within the angular zone.
-    override wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = (
-        callback,
-        source
-    ) => this.runOutside(callback, source);
+    wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = (callback, source) =>
+        this.runOutside(callback, source);
 
     /**
      * The shouldWrapOutgoing property is used to determine if events should be run outside of Angular or not.
@@ -80,7 +78,7 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
         return new AngularFrameworkEventListenerService(this);
     }
 
-    override isFrameworkComponent(comp: any): boolean {
+    isFrameworkComponent(comp: any): boolean {
         if (!comp) {
             return false;
         }
