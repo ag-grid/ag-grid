@@ -1,5 +1,5 @@
 import type { IClientSideNodeManager, NamedBean, RowNode } from 'ag-grid-community';
-import { _logError } from 'ag-grid-community';
+import { _error } from 'ag-grid-community';
 
 import { AbstractClientSideTreeNodeManager } from './abstractClientSideTreeNodeManager';
 import { makeFieldPathGetter } from './fieldAccess';
@@ -42,7 +42,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
 
         const addChild = (parent: TreeNode, data: TData) => {
             if (processedDataSet.has(data)) {
-                _logError(5, { data }); // Duplicate node
+                _error(5, { data }); // Duplicate node
                 return;
             }
 
