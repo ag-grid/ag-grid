@@ -24,11 +24,11 @@ export class ClientSideDetailService extends BeanStub implements NamedBean {
             this.addManagedPropertyListeners(['treeData', 'masterDetail'], (params) => {
                 const properties = params.changeSet?.properties;
                 if (properties) {
-                    const enabled = this.gos.get('masterDetail');
+                    const masterDetail = this.gos.get('masterDetail');
                     const masterDetailChanged = properties.includes('masterDetail');
                     let needUpdate = false;
 
-                    if (enabled && properties.includes('treeData')) {
+                    if (masterDetail && properties.includes('treeData')) {
                         needUpdate = true; // When treeData and masterDetail are enabled, we need to check if leafs/groups changed
                     } else if (masterDetailChanged) {
                         needUpdate = true; // When masterDetail changes, we need to update all rows
