@@ -3,14 +3,14 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { isColumn } from '../entities/agColumn';
-import { AgColumnGroup, createUniqueColumnGroupId, isColumnGroup } from '../entities/agColumnGroup';
-import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
+import { isColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType } from '../events';
 import type { ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
 import { _last } from '../utils/array';
-import { _exists } from '../utils/generic';
 import type { ColumnFlexService } from './columnFlexService';
+import type { ColumnGroupService, CreateGroupsParams } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
 import { getWidthOfColsInList } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
@@ -35,11 +35,13 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     private columnModel: ColumnModel;
     private columnFlexService?: ColumnFlexService;
     private columnViewportService: ColumnViewportService;
+    private columnGroupService?: ColumnGroupService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.columnFlexService = beans.columnFlexService;
         this.columnViewportService = beans.columnViewportService;
+        this.columnGroupService = beans.columnGroupService;
     }
 
     // tree of columns to be displayed for each section
@@ -74,7 +76,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             this.buildTrees();
         }
 
-        this.updateOpenClosedVisibilityInColumnGroups();
+        this.columnGroupService?.updateOpenClosedVisibility();
 
         this.leftCols = pickDisplayedCols(this.treeLeft);
         this.centerCols = pickDisplayedCols(this.treeCenter);
@@ -402,49 +404,6 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return null;
     }
 
-    public getGroupAtDirection(columnGroup: AgColumnGroup, direction: 'After' | 'Before'): AgColumnGroup | null {
-        // pick the last displayed column in this group
-        const requiredLevel = columnGroup.getProvidedColumnGroup().getLevel() + columnGroup.getPaddingLevel();
-        const colGroupLeafColumns = columnGroup.getDisplayedLeafColumns();
-        const col: AgColumn | null = direction === 'After' ? _last(colGroupLeafColumns) : colGroupLeafColumns[0];
-        const getDisplayColMethod: 'getColAfter' | 'getColBefore' = `getCol${direction}` as any;
-
-        while (true) {
-            // keep moving to the next col, until we get to another group
-            const column = this[getDisplayColMethod](col);
-
-            if (!column) {
-                return null;
-            }
-
-            const groupPointer = this.getColGroupAtLevel(column, requiredLevel);
-
-            if (groupPointer !== columnGroup) {
-                return groupPointer;
-            }
-        }
-    }
-
-    public getColGroupAtLevel(column: AgColumn, level: number): AgColumnGroup | null {
-        // get group at same level as the one we are looking for
-        let groupPointer: AgColumnGroup = column.getParent()!;
-        let originalGroupLevel: number;
-        let groupPointerLevel: number;
-
-        while (true) {
-            const groupPointerProvidedColumnGroup = groupPointer.getProvidedColumnGroup();
-            originalGroupLevel = groupPointerProvidedColumnGroup.getLevel();
-            groupPointerLevel = groupPointer.getPaddingLevel();
-
-            if (originalGroupLevel + groupPointerLevel <= level) {
-                break;
-            }
-            groupPointer = groupPointer.getParent()!;
-        }
-
-        return groupPointer;
-    }
-
     public isPinningLeft(): boolean {
         return this.leftCols.length > 0;
     }
@@ -471,16 +430,6 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return fromMap === item;
     }
 
-    private updateOpenClosedVisibilityInColumnGroups(): void {
-        const allColumnGroups = this.getAllTrees();
-
-        depthFirstAllColumnTreeSearch(allColumnGroups, false, (child) => {
-            if (isColumnGroup(child)) {
-                child.calculateDisplayedColumns();
-            }
-        });
-    }
-
     public getFirstColumn(): AgColumn | null {
         const isRtl = this.gos.get('enableRtl');
         const queryOrder: ('leftCols' | 'centerCols' | 'rightCols')[] = ['leftCols', 'centerCols', 'rightCols'];
@@ -497,40 +446,6 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         }
 
         return null;
-    }
-
-    // returns the group with matching colId and instanceId. If instanceId is missing,
-    // matches only on the colId.
-    public getColumnGroup(colId: string | AgColumnGroup, partId?: number): AgColumnGroup | null {
-        if (!colId) {
-            return null;
-        }
-        if (isColumnGroup(colId)) {
-            return colId;
-        }
-
-        const allColumnGroups = this.getAllTrees();
-        const checkPartId = typeof partId === 'number';
-        let result: AgColumnGroup | null = null;
-
-        depthFirstAllColumnTreeSearch(allColumnGroups, false, (child) => {
-            if (isColumnGroup(child)) {
-                const columnGroup = child;
-                let matched: boolean;
-
-                if (checkPartId) {
-                    matched = colId === columnGroup.getGroupId() && partId === columnGroup.getPartId();
-                } else {
-                    matched = colId === columnGroup.getGroupId();
-                }
-
-                if (matched) {
-                    result = columnGroup;
-                }
-            }
-        });
-
-        return result;
     }
 
     // used by:
@@ -581,177 +496,12 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         return (isFirst ? allColumns[0] : _last(allColumns)) === columnToCompare;
     }
 
-    public createGroups(params: {
-        // all displayed columns sorted - this is the columns the grid should show
-        columns: AgColumn[];
-        // creates unique id's for the group
-        idCreator: GroupInstanceIdCreator;
-        // whether it's left, right or center col
-        pinned: ColumnPinnedType;
-        // we try to reuse old groups if we can, to allow gui to do animation
-        oldDisplayedGroups?: (AgColumn | AgColumnGroup)[];
-        // set `isStandaloneStructure` to true if this structure will not be used
-        // by the grid UI. This is useful for export modules (gridSerializer).
-        isStandaloneStructure?: boolean;
-    }): (AgColumn | AgColumnGroup)[] {
-        const { columns, idCreator, pinned, oldDisplayedGroups, isStandaloneStructure } = params;
-        const oldColumnsMapped = this.mapOldGroupsById(oldDisplayedGroups!);
-
-        /**
-         * The following logic starts at the leaf level of columns, iterating through them to build their parent
-         * groups when the parents match.
-         *
-         * The created groups are then added to an array, and similarly iterated on until we reach the top level.
-         *
-         * When row groups have no original parent, it's added to the result.
-         */
-        const topLevelResultCols: (AgColumn | AgColumnGroup)[] = [];
-
-        // this is an array of cols or col groups at one level of depth, starting from leaf and ending at root
-        let groupsOrColsAtCurrentLevel: (AgColumn | AgColumnGroup)[] = columns as AgColumn[];
-        while (groupsOrColsAtCurrentLevel.length) {
-            // store what's currently iterating so the function can build the next level of col groups
-            const currentlyIterating = groupsOrColsAtCurrentLevel;
-            groupsOrColsAtCurrentLevel = [];
-
-            // store the index of the last row which was different from the previous row, this is used as a slice
-            // index for finding the children to group together
-            let lastGroupedColIdx = 0;
-
-            // create a group of children from lastGroupedColIdx to the provided `to` parameter
-            const createGroupToIndex = (to: number) => {
-                const from = lastGroupedColIdx;
-                lastGroupedColIdx = to;
-
-                const previousNode = currentlyIterating[from];
-                const previousNodeProvided = isColumnGroup(previousNode)
-                    ? previousNode.getProvidedColumnGroup()
-                    : previousNode;
-                const previousNodeParent = previousNodeProvided.getOriginalParent() as AgProvidedColumnGroup | null;
-
-                if (previousNodeParent == null) {
-                    // if the last node was different, and had a null parent, then we add all the nodes to the final
-                    // results)
-                    for (let i = from; i < to; i++) {
-                        topLevelResultCols.push(currentlyIterating[i]);
-                    }
-                    return;
-                }
-
-                // the parent differs from the previous node, so we create a group from the previous node
-                // and add all to the result array, except the current node.
-                const newGroup = this.createColGroup(
-                    previousNodeParent,
-                    idCreator,
-                    oldColumnsMapped,
-                    pinned,
-                    isStandaloneStructure
-                );
-
-                for (let i = from; i < to; i++) {
-                    newGroup.addChild(currentlyIterating[i]);
-                }
-                groupsOrColsAtCurrentLevel.push(newGroup);
-            };
-
-            for (let i = 1; i < currentlyIterating.length; i++) {
-                const thisNode = currentlyIterating[i];
-                const thisNodeProvided = isColumnGroup(thisNode) ? thisNode.getProvidedColumnGroup() : thisNode;
-                const thisNodeParent = thisNodeProvided.getOriginalParent();
-
-                const previousNode = currentlyIterating[lastGroupedColIdx];
-                const previousNodeProvided = isColumnGroup(previousNode)
-                    ? previousNode.getProvidedColumnGroup()
-                    : previousNode;
-                const previousNodeParent = previousNodeProvided.getOriginalParent();
-
-                if (thisNodeParent !== previousNodeParent) {
-                    createGroupToIndex(i);
-                }
-            }
-
-            if (lastGroupedColIdx < currentlyIterating.length) {
-                createGroupToIndex(currentlyIterating.length);
-            }
-        }
-
-        if (!isStandaloneStructure) {
-            this.setupParentsIntoCols(topLevelResultCols, null);
-        }
-        return topLevelResultCols;
-    }
-
-    private createColGroup(
-        providedGroup: AgProvidedColumnGroup,
-        groupInstanceIdCreator: GroupInstanceIdCreator,
-        oldColumnsMapped: { [key: string]: AgColumnGroup },
-        pinned: ColumnPinnedType,
-        isStandaloneStructure?: boolean
-    ): AgColumnGroup {
-        const groupId = providedGroup.getGroupId();
-        const instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
-        const uniqueId = createUniqueColumnGroupId(groupId, instanceId);
-
-        let columnGroup: AgColumnGroup | null = oldColumnsMapped[uniqueId];
-
-        // if the user is setting new colDefs, it is possible that the id's overlap, and we
-        // would have a false match from above. so we double check we are talking about the
-        // same original column group.
-        if (columnGroup && columnGroup.getProvidedColumnGroup() !== providedGroup) {
-            columnGroup = null;
-        }
-
-        if (_exists(columnGroup)) {
-            // clean out the old column group here, as we will be adding children into it again
-            columnGroup.reset();
-        } else {
-            columnGroup = new AgColumnGroup(providedGroup, groupId, instanceId, pinned);
-            if (!isStandaloneStructure) {
-                this.createBean(columnGroup);
-            }
-        }
-
-        return columnGroup;
-    }
-
-    // returns back a 2d map of ColumnGroup as follows: groupId -> instanceId -> ColumnGroup
-    private mapOldGroupsById(displayedGroups: (AgColumn | AgColumnGroup)[]): {
-        [uniqueId: string]: AgColumnGroup;
-    } {
-        const result: { [uniqueId: HeaderColumnId]: AgColumnGroup } = {};
-
-        const recursive = (columnsOrGroups: (AgColumn | AgColumnGroup)[] | null) => {
-            columnsOrGroups!.forEach((columnOrGroup) => {
-                if (isColumnGroup(columnOrGroup)) {
-                    const columnGroup = columnOrGroup;
-                    result[columnOrGroup.getUniqueId()] = columnGroup;
-                    recursive(columnGroup.getChildren());
-                }
-            });
-        };
-
-        if (displayedGroups) {
-            recursive(displayedGroups);
-        }
-
-        return result;
-    }
-
-    private setupParentsIntoCols(
-        columnsOrGroups: (AgColumn | AgColumnGroup)[] | null,
-        parent: AgColumnGroup | null
-    ): void {
-        columnsOrGroups!.forEach((columnsOrGroup) => {
-            columnsOrGroup.setParent(parent);
-            if (isColumnGroup(columnsOrGroup)) {
-                const columnGroup = columnsOrGroup;
-                this.setupParentsIntoCols(columnGroup.getChildren(), columnGroup);
-            }
-        });
+    public createGroups(params: CreateGroupsParams): (AgColumn | AgColumnGroup)[] {
+        return this.columnGroupService ? this.columnGroupService.createColumnGroups(params) : params.columns;
     }
 }
 
-function depthFirstAllColumnTreeSearch(
+export function depthFirstAllColumnTreeSearch(
     tree: (AgColumn | AgColumnGroup)[] | null,
     useDisplayedChildren: boolean,
     callback: (treeNode: AgColumn | AgColumnGroup) => void

@@ -3,11 +3,11 @@ import { RowApiModule, ScrollApiModule } from './api/apiModule';
 import { ColumnAutosizeModule } from './columnAutosize/columnAutosizeModule';
 import { ColumnMoveModule } from './columnMove/columnMoveModule';
 import { ColumnResizeModule } from './columnResize/columnResizeModule';
+import { ColumnGroupModule } from './columns/columnGroups/columnGroupModule';
 import { ColumnHoverModule } from './columns/columnHover/columnHoverModule';
 import {
     ColumnApiModule,
     ColumnFlexModule,
-    ColumnGroupModule,
     DataTypeModule,
     GetColumnDefsApiModule,
     SelectionColumnModule,

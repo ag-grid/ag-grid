@@ -179,7 +179,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             result.push('rowUnGroup');
         } else if (allowRowGroup && column.isPrimary()) {
             if (column.isRowGroupActive()) {
-                const groupLocked = this.columnModel.isColGroupLocked(column);
+                const groupLocked = this.columnModel.isRowGroupColLocked(column);
                 if (!groupLocked) {
                     result.push('rowUnGroup');
                 }

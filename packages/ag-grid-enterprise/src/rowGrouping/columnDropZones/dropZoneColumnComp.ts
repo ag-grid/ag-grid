@@ -343,7 +343,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     private isGroupingAndLocked(): boolean {
-        return this.isGroupingZone() && this.columnModel.isColGroupLocked(this.column);
+        return this.isGroupingZone() && this.columnModel.isRowGroupColLocked(this.column);
     }
 
     private isAggregationZone() {

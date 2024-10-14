@@ -5,7 +5,6 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, Context } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
@@ -21,7 +20,6 @@ import type { ValueCache } from '../valueService/valueCache';
 import type { ColumnDefFactory } from './columnDefFactory';
 import { dispatchColumnPinnedEvent } from './columnEventUtils';
 import type { ColumnFactory } from './columnFactory';
-import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnState, ColumnStateService } from './columnStateService';
 import {
     GROUP_AUTO_COLUMN_ID,
@@ -369,37 +367,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.columnAnimationService?.finish();
     }
 
-    // called by headerRenderer - when a header is opened or closed
-    public setColumnGroupOpened(
-        key: AgProvidedColumnGroup | string | null,
-        newValue: boolean,
-        source: ColumnEventType
-    ): void {
-        let keyAsString: string;
-
-        if (isProvidedColumnGroup(key)) {
-            keyAsString = key.getId();
-        } else {
-            keyAsString = key || '';
-        }
-        this.columnStateService.setColumnGroupState([{ groupId: keyAsString, open: newValue }], source);
-    }
-
-    public getProvidedColGroup(key: string): AgProvidedColumnGroup | null {
-        let res: AgProvidedColumnGroup | null = null;
-
-        depthFirstOriginalTreeSearch(null, this.cols?.tree, (node) => {
-            if (isProvidedColumnGroup(node)) {
-                if (node.getId() === key) {
-                    res = node;
-                }
-            }
-        });
-
-        return res;
-    }
-
-    public isColGroupLocked(column: AgColumn): boolean {
+    public isRowGroupColLocked(column: AgColumn): boolean {
         const groupLockGroupColumns = this.gos.get('groupLockGroupColumns');
         if (!column.isRowGroupActive() || groupLockGroupColumns === 0) {
             return false;
@@ -667,7 +635,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public getColTree(): (AgColumn | AgProvidedColumnGroup)[] {
-        return this.cols.tree;
+        return this.cols?.tree ?? [];
     }
 
     // + columnSelectPanel

@@ -1,4 +1,4 @@
-import type { ColumnModel } from '../../../columns/columnModel';
+import type { ColumnGroupService } from '../../../columns/columnGroups/columnGroupService';
 import type { BeanCollection } from '../../../context/context';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnGroup } from '../../../interfaces/iColumn';
@@ -36,10 +36,10 @@ export interface IHeaderGroup {}
 export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> {}
 
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
-    private columnModel: ColumnModel;
+    private columnGroupService: ColumnGroupService;
 
     public wireBeans(beans: BeanCollection) {
-        this.columnModel = beans.columnModel;
+        this.columnGroupService = beans.columnGroupService!;
     }
 
     private params: IHeaderGroupParams;
@@ -90,7 +90,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
             }
 
             const newExpandedValue = !this.params.columnGroup.isExpanded();
-            this.columnModel.setColumnGroupOpened(
+            this.columnGroupService.setColumnGroupOpened(
                 (this.params.columnGroup as AgColumnGroup).getProvidedColumnGroup(),
                 newExpandedValue,
                 'uiColumnExpanded'

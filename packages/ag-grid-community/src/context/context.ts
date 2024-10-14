@@ -8,6 +8,7 @@ import type { ColumnResizeService } from '../columnResize/columnResizeService';
 import type { ColumnDefFactory } from '../columns/columnDefFactory';
 import type { ColumnFactory } from '../columns/columnFactory';
 import type { ColumnFlexService } from '../columns/columnFlexService';
+import type { ColumnGroupService } from '../columns/columnGroups/columnGroupService';
 import type { ColumnHoverService } from '../columns/columnHover/columnHoverService';
 import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnNameService } from '../columns/columnNameService';
@@ -293,6 +294,7 @@ export interface CoreBeanCollection {
     flashCellService?: FlashCellService;
     masterDetailService?: IMasterDetailService;
     tooltipService?: TooltipService;
+    columnGroupService?: ColumnGroupService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -351,26 +353,27 @@ export type BeanName =
     | 'chartTranslationService'
     | 'chartService'
     | 'clipboardService'
+    | 'columnAnimationService'
     | 'columnAutosizeService'
     | 'columnChooserFactory'
     | 'columnController'
     | 'columnDefFactory'
     | 'columnEditorFactory'
+    | 'columnFactory'
     | 'columnFilterService'
     | 'columnFlexService'
-    | 'columnResizeService'
-    | 'columnFactory'
-    | 'columnAnimationService'
+    | 'columnGroupService'
     | 'columnHoverService'
     | 'columnMenuFactory'
     | 'columnModel'
     | 'columnMoveService'
-    | 'columnPositionService'
     | 'columnNameService'
-    | 'columnViewportService'
+    | 'columnPositionService'
+    | 'columnResizeService'
     | 'columnStateService'
     | 'columnToolPanelFactory'
     | 'columnUtils'
+    | 'columnViewportService'
     | 'pivotResultColsService'
     | 'context'
     | 'contextMenuService'

@@ -77,6 +77,8 @@ type CommunityModuleName =
     | 'ColumnFilterMenuModule'
     | 'ColumnFilterModule'
     | 'ColumnFlexModule'
+    | 'ColumnGroupApiModule'
+    | 'ColumnGroupCoreModule'
     | 'ColumnGroupHeaderCompModule'
     | 'ColumnGroupModule'
     | 'ColumnHeaderCompModule'

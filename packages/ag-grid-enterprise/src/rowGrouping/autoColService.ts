@@ -4,6 +4,7 @@ import type {
     ColKey,
     ColumnEventType,
     ColumnFactory,
+    ColumnGroupService,
     ColumnModel,
     ColumnNameService,
     Context,
@@ -39,6 +40,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
     private columnFactory: ColumnFactory;
     private funcColsService: FuncColsService;
     private context: Context;
+    private columnGroupService?: ColumnGroupService;
 
     // group auto columns
     public autoCols: _ColumnCollections | null;
@@ -49,6 +51,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         this.columnFactory = beans.columnFactory;
         this.funcColsService = beans.funcColsService;
         this.context = beans.context;
+        this.columnGroupService = beans.columnGroupService;
     }
 
     public postConstruct(): void {
@@ -112,7 +115,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         }
 
         destroyPrevious();
-        const treeDepth = this.columnFactory.findDepth(cols.tree);
+        const treeDepth = this.columnGroupService?.findDepth(cols.tree) ?? 0;
         const tree = this.balanceTreeForAutoCols(list, treeDepth);
         this.autoCols = {
             list,

@@ -191,7 +191,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName,
                         disabled:
                             this.gos.get('functionsReadOnly') ||
-                            (underlyingColumn != null && this.columnModel.isColGroupLocked(underlyingColumn)),
+                            (underlyingColumn != null && this.columnModel.isRowGroupColLocked(underlyingColumn)),
                         action: () => this.funcColsService.removeRowGroupColumns([showRowGroup], source),
                         icon: icon,
                     };
@@ -206,7 +206,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         this.gos.get('functionsReadOnly') ||
                         !column?.isRowGroupActive() ||
                         !column?.getColDef().enableRowGroup ||
-                        this.columnModel.isColGroupLocked(column),
+                        this.columnModel.isRowGroupColLocked(column),
                     action: () => this.funcColsService.removeRowGroupColumns([column], source),
                     icon: icon,
                 };

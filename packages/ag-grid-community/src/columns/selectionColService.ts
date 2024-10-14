@@ -7,7 +7,7 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { ColumnEventType } from '../events';
 import { _getCheckboxes, _getHeaderCheckbox } from '../gridOptionsUtils';
 import type { IAutoColService } from '../interfaces/iAutoColService';
-import type { ColumnFactory } from './columnFactory';
+import type { ColumnGroupService } from './columnGroups/columnGroupService';
 import type { ColKey, ColumnCollections, ColumnModel } from './columnModel';
 import {
     _areColIdsEqual,
@@ -24,7 +24,7 @@ export class SelectionColService extends BeanStub implements NamedBean {
     beanName = 'selectionColService' as const;
 
     private context: Context;
-    private columnFactory: ColumnFactory;
+    private columnGroupService?: ColumnGroupService;
     private autoColService?: IAutoColService;
     private columnModel: ColumnModel;
 
@@ -33,7 +33,7 @@ export class SelectionColService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.context = beans.context;
-        this.columnFactory = beans.columnFactory;
+        this.columnGroupService = beans.columnGroupService;
         this.autoColService = beans.autoColService;
         this.columnModel = beans.columnModel;
     }
@@ -79,7 +79,7 @@ export class SelectionColService extends BeanStub implements NamedBean {
         }
 
         destroyCollection();
-        const treeDepth = this.columnFactory.findDepth(cols.tree);
+        const treeDepth = this.columnGroupService?.findDepth(cols.tree) ?? 0;
         const tree = this.autoColService?.balanceTreeForAutoCols(list, treeDepth) ?? [];
         this.selectionCols = {
             list,

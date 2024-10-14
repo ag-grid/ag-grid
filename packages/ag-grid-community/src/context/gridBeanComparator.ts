@@ -24,6 +24,7 @@ const orderedCoreBeans: BeanName[] = [
     'validationService',
     'pinnedRowModel',
     'dragService',
+    'columnGroupService',
     'visibleColsService',
     'eventService',
     'gos',

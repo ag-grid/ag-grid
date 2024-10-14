@@ -10,6 +10,7 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
 // columns
 export type { ColumnFactory } from './columns/columnFactory';
+export type { ColumnGroupService } from './columns/columnGroups/columnGroupService';
 export type { ColumnModel } from './columns/columnModel';
 export { ColumnCollections as _ColumnCollections, ColKey } from './columns/columnModel';
 export type { ColumnAutosizeService } from './columnAutosize/columnAutosizeService';

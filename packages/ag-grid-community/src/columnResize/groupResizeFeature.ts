@@ -1,5 +1,5 @@
 import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
-import type { VisibleColsService } from '../columns/visibleColsService';
+import type { ColumnGroupService } from '../columns/columnGroups/columnGroupService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { HorizontalResizeService } from '../dragAndDrop/horizontalResizeService';
@@ -23,14 +23,14 @@ interface ColumnSizeAndRatios {
 export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private horizontalResizeService: HorizontalResizeService;
     private autoWidthCalculator: AutoWidthCalculator;
-    private visibleColsService: VisibleColsService;
+    private columnGroupService?: ColumnGroupService;
     private columnResizeService?: ColumnResizeService;
     private columnAutosizeService?: ColumnAutosizeService;
 
     public wireBeans(beans: BeanCollection) {
         this.horizontalResizeService = beans.horizontalResizeService!;
         this.autoWidthCalculator = beans.autoWidthCalculator!;
-        this.visibleColsService = beans.visibleColsService;
+        this.columnGroupService = beans.columnGroupService;
         this.columnResizeService = beans.columnResizeService;
         this.columnAutosizeService = beans.columnAutosizeService;
     }
@@ -113,7 +113,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         let groupAfter: AgColumnGroup | null = null;
 
         if (shiftKey) {
-            groupAfter = this.visibleColsService.getGroupAtDirection(this.columnGroup, 'After');
+            groupAfter = this.columnGroupService?.getGroupAtDirection(this.columnGroup, 'After') ?? null;
         }
 
         if (groupAfter) {

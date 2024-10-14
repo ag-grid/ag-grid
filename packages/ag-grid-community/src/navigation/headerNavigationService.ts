@@ -1,3 +1,4 @@
+import type { ColumnGroupService } from '../columns/columnGroups/columnGroupService';
 import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { NamedBean } from '../context/bean';
@@ -59,12 +60,14 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     private ctrlsService: CtrlsService;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
+    private columnGroupService?: ColumnGroupService;
 
     public wireBeans(beans: BeanCollection): void {
         this.focusService = beans.focusService;
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
+        this.columnGroupService = beans.columnGroupService;
     }
 
     private gridBodyCon: GridBodyCtrl;
@@ -88,7 +91,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         if (typeof colKey === 'string') {
             column = this.columnModel.getCol(colKey);
             if (!column) {
-                column = this.visibleColsService.getColumnGroup(colKey);
+                column = this.columnGroupService?.getColumnGroup(colKey) ?? null;
             }
         } else {
             column = colKey as AgColumn | AgColumnGroup;
@@ -303,7 +306,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         let getColMethod: 'getColBefore' | 'getColAfter';
 
         if (isColumnGroup(focusedHeader.column)) {
-            nextColumn = this.visibleColsService.getGroupAtDirection(focusedHeader.column, direction)!;
+            nextColumn = this.columnGroupService?.getGroupAtDirection(focusedHeader.column, direction)!;
         } else {
             getColMethod = `getCol${direction}` as any;
             nextColumn = this.visibleColsService[getColMethod](focusedHeader.column as AgColumn)!;
@@ -426,7 +429,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         const type = childContainer?.getRowType(level);
 
         if (type == HeaderRowType.COLUMN_GROUP) {
-            const columnGroup = this.visibleColsService.getColGroupAtLevel(column, level);
+            const columnGroup = this.columnGroupService?.getColGroupAtLevel(column, level);
             return {
                 headerRowIndex: level,
                 column: columnGroup!,
