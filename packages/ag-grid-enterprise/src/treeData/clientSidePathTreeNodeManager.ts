@@ -80,7 +80,7 @@ export class ClientSidePathTreeNodeManager<TData>
                 do {
                     node = node.upsertKey(path[level++]);
                 } while (level < pathLength);
-                this.treeUpsert(node, row, update);
+                this.treeSetRow(node, row, update);
             }
         }
     }

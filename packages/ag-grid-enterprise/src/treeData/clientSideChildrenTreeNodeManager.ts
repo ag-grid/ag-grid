@@ -52,7 +52,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
             allLeafChildren.push(row);
 
             parent = parent.upsertKey(row.id!);
-            this.treeUpsert(parent, row, false);
+            this.treeSetRow(parent, row, false);
 
             const children = childrenGetter(data);
             if (children) {

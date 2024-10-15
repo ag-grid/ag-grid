@@ -121,7 +121,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
     }
 
     /** Add or updates the row to a non-root node, preparing the tree correctly for the commit. */
-    protected treeUpsert(node: TreeNode, newRow: RowNode, update: boolean): void {
+    protected treeSetRow(node: TreeNode, newRow: RowNode, update: boolean): void {
         const { level, row: oldRow } = node;
         if (level < 0) {
             return; // Cannot overwrite the root row
