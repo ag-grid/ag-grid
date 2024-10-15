@@ -3,7 +3,6 @@ import type { ChangedPath, GetDataPath, NamedBean, RowNode, RowNodeTransaction }
 
 import { AbstractClientSideTreeNodeManager } from './abstractClientSideTreeNodeManager';
 import type { TreeNode } from './treeNode';
-import { EMPTY_ARRAY } from './treeNode';
 
 export class ClientSidePathTreeNodeManager<TData>
     extends AbstractClientSideTreeNodeManager<TData>
@@ -70,27 +69,17 @@ export class ClientSidePathTreeNodeManager<TData>
     private addOrUpdateRows(getDataPath: GetDataPath | undefined, rows: RowNode[] | null, update: boolean): void {
         for (let i = 0, len = rows?.length ?? 0; i < len; ++i) {
             const row = rows![i];
-
-            const data = row.data;
-            const path = getDataPath?.(data) || EMPTY_ARRAY;
-            if (!path.length) {
-                _warn(185, { data });
-            }
-
-            // Gets the last node of a path. Inserts filler nodes where needed.
-            let node: TreeNode | undefined;
-            let parent: TreeNode | null = this.treeRoot;
-            const stop = path.length - 1;
-            for (let level = 0; level <= stop; ++level) {
-                node = parent.upsertKey(path[level]);
-                if (level >= stop) {
-                    node.invalidate();
-                    break;
-                }
-                parent = node;
-            }
-
-            if (node) {
+            const path = getDataPath?.(row.data);
+            const pathLength = path?.length;
+            if (!pathLength) {
+                _warn(185, { data: row.data });
+            } else {
+                // Gets the last node of a path. Inserts filler nodes where needed.
+                let level = 0;
+                let node = this.treeRoot;
+                do {
+                    node = node.upsertKey(path[level++]);
+                } while (level < pathLength);
                 this.treeUpsert(node, row, update);
             }
         }
