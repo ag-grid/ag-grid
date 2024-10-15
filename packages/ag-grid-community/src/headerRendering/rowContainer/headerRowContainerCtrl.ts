@@ -14,6 +14,7 @@ import type { ScrollVisibleService } from '../../gridBodyComp/scrollVisibleServi
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { HeaderPosition } from '../../interfaces/iHeaderPosition';
 import type { PinnedColumnService } from '../../pinnedColumns/pinnedColumnService';
+import { getHeaderRowCount } from '../headerUtils';
 import { HeaderRowType } from '../row/headerRowComp';
 import { HeaderRowCtrl } from '../row/headerRowCtrl';
 
@@ -102,7 +103,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         const focusedHeaderPosition = this.focusService.getFocusHeaderToUseAfterRefresh();
 
         const refreshColumnGroups = () => {
-            const groupRowCount = this.columnModel.getHeaderRowCount() - 1;
+            const groupRowCount = getHeaderRowCount(this.columnModel) - 1;
 
             this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
 

@@ -1,9 +1,11 @@
+import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { IAggFunc } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType } from '../events';
+import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
@@ -18,9 +20,10 @@ import {
     dispatchColumnResizedEvent,
     dispatchColumnVisibleEvent,
 } from './columnEventUtils';
-import type { ColumnModel } from './columnModel';
+import type { ColumnCollections, ColumnModel } from './columnModel';
 import { GROUP_AUTO_COLUMN_ID, _getColumnsFromTree, isColumnSelectionCol } from './columnUtils';
 import type { FuncColsService } from './funcColsService';
+import type { SelectionColService } from './selectionColService';
 import type { VisibleColsService } from './visibleColsService';
 
 export interface ModifyColumnsNoEventsCallbacks {
@@ -80,6 +83,8 @@ export class ColumnStateService extends BeanStub implements NamedBean {
     private visibleColsService: VisibleColsService;
     private columnAnimationService?: ColumnAnimationService;
     private pivotResultColsService?: IPivotResultColsService;
+    private autoColService?: IAutoColService;
+    private selectionColService?: SelectionColService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
@@ -88,6 +93,8 @@ export class ColumnStateService extends BeanStub implements NamedBean {
         this.visibleColsService = beans.visibleColsService;
         this.columnAnimationService = beans.columnAnimationService;
         this.pivotResultColsService = beans.pivotResultColsService;
+        this.autoColService = beans.autoColService;
+        this.selectionColService = beans.selectionColService;
     }
 
     public applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType): boolean {
@@ -209,16 +216,16 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
             // sync newly created auto group columns with ColumnState
             syncColStates(
-                (colId: string) => this.columnModel.getAutoCol(colId),
+                (colId: string) => this.autoColService?.getAutoCol(colId) ?? null,
                 autoColStates,
-                this.columnModel.getAutoCols()?.slice()
+                this.autoColService?.getAutoCols()?.slice()
             );
 
             // sync selection columns with ColumnState
             syncColStates(
-                (colId: string) => this.columnModel.getSelectionCol(colId),
+                (colId: string) => this.selectionColService?.getSelectionCol(colId) ?? null,
                 selectionColStates,
-                this.columnModel.getSelectionCols()?.slice()
+                this.selectionColService?.getSelectionCols()?.slice()
             );
 
             this.orderLiveColsLikeState(params);
@@ -276,7 +283,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
         let letPivotIndex = 1000;
 
         let colsToProcess: AgColumn[] = [];
-        const groupAutoCols = this.columnModel.getAutoCols();
+        const groupAutoCols = this.autoColService?.getAutoCols();
         if (groupAutoCols) {
             colsToProcess = colsToProcess.concat(groupAutoCols);
         }
@@ -521,7 +528,62 @@ export class ColumnStateService extends BeanStub implements NamedBean {
                 colIds.push(item.colId);
             }
         });
-        this.columnModel.sortColsLikeKeys(colIds);
+        this.sortColsLikeKeys(this.columnModel.cols, colIds);
+    }
+
+    private sortColsLikeKeys(cols: ColumnCollections | undefined, colIds: string[]): void {
+        if (cols == null) {
+            return;
+        }
+
+        let newOrder: AgColumn[] = [];
+        const processedColIds: { [id: string]: boolean } = {};
+
+        colIds.forEach((colId) => {
+            if (processedColIds[colId]) {
+                return;
+            }
+            const col = cols.map[colId];
+            if (col) {
+                newOrder.push(col);
+                processedColIds[colId] = true;
+            }
+        });
+
+        // add in all other columns
+        let autoGroupInsertIndex = 0;
+        cols.list.forEach((col) => {
+            const colId = col.getColId();
+            const alreadyProcessed = processedColIds[colId] != null;
+            if (alreadyProcessed) {
+                return;
+            }
+
+            const isAutoGroupCol = colId.startsWith(GROUP_AUTO_COLUMN_ID);
+            if (isAutoGroupCol) {
+                // auto group columns, if missing from state list, are added to the start.
+                // it's common to have autoGroup missing, as grouping could be on by default
+                // on a column, but the user could of since removed the grouping via the UI.
+                // if we don't inc the insert index, autoGroups will be inserted in reverse order
+                newOrder.splice(autoGroupInsertIndex++, 0, col);
+            } else {
+                // normal columns, if missing from state list, are added at the end
+                newOrder.push(col);
+            }
+        });
+
+        // this is already done in updateCols, however we changed the order above (to match the order of the state
+        // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
+        // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
+        // is less sexy for the code here, but it keeps consistency.
+        newOrder = placeLockedColumns(newOrder, this.gos);
+
+        if (!doesMovePassMarryChildren(newOrder, this.columnModel.getColTree())) {
+            _warn(39);
+            return;
+        }
+
+        cols.list = newOrder;
     }
 
     // calculates what events to fire between column state changes. gets used when:

@@ -28,7 +28,7 @@ export class ColumnFactory extends BeanStub implements NamedBean {
     }
 
     public createColumnTree(
-        defs: (ColDef | ColGroupDef)[] | null,
+        defs: (ColDef | ColGroupDef)[] | null | undefined = null,
         primaryColumns: boolean,
         existingTree: (AgColumn | AgProvidedColumnGroup)[] | undefined,
         source: ColumnEventType

@@ -1,5 +1,11 @@
 import type { _ModuleWithApi, _ModuleWithoutApi, _RowGroupingGridApi } from 'ag-grid-community';
-import { ColumnFilterModule, FloatingFilterModule, PopupModule, StickyRowModule } from 'ag-grid-community';
+import {
+    ColumnFilterModule,
+    ColumnGroupCoreModule,
+    FloatingFilterModule,
+    PopupModule,
+    StickyRowModule,
+} from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { AggregationModule } from '../aggregation/aggregationModule';
@@ -76,7 +82,7 @@ export const RowGroupingCoreModule: _ModuleWithoutApi = {
 export const PivotModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('PivotModule'),
     beans: [PivotResultColsService, PivotColDefService, PivotStage],
-    dependsOn: [RowGroupingCoreModule],
+    dependsOn: [RowGroupingCoreModule, ColumnGroupCoreModule],
 };
 
 export const RowGroupingApiModule: _ModuleWithApi<_RowGroupingGridApi<any>> = {

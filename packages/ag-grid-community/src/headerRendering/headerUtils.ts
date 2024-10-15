@@ -1,6 +1,12 @@
+import type { ColumnModel } from '../columns/columnModel';
 import type { BeanCollection } from '../context/context';
 import type { HeaderGroupCellCtrl } from './cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderRowCtrl } from './row/headerRowCtrl';
+
+// + gridPanel -> for resizing the body and setting top margin
+export function getHeaderRowCount(columnModel: ColumnModel): number {
+    return columnModel.cols ? columnModel.cols.treeDepth + 1 : -1;
+}
 
 export function getGroupRowsHeight(beans: BeanCollection): number[] {
     const heights: number[] = [];

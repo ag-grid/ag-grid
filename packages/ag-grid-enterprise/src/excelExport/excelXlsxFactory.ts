@@ -8,7 +8,7 @@ import type {
     ExcelWorksheet,
     RowHeightCallbackParams,
 } from 'ag-grid-community';
-import { ExcelFactoryMode, _escapeString, _warn } from 'ag-grid-community';
+import { ExcelFactoryMode, _escapeString, _getHeaderRowCount, _warn } from 'ag-grid-community';
 
 import type {
     ExcelCalculatedImage,
@@ -141,7 +141,7 @@ function processTableConfig(worksheet: ExcelWorksheet, config: ExcelGridSerializ
     const sheetIndex = XLSX_SHEET_NAMES.length - 1;
     const { table } = worksheet;
     const { rows, columns } = table;
-    const headerRowCount = config.columnModel.getHeaderRowCount();
+    const headerRowCount = _getHeaderRowCount(config.columnModel);
     const tableHeaderRowIndex: number = headerRowCount - 1; // Assuming that header starts at row 0
     const tableRowCount = rows.length;
     const tableColCount = columns.length;

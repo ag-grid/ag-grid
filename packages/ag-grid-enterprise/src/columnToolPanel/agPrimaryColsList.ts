@@ -255,7 +255,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private buildTreeFromProvidedColumnDefs(): void {
         // add column / group comps to tool panel
         this.buildListModel(this.columnModel.getColDefColTree());
-        this.groupsExist = this.columnModel.isProvidedColGroupsPresent();
+        this.groupsExist = !!this.columnModel.colDefCols?.treeDepth;
     }
 
     private buildListModel(columnTree: (AgColumn | AgProvidedColumnGroup)[]): void {

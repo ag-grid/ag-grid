@@ -16,6 +16,7 @@ import { Component, DragSourceType, KeyCode, RefPlaceholder, _loadTemplate } fro
 
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { VirtualList } from '../../widgets/virtualList';
+import { isRowGroupColLocked } from '../rowGroupingUtils';
 import type { TDropZone } from './baseDropZonePanel';
 
 export class DropZoneColumnComp extends PillDragComp<AgColumn> {
@@ -343,7 +344,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     private isGroupingAndLocked(): boolean {
-        return this.isGroupingZone() && this.columnModel.isRowGroupColLocked(this.column);
+        return this.isGroupingZone() && isRowGroupColLocked(this.funcColsService, this.gos, this.column);
     }
 
     private isAggregationZone() {

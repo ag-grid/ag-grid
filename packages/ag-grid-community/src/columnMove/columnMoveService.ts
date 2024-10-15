@@ -78,7 +78,8 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         const movedColumns = this.columnModel.getColsForKeys(columnsToMoveKeys);
 
         if (this.doesMovePassRules(movedColumns, toIndex)) {
-            this.columnModel.moveInCols(movedColumns, toIndex, source);
+            _moveInArray(this.columnModel.getCols(), movedColumns, toIndex);
+            this.visibleColsService.refresh(source);
             this.eventService.dispatchEvent({
                 type: 'columnMoved',
                 columns: movedColumns,

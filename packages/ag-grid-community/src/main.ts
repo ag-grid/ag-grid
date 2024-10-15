@@ -301,7 +301,10 @@ export type {
     IAbstractHeaderCellComp,
 } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 export { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerCtrl';
-export { getFloatingFiltersHeight as _getFloatingFiltersHeight } from './headerRendering/headerUtils';
+export {
+    getFloatingFiltersHeight as _getFloatingFiltersHeight,
+    getHeaderRowCount as _getHeaderRowCount,
+} from './headerRendering/headerUtils';
 
 // misc
 export { _requestAnimationFrame } from './misc/animationFrameService';
@@ -1009,6 +1012,7 @@ export { PopupModule } from './widgets/popupModule';
 export { SharedMenuModule } from './misc/menu/sharedMenuModule';
 export { KeyboardNavigationCoreModule } from './navigation/navigationModule';
 export { FlashCellModule } from './rendering/cell/flashCellModule';
+export { ColumnGroupCoreModule } from './columns/columnGroups/columnGroupModule';
 
 //  events
 export * from './events';
