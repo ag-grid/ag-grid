@@ -89,6 +89,7 @@ import type { CellFlashService } from '../rendering/cell/cellFlashService';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { StickyRowService } from '../rendering/features/stickyRowService';
 import type { OverlayService } from '../rendering/overlays/overlayService';
+import type { RowAutoHeightService } from '../rendering/row/rowAutoHeightService';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { RowNodeSorter } from '../sort/rowNodeSorter';
@@ -295,6 +296,7 @@ export interface CoreBeanCollection {
     masterDetailService?: IMasterDetailService;
     tooltipService?: TooltipService;
     columnGroupService?: ColumnGroupService;
+    rowAutoHeightService?: RowAutoHeightService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -444,6 +446,7 @@ export type BeanName =
     | 'pageBoundsService'
     | 'registry'
     | 'renderStatusService'
+    | 'rowAutoHeightService'
     | 'rowContainerHeightService'
     | 'rowDragService'
     | 'rowEditService'

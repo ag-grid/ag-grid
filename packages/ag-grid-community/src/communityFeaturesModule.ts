@@ -38,6 +38,7 @@ import { ColumnAnimationModule } from './rendering/columnAnimationModule';
 import { StickyRowModule } from './rendering/features/stickyRowModule';
 import { OverlayModule } from './rendering/overlays/overlayModule';
 import { RenderApiModule } from './rendering/renderModule';
+import { RowAutoHeightModule } from './rendering/row/rowAutoHeightModule';
 import { RowSelectionModule } from './selection/rowSelectionModule';
 import { SortModule } from './sort/sortModule';
 import { CellStyleModule, RowStyleModule } from './styling/stylingModule';
@@ -97,5 +98,6 @@ export const CommunityFeaturesModule: _ModuleWithoutApi = {
         TooltipModule,
         PinnedColumnModule,
         LocaleModule,
+        RowAutoHeightModule,
     ],
 };

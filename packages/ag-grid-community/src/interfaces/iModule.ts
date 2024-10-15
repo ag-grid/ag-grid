@@ -145,6 +145,7 @@ type CommunityModuleName =
     | 'ReadOnlyFloatingFilterModule'
     | 'RenderApiModule'
     | 'RowApiModule'
+    | 'RowAutoHeightModule'
     | 'RowDragApiModule'
     | 'RowDragCoreModule'
     | 'RowDragModule'
