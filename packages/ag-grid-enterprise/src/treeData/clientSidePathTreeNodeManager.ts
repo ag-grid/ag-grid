@@ -58,7 +58,7 @@ export class ClientSidePathTreeNodeManager<TData>
         for (let i = 0, len = rows?.length ?? 0; i < len; ++i) {
             const row = rows![i];
             const node = row.treeNode as TreeNode | null;
-            if (node !== null) {
+            if (node) {
                 this.treeRemove(node, row);
             }
         }
