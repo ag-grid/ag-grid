@@ -12,7 +12,9 @@
                 "url": "./status-bar/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["IStatusPanelComp"],
+                "exclude": [
+                    "IStatusPanelComp"
+                ],
                 "include": []
             }
         },
@@ -22,7 +24,9 @@
                 "url": "./side-bar/"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["IToolPanelComp"],
+                "exclude": [
+                    "IToolPanelComp"
+                ],
                 "include": []
             }
         },
@@ -172,13 +176,13 @@
         "defaultColGroupDef": {
             "more": {
                 "name": "Default Column Group Definition",
-                "url": "./column-definitions/#default-column-definitions"
+                "url": "./column-groups/#group-defaults"
             }
         },
         "columnTypes": {
             "more": {
                 "name": "Custom Column Types",
-                "url": "./column-definitions/#default-column-definitions"
+                "url": "./column-definitions/#column-types"
             }
         },
         "dataTypeDefinitions": {
@@ -586,7 +590,9 @@
                 "url": "./integrated-charts-customisation/#custom-chart-themes"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["AgChartThemeDefinition"]
+                "exclude": [
+                    "AgChartThemeDefinition"
+                ]
             }
         },
         "chartThemeOverrides": {
@@ -595,7 +601,9 @@
                 "url": "./integrated-charts-customisation/#overriding-themes"
             },
             "interfaceHierarchyOverrides": {
-                "exclude": ["AgChartThemeOverrides"]
+                "exclude": [
+                    "AgChartThemeOverrides"
+                ]
             }
         },
         "chartToolPanelsDef": {
@@ -1588,7 +1596,9 @@
             },
             "interfaceHierarchyOverrides": {
                 "exclude": [],
-                "include": ["IViewportDatasourceParams"]
+                "include": [
+                    "IViewportDatasourceParams"
+                ]
             }
         },
         "viewportRowModelPageSize": {
