@@ -175,9 +175,8 @@ interface BaseRowNode<TData = any> {
     /** If using quick filter, stores a string representation of the row for searching against. */
     quickFilterAggregateText: string | null;
 
-    /**`true` if this row is a master row, part of master / detail (ie row can be expanded to show detail). */
+    /** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail). */
     master: boolean;
-
     /** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row). */
     detail: boolean | undefined;
 }
