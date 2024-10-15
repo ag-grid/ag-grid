@@ -1,5 +1,3 @@
-import test from 'node:test';
-
 import type { GridOptions } from './entities/gridOptions';
 
 export const INITIAL_GRID_OPTION_KEYS = {
