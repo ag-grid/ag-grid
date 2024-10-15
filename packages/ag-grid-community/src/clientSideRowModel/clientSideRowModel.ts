@@ -4,7 +4,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
-import { RowNode } from '../entities/rowNode';
+import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
 import type { Environment } from '../environment';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
 import {
@@ -28,11 +28,11 @@ import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _insertIntoArray, _last, _removeFromArray } from '../utils/array';
+import { _last, _removeFromArray } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _debounce } from '../utils/function';
-import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
-import { _logError } from '../validation/logging';
+import { _exists, _missing } from '../utils/generic';
+import { _error } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
 import { ClientSideNodeManager } from './clientSideNodeManager';
 import { updateRowNodeAfterFilter } from './filterStage';
@@ -375,7 +375,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
 
         rowNodes.forEach((rowNode, idx) => {
-            _insertIntoArray(allLeafChildren, rowNode, Math.max(indexAtPixelNow + increment, 0) + idx);
+            allLeafChildren.splice(Math.max(indexAtPixelNow + increment, 0) + idx, 0, rowNode);
         });
 
         rowNodes.forEach((rowNode: ClientSideRowModelRowNode, index) => {
@@ -574,7 +574,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // the impacted parent rows are recalculated, parents who's children have
         // not changed are not impacted.
 
-        const noTransactions = _missingOrEmpty(rowNodeTransactions);
+        const noTransactions = !rowNodeTransactions?.length;
 
         const changedPath = new ChangedPath(false, this.rootNode);
 
@@ -620,7 +620,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (_missing(paramsStep)) {
-            _logError(10, { step, stepsMapped });
+            _error(10, { step, stepsMapped });
             return undefined;
         }
         const animate = !this.gos.get('suppressAnimationFrame');
@@ -1087,7 +1087,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public getRowNode(id: string): RowNode | undefined {
         // although id is typed a string, this could be called by the user, and they could have passed a number
-        const idIsGroup = typeof id == 'string' && id.indexOf(RowNode.ID_PREFIX_ROW_GROUP) == 0;
+        const idIsGroup = typeof id == 'string' && id.indexOf(ROW_ID_PREFIX_ROW_GROUP) == 0;
 
         if (idIsGroup) {
             // only one users complained about getRowNode not working for groups, after years of

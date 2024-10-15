@@ -23,7 +23,7 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import { _parseDateTimeFromString, _serialiseDate } from '../utils/date';
 import { _toStringOrNull } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import type { ValueService } from '../valueService/valueService';
 import type { ColumnModel } from './columnModel';
 import { convertSourceType } from './columnModel';
@@ -184,7 +184,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             mergedDataTypeDefinition = this.mergeDataTypeDefinitions(baseDataTypeDefinition, dataTypeDefinition);
         } else {
             if (alreadyProcessedDataTypes.includes(extendsCellDataType)) {
-                _logWarn(44);
+                _warn(44);
                 return undefined;
             }
             const extendedDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
@@ -218,11 +218,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
         parentCellDataType: string
     ): boolean {
         if (!parentDataTypeDefinition) {
-            _logWarn(45, { parentCellDataType });
+            _warn(45, { parentCellDataType });
             return false;
         }
         if (parentDataTypeDefinition.baseDataType !== dataTypeDefinition.baseDataType) {
-            _logWarn(46);
+            _warn(46);
             return false;
         }
         return true;
@@ -309,7 +309,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
         const dataTypeDefinition = this.dataTypeDefinitions[cellDataType as string];
         if (!dataTypeDefinition) {
-            _logWarn(47, { cellDataType });
+            _warn(47, { cellDataType });
             return undefined;
         }
         colDef.cellDataType = cellDataType;
@@ -573,7 +573,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     public validateColDef(colDef: ColDef): void {
-        const warning = (property: 'Formatter' | 'Parser') => _logWarn(48, { property });
+        const warning = (property: 'Formatter' | 'Parser') => _warn(48, { property });
         if (colDef.cellDataType === 'object') {
             if (
                 colDef.valueFormatter === this.dataTypeDefinitions.object.groupSafeValueFormatter &&

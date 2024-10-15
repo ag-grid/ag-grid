@@ -1,4 +1,6 @@
 import type { _ColumnGridApi, _GetColumnDefsApi } from '../api/gridApi';
+import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
+import { ColumnGroupHeaderCompModule } from '../headerRendering/cells/headerModule';
 import { baseCommunityModule } from '../interfaces/iModule';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { CheckboxCellRendererModule } from '../rendering/cellRenderers/cellRendererModule';
@@ -38,8 +40,8 @@ import {
 } from './columnApi';
 import { ColumnDefFactory } from './columnDefFactory';
 import { ColumnFlexService } from './columnFlexService';
-import { ControlsColService } from './controlsColService';
 import { DataTypeService } from './dataTypeService';
+import { SelectionColService } from './selectionColService';
 
 export const DataTypeModule: _ModuleWithoutApi = {
     ...baseCommunityModule('DataTypeModule'),
@@ -47,9 +49,9 @@ export const DataTypeModule: _ModuleWithoutApi = {
     dependsOn: [CheckboxCellRendererModule],
 };
 
-export const ControlsColumnModule: _ModuleWithoutApi = {
-    ...baseCommunityModule('ControlsColumnModule'),
-    beans: [ControlsColService],
+export const SelectionColumnModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('SelectionColumnModule'),
+    beans: [SelectionColService],
 };
 
 export const GetColumnDefsApiModule: _ModuleWithApi<_GetColumnDefsApi<any>> = {
@@ -100,4 +102,10 @@ export const ColumnApiModule: _ModuleWithApi<_ColumnGridApi<any>> = {
         getRightDisplayedColumnGroups,
         getAllDisplayedColumnGroups,
     },
+};
+
+export const ColumnGroupModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('ColumnGroupModule'),
+    dynamicBeans: [{ name: 'headerGroupCellCtrl', classImp: HeaderGroupCellCtrl as any }],
+    dependsOn: [ColumnGroupHeaderCompModule],
 };

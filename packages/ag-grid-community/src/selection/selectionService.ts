@@ -1,6 +1,6 @@
 import type { NamedBean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
-import type { RowSelectionMode } from '../entities/gridOptions';
+import type { RowSelectionMode, SelectAllMode } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { RowSelectedEvent, SelectionEventSourceType } from '../events';
 import { isSelectionUIEvent } from '../events';
@@ -19,9 +19,8 @@ import type { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } fr
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import { _last } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
-import { _warnOnce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
-import { _logError } from '../validation/logging';
+import { _error, _warn } from '../validation/logging';
 import { BaseSelectionService } from './baseSelectionService';
 import { RowRangeSelectionContext } from './rowRangeSelectionContext';
 
@@ -93,7 +92,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         if (nodes.length === 0) return 0;
 
         if (nodes.length > 1 && !this.isMultiSelect()) {
-            _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
+            _warn(130);
             return 0;
         }
 
@@ -106,7 +105,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         if (rangeSelect) {
             if (filteredNodes.length > 1) {
-                _warnOnce('cannot range select while selecting multiple rows');
+                _warn(131);
                 return 0;
             }
 
@@ -451,22 +450,18 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         return count === 0;
     }
 
-    public deselectAllRowNodes(params: {
-        source: SelectionEventSourceType;
-        justFiltered?: boolean;
-        justCurrentPage?: boolean;
-    }) {
+    public deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }) {
         const callback = (rowNode: RowNode) => rowNode.selectThisNode(false, undefined, source);
         const rowModelClientSide = _isClientSideRowModel(this.gos);
 
-        const { source, justFiltered, justCurrentPage } = params;
+        const { source, selectAll } = params;
 
-        if (justCurrentPage || justFiltered) {
+        if (selectAll === 'currentPage' || selectAll === 'filtered') {
             if (!rowModelClientSide) {
-                _logError(102);
+                _error(102);
                 return;
             }
-            this.getNodesToSelect(justFiltered, justCurrentPage).forEach(callback);
+            this.getNodesToSelect(selectAll).forEach(callback);
         } else {
             this.selectedNodes.forEach((rowNode: RowNode) => {
                 // remember the reference can be to null, as we never 'delete' from the map
@@ -488,10 +483,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         this.dispatchSelectionChanged(source);
     }
 
-    private getSelectedCounts(
-        justFiltered?: boolean | undefined,
-        justCurrentPage?: boolean | undefined
-    ): {
+    private getSelectedCounts(selectAll?: SelectAllMode): {
         selectedCount: number;
         notSelectedCount: number;
     } {
@@ -512,15 +504,12 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             }
         };
 
-        this.getNodesToSelect(justFiltered, justCurrentPage).forEach(callback);
+        this.getNodesToSelect(selectAll).forEach(callback);
         return { selectedCount, notSelectedCount };
     }
 
-    public getSelectAllState(
-        justFiltered?: boolean | undefined,
-        justCurrentPage?: boolean | undefined
-    ): boolean | null {
-        const { selectedCount, notSelectedCount } = this.getSelectedCounts(justFiltered, justCurrentPage);
+    public getSelectAllState(selectAll?: SelectAllMode): boolean | null {
+        const { selectedCount, notSelectedCount } = this.getSelectedCounts(selectAll);
         // if no rows, always have it unselected
         if (selectedCount === 0 && notSelectedCount === 0) {
             return false;
@@ -535,20 +524,19 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         return selectedCount > 0;
     }
 
-    public hasNodesToSelect(justFiltered = false, justCurrentPage = false) {
-        return this.getNodesToSelect(justFiltered, justCurrentPage).filter((node) => node.selectable).length > 0;
+    public hasNodesToSelect(selectAll: SelectAllMode) {
+        return this.getNodesToSelect(selectAll).filter((node) => node.selectable).length > 0;
     }
 
     /**
-     * @param justFiltered whether to just include nodes which have passed the filter
-     * @param justCurrentPage whether to just include nodes on the current page
+     * @param selectAll See `MultiRowSelectionOptions.selectAll`
      * @returns all nodes including unselectable nodes which are the target of this selection attempt
      */
-    private getNodesToSelect(justFiltered = false, justCurrentPage = false) {
+    private getNodesToSelect(selectAll?: SelectAllMode) {
         this.validateSelectAllType();
 
         const nodes: RowNode[] = [];
-        if (justCurrentPage) {
+        if (selectAll === 'currentPage') {
             this.forEachNodeOnPage((node) => {
                 if (!node.group) {
                     nodes.push(node);
@@ -577,7 +565,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         const clientSideRowModel = this.rowModel as IClientSideRowModel;
-        if (justFiltered) {
+        if (selectAll === 'filtered') {
             clientSideRowModel.forEachNodeAfterFilter((node) => {
                 nodes.push(node);
             });
@@ -601,19 +589,16 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
     }
 
-    public selectAllRowNodes(params: {
-        source: SelectionEventSourceType;
-        justFiltered?: boolean;
-        justCurrentPage?: boolean;
-    }) {
+    public selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }) {
         if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
-            return _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
+            _warn(132);
+            return;
         }
         this.validateSelectAllType();
 
-        const { source, justFiltered, justCurrentPage } = params;
+        const { source, selectAll } = params;
 
-        const nodes = this.getNodesToSelect(justFiltered, justCurrentPage);
+        const nodes = this.getNodesToSelect(selectAll);
         nodes.forEach((rowNode) => rowNode.selectThisNode(true, undefined, source));
 
         this.selectionCtx.setRoot(nodes[0] ?? null);
@@ -642,7 +627,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         source: SelectionEventSourceType
     ): void {
         if (!Array.isArray(state)) {
-            _logError(103);
+            _error(103);
             return;
         }
         const rowIds = new Set(state);

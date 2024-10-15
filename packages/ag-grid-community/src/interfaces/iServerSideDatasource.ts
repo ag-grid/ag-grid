@@ -1,12 +1,12 @@
 // we pass a VO of the column and not the column itself,
 // so the data is read to be be converted to JSON and thrown
 // over the wire
-import type { LoadSuccessParams } from '../rowNodeCache/iRowNodeBlock';
 import type { AdvancedFilterModel } from './advancedFilterModel';
 import type { ColumnVO } from './iColumnVO';
 import type { AgGridCommon } from './iCommon';
 import type { FilterModel } from './iFilter';
 import type { IRowNode } from './iRowNode';
+import type { LoadSuccessParams } from './iServerSideRowModel';
 import type { SortModelItem } from './iSortModelItem';
 
 export interface IServerSideGetRowsRequest {
@@ -44,12 +44,12 @@ export interface IServerSideGetRowsParams<TData = any, TContext = any> extends A
      * The parent row node. The RootNode (level -1) if request is top level.
      * This is NOT part fo the request as it cannot be serialised to JSON (a rowNode has methods).
      */
-    parentNode: IRowNode;
+    parentNode: IRowNode<TData>;
 
     /**
      * Success callback, pass the rows back to the grid that were requested.
      */
-    success(params: LoadSuccessParams): void;
+    success(params: LoadSuccessParams<TData>): void;
 
     /**
      * Fail callback, tell the grid the call failed so it can adjust it's state.
@@ -58,12 +58,12 @@ export interface IServerSideGetRowsParams<TData = any, TContext = any> extends A
 }
 
 // datasource for Server Side Row Model
-export interface IServerSideDatasource {
+export interface IServerSideDatasource<TData = any> {
     /**
      * Grid calls `getRows` when it requires more rows as specified in the params.
      * Params object contains callbacks for responding to the request.
      */
-    getRows(params: IServerSideGetRowsParams): void;
+    getRows(params: IServerSideGetRowsParams<TData>): void;
     /** Optional method, if your datasource has state it needs to clean up. */
     destroy?(): void;
 }

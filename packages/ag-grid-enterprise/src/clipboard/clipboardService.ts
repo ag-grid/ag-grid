@@ -40,7 +40,7 @@ import {
     _isSameRow,
     _last,
     _removeFromArray,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 interface RowCallback {
@@ -71,12 +71,83 @@ enum CellClearType {
     FocusedCell,
 }
 
-const apiError = (method: string) =>
-    `AG Grid: Unable to use the Clipboard API (navigator.clipboard.${method}()). ` +
-    'The reason why it could not be used has been logged in the previous line. ' +
-    "For this reason the grid has defaulted to using a workaround which doesn't perform as well. " +
-    'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
-    'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.';
+// This will parse a delimited string into an array of arrays.
+export function stringToArray(strData: string, delimiter = ','): string[][] {
+    const data: any[][] = [];
+    const isNewline = (char: string) => char === '\r' || char === '\n';
+
+    let insideQuotedField = false;
+
+    if (strData === '') {
+        return [['']];
+    }
+
+    // iterate over each character, keep track of current row and column (of the returned array)
+    for (let row = 0, column = 0, position = 0; position < strData.length; position++) {
+        const previousChar = strData[position - 1];
+        const currentChar = strData[position];
+        const nextChar = strData[position + 1];
+        const ensureDataExists = () => {
+            if (!data[row]) {
+                // create row if it doesn't exist
+                data[row] = [];
+            }
+
+            if (!data[row][column]) {
+                // create column if it doesn't exist
+                data[row][column] = '';
+            }
+        };
+
+        ensureDataExists();
+
+        if (currentChar === '"') {
+            if (insideQuotedField) {
+                if (nextChar === '"') {
+                    // unescape double quote
+                    data[row][column] += '"';
+                    position++;
+                } else {
+                    // exit quoted field
+                    insideQuotedField = false;
+                }
+
+                // continue;
+            } else if (previousChar === undefined || previousChar === delimiter || isNewline(previousChar)) {
+                // enter quoted field
+                insideQuotedField = true;
+                // continue;
+            }
+        }
+
+        if (!insideQuotedField && currentChar !== '"') {
+            if (currentChar === delimiter) {
+                // move to next column
+                column++;
+                ensureDataExists();
+
+                continue;
+            } else if (isNewline(currentChar)) {
+                // move to next row
+                column = 0;
+                row++;
+                ensureDataExists();
+
+                if (currentChar === '\r' && nextChar === '\n') {
+                    // skip over second newline character if it exists
+                    position++;
+                }
+
+                continue;
+            }
+        }
+
+        // add current character to current column
+        data[row][column] += currentChar;
+    }
+
+    return data;
+}
 
 export class ClipboardService extends BeanStub implements NamedBean, IClipboardService {
     beanName = 'clipboardService' as const;
@@ -136,7 +207,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 .readText()
                 .then(this.processClipboardData.bind(this))
                 .catch((e) => {
-                    _warnOnce(`${e}\n${apiError('readText')}`);
+                    _warn(40, { e, method: 'readText' });
                     this.navigatorApiFailed = true;
                     this.pasteFromClipboardLegacy();
                 });
@@ -197,7 +268,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             return;
         }
 
-        let parsedData: string[][] | null = ClipboardService.stringToArray(data, this.getClipboardDelimiter());
+        let parsedData: string[][] | null = stringToArray(data, this.getClipboardDelimiter());
 
         const userFunc = this.gos.getCallback('processDataFromClipboard');
 
@@ -230,84 +301,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         };
 
         this.doPasteOperation(pasteOperation);
-    }
-
-    // This will parse a delimited string into an array of arrays.
-    static stringToArray(strData: string, delimiter = ','): string[][] {
-        const data: any[][] = [];
-        const isNewline = (char: string) => char === '\r' || char === '\n';
-
-        let insideQuotedField = false;
-
-        if (strData === '') {
-            return [['']];
-        }
-
-        // iterate over each character, keep track of current row and column (of the returned array)
-        for (let row = 0, column = 0, position = 0; position < strData.length; position++) {
-            const previousChar = strData[position - 1];
-            const currentChar = strData[position];
-            const nextChar = strData[position + 1];
-            const ensureDataExists = () => {
-                if (!data[row]) {
-                    // create row if it doesn't exist
-                    data[row] = [];
-                }
-
-                if (!data[row][column]) {
-                    // create column if it doesn't exist
-                    data[row][column] = '';
-                }
-            };
-
-            ensureDataExists();
-
-            if (currentChar === '"') {
-                if (insideQuotedField) {
-                    if (nextChar === '"') {
-                        // unescape double quote
-                        data[row][column] += '"';
-                        position++;
-                    } else {
-                        // exit quoted field
-                        insideQuotedField = false;
-                    }
-
-                    // continue;
-                } else if (previousChar === undefined || previousChar === delimiter || isNewline(previousChar)) {
-                    // enter quoted field
-                    insideQuotedField = true;
-                    // continue;
-                }
-            }
-
-            if (!insideQuotedField && currentChar !== '"') {
-                if (currentChar === delimiter) {
-                    // move to next column
-                    column++;
-                    ensureDataExists();
-
-                    continue;
-                } else if (isNewline(currentChar)) {
-                    // move to next row
-                    column = 0;
-                    row++;
-                    ensureDataExists();
-
-                    if (currentChar === '\r' && nextChar === '\n') {
-                        // skip over second newline character if it exists
-                        position++;
-                    }
-
-                    continue;
-                }
-            }
-
-            // add current character to current column
-            data[row][column] += currentChar;
-        }
-
-        return data;
     }
 
     // common code to paste operations, e.g. paste to cell, paste to range, and copy range down
@@ -1178,7 +1171,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const allowNavigator = !this.gos.get('suppressClipboardApi');
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.writeText(data).catch((e) => {
-                _warnOnce(`${e}\n${apiError('writeText')}`);
+                _warn(40, { e, method: 'writeText' });
                 this.copyDataToClipboardLegacy(data);
             });
             return;
@@ -1200,11 +1193,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             const result = eDocument.execCommand('copy');
 
             if (!result) {
-                _warnOnce(
-                    "Browser did not allow document.execCommand('copy'). Ensure " +
-                        'api.copySelectedRowsToClipboard() is invoked via a user event, i.e. button click, otherwise ' +
-                        'the browser will prevent it for security reasons.'
-                );
+                _warn(41);
             }
 
             if (focusedElementBefore != null && focusedElementBefore.focus != null) {
@@ -1238,7 +1227,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         try {
             callbackNow(eTempInput);
         } catch (err) {
-            _warnOnce("Browser does not support document.execCommand('copy') for clipboard operations");
+            _warn(42);
         }
 
         //It needs 100 otherwise OS X seemed to not always be able to paste... Go figure...

@@ -3,7 +3,6 @@ import { RowComp } from '../../rendering/row/rowComp';
 import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import { _setAriaRole } from '../../utils/aria';
 import { _ensureDomOrder, _insertWithDomOrder } from '../../utils/dom';
-import { _getAllValuesInObject } from '../../utils/object';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { IRowContainerComp, RowContainerName, RowContainerOptions } from './rowContainerCtrl';
@@ -44,9 +43,9 @@ export class RowContainerComp extends Component {
     private domOrder: boolean;
     private lastPlacedElement: HTMLElement | null;
 
-    constructor() {
+    constructor(params?: { name: string }) {
         super();
-        this.name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
+        this.name = params?.name as RowContainerName;
         this.options = _getRowContainerOptions(this.name);
         this.setTemplate(templateFactory(this.options));
     }
@@ -100,7 +99,7 @@ export class RowContainerComp extends Component {
         };
 
         rowCtrls.forEach(processRow);
-        _getAllValuesInObject(oldRows).forEach((oldRowComp) => {
+        Object.values(oldRows).forEach((oldRowComp) => {
             this.eContainer.removeChild(oldRowComp.getGui());
             oldRowComp.destroy();
         });

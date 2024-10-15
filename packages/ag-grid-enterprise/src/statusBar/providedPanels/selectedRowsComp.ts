@@ -1,5 +1,5 @@
 import type { BeanCollection, ISelectionService, IStatusPanelComp } from 'ag-grid-community';
-import { _formatNumberCommas, _isClientSideRowModel, _isServerSideRowModel, _warnOnce } from 'ag-grid-community';
+import { _formatNumberCommas, _isClientSideRowModel, _isServerSideRowModel, _warn } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
 
@@ -12,7 +12,7 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
 
     public postConstruct(): void {
         if (!_isClientSideRowModel(this.gos) && !_isServerSideRowModel(this.gos)) {
-            _warnOnce(`agSelectedRowCountComponent should only be used with the client and server side row model.`);
+            _warn(223);
             return;
         }
 
@@ -34,10 +34,7 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
             this.setDisplayed(true);
             return;
         }
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
-        const thousandSeparator = localeTextFunc('thousandSeparator', ',');
-        const decimalSeparator = localeTextFunc('decimalSeparator', '.');
-        this.setValue(_formatNumberCommas(selectedRowCount, thousandSeparator, decimalSeparator));
+        this.setValue(_formatNumberCommas(selectedRowCount, this.localeService));
         this.setDisplayed(selectedRowCount > 0);
     }
 

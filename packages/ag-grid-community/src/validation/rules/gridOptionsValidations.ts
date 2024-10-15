@@ -1,6 +1,8 @@
 import { ComponentUtil } from '../../components/componentUtil';
-import type { GridOptions } from '../../entities/gridOptions';
+import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
 import { PropertyKeys } from '../../propertyKeys';
+import { DEFAULT_SORTING_ORDER } from '../../sort/sortController';
+import { toStringWithNullUndefined } from '../logging';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 import { COL_DEF_VALIDATORS } from './colDefValidations';
 
@@ -62,7 +64,7 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
 
     groupRemoveSingleChildren: {
         version: '32.3',
-        renamed: 'groupHideParentOfSingleChild',
+        message: 'Use `groupHideParentOfSingleChild` instead.',
     },
     groupRemoveLowestSingleChildren: {
         version: '32.3',
@@ -236,6 +238,63 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
             }
             return null;
         },
+    },
+    rowClass: {
+        validate: (options) => {
+            const rowClass = options.rowClass;
+            if (typeof rowClass === 'function') {
+                return 'rowClass should not be a function, please use getRowClass instead';
+            }
+            return null;
+        },
+    },
+
+    tooltipShowDelay: {
+        validate: (options) => {
+            if (options.tooltipShowDelay && options.tooltipShowDelay < 0) {
+                return 'tooltipShowDelay should not be lower than 0';
+            }
+            return null;
+        },
+    },
+    tooltipHideDelay: {
+        validate: (options) => {
+            if (options.tooltipHideDelay && options.tooltipHideDelay < 0) {
+                return 'tooltipHideDelay should not be lower than 0';
+            }
+            return null;
+        },
+    },
+    sortingOrder: {
+        validate: (_options) => {
+            const sortingOrder = _options.sortingOrder;
+
+            if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
+                const invalidItems = sortingOrder.filter((a) => !DEFAULT_SORTING_ORDER.includes(a));
+                if (invalidItems.length > 0) {
+                    return `sortingOrder must be an array with elements from [${DEFAULT_SORTING_ORDER.map(toStringWithNullUndefined).join()}], currently it includes [${invalidItems.map(toStringWithNullUndefined).join()}]`;
+                }
+            } else if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
+                return `sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`;
+            }
+            return null;
+        },
+    },
+    domLayout: {
+        validate: (options) => {
+            const domLayout = options.domLayout;
+            const validLayouts: DomLayoutType[] = ['autoHeight', 'normal', 'print'];
+            if (domLayout && !validLayouts.includes(domLayout)) {
+                return `domLayout must be one of [${validLayouts.join()}], currently it's ${domLayout}`;
+            }
+            return null;
+        },
+    },
+    serverSideSortAllLevels: {
+        supportedRowModels: ['serverSide'],
+    },
+    serverSideOnlyRefreshFilteredGroups: {
+        supportedRowModels: ['serverSide'],
     },
 
     columnDefs: () => COL_DEF_VALIDATORS,

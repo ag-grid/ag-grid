@@ -1,10 +1,9 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { RowClassParams } from '../entities/gridOptions';
+import type { RowClassParams, RowStyle } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
-import { _warnOnce } from '../utils/function';
 import type { ExpressionService } from '../valueService/expressionService';
 import { processClassRules } from './stylingUtils';
 
@@ -26,24 +25,18 @@ export class RowStyleService extends BeanStub implements NamedBean {
         this.expressionService = beans.expressionService;
     }
 
-    public processClassesFromGridOptions(rowNode: RowNode): string[] {
-        const res: string[] = [];
-
+    public processClassesFromGridOptions(classes: string[], rowNode: RowNode): void {
         const process = (rowCls: string | string[] | undefined) => {
             if (typeof rowCls === 'string') {
-                res.push(rowCls);
+                classes.push(rowCls);
             } else if (Array.isArray(rowCls)) {
-                rowCls.forEach((e) => res.push(e));
+                rowCls.forEach((e) => classes.push(e));
             }
         };
 
         // part 1 - rowClass
         const rowClass = this.gos.get('rowClass');
         if (rowClass) {
-            if (typeof rowClass === 'function') {
-                _warnOnce('rowClass should not be a function, please use getRowClass instead');
-                return [];
-            }
             process(rowClass);
         }
 
@@ -59,25 +52,19 @@ export class RowStyleService extends BeanStub implements NamedBean {
             const rowClassFuncResult = rowClassFunc(params);
             process(rowClassFuncResult);
         }
-
-        return res;
     }
 
-    public preProcessRowClassRules(rowNode: RowNode): string[] {
-        const res: string[] = [];
-
+    public preProcessRowClassRules(classes: string[], rowNode: RowNode): void {
         this.processRowClassRules(
             rowNode,
             (className: string) => {
-                res.push(className);
+                classes.push(className);
             },
             () => {
                 // not catered for, if creating, no need
                 // to remove class as it was never there
             }
         );
-
-        return res;
     }
 
     public processRowClassRules(
@@ -99,5 +86,27 @@ export class RowStyleService extends BeanStub implements NamedBean {
             onApplicableClass,
             onNotApplicableClass
         );
+    }
+
+    public processStylesFromGridOptions(rowNode: RowNode): RowStyle | undefined {
+        // part 1 - rowStyle
+        const rowStyle = this.gos.get('rowStyle');
+
+        // part 1 - rowStyleFunc
+        const rowStyleFunc = this.gos.getCallback('getRowStyle');
+        let rowStyleFuncResult: any;
+
+        if (rowStyleFunc) {
+            const params: WithoutGridCommon<RowClassParams> = {
+                data: rowNode.data,
+                node: rowNode,
+                rowIndex: rowNode.rowIndex!,
+            };
+            rowStyleFuncResult = rowStyleFunc(params);
+        }
+        if (rowStyleFuncResult || rowStyle) {
+            return Object.assign({}, rowStyle, rowStyleFuncResult);
+        }
+        return undefined;
     }
 }

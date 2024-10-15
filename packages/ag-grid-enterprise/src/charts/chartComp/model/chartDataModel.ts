@@ -11,7 +11,7 @@ import type {
     SeriesChartType,
     SeriesGroupType,
 } from 'ag-grid-community';
-import { BeanStub, CellRangeType, _includes } from 'ag-grid-community';
+import { BeanStub, CellRangeType } from 'ag-grid-community';
 
 import type { ChartDatasourceParams } from '../datasource/chartDatasource';
 import { ChartDatasource } from '../datasource/chartDatasource';
@@ -43,9 +43,9 @@ export interface ChartModelParams {
     seriesGroupType?: SeriesGroupType;
 }
 
-export class ChartDataModel extends BeanStub {
-    public static DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
+export const DEFAULT_CHART_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';
 
+export class ChartDataModel extends BeanStub {
     private rangeService: IRangeService;
     private chartTranslationService: ChartTranslationService;
 
@@ -203,7 +203,7 @@ export class ChartDataModel extends BeanStub {
             valueCols: this.getSelectedValueCols(),
             startRow,
             endRow,
-            isScatter: _includes(['scatter', 'bubble'], this.chartType),
+            isScatter: ['scatter', 'bubble'].includes(this.chartType),
         };
 
         const { chartData, columnNames, groupChartData } = this.datasource.getData(params);
@@ -348,7 +348,7 @@ export class ChartDataModel extends BeanStub {
         });
 
         const defaultCategory = {
-            colId: ChartDataModel.DEFAULT_CATEGORY,
+            colId: DEFAULT_CHART_CATEGORY,
             displayName: this.chartTranslationService.translate('defaultCategory'),
             selected: !hasSelectedDimension, // if no dimensions in range select the default
             order: 0,
@@ -362,7 +362,7 @@ export class ChartDataModel extends BeanStub {
 
         valueCols.forEach((column) => {
             // first time the value cell range is set, preserve the column order from the supplied range
-            if (isInitialising && _includes(this.referenceCellRange.columns, column)) {
+            if (isInitialising && this.referenceCellRange.columns.includes(column)) {
                 column = valueColumnsFromReferenceRange.shift()!;
             }
 
@@ -475,7 +475,7 @@ export class ChartDataModel extends BeanStub {
 
         const isDefaultCategory =
             selectedDimensionColStates.length === 1
-                ? selectedDimensionColStates[0].colId === ChartDataModel.DEFAULT_CATEGORY
+                ? selectedDimensionColStates[0].colId === DEFAULT_CHART_CATEGORY
                 : false;
         const selectedColumns = selectedDimensionColStates
             .map(({ column }) => column)

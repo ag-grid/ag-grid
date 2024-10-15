@@ -1,5 +1,5 @@
 import type { AbstractColDef, ColDef, ColGroupDef } from 'ag-grid-community';
-import { _includes, _last } from 'ag-grid-community';
+import { _last } from 'ag-grid-community';
 
 export function isColGroupDef(colDef: AbstractColDef): colDef is ColGroupDef {
     return !!colDef && typeof (colDef as ColGroupDef).children !== 'undefined';
@@ -12,7 +12,7 @@ function getId(colDef: AbstractColDef): string | undefined {
 function addChildrenToGroup(tree: AbstractColDef, groupId: string, colDef: AbstractColDef): boolean {
     const subGroupIsSplit = (currentSubGroup: ColGroupDef, currentSubGroupToAdd: ColGroupDef) => {
         const existingChildIds = currentSubGroup.children.map(getId);
-        const childGroupAlreadyExists = _includes(existingChildIds, getId(currentSubGroupToAdd));
+        const childGroupAlreadyExists = existingChildIds.includes(getId(currentSubGroupToAdd));
         const lastChild = _last(currentSubGroup.children);
         const lastChildIsDifferent = lastChild && getId(lastChild) !== getId(currentSubGroupToAdd);
         return childGroupAlreadyExists && lastChildIsDifferent;
@@ -33,7 +33,7 @@ function addChildrenToGroup(tree: AbstractColDef, groupId: string, colDef: Abstr
     if (currentGroup.groupId === groupId) {
         // add children that don't already exist to group
         const existingChildIds = currentGroup.children.map(getId);
-        const colDefAlreadyPresent = _includes(existingChildIds, getId(groupToAdd));
+        const colDefAlreadyPresent = existingChildIds.includes(getId(groupToAdd));
         if (!colDefAlreadyPresent) {
             currentGroup.children.push(groupToAdd);
             return true;

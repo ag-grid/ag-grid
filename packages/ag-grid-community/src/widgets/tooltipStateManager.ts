@@ -6,7 +6,6 @@ import { _getActiveDomElement, _getDocument } from '../gridOptionsUtils';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { ITooltipComp, ITooltipParams } from '../rendering/tooltipComponent';
 import { _isIOSUserAgent } from '../utils/browser';
-import { _warnOnce } from '../utils/function';
 import { _exists } from '../utils/generic';
 import type { PopupService } from './popupService';
 
@@ -29,6 +28,11 @@ const SHOW_QUICK_TOOLTIP_DIFF = 1000;
 const FADE_OUT_TOOLTIP_TIMEOUT = 1000;
 const INTERACTIVE_HIDE_DELAY = 100;
 
+// different instances of tooltipFeature use this to see when the
+// last tooltip was hidden.
+let lastTooltipHideTime: number;
+let isLocked = false;
+
 export class TooltipStateManager extends BeanStub {
     private popupService?: PopupService;
     private userComponentFactory: UserComponentFactory;
@@ -37,11 +41,6 @@ export class TooltipStateManager extends BeanStub {
         this.popupService = beans.popupService;
         this.userComponentFactory = beans.userComponentFactory;
     }
-
-    // different instances of tooltipFeature use this to see when the
-    // last tooltip was hidden.
-    private static lastTooltipHideTime: number;
-    private static isLocked = false;
 
     private showTooltipTimeoutId: number | undefined;
     private hideTooltipTimeoutId: number | undefined;
@@ -117,9 +116,6 @@ export class TooltipStateManager extends BeanStub {
 
     private getGridOptionsTooltipDelay(delayOption: 'tooltipShowDelay' | 'tooltipHideDelay'): number {
         const delay = this.gos.get(delayOption);
-        if (delay < 0) {
-            _warnOnce(`${delayOption} should not be lower than 0`);
-        }
         return Math.max(200, delay);
     }
 
@@ -161,7 +157,7 @@ export class TooltipStateManager extends BeanStub {
             return;
         }
 
-        if (TooltipStateManager.isLocked) {
+        if (isLocked) {
             this.showTooltipTimeoutId = window.setTimeout(() => {
                 this.prepareToShowTooltip(e);
             }, INTERACTIVE_HIDE_DELAY);
@@ -232,7 +228,7 @@ export class TooltipStateManager extends BeanStub {
         // mouseenter to be called twice in a row, which can happen if editing the cell. this was reported
         // in https://ag-grid.atlassian.net/browse/AG-4422. to get around this, we check the state, and if
         // state is != nothing, then we know mouseenter was already received.
-        if (this.state != TooltipStates.NOTHING || TooltipStateManager.isLocked) {
+        if (this.state != TooltipStates.NOTHING || isLocked) {
             return;
         }
 
@@ -252,7 +248,7 @@ export class TooltipStateManager extends BeanStub {
     private isLastTooltipHiddenRecently(): boolean {
         // return true if <1000ms since last time we hid a tooltip
         const now = new Date().getTime();
-        const then = TooltipStateManager.lastTooltipHideTime;
+        const then = lastTooltipHideTime;
 
         return now - then < SHOW_QUICK_TOOLTIP_DIFF;
     }
@@ -312,7 +308,7 @@ export class TooltipStateManager extends BeanStub {
         // one, the instance may not be back yet
         if (this.tooltipComp) {
             this.destroyTooltipComp();
-            TooltipStateManager.lastTooltipHideTime = new Date().getTime();
+            lastTooltipHideTime = new Date().getTime();
         }
 
         this.eventService.dispatchEvent({
@@ -513,7 +509,7 @@ export class TooltipStateManager extends BeanStub {
     }
 
     private lockService(): void {
-        TooltipStateManager.isLocked = true;
+        isLocked = true;
         this.interactiveTooltipTimeoutId = window.setTimeout(() => {
             this.unlockService();
             this.setToDoNothing();
@@ -521,7 +517,7 @@ export class TooltipStateManager extends BeanStub {
     }
 
     private unlockService(): void {
-        TooltipStateManager.isLocked = false;
+        isLocked = false;
         this.clearInteractiveTimeout();
     }
 

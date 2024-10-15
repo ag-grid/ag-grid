@@ -9,7 +9,7 @@ import type {
     SparklineMarkerOptions,
     SparklineOptions,
 } from 'ag-grid-community';
-import { _warnOnce } from 'ag-grid-community';
+import { _warn } from 'ag-grid-community';
 
 import { AreaSparkline } from './area/areaSparkline';
 import type { BarColumnLabel } from './bar-column/barColumnSparkline';
@@ -37,28 +37,26 @@ type Validators = {
 
 type ValidatorFunc = (property: string, value: any, defaultValue?: any) => boolean;
 
-export abstract class AgSparkline {
-    static create(options: SparklineFactoryOptions, tooltip: SparklineTooltip) {
-        // avoid mutating user provided options
-        options = _Util.deepClone(options);
+export function createAgSparkline(options: SparklineFactoryOptions, tooltip: SparklineTooltip) {
+    // avoid mutating user provided options
+    options = _Util.deepClone(options);
 
-        const sparkline = getSparklineInstance(options.type);
+    const sparkline = getSparklineInstance(options.type);
 
-        if (tooltip) {
-            sparkline.tooltip = tooltip;
-        }
-
-        initSparkline(sparkline, options);
-        initSparklineByType(sparkline, options);
-
-        if (options.data) {
-            sparkline.data = options.data;
-        }
-
-        sparkline.processedOptions = options;
-
-        return sparkline;
+    if (tooltip) {
+        sparkline.tooltip = tooltip;
     }
+
+    initSparkline(sparkline, options);
+    initSparklineByType(sparkline, options);
+
+    if (options.data) {
+        sparkline.data = options.data;
+    }
+
+    sparkline.processedOptions = options;
+
+    return sparkline;
 }
 
 function getSparklineInstance(type: string = 'line'): any {
@@ -229,9 +227,7 @@ const offsetValidator = (property: string, value: number, defaultOffset?: number
         return true;
     }
 
-    _warnOnce(
-        `${property} must be a number, the value you provided is not a valid number. Using the default of ${defaultOffset}px.`
-    );
+    _warn(218, { property, defaultOffset });
     return false;
 };
 
@@ -251,7 +247,7 @@ function setValueIfPropertyExists(target: any, property: string, value: any, opt
                 target[property] = value;
             }
         } else {
-            _warnOnce(`Property ${property} does not exist on the target object.`);
+            _warn(219, { property });
         }
     }
 }

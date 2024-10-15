@@ -8,7 +8,7 @@ import type {
     RowNode,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, _includes, _isClientSideRowModel, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _isClientSideRowModel, _warn } from 'ag-grid-community';
 
 export class ChartCrossFilterService extends BeanStub implements NamedBean {
     beanName = 'chartCrossFilterService' as const;
@@ -36,17 +36,12 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
             return;
         }
 
-        const colId = ChartCrossFilterService.extractFilterColId(event);
+        const colId = this.extractFilterColId(event);
         if (this.isValidColumnFilter(colId)) {
             // update filters based on current chart selections
             this.updateFilters(filterModel, event, colId);
         } else {
-            _warnOnce(
-                "cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' " +
-                    "to be defined on the column with id: '" +
-                    colId +
-                    "'"
-            );
+            _warn(154, { colId });
         }
     }
 
@@ -60,7 +55,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
     }
 
     private updateFilters(filterModel: any, event: any, colId: string) {
-        const dataKey = ChartCrossFilterService.extractFilterColId(event);
+        const dataKey = this.extractFilterColId(event);
         const rawValue = event.datum[dataKey];
         if (rawValue === undefined) {
             return;
@@ -70,7 +65,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
 
         if (event.event.metaKey || event.event.ctrlKey) {
             const existingGridValues = this.getCurrentGridValuesForCategory(colId);
-            const valueAlreadyExists = _includes(existingGridValues, selectedValue);
+            const valueAlreadyExists = existingGridValues.includes(selectedValue);
 
             let updatedValues;
             if (valueAlreadyExists) {
@@ -111,7 +106,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
         return filteredValues;
     }
 
-    private static extractFilterColId(event: any): string {
+    private extractFilterColId(event: any): string {
         return event.xKey || event.calloutLabelKey;
     }
 
@@ -125,7 +120,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
             return filterType;
         }
 
-        return _includes(['agSetColumnFilter', 'agMultiColumnFilter'], filterType);
+        return ['agSetColumnFilter', 'agMultiColumnFilter'].includes(filterType);
     }
 
     private getColumnFilterType(colId: any) {

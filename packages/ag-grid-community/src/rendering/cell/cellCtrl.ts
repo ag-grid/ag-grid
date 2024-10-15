@@ -1,14 +1,13 @@
-import { isColumnControlsCol } from '../../columns/columnUtils';
+import { isColumnSelectionCol } from '../../columns/columnUtils';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
-import { _createCellId } from '../../entities/positionUtils';
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
-import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
+import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../events';
 import type { GridOptionsService } from '../../gridOptionsService';
 import {
     _getCheckboxes,
@@ -39,7 +38,6 @@ import { TooltipFeature } from '../../widgets/tooltipFeature';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
-import type { FlashCellsParams } from '../rowRenderer';
 import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
 import { CellMouseListenerFeature } from './cellMouseListenerFeature';
 import { CellPositionFeature } from './cellPositionFeature';
@@ -425,7 +423,7 @@ export class CellCtrl extends BeanStub {
         const { rowSelection } = this.beans.gridOptions;
         return (
             colDef.checkboxSelection ||
-            (isColumnControlsCol(this.column) &&
+            (isColumnSelectionCol(this.column) &&
                 rowSelection &&
                 typeof rowSelection !== 'string' &&
                 _getCheckboxes(rowSelection))
@@ -621,7 +619,7 @@ export class CellCtrl extends BeanStub {
             const flashCell = !suppressFlash && !processingFilterChange && colDef.enableCellChangeFlash;
 
             if (flashCell) {
-                this.flashCell();
+                this.beans.cellFlashService?.flashCell(this);
             }
 
             this.cellCustomStyleFeature?.applyUserStyles();
@@ -639,69 +637,6 @@ export class CellCtrl extends BeanStub {
     // than what we pick up on. eg selecting from a dropdown ends editing.
     public stopEditingAndFocus(suppressNavigateAfterEdit = false, shiftKey: boolean = false): void {
         this.beans.editService?.stopEditingAndFocus(this, suppressNavigateAfterEdit, shiftKey);
-    }
-
-    // user can also call this via API
-    public flashCell(delays?: Pick<FlashCellsParams, 'fadeDuration' | 'flashDuration'>): void {
-        this.animateCell('data-changed', delays?.flashDuration, delays?.fadeDuration);
-    }
-
-    private animateCell(cssName: string, flashDuration?: number | null, fadeDuration?: number | null): void {
-        if (!this.cellComp) {
-            return;
-        }
-        const { gos } = this.beans;
-
-        if (!flashDuration) {
-            flashDuration = gos.get('cellFlashDuration');
-        }
-
-        if (flashDuration === 0) {
-            return;
-        }
-
-        if (!_exists(fadeDuration)) {
-            fadeDuration = gos.get('cellFadeDuration');
-        }
-
-        const fullName = `ag-cell-${cssName}`;
-        const animationFullName = `ag-cell-${cssName}-animation`;
-
-        // we want to highlight the cells, without any animation
-        this.cellComp.addOrRemoveCssClass(fullName, true);
-        this.cellComp.addOrRemoveCssClass(animationFullName, false);
-
-        // then once that is applied, we remove the highlight with animation
-        this.beans.frameworkOverrides.wrapIncoming(() => {
-            window.setTimeout(() => {
-                if (!this.isAlive()) {
-                    return;
-                }
-                this.cellComp.addOrRemoveCssClass(fullName, false);
-                this.cellComp.addOrRemoveCssClass(animationFullName, true);
-
-                this.eGui.style.transition = `background-color ${fadeDuration}ms`;
-                window.setTimeout(() => {
-                    if (!this.isAlive()) {
-                        return;
-                    }
-                    // and then to leave things as we got them, we remove the animation
-                    this.cellComp.addOrRemoveCssClass(animationFullName, false);
-                    this.eGui.style.transition = '';
-                }, fadeDuration!);
-            }, flashDuration!);
-        });
-    }
-
-    public onFlashCells(event: FlashCellsEvent): void {
-        if (!this.cellComp) {
-            return;
-        }
-        const cellId = _createCellId(this.getCellPosition());
-        const shouldFlash = event.cells[cellId];
-        if (shouldFlash) {
-            this.animateCell('highlight');
-        }
     }
 
     public isCellEditable(): boolean {
@@ -989,6 +924,10 @@ export class CellCtrl extends BeanStub {
             rowPinned: _makeNull(this.rowNode.rowPinned),
             column: this.column,
         };
+    }
+
+    public setInlineEditingCss(): void {
+        this.beans.editService?.setInlineEditingCss(this.rowCtrl);
     }
 
     // CSS Classes that only get applied once, they never change

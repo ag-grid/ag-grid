@@ -4,7 +4,6 @@ import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContai
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _setAriaRole } from '../../utils/aria';
 import { _addStylesToElement, _setDomChildOrder } from '../../utils/dom';
-import { _getAllValuesInObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
 import { CellComp } from '../cell/cellComp';
 import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
@@ -99,7 +98,7 @@ export class RowComp extends Component {
             }
         });
 
-        const cellCompsToRemove = _getAllValuesInObject(cellsToRemove).filter((cellComp) => cellComp != null);
+        const cellCompsToRemove = Object.values(cellsToRemove).filter((cellComp) => cellComp != null);
 
         this.destroyCells(cellCompsToRemove as CellComp[]);
         this.ensureDomOrder(cellCtrls);
@@ -139,7 +138,7 @@ export class RowComp extends Component {
     }
 
     private destroyAllCells(): void {
-        const cellsToDestroy = _getAllValuesInObject(this.cellComps).filter((cp) => cp != null);
+        const cellsToDestroy = Object.values(this.cellComps).filter((cp) => cp != null);
         this.destroyCells(cellsToDestroy as CellComp[]);
     }
 

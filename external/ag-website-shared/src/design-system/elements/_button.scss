@@ -18,7 +18,7 @@ input[type='submit']#{$selector-exclude-grid},
     font-weight: var(--text-bold);
     padding: 0.375em 1em 0.5em;
     white-space: nowrap;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background-color: var(--color-button-primary-bg);
     color: var(--color-button-primary-fg);
     border: 1px solid var(--color-button-primary-border);
@@ -71,8 +71,9 @@ input[type='submit']#{$selector-exclude-grid},
         pointer-events: none;
     }
 
-    .icon {
+    :where(.icon) {
         --icon-size: 2em;
+
         fill: var(--color-button-primary-fg);
         display: inline-block;
         position: relative;
@@ -101,7 +102,7 @@ a.button:hover {
         background-color: var(--color-button-secondary-bg-active);
     }
 
-    .icon {
+    :where(.icon) {
         fill: var(--color-button-secondary-fg);
     }
 }
@@ -126,7 +127,7 @@ a.button-secondary:hover {
         background-color: var(--color-button-tertiary-bg-active);
     }
 
-    .icon {
+    :where(.icon) {
         fill: var(--color-button-tertiary-fg);
     }
 }

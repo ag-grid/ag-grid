@@ -1,17 +1,17 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import Layout from '@layouts/Layout.astro';
-import { PagesNavigation } from '@components/pages-navigation/components/PagesNavigation';
 import { Header } from '@features/docs/components/Header';
 import { getFrameworkDisplayText } from '@utils/framework';
-import type { Framework, MenuItem, MenuSection } from '@ag-grid-types';
+import type { Framework } from '@ag-grid-types';
 import { getDocsPages } from '@features/docs/utils/pageData';
 import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
 import { getFirstParagraphText } from '@utils/markdoc/getFirstParagraphText';
 import { DOCS_TAB_ITEM_ID_PREFIX } from '@ag-website-shared/constants';
-import { getFilteredMenuSections } from '@components/pages-navigation/utils/getFilteredMenuSections';
 import { getHeadings } from '@utils/markdoc/getHeadings';
 import { isApiMenuPath } from '@utils/apiMenuPath';
+import { DocsNav } from '@ag-website-shared/components/docs-navigation/DocsNav';
+
 import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
 
 export async function getStaticPaths() {
@@ -25,16 +25,6 @@ const pageName = Astro.params.pageName as Framework;
 const path = Astro.url.pathname;
 const { title, enterprise, hideSideMenu, hidePageMenu, headings: pageHeadings } = page.data;
 
-const { data: menu } = await getEntry('menu', 'data');
-const frameworkMenuSections: MenuSection[] = getFilteredMenuSections({
-    menuSections: menu.main.sections,
-    framework: currentFramework,
-});
-const apiMenuSections: MenuSection[] = getFilteredMenuSections({
-    menuSections: menu.api.sections,
-    framework: currentFramework,
-});
-
 const { data: versionsData } = await getEntry('versions', 'ag-grid-versions');
 const version = versionsData[0]?.version;
 const frameworkDisplayText = getFrameworkDisplayText(currentFramework);
@@ -44,11 +34,11 @@ const description = page.data.description
     : getFirstParagraphText(page.body, currentFramework); // Default to 1st paragraph text
 const descriptionWithSeoTagline = `${description ? `${description} ` : ''}${seoTagline}`;
 
-const isApiPage = isApiMenuPath({
-    pageName,
-    menuData: menu,
-});
-const menuSections = isApiPage ? apiMenuSections : frameworkMenuSections;
+const { data: docsNavData } = await getEntry('docs-nav', 'docsNav');
+const { data: apiNavData } = await getEntry('api-nav', 'apiNav');
+
+const isApiPage = isApiMenuPath({ pageName, menuData: apiNavData });
+const menuData = isApiPage ? apiNavData : docsNavData;
 
 const { Content } = await page.render();
 const headings =
@@ -75,14 +65,16 @@ const headings =
     <div class:list={[hidePageMenu && styles.noLeftMenu, styles.contentViewport, 'layout-grid']}>
         {
             !hidePageMenu && (
-                <PagesNavigation
+                <DocsNav
                     client:load
-                    menuSections={menuSections}
+                    menuData={menuData}
                     framework={currentFramework}
                     pageName={pageName}
+                    showWhatsNew={!isApiPage}
                 />
             )
         }
+
         <div
             id="doc-content"
             class:list={[
@@ -98,7 +90,7 @@ const headings =
                 framework={currentFramework}
                 isEnterprise={enterprise}
                 path={path}
-                menuItems={menuSections as MenuItem[]}
+                menuItems={menuData.sections}
             />
 
             {/* Wrapping div is a hack to target "intro" section of docs page */}

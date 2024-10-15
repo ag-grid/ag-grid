@@ -1,6 +1,6 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnNameService } from '../columns/columnNameService';
-import { isColumnControlsCol, isColumnGroupAutoCol } from '../columns/columnUtils';
+import { isColumnGroupAutoCol, isColumnSelectionCol } from '../columns/columnUtils';
 import { GroupInstanceIdCreator } from '../columns/groupInstanceIdCreator';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { NamedBean } from '../context/bean';
@@ -22,7 +22,6 @@ import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { RowNodeSorter } from '../sort/rowNodeSorter';
 import type { SortController } from '../sort/sortController';
 import { _last } from '../utils/array';
-import { _compose } from '../utils/function';
 import type { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from './interfaces';
 
 type ProcessGroupHeaderCallback = (params: ProcessGroupHeaderForExportParams) => string;
@@ -64,7 +63,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
             columnKeys as (string | AgColumn)[] | undefined
         );
 
-        const serializeChain = _compose<GridSerializingSession<T>>(
+        return [
             // first pass, put in the header names of the cols
             this.prepareSession(columnsToExport),
             this.prependContent(params),
@@ -73,10 +72,10 @@ export class GridSerializer extends BeanStub implements NamedBean {
             this.processPinnedTopRows(params, columnsToExport),
             this.processRows(params, columnsToExport),
             this.processPinnedBottomRows(params, columnsToExport),
-            this.appendContent(params)
-        );
-
-        return serializeChain(gridSerializingSession).parse();
+            this.appendContent(params),
+        ]
+            .reduce((composed, f) => f(composed), gridSerializingSession)
+            .parse();
     }
 
     private processRow<T>(
@@ -377,7 +376,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
         if (skipRowGroups && !isTreeData) {
             columnsToExport = columnsToExport.filter(
-                (column) => isColumnGroupAutoCol(column) || isColumnControlsCol(column)
+                (column) => isColumnGroupAutoCol(column) || isColumnSelectionCol(column)
             );
         }
 

@@ -1,4 +1,4 @@
-import { VERSION as CHARTS_VERSION, _ModuleSupport } from 'ag-charts-community';
+import { _ModuleSupport } from 'ag-charts-community';
 import type { AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-types';
 
 import type {
@@ -27,7 +27,7 @@ import type {
     UpdateChartParams,
     VisibleColsService,
 } from 'ag-grid-community';
-import { BeanStub, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _warn } from 'ag-grid-community';
 
 import { VERSION as GRID_VERSION } from '../version';
 import type { GridChartParams } from './chartComp/gridChartComp';
@@ -69,8 +69,6 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         this.focusService = beans.focusService;
     }
 
-    public static CHARTS_VERSION = CHARTS_VERSION;
-
     // we destroy all charts bound to this grid when grid is destroyed. activeCharts contains all charts, including
     // those in developer provided containers.
     private activeCharts = new Set<ChartRef>();
@@ -85,13 +83,13 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
     public updateChart(params: UpdateChartParams): void {
         if (this.activeChartComps.size === 0) {
-            _warnOnce(`No active charts to update.`);
+            _warn(124);
             return;
         }
 
         const chartComp = [...this.activeChartComps].find((chartComp) => chartComp.getChartId() === params.chartId);
         if (!chartComp) {
-            _warnOnce(`Unable to update chart. No active chart found with ID: ${params.chartId}.`);
+            _warn(125, { chartId: params.chartId });
             return;
         }
 
@@ -164,7 +162,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
 
     public restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
         if (!model) {
-            _warnOnce('unable to restore chart as no chart model is provided');
+            _warn(126);
             return;
         }
 
@@ -348,9 +346,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
             rangeParams &&
             this.rangeService?.createPartialCellRangeFromRangeParams(rangeParams as CellRangeParams, true);
         if (!cellRange) {
-            _warnOnce(
-                `unable to create chart as ${allRange ? 'there are no columns in the grid' : 'no range is selected'}.`
-            );
+            _warn(127, { allRange });
         }
         return cellRange;
     }

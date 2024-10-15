@@ -11,15 +11,16 @@ import type {
     ExcelStyle,
     ExcelWorksheet,
     ExcelWorksheetConfigParams,
+    GridSerializingParams,
+    RowAccumulator,
     RowHeightCallbackParams,
     RowNode,
+    RowSpanningAccumulator,
 } from 'ag-grid-community';
-import { _last, _mergeDeep, _warnOnce } from 'ag-grid-community';
-import type { GridSerializingParams, RowAccumulator, RowSpanningAccumulator } from 'ag-grid-community';
-import { BaseGridSerializingSession, RowType } from 'ag-grid-community';
+import { BaseGridSerializingSession, RowType, _last, _mergeDeep, _warn } from 'ag-grid-community';
 
 import { getHeightFromProperty } from './assets/excelUtils';
-import { ExcelXlsxFactory } from './excelXlsxFactory';
+import { addXlsxBodyImageToMap, createXlsxExcel, getXlsxStringPosition } from './excelXlsxFactory';
 
 export interface StyleLinkerInterface {
     rowType: RowType;
@@ -425,7 +426,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             config.frozenRowCount = this.frozenRowCount;
         }
 
-        return ExcelXlsxFactory.createExcel(excelStyles, data, config);
+        return createXlsxExcel(excelStyles, data, config);
     }
 
     private getDataTypeForValue(valueForCell?: string): ExcelOOXMLDataType {
@@ -455,7 +456,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 case 'boolean':
                     return 'b';
                 default:
-                    _warnOnce(`Unrecognized data type for excel export [${style.id}.dataType=${style.dataType}]`);
+                    _warn(162, { id: style.id, dataType: style.dataType });
             }
         }
 
@@ -477,13 +478,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             return;
         }
 
-        ExcelXlsxFactory.addBodyImageToMap(
-            addedImage.image,
-            rowIndex,
-            column,
-            this.columnsToExport,
-            this.config.rowHeight
-        );
+        addXlsxBodyImageToMap(addedImage.image, rowIndex, column, this.columnsToExport, this.config.rowHeight);
 
         return addedImage;
     }
@@ -533,7 +528,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             styleId: this.getStyleById(styleId) ? styleId! : undefined,
             data: {
                 type: type,
-                value: type === 's' ? ExcelXlsxFactory.getStringPosition(valueToUse).toString() : value,
+                value: type === 's' ? getXlsxStringPosition(valueToUse).toString() : value,
             },
             mergeAcross: numOfCells,
         };
@@ -552,7 +547,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 value = value.slice(1);
             }
 
-            value = ExcelXlsxFactory.getStringPosition(value).toString();
+            value = getXlsxStringPosition(value).toString();
         } else if (type === 'f') {
             value = value.slice(1);
         } else if (type === 'n') {

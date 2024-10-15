@@ -1,8 +1,8 @@
 import type { TextFormatter } from 'ag-grid-community';
-import { _warnOnce } from 'ag-grid-community';
+import { _warn } from 'ag-grid-community';
 
 import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
-import { SetFilterDisplayValue } from './iSetDisplayValueModel';
+import { SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSetDisplayValueModel';
 
 const DATE_TREE_LIST_PATH_GETTER = (date: Date | null) =>
     date ? [String(date.getFullYear()), String(date.getMonth() + 1), String(date.getDate())] : null;
@@ -18,10 +18,10 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         depth: 0,
         filterPasses: true,
         available: true,
-        treeKey: SetFilterDisplayValue.SELECT_ALL,
+        treeKey: SET_FILTER_SELECT_ALL,
         children: this.allDisplayedItemsTree,
         expanded: true,
-        key: SetFilterDisplayValue.SELECT_ALL,
+        key: SET_FILTER_SELECT_ALL,
         parentTreeKeys: [],
     };
 
@@ -29,9 +29,9 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         depth: 0,
         filterPasses: true,
         available: true,
-        treeKey: SetFilterDisplayValue.ADD_SELECTION_TO_FILTER,
+        treeKey: SET_FILTER_ADD_SELECTION_TO_FILTER,
         expanded: true,
-        key: SetFilterDisplayValue.ADD_SELECTION_TO_FILTER,
+        key: SET_FILTER_ADD_SELECTION_TO_FILTER,
         parentTreeKeys: [],
     };
 
@@ -159,9 +159,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         if (isDate) {
             return DATE_TREE_LIST_PATH_GETTER as any;
         }
-        _warnOnce(
-            'property treeList=true for Set Filter params, but you did not provide a treeListPathGetter or values of type Date.'
-        );
+        _warn(211);
         return (value) => [String(value)];
     }
 

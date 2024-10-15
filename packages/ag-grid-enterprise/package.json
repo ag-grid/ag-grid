@@ -85,14 +85,14 @@
     "ag-grid-community": "32.2.0"
   },
   "optionalDependencies": {
-    "ag-charts-community": "10.2.0-beta.20241008.1216",
-    "ag-charts-enterprise": "10.2.0-beta.20241008.1216"
+    "ag-charts-community": "10.2.0-beta.20241013",
+    "ag-charts-enterprise": "10.2.0-beta.20241013"
   },
   "devDependencies": {
     "source-map-loader": "^5.0.0",
     "@ag-grid-community/styles": "32.2.0",
-    "ag-charts-community": "10.2.0-beta.20241008.1216",
-    "ag-charts-enterprise": "10.2.0-beta.20241008.1216",
+    "ag-charts-community": "10.2.0-beta.20241013",
+    "ag-charts-enterprise": "10.2.0-beta.20241013",
     "ts-loader": "^9.5.1",
     "style-loader": "^3.3.4",
     "css-loader": "^6.10.0",

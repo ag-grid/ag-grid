@@ -2,7 +2,7 @@ import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _warnOnce } from '../utils/function';
+import { _warn } from '../validation/logging';
 
 export function setNodesSelected(
     beans: BeanCollection,
@@ -10,12 +10,12 @@ export function setNodesSelected(
 ) {
     const allNodesValid = params.nodes.every((node) => {
         if (node.rowPinned) {
-            _warnOnce('cannot select pinned rows');
+            _warn(119);
             return false;
         }
 
         if (node.id === undefined) {
-            _warnOnce('cannot select node until id for node is known');
+            _warn(120);
             return false;
         }
         return true;
@@ -39,25 +39,25 @@ export function deselectAll(beans: BeanCollection, source: SelectionEventSourceT
 }
 
 export function selectAllFiltered(beans: BeanCollection, source: SelectionEventSourceType = 'apiSelectAllFiltered') {
-    beans.selectionService?.selectAllRowNodes({ source, justFiltered: true });
+    beans.selectionService?.selectAllRowNodes({ source, selectAll: 'filtered' });
 }
 
 export function deselectAllFiltered(beans: BeanCollection, source: SelectionEventSourceType = 'apiSelectAllFiltered') {
-    beans.selectionService?.deselectAllRowNodes({ source, justFiltered: true });
+    beans.selectionService?.deselectAllRowNodes({ source, selectAll: 'filtered' });
 }
 
 export function selectAllOnCurrentPage(
     beans: BeanCollection,
     source: SelectionEventSourceType = 'apiSelectAllCurrentPage'
 ) {
-    beans.selectionService?.selectAllRowNodes({ source, justCurrentPage: true });
+    beans.selectionService?.selectAllRowNodes({ source, selectAll: 'currentPage' });
 }
 
 export function deselectAllOnCurrentPage(
     beans: BeanCollection,
     source: SelectionEventSourceType = 'apiSelectAllCurrentPage'
 ) {
-    beans.selectionService?.deselectAllRowNodes({ source, justCurrentPage: true });
+    beans.selectionService?.deselectAllRowNodes({ source, selectAll: 'currentPage' });
 }
 
 export function getSelectedNodes<TData = any>(beans: BeanCollection): IRowNode<TData>[] {

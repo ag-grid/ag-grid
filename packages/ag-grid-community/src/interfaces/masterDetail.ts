@@ -2,6 +2,7 @@ import type { GridApi } from '../api/gridApi';
 import type { Bean } from '../context/bean';
 import type { GridOptions } from '../entities/gridOptions';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
+import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { IRowNode } from './iRowNode';
 
 export interface IDetailCellRenderer<TData = any> {
@@ -52,4 +53,8 @@ export interface IDetailCellRendererCtrl extends Bean {
     init(comp: IDetailCellRenderer, params: IDetailCellRendererParams): void;
     registerDetailWithMaster(api: GridApi): void;
     refresh(): boolean;
+}
+
+export interface IMasterDetailService {
+    setupDetailRowAutoHeight(rowCtrl: RowCtrl, eDetailGui: HTMLElement): void;
 }

@@ -7,6 +7,7 @@ import type { DragAndDropService, DragSource } from '../../../dragAndDrop/dragAn
 import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
+import type { SuppressHeaderKeyboardEventParams } from '../../../entities/colDef';
 import type { FocusService } from '../../../focusService';
 import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
 import { _getActiveDomElement, _getDocument, _setDomData } from '../../../gridOptionsUtils';
@@ -16,7 +17,7 @@ import { _requestAnimationFrame } from '../../../misc/animationFrameService';
 import type { MenuService } from '../../../misc/menu/menuService';
 import { _setAriaColIndex } from '../../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize, _getInnerWidth, _observeResize } from '../../../utils/dom';
-import { _isUserSuppressingHeaderKeyboardEvent } from '../../../utils/keyboard';
+import { _exists } from '../../../utils/generic';
 import { KeyCode } from '../.././../constants/keyCode';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import { refreshFirstAndLastStyles } from '../cssClassApplier';
@@ -33,13 +34,13 @@ export interface IHeaderResizeFeature {
 
 export type HeaderCellCtrlInstanceId = BrandedType<string, 'HeaderCellCtrlInstanceId'>;
 
+export const DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
+
 export abstract class AbstractHeaderCellCtrl<
     TComp extends IAbstractHeaderCellComp = any,
     TColumn extends AgColumn | AgColumnGroup = any,
     TFeature extends IHeaderResizeFeature = any,
 > extends BeanStub {
-    public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
-
     public readonly instanceId: HeaderCellCtrlInstanceId;
 
     private pinnedWidthService: PinnedWidthService;
@@ -96,10 +97,24 @@ export abstract class AbstractHeaderCellCtrl<
         });
     }
 
-    protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
+    protected shouldStopEventPropagation(event: KeyboardEvent): boolean {
         const { headerRowIndex, column } = this.focusService.getFocusedHeader()!;
 
-        return _isUserSuppressingHeaderKeyboardEvent(this.gos, e, headerRowIndex, column as AgColumn);
+        const colDef = column.getDefinition();
+        const colDefFunc = colDef && colDef.suppressHeaderKeyboardEvent;
+
+        if (!_exists(colDefFunc)) {
+            return false;
+        }
+
+        const params: SuppressHeaderKeyboardEventParams = this.gos.addGridCommonParams({
+            colDef: colDef,
+            column,
+            headerRowIndex,
+            event,
+        });
+
+        return !!colDefFunc(params);
     }
 
     protected getWrapperHasFocus(): boolean {
@@ -361,7 +376,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     private addDomData(compBean: BeanStub): void {
-        const key = AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL;
+        const key = DOM_DATA_KEY_HEADER_CTRL;
         _setDomData(this.gos, this.eGui, key, this);
         compBean.addDestroyFunc(() => _setDomData(this.gos, this.eGui, key, null));
     }

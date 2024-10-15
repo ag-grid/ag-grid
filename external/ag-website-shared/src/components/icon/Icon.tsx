@@ -7,10 +7,12 @@ import Chord from '@ag-website-shared/images/inline-svgs/chord.svg?react';
 import CodeResult from '@ag-website-shared/images/inline-svgs/code-result.svg?react';
 import CodeSandboxIcon from '@ag-website-shared/images/inline-svgs/codesandbox.svg?react';
 import ColumnsIcon from '@ag-website-shared/images/inline-svgs/columns.svg?react';
+import ConeFunnel from '@ag-website-shared/images/inline-svgs/cone-funnel.svg?react';
 import CrossIcon from '@ag-website-shared/images/inline-svgs/cross.svg?react';
 import EnterpriseIcon from '@ag-website-shared/images/inline-svgs/enterprise.svg?react';
 import EscapeIcon from '@ag-website-shared/images/inline-svgs/escape.svg?react';
 import FigmaIcon from '@ag-website-shared/images/inline-svgs/figma-logo.svg?react';
+import Funnel from '@ag-website-shared/images/inline-svgs/funnel.svg?react';
 import HeadingResult from '@ag-website-shared/images/inline-svgs/heading-result.svg?react';
 import IntegratedChartsIcon from '@ag-website-shared/images/inline-svgs/integrated-chart.svg?react';
 import maximizeIcon from '@ag-website-shared/images/inline-svgs/maximize.svg?react';
@@ -18,6 +20,7 @@ import minimizeIcon from '@ag-website-shared/images/inline-svgs/minimize.svg?rea
 import NewTabIcon from '@ag-website-shared/images/inline-svgs/new-tab.svg?react';
 import PageResult from '@ag-website-shared/images/inline-svgs/page-result.svg?react';
 import PlunkerIcon from '@ag-website-shared/images/inline-svgs/plunker.svg?react';
+import Pyramid from '@ag-website-shared/images/inline-svgs/pyramid.svg?react';
 import RadarArea from '@ag-website-shared/images/inline-svgs/radar-area.svg?react';
 import RadialColumn from '@ag-website-shared/images/inline-svgs/radial-column.svg?react';
 import RadialGauge from '@ag-website-shared/images/inline-svgs/radial-gauge.svg?react';
@@ -123,8 +126,9 @@ const CHARTS_ICON_MAP = {
     chartsTreemap: CarbonIcon.ChartTreemap,
     chartsSunburst: CarbonIcon.ChartSunburst,
     chartsIcicle: CarbonIcon.ChartClusterBar,
-    chartsFunnel: CarbonIcon.Filter,
-    chartsPyramid: CarbonIcon.UpToTop,
+    chartsFunnel: Funnel,
+    chartsConeFunnel: ConeFunnel,
+    chartsPyramid: Pyramid,
     chartsLinearGauge: CarbonIcon.ChartBullet,
     chartsMap: CarbonIcon.Plan,
     chartsCandlestick: CarbonIcon.ChartCandlestick,

@@ -1,11 +1,9 @@
-import { BeanStub, _getRowHeightAsNumber, _getRowIdCallback, _warnOnce } from 'ag-grid-community';
 import type {
     BeanCollection,
     FocusService,
     GetRowIdParams,
     IRowNode,
     LoadSuccessParams,
-    NumberSequence,
     RowNode,
     RowNodeSorter,
     RowRenderer,
@@ -13,11 +11,12 @@ import type {
     SortController,
     WithoutGridCommon,
 } from 'ag-grid-community';
+import { BeanStub, _getRowHeightAsNumber, _getRowIdCallback, _warn } from 'ag-grid-community';
 
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { NodeManager } from '../../nodeManager';
 import type { ServerSideRowModel } from '../../serverSideRowModel';
-import { LazyBlockLoadingService } from './lazyBlockLoadingService';
+import type { LazyBlockLoadingService } from './lazyBlockLoadingService';
 import type { LazyStore } from './lazyStore';
 import { MultiIndexMap } from './multiIndexMap';
 
@@ -26,6 +25,8 @@ interface LazyStoreNode {
     index: number;
     node: RowNode;
 }
+
+const DEFAULT_BLOCK_SIZE = 100 as const;
 
 export class LazyCache extends BeanStub {
     private rowRenderer: RowRenderer;
@@ -163,11 +164,11 @@ export class LazyCache extends BeanStub {
             // if hiding open groups, the first node in this expanded store may not be
             // the first displayed node, as it could be hidden, so need to DFS first.
             const nextParent = this.nodeMap.find(
-                (lazyNode) => !!lazyNode.node.childStore?.isDisplayIndexInStore(displayIndex)
+                (lazyNode) => !!(lazyNode.node.childStore as LazyStore | undefined)?.isDisplayIndexInStore(displayIndex)
             );
             // if belongs to child store, search that first
             if (nextParent) {
-                return nextParent.node.childStore?.getRowUsingDisplayIndex(displayIndex);
+                return (nextParent.node.childStore as LazyStore | undefined)?.getRowUsingDisplayIndex(displayIndex);
             }
         }
 
@@ -189,9 +190,11 @@ export class LazyCache extends BeanStub {
             // if previous row is expanded group, this node will belong to that group.
             if (
                 contiguouslyPreviousNode.expanded &&
-                contiguouslyPreviousNode.childStore?.isDisplayIndexInStore(displayIndex)
+                (contiguouslyPreviousNode.childStore as LazyStore | undefined)?.isDisplayIndexInStore(displayIndex)
             ) {
-                return contiguouslyPreviousNode.childStore?.getRowUsingDisplayIndex(displayIndex);
+                return (contiguouslyPreviousNode.childStore as LazyStore | undefined)?.getRowUsingDisplayIndex(
+                    displayIndex
+                );
             }
 
             // otherwise, row must be a stub node
@@ -213,9 +216,9 @@ export class LazyCache extends BeanStub {
         if (
             previousNode &&
             previousNode.node.expanded &&
-            previousNode.node.childStore?.isDisplayIndexInStore(displayIndex)
+            (previousNode.node.childStore as LazyStore | undefined)?.isDisplayIndexInStore(displayIndex)
         ) {
-            return previousNode.node.childStore?.getRowUsingDisplayIndex(displayIndex);
+            return (previousNode.node.childStore as LazyStore | undefined)?.getRowUsingDisplayIndex(displayIndex);
         }
 
         // if we have the node after this node, we can calculate the store index of this node by the difference
@@ -269,7 +272,7 @@ export class LazyCache extends BeanStub {
      */
     private skipDisplayIndexes(
         numberOfRowsToSkip: number,
-        displayIndexSeq: NumberSequence,
+        displayIndexSeq: { value: number },
         nextRowTop: { value: number }
     ) {
         if (numberOfRowsToSkip === 0) {
@@ -277,7 +280,7 @@ export class LazyCache extends BeanStub {
         }
         const defaultRowHeight = _getRowHeightAsNumber(this.gos);
 
-        displayIndexSeq.skip(numberOfRowsToSkip);
+        displayIndexSeq.value += numberOfRowsToSkip;
         nextRowTop.value += numberOfRowsToSkip * defaultRowHeight;
     }
 
@@ -285,7 +288,7 @@ export class LazyCache extends BeanStub {
      * @param displayIndexSeq the number sequence for generating the display index of each row
      * @param nextRowTop an object containing the next row top value intended to be modified by ref per row
      */
-    public setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }, uiLevel: number): void {
+    public setDisplayIndexes(displayIndexSeq: { value: number }, nextRowTop: { value: number }, uiLevel: number): void {
         // Create a map of display index nodes for access speed
         this.nodeDisplayIndexMap.clear();
 
@@ -433,7 +436,9 @@ export class LazyCache extends BeanStub {
         }
 
         const storeIndexDiff = storeIndex - previousNode.index;
-        const previousDisplayIndex = previousNode.node.childStore?.getDisplayIndexEnd() ?? previousNode.node.rowIndex!;
+        const previousDisplayIndex =
+            (previousNode.node.childStore as LazyStore | undefined)?.getDisplayIndexEnd() ??
+            previousNode.node.rowIndex!;
         return previousDisplayIndex + storeIndexDiff;
     }
 
@@ -522,7 +527,7 @@ export class LazyCache extends BeanStub {
         // node doesn't exist, create a new one
         const newNode = this.blockUtils.createRowNode(this.store.getRowDetails());
         if (data != null) {
-            const defaultId = this.getPrefixedId(this.store.getIdSequence().next());
+            const defaultId = this.getPrefixedId(this.store.getIdSequence().value++);
             this.blockUtils.setDataIntoRowNode(newNode, data, defaultId, undefined);
 
             // don't allow the SSRM to listen to the dispatched row event, as it will
@@ -823,9 +828,7 @@ export class LazyCache extends BeanStub {
             const duplicates = this.extractDuplicateIds(response.rowData);
             if (duplicates.length > 0) {
                 const duplicateIdText = duplicates.join(', ');
-                _warnOnce(
-                    `Unable to display rows as duplicate row ids (${duplicateIdText}) were returned by the getRowId callback. Please modify the getRowId callback to provide unique ids.`
-                );
+                _warn(205, { duplicateIdText });
                 this.onLoadFailed(firstRowIndex, numberOfRowsExpected);
                 return;
             }
@@ -1195,7 +1198,7 @@ export class LazyCache extends BeanStub {
      * Return the block size configured for this cache
      */
     public getBlockSize() {
-        return this.storeParams.cacheBlockSize || LazyBlockLoadingService.DEFAULT_BLOCK_SIZE;
+        return this.storeParams.cacheBlockSize || DEFAULT_BLOCK_SIZE;
     }
 
     /**

@@ -3,7 +3,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import { _getMaxDivHeight } from '../utils/browser';
-import { _log } from '../utils/function';
+import { _logIfDebug } from '../utils/function';
 
 /**
  * This class solves the 'max height' problem, where the user might want to show more data than
@@ -44,9 +44,7 @@ export class RowContainerHeightService extends BeanStub implements NamedBean {
     public postConstruct(): void {
         this.addManagedEventListeners({ bodyHeightChanged: this.updateOffset.bind(this) });
         this.maxDivHeight = _getMaxDivHeight();
-        if (this.gos.get('debug')) {
-            _log('RowContainerHeightService - maxDivHeight = ' + this.maxDivHeight);
-        }
+        _logIfDebug(this.gos, 'RowContainerHeightService - maxDivHeight = ' + this.maxDivHeight);
     }
 
     public isStretching(): boolean {
@@ -83,11 +81,10 @@ export class RowContainerHeightService extends BeanStub implements NamedBean {
 
         const divStretchOffset = scrollPercent * this.pixelsToShave;
 
-        if (this.gos.get('debug')) {
-            _log(
-                `RowContainerHeightService - Div Stretch Offset = ${divStretchOffset} (${this.pixelsToShave} * ${scrollPercent})`
-            );
-        }
+        _logIfDebug(
+            this.gos,
+            `RowContainerHeightService - Div Stretch Offset = ${divStretchOffset} (${this.pixelsToShave} * ${scrollPercent})`
+        );
 
         this.setDivStretchOffset(divStretchOffset);
     }

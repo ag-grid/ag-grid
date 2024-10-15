@@ -15,18 +15,10 @@ import type {
     SortController,
     ValueService,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    _includes,
-    _isClientSideRowModel,
-    _isServerSideRowModel,
-    _last,
-    _values,
-    _warnOnce,
-} from 'ag-grid-community';
+import { BeanStub, _isClientSideRowModel, _isServerSideRowModel, _last, _warn } from 'ag-grid-community';
 
 import type { ColState } from '../model/chartDataModel';
-import { ChartDataModel } from '../model/chartDataModel';
+import { DEFAULT_CHART_CATEGORY } from '../model/chartDataModel';
 
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];
@@ -69,12 +61,12 @@ export class ChartDatasource extends BeanStub {
     public getData(params: ChartDatasourceParams): IData {
         if (params.crossFiltering) {
             if (params.grouping) {
-                _warnOnce('crossing filtering with row grouping is not supported.');
+                _warn(141);
                 return { chartData: [], columnNames: {} };
             }
 
             if (!_isClientSideRowModel(this.gos)) {
-                _warnOnce('crossing filtering is only supported in the client side row model.');
+                _warn(142);
                 return { chartData: [], columnNames: {} };
             }
         }
@@ -171,7 +163,7 @@ export class ChartDatasource extends BeanStub {
                         const valueString = valueObject?.toString ? String(valueObject.toString()) : '';
 
                         // traverse parents to extract group label path
-                        const labels = ChartDatasource.getGroupLabels(rowNode, valueString);
+                        const labels = this.getGroupLabels(rowNode, valueString);
 
                         data[colId] = {
                             labels,
@@ -202,7 +194,7 @@ export class ChartDatasource extends BeanStub {
                     }
                 } else {
                     // introduce a default category when no dimensions exist with a value based off row index (+1)
-                    data[ChartDataModel.DEFAULT_CATEGORY] = i + 1;
+                    data[DEFAULT_CHART_CATEGORY] = i + 1;
                 }
             });
 
@@ -243,12 +235,12 @@ export class ChartDatasource extends BeanStub {
 
         let groupChartData: any[] | undefined;
         if (grouping) {
-            const groupIndexesToRemove = _values(groupsToRemove);
+            const groupIndexesToRemove = Object.values(groupsToRemove);
             const allData = extractedRowData;
             extractedRowData = [];
             groupChartData = [];
             for (let i = 0; i < allData.length; i++) {
-                (_includes(groupIndexesToRemove, i) ? groupChartData : extractedRowData).push(allData[i]);
+                (groupIndexesToRemove.includes(i) ? groupChartData : extractedRowData).push(allData[i]);
             }
         }
 
@@ -388,7 +380,7 @@ export class ChartDatasource extends BeanStub {
         return extractSeparator(firstSecondaryCol.getParent()!, firstSecondaryCol.getColId());
     }
 
-    private static getGroupLabels(rowNode: RowNode | null, initialLabel: string): string[] {
+    private getGroupLabels(rowNode: RowNode | null, initialLabel: string): string[] {
         const labels = [initialLabel];
         while (rowNode && rowNode.level !== 0) {
             rowNode = rowNode.parent;

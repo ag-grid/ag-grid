@@ -1,4 +1,6 @@
+import type { LocalEventService } from '../localEventService';
 import type { AgPromise } from '../utils/promise';
+import type { IFrameworkEventListenerService } from './iFrameworkEventListenerService';
 
 export type FrameworkOverridesIncomingSource = 'resize-observer' | 'ensureVisible' | 'popupPositioning';
 
@@ -30,13 +32,14 @@ export interface IFrameworkOverrides {
      */
     wrapOutgoing: <T>(callback: () => T) => T;
 
-    /**
-     * The shouldWrapOutgoing property is used to determine if events should be run outside of Angular or not.
-     * If an event handler is registered outside of Angular then we should not wrap the event handler
-     * with runInsideAngular() as the user may not have wanted this.
-     * This is also used to not wrap internal event listeners that are registered with RowNodes and Columns.
-     */
-    shouldWrapOutgoing?: boolean;
+    /** Used for Angular event listener wrapping */
+    createLocalEventListenerWrapper?(
+        existingFrameworkEventListenerService: IFrameworkEventListenerService<any, any> | undefined,
+        localEventService: LocalEventService<any>
+    ): IFrameworkEventListenerService<any, any> | undefined;
+
+    /** Used for Angular event listener wrapping */
+    createGlobalEventListenerWrapper?(): IFrameworkEventListenerService<any, any>;
 
     /*
      * vue components are specified in the "components" part of the vue component - as such we need a way to deteremine if a given component is

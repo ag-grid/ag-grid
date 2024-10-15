@@ -2,9 +2,8 @@ import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttached
 import type { IDoesFilterPassParams, IFilterOptionDef } from '../../interfaces/iFilter';
 import { _areEqual } from '../../utils/array';
 import { _removeFromParent, _setDisabled, _setDisplayed } from '../../utils/dom';
-import { _isFunction } from '../../utils/function';
 import { AgPromise } from '../../utils/promise';
-import { _logWarn } from '../../validation/logging';
+import { _warn } from '../../validation/logging';
 import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
 import type { AgInputTextField } from '../../widgets/agInputTextField';
 import type { ListOption } from '../../widgets/agList';
@@ -14,7 +13,6 @@ import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import type { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import type {
-    FilterPlaceholderFunction,
     ICombinedSimpleModel,
     ISimpleFilter,
     ISimpleFilterModel,
@@ -250,7 +248,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             let conditions = combinedModel.conditions;
             if (conditions == null) {
                 conditions = [];
-                _logWarn(77);
+                _warn(77);
             }
 
             const numConditions = this.validateAndUpdateConditions(conditions);
@@ -297,7 +295,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         if (numConditions > this.maxNumConditions) {
             conditions.splice(this.maxNumConditions);
             // 'Filter Model contains more conditions than "filterParams.maxNumConditions". Additional conditions have been ignored.'
-            _logWarn(78);
+            _warn(78);
             numConditions = this.maxNumConditions;
         }
         return numConditions;
@@ -351,16 +349,16 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     private setNumConditions(params: SimpleFilterParams): void {
         this.maxNumConditions = params.maxNumConditions ?? 2;
         if (this.maxNumConditions < 1) {
-            _logWarn(79);
+            _warn(79);
             this.maxNumConditions = 1;
         }
         this.numAlwaysVisibleConditions = params.numAlwaysVisibleConditions ?? 1;
         if (this.numAlwaysVisibleConditions < 1) {
-            _logWarn(80);
+            _warn(80);
             this.numAlwaysVisibleConditions = 1;
         }
         if (this.numAlwaysVisibleConditions > this.maxNumConditions) {
-            _logWarn(81);
+            _warn(81);
             this.numAlwaysVisibleConditions = this.maxNumConditions;
         }
     }
@@ -651,11 +649,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     private getPlaceholderText(defaultPlaceholder: keyof typeof FILTER_LOCALE_TEXT, position: number): string {
         let placeholder = this.translate(defaultPlaceholder);
-        if (_isFunction<string>(this.filterPlaceholder)) {
-            const filterPlaceholderFn = this.filterPlaceholder as FilterPlaceholderFunction;
+        if (typeof this.filterPlaceholder === 'function') {
             const filterOptionKey = this.eTypes[position].getValue() as ISimpleFilterModelType;
             const filterOption = this.translate(filterOptionKey);
-            placeholder = filterPlaceholderFn({
+            placeholder = this.filterPlaceholder({
                 filterOptionKey,
                 filterOption,
                 placeholder,

@@ -2,7 +2,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import type { RowNode } from '../../entities/rowNode';
 import type { CsvCustomContent } from '../../interfaces/exportParams';
-import { _logWarn } from '../../validation/logging';
+import { _warn } from '../../validation/logging';
 import type { CsvSerializingParams, RowAccumulator, RowSpanningAccumulator } from '../interfaces';
 import { BaseGridSerializingSession } from './baseGridSerializingSession';
 
@@ -120,7 +120,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         } else if (typeof value.toString === 'function') {
             stringValue = value.toString();
         } else {
-            _logWarn(53);
+            _warn(53);
             stringValue = '';
         }
 

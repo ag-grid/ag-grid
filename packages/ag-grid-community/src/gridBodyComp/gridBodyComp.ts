@@ -15,34 +15,45 @@ import { CSS_CLASS_FORCE_VERTICAL_SCROLL, GridBodyCtrl } from './gridBodyCtrl';
 import { RowContainerSelector } from './rowContainer/rowContainerComp';
 import type { RowContainerName } from './rowContainer/rowContainerCtrl';
 
-function makeRowContainers(names: RowContainerName[]): string {
-    return names.map((name) => `<ag-row-container name="${name}"></ag-row-container>`).join('');
+function makeRowContainers(paramsMap: Record<string, { name: string }>, names: RowContainerName[]): string {
+    return names
+        .map((name) => {
+            const refName = `e${name[0].toUpperCase() + name.substring(1)}RowContainer`;
+            paramsMap[refName] = { name };
+            return /* html */ `<ag-row-container name="${name}" data-ref="${refName}"></ag-row-container>`;
+        })
+        .join('');
 }
 
-function getGridBodyTemplate(includeOverlay?: boolean) {
-    return /* html */ `<div class="ag-root ag-unselectable" role="treegrid">
+function getGridBodyTemplate(includeOverlay?: boolean): {
+    paramsMap: Record<string, { name: string }>;
+    template: string;
+} {
+    const paramsMap: Record<string, { name: string }> = {};
+    const template = /* html */ `<div class="ag-root ag-unselectable" role="treegrid">
         <ag-header-root></ag-header-root>
         <div class="ag-floating-top" data-ref="eTop" role="presentation">
-            ${makeRowContainers(['topLeft', 'topCenter', 'topRight', 'topFullWidth'])}
+            ${makeRowContainers(paramsMap, ['topLeft', 'topCenter', 'topRight', 'topFullWidth'])}
         </div>
         <div class="ag-body" data-ref="eBody" role="presentation">
             <div class="ag-body-viewport" data-ref="eBodyViewport" role="presentation">
-            ${makeRowContainers(['left', 'center', 'right', 'fullWidth'])}
+            ${makeRowContainers(paramsMap, ['left', 'center', 'right', 'fullWidth'])}
             </div>
             <ag-fake-vertical-scroll></ag-fake-vertical-scroll>
         </div>
         <div class="ag-sticky-top" data-ref="eStickyTop" role="presentation">
-            ${makeRowContainers(['stickyTopLeft', 'stickyTopCenter', 'stickyTopRight', 'stickyTopFullWidth'])}
+            ${makeRowContainers(paramsMap, ['stickyTopLeft', 'stickyTopCenter', 'stickyTopRight', 'stickyTopFullWidth'])}
         </div>
         <div class="ag-sticky-bottom" data-ref="eStickyBottom" role="presentation">
-            ${makeRowContainers(['stickyBottomLeft', 'stickyBottomCenter', 'stickyBottomRight', 'stickyBottomFullWidth'])}
+            ${makeRowContainers(paramsMap, ['stickyBottomLeft', 'stickyBottomCenter', 'stickyBottomRight', 'stickyBottomFullWidth'])}
         </div>
         <div class="ag-floating-bottom" data-ref="eBottom" role="presentation">
-            ${makeRowContainers(['bottomLeft', 'bottomCenter', 'bottomRight', 'bottomFullWidth'])}
+            ${makeRowContainers(paramsMap, ['bottomLeft', 'bottomCenter', 'bottomRight', 'bottomFullWidth'])}
         </div>
         <ag-fake-horizontal-scroll></ag-fake-horizontal-scroll>
         ${includeOverlay ? /* html */ `<ag-overlay-wrapper></ag-overlay-wrapper>` : ''}
     </div>`;
+    return { paramsMap, template };
 }
 
 export class GridBodyComp extends Component {
@@ -66,13 +77,19 @@ export class GridBodyComp extends Component {
     public postConstruct() {
         const overlaySelector = this.overlayService?.getOverlayWrapperSelector();
 
-        this.setTemplate(getGridBodyTemplate(!!overlaySelector), [
-            ...(overlaySelector ? [overlaySelector] : []),
-            FakeHScrollSelector,
-            FakeVScrollSelector,
-            GridHeaderSelector,
-            RowContainerSelector,
-        ]);
+        const { paramsMap, template } = getGridBodyTemplate(!!overlaySelector);
+
+        this.setTemplate(
+            template,
+            [
+                ...(overlaySelector ? [overlaySelector] : []),
+                FakeHScrollSelector,
+                FakeVScrollSelector,
+                GridHeaderSelector,
+                RowContainerSelector,
+            ],
+            paramsMap
+        );
 
         const setHeight = (height: number, element: HTMLElement) => {
             const heightString = `${height}px`;

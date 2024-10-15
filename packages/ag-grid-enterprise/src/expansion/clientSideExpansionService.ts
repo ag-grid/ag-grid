@@ -6,9 +6,11 @@ import type {
     NamedBean,
     RowNode,
 } from 'ag-grid-community';
-import { BeanStub, ClientSideRowModelSteps, _exists } from 'ag-grid-community';
+import { ClientSideRowModelSteps, _exists } from 'ag-grid-community';
 
-export class ClientSideExpansionService extends BeanStub implements NamedBean, IExpansionService {
+import { BaseExpansionService } from './baseExpansionService';
+
+export class ClientSideExpansionService extends BaseExpansionService implements NamedBean, IExpansionService {
     beanName = 'expansionService' as const;
 
     private rowModel: IClientSideRowModel;

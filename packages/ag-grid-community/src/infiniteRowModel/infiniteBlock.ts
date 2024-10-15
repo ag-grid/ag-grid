@@ -1,12 +1,11 @@
 import type { BeanCollection } from '../context/context';
 import { RowNode } from '../entities/rowNode';
 import type { IGetRowsParams } from '../interfaces/iDatasource';
-import type { LoadSuccessParams } from '../rowNodeCache/iRowNodeBlock';
-import { RowNodeBlock } from '../rowNodeCache/rowNodeBlock';
+import type { LoadSuccessParams } from '../interfaces/iServerSideRowModel';
 import { _exists, _missing } from '../utils/generic';
-import type { NumberSequence } from '../utils/numberSequence';
-import { _logWarn } from '../validation/logging';
+import { _warn } from '../validation/logging';
 import type { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
+import { RowNodeBlock } from './rowNodeBlock';
 
 export class InfiniteBlock extends RowNodeBlock {
     private beans: BeanCollection;
@@ -68,7 +67,7 @@ export class InfiniteBlock extends RowNodeBlock {
     protected loadFromDatasource(): void {
         const params = this.createLoadParams();
         if (_missing(this.params.datasource.getRows)) {
-            _logWarn(90);
+            _warn(90);
             return;
         }
 
@@ -101,13 +100,13 @@ export class InfiniteBlock extends RowNodeBlock {
 
     public forEachNode(
         callback: (rowNode: RowNode, index: number) => void,
-        sequence: NumberSequence,
+        sequence: { value: number },
         rowCount: number
     ): void {
         this.rowNodes.forEach((rowNode: RowNode, index: number) => {
             const rowIndex = this.startRow + index;
             if (rowIndex < rowCount) {
-                callback(rowNode, sequence.next());
+                callback(rowNode, sequence.value++);
             }
         });
     }
@@ -118,7 +117,7 @@ export class InfiniteBlock extends RowNodeBlock {
 
     public getRow(rowIndex: number, dontTouchLastAccessed = false): RowNode {
         if (!dontTouchLastAccessed) {
-            this.lastAccessed = this.params.lastAccessedSequence.next();
+            this.lastAccessed = this.params.lastAccessedSequence.value++;
         }
         const localIndex = rowIndex - this.startRow;
         return this.rowNodes[localIndex];

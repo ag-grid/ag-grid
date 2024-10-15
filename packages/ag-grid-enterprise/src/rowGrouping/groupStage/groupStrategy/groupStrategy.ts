@@ -17,11 +17,11 @@ import type {
 import {
     BeanStub,
     RowNode,
+    _ROW_ID_PREFIX_ROW_GROUP,
     _areEqual,
     _exists,
-    _existsAndNotEmpty,
     _removeFromArray,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import { BatchRemover } from './batchRemover';
@@ -151,13 +151,13 @@ export class GroupStrategy extends BeanStub {
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
             // transaction.
-            if (_existsAndNotEmpty(tran.remove)) {
+            if (tran.remove?.length) {
                 this.removeNodes(tran.remove as RowNode[], details, batchRemover);
             }
-            if (_existsAndNotEmpty(tran.update)) {
+            if (tran.update?.length) {
                 this.moveNodesInWrongPath(tran.update as RowNode[], details, batchRemover);
             }
-            if (_existsAndNotEmpty(tran.add)) {
+            if (tran.add?.length) {
                 this.insertNodes(tran.add as RowNode[], details);
             }
 
@@ -488,7 +488,7 @@ export class GroupStrategy extends BeanStub {
         const parentGroup = this.findParentForNode(childNode, path, details, batchRemover);
 
         if (!parentGroup.group) {
-            _warnOnce(`duplicate group keys for row data, keys should be unique`, [parentGroup.data, childNode.data]);
+            _warn(184, { parentGroupData: parentGroup.data, childNodeData: childNode.data });
         }
         childNode.parent = parentGroup;
         childNode.level = path.length;
@@ -586,7 +586,7 @@ export class GroupStrategy extends BeanStub {
 
         // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
         // for top pinned and bottom pinned rows.
-        return RowNode.ID_PREFIX_ROW_GROUP + createGroupId(node, parent, level);
+        return _ROW_ID_PREFIX_ROW_GROUP + createGroupId(node, parent, level);
     }
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo, details: GroupingDetails): void {
