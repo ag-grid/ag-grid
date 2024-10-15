@@ -61,10 +61,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         eGui: HTMLElement,
         eResize: HTMLElement,
         eHeaderCompWrapper: HTMLElement,
-        compBean: BeanStub | undefined
+        compBeanInput: BeanStub | undefined
     ): void {
         this.comp = comp;
-        compBean = setupCompBean(this, this.beans.context, compBean);
+        const compBean = setupCompBean(this, this.beans.context, compBeanInput);
 
         this.setGui(eGui, compBean);
         this.updateState();

@@ -126,11 +126,16 @@ export class HeaderRowCtrl extends BeanStub {
         );
     }
 
-    public getHeaderCellCtrl(column: AgColumn | AgColumnGroup): any {
+    public getHeaderCellCtrl(column: AgColumn | AgColumnGroup): AbstractHeaderCellCtrl | undefined {
         if (!this.headerCellCtrls) {
             return;
         }
-        return Array.from(this.headerCellCtrls.values()).find((cellCtrl) => cellCtrl.getColumnGroupChild() === column);
+        for (const cellCtrl of this.headerCellCtrls.values()) {
+            if (cellCtrl.getColumnGroupChild() === column) {
+                return cellCtrl;
+            }
+        }
+        return undefined;
     }
 
     private onDisplayedColumnsChanged(): void {

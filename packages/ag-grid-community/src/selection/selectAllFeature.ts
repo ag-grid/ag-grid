@@ -2,7 +2,7 @@ import { isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { GridOptions, RowSelectionOptions } from '../entities/gridOptions';
+import type { GridOptions, RowSelectionOptions, SelectAllMode } from '../entities/gridOptions';
 import type { SelectionEventSourceType } from '../events';
 import {
     _getActiveDomElement,
@@ -131,14 +131,14 @@ export class SelectAllFeature extends BeanStub {
 
         this.processingEventFromCheckbox = true;
 
-        const allSelected = this.selectionService.getSelectAllState(this.isFilteredOnly(), this.isCurrentPageOnly());
+        const selectAllMode = this.getSelectAllMode();
 
+        const allSelected = this.selectionService.getSelectAllState(selectAllMode);
         this.cbSelectAll.setValue(allSelected!);
-        const hasNodesToSelect = this.selectionService.hasNodesToSelect(
-            this.isFilteredOnly(),
-            this.isCurrentPageOnly()
-        );
+
+        const hasNodesToSelect = this.selectionService.hasNodesToSelect(selectAllMode);
         this.cbSelectAll.setDisabled(!hasNodesToSelect);
+
         this.refreshSelectAllLabel();
 
         this.processingEventFromCheckbox = false;
@@ -189,21 +189,16 @@ export class SelectAllFeature extends BeanStub {
         }
 
         const value = this.cbSelectAll.getValue();
-        const justFiltered = this.isFilteredOnly();
-        const justCurrentPage = this.isCurrentPageOnly();
+        const selectAll = this.getSelectAllMode();
 
         let source: SelectionEventSourceType = 'uiSelectAll';
-        if (justCurrentPage) {
+        if (selectAll === 'currentPage') {
             source = 'uiSelectAllCurrentPage';
-        } else if (justFiltered) {
+        } else if (selectAll === 'filtered') {
             source = 'uiSelectAllFiltered';
         }
 
-        const params = {
-            source,
-            justFiltered,
-            justCurrentPage,
-        };
+        const params = { source, selectAll };
         if (value) {
             this.selectionService.selectAllRowNodes(params);
         } else {
@@ -241,17 +236,18 @@ export class SelectAllFeature extends BeanStub {
         );
     }
 
-    private isFilteredOnly(): boolean {
+    private getSelectAllMode(): SelectAllMode {
         const so = this.selectionOptions;
-        return so !== undefined
-            ? so.mode === 'multiRow' && so.selectAll === 'filtered'
-            : !!this.column.getColDef().headerCheckboxSelectionFilteredOnly;
-    }
-
-    private isCurrentPageOnly(): boolean {
-        const so = this.selectionOptions;
-        return so !== undefined
-            ? so.mode === 'multiRow' && so.selectAll === 'currentPage'
-            : !!this.column.getColDef().headerCheckboxSelectionCurrentPageOnly;
+        if (so) {
+            return (so.mode === 'multiRow' && so.selectAll) || 'all';
+        }
+        const { headerCheckboxSelectionCurrentPageOnly, headerCheckboxSelectionFilteredOnly } = this.column.getColDef();
+        if (headerCheckboxSelectionCurrentPageOnly) {
+            return 'currentPage';
+        }
+        if (headerCheckboxSelectionFilteredOnly) {
+            return 'filtered';
+        }
+        return 'all';
     }
 }

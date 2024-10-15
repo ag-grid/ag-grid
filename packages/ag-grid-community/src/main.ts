@@ -1011,7 +1011,7 @@ export { InfiniteRowModelModule } from './infiniteRowModel/infiniteRowModelModul
 export { PopupModule } from './widgets/popupModule';
 export { SharedMenuModule } from './misc/menu/sharedMenuModule';
 export { KeyboardNavigationCoreModule } from './navigation/navigationModule';
-export { FlashCellModule } from './rendering/cell/flashCellModule';
+export { CellFlashModule } from './rendering/cell/cellFlashModule';
 export { ColumnGroupCoreModule } from './columns/columnGroups/columnGroupModule';
 
 //  events

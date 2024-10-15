@@ -2063,7 +2063,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public sortChanged: EventEmitter<SortChangedEvent<TData>> = new EventEmitter<SortChangedEvent<TData>>();
 
     // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"'
-    // https://angular.io/guide/template-typecheck#input-setter-coercion
+    // https://angular.dev/tools/cli/template-typecheck#input-setter-coercion
     static ngAcceptInputType_suppressMakeColumnVisibleAfterUnGroup: boolean | null | '';
     static ngAcceptInputType_suppressRowClickSelection: boolean | null | '';
     static ngAcceptInputType_suppressCellFocus: boolean | null | '';

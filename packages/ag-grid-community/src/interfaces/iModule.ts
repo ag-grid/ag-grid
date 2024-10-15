@@ -59,6 +59,7 @@ type CommunityModuleName =
     | 'AnimationFrameModule'
     | 'AutoWidthModule'
     | 'CellApiModule'
+    | 'CellFlashModule'
     | 'CellRendererFunctionModule'
     | 'CellStyleModule'
     | 'ChangeDetectionModule'

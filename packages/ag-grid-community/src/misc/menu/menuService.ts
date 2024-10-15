@@ -7,6 +7,7 @@ import { isColumn } from '../../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import type { FilterManager } from '../../filter/filterManager';
 import { _isLegacyMenuEnabled } from '../../gridOptionsUtils';
+import type { HeaderCellCtrl } from '../../headerRendering/cells/column/headerCellCtrl';
 import type { ContainerType } from '../../interfaces/iAfterGuiAttachedParams';
 import type { Column } from '../../interfaces/iColumn';
 import type { IContextMenuService } from '../../interfaces/iContextMenu';
@@ -182,7 +183,7 @@ export class MenuService extends BeanStub implements NamedBean {
             _requestAnimationFrame(this.gos, () => {
                 const headerCellCtrl = this.ctrlsService
                     .getHeaderRowContainerCtrl(column.getPinned())
-                    ?.getHeaderCtrlForColumn(column);
+                    ?.getHeaderCtrlForColumn(column) as HeaderCellCtrl | undefined;
 
                 if (headerCellCtrl) {
                     menuFactory.showMenuAfterButtonClick(

@@ -49,6 +49,8 @@ interface RowNodeMap {
     [id: string]: IRowNode;
 }
 
+const ROW_ANIMATION_TIMEOUT = 400 as const;
+
 export class RowRenderer extends BeanStub implements NamedBean {
     beanName = 'rowRenderer' as const;
 
@@ -238,9 +240,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
             },
             cellFocusCleared: () => this.onCellFocusChanged(),
             flashCells: (event) => {
-                const { flashCellService } = this.beans;
-                if (flashCellService) {
-                    this.getAllCellCtrls().forEach((cellCtrl) => flashCellService.onFlashCells(cellCtrl, event));
+                const { cellFlashService } = this.beans;
+                if (cellFlashService) {
+                    this.getAllCellCtrls().forEach((cellCtrl) => cellFlashService.onFlashCells(cellCtrl, event));
                 }
             },
             columnHoverChanged: () => {
@@ -1191,7 +1193,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 this.updateAllRowCtrls();
                 this.dispatchDisplayedRowsChanged();
             });
-            window.setTimeout(() => executeInAWhileFuncs.forEach((func) => func()), 400);
+            window.setTimeout(() => executeInAWhileFuncs.forEach((func) => func()), ROW_ANIMATION_TIMEOUT);
         }
     }
 

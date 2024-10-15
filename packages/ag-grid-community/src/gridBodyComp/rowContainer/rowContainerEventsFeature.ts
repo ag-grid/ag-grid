@@ -4,7 +4,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { FocusService } from '../../focusService';
-import { _getSelectAllCurrentPage, _getSelectAllFiltered, _isCellSelectionEnabled } from '../../gridOptionsUtils';
+import { _getSelectAll, _isCellSelectionEnabled } from '../../gridOptionsUtils';
 import type { IRangeService } from '../../interfaces/IRangeService';
 import type { IClipboardService } from '../../interfaces/iClipboardService';
 import type { IContextMenuService } from '../../interfaces/iContextMenu';
@@ -334,13 +334,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 columnEnd: _last(allDisplayedColumns),
             });
         } else if (selectionService) {
-            const justFiltered = _getSelectAllFiltered(gos);
-            const justCurrentPage = _getSelectAllCurrentPage(gos);
-            selectionService?.selectAllRowNodes({
-                source: 'keyboardSelectAll',
-                justFiltered,
-                justCurrentPage,
-            });
+            selectionService?.selectAllRowNodes({ source: 'keyboardSelectAll', selectAll: _getSelectAll(gos) });
         }
 
         event.preventDefault();
