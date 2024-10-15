@@ -1,6 +1,7 @@
-import { ComponentUtil } from '../../components/componentUtil';
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
-import { PropertyKeys } from '../../propertyKeys';
+import { _ALL_EVENTS } from '../../eventTypes';
+import { _getCallbackForEvent } from '../../gridOptionsUtils';
+import { _ALL_GRID_OPTIONS } from '../../propertyKeys';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortController';
 import { toStringWithNullUndefined } from '../logging';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
@@ -80,6 +81,28 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
         message: 'Use `suppressGroupChangesColumnVisibility: "suppressShowOnUngroup"` instead.',
     },
 });
+
+function toConstrainedNum(
+    key: keyof GridOptions,
+    value: any,
+    min: number,
+    max: number = Number.MAX_VALUE
+): string | null {
+    if (typeof value === 'number' || value == null) {
+        if (value == null) {
+            return null;
+        }
+
+        if (value >= min && value <= max) {
+            return null;
+        }
+        if (max === Number.MAX_VALUE) {
+            return `${key}: value should be greater than or equal to ${min}`;
+        }
+        return `${key}: value should be between ${min} and ${max}`;
+    }
+    return `${key}: value should be a number`;
+}
 
 /**
  * Validation rules for gridOptions
@@ -184,6 +207,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     },
     cacheBlockSize: {
         supportedRowModels: ['serverSide', 'infinite'],
+        validate({ cacheBlockSize }) {
+            return toConstrainedNum('cacheBlockSize', cacheBlockSize, 1);
+        },
     },
     datasource: {
         supportedRowModels: ['infinite'],
@@ -297,6 +323,53 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
         supportedRowModels: ['serverSide'],
     },
 
+    paginationPageSize: {
+        validate({ paginationPageSize }) {
+            return toConstrainedNum('paginationPageSize', paginationPageSize, 1);
+        },
+    },
+    autoSizePadding: {
+        validate({ autoSizePadding }) {
+            return toConstrainedNum('autoSizePadding', autoSizePadding, 0);
+        },
+    },
+    keepDetailRowsCount: {
+        validate({ keepDetailRowsCount }) {
+            return toConstrainedNum('keepDetailRowsCount', keepDetailRowsCount, 1);
+        },
+    },
+    rowBuffer: {
+        validate({ rowBuffer }) {
+            return toConstrainedNum('rowBuffer', rowBuffer, 0);
+        },
+    },
+    infiniteInitialRowCount: {
+        validate({ infiniteInitialRowCount }) {
+            return toConstrainedNum('infiniteInitialRowCount', infiniteInitialRowCount, 1);
+        },
+    },
+    cacheOverflowSize: {
+        validate({ cacheOverflowSize }) {
+            return toConstrainedNum('cacheOverflowSize', cacheOverflowSize, 1);
+        },
+    },
+    serverSideInitialRowCount: {
+        supportedRowModels: ['serverSide'],
+        validate({ serverSideInitialRowCount }) {
+            return toConstrainedNum('serverSideInitialRowCount', serverSideInitialRowCount, 1);
+        },
+    },
+    viewportRowModelPageSize: {
+        validate({ viewportRowModelPageSize }) {
+            return toConstrainedNum('viewportRowModelPageSize', viewportRowModelPageSize, 1);
+        },
+    },
+    viewportRowModelBufferSize: {
+        validate({ viewportRowModelBufferSize }) {
+            return toConstrainedNum('viewportRowModelBufferSize', viewportRowModelBufferSize, 0);
+        },
+    },
+
     columnDefs: () => COL_DEF_VALIDATORS,
     defaultColDef: () => COL_DEF_VALIDATORS,
     defaultColGroupDef: () => COL_DEF_VALIDATORS,
@@ -306,7 +379,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
 
 export const GRID_OPTIONS_VALIDATORS: () => OptionsValidator<GridOptions> = () => ({
     objectName: 'gridOptions',
-    allProperties: [...PropertyKeys.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS],
+    allProperties: [..._ALL_GRID_OPTIONS, ..._ALL_EVENTS.map((event) => _getCallbackForEvent(event))],
     propertyExceptions: ['api'],
     docsUrl: 'grid-options/',
     deprecations: GRID_OPTION_DEPRECATIONS(),

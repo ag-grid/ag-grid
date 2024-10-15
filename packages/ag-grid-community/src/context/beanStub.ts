@@ -214,7 +214,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
 
     private propertyListenerId = 0;
     // Enable multiple grid properties to be updated together by the user but only trigger shared logic once.
-    // Closely related to logic in ComponentUtil.ts
+    // Closely related to logic in GridOptionsUtils.ts _processOnChange
     private lastChangeSetIdLookup: Record<string, number> = {};
     /**
      * Setup managed property listeners for the given set of GridOption properties.
