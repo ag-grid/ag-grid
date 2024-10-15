@@ -20,7 +20,11 @@ export class ClientSideDetailService extends BeanStub implements NamedBean, ICli
 
     private isEnabled(): boolean {
         const gos = this.gos;
-        return gos.get('masterDetail') && !gos.get('treeData');
+        return (
+            gos.get('masterDetail') &&
+            // TODO: AG-1752: [Tree Data] Allow tree data leaf rows to serve as master rows for detail grids (Tree Data hosting Master/Detail)"
+            !gos.get('treeData')
+        );
     }
 
     public wireBeans(beans: BeanCollection): void {
