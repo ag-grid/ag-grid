@@ -37,7 +37,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
 
         rootNode.allLeafChildren = allLeafChildren;
 
-        this.clearTree(this.treeRoot);
+        this.treeClear(this.treeRoot);
         this.treeRoot.setRow(rootNode);
 
         const addChild = (parent: TreeNode, data: TData) => {

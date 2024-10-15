@@ -83,7 +83,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
             treeRoot.removeRow(rootRow);
             clearTreeRowFlags(rootRow);
         }
-        this.destroyTree(treeRoot);
+        this.treeDestroy(treeRoot);
         this.commitDestroyedRows();
 
         super.deactivate();
@@ -253,7 +253,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
     /** Commit the changes performed to a node and its children */
     private treeCommitChild(details: TreeCommitDetails, parent: TreeNode, node: TreeNode): void {
         if (node.isEmptyFillerNode()) {
-            this.clearTree(node);
+            this.treeClear(node);
             return; // Removed. No need to process children.
         }
 
@@ -307,7 +307,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
         const treeData = details.treeData;
 
         if (node.isEmptyFillerNode()) {
-            this.clearTree(node);
+            this.treeClear(node);
             return; // Removed. No need to process further
         }
 
@@ -428,7 +428,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
     }
 
     /** Called to clear a subtree. */
-    public clearTree(node: TreeNode): void {
+    public treeClear(node: TreeNode): void {
         const { parent, oldRow, row, level } = node;
         if (parent !== null && oldRow !== null) {
             parent.childrenChanged = true;
@@ -446,13 +446,13 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
             }
         }
         for (const child of node.enumChildren()) {
-            this.clearTree(child);
+            this.treeClear(child);
         }
         node.destroy();
     }
 
     /** Called by the destructor, to the destroy the whole tree. */
-    private destroyTree(node: TreeNode): void {
+    private treeDestroy(node: TreeNode): void {
         const { row, level, duplicateRows } = node;
         if (row) {
             if (level >= 0 && !row.data) {
@@ -471,7 +471,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
             }
         }
         for (const child of node.enumChildren()) {
-            this.destroyTree(child);
+            this.treeDestroy(child);
         }
         node.destroy();
     }
@@ -513,10 +513,10 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
      * This method finalizes the deletion of rows that were marked for deletion.
      */
     private commitDestroyedRows() {
-        const { rowsPendingDestruction: rowsPendingDeletion } = this;
-        if (rowsPendingDeletion !== null) {
+        const { rowsPendingDestruction } = this;
+        if (rowsPendingDestruction !== null) {
             this.rowsPendingDestruction = null;
-            for (const row of rowsPendingDeletion) {
+            for (const row of rowsPendingDestruction) {
                 this.treeDestroyRow(row, true);
             }
         }

@@ -13,7 +13,7 @@ export class ClientSidePathTreeNodeManager<TData>
     protected override loadNewRowData(rowData: TData[]): void {
         const rootNode = this.rootNode;
 
-        this.clearTree(this.treeRoot);
+        this.treeClear(this.treeRoot);
         this.treeRoot.setRow(rootNode);
 
         super.loadNewRowData(rowData);
