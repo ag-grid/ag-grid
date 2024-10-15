@@ -1,21 +1,29 @@
 import type {
     BeanCollection,
+    BeanName,
     FuncColsService,
-    IClientSideDetailService,
-    IClientSideRowModel,
+    IMasterDetailService,
+    IRowModel,
     NamedBean,
+    RowCtrl,
     RowDataUpdatedEvent,
     RowNodeTransaction,
 } from 'ag-grid-community';
 import { RowNode, _exists } from 'ag-grid-community';
-import { BeanStub, ClientSideRowModelSteps, _isClientSideRowModel } from 'ag-grid-community';
+import {
+    BeanStub,
+    ClientSideRowModelSteps,
+    _isClientSideRowModel,
+    _isServerSideRowModel,
+    _observeResize,
+} from 'ag-grid-community';
 
-export class ClientSideDetailService extends BeanStub implements NamedBean, IClientSideDetailService {
-    beanName = 'clientSideDetailService' as const;
+export class MasterDetailService extends BeanStub implements NamedBean, IMasterDetailService {
+    beanName: BeanName = 'masterDetailService' as const;
 
     private beans: BeanCollection;
     private enabled: boolean;
-    private rowModel: IClientSideRowModel;
+    private rowModel: IRowModel;
     private funcColsService: FuncColsService;
 
     private isEnabled(): boolean {
@@ -30,7 +38,7 @@ export class ClientSideDetailService extends BeanStub implements NamedBean, ICli
     public wireBeans(beans: BeanCollection): void {
         this.beans = beans;
         this.funcColsService = beans.funcColsService;
-        this.rowModel = beans.rowModel as IClientSideRowModel;
+        this.rowModel = beans.rowModel;
     }
 
     public postConstruct(): void {
@@ -45,7 +53,7 @@ export class ClientSideDetailService extends BeanStub implements NamedBean, ICli
         const enabled = this.isEnabled();
         if (this.enabled !== enabled) {
             if (this.setMasters(null)) {
-                this.rowModel.refreshModel({ step: ClientSideRowModelSteps.MAP });
+                this.rowModel.refreshModel?.({ step: ClientSideRowModelSteps.MAP });
             }
         }
     }
@@ -112,9 +120,11 @@ export class ClientSideDetailService extends BeanStub implements NamedBean, ICli
                 }
             }
         } else {
-            const allLeafChildren = this.rowModel.rootNode!.allLeafChildren!;
-            for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
-                setMaster(allLeafChildren[i], true, false);
+            const allLeafChildren = this.rowModel.rootNode?.allLeafChildren;
+            if (allLeafChildren) {
+                for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
+                    setMaster(allLeafChildren[i], true, false);
+                }
             }
         }
 
@@ -146,5 +156,40 @@ export class ClientSideDetailService extends BeanStub implements NamedBean, ICli
         masterNode.detailNode = detailNode;
 
         return detailNode;
+    }
+
+    public setupDetailRowAutoHeight(rowCtrl: RowCtrl, eDetailGui: HTMLElement): void {
+        const { gos } = this;
+        if (!gos.get('detailRowAutoHeight')) {
+            return;
+        }
+
+        const checkRowSizeFunc = () => {
+            const clientHeight = eDetailGui.clientHeight;
+
+            // if the UI is not ready, the height can be 0, which we ignore, as otherwise a flicker will occur
+            // as UI goes from the default height, to 0, then to the real height as UI becomes ready. this means
+            // it's not possible for have 0 as auto-height, however this is an improbable use case, as even an
+            // empty detail grid would still have some styling around it giving at least a few pixels.
+            if (clientHeight != null && clientHeight > 0) {
+                // we do the update in a timeout, to make sure we are not calling from inside the grid
+                // doing another update
+                const updateRowHeightFunc = () => {
+                    const { rowModel } = this;
+                    const rowNode = rowCtrl.getRowNode();
+                    rowNode.setRowHeight(clientHeight);
+                    if (_isClientSideRowModel(gos, rowModel) || _isServerSideRowModel(gos, rowModel)) {
+                        rowModel.onRowHeightChanged();
+                    }
+                };
+                window.setTimeout(updateRowHeightFunc, 0);
+            }
+        };
+
+        const resizeObserverDestroyFunc = _observeResize(gos, eDetailGui, checkRowSizeFunc);
+
+        rowCtrl.addDestroyFunc(resizeObserverDestroyFunc);
+
+        checkRowSizeFunc();
     }
 }

@@ -28,10 +28,10 @@ import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _insertIntoArray, _last, _removeFromArray } from '../utils/array';
+import { _last, _removeFromArray } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _debounce } from '../utils/function';
-import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
+import { _exists, _missing } from '../utils/generic';
 import { _error, _warn } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
 import { updateRowNodeAfterFilter } from './filterStage';
@@ -457,7 +457,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
 
         rowNodes.forEach((rowNode, idx) => {
-            _insertIntoArray(allLeafChildren, rowNode, Math.max(indexAtPixelNow + increment, 0) + idx);
+            allLeafChildren.splice(Math.max(indexAtPixelNow + increment, 0) + idx, 0, rowNode);
         });
 
         rowNodes.forEach((rowNode: ClientSideRowModelRowNode, index) => {
@@ -656,7 +656,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // the impacted parent rows are recalculated, parents who's children have
         // not changed are not impacted.
 
-        const noTransactions = _missingOrEmpty(rowNodeTransactions);
+        const noTransactions = !rowNodeTransactions?.length;
 
         const changedPath = new ChangedPath(false, this.rootNode);
 

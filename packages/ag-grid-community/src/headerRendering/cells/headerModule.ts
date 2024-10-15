@@ -3,8 +3,8 @@ import type { _ModuleWithoutApi } from '../../interfaces/iModule';
 import { HeaderComp } from './column/headerComp';
 import { HeaderGroupComp } from './columnGroup/headerGroupComp';
 
-export const ColumnHeaderModule: _ModuleWithoutApi = {
-    ...baseCommunityModule('ColumnHeaderModule'),
+export const ColumnHeaderCompModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('ColumnHeaderCompModule'),
     userComponents: [
         {
             classImp: HeaderComp,
@@ -13,8 +13,8 @@ export const ColumnHeaderModule: _ModuleWithoutApi = {
     ],
 };
 
-export const ColumnGroupHeaderModule: _ModuleWithoutApi = {
-    ...baseCommunityModule('ColumnGroupHeaderModule'),
+export const ColumnGroupHeaderCompModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('ColumnGroupHeaderCompModule'),
     userComponents: [
         {
             classImp: HeaderGroupComp,

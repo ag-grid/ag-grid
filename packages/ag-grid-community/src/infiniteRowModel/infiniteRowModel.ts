@@ -5,17 +5,16 @@ import type { RowNode } from '../entities/rowNode';
 import type { FilterManager } from '../filter/filterManager';
 import { _getRowHeightAsNumber, _getRowIdCallback } from '../gridOptionsUtils';
 import type { IDatasource } from '../interfaces/iDatasource';
-import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
+import type { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { SortController } from '../sort/sortController';
 import { _jsonEquals } from '../utils/generic';
-import { NumberSequence } from '../utils/numberSequence';
 import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
 import type { RowNodeBlockLoader } from './rowNodeBlockLoader';
 
-export class InfiniteRowModel extends BeanStub implements NamedBean {
+export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
 
     private filterManager?: FilterManager;
@@ -213,7 +212,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean {
 
             // the cache could create this, however it is also used by the pages, so handy to create it
             // here as the settings are also passed to the pages
-            lastAccessedSequence: new NumberSequence(),
+            lastAccessedSequence: { value: 0 },
         } as InfiniteCacheParams;
 
         this.infiniteCache = this.createBean(new InfiniteCache(this.cacheParams));

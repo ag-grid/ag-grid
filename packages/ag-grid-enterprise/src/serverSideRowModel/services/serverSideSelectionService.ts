@@ -4,6 +4,7 @@ import type {
     NamedBean,
     RowNode,
     RowSelectionMode,
+    SelectAllMode,
     SelectionEventSourceType,
     ServerSideRowGroupSelectionState,
     ServerSideRowSelectionState,
@@ -186,11 +187,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         return true;
     }
 
-    public selectAllRowNodes(params: {
-        source: SelectionEventSourceType;
-        justFiltered?: boolean | undefined;
-        justCurrentPage?: boolean | undefined;
-    }): void {
+    public selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void {
         validateSelectionParameters(params);
         if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
             _warn(193);
@@ -210,11 +207,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         this.dispatchSelectionChanged(params.source);
     }
 
-    public deselectAllRowNodes(params: {
-        source: SelectionEventSourceType;
-        justFiltered?: boolean | undefined;
-        justCurrentPage?: boolean | undefined;
-    }): void {
+    public deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void {
         validateSelectionParameters(params);
 
         this.selectionStrategy.deselectAllRowNodes(params);
@@ -230,8 +223,8 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         this.dispatchSelectionChanged(params.source);
     }
 
-    public getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean): boolean | null {
-        return this.selectionStrategy.getSelectAllState(justFiltered, justCurrentPage);
+    public getSelectAllState(selectAll?: SelectAllMode): boolean | null {
+        return this.selectionStrategy.getSelectAllState(selectAll);
     }
 
     // used by CSRM
@@ -240,15 +233,8 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         return undefined;
     }
 }
-function validateSelectionParameters({
-    justCurrentPage,
-    justFiltered,
-}: {
-    source: SelectionEventSourceType;
-    justFiltered?: boolean | undefined;
-    justCurrentPage?: boolean | undefined;
-}) {
-    if (justCurrentPage || justFiltered) {
-        _warn(195, { justCurrentPage });
+function validateSelectionParameters({ selectAll }: { source: SelectionEventSourceType; selectAll?: SelectAllMode }) {
+    if (selectAll === 'filtered' || selectAll === 'currentPage') {
+        _warn(195, { justCurrentPage: selectAll === 'currentPage' });
     }
 }

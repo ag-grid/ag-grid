@@ -463,7 +463,7 @@ const CellComp = ({
         cssClassManager.current!.addOrRemoveCssClass('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
         cssClassManager.current!.addOrRemoveCssClass('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
         cssClassManager.current!.addOrRemoveCssClass('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
-        cellCtrl.getRowCtrl()?.setInlineEditingCss();
+        cellCtrl.setInlineEditingCss();
 
         if (cellCtrl.shouldRestoreFocus() && !cellCtrl.isEditing()) {
             // Restore focus to the cell if it was focused before and not editing.

@@ -10,10 +10,10 @@ export function _makeNull<T>(value?: T): T | null {
     return value;
 }
 
-export function _exists(value: string | null | undefined, allowEmptyString?: boolean): value is string;
+export function _exists(value: string | null | undefined): value is string;
 export function _exists<T>(value: T): value is NonNullable<T>;
-export function _exists(value: any, allowEmptyString = false): boolean {
-    return value != null && (value !== '' || allowEmptyString);
+export function _exists(value: any): boolean {
+    return value != null && value !== '';
 }
 
 export function _missing<T>(value: T | null | undefined): value is Exclude<undefined | null, T>;
@@ -21,71 +21,8 @@ export function _missing(value: any): boolean {
     return !_exists(value);
 }
 
-export function _missingOrEmpty<T>(value?: T[] | string | null): boolean {
-    return value == null || value.length === 0;
-}
-
 export function _toStringOrNull(value: any): string | null {
     return value != null && typeof value.toString === 'function' ? value.toString() : null;
-}
-
-// for parsing html attributes, where we want empty strings and missing attributes to be undefined
-export function _attrToNumber(value?: number | string | null): number | null | undefined {
-    if (value === undefined) {
-        // undefined or empty means ignore the value
-        return;
-    }
-
-    if (value === null || value === '') {
-        // null or blank means clear
-        return null;
-    }
-
-    if (typeof value === 'number') {
-        return isNaN(value) ? undefined : value;
-    }
-
-    const valueParsed = parseInt(value, 10);
-
-    return isNaN(valueParsed) ? undefined : valueParsed;
-}
-
-// for parsing html attributes, where we want empty strings and missing attributes to be undefined
-export function _attrToBoolean(value?: boolean | string | null): boolean | undefined {
-    if (value === undefined) {
-        // undefined or empty means ignore the value
-        return;
-    }
-
-    if (value === null || value === '') {
-        // null means clear
-        return false;
-    }
-
-    return toBoolean(value);
-}
-
-export function toBoolean(value: any): boolean {
-    if (typeof value === 'boolean') {
-        return value;
-    }
-
-    if (typeof value === 'string') {
-        // for boolean, compare to empty String to allow attributes appearing with
-        // no value to be treated as 'true'
-        return value.toUpperCase() === 'TRUE' || value == '';
-    }
-
-    return false;
-}
-
-// for parsing html attributes, where we want empty strings and missing attributes to be undefined
-export function _attrToString(value?: string): string | undefined {
-    if (value == null || value === '') {
-        return;
-    }
-
-    return value;
 }
 
 export function _jsonEquals<T1, T2>(val1: T1, val2: T2): boolean {
@@ -142,16 +79,4 @@ export function _defaultComparator(valueA: any, valueB: any, accentedCompare: bo
         // by browser, then just continue with the quick one
         return doQuickCompare(valueA, valueB);
     }
-}
-
-export function _values<T>(object: { [key: string]: T } | Set<T> | Map<any, T>): T[] {
-    if (object instanceof Set || object instanceof Map) {
-        const arr: T[] = [];
-
-        object.forEach((value: T) => arr.push(value));
-
-        return arr;
-    }
-
-    return Object.values(object);
 }

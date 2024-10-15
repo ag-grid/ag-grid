@@ -9,8 +9,7 @@ import type { GetGroupIncludeFooterParams } from '../interfaces/iCallbackParams'
 import { ClientSideRowModelSteps } from '../interfaces/iClientSideRowModel';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
-import type { IClientSideDetailService } from '../interfaces/masterDetail';
-import { _missingOrEmpty } from '../utils/generic';
+import type { IMasterDetailService } from '../interfaces/masterDetail';
 
 interface FlattenDetails {
     hideOpenParents: boolean;
@@ -31,14 +30,12 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
     ]);
     public step: ClientSideRowModelSteps = ClientSideRowModelSteps.MAP;
 
-    private beans: BeanCollection;
     private columnModel: ColumnModel;
-    private detailService: IClientSideDetailService | undefined;
+    private masterDetailService: IMasterDetailService | undefined;
 
     public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
         this.columnModel = beans.columnModel;
-        this.detailService = beans.clientSideDetailService;
+        this.masterDetailService = beans.masterDetailService;
     }
 
     public execute(params: StageExecuteParams): RowNode[] {
@@ -99,7 +96,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
         skipLeafNodes: boolean,
         uiLevel: number
     ) {
-        if (_missingOrEmpty(rowsToFlatten)) {
+        if (!rowsToFlatten?.length) {
             return;
         }
 
@@ -175,7 +172,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
                     }
                 }
             } else {
-                const detailNode = this.detailService?.getDetail(rowNode);
+                const detailNode = this.masterDetailService?.getDetail(rowNode);
                 if (detailNode) {
                     this.addRowNodeToRowsToDisplay(details, detailNode, result, uiLevel);
                 }

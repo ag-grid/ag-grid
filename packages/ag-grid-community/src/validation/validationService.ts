@@ -7,7 +7,6 @@ import type { EnterpriseModuleName, ModuleName } from '../interfaces/iModule';
 import { _areModulesGridScoped } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
 import { _fuzzySuggestions } from '../utils/fuzzyMatch';
-import { _iterateObject } from '../utils/object';
 import { validateApiFunction } from './apiFunctionValidator';
 import { ENTERPRISE_MODULE_NAMES } from './enterpriseModuleNames';
 import type { ErrorId, GetErrorParams } from './errorMessages/errorText';
@@ -209,7 +208,7 @@ export class ValidationService extends BeanStub implements NamedBean {
             validProperties
         );
 
-        _iterateObject(invalidProperties, (key, value) => {
+        Object.entries(invalidProperties).forEach(([key, value]) => {
             let message = `invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(', ')}.`;
             if (validProperties.includes('context')) {
                 message += `\nIf you are trying to annotate ${containerName} with application data, use the '${containerName}.context' property instead.`;
