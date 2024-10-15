@@ -18,7 +18,7 @@ export class ClientSidePathTreeNodeManager<TData>
 
         super.loadNewRowData(rowData);
 
-        this.addOrUpdateRows(this.gos.get('getDataPath'), rootNode.allLeafChildren!, false);
+        this.addOrUpdateRows(rootNode.allLeafChildren!, false);
 
         this.treeCommit();
     }
@@ -30,13 +30,12 @@ export class ClientSidePathTreeNodeManager<TData>
     ): void {
         this.treeRoot.setRow(this.rootNode);
 
-        const getDataPath = this.gos.get('getDataPath');
         for (const { remove, update, add } of transactions) {
             // the order of [add, remove, update] is the same as in ClientSideNodeManager.
             // Order is important when a record with the same id is added and removed in the same transaction.
             this.removeRows(remove as RowNode[] | null);
-            this.addOrUpdateRows(getDataPath, update as RowNode[] | null, true);
-            this.addOrUpdateRows(getDataPath, add as RowNode[] | null, false);
+            this.addOrUpdateRows(update as RowNode[] | null, true);
+            this.addOrUpdateRows(add as RowNode[] | null, false);
         }
 
         if (rowNodesOrderChanged) {
@@ -66,7 +65,8 @@ export class ClientSidePathTreeNodeManager<TData>
     }
 
     /** Transactional add/update */
-    private addOrUpdateRows(getDataPath: GetDataPath | undefined, rows: RowNode[] | null, update: boolean): void {
+    private addOrUpdateRows(rows: RowNode[] | null, update: boolean): void {
+        const getDataPath = this.gos.get('getDataPath');
         for (let i = 0, len = rows?.length ?? 0; i < len; ++i) {
             const row = rows![i];
             const path = getDataPath?.(row.data);
