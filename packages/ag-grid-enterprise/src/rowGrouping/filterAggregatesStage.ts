@@ -1,5 +1,6 @@
 import type {
     BeanCollection,
+    ClientSideRowModelStage,
     ColumnModel,
     FilterManager,
     GridOptions,
@@ -8,13 +9,13 @@ import type {
     RowNode,
     StageExecuteParams,
 } from 'ag-grid-community';
-import { BeanStub, ClientSideRowModelSteps, _getGroupAggFiltering } from 'ag-grid-community';
+import { BeanStub, _getGroupAggFiltering } from 'ag-grid-community';
 
 export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'filterAggregatesStage' as const;
 
     public refreshProps: Set<keyof GridOptions<any>> = new Set([]);
-    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.FILTER_AGGREGATES;
+    public step: ClientSideRowModelStage = 'filter_aggregates';
 
     private filterManager?: FilterManager;
     private columnModel: ColumnModel;

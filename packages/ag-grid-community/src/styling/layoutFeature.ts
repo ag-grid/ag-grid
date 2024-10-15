@@ -4,11 +4,11 @@ export interface LayoutView {
     updateLayoutClasses(layoutClass: string, params: UpdateLayoutClassesParams): void;
 }
 
-export enum LayoutCssClasses {
-    AUTO_HEIGHT = 'ag-layout-auto-height',
-    NORMAL = 'ag-layout-normal',
-    PRINT = 'ag-layout-print',
-}
+export const LayoutCssClasses = {
+    AUTO_HEIGHT: 'ag-layout-auto-height',
+    NORMAL: 'ag-layout-normal',
+    PRINT: 'ag-layout-print',
+} as const;
 
 export interface UpdateLayoutClassesParams {
     autoHeight: boolean;

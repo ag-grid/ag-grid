@@ -1,5 +1,5 @@
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import { HorizontalDirection } from '../../../constants/direction';
+import type { HorizontalDirection } from '../../../constants/direction';
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
@@ -291,7 +291,7 @@ export abstract class AbstractHeaderCellCtrl<
         }
 
         const isLeft = (e.key === KeyCode.LEFT) !== this.gos.get('enableRtl');
-        const direction = HorizontalDirection[isLeft ? 'Left' : 'Right'];
+        const direction = isLeft ? 'left' : 'right';
 
         if (e.altKey) {
             this.isResizing = true;

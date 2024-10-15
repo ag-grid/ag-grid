@@ -11,7 +11,7 @@ import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
 import { getColumnHeaderRowHeight, getFloatingFiltersHeight, getGroupRowsHeight } from '../headerUtils';
-import { HeaderRowType } from './headerRowComp';
+import type { HeaderRowType } from './headerRowComp';
 
 export interface IHeaderRowComp {
     setTop(top: string): void;
@@ -49,9 +49,9 @@ export class HeaderRowCtrl extends BeanStub {
         this.type = type;
 
         const typeClass =
-            type == HeaderRowType.COLUMN_GROUP
+            type == 'group'
                 ? `ag-header-row-column-group`
-                : type == HeaderRowType.FLOATING_FILTER
+                : type == 'filter'
                   ? `ag-header-row-column-filter`
                   : `ag-header-row-column`;
         this.headerRowClass = `ag-header-row ${typeClass}`;
@@ -298,7 +298,7 @@ export class HeaderRowCtrl extends BeanStub {
 
         if (headerCtrl == null) {
             switch (this.type) {
-                case HeaderRowType.FLOATING_FILTER: {
+                case 'filter': {
                     headerCtrl = this.createBean(
                         this.beans.registry.createDynamicBean<HeaderFilterCellCtrl>(
                             'headerFilterCellCtrl',
@@ -309,7 +309,7 @@ export class HeaderRowCtrl extends BeanStub {
                     );
                     break;
                 }
-                case HeaderRowType.COLUMN_GROUP:
+                case 'group':
                     headerCtrl = this.createBean(
                         this.beans.registry.createDynamicBean<HeaderGroupCellCtrl>(
                             'headerGroupCellCtrl',
@@ -351,7 +351,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getActualDepth(): number {
-        return this.type == HeaderRowType.FLOATING_FILTER ? this.rowIndex - 1 : this.rowIndex;
+        return this.type == 'filter' ? this.rowIndex - 1 : this.rowIndex;
     }
 
     private getColumnsInViewportNormalLayout(): (AgColumn | AgColumnGroup)[] {

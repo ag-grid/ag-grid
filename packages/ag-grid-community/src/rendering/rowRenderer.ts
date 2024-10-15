@@ -35,8 +35,6 @@ import type { CellCtrl } from './cell/cellCtrl';
 import { DOM_DATA_KEY_CELL_CTRL } from './cell/cellCtrl';
 import type { StickyRowFeature } from './features/stickyRowFeature';
 import type { StickyRowService } from './features/stickyRowService';
-import type { CtrlFunc } from './renderUtils';
-import { iterateCtrls } from './renderUtils';
 import type { RowCtrlInstanceId } from './row/rowCtrl';
 import { DOM_DATA_KEY_ROW_CTRL, RowCtrl } from './row/rowCtrl';
 import type { RowContainerHeightService } from './rowContainerHeightService';

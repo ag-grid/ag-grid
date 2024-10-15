@@ -1,6 +1,6 @@
 import type { ColumnModel } from '../../columns/columnModel';
 import type { VisibleColsService } from '../../columns/visibleColsService';
-import { HorizontalDirection } from '../../constants/direction';
+import type { HorizontalDirection } from '../../constants/direction';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
@@ -254,7 +254,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         finished: boolean
     ): void {
         const allMovingColumns = this.getAllMovingColumns(draggingEvent);
-        const fromLeft = this.normaliseDirection(draggingEvent.hDirection!) === HorizontalDirection.Right;
+        const fromLeft = this.normaliseDirection(draggingEvent.hDirection!) === 'right';
         const isFromHeader = draggingEvent.dragSource.type === DragSourceType.HeaderCell;
 
         const params = this.getMoveColumnParams({
@@ -517,10 +517,10 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection {
         if (this.gos.get('enableRtl')) {
             switch (hDirection) {
-                case HorizontalDirection.Left:
-                    return HorizontalDirection.Right;
-                case HorizontalDirection.Right:
-                    return HorizontalDirection.Left;
+                case 'left':
+                    return 'right';
+                case 'right':
+                    return 'left';
             }
         }
 

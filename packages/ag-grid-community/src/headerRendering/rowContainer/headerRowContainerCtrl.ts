@@ -16,7 +16,7 @@ import type { HeaderPosition } from '../../interfaces/iHeaderPosition';
 import type { PinnedColumnService } from '../../pinnedColumns/pinnedColumnService';
 import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { getHeaderRowCount } from '../headerUtils';
-import { HeaderRowType } from '../row/headerRowComp';
+import type { HeaderRowType } from '../row/headerRowComp';
 import { HeaderRowCtrl } from '../row/headerRowCtrl';
 
 export interface IHeaderRowContainerComp {
@@ -109,7 +109,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
 
             for (let i = 0; i < groupRowCount; i++) {
-                const ctrl = this.createBean(new HeaderRowCtrl(sequence++, this.pinned, HeaderRowType.COLUMN_GROUP));
+                const ctrl = this.createBean(new HeaderRowCtrl(sequence++, this.pinned, 'group'));
                 this.groupsRowCtrls.push(ctrl);
             }
         };
@@ -127,7 +127,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             }
 
             if (needNewInstance) {
-                this.columnsRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.COLUMN));
+                this.columnsRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, 'column'));
             }
         };
 
@@ -153,9 +153,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             }
 
             if (!this.filtersRowCtrl) {
-                this.filtersRowCtrl = this.createBean(
-                    new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.FLOATING_FILTER)
-                );
+                this.filtersRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, 'filter'));
             }
         };
 

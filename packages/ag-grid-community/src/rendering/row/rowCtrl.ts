@@ -31,7 +31,6 @@ import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IEventListener } from '../../interfaces/iEventEmitter';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
-import { RowHighlightPosition } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { calculateRowLevel } from '../../styling/rowStyleService';
@@ -45,8 +44,6 @@ import { _escapeString } from '../../utils/string';
 import type { Component } from '../../widgets/component';
 import { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
-import type { CtrlFunc } from '../renderUtils';
-import { iterateCtrls } from '../renderUtils';
 
 type RowType = 'Normal' | 'FullWidth' | 'FullWidthLoading' | 'FullWidthGroup' | 'FullWidthDetail';
 
@@ -815,8 +812,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const highlighted = this.rowNode.highlighted;
 
         this.allRowGuis.forEach((gui) => {
-            const aboveOn = highlighted === RowHighlightPosition.Above;
-            const belowOn = highlighted === RowHighlightPosition.Below;
+            const aboveOn = highlighted === 'Above';
+            const belowOn = highlighted === 'Below';
             gui.rowComp.addOrRemoveCssClass('ag-row-highlight-above', aboveOn);
             gui.rowComp.addOrRemoveCssClass('ag-row-highlight-below', belowOn);
         });

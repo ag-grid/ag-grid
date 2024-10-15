@@ -10,7 +10,7 @@ import { _getActiveDomElement } from '../gridOptionsUtils';
 import { _requestAnimationFrame } from '../misc/animationFrameService';
 import type { MenuService } from '../misc/menu/menuService';
 import type { HeaderNavigationService } from '../navigation/headerNavigationService';
-import { HeaderNavigationDirection } from '../navigation/headerNavigationService';
+import type { HeaderNavigationDirection } from '../navigation/headerNavigationService';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _exists } from '../utils/generic';
 import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
@@ -155,7 +155,7 @@ export class GridHeaderCtrl extends BeanStub {
     protected onTabKeyDown(e: KeyboardEvent): void {
         const isRtl = this.gos.get('enableRtl');
         const backwards = e.shiftKey;
-        const direction = backwards !== isRtl ? HeaderNavigationDirection.LEFT : HeaderNavigationDirection.RIGHT;
+        const direction = backwards !== isRtl ? 'LEFT' : 'RIGHT';
 
         if (
             this.headerNavigationService!.navigateHorizontally(direction, true, e) ||
@@ -172,11 +172,11 @@ export class GridHeaderCtrl extends BeanStub {
 
         switch (e.key) {
             case KeyCode.LEFT:
-                direction = HeaderNavigationDirection.LEFT;
+                direction = 'LEFT';
             // eslint-disable-next-line no-fallthrough
             case KeyCode.RIGHT: {
                 if (!_exists(direction)) {
-                    direction = HeaderNavigationDirection.RIGHT;
+                    direction = 'RIGHT';
                 }
                 if (this.headerNavigationService!.navigateHorizontally(direction, false, e)) {
                     // preventDefault so that the arrow keys don't cause an extra scroll
@@ -185,11 +185,11 @@ export class GridHeaderCtrl extends BeanStub {
                 break;
             }
             case KeyCode.UP:
-                direction = HeaderNavigationDirection.UP;
+                direction = 'UP';
             // eslint-disable-next-line no-fallthrough
             case KeyCode.DOWN: {
                 if (!_exists(direction)) {
-                    direction = HeaderNavigationDirection.DOWN;
+                    direction = 'DOWN';
                 }
                 if (this.headerNavigationService!.navigateVertically(direction, null, e)) {
                     // preventDefault so that the arrow keys don't cause an extra scroll

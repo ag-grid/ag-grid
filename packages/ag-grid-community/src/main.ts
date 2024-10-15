@@ -136,7 +136,6 @@ export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 export { type ITreeNode, RowNode, ROW_ID_PREFIX_ROW_GROUP as _ROW_ID_PREFIX_ROW_GROUP } from './entities/rowNode';
 export {
-    RowHighlightPosition,
     RowPinnedType,
     IRowNode,
     RowNodeSelectedEvent,
@@ -431,7 +430,7 @@ export { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 export { RowDataTransaction } from './interfaces/rowDataTransaction';
 export {
     IClientSideRowModel,
-    ClientSideRowModelSteps,
+    ClientSideRowModelStage,
     ClientSideRowModelStep,
     RefreshModelParams,
 } from './interfaces/iClientSideRowModel';
@@ -466,7 +465,6 @@ export { BaseSelectionService } from './selection/baseSelectionService';
 
 // styling
 export type { CellStyleService } from './styling/cellStyleService';
-export { UpdateLayoutClassesParams, LayoutCssClasses } from './styling/layoutFeature';
 
 // widgets
 export {
@@ -566,7 +564,6 @@ export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export type { CellNavigationService } from './navigation/cellNavigationService';
 export { KeyCode } from './constants/keyCode';
-export { VerticalDirection, HorizontalDirection } from './constants/direction';
 export {
     GridParams,
     Params,
@@ -700,7 +697,6 @@ export {
 export { RowPosition } from './interfaces/iRowPosition';
 export { HeaderPosition } from './interfaces/iHeaderPosition';
 export type { HeaderNavigationService } from './navigation/headerNavigationService';
-export { HeaderNavigationDirection } from './navigation/headerNavigationService';
 export {
     IAggFunc,
     IAggFuncParams,
@@ -976,7 +972,6 @@ export { BaseCreator } from './csvExport/baseCreator';
 export { BaseGridSerializingSession } from './csvExport/sessions/baseGridSerializingSession';
 export { _downloadFile } from './csvExport/downloader';
 export type { GridSerializer } from './csvExport/gridSerializer';
-export { RowType } from './csvExport/gridSerializer';
 export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from './csvExport/interfaces';
 
 // modules
