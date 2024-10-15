@@ -18,6 +18,9 @@ export enum ClientSideRowModelSteps {
 }
 
 export interface IClientSideRowModel<TData = any> extends IRowModel {
+    /** The root row containing all the rows */
+    readonly rootNode: RowNode;
+
     onRowGroupOpened(): void;
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
     refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void;

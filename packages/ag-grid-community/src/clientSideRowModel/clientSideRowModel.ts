@@ -105,7 +105,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private onRowHeightChanged_debounced = _debounce(this.onRowHeightChanged.bind(this), 100);
 
     // top most node of the tree. the children are the user provided data.
-    private rootNode: RowNode;
+    public rootNode: RowNode;
+
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
     private nodeManager: IClientSideNodeManager<any>;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
@@ -233,7 +234,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const allProps: (keyof GridOptions)[] = [
             'rowData',
-            'masterDetail',
             ...resetProps,
             ...this.orderedStages.flatMap(({ refreshProps }) => [...refreshProps]),
         ];
@@ -248,7 +248,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
             const rowDataChanged = propertiesSet.has('rowData');
             const treeDataChanged = propertiesSet.has('treeData');
-            const masterDetailChanged = propertiesSet.has('masterDetail');
             const treeDataChildrenFieldChanged = propertiesSet.has('treeDataChildrenField');
 
             const needFullReload =
@@ -274,8 +273,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             if (rowDataChanged) {
                 const rowData = this.gos.get('rowData');
                 if (rowData) {
-                    if (this.isImmutableRowDataActive()) {
-                        this.setImmutableRowData(rowData, masterDetailChanged);
+                    const getRowIdProvided =
+                        this.gos.exists('getRowId') &&
+                        // this property is a backwards compatibility property, for those who want
+                        // the old behaviour of Row IDs but NOT Immutable Data.
+                        !this.gos.get('resetRowDataOnUpdate');
+
+                    if (getRowIdProvided) {
+                        this.setImmutableRowData(rowData);
                     } else {
                         this.setNewRowData(rowData);
                     }
@@ -288,12 +293,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             if (treeDataChanged) {
                 // We need to notify the nodeManager that the treeData property has changed, and refresh everything
                 this.nodeManager.onTreeDataChanged?.();
-                refreshModelStep = ClientSideRowModelSteps.EVERYTHING;
-            }
-
-            if (masterDetailChanged) {
-                // We need to set the master/detail for all rows at this stage, before the refresh
-                this.nodeManager.setMasterForAllRows?.(this.rootNode.allLeafChildren, true);
                 refreshModelStep = ClientSideRowModelSteps.EVERYTHING;
             }
 
@@ -761,6 +760,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                 if (afterColumnsChange) {
                     this.nodeManager.afterColumnsChanged?.();
                 }
+
                 this.doRowGrouping(
                     params.rowNodeTransactions,
                     changedPath,
@@ -1142,9 +1142,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (this.rowNodesCountReady) {
             // only if row data has been set
             this.rowCountReady = true;
-            this.eventService.dispatchEventOnce({
-                type: 'rowCountReady',
-            });
+            this.eventService.dispatchEventOnce({ type: 'rowCountReady' });
         }
     }
 
@@ -1185,18 +1183,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return this.nodeManager.getRowNode(id);
     }
 
-    private isImmutableRowDataActive(): boolean {
-        const getRowIdProvided = this.gos.exists('getRowId');
-        // this property is a backwards compatibility property, for those who want
-        // the old behaviour of Row IDs but NOT Immutable Data.
-        const resetRowDataOnUpdate = this.gos.get('resetRowDataOnUpdate');
-
-        if (resetRowDataOnUpdate) {
-            return false;
-        }
-        return getRowIdProvided;
-    }
-
     // rows: the rows to put into the model
     private setNewRowData(rowData: any[]): void {
         // no need to invalidate cache, as the cache is stored on the rowNode,
@@ -1217,11 +1203,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
     }
 
-    private setImmutableRowData(rowData: any[], masterDetailChanged: boolean): void {
+    private setImmutableRowData(rowData: any[]): void {
         const updateRowDataResult = this.nodeManager.setImmutableRowData(rowData);
         if (updateRowDataResult) {
             const { rowNodeTransaction, rowsInserted, rowsOrderChanged } = updateRowDataResult;
-            this.commitTransactions([rowNodeTransaction], rowsInserted || rowsOrderChanged, masterDetailChanged);
+            this.commitTransactions([rowNodeTransaction], rowsInserted || rowsOrderChanged);
         }
     }
 
@@ -1279,7 +1265,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
         });
 
-        this.commitTransactions(rowNodeTrans, orderChanged, false);
+        this.commitTransactions(rowNodeTrans, orderChanged);
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {
@@ -1309,7 +1295,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.rowNodesCountReady = true;
         const { rowNodeTransaction, rowsInserted } = this.nodeManager.updateRowData(rowDataTran);
 
-        this.commitTransactions([rowNodeTransaction], rowsInserted, false);
+        this.commitTransactions([rowNodeTransaction], rowsInserted);
 
         return rowNodeTransaction;
     }
@@ -1323,31 +1309,23 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * @param rowNodeTrans - the transactions to apply
      * @param orderChanged - whether the order of the rows has changed, either via generated transaction or user provided addIndex
      */
-    private commitTransactions(
-        rowNodeTransactions: RowNodeTransaction[],
-        rowNodesOrderChanged: boolean,
-        masterDetailChanged: boolean
-    ): void {
+    private commitTransactions(transactions: RowNodeTransaction[], rowNodesOrderChanged: boolean): void {
         if (!this.hasStarted) {
             return;
         }
 
-        const changedPath = this.createChangePath(rowNodeTransactions);
+        const changedPath = this.createChangePath(transactions);
 
-        this.nodeManager.commitTransactions?.(rowNodeTransactions, changedPath, rowNodesOrderChanged);
-
-        if (masterDetailChanged) {
-            this.nodeManager.setMasterForAllRows?.(this.rootNode.allLeafChildren, true);
-        }
+        this.nodeManager.commitTransactions?.(transactions, changedPath, rowNodesOrderChanged);
 
         const animate = !this.gos.get('suppressAnimationFrame');
 
-        this.eventService.dispatchEvent({ type: 'rowDataUpdated' });
+        this.eventService.dispatchEvent({ type: 'rowDataUpdated', transactions });
 
         this.refreshModel(
             {
                 step: ClientSideRowModelSteps.EVERYTHING,
-                rowNodeTransactions,
+                rowNodeTransactions: transactions,
                 rowNodesOrderChanged,
                 keepRenderedRows: true,
                 keepEditingRows: true,
@@ -1427,11 +1405,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private onGridReady(): void {
-        if (this.hasStarted) {
-            return;
+        if (!this.hasStarted) {
+            // App can start using API to add transactions, so need to add data into the node manager if not started
+            this.setInitialData();
         }
-        // App can start using API to add transactions, so need to add data into the node manager if not started
-        this.setInitialData();
     }
 
     public isRowDataLoaded(): boolean {

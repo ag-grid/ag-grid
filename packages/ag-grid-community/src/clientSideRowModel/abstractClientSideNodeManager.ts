@@ -60,6 +60,28 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         return this.rootNode.allLeafChildren?.map((node) => node.data!);
     }
 
+    public activate(rootNode: ClientSideNodeManagerRootNode<TData>): void {
+        this.rootNode = rootNode;
+
+        if (rootNode) {
+            rootNode.group = true;
+            rootNode.level = -1;
+            rootNode.id = ROOT_NODE_ID;
+            rootNode.allLeafChildren = [];
+            rootNode.childrenAfterGroup = [];
+            rootNode.childrenAfterSort = [];
+            rootNode.childrenAfterAggFilter = [];
+            rootNode.childrenAfterFilter = [];
+        }
+    }
+
+    public deactivate(): void {
+        if (this.rootNode) {
+            this.setNewRowData([]);
+            this.rootNode = null!;
+        }
+    }
+
     public setNewRowData(rowData: TData[]): void {
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
@@ -363,30 +385,6 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         });
     }
 
-    public deactivate(): void {
-        if (this.rootNode) {
-            this.setNewRowData([]);
-            this.rootNode = null!;
-        }
-    }
-
-    public activate(rootRowNode: RowNode<TData>): void {
-        const rootNode = rootRowNode as ClientSideNodeManagerRootNode<TData>;
-
-        this.rootNode = rootNode;
-
-        if (rootNode) {
-            rootNode.group = true;
-            rootNode.level = -1;
-            rootNode.id = ROOT_NODE_ID;
-            rootNode.allLeafChildren = [];
-            rootNode.childrenAfterGroup = [];
-            rootNode.childrenAfterSort = [];
-            rootNode.childrenAfterAggFilter = [];
-            rootNode.childrenAfterFilter = [];
-        }
-    }
-
     protected dispatchRowDataUpdateStartedEvent(rowData?: TData[] | null): void {
         this.eventService.dispatchEvent({
             type: 'rowDataUpdateStarted',
@@ -420,15 +418,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         }
     }
 
-    protected isExpanded(level: number): boolean {
-        const expandByDefault = this.gos.get('groupDefaultExpanded');
-        if (expandByDefault === -1) {
-            return true;
-        }
-        return level < expandByDefault;
-    }
-
-    protected sanitizeAddIndex(addIndex: number): number {
+    private sanitizeAddIndex(addIndex: number): number {
         const allChildrenCount = this.rootNode.allLeafChildren?.length ?? 0;
         if (addIndex < 0 || addIndex >= allChildrenCount || Number.isNaN(addIndex)) {
             return allChildrenCount; // Append. Also for negative values, as it was historically the behavior.
@@ -441,16 +431,15 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         return Math.ceil(addIndex);
     }
 
-    protected createRowNode(dataItem: TData, sourceRowIndex: number): RowNode<TData> {
+    protected createRowNode(data: TData, sourceRowIndex: number): RowNode<TData> {
         const node: ClientSideNodeManagerRowNode<TData> = new RowNode<TData>(this.beans);
         node.parent = this.rootNode;
         node.level = 0;
         node.group = false;
-        node.master = false;
         node.expanded = false;
         node.sourceRowIndex = sourceRowIndex;
 
-        node.setDataAndId(dataItem, String(this.nextId));
+        node.setDataAndId(data, String(this.nextId));
 
         if (this.allNodesMap[node.id!]) {
             _warn(2, { nodeId: node.id });

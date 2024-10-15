@@ -1,4 +1,5 @@
 import type { RowNode } from '../entities/rowNode';
+import type { ClientSideRowModelStep, RefreshModelParams } from './iClientSideRowModel';
 
 export interface RowBounds {
     rowTop: number;
@@ -9,6 +10,11 @@ export interface RowBounds {
 export type RowModelType = 'infinite' | 'viewport' | 'clientSide' | 'serverSide';
 
 export interface IRowModel {
+    readonly rootNode?: RowNode;
+
+    /** Available only in ClientSideRowModel. */
+    refreshModel?(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void;
+
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode | undefined;
 
