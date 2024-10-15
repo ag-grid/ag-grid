@@ -1,5 +1,3 @@
-import { _utf8_encode } from 'ag-grid-community';
-
 import { deflateLocalFile } from './compress';
 import { convertDate, convertDecToHex, convertTime } from './convert';
 import { getCrcFromCrc32Table } from './crcTable';
@@ -13,6 +11,99 @@ interface ZipFileHeader {
 export interface ProcessedZipFile extends ZipFileHeader {
     content: Uint8Array;
     isCompressed: boolean;
+}
+
+/**
+ * It encodes any string in UTF-8 format
+ * taken from https://github.com/mathiasbynens/utf8.js
+ * @param {string} s
+ * @returns {string}
+ */
+function _utf8_encode(s: string | null): string {
+    const stringFromCharCode = String.fromCharCode;
+
+    function ucs2decode(string: string | null): number[] {
+        const output: number[] = [];
+
+        if (!string) {
+            return [];
+        }
+
+        const len = string.length;
+
+        let counter = 0;
+        let value;
+        let extra;
+
+        while (counter < len) {
+            value = string.charCodeAt(counter++);
+            if (value >= 0xd800 && value <= 0xdbff && counter < len) {
+                // high surrogate, and there is a next character
+                extra = string.charCodeAt(counter++);
+                if ((extra & 0xfc00) == 0xdc00) {
+                    // low surrogate
+                    output.push(((value & 0x3ff) << 10) + (extra & 0x3ff) + 0x10000);
+                } else {
+                    // unmatched surrogate; only append this code unit, in case the next
+                    // code unit is the high surrogate of a surrogate pair
+                    output.push(value);
+                    counter--;
+                }
+            } else {
+                output.push(value);
+            }
+        }
+        return output;
+    }
+
+    function checkScalarValue(point: number) {
+        if (point >= 0xd800 && point <= 0xdfff) {
+            throw Error('Lone surrogate U+' + point.toString(16).toUpperCase() + ' is not a scalar value');
+        }
+    }
+
+    function createByte(point: number, shift: number) {
+        return stringFromCharCode(((point >> shift) & 0x3f) | 0x80);
+    }
+
+    function encodeCodePoint(point: number): string {
+        if ((point & 0xffffff80) == 0) {
+            // 1-byte sequence
+            return stringFromCharCode(point);
+        }
+
+        let symbol = '';
+
+        if ((point & 0xfffff800) == 0) {
+            // 2-byte sequence
+            symbol = stringFromCharCode(((point >> 6) & 0x1f) | 0xc0);
+        } else if ((point & 0xffff0000) == 0) {
+            // 3-byte sequence
+            checkScalarValue(point);
+            symbol = stringFromCharCode(((point >> 12) & 0x0f) | 0xe0);
+            symbol += createByte(point, 6);
+        } else if ((point & 0xffe00000) == 0) {
+            // 4-byte sequence
+            symbol = stringFromCharCode(((point >> 18) & 0x07) | 0xf0);
+            symbol += createByte(point, 12);
+            symbol += createByte(point, 6);
+        }
+        symbol += stringFromCharCode((point & 0x3f) | 0x80);
+        return symbol;
+    }
+
+    const codePoints = ucs2decode(s);
+    const length = codePoints.length;
+    let index = -1;
+    let codePoint;
+    let byteString = '';
+
+    while (++index < length) {
+        codePoint = codePoints[index];
+        byteString += encodeCodePoint(codePoint);
+    }
+
+    return byteString;
 }
 
 const getHeaders = (

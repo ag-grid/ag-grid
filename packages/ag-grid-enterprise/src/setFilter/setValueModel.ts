@@ -19,11 +19,11 @@ import {
     AgPromise,
     LocalEventService,
     _defaultComparator,
+    _error,
     _exists,
     _isClientSideRowModel,
-    _logError,
     _makeNull,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import { ClientSideValuesExtractor } from './clientSideValueExtractor';
@@ -386,13 +386,9 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
             if (firstValue && typeof firstValue !== 'object' && typeof firstValue !== 'function') {
                 const firstKey = this.createKey(firstValue);
                 if (firstKey == null) {
-                    _warnOnce(
-                        'Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types'
-                    );
+                    _warn(209);
                 } else {
-                    _warnOnce(
-                        'Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects?'
-                    );
+                    _warn(210);
                 }
             }
         }
@@ -454,7 +450,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
         existingValues?: Map<string | null, V | null>;
     } | null {
         if (!this.clientSideValuesExtractor) {
-            _logError(113);
+            _error(113);
             return null;
         }
 

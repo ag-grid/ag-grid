@@ -12,14 +12,14 @@ export class ClientSidePathTreeNodeManager<TData>
     beanName = 'clientSidePathTreeNodeManager' as const;
 
     protected override loadNewRowData(rowData: TData[]): void {
-        const rootRow = this.rootRow;
+        const rootNode = this.rootNode;
 
         this.clearTree(this.treeRoot);
-        this.treeRoot.setRow(this.rootRow);
+        this.treeRoot.setRow(rootNode);
 
         super.loadNewRowData(rowData);
 
-        this.addOrUpdateRows(rootRow.allLeafChildren!, false);
+        this.addOrUpdateRows(rootNode.allLeafChildren!, false);
 
         this.treeCommit();
     }
@@ -29,7 +29,7 @@ export class ClientSidePathTreeNodeManager<TData>
         changedPath: ChangedPath | undefined,
         rowNodesOrderChanged: boolean
     ): void {
-        this.treeRoot.setRow(this.rootRow);
+        this.treeRoot.setRow(this.rootNode);
 
         for (const { remove, update, add } of transactions) {
             // the order of [add, remove, update] is the same as in ClientSideNodeManager.

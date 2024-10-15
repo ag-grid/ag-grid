@@ -28,11 +28,11 @@ import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
-import { _insertIntoArray, _last, _removeFromArray } from '../utils/array';
+import { _last, _removeFromArray } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _debounce } from '../utils/function';
-import { _exists, _missing, _missingOrEmpty } from '../utils/generic';
-import { _logError, _logWarn } from '../validation/logging';
+import { _exists, _missing } from '../utils/generic';
+import { _error, _warn } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
 import { updateRowNodeAfterFilter } from './filterStage';
 import { updateRowNodeAfterSort } from './sortStage';
@@ -105,7 +105,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private onRowHeightChanged_debounced = _debounce(this.onRowHeightChanged.bind(this), 100);
 
     // top most node of the tree. the children are the user provided data.
-    private rootNode: RowNode;
+    public rootNode: RowNode;
+
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
     private nodeManager: IClientSideNodeManager<any>;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
@@ -233,7 +234,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const allProps: (keyof GridOptions)[] = [
             'rowData',
-            'masterDetail',
             ...resetProps,
             ...this.orderedStages.flatMap(({ refreshProps }) => [...refreshProps]),
         ];
@@ -248,7 +248,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
             const rowDataChanged = propertiesSet.has('rowData');
             const treeDataChanged = propertiesSet.has('treeData');
-            const masterDetailChanged = propertiesSet.has('masterDetail');
             const treeDataChildrenFieldChanged = propertiesSet.has('treeDataChildrenField');
 
             const needFullReload =
@@ -294,10 +293,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             if (treeDataChanged) {
                 // We need to notify the nodeManager that the treeData property has changed, and refresh everything
                 this.nodeManager.onTreeDataChanged?.();
-                refreshModelStep = ClientSideRowModelSteps.EVERYTHING;
-            }
-
-            if (masterDetailChanged) {
                 refreshModelStep = ClientSideRowModelSteps.EVERYTHING;
             }
 
@@ -462,7 +457,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
 
         rowNodes.forEach((rowNode, idx) => {
-            _insertIntoArray(allLeafChildren, rowNode, Math.max(indexAtPixelNow + increment, 0) + idx);
+            allLeafChildren.splice(Math.max(indexAtPixelNow + increment, 0) + idx, 0, rowNode);
         });
 
         rowNodes.forEach((rowNode: ClientSideRowModelRowNode, index) => {
@@ -661,7 +656,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // the impacted parent rows are recalculated, parents who's children have
         // not changed are not impacted.
 
-        const noTransactions = _missingOrEmpty(rowNodeTransactions);
+        const noTransactions = !rowNodeTransactions?.length;
 
         const changedPath = new ChangedPath(false, this.rootNode);
 
@@ -707,7 +702,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (_missing(paramsStep)) {
-            _logError(10, { step, stepsMapped });
+            _error(10, { step, stepsMapped });
             return undefined;
         }
         const animate = !this.gos.get('suppressAnimationFrame');
@@ -1147,9 +1142,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (this.rowNodesCountReady) {
             // only if row data has been set
             this.rowCountReady = true;
-            this.eventService.dispatchEventOnce({
-                type: 'rowCountReady',
-            });
+            this.eventService.dispatchEventOnce({ type: 'rowCountReady' });
         }
     }
 
@@ -1199,7 +1192,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.selectionService?.reset('rowDataChanged');
 
         if (!Array.isArray(rowData)) {
-            _logWarn(1);
+            _warn(1);
         } else {
             this.rowNodesCountReady = true;
             this.nodeManager.setNewRowData(rowData);
@@ -1316,23 +1309,23 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
      * @param rowNodeTrans - the transactions to apply
      * @param orderChanged - whether the order of the rows has changed, either via generated transaction or user provided addIndex
      */
-    private commitTransactions(rowNodeTransactions: RowNodeTransaction[], rowNodesOrderChanged: boolean): void {
+    private commitTransactions(transactions: RowNodeTransaction[], rowNodesOrderChanged: boolean): void {
         if (!this.hasStarted) {
             return;
         }
 
-        const changedPath = this.createChangePath(rowNodeTransactions);
+        const changedPath = this.createChangePath(transactions);
 
-        this.nodeManager.commitTransactions?.(rowNodeTransactions, changedPath, rowNodesOrderChanged);
+        this.nodeManager.commitTransactions?.(transactions, changedPath, rowNodesOrderChanged);
 
         const animate = !this.gos.get('suppressAnimationFrame');
 
-        this.eventService.dispatchEvent({ type: 'rowDataUpdated' });
+        this.eventService.dispatchEvent({ type: 'rowDataUpdated', transactions });
 
         this.refreshModel(
             {
                 step: ClientSideRowModelSteps.EVERYTHING,
-                rowNodeTransactions,
+                rowNodeTransactions: transactions,
                 rowNodesOrderChanged,
                 keepRenderedRows: true,
                 keepEditingRows: true,

@@ -2599,7 +2599,7 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any> extends Com
     headerCheckbox?: boolean;
 }
 
-/** Subset of ColDef allowing for customisation of the Controls column, currently used for checkbox selection */
+/** Subset of ColDef allowing for customisation of the Selection column, currently used for checkbox selection */
 export type SelectionColumnDef = Pick<
     ColDef,
     | 'icons'

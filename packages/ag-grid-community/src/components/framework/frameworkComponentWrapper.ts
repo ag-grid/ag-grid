@@ -1,6 +1,6 @@
 import type { IComponent } from '../../interfaces/iComponent';
 import type { ComponentType } from '../../interfaces/iUserCompDetails';
-import { _logWarn } from '../../validation/logging';
+import { _warn } from '../../validation/logging';
 
 /**
  * B the business interface (ie IHeader)
@@ -57,7 +57,7 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
             }
 
             if (mandatory) {
-                _logWarn(49, { methodName });
+                _warn(49, { methodName });
             }
             // multiple features rely on this returning `null` rather than `undefined`,
             // so that they can differentiate whether the underlying component has implemented a void method or not

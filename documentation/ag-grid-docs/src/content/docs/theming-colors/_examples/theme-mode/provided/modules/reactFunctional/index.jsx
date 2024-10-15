@@ -76,6 +76,9 @@ const defaultColDef = {
     flex: 1,
     minWidth: 100,
     filter: true,
+    enableValue: true,
+    enableRowGroup: true,
+    enablePivot: true,
 };
 
 const root = createRoot(document.getElementById('root'));

@@ -8,13 +8,25 @@ import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType } from '../events';
 import type { ColumnPinnedType, HeaderColumnId } from '../interfaces/iColumn';
-import { _last, _removeAllFromUnorderedArray } from '../utils/array';
+import { _last } from '../utils/array';
 import { _exists } from '../utils/generic';
 import type { ColumnFlexService } from './columnFlexService';
 import type { ColumnModel } from './columnModel';
 import { getWidthOfColsInList } from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
+
+function _removeAllFromUnorderedArray<T>(array: T[], toRemove: T[]) {
+    for (let i = 0; i < toRemove.length; i++) {
+        const index = array.indexOf(toRemove[i]);
+
+        if (index >= 0) {
+            // preserve the last element, then shorten array length by 1 to delete index
+            array[index] = array[array.length - 1];
+            array.pop();
+        }
+    }
+}
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 export class VisibleColsService extends BeanStub implements NamedBean {

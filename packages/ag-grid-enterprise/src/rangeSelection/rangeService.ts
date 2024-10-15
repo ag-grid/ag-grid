@@ -29,21 +29,17 @@ import {
     _areCellsEqual,
     _areEqual,
     _exists,
-    _existsAndNotEmpty,
     _getCellCtrlForEventTarget,
     _getSuppressMultiRanges,
-    _includes,
     _isCellSelectionEnabled,
     _isDomLayout,
     _isRowBefore,
     _isSameRow,
     _isUsingNewCellSelectionAPI,
     _last,
-    _logWarn,
     _makeNull,
     _missing,
-    _shallowCompare,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import { CellRangeFeature } from './cellRangeFeature';
@@ -365,7 +361,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public setCellRanges(cellRanges: CellRange[]): void {
-        if (_shallowCompare(this.cellRanges, cellRanges)) {
+        if (_areEqual(this.cellRanges, cellRanges)) {
             return;
         }
 
@@ -502,7 +498,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private verifyCellRanges(gos: GridOptionsService): boolean {
         const invalid = _isUsingNewCellSelectionAPI(gos) && _getSuppressMultiRanges(gos) && this.cellRanges.length > 0;
         if (invalid) {
-            _logWarn(93);
+            _warn(93);
         }
 
         return !invalid;
@@ -638,7 +634,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean {
-        const columnInRange = range.columns !== null && _includes(range.columns, cell.column);
+        const columnInRange = range.columns !== null && range.columns.includes(cell.column);
         const rowInRange = this.isRowInRange(cell.rowIndex, cell.rowPinned, range);
 
         return columnInRange && rowInRange;
@@ -713,7 +709,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const isMultiKey = ctrlKey || metaKey;
         const allowMulti = !_getSuppressMultiRanges(this.gos);
         const isMultiSelect = allowMulti ? isMultiKey : false;
-        const extendRange = shiftKey && _existsAndNotEmpty(this.cellRanges);
+        const extendRange = shiftKey && !!this.cellRanges?.length;
 
         if (!isMultiSelect && (!extendRange || _exists(_last(this.cellRanges)!.type))) {
             this.removeAllCellRanges(true);
@@ -815,7 +811,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             if (intersectCols.length > 0) {
                 const middle: CellRange = {
                     columns: intersectCols,
-                    startColumn: _includes(intersectCols, lastRange.startColumn)
+                    startColumn: intersectCols.includes(lastRange.startColumn)
                         ? lastRange.startColumn
                         : intersectCols[0],
                     startRow: this.rowMax([{ ...intersectionStartRow }, { ...startRow }]),
@@ -972,16 +968,15 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const isSameColumn = columnFrom === columnTo;
         const fromIndex = allColumns.indexOf(columnFrom as AgColumn);
 
-        const logMissing = (column: AgColumn) => _warnOnce(`column ${column.getId()} is not visible`);
         if (fromIndex < 0) {
-            logMissing(columnFrom);
+            _warn(178, { colId: columnFrom.getId() });
             return;
         }
 
         const toIndex = isSameColumn ? fromIndex : allColumns.indexOf(columnTo as AgColumn);
 
         if (toIndex < 0) {
-            logMissing(columnTo);
+            _warn(178, { colId: columnTo.getId() });
             return;
         }
 

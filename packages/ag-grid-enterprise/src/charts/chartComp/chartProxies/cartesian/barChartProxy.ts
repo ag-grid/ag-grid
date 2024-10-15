@@ -1,7 +1,5 @@
 import type { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-types';
 
-import { _includes } from 'ag-grid-community';
-
 import { hexToRGBA } from '../../utils/color';
 import { isStacked } from '../../utils/seriesTypeMapper';
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
@@ -93,7 +91,7 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
 
     private isNormalised() {
         const normalisedCharts = ['normalizedColumn', 'normalizedBar'];
-        return !this.crossFiltering && _includes(normalisedCharts, this.chartType);
+        return !this.crossFiltering && normalisedCharts.includes(this.chartType);
     }
 
     protected override isHorizontal(): boolean {

@@ -61,6 +61,9 @@ export class AppComponent {
         flex: 1,
         minWidth: 100,
         filter: true,
+        enableValue: true,
+        enableRowGroup: true,
+        enablePivot: true,
     };
 
     setDarkMode(enabled: boolean) {

@@ -4,8 +4,8 @@ import type {
     IsGroupOpenByDefaultParams,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { RowNode, _ROW_ID_PREFIX_ROW_GROUP } from 'ag-grid-community';
-import { AbstractClientSideNodeManager, _warnOnce } from 'ag-grid-community';
+import { RowNode, _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
+import { AbstractClientSideNodeManager } from 'ag-grid-community';
 
 import { TreeNode } from './treeNode';
 import type { TreeRow } from './treeRow';
@@ -71,9 +71,9 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
     /** The root node of the tree. */
     public readonly treeRoot: TreeNode = new TreeNode(null, '', -1);
 
-    public override activate(rootRowNode: RowNode<TData>): void {
-        super.activate(rootRowNode);
-        this.treeRoot.setRow(rootRowNode);
+    public override activate(rootNode: RowNode<TData>): void {
+        super.activate(rootNode);
+        this.treeRoot.setRow(rootNode);
     }
 
     public override deactivate(): void {
@@ -103,7 +103,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
             if (this.oldGroupDisplayColIds !== newGroupDisplayColIds) {
                 this.oldGroupDisplayColIds = newGroupDisplayColIds;
 
-                this.checkAllGroupDataAfterColsChanged(this.rootRow.childrenAfterGroup);
+                this.checkAllGroupDataAfterColsChanged(this.rootNode.childrenAfterGroup);
             }
         } else {
             this.oldGroupDisplayColIds = '';
@@ -381,11 +381,11 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
 
         if (node.duplicateRows?.size && !node.duplicateRowsWarned) {
             node.duplicateRowsWarned = true;
-            _warnOnce(`duplicate group keys for row data, keys should be unique`, [
-                row.id,
-                row.data,
-                ...Array.from(node.duplicateRows).map((r) => r.data),
-            ]);
+            _warn(186, {
+                rowId: row.id,
+                rowData: row.data,
+                duplicateRowsData: Array.from(node.duplicateRows).map((r) => r.data),
+            });
         }
     }
 

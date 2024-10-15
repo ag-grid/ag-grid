@@ -1,5 +1,5 @@
 import type { BeanCollection, IClientSideRowModel, IRowModel, IStatusPanelComp } from 'ag-grid-community';
-import { _formatNumberCommas, _isClientSideRowModel, _warnOnce } from 'ag-grid-community';
+import { _formatNumberCommas, _isClientSideRowModel, _warn } from 'ag-grid-community';
 
 import { AgNameValue } from './agNameValue';
 
@@ -14,7 +14,7 @@ export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
         this.setLabel('totalRows', 'Total Rows');
 
         if (!_isClientSideRowModel(this.gos)) {
-            _warnOnce('agTotalRowCountComponent should only be used with the client side row model.');
+            _warn(225);
             return;
         }
 
@@ -28,10 +28,7 @@ export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     private onDataChanged() {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
-        const thousandSeparator = localeTextFunc('thousandSeparator', ',');
-        const decimalSeparator = localeTextFunc('decimalSeparator', '.');
-        this.setValue(_formatNumberCommas(this.getRowCountValue(), thousandSeparator, decimalSeparator));
+        this.setValue(_formatNumberCommas(this.getRowCountValue(), this.localeService));
     }
 
     private getRowCountValue(): number {

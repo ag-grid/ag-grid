@@ -13,9 +13,9 @@ import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnNameService } from '../columns/columnNameService';
 import type { ColumnStateService } from '../columns/columnStateService';
 import type { ColumnViewportService } from '../columns/columnViewportService';
-import type { ControlsColService } from '../columns/controlsColService';
 import type { DataTypeService } from '../columns/dataTypeService';
 import type { FuncColsService } from '../columns/funcColsService';
+import type { SelectionColService } from '../columns/selectionColService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { AgComponentUtils } from '../components/framework/agComponentUtils';
 import type { FrameworkComponentWrapper } from '../components/framework/frameworkComponentWrapper';
@@ -68,6 +68,7 @@ import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { ISideBarService } from '../interfaces/iSideBar';
+import type { IMasterDetailService } from '../interfaces/masterDetail';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { LocaleService } from '../localeService';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -85,6 +86,7 @@ import type { PaginationService } from '../pagination/paginationService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
+import type { CellFlashService } from '../rendering/cell/cellFlashService';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { StickyRowService } from '../rendering/features/stickyRowService';
 import type { OverlayService } from '../rendering/overlays/overlayService';
@@ -111,10 +113,11 @@ export interface ContextParams extends GenericContextParams<BeanName, BeanCollec
 export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollection> {}
 
 export type DynamicBeanName =
-    | 'headerFilterCell'
     | 'detailCellRendererCtrl'
-    | 'groupCellRendererCtrl'
     | 'fillHandle'
+    | 'groupCellRendererCtrl'
+    | 'headerFilterCellCtrl'
+    | 'headerGroupCellCtrl'
     | 'rangeHandle';
 
 export type UserComponentName =
@@ -227,7 +230,7 @@ export interface CoreBeanCollection {
     columnFactory: ColumnFactory;
     pivotResultColsService?: IPivotResultColsService;
     autoColService?: IAutoColService;
-    controlsColService?: ControlsColService;
+    selectionColService?: SelectionColService;
     columnDefFactory?: ColumnDefFactory;
     columnAutosizeService?: ColumnAutosizeService;
     funcColsService: FuncColsService;
@@ -291,6 +294,8 @@ export interface CoreBeanCollection {
     clientSideNodeManager?: IClientSideNodeManager;
     clientSidePathTreeNodeManager?: IClientSideNodeManager;
     clientSideChildrenTreeNodeManager?: IClientSideNodeManager;
+    cellFlashService?: CellFlashService;
+    masterDetailService?: IMasterDetailService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -336,6 +341,7 @@ export type BeanName =
     | 'autoWidthCalculator'
     | 'beans'
     | 'cellEditorFactory'
+    | 'cellFlashService'
     | 'cellNavigationService'
     | 'cellRendererFactory'
     | 'cellRendererService'
@@ -372,7 +378,7 @@ export type BeanName =
     | 'pivotResultColsService'
     | 'context'
     | 'contextMenuService'
-    | 'controlsColService'
+    | 'selectionColService'
     | 'ctrlsService'
     | 'csvCreator'
     | 'dataTypeService'
@@ -415,6 +421,7 @@ export type BeanName =
     | 'licenseManager'
     | 'localeService'
     | 'loggerFactory'
+    | 'masterDetailService'
     | 'menuItemMapper'
     | 'menuService'
     | 'menuUtils'

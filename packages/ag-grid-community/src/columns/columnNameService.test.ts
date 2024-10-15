@@ -1,4 +1,4 @@
-import { _camelCaseToHumanText, _camelCaseToHyphenated } from './string';
+import { _camelCaseToHumanText } from './columnNameService';
 
 describe('_camelCaseToHumanText', () => {
     it.each([
@@ -12,15 +12,5 @@ describe('_camelCaseToHumanText', () => {
         ['person_address.town', 'Person_address Town'],
     ])('Value: %s', (field, expected) => {
         expect(_camelCaseToHumanText(field)).toBe(expected);
-    });
-});
-
-describe('camelCaseToHyphenated', () => {
-    it.each([
-        ['backgroundColor', 'background-color'],
-        ['marginLeft', 'margin-left'],
-        ['thisIsARandomTest', 'this-is-a-random-test'],
-    ])('Value %s', (field, expected) => {
-        expect(_camelCaseToHyphenated(field)).toBe(expected);
     });
 });

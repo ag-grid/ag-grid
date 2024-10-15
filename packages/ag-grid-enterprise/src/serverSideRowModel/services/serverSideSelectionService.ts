@@ -4,6 +4,7 @@ import type {
     NamedBean,
     RowNode,
     RowSelectionMode,
+    SelectAllMode,
     SelectionEventSourceType,
     ServerSideRowGroupSelectionState,
     ServerSideRowSelectionState,
@@ -12,8 +13,9 @@ import {
     BaseSelectionService,
     _getGroupSelectsDescendants,
     _getRowSelectionMode,
+    _isMultiRowSelection,
     _isUsingNewRowSelectionAPI,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import { DefaultStrategy } from './selection/strategies/defaultStrategy';
@@ -85,12 +87,12 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         const { nodes, ...otherParams } = params;
 
         if (nodes.length > 1 && this.selectionMode !== 'multiRow') {
-            _warnOnce(`cannot multi select unless selection mode is 'multiRow'`);
+            _warn(191);
             return 0;
         }
 
         if (nodes.length > 1 && params.rangeSelect) {
-            _warnOnce(`cannot use range selection when multi selecting rows`);
+            _warn(192);
             return 0;
         }
 
@@ -185,14 +187,11 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         return true;
     }
 
-    public selectAllRowNodes(params: {
-        source: SelectionEventSourceType;
-        justFiltered?: boolean | undefined;
-        justCurrentPage?: boolean | undefined;
-    }): void {
+    public selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void {
         validateSelectionParameters(params);
-        if (_isUsingNewRowSelectionAPI(this.gos) && _getRowSelectionMode(this.gos) !== 'multiRow') {
-            return _warnOnce("cannot multi select unless selection mode is 'multiRow'");
+        if (_isUsingNewRowSelectionAPI(this.gos) && !_isMultiRowSelection(this.gos)) {
+            _warn(193);
+            return;
         }
 
         this.selectionStrategy.selectAllRowNodes(params);
@@ -208,11 +207,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         this.dispatchSelectionChanged(params.source);
     }
 
-    public deselectAllRowNodes(params: {
-        source: SelectionEventSourceType;
-        justFiltered?: boolean | undefined;
-        justCurrentPage?: boolean | undefined;
-    }): void {
+    public deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void {
         validateSelectionParameters(params);
 
         this.selectionStrategy.deselectAllRowNodes(params);
@@ -228,27 +223,18 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         this.dispatchSelectionChanged(params.source);
     }
 
-    public getSelectAllState(justFiltered?: boolean, justCurrentPage?: boolean): boolean | null {
-        return this.selectionStrategy.getSelectAllState(justFiltered, justCurrentPage);
+    public getSelectAllState(selectAll?: SelectAllMode): boolean | null {
+        return this.selectionStrategy.getSelectAllState(selectAll);
     }
 
     // used by CSRM
     public getBestCostNodeSelection(): RowNode<any>[] | undefined {
-        _warnOnce('calling gridApi.getBestCostNodeSelection() is only possible when using rowModelType=`clientSide`.');
+        _warn(194);
         return undefined;
     }
 }
-function validateSelectionParameters({
-    justCurrentPage,
-    justFiltered,
-}: {
-    source: SelectionEventSourceType;
-    justFiltered?: boolean | undefined;
-    justCurrentPage?: boolean | undefined;
-}) {
-    if (justCurrentPage || justFiltered) {
-        _warnOnce(
-            `selecting just ${justCurrentPage ? 'current page' : 'filtered'} only works when gridOptions.rowModelType='clientSide'`
-        );
+function validateSelectionParameters({ selectAll }: { source: SelectionEventSourceType; selectAll?: SelectAllMode }) {
+    if (selectAll === 'filtered' || selectAll === 'currentPage') {
+        _warn(195, { justCurrentPage: selectAll === 'currentPage' });
     }
 }

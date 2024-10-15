@@ -12,6 +12,7 @@ import {
 import type { IServerSideStore } from '../interfaces/IServerSideStore';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
+import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
 import type {
     AgRowNodeEventListener,
     CellChangedEvent,
@@ -25,10 +26,9 @@ import type {
 } from '../interfaces/iRowNode';
 import type { IServerSideRowModel } from '../interfaces/iServerSideRowModel';
 import { LocalEventService } from '../localEventService';
-import { FrameworkEventListenerService } from '../misc/frameworkEventListenerService';
 import { _debounce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
-import { _logError, _logWarn } from '../validation/logging';
+import { _error, _warn } from '../validation/logging';
 import type { AgColumn } from './agColumn';
 
 /**
@@ -101,10 +101,10 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public dragging: boolean;
 
     /** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail) */
-    public master: boolean;
+    public master: boolean = false;
 
     /** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/
-    public detail: boolean | undefined;
+    public detail: boolean | undefined = undefined;
 
     /** If this row is a master row that was expanded, this points to the associated detail row. */
     public detailNode: RowNode;
@@ -290,7 +290,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     private selected: boolean | undefined = false;
     /** If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES` */
     private localEventService: LocalEventService<RowNodeEventType> | null;
-    private frameworkEventListenerService: FrameworkEventListenerService<any, any> | null;
+    private frameworkEventListenerService?: IFrameworkEventListenerService<any, any>;
 
     private beans: BeanCollection;
 
@@ -360,7 +360,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public getRowIndexString(): string | null {
         if (this.rowIndex == null) {
             // Row has been removed so no index
-            _logError(13);
+            _error(13);
             return null;
         }
 
@@ -461,7 +461,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
                 // make sure id provided doesn't start with 'row-group-' as this is reserved.
                 if (this.id.startsWith(ROW_ID_PREFIX_ROW_GROUP)) {
-                    _logError(14, {
+                    _error(14, {
                         groupPrefix: ROW_ID_PREFIX_ROW_GROUP,
                     });
                 }
@@ -824,7 +824,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             // master detail and leaf groups aren't expandable in pivot mode.
             return this.hasChildren() && !this.leafGroup;
         }
-        return this.hasChildren() || !!this.master;
+        return this.hasChildren() || this.master;
     }
 
     /** Returns:
@@ -962,12 +962,12 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             return 0;
         }
         if (this.rowPinned) {
-            _logWarn(59);
+            _warn(59);
             return 0;
         }
 
         if (this.id === undefined) {
-            _logWarn(60);
+            _warn(60);
             return 0;
         }
 
@@ -988,10 +988,10 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         if (!this.localEventService) {
             this.localEventService = new LocalEventService();
         }
-        if (this.beans.frameworkOverrides.shouldWrapOutgoing && !this.frameworkEventListenerService) {
-            this.localEventService.setFrameworkOverrides(this.beans.frameworkOverrides);
-            this.frameworkEventListenerService = new FrameworkEventListenerService(this.beans.frameworkOverrides);
-        }
+        this.frameworkEventListenerService = this.beans.frameworkOverrides.createLocalEventListenerWrapper?.(
+            this.frameworkEventListenerService,
+            this.localEventService
+        );
 
         const listener = this.frameworkEventListenerService?.wrap(userListener) ?? userListener;
         this.localEventService.addEventListener(eventType, listener);
@@ -1030,7 +1030,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      */
     public isFullWidthCell(): boolean {
         // log deprecation
-        _logWarn(61);
+        _warn(61);
 
         if (this.detail) {
             return true;

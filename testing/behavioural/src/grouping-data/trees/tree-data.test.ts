@@ -219,7 +219,7 @@ function hierarchyWithInvertedOrderRowSnapshot(): RowSnapshot[] {
             lastChild: true,
             leafGroup: false,
             level: 0,
-            master: undefined,
+            master: false,
             parentKey: null,
             rowGroupIndex: null,
             rowPinned: undefined,

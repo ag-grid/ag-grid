@@ -1,4 +1,5 @@
 import type { RowNode } from '../entities/rowNode';
+import type { ClientSideRowModelStep, RefreshModelParams } from './iClientSideRowModel';
 
 export interface RowBounds {
     rowTop: number;
@@ -9,6 +10,11 @@ export interface RowBounds {
 export type RowModelType = 'infinite' | 'viewport' | 'clientSide' | 'serverSide';
 
 export interface IRowModel {
+    readonly rootNode?: RowNode;
+
+    /** Available only in ClientSideRowModel. */
+    refreshModel?(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void;
+
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode | undefined;
 
@@ -43,9 +49,6 @@ export interface IRowModel {
     /** Iterate through each node. What this does depends on the model type. For clientSide, goes through
      * all nodes. For serverSide, goes through what's loaded in memory. */
     forEachNode(callback: (rowNode: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
-
-    /** Iterates through all root.allLeafChildren if this is a ClientSideRowModel, otherwise is undefined */
-    forEachLeafNode?(callback: (node: RowNode, index: number) => void): void;
 
     /** The base class returns the type. We use this instead of 'instanceof' as the client might provide
      * their own implementation of the models in the future. */

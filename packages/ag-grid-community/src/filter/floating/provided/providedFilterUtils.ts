@@ -1,10 +1,10 @@
-import { _logWarn } from '../../../validation/logging';
+import { _warn } from '../../../validation/logging';
 import type { ProvidedFilterParams } from '../../provided/iProvidedFilter';
 
 export function getDebounceMs(params: ProvidedFilterParams, debounceDefault: number): number {
     if (isUseApplyButton(params)) {
         if (params.debounceMs != null) {
-            _logWarn(71);
+            _warn(71);
         }
 
         return 0;

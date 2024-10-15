@@ -24,7 +24,6 @@ import type {
 import {
     BeanStub,
     KeyCode,
-    _cloneObject,
     _createIconNoSpan,
     _getCellRendererDetails,
     _getGrandTotalRow,
@@ -34,7 +33,7 @@ import {
     _removeAriaExpanded,
     _setAriaExpanded,
     _stopPropagationForAgGrid,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 const InnerRendererComponent: ComponentType = {
@@ -390,8 +389,10 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
         if (totalValueGetter) {
             // params is same as we were given, except we set the value as the item to display
-            const paramsClone = _cloneObject(this.params);
-            paramsClone.value = this.params.value;
+            const paramsClone = {
+                ...this.params,
+                value: this.params.value,
+            };
 
             if (typeof totalValueGetter === 'function') {
                 footerValue = totalValueGetter(paramsClone);
@@ -400,7 +401,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
                     ? this.expressionService.evaluate(totalValueGetter, paramsClone)
                     : '';
             } else {
-                _warnOnce('totalValueGetter should be either a function or a string (expression)');
+                _warn(179);
             }
         } else {
             const localeTextFunc = this.localeService.getLocaleTextFunc();

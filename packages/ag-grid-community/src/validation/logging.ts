@@ -1,5 +1,5 @@
 import { BASE_URL } from '../baseUrl';
-import { _errorOnce as errorLog, _warnOnce as warnLog } from '../utils/function';
+import { _errorOnce, _warnOnce } from '../utils/function';
 import { VERSION } from '../version';
 import type { ErrorId, ErrorMap, GetErrorParams } from './errorMessages/errorText';
 import type { ValidationService } from './validationService';
@@ -60,6 +60,13 @@ function stringifyValue(value: any) {
     }
     return output;
 }
+/**
+ * Correctly formats a string or undefined or null value into a human readable string
+ * @param input
+ */
+export function toStringWithNullUndefined(str: string | null | undefined) {
+    return str === undefined ? 'undefined' : str === null ? 'null' : str;
+}
 
 export function getErrorLink(errorNum: ErrorId, args: GetErrorParams<any>) {
     const params = new URLSearchParams();
@@ -77,20 +84,20 @@ const minifiedLog = (errorNum: ErrorId, args: GetErrorParams<any>, defaultMessag
     return `${defaultMessage ? defaultMessage + ' \n' : ''}Visit ${errorLink}${defaultMessage ? '' : ' \n  Alternatively register the ValidationModule to see the full message in the console.'}`;
 };
 
-export function _logWarn<
+export function _warn<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: undefined extends GetErrorParams<TId> ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-    getMsgOrDefault(warnLog, args[0], args[1] as any);
+    getMsgOrDefault(_warnOnce, args[0], args[1] as any);
 }
 
-export function _logError<
+export function _error<
     TId extends ErrorId,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(...args: undefined extends GetErrorParams<TId> ? [id: TId] : [id: TId, params: GetErrorParams<TId>]): void {
-    getMsgOrDefault(errorLog, args[0], args[1] as any);
+    getMsgOrDefault(_errorOnce, args[0], args[1] as any);
 }
 
 /** Used for messages before the ValidationService has been created */
@@ -99,5 +106,5 @@ export function _logPreCreationError<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     TShowMessageAtCallLocation = ErrorMap[TId],
 >(id: TId, args: GetErrorParams<TId>, defaultMessage: string) {
-    getMsgOrDefault(errorLog, id!, args as any, defaultMessage);
+    getMsgOrDefault(_errorOnce, id!, args as any, defaultMessage);
 }

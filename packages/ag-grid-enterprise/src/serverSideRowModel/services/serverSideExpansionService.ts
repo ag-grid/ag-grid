@@ -1,4 +1,3 @@
-import { BeanStub } from 'ag-grid-community';
 import type {
     BeanCollection,
     IExpansionService,
@@ -8,9 +7,10 @@ import type {
     WithoutGridCommon,
 } from 'ag-grid-community';
 
+import { BaseExpansionService } from '../../expansion/baseExpansionService';
 import type { ServerSideRowModel } from '../serverSideRowModel';
 
-export class ServerSideExpansionService extends BeanStub implements NamedBean, IExpansionService {
+export class ServerSideExpansionService extends BaseExpansionService implements NamedBean, IExpansionService {
     beanName = 'expansionService' as const;
 
     private serverSideRowModel: ServerSideRowModel;

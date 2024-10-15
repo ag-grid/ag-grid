@@ -9,7 +9,7 @@ import type {
     IShowRowGroupColsService,
     RowNode,
 } from 'ag-grid-community';
-import { BeanStub, _logError, _missing, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _error, _missing } from 'ag-grid-community';
 
 export class GroupHideOpenParentsService extends BeanStub implements IGroupHideOpenParentsService {
     beanName = 'groupHideOpenParentsService' as const;
@@ -23,14 +23,7 @@ export class GroupHideOpenParentsService extends BeanStub implements IGroupHideO
     }
 
     public updateGroupDataForHideOpenParents(changedPath?: ChangedPath): void {
-        if (!this.gos.get('groupHideOpenParents')) {
-            return;
-        }
-
-        if (this.gos.get('treeData')) {
-            _warnOnce(
-                `The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them.`
-            );
+        if (!this.gos.get('groupHideOpenParents') || this.gos.get('treeData')) {
             return;
         }
 
@@ -59,7 +52,7 @@ export class GroupHideOpenParentsService extends BeanStub implements IGroupHideO
             groupDisplayCols.forEach((groupDisplayCol) => {
                 const showRowGroup = groupDisplayCol.getColDef().showRowGroup;
                 if (typeof showRowGroup !== 'string') {
-                    _logError(110);
+                    _error(110);
                     return;
                 }
 

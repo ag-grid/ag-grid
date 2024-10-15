@@ -17,11 +17,9 @@ import {
     _setDisplayed,
     _setVisible,
 } from '../utils/dom';
-import { _warnOnce } from '../utils/function';
-import { NumberSequence } from '../utils/numberSequence';
 import { TooltipFeature } from './tooltipFeature';
 
-const compIdSequence = new NumberSequence();
+let compIdSequence = 0;
 
 /** The RefPlaceholder is used to control when data-ref attribute should be applied to the component
  * There are hanging data-refs in the DOM that are not being used internally by the component which we don't want to apply to the component.
@@ -62,7 +60,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     // unique id for this row component. this is used for getting a reference to the HTML dom.
     // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
     // around as we create a new rowComp instance for the same row node).
-    private compId = compIdSequence.next();
+    private compId = compIdSequence++;
 
     private cssClassManager: CssClassManager;
 
@@ -177,7 +175,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
                     // 3. The property is on a child component and not available on the parent during construction.
                     //    In which case you may need to pass the template via setTemplate() instead of in the super constructor.
                     // 4. The data-ref is not used by the component and should be removed from the template.
-                    _warnOnce(`Issue with data-ref: ${elementRef} on ${this.constructor.name} with ${current}`);
+                    throw new Error(`Issue with data-ref: ${elementRef} on ${this.constructor.name} with ${current}`);
                 }
             }
         }
@@ -243,7 +241,7 @@ export class Component<TLocalEvent extends string = ComponentEvent>
 
             this.createBean(newComponent, null, afterPreCreateCallback);
         } else if (isAgGridComponent) {
-            _warnOnce(`Missing selector: ${key}`);
+            throw new Error(`Missing selector: ${key}`);
         }
 
         this.applyElementsToComponent(element, elementRef, paramsMap, newComponent);

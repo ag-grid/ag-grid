@@ -1,4 +1,4 @@
-import { _logError } from '../validation/logging';
+import { _error } from '../validation/logging';
 import type { CoreParams } from './core/core-css';
 import { clamp, memoize, paramToVariableExpression } from './theme-utils';
 
@@ -380,7 +380,7 @@ const durationValueToCss = (value: DurationValue, param: string): string | false
     if (typeof value === 'string') return value;
     if (typeof value === 'number') {
         if (value > 50) {
-            _logError(104, { value, param });
+            _error(104, { value, param });
         }
         return `${value}s`;
     }

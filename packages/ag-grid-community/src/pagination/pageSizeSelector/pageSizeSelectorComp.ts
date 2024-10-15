@@ -3,8 +3,7 @@ import type { PaginationChangedEvent } from '../../events';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import { _areEqual } from '../../utils/array';
 import { _clearElement } from '../../utils/dom';
-import { _missingOrEmpty } from '../../utils/generic';
-import { _logWarn } from '../../validation/logging';
+import { _warn } from '../../validation/logging';
 import type { ListOption } from '../../widgets/agList';
 import { AgSelect } from '../../widgets/agSelect';
 import type { ComponentSelector } from '../../widgets/component';
@@ -139,9 +138,9 @@ export class PageSizeSelectorComp extends Component {
             const pageSizeSet = this.gos.exists('paginationPageSize');
             const pageSizesSet = this.gos.get(paginationPageSizeSelector) !== true;
 
-            _logWarn(94, { pageSizeSet, pageSizesSet, pageSizeOptions, paginationPageSizeOption });
+            _warn(94, { pageSizeSet, pageSizesSet, pageSizeOptions, paginationPageSizeOption });
             if (!pageSizesSet) {
-                _logWarn(95, { paginationPageSizeOption, paginationPageSizeSelector });
+                _warn(95, { paginationPageSizeOption, paginationPageSizeSelector });
             }
             // When the paginationPageSize option is set to a value that is
             // not in the list of page size options.
@@ -189,7 +188,7 @@ export class PageSizeSelectorComp extends Component {
         const defaultValues = [20, 50, 100];
         const paginationPageSizeSelectorValues = this.gos.get(paginationPageSizeSelector);
 
-        if (!Array.isArray(paginationPageSizeSelectorValues) || _missingOrEmpty(paginationPageSizeSelectorValues)) {
+        if (!Array.isArray(paginationPageSizeSelectorValues) || !paginationPageSizeSelectorValues?.length) {
             return defaultValues;
         }
 

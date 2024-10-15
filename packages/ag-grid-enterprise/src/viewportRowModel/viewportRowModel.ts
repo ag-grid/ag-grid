@@ -8,7 +8,7 @@ import type {
     RowModelType,
     RowRenderer,
 } from 'ag-grid-community';
-import { BeanStub, RowNode, _getRowHeightAsNumber, _iterateObject, _missing, _warnOnce } from 'ag-grid-community';
+import { BeanStub, RowNode, _getRowHeightAsNumber, _missing, _warn } from 'ag-grid-community';
 
 export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
@@ -168,7 +168,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         this.rowCount = -1;
 
         if (!viewportDatasource.init) {
-            _warnOnce('viewport is missing init method.');
+            _warn(226);
         } else {
             viewportDatasource.init({
                 setRowCount: this.setRowCount.bind(this),
@@ -286,7 +286,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     }
 
     private setRowData(rowData: { [key: number]: any }): void {
-        _iterateObject(rowData, (indexStr: string, dataItem: any) => {
+        for (const [indexStr, dataItem] of Object.entries(rowData)) {
             const index = parseInt(indexStr, 10);
             // we should never keep rows that we didn't specifically ask for, this
             // guarantees the contract we have with the server.
@@ -306,7 +306,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
                 // of put a placeholder node in place.
                 rowNode.setDataAndId(dataItem, index.toString());
             }
-        });
+        }
     }
 
     private createBlankRowNode(rowIndex: number): RowNode {

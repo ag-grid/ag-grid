@@ -19,7 +19,6 @@
 .ag-autocomplete-list-popup {
     border-radius: var(--ag-border-radius);
     box-shadow: var(--ag-dropdown-shadow);
-    padding: var(--ag-spacing);
     background-color: var(--ag-background-color);
     padding: 0;
 }
@@ -35,5 +34,4 @@
 
 .ag-checkbox-edit {
     padding-left: var(--ag-cell-horizontal-padding);
-    padding-right: var(--ag-cell-horizontal-padding);
 }

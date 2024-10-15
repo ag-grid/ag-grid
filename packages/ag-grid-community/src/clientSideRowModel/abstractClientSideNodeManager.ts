@@ -8,9 +8,8 @@ import type {
     IClientSideNodeManager,
 } from '../interfaces/iClientSideNodeManager';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
-import { _exists, _missingOrEmpty } from '../utils/generic';
-import { _cloneObject, _iterateObject } from '../utils/object';
-import { _logError, _logWarn } from '../validation/logging';
+import { _exists } from '../utils/generic';
+import { _error, _warn } from '../validation/logging';
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
 
@@ -45,7 +44,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     private nextId = 0;
     protected allNodesMap: { [id: string]: RowNode<TData> } = {};
 
-    public rootRow: AbstractClientSideNodeManager.RootNode<TData>;
+    public rootNode: AbstractClientSideNodeManager.RootNode<TData>;
 
     protected beans: BeanCollection;
 
@@ -58,13 +57,11 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     }
 
     public extractRowData(): TData[] | null | undefined {
-        return this.rootRow.allLeafChildren?.map((node) => node.data!);
+        return this.rootNode.allLeafChildren?.map((node) => node.data!);
     }
 
-    public activate(rootRowNode: RowNode<TData>): void {
-        const rootNode = rootRowNode as ClientSideNodeManagerRootNode<TData>;
-
-        this.rootRow = rootNode;
+    public activate(rootNode: ClientSideNodeManagerRootNode<TData>): void {
+        this.rootNode = rootNode;
 
         if (rootNode) {
             rootNode.group = true;
@@ -79,9 +76,9 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     }
 
     public deactivate(): void {
-        if (this.rootRow) {
+        if (this.rootNode) {
             this.setNewRowData([]);
-            this.rootRow = null!;
+            this.rootNode = null!;
         }
     }
 
@@ -93,15 +90,15 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     public setNewRowData(rowData: TData[]): void {
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
-        const rootRow = this.rootRow;
-        const sibling = this.rootRow.sibling;
+        const rootNode = this.rootNode;
+        const sibling = this.rootNode.sibling;
 
-        rootRow.childrenAfterFilter = null;
-        rootRow.childrenAfterGroup = null;
-        rootRow.childrenAfterAggFilter = null;
-        rootRow.childrenAfterSort = null;
-        rootRow.childrenMapped = null;
-        rootRow.updateHasChildren();
+        rootNode.childrenAfterFilter = null;
+        rootNode.childrenAfterGroup = null;
+        rootNode.childrenAfterAggFilter = null;
+        rootNode.childrenAfterSort = null;
+        rootNode.childrenMapped = null;
+        rootNode.updateHasChildren();
 
         // Clear internal maps
 
@@ -111,17 +108,17 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         this.loadNewRowData(rowData);
 
         if (sibling) {
-            sibling.childrenAfterFilter = rootRow.childrenAfterFilter;
-            sibling.childrenAfterGroup = rootRow.childrenAfterGroup;
-            sibling.childrenAfterAggFilter = rootRow.childrenAfterAggFilter;
-            sibling.childrenAfterSort = rootRow.childrenAfterSort;
-            sibling.childrenMapped = rootRow.childrenMapped;
-            sibling.allLeafChildren = rootRow.allLeafChildren;
+            sibling.childrenAfterFilter = rootNode.childrenAfterFilter;
+            sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
+            sibling.childrenAfterAggFilter = rootNode.childrenAfterAggFilter;
+            sibling.childrenAfterSort = rootNode.childrenAfterSort;
+            sibling.childrenMapped = rootNode.childrenMapped;
+            sibling.allLeafChildren = rootNode.allLeafChildren;
         }
     }
 
     protected loadNewRowData(rowData: TData[]): void {
-        this.rootRow.allLeafChildren = rowData?.map((dataItem, index) => this.createRowNode(dataItem, index)) ?? [];
+        this.rootNode.allLeafChildren = rowData?.map((dataItem, index) => this.createRowNode(dataItem, index)) ?? [];
     }
 
     public setImmutableRowData(rowData: TData[]): ClientSideNodeManagerUpdateRowDataResult<TData> {
@@ -168,7 +165,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         const getRowIdFunc = _getRowIdCallback(this.gos)!;
 
         // get a map of the existing data, that we are going to modify as we find rows to not delete
-        const existingNodesMap: { [id: string]: RowNode | undefined } = _cloneObject(this.allNodesMap);
+        const existingNodesMap: { [id: string]: RowNode | undefined } = { ...this.allNodesMap };
 
         const remove: TData[] = [];
         const update: TData[] = [];
@@ -198,11 +195,11 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         }
 
         // at this point, all rows that are left, should be removed
-        _iterateObject(existingNodesMap, (id, rowNode) => {
+        for (const rowNode of Object.values(existingNodesMap)) {
             if (rowNode) {
                 remove.push(rowNode.data);
             }
-        });
+        }
 
         return { remove, update, add };
     }
@@ -214,7 +211,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
      * @returns true if the order changed, otherwise false
      */
     private updateRowOrderFromRowData(rowData: TData[]): boolean {
-        const rows = this.rootRow.allLeafChildren;
+        const rows = this.rootNode.allLeafChildren;
         const rowsLength = rows?.length ?? 0;
         const rowsOutOfOrder = new Map<TData, AbstractClientSideNodeManager.RowNode<TData>>();
         let firstIndexOutOfOrder = -1;
@@ -253,11 +250,11 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         result: ClientSideNodeManagerUpdateRowDataResult<TData>
     ): void {
         const add = rowDataTran.add;
-        if (_missingOrEmpty(add)) {
+        if (!add?.length) {
             return;
         }
 
-        const allLeafChildren = this.rootRow.allLeafChildren!;
+        const allLeafChildren = this.rootNode.allLeafChildren!;
         let addIndex = allLeafChildren.length;
 
         if (typeof rowDataTran.addIndex === 'number') {
@@ -281,7 +278,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         }
 
         // create new row nodes for each data item
-        const newNodes: RowNode<TData>[] = add!.map((item, index) => this.createRowNode(item, addIndex + index));
+        const newNodes: RowNode[] = add.map((item, index) => this.createRowNode(item, addIndex + index));
 
         if (addIndex < allLeafChildren.length) {
             // Insert at the specified index
@@ -295,16 +292,16 @@ export abstract class AbstractClientSideNodeManager<TData = any>
                 nodesAfterIndex[index].sourceRowIndex = nodesAfterIndexFirstIndex + index;
             }
 
-            this.rootRow.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
+            this.rootNode.allLeafChildren = [...nodesBeforeIndex, ...newNodes, ...nodesAfterIndex];
 
             // Mark the result as rows inserted
             result.rowsInserted = true;
         } else {
             // Just append at the end
-            this.rootRow.allLeafChildren = allLeafChildren.concat(newNodes);
+            this.rootNode.allLeafChildren = allLeafChildren.concat(newNodes);
         }
 
-        const sibling = this.rootRow.sibling;
+        const sibling = this.rootNode.sibling;
         if (sibling) {
             sibling.allLeafChildren = allLeafChildren;
         }
@@ -321,13 +318,13 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     ): void {
         const { remove } = rowDataTran;
 
-        if (_missingOrEmpty(remove)) {
+        if (!remove?.length) {
             return;
         }
 
         const rowIdsRemoved: { [key: string]: boolean } = {};
 
-        remove!.forEach((item) => {
+        remove.forEach((item) => {
             const rowNode = this.lookupRowNode(getRowIdFunc, item);
 
             if (!rowNode) {
@@ -352,17 +349,17 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             rowNodeTransaction.remove.push(rowNode);
         });
 
-        this.rootRow.allLeafChildren =
-            this.rootRow.allLeafChildren?.filter((rowNode) => !rowIdsRemoved[rowNode.id!]) ?? null;
+        this.rootNode.allLeafChildren =
+            this.rootNode.allLeafChildren?.filter((rowNode) => !rowIdsRemoved[rowNode.id!]) ?? null;
 
         // after rows have been removed, all following rows need the position index updated
-        this.rootRow.allLeafChildren?.forEach((node, idx) => {
+        this.rootNode.allLeafChildren?.forEach((node, idx) => {
             node.sourceRowIndex = idx;
         });
 
-        const sibling = this.rootRow.sibling;
+        const sibling = this.rootNode.sibling;
         if (sibling) {
-            sibling.allLeafChildren = this.rootRow.allLeafChildren;
+            sibling.allLeafChildren = this.rootNode.allLeafChildren;
         }
     }
 
@@ -373,11 +370,11 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         nodesToUnselect: RowNode<TData>[]
     ): void {
         const { update } = rowDataTran;
-        if (_missingOrEmpty(update)) {
+        if (!update?.length) {
             return;
         }
 
-        update!.forEach((item) => {
+        update.forEach((item) => {
             const rowNode = this.lookupRowNode(getRowIdFunc, item);
 
             if (!rowNode) {
@@ -390,8 +387,6 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             }
 
             rowNodeTransaction.update.push(rowNode);
-
-            this.beans.detailGridApiService?.setMasterForRow(rowNode, rowNode.data, false);
         });
     }
 
@@ -429,7 +424,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     }
 
     private sanitizeAddIndex(addIndex: number): number {
-        const allChildrenCount = this.rootRow.allLeafChildren?.length ?? 0;
+        const allChildrenCount = this.rootNode.allLeafChildren?.length ?? 0;
         if (addIndex < 0 || addIndex >= allChildrenCount || Number.isNaN(addIndex)) {
             return allChildrenCount; // Append. Also for negative values, as it was historically the behavior.
         }
@@ -443,23 +438,20 @@ export abstract class AbstractClientSideNodeManager<TData = any>
 
     protected createRowNode(data: TData, sourceRowIndex: number): RowNode<TData> {
         const node: ClientSideNodeManagerRowNode<TData> = new RowNode<TData>(this.beans);
-        node.parent = this.rootRow;
+        node.parent = this.rootNode;
         node.level = 0;
         node.group = false;
-        node.master = false;
         node.expanded = false;
         node.sourceRowIndex = sourceRowIndex;
 
         node.setDataAndId(data, String(this.nextId));
 
         if (this.allNodesMap[node.id!]) {
-            _logWarn(2, { nodeId: node.id });
+            _warn(2, { nodeId: node.id });
         }
         this.allNodesMap[node.id!] = node;
 
         this.nextId++;
-
-        this.beans.detailGridApiService?.setMasterForRow(node, data, true);
 
         return node;
     }
@@ -471,14 +463,14 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             const id = getRowIdFunc({ data, level: 0 });
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
-                _logError(4, { id });
+                _error(4, { id });
                 return null;
             }
         } else {
             // find rowNode using object references
-            rowNode = this.rootRow.allLeafChildren?.find((node) => node.data === data);
+            rowNode = this.rootNode.allLeafChildren?.find((node) => node.data === data);
             if (!rowNode) {
-                _logError(5, { data });
+                _error(5, { data });
                 return null;
             }
         }

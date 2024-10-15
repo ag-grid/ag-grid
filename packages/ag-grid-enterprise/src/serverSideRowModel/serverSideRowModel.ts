@@ -25,7 +25,6 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    NumberSequence,
     RowNode,
     _debounce,
     _getRowHeightAsNumber,
@@ -33,7 +32,7 @@ import {
     _isGetRowHeightFunction,
     _isRowSelection,
     _jsonEquals,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import type { NodeManager } from './nodeManager';
@@ -43,7 +42,7 @@ import type { StoreFactory } from './stores/storeFactory';
 export interface SSRMParams {
     sortModel: SortModelItem[];
     filterModel: FilterModel | AdvancedFilterModel | null;
-    lastAccessedSequence: NumberSequence;
+    lastAccessedSequence: { value: number };
     dynamicRowHeight: boolean;
     rowGroupCols: ColumnVO[];
     valueCols: ColumnVO[];
@@ -83,7 +82,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private onRowHeightChanged_debounced = _debounce(this.onRowHeightChanged.bind(this), 100);
 
-    private rootNode: RowNode;
+    public rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
 
     private storeParams: SSRMParams;
@@ -157,11 +156,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     private verifyProps(): void {
-        if (this.gos.exists('initialGroupOrderComparator')) {
-            _warnOnce(`initialGroupOrderComparator cannot be used with Server Side Row Model.`);
-        }
         if (_isRowSelection(this.gos) && !this.gos.exists('getRowId')) {
-            _warnOnce(`getRowId callback must be provided for Server Side Row Model selection to work correctly.`);
+            _warn(188);
         }
     }
 
@@ -398,7 +394,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             sortModel: this.sortController?.getSortModel() ?? [],
 
             datasource: this.datasource,
-            lastAccessedSequence: new NumberSequence(),
+            lastAccessedSequence: { value: 0 },
             // blockSize: blockSize == null ? 100 : blockSize,
             dynamicRowHeight: dynamicRowHeight,
         };
@@ -451,7 +447,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         if (!rootStore) {
             return;
         }
-        rootStore.setDisplayIndexes(new NumberSequence(), { value: 0 }, 0);
+        rootStore.setDisplayIndexes({ value: 0 }, { value: 0 }, 0);
     }
 
     public retryLoads(): void {

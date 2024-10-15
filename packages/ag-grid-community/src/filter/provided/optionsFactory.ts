@@ -1,5 +1,5 @@
 import type { IFilterOptionDef } from '../../interfaces/iFilter';
-import { _logWarn } from '../../validation/logging';
+import { _warn } from '../../validation/logging';
 import type { ScalarFilterParams } from './iScalarFilter';
 import type { SimpleFilterParams } from './iSimpleFilter';
 
@@ -32,7 +32,7 @@ export class OptionsFactory {
             const requiredProperties = [['displayKey'], ['displayName'], ['predicate', 'test']];
             const propertyCheck = (keys: [keyof IFilterOptionDef]) => {
                 if (!keys.some((key) => filterOption[key] != null)) {
-                    _logWarn(72, { keys });
+                    _warn(72, { keys });
                     return false;
                 }
 
@@ -60,11 +60,11 @@ export class OptionsFactory {
                 this.defaultOption = firstFilterOption.displayKey;
             } else {
                 // invalid FilterOptionDef supplied as it doesn't contain a 'displayKey
-                _logWarn(73);
+                _warn(73);
             }
         } else {
             //no filter options for filter
-            _logWarn(74);
+            _warn(74);
         }
     }
 

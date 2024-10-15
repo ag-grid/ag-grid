@@ -1,5 +1,5 @@
 import type { IClientSideNodeManager, NamedBean, RowNode } from 'ag-grid-community';
-import { _logError } from 'ag-grid-community';
+import { _error } from 'ag-grid-community';
 
 import { AbstractClientSideTreeNodeManager } from './abstractClientSideTreeNodeManager';
 import { makeFieldPathGetter } from './fieldAccess';
@@ -19,30 +19,30 @@ export class ClientSideChildrenTreeNodeManager<TData>
         return Array.from(this.treeRoot.enumChildren(), (node) => node.row!.data);
     }
 
-    public override activate(rootRow: RowNode<TData>): void {
+    public override activate(rootNode: RowNode<TData>): void {
         const oldChildrenGetter = this.childrenGetter;
         const childrenField = this.gos.get('treeDataChildrenField');
         if (!oldChildrenGetter || oldChildrenGetter.path !== childrenField) {
             this.childrenGetter = makeFieldPathGetter(childrenField);
         }
 
-        super.activate(rootRow);
+        super.activate(rootNode);
     }
 
     protected override loadNewRowData(rowData: TData[]): void {
-        const { rootRow, childrenGetter } = this;
+        const { rootNode, childrenGetter } = this;
 
         const processedDataSet = new Set<TData>();
         const allLeafChildren: TreeRow<TData>[] = [];
 
-        rootRow.allLeafChildren = allLeafChildren;
+        rootNode.allLeafChildren = allLeafChildren;
 
         this.clearTree(this.treeRoot);
-        this.treeRoot.setRow(rootRow);
+        this.treeRoot.setRow(rootNode);
 
         const addChild = (parent: TreeNode, data: TData) => {
             if (processedDataSet.has(data)) {
-                _logError(5, { data }); // Duplicate node
+                _error(5, { data }); // Duplicate node
                 return;
             }
 
@@ -71,11 +71,11 @@ export class ClientSideChildrenTreeNodeManager<TData>
     }
 
     public onTreeDataChanged() {
-        const { rootRow } = this;
-        this.treeRoot.setRow(rootRow);
-        const allLeafChildren = this.rootRow.allLeafChildren!;
+        const { rootNode } = this;
+        this.treeRoot.setRow(rootNode);
+        const allLeafChildren = rootNode.allLeafChildren!;
         for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
-            (allLeafChildren[i] as TreeRow<TData>).treeNode?.invalidate();
+            allLeafChildren[i].treeNode?.invalidate();
         }
         this.treeCommit();
     }

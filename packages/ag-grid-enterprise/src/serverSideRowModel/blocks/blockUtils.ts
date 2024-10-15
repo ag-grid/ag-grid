@@ -3,7 +3,6 @@ import type {
     BeanCollection,
     IShowRowGroupColsService,
     NamedBean,
-    NumberSequence,
     RowBounds,
     ValueService,
 } from 'ag-grid-community';
@@ -15,7 +14,7 @@ import {
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import type { NodeManager } from '../nodeManager';
@@ -120,12 +119,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
         if (rowNode.key === null || rowNode.key === undefined) {
             _doOnce(() => {
-                _warnOnce(`null and undefined values are not allowed for server side row model keys`);
-                if (rowNode.rowGroupColumn) {
-                    _warnOnce(`column = ${rowNode.rowGroupColumn.getId()}`);
-                }
-                _warnOnce(`data is ` + rowNode.data);
-            }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
+                _warn(190, { rowGroupId: rowNode.rowGroupColumn?.getId(), data: rowNode.data });
+            }, 'SSBlock-BadKey');
         }
 
         const isUnbalancedGroup = this.gos.get('groupAllowUnbalanced') && rowNode.key === '';
@@ -266,7 +261,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
     public setDisplayIndex(
         rowNode: RowNode,
-        displayIndexSeq: NumberSequence,
+        displayIndexSeq: { value: number },
         nextRowTop: { value: number },
         uiLevel: number
     ): void {
@@ -277,7 +272,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
             rowNode.setRowTop(null);
         } else {
             // set this row
-            rowNode.setRowIndex(displayIndexSeq.next());
+            rowNode.setRowIndex(displayIndexSeq.value++);
             rowNode.setRowTop(nextRowTop.value);
             nextRowTop.value += rowNode.rowHeight!;
         }
@@ -291,7 +286,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         const hasDetailRow = rowNode.master;
         if (hasDetailRow) {
             if (rowNode.expanded && rowNode.detailNode) {
-                rowNode.detailNode.setRowIndex(displayIndexSeq.next());
+                rowNode.detailNode.setRowIndex(displayIndexSeq.value++);
                 rowNode.detailNode.setRowTop(nextRowTop.value);
                 nextRowTop.value += rowNode.detailNode.rowHeight!;
             } else if (rowNode.detailNode) {

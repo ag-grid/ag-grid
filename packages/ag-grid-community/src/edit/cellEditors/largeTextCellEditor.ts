@@ -30,7 +30,7 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
             .setCols(params.cols || 60)
             .setRows(params.rows || 10);
 
-        if (_exists(params.value, true)) {
+        if (params.value != null) {
             this.eTextArea.setValue(params.value.toString(), true);
         }
 

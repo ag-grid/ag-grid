@@ -7,7 +7,7 @@ import type {
     AgChartThemePalette,
 } from 'ag-charts-types';
 
-import { _includes, _warnOnce } from 'ag-grid-community';
+import { _warn } from 'ag-grid-community';
 
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
 import { get } from '../utils/object';
@@ -98,7 +98,7 @@ function isIdenticalPalette(paletteA: AgChartThemePalette, paletteB: AgChartThem
 }
 
 export function isStockTheme(themeName: string): boolean {
-    return _includes(Object.keys(_Theme.themes), themeName);
+    return Object.keys(_Theme.themes).includes(themeName);
 }
 
 function createCrossFilterThemeOverrides(
@@ -182,7 +182,7 @@ function getSelectedTheme(chartProxyParams: ChartProxyParams): string {
     let chartThemeName = chartProxyParams.getChartThemeName();
     const availableThemes = chartProxyParams.getChartThemes();
 
-    if (!_includes(availableThemes, chartThemeName)) {
+    if (!availableThemes.includes(chartThemeName)) {
         chartThemeName = availableThemes[0];
     }
 
@@ -194,10 +194,7 @@ export function lookupCustomChartTheme(chartProxyParams: ChartProxyParams, name:
     const customChartTheme = customChartThemes && customChartThemes[name];
 
     if (!customChartTheme) {
-        _warnOnce(
-            `no stock theme exists with the name '${name}' and no ` +
-                "custom chart theme with that name was supplied to 'customChartThemes'"
-        );
+        _warn(140, { name });
     }
 
     return customChartTheme as AgChartTheme;

@@ -46,7 +46,7 @@
     "@vue/cli-service": "~5.0.8",
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/test-utils": "^2.0.0-0",
-    "typescript": "~5.1.6",
+    "typescript": "~5.2.2",
     "vue-jest": "^3.0.7",
     "rimraf": "3.0.2"
   },
