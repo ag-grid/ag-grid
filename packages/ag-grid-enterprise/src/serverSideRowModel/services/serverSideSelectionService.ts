@@ -84,7 +84,9 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
         this.dispatchSelectionChanged(source);
     }
 
-    public setNodesSelected({ nodes, ...params }: ISetNodesSelectedParams): number {
+    public setNodesSelected(params: ISetNodesSelectedParams): number {
+        const { nodes, ...otherParams } = params;
+
         if (nodes.length > 1 && this.selectionMode !== 'multiRow') {
             _warn(191);
             return 0;
@@ -95,14 +97,10 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             return 0;
         }
 
-        // Only filter out selectable nodes when attempting to select; we should be able to de-select
-        // unselectable nodes (e.g. when isRowSelectable changes)
-        const adjustedParams = params.newValue
-            ? {
-                  nodes: nodes.filter((node) => node.selectable),
-                  ...params,
-              }
-            : { nodes, ...params };
+        const adjustedParams = {
+            nodes: nodes.filter((node) => node.selectable),
+            ...otherParams,
+        };
 
         // if no selectable nodes, then return 0
         if (!adjustedParams.nodes.length) {
