@@ -451,7 +451,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
         node.destroy();
     }
 
-    /** Called by the destructor, to the destroy the whole tree. */
+    /** Called by the deactivate, to destroy the whole tree. */
     private treeDestroy(node: TreeNode): void {
         const { row, level, duplicateRows } = node;
         if (row) {
