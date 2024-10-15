@@ -1,5 +1,5 @@
 import { _warn } from 'ag-grid-community';
-import type { ChangedPath, GetDataPath, NamedBean, RowNode, RowNodeTransaction } from 'ag-grid-community';
+import type { ChangedPath, NamedBean, RowNode, RowNodeTransaction } from 'ag-grid-community';
 
 import { AbstractClientSideTreeNodeManager } from './abstractClientSideTreeNodeManager';
 import type { TreeNode } from './treeNode';
