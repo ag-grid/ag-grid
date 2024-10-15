@@ -492,6 +492,10 @@ export const AG_GRID_ERRORS = {
     237: () =>
         'Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.' as const,
     238: ({ message }: { message: string }) => ['Failed to deserialize state with error ', message] as const,
+    239: () =>
+        'Invalid mixing of Theming API and CSS File Themes in the same page. No value was provided to the `theme` grid option so it defaulted to themeQuartz, but the file (ag-grid.css) is also included and will cause styling issues. Pass the string "legacy" to the theme grid option to use v32 style themes, or remove ag-grid.css from the page.' as const,
+    240: ({ theme }: { theme: any }) =>
+        `theme grid option must be a Theming API theme object or the string "legacy", received: ${theme}` as const,
 } as const;
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

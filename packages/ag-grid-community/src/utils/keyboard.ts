@@ -1,18 +1,7 @@
-import { KeyCode } from '../constants/keyCode';
 import type { AgColumn } from '../entities/agColumn';
-import type { AgColumnGroup } from '../entities/agColumnGroup';
-import type { SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams } from '../entities/colDef';
+import type { SuppressKeyboardEventParams } from '../entities/colDef';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { IRowNode } from '../interfaces/iRowNode';
-import { _isMacOsUserAgent } from './browser';
-import { _exists } from './generic';
-
-const A_KEYCODE = 65;
-const C_KEYCODE = 67;
-const V_KEYCODE = 86;
-const D_KEYCODE = 68;
-const Z_KEYCODE = 90;
-const Y_KEYCODE = 89;
 
 export function _isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
     // no allowed printable chars have alt or ctrl key combinations
@@ -69,68 +58,5 @@ export function _isUserSuppressingKeyboardEvent(
     }
 
     // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
-    return false;
-}
-
-export function _isUserSuppressingHeaderKeyboardEvent(
-    gos: GridOptionsService,
-    keyboardEvent: KeyboardEvent,
-    headerRowIndex: number,
-    column: AgColumn | AgColumnGroup
-): boolean {
-    const colDef = column.getDefinition();
-    const colDefFunc = colDef && colDef.suppressHeaderKeyboardEvent;
-
-    if (!_exists(colDefFunc)) {
-        return false;
-    }
-
-    const params: SuppressHeaderKeyboardEventParams = gos.addGridCommonParams({
-        colDef: colDef,
-        column,
-        headerRowIndex,
-        event: keyboardEvent,
-    });
-
-    return !!colDefFunc(params);
-}
-
-export function _normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string {
-    const { keyCode } = keyboardEvent;
-    let code: string;
-
-    switch (keyCode) {
-        case A_KEYCODE:
-            code = KeyCode.A;
-            break;
-        case C_KEYCODE:
-            code = KeyCode.C;
-            break;
-        case V_KEYCODE:
-            code = KeyCode.V;
-            break;
-        case D_KEYCODE:
-            code = KeyCode.D;
-            break;
-        case Z_KEYCODE:
-            code = KeyCode.Z;
-            break;
-        case Y_KEYCODE:
-            code = KeyCode.Y;
-            break;
-        default:
-            code = keyboardEvent.code;
-    }
-
-    return code;
-}
-
-export function _isDeleteKey(key: string, alwaysReturnFalseOnBackspace = false) {
-    if (key === KeyCode.DELETE) {
-        return true;
-    }
-    if (!alwaysReturnFalseOnBackspace && key === KeyCode.BACKSPACE) {
-        return _isMacOsUserAgent();
-    }
     return false;
 }

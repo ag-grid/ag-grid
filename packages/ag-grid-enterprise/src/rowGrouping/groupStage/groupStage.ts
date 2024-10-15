@@ -18,7 +18,7 @@ import type {
     WithoutGridCommon,
 } from 'ag-grid-community';
 import { ClientSideRowModelSteps, _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
-import { BeanStub, RowNode, _areEqual, _exists, _existsAndNotEmpty, _removeFromArray } from 'ag-grid-community';
+import { BeanStub, RowNode, _areEqual, _exists, _removeFromArray } from 'ag-grid-community';
 
 import { BatchRemover } from './batchRemover';
 import type { GroupRow } from './groupRow';
@@ -162,13 +162,13 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
             // transaction.
-            if (_existsAndNotEmpty(tran.remove)) {
+            if (tran.remove?.length) {
                 this.removeNodes(tran.remove as RowNode[], details, batchRemover);
             }
-            if (_existsAndNotEmpty(tran.update)) {
+            if (tran.update?.length) {
                 this.moveNodesInWrongPath(tran.update as RowNode[], details, batchRemover);
             }
-            if (_existsAndNotEmpty(tran.add)) {
+            if (tran.add?.length) {
                 this.insertNodes(tran.add as RowNode[], details);
             }
 

@@ -1,5 +1,3 @@
-import { _errorOnce } from 'ag-grid-community';
-
 export type DataFieldGetter<TData = any, TResult = unknown> = {
     (data: TData | null | undefined): TResult | null | undefined;
     path: string | null | undefined;
@@ -11,7 +9,7 @@ const parseFieldPath = (fieldPath: string | null | undefined): string[] => {
     }
     const segments = fieldPath.split('.');
     if (segments.includes('__proto__')) {
-        _errorOnce('Field path contains restricted keyword "__proto__"', fieldPath);
+        // TODO: maybe we should raise an error like 'Field path contains restricted keyword "__proto__"'
         return []; // Avoid the risk of accessing prototype
     }
     return segments;
@@ -39,7 +37,7 @@ export const makeFieldPathGetter = <TData = any, TResult = unknown>(
             for (let i = 0; i <= last && value !== null && value !== undefined; ++i) {
                 value = value[splitPath[i]];
                 if (i < last && typeof value !== 'object' && value !== undefined) {
-                    _errorOnce('Accessing a ' + typeof value + ' not allowed in field path', fieldPath, splitPath[i]);
+                    // TODO: maybe we should raise an error like 'Accessing a ' + typeof value + ' not allowed in field path'
                     return null;
                 }
             }

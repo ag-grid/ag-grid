@@ -8,8 +8,7 @@ import type {
     IClientSideNodeManager,
 } from '../interfaces/iClientSideNodeManager';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
-import { _exists, _missingOrEmpty } from '../utils/generic';
-import { _cloneObject, _iterateObject } from '../utils/object';
+import { _exists } from '../utils/generic';
 import { _error, _warn } from '../validation/logging';
 
 const ROOT_NODE_ID = 'ROOT_NODE_ID';
@@ -139,7 +138,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         const getRowIdFunc = _getRowIdCallback(this.gos)!;
 
         // get a map of the existing data, that we are going to modify as we find rows to not delete
-        const existingNodesMap: { [id: string]: RowNode | undefined } = _cloneObject(this.allNodesMap);
+        const existingNodesMap: { [id: string]: RowNode | undefined } = { ...this.allNodesMap };
 
         const remove: TData[] = [];
         const update: TData[] = [];
@@ -169,11 +168,11 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         }
 
         // at this point, all rows that are left, should be removed
-        _iterateObject(existingNodesMap, (id, rowNode) => {
+        for (const rowNode of Object.values(existingNodesMap)) {
             if (rowNode) {
                 remove.push(rowNode.data);
             }
-        });
+        }
 
         return { remove, update, add };
     }
@@ -224,7 +223,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         result: ClientSideNodeManagerUpdateRowDataResult<TData>
     ): void {
         const add = rowDataTran.add;
-        if (_missingOrEmpty(add)) {
+        if (!add?.length) {
             return;
         }
 
@@ -252,7 +251,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         }
 
         // create new row nodes for each data item
-        const newNodes: RowNode[] = add!.map((item, index) => this.createRowNode(item, addIndex + index));
+        const newNodes: RowNode[] = add.map((item, index) => this.createRowNode(item, addIndex + index));
 
         if (addIndex < allLeafChildren.length) {
             // Insert at the specified index
@@ -292,13 +291,13 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     ): void {
         const { remove } = rowDataTran;
 
-        if (_missingOrEmpty(remove)) {
+        if (!remove?.length) {
             return;
         }
 
         const rowIdsRemoved: { [key: string]: boolean } = {};
 
-        remove!.forEach((item) => {
+        remove.forEach((item) => {
             const rowNode = this.lookupRowNode(getRowIdFunc, item);
 
             if (!rowNode) {
@@ -344,11 +343,11 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         nodesToUnselect: RowNode[]
     ): void {
         const { update } = rowDataTran;
-        if (_missingOrEmpty(update)) {
+        if (!update?.length) {
             return;
         }
 
-        update!.forEach((item) => {
+        update.forEach((item) => {
             const rowNode = this.lookupRowNode(getRowIdFunc, item);
 
             if (!rowNode) {

@@ -7,8 +7,6 @@ import type { SortModelItem } from '../interfaces/iSortModelItem';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import { _logIfDebug } from '../utils/function';
 import { _exists } from '../utils/generic';
-import { NumberSequence } from '../utils/numberSequence';
-import { _getAllValuesInObject } from '../utils/object';
 import { InfiniteBlock } from './infiniteBlock';
 import type { RowNodeBlockLoader } from './rowNodeBlockLoader';
 
@@ -21,7 +19,7 @@ export interface InfiniteCacheParams {
     filterModel: any;
     maxBlocksInCache?: number;
     rowHeight: number;
-    lastAccessedSequence: NumberSequence;
+    lastAccessedSequence: { value: number };
     rowNodeBlockLoader?: RowNodeBlockLoader;
     dynamicRowHeight: boolean;
 }
@@ -241,14 +239,14 @@ export class InfiniteCache extends BeanStub {
     }
 
     public forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void): void {
-        const sequence = new NumberSequence();
+        const sequence = { value: 0 };
         this.getBlocksInOrder().forEach((block) => block.forEachNode(callback, sequence, this.rowCount));
     }
 
     public getBlocksInOrder(): InfiniteBlock[] {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
         const blockComparator = (a: InfiniteBlock, b: InfiniteBlock) => a.getId() - b.getId();
-        const blocks = _getAllValuesInObject(this.blocks).sort(blockComparator);
+        const blocks = Object.values(this.blocks).sort(blockComparator);
         return blocks;
     }
 
@@ -308,7 +306,7 @@ export class InfiniteCache extends BeanStub {
 
         let lastBlockId = -1;
         let inActiveRange = false;
-        const numberSequence: NumberSequence = new NumberSequence();
+        const numberSequence = { value: 0 };
 
         let foundGapInSelection = false;
 

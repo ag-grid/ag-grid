@@ -6,7 +6,6 @@ import type { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer
 import { _setAriaHidden } from './aria';
 import { _isBrowserChrome, _isBrowserSafari } from './browser';
 import type { AgPromise } from './promise';
-import { _camelCaseToHyphenated } from './string';
 
 let rtlNegativeScroll: boolean;
 
@@ -354,6 +353,15 @@ export function _insertWithDomOrder(
             eContainer.appendChild(eToInsert);
         }
     }
+}
+
+/**
+ * Converts a camelCase string into hyphenated string
+ * @param {string} camelCase
+ * @return {string}
+ */
+function _camelCaseToHyphenated(camelCase: string): string {
+    return camelCase.replace(/[A-Z]/g, (s) => `-${s.toLocaleLowerCase()}`);
 }
 
 export function _addStylesToElement(eElement: any, styles: RowStyle | CellStyle | null | undefined) {

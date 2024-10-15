@@ -22,7 +22,6 @@ import {
     KeyCode,
     ProvidedFilter,
     TabGuardComp,
-    _forEachReverse,
     _getActiveDomElement,
     _getFilterDetails,
     _isNothingFocused,
@@ -41,6 +40,16 @@ export function getMultiFilterDefs(params: MultiFilterParams): IMultiFilterDef[]
     return filters && filters.length > 0
         ? filters
         : [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }];
+}
+
+function _forEachReverse<T>(list: T[] | null | undefined, action: (value: T, index: number) => void): void {
+    if (list == null) {
+        return;
+    }
+
+    for (let i = list.length - 1; i >= 0; i--) {
+        action(list[i], i);
+    }
 }
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
@@ -390,7 +399,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
             // don't want to focus later if focus suppressed
             let hasFocused = !!suppressFocus;
             if (filterDefs) {
-                _forEachReverse(filterDefs!, (filterDef, index) => {
+                _forEachReverse(filterDefs, (filterDef, index) => {
                     const isFirst = index === 0;
                     const notInlineDisplayType = filterDef.display && filterDef.display !== 'inline';
                     const suppressFocusForFilter = suppressFocus || !isFirst || notInlineDisplayType;
@@ -455,7 +464,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
     private executeFunctionIfExists<T extends IFilterComp>(name: keyof T, ...params: any[]): void {
         // The first filter is always the "dominant" one. By iterating in reverse order we ensure the first filter
         // always gets the last say
-        _forEachReverse(this.filters!, (filter) => {
+        _forEachReverse(this.filters, (filter) => {
             this.executeFunctionIfExistsOnFilter(filter as T, name, params);
         });
     }

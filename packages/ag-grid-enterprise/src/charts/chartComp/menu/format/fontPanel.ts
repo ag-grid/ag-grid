@@ -1,12 +1,5 @@
 import type { AgSelectParams, BeanCollection } from 'ag-grid-community';
-import {
-    AgSelectSelector,
-    Component,
-    RefPlaceholder,
-    _capitalise,
-    _includes,
-    _removeFromParent,
-} from 'ag-grid-community';
+import { AgSelectSelector, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
 
 import type { AgGroupComponent, AgGroupComponentParams } from '../../../../widgets/agGroupComponent';
 import { AgGroupComponentSelector } from '../../../../widgets/agGroupComponent';
@@ -31,6 +24,10 @@ export interface FontPanelParams {
     chartMenuParamsFactory: ChartMenuParamsFactory;
     keyMapper: (key: string) => string;
     cssIdentifier?: string;
+}
+
+function _capitalise(str: string): string {
+    return str[0].toUpperCase() + str.substring(1).toLowerCase();
 }
 
 export class FontPanel extends Component {
@@ -168,7 +165,7 @@ export class FontPanel extends Component {
         const sizes = [8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36];
         const size = this.getInitialFontValue('fontSize');
 
-        if (!_includes(sizes, size)) {
+        if (!sizes.includes(size!)) {
             sizes.push(size!);
         }
 

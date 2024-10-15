@@ -6,7 +6,7 @@ import type {
     RowNode,
     StoreRefreshAfterParams,
 } from 'ag-grid-community';
-import { BeanStub, _isServerSideRowModel, _missingOrEmpty } from 'ag-grid-community';
+import { BeanStub, _isServerSideRowModel } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from '../serverSideRowModel';
 import type { LazyStore } from './lazy/lazyStore';
@@ -30,7 +30,7 @@ export class StoreUtils extends BeanStub implements NamedBean {
         currentCache: LazyStore,
         findNodeFunc: (key: string) => RowNode | null
     ): LazyStore | null {
-        if (_missingOrEmpty(keys)) {
+        if (!keys?.length) {
             return currentCache;
         }
 

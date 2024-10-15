@@ -1,6 +1,5 @@
 import { BASE_URL } from './baseUrl';
 import type { FrameworkOverridesIncomingSource, IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
-import { _includes } from './utils/array';
 import { AgPromise } from './utils/promise';
 import { setValidationDocLink } from './validation/logging';
 
@@ -29,15 +28,12 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
         listener: EventListenerOrEventListenerObject,
         useCapture?: boolean
     ): void {
-        const isPassive = _includes(PASSIVE_EVENTS, type);
+        const isPassive = PASSIVE_EVENTS.includes(type);
         element.addEventListener(type, listener, { capture: !!useCapture, passive: isPassive });
     }
 
     wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = (callback) => callback();
     wrapOutgoing: <T>(callback: () => T) => T = (callback) => callback();
-    get shouldWrapOutgoing() {
-        return false;
-    }
 
     frameworkComponent(name: string): any {
         return null;

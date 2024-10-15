@@ -3,7 +3,6 @@ import { RowNode } from '../entities/rowNode';
 import type { IGetRowsParams } from '../interfaces/iDatasource';
 import type { LoadSuccessParams } from '../interfaces/iServerSideRowModel';
 import { _exists, _missing } from '../utils/generic';
-import type { NumberSequence } from '../utils/numberSequence';
 import { _warn } from '../validation/logging';
 import type { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
 import { RowNodeBlock } from './rowNodeBlock';
@@ -101,13 +100,13 @@ export class InfiniteBlock extends RowNodeBlock {
 
     public forEachNode(
         callback: (rowNode: RowNode, index: number) => void,
-        sequence: NumberSequence,
+        sequence: { value: number },
         rowCount: number
     ): void {
         this.rowNodes.forEach((rowNode: RowNode, index: number) => {
             const rowIndex = this.startRow + index;
             if (rowIndex < rowCount) {
-                callback(rowNode, sequence.next());
+                callback(rowNode, sequence.value++);
             }
         });
     }
@@ -118,7 +117,7 @@ export class InfiniteBlock extends RowNodeBlock {
 
     public getRow(rowIndex: number, dontTouchLastAccessed = false): RowNode {
         if (!dontTouchLastAccessed) {
-            this.lastAccessed = this.params.lastAccessedSequence.next();
+            this.lastAccessed = this.params.lastAccessedSequence.value++;
         }
         const localIndex = rowIndex - this.startRow;
         return this.rowNodes[localIndex];

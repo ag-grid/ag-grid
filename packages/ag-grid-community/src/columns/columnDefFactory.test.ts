@@ -1,11 +1,11 @@
-import { _mergeDeep } from './object';
+import { _deepCloneDefinition } from './columnDefFactory';
 
-describe('object', () => {
-    test('_mergeDeep does not allow prototype pollution', () => {
+describe('ColumnDefFactory', () => {
+    test('_deepCloneDefinition does not allow prototype pollution', () => {
         const BAD_JSON = JSON.parse('{"__proto__":{"polluted":true}}');
-        const victim = {};
+        let victim = {};
         try {
-            _mergeDeep(victim, BAD_JSON);
+            victim = _deepCloneDefinition(BAD_JSON);
         } catch (e) {
             console.error(e);
         }
