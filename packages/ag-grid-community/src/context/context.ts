@@ -81,7 +81,7 @@ import type { PageBoundsListener } from '../pagination/pageBoundsListener';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageSizeService';
 import type { PaginationService } from '../pagination/paginationService';
-import type { PinnedWidthService } from '../pinnedColumns/pinnedWidthService';
+import type { PinnedColumnService } from '../pinnedColumns/pinnedColumnService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
@@ -252,7 +252,7 @@ export interface CoreBeanCollection {
     mouseEventService: MouseEventService;
     cellNavigationService?: CellNavigationService;
     scrollVisibleService: ScrollVisibleService;
-    pinnedWidthService?: PinnedWidthService;
+    pinnedColumnService?: PinnedColumnService;
     expressionService?: ExpressionService;
     autoWidthCalculator?: AutoWidthCalculator;
     agComponentUtils?: AgComponentUtils;
@@ -433,7 +433,7 @@ export type BeanName =
     | 'paginationAutoPageSizeService'
     | 'paginationService'
     | 'pinnedRowModel'
-    | 'pinnedWidthService'
+    | 'pinnedColumnService'
     | 'pivotColDefService'
     | 'pivotStage'
     | 'popupService'

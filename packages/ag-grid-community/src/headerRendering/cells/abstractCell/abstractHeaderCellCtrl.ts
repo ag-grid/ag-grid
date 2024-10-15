@@ -14,7 +14,7 @@ import type { BrandedType } from '../../../interfaces/brandedType';
 import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import { _requestAnimationFrame } from '../../../misc/animationFrameService';
 import type { MenuService } from '../../../misc/menu/menuService';
-import type { PinnedWidthService } from '../../../pinnedColumns/pinnedWidthService';
+import type { PinnedColumnService } from '../../../pinnedColumns/pinnedColumnService';
 import { _setAriaColIndex } from '../../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize, _getInnerWidth, _observeResize } from '../../../utils/dom';
 import { _exists } from '../../../utils/generic';
@@ -43,7 +43,7 @@ export abstract class AbstractHeaderCellCtrl<
 > extends BeanStub {
     public readonly instanceId: HeaderCellCtrlInstanceId;
 
-    private pinnedWidthService?: PinnedWidthService;
+    private pinnedColumnService?: PinnedColumnService;
     protected focusService: FocusService;
     protected userComponentFactory: UserComponentFactory;
     protected ctrlsService: CtrlsService;
@@ -51,7 +51,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected menuService?: MenuService;
 
     public wireBeans(beans: BeanCollection) {
-        this.pinnedWidthService = beans.pinnedWidthService;
+        this.pinnedColumnService = beans.pinnedColumnService;
         this.focusService = beans.focusService;
         this.userComponentFactory = beans.userComponentFactory;
         this.ctrlsService = beans.ctrlsService;
@@ -313,8 +313,8 @@ export abstract class AbstractHeaderCellCtrl<
 
         const pinned = this.column.getPinned();
         if (pinned) {
-            const leftWidth = this.pinnedWidthService?.getPinnedLeftWidth() ?? 0;
-            const rightWidth = this.pinnedWidthService?.getPinnedRightWidth() ?? 0;
+            const leftWidth = this.pinnedColumnService?.getPinnedLeftWidth() ?? 0;
+            const rightWidth = this.pinnedColumnService?.getPinnedRightWidth() ?? 0;
             const bodyWidth = _getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
 
             if (leftWidth + rightWidth + diff > bodyWidth) {

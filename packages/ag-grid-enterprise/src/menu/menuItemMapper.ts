@@ -96,32 +96,41 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     ): MenuItemDef | string | null {
         const localeTextFunc = this.getLocaleTextFunc();
         const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
+        const { pinnedColumnService } = this.beans;
 
         switch (key) {
             case 'pinSubMenu':
-                return {
-                    name: localeTextFunc('pinColumn', 'Pin Column'),
-                    icon: _createIconNoSpan('menuPin', this.gos, null),
-                    subMenu: ['clearPinned', 'pinLeft', 'pinRight'],
-                };
+                return pinnedColumnService && column
+                    ? {
+                          name: localeTextFunc('pinColumn', 'Pin Column'),
+                          icon: _createIconNoSpan('menuPin', this.gos, null),
+                          subMenu: ['clearPinned', 'pinLeft', 'pinRight'],
+                      }
+                    : null;
             case 'pinLeft':
-                return {
-                    name: localeTextFunc('pinLeft', 'Pin Left'),
-                    action: () => this.columnModel.setColsPinned([column], 'left', source),
-                    checked: !!column && column.isPinnedLeft(),
-                };
+                return pinnedColumnService && column
+                    ? {
+                          name: localeTextFunc('pinLeft', 'Pin Left'),
+                          action: () => pinnedColumnService.setColsPinned([column], 'left', source),
+                          checked: !!column && column.isPinnedLeft(),
+                      }
+                    : null;
             case 'pinRight':
-                return {
-                    name: localeTextFunc('pinRight', 'Pin Right'),
-                    action: () => this.columnModel.setColsPinned([column], 'right', source),
-                    checked: !!column && column.isPinnedRight(),
-                };
+                return pinnedColumnService && column
+                    ? {
+                          name: localeTextFunc('pinRight', 'Pin Right'),
+                          action: () => pinnedColumnService.setColsPinned([column], 'right', source),
+                          checked: !!column && column.isPinnedRight(),
+                      }
+                    : null;
             case 'clearPinned':
-                return {
-                    name: localeTextFunc('noPin', 'No Pin'),
-                    action: () => this.columnModel.setColsPinned([column], null, source),
-                    checked: !!column && !column.isPinned(),
-                };
+                return pinnedColumnService && column
+                    ? {
+                          name: localeTextFunc('noPin', 'No Pin'),
+                          action: () => pinnedColumnService.setColsPinned([column], null, source),
+                          checked: !!column && !column.isPinned(),
+                      }
+                    : null;
             case 'valueAggSubMenu':
                 if (this.gos.assertModuleRegistered('RowGroupingCoreModule', 'Aggregation from Menu')) {
                     if (!column?.isPrimary() && !column?.getColDef().pivotValueColumn) {

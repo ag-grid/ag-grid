@@ -8,17 +8,15 @@ import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
-import { _isDomLayout, _shouldMaintainColumnOrder } from '../gridOptionsUtils';
+import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
 import type { IAutoColService } from '../interfaces/iAutoColService';
-import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
+import type { Column } from '../interfaces/iColumn';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
-import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { _areEqual, _moveInArray } from '../utils/array';
 import { _warn } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
 import type { ColumnDefFactory } from './columnDefFactory';
-import { dispatchColumnPinnedEvent } from './columnEventUtils';
 import type { ColumnFactory } from './columnFactory';
 import type { ColumnState, ColumnStateService } from './columnStateService';
 import {
@@ -55,7 +53,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private visibleColsService: VisibleColsService;
     private columnViewportService: ColumnViewportService;
     private pivotResultColsService?: IPivotResultColsService;
-    private columnAnimationService?: ColumnAnimationService;
     private autoColService?: IAutoColService;
     private selectionColService?: SelectionColService;
     private valueCache?: ValueCache;
@@ -72,7 +69,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.visibleColsService = beans.visibleColsService;
         this.columnViewportService = beans.columnViewportService;
         this.pivotResultColsService = beans.pivotResultColsService;
-        this.columnAnimationService = beans.columnAnimationService;
         this.autoColService = beans.autoColService;
         this.selectionColService = beans.selectionColService;
         this.valueCache = beans.valueCache;
@@ -93,7 +89,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     // [providedCols OR pivotResultCols] PLUS autoGroupCols PLUS selectionCols
     // this cols.list maintains column order.
-    private cols: ColumnCollections;
+    public cols: ColumnCollections;
 
     // if pivotMode is on, however pivot results are NOT shown if no pivot columns are set
     private pivotMode = false;
@@ -316,55 +312,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
             },
             source
         );
-    }
-
-    public setColsPinned(keys: Maybe<ColKey>[], pinned: ColumnPinnedType, source: ColumnEventType): void {
-        if (!this.cols) {
-            return;
-        }
-        if (!keys?.length) {
-            return;
-        }
-
-        if (_isDomLayout(this.gos, 'print')) {
-            _warn(37);
-            return;
-        }
-
-        this.columnAnimationService?.start();
-
-        let actualPinned: ColumnPinnedType;
-        if (pinned === true || pinned === 'left') {
-            actualPinned = 'left';
-        } else if (pinned === 'right') {
-            actualPinned = 'right';
-        } else {
-            actualPinned = null;
-        }
-
-        const updatedCols: AgColumn[] = [];
-
-        keys.forEach((key) => {
-            if (!key) {
-                return;
-            }
-            const column = this.getCol(key);
-            if (!column) {
-                return;
-            }
-
-            if (column.getPinned() !== actualPinned) {
-                column.setPinned(actualPinned);
-                updatedCols.push(column);
-            }
-        });
-
-        if (updatedCols.length) {
-            this.visibleColsService.refresh(source);
-            dispatchColumnPinnedEvent(this.eventService, updatedCols, source);
-        }
-
-        this.columnAnimationService?.finish();
     }
 
     public isRowGroupColLocked(column: AgColumn): boolean {

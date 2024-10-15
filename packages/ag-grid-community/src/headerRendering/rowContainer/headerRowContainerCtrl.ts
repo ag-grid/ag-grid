@@ -13,7 +13,7 @@ import type { ScrollPartner } from '../../gridBodyComp/gridBodyScrollFeature';
 import type { ScrollVisibleService } from '../../gridBodyComp/scrollVisibleService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { HeaderPosition } from '../../interfaces/iHeaderPosition';
-import type { PinnedWidthService } from '../../pinnedColumns/pinnedWidthService';
+import type { PinnedColumnService } from '../../pinnedColumns/pinnedColumnService';
 import { HeaderRowType } from '../row/headerRowComp';
 import { HeaderRowCtrl } from '../row/headerRowCtrl';
 
@@ -28,7 +28,7 @@ export interface IHeaderRowContainerComp {
 export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     private ctrlsService: CtrlsService;
     private scrollVisibleService: ScrollVisibleService;
-    private pinnedWidthService?: PinnedWidthService;
+    private pinnedColumnService?: PinnedColumnService;
     private columnModel: ColumnModel;
     private focusService: FocusService;
     private filterManager?: FilterManager;
@@ -37,7 +37,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
         this.scrollVisibleService = beans.scrollVisibleService;
-        this.pinnedWidthService = beans.pinnedWidthService;
+        this.pinnedColumnService = beans.pinnedColumnService;
         this.columnModel = beans.columnModel;
         this.focusService = beans.focusService;
         this.filterManager = beans.filterManager;
@@ -294,7 +294,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     private setupPinnedWidth(): void {
-        if (this.pinned == null || !this.pinnedWidthService) {
+        if (this.pinned == null || !this.pinnedColumnService) {
             return;
         }
 
@@ -305,8 +305,8 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
 
         const listener = () => {
             const width = pinningLeft
-                ? this.pinnedWidthService!.getPinnedLeftWidth()
-                : this.pinnedWidthService!.getPinnedRightWidth();
+                ? this.pinnedColumnService!.getPinnedLeftWidth()
+                : this.pinnedColumnService!.getPinnedRightWidth();
             if (width == null) {
                 return;
             } // can happen at initialisation, width not yet set

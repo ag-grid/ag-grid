@@ -1,23 +1,29 @@
-import type { ColumnModel } from '../columns/columnModel';
+import { dispatchColumnPinnedEvent } from '../columns/columnEventUtils';
+import type { ColKey, ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
+import type { ColumnEventType } from '../events';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import { SetPinnedWidthFeature } from '../gridBodyComp/rowContainer/setPinnedWidthFeature';
 import { _isDomLayout } from '../gridOptionsUtils';
 import type { ProcessUnpinnedColumnsParams } from '../interfaces/iCallbackParams';
+import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { _getInnerWidth } from '../utils/dom';
+import { _warn } from '../validation/logging';
 
-export class PinnedWidthService extends BeanStub implements NamedBean {
-    beanName = 'pinnedWidthService' as const;
+export class PinnedColumnService extends BeanStub implements NamedBean {
+    beanName = 'pinnedColumnService' as const;
 
     private visibleColsService: VisibleColsService;
     private ctrlsService: CtrlsService;
     private columnModel: ColumnModel;
+    private columnAnimationService?: ColumnAnimationService;
 
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -25,6 +31,7 @@ export class PinnedWidthService extends BeanStub implements NamedBean {
         this.visibleColsService = beans.visibleColsService;
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;
+        this.columnAnimationService = beans.columnAnimationService;
     }
 
     private leftWidth: number;
@@ -91,11 +98,60 @@ export class PinnedWidthService extends BeanStub implements NamedBean {
             columnsToRemove = processUnpinnedColumns(params) as AgColumn[];
         }
 
-        this.columnModel.setColsPinned(columnsToRemove, null, 'viewportSizeFeature');
+        this.setColsPinned(columnsToRemove, null, 'viewportSizeFeature');
     }
 
     public createPinnedWidthFeature(element: HTMLElement, isLeft: boolean): SetPinnedWidthFeature {
         return new SetPinnedWidthFeature(element, isLeft);
+    }
+
+    public setColsPinned(keys: ColKey[], pinned: ColumnPinnedType, source: ColumnEventType): void {
+        if (!this.columnModel.cols) {
+            return;
+        }
+        if (!keys?.length) {
+            return;
+        }
+
+        if (_isDomLayout(this.gos, 'print')) {
+            _warn(37);
+            return;
+        }
+
+        this.columnAnimationService?.start();
+
+        let actualPinned: ColumnPinnedType;
+        if (pinned === true || pinned === 'left') {
+            actualPinned = 'left';
+        } else if (pinned === 'right') {
+            actualPinned = 'right';
+        } else {
+            actualPinned = null;
+        }
+
+        const updatedCols: AgColumn[] = [];
+
+        keys.forEach((key) => {
+            if (!key) {
+                return;
+            }
+            const column = this.columnModel.getCol(key);
+            if (!column) {
+                return;
+            }
+
+            if (column.getPinned() !== actualPinned) {
+                column.setPinned(actualPinned);
+                updatedCols.push(column);
+            }
+        });
+
+        if (updatedCols.length) {
+            this.visibleColsService.refresh(source);
+            dispatchColumnPinnedEvent(this.eventService, updatedCols, source);
+        }
+
+        this.columnAnimationService?.finish();
     }
 
     private getPinnedColumnsOverflowingViewport(viewportWidth: number): AgColumn[] {

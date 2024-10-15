@@ -7,20 +7,20 @@ import type { AgColumn } from '../entities/agColumn';
 import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
-import type { PinnedWidthService } from '../pinnedColumns/pinnedWidthService';
+import type { PinnedColumnService } from '../pinnedColumns/pinnedColumnService';
 import { _getInnerWidth, _setDisplayed } from '../utils/dom';
 import type { ColumnResizeService } from './columnResizeService';
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private horizontalResizeService: HorizontalResizeService;
-    private pinnedWidthService?: PinnedWidthService;
+    private pinnedColumnService?: PinnedColumnService;
     private ctrlsService: CtrlsService;
     private columnResizeService?: ColumnResizeService;
     private columnAutosizeService?: ColumnAutosizeService;
 
     public wireBeans(beans: BeanCollection) {
         this.horizontalResizeService = beans.horizontalResizeService!;
-        this.pinnedWidthService = beans.pinnedWidthService;
+        this.pinnedColumnService = beans.pinnedColumnService;
         this.ctrlsService = beans.ctrlsService;
         this.columnResizeService = beans.columnResizeService;
         this.columnAutosizeService = beans.columnAutosizeService;
@@ -109,8 +109,8 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         const columnWidths = [{ key, newWidth }];
 
         if (this.column.getPinned()) {
-            const leftWidth = this.pinnedWidthService?.getPinnedLeftWidth() ?? 0;
-            const rightWidth = this.pinnedWidthService?.getPinnedRightWidth() ?? 0;
+            const leftWidth = this.pinnedColumnService?.getPinnedLeftWidth() ?? 0;
+            const rightWidth = this.pinnedColumnService?.getPinnedRightWidth() ?? 0;
             const bodyWidth = _getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
 
             if (leftWidth + rightWidth + (resizeAmountNormalised - lastResizeAmount) > bodyWidth) {

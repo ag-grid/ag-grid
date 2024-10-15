@@ -4,7 +4,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
 import type { ScrollVisibleService, SetScrollsVisibleParams } from '../gridBodyComp/scrollVisibleService';
-import type { PinnedWidthService } from '../pinnedColumns/pinnedWidthService';
+import type { PinnedColumnService } from '../pinnedColumns/pinnedColumnService';
 import { _getInnerHeight } from '../utils/dom';
 import type { GridBodyCtrl } from './gridBodyCtrl';
 import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
@@ -14,14 +14,14 @@ import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 // vertical scrolling.
 export class ViewportSizeFeature extends BeanStub {
     private ctrlsService: CtrlsService;
-    private pinnedWidthService?: PinnedWidthService;
+    private pinnedColumnService?: PinnedColumnService;
     private columnFlexService?: ColumnFlexService;
     private scrollVisibleService: ScrollVisibleService;
     private columnViewportService: ColumnViewportService;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
-        this.pinnedWidthService = beans.pinnedWidthService;
+        this.pinnedColumnService = beans.pinnedColumnService;
         this.columnFlexService = beans.columnFlexService;
         this.scrollVisibleService = beans.scrollVisibleService;
         this.columnViewportService = beans.columnViewportService;
@@ -66,7 +66,7 @@ export class ViewportSizeFeature extends BeanStub {
     private onCenterViewportResized(): void {
         this.scrollVisibleService.onCentreViewportResized();
         if (this.centerContainerCtrl.isViewportInTheDOMTree()) {
-            this.pinnedWidthService?.keepPinnedColumnsNarrowerThanViewport();
+            this.pinnedColumnService?.keepPinnedColumnsNarrowerThanViewport();
             this.checkViewportAndScrolls();
 
             const newWidth = this.centerContainerCtrl.getCenterWidth();

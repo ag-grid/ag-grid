@@ -7,7 +7,7 @@ import type { StickyTopOffsetChangedEvent } from '../../events';
 import { _isDomLayout } from '../../gridOptionsUtils';
 import type { IRangeService } from '../../interfaces/IRangeService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
-import type { PinnedWidthService } from '../../pinnedColumns/pinnedWidthService';
+import type { PinnedColumnService } from '../../pinnedColumns/pinnedColumnService';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { RowRenderer } from '../../rendering/rowRenderer';
 import {
@@ -235,7 +235,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     private columnViewportService: ColumnViewportService;
     private rowRenderer: RowRenderer;
     private rangeService?: IRangeService;
-    private pinnedWidthService?: PinnedWidthService;
+    private pinnedColumnService?: PinnedColumnService;
 
     public wireBeans(beans: BeanCollection) {
         this.dragService = beans.dragService;
@@ -243,7 +243,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         this.columnViewportService = beans.columnViewportService;
         this.rowRenderer = beans.rowRenderer;
         this.rangeService = beans.rangeService;
-        this.pinnedWidthService = beans.pinnedWidthService;
+        this.pinnedColumnService = beans.pinnedColumnService;
     }
 
     private readonly options: RowContainerOptions;
@@ -313,13 +313,13 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         const pinnedWidthChanged = () => this.onPinnedWidthChanged();
         this.forContainers(allLeft, () => {
             this.pinnedWidthFeature = this.createManagedBean(
-                this.pinnedWidthService?.createPinnedWidthFeature(this.eContainer, true)
+                this.pinnedColumnService?.createPinnedWidthFeature(this.eContainer, true)
             );
             this.addManagedEventListeners({ leftPinnedWidthChanged: pinnedWidthChanged });
         });
         this.forContainers(allRight, () => {
             this.pinnedWidthFeature = this.createManagedBean(
-                this.pinnedWidthService?.createPinnedWidthFeature(this.eContainer, true)
+                this.pinnedColumnService?.createPinnedWidthFeature(this.eContainer, true)
             );
             this.addManagedEventListeners({ rightPinnedWidthChanged: pinnedWidthChanged });
         });
