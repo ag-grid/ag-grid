@@ -70,7 +70,9 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
             // Use the Generic hint types for improved type checking by updating the columnDefs property
             inputTypeWithGenerics = inputType.replace('ColDef<TData>', 'TColDef');
         }
-        line += `    @Input() public ${property}: ${inputTypeWithGenerics} = undefined;${EOL}`;
+        const isBoolean = inputType === 'boolean | undefined';
+
+        line += `    @Input(${isBoolean ? '{ transform: booleanAttribute }' : ''}) public ${property}: ${inputTypeWithGenerics} = undefined;${EOL}`;
         const order = typeKeysOrder.findIndex((p) => p === property);
         propsToWrite.push({ order, line });
     });
@@ -102,21 +104,9 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
     }
 
     result = writeSortedLines(eventsToWrite, result);
-    result = addTypeCoercionHints(result, compUtils.BOOLEAN_PROPERTIES, skippableProperties);
 
     const typesToImport = extractTypes({ eventTypeLookup, typeLookup }, skippableProperties);
     return { code: result, types: typesToImport };
-}
-
-function addTypeCoercionHints(result, boolProps, skippableProperties) {
-    result += `${EOL}    // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"' ${EOL}`;
-    result += `    // https://angular.dev/tools/cli/template-typecheck#input-setter-coercion ${EOL}`;
-    boolProps.forEach((property) => {
-        if (skippableProperties.indexOf(property) === -1) {
-            result += `    static ngAcceptInputType_${property}: boolean | null | '';${EOL}`;
-        }
-    });
-    return result;
 }
 
 function getSafeType(typeName) {
