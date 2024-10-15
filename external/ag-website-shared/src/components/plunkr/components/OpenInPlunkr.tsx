@@ -1,8 +1,10 @@
 import { OpenInCTA } from '@ag-website-shared/components/open-in-cta/OpenInCTA';
 import { cleanIndexHtml } from '@ag-website-shared/utils/cleanIndexHtml';
+import { updateHtmlWithDarkMode } from '@ag-website-shared/utils/updateHtmlWithDarkMode';
 import type { FileContents } from '@features/example-generator/types';
 import { stripOutDarkModeCode } from '@features/example-runner/components/CodeViewer';
 import { fetchTextFile } from '@utils/fetchTextFile';
+import { useDarkmode } from '@utils/hooks/useDarkmode';
 import type { FunctionComponent } from 'react';
 
 import { openPlunker } from '../utils/plunkr';
@@ -26,12 +28,15 @@ export const OpenInPlunkr: FunctionComponent<Props> = ({
     fileToOpen,
     isDev,
 }) => {
+    const [isDarkMode] = useDarkmode();
+
     return (
         <OpenInCTA
             type="plunker"
             onClick={async () => {
                 const html = await fetchTextFile(htmlUrl);
-                const indexHtml = isDev ? cleanIndexHtml(html) : html;
+                const cleanedHtml = isDev ? cleanIndexHtml(html) : html;
+                const indexHtml = updateHtmlWithDarkMode({ html: cleanedHtml, isDarkMode });
                 const localFiles = { ...files };
                 stripOutDarkModeCode(localFiles);
                 const plunkrExampleFiles = {
