@@ -3,13 +3,14 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
-import { RowNode } from '../entities/rowNode';
+import type { RowNode } from '../entities/rowNode';
 import { _getGrandTotalRow, _getGroupTotalRowCallback, _isGroupMultiAutoColumn } from '../gridOptionsUtils';
 import type { GetGroupIncludeFooterParams } from '../interfaces/iCallbackParams';
 import { ClientSideRowModelSteps } from '../interfaces/iClientSideRowModel';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
-import { _exists, _missingOrEmpty } from '../utils/generic';
+import type { IClientSideDetailService } from '../interfaces/masterDetail';
+import { _missingOrEmpty } from '../utils/generic';
 
 interface FlattenDetails {
     hideOpenParents: boolean;
@@ -32,10 +33,12 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
 
     private beans: BeanCollection;
     private columnModel: ColumnModel;
+    private detailService: IClientSideDetailService | undefined;
 
     public wireBeans(beans: BeanCollection): void {
         this.beans = beans;
         this.columnModel = beans.columnModel;
+        this.detailService = beans.clientSideDetailService;
     }
 
     public execute(params: StageExecuteParams): RowNode[] {
@@ -171,13 +174,11 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
                         this.addRowNodeToRowsToDisplay(details, rowNode.sibling, result, uiLevelForChildren);
                     }
                 }
-            } else if (rowNode.master && rowNode.expanded) {
-                const detailNode = this.createDetailNode(rowNode);
-                this.addRowNodeToRowsToDisplay(details, detailNode, result, uiLevel);
-            }
-
-            if (rowNode.master === undefined && rowNode.data) {
-                rowNode.master = false; // Ensure the flag is not undefined for non-filler nodes - just to maintain the legacy behaviour
+            } else {
+                const detailNode = this.detailService?.getDetail(rowNode);
+                if (detailNode) {
+                    this.addRowNodeToRowsToDisplay(details, detailNode, result, uiLevel);
+                }
             }
         }
     }
@@ -196,27 +197,5 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
             result.push(rowNode);
         }
         rowNode.setUiLevel(details.isGroupMultiAutoColumn ? 0 : uiLevel);
-    }
-
-    private createDetailNode(masterNode: RowNode): RowNode {
-        if (_exists(masterNode.detailNode)) {
-            return masterNode.detailNode;
-        }
-
-        const detailNode = new RowNode(this.beans);
-
-        detailNode.detail = true;
-        detailNode.selectable = false;
-        detailNode.parent = masterNode;
-
-        if (_exists(masterNode.id)) {
-            detailNode.id = 'detail_' + masterNode.id;
-        }
-
-        detailNode.data = masterNode.data;
-        detailNode.level = masterNode.level + 1;
-        masterNode.detailNode = detailNode;
-
-        return detailNode;
     }
 }

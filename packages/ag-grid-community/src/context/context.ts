@@ -68,6 +68,7 @@ import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { ISideBarService } from '../interfaces/iSideBar';
+import type { IClientSideDetailService } from '../interfaces/masterDetail';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
 import type { LocaleService } from '../localeService';
 import type { AnimationFrameService } from '../misc/animationFrameService';
@@ -265,6 +266,7 @@ export interface CoreBeanCollection {
     paginationService?: PaginationService;
     pageBoundsService: PageBoundsService;
     apiFunctionService: ApiFunctionService;
+    clientSideDetailService?: IClientSideDetailService;
     detailGridApiService?: IDetailGridApiService;
     gridDestroyService: GridDestroyService;
     expansionService?: IExpansionService;

@@ -105,7 +105,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private onRowHeightChanged_debounced = _debounce(this.onRowHeightChanged.bind(this), 100);
 
     // top most node of the tree. the children are the user provided data.
-    private rootNode: RowNode;
+    public rootNode: RowNode;
+
     private rowsToDisplay: RowNode[] = []; // the rows mapped to rows to display
     private nodeManager: IClientSideNodeManager<any>;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;

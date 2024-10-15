@@ -1,137 +1,146 @@
 import type {
     BeanCollection,
     FuncColsService,
+    IClientSideDetailService,
     IClientSideRowModel,
-    IRowModel,
     NamedBean,
-    RowNode,
+    RowDataUpdatedEvent,
+    RowNodeTransaction,
 } from 'ag-grid-community';
+import { RowNode, _exists } from 'ag-grid-community';
 import { BeanStub, ClientSideRowModelSteps, _isClientSideRowModel } from 'ag-grid-community';
 
-export class ClientSideDetailService extends BeanStub implements NamedBean {
+export class ClientSideDetailService extends BeanStub implements NamedBean, IClientSideDetailService {
     beanName = 'clientSideDetailService' as const;
 
-    private rowModel: IRowModel;
+    private beans: BeanCollection;
+    private enabled: boolean;
+    private rowModel: IClientSideRowModel;
     private funcColsService: FuncColsService;
 
+    private isEnabled(): boolean {
+        const gos = this.gos;
+        return gos.get('masterDetail') && !gos.get('treeData');
+    }
+
     public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
         this.funcColsService = beans.funcColsService;
-        this.rowModel = beans.rowModel;
+        this.rowModel = beans.rowModel as IClientSideRowModel;
     }
 
     public postConstruct(): void {
         if (_isClientSideRowModel(this.gos)) {
-            this.addManagedPropertyListeners(['treeData', 'masterDetail'], (params) => {
-                const properties = params.changeSet?.properties;
-                if (properties) {
-                    const masterDetail = this.gos.get('masterDetail');
-                    const masterDetailChanged = properties.includes('masterDetail');
-                    let needUpdate = false;
-
-                    if (masterDetail && properties.includes('treeData')) {
-                        needUpdate = true; // When treeData and masterDetail are enabled, we need to check if leafs/groups changed
-                    } else if (masterDetailChanged) {
-                        needUpdate = true; // When masterDetail changes, we need to update all rows
-                    }
-
-                    if (needUpdate) {
-                        let changed = false;
-                        (this.rowModel as IClientSideRowModel).forEachLeafNode!((node) => {
-                            if (this.updateMaster(node, masterDetailChanged, true)) {
-                                changed = true;
-                            }
-                        });
-
-                        if (changed) {
-                            // We need to refresh the model to ensure all row components are rerendered
-                            (this.rowModel as IClientSideRowModel).refreshModel({ step: ClientSideRowModelSteps.MAP });
-                        }
-                    }
-                }
-            });
-
-            this.addManagedEventListeners({
-                rowDataUpdated: ({ transactions }) => {
-                    if (transactions && transactions.length) {
-                        // Row data transactional update
-                        const updatedNodes = new Set<RowNode>();
-                        for (const transaction of transactions) {
-                            for (const rowNode of transaction.update) {
-                                updatedNodes.add(rowNode as RowNode);
-                            }
-                        }
-                        (this.rowModel as IClientSideRowModel).forEachLeafNode!((node) => {
-                            this.updateMaster(node, false, updatedNodes.has(node));
-                        });
-                    } else {
-                        // New row data
-                        (this.rowModel as IClientSideRowModel).forEachLeafNode!((node) => {
-                            this.updateMaster(node, true, false);
-                        });
-                    }
-
-                    // Note that CSRM will invoke refreshModel after this event
-                },
-            });
+            this.enabled = this.isEnabled();
+            this.addManagedPropertyListeners(['treeData', 'masterDetail'], this.enabledUpdated.bind(this));
+            this.addManagedEventListeners({ rowDataUpdated: this.rowDataUpdated.bind(this) });
         }
     }
 
-    private updateMaster<TData = any>(row: RowNode<TData>, overrideExpanded: boolean, updated: boolean): boolean {
-        const gos = this.gos;
-        const oldMaster = row.master;
-        const newRow = oldMaster === undefined;
-
-        let master = gos.get('masterDetail');
-
-        const treeGroup = row.group && !!row.treeNode;
-
-        if (treeGroup) {
-            master = false; // Tree groups cannot be master rows
-        }
-
-        if (master) {
-            if (newRow || updated) {
-                const data = row.data;
-                if (data) {
-                    // if we are doing master detail, then the default is that everything can be a Master Row.
-                    const isRowMasterFunc = gos.get('isRowMaster');
-                    master = !isRowMasterFunc || !!isRowMasterFunc(row.data);
-                }
-            } else {
-                master = oldMaster;
+    private enabledUpdated() {
+        const enabled = this.isEnabled();
+        if (this.enabled !== enabled) {
+            if (this.setMasters(null)) {
+                this.rowModel.refreshModel({ step: ClientSideRowModelSteps.MAP });
             }
         }
+    }
 
-        if ((overrideExpanded || newRow) && !treeGroup) {
-            let expanded = false;
-            if (master) {
-                const expandByDefault = gos.get('groupDefaultExpanded');
+    private rowDataUpdated({ transactions }: RowDataUpdatedEvent) {
+        this.setMasters(transactions);
+    }
 
+    private setMasters(transactions: RowNodeTransaction[] | null | undefined): boolean {
+        const enabled = this.isEnabled();
+        this.enabled = enabled;
+
+        const gos = this.gos;
+        const isRowMaster = gos.get('isRowMaster');
+        const groupDefaultExpanded = gos.get('groupDefaultExpanded');
+        let rowsChanged = false;
+
+        const setMaster = (row: RowNode, created: boolean, updated: boolean) => {
+            const oldMaster = row.master;
+
+            let newMaster = enabled;
+
+            if (enabled) {
+                if (created || updated) {
+                    if (isRowMaster) {
+                        const data = row.data;
+                        newMaster = !!data && !!isRowMaster(data);
+                    }
+                } else {
+                    newMaster = oldMaster;
+                }
+            }
+
+            if (newMaster && created) {
                 // TODO: AG-11476 isGroupOpenByDefault callback doesn't apply to master/detail grid
 
-                if (expandByDefault === -1) {
-                    expanded = true;
+                if (groupDefaultExpanded === -1) {
+                    row.expanded = true;
                 } else {
                     // need to take row group into account when determining level
                     const masterRowLevel = this.funcColsService.rowGroupCols?.length ?? 0;
-                    expanded = masterRowLevel < expandByDefault;
+                    row.expanded = masterRowLevel < groupDefaultExpanded;
+                }
+            } else if (!newMaster && oldMaster) {
+                row.expanded = false; // if changing AWAY from master, then un-expand, otherwise next time it's shown it is expanded again
+            }
+
+            if (newMaster !== oldMaster) {
+                row.master = newMaster;
+                rowsChanged ||= !newMaster !== !oldMaster;
+
+                row.dispatchRowEvent('masterChanged');
+            }
+        };
+
+        if (transactions) {
+            for (let i = 0, len = transactions.length; i < len; ++i) {
+                const { update, add } = transactions[i];
+                for (let j = 0, len = add.length; j < len; ++j) {
+                    setMaster(add[j] as RowNode, true, false);
+                }
+                for (let j = 0, len = update.length; j < len; ++j) {
+                    setMaster(update[j] as RowNode, false, true);
                 }
             }
-            row.expanded = expanded;
-        } else if (oldMaster && !master) {
-            // if changing AWAY from master, then un-expand, otherwise next time it's shown it is expanded again
-            row.expanded = false;
+        } else {
+            const allLeafChildren = this.rowModel.rootNode!.allLeafChildren!;
+            for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
+                setMaster(allLeafChildren[i], true, false);
+            }
         }
 
-        if (oldMaster === master) {
-            return false; // No changes
+        return rowsChanged;
+    }
+
+    /** Used by flatten stage to get or create a detail node from a master node */
+    public getDetail(masterNode: RowNode): RowNode | null {
+        if (!masterNode.master || !masterNode.expanded) {
+            return null;
         }
 
-        row.master = master;
-        if (!newRow) {
-            row.dispatchRowEvent('masterChanged');
+        let detailNode = masterNode.detailNode;
+        if (detailNode) {
+            return detailNode;
         }
 
-        return true;
+        detailNode = new RowNode(this.beans);
+        detailNode.detail = true;
+        detailNode.selectable = false;
+        detailNode.parent = masterNode;
+
+        if (_exists(masterNode.id)) {
+            detailNode.id = 'detail_' + masterNode.id;
+        }
+
+        detailNode.data = masterNode.data;
+        detailNode.level = masterNode.level + 1;
+        masterNode.detailNode = detailNode;
+
+        return detailNode;
     }
 }

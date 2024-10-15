@@ -526,6 +526,7 @@ export {
 
 // master detail
 export {
+    IClientSideDetailService,
     IDetailCellRendererParams,
     GetDetailRowData,
     GetDetailRowDataParams,

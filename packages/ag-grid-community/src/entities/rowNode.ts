@@ -100,14 +100,11 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     /** `true` if this row is getting dragged */
     public dragging: boolean;
 
-    /**
-     * `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail)
-     * Note: This field is initially set to undefined so that ClientSideDetailService knows that this is a new row to be initialised.
-     */
-    public master: boolean = undefined!;
+    /** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail) */
+    public master: boolean = false;
 
     /** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/
-    public detail: boolean | undefined;
+    public detail: boolean | undefined = undefined;
 
     /** If this row is a master row that was expanded, this points to the associated detail row. */
     public detailNode: RowNode;
@@ -827,7 +824,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             // master detail and leaf groups aren't expandable in pivot mode.
             return this.hasChildren() && !this.leafGroup;
         }
-        return this.hasChildren() || !!this.master;
+        return this.hasChildren() || this.master;
     }
 
     /** Returns:

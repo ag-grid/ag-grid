@@ -1,8 +1,14 @@
 import type { GridApi } from '../api/gridApi';
 import type { Bean } from '../context/bean';
 import type { GridOptions } from '../entities/gridOptions';
+import type { RowNode } from '../entities/rowNode';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
 import type { IRowNode } from './iRowNode';
+
+export interface IClientSideDetailService {
+    /** Used by flatten stage to get or create a detail node from a master node */
+    getDetail(masterNode: RowNode): RowNode | null;
+}
 
 export interface IDetailCellRenderer<TData = any> {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
