@@ -7,7 +7,7 @@ import type {
     NamedBean,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _warn } from 'ag-grid-community';
 
 import type { ChartController } from '../chartController';
 import type { AdvancedSettingsMenuFactory } from '../menu/advancedSettings/advancedSettingsMenuFactory';
@@ -66,7 +66,7 @@ export class ChartMenuService extends BeanStub implements NamedBean {
         return toolbarItemsFunc
             ? toolbarItemsFunc(params).filter((option) => {
                   if (!CHART_TOOLBAR_ALLOW_LIST.includes(option)) {
-                      _warnOnce(`'${option}' is not a valid Chart Toolbar Option`);
+                      _warn(155, { option });
                       return false;
                   }
                   return true;
@@ -84,7 +84,7 @@ export class ChartMenuService extends BeanStub implements NamedBean {
             ?.map((panel) => {
                 const menuOption = CHART_TOOL_PANEL_MENU_OPTIONS[panel];
                 if (!menuOption) {
-                    _warnOnce(`Invalid panel in chartToolPanelsDef.panels: '${panel}'`);
+                    _warn(156, { panel });
                 }
                 return menuOption;
             })

@@ -1,5 +1,5 @@
 import type { TextFormatter } from 'ag-grid-community';
-import { _warnOnce } from 'ag-grid-community';
+import { _warn } from 'ag-grid-community';
 
 import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSetDisplayValueModel';
@@ -159,9 +159,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         if (isDate) {
             return DATE_TREE_LIST_PATH_GETTER as any;
         }
-        _warnOnce(
-            'property treeList=true for Set Filter params, but you did not provide a treeListPathGetter or values of type Date.'
-        );
+        _warn(211);
         return (value) => [String(value)];
     }
 

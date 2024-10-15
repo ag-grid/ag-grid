@@ -1,11 +1,9 @@
 import type { BeanCollection, ExcelExportMultipleSheetParams, ExcelExportParams } from 'ag-grid-community';
-import { ExcelFactoryMode, _warnOnce } from 'ag-grid-community';
+import { ExcelFactoryMode, _warn } from 'ag-grid-community';
 
 function assertNotExcelMultiSheet(beans: BeanCollection): boolean {
     if (beans.excelCreator?.getFactoryMode() === ExcelFactoryMode.MULTI_SHEET) {
-        _warnOnce(
-            "The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'"
-        );
+        _warn(161);
         return false;
     }
     return true;

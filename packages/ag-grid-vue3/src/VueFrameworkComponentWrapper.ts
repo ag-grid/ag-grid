@@ -1,5 +1,5 @@
 import type { WrappableInterface } from 'ag-grid-community';
-import { BaseComponentWrapper, _warnOnce } from 'ag-grid-community';
+import { BaseComponentWrapper, _warn } from 'ag-grid-community';
 
 import { VueComponentFactory } from './VueComponentFactory';
 
@@ -96,7 +96,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
             }
 
             if (mandatory) {
-                _warnOnce('Framework component is missing the method ' + methodName + '()');
+                _warn(233, { methodName });
             }
             return null;
         };

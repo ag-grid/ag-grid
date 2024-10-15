@@ -19,7 +19,7 @@ export interface Props {
 const { showSearchBar, showDocsNav, apiPaths = [] } = Astro.props;
 
 const { pathname } = Astro.url;
-const { data: menuData } = await getEntry('menu', 'data');
+const { data: menuData } = await getEntry('site-header', 'siteHeader');
 const topNavItems = menuData.header?.items || [];
 const frameworkPaths = FRAMEWORKS.map((framework) => ({
     title: 'Docs',
