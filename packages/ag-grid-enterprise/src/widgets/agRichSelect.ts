@@ -5,8 +5,11 @@ import type {
     BeanCollection,
     FieldPickerValueSelectedEvent,
     IRichCellEditorRendererParams,
+    ITooltipCtrl,
+    Registry,
     RichSelectListRowSelectedEvent,
     RichSelectParams,
+    TooltipFeature,
     UserCompDetails,
     UserComponentFactory,
     WithoutGridCommon,
@@ -28,6 +31,7 @@ import {
     _isEventFromPrintableCharacter,
     _isVisible,
     _setAriaActiveDescendant,
+    _shouldDisplayTooltip,
     _stopPropagationForAgGrid,
 } from 'ag-grid-community';
 
@@ -44,11 +48,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 > {
     private userComponentFactory: UserComponentFactory;
     private ariaAnnouncementService: AriaAnnouncementService;
+    private registry: Registry;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.userComponentFactory = beans.userComponentFactory;
         this.ariaAnnouncementService = beans.ariaAnnouncementService;
+        this.registry = beans.registry;
     }
 
     private searchString = '';
@@ -64,6 +70,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     private ariaDeselectAllItems: string;
     private ariaDeleteSelection: string;
     private skipWrapperAnnouncement?: boolean = false;
+    private tooltipFeature?: TooltipFeature;
+    private shouldDisplayTooltip?: () => boolean;
 
     constructor(config?: RichSelectParams<TValue>) {
         super({
@@ -108,6 +116,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     public override postConstruct(): void {
+        this.tooltipFeature = this.createOptionalManagedBean(
+            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', {
+                getGui: () => this.getGui(),
+                shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,
+            } as ITooltipCtrl)
+        );
         super.postConstruct();
         this.createListComponent();
         this.eDeselect.appendChild(_createIconNoSpan('cancel', this.gos)!);
@@ -211,7 +225,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                         this.setValue(value, true);
                     },
                     setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
-                        this.setTooltip({ newTooltipText: value, shouldDisplayTooltip });
+                        this.shouldDisplayTooltip = shouldDisplayTooltip;
+                        this.tooltipFeature?.setTooltipAndRefresh(value);
                     },
                 }
             );
@@ -243,10 +258,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
                 }
             }
 
-            this.setTooltip({
-                newTooltipText: valueFormatted ?? null,
-                shouldDisplayTooltip: () => this.eDisplayField.scrollWidth > this.eDisplayField.clientWidth,
-            });
+            this.shouldDisplayTooltip = _shouldDisplayTooltip(() => this.eDisplayField);
+            this.tooltipFeature?.setTooltipAndRefresh(valueFormatted ?? null);
         }
     }
 

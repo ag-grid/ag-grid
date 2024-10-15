@@ -7,7 +7,7 @@ import type { IRowDragItem } from '../interfaces/iRowDragItem';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { MenuItemDef } from '../interfaces/menuItem';
 import type { ICellRendererParams } from '../rendering/cellRenderers/iCellRenderer';
-import type { ITooltipParams } from '../rendering/tooltipComponent';
+import type { ITooltipParams } from '../tooltip/tooltipComponent';
 import type { GetContextMenuItems, GetMainMenuItems, RowClassParams } from './gridOptions';
 
 /** AbstractColDef can be a group or a column definition */
