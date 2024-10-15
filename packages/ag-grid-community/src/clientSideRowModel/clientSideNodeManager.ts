@@ -8,4 +8,10 @@ export class ClientSideNodeManager<TData> extends AbstractClientSideNodeManager<
     public setMasterForAllRows(rows: RowNode<TData>[] | null | undefined, shouldSetExpanded: boolean): void {
         this.beans.detailGridApiService?.setMasterForAllRows(rows, shouldSetExpanded);
     }
+
+    protected override createRowNode(data: TData, sourceRowIndex: number): RowNode<TData> {
+        const node = super.createRowNode(data, sourceRowIndex);
+        this.beans.detailGridApiService?.setMasterForRow(node, data, true);
+        return node;
+    }
 }
