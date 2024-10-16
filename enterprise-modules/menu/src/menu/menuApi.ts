@@ -1,8 +1,14 @@
-import type { AgColumn, BeanCollection, ColumnChooserParams, IContextMenuParams } from '@ag-grid-community/core';
+import type {
+    AgColumn,
+    BeanCollection,
+    ColumnChooserParams,
+    IContextMenuParams,
+    RowNode,
+} from '@ag-grid-community/core';
 
 export function showContextMenu(beans: BeanCollection, params?: IContextMenuParams) {
     const { rowNode, column, value, x, y } = params || {};
-    let { x: clientX, y: clientY } = beans.menuService.getContextMenuPosition(rowNode, column as AgColumn);
+    let { x: clientX, y: clientY } = beans.menuService.getContextMenuPosition(rowNode as RowNode, column as AgColumn);
 
     if (x != null) {
         clientX = x;

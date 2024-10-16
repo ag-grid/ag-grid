@@ -12,6 +12,7 @@ import type { Column } from '../interfaces/iColumn';
 import type { IColumnChooserFactory, ShowColumnChooserParams } from '../interfaces/iColumnChooserFactory';
 import type { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
+import type { IRowNode } from '../interfaces/iRowNode';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import { _isIOSUserAgent } from '../utils/browser';
@@ -49,11 +50,11 @@ export type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams |
     BaseShowFilterMenuParams;
 
 export interface ShowContextMenuParams {
-    /** The `RowNode` associated with the Context Menu */
-    rowNode?: RowNode | null;
-    /** The `Column` associated with the Context Menu */
+    /** The row node associated with the Context Menu */
+    rowNode?: IRowNode | null;
+    /** The column associated with the Context Menu */
     column?: Column | null;
-    /** The value that will be passed to the Context Menu (useful with `getContextMenuItems`). If none is passed, and `RowNode` and `Column` are provided, this will be the respective Cell value */
+    /** The value that will be passed to the Context Menu (useful with `getContextMenuItems`). If none is passed, and `rowNode` and `column` are provided, this will be the respective Cell value */
     value: any;
 }
 
@@ -68,9 +69,9 @@ interface TouchShowContextMenuParam {
 export type EventShowContextMenuParams = (MouseShowContextMenuParams | TouchShowContextMenuParam) &
     ShowContextMenuParams;
 export interface IContextMenuParams extends ShowContextMenuParams {
-    /** The x position for the Context Menu, if no value is given and `RowNode` and `Column` are provided, this will default to be middle of the cell, otherwise it will be `0`. */
+    /** The x position for the Context Menu, if no value is given and `rowNode` and `column` are provided, this will default to be middle of the cell, otherwise it will be `0`. */
     x?: number;
-    /** The y position for the Context Menu, if no value is given and `RowNode` and `Column` are provided, this will default to be middle of the cell, otherwise it will be `0`. */
+    /** The y position for the Context Menu, if no value is given and `rowNode` and `column` are provided, this will default to be middle of the cell, otherwise it will be `0`. */
     y?: number;
 }
 
@@ -145,7 +146,7 @@ export class MenuService extends BeanStub implements NamedBean {
     }
 
     public showContextMenu(params: EventShowContextMenuParams & { anchorToElement?: HTMLElement }): void {
-        const { rowNode } = params;
+        const rowNode = params.rowNode as RowNode | null | undefined;
         const column = params.column as AgColumn | null | undefined;
         let { anchorToElement, value } = params;
 
