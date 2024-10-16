@@ -8,6 +8,7 @@ import type {
     IAggFunc,
     IAggFuncService,
     NamedBean,
+    SelectionColService,
 } from 'ag-grid-community';
 import { BeanStub } from 'ag-grid-community';
 
@@ -19,11 +20,13 @@ export class ModelItemUtils extends BeanStub implements NamedBean {
     private aggFuncService?: IAggFuncService;
     private columnModel: ColumnModel;
     private columnStateService: ColumnStateService;
+    private selectionColService?: SelectionColService;
 
     public wireBeans(beans: BeanCollection) {
         this.aggFuncService = beans.aggFuncService;
         this.columnModel = beans.columnModel;
         this.columnStateService = beans.columnStateService;
+        this.selectionColService = beans.selectionColService;
     }
 
     public selectAllChildren(colTree: ColumnModelItem[], selectAllChecked: boolean, eventType: ColumnEventType): void {
@@ -82,6 +85,8 @@ export class ModelItemUtils extends BeanStub implements NamedBean {
         if (colStateItems.length > 0) {
             this.columnStateService.applyColumnState({ state: colStateItems }, eventType);
         }
+
+        this.selectionColService?.refreshVisibility();
     }
 
     private setAllPivot(columns: AgColumn[], value: boolean, eventType: ColumnEventType): void {
