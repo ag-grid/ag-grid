@@ -1,5 +1,4 @@
-import type { Framework, ImportType, Library } from '@ag-grid-types';
-import Note from '@ag-website-shared/components/alert/Note';
+import type { Framework, Library } from '@ag-grid-types';
 import Success from '@ag-website-shared/components/alert/Success';
 import Warning from '@ag-website-shared/components/alert/Warning';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
@@ -18,7 +17,6 @@ import styles from './LicenseSetup.module.scss';
 interface SeedRepo {
     name: string;
     framework: Framework;
-    importType: ImportType;
     licenseType: 'enterprise' | 'enterprise-bundle';
     devEnvironment: string;
     url: string;
@@ -46,8 +44,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
     const {
         userLicense,
         setUserLicense,
-        importType,
-        updateImportTypeWithUrlUpdate,
         licensedProducts,
         isIntegratedCharts,
         updateIsIntegratedChartsWithUrlUpdate,
@@ -65,9 +61,8 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                 library,
                 framework,
                 isIntegratedCharts,
-                importType,
             }),
-        [library, framework, isIntegratedCharts, importType]
+        [library, framework, isIntegratedCharts]
     );
     const npmInstallSnippet = useMemo(
         () =>
@@ -75,19 +70,17 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                 library,
                 framework,
                 isIntegratedCharts,
-                importType,
             }),
-        [framework, isIntegratedCharts, importType]
+        [framework, isIntegratedCharts]
     );
     const bootstrapSnippet = useMemo(
         () =>
             getBootstrapSnippet({
                 framework,
-                importType,
                 license: (licenseState.chartsNoGridEnterpriseError ? '' : userLicense) || 'your License Key',
                 isIntegratedCharts,
             }),
-        [framework, licenseState, importType, userLicense, isIntegratedCharts]
+        [framework, licenseState, userLicense, isIntegratedCharts]
     );
     const selectedSeedRepos = useMemo(
         () =>
@@ -96,9 +89,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                     return isIntegratedCharts ? licenseType === 'enterprise-bundle' : licenseType === 'enterprise';
                 })
                 .filter((seedRepo) => {
-                    return seedRepo.framework === framework && seedRepo.importType === importType;
+                    return seedRepo.framework === framework;
                 }),
-        [seedRepos, isIntegratedCharts, framework, importType]
+        [seedRepos, isIntegratedCharts, framework]
     );
     const isGrid = library === 'grid';
     const productName = isGrid ? 'AG Grid' : 'AG Charts';
@@ -187,30 +180,9 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                                 </Warning>
                             )}
 
-                            <div className={styles.frameworkImportContainer}>
-                                <div className={styles.frameworkContainer}>
-                                    <label>Framework</label>
-                                    <FrameworkSelectorInsideDocs path={path} currentFramework={framework} />
-                                </div>
-
-                                <span className={styles.divider}></span>
-
-                                <div className={styles.importContainer}>
-                                    <label>
-                                        <span>Import type:</span>
-                                    </label>
-
-                                    <select
-                                        name="importType"
-                                        value={importType}
-                                        onChange={(e) => {
-                                            updateImportTypeWithUrlUpdate(e.target.value as ImportType);
-                                        }}
-                                    >
-                                        <option value="packages">Packages</option>
-                                        <option value="modules">Modules</option>
-                                    </select>
-                                </div>
+                            <div className={styles.frameworkContainer}>
+                                <label>Framework</label>
+                                <FrameworkSelectorInsideDocs path={path} currentFramework={framework} />
                             </div>
                         </>
                     )}
@@ -229,8 +201,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                             {licenseState.gridNoChartsEnterpriseError}. <EmailSales />
                         </Warning>
                     )}
-
-                    {licenseState.minimalModulesInfo && <Note>{licenseState.minimalModulesInfo}</Note>}
 
                     <p>
                         Copy the following dependencies into your <code>package.json</code>:
@@ -261,6 +231,8 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
 
                     <p>An example of how to set up your {productName} Enterprise License Key:</p>
 
+                    {licenseState.minimalModulesInfo && <Note>{licenseState.minimalModulesInfo}</Note>}
+
                     <Snippet
                         framework={framework}
                         content={bootstrapSnippet[library as keyof typeof bootstrapSnippet]}
@@ -281,40 +253,36 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
                                                 <th scope="col">Github Repo</th>
                                                 <th scope="col">Framework</th>
                                                 <th scope="col">Development Environment</th>
-                                                <th scope="col">Import Type</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {selectedSeedRepos.map(
-                                                ({ name, url, framework, devEnvironment, importType }) => {
-                                                    return (
-                                                        <tr key={url}>
-                                                            <td>
-                                                                <a
-                                                                    className={classnames(
-                                                                        styles.repoButton,
-                                                                        'button-secondary'
-                                                                    )}
-                                                                    href={url}
-                                                                >
-                                                                    <Icon name="github" />
-                                                                    {name}
-                                                                </a>
-                                                            </td>
-                                                            <td>
-                                                                <img
-                                                                    className={styles.frameworkLogo}
-                                                                    src={fwLogos[framework]}
-                                                                    alt={framework}
-                                                                />{' '}
-                                                                {framework}
-                                                            </td>
-                                                            <td>{devEnvironment}</td>
-                                                            <td>{importType}</td>
-                                                        </tr>
-                                                    );
-                                                }
-                                            )}
+                                            {selectedSeedRepos.map(({ name, url, framework, devEnvironment }) => {
+                                                return (
+                                                    <tr key={url}>
+                                                        <td>
+                                                            <a
+                                                                className={classnames(
+                                                                    styles.repoButton,
+                                                                    'button-secondary'
+                                                                )}
+                                                                href={url}
+                                                            >
+                                                                <Icon name="github" />
+                                                                {name}
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            <img
+                                                                className={styles.frameworkLogo}
+                                                                src={fwLogos[framework]}
+                                                                alt={framework}
+                                                            />{' '}
+                                                            {framework}
+                                                        </td>
+                                                        <td>{devEnvironment}</td>
+                                                    </tr>
+                                                );
+                                            })}
                                         </tbody>
                                     </table>
                                 </>

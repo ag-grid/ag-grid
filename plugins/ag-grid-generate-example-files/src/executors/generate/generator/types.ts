@@ -18,8 +18,6 @@ export interface ExampleConfig {
     myGridReference?: boolean;
 }
 
-export type ImportType = 'packages' | 'modules';
-
 export interface BindingImport {
     isNamespaced: boolean;
     module: string;

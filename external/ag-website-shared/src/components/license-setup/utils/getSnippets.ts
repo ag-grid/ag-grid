@@ -1,4 +1,4 @@
-import type { Framework, ImportType, Library } from '@ag-grid-types';
+import type { Framework, Library } from '@ag-grid-types';
 import { agLibraryVersion } from '@constants';
 
 import { getDependencies } from './getDependencies';
@@ -8,18 +8,15 @@ export const getDependenciesSnippet = ({
     library,
     framework,
     isIntegratedCharts,
-    importType,
 }: {
     library: Library;
     framework: Framework;
     isIntegratedCharts: boolean;
-    importType?: ImportType;
 }) => {
     const dependencies = getDependencies({
         library,
         framework,
         isIntegratedCharts,
-        importType,
     });
 
     const depObject: Record<string, string> = {};
@@ -34,18 +31,15 @@ export const getNpmInstallSnippet = ({
     library,
     framework,
     isIntegratedCharts,
-    importType,
 }: {
     library: Library;
     framework: Framework;
     isIntegratedCharts: boolean;
-    importType?: ImportType;
 }) => {
     const dependencies = getDependencies({
         library,
         framework,
         isIntegratedCharts,
-        importType,
     });
     const dependenciesStr = dependencies.join(' ');
 
@@ -54,22 +48,18 @@ export const getNpmInstallSnippet = ({
 
 export const getBootstrapSnippet = ({
     framework,
-    importType,
     license: rawLicense,
     isIntegratedCharts,
 }: {
     framework: Framework;
     license?: string;
-    importType?: ImportType;
     isIntegratedCharts?: boolean;
 }): {
     grid: string;
     charts: string;
 } => {
     const license = rawLicense?.trim();
-    const gridFrameworkTemplate = GRID_LICENSE_TEMPLATES[framework];
-    const gridTemplate = gridFrameworkTemplate[importType];
-
+    const gridTemplate = GRID_LICENSE_TEMPLATES[framework];
     const chartsTemplate = CHARTS_LICENSE_TEMPLATES[framework];
 
     return {
