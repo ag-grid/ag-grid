@@ -19,8 +19,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, StatusBarModule, Range
 
 const rowSelection = {
     mode: 'multiRow',
-    checkboxes: false,
-    headerCheckbox: false,
 };
 
 const GridExample = () => {

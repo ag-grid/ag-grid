@@ -97,7 +97,6 @@ const filterData = (filterModel, data) => {
 
 const rowSelection = {
     mode: 'multiRow',
-    checkboxes: false,
     headerCheckbox: false,
 };
 
