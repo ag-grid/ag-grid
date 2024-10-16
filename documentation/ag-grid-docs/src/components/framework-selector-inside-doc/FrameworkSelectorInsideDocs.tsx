@@ -15,7 +15,12 @@ import styles from './FrameworkSelectorInsideDocs.module.scss';
 interface Props {
     path: string;
     currentFramework: Framework;
-    menuItems: MenuItem[];
+    /**
+     * Menu items used to check if the current page exists for the framework
+     * to be changed to. If not provided, will just go to the page without
+     * checks.
+     */
+    menuItems?: MenuItem[];
 }
 
 export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems }: Props) => {
@@ -33,7 +38,7 @@ export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems 
 
     const handleFrameworkChange = (selectedFramework: Framework) => {
         const pageName = getPageNameFromPath(path);
-        const menuItem = getMenuItemFromPageName({ menuItems: menuItems, pageName });
+        const menuItem = menuItems && getMenuItemFromPageName({ menuItems, pageName });
         let newUrl = getNewFrameworkPath({
             path,
             currentFramework,

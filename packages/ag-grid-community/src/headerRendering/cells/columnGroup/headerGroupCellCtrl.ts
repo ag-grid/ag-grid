@@ -11,10 +11,9 @@ import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { HeaderColumnId } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
+import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 import { _last } from '../../../utils/array';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
-import type { ITooltipFeatureCtrl } from '../../../widgets/tooltipFeature';
-import { TooltipFeature } from '../../../widgets/tooltipFeature';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
@@ -62,14 +61,14 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.addClasses();
         this.setupMovingCss(compBean);
         this.setupExpandable(compBean);
-        this.setupTooltip(compBean);
+        this.setupTooltip();
 
         this.setupAutoHeight({
             wrapperElement: eHeaderCompWrapper,
             compBean,
         });
 
-        this.setupUserComp(compBean);
+        this.setupUserComp();
         this.addHeaderMouseListeners(compBean);
 
         this.addManagedPropertyListener('groupHeaderHeight', this.refreshMaxHeaderHeight.bind(this));
@@ -207,7 +206,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.resizeFeature.resizeLeafColumnsToFit(source);
     }
 
-    private setupUserComp(compBean: BeanStub): void {
+    private setupUserComp(): void {
         const params: IHeaderGroupParams = this.gos.addGridCommonParams({
             displayName: this.displayName!,
             columnGroup: this.column,
@@ -219,7 +218,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
                 );
             },
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
-                this.setupTooltip(compBean, value, shouldDisplayTooltip);
+                this.setupTooltip(value, shouldDisplayTooltip);
             },
         });
 
@@ -249,39 +248,13 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         });
     }
 
-    private setupTooltip(compBean: BeanStub, value?: string, shouldDisplayTooltip?: () => boolean): void {
-        if (this.tooltipFeature) {
-            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
-        }
-
-        const colGroupDef = this.column.getColGroupDef();
-        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
-        const eGui = this.eGui;
-
-        if (!shouldDisplayTooltip && isTooltipWhenTruncated && !colGroupDef?.headerGroupComponent) {
-            shouldDisplayTooltip = () => {
-                const textEl = eGui.querySelector('.ag-header-group-text');
-                if (!textEl) {
-                    return true;
-                }
-
-                return textEl.scrollWidth > textEl.clientWidth;
-            };
-        }
-
-        const tooltipCtrl: ITooltipFeatureCtrl = {
-            getColumn: () => this.column,
-            getGui: () => eGui,
-            getLocation: () => 'headerGroup',
-            getTooltipValue: () => value ?? (colGroupDef && colGroupDef.headerTooltip),
-            shouldDisplayTooltip,
-        };
-
-        if (colGroupDef) {
-            tooltipCtrl.getColDef = () => colGroupDef;
-        }
-
-        compBean.createManagedBean(new TooltipFeature(tooltipCtrl));
+    private setupTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
+        this.tooltipFeature = this.beans.tooltipService?.setupHeaderGroupTooltip(
+            this.tooltipFeature,
+            this,
+            value,
+            shouldDisplayTooltip
+        );
     }
 
     private setupExpandable(compBean: BeanStub): void {
@@ -417,6 +390,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     }
 
     public override destroy(): void {
+        this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         super.destroy();
     }
 }

@@ -14,13 +14,12 @@ import { _missing } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import { _warn } from '../../validation/logging';
 import { Component } from '../../widgets/component';
-import type { TooltipParentComp } from '../../widgets/tooltipStateManager';
 import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from './../dndSourceComp';
 import type { RowCtrl } from './../row/rowCtrl';
 import type { CellCtrl, ICellComp } from './cellCtrl';
 
-export class CellComp extends Component implements TooltipParentComp {
+export class CellComp extends Component {
     private eCellWrapper: HTMLElement | undefined;
     private eCellValue: HTMLElement | undefined;
 

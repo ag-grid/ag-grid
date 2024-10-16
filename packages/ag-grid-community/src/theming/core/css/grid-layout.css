@@ -80,7 +80,6 @@
 .ag-sticky-bottom {
     border-top: var(--ag-row-border);
     box-sizing: content-box !important;
-    display: none;
 }
 
 .ag-group-expanded,
