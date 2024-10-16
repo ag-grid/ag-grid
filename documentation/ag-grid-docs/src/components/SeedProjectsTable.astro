@@ -16,7 +16,7 @@ import styles from '@ag-website-shared/components/license-setup/components/Licen
     </thead>
     <tbody>
         {
-            seedProjects.map(({ name, url, framework, devEnvironment, importType, licenseType }) => {
+            seedProjects.map(({ name, url, framework, devEnvironment, licenseType }) => {
                 return (
                     <tr>
                         <td scope="row" data-column="Github Repo">
@@ -27,7 +27,6 @@ import styles from '@ag-website-shared/components/license-setup/components/Licen
                         </td>
                         <td data-column="Framework">{framework}</td>
                         <td data-column="Development Environment">{devEnvironment}</td>
-                        <td data-column="Import Type">{importType}</td>
                         <td data-column="License Type">
                             <a href="https://www.ag-grid.com/license-pricing/">
                                 {licenseType === 'enterprise-bundle' ? 'Enterprise Bundle' : 'AG Grid Enterprise'}

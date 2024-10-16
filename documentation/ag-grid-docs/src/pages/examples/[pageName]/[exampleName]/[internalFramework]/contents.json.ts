@@ -1,4 +1,4 @@
-import type { ImportType, InternalFramework } from '@ag-grid-types';
+import type { InternalFramework } from '@ag-grid-types';
 import { getDocsExamplePages } from '@features/docs/utils/pageData';
 import { getGeneratedContents } from '@features/example-generator';
 import type { APIContext } from 'astro';
@@ -14,7 +14,7 @@ export async function getStaticPaths() {
 }
 
 export async function GET(context: APIContext) {
-    const { internalFramework, pageName, importType, exampleName } = context.params;
+    const { internalFramework, pageName, exampleName } = context.params;
 
     let generatedContents;
     try {
@@ -22,7 +22,6 @@ export async function GET(context: APIContext) {
             type: 'docs',
             framework: internalFramework as InternalFramework,
             pageName: pageName!,
-            importType: importType as ImportType,
             exampleName: exampleName!,
         });
     } catch (error) {

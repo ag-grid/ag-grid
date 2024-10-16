@@ -3,7 +3,6 @@ import { getPageNameFromPath } from '@features/docs/utils/urlPaths';
 import ExampleRunnerContainer from '@features/example-runner/components/ExampleRunnerContainer.astro';
 import { getIsDev } from '@utils/env';
 import { DocsExampleRunner } from './DocsExampleRunner';
-import type { ImportType } from '@ag-grid-types';
 import { DISABLE_EXAMPLE_RUNNER } from '@constants';
 
 interface Props {
@@ -12,10 +11,9 @@ interface Props {
     exampleHeight?: number;
     suppressDarkMode?: boolean;
     typescriptOnly?: boolean;
-    overrideImportType?: ImportType;
 }
 
-const { title, name, exampleHeight, typescriptOnly, suppressDarkMode, overrideImportType } = Astro.props as Props;
+const { title, name, exampleHeight, typescriptOnly, suppressDarkMode } = Astro.props as Props;
 
 const pageName = getPageNameFromPath(Astro.url.pathname);
 const isDev = getIsDev();
@@ -31,7 +29,6 @@ const isDev = getIsDev();
                 exampleHeight={exampleHeight}
                 typescriptOnly={typescriptOnly}
                 suppressDarkMode={suppressDarkMode}
-                overrideImportType={overrideImportType}
                 pageName={pageName}
                 isDev={isDev}
             />
