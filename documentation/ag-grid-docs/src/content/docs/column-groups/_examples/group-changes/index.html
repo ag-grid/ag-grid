@@ -1,21 +1,27 @@
-<div class="test-container">
-    <div class="test-header">
-        <label>
-            <button onclick="onBtNoGroups()">No Groups</button>
-        </label>
-        <label>
+<div class="toolbar">
+    <label>
+        <button onclick="onBtNoGroups()">No Groups</button>
+    </label>
+    <label>
+
+        <button onclick="onParticipantInGroupOnly()">
             <div class="participant-group legend-box"></div>
-            <button onclick="onParticipantInGroupOnly()">Participant in Group</button>
-        </label>
-        <label>
+            Participant in Group
+        </button>
+    </label>
+    <label>
+        <button onclick="onMedalsInGroupOnly()">
             <div class="medals-group legend-box"></div>
-            <button onclick="onMedalsInGroupOnly()">Medals in Group</button>
-        </label>
-        <label>
+            Medals in Group
+        </button>
+    </label>
+    <label>
+        <button onclick="onParticipantAndMedalsInGroups()">
             <div class="participant-group legend-box"></div>
             <div class="medals-group legend-box"></div>
-            <button onclick="onParticipantAndMedalsInGroups()">Participant and Medals in Group</button>
-        </label>
-    </div>
-    <div id="myGrid" class="ag-theme-quartz test-grid"></div>
+            Participant and Medals in Group
+        </button>
+    </label>
 </div>
+
+<div id="myGrid" class="ag-theme-quartz test-grid"></div>
