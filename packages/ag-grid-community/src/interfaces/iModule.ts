@@ -163,6 +163,9 @@ type CommunityModuleName =
     | 'StateCoreModule'
     | 'StateModule'
     | 'StickyRowModule'
+    | 'TooltipCoreModule'
+    | 'TooltipCompModule'
+    | 'TooltipModule'
     | 'UndoRedoEditModule'
     | 'ValidationModule'
     | 'ValueCacheModule';

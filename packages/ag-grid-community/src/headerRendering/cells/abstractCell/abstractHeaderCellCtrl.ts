@@ -70,7 +70,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected eGui: HTMLElement;
     protected resizeFeature: TFeature | null = null;
     protected comp: TComp;
-    protected column: TColumn;
+    public column: TColumn;
 
     public lastFocusEvent: KeyboardEvent | null = null;
 
