@@ -3,9 +3,12 @@ import type {
     BeanCollection,
     ColumnAdvancedFilterModel,
     FilterManager,
+    ITooltipCtrl,
     JoinAdvancedFilterModel,
+    Registry,
+    TooltipFeature,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder, TooltipFeature, _exists, _setDisabled } from 'ag-grid-community';
+import { Component, RefPlaceholder, _exists, _setDisabled } from 'ag-grid-community';
 
 import type { VirtualListDragItem } from '../../features/iVirtualListDragFeature';
 import { VirtualList } from '../../widgets/virtualList';
@@ -26,11 +29,13 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     private filterManager?: FilterManager;
     private advancedFilterService: AdvancedFilterService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
+    private registry: Registry;
 
     public wireBeans(beans: BeanCollection): void {
         this.filterManager = beans.filterManager;
         this.advancedFilterService = beans.advancedFilterService as AdvancedFilterService;
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
+        this.registry = beans.registry;
     }
 
     private readonly eList: HTMLElement = RefPlaceholder;
@@ -43,7 +48,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     private items: AdvancedFilterBuilderItem[];
     private dragFeature: AdvancedFilterBuilderDragFeature;
     private showMove: boolean;
-    private validationTooltipFeature: TooltipFeature;
+    private validationTooltipFeature?: TooltipFeature;
     private validationMessage: string | null = null;
 
     constructor() {
@@ -139,13 +144,13 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
             },
         });
 
-        this.validationTooltipFeature = this.createManagedBean(
-            new TooltipFeature({
+        this.validationTooltipFeature = this.createOptionalManagedBean(
+            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', {
                 getGui: () => this.eApplyFilterButton,
                 getLocation: () => 'advancedFilter',
                 getTooltipValue: () => this.validationMessage,
                 getTooltipShowDelayOverride: () => 1000,
-            })
+            } as ITooltipCtrl)
         );
         this.validate();
 
@@ -483,7 +488,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
             );
         }
         _setDisabled(this.eApplyFilterButton, disableApply);
-        this.validationTooltipFeature.refreshToolTip();
+        this.validationTooltipFeature?.refreshTooltip();
     }
 
     private validateItems(): void {

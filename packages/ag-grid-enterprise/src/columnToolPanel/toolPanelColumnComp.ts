@@ -6,8 +6,9 @@ import type {
     DragAndDropService,
     DragItem,
     DragSource,
-    ITooltipParams,
-    WithoutGridCommon,
+    ITooltipCtrl,
+    Registry,
+    TooltipFeature,
 } from 'ag-grid-community';
 import {
     AgCheckboxSelector,
@@ -17,6 +18,7 @@ import {
     RefPlaceholder,
     _createIconNoSpan,
     _escapeString,
+    _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
     _setAriaDescribedBy,
     _setAriaLabel,
@@ -32,11 +34,13 @@ export class ToolPanelColumnComp extends Component {
     private columnModel: ColumnModel;
     private dragAndDropService: DragAndDropService;
     private modelItemUtils: ModelItemUtils;
+    private registry: Registry;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.dragAndDropService = beans.dragAndDropService!;
         this.modelItemUtils = beans.modelItemUtils as ModelItemUtils;
+        this.registry = beans.registry;
     }
 
     private readonly eLabel: HTMLElement = RefPlaceholder;
@@ -47,6 +51,7 @@ export class ToolPanelColumnComp extends Component {
     private eDragHandle: Element;
     private displayName: string | null;
     private processingColumnStateChange = false;
+    private tooltipFeature?: TooltipFeature;
 
     constructor(
         modelItem: ColumnModelItem,
@@ -89,6 +94,15 @@ export class ToolPanelColumnComp extends Component {
         this.addCssClass(`ag-column-select-indent-${indent}`);
         this.getGui().style.setProperty('--ag-indentation-level', String(indent));
 
+        this.tooltipFeature = this.createOptionalManagedBean(
+            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', {
+                getGui: () => this.getGui(),
+                getLocation: () => 'columnToolPanelColumn',
+                getColDef: () => this.column.getColDef(),
+                shouldDisplayTooltip: _getShouldDisplayTooltip(this.gos, () => this.eLabel),
+            } as ITooltipCtrl)
+        );
+
         this.setupDragging();
 
         const onColStateChanged = this.onColumnStateChanged.bind(this);
@@ -124,27 +138,10 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private setupTooltip(): void {
-        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
-        let shouldDisplayTooltip: (() => boolean) | undefined;
-
-        if (isTooltipWhenTruncated) {
-            shouldDisplayTooltip = () => this.eLabel.scrollWidth > this.eLabel.clientWidth;
-        }
-        const refresh = () => {
-            const newTooltipText = this.column.getColDef().headerTooltip;
-            this.setTooltip({ newTooltipText, location: 'columnToolPanelColumn', shouldDisplayTooltip });
-        };
-
+        const refresh = () => this.tooltipFeature?.setTooltipAndRefresh(this.column.getColDef().headerTooltip);
         refresh();
 
         this.addManagedEventListeners({ newColumnsLoaded: refresh });
-    }
-
-    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
-        const res = super.getTooltipParams();
-        res.location = 'columnToolPanelColumn';
-        res.colDef = this.column.getColDef();
-        return res;
     }
 
     private onContextMenu(e: MouseEvent): void {

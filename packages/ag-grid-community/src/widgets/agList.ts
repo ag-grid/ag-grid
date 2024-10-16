@@ -1,9 +1,11 @@
+import type { Registry } from '../components/framework/registry';
 import { KeyCode } from '../constants/keyCode';
+import type { BeanCollection } from '../context/context';
 import { _getDocument } from '../gridOptionsUtils';
+import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
 import { _setAriaPosInSet, _setAriaRole, _setAriaSelected, _setAriaSetSize } from '../utils/aria';
 import { _isVisible, _removeFromParent } from '../utils/dom';
 import { Component } from './component';
-import { TooltipFeature } from './tooltipFeature';
 
 export interface ListOption<TValue = string> {
     value: TValue;
@@ -15,6 +17,8 @@ export type AgListEvent = 'fieldValueChanged' | 'selectedItem';
 export class AgList<TEventType extends string = AgListEvent, TValue = string> extends Component<
     TEventType | AgListEvent
 > {
+    private registry: Registry;
+
     private readonly activeClass = 'ag-active-item';
 
     private options: ListOption<TValue>[] = [];
@@ -28,6 +32,10 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
         private readonly unFocusable: boolean = false
     ) {
         super(/* html */ `<div class="ag-list ag-${cssIdentifier}-list" role="listbox"></div>`);
+    }
+
+    public wireBeans(beans: BeanCollection): void {
+        this.registry = beans.registry;
     }
 
     public postConstruct(): void {
@@ -170,14 +178,14 @@ export class AgList<TEventType extends string = AgListEvent, TValue = string> ex
             },
         });
 
-        this.createManagedBean(
-            new TooltipFeature({
+        this.createOptionalManagedBean(
+            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', {
                 getTooltipValue: () => text,
                 getGui: () => itemEl,
                 getLocation: () => 'UNKNOWN',
                 // only show tooltips for items where the text cannot be fully displayed
                 shouldDisplayTooltip: () => span.scrollWidth > span.clientWidth,
-            })
+            } as ITooltipCtrl)
         );
 
         this.getGui().appendChild(itemEl);

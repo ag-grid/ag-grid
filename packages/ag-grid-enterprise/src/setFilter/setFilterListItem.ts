@@ -6,13 +6,13 @@ import type {
     ColDef,
     ICellRendererComp,
     ISetFilterCellRendererParams,
-    ISetFilterTreeListTooltipParams,
-    ITooltipParams,
+    ITooltipCtrl,
+    Registry,
     SetFilterParams,
+    TooltipFeature,
     UserComponentFactory,
     ValueFormatterParams,
     ValueService,
-    WithoutGridCommon,
 } from 'ag-grid-community';
 import {
     AgCheckboxSelector,
@@ -20,6 +20,8 @@ import {
     RefPlaceholder,
     _createIcon,
     _getCellRendererDetails,
+    _getShouldDisplayTooltip,
+    _isShowTooltipWhenTruncated,
     _setAriaChecked,
     _setAriaDescribedBy,
     _setAriaExpanded,
@@ -69,10 +71,12 @@ export type SetFilterListItemEvent = 'selectionChanged' | 'expandedChanged';
 export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private valueService: ValueService;
     private userComponentFactory: UserComponentFactory;
+    private registry: Registry;
 
     public wireBeans(beans: BeanCollection) {
         this.valueService = beans.valueService;
         this.userComponentFactory = beans.userComponentFactory;
+        this.registry = beans.registry;
     }
 
     private readonly eCheckbox: AgCheckbox = RefPlaceholder;
@@ -101,6 +105,9 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private cellRendererParams: ISetFilterCellRendererParams;
     private cellRendererComponent?: ICellRendererComp;
     private destroyCellRendererComponent?: () => void;
+    private tooltipFeature?: TooltipFeature;
+    private shouldDisplayTooltip?: () => boolean;
+    private formattedValue: string | null = null;
 
     constructor(params: SetFilterListItemParams<V>) {
         super(
@@ -136,6 +143,18 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     }
 
     public postConstruct(): void {
+        this.tooltipFeature = this.createOptionalManagedBean(
+            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', {
+                getGui: () => this.getGui(),
+                getColDef: () => this.params.colDef,
+                getColumn: () => this.params.column as AgColumn,
+                getLocation: () => 'setFilterValue',
+                shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,
+                getValueFormatted: () => this.formattedValue,
+                getAdditionalParams: () => (this.isTree ? { level: this.depth } : {}),
+            } as ITooltipCtrl)
+        );
+
         this.addDestroyFunc(() => this.destroyCellRendererComponent?.());
 
         this.render();
@@ -345,6 +364,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         } else {
             formattedValue = this.getFormattedValue(column as AgColumn, value);
         }
+        this.formattedValue = formattedValue;
 
         this.setTooltipAndCellRendererParams(value, formattedValue);
 
@@ -352,28 +372,13 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     }
 
     private setTooltipAndCellRendererParams(value: V | null | (() => string), formattedValue: string | null): void {
-        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
-
-        if (this.params.showTooltips && (!isTooltipWhenTruncated || !this.params.cellRenderer)) {
+        if (this.params.showTooltips && (!_isShowTooltipWhenTruncated(this.gos) || !this.params.cellRenderer)) {
             const newTooltipText = formattedValue != null ? formattedValue : _toStringOrNull(value);
-            let shouldDisplayTooltip: (() => boolean) | undefined;
-
-            if (isTooltipWhenTruncated) {
-                shouldDisplayTooltip = () => {
-                    const el = this.eCheckbox.getGui().querySelector('.ag-label');
-                    if (!el) {
-                        return true;
-                    } // show label by default
-                    return el.scrollWidth > el.clientWidth;
-                };
-            }
-            this.setTooltip({
-                newTooltipText,
-                location: 'setFilterValue',
-                getColDef: () => this.params.colDef,
-                getColumn: () => this.params.column as AgColumn,
-                shouldDisplayTooltip,
-            });
+            this.shouldDisplayTooltip = _getShouldDisplayTooltip(
+                this.gos,
+                () => this.eCheckbox.getGui().querySelector('.ag-label') as HTMLElement | undefined
+            );
+            this.tooltipFeature?.setTooltipAndRefresh(newTooltipText);
         }
 
         this.cellRendererParams = this.gos.addGridCommonParams({
@@ -382,25 +387,10 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             colDef: this.params.colDef,
             column: this.params.column,
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
-                this.setTooltip({
-                    newTooltipText: value,
-                    getColDef: () => this.params.colDef,
-                    getColumn: () => this.params.column as AgColumn,
-                    location: 'setFilterValue',
-                    shouldDisplayTooltip,
-                });
+                this.shouldDisplayTooltip = shouldDisplayTooltip;
+                this.tooltipFeature?.setTooltipAndRefresh(value);
             },
         });
-    }
-
-    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
-        const res = super.getTooltipParams();
-        res.location = 'setFilterValue';
-        res.colDef = this.getComponentHolder();
-        if (this.isTree) {
-            (res as ISetFilterTreeListTooltipParams).level = this.depth;
-        }
-        return res;
     }
 
     private getFormattedValue(column: AgColumn, value: any) {

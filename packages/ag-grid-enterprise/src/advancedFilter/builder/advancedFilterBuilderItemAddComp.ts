@@ -1,5 +1,11 @@
-import type { BeanCollection, FieldPickerValueSelectedEvent } from 'ag-grid-community';
-import { Component, RefPlaceholder, TooltipFeature, _setAriaLabel, _setAriaLevel } from 'ag-grid-community';
+import type {
+    BeanCollection,
+    FieldPickerValueSelectedEvent,
+    ITooltipCtrl,
+    Registry,
+    TooltipFeature,
+} from 'ag-grid-community';
+import { Component, RefPlaceholder, _setAriaLabel, _setAriaLevel } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import { AddDropdownComp } from './addDropdownComp';
@@ -13,9 +19,11 @@ import type {
 
 export class AdvancedFilterBuilderItemAddComp extends Component<AdvancedFilterBuilderEvents> {
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
+    private registry: Registry;
 
     public wireBeans(beans: BeanCollection) {
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
+        this.registry = beans.registry;
     }
 
     private readonly eItem: HTMLElement = RefPlaceholder;
@@ -54,13 +62,13 @@ export class AdvancedFilterBuilderItemAddComp extends Component<AdvancedFilterBu
         });
         this.eItem.appendChild(eAddButton.getGui());
 
-        this.createManagedBean(
-            new TooltipFeature({
+        this.createOptionalManagedBean(
+            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', {
                 getGui: () => eAddButton.getGui(),
                 getLocation: () => 'advancedFilter',
                 getTooltipValue: () =>
                     this.advancedFilterExpressionService.translate('advancedFilterBuilderAddButtonTooltip'),
-            })
+            } as ITooltipCtrl)
         );
 
         this.createManagedBean(
