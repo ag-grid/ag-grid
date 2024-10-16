@@ -300,10 +300,22 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private moveRows(rowNodes: RowNode[], pixel: number, increment: number = 0): void {
-        const rowWasMoved = this.clientSideRowModel.ensureRowsAtPixel(rowNodes, pixel, increment);
+        // Find the focussed row node so we can ensure it remains focussed after the move
+        // (we can't rely on the rowIndex because it's not updated during the move)
+        const cell = this.focusService.getFocusedCell();
+        const focussedRowNode = rowNodes.find((n) => n.rowIndex === cell?.rowIndex && n.rowPinned == cell.rowPinned);
 
+        const rowWasMoved = this.clientSideRowModel.ensureRowsAtPixel(rowNodes, pixel, increment);
         if (rowWasMoved) {
-            this.focusService.clearFocusedCell();
+            if (focussedRowNode) {
+                this.focusService.setFocusedCell({
+                    column: cell?.column ?? null,
+                    rowIndex: focussedRowNode.rowIndex,
+                    rowPinned: focussedRowNode.rowPinned,
+                });
+            } else {
+                this.focusService.clearFocusedCell();
+            }
         }
     }
 
