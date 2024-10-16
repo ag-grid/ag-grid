@@ -1,10 +1,12 @@
 import type { Framework, Library } from '@ag-grid-types';
+import Note from '@ag-website-shared/components/alert/Note';
 import Success from '@ag-website-shared/components/alert/Success';
 import Warning from '@ag-website-shared/components/alert/Warning';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { Snippet } from '@ag-website-shared/components/snippet/Snippet';
 import fwLogos from '@ag-website-shared/images/fw-logos';
 import { FrameworkSelectorInsideDocs } from '@components/framework-selector-inside-doc/FrameworkSelectorInsideDocs';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
 import { useMemo } from 'react';
 import type { FunctionComponent } from 'react';
@@ -208,6 +210,14 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
 
                     {dependenciesSnippet && (
                         <Snippet framework={framework} content={dependenciesSnippet} copyToClipboard />
+                    )}
+
+                    {isGrid && (
+                        <Note>
+                            If you are using an older version of AG Grid, before v33.0.0, please see the relevant{' '}
+                            <a href={urlWithBaseUrl('/documentation-archive')}>documentation</a> for help on installing
+                            your license key
+                        </Note>
                     )}
 
                     <p>Or install using npm:</p>
