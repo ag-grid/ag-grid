@@ -97,6 +97,7 @@ import type { SortController } from '../sort/sortController';
 import type { CellStyleService } from '../styling/cellStyleService';
 import type { RowStyleService } from '../styling/rowStyleService';
 import type { SyncService } from '../syncService';
+import type { TooltipService } from '../tooltip/tooltipService';
 import type { UndoRedoService } from '../undoRedo/undoRedoService';
 import type { ValidationService } from '../validation/validationService';
 import type { ExpressionService } from '../valueService/expressionService';
@@ -118,7 +119,8 @@ export type DynamicBeanName =
     | 'groupCellRendererCtrl'
     | 'headerFilterCellCtrl'
     | 'headerGroupCellCtrl'
-    | 'rangeHandle';
+    | 'rangeHandle'
+    | 'tooltipFeature';
 
 export type UserComponentName =
     | 'agDragAndDropImage'
@@ -296,6 +298,7 @@ export interface CoreBeanCollection {
     clientSideChildrenTreeNodeManager?: IClientSideNodeManager;
     cellFlashService?: CellFlashService;
     masterDetailService?: IMasterDetailService;
+    tooltipService?: TooltipService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -475,6 +478,7 @@ export type BeanName =
     | 'syncService'
     | 'templateService'
     | 'toolPanelColDefService'
+    | 'tooltipService'
     | 'undoRedoService'
     | 'userComponentFactory'
     | 'valueCache'

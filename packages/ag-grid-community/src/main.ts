@@ -866,9 +866,14 @@ export {
 export { IFrameworkOverrides, FrameworkOverridesIncomingSource } from './interfaces/iFrameworkOverrides';
 export { IFrameworkEventListenerService } from './interfaces/iFrameworkEventListenerService';
 export type { Environment } from './environment';
-export { ITooltipComp, ITooltipParams, TooltipLocation } from './rendering/tooltipComponent';
-export { TooltipFeature } from './widgets/tooltipFeature';
-export { TooltipStateManager } from './widgets/tooltipStateManager';
+export { ITooltipComp, ITooltipParams, TooltipLocation } from './tooltip/tooltipComponent';
+export {
+    TooltipFeature,
+    ITooltipCtrl,
+    _shouldDisplayTooltip,
+    _getShouldDisplayTooltip,
+    _isShowTooltipWhenTruncated,
+} from './tooltip/tooltipFeature';
 export { IAggregationStage } from './interfaces/iAggregationStage';
 export {
     MenuItemLeafDef,

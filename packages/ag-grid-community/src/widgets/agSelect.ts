@@ -1,5 +1,9 @@
+import type { Registry } from '../components/framework/registry';
 import { KeyCode } from '../constants/keyCode';
+import type { BeanCollection } from '../context/context';
 import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
+import { _shouldDisplayTooltip } from '../tooltip/tooltipFeature';
+import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
 import { _setAriaControls } from '../utils/aria';
 import type { ListOption } from './agList';
 import { AgList } from './agList';
@@ -21,7 +25,10 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
     AgSelectEvent,
     AgList<AgSelectEvent, TValue>
 > {
+    private registry: Registry;
+
     protected listComponent: AgList<AgSelectEvent, TValue> | undefined;
+    private tooltipFeature?: TooltipFeature;
 
     constructor(config?: AgSelectParams<TValue>) {
         super({
@@ -35,7 +42,18 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
         });
     }
 
+    public override wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.registry = beans.registry;
+    }
+
     public override postConstruct(): void {
+        this.tooltipFeature = this.createOptionalManagedBean(
+            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', {
+                shouldDisplayTooltip: _shouldDisplayTooltip(() => this.eDisplayField),
+                getGui: () => this.getGui(),
+            } as ITooltipCtrl)
+        );
         super.postConstruct();
         this.createListComponent();
         this.eWrapper.tabIndex = this.gos.get('tabIndex');
@@ -179,10 +197,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
 
         this.eDisplayField.textContent = displayValue!;
 
-        this.setTooltip({
-            newTooltipText: displayValue ?? null,
-            shouldDisplayTooltip: () => this.eDisplayField.scrollWidth > this.eDisplayField.clientWidth,
-        });
+        this.tooltipFeature?.setTooltipAndRefresh(displayValue ?? null);
 
         return super.setValue(value, silent);
     }

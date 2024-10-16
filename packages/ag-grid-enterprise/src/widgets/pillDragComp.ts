@@ -8,6 +8,9 @@ import type {
     DragSource,
     DragSourceType,
     DropTarget,
+    ITooltipCtrl,
+    Registry,
+    TooltipFeature,
 } from 'ag-grid-community';
 import {
     Component,
@@ -23,9 +26,11 @@ import {
 export type PillDragCompEvent = 'columnRemove';
 export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
     private dragAndDropService?: DragAndDropService;
+    private registry: Registry;
 
     public wireBeans(beans: BeanCollection) {
         this.dragAndDropService = beans.dragAndDropService;
+        this.registry = beans.registry;
     }
 
     private readonly eText: HTMLElement = RefPlaceholder;
@@ -38,6 +43,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
     protected abstract getTooltip(): string | null | undefined;
     protected abstract createGetDragItem(): () => DragItem<TItem>;
     protected abstract getDragSourceType(): DragSourceType;
+    private tooltipFeature?: TooltipFeature;
 
     constructor(
         private dragSourceDropTarget: DropTarget,
@@ -70,6 +76,12 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
         this.eDragHandle.appendChild(_createIconNoSpan('columnDrag', this.gos)!);
 
         this.eButton.appendChild(_createIconNoSpan('cancel', this.gos)!);
+
+        this.tooltipFeature = this.createOptionalManagedBean(
+            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', {
+                getGui: () => this.getGui(),
+            } as ITooltipCtrl)
+        );
 
         this.setupComponents();
 
@@ -114,10 +126,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
     }
 
     private setupTooltip(): void {
-        const refresh = () => {
-            const newTooltipText = this.getTooltip();
-            this.setTooltip({ newTooltipText });
-        };
+        const refresh = () => this.tooltipFeature?.setTooltipAndRefresh(this.getTooltip());
 
         refresh();
 
