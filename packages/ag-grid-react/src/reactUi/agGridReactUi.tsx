@@ -95,7 +95,17 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             });
         }
 
-        const mergedGridOps = _combineAttributesAndGridOptions(props.gridOptions, props);
+        const excludeReactCompProps: Exclude<keyof AgGridReactProps, keyof GridOptions>[] = [
+            'gridOptions',
+            'modules',
+            'containerStyle',
+            'className',
+            'setGridApi',
+            'componentWrappingElement',
+            'maxComponentCreationTimeMs',
+            'children',
+        ];
+        const mergedGridOps = _combineAttributesAndGridOptions(props.gridOptions, props, excludeReactCompProps);
 
         const processQueuedUpdates = () => {
             if (ready.current) {

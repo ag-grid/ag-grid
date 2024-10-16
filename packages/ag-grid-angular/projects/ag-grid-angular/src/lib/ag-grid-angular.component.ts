@@ -97,7 +97,6 @@ import type {
     GetServerSideGroupKey,
     GetServerSideGroupLevelParamsParams,
     GridColumnsChangedEvent,
-    GridPreDestroyedEvent,
     GridReadyEvent,
     GridSizeChangedEvent,
     GridState,
@@ -217,8 +216,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     private _initialised = false;
     private _destroyed = false;
 
-    private gridParams: GridParams;
-
     // in order to ensure firing of gridReady is deterministic
     private _holdEvents = true;
     private _resolveFullyReady: () => void;
@@ -231,9 +228,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
 
     constructor(
         elementDef: ElementRef,
-        private viewContainerRef: ViewContainerRef,
-        private angularFrameworkOverrides: AngularFrameworkOverrides,
-        private frameworkComponentWrapper: AngularFrameworkComponentWrapper
+        private _viewContainerRef: ViewContainerRef,
+        private _angularFrameworkOverrides: AngularFrameworkOverrides,
+        private _frameworkComponentWrapper: AngularFrameworkComponentWrapper
     ) {
         this._nativeElement = elementDef.nativeElement;
         this._fullyReady.then(() => {
@@ -245,20 +242,32 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
 
     ngAfterViewInit(): void {
         // Run the setup outside of angular so all the event handlers that are created do not trigger change detection
-        this.angularFrameworkOverrides.runOutsideAngular(() => {
-            this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef, this.angularFrameworkOverrides);
-            const mergedGridOps = _combineAttributesAndGridOptions(this.gridOptions, this);
+        this._angularFrameworkOverrides.runOutsideAngular(() => {
+            this._frameworkComponentWrapper.setViewContainerRef(
+                this._viewContainerRef,
+                this._angularFrameworkOverrides
+            );
 
-            this.gridParams = {
+            const excludeAngularCompProps = [
+                'gridOptions',
+                'modules',
+                ...Object.entries(this)
+                    .filter(([key, value]) => key.startsWith('_') || value instanceof EventEmitter)
+                    .map(([key]) => key),
+            ];
+
+            const mergedGridOps = _combineAttributesAndGridOptions(this.gridOptions, this, excludeAngularCompProps);
+
+            const gridParams: GridParams = {
                 globalEventListener: this.globalEventListener.bind(this),
-                frameworkOverrides: this.angularFrameworkOverrides,
+                frameworkOverrides: this._angularFrameworkOverrides,
                 providedBeanInstances: {
-                    frameworkComponentWrapper: this.frameworkComponentWrapper,
+                    frameworkComponentWrapper: this._frameworkComponentWrapper,
                 },
                 modules: (this.modules || []) as any,
             };
 
-            const api = createGrid(this._nativeElement, mergedGridOps, this.gridParams);
+            const api = createGrid(this._nativeElement, mergedGridOps, gridParams);
             if (api) {
                 this.api = api;
             }
@@ -275,7 +284,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     public ngOnChanges(changes: any): void {
         if (this._initialised) {
             // Run the changes outside of angular so any event handlers that are created do not trigger change detection
-            this.angularFrameworkOverrides.runOutsideAngular(() => {
+            this._angularFrameworkOverrides.runOutsideAngular(() => {
                 const gridOptions: GridOptions = {};
                 Object.entries(changes).forEach(([key, value]: [string, any]) => {
                     gridOptions[key as keyof GridOptions] = value.currentValue;
@@ -321,7 +330,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         const emitter = <EventEmitter<any>>(<any>this)[eventType];
         if (emitter && this.isEmitterUsed(eventType)) {
             // Make sure we emit within the angular zone, so change detection works properly
-            const fireEmitter = () => this.angularFrameworkOverrides.runInsideAngular(() => emitter.emit(event));
+            const fireEmitter = () => this._angularFrameworkOverrides.runInsideAngular(() => emitter.emit(event));
 
             if (this._holdEvents) {
                 // if the user is listening to events, wait for ngAfterViewInit to fire first, then emit the grid events

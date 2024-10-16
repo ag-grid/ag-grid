@@ -201,10 +201,12 @@ export const AgGridVue = defineComponent({
         // the gridOptions we pass to the grid don't need to be reactive (and shouldn't be - it'll cause issues
         // with mergeDeep for example
         const gridOptions = markRaw(
-            _combineAttributesAndGridOptions(toRaw(this.gridOptions), this, [
-                ..._ALL_GRID_OPTIONS,
-                ..._ALL_EVENTS.map((event) => _getCallbackForEvent(event)),
-            ])
+            _combineAttributesAndGridOptions(
+                toRaw(this.gridOptions),
+                this,
+                [],
+                [..._ALL_GRID_OPTIONS, ..._ALL_EVENTS.map((event) => _getCallbackForEvent(event))]
+            )
         );
 
         this.checkForBindingConflicts();

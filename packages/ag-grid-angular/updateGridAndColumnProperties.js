@@ -55,8 +55,9 @@ function extractTypesFromNode(srcFile, node, { typeLookup, eventTypeLookup, publ
 }
 
 function generateAngularInputOutputs({ typeLookup, eventTypeLookup, docLookup }) {
-    const skippableProperties = ['gridOptions', 'reactiveCustomComponents', 'GridPreDestroyedEvent'];
+    const skippableProperties = ['gridOptions', 'reactiveCustomComponents'];
     const skippableEvents = ['gridPreDestroyed'];
+    const skippableEventTypes = ['GridPreDestroyedEvent'];
     let propsToWrite = [];
     const typeKeysOrder = Object.keys(typeLookup);
 
@@ -105,7 +106,7 @@ function generateAngularInputOutputs({ typeLookup, eventTypeLookup, docLookup })
 
     result = writeSortedLines(eventsToWrite, result);
 
-    const typesToImport = extractTypes({ eventTypeLookup, typeLookup }, skippableProperties);
+    const typesToImport = extractTypes({ eventTypeLookup, typeLookup }, skippableProperties, skippableEventTypes);
     return { code: result, types: typesToImport };
 }
 
@@ -149,7 +150,7 @@ function parseFile(sourceFile) {
     return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
 }
 
-function extractTypes(context, propsToSkip = []) {
+function extractTypes(context, propsToSkip = [], typesToSkip = []) {
     let allTypes = [
         ...Object.entries(context.typeLookup)
             .filter(([k, v]) => !propsToSkip.includes(k))
@@ -171,7 +172,7 @@ function extractTypes(context, propsToSkip = []) {
     expandedTypes = [...new Set(expandedTypes)]
         .filter((t) => !nonAgTypes.includes(t) && !AG_CHART_TYPES.includes(t))
         .sort();
-    return expandedTypes;
+    return expandedTypes.filter((t) => !typesToSkip.includes(t));
 }
 
 function getGridPropertiesAndEventsJs() {
