@@ -177,7 +177,6 @@ export class PropertyKeys {
         'popupParent',
         'statusBar',
         'sideBar',
-        'theme',
         'chartThemeOverrides',
         'customChartThemes',
         'chartToolPanelsDef',
@@ -383,7 +382,8 @@ export class PropertyKeys {
     // If property does not fit above, i.e union that should not be coerced.
     public static OTHER_PROPERTIES: GridOptionKey[] = [
         'suppressStickyTotalRow',
-        // needs avoid coercion to boolean so that we can warn if it's unset
+        'theme',
+        // needs to avoid coercion to boolean so that we can warn if it's unset
         'loadThemeGoogleFonts',
         'rowSelection',
         'groupHideParentOfSingleChild',
