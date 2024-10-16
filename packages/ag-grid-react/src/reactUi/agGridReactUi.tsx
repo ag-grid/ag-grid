@@ -122,6 +122,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             },
             modules,
             frameworkOverrides,
+            setThemeOnGridDiv: true,
         };
 
         const createUiCallback = (context: Context) => {

@@ -44,7 +44,6 @@ describe('React Suspense', () => {
                         Suspend Ag Grid
                     </button>
                     <AgGridReact
-                        className="ag-theme-alpine"
                         containerStyle={{
                             height: '200px',
                         }}

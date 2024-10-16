@@ -4,8 +4,6 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, GetRowIdParams, GridApi, GridReadyEvent, RowDropZoneParams } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import './styles.css';
 
@@ -47,7 +45,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                 <div style="height: 100%;" class="inner-col" #eLeftGrid>
                     <ag-grid-angular
                         style="height: 100%;"
-                        [class]="themeClass"
                         [defaultColDef]="defaultColDef"
                         [getRowId]="getRowId"
                         [rowClassRules]="rowClassRules"
@@ -96,7 +93,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                 <div style="height: 100%;" class="inner-col" #eRightGrid>
                     <ag-grid-angular
                         style="height: 100%;"
-                        [class]="themeClass"
                         [defaultColDef]="defaultColDef"
                         [getRowId]="getRowId"
                         [rowClassRules]="rowClassRules"
@@ -112,10 +108,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     `,
 })
 export class AppComponent {
-    themeClass =
-        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-        'ag-theme-quartz' /** DARK MODE END **/;
-
     leftRowData: any[] = [];
     rightRowData: any[] = [];
     leftApi!: GridApi;

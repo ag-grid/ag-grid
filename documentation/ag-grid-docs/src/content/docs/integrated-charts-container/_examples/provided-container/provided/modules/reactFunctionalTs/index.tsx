@@ -6,8 +6,6 @@ import { createRoot } from 'react-dom/client';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ChartRef, ColDef, GridReadyEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { GridChartsModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
 import { RowGroupingModule } from 'ag-grid-enterprise';
@@ -20,9 +18,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, Menu
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
     const gridStyle = useMemo(() => ({ height: '300px', width: '100%' }), []);
-    const themeName =
-        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-        'ag-theme-quartz'; /** DARK MODE END **/
     const [rowData, setRowData] = useState<any[]>();
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         { field: 'athlete', width: 150, chartDataType: 'category' },
@@ -70,7 +65,7 @@ const GridExample = () => {
     return (
         <div style={containerStyle}>
             <div id="container">
-                <div style={gridStyle} className={themeName}>
+                <div style={gridStyle}>
                     <AgGridReact
                         rowData={rowData}
                         columnDefs={columnDefs}
@@ -81,7 +76,7 @@ const GridExample = () => {
                         createChartContainer={updateChartParams}
                         onGridReady={onGridReady}
                     />
-                    <div ref={chartPlaceholderRef} className={'chart-wrapper ' + themeName}>
+                    <div ref={chartPlaceholderRef} className="chart-wrapper">
                         {chartRef ? (
                             <div key={chartRef.chartId}>
                                 <div className="chart-wrapper-top">

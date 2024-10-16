@@ -8,14 +8,12 @@ import {
     addLicenseManager,
     convertFunctionToConstPropertyTs,
     findLocaleImport,
-    getActiveTheme,
     getFunctionName,
     getIntegratedDarkModeCode,
     getPropertyInterfaces,
     handleRowGenericInterface,
     isInstanceMethod,
     preferParamsApi,
-    usesThemingApi,
 } from './parser-utils';
 import {
     EventAndCallbackNames,
@@ -37,17 +35,6 @@ function getModuleImports(
         "import { createRoot } from 'react-dom/client';",
         "import { AgGridReact } from 'ag-grid-react';",
     ];
-
-    if (!usesThemingApi(bindings)) {
-        imports.push("import 'ag-grid-community/styles/ag-grid.css';");
-        // to account for the (rare) example that has more than one class...just default to quartz if it does
-        // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
-        // "source" non dark version
-        const theme = bindings.inlineGridStyles.theme
-            ? bindings.inlineGridStyles.theme.replace('-dark', '')
-            : 'ag-theme-quartz';
-        imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
-    }
 
     if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));
@@ -103,9 +90,8 @@ function getTemplate(
     rowDataGeneric: string,
     exampleConfig: ExampleConfig
 ): string {
-    const { inlineGridStyles } = bindings;
     const agGridTag = `
-        <div ${exampleConfig.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className={${getActiveTheme(inlineGridStyles.theme, true)}}>
+        <div ${exampleConfig.myGridReference ? 'id="myGrid"' : ''} style={gridStyle}>
             <AgGridReact${rowDataGeneric}
                 ref={gridRef}
                 ${componentAttributes.join('\n')}

@@ -6,8 +6,6 @@ import { createRoot } from 'react-dom/client';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, GridApi, GridPreDestroyedEvent, GridReadyEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 
 import type { TAthlete } from './data';
@@ -129,10 +127,6 @@ const GridExample = () => {
                             height: '100%',
                             width: '100%',
                         }}
-                        className={
-                            /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-                            'ag-theme-quartz' /** DARK MODE END **/
-                        }
                     >
                         {gridVisible && (
                             <AgGridReact

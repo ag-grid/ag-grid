@@ -77,7 +77,7 @@ npm install ag-grid-vue3
 
 <!-- Create JavaScript -->
 
-Load the AG Grid library and create a blank container div:
+Load the AG Grid library and create a container div. The div should have a height because the Data Grid will fill the size of the parent container:
 
 ```html
 <html lang="en">
@@ -87,7 +87,7 @@ Load the AG Grid library and create a blank container div:
  </head>
  <body>
    <!-- Your Data Grid container -->
-   <div id="myGrid"></div>
+   <div id="myGrid" style="height: 500px"></div>
  </body>
 </html>
 ```
@@ -126,14 +126,6 @@ const gridOptions = {
 };
 ```
 
-**4. Styling the JavaScript Data Grid**
-
-Add the `ag-theme-quartz` CSS class to your Data Grid container div to apply the Data Grid's theme.
-
-```html
-<!-- Your Data Grid container -->
-<div id="myGrid" class="ag-theme-quartz" style="height: 500px"></div>
-```
 {% /if %}
 
 {% if isFramework("react") %}
@@ -144,8 +136,6 @@ Add the `ag-theme-quartz` CSS class to your Data Grid container div to apply the
 
 ```js
 import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
-import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 ```
 
 **3. Define Rows and Columns**
@@ -179,10 +169,9 @@ Rows and Columns are set as `AgGridReact` component attributes.
 
 ```jsx
 return (
- // wrapping container with theme & size
  <div
-  className="ag-theme-quartz" // applying the Data Grid theme
-  style={{ height: 500 }} // the Data Grid will fill the size of the parent container
+  // define a height because the Data Grid will fill the size of the parent container
+  style={{ height: 500 }}
  >
    <AgGridReact
        rowData={rowData}
@@ -246,26 +235,6 @@ template:
 `
 ```
 
-**5. Styling the Data Grid**
-
-Import the required dependencies into your `styles.css` file.
-
-```js
-/* Core Data Grid CSS */
-import 'ag-grid-community/styles/ag-grid.css';
-/* Quartz Theme Specific CSS */
-import 'ag-grid-community/styles/ag-theme-quartz.css';
-```
-
-Add the `class` and `style` props to the `ag-grid-angular` component.
-
-```html
-<ag-grid-angular
- class="ag-theme-quartz"
- style="height: 500px;"
- ...
- />
-```
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -277,8 +246,6 @@ Add the `class` and `style` props to the `ag-grid-angular` component.
 
 <script>
 import { ref } from 'vue';
-import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import { AgGridVue } from "ag-grid-vue3"; // Vue Data Grid Component
 
 export default {
@@ -328,7 +295,6 @@ Rows and Columns are set as `ag-grid-vue` component attributes. Styling is appli
    :rowData="rowData"
    :columnDefs="colDefs"
    style="height: 500px"
-   class="ag-theme-quartz"
  >
  </ag-grid-vue>
 </template>
@@ -336,7 +302,7 @@ Rows and Columns are set as `ag-grid-vue` component attributes. Styling is appli
 {% /if %}
 
 {% if isFramework("angular") %}
-**6. Running the Angular Data Grid**
+**5. Running the Angular Data Grid**
 {% /if %}
 
 {% if isFramework("react") %}
@@ -348,7 +314,7 @@ Rows and Columns are set as `ag-grid-vue` component attributes. Styling is appli
 {% /if %}
 
 {% if isFramework("javascript") %}
-**5. Running the JavaScript Data Grid**
+**4. Running the JavaScript Data Grid**
 {% /if %}
 
 Below is a live example of the application running. Click `</> Code` to see the code.
@@ -635,64 +601,57 @@ This example demonstrates filtering, editing, sorting, row selection, and pagina
 
 ### Themes
 
-[Grid Themes](./themes/) define how the grid looks (colors, font, spacing etc).
-The grid comes with [Provided Themes](./themes/#provided-themes) such as Quartz and Alpine.
-To use a theme you need to 1) import the themes CSS and 2) apply the theme to the parent
-HTML element of the grid.
+[Grid Themes](./theming/) define how the grid looks (colors, font, spacing etc). The default theme is called Quartz. You can choose a [different theme](./themes/), or customise a built-in theme by changing parameters. Here we create a new theme based on Quartz:
+
+```js
+import { themeQuartz }; // or themeBalham, themeMaterial, themeAlpine
+
+const myTheme = themeQuartz.withParams({
+    /* Low spacing = very compact */
+    spacing: 2,
+    /* Changes the color of the grid text */
+    foregroundColor: 'rgb(14, 68, 145)',
+    /* Changes the color of the grid background */
+    backgroundColor: 'rgb(241, 247, 255)',
+    /* Changes the header color of the top row */
+    headerBackgroundColor: 'rgb(228, 237, 250)',
+    /* Changes the hover color of the row*/
+    rowHoverColor: 'rgb(216, 226, 255)',
+});
 
 {% if isFramework("react") %}
-```jsx
-import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
-// import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme, not used here
 ...
 return (
- <div class="ag-theme-quartz"> // set Quartz Theme on parent div
-   <AgGridReact rowData={...} columnDefs={...} />
+ <div>
+   <AgGridReact theme={myTheme} rowData={...} columnDefs={...} />
  </div>
 )
-```
 {% /if %}
-
 {% if isFramework("javascript") %}
-```js
-import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
-// import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme, not used here
-```
-
-```html
-<!-- Your grid container -->
-<div id="myGrid" class="ag-theme-quartz" style="height: 500px"></div>
-```
+const gridOptions = {
+  theme: myTheme,
+  ...
+}
 {% /if %}
-
 {% if isFramework("angular") %}
-```js
-import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
-// import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme, not used here
 // ...
  template: `<div style="height: 100%; box-sizing: border-box;">
    <ag-grid-angular
      // ...
-     [class]="themeClass"
+     [theme]="theme"
     />
  </div>`,
 // ...
-public themeClass: string = "ag-theme-quartz";
-```
+public theme = myTheme;
 {% /if %}
-
 {% if isFramework("vue") %}
-```js
-import "ag-grid-community/styles/ag-theme-quartz.css"; // import Quartz theme
-// import "ag-grid-community/styles/ag-theme-alpine.css"; // import Alpine theme, not used here
-
 const VueExample = {
  template: `
        <div style="height: 100%">
            <div style="height: 100%; box-sizing: border-box;">
                <ag-grid-vue
                // ...
-               :class="themeClass"></ag-grid-vue>
+               :theme="theme"></ag-grid-vue>
            </div>
        </div>
    `,
@@ -700,37 +659,15 @@ const VueExample = {
  data: function () {
    return {
      // ...
-     themeClass: "ag-theme-quartz",
+     theme: myTheme,
    };
  },
 // ...
-```
-
 {% /if %}
-
-{% imageCaption imagePath="resources/ag-grid-alpine-quartz-themes.png" alt="AG Grid Themes" maxWidth="860px" /%}
-
-
-From left to right [Alpine Light](/example?theme=ag-theme-alpine), [Alpine Dark](/example?theme=ag-theme-alpine-dark), [Quartz Light](/example?theme=ag-theme-quartz), and [Quartz Dark](/example?theme=ag-theme-quartz-dark) AG Grid themes. 
-
-### Customising a Theme
-
-[Customise Themes](./global-style-customisation) using CSS variables.
-
-```css
-.ag-theme-quartz {
-    /* Changes the color of the grid text */
-      --ag-foreground-color: rgb(14, 68, 145);
-      /* Changes the color of the grid background */
-      --ag-background-color: rgb(241, 247, 255);
-      /* Changes the header color of the top row */
-      --ag-header-background-color: rgb(228, 237, 250);
-      /* Changes the hover color of the row*/
-      --ag-row-hover-color: rgb(216, 226, 255);
-}
 ```
 
-{% gridExampleRunner title="Theming Example" name="custom-quartz-theme" /%}
+
+{% gridExampleRunner title="Customising Quartz Theme" name="custom-quartz-theme" suppressDarkMode=true /%}
 
 ### Figma
 
@@ -786,7 +723,7 @@ const gridOptions = {
 
 This example demonstrates cell style and row style.
 
-{% gridExampleRunner title="Theming Example" name="theme-example" /%}
+{% gridExampleRunner title="Cell and Row Style" name="cell-row-style" /%}
 
 ## Next Steps
 

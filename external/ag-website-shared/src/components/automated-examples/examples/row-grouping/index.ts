@@ -100,6 +100,7 @@ const columnDefs: ColDef[] = [
 ];
 let api: GridApi;
 const gridOptions: GridOptions = {
+    theme: 'legacy',
     columnDefs,
     loading: false,
     suppressNoRowsOverlay: true,

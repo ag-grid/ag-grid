@@ -14,7 +14,7 @@ const BasicFeatures: React.FC = () => {
     ]);
     
     return (
-        <div className={"ag-theme-quartz-dark"}>
+        <div style={{height: 500}}>
             <AgGridReact rowData={rowData} columnDefs={colDefs}  />
         </div>
     );

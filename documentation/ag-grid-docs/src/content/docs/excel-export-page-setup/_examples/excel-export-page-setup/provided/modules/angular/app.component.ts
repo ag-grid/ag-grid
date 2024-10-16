@@ -5,8 +5,6 @@ import { Component } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { ExcelExportModule, MenuModule } from 'ag-grid-enterprise';
 
 import type { IOlympicData } from './interfaces';
@@ -85,7 +83,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExpor
         <div class="grid-wrapper">
             <ag-grid-angular
                 style="width: 100%; height: 100%;"
-                [class]="themeClass"
                 [columnDefs]="columnDefs"
                 [defaultColDef]="defaultColDef"
                 [popupParent]="popupParent"
@@ -96,9 +93,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExpor
     </div>`,
 })
 export class AppComponent {
-    themeClass =
-        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-        'ag-theme-quartz' /** DARK MODE END **/;
     public columnDefs: ColDef[] = [
         { field: 'athlete', minWidth: 200 },
         { field: 'country', minWidth: 200 },

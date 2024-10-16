@@ -6,7 +6,6 @@ import {
     addGenericInterfaceImport,
     addLicenseManager,
     findLocaleImport,
-    getActiveTheme,
     getIntegratedDarkModeCode,
     getPropertyInterfaces,
     handleRowGenericInterface,
@@ -14,7 +13,6 @@ import {
     preferParamsApi,
     removeFunctionKeyword,
     replaceGridReadyRowData,
-    usesThemingApi,
 } from './parser-utils';
 import { toTitleCase } from './string-utils';
 
@@ -60,20 +58,9 @@ function addModuleImports(
     exampleConfig: ExampleConfig,
     allStylesheets: string[]
 ): string[] {
-    const { inlineGridStyles, imports: bindingImports, properties } = bindings;
+    const { imports: bindingImports, properties } = bindings;
 
     imports.push("import { AgGridAngular } from 'ag-grid-angular';");
-
-    if (!usesThemingApi(bindings)) {
-        imports.push('// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273');
-        imports.push("import 'ag-grid-community/styles/ag-grid.css';");
-
-        // to account for the (rare) example that has more than one class...just default to quartz if it does
-        // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
-        // "source" non dark version
-        const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
-        imports.push(`import "ag-grid-community/styles/${theme}.css";`);
-    }
 
     if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
@@ -196,13 +183,6 @@ export function vanillaToAngular(
 
         if (!propertyAssignments.find((item) => item.indexOf('rowData') >= 0)) {
             propertyAssignments.push(`public rowData!: ${rowDataType}[];`);
-        }
-
-        if (!usesThemingApi(bindings)) {
-            propertyAttributes.push('[class]="themeClass"');
-            propertyAssignments.push(
-                `public themeClass: string = ${getActiveTheme(bindings.inlineGridStyles.theme, true)};`
-            );
         }
 
         const componentForCheckBody = eventHandlers

@@ -4,8 +4,6 @@ import { createRoot } from 'react-dom/client';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, GridReadyEvent, SizeColumnsToContentStrategy } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
@@ -74,16 +72,8 @@ const GridExample = () => {
             .then((data) => setRowData(data));
     };
 
-    const baseClassName = 'example-container';
-    const themeClassName =
-        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-        'ag-theme-quartz'; /** DARK MODE END **/
-
     return (
-        <div
-            style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
-            className={`${baseClassName} ${themeClassName}`}
-        >
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }} className="example-container">
             <div style={{ flex: '1 1 auto' }}>
                 <AgGridReact
                     ref={topGrid}

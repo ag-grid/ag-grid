@@ -600,7 +600,7 @@ export class EditorComponent implements ICellEditorAngularComp {
     template:
         `<div>
             <ag-grid-angular
-                style="width: 100%; height: 350px;" class="ag-theme-quartz"
+                style="width: 100%; height: 350px;"
                 [columnDefs]="columnDefs"
                 [rowData]="rowData"
                 [stopEditingWhenCellsLoseFocus]="false"
@@ -696,24 +696,6 @@ it('Test cell clicked run row handler', async () => {
 {% /if %}
 
 {% if isFramework("angular") %}
-## Applying Styles To The Grid When Testing
-
-Although not strictly necessary when unit testing the grid, it is still useful to see the grid
-rendered when debugging. In order for this to work you need to provide the CSS to `karma.conf.js`:
-
-{% /if %}
-
-{% if isFramework("angular") %}
-```js
-// not strictly required for testing but useful when debugging the grid in action
-files: [
-    '../node_modules/ag-grid-community/styles/ag-grid.css',
-    '../node_modules/ag-grid-community/styles/ag-theme-quartz.css'
-]
-```
-{% /if %}
-
-{% if isFramework("angular") %}
 All the tests above and more can be found in the following [GitHub Repo](https://github.com/ag-grid/ag-grid-angular-cli-example/tree/latest/src/tests).
 {% /if %}
 
@@ -767,7 +749,7 @@ const App = () => {
     ]);
 
     return (
-        <div className="ag-theme-quartz" style={{ height: 400, width: 600 }}>
+        <div style={{ height: 400, width: 600 }}>
             <AgGridReact
                 rowData={rowData}
                 columnDefs={colDefs} />
@@ -842,7 +824,7 @@ To test clicking rows it is recommend to use `userEvent` from `testing-library/u
 {% if isFramework("react") %}
 ```js
 <div data-testid="rowClicked">Row Clicked: {rowClicked?.make}</div>
-<div className="ag-theme-quartz" style={{ height: 400, width: 600 }}>
+<div style={{ height: 400, width: 600 }}>
   <AgGridReact
       rowData={rowData}
       columnDefs={colDefs}
@@ -1015,7 +997,6 @@ to test this within the context of the Grid.
 
 <template>
     <ag-grid-vue style="width: 500px; height: 500px;"
-                 class="ag-theme-balham"
                  @grid-ready="onGridReady"
                  :columnDefs="columnDefs"
                  :rowData="rowData">

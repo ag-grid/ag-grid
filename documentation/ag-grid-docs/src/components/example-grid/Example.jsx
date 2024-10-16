@@ -637,7 +637,7 @@ const ExampleInner = ({ darkMode }) => {
             },
             rowDragManaged: true,
             rowDragMultiRow: true,
-            popupParent: IS_SSR ? null : document.querySelector('#example-wrapper'),
+            popupParent: IS_SSR ? null : document.body,
             rowGroupPanelShow: isSmall ? undefined : 'always',
             pivotPanelShow: 'always',
             suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
@@ -1070,6 +1070,7 @@ const ExampleInner = ({ darkMode }) => {
                     {gridTheme && (
                         <div id="myGrid" style={{ flex: '1 1 auto', overflow: 'hidden' }} className={themeClass}>
                             <AgGridReactMemo
+                                theme="legacy"
                                 ref={gridRef}
                                 modules={modules}
                                 gridOptions={gridOptions}

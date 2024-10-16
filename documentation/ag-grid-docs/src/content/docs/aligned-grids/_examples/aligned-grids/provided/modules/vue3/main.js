@@ -2,15 +2,13 @@ import { createApp } from 'vue';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from 'ag-grid-vue3';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column" :class="themeClass">
+        <div style="height: 100%; display: flex; flex-direction: column">
             <div style="flex: 0 1 auto;">
                 <label><input type="checkbox" checked @change="onCbAthlete($event.target.checked)"/>Athlete</label>
                 <label><input type="checkbox" checked @change="onCbAge($event.target.checked)"/>Age</label>
@@ -18,7 +16,6 @@ const VueExample = {
             </div>
             <ag-grid-vue style="flex: 1 1 auto;"
                          ref="topGrid"
-                         :class="themeClass"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
                          
@@ -28,7 +25,6 @@ const VueExample = {
             <div style='height: 5%'></div>
             <ag-grid-vue style="flex: 1 1 auto;"
                          ref="bottomGrid"
-                         :class="themeClass"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
                          
@@ -80,9 +76,6 @@ const VueExample = {
                     minWidth: 100,
                 },
             },
-            themeClass:
-                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
-                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
     mounted() {

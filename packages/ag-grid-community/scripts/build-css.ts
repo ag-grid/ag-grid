@@ -15,11 +15,11 @@ const DEV_MODE = process.argv.includes('--dev');
 const written = new Set<string>();
 
 const generateAllCSSEmbeds = async () => {
-    await generateCSSEmbed(join(themingFolder, 'core/core.css'), true);
+    await generateCSSEmbed(join(themingFolder, 'core/core.css'));
 
     const cssEntryPoints = globSync(join(themingFolder, 'parts/**/*.css')).filter((path) => !path.includes('/css/'));
     for (const cssEntryPoint of cssEntryPoints) {
-        await generateCSSEmbed(cssEntryPoint, false);
+        await generateCSSEmbed(cssEntryPoint);
     }
 
     // remove any old generated files not written in this execution
@@ -31,11 +31,11 @@ const generateAllCSSEmbeds = async () => {
     }
 };
 
-const generateCSSEmbed = async (entry: string, isCore: boolean) => {
+const generateCSSEmbed = async (entry: string) => {
     const dir = dirname(entry);
     const entryName = basename(entry, '.css');
     const outputFile = join(dir, `GENERATED-${entryName}.ts`);
-    const cssString = await loadAndProcessCSSFile(entry, isCore);
+    const cssString = await loadAndProcessCSSFile(entry);
     const exportName = camelCase(entryName) + 'CSS';
     const result = `export const ${exportName} = /*css*/ \`${cssString.replace(/`/g, '\\`')}\`;\n`;
 
@@ -43,11 +43,8 @@ const generateCSSEmbed = async (entry: string, isCore: boolean) => {
     written.add(outputFile);
 };
 
-const loadAndProcessCSSFile = async (cssPath: string, isCore: boolean) => {
+const loadAndProcessCSSFile = async (cssPath: string) => {
     const css = fs.readFileSync(cssPath, 'utf8');
-    // non-core parts are wrapped in .ag-theme-xxx { ... } and .ag-rtl is
-    // applied to the same element as the theme class, so we need the & operator
-    const join = isCore ? '' : '&';
     const result = await postcss(
         // inline @import(./path.css)
         cssImport(),
@@ -57,9 +54,9 @@ const loadAndProcessCSSFile = async (cssPath: string, isCore: boolean) => {
         cssAutoPrefix(),
         // auto RTL support
         cssRtl({
-            ltrPrefix: `${join}.ag-ltr`,
-            rtlPrefix: `${join}.ag-rtl`,
-            bothPrefix: `${join}:is(.ag-ltr, .ag-rtl)`,
+            ltrPrefix: `.ag-ltr`,
+            rtlPrefix: `.ag-rtl`,
+            bothPrefix: `:is(.ag-ltr, .ag-rtl)`,
         }),
         cssNano({
             preset: [

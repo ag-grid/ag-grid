@@ -8,12 +8,10 @@ import {
     addRelativeImports,
     convertFunctionToConstProperty,
     findLocaleImport,
-    getActiveTheme,
     getFunctionName,
     getIntegratedDarkModeCode,
     isInstanceMethod,
     preferParamsApi,
-    usesThemingApi,
 } from './parser-utils';
 import {
     EventAndCallbackNames,
@@ -36,17 +34,6 @@ function getModuleImports(
     ];
 
     addLicenseManager(imports, exampleConfig);
-
-    if (!usesThemingApi(bindings)) {
-        imports.push("import 'ag-grid-community/styles/ag-grid.css';");
-        // to account for the (rare) example that has more than one class...just default to quartz if it does
-        // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
-        // "source" non dark version
-        const theme = bindings.inlineGridStyles.theme
-            ? bindings.inlineGridStyles.theme.replace('-dark', '')
-            : 'ag-theme-quartz';
-        imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
-    }
 
     if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));
@@ -89,7 +76,7 @@ function getImports(
 
 function getTemplate(bindings: ParsedBindings, componentAttributes: string[], exampleConfig: ExampleConfig): string {
     const agGridTag = `
-        <div ${exampleConfig.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className={${getActiveTheme(bindings.inlineGridStyles.theme, false)}}>
+        <div ${exampleConfig.myGridReference ? 'id="myGrid"' : ''} style={gridStyle}>
             <AgGridReact
                 ref={gridRef}
                 ${componentAttributes.join('\n')}

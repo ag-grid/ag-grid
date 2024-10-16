@@ -12,8 +12,6 @@ import type {
     RowSelectionOptions,
 } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import './styles.css';
 
@@ -66,7 +64,6 @@ export class SportRenderer implements ICellRendererAngularComp {
                     <div id="eLeftGrid">
                         <ag-grid-angular
                             style="height: 100%;"
-                            [class]="themeClass"
                             [defaultColDef]="defaultColDef"
                             [rowSelection]="rowSelection"
                             [rowDragMultiRow]="true"
@@ -86,7 +83,6 @@ export class SportRenderer implements ICellRendererAngularComp {
                     <div id="eRightGrid">
                         <ag-grid-angular
                             style="height: 100%;"
-                            [class]="themeClass"
                             [defaultColDef]="defaultColDef"
                             [getRowId]="getRowId"
                             [rowDragManaged]="true"
@@ -101,9 +97,6 @@ export class SportRenderer implements ICellRendererAngularComp {
     </div>`,
 })
 export class AppComponent {
-    themeClass =
-        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-        'ag-theme-quartz' /** DARK MODE END **/;
     rawData: any[] = [];
     leftRowData: any[] = [];
     rightRowData: any[] = [];
