@@ -397,19 +397,20 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const indexAtPixelNow = pixel != null ? this.getRowIndexAtPixel(pixel) : null;
         const rowNodeAtPixelNow = indexAtPixelNow != null ? this.getRow(indexAtPixelNow) : null;
 
-        if (!rowNodeAtPixelNow || !rowNode || rowNodeAtPixelNow === rowNode || pixel == null) {
-            if (this.lastHighlightedRow) {
-                this.lastHighlightedRow.setHighlighted(null);
-                this.lastHighlightedRow = null;
-            }
+        if (!rowNodeAtPixelNow || !rowNode || pixel == null) {
+            this.clearHighlightedRow();
             return;
         }
 
         const highlight = this.getHighlightPosition(pixel, rowNodeAtPixelNow);
+        const isSamePosition = this.isHighlightingCurrentPosition(rowNode, rowNodeAtPixelNow, highlight);
+        const isDifferentNode = this.lastHighlightedRow != null && this.lastHighlightedRow !== rowNodeAtPixelNow;
 
-        if (this.lastHighlightedRow && this.lastHighlightedRow !== rowNodeAtPixelNow) {
-            this.lastHighlightedRow.setHighlighted(null);
-            this.lastHighlightedRow = null;
+        if (isSamePosition || isDifferentNode) {
+            this.clearHighlightedRow();
+            if (isSamePosition) {
+                return;
+            }
         }
 
         rowNodeAtPixelNow.setHighlighted(highlight);
@@ -433,6 +434,31 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public getLastHighlightedRowNode(): RowNode | null {
         return this.lastHighlightedRow;
+    }
+
+    private isHighlightingCurrentPosition(
+        movingRowNode: RowNode,
+        hoveredRowNode: RowNode,
+        highlightPosition: RowHighlightPosition
+    ): boolean {
+        if (movingRowNode === hoveredRowNode) {
+            return true;
+        }
+
+        const diff = highlightPosition === RowHighlightPosition.Above ? -1 : 1;
+
+        if (this.getRow(hoveredRowNode.rowIndex! + diff) === movingRowNode) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private clearHighlightedRow(): void {
+        if (this.lastHighlightedRow) {
+            this.lastHighlightedRow.setHighlighted(null);
+            this.lastHighlightedRow = null;
+        }
     }
 
     public isLastRowIndexKnown(): boolean {
@@ -1326,5 +1352,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public isRowDataLoaded(): boolean {
         return this.rowCountReady;
+    }
+
+    public override destroy(): void {
+        super.destroy();
+
+        (this.rootNode as any) = null;
+        (this.rowsToDisplay as any) = null;
+        (this.nodeManager as any) = null;
+        this.rowDataTransactionBatch = null;
+        this.lastHighlightedRow = null;
+        (this.orderedStages as any) = null;
+        this.clearHighlightedRow();
     }
 }
