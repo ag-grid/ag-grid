@@ -115,11 +115,6 @@ class ThemeImpl<TParams = unknown> implements Theme {
             // Remove the CSS from @ag-grid-community/styles that is
             // automatically injected by the UMD bundle
             uninstallThemeCSS('legacy', document.head);
-
-            const legacyStylesLoaded = getComputedStyle(document.body).getPropertyValue('--ag-legacy-styles-loaded');
-            if (legacyStylesLoaded) {
-                _error(106);
-            }
         }
 
         let root = container.getRootNode() as HTMLElement;
