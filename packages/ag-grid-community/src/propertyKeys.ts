@@ -90,7 +90,6 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'popupParent',
     'statusBar',
     'sideBar',
-    'theme',
     'chartThemeOverrides',
     'customChartThemes',
     'chartToolPanelsDef',
@@ -157,6 +156,7 @@ const NUMBER_GRID_OPTIONS: KeysOfType<number>[] = [
 // used internally
 const OTHER_GRID_OPTIONS: GridOptionKey[] = [
     'suppressStickyTotalRow',
+    'theme',
     // needs avoid coercion to boolean so that we can warn if it's unset
     'loadThemeGoogleFonts',
     'rowSelection',

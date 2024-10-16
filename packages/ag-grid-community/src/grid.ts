@@ -30,6 +30,8 @@ export interface GridParams {
     frameworkOverrides?: IFrameworkOverrides;
     // INTERNAL - bean instances to add to the context
     providedBeanInstances?: { [key: string]: any };
+    // INTERNAL - set by frameworks if the provided grid div is safe to set a theme class on
+    setThemeOnGridDiv?: boolean;
 
     /**
      * Modules to be registered directly with this grid instance.
@@ -126,6 +128,17 @@ export function createGrid<TData>(
         // No gridOptions provided, abort creating the grid
         _error(11);
         return {} as GridApi;
+    }
+    const gridParams: GridParams | undefined = params;
+    if (!gridParams?.setThemeOnGridDiv) {
+        // frameworks already create an element owned by our code, so we can set
+        // the theme class on it. JS users calling createGrid directly are
+        // passing an element owned by their application, so we can't set a
+        // class name on it and must create a wrapper.
+        const newGridDiv = document.createElement('div');
+        newGridDiv.style.height = '100%';
+        eGridDiv.appendChild(newGridDiv);
+        eGridDiv = newGridDiv;
     }
     const api = new GridCoreCreator().create(
         eGridDiv,
