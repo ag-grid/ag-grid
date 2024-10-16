@@ -1,3 +1,4 @@
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager } from '../../test-utils';
@@ -6,7 +7,7 @@ import { getRowsSnapshot, simpleHierarchyRowSnapshot } from '../row-snapshot-tes
 
 describe('ag-grid grouping tree data with groupRows', () => {
     const gridsManager = new TestGridsManager({
-        modules: [TreeDataModule],
+        modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
     beforeEach(() => {

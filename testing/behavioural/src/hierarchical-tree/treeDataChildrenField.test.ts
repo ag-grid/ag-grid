@@ -1,3 +1,4 @@
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
@@ -6,7 +7,7 @@ import type { GridRowsOptions } from '../test-utils';
 
 describe('ag-grid treeDataChildrenField', () => {
     const gridsManager = new TestGridsManager({
-        modules: [TreeDataModule],
+        modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
     beforeEach(() => {

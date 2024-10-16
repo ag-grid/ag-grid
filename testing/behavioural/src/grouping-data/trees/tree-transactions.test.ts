@@ -1,4 +1,5 @@
 import type { RowDataTransaction } from 'ag-grid-community';
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, executeTransactionsAsync } from '../../test-utils';
@@ -10,7 +11,7 @@ const gridRowsOptions: GridRowsOptions = {
 
 describe('ag-grid tree transactions', () => {
     const gridsManager = new TestGridsManager({
-        modules: [TreeDataModule],
+        modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
     beforeEach(() => {

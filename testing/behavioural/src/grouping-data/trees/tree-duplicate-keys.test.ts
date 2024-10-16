@@ -1,5 +1,6 @@
 import type { MockInstance } from 'vitest';
 
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager } from '../../test-utils';
@@ -8,7 +9,7 @@ const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree duplicate keys', () => {
     const gridsManager = new TestGridsManager({
-        modules: [TreeDataModule],
+        modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
     const gridRowsOptions = {
