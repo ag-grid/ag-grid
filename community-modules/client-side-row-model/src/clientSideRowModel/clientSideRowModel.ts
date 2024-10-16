@@ -666,15 +666,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private buildRefreshModelParams(step: ClientSideRowModelStep | undefined): RefreshModelParams | undefined {
-        let paramsStep = ClientSideRowModelSteps.EVERYTHING;
-        const stepsMapped: any = {
+        let paramsStep: ClientSideRowModelSteps | undefined = ClientSideRowModelSteps.EVERYTHING;
+        const stepsMapped: Record<ClientSideRowModelStep, ClientSideRowModelSteps> = {
             everything: ClientSideRowModelSteps.EVERYTHING,
             group: ClientSideRowModelSteps.EVERYTHING,
             filter: ClientSideRowModelSteps.FILTER,
             map: ClientSideRowModelSteps.MAP,
             aggregate: ClientSideRowModelSteps.AGGREGATE,
+            filter_aggregates: ClientSideRowModelSteps.FILTER_AGGREGATES,
             sort: ClientSideRowModelSteps.SORT,
             pivot: ClientSideRowModelSteps.PIVOT,
+            nothing: ClientSideRowModelSteps.NOTHING,
         };
         if (_exists(step)) {
             paramsStep = stepsMapped[step];

@@ -5,7 +5,19 @@ import type { IRowModel } from './iRowModel';
 import type { RowDataTransaction } from './rowDataTransaction';
 import type { RowNodeTransaction } from './rowNodeTransaction';
 
-export type ClientSideRowModelStep = `${ClientSideRowModelSteps}`;
+// this is exposed via the api
+export type ClientSideRowModelStep =
+    | 'everything'
+    | 'group'
+    | 'filter'
+    | 'sort'
+    | 'map'
+    | 'aggregate'
+    | 'filter_aggregates'
+    | 'pivot'
+    | 'nothing';
+
+// this is used internally
 export enum ClientSideRowModelSteps {
     EVERYTHING = 'group',
     FILTER = 'filter',
