@@ -24,6 +24,6 @@ export const TreeDataCoreModule: _ModuleWithoutApi = {
 
 export const TreeDataModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('TreeDataModule'),
-    rowModels: ['clientSide'],
+    rowModels: ['clientSide', 'serverSide'],
     dependsOn: [TreeDataCoreModule],
 };

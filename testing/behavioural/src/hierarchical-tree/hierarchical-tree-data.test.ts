@@ -2,14 +2,14 @@ import type { MockInstance } from 'vitest';
 
 import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
+import { TreeDataModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
 import { GridRows, TestGridsManager } from '../test-utils';
 
 describe('ag-grid hierarchical tree data', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
+        modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
     let consoleWarnSpy: MockInstance;

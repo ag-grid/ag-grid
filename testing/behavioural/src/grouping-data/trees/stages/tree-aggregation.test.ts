@@ -1,3 +1,4 @@
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../../test-utils';
@@ -5,7 +6,7 @@ import { GridRows, TestGridsManager, cachedJSONObjects, executeTransactionsAsync
 
 describe('ag-grid tree aggregation', () => {
     const gridsManager = new TestGridsManager({
-        modules: [TreeDataModule],
+        modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
     beforeEach(() => {

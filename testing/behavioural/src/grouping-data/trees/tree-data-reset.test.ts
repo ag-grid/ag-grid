@@ -1,6 +1,7 @@
 import { setTimeout as asyncSetTimeout } from 'timers/promises';
 import type { MockInstance } from 'vitest';
 
+import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager, cachedJSONObjects } from '../../test-utils';
@@ -14,7 +15,7 @@ const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree data', () => {
     const gridsManager = new TestGridsManager({
-        modules: [TreeDataModule],
+        modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
     let consoleWarnSpy: MockInstance;
