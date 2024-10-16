@@ -4,8 +4,6 @@ import { createRoot } from 'react-dom/client';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { CsvExportModule } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { ExcelExportModule, exportMultipleSheetsAsExcel } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -199,13 +197,7 @@ const GridExample = () => {
     return (
         <div className="top-container">
             {getTopToolBar()}
-            <div
-                className={
-                    'grid-wrapper ' +
-                    /** DARK MODE START **/ (document.documentElement.dataset.defaultTheme ||
-                        'ag-theme-quartz') /** DARK MODE END **/
-                }
-            >
+            <div className="grid-wrapper">
                 {getGridWrapper(0)}
                 {getGridWrapper(1)}
             </div>

@@ -540,19 +540,13 @@ function internalParser(
     );
 
     const gridElement = domTree('#myGrid').replaceWith(templatePlaceholder);
-    const inlineClass = gridElement.attr('class');
     const inlineHeight = gridElement.css('height');
     const inlineWidth = gridElement.css('width');
 
     const inlineGridStyles: InlineGridStyles = {
-        theme: 'ag-theme-quartz',
         width: '100%',
         height: '100%',
     };
-    if (inlineClass) {
-        const theme = inlineClass.split(' ').filter((className) => className.indexOf('ag-theme') >= 0);
-        inlineGridStyles.theme = theme && theme.length > 0 ? theme[0] : 'ag-theme-quartz';
-    }
     inlineGridStyles.height = parseInt(inlineHeight) ? inlineHeight : '100%';
     inlineGridStyles.width = parseInt(inlineWidth) ? inlineWidth : '100%';
 

@@ -6,7 +6,7 @@ import styles from '@pages-styles/pipelineChangelog.module.scss';
 import { IssueColDef, IssueTypeColDef } from '@utils/grid/issueColDefs';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import classnames from 'classnames';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 const COLUMN_DEFS = [
     IssueColDef,
@@ -180,8 +180,6 @@ export const Pipeline = ({ location }) => {
                 masterDetail={true}
                 rowData={rowData}
                 onGridReady={gridReady}
-                theme="ag-theme-quartz"
-                darkModeTheme="ag-theme-quartz-dark"
             ></Grid>
         </div>
     );

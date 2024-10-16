@@ -27,7 +27,7 @@ const GetThemeDialog = () => {
         <DownloadThemeWrapper>
             <Paragraph>
                 Copy the code below into your application to use this theme. See the{' '}
-                <a href="/react-data-grid/theming-api/" target="_blank">
+                <a href="/react-data-grid/theming/" target="_blank">
                     Theming API documentation
                 </a>{' '}
                 for more information.

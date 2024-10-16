@@ -26,7 +26,6 @@ export interface BindingImport {
 }
 
 export interface InlineGridStyles {
-    theme: string;
     width: string;
     height: string;
 }

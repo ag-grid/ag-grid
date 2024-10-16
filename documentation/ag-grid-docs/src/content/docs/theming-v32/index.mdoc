@@ -1,0 +1,172 @@
+---
+title: "v32 Themes"
+description: "Information on the deprecated theming technique used in v32"
+---
+
+Transitional support for applications created before v33
+
+{% note %}
+In v33 the [Theming API](./theming) was introduced and is recommend for all new applications. The old method of theming the grid is deprecated and will be removed in a future major version. This page describes the v32 themes for applications that have not yet migrated.
+{% /note %}
+
+## v32 Theming Overview
+
+The grid is styled with CSS, and a theme is simply a CSS class that applies styles to the grid. Most users choose a provided theme and then [customise](./global-style-customisation/) it to meet their needs. It is also possible to [create your own themes](#creating-your-own-theme).
+
+## v32 Provided Themes
+
+The grid comes with several provided themes which act as a great starting point for any application-specific customisations. Click the theme name to see a demo.
+
+| Theme Name | Description |
+|------------|-------------|
+|[**ag-theme-quartz**](./../example?theme=ag-theme-quartz){% br /%}[**ag-theme-quartz-dark**](./../example?theme=ag-theme-quartz-dark){% br /%}[**ag-theme-quartz-auto-dark**](./../example?theme=ag-theme-quartz-auto-dark) \*{% br /%}{% br /%}File name `ag-theme-quartz[.min].css` | Modern looking themes with high contrast and generous padding.{% br /%}{% br /%}This is the recommended grid theme and an excellent choice for most applications. |
+|[**ag-theme-balham**](./../example?theme=ag-theme-balham){% br /%}[**ag-theme-balham-dark**](./../example?theme=ag-theme-balham-dark){% br /%}[**ag-theme-balham-auto-dark**](./../example?theme=ag-theme-balham-auto-dark) \*{% br /%}{% br /%}File name `ag-theme-balham[.min].css` | Balham has a more traditional look modelled after a spreadsheet application. It is appropriate for applications that need to fit more data onto each page. |
+|[**ag-theme-material**](./../example?theme=ag-theme-material){% br /%}[**ag-theme-material-dark**](./../example?theme=ag-theme-material-dark){% br /%}[**ag-theme-material-auto-dark**](./../example?theme=ag-theme-material-auto-dark) \*{% br /%}{% br /%}File name `ag-theme-material[.min].css` | A theme designed according to the Google Material Language Specs.{% br /%}{% br /%}This theme looks great for simple applications with lots of white space, and is the obvious choice if the rest of your application follows the Google Material Design spec. However, the Material spec doesn't cater for advanced grid features such as grouped columns and tool panels. If your application uses these features, consider using `ag-theme-quartz` instead. |
+|[**ag-theme-alpine**](./../example?theme=ag-theme-alpine){% br /%}[**ag-theme-alpine-dark**](./../example?theme=ag-theme-alpine-dark){% br /%}[**ag-theme-alpine-auto-dark**](./../example?theme=ag-theme-alpine-auto-dark) \*{% br /%}{% br /%}File name `ag-theme-alpine[.min].css` | Alpine was the default theme before Quartz was released. It is still supported, but we recommend Quartz for new applications. |
+
+\* The 'auto' versions of each theme use the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature to switch between dark and light variants depending on whether the user has enabled dark mode on their operating system.
+
+## Applying a v32 Theme to an App
+
+To use a theme, add the theme class name to the `div` element that contains your grid. The following is an example of using the Quartz theme:
+
+```html
+<div id="myGrid" class="ag-theme-quartz"></div>
+```
+
+{% warning %}
+The grid must always have a theme class set on its container, whether this is a provided theme or your own.
+{% /warning %}
+
+## Loading CSS files and fonts
+
+In order for the above code to work, the correct stylesheets must be loaded in the correct order. There are two kinds of stylesheet that need to be loaded when using provided themes:
+
+* **`ag-grid.css`** - structural styles containing CSS rules that are essential to the functioning of the grid and must be loaded first.
+* **`ag-theme-{theme-name}.css`** - theme styles that add design look and feel on top of the structural styles.
+
+{% note %}
+The correct files to load are located in `ag-grid-community/styles` or `@ag-grid-community/styles` if you're using [modules](./modules/).
+
+This path has changed in v28, and the old files are still there as part of the [Legacy Styles](./global-style-upgrading-to-v28/) but will be removed in v29.
+
+Double-check that you are importing files from the new paths. If you have `/src/` or `/dist/` in your path then you're using the old paths.
+{% /note %}
+
+There are various ways to load these stylesheets, as described in the sections below:
+
+{% if isFramework("javascript") %}
+### Pre-built Bundles
+Some pre-built bundles, whether downloaded from our website or included in the `ag-grid-community` [NPM package](./installation/#install-ag-grid-with-npm), already embed the structural styles and all provided themes. If you are using one of these files, you do not need to load separately CSS.
+{% /if %}
+
+### Loading 3rd party fonts
+
+Some themes have a recommended 3rd party font, which is not bundled with the theme CSS. If the font is not available at runtime, the OS default UI font will be used instead - Segoe UI on Windows and SF Pro on Mac.
+
+#### Loading IBM Plex Sans for the Quartz theme
+
+Plex Sans is a font that gives excellent readability on both regular and high DPI screens. It features a tall x-height to aid in readability of mixed-case and lower-case text.
+
+You can [download Plex Sans from Google Fonts](https://fonts.google.com/specimen/IBM+Plex+Sans) (you need weights 400/Regular and 500/Medium)and use it in your application, or load it from the Google Fonts API:
+
+```html
+<!-- in HTML -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+```
+
+```css
+/* in css */
+@import "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap";
+```
+
+#### Loading Roboto for the Material theme
+
+Roboto is the font recommended by the Material Design specification.
+
+You can [download Roboto from Google Fonts](https://fonts.google.com/specimen/Roboto) and use it in your application, or load it from the Google Fonts API:
+
+```html
+<!-- in HTML -->
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
+```
+
+```css
+/* is css */
+@import "https://fonts.googleapis.com/css?family=Roboto";
+```
+
+### JavaScript Bundlers
+
+If you are using a JavaScript bundler like webpack or Rollup and it is configured to load styles, you can `require()` the correct CSS file from `node_modules`. This is the recommended approach as webpack will take care of minifying your CSS in production:
+
+```js
+// CommonJS:
+require("ag-grid-community/styles/ag-grid.css");
+
+// ECMAScript Modules:
+import "ag-grid-community/styles/ag-grid.css";
+```
+
+### App Hosted
+
+You can copy, either manually or as part of your app's build, the required CSS files (`ag-grid.css` and `ag-theme-{theme-name}.css`) from node\_modules and serve it with your app.
+
+### Sass Styling API
+
+If you're using the [Sass Styling API](./global-style-customisation-sass) then the right CSS files will be automatically included for your chosen theme. For projects that are already using Sass this is the recommended approach.
+
+### CDN
+
+You can load the structural styles and theme from a free CDN by adding this code to your page.
+
+```html
+<link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/ag-grid-community@{% $agGridVersion %}/styles/ag-grid.css" />
+
+<link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/ag-grid-community@{% $agGridVersion %}/styles/ag-theme-quartz.css" />
+```
+
+{% note %}
+Change the theme name in the URL to the one that you're using, and ensure that the version number in the URL matches the JS version you're using. This is useful for testing and prototyping but not recommended for production as your app will be unavailable if the jsdelivr servers are down.
+{% /note %}
+
+## Creating your own theme
+
+The majority of users select a provided theme and [make customisations using CSS](./global-style-customisation/). If your chosen provided theme has elements that you don't want, you will need to add CSS rules to remove them. If your desired look and feel is very different from the provided theme, at some point it becomes easier to start from scratch. To do this, you can define your own theme.
+
+A theme is simply a CSS class name matching the pattern `ag-theme-*`, along with CSS rules that target this class name.
+
+{% warning %}
+If you create your own theme, its name must start with `ag-theme-`.
+{% /warning %}
+
+Ensure that `ag-grid.css` is loaded, choose a theme name and apply it to the grid:
+
+```html
+<div id="myGrid" class="ag-theme-mycustomtheme"></div>
+```
+
+That's it! You've created a theme. You haven't added any styles to it so what you will see is a nearly blank slate - basic customisable borders and padding but no opinionated design elements. You can then [add customisations using CSS](./global-style-customisation/):
+
+```css
+.ag-theme-mycustomtheme {
+    /* customise with CSS variables */
+    --ag-grid-size: 8px;
+    --ag-border-color: red;
+}
+.ag-theme-mycustomtheme .ag-header {
+    /* or with CSS selectors targeting grid DOM elements */
+    font-style: italic;
+}
+```
+
+## Creating themes with the Theme Builder
+As an alternative to creating themes with CSS you can use our [Theme Builder](/theme-builder) to create themes with no code. Visit the [Theme Builder page](/theme-builder) to get started. Then try some of our preset themes, configure your theme options, and download your AG Grid Theme CSS file. 
+
+## Creating Themes with the AG Grid Design System
+
+Figma users can now download the AG Grid design system and extend the [Quartz](/example?theme=quartz), [Alpine](/example?theme=alpine), and [Material](/example?theme=material) themes to create custom CSS themes. For more information on how to create themes with the AG Grid design system please see our [AG Grid Design System](./ag-grid-design-system/) page.

@@ -11,8 +11,6 @@ import type {
     RowDropZoneParams,
 } from 'ag-grid-community';
 import { ModuleRegistry, RowNodeTransaction } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
@@ -205,13 +203,7 @@ const GridExample = () => {
     );
 
     return (
-        <div
-            className={
-                'example-wrapper ' +
-                /** DARK MODE START **/ (document.documentElement?.dataset.defaultTheme ||
-                    'ag-theme-quartz') /** DARK MODE END **/
-            }
-        >
+        <div className="example-wrapper">
             {getInnerGridCol('Left')}
             <div className="inner-col vertical-toolbar">
                 <span className="bin" ref={eBin}>

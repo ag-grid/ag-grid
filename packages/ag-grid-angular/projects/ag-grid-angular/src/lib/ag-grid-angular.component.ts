@@ -270,6 +270,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
                     frameworkComponentWrapper: this._frameworkComponentWrapper,
                 },
                 modules: (this.modules || []) as any,
+                setThemeOnGridDiv: true,
             };
 
             const api = createGrid(this._nativeElement, mergedGridOps, gridParams);
@@ -1467,9 +1468,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public initialState: GridState | undefined = undefined;
-    /** Theme to apply to the grid.
+    /** Theme to apply to the grid. In no value is provided, the default theme
+     * will be applied.
+     *
+     * In AG Grid v23 and earlier, themes were applied by setting a class name
+     * on the parent element of the grid. To opt back in to this behaviour, pass
+     * the string "legacy"
      */
-    @Input() public theme: GridTheme | undefined = undefined;
+    @Input() public theme: GridTheme | 'legacy' | undefined = undefined;
     /** Whether to load supported theme fonts from the Google Fonts server.
      *
      * - `true` -> load fonts automatically if your theme uses them

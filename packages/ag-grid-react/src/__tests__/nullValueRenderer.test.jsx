@@ -68,7 +68,7 @@ class GridComponent extends Component {
 
     render() {
         return (
-            <div className="ag-theme-balham" style={{ height: 100 }}>
+            <div style={{ height: 100 }}>
                 <AgGridReact
                     suppressReactUi={true}
                     columnDefs={this.state.columnDefs}
