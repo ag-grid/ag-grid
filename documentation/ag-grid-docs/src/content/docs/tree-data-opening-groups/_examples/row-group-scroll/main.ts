@@ -2,11 +2,11 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridApi, GridOptions, RowGroupOpenedEvent } from 'ag-grid-community';
 import { ColDef, createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { getData } from './data';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, TreeDataModule]);
 
 let gridApi: GridApi;
 
