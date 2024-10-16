@@ -1,15 +1,17 @@
+<div class="toolbar">
+    <span>
+        <button onclick="onStopMessages()">&#9632; Stop</button>
+        <button onclick="onStartLoad()">&#9658; Start</button>
+    </span>
+    <span style="margin-left: 30px">
+        <button onclick="updateChart('stackedColumn')">Stacked Column Chart</button>
+        <button onclick="updateChart('groupedColumn')">Grouped Column Chart</button>
+        <button onclick="updateChart('line')">Line Chart</button>
+    </span>
+</div>
+
 <div id="myApp" class="wrapper">
-    <div style="padding-bottom: 4px">
-        <span>
-            <button onclick="onStopMessages()">&#9632; Stop</button>
-            <button onclick="onStartLoad()">&#9658; Start</button>
-        </span>
-        <span style="margin-left: 30px">
-            <button onclick="updateChart('stackedColumn')">Stacked Column Chart</button>
-            <button onclick="updateChart('groupedColumn')">Grouped Column Chart</button>
-            <button onclick="updateChart('line')">Line Chart</button>
-        </span>
-    </div>
     <div id="myGrid" class="ag-theme-quartz my-grid"></div>
+
     <div id="myChart" class="ag-theme-quartz my-chart"></div>
 </div>

@@ -1,20 +1,18 @@
-<div class="example-wrapper">
-    <div>
-        <div style="margin-bottom: 5px; display: flex">
-            <button onclick="onBtStartEditing(undefined)">edit (0)</button>
-            <button onclick="onBtStartEditing('Backspace')">edit (0, Backspace)</button>
-            <button onclick="onBtStartEditing('T')">edit (0, 'T')</button>
-            <button onclick="onBtStartEditing(undefined, 'top')">edit (0, Top)</button>
-            <button onclick="onBtStartEditing(undefined, 'bottom')">edit (0, Bottom)</button>
-        </div>
-        <div style="margin-bottom: 5px; display: flex">
-            <button onclick="onBtStopEditing()">stop ()</button>
-            <button onclick="onBtNextCell()">next ()</button>
-            <button onclick="onBtPreviousCell()">previous ()</button>
-            <button onclick="onBtWhich()">which ()</button>
-        </div>
+<div class="toolbar">
+    <div style="margin-bottom: 5px; display: flex">
+        <button onclick="onBtStartEditing(undefined)">edit (0)</button>
+        <button onclick="onBtStartEditing('Backspace')">edit (0, Backspace)</button>
+        <button onclick="onBtStartEditing('T')">edit (0, 'T')</button>
+        <button onclick="onBtStartEditing(undefined, 'top')">edit (0, Top)</button>
+        <button onclick="onBtStartEditing(undefined, 'bottom')">edit (0, Bottom)</button>
     </div>
-    <div class="grid-wrapper">
-        <div id="myGrid" class="ag-theme-quartz"></div>
+    <div style="margin-bottom: 5px; display: flex">
+        <button onclick="onBtStopEditing()">stop ()</button>
+        <button onclick="onBtNextCell()">next ()</button>
+        <button onclick="onBtPreviousCell()">previous ()</button>
+        <button onclick="onBtWhich()">which ()</button>
     </div>
 </div>
+
+<div class="grid-wrapper">
+    <div id="myGrid" class="ag-theme-quartz"></div>

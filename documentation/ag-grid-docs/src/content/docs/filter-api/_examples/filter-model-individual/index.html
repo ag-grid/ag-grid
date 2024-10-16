@@ -1,20 +1,16 @@
-<div class="example-wrapper">
-    <div>
-        <div class="button-group">
-            <button onclick="saveFilterModel()">Save Filter Model</button>
-            <button onclick="restoreFilterModel()">Restore Saved Filter Model</button>
-            <button
-                onclick="restoreFromHardCoded()"
-                title="Name = 'Mich%', Country = ['Ireland', 'United States'], Age &lt; 30, Date &lt; 01/01/2010"
-            >
-                Set Custom Filter Model
-            </button>
-            <button onclick="clearFilter()">Reset Filter</button>
-        </div>
+<div>
+    <div class="button-group">
+        <button onclick="saveFilterModel()">Save Filter Model</button>
+        <button onclick="restoreFilterModel()">Restore Saved Filter Model</button>
+        <button onclick="restoreFromHardCoded()"
+            title="Name = 'Mich%', Country = ['Ireland', 'United States'], Age &lt; 30, Date &lt; 01/01/2010">
+            Set Custom Filter Model
+        </button>
+        <button onclick="clearFilter()">Reset Filter</button>
     </div>
-    <div>
-        <div class="button-group">Saved Filters: <span id="savedFilters">(none)</span></div>
-    </div>
-
-    <div id="myGrid" class="ag-theme-quartz"></div>
 </div>
+<div>
+    <div class="button-group">Saved Filters: <span id="savedFilters">(none)</span></div>
+</div>
+
+<div id="myGrid" class="ag-theme-quartz"></div>

@@ -1,16 +1,14 @@
-<div class="example-wrapper">
-    <div class="example-header">
-        <div>
-            Athlete:
-            <button onClick="selectNothing()">API: Filter empty set</button>
-            <button onClick="selectJohnAndKenny()">API: Filter only John Joe Nevin and Kenny Egan</button>
-            <button onClick="selectEverything()">API: Remove filter</button>
-        </div>
-        <div style="padding-top: 10px">
-            Country - available filter values
-            <button onClick="setCountriesToFranceAustralia()">Filter values restricted to France and Australia</button>
-            <button onClick="setCountriesToAll()">Make all countries available</button>
-        </div>
+<div class="toolbar">
+    <div>
+        Athlete:
+        <button onClick="selectNothing()">API: Filter empty set</button>
+        <button onClick="selectJohnAndKenny()">API: Filter only John Joe Nevin and Kenny Egan</button>
+        <button onClick="selectEverything()">API: Remove filter</button>
     </div>
-    <div id="myGrid" class="ag-theme-quartz"></div>
+    <div style="padding-top: 10px">
+        Country - available filter values
+        <button onClick="setCountriesToFranceAustralia()">Filter values restricted to France and Australia</button>
+        <button onClick="setCountriesToAll()">Make all countries available</button>
+    </div>
 </div>
+<div id="myGrid" class="ag-theme-quartz"></div>

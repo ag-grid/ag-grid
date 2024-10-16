@@ -3,10 +3,12 @@
         font-weight: bold;
         color: burlywood;
     }
+
     .total-col {
         font-weight: bold;
         color: burlywood;
     }
+
     .number-cell {
         text-align: right;
     }
@@ -14,9 +16,8 @@
 
 <div style="height: 100%; box-sizing: border-box; padding-top: 45px">
     <div id="myGrid" style="height: 100%" class="ag-theme-quartz"></div>
-</div>
-<div style="position: absolute; top: 0; left: 15px">
-    <button onclick="onUpdateOneValue()">Update One Value</button>
-    <button onclick="onExpireValueCache()">Expire Value Cache</button>
-    <button onclick="onRefreshCells()">Aggregate Data & Refresh Cells</button>
-</div>
+    <div style="position: absolute; top: 0; left: 15px">
+        <button onclick="onUpdateOneValue()">Update One Value</button>
+        <button onclick="onExpireValueCache()">Expire Value Cache</button>
+        <button onclick="onRefreshCells()">Aggregate Data & Refresh Cells</button>
+    </div>

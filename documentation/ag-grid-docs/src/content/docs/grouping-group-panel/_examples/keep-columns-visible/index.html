@@ -1,15 +1,13 @@
-<div class="example-wrapper">
-    <div class="example-header">
-        <label>
-            <span>suppressGroupChangesColumnVisibility:</span>
-            <select id="visibility-behaviour" onchange="onPropertyChange()">
-                <option value="false">false</option>
-                <option value="true">true</option>
-                <option value="suppressHideOnGroup">"suppressHideOnGroup"</option>
-                <option value="suppressShowOnUngroup">"suppressShowOnUngroup"</option>
-            </select>
-        </label>
-        <button onclick="resetCols()">Reset Column Visibility</button>
-    </div>
-    <div id="myGrid" class="ag-theme-quartz" style="height: 100%"></div>
+<div class="toolbar">
+    <label>
+        <span>suppressGroupChangesColumnVisibility:</span>
+        <select id="visibility-behaviour" onchange="onPropertyChange()">
+            <option value="false">false</option>
+            <option value="true">true</option>
+            <option value="suppressHideOnGroup">"suppressHideOnGroup"</option>
+            <option value="suppressShowOnUngroup">"suppressShowOnUngroup"</option>
+        </select>
+    </label>
+    <button onclick="resetCols()">Reset Column Visibility</button>
 </div>
+<div id="myGrid" class="ag-theme-quartz"></div>

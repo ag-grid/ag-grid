@@ -1,10 +1,8 @@
-<div class="example-wrapper">
-    <div class="example-header">
-        <input type="text" id="filter-text-box" placeholder="Filter..." oninput="onFilterTextBoxChanged()" />
-        <button style="margin-left: 20px" onclick="onPrintQuickFilterTexts()">Print Quick Filter Cache Texts</button>
-        <button id="includeHiddenColumns" style="margin-left: 20px" onclick="onIncludeHiddenColumnsToggled()">
-            Include Hidden Columns
-        </button>
-    </div>
-    <div id="myGrid" class="ag-theme-quartz"></div>
+<div class="toolbar">
+    <input type="text" id="filter-text-box" placeholder="Filter..." oninput="onFilterTextBoxChanged()" />
+    <button style="margin-left: 20px" onclick="onPrintQuickFilterTexts()">Print Quick Filter Cache Texts</button>
+    <button id="includeHiddenColumns" style="margin-left: 20px" onclick="onIncludeHiddenColumnsToggled()">
+        Include Hidden Columns
+    </button>
 </div>
+<div id="myGrid" class="ag-theme-quartz"></div>

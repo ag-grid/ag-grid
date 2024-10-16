@@ -1,16 +1,12 @@
-<div class="example-wrapper">
-    <div class="example-header">
-        <div style="padding: 4px">
-            <button onclick="clearPinned()">Clear Pinned</button>
-            <button onclick="resetPinned()">Left = #, Athlete, Age; Right = Total</button>
-            <button onclick="pinCountry()">Left = Country</button>
-        </div>
+<div class="toolbar">
+    <button onclick="clearPinned()">Clear Pinned</button>
+    <button onclick="resetPinned()">Left = #, Athlete, Age; Right = Total</button>
+    <button onclick="pinCountry()">Left = Country</button>
 
-        <div style="padding: 4px">
-            Jump to:
-            <input placeholder="row" type="text" style="width: 40px" id="row" oninput="jumpToRow()" />
-            <input placeholder="col" type="text" style="width: 40px" id="col" oninput="jumpToCol()" />
-        </div>
-    </div>
-    <div id="myGrid" class="ag-theme-quartz"></div>
+    <hr />
+
+    Jump to:
+    <input placeholder="row" type="text" style="width: 6em" id="row" oninput="jumpToRow()" />
+    <input placeholder="col" type="text" style="width: 6em" id="col" oninput="jumpToCol()" />
 </div>
+<div id="myGrid" class="ag-theme-quartz"></div>

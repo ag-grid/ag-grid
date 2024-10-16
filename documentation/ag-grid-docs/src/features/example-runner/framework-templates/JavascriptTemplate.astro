@@ -45,6 +45,9 @@ import {
     getGridLocaleScriptPath,
 } from '@utils/gridLibraryPaths';
 
+import examplebaseStyle from '@ag-website-shared/components/example-runner/example-base.css?raw';
+import exampleControlsStyle from '@ag-website-shared/components/example-runner/example-controls.css?raw';
+
 const siteUrl = Astro.site ? pathJoin(Astro.site, SITE_BASE_URL) : '/';
 
 const gridScriptPath = getCacheBustingUrl(getGridScriptPath(siteUrl), modifiedTimeMs);
@@ -55,7 +58,7 @@ const gridScriptLocalePath = getCacheBustingUrl(getGridLocaleScriptPath(siteUrl)
 <html lang="en">
     <head>
         <MetaData isDev={isDev} title={`JavaScript Example - ${title}`} modifiedTimeMs={modifiedTimeMs} />
-        <ExampleStyle extraStyles={extraStyles} />
+        <!-- <ExampleStyle extraStyles={extraStyles} /> -->
         <Styles
             baseUrl={appLocation}
             files={isDev && styleFiles
@@ -64,6 +67,10 @@ const gridScriptLocalePath = getCacheBustingUrl(getGridLocaleScriptPath(siteUrl)
                       .map((file: string) => getCacheBustingUrl(file, modifiedTimeMs))
                 : []}
         />
+
+        <style set:html={examplebaseStyle}></style>
+        <style set:html={exampleControlsStyle}></style>
+
         <Extras extras={extras ?? []} />
     </head>
     <body>

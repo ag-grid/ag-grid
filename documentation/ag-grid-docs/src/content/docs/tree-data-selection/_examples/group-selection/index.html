@@ -1,18 +1,17 @@
-<div class="example-wrapper">
-    <div class="example-header">
-        <label>
-            <span>Group selects:</span>
-            <select id="input-group-selection-mode" onchange="onSelectionModeChange()">
-                <option value="self">self</option>
-                <option value="descendants">descendants</option>
-                <option value="filteredDescendants">filteredDescendants</option>
-            </select>
-        </label>
+<div class="toolbar">
+    <label>
+        <span>Group selects:</span>
+        <select id="input-group-selection-mode" onchange="onSelectionModeChange()">
+            <option value="self">self</option>
+            <option value="descendants">descendants</option>
+            <option value="filteredDescendants">filteredDescendants</option>
+        </select>
+    </label>
 
-        <label>
-            <span>Quick Filter:</span>
-            <input type="text" id="input-quick-filter" oninput="onQuickFilterChanged()" />
-        </label>
-    </div>
-    <div id="myGrid" class="ag-theme-quartz" style="height: 100%"></div>
+    <label>
+        <span>Quick Filter:</span>
+        <input type="text" id="input-quick-filter" oninput="onQuickFilterChanged()" />
+    </label>
+</div>
+<div id="myGrid" class="ag-theme-quartz"></div>
 </div>

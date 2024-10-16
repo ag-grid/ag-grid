@@ -1,20 +1,18 @@
-<div class="example-wrapper">
-    <div class="example-header">
-        <div>
-            <label>
-                <input type="checkbox" id="pivot-mode" onclick="pivotMode()" />
-                Group &amp; Pivot
-            </label>
-        </div>
-
-        <div style="margin-top: 6px">
-            <button onclick="updateOneRecord()">Set One Value</button>
-            <button onclick="updateUsingTransaction()">Update Points</button>
-            <button onclick="addNewGroupUsingTransaction()">Add Year 5</button>
-            <button onclick="addNewCourse()">Add Physics Row</button>
-            <button onclick="removePhysics()">Remove All Physics</button>
-            <button onclick="moveCourse()">Move Course</button>
-        </div>
+<div class="toolbar">
+    <div>
+        <label>
+            <input type="checkbox" id="pivot-mode" onclick="pivotMode()" />
+            Group &amp; Pivot
+        </label>
     </div>
-    <div id="myGrid" class="ag-theme-quartz"></div>
+
+    <div style="margin-top: 6px">
+        <button onclick="updateOneRecord()">Set One Value</button>
+        <button onclick="updateUsingTransaction()">Update Points</button>
+        <button onclick="addNewGroupUsingTransaction()">Add Year 5</button>
+        <button onclick="addNewCourse()">Add Physics Row</button>
+        <button onclick="removePhysics()">Remove All Physics</button>
+        <button onclick="moveCourse()">Move Course</button>
+    </div>
 </div>
+<div id="myGrid" class="ag-theme-quartz"></div>

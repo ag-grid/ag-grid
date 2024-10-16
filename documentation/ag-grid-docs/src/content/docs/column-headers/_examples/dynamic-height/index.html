@@ -1,50 +1,48 @@
-<div class="example-wrapper">
-    <div class="button-bar example-header">
-        <table>
-            <tr>
-                <td class="labels">pivot<br />(<span id="pivot">off</span>)</td>
-                <td class="buttons-container">
-                    <button onclick="setPivotOn()">on</button>
-                    <button onclick="setPivotOff()">off</button>
-                </td>
-            </tr>
-            <tr>
-                <td class="labels">groupHeaderHeight<br />(<span id="groupHeaderHeight">undefined</span>)</td>
-                <td class="buttons-container">
-                    <button onclick="setGroupHeaderHeight(40)">40px</button>
-                    <button onclick="setGroupHeaderHeight(60)">60px</button>
-                    <button onclick="setGroupHeaderHeight(undefined)">undefined</button>
-                </td>
-                <td class="labels">headerHeight<br />(<span id="headerHeight">undefined</span>)</td>
-                <td class="buttons-container">
-                    <button onclick="setHeaderHeight(70)">70px</button>
-                    <button onclick="setHeaderHeight(80)">80px</button>
-                    <button onclick="setHeaderHeight(undefined)">undefined</button>
-                </td>
-            </tr>
-            <tr id="requiresPivot" class="hidden">
-                <td class="labels">pivotGroupHeaderHeight<br />(<span id="pivotGroupHeaderHeight">undefined</span>)</td>
-                <td class="buttons-container">
-                    <button onclick="setPivotGroupHeaderHeight(50)">50px</button>
-                    <button onclick="setPivotGroupHeaderHeight(70)">70px</button>
-                    <button onclick="setPivotGroupHeaderHeight(undefined)">undefined</button>
-                </td>
-                <td class="labels">pivotHeaderHeight<br />(<span id="pivotHeaderHeight">undefined</span>)</td>
-                <td class="buttons-container">
-                    <button onclick="setPivotHeaderHeight(60)">60px</button>
-                    <button onclick="setPivotHeaderHeight(80)">80px</button>
-                    <button onclick="setPivotHeaderHeight(undefined)">undefined</button>
-                </td>
-            </tr>
-            <tr id="requiresNotPivot">
-                <td class="labels">floatingFiltersHeight<br />(<span id="floatingFiltersHeight">undefined</span>)</td>
-                <td class="buttons-container">
-                    <button onclick="setFloatingFiltersHeight(35)">35px</button>
-                    <button onclick="setFloatingFiltersHeight(55)">55px</button>
-                    <button onclick="setFloatingFiltersHeight(undefined)">undefined</button>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div id="myGrid" class="ag-theme-quartz"></div>
+<div class="button-bar example-header">
+    <table>
+        <tr>
+            <td class="labels">pivot<br />(<span id="pivot">off</span>)</td>
+            <td class="buttons-container">
+                <button onclick="setPivotOn()">on</button>
+                <button onclick="setPivotOff()">off</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="labels">groupHeaderHeight<br />(<span id="groupHeaderHeight">undefined</span>)</td>
+            <td class="buttons-container">
+                <button onclick="setGroupHeaderHeight(40)">40px</button>
+                <button onclick="setGroupHeaderHeight(60)">60px</button>
+                <button onclick="setGroupHeaderHeight(undefined)">undefined</button>
+            </td>
+            <td class="labels">headerHeight<br />(<span id="headerHeight">undefined</span>)</td>
+            <td class="buttons-container">
+                <button onclick="setHeaderHeight(70)">70px</button>
+                <button onclick="setHeaderHeight(80)">80px</button>
+                <button onclick="setHeaderHeight(undefined)">undefined</button>
+            </td>
+        </tr>
+        <tr id="requiresPivot" class="hidden">
+            <td class="labels">pivotGroupHeaderHeight<br />(<span id="pivotGroupHeaderHeight">undefined</span>)</td>
+            <td class="buttons-container">
+                <button onclick="setPivotGroupHeaderHeight(50)">50px</button>
+                <button onclick="setPivotGroupHeaderHeight(70)">70px</button>
+                <button onclick="setPivotGroupHeaderHeight(undefined)">undefined</button>
+            </td>
+            <td class="labels">pivotHeaderHeight<br />(<span id="pivotHeaderHeight">undefined</span>)</td>
+            <td class="buttons-container">
+                <button onclick="setPivotHeaderHeight(60)">60px</button>
+                <button onclick="setPivotHeaderHeight(80)">80px</button>
+                <button onclick="setPivotHeaderHeight(undefined)">undefined</button>
+            </td>
+        </tr>
+        <tr id="requiresNotPivot">
+            <td class="labels">floatingFiltersHeight<br />(<span id="floatingFiltersHeight">undefined</span>)</td>
+            <td class="buttons-container">
+                <button onclick="setFloatingFiltersHeight(35)">35px</button>
+                <button onclick="setFloatingFiltersHeight(55)">55px</button>
+                <button onclick="setFloatingFiltersHeight(undefined)">undefined</button>
+            </td>
+        </tr>
+    </table>
 </div>
+<div id="myGrid" class="ag-theme-quartz"></div>

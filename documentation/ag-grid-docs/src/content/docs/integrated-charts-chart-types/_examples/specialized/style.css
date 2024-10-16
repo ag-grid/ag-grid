@@ -1,13 +1,3 @@
-.wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.button-container {
-    flex-wrap: wrap;
-}
-
 #myGrid {
     flex: 1;
 }

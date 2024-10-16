@@ -1,17 +1,16 @@
-<div class="example-wrapper">
-    <div style="margin-bottom: 10px">
-        <label style="margin-right: 10px">
-            <span>Select All Mode: </span>
-            <select id="select-all-mode" onchange="updateSelectAllMode()">
-                <option value="all">all</option>
-                <option value="filtered">filtered</option>
-                <option value="currentPage">currentPage</option>
-            </select>
-        </label>
-        <label>
-            <span>Filter: </span>
-            <input type="text" oninput="onQuickFilterChanged()" id="quickFilter" placeholder="quick filter..." />
-        </label>
-    </div>
-    <div id="myGrid" class="ag-theme-quartz" style="height: 100%"></div>
+<div style="margin-bottom: 10px">
+    <label style="margin-right: 10px">
+        <span>Select All Mode: </span>
+        <select id="select-all-mode" onchange="updateSelectAllMode()">
+            <option value="all">all</option>
+            <option value="filtered">filtered</option>
+            <option value="currentPage">currentPage</option>
+        </select>
+    </label>
+    <label>
+        <span>Filter: </span>
+        <input type="text" oninput="onQuickFilterChanged()" id="quickFilter" placeholder="quick filter..." />
+    </label>
+</div>
+<div id="myGrid" class="ag-theme-quartz"></div>
 </div>

@@ -1,20 +1,18 @@
-<div class="example-wrapper">
-    <div class="example-header">
-        <div>
-            <button onclick="scrambleAndRefreshAll()">Scramble & Refresh All</button>
-            <button onclick="scrambleAndRefreshLeftToRight()">Scramble & Refresh Left to Right</button>
-            <button onclick="scrambleAndRefreshTopToBottom()">Scramble & Refresh Top to Bottom</button>
-        </div>
-        <div>
-            <label>
-                <input type="checkbox" id="forceRefresh" />
-                Force Refresh
-            </label>
-            <label>
-                <input type="checkbox" id="suppressFlash" />
-                Suppress Flash
-            </label>
-        </div>
+<div class="toolbar">
+    <div>
+        <button onclick="scrambleAndRefreshAll()">Scramble & Refresh All</button>
+        <button onclick="scrambleAndRefreshLeftToRight()">Scramble & Refresh Left to Right</button>
+        <button onclick="scrambleAndRefreshTopToBottom()">Scramble & Refresh Top to Bottom</button>
     </div>
-    <div id="myGrid" class="ag-theme-quartz"></div>
+    <div>
+        <label>
+            <input type="checkbox" id="forceRefresh" />
+            Force Refresh
+        </label>
+        <label>
+            <input type="checkbox" id="suppressFlash" />
+            Suppress Flash
+        </label>
+    </div>
 </div>
+<div id="myGrid" class="ag-theme-quartz"></div>

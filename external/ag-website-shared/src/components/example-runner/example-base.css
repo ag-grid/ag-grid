@@ -1,0 +1,37 @@
+html,
+body,
+my-app,
+#root,
+#app {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Only target body for AG Charts JS examples  */
+body:not(:has(:is(my-app, #root, #app))),
+#root,
+#app,
+my-app {
+    display: grid;
+    grid-auto-rows: minmax(0, 1fr);
+    grid-auto-columns: minmax(0, 1fr);
+    gap: 9px;
+
+    &:has(.toolbar) {
+        grid: 'toolbar' auto 'canvas' minmax(0, 1fr) / 1fr;
+    }
+}
+
+body:not(:has(:is(my-app, #root, #app, .ag-root))),
+#root,
+#app,
+my-app {
+    padding-left: 10px;
+}
+
+/* Hide codesandbox highlighter */
+body > #highlighter {
+    display: none;
+}
