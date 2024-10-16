@@ -33,7 +33,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                     [class]="themeClass"
                     [columnDefs]="columnDefs"
                     [rowData]="rowData"
-                    [rowSelection]="rowSelection"
                     (gridReady)="onGridReady($event)"
                 />
             }
@@ -56,11 +55,6 @@ export class AppComponent {
     ];
 
     public rowData: any[] | null = getData();
-    public rowSelection: RowSelectionOptions = {
-        mode: 'multiRow',
-        checkboxes: false,
-        headerCheckbox: false,
-    };
 
     reloadGrid() {
         this.isVisible = false;

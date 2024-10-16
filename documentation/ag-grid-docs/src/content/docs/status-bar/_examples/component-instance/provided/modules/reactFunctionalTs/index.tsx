@@ -23,8 +23,6 @@ export interface IClickableStatusBar extends IStatusPanel {
 
 const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
-    checkboxes: false,
-    headerCheckbox: false,
 };
 
 const GridExample = () => {

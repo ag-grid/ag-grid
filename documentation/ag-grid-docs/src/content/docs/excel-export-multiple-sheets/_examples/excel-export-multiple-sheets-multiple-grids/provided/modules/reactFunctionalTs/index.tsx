@@ -78,8 +78,6 @@ const defaultColDef: ColDef = {
 
 const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
-    checkboxes: false,
-    headerCheckbox: false,
 };
 
 const GridExample = () => {
