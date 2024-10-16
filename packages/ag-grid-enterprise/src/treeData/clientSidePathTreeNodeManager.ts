@@ -1,9 +1,8 @@
-import { _warnOnce } from 'ag-grid-community';
-import type { ChangedPath, GetDataPath, NamedBean, RowNode, RowNodeTransaction } from 'ag-grid-community';
+import { _warn } from 'ag-grid-community';
+import type { ChangedPath, NamedBean, RowNode, RowNodeTransaction } from 'ag-grid-community';
 
 import { AbstractClientSideTreeNodeManager } from './abstractClientSideTreeNodeManager';
-import type { TreeNode } from './treeNodeManager/treeNode';
-import { EMPTY_ARRAY } from './treeNodeManager/treeNode';
+import type { TreeNode } from './treeNode';
 
 export class ClientSidePathTreeNodeManager<TData>
     extends AbstractClientSideTreeNodeManager<TData>
@@ -14,21 +13,14 @@ export class ClientSidePathTreeNodeManager<TData>
     protected override loadNewRowData(rowData: TData[]): void {
         const rootNode = this.rootNode;
 
-        this.treeNodeManager.clearTree(this.treeNodeManager.root);
-        this.treeNodeManager.activate(rootNode);
+        this.treeClear(this.treeRoot);
+        this.treeRoot.setRow(rootNode);
 
         super.loadNewRowData(rowData);
 
-        const getDataPath = this.gos.get('getDataPath');
+        this.addOrUpdateRows(rootNode.allLeafChildren!, false);
 
-        for (const row of rootNode.allLeafChildren!) {
-            const treeNode = this.upsertPath(this.getDataPath(getDataPath, row));
-            if (treeNode) {
-                this.treeNodeManager.addOrUpdateRow(treeNode, row, false);
-            }
-        }
-
-        this.treeNodeManager.commitTree();
+        this.treeCommit();
     }
 
     public commitTransactions(
@@ -36,19 +28,40 @@ export class ClientSidePathTreeNodeManager<TData>
         changedPath: ChangedPath | undefined,
         rowNodesOrderChanged: boolean
     ): void {
-        this.treeNodeManager.activate(this.rootNode);
+        this.treeRoot.setRow(this.rootNode);
 
         for (const { remove, update, add } of transactions) {
             // the order of [add, remove, update] is the same as in ClientSideNodeManager.
             // Order is important when a record with the same id is added and removed in the same transaction.
-            this.treeNodeManager.removeRows(remove as RowNode[] | null);
+            this.removeRows(remove as RowNode[] | null);
             this.addOrUpdateRows(update as RowNode[] | null, true);
             this.addOrUpdateRows(add as RowNode[] | null, false);
         }
+
         if (rowNodesOrderChanged) {
-            this.treeNodeManager.handleRowNodesOrderChanged();
+            const rows = this.treeRoot.row?.allLeafChildren;
+            if (rows) {
+                for (let rowIdx = 0, rowsLen = rows.length; rowIdx < rowsLen; ++rowIdx) {
+                    const node = rows[rowIdx].treeNode as TreeNode | null;
+                    if (node && node.oldSourceRowIndex !== rowIdx) {
+                        node.invalidateOrder(); // Order might have changed
+                    }
+                }
+            }
         }
-        this.treeNodeManager.commitTree(changedPath); // One single commit for all the transactions
+
+        this.treeCommit(changedPath); // One single commit for all the transactions
+    }
+
+    /** Transactional removal */
+    private removeRows(rows: RowNode[] | null | undefined): void {
+        for (let i = 0, len = rows?.length ?? 0; i < len; ++i) {
+            const row = rows![i];
+            const node = row.treeNode as TreeNode | null;
+            if (node) {
+                this.treeRemove(node, row);
+            }
+        }
     }
 
     /** Transactional add/update */
@@ -56,36 +69,19 @@ export class ClientSidePathTreeNodeManager<TData>
         const getDataPath = this.gos.get('getDataPath');
         for (let i = 0, len = rows?.length ?? 0; i < len; ++i) {
             const row = rows![i];
-            const node = this.upsertPath(this.getDataPath(getDataPath, row));
-            if (node) {
-                this.treeNodeManager.addOrUpdateRow(node, row, update);
+            const path = getDataPath?.(row.data);
+            const pathLength = path?.length;
+            if (!pathLength) {
+                _warn(185, { data: row.data });
+            } else {
+                // Gets the last node of a path. Inserts filler nodes where needed.
+                let level = 0;
+                let node = this.treeRoot;
+                do {
+                    node = node.upsertKey(path[level++]);
+                } while (level < pathLength);
+                this.treeSetRow(node, row, update);
             }
         }
-    }
-
-    private getDataPath(getDataPath: GetDataPath | undefined, { data }: RowNode): string[] {
-        const keys = getDataPath?.(data) || EMPTY_ARRAY;
-        if (!keys.length) {
-            _warnOnce(`getDataPath() should not return an empty path`, [data]);
-        }
-        return keys;
-    }
-
-    /**
-     * Gets the last node of a path. Inserts filler nodes where needed.
-     * Note that invalidate() is not called, is up to the caller to call it if needed.
-     */
-    private upsertPath(path: string[]): TreeNode | null {
-        let parent: TreeNode | null = this.treeNodeManager.root;
-        const stop = path.length - 1;
-        for (let level = 0; level <= stop; ++level) {
-            const node: TreeNode = parent.upsertKey(path[level]);
-            if (level >= stop) {
-                node.invalidate();
-                return node;
-            }
-            parent = node;
-        }
-        return null;
     }
 }

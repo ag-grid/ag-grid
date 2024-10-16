@@ -42,7 +42,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     implements IClientSideNodeManager<TData>
 {
     private nextId = 0;
-    protected allNodesMap: { [id: string]: RowNode } = {};
+    protected allNodesMap: { [id: string]: RowNode<TData> } = {};
 
     public rootNode: AbstractClientSideNodeManager.RootNode<TData>;
 
@@ -80,6 +80,11 @@ export abstract class AbstractClientSideNodeManager<TData = any>
             this.setNewRowData([]);
             this.rootNode = null!;
         }
+    }
+
+    public override destroy(): void {
+        this.deactivate();
+        super.destroy();
     }
 
     public setNewRowData(rowData: TData[]): void {
@@ -309,7 +314,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         getRowIdFunc: ((data: any) => string) | undefined,
         rowDataTran: RowDataTransaction,
         { rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult<TData>,
-        nodesToUnselect: RowNode[]
+        nodesToUnselect: RowNode<TData>[]
     ): void {
         const { remove } = rowDataTran;
 
@@ -362,7 +367,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         getRowIdFunc: ((data: any) => string) | undefined,
         rowDataTran: RowDataTransaction,
         { rowNodeTransaction }: ClientSideNodeManagerUpdateRowDataResult<TData>,
-        nodesToUnselect: RowNode[]
+        nodesToUnselect: RowNode<TData>[]
     ): void {
         const { update } = rowDataTran;
         if (!update?.length) {
@@ -451,7 +456,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         return node;
     }
 
-    protected lookupRowNode(getRowIdFunc: ((data: any) => string) | undefined, data: TData): RowNode | null {
+    protected lookupRowNode(getRowIdFunc: ((data: any) => string) | undefined, data: TData): RowNode<TData> | null {
         let rowNode: RowNode | undefined;
         if (getRowIdFunc) {
             // find rowNode using id
