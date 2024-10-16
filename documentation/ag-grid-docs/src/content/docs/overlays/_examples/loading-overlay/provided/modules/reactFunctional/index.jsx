@@ -5,8 +5,6 @@ import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
@@ -34,13 +32,7 @@ const GridExample = () => {
                 <button onClick={() => setRowData([{ athlete: 'Michael Phelps', country: 'US' }])}>Set rowData</button>
             </div>
 
-            <div
-                style={{ height: '100%' }}
-                className={
-                    /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-                    'ag-theme-quartz' /** DARK MODE END **/
-                }
-            >
+            <div style={{ height: '100%' }}>
                 <AgGridReact loading={loading} rowData={rowData} columnDefs={columnDefs} />
             </div>
         </div>

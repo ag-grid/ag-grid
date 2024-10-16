@@ -2782,4 +2782,14 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-data-grid/aggregation-other', to: '/javascript-data-grid/aggregation' },
     { from: '/react-data-grid/aggregation-other', to: '/javascript-data-grid/aggregation' },
     { from: '/vue-data-grid/aggregation-other', to: '/javascript-data-grid/aggregation' },
+
+    { from: '/javascript-data-grid/global-style', to: '/javascript-data-grid/theming' },
+    { from: '/angular-data-grid/global-style', to: '/javascript-data-grid/theming' },
+    { from: '/react-data-grid/global-style', to: '/javascript-data-grid/theming' },
+    { from: '/vue-data-grid/global-style', to: '/javascript-data-grid/theming' },
+
+    { from: '/javascript-data-grid/theming-api', to: '/javascript-data-grid/theming' },
+    { from: '/angular-data-grid/theming-api', to: '/javascript-data-grid/theming' },
+    { from: '/react-data-grid/theming-api', to: '/javascript-data-grid/theming' },
+    { from: '/vue-data-grid/theming-api', to: '/javascript-data-grid/theming' },
 ];

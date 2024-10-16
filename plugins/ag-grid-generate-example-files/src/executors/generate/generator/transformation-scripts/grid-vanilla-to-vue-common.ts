@@ -67,7 +67,6 @@ export function getTemplate(bindings: ParsedBindings, exampleConfig: ExampleConf
     const agGridTag = `<ag-grid-vue
     ${exampleConfig.myGridReference ? 'id="myGrid"' : ''}
     ${style}
-    :class="themeClass"
     :columnDefs="columnDefs"
     @grid-ready="onGridReady"
     ${attributes.join('\n    ')}></ag-grid-vue>`;
