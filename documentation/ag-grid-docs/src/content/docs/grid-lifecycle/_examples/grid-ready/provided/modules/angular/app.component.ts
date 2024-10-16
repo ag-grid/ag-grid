@@ -1,6 +1,6 @@
 import { AgGridAngular } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridReadyEvent, RowSelectionOptions } from '@ag-grid-community/core';
+import { ColDef, GridApi, GridReadyEvent } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';

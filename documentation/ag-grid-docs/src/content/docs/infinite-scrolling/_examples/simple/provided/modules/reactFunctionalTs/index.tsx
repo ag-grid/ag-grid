@@ -1,6 +1,6 @@
 'use strict';
 
-import { ColDef, GridReadyEvent, IDatasource, ModuleRegistry, RowSelectionOptions } from '@ag-grid-community/core';
+import { ColDef, GridReadyEvent, IDatasource, ModuleRegistry } from '@ag-grid-community/core';
 import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 import { AgGridReact, CustomCellRendererProps } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
