@@ -1357,12 +1357,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     public override destroy(): void {
         super.destroy();
 
-        (this.rootNode as any) = null;
-        (this.rowsToDisplay as any) = null;
-        (this.nodeManager as any) = null;
-        this.rowDataTransactionBatch = null;
-        this.lastHighlightedRow = null;
-        (this.orderedStages as any) = null;
+        // TODO: We should unassign the local properties below to avoid memory leaks.
+        // (this.rootNode as any) = null;
+        // (this.rowsToDisplay as any) = null;
+        // (this.nodeManager as any) = null;
+        // this.rowDataTransactionBatch = null;
+        // this.lastHighlightedRow = null;
+        // (this.orderedStages as any) = null;
+
         this.clearHighlightedRow();
     }
 }
