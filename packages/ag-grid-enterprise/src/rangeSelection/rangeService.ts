@@ -177,7 +177,8 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return _isRowBefore(cellRange.startRow, cellRange.endRow) ? cellRange.startRow : cellRange.endRow;
         }
 
-        const rowPinned = this.pinnedRowModel?.getPinnedTopRowCount() ?? 0 > 0 ? 'top' : null;
+        const pinnedTopRowCount = this.pinnedRowModel?.getPinnedTopRowCount() ?? 0;
+        const rowPinned = pinnedTopRowCount > 0 ? 'top' : null;
 
         return { rowIndex: 0, rowPinned };
     }
