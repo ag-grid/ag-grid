@@ -4,9 +4,9 @@ import type {
     IsGroupOpenByDefaultParams,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { RowNode, _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
-import { AbstractClientSideNodeManager } from 'ag-grid-community';
+import { AbstractClientSideNodeManager, RowNode, _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
 
+import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import { TreeNode } from './treeNode';
 import type { TreeRow } from './treeRow';
 import {
@@ -342,7 +342,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
 
         if (oldGroup !== group) {
             markTreeRowPathChanged(row);
-            row.setGroup(group); // Internally calls updateHasChildren
+            setRowNodeGroup(row, this.beans, group); // Internally calls updateHasChildren
             if (!group && !row.expanded) {
                 setTreeRowExpandedInitialized(row, false);
             }
@@ -513,7 +513,11 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
         if (!row.data && row.isSelected()) {
             //we remove selection on filler nodes here, as the selection would not be removed
             // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-            row.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
+            this.beans.selectionService?.setSelectedParams({
+                rowNode: row,
+                newValue: false,
+                source: 'rowGroupChanged',
+            });
         }
     }
 

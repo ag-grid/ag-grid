@@ -192,7 +192,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         const currentPageBottomPixel = scrollPosition.top + pixelsInOnePage;
         const currentPageBottomRow = this.rowModel.getRowIndexAtPixel(currentPageBottomPixel + pagingPixelOffset);
 
-        if (this.columnModel.autoRowHeightActive) {
+        if (this.beans.rowAutoHeightService?.active) {
             this.navigateToNextPageWithAutoHeight(gridCell, currentPageBottomRow);
         } else {
             this.navigateToNextPage(gridCell, currentPageBottomRow);
@@ -209,7 +209,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         const currentPageTopPixel = scrollPosition.top;
         const currentPageTopRow = this.rowModel.getRowIndexAtPixel(currentPageTopPixel + pagingPixelOffset);
 
-        if (this.columnModel.autoRowHeightActive) {
+        if (this.beans.rowAutoHeightService?.active) {
             this.navigateToNextPageWithAutoHeight(gridCell, currentPageTopRow, true);
         } else {
             this.navigateToNextPage(gridCell, currentPageTopRow, true);

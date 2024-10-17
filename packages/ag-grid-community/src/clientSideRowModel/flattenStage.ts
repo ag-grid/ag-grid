@@ -4,6 +4,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
+import { _createRowNodeFooter, _destroyRowNodeFooter } from '../entities/rowNodeUtils';
 import { _getGrandTotalRow, _getGroupTotalRowCallback, _isGroupMultiAutoColumn } from '../gridOptionsUtils';
 import type { GetGroupIncludeFooterParams } from '../interfaces/iCallbackParams';
 import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
@@ -30,10 +31,12 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
     ]);
     public step: ClientSideRowModelStage = 'map';
 
+    private beans: BeanCollection;
     private columnModel: ColumnModel;
     private masterDetailService: IMasterDetailService | undefined;
 
     public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
         this.columnModel = beans.columnModel;
         this.masterDetailService = beans.masterDetailService;
     }
@@ -64,7 +67,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
             details.grandTotalRow;
 
         if (includeGrandTotalRow) {
-            rootNode.createFooter();
+            _createRowNodeFooter(rootNode, this.beans);
             const addToTop = details.grandTotalRow === 'top';
             this.addRowNodeToRowsToDisplay(details, rootNode.sibling, result, 0, addToTop);
         }
@@ -148,13 +151,13 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
                 if (rowNode.expanded || excludedParent) {
                     const doesRowShowFooter = details.groupTotalRow({ node: rowNode });
                     if (!doesRowShowFooter) {
-                        rowNode.destroyFooter();
+                        _destroyRowNodeFooter(rowNode);
                     }
 
                     // if the parent was excluded, then ui level is that of the parent
                     const uiLevelForChildren = excludedParent ? uiLevel : uiLevel + 1;
                     if (doesRowShowFooter === 'top') {
-                        rowNode.createFooter();
+                        _createRowNodeFooter(rowNode, this.beans);
                         this.addRowNodeToRowsToDisplay(details, rowNode.sibling, result, uiLevelForChildren);
                     }
 
@@ -167,7 +170,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
                     );
 
                     if (doesRowShowFooter === 'bottom') {
-                        rowNode.createFooter();
+                        _createRowNodeFooter(rowNode, this.beans);
                         this.addRowNodeToRowsToDisplay(details, rowNode.sibling, result, uiLevelForChildren);
                     }
                 }

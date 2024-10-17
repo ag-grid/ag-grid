@@ -1,7 +1,7 @@
 import type { NamedBean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
 import type { RowSelectionMode, SelectAllMode } from '../entities/gridOptions';
-import type { RowNode } from '../entities/rowNode';
+import { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
 import { isSelectionUIEvent } from '../events';
 import {
@@ -25,10 +25,12 @@ import { RowRangeSelectionContext } from './rowRangeSelectionContext';
 export class SelectionService extends BaseSelectionService implements NamedBean, ISelectionService {
     beanName = 'selectionService' as const;
 
+    private beans: BeanCollection;
     private pageBoundsService: PageBoundsService;
 
     public override wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
+        this.beans = beans;
         this.pageBoundsService = beans.pageBoundsService;
     }
 
@@ -153,7 +155,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             const skipThisNode = groupSelectsFiltered && node.group;
 
             if (!skipThisNode) {
-                const thisNodeWasSelected = node.selectThisNode(newValue, event, source);
+                const thisNodeWasSelected = this.selectRowNode(node, newValue, event, source);
                 if (thisNodeWasSelected) {
                     updatedCount++;
                 }
@@ -193,7 +195,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 return;
             }
 
-            const nodeWasSelected = rowNode.selectThisNode(value, undefined, source);
+            const nodeWasSelected = this.selectRowNode(rowNode, value, undefined, source);
             if (nodeWasSelected) {
                 updatedCount++;
             }
@@ -296,9 +298,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         changedPath.forEachChangedNodeDepthFirst((rowNode) => {
             if (rowNode !== rootNode) {
-                const selected = rowNode.calculateSelectedFromChildren();
+                const selected = this.calculateSelectedFromChildren(rowNode);
                 selectionChanged =
-                    rowNode.selectThisNode(selected === null ? false : selected, undefined, source) || selectionChanged;
+                    this.selectRowNode(rowNode, selected === null ? false : selected, undefined, source) ||
+                    selectionChanged;
             }
         });
 
@@ -310,8 +313,9 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         let updatedCount = 0;
         this.selectedNodes.forEach((otherRowNode: RowNode) => {
             if (otherRowNode && otherRowNode.id !== rowNodeToKeepSelected.id) {
-                const rowNode = this.selectedNodes.get(otherRowNode.id!);
-                updatedCount += rowNode!.setSelectedParams({
+                const rowNode = this.selectedNodes.get(otherRowNode.id!)!;
+                updatedCount += this.setSelectedParams({
+                    rowNode,
                     newValue: false,
                     clearSelection: false,
                     suppressFinishActions: true,
@@ -325,8 +329,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         });
 
         groupsToRefresh.forEach((group: RowNode) => {
-            const selected = group.calculateSelectedFromChildren();
-            group.selectThisNode(selected === null ? false : selected, undefined, source);
+            const selected = this.calculateSelectedFromChildren(group);
+            this.selectRowNode(group, selected === null ? false : selected, undefined, source);
         });
 
         return updatedCount;
@@ -347,9 +351,27 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
     }
 
-    public syncInRowNode(rowNode: RowNode, oldNode: RowNode | null): void {
+    public syncInRowNode(rowNode: RowNode, oldNode?: RowNode): void {
         this.syncInOldRowNode(rowNode, oldNode);
         this.syncInNewRowNode(rowNode);
+    }
+
+    public createDaemonNode(rowNode: RowNode): RowNode | undefined {
+        if (!_exists(rowNode.id)) {
+            return undefined;
+        }
+        const oldNode = new RowNode(this.beans);
+
+        // just copy the id and data, this is enough for the node to be used
+        // in the selection controller (the selection controller is the only
+        // place where daemon nodes can live).
+        oldNode.id = rowNode.id;
+        oldNode.data = rowNode.data;
+        oldNode.__daemon = true;
+        oldNode.__selected = rowNode.__selected;
+        oldNode.level = rowNode.level;
+
+        return oldNode;
     }
 
     // if the id has changed for the node, then this means the rowNode
@@ -363,7 +385,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     // daemon is removed. the daemon, because it's an oldNode, is not
     // used by the grid for rendering, it's a copy of what the node used
     // to be like before the id was changed.
-    private syncInOldRowNode(rowNode: RowNode, oldNode: RowNode | null): void {
+    private syncInOldRowNode(rowNode: RowNode, oldNode?: RowNode): void {
         const oldNodeHasDifferentId = _exists(oldNode) && rowNode.id !== oldNode.id;
         if (oldNodeHasDifferentId && oldNode) {
             const id = oldNode.id!;
@@ -376,10 +398,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
     private syncInNewRowNode(rowNode: RowNode): void {
         if (this.selectedNodes.has(rowNode.id!)) {
-            rowNode.setSelectedInitialValue(true);
+            rowNode.__selected = true;
             this.selectedNodes.set(rowNode.id!, rowNode);
         } else {
-            rowNode.setSelectedInitialValue(false);
+            rowNode.__selected = false;
         }
     }
 
@@ -448,7 +470,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     public deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }) {
-        const callback = (rowNode: RowNode) => rowNode.selectThisNode(false, undefined, source);
+        const callback = (rowNode: RowNode) => this.selectRowNode(rowNode, false, undefined, source);
         const rowModelClientSide = _isClientSideRowModel(this.gos);
 
         const { source, selectAll } = params;
@@ -596,7 +618,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         const { source, selectAll } = params;
 
         const nodes = this.getNodesToSelect(selectAll);
-        nodes.forEach((rowNode) => rowNode.selectThisNode(true, undefined, source));
+        nodes.forEach((rowNode) => this.selectRowNode(rowNode, true, undefined, source));
 
         this.selectionCtx.setRoot(nodes[0] ?? null);
         this.selectionCtx.setEndRange(_last(nodes) ?? null);
