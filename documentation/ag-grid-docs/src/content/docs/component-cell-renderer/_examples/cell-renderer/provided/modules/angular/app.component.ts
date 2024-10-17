@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef, GridApi, ICellRenderer, ICellRendererParams, IRowNode } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import './styles.css';
 
@@ -80,7 +78,6 @@ export class IconRenderer implements ICellRenderer {
             <ag-grid-angular
                 #agGrid
                 style="width: 100%; height: 100%;"
-                [class]="themeClass"
                 [columnDefs]="columnDefs"
                 [defaultColDef]="defaultColDef"
                 (gridReady)="onGridReady($event)"
@@ -89,10 +86,6 @@ export class IconRenderer implements ICellRenderer {
     `,
 })
 export class AppComponent {
-    themeClass =
-        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-        'ag-theme-quartz' /** DARK MODE END **/;
-
     private gridApi!: GridApi;
 
     public columnDefs: ColDef[] = this.getColumnDefs();

@@ -2,8 +2,6 @@ import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { ExcelExportModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
@@ -75,7 +73,6 @@ const VueExample = {
                     <ag-grid-vue
                 
                 style="width: 100%; height: 100%;"
-                :class="themeClass"
                 :columnDefs="columnDefs"
                 @grid-ready="onGridReady"
                 :defaultColDef="defaultColDef"
@@ -158,9 +155,6 @@ const VueExample = {
             rowData,
             onGridReady,
             onFormSubmit,
-            themeClass:
-                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
-                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
 };

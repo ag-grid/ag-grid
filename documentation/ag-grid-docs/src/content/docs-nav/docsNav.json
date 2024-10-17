@@ -95,18 +95,37 @@
                         {
                             "type": "item",
                             "title": "Overview",
-                            "path": "global-style"
+                            "path": "theming"
                         },
                         {
                             "type": "item",
-                            "title": "Themes",
+                            "title": "Built-in Themes",
                             "path": "themes"
                         },
                         {
                             "type": "item",
+                            "title": "Theme Parameters",
+                            "path": "theming-parameters"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Theme Parts",
+                            "path": "theming-parts"
+                        },
+                        {
+                            "type": "item",
                             "title": "Customisation",
-                            "path": "global-style-customisation",
                             "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Colors & Dark Mode",
+                                    "path": "theming-colors"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Borders",
+                                    "path": "theming-borders"
+                                },
                                 {
                                     "type": "item",
                                     "title": "Variable Reference",
@@ -159,47 +178,25 @@
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Advanced CSS",
-                                    "path": "global-style-customisation-css"
-                                }
-                            ]
-                        },
-                        {
-                            "type": "item",
-                            "title": "Sass",
-                            "path": "global-style-customisation-sass"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Theming API",
-                            "path": "theming-api",
-                            "children": [
-                                {
-                                    "type": "item",
                                     "title": "Extending with CSS",
                                     "path": "theming-css"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Colors & Dark Mode",
-                                    "path": "theming-colors"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Borders",
-                                    "path": "theming-borders"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Distributing Shared Themes",
-                                    "path": "theming-distribution"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Migration",
-                                    "path": "theming-migration"
                                 }
                             ]
+                        },
+                        {
+                            "type": "item",
+                            "title": "Distributing Shared Themes",
+                            "path": "theming-distribution"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Migration from v32",
+                            "path": "theming-migration"
+                        },
+                        {
+                            "type": "item",
+                            "title": "v32 Themes",
+                            "path": "theming-v32"
                         }
                     ]
                 },

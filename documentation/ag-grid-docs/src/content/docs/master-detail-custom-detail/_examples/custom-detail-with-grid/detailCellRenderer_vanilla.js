@@ -47,8 +47,6 @@ class DetailCellRenderer {
 
     getTemplate() {
         var data = this.params.data;
-        // Application logic to match parent theme for this Example
-        const themeClass = 'full-width-grid ' + (document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz');
         var template =
             '<div class="full-width-panel">' +
             '  <div class="full-width-details">' +
@@ -59,7 +57,7 @@ class DetailCellRenderer {
             data.account +
             '</div>' +
             '  </div>' +
-            `  <div class="${themeClass}"></div>` +
+            `  <div class="full-width-grid"></div>` +
             '</div>';
 
         return template;

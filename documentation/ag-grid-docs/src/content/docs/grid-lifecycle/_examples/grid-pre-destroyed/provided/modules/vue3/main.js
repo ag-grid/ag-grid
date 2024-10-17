@@ -2,8 +2,6 @@ import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from 'ag-grid-vue3';
 
 import { getData } from './data.js';
@@ -36,7 +34,6 @@ const VueExample = {
                 <ag-grid-vue
                     v-if="showGrid"                
                     style="width: 100%; height: 100%;"
-                    :class="themeClass"
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"
                     :defaultColDef="defaultColDef"
@@ -149,9 +146,6 @@ const VueExample = {
             updateColumnWidth,
             destroyGrid,
             reloadGrid,
-            themeClass:
-                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
-                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
 };

@@ -5,7 +5,7 @@ import React from 'react';
 import styles from '../FeatureTabs.module.scss';
 
 const CustomFeatures: React.FC = () => {
-    const codeExample = `.ag-theme-quartz {
+    const codeExample = `#myGrid {
     /* Colours */
     --ag-foreground-color: rgb(126, 46, 132);
     --ag-background-color: rgb(249, 245, 227);
@@ -13,11 +13,11 @@ const CustomFeatures: React.FC = () => {
     --ag-font-size: 17px;
     --ag-font-family: monospace;
     /* Sizing */
-    --ag-grid-size: 3px; /* very compact */
+    --ag-spacing: 3px; /* very compact */
     --ag-header-height: 30px;
     /* Borders */
-    --ag-borders: none;
-    --ag-row-border-style: dashed;
+    --ag-wrapper-border: none;
+    --ag-row-border: dashed 1px #eee;
 }
 `;
 
@@ -37,11 +37,11 @@ const CustomFeatures: React.FC = () => {
                         </span>
                     </div>
                     <div className={styles.feature}>
-                        <h5 className={styles.featureHeading}>4 Default Themes</h5>
+                        <h5 className={styles.featureHeading}>Powerful Theming System</h5>
                         <span className={styles.featureDetail}>
-                            Choose from four themes including our new{' '}
+                            Choose from one of our provided themes including our new{' '}
                             <a href={urlWithBaseUrl('./example?theme=ag-theme-quartz')}>Quartz</a> and{' '}
-                            <a href={urlWithBaseUrl('./example?theme=ag-theme-material/')}>Material</a> themes or design
+                            <a href={urlWithBaseUrl('./example?theme=ag-theme-material')}>Material</a> themes or design
                             your own theme with our <a href={urlWithBaseUrl('./theme-builder/')}>Theme Builder</a> or{' '}
                             <a href={urlWithBaseUrl('./react-data-grid/ag-grid-design-system/')}>Figma Design System</a>
                             .

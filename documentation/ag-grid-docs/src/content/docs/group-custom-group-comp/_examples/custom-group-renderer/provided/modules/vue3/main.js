@@ -2,8 +2,6 @@ import { createApp } from 'vue';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
@@ -17,7 +15,6 @@ const VueExample = {
                 <ag-grid-vue
                 
                 style="width: 100%; height: 100%;"
-                :class="themeClass"
                 :columnDefs="columnDefs"
                 @grid-ready="onGridReady"
                 @cell-double-clicked="onCellDoubleClicked"
@@ -48,9 +45,6 @@ const VueExample = {
             autoGroupColumnDef: null,
             groupDefaultExpanded: null,
             rowData: null,
-            themeClass:
-                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
-                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
     created() {

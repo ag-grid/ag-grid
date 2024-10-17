@@ -35,9 +35,6 @@ import { LicenseManager } from "@ag-grid-enterprise/core";
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';${isIntegratedCharts ? "\nimport { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';" : ''}
 
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-
 import App from "./App";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule${isIntegratedCharts ? ', GridChartsModule' : ''}]);
@@ -75,9 +72,6 @@ import { LicenseManager } from "@ag-grid-enterprise/core";
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'${isIntegratedCharts ? "\nimport { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';" : ''};
 
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-
 ModuleRegistry.registerModules([ClientSideRowModelModule${isIntegratedCharts ? ', GridChartsModule' : ''}]);
 
 LicenseManager.setLicenseKey("${license}");
@@ -105,9 +99,6 @@ createGrid(<dom element>, gridOptions);
 import { LicenseManager } from "@ag-grid-enterprise/core";
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'${isIntegratedCharts ? "\nimport { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';" : ''};
-
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule${isIntegratedCharts ? ', GridChartsModule' : ''}]);
 
@@ -145,9 +136,6 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 import { LicenseManager } from "@ag-grid-enterprise/core";
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'${isIntegratedCharts ? "\nimport { GridChartsModule } from '@ag-grid-enterprise/charts-enterprise';" : ''};
-
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule${isIntegratedCharts ? ', GridChartsModule' : ''}]);
 

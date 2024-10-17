@@ -5,8 +5,6 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, GridReadyEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import { MySimpleEditor } from './mySimple-editor.component';
 import './style.css';
@@ -20,7 +18,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     template: `
         <ag-grid-angular
             style="width: 100%; height: 100%;"
-            [class]="themeClass"
             [columnDefs]="columnDefs"
             [defaultColDef]="defaultColDef"
             [rowData]="rowData"
@@ -29,9 +26,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     `,
 })
 export class AppComponent implements OnDestroy {
-    public themeClass =
-        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-        'ag-theme-quartz' /** DARK MODE END **/;
     public columnDefs: ColDef[] = [
         {
             field: 'first_name',

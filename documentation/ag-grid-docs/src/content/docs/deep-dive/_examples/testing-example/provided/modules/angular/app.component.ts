@@ -13,8 +13,6 @@ import type {
     ValueFormatterParams,
 } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -106,7 +104,6 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
             <!-- The AG Grid component, with various Grid Option properties -->
             <ag-grid-angular
                 style="width: 100%; height: 550px;"
-                [class]="themeClass"
                 [rowData]="rowData"
                 [columnDefs]="colDefs"
                 [defaultColDef]="defaultColDef"
@@ -120,10 +117,6 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
     `,
 })
 export class AppComponent {
-    themeClass =
-        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-        'ag-theme-quartz' /** DARK MODE END **/;
-
     // Return formatted date value
     dateFormatter(params: ValueFormatterParams) {
         return new Date(params.value).toLocaleDateString('en-us', {

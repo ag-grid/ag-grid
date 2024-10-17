@@ -14,7 +14,6 @@ import type { ComponentSelector } from '../widgets/component';
 
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
-    setGridThemeClass(cssClass: string): void;
     destroyGridUi(): void;
     forceFocusOutOfContainer(up: boolean): void;
     getFocusableContainers(): FocusableContainer[];
@@ -63,9 +62,6 @@ export class GridCtrl extends BeanStub {
         this.createManagedBean(new LayoutFeature(this.view));
 
         this.view.setRtlClass(this.gos.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
-
-        this.updateGridThemeClass();
-        this.addManagedEventListeners({ gridStylesChanged: this.handleThemeChange.bind(this) });
 
         const unsubscribeFromResize = _observeResize(this.gos, this.eGridHostDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
@@ -224,19 +220,6 @@ export class GridCtrl extends BeanStub {
 
     private getFocusableContainers(): FocusableContainer[] {
         return [...this.view.getFocusableContainers(), ...this.additionalFocusableContainers];
-    }
-
-    private updateGridThemeClass(): void {
-        const gridThemeClass = this.beans.environment.getGridThemeClass();
-        if (gridThemeClass) {
-            this.view.setGridThemeClass(gridThemeClass);
-        }
-    }
-
-    private handleThemeChange(e: CssVariablesChanged) {
-        if (e.themeChanged) {
-            this.updateGridThemeClass();
-        }
     }
 
     public override destroy(): void {

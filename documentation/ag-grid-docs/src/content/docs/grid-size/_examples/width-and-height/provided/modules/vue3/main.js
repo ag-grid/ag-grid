@@ -2,8 +2,6 @@ import { createApp } from 'vue';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from 'ag-grid-vue3';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -17,7 +15,7 @@ const VueExample = {
                 <button @click="fillExact">Exactly 400 x 400 pixels</button>
             </div>
             <div style="width: 100%; flex: 1 1 auto;">
-                <ag-grid-vue :style="{width, height}" :class="themeClass"
+                <ag-grid-vue :style="{width, height}"
                              @grid-ready="onGridReady"
                              :columnDefs="columnDefs"
                              :rowData="rowData"
@@ -34,9 +32,6 @@ const VueExample = {
             rowData: null,
             height: '100%',
             width: '100%',
-            themeClass:
-                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
-                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
     beforeMount() {

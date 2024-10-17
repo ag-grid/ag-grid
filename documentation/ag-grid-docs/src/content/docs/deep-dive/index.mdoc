@@ -30,7 +30,7 @@ Complete our [Quick Start](./getting-started/) (or open the example below in Cod
 1) **Grid Options:** An object which holds all of the options for the grid, such as Row Data & Column Definitions.
 1) **Row Data:** The data to be displayed.
 1) **Column Definition:** Defines & controls grid columns.
-1) **Container:** A div that contains and defines the grid's theme & dimensions.
+1) **Container:** A div that contains and defines the grid's dimensions.
 1) **Grid API:** Provides access to Grid API methods. Initialised when creating a new grid.
 
 {% gridExampleRunner title="Basic Example" name="basic-example"  exampleHeight=220 /%}
@@ -45,7 +45,7 @@ Complete our [Quick Start](./getting-started/) (or open the example below in Cod
 
 1) **Row Data:** The data to be displayed.
 1) **Column Definition:** Defines & controls grid columns.
-1) **Container:** A div that contains the grid and defines it's theme & dimensions.
+1) **Container:** A div that contains the grid and defines it's dimensions.
 1) **Grid Component:** The `AgGridReact` component with **Row Data** and **Column Definition** props.
 
 {% gridExampleRunner title="Basic Example" name="basic-example"  exampleHeight=220 /%}
@@ -62,7 +62,7 @@ Complete our [Quick Start](./getting-started/) (or open the example below in Cod
 
 1) **Row Data:** The data to be displayed.
 1) **Column Definition:** Defines & controls grid columns.
-1) **Grid Component:** The `ag-grid-angular` component, with Dimensions, CSS Theme, Row Data, and Column Definition attributes
+1) **Grid Component:** The `ag-grid-angular` component, with Dimensions, Row Data, and Column Definition attributes
 
 {% gridExampleRunner title="Basic Example" name="basic-example"  exampleHeight=220 /%}
 
@@ -76,7 +76,7 @@ Complete our [Quick Start](./getting-started/) (or open the example below in Cod
 
 1) **Row Data:** The data to be displayed.
 1) **Column Definition:** Defines & controls grid columns.
-1) **Grid Component:** The `ag-grid-vue` component, with Dimensions, CSS Theme, Row Data, and Column Definition attributes
+1) **Grid Component:** The `ag-grid-vue` component, with Dimensions, Row Data, and Column Definition attributes
 
 {% gridExampleRunner title="Basic Example" name="basic-example"  exampleHeight=220 /%}
 
@@ -175,7 +175,6 @@ First we need to hook into the `gridReady` event by adding `(gridReady)="onGridR
 <!-- The AG Grid component, with various Grid Option properties -->
 <ag-grid-angular
  style="width: 100%; height: 550px;"
- class="ag-theme-quartz-dark"
  [rowData]="rowData"
  [columnDefs]="colDefs"
  (gridReady)="onGridReady($event)"
@@ -392,7 +391,7 @@ const defaultColDef = useMemo(() => ({
  filter: true // Enable filtering on all columns
 }))
 
-<div className="ag-theme-quartz" style={{ width: 600, height: 500 }}>
+<div style={{ width: 600, height: 500 }}>
  <AgGridReact
    defaultColDef={defaultColDef}
    //...
@@ -475,7 +474,6 @@ const App = {
    `
    <ag-grid-vue
      style="width: 100%; height: 100%"
-     class="ag-theme-quartz-dark"
      :columnDefs="colDefs"
      :rowData="rowData"
      :defaultColDef="defaultColDef"
@@ -528,7 +526,7 @@ So far we've covered creating a grid, updating the data within the grid, and con
 Grid Options are passed to the grid component directly as props. Let's enable pagination by adding `pagination={true}`:
 
 ```jsx
-<div className="ag-theme-quartz" style={{ width: 600, height: 500 }}>
+<div style={{ width: 600, height: 500 }}>
  <AgGridReact
    // ...
    pagination={true} // Enable Pagination
@@ -583,7 +581,6 @@ const App = {
    `
    <ag-grid-vue
      style="width: 100%; height: 100%"
-     class="ag-theme-quartz-dark"
      :columnDefs="colDefs"
      :rowData="rowData"
      :defaultColDef="defaultColDef"
@@ -966,7 +963,7 @@ const defaultColDef = useMemo(() => ({
  // ...
 }))
 
-<div className="ag-theme-quartz" style={{ width: 600, height: 500 }}>
+<div style={{ width: 600, height: 500 }}>
  <AgGridReact
    // Hook into CellValueChanged event and log value
    onCellValueChanged={event => console.log(`New Cell Value: ${event.value}`)}

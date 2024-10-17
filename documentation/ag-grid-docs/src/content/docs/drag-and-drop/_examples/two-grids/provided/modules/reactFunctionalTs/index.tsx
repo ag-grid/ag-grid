@@ -4,8 +4,6 @@ import { createRoot } from 'react-dom/client';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, GridApi, GridOptions, GridReadyEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
@@ -158,11 +156,7 @@ const GridExample = () => {
         <div className="outer">
             <div
                 style={{ height: '100%' }}
-                className={
-                    'inner-col ' +
-                    /** DARK MODE START **/ (document.documentElement?.dataset.defaultTheme ||
-                        'ag-theme-quartz') /** DARK MODE END **/
-                }
+                className="inner-col"
                 onDragOver={gridDragOver}
                 onDrop={(e) => gridDrop('left', e)}
             >
@@ -198,11 +192,7 @@ const GridExample = () => {
 
             <div
                 style={{ height: '100%' }}
-                className={
-                    'inner-col ' +
-                    /** DARK MODE START **/ (document.documentElement?.dataset.defaultTheme ||
-                        'ag-theme-quartz') /** DARK MODE END **/
-                }
+                className="inner-col"
                 onDragOver={gridDragOver}
                 onDrop={(e) => gridDrop('right', e)}
             >

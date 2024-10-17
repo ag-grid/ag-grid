@@ -6,8 +6,6 @@ import { createRoot } from 'react-dom/client';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, IStatusPanel, RowSelectionOptions, StatusPanelDef } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { RangeSelectionModule } from 'ag-grid-enterprise';
 import { StatusBarModule } from 'ag-grid-enterprise';
 import { AgGridReact, getInstance } from 'ag-grid-react';
@@ -96,13 +94,7 @@ const GridExample = () => {
                 Toggle Status Bar Component
             </button>
 
-            <div
-                style={gridStyle}
-                className={
-                    /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-                    'ag-theme-quartz' /** DARK MODE END **/
-                }
-            >
+            <div style={gridStyle}>
                 <AgGridReact
                     ref={gridRef}
                     rowData={rowData}

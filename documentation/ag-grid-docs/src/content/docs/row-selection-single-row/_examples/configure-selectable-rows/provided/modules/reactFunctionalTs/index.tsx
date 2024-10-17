@@ -4,8 +4,6 @@ import { createRoot } from 'react-dom/client';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import type { ColDef, RowSelectionOptions } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
@@ -59,14 +57,7 @@ const GridExample = () => {
                     <input id="toggle-hide-checkbox" type="checkbox" defaultChecked onChange={toggleHideCheckbox} />
                 </label>
             </div>
-            <div
-                id="myGrid"
-                className={
-                    'grid ' +
-                    /** DARK MODE START **/ (document.documentElement.dataset.defaultTheme ||
-                        'ag-theme-quartz') /** DARK MODE END **/
-                }
-            >
+            <div id="myGrid" className="grid">
                 <AgGridReact
                     ref={grid}
                     rowData={rowData}

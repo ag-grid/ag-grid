@@ -146,6 +146,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             <div className={styles.container}>
                 <div className={`${themeClass} ${styles.grid}`}>
                     <AgGridReact
+                        theme="legacy"
                         ref={gridRef}
                         columnDefs={colDefs}
                         rowData={rowData}

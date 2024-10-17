@@ -4,29 +4,103 @@ title: "Migrating to the Theming API"
 
 Migrating to the Theming API
 
-Before v32.2, themes were imported as CSS files in our NPM modules. For the purposes of this guide we'll call those the legacy themes. This guide covers migrating from legacy themes to the Theming API.
+Before v33, themes were imported as CSS files in our NPM modules, and applied by setting a class name on the grid's container element, e.g. `class="ag-theme-quartz"`. In v33, the default method of styling the grid is the Theming API, in which themes are imported as JavaScript objects and passed to the grid as a grid option. This guide covers migrating from v32 Themes to the Theming API.
 
 {% note %}
-If your application is split between multiple pages, it can be migrated one page at a time. However a single document can not contain both legacy styling and the Theming API, because the two styles conflict with each other.
+If your application is split between multiple pages, it can be migrated one page at a time. However a single HTML document can not contain both legacy styling and the Theming API, because the two styles conflict with each other.
 {% /note %}
 
-#### Understanding the scope of the Theming API
+## Understanding the Theming API
 
-When migrating an app from legacy styles to the Theming API, it is useful to know:
+If you are familiar with the method of theming applications used in v32 and earlier, the following technical context will help you understand what is changing and what remains the same.
 
-* The DOM structure of the grid, and class names used, does not change when using the Theming API. Any custom CSS you have written that targets `ag-*` class names work without modification.
-* Many custom properties have been renamed, see below for the full list. If you make extensive use of `--ag-*` custom properties, updating these will be the majority of the work in migrating to the Theming API.
-* In the legacy themes, custom properties had to be set in CSS. When migrating custom properties to the Theming API you may choose whether to specify them in JavaScript in order to get Typescript validation of property names and values, or to continue to set them in CSS. The list below provides the JS API names, to convert them to CSS use kebab-case and add the `--ag-` prefix (`tooltipTextColor` -> `--ag-tooltip-text-color`).
+The grid is styled using CSS. A running grid instance contains thousands of DOM elements, and each of them has class names like `ag-header` and `ag-row` that can be used in CSS rules that change the style of that element. The grid package from NPM contains CSS that set up a default grid style and expose CSS custom properties (variables) that allow configuration of colors, borders, padding, fonts etc. When you want to go beyond what is possible with the custom properties, you write your own CSS rules targeting the grid's class names.
 
-### 1. Remove legacy CSS imports
+None of this is changing - the grid is still styled with CSS and CSS custom properties, and you can still extend it with your own CSS rules. What the Theming API changes is the following:
+
+1. Instead of importing CSS files yourself, the grid code is now responsible for inserting the correct CSS files into the document head in the correct order. This eliminates a class of bugs around incorrectly loading CSS files.
+2. There is a TypeScript API for setting CSS custom properties (`theme.withParams(...)`). This provides autocompletion and inline documentation making it easier to find the property you're looking for. You can still set custom properties in CSS if you prefer.
+3. It is now possible to mix and match elements of different themes. Previously, if you wanted the text inputs from Material and the buttons from Quartz, you would have to write your own styles. Now you can compose your own themes using parts from different built in themes (`theme.withPart(...)`).
+4. It is a significant rewrite of the CSS we provide to style the grid, containing many improvements and resolving long-standing issues. It contains all the learnings from 10 years of maintaining the old CSS themes. Some examples of changes we've made:
+    * Compactness and spacing has been completely overhauled. In v32 Themes the size of many elements was set as a multiple of `--ag-grid-size`, so lower values produced a more compact grid. However in practice after changing the value, many further tweaks were required to get things looking right. In the Theming API this is replaced by `--ag-spacing` which is designed to "just work" at any value.
+    * Focus styles look and work better, with focus styles on elements like header cells looking more like the focus styles on form inputs.
+    * CSS custom properties now inherit as expected - if you set `--ag-foreground-color` on the `body` element, it will be inherited by all grids on the page. In v32 Themes, the custom property had to be set on the same element as the theme class.
+    * [Selector specificity](https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity) has been reduced across the board, making it easier to override in your own stylesheets. For example, in v32 Themes if you added the following code to your application's stylesheet - `.ag-cell-inline-editing { box-shadow: none; }` - it would not have the intended effect of removing the shadow from cells being edited. This was because our CSS that added the shadow had a more specific selector. In the Theming API this code works as expected.
+    * Custom properties have been added, removed and renamed to make a more consistent and logical set. See below for a list.
+
+### What do I need to change in my app to migrate
+
+### 1. Remove CSS imports
 
 Applications import the legacy CSS files either through JS (`import 'ag-grid-community/styles/ag-grid.css';`) or by copying the CSS files from the NPM package to the application. Any such CSS imports should be removed.
 
-### 2. Convert any css custom properties you are using to the new names
+### 2. Import your theme from the NPM package
+
+Themes can be imported from `ag-grid-community` and passed to the `theme` grid option:
+
+```js
+import { themeBalham } from 'ag-grid-community';
+```
+
+Once imported, you can optionally add default values for any custom properties you want to set using the TypeScript API:
+
+```js
+const myTheme = themeBalham.withParams({ accentColor: 'red' });
+```
+
+You can then pass your theme to the `theme` grid option:
+
+{% if isFramework("javascript") %}
+```js
+const gridOptions = {
+    theme: myTheme,
+    ...
+}
+```
+{% /if %}
+{% if isFramework("react") %}
+```js
+<AgGridReact
+    theme={myTheme}
+    ...
+/>
+```
+{% /if %}
+{% if isFramework("vue") %}
+```js
+// in template
+<ag-grid-vue
+    :theme="theme"
+    ...
+></ag-grid-vue>
+
+// in component setup hook
+setup() {
+    return {
+        theme: myTheme,
+    };
+}
+```
+{% /if %}
+{% if isFramework("angular") %}
+```js
+// in template
+<ag-grid-angular
+    [theme]="theme"
+/>
+
+// in component class
+public theme = myTheme;
+```
+{% /if %}
+
+### 3. Convert any css custom properties you are using to the new names
+
+In v32 Themes, custom properties had to be set in CSS. When migrating custom properties to the Theming API you may choose whether to specify them in JavaScript in order to get Typescript validation of property names and values, or to continue to set them in CSS. The list below provides the JS API names, to convert them to CSS use kebab-case and add the `--ag-` prefix (`tooltipTextColor` -> `--ag-tooltip-text-color`).
 
 #### Key changes
 
- * `--ag-grid-size` -> `--ag-spacing` spacing works a little bit differently from the old "grid size". It controls the padding around elements, whereas grid size controlled their size. So setting spacing to `0` will result in a grid with no padding, whereas setting grid size to `0` would have resulted in zero-height rows.
+ * `--ag-grid-size` -> `spacing` spacing works a little bit differently from the old "grid size". It controls the padding around elements, whereas grid size controlled their size. So setting spacing to `0` will result in a grid with no padding, whereas setting grid size to `0` would have resulted in zero-height rows.
  * `--ag-active-color`, `--ag-alpine-active-color`, `--ag-balham-active-color`, `--ag-material-accent-color` -> use `accentColor`
  * `--ag-borders*` -> there has been a reworking of border parameters, see the Theming API docs for the new list of border parameters.
  * `--ag-row-border-color`, `--ag-row-border-style`, `--ag-row-border-width` -> replaced with `rowBorder`
@@ -42,10 +116,10 @@ While developing the Theming API we took the opportunity to rename many of our p
  * `--ag-selected-tab-underline-color` -> `tabSelectedUnderlineColor`
  * `--ag-selected-tab-underline-transition-speed` -> `tabSelectedUnderlineTransitionDuration`
  * `--ag-selected-tab-underline-width` -> `tabSelectedUnderlineWidth`
- * `--ag-advanced-filter-column-pill-color` -> `--ag-advanced-filter-builder-column-pill-color`
- * `--ag-advanced-filter-join-pill-color` -> `--ag-advanced-filter-builder-join-pill-color`
- * `--ag-advanced-filter-option-pill-color` -> `--ag-advanced-filter-builder-option-pill-color`
- * `--ag-advanced-filter-value-pill-color` -> `--ag-advanced-filter-builder-value-pill-color`
+ * `--ag-advanced-filter-column-pill-color` -> `advancedFilterBuilderColumnPillColor`
+ * `--ag-advanced-filter-join-pill-color` -> `advancedFilterBuilderJoinPillColor`
+ * `--ag-advanced-filter-option-pill-color` -> `advancedFilterBuilderOptionPillColor`
+ * `--ag-advanced-filter-value-pill-color` -> `advancedFilterBuilderValuePillColor`
  * `--ag-borders-input` -> `inputBorder`
  * `--ag-borders-input-invalid` -> `inputInvalidBorder`
  * `--ag-card-radius` -> `borderRadius`
@@ -87,20 +161,32 @@ These properties were either outdated, confusing to use, or provided no benefit 
  * `--ag-minichart-selected-chart-color`
  * `--ag-minichart-selected-page-color`
 
-### 3. [optional] Remove ag-theme-* classes and update CSS rules that target them
+### 4. [optional] Remove ag-theme-* classes and update CSS rules that target them
 
-Legacy themes were applied by adding a class name e.g. `ag-theme-quartz` to the wrapper element of the grid. Any CSS custom rules had to include this class name in order to override the styles defined in the theme. This is no longer required, but still works. You may take the opportunity to simplify your styles:
+v32 themes were applied by adding a class name e.g. `ag-theme-quartz` to the wrapper element of the grid. Any CSS custom rules had to include this class name in order to override the styles defined in the theme. This is no longer required.
 
+It is not required to remove the theme classname from your grid container, but if you do, you should also remove the class name from any CSS rules that target it:
+
+Before:
+
+```html
+<div id="myGrid" class="ag-theme-quartz"></div>
+```
 ```css
-/* Required in legacy CSS themes, still works with Theming API */
 .ag-theme-quartz {
     --ag-foreground-color: red;
 }
 .ag-theme-quartz .ag-header-cell {
     font-style: italic;
 }
+```
 
-/* Valid in Theming API only: */
+After:
+
+```html
+<div id="myGrid"></div>
+```
+```css
 body {
     /* set vars on `body` to affect all grids on the page regardless of the theme they
        use. You can also use a different selector to affect only specific grids. */
@@ -110,3 +196,7 @@ body {
     font-style: italic;
 }
 ```
+
+### 4. [Sass users only] Remove use of the Sass API
+
+The Theming API achieves in JavaScript what the old Sass API did in Sass.

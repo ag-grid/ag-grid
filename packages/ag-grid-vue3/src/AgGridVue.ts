@@ -215,6 +215,7 @@ export const AgGridVue = defineComponent({
                 frameworkComponentWrapper,
             },
             modules: this.modules,
+            setThemeOnGridDiv: true,
         };
 
         this.api = createGrid(this.$el as HTMLElement, gridOptions, gridParams);

@@ -6,8 +6,6 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, ICellRendererParams, ValueGetterParams } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -29,12 +27,7 @@ export class CustomButtonComponent implements ICellRendererAngularComp {
     selector: 'my-app',
     standalone: true,
     imports: [AgGridAngular],
-    template: ` <ag-grid-angular
-        style="width: 100%; height: 100%;"
-        [rowData]="rowData"
-        [columnDefs]="columnDefs"
-        [class]="themeClass"
-    />`,
+    template: ` <ag-grid-angular style="width: 100%; height: 100%;" [rowData]="rowData" [columnDefs]="columnDefs" />`,
 })
 export class AppComponent {
     public rowData: any[] | null = [
@@ -55,9 +48,6 @@ export class AppComponent {
         { field: 'electric', flex: 1 },
         { field: 'button', cellRenderer: CustomButtonComponent, flex: 1 },
     ];
-    public themeClass =
-        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-        'ag-theme-quartz' /** DARK MODE END **/;
 }
 
 const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

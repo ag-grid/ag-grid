@@ -6,8 +6,6 @@ import { Component, ViewChild } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import type { ChartRef, ColDef, GridReadyEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { GridChartsModule, MenuModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import './styles.css';
@@ -28,10 +26,9 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, GridChartsModule, Menu
             [popupParent]="popupParent"
             [createChartContainer]="createChartContainer"
             [rowData]="rowData"
-            [class]="themeClass"
             (gridReady)="onGridReady($event)"
         />
-        <div #chartParent [class]="'chart-wrapper ' + themeClass">
+        <div #chartParent class="chart-wrapper">
             @if (chartRef) {
                 <div class="chart-wrapper-top">
                     <h2 class="chart-wrapper-title">Chart created at {{ createdTime }}</h2>
@@ -54,9 +51,6 @@ export class AppComponent {
     defaultColDef: ColDef = { flex: 1 };
     popupParent: HTMLElement | null = document.body;
     rowData!: any[];
-    themeClass =
-        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-        'ag-theme-quartz' /** DARK MODE END **/;
     chartRef?: ChartRef;
     createdTime?: string;
 
