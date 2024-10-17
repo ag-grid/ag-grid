@@ -311,7 +311,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         if (this.clientSideRowModel) {
             const onlyChangedColumns = this.gos.get('aggregateOnlyChangedColumns');
-            changedPath = new ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
+            changedPath = new ChangedPath(onlyChangedColumns, this.clientSideRowModel.rootNode);
         }
 
         const cellsToFlash = {} as any;

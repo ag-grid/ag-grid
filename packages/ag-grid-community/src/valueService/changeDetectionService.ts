@@ -57,7 +57,7 @@ export class ChangeDetectionService extends BeanStub implements NamedBean {
         // step 1 of change detection is to update the aggregated values
         if (this.clientSideRowModel && !rowNode.isRowPinned()) {
             const onlyChangedColumns = this.gos.get('aggregateOnlyChangedColumns');
-            const changedPath = new ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
+            const changedPath = new ChangedPath(onlyChangedColumns, this.clientSideRowModel.rootNode);
             changedPath.addParentNode(rowNode.parent, [column]);
             this.clientSideRowModel.doAggregate(changedPath);
 
