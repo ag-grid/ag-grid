@@ -2,13 +2,15 @@ import type { NamedBean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
 import type { RowSelectionMode, SelectAllMode } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
-import type { SelectionEventSourceType } from '../events';
+import type { RowSelectedEvent, SelectionEventSourceType } from '../events';
 import { isSelectionUIEvent } from '../events';
 import {
     _getGroupSelectsDescendants,
+    _getIsRowSelectable,
     _getRowSelectionMode,
     _isClientSideRowModel,
     _isMultiRowSelection,
+    _isRowSelection,
     _isUsingNewRowSelectionAPI,
 } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
@@ -332,8 +334,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         return updatedCount;
     }
 
-    private onRowSelected(event: any): void {
-        const rowNode = event.node;
+    private onRowSelected(event: RowSelectedEvent): void {
+        const rowNode = event.node as RowNode;
 
         // we do not store the group rows when the groups select children
         if (this.groupSelectsChildren && rowNode.group) {
@@ -341,9 +343,9 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         if (rowNode.isSelected()) {
-            this.selectedNodes.set(rowNode.id, rowNode);
+            this.selectedNodes.set(rowNode.id!, rowNode);
         } else {
-            this.selectedNodes.delete(rowNode.id);
+            this.selectedNodes.delete(rowNode.id!);
         }
     }
 
@@ -646,6 +648,72 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             throw new Error(
                 `selectAll only available when rowModelType='clientSide', ie not ${this.rowModel.getType()}`
             );
+        }
+    }
+
+    /**
+     * Updates the selectable state for a node by invoking isRowSelectable callback.
+     * If the node is not selectable, it will be deselected.
+     *
+     * Callers:
+     *  - property isRowSelectable changed
+     *  - after grouping / treeData
+     */
+    public override updateSelectable(skipLeafNodes: boolean): void {
+        const { gos } = this;
+
+        const isRowSelecting = _isRowSelection(gos);
+
+        if (!isRowSelecting) {
+            return;
+        }
+
+        const isGroupSelectsChildren = _getGroupSelectsDescendants(gos);
+        const isCsrmGroupSelectsChildren = _isClientSideRowModel(gos) && isGroupSelectsChildren;
+
+        const nodesToDeselect: RowNode[] = [];
+
+        const nodeCallback = (node: RowNode) => {
+            if (skipLeafNodes && !node.group) {
+                return;
+            }
+
+            // Only in the CSRM, we allow group node selection if a child has a selectable=true when using groupSelectsChildren
+            if (isCsrmGroupSelectsChildren && node.group) {
+                const hasSelectableChild = node.childrenAfterGroup!.some((rowNode) => rowNode.selectable === true);
+                node.setRowSelectable(hasSelectableChild, true);
+                return;
+            }
+
+            const rowSelectable = this.isRowSelectable?.(node) ?? true;
+            node.setRowSelectable(rowSelectable, true);
+
+            if (!rowSelectable && node.isSelected()) {
+                nodesToDeselect.push(node);
+            }
+        };
+
+        // Needs to be depth first in this case, so that parents can be updated based on child.
+        if (isCsrmGroupSelectsChildren) {
+            const csrm = this.rowModel as IClientSideRowModel;
+            const changedPath = new ChangedPath(false, csrm.getRootNode());
+            changedPath.forEachChangedNodeDepthFirst(nodeCallback, true, true);
+        } else {
+            // Normal case, update all rows
+            this.rowModel.forEachNode(nodeCallback);
+        }
+
+        if (nodesToDeselect.length) {
+            this.setNodesSelected({
+                nodes: nodesToDeselect,
+                newValue: false,
+                source: 'selectableChanged',
+            });
+        }
+
+        // if csrm and group selects children, update the groups after deselecting leaf nodes.
+        if (isCsrmGroupSelectsChildren) {
+            this.updateGroupsFromChildrenSelections?.('selectableChanged');
         }
     }
 }
