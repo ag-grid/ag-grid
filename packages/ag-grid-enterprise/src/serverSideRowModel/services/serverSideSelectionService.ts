@@ -230,8 +230,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
     // used by CSRM
     public getBestCostNodeSelection(): RowNode<any>[] | undefined {
-        _warn(194);
-        return undefined;
+        return _warn(194) as undefined;
     }
 
     /**
@@ -242,7 +241,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
      *  - property isRowSelectable changed
      *  - after grouping / treeData
      */
-    public override updateSelectable(skipLeafNodes: boolean): void {
+    protected override updateSelectable(skipLeafNodes: boolean): void {
         const { gos } = this;
 
         const isRowSelecting = _isRowSelection(gos);
@@ -259,7 +258,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             }
 
             const rowSelectable = this.isRowSelectable?.(node) ?? true;
-            node.setRowSelectable(rowSelectable, true);
+            this.setRowSelectable(node, rowSelectable, true);
 
             if (!rowSelectable && node.isSelected()) {
                 nodesToDeselect.push(node);

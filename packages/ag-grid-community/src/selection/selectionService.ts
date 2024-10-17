@@ -680,12 +680,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
      *  - property isRowSelectable changed
      *  - after grouping / treeData
      */
-    public override updateSelectable(skipLeafNodes: boolean): void {
+    protected updateSelectable(skipLeafNodes: boolean) {
         const { gos } = this;
 
-        const isRowSelecting = _isRowSelection(gos);
-
-        if (!isRowSelecting) {
+        if (!_isRowSelection(gos)) {
             return;
         }
 
