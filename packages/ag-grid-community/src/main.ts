@@ -14,7 +14,7 @@ export type { ColumnModel } from './columns/columnModel';
 export { ColumnCollections as _ColumnCollections, ColKey } from './columns/columnModel';
 export type { ColumnAutosizeService } from './columnAutosize/columnAutosizeService';
 export type { FuncColsService } from './columns/funcColsService';
-export { _BaseColsService } from './columns/baseColsService';
+export { BaseColsService } from './columns/baseColsService';
 export type { ColumnStateService } from './columns/columnStateService';
 export { ColumnState, ColumnStateParams, ApplyColumnStateParams } from './columns/columnStateService';
 export type { ColumnMoveService } from './columnMove/columnMoveService';
@@ -303,7 +303,7 @@ export { _requestAnimationFrame } from './misc/animationFrameService';
 export type { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
 export type { MenuService } from './misc/menu/menuService';
-export * from './interfaces/iColsService';
+export { IColsService } from './interfaces/iColsService';
 
 // editing / cellEditors
 export {

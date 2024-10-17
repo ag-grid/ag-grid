@@ -10,9 +10,9 @@ import type {
     IColsService,
     NamedBean,
 } from 'ag-grid-community';
-import { _BaseColsService, _exists, _removeFromArray, _warn } from 'ag-grid-community';
+import { BaseColsService, _exists, _removeFromArray, _warn } from 'ag-grid-community';
 
-export class ValueColsService extends _BaseColsService implements NamedBean, IColsService {
+export class ValueColsService extends BaseColsService implements NamedBean, IColsService {
     beanName = 'valueColsService' as const;
 
     public override wireBeans(beans: BeanCollection): void {

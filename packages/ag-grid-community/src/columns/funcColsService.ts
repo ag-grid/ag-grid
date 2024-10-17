@@ -33,7 +33,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
     }
 
     public getSourceColumnsForGroupColumn(groupCol: AgColumn): AgColumn[] | null {
-        return this.rowGroupColsService.getSourceColumnsForGroupColumn(groupCol);
+        return this.rowGroupColsService?.getSourceColumnsForGroupColumn?.(groupCol) ?? null;
     }
 
     public sortRowGroupColumns(compareFn?: (a: AgColumn, b: AgColumn) => number): void {
@@ -45,7 +45,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
     }
 
     public isRowGroupEmpty(): boolean {
-        return this.rowGroupColsService.isRowGroupEmpty();
+        return this.rowGroupColsService?.isRowGroupEmpty?.() ?? false;
     }
 
     public setRowGroupColumns(colKeys: ColKey[], source: ColumnEventType): void {
@@ -61,7 +61,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
     }
 
     public moveRowGroupColumn(fromIndex: number, toIndex: number, source: ColumnEventType): void {
-        this.rowGroupColsService.moveColumn(fromIndex, toIndex, source);
+        this.rowGroupColsService.moveColumn!(fromIndex, toIndex, source);
     }
 
     public addPivotColumns(keys: ColKey[], source: ColumnEventType): void {
@@ -86,12 +86,6 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
     public removeValueColumns(keys: ColKey[], source: ColumnEventType): void {
         this.valueColsService.removeColumns(keys, source);
-    }
-
-    public extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {
-        this.rowGroupColsService.extractCols(source, oldProvidedCols);
-        this.pivotColsService.extractCols(source, oldProvidedCols);
-        this.valueColsService.extractCols(source, oldProvidedCols);
     }
 
     public generateColumnStateForRowGroupAndPivotIndexes(

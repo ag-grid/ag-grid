@@ -13,7 +13,7 @@ import type { ColKey, ColumnModel, Maybe } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateService';
 import type { VisibleColsService } from './visibleColsService';
 
-export abstract class _BaseColsService extends BeanStub implements IColsService {
+export abstract class BaseColsService extends BeanStub implements IColsService {
     protected columnModel: ColumnModel;
     protected aggFuncService?: IAggFuncService;
     protected visibleColsService: VisibleColsService;
@@ -66,7 +66,7 @@ export abstract class _BaseColsService extends BeanStub implements IColsService 
     protected setColList(
         colKeys: ColKey[],
         masterList: AgColumn[],
-        eventName: ReturnType<_BaseColsService['getEventName']>,
+        eventName: ReturnType<BaseColsService['getEventName']>,
         detectOrderChange: boolean,
         autoGroupsNeedBuilding: boolean,
         columnCallback: (added: boolean, column: AgColumn) => void,
@@ -129,7 +129,7 @@ export abstract class _BaseColsService extends BeanStub implements IColsService 
         actionIsAdd: boolean,
         autoGroupsNeedBuilding: boolean,
         columnCallback: (column: AgColumn) => void,
-        eventType: ReturnType<_BaseColsService['getEventName']>,
+        eventType: ReturnType<BaseColsService['getEventName']>,
         source: ColumnEventType
     ) {
         if (!keys || _missingOrEmpty(keys)) {

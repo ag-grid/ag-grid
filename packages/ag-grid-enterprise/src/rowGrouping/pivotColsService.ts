@@ -8,9 +8,9 @@ import type {
     IColsService,
     NamedBean,
 } from 'ag-grid-community';
-import { _BaseColsService, _removeFromArray } from 'ag-grid-community';
+import { BaseColsService, _removeFromArray } from 'ag-grid-community';
 
-export class PivotColsService extends _BaseColsService implements NamedBean, IColsService {
+export class PivotColsService extends BaseColsService implements NamedBean, IColsService {
     beanName = 'pivotColsService' as const;
 
     private modifyColumnsNoEventsCallbacks = {

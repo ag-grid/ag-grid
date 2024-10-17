@@ -10,13 +10,13 @@ import type {
     NamedBean,
 } from 'ag-grid-community';
 import {
-    _BaseColsService,
+    BaseColsService,
     _missingOrEmpty,
     _removeFromArray,
     _shouldUpdateColVisibilityAfterGroup,
 } from 'ag-grid-community';
 
-export class RowGroupColsService extends _BaseColsService implements NamedBean, IColsService {
+export class RowGroupColsService extends BaseColsService implements NamedBean, IColsService {
     beanName = 'rowGroupColsService' as const;
 
     private modifyColumnsNoEventsCallbacks = {

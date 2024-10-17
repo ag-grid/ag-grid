@@ -1,16 +1,10 @@
 import type { ColKey, Maybe } from '../columns/columnModel';
 import type { ColumnState, ColumnStateParams } from '../columns/columnStateService';
 import type { AgColumn } from '../entities/agColumn';
+import { IAggFunc } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 
-// WIP during FuncColsService refactor
-interface IColsServiceExtraMethods {
-    isRowGroupEmpty(): boolean;
-    getSourceColumnsForGroupColumn(groupCol: AgColumn): AgColumn[] | null;
-    moveColumn(fromIndex: number, toIndex: number, source: ColumnEventType): void;
-}
-
-export interface IColsService extends IColsServiceExtraMethods {
+export interface IColsService {
     columns: AgColumn[];
     setColumns(colKeys: ColKey[], source: ColumnEventType): void;
     addColumns(keys: Maybe<ColKey>[], source: ColumnEventType): void;
@@ -30,4 +24,12 @@ export interface IColsService extends IColsServiceExtraMethods {
         columnStateAccumulator: { [colId: string]: ColumnState },
         incomingColumnState: { [colId: string]: ColumnState }
     ): { [colId: string]: ColumnState };
+
+    // RowGroup
+    isRowGroupEmpty?(): boolean;
+    getSourceColumnsForGroupColumn?(groupCol: AgColumn): AgColumn[] | null;
+    moveColumn?(fromIndex: number, toIndex: number, source: ColumnEventType): void;
+
+    // Value
+    setColumnAggFunc?(key: ColKey, aggFunc: string | IAggFunc | null | undefined, source: ColumnEventType): void;
 }

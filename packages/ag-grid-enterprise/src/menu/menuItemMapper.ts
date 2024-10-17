@@ -9,6 +9,7 @@ import type {
     FocusService,
     IAggFuncService,
     IClipboardService,
+    IColsService,
     ICsvCreator,
     IExcelCreator,
     IExpansionService,
@@ -31,8 +32,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
     private columnStateService: ColumnStateService;
-    private rowGroupColsService: RowGroupColsService;
-    private valueColsService: ValueColsService;
+    private rowGroupColsService?: IColsService;
+    private valueColsService?: IColsService;
     private focusService: FocusService;
     private positionUtils: PositionUtils;
     private chartMenuItemMapper: ChartMenuItemMapper;
@@ -50,8 +51,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.columnStateService = beans.columnStateService;
-        this.rowGroupColsService = beans.rowGroupColsService as RowGroupColsService;
-        this.valueColsService = beans.valueColsService as ValueColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
+        this.valueColsService = beans.valueColsService;
         this.focusService = beans.focusService;
         this.positionUtils = beans.positionUtils;
         this.chartMenuItemMapper = beans.chartMenuItemMapper as ChartMenuItemMapper;
@@ -176,7 +177,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         this.gos.get('functionsReadOnly') ||
                         column?.isRowGroupActive() ||
                         !column?.getColDef().enableRowGroup,
-                    action: () => this.rowGroupColsService.addColumns([column], source),
+                    action: () => this.rowGroupColsService?.addColumns([column], source),
                     icon: _createIconNoSpan('menuAddRowGroup', this.gos, null),
                 };
             case 'rowUnGroup': {
@@ -188,12 +189,13 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return {
                         name: localeTextFunc('ungroupAll', 'Un-Group All'),
                         disabled:
+                            !this.rowGroupColsService ||
                             this.gos.get('functionsReadOnly') ||
                             lockedGroups === -1 ||
-                            lockedGroups >= this.rowGroupColsService.columns.length,
+                            lockedGroups >= (this.rowGroupColsService?.columns ?? []).length,
                         action: () =>
-                            this.rowGroupColsService.setColumns(
-                                this.rowGroupColsService.columns.slice(0, lockedGroups),
+                            this.rowGroupColsService?.setColumns(
+                                (this.rowGroupColsService?.columns ?? []).slice(0, lockedGroups),
                                 source
                             ),
                         icon: icon,
@@ -209,9 +211,10 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return {
                         name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName,
                         disabled:
+                            !this.rowGroupColsService ||
                             this.gos.get('functionsReadOnly') ||
                             (underlyingColumn != null && this.columnModel.isColGroupLocked(underlyingColumn)),
-                        action: () => this.rowGroupColsService.removeColumns([showRowGroup], source),
+                        action: () => this.rowGroupColsService?.removeColumns([showRowGroup], source),
                         icon: icon,
                     };
                 }
@@ -222,11 +225,12 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ' ' +
                         _escapeString(this.columnNameService.getDisplayNameForColumn(column, 'header')),
                     disabled:
+                        !this.rowGroupColsService ||
                         this.gos.get('functionsReadOnly') ||
                         !column?.isRowGroupActive() ||
                         !column?.getColDef().enableRowGroup ||
                         this.columnModel.isColGroupLocked(column),
-                    action: () => this.rowGroupColsService.removeColumns([column], source),
+                    action: () => this.rowGroupColsService?.removeColumns([column], source),
                     icon: icon,
                 };
             }
@@ -412,8 +416,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             result.push({
                 name: localeTextFunc('noAggregation', 'None'),
                 action: () => {
-                    this.rowGroupColsService.removeColumns([columnToUse!], 'contextMenu');
-                    this.valueColsService.setColumnAggFunc(columnToUse, undefined, 'contextMenu');
+                    this.valueColsService?.removeColumns([columnToUse!], 'contextMenu');
+                    this.valueColsService?.setColumnAggFunc?.(columnToUse, undefined, 'contextMenu');
                 },
                 checked: !columnIsAlreadyAggValue,
             });
@@ -422,8 +426,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 result.push({
                     name: localeTextFunc(funcName, aggFuncService.getDefaultFuncLabel(funcName)),
                     action: () => {
-                        this.valueColsService.setColumnAggFunc(columnToUse, funcName, 'contextMenu');
-                        this.rowGroupColsService.addColumns([columnToUse!], 'contextMenu');
+                        this.valueColsService?.setColumnAggFunc!(columnToUse, funcName, 'contextMenu');
+                        this.valueColsService?.addColumns?.([columnToUse!], 'contextMenu');
                     },
                     checked: columnIsAlreadyAggValue && columnToUse!.getAggFunc() === funcName,
                 });

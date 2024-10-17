@@ -19,7 +19,7 @@ export function setColumnAggFunc(
     key: string | ColDef | Column,
     aggFunc: string | IAggFunc | null | undefined
 ): void {
-    (beans.valueColsService as ValueColsService).setColumnAggFunc(key, aggFunc, 'api');
+    beans.valueColsService!.setColumnAggFunc!(key, aggFunc, 'api');
 }
 
 export function isPivotMode(beans: BeanCollection): boolean {

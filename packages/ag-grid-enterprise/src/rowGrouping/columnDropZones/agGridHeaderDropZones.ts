@@ -1,4 +1,4 @@
-import type { BeanCollection, ColumnModel, ComponentSelector } from 'ag-grid-community';
+import type { BeanCollection, ColumnModel, ComponentSelector, IColsService } from 'ag-grid-community';
 import { Component, _setAriaRole } from 'ag-grid-community';
 
 import type { RowGroupColsService } from '../rowGroupColsService';
@@ -7,11 +7,11 @@ import { RowGroupDropZonePanel } from './rowGroupDropZonePanel';
 
 export class AgGridHeaderDropZones extends Component {
     private columnModel: ColumnModel;
-    private rowGroupColsService: RowGroupColsService;
+    private rowGroupColsService?: IColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
-        this.rowGroupColsService = beans.rowGroupColsService as RowGroupColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
     }
 
     private rowGroupComp: Component;
@@ -79,7 +79,7 @@ export class AgGridHeaderDropZones extends Component {
         if (rowGroupPanelShow === 'always') {
             this.rowGroupComp.setDisplayed(true);
         } else if (rowGroupPanelShow === 'onlyWhenGrouping') {
-            const grouping = !this.rowGroupColsService.isRowGroupEmpty();
+            const grouping = !this.rowGroupColsService?.isRowGroupEmpty?.();
             this.rowGroupComp.setDisplayed(grouping);
         } else {
             this.rowGroupComp.setDisplayed(false);
