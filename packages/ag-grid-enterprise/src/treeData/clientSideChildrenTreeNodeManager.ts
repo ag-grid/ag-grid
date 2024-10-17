@@ -19,6 +19,13 @@ export class ClientSideChildrenTreeNodeManager<TData>
         return Array.from(this.treeRoot.enumChildren(), (node) => node.row!.data);
     }
 
+    public override destroy(): void {
+        super.destroy();
+
+        // Forcefully deallocate memory
+        this.childrenGetter = null!;
+    }
+
     public override activate(rootNode: RowNode<TData>): void {
         const oldChildrenGetter = this.childrenGetter;
         const childrenField = this.gos.get('treeDataChildrenField');

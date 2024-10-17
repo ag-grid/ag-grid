@@ -83,8 +83,12 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     }
 
     public override destroy(): void {
-        this.deactivate();
         super.destroy();
+
+        // Forcefully deallocate memory
+        this.rootNode = null!;
+        this.allNodesMap = null!;
+        this.beans = null!;
     }
 
     public setNewRowData(rowData: TData[]): void {

@@ -69,11 +69,20 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
     private rowsPendingDestruction: Set<TreeRow> | null = null;
 
     /** The root node of the tree. */
-    public readonly treeRoot: TreeNode = new TreeNode(null, '', -1);
+    public treeRoot: TreeNode = new TreeNode(null, '', -1);
 
     public override activate(rootNode: RowNode<TData>): void {
         super.activate(rootNode);
         this.treeRoot.setRow(rootNode);
+    }
+
+    public override destroy(): void {
+        super.destroy();
+
+        // Forcefully deallocate memory
+        this.treeRoot = null!;
+        this.oldGroupDisplayColIds = null!;
+        this.rowsPendingDestruction = null!;
     }
 
     public override deactivate(): void {
