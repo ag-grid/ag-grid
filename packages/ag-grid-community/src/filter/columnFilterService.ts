@@ -390,7 +390,11 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         additionalEventAttributes?: any;
         columns?: AgColumn[];
     }): void {
-        const action = () => this.filterManager?.onFilterChanged(params);
+        const action = () => {
+            if (this.isAlive()) {
+                this.filterManager?.onFilterChanged(params);
+            }
+        };
         if (this.rowRenderer.isRefreshInProgress()) {
             setTimeout(action, 0);
         } else {

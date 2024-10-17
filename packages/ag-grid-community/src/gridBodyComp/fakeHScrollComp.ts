@@ -60,6 +60,11 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         this.addManagedPropertyListeners(['suppressHorizontalScroll'], this.onScrollVisibilityChanged.bind(this));
     }
 
+    override destroy(): void {
+        window.clearTimeout(this.setScrollVisibleDebounce);
+        super.destroy();
+    }
+
     protected override initialiseInvisibleScrollbar(): void {
         if (this.invisibleScrollbar !== undefined) {
             return;
@@ -133,6 +138,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         // a scrollbar, give a little time for the grid to resize, after which a
         // scrollbar may no longer be required
         const apply = () => {
+            this.setScrollVisibleDebounce = 0;
             this.addOrRemoveCssClass('ag-scrollbar-invisible', invisibleScrollbar);
             _setFixedHeight(this.getGui(), scrollContainerSize);
             _setFixedHeight(this.eViewport, scrollContainerSize);
@@ -143,9 +149,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         if (!hScrollShowing) {
             apply();
         } else {
-            this.setScrollVisibleDebounce = window.setTimeout(() => {
-                apply();
-            }, 100);
+            this.setScrollVisibleDebounce = window.setTimeout(apply, 100);
         }
     }
 

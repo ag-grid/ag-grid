@@ -134,7 +134,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     private getDateComponentParams(): WithoutGridCommon<IDateParams> {
         const debounceMs = getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
         return {
-            onDateChanged: _debounce(this.onDateChanged.bind(this), debounceMs),
+            onDateChanged: _debounce(this, this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams,
             location: 'floatingFilter',
         };

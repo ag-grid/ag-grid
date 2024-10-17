@@ -132,10 +132,14 @@ export class AgPrimaryColsHeader extends Component<AgPrimaryColsHeaderEvent> {
 
     private onFilterTextChanged(): void {
         if (!this.onFilterTextChangedDebounced) {
-            this.onFilterTextChangedDebounced = _debounce(() => {
-                const filterText = this.eFilterTextField.getValue();
-                this.dispatchLocalEvent({ type: 'filterChanged', filterText: filterText });
-            }, DEBOUNCE_DELAY);
+            this.onFilterTextChangedDebounced = _debounce(
+                this,
+                () => {
+                    const filterText = this.eFilterTextField.getValue();
+                    this.dispatchLocalEvent({ type: 'filterChanged', filterText: filterText });
+                },
+                DEBOUNCE_DELAY
+            );
         }
 
         this.onFilterTextChangedDebounced();

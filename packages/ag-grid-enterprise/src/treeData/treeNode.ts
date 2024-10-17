@@ -1,3 +1,4 @@
+import { _EmptyArray } from 'ag-grid-community';
 import type { ITreeNode, RowNode } from 'ag-grid-community';
 
 import type { TreeRow } from './treeRow';
@@ -5,14 +6,8 @@ import type { TreeRow } from './treeRow';
 const treeNodePositionComparer = (a: RowNode, b: RowNode): number =>
     a.treeNode!.oldSourceRowIndex - b.treeNode!.oldSourceRowIndex;
 
-/**
- * An empty array, used to set an empty array to the childrenAfterGroup and allLeafChildren arrays without allocating a new one for each leaf.
- * Leaves don't have children, using a preallocated empty array reduces memory usage and GC pressure considerably.
- */
-export const EMPTY_ARRAY = Object.freeze([]) as unknown as any[];
-
 /** An empty iterator, to avoid null checking when we iterate the children map */
-const EMPTY_CHILDREN = (EMPTY_ARRAY as TreeNode[]).values();
+const EMPTY_CHILDREN = (_EmptyArray as TreeNode[]).values();
 
 /** Disassociate a node from a row, breaking the association to the node. Only the row is modified, not the TreeNode. */
 const orphanRow = (row: TreeRow, root: boolean): void => {
@@ -78,7 +73,7 @@ export class TreeNode implements ITreeNode {
     public duplicateRows: Set<TreeRow> | null = null;
 
     /** We keep the row.childrenAfterGroup here, we just swap arrays when we assign rows */
-    public childrenAfterGroup: TreeRow[] = EMPTY_ARRAY;
+    public childrenAfterGroup: TreeRow[] = _EmptyArray;
 
     /**
      * We keep the row.allLeafChildren here, we just swap arrays when we assign or swap the row to this node.
@@ -86,7 +81,7 @@ export class TreeNode implements ITreeNode {
      * in this case the row.allLeafChildren will be the same as one of the childrenAfterGroup[x].allLeafChildren,
      * to get the allLeafChildren if is null, do node.allLeafChildren ?? node.row.allLeafChildren.
      */
-    private allLeafChildren: TreeRow[] | null = EMPTY_ARRAY;
+    private allLeafChildren: TreeRow[] | null = _EmptyArray;
 
     /** Indicates whether childrenAfterGroup might need to be recomputed and sorted. Reset during commit. */
     public childrenChanged: boolean = false;
@@ -161,7 +156,7 @@ export class TreeNode implements ITreeNode {
      * childrenAfterGroup and allLeafChildren will be reassigned.
      * @returns True if the row changed
      */
-    public setRow(newRow: TreeRow): boolean {
+    public setRow(newRow: TreeRow | null): boolean {
         const { level, row: oldRow, childrenAfterGroup } = this;
         if (level < 0) {
             if (oldRow !== null && oldRow !== newRow) {
@@ -172,15 +167,19 @@ export class TreeNode implements ITreeNode {
                 return false; // Already the same row
             }
             if (oldRow !== null) {
-                newRow.allLeafChildren = oldRow.allLeafChildren ?? this.allLeafChildren ?? EMPTY_ARRAY;
+                if (newRow !== null) {
+                    newRow.allLeafChildren = oldRow.allLeafChildren ?? this.allLeafChildren ?? _EmptyArray;
+                }
                 orphanRow(oldRow, false); // Unlink the old row, is being replaced
-            } else {
-                newRow.allLeafChildren = this.allLeafChildren ?? EMPTY_ARRAY;
+            } else if (newRow !== null) {
+                newRow.allLeafChildren = this.allLeafChildren ?? _EmptyArray;
             }
         }
-        newRow.level = level;
-        newRow.childrenAfterGroup = childrenAfterGroup;
-        newRow.treeNode = this;
+        if (newRow !== null) {
+            newRow.level = level;
+            newRow.childrenAfterGroup = childrenAfterGroup;
+            newRow.treeNode = this;
+        }
         this.row = newRow;
         return true;
     }
@@ -200,7 +199,7 @@ export class TreeNode implements ITreeNode {
                 this.row = duplicate;
                 duplicate.childrenAfterGroup = childrenAfterGroup;
                 if (level >= 0) {
-                    duplicate.allLeafChildren = row.allLeafChildren ?? this.allLeafChildren ?? EMPTY_ARRAY;
+                    duplicate.allLeafChildren = row.allLeafChildren ?? this.allLeafChildren ?? _EmptyArray;
                 }
             } else {
                 this.row = null;
@@ -236,9 +235,9 @@ export class TreeNode implements ITreeNode {
         newRow.treeNode = this;
         newRow.level = level;
         if (level >= 0) {
-            newRow.allLeafChildren = EMPTY_ARRAY;
+            newRow.allLeafChildren = _EmptyArray;
         }
-        newRow.childrenAfterGroup = EMPTY_ARRAY;
+        newRow.childrenAfterGroup = _EmptyArray;
         return true;
     }
 
@@ -261,9 +260,9 @@ export class TreeNode implements ITreeNode {
         if (newRow !== oldRow) {
             // Swap the rows
             newRow.childrenAfterGroup = this.childrenAfterGroup;
-            newRow.allLeafChildren = oldRow.allLeafChildren ?? this.allLeafChildren ?? EMPTY_ARRAY;
-            oldRow.childrenAfterGroup = EMPTY_ARRAY;
-            oldRow.allLeafChildren = EMPTY_ARRAY;
+            newRow.allLeafChildren = oldRow.allLeafChildren ?? this.allLeafChildren ?? _EmptyArray;
+            oldRow.childrenAfterGroup = _EmptyArray;
+            oldRow.allLeafChildren = _EmptyArray;
             duplicateRows.delete(newRow);
             duplicateRows.add(oldRow);
             this.row = newRow;
@@ -344,7 +343,7 @@ export class TreeNode implements ITreeNode {
      * It uses the rowNodeOrder map to sort the children in the right order, if is passed.
      * It assumes all children childrenAfterGroup are up to date and rows all created.
      *
-     * It replaces the array with EMPTY_ARRAY if there are no children, to reduce memory usage and GC pressure.
+     * It replaces the array with _EmptyArray if there are no children, to reduce memory usage and GC pressure.
      * It does sort the children only if strictly needed, to avoid unnecessary work.
      *
      * If the order changes, also the order in the children map will be updated,
@@ -354,21 +353,21 @@ export class TreeNode implements ITreeNode {
         this.childrenChanged = false; // Reset the flag for this node
         const childrenCount = (treeData && this.children?.size) || 0;
         if (childrenCount === 0) {
-            this.row!.childrenAfterGroup = EMPTY_ARRAY;
+            this.row!.childrenAfterGroup = _EmptyArray;
 
             if (this.childrenAfterGroup.length === 0) {
                 return false; // No children
             }
 
             this.leafChildrenChanged = true;
-            this.childrenAfterGroup = EMPTY_ARRAY;
+            this.childrenAfterGroup = _EmptyArray;
             return true; // Children cleared
         }
 
         let nodesChanged = false;
 
         let childrenAfterGroup = this.childrenAfterGroup;
-        if (childrenAfterGroup === EMPTY_ARRAY) {
+        if (childrenAfterGroup === _EmptyArray) {
             childrenAfterGroup = new Array(childrenCount);
             this.childrenAfterGroup = childrenAfterGroup;
             this.row!.childrenAfterGroup = childrenAfterGroup;
@@ -435,8 +434,8 @@ export class TreeNode implements ITreeNode {
         if (childrenAfterGroupLen === 0) {
             // No children, no leaf nodes.
             nodesChanged = row!.allLeafChildren?.length !== 0;
-            row!.allLeafChildren = EMPTY_ARRAY;
-            this.allLeafChildren = EMPTY_ARRAY;
+            row!.allLeafChildren = _EmptyArray;
+            this.allLeafChildren = _EmptyArray;
         } else if (childrenAfterGroupLen === 1 && childrenAfterGroup[0].allLeafChildren?.length) {
             // We can avoid building the leaf children array if we are a node with just one child that has leafs
             // In this case we use the allLeafChildren of the child by assigning it to this.row.allLeafChildren in O(1)
@@ -455,7 +454,7 @@ export class TreeNode implements ITreeNode {
             // We need to rebuild the allLeafChildren array, we use children allLeafChildren arrays
 
             let allLeafChildren = this.allLeafChildren;
-            if (allLeafChildren === EMPTY_ARRAY || allLeafChildren === null) {
+            if (allLeafChildren === _EmptyArray || allLeafChildren === null) {
                 allLeafChildren = [];
                 this.allLeafChildren = allLeafChildren;
             }

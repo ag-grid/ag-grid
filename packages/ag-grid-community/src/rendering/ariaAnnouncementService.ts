@@ -22,7 +22,7 @@ export class AriaAnnouncementService extends BeanStub implements NamedBean {
     constructor() {
         super();
 
-        this.updateAnnouncement = _debounce(this.updateAnnouncement.bind(this), 200);
+        this.updateAnnouncement = _debounce(this, this.updateAnnouncement.bind(this), 200);
     }
 
     public postConstruct(): void {

@@ -69,7 +69,8 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
                 update();
                 this.isBodyRendered = true;
             } else {
-                _debounce(() => update(), 50)();
+                // TODO: this is weird, since this _debounce is inlined here this seems to act just as a setTimeout?
+                _debounce(this, update, 50)();
             }
         } else {
             this.isBodyRendered = false;
