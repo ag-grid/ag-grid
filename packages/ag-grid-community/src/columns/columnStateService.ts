@@ -173,10 +173,8 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
             columnsWithNoState.forEach(applyDefaultsFunc);
 
-            this.funcColsService.sortRowGroupColumns(
-                comparatorByIndex.bind(this, rowGroupIndexes, previousRowGroupCols)
-            );
-            this.funcColsService.sortPivotColumns(comparatorByIndex.bind(this, pivotIndexes, previousPivotCols));
+            this.rowGroupColsService?.sortColumns(comparatorByIndex.bind(this, rowGroupIndexes, previousRowGroupCols));
+            this.pivotColsService?.sortColumns(comparatorByIndex.bind(this, pivotIndexes, previousPivotCols));
 
             this.columnModel.refreshCols(false);
 

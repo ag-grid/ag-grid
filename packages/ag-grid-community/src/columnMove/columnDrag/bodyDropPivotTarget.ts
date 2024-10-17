@@ -4,13 +4,18 @@ import type { BeanCollection } from '../../context/context';
 import type { DragAndDropIcon, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
+import { IColsService } from '../../main-umd-noStyles';
 import type { DropListener } from './bodyDropTarget';
 
 export class BodyDropPivotTarget extends BeanStub implements DropListener {
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
+    private pivotColsService?: IColsService;
+    private valueColsService?: IColsService;
 
     public wireBeans(beans: BeanCollection) {
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
+        this.pivotColsService = beans.pivotColsService;
+        this.valueColsService = beans.valueColsService;
     }
 
     private columnsToAggregate: AgColumn[] = [];
@@ -89,13 +94,13 @@ export class BodyDropPivotTarget extends BeanStub implements DropListener {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public onDragStop(draggingEvent: DraggingEvent): void {
         if (this.columnsToAggregate.length > 0) {
-            this.funcColsService.addValueColumns(this.columnsToAggregate, 'toolPanelDragAndDrop');
+            this.valueColsService?.addColumns(this.columnsToAggregate, 'toolPanelDragAndDrop');
         }
         if (this.columnsToGroup.length > 0) {
-            this.funcColsService.addRowGroupColumns(this.columnsToGroup, 'toolPanelDragAndDrop');
+            this.rowGroupColsService?.addColumns(this.columnsToGroup, 'toolPanelDragAndDrop');
         }
         if (this.columnsToPivot.length > 0) {
-            this.funcColsService.addPivotColumns(this.columnsToPivot, 'toolPanelDragAndDrop');
+            this.pivotColsService?.addColumns(this.columnsToPivot, 'toolPanelDragAndDrop');
         }
     }
 

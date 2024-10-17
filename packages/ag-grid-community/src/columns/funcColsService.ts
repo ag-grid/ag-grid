@@ -32,58 +32,6 @@ export class FuncColsService extends BeanStub implements NamedBean {
         return this.pivotColsService.columns;
     }
 
-    public sortRowGroupColumns(compareFn?: (a: AgColumn, b: AgColumn) => number): void {
-        this.rowGroupColsService.sortColumns(compareFn);
-    }
-
-    public sortPivotColumns(compareFn?: (a: AgColumn, b: AgColumn) => number): void {
-        this.pivotColsService.sortColumns(compareFn);
-    }
-
-    public isRowGroupEmpty(): boolean {
-        return this.rowGroupColsService?.isRowGroupEmpty?.() ?? false;
-    }
-
-    public setRowGroupColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this.rowGroupColsService.setColumns(colKeys, source);
-    }
-
-    public addRowGroupColumns(keys: Maybe<ColKey>[], source: ColumnEventType): void {
-        this.rowGroupColsService.addColumns(keys, source);
-    }
-
-    public removeRowGroupColumns(keys: Maybe<ColKey>[] | null, source: ColumnEventType): void {
-        this.rowGroupColsService.removeColumns(keys, source);
-    }
-
-    public moveRowGroupColumn(fromIndex: number, toIndex: number, source: ColumnEventType): void {
-        this.rowGroupColsService.moveColumn!(fromIndex, toIndex, source);
-    }
-
-    public addPivotColumns(keys: ColKey[], source: ColumnEventType): void {
-        this.pivotColsService.addColumns(keys, source);
-    }
-
-    public setPivotColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this.pivotColsService.setColumns(colKeys, source);
-    }
-
-    public removePivotColumns(keys: ColKey[], source: ColumnEventType): void {
-        this.pivotColsService.removeColumns(keys, source);
-    }
-
-    public setValueColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this.valueColsService.setColumns(colKeys, source);
-    }
-
-    public addValueColumns(keys: ColKey[], source: ColumnEventType): void {
-        this.valueColsService.addColumns(keys, source);
-    }
-
-    public removeValueColumns(keys: ColKey[], source: ColumnEventType): void {
-        this.valueColsService.removeColumns(keys, source);
-    }
-
     public generateColumnStateForRowGroupAndPivotIndexes(
         updatedRowGroupColumnState: { [colId: string]: ColumnState },
         updatedPivotColumnState: { [colId: string]: ColumnState }
