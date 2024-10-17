@@ -440,7 +440,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return true;
         }
 
-        const diff = highlightPosition === RowHighlightPosition.Above ? -1 : 1;
+        const diff = highlightPosition === 'Above' ? -1 : 1;
 
         if (this.getRow(hoveredRowNode.rowIndex! + diff) === movingRowNode) {
             return true;
