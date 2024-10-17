@@ -117,13 +117,13 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     enableAdvancedFilter: { module: 'AdvancedFilterModule' },
     treeData: {
         supportedRowModels: ['clientSide', 'serverSide'],
-        module: 'RowGroupingModule',
+        module: 'TreeDataModule',
         validate: (options) => {
             const rowModel = options.rowModelType ?? 'clientSide';
             switch (rowModel) {
                 case 'clientSide': {
-                    const csrmWarning = `treeData requires 'getDataPath' in the ${rowModel} row model.`;
-                    return options.getDataPath ? null : csrmWarning;
+                    const csrmWarning = `treeData requires 'treeDataChildrenField' or 'getDataPath' in the ${rowModel} row model.`;
+                    return options.treeDataChildrenField || options.getDataPath ? null : csrmWarning;
                 }
                 case 'serverSide': {
                     const ssrmWarning = `treeData requires 'isServerSideGroup' and 'getServerSideGroupKey' in the ${rowModel} row model.`;
@@ -197,6 +197,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
         },
     },
 
+    treeDataChildrenField: {
+        module: 'TreeDataModule',
+    },
     viewportDatasource: {
         supportedRowModels: ['viewport'],
         module: 'ViewportRowModelModule',

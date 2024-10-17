@@ -59,6 +59,7 @@ const STRING_GRID_OPTIONS: KeysOfType<string>[] = [
     'columnMenu',
     'tooltipShowMode',
     'grandTotalRow',
+    'treeDataChildrenField',
 ];
 
 // only used internally

@@ -4,13 +4,13 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { TreeDataModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
 import CustomGroupCellRenderer from './customGroupCellRendererVue.js';
 import { getData } from './data.js';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, TreeDataModule]);
 
 const VueExample = {
     template: `

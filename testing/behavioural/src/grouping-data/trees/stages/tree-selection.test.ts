@@ -1,12 +1,12 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { TreeDataModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../../test-utils';
 import { GridRows, TestGridsManager, cachedJSONObjects } from '../../../test-utils';
 
 describe('ag-grid tree selection', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
     beforeEach(() => {

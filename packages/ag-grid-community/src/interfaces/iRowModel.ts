@@ -9,6 +9,8 @@ export interface RowBounds {
 export type RowModelType = 'infinite' | 'viewport' | 'clientSide' | 'serverSide';
 
 export interface IRowModel {
+    readonly rootNode?: RowNode;
+
     /** Returns the rowNode at the given index. */
     getRow(index: number): RowNode | undefined;
 

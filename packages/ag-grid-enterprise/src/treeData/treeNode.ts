@@ -111,13 +111,13 @@ export class TreeNode implements ITreeNode {
         public readonly level: number
     ) {}
 
-    public isEmptyFillerNode(): boolean {
-        return !this.row?.data && !this.children?.size;
+    /** Returns the number of children in this node */
+    public get size(): number {
+        return this.children?.size ?? 0;
     }
 
-    /** Returns true if this tree node has children */
-    public hasChildren(): boolean {
-        return !!this.children?.size;
+    public isEmptyFillerNode(): boolean {
+        return !this.row?.data && !this.children?.size;
     }
 
     /** Returns an iterator able to iterate all children in this node, in order of insertion */
@@ -350,17 +350,18 @@ export class TreeNode implements ITreeNode {
      * If the order changes, also the order in the children map will be updated,
      * so the next call to enumChildren() will return the children in the right order.
      */
-    public updateChildrenAfterGroup(): boolean {
+    public updateChildrenAfterGroup(treeData: boolean): boolean {
         this.childrenChanged = false; // Reset the flag for this node
-        const childrenCount = this.children?.size ?? 0;
+        const childrenCount = (treeData && this.children?.size) || 0;
         if (childrenCount === 0) {
+            this.row!.childrenAfterGroup = EMPTY_ARRAY;
+
             if (this.childrenAfterGroup.length === 0) {
                 return false; // No children
             }
 
             this.leafChildrenChanged = true;
             this.childrenAfterGroup = EMPTY_ARRAY;
-            this.row!.childrenAfterGroup = EMPTY_ARRAY;
             return true; // Children cleared
         }
 

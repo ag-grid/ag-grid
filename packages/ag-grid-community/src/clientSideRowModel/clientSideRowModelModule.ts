@@ -5,6 +5,7 @@ import { FilterCoreModule } from '../filter/filterModule';
 import { baseCommunityModule } from '../interfaces/iModule';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { SortModule } from '../sort/sortModule';
+import { ClientSideNodeManager } from './clientSideNodeManager';
 import { ClientSideRowModel } from './clientSideRowModel';
 import {
     applyTransaction,
@@ -21,14 +22,13 @@ import {
 } from './clientSideRowModelApi';
 import { FilterStage } from './filterStage';
 import { FlattenStage } from './flattenStage';
-import { ImmutableService } from './immutableService';
 import { RowNodeEventThrottle } from './rowNodeEventThrottle';
 import { SortStage } from './sortStage';
 
 export const ClientSideRowModelCoreModule: _ModuleWithoutApi = {
     ...baseCommunityModule('ClientSideRowModelCoreModule'),
     rowModels: ['clientSide'],
-    beans: [ClientSideRowModel, FlattenStage, ImmutableService, RowNodeEventThrottle],
+    beans: [ClientSideNodeManager, ClientSideRowModel, FlattenStage, RowNodeEventThrottle],
 };
 
 export const ClientSideRowModelSortModule: _ModuleWithoutApi = {
