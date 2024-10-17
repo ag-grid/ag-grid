@@ -64,9 +64,12 @@ export function getTemplate(bindings: ParsedBindings, exampleConfig: ExampleConf
         ? ''
         : `style="width: ${inlineGridStyles.width}; height: ${inlineGridStyles.height};"`;
 
+    const className = inlineGridStyles.className ? `class="${inlineGridStyles.className}"` : '';
+
     const agGridTag = `<ag-grid-vue
     ${exampleConfig.myGridReference ? 'id="myGrid"' : ''}
     ${style}
+    ${className}
     :columnDefs="columnDefs"
     @grid-ready="onGridReady"
     ${attributes.join('\n    ')}></ag-grid-vue>`;

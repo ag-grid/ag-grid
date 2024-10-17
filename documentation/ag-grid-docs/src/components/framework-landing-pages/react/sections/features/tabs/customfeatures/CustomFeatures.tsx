@@ -30,7 +30,7 @@ const CustomFeatures: React.FC = () => {
                         <h5 className={styles.featureHeading}>100+ CSS Variables</h5>
                         <span className={styles.featureDetail}>
                             Customise every part of your React Table with over{' '}
-                            <a href={urlWithBaseUrl('./react-data-grid/global-style-customisation-variables/')}>
+                            <a href={urlWithBaseUrl('./react-data-grid/theming-v32-customisation-variables/')}>
                                 100 CSS variables
                             </a>
                             . Customise colours, spacing, fonts, and component styles.

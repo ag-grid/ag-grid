@@ -295,6 +295,8 @@ async function writeContents(
     const outputPath = path.join(options.outputPath, importType, internalFramework, 'contents.json');
     await writeFile(outputPath, JSON.stringify(result));
 
+    console.log('!!!!', outputPath);
+
     for (const name in result.files) {
         if (typeof result.files[name] !== 'string') {
             throw new Error(`${outputPath}: non-string file content`);
