@@ -16,7 +16,7 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
     }
 
     private setupFailed(): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         this.getGui().innerText = localeTextFunc('loadingError', 'ERR');
 
         const ariaFailed = localeTextFunc('ariaSkeletonCellLoadingFailed', 'Row failed to load');
@@ -42,7 +42,7 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
 
         this.getGui().appendChild(skeletonEffect);
 
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         const ariaLoading = localeTextFunc('ariaSkeletonCellLoading', 'Row data is loading');
         _setAriaLabel(this.getGui(), ariaLoading);
     }

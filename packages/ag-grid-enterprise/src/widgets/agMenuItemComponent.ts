@@ -238,7 +238,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
             );
         };
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         const addPopupRes = popupService?.addPopup({
             modal: true,

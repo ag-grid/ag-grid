@@ -16,7 +16,7 @@ export class AgNameValue extends Component {
         // we want to hide until the first value comes in
         this.setDisplayed(false);
 
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         this.eLabel.innerHTML = localeTextFunc(key, defaultValue);
     }
 

@@ -102,7 +102,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         const disabled = params.disabled != null ? params.disabled : !params.column?.isCellEditable(params.node);
         this.eCheckbox.setDisabled(disabled);
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const stateName = _getAriaCheckboxStateName(translate, isSelected);
         const ariaLabel = disabled
             ? stateName

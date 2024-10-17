@@ -4,6 +4,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
+import type { RowHighlightPosition } from '../entities/rowNode';
 import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
 import type { Environment } from '../environment';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
@@ -15,15 +16,10 @@ import {
     _isAnimateRows,
     _isDomLayout,
 } from '../gridOptionsUtils';
-import type {
-    ClientSideRowModelStep,
-    IClientSideRowModel,
-    RefreshModelParams,
-} from '../interfaces/iClientSideRowModel';
-import { ClientSideRowModelSteps } from '../interfaces/iClientSideRowModel';
+import type { IClientSideRowModel, RefreshModelParams } from '../interfaces/iClientSideRowModel';
+import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
 import type { IGroupHideOpenParentsService } from '../interfaces/iGroupHideOpenParentsService';
 import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
-import { RowHighlightPosition } from '../interfaces/iRowNode';
 import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
@@ -32,7 +28,6 @@ import { _last, _removeFromArray } from '../utils/array';
 import { ChangedPath } from '../utils/changedPath';
 import { _debounce } from '../utils/function';
 import { _exists, _missing } from '../utils/generic';
-import { _error } from '../validation/logging';
 import type { ValueCache } from '../valueService/valueCache';
 import { ClientSideNodeManager } from './clientSideNodeManager';
 import { updateRowNodeAfterFilter } from './filterStage';
@@ -138,10 +133,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             this.filterAggregatesStage,
             this.flattenStage,
         ].filter((stage) => !!stage) as IRowNodeStage[];
-        const refreshEverythingFunc = this.refreshModel.bind(this, { step: ClientSideRowModelSteps.EVERYTHING });
+        const refreshEverythingFunc = this.refreshModel.bind(this, { step: 'group' });
         const animate = !this.gos.get('suppressAnimationFrame');
         const refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(this, {
-            step: ClientSideRowModelSteps.EVERYTHING, // after cols change, row grouping (the first stage) could of changed
+            step: 'group', // after cols change, row grouping (the first stage) could of changed
             afterColumnsChanged: true,
             keepRenderedRows: true, // we want animations cos sorting or filtering could be applied
             animate,
@@ -151,7 +146,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             newColumnsLoaded: refreshEverythingAfterColsChangedFunc,
             columnRowGroupChanged: refreshEverythingFunc,
             columnValueChanged: this.onValueChanged.bind(this),
-            columnPivotChanged: this.refreshModel.bind(this, { step: ClientSideRowModelSteps.PIVOT }),
+            columnPivotChanged: this.refreshModel.bind(this, { step: 'pivot' }),
             filterChanged: this.onFilterChanged.bind(this),
             sortChanged: this.onSortChanged.bind(this),
             columnPivotModeChanged: refreshEverythingFunc,
@@ -383,7 +378,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
 
         this.refreshModel({
-            step: ClientSideRowModelSteps.EVERYTHING,
+            step: 'group',
             keepRenderedRows: true,
             keepEditingRows: true,
             animate,
@@ -397,19 +392,20 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const indexAtPixelNow = pixel != null ? this.getRowIndexAtPixel(pixel) : null;
         const rowNodeAtPixelNow = indexAtPixelNow != null ? this.getRow(indexAtPixelNow) : null;
 
-        if (!rowNodeAtPixelNow || !rowNode || rowNodeAtPixelNow === rowNode || pixel == null) {
-            if (this.lastHighlightedRow) {
-                this.lastHighlightedRow.setHighlighted(null);
-                this.lastHighlightedRow = null;
-            }
+        if (!rowNodeAtPixelNow || !rowNode || pixel == null) {
+            this.clearHighlightedRow();
             return;
         }
 
         const highlight = this.getHighlightPosition(pixel, rowNodeAtPixelNow);
+        const isSamePosition = this.isHighlightingCurrentPosition(rowNode, rowNodeAtPixelNow, highlight);
+        const isDifferentNode = this.lastHighlightedRow != null && this.lastHighlightedRow !== rowNodeAtPixelNow;
 
-        if (this.lastHighlightedRow && this.lastHighlightedRow !== rowNodeAtPixelNow) {
-            this.lastHighlightedRow.setHighlighted(null);
-            this.lastHighlightedRow = null;
+        if (isSamePosition || isDifferentNode) {
+            this.clearHighlightedRow();
+            if (isSamePosition) {
+                return;
+            }
         }
 
         rowNodeAtPixelNow.setHighlighted(highlight);
@@ -422,17 +418,42 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             rowNode = this.getRow(index || 0);
 
             if (!rowNode) {
-                return RowHighlightPosition.Below;
+                return 'Below';
             }
         }
 
         const { rowTop, rowHeight } = rowNode;
 
-        return pixel - rowTop! < rowHeight! / 2 ? RowHighlightPosition.Above : RowHighlightPosition.Below;
+        return pixel - rowTop! < rowHeight! / 2 ? 'Above' : 'Below';
     }
 
     public getLastHighlightedRowNode(): RowNode | null {
         return this.lastHighlightedRow;
+    }
+
+    private isHighlightingCurrentPosition(
+        movingRowNode: RowNode,
+        hoveredRowNode: RowNode,
+        highlightPosition: RowHighlightPosition
+    ): boolean {
+        if (movingRowNode === hoveredRowNode) {
+            return true;
+        }
+
+        const diff = highlightPosition === 'Above' ? -1 : 1;
+
+        if (this.getRow(hoveredRowNode.rowIndex! + diff) === movingRowNode) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private clearHighlightedRow(): void {
+        if (this.lastHighlightedRow) {
+            this.lastHighlightedRow.setHighlighted(null);
+            this.lastHighlightedRow = null;
+        }
     }
 
     public isLastRowIndexKnown(): boolean {
@@ -527,7 +548,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public onRowGroupOpened(): void {
         const animate = _isAnimateRows(this.gos);
-        this.refreshModel({ step: ClientSideRowModelSteps.MAP, keepRenderedRows: true, animate: animate });
+        this.refreshModel({ step: 'map', keepRenderedRows: true, animate: animate });
     }
 
     private onFilterChanged(event: FilterChangedEvent): void {
@@ -537,16 +558,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const animate = _isAnimateRows(this.gos);
 
         const primaryOrQuickFilterChanged = event.columns.length === 0 || event.columns.some((col) => col.isPrimary());
-        const step: ClientSideRowModelSteps = primaryOrQuickFilterChanged
-            ? ClientSideRowModelSteps.FILTER
-            : ClientSideRowModelSteps.FILTER_AGGREGATES;
+        const step: ClientSideRowModelStage = primaryOrQuickFilterChanged ? 'filter' : 'filter_aggregates';
         this.refreshModel({ step: step, keepRenderedRows: true, animate: animate });
     }
 
     private onSortChanged(): void {
         const animate = _isAnimateRows(this.gos);
         this.refreshModel({
-            step: ClientSideRowModelSteps.SORT,
+            step: 'sort',
             keepRenderedRows: true,
             animate: animate,
             keepEditingRows: true,
@@ -559,9 +578,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private onValueChanged(): void {
         if (this.columnModel.isPivotActive()) {
-            this.refreshModel({ step: ClientSideRowModelSteps.PIVOT });
+            this.refreshModel({ step: 'pivot' });
         } else {
-            this.refreshModel({ step: ClientSideRowModelSteps.AGGREGATE });
+            this.refreshModel({ step: 'aggregate' });
         }
     }
 
@@ -604,37 +623,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         return transactionsContainUpdatesOnly;
     }
 
-    private buildRefreshModelParams(step: ClientSideRowModelStep | undefined): RefreshModelParams | undefined {
-        let paramsStep = ClientSideRowModelSteps.EVERYTHING;
-        const stepsMapped: any = {
-            everything: ClientSideRowModelSteps.EVERYTHING,
-            group: ClientSideRowModelSteps.EVERYTHING,
-            filter: ClientSideRowModelSteps.FILTER,
-            map: ClientSideRowModelSteps.MAP,
-            aggregate: ClientSideRowModelSteps.AGGREGATE,
-            sort: ClientSideRowModelSteps.SORT,
-            pivot: ClientSideRowModelSteps.PIVOT,
-        };
-        if (_exists(step)) {
-            paramsStep = stepsMapped[step];
-        }
-
-        if (_missing(paramsStep)) {
-            _error(10, { step, stepsMapped });
-            return undefined;
-        }
-        const animate = !this.gos.get('suppressAnimationFrame');
-        const modelParams: RefreshModelParams = {
-            step: paramsStep,
+    private buildRefreshModelParams(step: ClientSideRowModelStage = 'group'): RefreshModelParams | undefined {
+        return {
+            step,
             keepRenderedRows: true,
             keepEditingRows: true,
-            animate,
+            animate: !this.gos.get('suppressAnimationFrame'),
         };
-        return modelParams;
     }
 
-    refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void {
-        if (!this.hasStarted || this.isRefreshingModel || this.columnModel.isChangeEventsDispatching()) {
+    refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStage | undefined): void {
+        if (!this.hasStarted || this.isRefreshingModel || this.columnModel.changeEventsDispatching) {
             return;
         }
 
@@ -668,7 +667,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.isRefreshingModel = true;
 
         switch (params.step) {
-            case ClientSideRowModelSteps.EVERYTHING:
+            case 'group':
                 this.doRowGrouping(
                     params.rowNodeTransactions,
                     changedPath,
@@ -676,17 +675,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
                     !!params.afterColumnsChanged
                 );
             /* eslint-disable no-fallthrough */
-            case ClientSideRowModelSteps.FILTER:
+            case 'filter':
                 this.doFilter(changedPath);
-            case ClientSideRowModelSteps.PIVOT:
+            case 'pivot':
                 this.doPivot(changedPath);
-            case ClientSideRowModelSteps.AGGREGATE: // depends on agg fields
+            case 'aggregate': // depends on agg fields
                 this.doAggregate(changedPath);
-            case ClientSideRowModelSteps.FILTER_AGGREGATES:
+            case 'filter_aggregates':
                 this.doFilterAggregates(changedPath);
-            case ClientSideRowModelSteps.SORT:
+            case 'sort':
                 this.doSort(params.rowNodeTransactions, changedPath);
-            case ClientSideRowModelSteps.MAP:
+            case 'map':
                 this.doRowsToDisplay();
             /* eslint-enable no-fallthrough */
         }
@@ -711,7 +710,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public isEmpty(): boolean {
         const rowsMissing = _missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
-        return _missing(this.rootNode) || rowsMissing || !this.columnModel.isReady();
+        return _missing(this.rootNode) || rowsMissing || !this.columnModel.ready;
     }
 
     public isRowsToRender(): boolean {
@@ -1129,7 +1128,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
 
         this.refreshModel({
-            step: ClientSideRowModelSteps.EVERYTHING,
+            step: 'group',
             newData: true,
         });
     }
@@ -1238,7 +1237,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         });
 
         this.refreshModel({
-            step: ClientSideRowModelSteps.EVERYTHING,
+            step: 'group',
             rowNodeTransactions,
             rowNodesOrderChanged,
             keepRenderedRows: true,
@@ -1253,7 +1252,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public onRowHeightChanged(): void {
         this.refreshModel({
-            step: ClientSideRowModelSteps.MAP,
+            step: 'map',
             keepRenderedRows: true,
             keepEditingRows: true,
             keepUndoRedoStack: true,
@@ -1308,7 +1307,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private onGridStylesChanges(e: CssVariablesChanged) {
         if (e.rowHeightChanged) {
-            if (this.columnModel.isAutoRowHeightActive()) {
+            if (this.columnModel.autoRowHeightActive) {
                 return;
             }
 
@@ -1326,5 +1325,19 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public isRowDataLoaded(): boolean {
         return this.rowCountReady;
+    }
+
+    public override destroy(): void {
+        super.destroy();
+
+        // TODO: We should unassign the local properties below to avoid memory leaks.
+        // (this.rootNode as any) = null;
+        // (this.rowsToDisplay as any) = null;
+        // (this.nodeManager as any) = null;
+        // this.rowDataTransactionBatch = null;
+        // this.lastHighlightedRow = null;
+        // (this.orderedStages as any) = null;
+
+        this.clearHighlightedRow();
     }
 }

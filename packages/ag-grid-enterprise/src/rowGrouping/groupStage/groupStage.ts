@@ -1,12 +1,13 @@
 import type {
     BeanCollection,
+    ClientSideRowModelStage,
     GridOptions,
     IRowNodeStage,
     ISelectionService,
     NamedBean,
     StageExecuteParams,
 } from 'ag-grid-community';
-import { BeanStub, ClientSideRowModelSteps } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
 import { GroupStrategy } from './groupStrategy/groupStrategy';
 import { TreeStrategy } from './treeStrategy/treeStrategy';
@@ -21,7 +22,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         'groupHideOpenParents',
         'groupDisplayType',
     ]);
-    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.EVERYTHING;
+    public step: ClientSideRowModelStage = 'group';
 
     private selectionService: ISelectionService | undefined;
     private strategy: GroupStrategy | TreeStrategy | undefined;

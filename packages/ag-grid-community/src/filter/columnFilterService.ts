@@ -20,6 +20,7 @@ import type {
 import type { RowNode } from '../entities/rowNode';
 import type { ColumnEventType, FilterChangedEventSourceType } from '../events';
 import { _getGroupAggFiltering, _isSetFilterByDefault } from '../gridOptionsUtils';
+import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FilterModel, IFilter, IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import type { IRowModel } from '../interfaces/iRowModel';
@@ -84,6 +85,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     private dataTypeService?: DataTypeService;
     private filterManager?: FilterManager;
     private filterValueService: FilterValueService;
+    private autoColService?: IAutoColService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueService = beans.valueService;
@@ -94,6 +96,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         this.dataTypeService = beans.dataTypeService;
         this.filterManager = beans.filterManager;
         this.filterValueService = beans.filterValueService!;
+        this.autoColService = beans.autoColService;
     }
 
     private allColumnFilters = new Map<string, FilterWrapper>();
@@ -623,8 +626,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     private updateDependentFilters(): void {
         // Group column filters can be dependant on underlying column filters, but don't normally get created until they're used for the first time.
         // Instead, create them by default when any filter changes.
-        const groupColumns = this.columnModel.getAutoCols();
-        groupColumns?.forEach((groupColumn) => {
+        this.autoColService?.getAutoCols()?.forEach((groupColumn) => {
             if (groupColumn.getColDef().filter === 'agGroupColumnFilter') {
                 this.getOrCreateFilterWrapper(groupColumn);
             }
@@ -908,7 +910,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         formatValue: DataTypeFormatValueFunc
     ): void {
         const usingSetFilter = _isSetFilterByDefault(this.gos);
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const mergeFilterParams = (params: any) => {
             const { filterParams } = colDef;
             colDef.filterParams =

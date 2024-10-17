@@ -282,7 +282,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         if (!this.isTree) {
             return;
         }
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const checkboxValue = this.eCheckbox.getValue();
         const state =
             checkboxValue === undefined
@@ -299,7 +299,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         if (!this.isTree) {
             return;
         }
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const itemLabel = translate('ariaFilterValue', 'Filter Value');
         const ariaEl = this.getAriaElement();
         _setAriaLabel(ariaEl, `${value} ${itemLabel}`);

@@ -2,6 +2,7 @@ import type {
     AgColumn,
     BeanCollection,
     ChangedPath,
+    ClientSideRowModelStage,
     ColDef,
     ColumnModel,
     FuncColsService,
@@ -13,7 +14,7 @@ import type {
     StageExecuteParams,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, ClientSideRowModelSteps, _missing } from 'ag-grid-community';
+import { BeanStub, _missing } from 'ag-grid-community';
 
 import type { PivotColDefService } from './pivotColDefService';
 
@@ -28,7 +29,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         'pivotColumnGroupTotals',
         'suppressExpandablePivotGroups',
     ]);
-    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.PIVOT;
+    public step: ClientSideRowModelStage = 'pivot';
 
     private valueService: ValueService;
     private columnModel: ColumnModel;

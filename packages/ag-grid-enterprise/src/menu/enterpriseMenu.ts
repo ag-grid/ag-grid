@@ -209,7 +209,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             }
         });
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is

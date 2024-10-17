@@ -2,6 +2,7 @@ import type {
     AgColumn,
     BeanCollection,
     ChangedPath,
+    ClientSideRowModelStage,
     ColumnModel,
     FuncColsService,
     GetGroupRowAggParams,
@@ -16,7 +17,7 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { BeanStub, ClientSideRowModelSteps, _error, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
+import { BeanStub, _error, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
 
 import type { AggFuncService } from './aggFuncService';
 
@@ -39,7 +40,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         'suppressAggFilteredOnly',
         'grandTotalRow',
     ]);
-    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.AGGREGATE;
+    public step: ClientSideRowModelStage = 'aggregate';
 
     private columnModel: ColumnModel;
     private valueService: ValueService;

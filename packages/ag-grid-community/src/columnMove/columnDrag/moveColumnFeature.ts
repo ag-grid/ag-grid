@@ -1,6 +1,6 @@
 import type { ColumnModel } from '../../columns/columnModel';
 import type { VisibleColsService } from '../../columns/visibleColsService';
-import { HorizontalDirection } from '../../constants/direction';
+import type { HorizontalDirection } from '../../constants/direction';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { CtrlsService } from '../../ctrlsService';
@@ -11,6 +11,7 @@ import type { ColumnEventType } from '../../events';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { ColumnHighlightPosition } from '../../interfaces/iColumn';
+import type { PinnedColumnService } from '../../pinnedColumns/pinnedColumnService';
 import { _last } from '../../utils/array';
 import { _exists, _missing } from '../../utils/generic';
 import type { ColumnMoveService } from '../columnMoveService';
@@ -30,6 +31,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private columnMoveService: ColumnMoveService;
     private dragAndDropService: DragAndDropService;
     private ctrlsService: CtrlsService;
+    private pinnedColumnService?: PinnedColumnService;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
@@ -37,6 +39,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.columnMoveService = beans.columnMoveService!;
         this.dragAndDropService = beans.dragAndDropService!;
         this.ctrlsService = beans.ctrlsService;
+        this.pinnedColumnService = beans.pinnedColumnService;
     }
 
     private gridBodyCon: GridBodyCtrl;
@@ -251,7 +254,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         finished: boolean
     ): void {
         const allMovingColumns = this.getAllMovingColumns(draggingEvent);
-        const fromLeft = this.normaliseDirection(draggingEvent.hDirection!) === HorizontalDirection.Right;
+        const fromLeft = this.normaliseDirection(draggingEvent.hDirection!) === 'right';
         const isFromHeader = draggingEvent.dragSource.type === DragSourceType.HeaderCell;
 
         const params = this.getMoveColumnParams({
@@ -514,10 +517,10 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection {
         if (this.gos.get('enableRtl')) {
             switch (hDirection) {
-                case HorizontalDirection.Left:
-                    return HorizontalDirection.Right;
-                case HorizontalDirection.Right:
-                    return HorizontalDirection.Left;
+                case 'left':
+                    return 'right';
+                case 'right':
+                    return 'left';
             }
         }
 
@@ -704,7 +707,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             pinned = this.getPinDirection();
         }
 
-        this.columnModel.setColsPinned(allowedCols, pinned, 'uiColumnDragged');
+        this.pinnedColumnService?.setColsPinned(allowedCols, pinned, 'uiColumnDragged');
 
         if (fromMoving) {
             this.dragAndDropService.nudge();

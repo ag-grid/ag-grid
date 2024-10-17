@@ -106,7 +106,7 @@ export class RowDragComp extends Component {
             })[0];
         }
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         this.dragSource = {
             type: DragSourceType.RowDrag,

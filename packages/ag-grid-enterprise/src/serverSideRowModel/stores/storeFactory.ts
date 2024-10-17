@@ -65,7 +65,7 @@ export class StoreFactory extends BeanStub implements NamedBean {
             return;
         }
 
-        if (this.columnModel.isAutoRowHeightActive()) {
+        if (this.columnModel.autoRowHeightActive) {
             _warn(204);
             return undefined;
         }

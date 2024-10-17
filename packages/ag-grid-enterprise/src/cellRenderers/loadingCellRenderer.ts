@@ -17,7 +17,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
     }
 
     private setupFailed(): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         this.eLoadingText.innerText = localeTextFunc('loadingError', 'ERR');
     }
 
@@ -27,7 +27,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
             this.eLoadingIcon.appendChild(eLoadingIcon);
         }
 
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
     }
 

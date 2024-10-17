@@ -3,11 +3,11 @@ import { RowApiModule, ScrollApiModule } from './api/apiModule';
 import { ColumnAutosizeModule } from './columnAutosize/columnAutosizeModule';
 import { ColumnMoveModule } from './columnMove/columnMoveModule';
 import { ColumnResizeModule } from './columnResize/columnResizeModule';
+import { ColumnGroupModule } from './columns/columnGroups/columnGroupModule';
 import { ColumnHoverModule } from './columns/columnHover/columnHoverModule';
 import {
     ColumnApiModule,
     ColumnFlexModule,
-    ColumnGroupModule,
     DataTypeModule,
     GetColumnDefsApiModule,
     SelectionColumnModule,
@@ -21,10 +21,12 @@ import type { _ModuleWithoutApi } from './interfaces/iModule';
 import { baseCommunityModule } from './interfaces/iModule';
 import { AnimationFrameModule } from './misc/animationFrameModule';
 import { EventApiModule } from './misc/apiEvents/apiEventModule';
+import { LocaleModule } from './misc/locale/localeModule';
 import { CommunityMenuApiModule } from './misc/menu/sharedMenuModule';
 import { StateModule } from './misc/state/stateModule';
 import { KeyboardNavigationModule } from './navigation/navigationModule';
 import { PaginationModule } from './pagination/paginationModule';
+import { PinnedColumnModule } from './pinnedColumns/pinnedColumnModule';
 import { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
 import { CellFlashModule } from './rendering/cell/cellFlashModule';
 import {
@@ -36,6 +38,7 @@ import { ColumnAnimationModule } from './rendering/columnAnimationModule';
 import { StickyRowModule } from './rendering/features/stickyRowModule';
 import { OverlayModule } from './rendering/overlays/overlayModule';
 import { RenderApiModule } from './rendering/renderModule';
+import { RowAutoHeightModule } from './rendering/row/rowAutoHeightModule';
 import { RowSelectionModule } from './selection/rowSelectionModule';
 import { SortModule } from './sort/sortModule';
 import { CellStyleModule, RowStyleModule } from './styling/stylingModule';
@@ -93,5 +96,8 @@ export const CommunityFeaturesModule: _ModuleWithoutApi = {
         CommunityMenuApiModule,
         CellFlashModule,
         TooltipModule,
+        PinnedColumnModule,
+        LocaleModule,
+        RowAutoHeightModule,
     ],
 };

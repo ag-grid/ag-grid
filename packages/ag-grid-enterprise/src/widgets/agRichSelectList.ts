@@ -61,7 +61,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
         const listId = `${LIST_COMPONENT_NAME}-${this.getCompId()}`;
         eListAriaEl.setAttribute('id', listId);
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const ariaLabel = translate(pickerAriaLabelKey, pickerAriaLabelValue);
 
         _setAriaLabel(eListAriaEl, ariaLabel);
@@ -259,7 +259,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
     private createLoadingElement(): void {
         const eDocument = _getDocument(this.gos);
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const el = eDocument.createElement('div');
 
         el.classList.add('ag-loading-text');

@@ -283,7 +283,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
         // only add total colDef if there is more than 1 child node
         if (group.children.length > 1) {
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const localeTextFunc = this.getLocaleTextFunc();
             const headerName = localeTextFunc('pivotColumnGroupTotals', 'Total');
 
             //create total colDef using an arbitrary value column as a template

@@ -89,7 +89,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             },
         });
 
-        if (this.columnModel.isReady()) {
+        if (this.columnModel.ready) {
             this.onColumnsChanged();
         }
     }
@@ -208,7 +208,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     }
 
     private refreshAriaLabel(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const filterListName = translate('ariaFilterPanelList', 'Filter List');
         const localeFilters = translate('filters', 'Filters');
 

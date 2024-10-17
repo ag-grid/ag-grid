@@ -357,7 +357,7 @@ export class TooltipStateManager extends BeanStub {
             eGui.classList.add('ag-tooltip-interactive');
         }
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         const addPopupRes = this.popupService?.addPopup({
             eChild: eGui,

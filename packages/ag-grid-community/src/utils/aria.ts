@@ -1,4 +1,5 @@
 import type { SortDirection } from '../entities/colDef';
+import type { LocaleTextFunc } from '../misc/locale/localeUtils';
 
 export type ColumnSortState = 'ascending' | 'descending' | 'other' | 'none';
 
@@ -165,10 +166,7 @@ export function _setAriaControls(controllerElement: Element, controlledElement: 
     _setAriaLabelledBy(controlledElement, controllerElement.id);
 }
 
-export function _getAriaCheckboxStateName(
-    translate: (key: string, defaultValue: string, variableValues?: string[]) => string,
-    state?: boolean
-): string {
+export function _getAriaCheckboxStateName(translate: LocaleTextFunc, state?: boolean): string {
     return state === undefined
         ? translate('ariaIndeterminate', 'indeterminate')
         : state === true
