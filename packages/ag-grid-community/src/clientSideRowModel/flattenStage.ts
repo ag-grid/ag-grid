@@ -31,10 +31,12 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
     ]);
     public step: ClientSideRowModelStage = 'map';
 
+    private beans: BeanCollection;
     private columnModel: ColumnModel;
     private masterDetailService: IMasterDetailService | undefined;
 
     public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
         this.columnModel = beans.columnModel;
         this.masterDetailService = beans.masterDetailService;
     }
