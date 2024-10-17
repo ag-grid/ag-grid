@@ -4,7 +4,6 @@ import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
 import type { IRowDragItem } from '../interfaces/iRowDragItem';
-import { _isFunction } from '../utils/function';
 import { _createIconNoSpan } from '../utils/icon';
 import { Component } from '../widgets/component';
 import type { DragSource } from './dragAndDropService';
@@ -107,7 +106,7 @@ export class RowDragComp extends Component {
             })[0];
         }
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         this.dragSource = {
             type: DragSourceType.RowDrag,
@@ -180,7 +179,7 @@ class VisibilityStrategy extends BeanStub {
 
             if (this.column) {
                 shown = this.column.isRowDrag(this.rowNode) || this.parent.isCustomGui();
-                isShownSometimes = _isFunction<boolean>(this.column.getColDef().rowDrag);
+                isShownSometimes = typeof this.column.getColDef().rowDrag === 'function';
             }
 
             // if shown sometimes, them some rows can have drag handle while other don't,

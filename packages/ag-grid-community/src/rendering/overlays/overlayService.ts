@@ -131,7 +131,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         if (this.showInitialOverlay && loading === undefined && !this.gos.get('suppressLoadingOverlay')) {
             loading =
                 !this.gos.get('columnDefs') ||
-                !this.columnModel.isReady() ||
+                !this.columnModel.ready ||
                 (!this.gos.get('rowData') && this.isClientSide);
         }
 

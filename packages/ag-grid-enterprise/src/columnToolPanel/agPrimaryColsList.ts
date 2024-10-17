@@ -10,15 +10,7 @@ import type {
     ColumnToolPanelState,
     ComponentSelector,
 } from 'ag-grid-community';
-import {
-    Component,
-    _exists,
-    _includes,
-    _setAriaLabel,
-    _setAriaLevel,
-    _warn,
-    isProvidedColumnGroup,
-} from 'ag-grid-community';
+import { Component, _exists, _setAriaLabel, _setAriaLevel, _warn, isProvidedColumnGroup } from 'ag-grid-community';
 
 import type { ToolPanelColDefService } from '../sideBar/common/toolPanelColDefService';
 import type { VirtualListModel } from '../widgets/iVirtualList';
@@ -133,7 +125,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             return this.createComponentFromItem(item, listItemElement);
         });
 
-        if (this.columnModel.isReady()) {
+        if (this.columnModel.ready) {
             this.onColumnsChanged();
         }
 
@@ -263,7 +255,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private buildTreeFromProvidedColumnDefs(): void {
         // add column / group comps to tool panel
         this.buildListModel(this.columnModel.getColDefColTree());
-        this.groupsExist = this.columnModel.isProvidedColGroupsPresent();
+        this.groupsExist = !!this.columnModel.colDefCols?.treeDepth;
     }
 
     private buildListModel(columnTree: (AgColumn | AgProvidedColumnGroup)[]): void {
@@ -372,7 +364,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     private refreshAriaLabel(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const columnListName = translate('ariaColumnPanelList', 'Column List');
         const localeColumns = translate('columns', 'Columns');
         const items = this.displayedColsList.length;
@@ -433,7 +425,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             }
         });
 
-        const unrecognisedGroupIds = groupIds.filter((groupId) => !_includes(expandedGroupIds, groupId));
+        const unrecognisedGroupIds = groupIds.filter((groupId) => !expandedGroupIds.includes(groupId));
         if (unrecognisedGroupIds.length > 0) {
             _warn(157, { unrecognisedGroupIds });
         }

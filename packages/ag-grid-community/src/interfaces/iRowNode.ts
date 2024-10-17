@@ -56,21 +56,6 @@ export type AgRowNodeEventListener<TEventType extends keyof RowNodeEventTypeMap<
     params: RowNodeEventTypeMap<TData>[TEventType]
 ) => void;
 
-export interface SetSelectedParams {
-    // true or false, whatever you want to set selection to
-    newValue: boolean;
-    // whether to remove other selections after this selection is done
-    clearSelection?: boolean;
-    // true when action is NOT on this node, ie user clicked a group and this is the child of a group
-    suppressFinishActions?: boolean;
-    // gets used when user shift-selects a range
-    rangeSelect?: boolean;
-    // used in group selection, if true, filtered out children will not be selected
-    groupSelectsFiltered?: boolean;
-    // event source, if from an event
-    source: SelectionEventSourceType;
-}
-
 export interface RowNodeEvent<T extends RowNodeEventType, TData = any> extends AgEvent<T> {
     node: IRowNode<TData>;
 }
@@ -105,11 +90,6 @@ export interface GroupChangedEvent<TData = any> extends RowNodeEvent<'groupChang
 export interface HasChildrenChangedEvent<TData = any> extends RowNodeEvent<'hasChildrenChanged', TData> {}
 export interface RowHighlightChangedEvent<TData = any> extends RowNodeEvent<'rowHighlightChanged', TData> {}
 export interface DraggingChangedEvent<TData = any> extends RowNodeEvent<'draggingChanged', TData> {}
-
-export enum RowHighlightPosition {
-    Above,
-    Below,
-}
 
 export type RowPinnedType = 'top' | 'bottom' | null | undefined;
 

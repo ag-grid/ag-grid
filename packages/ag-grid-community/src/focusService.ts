@@ -6,8 +6,7 @@ import type { BeanCollection } from './context/context';
 import type { CtrlsService } from './ctrlsService';
 import type { AgColumn } from './entities/agColumn';
 import type { AgColumnGroup } from './entities/agColumnGroup';
-import { _areCellsEqual } from './entities/positionUtils';
-import type { PositionUtils } from './entities/positionUtils';
+import { _areCellsEqual, _getFirstRow, _getLastRow } from './entities/positionUtils';
 import type { RowNode } from './entities/rowNode';
 import type { CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
@@ -15,8 +14,6 @@ import type { GridCtrl } from './gridComp/gridCtrl';
 import { _getActiveDomElement, _getDocument, _getDomData } from './gridOptionsUtils';
 import { DOM_DATA_KEY_HEADER_CTRL } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl } from './headerRendering/cells/column/headerCellCtrl';
-import type { IRangeService } from './interfaces/IRangeService';
-import type { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 import type { NavigateToNextHeaderParams, TabToNextHeaderParams } from './interfaces/iCallbackParams';
 import type { CellPosition } from './interfaces/iCellPosition';
 import type { WithoutGridCommon } from './interfaces/iCommon';
@@ -39,32 +36,27 @@ import { TabGuardClassNames } from './widgets/tabGuardCtrl';
 export class FocusService extends BeanStub implements NamedBean {
     beanName = 'focusService' as const;
 
+    private beans: BeanCollection;
     private eGridDiv: HTMLElement;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
     private headerNavigationService?: HeaderNavigationService;
     private rowRenderer: RowRenderer;
-    private positionUtils: PositionUtils;
     private navigationService?: NavigationService;
     private ctrlsService: CtrlsService;
     private filterManager?: FilterManager;
     private overlayService?: OverlayService;
 
-    private rangeService?: IRangeService;
-    private advancedFilterService?: IAdvancedFilterService;
-
     public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
         this.eGridDiv = beans.eGridDiv;
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
         this.headerNavigationService = beans.headerNavigationService;
         this.rowRenderer = beans.rowRenderer;
-        this.positionUtils = beans.positionUtils;
         this.navigationService = beans.navigationService;
         this.ctrlsService = beans.ctrlsService;
         this.filterManager = beans.filterManager;
-        this.rangeService = beans.rangeService;
-        this.advancedFilterService = beans.advancedFilterService;
         this.overlayService = beans.overlayService;
     }
 
@@ -531,8 +523,9 @@ export class FocusService extends BeanStub implements NamedBean {
             return false;
         }
 
-        if (firstColumn.getParent()) {
-            firstColumn = this.visibleColsService.getColGroupAtLevel(firstColumn, 0)!;
+        const { columnGroupService } = this.beans;
+        if (columnGroupService && firstColumn.getParent()) {
+            firstColumn = columnGroupService.getColGroupAtLevel(firstColumn, 0)!;
         }
 
         const headerPosition = getHeaderIndexToFocus(firstColumn, 0);
@@ -734,7 +727,7 @@ export class FocusService extends BeanStub implements NamedBean {
             return this.focusNextGridCoreContainer(false);
         }
 
-        const nextRow = backwards ? this.positionUtils.getLastRow() : this.positionUtils.getFirstRow();
+        const nextRow = backwards ? _getLastRow(this.beans) : _getFirstRow(this.beans);
 
         if (nextRow) {
             const { rowIndex, rowPinned } = nextRow;
@@ -757,7 +750,7 @@ export class FocusService extends BeanStub implements NamedBean {
                     forceBrowserFocus: true,
                 });
 
-                this.rangeService?.setRangeToCell({ rowIndex, rowPinned, column });
+                this.beans.rangeService?.setRangeToCell({ rowIndex, rowPinned, column });
 
                 return true;
             }
@@ -794,7 +787,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
     private focusAdvancedFilter(position: HeaderPosition | null): boolean {
         this.advancedFilterFocusColumn = position?.column as AgColumn | undefined;
-        return this.advancedFilterService?.getCtrl().focusHeaderComp() ?? false;
+        return this.beans.advancedFilterService?.getCtrl().focusHeaderComp() ?? false;
     }
 
     public focusNextFromAdvancedFilter(backwards?: boolean, forceFirstColumn?: boolean): boolean {

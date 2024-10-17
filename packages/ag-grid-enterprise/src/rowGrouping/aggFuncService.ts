@@ -1,5 +1,5 @@
 import type { AgColumn, IAggFunc, IAggFuncParams, IAggFuncService, NamedBean } from 'ag-grid-community';
-import { BeanStub, _exists, _existsAndNotEmpty, _includes, _iterateObject, _last } from 'ag-grid-community';
+import { BeanStub, _exists, _last } from 'ag-grid-community';
 
 const defaultAggFuncNames = {
     sum: 'Sum',
@@ -45,7 +45,7 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
 
     private isAggFuncPossible(column: AgColumn, func: string): boolean {
         const allKeys = this.getFuncNames(column);
-        const allowed = _includes(allKeys, func);
+        const allowed = allKeys.includes(func);
         const funcExists = _exists(this.aggFuncsMap[func]);
         return allowed && funcExists;
     }
@@ -66,12 +66,15 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
         }
 
         const allKeys = this.getFuncNames(column);
-        return _existsAndNotEmpty(allKeys) ? allKeys[0] : null;
+        return allKeys?.length ? allKeys[0] : null;
     }
 
     public addAggFuncs(aggFuncs?: { [key: string]: IAggFunc }): void {
         this.init();
-        _iterateObject(aggFuncs, (key: string, aggFunc: IAggFunc) => {
+        if (!aggFuncs) {
+            return;
+        }
+        Object.entries(aggFuncs).forEach(([key, aggFunc]) => {
             this.aggFuncsMap[key] = aggFunc;
         });
     }
@@ -205,7 +208,7 @@ function aggAvg(params: IAggFuncParams): {
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
         const currentValue = values[i];
-        let valueToAdd = null;
+        let valueToAdd: number | bigint | null = null;
 
         if (typeof currentValue === 'number' || typeof currentValue === 'bigint') {
             valueToAdd = currentValue;
@@ -229,7 +232,7 @@ function aggAvg(params: IAggFuncParams): {
         }
     }
 
-    let value = null;
+    let value: null | number = null;
 
     // avoid divide by zero error
     if (count > 0) {

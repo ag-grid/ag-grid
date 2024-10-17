@@ -11,12 +11,12 @@ import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { SelectAllFeature } from '../../../selection/selectAllFeature';
+import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 import type { ColumnSortState } from '../../../utils/aria';
 import { _getAriaSortState } from '../../../utils/aria';
 import { _setDisplayed } from '../../../utils/dom';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
-import type { ITooltipFeatureCtrl } from '../../../widgets/tooltipFeature';
-import { TooltipFeature } from '../../../widgets/tooltipFeature';
+import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
@@ -61,10 +61,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         eGui: HTMLElement,
         eResize: HTMLElement,
         eHeaderCompWrapper: HTMLElement,
-        compBean: BeanStub | undefined
+        compBeanInput: BeanStub | undefined
     ): void {
         this.comp = comp;
-        compBean = setupCompBean(this, this.beans.context, compBean);
+        const compBean = setupCompBean(this, this.beans.context, compBeanInput);
 
         this.setGui(eGui, compBean);
         this.updateState();
@@ -84,10 +84,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.addColumnHoverListener(compBean);
         this.setupFilterClass(compBean);
         this.setupClassesFromColDef();
-        this.setupTooltip(compBean);
+        this.setupTooltip();
         this.addActiveHeaderMouseListeners(compBean);
         this.setupSelectAll(compBean);
-        this.setupUserComp(compBean);
+        this.setupUserComp();
         this.refreshAria();
 
         if (this.beans.columnResizeService) {
@@ -113,12 +113,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
         compBean.addManagedPropertyListeners(
             ['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader'],
-            () => this.refresh(compBean)
+            () => this.refresh()
         );
-        compBean.addManagedListeners(this.column, { colDefChanged: () => this.refresh(compBean) });
+        compBean.addManagedListeners(this.column, { colDefChanged: () => this.refresh() });
         compBean.addManagedListeners(this.column, { headerHighlightChanged: this.onHeaderHighlightChanged.bind(this) });
 
-        const listener = () => this.checkDisplayName(compBean);
+        const listener = () => this.checkDisplayName();
         compBean.addManagedEventListeners({
             columnValueChanged: listener,
             columnRowGroupChanged: listener,
@@ -142,8 +142,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.beans.columnResizeService?.resizeHeader(this.column, delta, shiftKey);
     }
 
-    private setupUserComp(compBean: BeanStub): void {
-        const compDetails = this.lookupUserCompDetails(compBean);
+    private setupUserComp(): void {
+        const compDetails = this.lookupUserCompDetails();
         this.setCompDetails(compDetails);
     }
 
@@ -152,13 +152,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.comp.setUserCompDetails(compDetails);
     }
 
-    private lookupUserCompDetails(compBean: BeanStub): UserCompDetails {
-        const params = this.createParams(compBean);
+    private lookupUserCompDetails(): UserCompDetails {
+        const params = this.createParams();
         const colDef = this.column.getColDef();
         return _getHeaderCompDetails(this.userComponentFactory, colDef, params)!;
     }
 
-    private createParams(compBean: BeanStub): IHeaderParams {
+    private createParams(): IHeaderParams {
         const params: IHeaderParams = this.gos.addGridCommonParams({
             column: this.column,
             displayName: this.displayName!,
@@ -196,7 +196,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             },
             eGridHeader: this.getGui(),
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
-                this.setupTooltip(compBean, value, shouldDisplayTooltip);
+                this.setupTooltip(value, shouldDisplayTooltip);
             },
         });
 
@@ -271,44 +271,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.setActiveHeader(false);
     }
 
-    private setupTooltip(compBean: BeanStub, value?: string, shouldDisplayTooltip?: () => boolean): void {
-        if (this.tooltipFeature) {
-            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
-        }
-
-        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
-        const eGui = this.eGui;
-        const colDef = this.column.getColDef();
-
-        if (!shouldDisplayTooltip && isTooltipWhenTruncated && !colDef.headerComponent) {
-            shouldDisplayTooltip = () => {
-                const textEl = eGui.querySelector('.ag-header-cell-text');
-                if (!textEl) {
-                    return true;
-                }
-
-                return textEl.scrollWidth > textEl.clientWidth;
-            };
-        }
-
-        const tooltipCtrl: ITooltipFeatureCtrl = {
-            getColumn: () => this.column,
-            getColDef: () => this.column.getColDef(),
-            getGui: () => eGui,
-            getLocation: () => 'header',
-            getTooltipValue: () => {
-                if (value != null) {
-                    return value;
-                }
-
-                const res = this.column.getColDef().headerTooltip;
-                return res;
-            },
-            shouldDisplayTooltip,
-        };
-
-        const tooltipFeature = compBean.createManagedBean(new TooltipFeature(tooltipCtrl));
-        this.setRefreshFunction('tooltip', () => tooltipFeature.refreshToolTip());
+    private setupTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
+        this.tooltipFeature = this.beans.tooltipService?.setupHeaderTooltip(
+            this.tooltipFeature,
+            this,
+            value,
+            shouldDisplayTooltip
+        );
     }
 
     private setupClassesFromColDef(): void {
@@ -361,15 +330,15 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.refreshFunctions[name] = func;
     }
 
-    private refresh(compBean: BeanStub): void {
+    private refresh(): void {
         this.updateState();
-        this.refreshHeaderComp(compBean);
+        this.refreshHeaderComp();
         this.refreshAria();
         Object.values(this.refreshFunctions).forEach((f) => f());
     }
 
-    private refreshHeaderComp(compBean: BeanStub): void {
-        const newCompDetails = this.lookupUserCompDetails(compBean);
+    private refreshHeaderComp(): void {
+        const newCompDetails = this.lookupUserCompDetails();
 
         const compInstance = this.comp.getUserCompInstance();
 
@@ -409,10 +378,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         return this.beans.columnNameService.getDisplayNameForColumn(this.column, 'header', true);
     }
 
-    private checkDisplayName(compBean: BeanStub): void {
+    private checkDisplayName(): void {
         // display name can change if aggFunc different, eg sum(Gold) is now max(Gold)
         if (this.displayName !== this.calculateDisplayName()) {
-            this.refresh(compBean);
+            this.refresh();
         }
     }
 
@@ -511,7 +480,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private refreshSpanHeaderHeight() {
         const { eGui, column, comp, beans } = this;
-        const groupHeaderHeight = this.beans.columnModel.getGroupRowsHeight();
+        const groupHeaderHeight = getGroupRowsHeight(this.beans);
         const isZeroGroupHeight = groupHeaderHeight.reduce((total, next) => (total += next), 0) === 0;
 
         comp.addOrRemoveCssClass('ag-header-parent-hidden', isZeroGroupHeight);
@@ -528,9 +497,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
         comp.addOrRemoveCssClass('ag-header-span-height', numberOfParents > 0);
 
-        const { columnModel } = beans;
-
-        const headerHeight = columnModel.getColumnHeaderRowHeight();
+        const headerHeight = getColumnHeaderRowHeight(beans);
 
         if (numberOfParents === 0) {
             // if spanning has stopped then need to reset these values.
@@ -553,7 +520,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private refreshAriaSort(): void {
         if (this.sortable) {
-            const translate = this.localeService.getLocaleTextFunc();
+            const translate = this.getLocaleTextFunc();
             const sort = this.beans.sortController?.getDisplaySortForColumn(this.column) || null;
             this.comp.setAriaSort(_getAriaSortState(sort));
             this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort'));
@@ -565,7 +532,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private refreshAriaMenu(): void {
         if (this.menuEnabled) {
-            const translate = this.localeService.getLocaleTextFunc();
+            const translate = this.getLocaleTextFunc();
             this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press ALT DOWN to open column menu'));
         } else {
             this.setAriaDescriptionProperty('menu', null);
@@ -574,7 +541,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private refreshAriaFilterButton(): void {
         if (this.openFilterEnabled && !_isLegacyMenuEnabled(this.gos)) {
-            const translate = this.localeService.getLocaleTextFunc();
+            const translate = this.getLocaleTextFunc();
             this.setAriaDescriptionProperty(
                 'filterButton',
                 translate('ariaFilterColumn', 'Press CTRL ENTER to open filter')
@@ -585,7 +552,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private refreshAriaFiltered(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const isFilterActive = this.column.isFilterActive();
         if (isFilterActive) {
             this.setAriaDescriptionProperty('filter', translate('ariaColumnFiltered', 'Column Filtered'));
@@ -666,6 +633,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     public override destroy(): void {
+        this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         super.destroy();
     }
 }

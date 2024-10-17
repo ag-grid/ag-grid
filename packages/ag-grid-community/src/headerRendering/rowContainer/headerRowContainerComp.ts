@@ -1,6 +1,5 @@
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import { _ensureDomOrder } from '../../utils/dom';
-import { _getAllValuesInObject } from '../../utils/object';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import { HeaderRowComp } from '../row/headerRowComp';
 import type { HeaderRowCtrl, HeaderRowCtrlInstanceId } from '../row/headerRowCtrl';
@@ -110,6 +109,6 @@ export class HeaderRowContainerComp extends Component {
             appendEnsuringDomOrder(rowComp);
         });
 
-        _getAllValuesInObject(oldRowComps).forEach((c) => this.destroyRowComp(c));
+        Object.values(oldRowComps).forEach((c) => this.destroyRowComp(c));
     }
 }

@@ -17,13 +17,13 @@ import type {
     RowNode,
     RowSpanningAccumulator,
 } from 'ag-grid-community';
-import { BaseGridSerializingSession, RowType, _last, _mergeDeep, _warn } from 'ag-grid-community';
+import { BaseGridSerializingSession, _last, _mergeDeep, _warn } from 'ag-grid-community';
 
 import { getHeightFromProperty } from './assets/excelUtils';
 import { addXlsxBodyImageToMap, createXlsxExcel, getXlsxStringPosition } from './excelXlsxFactory';
 
 export interface StyleLinkerInterface {
-    rowType: RowType;
+    rowType: 'HEADER_GROUPING' | 'HEADER' | 'BODY';
     rowIndex: number;
     value: string;
     column?: Column;
@@ -146,7 +146,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 collapsibleRanges: number[][]
             ) => {
                 const styleIds: string[] = this.config.styleLinker({
-                    rowType: RowType.HEADER_GROUPING,
+                    rowType: 'HEADER_GROUPING',
                     rowIndex: 1,
                     value: `grouping-${header}`,
                     columnGroup,
@@ -315,7 +315,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         return (column) => {
             const nameForCol = this.extractHeaderValue(column);
             const styleIds: string[] = this.config.styleLinker({
-                rowType: RowType.HEADER,
+                rowType: 'HEADER',
                 rowIndex,
                 value: nameForCol,
                 column,
@@ -362,7 +362,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 node
             );
             const styleIds: string[] = this.config.styleLinker({
-                rowType: RowType.BODY,
+                rowType: 'BODY',
                 rowIndex,
                 value: valueForCell,
                 column,

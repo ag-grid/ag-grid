@@ -5,10 +5,9 @@ import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { AgColumn } from '../../entities/agColumn';
 import type { CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
-import { _createCellId } from '../../entities/positionUtils';
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
-import type { CellContextMenuEvent, CellEvent, CellFocusedEvent, FlashCellsEvent } from '../../events';
+import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../events';
 import type { GridOptionsService } from '../../gridOptionsService';
 import {
     _getCheckboxes,
@@ -22,21 +21,18 @@ import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
 import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ICellRangeFeature } from '../../interfaces/iCellRangeFeature';
-import type { FlashCellsParams } from '../../interfaces/iCellsParams';
 import type { CellChangedEvent } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _requestAnimationFrame } from '../../misc/animationFrameService';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
+import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _setAriaColIndex } from '../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../utils/dom';
 import { _getCtrlForEventTarget } from '../../utils/event';
-import { _exists, _makeNull } from '../../utils/generic';
-import { _getValueUsingField } from '../../utils/object';
+import { _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
-import type { ITooltipFeatureCtrl } from '../../widgets/tooltipFeature';
-import { TooltipFeature } from '../../widgets/tooltipFeature';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
@@ -187,63 +183,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private enableTooltipFeature(value?: string, shouldDisplayTooltip?: () => boolean): void {
-        const getTooltipValue = () => {
-            const colDef = this.column.getColDef();
-            const data = this.rowNode.data;
-
-            if (colDef.tooltipField && _exists(data)) {
-                return _getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
-            }
-
-            const valueGetter = colDef.tooltipValueGetter;
-
-            if (valueGetter) {
-                return valueGetter(
-                    this.beans.gos.addGridCommonParams({
-                        location: 'cell',
-                        colDef: this.column.getColDef(),
-                        column: this.column,
-                        rowIndex: this.cellPosition.rowIndex,
-                        node: this.rowNode,
-                        data: this.rowNode.data,
-                        value: this.value,
-                        valueFormatted: this.valueFormatted,
-                    })
-                );
-            }
-
-            return null;
-        };
-
-        const isTooltipWhenTruncated = this.beans.gos.get('tooltipShowMode') === 'whenTruncated';
-
-        if (!shouldDisplayTooltip && isTooltipWhenTruncated && !this.isCellRenderer()) {
-            shouldDisplayTooltip = () => {
-                const eGui = this.getGui();
-                const textEl = eGui.children.length === 0 ? eGui : eGui.querySelector('.ag-cell-value');
-                if (!textEl) {
-                    return true;
-                }
-
-                return textEl.scrollWidth > textEl.clientWidth;
-            };
-        }
-
-        const tooltipCtrl: ITooltipFeatureCtrl = {
-            getColumn: () => this.column,
-            getColDef: () => this.column.getColDef(),
-            getRowIndex: () => this.cellPosition.rowIndex,
-            getRowNode: () => this.rowNode,
-            getGui: () => this.getGui(),
-            getLocation: () => 'cell',
-            getTooltipValue: value != null ? () => value : getTooltipValue,
-
-            // this makes no sense, why is the cell formatted value passed to the tooltip???
-            getValueFormatted: () => this.valueFormatted,
-            shouldDisplayTooltip,
-        };
-
-        this.tooltipFeature = new TooltipFeature(tooltipCtrl, this.beans);
+        this.tooltipFeature = this.beans.tooltipService?.enableCellTooltipFeature(this, value, shouldDisplayTooltip);
     }
 
     private disableTooltipFeature() {
@@ -285,7 +225,7 @@ export class CellCtrl extends BeanStub {
 
         this.cellPositionFeature?.setComp(eGui);
         this.cellCustomStyleFeature?.setComp(comp);
-        this.tooltipFeature?.refreshToolTip();
+        this.tooltipFeature?.refreshTooltip();
         this.cellKeyboardListenerFeature?.setComp(this.eGui);
 
         if (this.cellRangeFeature) {
@@ -310,58 +250,7 @@ export class CellCtrl extends BeanStub {
             return;
         }
 
-        const eParentCell = eCellWrapper.parentElement!;
-        // taking minRowHeight from getRowHeightForNode means the getRowHeight() callback is used,
-        // thus allowing different min heights for different rows.
-        const minRowHeight = _getRowHeightForNode(this.beans.gos, this.rowNode).height;
-
-        const measureHeight = (timesCalled: number) => {
-            if (this.editing) {
-                return;
-            }
-            // because of the retry's below, it's possible the retry's go beyond
-            // the rows life.
-            if (!this.isAlive() || !compBean.isAlive()) {
-                return;
-            }
-
-            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = _getElementSize(eParentCell);
-            const extraHeight = paddingTop + paddingBottom + borderBottomWidth + borderTopWidth;
-
-            const wrapperHeight = eCellWrapper!.offsetHeight;
-            const autoHeight = wrapperHeight + extraHeight;
-
-            if (timesCalled < 5) {
-                // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
-                // maybe it will be ready next VM turn
-                const doc = _getDocument(this.beans.gos);
-                const notYetInDom = !doc || !doc.contains(eCellWrapper);
-
-                // this happens in React, where React hasn't put any content in. we say 'possibly'
-                // as a) may not be React and b) the cell could be empty anyway
-                const possiblyNoContentYet = autoHeight == 0;
-
-                if (notYetInDom || possiblyNoContentYet) {
-                    window.setTimeout(() => measureHeight(timesCalled + 1), 0);
-                    return;
-                }
-            }
-
-            const newHeight = Math.max(autoHeight, minRowHeight);
-            this.rowNode.setRowAutoHeight(newHeight, this.column);
-        };
-
-        const listener = () => measureHeight(0);
-
-        // do once to set size in case size doesn't change, common when cell is blank
-        listener();
-
-        const destroyResizeObserver = _observeResize(this.beans.gos, eCellWrapper, listener);
-
-        compBean.addDestroyFunc(() => {
-            destroyResizeObserver();
-            this.rowNode.setRowAutoHeight(undefined, this.column);
-        });
+        this.beans.rowAutoHeightService?.setupCellAutoHeight(this, eCellWrapper, compBean);
     }
 
     public getCellAriaRole(): string {
@@ -536,7 +425,7 @@ export class CellCtrl extends BeanStub {
                     this.disableTooltipFeature();
                 }
                 this.enableTooltipFeature(value, shouldDisplayTooltip);
-                this.tooltipFeature?.refreshToolTip();
+                this.tooltipFeature?.refreshTooltip();
             },
         });
 
@@ -621,14 +510,14 @@ export class CellCtrl extends BeanStub {
             const flashCell = !suppressFlash && !processingFilterChange && colDef.enableCellChangeFlash;
 
             if (flashCell) {
-                this.flashCell();
+                this.beans.cellFlashService?.flashCell(this);
             }
 
             this.cellCustomStyleFeature?.applyUserStyles();
             this.cellCustomStyleFeature?.applyClassesFromColDef();
         }
 
-        this.tooltipFeature?.refreshToolTip();
+        this.tooltipFeature?.refreshTooltip();
 
         // we do cellClassRules even if the value has not changed, so that users who have rules that
         // look at other parts of the row (where the other part of the row might of changed) will work.
@@ -639,69 +528,6 @@ export class CellCtrl extends BeanStub {
     // than what we pick up on. eg selecting from a dropdown ends editing.
     public stopEditingAndFocus(suppressNavigateAfterEdit = false, shiftKey: boolean = false): void {
         this.beans.editService?.stopEditingAndFocus(this, suppressNavigateAfterEdit, shiftKey);
-    }
-
-    // user can also call this via API
-    public flashCell(delays?: Pick<FlashCellsParams, 'fadeDuration' | 'flashDuration'>): void {
-        this.animateCell('data-changed', delays?.flashDuration, delays?.fadeDuration);
-    }
-
-    private animateCell(cssName: string, flashDuration?: number | null, fadeDuration?: number | null): void {
-        if (!this.cellComp) {
-            return;
-        }
-        const { gos } = this.beans;
-
-        if (!flashDuration) {
-            flashDuration = gos.get('cellFlashDuration');
-        }
-
-        if (flashDuration === 0) {
-            return;
-        }
-
-        if (!_exists(fadeDuration)) {
-            fadeDuration = gos.get('cellFadeDuration');
-        }
-
-        const fullName = `ag-cell-${cssName}`;
-        const animationFullName = `ag-cell-${cssName}-animation`;
-
-        // we want to highlight the cells, without any animation
-        this.cellComp.addOrRemoveCssClass(fullName, true);
-        this.cellComp.addOrRemoveCssClass(animationFullName, false);
-
-        // then once that is applied, we remove the highlight with animation
-        this.beans.frameworkOverrides.wrapIncoming(() => {
-            window.setTimeout(() => {
-                if (!this.isAlive()) {
-                    return;
-                }
-                this.cellComp.addOrRemoveCssClass(fullName, false);
-                this.cellComp.addOrRemoveCssClass(animationFullName, true);
-
-                this.eGui.style.transition = `background-color ${fadeDuration}ms`;
-                window.setTimeout(() => {
-                    if (!this.isAlive()) {
-                        return;
-                    }
-                    // and then to leave things as we got them, we remove the animation
-                    this.cellComp.addOrRemoveCssClass(animationFullName, false);
-                    this.eGui.style.transition = '';
-                }, fadeDuration!);
-            }, flashDuration!);
-        });
-    }
-
-    public onFlashCells(event: FlashCellsEvent): void {
-        if (!this.cellComp) {
-            return;
-        }
-        const cellId = _createCellId(this.getCellPosition());
-        const shouldFlash = event.cells[cellId];
-        if (shouldFlash) {
-            this.animateCell('highlight');
-        }
     }
 
     public isCellEditable(): boolean {
@@ -745,6 +571,10 @@ export class CellCtrl extends BeanStub {
 
     public getValue(): any {
         return this.value;
+    }
+
+    public getValueFormatted(): any {
+        return this.valueFormatted;
     }
 
     private addDomData(compBean: BeanStub): void {
@@ -991,6 +821,10 @@ export class CellCtrl extends BeanStub {
         };
     }
 
+    public setInlineEditingCss(): void {
+        this.beans.editService?.setInlineEditingCss(this.rowCtrl);
+    }
+
     // CSS Classes that only get applied once, they never change
     private applyStaticCssClasses(): void {
         this.cellComp.addOrRemoveCssClass(CSS_CELL, true);
@@ -1013,8 +847,7 @@ export class CellCtrl extends BeanStub {
             return;
         }
 
-        const isTooltipEnabled = this.column.isTooltipEnabled();
-        if (isTooltipEnabled) {
+        if (this.column.isTooltipEnabled()) {
             this.disableTooltipFeature();
             this.enableTooltipFeature();
         } else {

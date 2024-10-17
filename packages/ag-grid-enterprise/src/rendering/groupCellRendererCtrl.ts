@@ -24,7 +24,6 @@ import type {
 import {
     BeanStub,
     KeyCode,
-    _cloneObject,
     _createIconNoSpan,
     _getCellRendererDetails,
     _getGrandTotalRow,
@@ -342,7 +341,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
                 this.params.column?.isRowGroupDisplayed(this.displayedGroupNode.rowGroupColumn.getId());
 
             if (this.displayedGroupNode.key === '' && this.displayedGroupNode.group && isGroupColForNode) {
-                const localeTextFunc = this.localeService.getLocaleTextFunc();
+                const localeTextFunc = this.getLocaleTextFunc();
                 valueWhenNoRenderer = localeTextFunc('blanks', '(Blanks)');
             } else {
                 valueWhenNoRenderer = value ?? null;
@@ -390,8 +389,10 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
         if (totalValueGetter) {
             // params is same as we were given, except we set the value as the item to display
-            const paramsClone = _cloneObject(this.params);
-            paramsClone.value = this.params.value;
+            const paramsClone = {
+                ...this.params,
+                value: this.params.value,
+            };
 
             if (typeof totalValueGetter === 'function') {
                 footerValue = totalValueGetter(paramsClone);
@@ -403,7 +404,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
                 _warn(179);
             }
         } else {
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const localeTextFunc = this.getLocaleTextFunc();
             const footerTotalPrefix = localeTextFunc('footerTotal', 'Total');
             footerValue = footerTotalPrefix + ' ' + (this.params.value != null ? this.params.value : '');
         }

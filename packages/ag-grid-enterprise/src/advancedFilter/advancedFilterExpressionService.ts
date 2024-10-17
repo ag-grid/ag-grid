@@ -163,7 +163,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         if (typeof defaultValue === 'function') {
             defaultValue = defaultValue(variableValues!);
         }
-        return this.localeService.getLocaleTextFunc()(key, defaultValue, variableValues);
+        return this.getLocaleTextFunc()(key, defaultValue, variableValues);
     }
 
     public generateAutocompleteListParams(

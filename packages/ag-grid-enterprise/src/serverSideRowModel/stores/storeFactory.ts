@@ -4,6 +4,7 @@ import type {
     FuncColsService,
     GetServerSideGroupLevelParamsParams,
     NamedBean,
+    RowAutoHeightService,
     RowNode,
     ServerSideGroupLevelParams,
     WithoutGridCommon,
@@ -18,10 +19,12 @@ export class StoreFactory extends BeanStub implements NamedBean {
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
+    private rowAutoHeightService?: RowAutoHeightService;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
+        this.rowAutoHeightService = beans.rowAutoHeightService;
     }
 
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): LazyStore {
@@ -65,7 +68,7 @@ export class StoreFactory extends BeanStub implements NamedBean {
             return;
         }
 
-        if (this.columnModel.isAutoRowHeightActive()) {
+        if (this.rowAutoHeightService?.active) {
             _warn(204);
             return undefined;
         }

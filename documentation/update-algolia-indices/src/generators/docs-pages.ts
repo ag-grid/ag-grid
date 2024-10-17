@@ -2,7 +2,7 @@ import fs from 'fs';
 import { JSDOM, VirtualConsole } from 'jsdom';
 
 import type { AlgoliaRecord } from '../types/algolia';
-import { DIST_DIR, MENU_FILE_PATH } from '../utils/constants';
+import { API_FILE_PATH, DIST_DIR, MENU_FILE_PATH } from '../utils/constants';
 import { logWarning } from '../utils/output';
 
 const virtualConsole = new VirtualConsole();
@@ -11,12 +11,15 @@ const virtualConsole = new VirtualConsole();
 virtualConsole.on('error', () => {});
 
 let pageRank = 0;
+
 export const getAllDocPages = (): FlattenedMenuItem[] => {
     const docsMenu = getDocsMenuData();
     const apiMenu = getApiMenuData();
     pageRank = 0;
+
     const flattenedDocMenuItems = getFlattenedMenuItems(docsMenu.sections);
     const flattenedApiMenuItems = getFlattenedMenuItems(apiMenu.sections);
+
     return [...flattenedApiMenuItems, ...flattenedDocMenuItems];
 };
 
@@ -133,19 +136,21 @@ export const parseDocPage = async (item: FlattenedMenuItem) => {
 interface MenuItem {
     title: string;
     path?: string;
-    items?: MenuItem[];
+    children?: MenuItem[];
 }
 
 const getDocsMenuData = () => {
     const file = fs.readFileSync(MENU_FILE_PATH, 'utf-8');
-    const { main } = JSON.parse(file);
-    return main;
+    const docsMenuData = JSON.parse(file);
+
+    return docsMenuData;
 };
 
 const getApiMenuData = () => {
-    const file = fs.readFileSync(MENU_FILE_PATH, 'utf-8');
-    const { api } = JSON.parse(file);
-    return api;
+    const file = fs.readFileSync(API_FILE_PATH, 'utf-8');
+    const apiMenuData = JSON.parse(file);
+
+    return apiMenuData;
 };
 
 export interface FlattenedMenuItem {
@@ -169,8 +174,8 @@ const getFlattenedMenuItems = (
                 breadcrumb: prefix ? `${prefix} > ${item.title}` : item.title,
             });
         }
-        if (item.items) {
-            getFlattenedMenuItems(item.items, result, prefix ? `${prefix} > ${item.title}` : item.title);
+        if (item.children) {
+            getFlattenedMenuItems(item.children, result, prefix ? `${prefix} > ${item.title}` : item.title);
         }
     });
     return result;

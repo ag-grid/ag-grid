@@ -11,7 +11,7 @@ import type {
     ExcelWorksheet,
     XmlElement,
 } from 'ag-grid-community';
-import { _compose, _escapeString, _iterateObject } from 'ag-grid-community';
+import { _escapeString } from 'ag-grid-community';
 
 import type { ExcelDataTable, ExcelHeaderFooterPosition } from '../../assets/excelInterfaces';
 import { getExcelColumnName } from '../../assets/excelUtils';
@@ -165,7 +165,7 @@ const replaceHeaderFooterTokens = (value: string): string => {
         '&[Picture]': '&G',
     };
 
-    _iterateObject<string>(map, (key, val) => {
+    Object.entries(map).forEach(([key, val]) => {
         value = value.replace(key, val);
     });
 
@@ -540,7 +540,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
 
         const worksheetExcelTables = XLSX_WORKSHEET_DATA_TABLES.get(currentSheet);
 
-        const createWorksheetChildren = _compose<ComposedWorksheetParams>(
+        const { children } = [
             addSheetPr(),
             addSheetViews(rightToLeft, frozenColumnCount, frozenRowCount),
             addSheetFormatPr(rows),
@@ -552,10 +552,8 @@ const worksheetFactory: ExcelOOXMLTemplate = {
             addHeaderFooter(headerFooterConfig),
             addDrawingRel(currentSheet),
             addVmlDrawingRel(currentSheet),
-            addExcelTableRel(worksheetExcelTables)
-        );
-
-        const { children } = createWorksheetChildren({ children: [], rIdCounter: 0 });
+            addExcelTableRel(worksheetExcelTables),
+        ].reduce((composed, f) => f(composed), { children: [], rIdCounter: 0 });
 
         return {
             name: 'worksheet',

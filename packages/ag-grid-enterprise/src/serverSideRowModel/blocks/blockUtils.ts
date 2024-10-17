@@ -3,13 +3,14 @@ import type {
     BeanCollection,
     IShowRowGroupColsService,
     NamedBean,
-    NumberSequence,
     RowBounds,
     ValueService,
 } from 'ag-grid-community';
 import {
     BeanStub,
     RowNode,
+    _createRowNodeFooter,
+    _destroyRowNodeFooter,
     _doOnce,
     _exists,
     _getGroupTotalRowCallback,
@@ -104,11 +105,12 @@ export class BlockUtils extends BeanStub implements NamedBean {
         rowNode.updateHasChildren();
 
         const getKeyFunc = this.gos.get('getServerSideGroupKey');
-        if (rowNode.hasChildren() && getKeyFunc != null) {
+        const hasChildren = rowNode.hasChildren();
+        if (hasChildren && getKeyFunc != null) {
             rowNode.key = getKeyFunc(rowNode.data);
         }
 
-        if (!rowNode.hasChildren() && rowNode.childStore != null) {
+        if (!hasChildren && rowNode.childStore != null) {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
             rowNode.expanded = false;
@@ -133,7 +135,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         const getGroupIncludeFooter = _getGroupTotalRowCallback(this.beans.gos);
         const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
         if (doesRowShowFooter) {
-            rowNode.createFooter();
+            _createRowNodeFooter(rowNode, this.beans);
             if (rowNode.sibling) {
                 rowNode.sibling.uiLevel = rowNode.uiLevel + 1;
             }
@@ -165,10 +167,10 @@ export class BlockUtils extends BeanStub implements NamedBean {
                     if (rowNode.sibling) {
                         rowNode.sibling.updateData(data);
                     } else {
-                        rowNode.createFooter();
+                        _createRowNodeFooter(rowNode, this.beans);
                     }
                 } else if (rowNode.sibling) {
-                    rowNode.destroyFooter();
+                    _destroyRowNodeFooter(rowNode);
                 }
             }
 
@@ -191,19 +193,14 @@ export class BlockUtils extends BeanStub implements NamedBean {
         rowNode.stub = false;
         const treeData = this.gos.get('treeData');
 
-        if (_exists(data)) {
-            rowNode.setDataAndId(data, defaultId);
+        rowNode.setDataAndId(data, defaultId);
 
-            if (treeData) {
-                this.setTreeGroupInfo(rowNode);
-            } else if (rowNode.group) {
-                this.setRowGroupInfo(rowNode);
-            } else if (this.gos.get('masterDetail')) {
-                this.setMasterDetailInfo(rowNode);
-            }
-        } else {
-            rowNode.setDataAndId(undefined, undefined);
-            rowNode.key = null;
+        if (treeData) {
+            this.setTreeGroupInfo(rowNode);
+        } else if (rowNode.group) {
+            this.setRowGroupInfo(rowNode);
+        } else if (this.gos.get('masterDetail')) {
+            this.setMasterDetailInfo(rowNode);
         }
 
         if (treeData || rowNode.group) {
@@ -262,7 +259,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
     public setDisplayIndex(
         rowNode: RowNode,
-        displayIndexSeq: NumberSequence,
+        displayIndexSeq: { value: number },
         nextRowTop: { value: number },
         uiLevel: number
     ): void {
@@ -273,7 +270,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
             rowNode.setRowTop(null);
         } else {
             // set this row
-            rowNode.setRowIndex(displayIndexSeq.next());
+            rowNode.setRowIndex(displayIndexSeq.value++);
             rowNode.setRowTop(nextRowTop.value);
             nextRowTop.value += rowNode.rowHeight!;
         }
@@ -287,7 +284,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         const hasDetailRow = rowNode.master;
         if (hasDetailRow) {
             if (rowNode.expanded && rowNode.detailNode) {
-                rowNode.detailNode.setRowIndex(displayIndexSeq.next());
+                rowNode.detailNode.setRowIndex(displayIndexSeq.value++);
                 rowNode.detailNode.setRowTop(nextRowTop.value);
                 nextRowTop.value += rowNode.detailNode.rowHeight!;
             } else if (rowNode.detailNode) {

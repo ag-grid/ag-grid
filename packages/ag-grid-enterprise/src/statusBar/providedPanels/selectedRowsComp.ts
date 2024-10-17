@@ -34,10 +34,7 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
             this.setDisplayed(true);
             return;
         }
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
-        const thousandSeparator = localeTextFunc('thousandSeparator', ',');
-        const decimalSeparator = localeTextFunc('decimalSeparator', '.');
-        this.setValue(_formatNumberCommas(selectedRowCount, thousandSeparator, decimalSeparator));
+        this.setValue(_formatNumberCommas(selectedRowCount, this.getLocaleTextFunc.bind(this)));
         this.setDisplayed(selectedRowCount > 0);
     }
 

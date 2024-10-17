@@ -270,7 +270,9 @@ export interface DisplayedColumnsChangedEvent<TData = any, TContext = any>
 }
 
 export interface RowDataUpdatedEvent<TData = any, TContext = any>
-    extends AgGlobalEvent<'rowDataUpdated', TData, TContext> {}
+    extends AgGlobalEvent<'rowDataUpdated', TData, TContext> {
+    transactions?: RowNodeTransaction[];
+}
 
 export interface RowDataUpdateStartedEvent<TData = any, TContext = any>
     extends AgGlobalEvent<'rowDataUpdateStarted', TData, TContext> {
@@ -485,7 +487,7 @@ export interface RowDragEvent<TData = any, TContext = any, T extends AgEventType
     /** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */
     eventPath?: EventTarget[];
     /** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */
-    vDirection: string;
+    vDirection: 'up' | 'down' | null;
     /** The row index the mouse is dragging over or -1 if over no row. */
     overIndex: number;
     /** The row node the mouse is dragging over or undefined if over no row. */

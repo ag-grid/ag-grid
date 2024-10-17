@@ -3,16 +3,11 @@ import type { UserComponentFactory } from '../components/framework/userComponent
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import { _getActiveDomElement, _getDocument } from '../gridOptionsUtils';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
-import type { ITooltipComp, ITooltipParams } from '../rendering/tooltipComponent';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _exists } from '../utils/generic';
-import type { PopupService } from './popupService';
-
-export interface TooltipParentComp {
-    getTooltipParams(): WithoutGridCommon<ITooltipParams>;
-    getGui(): HTMLElement;
-}
+import type { PopupService } from '../widgets/popupService';
+import type { ITooltipComp } from './tooltipComponent';
+import type { ITooltipCtrl } from './tooltipFeature';
 
 enum TooltipStates {
     NOTHING,
@@ -72,10 +67,8 @@ export class TooltipStateManager extends BeanStub {
     private onDocumentKeyDownCallback: (() => null) | undefined;
 
     constructor(
-        private parentComp: TooltipParentComp,
-        private tooltipShowDelayOverride?: number,
-        private tooltipHideDelayOverride?: number,
-        private shouldDisplayTooltip?: () => boolean
+        private readonly tooltipCtrl: ITooltipCtrl,
+        private readonly getTooltipValue: () => any
     ) {
         super();
     }
@@ -88,7 +81,7 @@ export class TooltipStateManager extends BeanStub {
         this.tooltipTrigger = this.getTooltipTrigger();
         this.tooltipMouseTrack = this.gos.get('tooltipMouseTrack');
 
-        const el = this.parentComp.getGui();
+        const el = this.tooltipCtrl.getGui();
 
         if (this.tooltipTrigger === TooltipTrigger.HOVER) {
             this.addManagedListeners(el, {
@@ -121,10 +114,12 @@ export class TooltipStateManager extends BeanStub {
 
     private getTooltipDelay(type: 'show' | 'hide'): number {
         if (type === 'show') {
-            return this.tooltipShowDelayOverride ?? this.getGridOptionsTooltipDelay('tooltipShowDelay')!;
+            return (
+                this.tooltipCtrl.getTooltipShowDelayOverride?.() ?? this.getGridOptionsTooltipDelay('tooltipShowDelay')!
+            );
         }
 
-        return this.tooltipHideDelayOverride ?? this.getGridOptionsTooltipDelay('tooltipHideDelay')!;
+        return this.tooltipCtrl.getTooltipHideDelayOverride?.() ?? this.getGridOptionsTooltipDelay('tooltipHideDelay')!;
     }
 
     public override destroy(): void {
@@ -200,7 +195,7 @@ export class TooltipStateManager extends BeanStub {
 
     private onFocusOut(e: FocusEvent): void {
         const relatedTarget = e.relatedTarget as Element;
-        const parentCompGui = this.parentComp.getGui();
+        const parentCompGui = this.tooltipCtrl.getGui();
         const tooltipGui = this.tooltipComp?.getGui();
 
         if (
@@ -279,14 +274,28 @@ export class TooltipStateManager extends BeanStub {
     }
 
     private showTooltip(): void {
-        const params: WithoutGridCommon<ITooltipParams> = {
-            ...this.parentComp.getTooltipParams(),
-        };
+        const value = this.getTooltipValue();
+        const ctrl = this.tooltipCtrl;
 
-        if (!_exists(params.value) || (this.shouldDisplayTooltip && !this.shouldDisplayTooltip())) {
+        if (!_exists(value) || (ctrl.shouldDisplayTooltip && !ctrl.shouldDisplayTooltip())) {
             this.setToDoNothing();
             return;
         }
+
+        const rowNode = ctrl.getRowNode?.();
+
+        const params = {
+            location: ctrl.getLocation?.() ?? 'UNKNOWN', //'cell',
+            colDef: ctrl.getColDef?.(),
+            column: ctrl.getColumn?.(),
+            rowIndex: ctrl.getRowIndex?.(),
+            node: rowNode,
+            data: rowNode?.data,
+            value,
+            valueFormatted: ctrl.getValueFormatted?.(),
+            hideTooltipCallback: () => this.hideTooltip(true),
+            ...(ctrl.getAdditionalParams?.() ?? {}),
+        };
 
         this.state = TooltipStates.SHOWING;
         this.tooltipInstanceCount++;
@@ -313,7 +322,7 @@ export class TooltipStateManager extends BeanStub {
 
         this.eventService.dispatchEvent({
             type: 'tooltipHide',
-            parentGui: this.parentComp.getGui(),
+            parentGui: this.tooltipCtrl.getGui(),
         });
 
         if (forceHide) {
@@ -348,7 +357,7 @@ export class TooltipStateManager extends BeanStub {
             eGui.classList.add('ag-tooltip-interactive');
         }
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         const addPopupRes = this.popupService?.addPopup({
             eChild: eGui,
@@ -393,7 +402,7 @@ export class TooltipStateManager extends BeanStub {
         this.eventService.dispatchEvent({
             type: 'tooltipShow',
             tooltipGui: eGui,
-            parentGui: this.parentComp.getGui(),
+            parentGui: this.tooltipCtrl.getGui(),
         });
 
         this.startHideTimeout();
@@ -424,7 +433,7 @@ export class TooltipStateManager extends BeanStub {
     }
 
     private onTooltipFocusOut(e: FocusEvent): void {
-        const parentGui = this.parentComp.getGui();
+        const parentGui = this.tooltipCtrl.getGui();
 
         // focusout is dispatched when inner elements lose focus
         // so we need to verify if focus is contained within the tooltip
@@ -461,7 +470,7 @@ export class TooltipStateManager extends BeanStub {
         } else {
             this.popupService?.positionPopupByComponent({
                 ...params,
-                eventSource: this.parentComp.getGui(),
+                eventSource: this.tooltipCtrl.getGui(),
                 position: 'under',
                 keepWithinBounds: true,
                 nudgeY: 5,

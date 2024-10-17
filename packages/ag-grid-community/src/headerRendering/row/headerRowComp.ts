@@ -1,6 +1,5 @@
 import { _setAriaRowIndex } from '../../utils/aria';
 import { _setDomChildOrder } from '../../utils/dom';
-import { _getAllValuesInObject, _iterateObject } from '../../utils/object';
 import { Component } from '../../widgets/component';
 import type { AbstractHeaderCellComp } from '../cells/abstractCell/abstractHeaderCellComp';
 import type { AbstractHeaderCellCtrl, HeaderCellCtrlInstanceId } from '../cells/abstractCell/abstractHeaderCellCtrl';
@@ -12,11 +11,7 @@ import { HeaderFilterCellComp } from '../cells/floatingFilter/headerFilterCellCo
 import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
 import type { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 
-export enum HeaderRowType {
-    COLUMN_GROUP = 'group',
-    COLUMN = 'column',
-    FLOATING_FILTER = 'filter',
-}
+export type HeaderRowType = 'group' | 'column' | 'filter';
 
 export class HeaderRowComp extends Component {
     private ctrl: HeaderRowCtrl;
@@ -69,13 +64,13 @@ export class HeaderRowComp extends Component {
             this.headerComps[id] = comp;
         });
 
-        _iterateObject(oldComps, (id: string, comp: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {
+        Object.values(oldComps).forEach((comp: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {
             this.getGui().removeChild(comp.getGui());
             this.destroyBean(comp);
         });
 
         if (forceOrder) {
-            const comps = _getAllValuesInObject(this.headerComps);
+            const comps = Object.values(this.headerComps);
             // ordering the columns by left position orders them in the order they appear on the screen
             comps.sort(
                 (
@@ -96,10 +91,10 @@ export class HeaderRowComp extends Component {
         let result: AbstractHeaderCellComp<AbstractHeaderCellCtrl>;
 
         switch (this.ctrl.getType()) {
-            case HeaderRowType.COLUMN_GROUP:
+            case 'group':
                 result = new HeaderGroupCellComp(headerCtrl as HeaderGroupCellCtrl);
                 break;
-            case HeaderRowType.FLOATING_FILTER:
+            case 'filter':
                 result = new HeaderFilterCellComp(headerCtrl as HeaderFilterCellCtrl);
                 break;
             default:

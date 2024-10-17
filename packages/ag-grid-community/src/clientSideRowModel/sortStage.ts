@@ -7,7 +7,7 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { PostSortRowsParams } from '../interfaces/iCallbackParams';
-import { ClientSideRowModelSteps } from '../interfaces/iClientSideRowModel';
+import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IGroupHideOpenParentsService } from '../interfaces/iGroupHideOpenParentsService';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -30,8 +30,14 @@ function updateChildIndexes(rowNode: RowNode): void {
         const firstChild = i === 0;
         const lastChild = i === rowNode.childrenAfterSort.length - 1;
         child.setFirstChild(firstChild);
-        child.setLastChild(lastChild);
-        child.setChildIndex(i);
+        if (child.lastChild !== lastChild) {
+            child.lastChild = lastChild;
+            child.dispatchRowEvent('lastChildChanged');
+        }
+        if (child.childIndex !== i) {
+            child.childIndex = i;
+            child.dispatchRowEvent('childIndexChanged');
+        }
     }
 }
 
@@ -47,7 +53,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'sortStage' as const;
 
     public refreshProps: Set<keyof GridOptions<any>> = new Set(['postSortRows', 'groupDisplayType', 'accentedSort']);
-    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.SORT;
+    public step: ClientSideRowModelStage = 'sort';
 
     private sortController: SortController;
     private columnModel: ColumnModel;

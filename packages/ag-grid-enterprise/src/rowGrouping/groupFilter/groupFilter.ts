@@ -152,7 +152,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
 
     private createGroupFieldSelectElement(sourceColumns: AgColumn[]): void {
         this.eGroupFieldSelect = this.createManagedBean(new AgSelect());
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         this.eGroupFieldSelect.setLabel(localeTextFunc('groupFilterSelect', 'Select field:'));
         this.eGroupFieldSelect.setLabelAlignment('top');
         this.eGroupFieldSelect.addOptions(

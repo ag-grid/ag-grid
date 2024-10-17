@@ -2,6 +2,7 @@ import type {
     AgColumn,
     BeanCollection,
     ChangedPath,
+    ClientSideRowModelStage,
     ColDef,
     ColumnModel,
     FuncColsService,
@@ -13,7 +14,7 @@ import type {
     StageExecuteParams,
     ValueService,
 } from 'ag-grid-community';
-import { BeanStub, ClientSideRowModelSteps, _iterateObject, _missing } from 'ag-grid-community';
+import { BeanStub, _missing } from 'ag-grid-community';
 
 import type { PivotColDefService } from './pivotColDefService';
 
@@ -28,7 +29,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         'pivotColumnGroupTotals',
         'suppressExpandablePivotGroups',
     ]);
-    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.PIVOT;
+    public step: ClientSideRowModelStage = 'pivot';
 
     private valueService: ValueService;
     private columnModel: ColumnModel;
@@ -224,7 +225,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         pivotIndex: number,
         uniqueValues: any
     ): Record<string, any> {
-        const mappedChildren: Record<string, any> = {};
+        const mappedChildren: Record<string, RowNode[]> = {};
         const pivotColumn = pivotColumns[pivotIndex];
 
         // map the children out based on the pivot column
@@ -259,9 +260,9 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         } else {
             const result: Record<string, any> = {};
 
-            _iterateObject(mappedChildren, (key: string, value: RowNode[]) => {
+            for (const [key, value] of Object.entries(mappedChildren)) {
                 result[key] = this.bucketChildren(value, pivotColumns, pivotIndex + 1, uniqueValues[key]);
-            });
+            }
 
             return result;
         }

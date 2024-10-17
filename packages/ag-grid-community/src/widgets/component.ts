@@ -2,13 +2,8 @@ import type { BeanStubEvent } from '../context/beanStub';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { BaseBean, ComponentBean } from '../context/genericContext';
-import type { AgColumn } from '../entities/agColumn';
-import type { AgColumnGroup } from '../entities/agColumnGroup';
-import type { ColDef, ColGroupDef } from '../entities/colDef';
 import type { AgEvent } from '../events';
-import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { CssClassManager } from '../rendering/cssClassManager';
-import type { ITooltipParams, TooltipLocation } from '../rendering/tooltipComponent';
 import {
     _copyNodeList,
     _isNodeOrElement,
@@ -17,10 +12,8 @@ import {
     _setDisplayed,
     _setVisible,
 } from '../utils/dom';
-import { NumberSequence } from '../utils/numberSequence';
-import { TooltipFeature } from './tooltipFeature';
 
-const compIdSequence = new NumberSequence();
+let compIdSequence = 0;
 
 /** The RefPlaceholder is used to control when data-ref attribute should be applied to the component
  * There are hanging data-refs in the DOM that are not being used internally by the component which we don't want to apply to the component.
@@ -61,13 +54,9 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     // unique id for this row component. this is used for getting a reference to the HTML dom.
     // we cannot use the RowNode id as this is not unique (due to animation, old rows can be lying
     // around as we create a new rowComp instance for the same row node).
-    private compId = compIdSequence.next();
+    private compId = compIdSequence++;
 
     private cssClassManager: CssClassManager;
-
-    protected usingBrowserTooltips: boolean;
-    private tooltipText: string | null | undefined;
-    private tooltipFeature: TooltipFeature | undefined;
 
     constructor(template?: string, componentSelectors?: ComponentSelector[]) {
         super();
@@ -81,8 +70,6 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     }
 
     public preConstruct(): void {
-        this.usingBrowserTooltips = this.gos.get('enableBrowserTooltips');
-
         this.wireTemplate(this.getGui());
     }
 
@@ -97,50 +84,6 @@ export class Component<TLocalEvent extends string = ComponentEvent>
 
     public getCompId(): number {
         return this.compId;
-    }
-
-    public getTooltipParams(): WithoutGridCommon<ITooltipParams> {
-        return {
-            value: this.tooltipText,
-            location: 'UNKNOWN',
-        };
-    }
-
-    public setTooltip(params?: {
-        newTooltipText?: string | null;
-        showDelayOverride?: number;
-        hideDelayOverride?: number;
-        location?: TooltipLocation;
-        getColumn?(): AgColumn | AgColumnGroup;
-        getColDef?(): ColDef | ColGroupDef;
-        shouldDisplayTooltip?: () => boolean;
-    }): void {
-        const { newTooltipText, showDelayOverride, hideDelayOverride, location, shouldDisplayTooltip } = params || {};
-
-        if (this.tooltipFeature) {
-            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
-        }
-
-        if (this.tooltipText !== newTooltipText) {
-            this.tooltipText = newTooltipText;
-        }
-
-        const getTooltipValue = () => this.tooltipText;
-
-        if (newTooltipText != null) {
-            this.tooltipFeature = this.createBean(
-                new TooltipFeature({
-                    getTooltipValue,
-                    getGui: () => this.getGui(),
-                    getLocation: () => location ?? 'UNKNOWN',
-                    getColDef: params?.getColDef,
-                    getColumn: params?.getColumn,
-                    getTooltipShowDelayOverride: showDelayOverride != null ? () => showDelayOverride : undefined,
-                    getTooltipHideDelayOverride: hideDelayOverride != null ? () => hideDelayOverride : undefined,
-                    shouldDisplayTooltip,
-                })
-            );
-        }
     }
 
     private getDataRefAttribute(element: Element): string | null {
@@ -408,10 +351,6 @@ export class Component<TLocalEvent extends string = ComponentEvent>
     public override destroy(): void {
         if (this.parentComponent) {
             this.parentComponent = undefined;
-        }
-
-        if (this.tooltipFeature) {
-            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         }
 
         super.destroy();

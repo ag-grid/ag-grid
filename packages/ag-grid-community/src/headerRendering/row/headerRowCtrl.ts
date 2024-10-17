@@ -6,12 +6,12 @@ import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { _isDomLayout } from '../../gridOptionsUtils';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ColumnPinnedType, HeaderColumnId } from '../../interfaces/iColumn';
-import { _values } from '../../utils/generic';
 import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
 import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
-import { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
+import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
-import { HeaderRowType } from './headerRowComp';
+import { getColumnHeaderRowHeight, getFloatingFiltersHeight, getGroupRowsHeight } from '../headerUtils';
+import type { HeaderRowType } from './headerRowComp';
 
 export interface IHeaderRowComp {
     setTop(top: string): void;
@@ -49,9 +49,9 @@ export class HeaderRowCtrl extends BeanStub {
         this.type = type;
 
         const typeClass =
-            type == HeaderRowType.COLUMN_GROUP
+            type == 'group'
                 ? `ag-header-row-column-group`
-                : type == HeaderRowType.FLOATING_FILTER
+                : type == 'filter'
                   ? `ag-header-row-column-filter`
                   : `ag-header-row-column`;
         this.headerRowClass = `ag-header-row ${typeClass}`;
@@ -126,11 +126,16 @@ export class HeaderRowCtrl extends BeanStub {
         );
     }
 
-    public getHeaderCellCtrl(column: AgColumn | AgColumnGroup): any {
+    public getHeaderCellCtrl(column: AgColumn | AgColumnGroup): AbstractHeaderCellCtrl | undefined {
         if (!this.headerCellCtrls) {
             return;
         }
-        return _values(this.headerCellCtrls).find((cellCtrl) => cellCtrl.getColumnGroupChild() === column);
+        for (const cellCtrl of this.headerCellCtrls.values()) {
+            if (cellCtrl.getColumnGroupChild() === column) {
+                return cellCtrl;
+            }
+        }
+        return undefined;
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -180,17 +185,17 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     public getTopAndHeight() {
-        const { columnModel, filterManager } = this.beans;
+        const { filterManager } = this.beans;
         const sizes: number[] = [];
 
-        const groupHeadersHeight = columnModel.getGroupRowsHeight();
-        const headerHeight = columnModel.getColumnHeaderRowHeight();
+        const groupHeadersHeight = getGroupRowsHeight(this.beans);
+        const headerHeight = getColumnHeaderRowHeight(this.beans);
 
         sizes.push(...groupHeadersHeight);
         sizes.push(headerHeight);
 
         if (filterManager?.hasFloatingFilters()) {
-            sizes.push(columnModel.getFloatingFiltersHeight() as number);
+            sizes.push(getFloatingFiltersHeight(this.beans) as number);
         }
 
         let topOffset = 0;
@@ -293,10 +298,10 @@ export class HeaderRowCtrl extends BeanStub {
 
         if (headerCtrl == null) {
             switch (this.type) {
-                case HeaderRowType.FLOATING_FILTER: {
+                case 'filter': {
                     headerCtrl = this.createBean(
                         this.beans.registry.createDynamicBean<HeaderFilterCellCtrl>(
-                            'headerFilterCell',
+                            'headerFilterCellCtrl',
                             headerColumn as AgColumn,
                             this.beans,
                             this
@@ -304,9 +309,14 @@ export class HeaderRowCtrl extends BeanStub {
                     );
                     break;
                 }
-                case HeaderRowType.COLUMN_GROUP:
+                case 'group':
                     headerCtrl = this.createBean(
-                        new HeaderGroupCellCtrl(headerColumn as AgColumnGroup, this.beans, this)
+                        this.beans.registry.createDynamicBean<HeaderGroupCellCtrl>(
+                            'headerGroupCellCtrl',
+                            headerColumn as AgColumnGroup,
+                            this.beans,
+                            this
+                        )!
                     );
                     break;
                 default:
@@ -341,7 +351,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getActualDepth(): number {
-        return this.type == HeaderRowType.FLOATING_FILTER ? this.rowIndex - 1 : this.rowIndex;
+        return this.type == 'filter' ? this.rowIndex - 1 : this.rowIndex;
     }
 
     private getColumnsInViewportNormalLayout(): (AgColumn | AgColumnGroup)[] {

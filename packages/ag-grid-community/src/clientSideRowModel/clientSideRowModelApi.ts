@@ -11,7 +11,7 @@ export function onGroupExpandedOrCollapsed(beans: BeanCollection): void {
 }
 
 export function refreshClientSideRowModel(beans: BeanCollection, step?: ClientSideRowModelStep): void {
-    _getClientSideRowModel(beans)?.refreshModel(step);
+    _getClientSideRowModel(beans)?.refreshModel(step === 'everything' ? 'group' : step);
 }
 
 export function isRowDataEmpty(beans: BeanCollection): boolean {
@@ -40,7 +40,7 @@ export function forEachNodeAfterFilterAndSort<TData = any>(
 }
 
 export function resetRowHeights(beans: BeanCollection): void {
-    if (beans.columnModel.isAutoRowHeightActive()) {
+    if (beans.rowAutoHeightService?.active) {
         _warn(3);
         return;
     }

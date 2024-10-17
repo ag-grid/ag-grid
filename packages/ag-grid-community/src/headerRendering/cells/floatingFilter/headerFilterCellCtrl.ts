@@ -38,10 +38,10 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         eGui: HTMLElement,
         eButtonShowMainFilter: HTMLElement,
         eFloatingFilterBody: HTMLElement,
-        compBean: BeanStub | undefined
+        compBeanInput: BeanStub | undefined
     ): void {
         this.comp = comp;
-        compBean = setupCompBean(this, this.beans.context, compBean);
+        const compBean = setupCompBean(this, this.beans.context, compBeanInput);
         this.eButtonShowMainFilter = eButtonShowMainFilter;
         this.eFloatingFilterBody = eFloatingFilterBody;
 
@@ -114,7 +114,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private setupAria(): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         _setAriaLabel(this.eButtonShowMainFilter, localeTextFunc('ariaFilterMenuOpen', 'Open Filter Menu'));
     }
 

@@ -1,10 +1,10 @@
 import type {
     BeanCollection,
+    ColumnModel,
     FocusService,
     GetRowIdParams,
     IRowNode,
     LoadSuccessParams,
-    NumberSequence,
     RowNode,
     RowNodeSorter,
     RowRenderer,
@@ -14,6 +14,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _getRowHeightAsNumber, _getRowIdCallback, _warn } from 'ag-grid-community';
 
+import { setRowNodeGroupValue } from '../../../rowGrouping/rowGroupingUtils';
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { NodeManager } from '../../nodeManager';
 import type { ServerSideRowModel } from '../../serverSideRowModel';
@@ -38,6 +39,7 @@ export class LazyCache extends BeanStub {
     private rowNodeSorter?: RowNodeSorter;
     private sortController?: SortController;
     private lazyBlockLoadingService: LazyBlockLoadingService;
+    private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
         this.rowRenderer = beans.rowRenderer;
@@ -48,6 +50,7 @@ export class LazyCache extends BeanStub {
         this.rowNodeSorter = beans.rowNodeSorter;
         this.sortController = beans.sortController;
         this.lazyBlockLoadingService = beans.lazyBlockLoadingService as LazyBlockLoadingService;
+        this.columnModel = beans.columnModel;
     }
 
     /**
@@ -250,7 +253,7 @@ export class LazyCache extends BeanStub {
         if (storeIndex === 0 && this.gos.get('groupHideOpenParents')) {
             const parentGroupData = this.store.getParentNode().groupData;
             for (const key in parentGroupData) {
-                newNode.setGroupValue(key, parentGroupData[key]);
+                setRowNodeGroupValue(newNode, this.columnModel, key, parentGroupData[key]);
             }
         }
         this.lazyBlockLoadingService.queueLoadCheck();
@@ -273,7 +276,7 @@ export class LazyCache extends BeanStub {
      */
     private skipDisplayIndexes(
         numberOfRowsToSkip: number,
-        displayIndexSeq: NumberSequence,
+        displayIndexSeq: { value: number },
         nextRowTop: { value: number }
     ) {
         if (numberOfRowsToSkip === 0) {
@@ -281,7 +284,7 @@ export class LazyCache extends BeanStub {
         }
         const defaultRowHeight = _getRowHeightAsNumber(this.gos);
 
-        displayIndexSeq.skip(numberOfRowsToSkip);
+        displayIndexSeq.value += numberOfRowsToSkip;
         nextRowTop.value += numberOfRowsToSkip * defaultRowHeight;
     }
 
@@ -289,7 +292,7 @@ export class LazyCache extends BeanStub {
      * @param displayIndexSeq the number sequence for generating the display index of each row
      * @param nextRowTop an object containing the next row top value intended to be modified by ref per row
      */
-    public setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }, uiLevel: number): void {
+    public setDisplayIndexes(displayIndexSeq: { value: number }, nextRowTop: { value: number }, uiLevel: number): void {
         // Create a map of display index nodes for access speed
         this.nodeDisplayIndexMap.clear();
 
@@ -316,7 +319,7 @@ export class LazyCache extends BeanStub {
             if (isFirstChild && this.gos.get('groupHideOpenParents')) {
                 const parentGroupData = this.store.getParentNode().groupData;
                 for (const key in parentGroupData) {
-                    node.setGroupValue(key, isFirstChild ? parentGroupData[key] : undefined);
+                    setRowNodeGroupValue(node, this.columnModel, key, isFirstChild ? parentGroupData[key] : undefined);
                 }
             }
 
@@ -528,7 +531,7 @@ export class LazyCache extends BeanStub {
         // node doesn't exist, create a new one
         const newNode = this.blockUtils.createRowNode(this.store.getRowDetails());
         if (data != null) {
-            const defaultId = this.getPrefixedId(this.store.getIdSequence().next());
+            const defaultId = this.getPrefixedId(this.store.getIdSequence().value++);
             this.blockUtils.setDataIntoRowNode(newNode, data, defaultId, undefined);
 
             // don't allow the SSRM to listen to the dispatched row event, as it will

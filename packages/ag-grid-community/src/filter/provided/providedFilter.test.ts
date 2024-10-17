@@ -1,6 +1,5 @@
 import type { ProvidedFilterModel } from '../../interfaces/iFilter';
 import type { IRowModel, RowModelType } from '../../interfaces/iRowModel';
-import type { LocaleService } from '../../localeService';
 import type { PositionableFeature } from '../../rendering/features/positionableFeature';
 import { mock } from '../../test-utils/mock';
 import type { AgPromise } from '../../utils/promise';
@@ -17,10 +16,6 @@ class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
 
         const eGui = mock<HTMLElement>('appendChild');
         this.setGui(eGui);
-
-        const localeService = mock<LocaleService>('getLocaleTextFunc');
-        localeService.getLocaleTextFunc.mockReturnValue((_: string, defaultValue: string) => defaultValue);
-        (this as any).localeService = localeService;
 
         const rowModel = mock<IRowModel>('getType');
         rowModel.getType.mockReturnValue(rowModelType);

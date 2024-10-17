@@ -3,7 +3,6 @@
   "compilerOptions": {
     "emitDecoratorMetadata": false,
     "noImplicitAny": false,
-    "strictNullChecks": false,
     "module": "commonjs",
     "types": ["jest", "node"]
   },

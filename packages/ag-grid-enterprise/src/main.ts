@@ -24,6 +24,7 @@ export { MasterDetailModule } from './masterDetail/masterDetailModule';
 export { RangeSelectionModule } from './rangeSelection/rangeSelectionModule';
 export { ServerSideRowModelModule } from './serverSideRowModel/serverSideRowModelModule';
 export { SparklinesModule } from './sparkline/sparklinesModule';
+export { TreeDataModule } from './treeData/treeDataModule';
 
 // tbd - having these here means all charts will be enterprise
 // once we have independent module imports this issue will go away

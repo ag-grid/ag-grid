@@ -1,4 +1,4 @@
-import type { AgColumn, DragAndDropIcon, DraggingEvent, ITooltipParams, WithoutGridCommon } from 'ag-grid-community';
+import type { AgColumn, DragAndDropIcon, DraggingEvent } from 'ag-grid-community';
 import { _createIconNoSpan } from 'ag-grid-community';
 
 import { BaseDropZonePanel } from './baseDropZonePanel';
@@ -9,7 +9,7 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     public postConstruct(): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('pivotColumnsEmptyMessage', 'Drag here to set column labels');
         const title = localeTextFunc('pivots', 'Column Labels');
 
@@ -29,16 +29,10 @@ export class PivotDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getAriaLabel(): string {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const label = translate('ariaPivotDropZonePanelLabel', 'Column Labels');
 
         return label;
-    }
-
-    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
-        const res = super.getTooltipParams();
-        res.location = 'pivotColumnsList';
-        return res;
     }
 
     private refresh(): void {

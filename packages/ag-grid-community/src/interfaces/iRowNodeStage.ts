@@ -1,7 +1,7 @@
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { ChangedPath } from '../utils/changedPath';
-import type { ClientSideRowModelSteps } from './iClientSideRowModel';
+import type { ClientSideRowModelStage } from './iClientSideRowModel';
 import type { RowNodeTransaction } from './rowNodeTransaction';
 
 export interface StageExecuteParams<TData = any> {
@@ -18,7 +18,7 @@ export interface StageExecuteParams<TData = any> {
 }
 
 export interface IRowNodeStage<TData = any> {
-    step: ClientSideRowModelSteps;
+    step: ClientSideRowModelStage;
     refreshProps: Set<keyof GridOptions>;
     execute(params: StageExecuteParams<TData>): any;
 }

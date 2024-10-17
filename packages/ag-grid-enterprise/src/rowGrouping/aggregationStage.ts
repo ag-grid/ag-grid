@@ -2,6 +2,7 @@ import type {
     AgColumn,
     BeanCollection,
     ChangedPath,
+    ClientSideRowModelStage,
     ColumnModel,
     FuncColsService,
     GetGroupRowAggParams,
@@ -16,14 +17,7 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    ClientSideRowModelSteps,
-    _error,
-    _getGrandTotalRow,
-    _getGroupAggFiltering,
-    _missingOrEmpty,
-} from 'ag-grid-community';
+import { BeanStub, _error, _getGrandTotalRow, _getGroupAggFiltering } from 'ag-grid-community';
 
 import type { AggFuncService } from './aggFuncService';
 
@@ -46,7 +40,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         'suppressAggFilteredOnly',
         'grandTotalRow',
     ]);
-    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.AGGREGATE;
+    public step: ClientSideRowModelStage = 'aggregate';
 
     private columnModel: ColumnModel;
     private valueService: ValueService;
@@ -70,7 +64,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         // and there is no cleanup to be done (as value columns don't change between transactions or change
         // detections). if no value columns and no changed path, means we have to go through all nodes in
         // case we need to clean up agg data from before.
-        const noValueColumns = _missingOrEmpty(this.funcColsService.valueCols);
+        const noValueColumns = !this.funcColsService.valueCols?.length;
         const noUserAgg = !this.gos.getCallback('getGroupRowAgg');
         const changedPathActive = params.changedPath && params.changedPath.isActive();
         if (noValueColumns && noUserAgg && changedPathActive) {
@@ -113,7 +107,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
                 // this check is needed for TreeData, in case the node is no longer a child,
                 // but it was a child previously.
                 if (rowNode.aggData) {
-                    rowNode.setAggData(null);
+                    this.setAggData(rowNode, null);
                 }
                 // never agg data for leaf nodes
                 return;
@@ -125,7 +119,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
             if (isRootNode && !aggDetails.groupIncludeTotalFooter) {
                 const notPivoting = !this.columnModel.isPivotMode();
                 if (!aggDetails.alwaysAggregateAtRootLevel && notPivoting) {
-                    rowNode.setAggData(null);
+                    this.setAggData(rowNode, null);
                     return;
                 }
             }
@@ -151,12 +145,12 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
             aggResult = this.aggregateRowNodeUsingValuesAndPivot(rowNode);
         }
 
-        rowNode.setAggData(aggResult);
+        this.setAggData(rowNode, aggResult);
 
         // if we are grouping, then it's possible there is a sibling footer
         // to the group, so update the data here also if there is one
         if (rowNode.sibling) {
-            rowNode.sibling.setAggData(aggResult);
+            this.setAggData(rowNode.sibling, aggResult);
         }
     }
 
@@ -321,5 +315,39 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         } as any); // the "as any" is needed to allow the deprecation warning messages
 
         return aggFuncAny(params);
+    }
+
+    private setAggData(rowNode: RowNode, newAggData: any): void {
+        const oldAggData = rowNode.aggData;
+        rowNode.aggData = newAggData;
+
+        // if no event service, nobody has registered for events, so no need fire event
+        if (rowNode.__localEventService) {
+            const eventFunc = (colId: string) => {
+                const value = rowNode.aggData ? rowNode.aggData[colId] : undefined;
+                const oldValue = oldAggData ? oldAggData[colId] : undefined;
+
+                if (value === oldValue) {
+                    return;
+                }
+
+                // do a quick lookup - despite the event it's possible the column no longer exists
+                const column = this.columnModel.getCol(colId)!;
+                if (!column) {
+                    return;
+                }
+
+                rowNode.dispatchCellChangedEvent(column, value, oldValue);
+            };
+
+            for (const key in oldAggData) {
+                eventFunc(key); // raise for old keys
+            }
+            for (const key in newAggData) {
+                if (!oldAggData || !(key in oldAggData)) {
+                    eventFunc(key); // new key, event not yet raised
+                }
+            }
+        }
     }
 }

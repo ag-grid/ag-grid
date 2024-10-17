@@ -47,7 +47,7 @@ function Item({ itemData, framework, pageName }: { itemData?: any; framework: Fr
           }).length > 0;
     const isActive = pageName === itemData.path;
 
-    const className = classnames(styles.item, itemData.icon ? styles.hasIcon : '', isActive ? styles.isIsActive : '');
+    const className = classnames(styles.item, itemData.icon ? styles.hasIcon : '', isActive ? styles.isActive : '');
 
     return (
         isCorrectFramework && (
@@ -202,7 +202,7 @@ export function DocsNav({
 
     return (
         <Collapsible id="docs-mobile-nav-collapser" isOpen={mobileNavOpen}>
-            <div className={styles.docsNavOuter}>
+            <div id="docs-nav-scroll" className={styles.docsNavOuter}>
                 <div className={styles.docsNavInner}>
                     {showWhatsNew && (
                         <div className={styles.whatsNewLink}>

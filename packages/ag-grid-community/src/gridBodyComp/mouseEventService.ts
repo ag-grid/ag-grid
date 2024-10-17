@@ -8,11 +8,10 @@ import type { CellPosition } from '../interfaces/iCellPosition';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import { _getCellCtrlForEventTarget } from '../rendering/cell/cellCtrl';
 import { _exists } from '../utils/generic';
-import { NumberSequence } from '../utils/numberSequence';
 
 const GRID_DOM_KEY = '__ag_grid_instance';
 
-const gridInstanceSequence = new NumberSequence();
+let gridInstanceSequence = 0;
 
 export class MouseEventService extends BeanStub implements NamedBean {
     beanName = 'mouseEventService' as const;
@@ -23,7 +22,7 @@ export class MouseEventService extends BeanStub implements NamedBean {
         this.ctrlsService = beans.ctrlsService;
     }
 
-    private gridInstanceId = gridInstanceSequence.next();
+    private gridInstanceId = gridInstanceSequence++;
 
     // we put the instance id onto the main DOM element. this is used for events, when grids are inside grids,
     // so the grid can work out if the even came from this grid or a grid inside this one. see the ctrl+v logic

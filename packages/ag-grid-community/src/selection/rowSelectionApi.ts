@@ -10,12 +10,12 @@ export function setNodesSelected(
 ) {
     const allNodesValid = params.nodes.every((node) => {
         if (node.rowPinned) {
-            _warn(119);
+            _warn(59);
             return false;
         }
 
         if (node.id === undefined) {
-            _warn(120);
+            _warn(60);
             return false;
         }
         return true;
@@ -39,25 +39,25 @@ export function deselectAll(beans: BeanCollection, source: SelectionEventSourceT
 }
 
 export function selectAllFiltered(beans: BeanCollection, source: SelectionEventSourceType = 'apiSelectAllFiltered') {
-    beans.selectionService?.selectAllRowNodes({ source, justFiltered: true });
+    beans.selectionService?.selectAllRowNodes({ source, selectAll: 'filtered' });
 }
 
 export function deselectAllFiltered(beans: BeanCollection, source: SelectionEventSourceType = 'apiSelectAllFiltered') {
-    beans.selectionService?.deselectAllRowNodes({ source, justFiltered: true });
+    beans.selectionService?.deselectAllRowNodes({ source, selectAll: 'filtered' });
 }
 
 export function selectAllOnCurrentPage(
     beans: BeanCollection,
     source: SelectionEventSourceType = 'apiSelectAllCurrentPage'
 ) {
-    beans.selectionService?.selectAllRowNodes({ source, justCurrentPage: true });
+    beans.selectionService?.selectAllRowNodes({ source, selectAll: 'currentPage' });
 }
 
 export function deselectAllOnCurrentPage(
     beans: BeanCollection,
     source: SelectionEventSourceType = 'apiSelectAllCurrentPage'
 ) {
-    beans.selectionService?.deselectAllRowNodes({ source, justCurrentPage: true });
+    beans.selectionService?.deselectAllRowNodes({ source, selectAll: 'currentPage' });
 }
 
 export function getSelectedNodes<TData = any>(beans: BeanCollection): IRowNode<TData>[] {

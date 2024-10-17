@@ -61,10 +61,10 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         this.createDateComponent();
         this.filterModelFormatter = new DateFilterModelFormatter(
             this.filterParams,
-            this.localeService,
+            this.getLocaleTextFunc.bind(this),
             this.optionsFactory
         );
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         this.eReadOnlyText.setDisabled(true).setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
     }
 

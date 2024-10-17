@@ -1,6 +1,7 @@
 import type {
     BeanCollection,
     IRowModel,
+    ISelectionService,
     IServerSideGroupSelectionState,
     IServerSideSelectionState,
     ISetNodesSelectedParams,
@@ -27,10 +28,12 @@ interface SelectedState {
 
 export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
     private rowModel: IRowModel;
+    private selectionService?: ISelectionService;
     private selectionCtx = new ServerSideRowRangeSelectionContext();
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
+        this.selectionService = beans.selectionService;
     }
 
     private selectedState: SelectedState = { selectAll: false, toggledNodes: new Set() };
@@ -245,7 +248,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
 
         this.rowModel.forEachNode((node) => {
             if (node !== rowNodeToKeepSelected) {
-                node.selectThisNode(false, undefined, source);
+                this.selectionService?.selectRowNode(node, false, undefined, source);
             }
         });
 

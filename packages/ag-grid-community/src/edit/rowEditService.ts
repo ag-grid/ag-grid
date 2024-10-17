@@ -14,19 +14,16 @@ export class RowEditService extends BeanStub implements NamedBean {
         event: KeyboardEvent | null = null
     ): boolean {
         let preventDefault = true;
-        const atLeastOneEditing = rowCtrl.getAllCellCtrls().reduce((prev: boolean, cellCtrl: CellCtrl) => {
+        let atLeastOneEditing = false;
+        rowCtrl.getAllCellCtrls().forEach((cellCtrl: CellCtrl) => {
             const cellStartedEdit = cellCtrl === sourceRenderedCell;
             if (cellStartedEdit) {
                 preventDefault = cellCtrl.startEditing(key, cellStartedEdit, event);
             } else {
                 cellCtrl.startEditing(null, cellStartedEdit, event);
             }
-            if (prev) {
-                return true;
-            }
-
-            return cellCtrl.isEditing();
-        }, false);
+            atLeastOneEditing ||= cellCtrl.isEditing();
+        });
 
         if (atLeastOneEditing) {
             this.setEditing(rowCtrl, true);

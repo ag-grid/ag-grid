@@ -3,40 +3,42 @@ import type {
     AggregationStatusPanelAggFunc,
     AggregationStatusPanelParams,
     BeanCollection,
-    CellNavigationService,
     IRangeService,
     IStatusPanelComp,
-    PositionUtils,
+    LocaleTextFunc,
     RowPosition,
-    ValueService,
 } from 'ag-grid-community';
 import {
     Component,
     RefPlaceholder,
     _createCellId,
     _exists,
-    _formatNumberTwoDecimalPlacesAndCommas,
+    _formatNumberCommas,
+    _getRowNode,
     _isClientSideRowModel,
     _isRowBefore,
     _isServerSideRowModel,
     _missing,
-    _missingOrEmpty,
     _warn,
 } from 'ag-grid-community';
 
 import type { AgNameValue } from './agNameValue';
 import { AgNameValueSelector } from './agNameValue';
 
+function _formatNumberTwoDecimalPlacesAndCommas(value: number, getLocaleTextFunc: () => LocaleTextFunc): string {
+    if (typeof value !== 'number') {
+        return '';
+    }
+
+    return _formatNumberCommas(Math.round(value * 100) / 100, getLocaleTextFunc);
+}
+
 export class AggregationComp extends Component implements IStatusPanelComp {
-    private valueService: ValueService;
-    private cellNavigationService: CellNavigationService;
-    private positionUtils: PositionUtils;
+    private beans: BeanCollection;
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection) {
-        this.valueService = beans.valueService;
-        this.cellNavigationService = beans.cellNavigationService!;
-        this.positionUtils = beans.positionUtils;
+        this.beans = beans;
         this.rangeService = beans.rangeService;
     }
 
@@ -102,12 +104,8 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     ) {
         const statusBarValueComponent = this.getAllowedAggregationValueComponent(aggFuncName);
         if (_exists(statusBarValueComponent) && statusBarValueComponent) {
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
-            const thousandSeparator = localeTextFunc('thousandSeparator', ',');
-            const decimalSeparator = localeTextFunc('decimalSeparator', '.');
-
             statusBarValueComponent.setValue(
-                _formatNumberTwoDecimalPlacesAndCommas(value!, thousandSeparator, decimalSeparator)
+                _formatNumberTwoDecimalPlacesAndCommas(value!, this.getLocaleTextFunc.bind(this))
             );
             statusBarValueComponent.setDisplayed(visible);
         } else {
@@ -146,7 +144,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
         const cellsSoFar: any = {};
 
-        if (cellRanges && !_missingOrEmpty(cellRanges) && this.rangeService) {
+        if (cellRanges?.length && this.rangeService) {
             for (let i = 0; i < cellRanges.length; i++) {
                 const cellRange = cellRanges[i];
 
@@ -175,12 +173,12 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
                         cellsSoFar[cellId] = true;
 
-                        const rowNode = this.positionUtils.getRowNode(currentRow);
+                        const rowNode = _getRowNode(this.beans, currentRow);
                         if (_missing(rowNode)) {
                             return;
                         }
 
-                        let value = this.valueService.getValue(col, rowNode);
+                        let value = this.beans.valueService.getValue(col, rowNode);
 
                         // if empty cell, skip it, doesn't impact count or anything
                         if (_missing(value) || value === '') {
@@ -218,7 +216,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
                     });
 
-                    currentRow = this.cellNavigationService.getRowBelow(currentRow);
+                    currentRow = this.beans.cellNavigationService!.getRowBelow(currentRow);
                 }
             }
         }

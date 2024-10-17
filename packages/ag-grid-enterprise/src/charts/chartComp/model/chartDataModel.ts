@@ -11,7 +11,7 @@ import type {
     SeriesChartType,
     SeriesGroupType,
 } from 'ag-grid-community';
-import { BeanStub, CellRangeType, _includes } from 'ag-grid-community';
+import { BeanStub, CellRangeType } from 'ag-grid-community';
 
 import type { ChartDatasourceParams } from '../datasource/chartDatasource';
 import { ChartDatasource } from '../datasource/chartDatasource';
@@ -203,7 +203,7 @@ export class ChartDataModel extends BeanStub {
             valueCols: this.getSelectedValueCols(),
             startRow,
             endRow,
-            isScatter: _includes(['scatter', 'bubble'], this.chartType),
+            isScatter: ['scatter', 'bubble'].includes(this.chartType),
         };
 
         const { chartData, columnNames, groupChartData } = this.datasource.getData(params);
@@ -362,7 +362,7 @@ export class ChartDataModel extends BeanStub {
 
         valueCols.forEach((column) => {
             // first time the value cell range is set, preserve the column order from the supplied range
-            if (isInitialising && _includes(this.referenceCellRange.columns, column)) {
+            if (isInitialising && this.referenceCellRange.columns.includes(column)) {
                 column = valueColumnsFromReferenceRange.shift()!;
             }
 

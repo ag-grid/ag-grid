@@ -12,7 +12,7 @@ import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompD
 import type { ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
 import type { ILoadingOverlayParams } from '../../rendering/overlays/loadingOverlayComponent';
 import type { INoRowsOverlayParams } from '../../rendering/overlays/noRowsOverlayComponent';
-import type { ITooltipParams } from '../../rendering/tooltipComponent';
+import type { ITooltipParams } from '../../tooltip/tooltipComponent';
 import { _getUserCompKeys } from './userComponentFactory';
 import type { UserComponentFactory } from './userComponentFactory';
 

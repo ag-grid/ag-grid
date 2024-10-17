@@ -30,8 +30,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs,
     rowSelection: {
         mode: 'multiRow',
-        checkboxes: false,
-        headerCheckbox: false,
     },
 };
 

@@ -3,12 +3,12 @@ import type { AgChartThemePalette } from 'ag-charts-types';
 import {
     Component,
     RefPlaceholder,
+    _areEqual,
     _clearElement,
     _createIconNoSpan,
     _getAbsoluteWidth,
     _radioCssClass,
     _setDisplayed,
-    _shallowCompare,
 } from 'ag-grid-community';
 
 import type { ChartController } from '../../chartController';
@@ -91,7 +91,7 @@ export class ChartSettingsPanel extends Component {
         const themeTemplateParameters = this.chartController.getThemeTemplateParameters();
         const chartGroups = this.gos.get('chartToolPanelsDef')?.settingsPanel?.chartGroupsDef;
 
-        if ((_shallowCompare(palettes, this.palettes) && !forceReset) || this.isAnimating) {
+        if ((_areEqual(palettes, this.palettes) && !forceReset) || this.isAnimating) {
             return;
         }
 

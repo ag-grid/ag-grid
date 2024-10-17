@@ -3,7 +3,6 @@
  * unit tests and we don't have references to window or document in the unit tests
  */
 let isSafari: boolean;
-let safariVersion: number;
 let isChrome: boolean;
 let isFirefox: boolean;
 let isMacOs: boolean;
@@ -17,21 +16,6 @@ export function _isBrowserSafari(): boolean {
         isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     }
     return isSafari;
-}
-
-export function _getSafariVersion(): number {
-    if (safariVersion === undefined) {
-        if (_isBrowserSafari()) {
-            const versionMatch = navigator.userAgent.match(/version\/(\d+)/i);
-            if (versionMatch) {
-                safariVersion = versionMatch[1] != null ? parseFloat(versionMatch[1]) : 0;
-            }
-        } else {
-            safariVersion = 0;
-        }
-    }
-
-    return safariVersion;
 }
 
 /**
@@ -72,12 +56,6 @@ export function _isIOSUserAgent(): boolean {
     }
 
     return isIOS;
-}
-
-export function _browserSupportsPreventScroll(): boolean {
-    // all browsers except safari support focus({ preventScroll: true }).
-    // this feature was added on Safari 15+
-    return !_isBrowserSafari() || _getSafariVersion() >= 15;
 }
 
 export function _getTabIndex(el: HTMLElement | null): string | null {
@@ -124,14 +102,6 @@ export function _getMaxDivHeight(): number {
     document.body.removeChild(div);
     maxDivHeight = res;
     return res;
-}
-
-export function _getBodyWidth(): number {
-    return document.body?.clientWidth ?? (window.innerHeight || document.documentElement?.clientWidth || -1);
-}
-
-export function _getBodyHeight(): number {
-    return document.body?.clientHeight ?? (window.innerHeight || document.documentElement?.clientHeight || -1);
 }
 
 export function _getScrollbarWidth(): number | null {

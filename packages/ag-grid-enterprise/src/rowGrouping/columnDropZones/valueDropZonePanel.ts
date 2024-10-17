@@ -1,4 +1,4 @@
-import type { AgColumn, DragAndDropIcon, DraggingEvent, ITooltipParams, WithoutGridCommon } from 'ag-grid-community';
+import type { AgColumn, DragAndDropIcon, DraggingEvent } from 'ag-grid-community';
 import { _createIconNoSpan } from 'ag-grid-community';
 
 import { BaseDropZonePanel } from './baseDropZonePanel';
@@ -9,7 +9,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     }
 
     public postConstruct(): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag here to aggregate');
         const title = localeTextFunc('values', 'Values');
 
@@ -23,16 +23,10 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getAriaLabel(): string {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const label = translate('ariaValuesDropZonePanelLabel', 'Values');
 
         return label;
-    }
-
-    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
-        const res = super.getTooltipParams();
-        res.location = 'valueColumnsList';
-        return res;
     }
 
     protected getIconName(): DragAndDropIcon {

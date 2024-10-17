@@ -1,7 +1,5 @@
 import type { AgCartesianAxisOptions, AgLineSeriesOptions } from 'ag-charts-types';
 
-import { _includes } from 'ag-grid-community';
-
 import type { ChartProxyParams, UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
 
@@ -45,6 +43,6 @@ export class LineChartProxy extends CartesianChartProxy<'line'> {
 
     private isNormalised() {
         const normalisedCharts = ['normalizedLine'];
-        return !this.crossFiltering && _includes(normalisedCharts, this.chartType);
+        return !this.crossFiltering && normalisedCharts.includes(this.chartType);
     }
 }
