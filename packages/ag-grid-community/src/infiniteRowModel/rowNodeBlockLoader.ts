@@ -2,7 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import { _getMaxConcurrentDatasourceRequests } from '../gridOptionsUtils';
 import { _removeFromArray } from '../utils/array';
-import { _debounce, _log } from '../utils/function';
+import { _debounce, _logIfDebug } from '../utils/function';
 import type { RowNodeBlock } from './rowNodeBlock';
 
 export type RowNodeBlockLoaderEvent = 'blockLoaded';
@@ -69,9 +69,7 @@ export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implem
         this.printCacheStatus();
 
         if (this.maxConcurrentRequests != null && this.activeBlockLoadsCount >= this.maxConcurrentRequests) {
-            if (this.gos.get('debug')) {
-                _log(`RowNodeBlockLoader - checkBlockToLoad: max loads exceeded`);
-            }
+            _logIfDebug(this.gos, `RowNodeBlockLoader - checkBlockToLoad: max loads exceeded`);
             return;
         }
 
@@ -80,7 +78,7 @@ export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implem
         const blocksToLoad: RowNodeBlock[] = this.blocks
             .filter((block) => block.getState() === 'needsLoading')
             .slice(0, loadAvailability);
-
+        this.activeBlockLoadsCount += blocksToLoad.length;
         blocksToLoad.forEach((block) => block.load());
         this.printCacheStatus();
     }
@@ -95,11 +93,10 @@ export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implem
     }
 
     private printCacheStatus(): void {
-        if (this.gos.get('debug')) {
-            _log(
-                `RowNodeBlockLoader - printCacheStatus: activePageLoadsCount = ${this.activeBlockLoadsCount},` +
-                    ` blocks = ${JSON.stringify(this.getBlockState())}`
-            );
-        }
+        _logIfDebug(
+            this.gos,
+            `RowNodeBlockLoader - printCacheStatus: activePageLoadsCount = ${this.activeBlockLoadsCount},` +
+                ` blocks = ${JSON.stringify(this.getBlockState())}`
+        );
     }
 }

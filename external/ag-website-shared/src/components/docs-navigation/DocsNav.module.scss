@@ -1,0 +1,243 @@
+@use 'design-system' as *;
+
+@media screen and (min-width: $breakpoint-docs-nav-medium) {
+    :global(#docs-mobile-nav-collapser) {
+        --right-margin: #{$spacing-size-16};
+
+        height: unset !important;
+        width: calc(var(--layout-width-3-12));
+        overflow: unset !important;
+    }
+
+    :global(#docs-mobile-nav-collapser > div) {
+        display: unset !important;
+    }
+}
+
+@media screen and (min-width: $breakpoint-docs-nav-large) {
+    :global(#docs-mobile-nav-collapser) {
+        width: calc(var(--layout-width-3-12) - var(--right-margin));
+    }
+}
+
+.docsNavOuter {
+    --nav-max-width: 276px;
+
+    --item-min-height: 34px;
+
+    --indent-size: #{$spacing-size-4};
+    --indent-initial-offset: #{$spacing-size-2};
+    --indent-border-offset: #{$spacing-size-1};
+
+    --item-border-color: var(--color-util-gray-300);
+    --item-active-color: var(--color-util-brand-500);
+    --item-active-bg-color: var(--color-util-brand-50);
+    --item-active-border-color: var(--color-util-brand-400);
+    --item-focus-color: var(--color-util-brand-300);
+    --item-chevron-color: var(--color-util-gray-400);
+
+    position: sticky;
+    width: 100%;
+    height: calc(100vh - var(--layout-site-header-height));
+    top: var(--layout-site-header-height);
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    #{$selector-darkmode} & {
+        --item-border-color: var(--color-util-gray-500);
+        --item-active-color: var(--color-util-brand-700);
+        --item-active-bg-color: color-mix(in srgb, var(--color-brand-400) 10%, transparent);
+        color: var(--color-util-brand-700);
+        --item-active-border-color: var(--color-util-brand-700);
+        --item-focus-color: var(--color-util-brand-700);
+        --item-chevron-color: var(--color-util-gray-500);
+    }
+}
+
+.docsNavInner {
+    padding-top: $spacing-size-10;
+    padding-bottom: $spacing-size-8;
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        padding-bottom: $spacing-size-32;
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-large) {
+        max-width: var(--nav-max-width);
+    }
+}
+
+.whatsNewLink a {
+    --height: 26px;
+    --hover-bg-color: color-mix(in srgb, var(--color-logo-orange) 5%, var(--color-bg-primary));
+
+    display: block;
+    position: relative;
+    width: fit-content;
+    height: var(--height);
+    margin-bottom: $spacing-size-4;
+    margin-left: $spacing-size-2;
+    padding: 2px 10px;
+    border-radius: var(--height);
+    font-size: var(--text-fs-sm);
+    text-decoration: none;
+    color: var(--color-logo-orange);
+    border: 1px solid var(--color-logo-orange);
+    transition:
+        background-color $transition-default-timing,
+        color $transition-default-timing;
+    -webkit-font-smoothing: auto;
+
+    &:hover,
+    &:focus {
+        background-color: var(--hover-bg-color);
+    }
+
+    #{$selector-darkmode} & {
+        --hover-bg-color: color-mix(in srgb, var(--color-logo-orange) 15%, var(--color-bg-primary));
+    }
+}
+
+.section {
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        max-width: var(--nav-max-width);
+    }
+}
+
+.sectionTitle,
+.groupTitle,
+.item {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    min-height: var(--item-min-height);
+}
+
+.sectionTitle {
+    padding-left: var(--indent-initial-offset);
+    text-transform: uppercase;
+    color: var(--color-util-gray-500);
+}
+
+.divider {
+    margin-top: $spacing-size-6;
+    margin-bottom: $spacing-size-3;
+    margin-left: var(--indent-initial-offset);
+    background-color: var(--color-border-secondary);
+}
+
+.groupTitle {
+    position: relative;
+    width: 100%;
+    padding-left: calc(var(--indent-size) + var(--indent-initial-offset));
+    font-weight: var(--text-semibold);
+    transition: color $transition-default-timing;
+
+    &:hover {
+        color: var(--item-active-color);
+    }
+
+    &:focus-visible {
+        outline: var(--item-focus-color) solid 2px;
+        outline-offset: -2px;
+    }
+}
+
+.groupChevron:global(.icon) {
+    position: absolute;
+    left: calc(var(--indent-border-offset) * -1 + var(--indent-initial-offset));
+    top: 7px;
+    bottom: auto;
+    width: $spacing-size-5;
+    height: $spacing-size-5;
+    margin: 0;
+    fill: var(--item-chevron-color);
+    transition:
+        transform $transition-default-timing,
+        fill $transition-default-timing;
+
+    .groupTitle:hover & {
+        transform: translate(2px, 0);
+    }
+
+    .group.isOpen & {
+        fill: var(--color-fg-primary);
+        transform: rotate(90deg) translate(0, 2px);
+    }
+}
+
+.groupChildren {
+    display: flex;
+    flex-direction: column;
+}
+
+.nestedItems {
+    border-left: 1px solid var(--item-border-color);
+    margin-left: calc(var(--indent-initial-offset) + var(--indent-border-offset));
+    padding-left: var(--indent-initial-offset);
+}
+
+.item {
+    color: var(--color-fg-primary);
+    padding-left: var(--indent-initial-offset);
+    transition:
+        background-color $transition-default-timing,
+        color $transition-default-timing,
+        border-color $transition-default-timing;
+
+    &:hover,
+    &.isActive {
+        background-color: var(--item-active-bg-color);
+        color: var(--item-active-color);
+    }
+
+    &:focus-visible {
+        outline: var(--item-focus-color) solid 2px;
+        outline-offset: -2px;
+        border-radius: var(--radius-sm);
+    }
+
+    &.hasIcon:not(:last-child) {
+        margin-bottom: $spacing-size-1;
+    }
+
+    .groupChildren & {
+        margin-left: calc(var(--indent-size) - var(--indent-border-offset));
+        padding-left: calc(var(--indent-initial-offset) + var(--indent-border-offset));
+        border-left: 1px solid var(--item-border-color);
+
+        &:not(:hover, .isActive) {
+            color: var(--color-fg-secondary);
+        }
+
+        &.isActive {
+            border-left: 1px solid var(--item-active-border-color);
+        }
+    }
+}
+
+.itemIcon:global(.icon),
+.externalIcon:global(.icon) {
+    fill: var(--color-fg-secondary);
+    transition: fill $transition-default-timing;
+
+    .item:hover &,
+    .item.isActive & {
+        fill: var(--item-active-color);
+    }
+}
+
+.itemIcon:global(.icon) {
+    margin-right: $spacing-size-2;
+}
+
+.enterpriseIcon:global(.icon),
+.externalIcon:global(.icon) {
+    width: $spacing-size-5;
+    height: $spacing-size-5;
+    margin-left: $spacing-size-1;
+}
+
+.enterpriseIcon:global(.icon) {
+    fill: var(--color-enterprise-icon);
+}

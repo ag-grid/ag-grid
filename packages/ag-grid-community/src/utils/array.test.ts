@@ -1,4 +1,4 @@
-import { _areEqual, _forEachReverse } from './array';
+import { _areEqual } from './array';
 
 describe('areEqual', () => {
     it.each([
@@ -40,19 +40,5 @@ describe('areEqual', () => {
         [[{ getColId: () => 3 }, { getColId: () => 7 }], [{ getColId: () => 3 }, { getColId: () => 7 }], true],
     ])('can use custom comparator: a = %s, b = %s, expected = %s', (a, b, expected) => {
         expect(_areEqual(a, b, (a, b) => a.getColId() === b.getColId())).toBe(expected);
-    });
-});
-
-describe('forEachReverse', () => {
-    it.each([undefined, null])('returns successfully if list is %s', (value) => {
-        expect(() => _forEachReverse(value!, () => {})).not.toThrow();
-    });
-
-    it('executes for each value in reverse order', () => {
-        const result: number[] = [];
-
-        _forEachReverse([1, 4, 7], (value) => result.push(value));
-
-        expect(result).toStrictEqual([7, 4, 1]);
     });
 });

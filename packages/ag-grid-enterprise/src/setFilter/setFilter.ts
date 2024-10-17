@@ -30,7 +30,7 @@ import {
     _makeNull,
     _setDisplayed,
     _toStringOrNull,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import type { VirtualListModel } from '../widgets/iVirtualList';
@@ -447,9 +447,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
         if (params.excelMode && params.defaultToNothingSelected) {
             params.defaultToNothingSelected = false;
-            _warnOnce(
-                'The Set Filter Parameter "defaultToNothingSelected" value was ignored because it does not work when "excelMode" is used.'
-            );
+            _warn(207);
         }
     }
 
@@ -508,7 +506,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             throw new Error('Value model has not been created.');
         }
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const filterListName = translate('ariaFilterList', 'Filter List');
         const isTree = !!this.setFilterParams.treeList;
 
@@ -799,8 +797,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             throw new Error('Value model has not been created.');
         }
 
-        const { eMiniFilter, localeService } = this;
-        const translate = localeService.getLocaleTextFunc();
+        const { eMiniFilter } = this;
+        const translate = this.getLocaleTextFunc();
 
         eMiniFilter.setDisplayed(!this.setFilterParams.suppressMiniFilter);
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
@@ -1325,7 +1323,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private translateForSetFilter(key: keyof ISetFilterLocaleText): string {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         return translate(key, DEFAULT_LOCALE_TEXT[key]);
     }

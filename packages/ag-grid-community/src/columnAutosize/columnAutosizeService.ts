@@ -33,6 +33,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     private timesDelayed = 0;
 
+    // when we're waiting for cell data types to be inferred, we need to defer column resizing
+    public shouldQueueResizeOperations: boolean = false;
+    private resizeOperationQueue: (() => void)[] = [];
+
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
@@ -54,8 +58,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         stopAtGroup?: AgColumnGroup;
         source?: ColumnEventType;
     }): void {
-        if (this.columnModel.isShouldQueueResizeOperations()) {
-            this.columnModel.pushResizeOperation(() => this.autoSizeCols(params));
+        if (this.shouldQueueResizeOperations) {
+            this.pushResizeOperation(() => this.autoSizeCols(params));
             return;
         }
 
@@ -167,7 +171,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
         for (const columnGroup of columnGroups) {
             for (const headerContainerCtrl of this.ctrlsService.getHeaderRowContainerCtrls()) {
-                headerGroupCtrl = headerContainerCtrl.getHeaderCtrlForColumn(columnGroup);
+                headerGroupCtrl = headerContainerCtrl.getHeaderCtrlForColumn(columnGroup) as
+                    | HeaderGroupCellCtrl
+                    | undefined;
                 if (headerGroupCtrl) {
                     break;
                 }
@@ -181,8 +187,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public autoSizeAllColumns(source: ColumnEventType, skipHeader?: boolean): void {
-        if (this.columnModel.isShouldQueueResizeOperations()) {
-            this.columnModel.pushResizeOperation(() => this.autoSizeAllColumns(source, skipHeader));
+        if (this.shouldQueueResizeOperations) {
+            this.pushResizeOperation(() => this.autoSizeAllColumns(source, skipHeader));
             return;
         }
 
@@ -281,8 +287,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         silent?: boolean,
         params?: ISizeColumnsToFitParams
     ): void {
-        if (this.columnModel.isShouldQueueResizeOperations()) {
-            this.columnModel.pushResizeOperation(() => this.sizeColumnsToFit(gridWidth, source, silent, params));
+        if (this.shouldQueueResizeOperations) {
+            this.pushResizeOperation(() => this.sizeColumnsToFit(gridWidth, source, silent, params));
             return;
         }
 
@@ -473,5 +479,20 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 this.autoSizeAllColumns('autosizeColumns', skipHeader);
             }
         });
+    }
+
+    public processResizeOperations(): void {
+        this.shouldQueueResizeOperations = false;
+        this.resizeOperationQueue.forEach((resizeOperation) => resizeOperation());
+        this.resizeOperationQueue = [];
+    }
+
+    public pushResizeOperation(func: () => void): void {
+        this.resizeOperationQueue.push(func);
+    }
+
+    public override destroy(): void {
+        this.resizeOperationQueue.length = 0;
+        super.destroy();
     }
 }

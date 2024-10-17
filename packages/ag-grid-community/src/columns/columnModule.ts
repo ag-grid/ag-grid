@@ -1,45 +1,36 @@
 import type { _ColumnGridApi, _GetColumnDefsApi } from '../api/gridApi';
+import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
+import { ColumnGroupHeaderCompModule } from '../headerRendering/cells/headerModule';
 import { baseCommunityModule } from '../interfaces/iModule';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
 import { CheckboxCellRendererModule } from '../rendering/cellRenderers/cellRendererModule';
 import {
     applyColumnState,
-    getAllDisplayedColumnGroups,
     getAllDisplayedColumns,
     getAllDisplayedVirtualColumns,
     getAllGridColumns,
-    getCenterDisplayedColumnGroups,
     getColumn,
     getColumnDef,
     getColumnDefs,
-    getColumnGroup,
-    getColumnGroupState,
     getColumnState,
     getColumns,
     getDisplayNameForColumn,
-    getDisplayNameForColumnGroup,
     getDisplayedCenterColumns,
     getDisplayedColAfter,
     getDisplayedColBefore,
     getDisplayedLeftColumns,
     getDisplayedRightColumns,
-    getLeftDisplayedColumnGroups,
-    getProvidedColumnGroup,
-    getRightDisplayedColumnGroups,
     isPinning,
     isPinningLeft,
     isPinningRight,
-    resetColumnGroupState,
     resetColumnState,
-    setColumnGroupOpened,
-    setColumnGroupState,
     setColumnsPinned,
     setColumnsVisible,
 } from './columnApi';
 import { ColumnDefFactory } from './columnDefFactory';
 import { ColumnFlexService } from './columnFlexService';
-import { ControlsColService } from './controlsColService';
 import { DataTypeService } from './dataTypeService';
+import { SelectionColService } from './selectionColService';
 
 export const DataTypeModule: _ModuleWithoutApi = {
     ...baseCommunityModule('DataTypeModule'),
@@ -47,9 +38,9 @@ export const DataTypeModule: _ModuleWithoutApi = {
     dependsOn: [CheckboxCellRendererModule],
 };
 
-export const ControlsColumnModule: _ModuleWithoutApi = {
-    ...baseCommunityModule('ControlsColumnModule'),
-    beans: [ControlsColService],
+export const SelectionColumnModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('SelectionColumnModule'),
+    beans: [SelectionColService],
 };
 
 export const GetColumnDefsApiModule: _ModuleWithApi<_GetColumnDefsApi<any>> = {
@@ -69,19 +60,12 @@ export const ColumnApiModule: _ModuleWithApi<_ColumnGridApi<any>> = {
     ...baseCommunityModule('ColumnApiModule'),
     apiFunctions: {
         getColumnDef,
-        setColumnGroupOpened,
-        getColumnGroup,
-        getProvidedColumnGroup,
         getDisplayNameForColumn,
-        getDisplayNameForColumnGroup,
         getColumn,
         getColumns,
         applyColumnState,
         getColumnState,
         resetColumnState,
-        getColumnGroupState,
-        setColumnGroupState,
-        resetColumnGroupState,
         isPinning,
         isPinningLeft,
         isPinningRight,
@@ -95,9 +79,11 @@ export const ColumnApiModule: _ModuleWithApi<_ColumnGridApi<any>> = {
         getDisplayedRightColumns,
         getAllDisplayedColumns,
         getAllDisplayedVirtualColumns,
-        getLeftDisplayedColumnGroups,
-        getCenterDisplayedColumnGroups,
-        getRightDisplayedColumnGroups,
-        getAllDisplayedColumnGroups,
     },
+};
+
+export const ColumnGroupModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('ColumnGroupModule'),
+    dynamicBeans: [{ name: 'headerGroupCellCtrl', classImp: HeaderGroupCellCtrl as any }],
+    dependsOn: [ColumnGroupHeaderCompModule],
 };

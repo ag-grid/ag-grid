@@ -3,10 +3,10 @@ import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { TreeDataModule } from 'ag-grid-enterprise';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([ColumnsToolPanelModule, MenuModule, RowGroupingModule, ServerSideRowModelModule]);
+ModuleRegistry.registerModules([ColumnsToolPanelModule, MenuModule, TreeDataModule, ServerSideRowModelModule]);
 
 interface FakeServer {
     getData: (request: IServerSideGetRowsRequest) => any;

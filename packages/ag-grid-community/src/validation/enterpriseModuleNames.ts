@@ -64,6 +64,7 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     StatusBarCoreModule: 1,
     StatusBarModule: 1,
     StatusBarSelectionModule: 1,
+    TreeDataModule: 1,
     ViewportRowModelCoreModule: 1,
     ViewportRowModelModule: 1,
 };

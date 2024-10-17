@@ -2,6 +2,7 @@ import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _getRowHeightAsNumber } from '../gridOptionsUtils';
+import { getHeaderHeight } from '../headerRendering/headerUtils';
 import type { FlashCellsParams, RefreshCellsParams } from '../interfaces/iCellsParams';
 import type { GetCellRendererInstancesParams, ICellRenderer } from './cellRenderers/iCellRenderer';
 import { isRowInMap, mapRowNodes } from './rowRenderer';
@@ -25,10 +26,14 @@ export function refreshCells<TData = any>(beans: BeanCollection, params: Refresh
 }
 
 export function flashCells<TData = any>(beans: BeanCollection, params: FlashCellsParams<TData> = {}): void {
+    const { cellFlashService } = beans;
+    if (!cellFlashService) {
+        return;
+    }
     beans.frameworkOverrides.wrapIncoming(() => {
         beans.rowRenderer
             .getCellCtrls(params.rowNodes, params.columns as AgColumn[])
-            .forEach((cellCtrl) => cellCtrl.flashCell(params));
+            .forEach((cellCtrl) => cellFlashService.flashCell(cellCtrl, params));
     });
 }
 
@@ -49,7 +54,7 @@ export function flushAllAnimationFrames(beans: BeanCollection): void {
 export function getSizesForCurrentTheme(beans: BeanCollection) {
     return {
         rowHeight: _getRowHeightAsNumber(beans.gos),
-        headerHeight: beans.columnModel.getHeaderHeight(),
+        headerHeight: getHeaderHeight(beans),
     };
 }
 

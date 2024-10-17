@@ -1,7 +1,13 @@
 import { Injectable, NgZone } from '@angular/core';
 
-import type { FrameworkOverridesIncomingSource } from 'ag-grid-community';
+import type {
+    FrameworkOverridesIncomingSource,
+    IFrameworkEventListenerService,
+    LocalEventService,
+} from 'ag-grid-community';
 import { VanillaFrameworkOverrides } from 'ag-grid-community';
+
+import { AngularFrameworkEventListenerService } from './angularFrameworkEventListenerService';
 
 @Injectable()
 export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
@@ -38,12 +44,18 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
     // This also means that if a user calls an AG Grid API method from within their component
     // the internal side effects will not trigger change detection. Without this the events would
     // run inside Angular and trigger change detection as the source of the event was within the angular zone.
-    wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = (callback, source) =>
-        this.runOutside(callback, source);
+    override wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = (
+        callback,
+        source
+    ) => this.runOutside(callback, source);
 
-    // Only setup wrapping when the call is coming from within Angular zone, i.e from a users application code.
-    // Used to distinguish between user code and AG Grid code setting up events against RowNodes and Columns
-    get shouldWrapOutgoing() {
+    /**
+     * The shouldWrapOutgoing property is used to determine if events should be run outside of Angular or not.
+     * If an event handler is registered outside of Angular then we should not wrap the event handler
+     * with runInsideAngular() as the user may not have wanted this.
+     * This is also used to not wrap internal event listeners that are registered with RowNodes and Columns.
+     */
+    public get shouldWrapOutgoing() {
         return this._ngZone && NgZone.isInAngularZone();
     }
 
@@ -51,9 +63,24 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
      * Make sure that any code that is executed outside of AG Grid is running within the Angular zone.
      * This means users can update templates and use binding without having to do anything extra.
      */
-    wrapOutgoing: <T>(callback: () => T) => T = (callback) => this.runInsideAngular(callback);
+    override wrapOutgoing: <T>(callback: () => T) => T = (callback) => this.runInsideAngular(callback);
 
-    isFrameworkComponent(comp: any): boolean {
+    public createLocalEventListenerWrapper(
+        existingFrameworkEventListenerService: IFrameworkEventListenerService<any, any> | undefined,
+        localEventService: LocalEventService<any>
+    ): IFrameworkEventListenerService<any, any> | undefined {
+        if (this.shouldWrapOutgoing && !existingFrameworkEventListenerService) {
+            localEventService.setFrameworkOverrides(this);
+            return new AngularFrameworkEventListenerService(this);
+        }
+        return undefined;
+    }
+
+    public createGlobalEventListenerWrapper(): IFrameworkEventListenerService<any, any> {
+        return new AngularFrameworkEventListenerService(this);
+    }
+
+    override isFrameworkComponent(comp: any): boolean {
         if (!comp) {
             return false;
         }

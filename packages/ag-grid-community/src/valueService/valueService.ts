@@ -294,6 +294,11 @@ export class ValueService extends BeanStub implements NamedBean {
 
         const { field, valueSetter } = column.getColDef();
 
+        if (_missing(field) && _missing(valueSetter)) {
+            _warn(17);
+            return false;
+        }
+
         if (this.dataTypeService && !this.dataTypeService.checkType(column, newValue)) {
             _warn(135);
             return false;

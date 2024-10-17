@@ -6,7 +6,7 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { GridOptionsService } from '../gridOptionsService';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
-import { _areEqual, _includes, _last, _sortNumerically } from '../utils/array';
+import { _areEqual, _last, _sortNumerically } from '../utils/array';
 import type { ColumnMoveService } from './columnMoveService';
 
 export interface ColumnMoveParams {
@@ -21,6 +21,25 @@ export interface ColumnMoveParams {
     columnModel: ColumnModel;
     columnMoveService: ColumnMoveService;
     visibleColsService: VisibleColsService;
+}
+
+// returns the provided cols sorted in same order as they appear in this.cols, eg if this.cols
+// contains [a,b,c,d,e] and col passed is [e,a] then the passed cols are sorted into [a,e]
+function sortColsLikeCols(colsList: AgColumn[], cols: AgColumn[]): void {
+    if (!cols || cols.length <= 1) {
+        return;
+    }
+
+    const notAllColsPresent = cols.filter((c) => colsList.indexOf(c) < 0).length > 0;
+    if (notAllColsPresent) {
+        return;
+    }
+
+    cols.sort((a, b) => {
+        const indexA = colsList.indexOf(a);
+        const indexB = colsList.indexOf(b);
+        return indexA - indexB;
+    });
 }
 
 export function getBestColumnMoveIndexFromXPosition(
@@ -75,7 +94,7 @@ export function getBestColumnMoveIndexFromXPosition(
     // could themselves be part of 'married children' groups, which means we need to maintain the order within
     // the moving list.
     const allMovingColumnsOrdered = allMovingColumns.slice();
-    columnModel.sortColsLikeCols(allMovingColumnsOrdered);
+    sortColsLikeCols(columnModel.getCols(), allMovingColumnsOrdered);
 
     const validMoves = calculateValidMoves({
         movingCols: allMovingColumnsOrdered,
@@ -257,9 +276,9 @@ function calculateValidMoves(params: {
     // so the result we return has to be and index location for this list
     const allGridCols = columnModel.getCols();
 
-    const movingDisplayedCols = allDisplayedCols.filter((col) => _includes(movingCols, col));
-    const otherDisplayedCols = allDisplayedCols.filter((col) => !_includes(movingCols, col));
-    const otherGridCols = allGridCols.filter((col) => !_includes(movingCols, col));
+    const movingDisplayedCols = allDisplayedCols.filter((col) => movingCols.includes(col));
+    const otherDisplayedCols = allDisplayedCols.filter((col) => !movingCols.includes(col));
+    const otherGridCols = allGridCols.filter((col) => !movingCols.includes(col));
 
     // work out how many DISPLAYED columns fit before the 'x' position. this gives us the displayIndex.
     // for example, if cols are a,b,c,d and we find a,b fit before 'x', then we want to place the moving

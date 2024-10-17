@@ -13,10 +13,10 @@ import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { TreeDataModule } from 'ag-grid-enterprise';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([ColumnsToolPanelModule, MenuModule, RowGroupingModule, ServerSideRowModelModule]);
+ModuleRegistry.registerModules([ColumnsToolPanelModule, MenuModule, TreeDataModule, ServerSideRowModelModule]);
 
 let fakeServer: {
     getData: (request: IServerSideGetRowsRequest) => void;
@@ -48,7 +48,7 @@ const gridOptions: GridOptions = {
     treeData: true,
     columnDefs,
     cacheBlockSize: 10,
-    rowSelection: { mode: 'singleRow', checkboxes: false },
+    rowSelection: { mode: 'singleRow' },
 
     isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
         const isKathrynPowers = params.rowNode.level == 0 && params.data.employeeName == 'Kathryn Powers';

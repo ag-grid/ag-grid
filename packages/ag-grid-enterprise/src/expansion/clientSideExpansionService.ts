@@ -6,9 +6,11 @@ import type {
     NamedBean,
     RowNode,
 } from 'ag-grid-community';
-import { BeanStub, ClientSideRowModelSteps, _exists } from 'ag-grid-community';
+import { _exists } from 'ag-grid-community';
 
-export class ClientSideExpansionService extends BeanStub implements NamedBean, IExpansionService {
+import { BaseExpansionService } from './baseExpansionService';
+
+export class ClientSideExpansionService extends BaseExpansionService implements NamedBean, IExpansionService {
     beanName = 'expansionService' as const;
 
     private rowModel: IClientSideRowModel;
@@ -71,7 +73,7 @@ export class ClientSideExpansionService extends BeanStub implements NamedBean, I
             recursiveExpandOrCollapse(rootNode.childrenAfterGroup);
         }
 
-        this.rowModel.refreshModel({ step: ClientSideRowModelSteps.MAP });
+        this.rowModel.refreshModel({ step: 'map' });
 
         this.eventService.dispatchEvent({
             type: 'expandOrCollapseAll',
@@ -84,6 +86,6 @@ export class ClientSideExpansionService extends BeanStub implements NamedBean, I
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
         // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
         // and thus the expand icon in the group cell won't get 'opened' or 'closed'.
-        this.rowModel.refreshModel({ step: ClientSideRowModelSteps.MAP });
+        this.rowModel.refreshModel({ step: 'map' });
     }
 }

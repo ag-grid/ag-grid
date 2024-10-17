@@ -20,15 +20,7 @@ import type {
     TouchShowContextMenuParam,
     ValueService,
 } from 'ag-grid-community';
-import {
-    BeanStub,
-    Component,
-    _areCellsEqual,
-    _exists,
-    _isIOSUserAgent,
-    _isNothingFocused,
-    _missingOrEmpty,
-} from 'ag-grid-community';
+import { BeanStub, Component, _areCellsEqual, _exists, _isIOSUserAgent, _isNothingFocused } from 'ag-grid-community';
 
 import type { CloseMenuEvent } from '../widgets/agMenuItemComponent';
 import { AgMenuList } from '../widgets/agMenuList';
@@ -153,7 +145,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     }
 
     public showContextMenu(params: EventShowContextMenuParams & { anchorToElement?: HTMLElement }): void {
-        const { rowNode } = params;
+        const rowNode = params.rowNode as RowNode | null | undefined;
         const column = params.column as AgColumn | null | undefined;
         let { anchorToElement, value } = params;
 
@@ -228,7 +220,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         const menuItems = this.getMenuItems(node, column, value);
         const eGridBodyGui = this.ctrlsService.getGridBodyCtrl().getGui();
 
-        if (menuItems === undefined || _missingOrEmpty(menuItems)) {
+        if (menuItems === undefined || !menuItems?.length) {
             return false;
         }
 
@@ -254,7 +246,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             nudgeY: 1,
         };
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,

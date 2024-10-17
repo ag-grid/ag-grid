@@ -83,7 +83,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
     }
 
     public setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void {
-        if (!this.columnModel.isReady()) {
+        if (!this.columnModel.ready) {
             return;
         }
 

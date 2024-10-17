@@ -11,18 +11,19 @@ import type {
     ExcelStyle,
     ExcelWorksheet,
     ExcelWorksheetConfigParams,
+    GridSerializingParams,
+    RowAccumulator,
     RowHeightCallbackParams,
     RowNode,
+    RowSpanningAccumulator,
 } from 'ag-grid-community';
-import { _last, _mergeDeep, _warnOnce } from 'ag-grid-community';
-import type { GridSerializingParams, RowAccumulator, RowSpanningAccumulator } from 'ag-grid-community';
-import { BaseGridSerializingSession, RowType } from 'ag-grid-community';
+import { BaseGridSerializingSession, _last, _mergeDeep, _warn } from 'ag-grid-community';
 
 import { getHeightFromProperty } from './assets/excelUtils';
 import { addXlsxBodyImageToMap, createXlsxExcel, getXlsxStringPosition } from './excelXlsxFactory';
 
 export interface StyleLinkerInterface {
-    rowType: RowType;
+    rowType: 'HEADER_GROUPING' | 'HEADER' | 'BODY';
     rowIndex: number;
     value: string;
     column?: Column;
@@ -145,7 +146,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 collapsibleRanges: number[][]
             ) => {
                 const styleIds: string[] = this.config.styleLinker({
-                    rowType: RowType.HEADER_GROUPING,
+                    rowType: 'HEADER_GROUPING',
                     rowIndex: 1,
                     value: `grouping-${header}`,
                     columnGroup,
@@ -314,7 +315,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         return (column) => {
             const nameForCol = this.extractHeaderValue(column);
             const styleIds: string[] = this.config.styleLinker({
-                rowType: RowType.HEADER,
+                rowType: 'HEADER',
                 rowIndex,
                 value: nameForCol,
                 column,
@@ -361,7 +362,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 node
             );
             const styleIds: string[] = this.config.styleLinker({
-                rowType: RowType.BODY,
+                rowType: 'BODY',
                 rowIndex,
                 value: valueForCell,
                 column,
@@ -455,7 +456,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                 case 'boolean':
                     return 'b';
                 default:
-                    _warnOnce(`Unrecognized data type for excel export [${style.id}.dataType=${style.dataType}]`);
+                    _warn(162, { id: style.id, dataType: style.dataType });
             }
         }
 

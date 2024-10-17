@@ -134,6 +134,16 @@ describe('ag-grid master detail', () => {
             · · · ├── LEAF id:0 x:"a"
             · · · └── LEAF id:1 x:"b"
         `);
+
+        consoleErrorSpy = vitest.spyOn(console, 'error').mockImplementation(() => {});
+        api.setGridOption('masterDetail', false);
+        consoleErrorSpy.mockRestore();
+
+        gridRows = new GridRows(api, 'data', gridRowsOptions);
+        await gridRows.check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 k:"1"
+        `);
     });
 
     test('masterDetail set rowData (without id)', async () => {

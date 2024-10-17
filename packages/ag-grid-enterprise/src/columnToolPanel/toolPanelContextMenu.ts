@@ -11,6 +11,7 @@ import type {
 } from 'ag-grid-community';
 import { Component, _createIconNoSpan, isColumn, isProvidedColumnGroup } from 'ag-grid-community';
 
+import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { AgMenuList } from '../widgets/agMenuList';
 
 type MenuItemName = 'rowGroup' | 'value' | 'pivot';
@@ -100,12 +101,12 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private buildMenuItemMap(): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
 
         this.menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap.set('rowGroup', {
             allowedFunction: (col) =>
-                col.isPrimary() && col.isAllowRowGroup() && !this.columnModel.isColGroupLocked(col),
+                col.isPrimary() && col.isAllowRowGroup() && !isRowGroupColLocked(this.funcColsService, this.gos, col),
             activeFunction: (col) => col.isRowGroupActive(),
             activateLabel: () => `${localeTextFunc('groupBy', 'Group by')} ${this.displayName}`,
             deactivateLabel: () => `${localeTextFunc('ungroupBy', 'Un-Group by')} ${this.displayName}`,
@@ -171,7 +172,7 @@ export class ToolPanelContextMenu extends Component {
     private displayContextMenu(menuItemsMapped: MenuItemDef[]): void {
         const eGui = this.getGui();
         const menuList = this.createBean(new AgMenuList());
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
 
         let hideFunc = () => {};
 

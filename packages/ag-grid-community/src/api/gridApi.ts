@@ -513,20 +513,8 @@ export interface _GetColumnDefsApi<TData> {
 export interface _ColumnGridApi<TData> {
     getColumnDef<TValue = any>(key: string | Column<TValue>): ColDef<TData, TValue> | null;
 
-    /** Call this if you want to open or close a column group. */
-    setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void;
-
-    /** Returns the column group with the given name. */
-    getColumnGroup(name: string, instanceId?: number): ColumnGroup | null;
-
-    /** Returns the provided column group with the given name. */
-    getProvidedColumnGroup(name: string): ProvidedColumnGroup | null;
-
     /** Returns the display name for a column. Useful if you are doing your own header rendering and want the grid to work out if `headerValueGetter` is used, or if you are doing your own column management GUI, to know what to show as the column name. */
     getDisplayNameForColumn(column: Column, location: HeaderLocation): string;
-
-    /** Returns the display name for a column group (when grouping columns). */
-    getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string;
 
     /** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */
     getColumn<TValue = any>(key: string | ColDef<TData, TValue> | Column<TValue>): Column<TValue> | null;
@@ -542,15 +530,6 @@ export interface _ColumnGridApi<TData> {
 
     /** Sets the state back to match the originally provided column definitions. */
     resetColumnState(): void;
-
-    /** Gets the state of the column groups. Typically used when saving column group state. */
-    getColumnGroupState(): { groupId: string; open: boolean }[];
-
-    /** Sets the state of the column group state from a previous state. */
-    setColumnGroupState(stateItems: { groupId: string; open: boolean }[]): void;
-
-    /** Sets the state back to match the originally provided column definitions. */
-    resetColumnGroupState(): void;
 
     /** Returns `true` if pinning left or right, otherwise `false`. */
     isPinning(): boolean;
@@ -596,6 +575,29 @@ export interface _ColumnGridApi<TData> {
 
     /** Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed. */
     getAllDisplayedVirtualColumns(): Column[];
+}
+
+export interface _ColumnGroupGridApi {
+    /** Call this if you want to open or close a column group. */
+    setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void;
+
+    /** Returns the column group with the given name. */
+    getColumnGroup(name: string, instanceId?: number): ColumnGroup | null;
+
+    /** Returns the provided column group with the given name. */
+    getProvidedColumnGroup(name: string): ProvidedColumnGroup | null;
+
+    /** Returns the display name for a column group (when grouping columns). */
+    getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: HeaderLocation): string;
+
+    /** Gets the state of the column groups. Typically used when saving column group state. */
+    getColumnGroupState(): { groupId: string; open: boolean }[];
+
+    /** Sets the state of the column group state from a previous state. */
+    setColumnGroupState(stateItems: { groupId: string; open: boolean }[]): void;
+
+    /** Sets the state back to match the originally provided column definitions. */
+    resetColumnGroupState(): void;
 
     /** Same as `getAllDisplayedColumnGroups` but just for the pinned left portion of the grid. */
     getLeftDisplayedColumnGroups(): (Column | ColumnGroup)[];
@@ -969,7 +971,7 @@ export interface _RangeSelectionGridApi {
     clearCellSelection(): void;
 }
 
-export interface _ServerSideRowModelGridApi {
+export interface _ServerSideRowModelGridApi<TData> {
     /**
      * Returns an object containing rules matching the selected rows in the SSRM.
      *
@@ -987,18 +989,22 @@ export interface _ServerSideRowModelGridApi {
     setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
 
     /** Apply transactions to the server side row model. */
-    applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined;
+    applyServerSideTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult<TData> | undefined;
     /** Batch apply transactions to the server side row model. */
     applyServerSideTransactionAsync(
         transaction: ServerSideTransaction,
-        callback?: (res: ServerSideTransactionResult) => void
+        callback?: (res: ServerSideTransactionResult<TData>) => void
     ): void;
 
     /**
      * Applies row data to a server side store.
      * New rows will overwrite rows at the same index in the same way as if provided by a datasource success callback.
      */
-    applyServerSideRowData(params: { successParams: LoadSuccessParams; route?: string[]; startRow?: number }): void;
+    applyServerSideRowData(params: {
+        successParams: LoadSuccessParams<TData>;
+        route?: string[];
+        startRow?: number;
+    }): void;
 
     /** Gets all failed server side loads to retry. */
     retryServerSideLoads(): void;
@@ -1155,6 +1161,7 @@ export interface _CoreModuleGridApi<TData>
         _ColumnHoverApi,
         _GetColumnDefsApi<TData>,
         _ColumnGridApi<TData>,
+        _ColumnGroupGridApi,
         _DragGridApi,
         _EditGridApi<TData>,
         _FilterGridApi,
@@ -1175,7 +1182,7 @@ export interface GridApi<TData = any>
         _CsvExportGridApi,
         _RowGroupingGridApi<TData>,
         _RangeSelectionGridApi,
-        _ServerSideRowModelGridApi,
+        _ServerSideRowModelGridApi<TData>,
         _MenuGridApi,
         _MasterDetailGridApi,
         _ExcelExportGridApi,

@@ -6,13 +6,21 @@ import type {
     CellPosition,
     CellRange,
     FillOperationParams,
-    PositionUtils,
     RowNode,
     RowPosition,
     ValueService,
     VisibleColsService,
 } from 'ag-grid-community';
-import { _getFillHandle, _isRowBefore, _isSameRow, _last, _toStringOrNull, _warnOnce } from 'ag-grid-community';
+import {
+    _getCellByPosition,
+    _getFillHandle,
+    _getRowNode,
+    _isRowBefore,
+    _isSameRow,
+    _last,
+    _toStringOrNull,
+    _warn,
+} from 'ag-grid-community';
 
 import { AbstractSelectionHandle, SelectionHandleType } from './abstractSelectionHandle';
 import { findLineByLeastSquares } from './utils';
@@ -31,17 +39,17 @@ interface ValueContext {
 type Direction = 'x' | 'y';
 
 export class AgFillHandle extends AbstractSelectionHandle {
+    private beans: BeanCollection;
     private valueService: ValueService;
     private cellNavigationService: CellNavigationService;
     private visibleColsService: VisibleColsService;
-    protected positionUtils: PositionUtils;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
+        this.beans = beans;
         this.valueService = beans.valueService;
         this.cellNavigationService = beans.cellNavigationService!;
         this.visibleColsService = beans.visibleColsService;
-        this.positionUtils = beans.positionUtils;
     }
 
     private initialPosition: CellPosition | undefined;
@@ -175,7 +183,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         if (direction !== 'x' && direction !== 'y' && direction !== 'xy') {
-            _warnOnce(`valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.`);
+            _warn(177);
             return 'xy';
         }
 
@@ -232,7 +240,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             }
 
             while (!finished && currentRow) {
-                const rowNode = this.positionUtils.getRowNode(currentRow);
+                const rowNode = _getRowNode(this.beans, currentRow);
                 if (!rowNode) {
                     break;
                 }
@@ -497,7 +505,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     }
 
     private extendVertical(initialPosition: CellPosition, endPosition: CellPosition, isMovingUp?: boolean) {
-        const { positionUtils, rangeService } = this;
+        const { rangeService, beans } = this;
 
         let row: RowPosition | null = initialPosition;
 
@@ -517,7 +525,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 }
 
                 if (!isInitialRow) {
-                    const cell = positionUtils.getCellByPosition(cellPos);
+                    const cell = _getCellByPosition(beans, cellPos);
 
                     if (cell) {
                         this.markedCells.push(cell);
@@ -558,7 +566,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             for (let i = 0; i < colLen; i++) {
                 const rowPos = { rowIndex: row.rowIndex, rowPinned: row.rowPinned };
                 const celPos = { ...rowPos, column: cellRange.columns[i] };
-                const cell = this.positionUtils.getCellByPosition(celPos);
+                const cell = _getCellByPosition(this.beans, celPos);
 
                 if (cell) {
                     this.markedCells.push(cell);
@@ -593,7 +601,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
             do {
                 isLastRow = _isSameRow(row, rangeEndRow);
-                const cell = this.positionUtils.getCellByPosition({
+                const cell = _getCellByPosition(this.beans, {
                     rowIndex: row.rowIndex,
                     rowPinned: row.rowPinned,
                     column: column,
@@ -633,7 +641,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
             do {
                 isLastRow = _isSameRow(row, rangeEndRow);
-                const cell = this.positionUtils.getCellByPosition({
+                const cell = _getCellByPosition(this.beans, {
                     rowIndex: row.rowIndex,
                     rowPinned: row.rowPinned,
                     column: column,

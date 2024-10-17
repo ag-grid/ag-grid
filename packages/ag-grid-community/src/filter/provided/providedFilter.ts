@@ -475,7 +475,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     protected translate(key: keyof typeof FILTER_LOCALE_TEXT): string {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         return translate(key, FILTER_LOCALE_TEXT[key]);
     }

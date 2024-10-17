@@ -12,7 +12,9 @@ import type {
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import { LocalEventService } from '../localEventService';
-import type { LocaleService } from '../localeService';
+import type { LocaleService } from '../misc/locale/localeService';
+import type { LocaleTextFunc } from '../misc/locale/localeUtils';
+import { _getLocaleTextFunc } from '../misc/locale/localeUtils';
 import { _addSafePassiveEventListener } from '../utils/event';
 import type { Bean } from './bean';
 import type { BeanCollection, Context } from './context';
@@ -41,7 +43,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     protected frameworkOverrides: IFrameworkOverrides;
     protected eventService: EventService;
     protected gos: GridOptionsService;
-    protected localeService: LocaleService;
+    private localeService?: LocaleService;
 
     public preWireBeans(beans: BeanCollection): void {
         this.frameworkOverrides = beans.frameworkOverrides;
@@ -256,6 +258,10 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
 
     public isAlive = (): boolean => !this.destroyed;
 
+    public getLocaleTextFunc(): LocaleTextFunc {
+        return _getLocaleTextFunc(this.localeService);
+    }
+
     public addDestroyFunc(func: () => void): void {
         // if we are already destroyed, we execute the func now
         if (this.isAlive()) {
@@ -263,6 +269,11 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
         } else {
             func();
         }
+    }
+
+    /** doesn't throw an error if `bean` is undefined */
+    public createOptionalManagedBean<T extends Bean | null | undefined>(bean: T, context?: Context): T | undefined {
+        return bean ? this.createManagedBean(bean, context) : undefined;
     }
 
     public createManagedBean<T extends Bean | null | undefined>(bean: T, context?: Context): T {

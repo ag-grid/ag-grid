@@ -1,11 +1,9 @@
 import type { BeanCollection, ExcelExportMultipleSheetParams, ExcelExportParams } from 'ag-grid-community';
-import { ExcelFactoryMode, _warnOnce } from 'ag-grid-community';
+import { _warn } from 'ag-grid-community';
 
 function assertNotExcelMultiSheet(beans: BeanCollection): boolean {
-    if (beans.excelCreator?.getFactoryMode() === ExcelFactoryMode.MULTI_SHEET) {
-        _warnOnce(
-            "The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'"
-        );
+    if (beans.excelCreator?.getFactoryMode() === 'MULTI_SHEET') {
+        _warn(161);
         return false;
     }
     return true;
@@ -24,7 +22,7 @@ export function exportDataAsExcel(beans: BeanCollection, params?: ExcelExportPar
     }
 }
 export function getSheetDataForExcel(beans: BeanCollection, params?: ExcelExportParams): string | undefined {
-    beans.excelCreator?.setFactoryMode(ExcelFactoryMode.MULTI_SHEET);
+    beans.excelCreator?.setFactoryMode('MULTI_SHEET');
 
     return beans.excelCreator?.getSheetDataForExcel(params);
 }

@@ -2,7 +2,6 @@ import type { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttached
 import type { IDoesFilterPassParams, IFilterOptionDef } from '../../interfaces/iFilter';
 import { _areEqual } from '../../utils/array';
 import { _removeFromParent, _setDisabled, _setDisplayed } from '../../utils/dom';
-import { _isFunction } from '../../utils/function';
 import { AgPromise } from '../../utils/promise';
 import { _warn } from '../../validation/logging';
 import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
@@ -14,7 +13,6 @@ import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
 import type { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import type {
-    FilterPlaceholderFunction,
     ICombinedSimpleModel,
     ISimpleFilter,
     ISimpleFilterModel,
@@ -448,7 +446,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return {
             value: displayKey,
             text: customOption
-                ? this.localeService.getLocaleTextFunc()(customOption.displayKey, customOption.displayName)
+                ? this.getLocaleTextFunc()(customOption.displayKey, customOption.displayName)
                 : this.translate(displayKey as keyof typeof FILTER_LOCALE_TEXT),
         };
     }
@@ -651,11 +649,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     private getPlaceholderText(defaultPlaceholder: keyof typeof FILTER_LOCALE_TEXT, position: number): string {
         let placeholder = this.translate(defaultPlaceholder);
-        if (_isFunction<string>(this.filterPlaceholder)) {
-            const filterPlaceholderFn = this.filterPlaceholder as FilterPlaceholderFunction;
+        if (typeof this.filterPlaceholder === 'function') {
             const filterOptionKey = this.eTypes[position].getValue() as ISimpleFilterModelType;
             const filterOption = this.translate(filterOptionKey);
-            placeholder = filterPlaceholderFn({
+            placeholder = this.filterPlaceholder({
                 filterOptionKey,
                 filterOption,
                 placeholder,
@@ -669,7 +666,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     // allow sub-classes to reset HTML placeholders after UI update.
     protected resetPlaceholder(): void {
-        const globalTranslate = this.localeService.getLocaleTextFunc();
+        const globalTranslate = this.getLocaleTextFunc();
 
         this.forEachInput((element, index, position, numberOfInputs) => {
             if (!(element instanceof AgAbstractInputField)) {
@@ -836,7 +833,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     private resetType(eType: AgSelect): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const filteringLabel = translate('ariaFilteringOperator', 'Filtering operator');
         eType
             .setValue(this.optionsFactory.getDefaultOption(), true)

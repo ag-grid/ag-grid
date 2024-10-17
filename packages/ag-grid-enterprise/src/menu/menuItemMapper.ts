@@ -5,65 +5,48 @@ import type {
     ColumnEventType,
     ColumnModel,
     ColumnNameService,
-    ColumnStateService,
-    FocusService,
     IAggFuncService,
     IClipboardService,
     IColsService,
-    ICsvCreator,
-    IExcelCreator,
     IExpansionService,
     MenuItemDef,
-    MenuService,
     NamedBean,
-    PositionUtils,
     SortController,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, _escapeString, _exists, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _createIconNoSpan, _escapeString, _exists, _getRowNode, _warn } from 'ag-grid-community';
 
-import type { RowGroupColsService } from '../rowGrouping/rowGroupColsService';
-import type { ValueColsService } from '../rowGrouping/valueColsService';
+import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 import type { ColumnChooserFactory } from './columnChooserFactory';
 
 export class MenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'menuItemMapper' as const;
 
+    private beans: BeanCollection;
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
-    private columnStateService: ColumnStateService;
     private rowGroupColsService?: IColsService;
     private valueColsService?: IColsService;
-    private focusService: FocusService;
-    private positionUtils: PositionUtils;
     private chartMenuItemMapper: ChartMenuItemMapper;
-    private menuService: MenuService;
     private sortController?: SortController;
     private columnAutosizeService?: ColumnAutosizeService;
     private expansionService?: IExpansionService;
     private clipboardService?: IClipboardService;
     private aggFuncService?: IAggFuncService;
-    private csvCreator?: ICsvCreator;
-    private excelCreator?: IExcelCreator;
     private columnChooserFactory?: ColumnChooserFactory;
 
     public wireBeans(beans: BeanCollection) {
+        this.beans = beans;
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
-        this.columnStateService = beans.columnStateService;
         this.rowGroupColsService = beans.rowGroupColsService;
         this.valueColsService = beans.valueColsService;
-        this.focusService = beans.focusService;
-        this.positionUtils = beans.positionUtils;
         this.chartMenuItemMapper = beans.chartMenuItemMapper as ChartMenuItemMapper;
-        this.menuService = beans.menuService!;
         this.sortController = beans.sortController;
         this.columnAutosizeService = beans.columnAutosizeService;
         this.expansionService = beans.expansionService;
         this.clipboardService = beans.clipboardService;
         this.aggFuncService = beans.aggFuncService;
-        this.csvCreator = beans.csvCreator;
-        this.excelCreator = beans.excelCreator;
         this.columnChooserFactory = beans.columnChooserFactory as ColumnChooserFactory;
     }
 
@@ -114,34 +97,43 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         sourceElement: () => HTMLElement,
         source: ColumnEventType
     ): MenuItemDef | string | null {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
+        const { pinnedColumnService } = this.beans;
 
         switch (key) {
             case 'pinSubMenu':
-                return {
-                    name: localeTextFunc('pinColumn', 'Pin Column'),
-                    icon: _createIconNoSpan('menuPin', this.gos, null),
-                    subMenu: ['clearPinned', 'pinLeft', 'pinRight'],
-                };
+                return pinnedColumnService && column
+                    ? {
+                          name: localeTextFunc('pinColumn', 'Pin Column'),
+                          icon: _createIconNoSpan('menuPin', this.gos, null),
+                          subMenu: ['clearPinned', 'pinLeft', 'pinRight'],
+                      }
+                    : null;
             case 'pinLeft':
-                return {
-                    name: localeTextFunc('pinLeft', 'Pin Left'),
-                    action: () => this.columnModel.setColsPinned([column], 'left', source),
-                    checked: !!column && column.isPinnedLeft(),
-                };
+                return pinnedColumnService && column
+                    ? {
+                          name: localeTextFunc('pinLeft', 'Pin Left'),
+                          action: () => pinnedColumnService.setColsPinned([column], 'left', source),
+                          checked: !!column && column.isPinnedLeft(),
+                      }
+                    : null;
             case 'pinRight':
-                return {
-                    name: localeTextFunc('pinRight', 'Pin Right'),
-                    action: () => this.columnModel.setColsPinned([column], 'right', source),
-                    checked: !!column && column.isPinnedRight(),
-                };
+                return pinnedColumnService && column
+                    ? {
+                          name: localeTextFunc('pinRight', 'Pin Right'),
+                          action: () => pinnedColumnService.setColsPinned([column], 'right', source),
+                          checked: !!column && column.isPinnedRight(),
+                      }
+                    : null;
             case 'clearPinned':
-                return {
-                    name: localeTextFunc('noPin', 'No Pin'),
-                    action: () => this.columnModel.setColsPinned([column], null, source),
-                    checked: !!column && !column.isPinned(),
-                };
+                return pinnedColumnService && column
+                    ? {
+                          name: localeTextFunc('noPin', 'No Pin'),
+                          action: () => pinnedColumnService.setColsPinned([column], null, source),
+                          checked: !!column && !column.isPinned(),
+                      }
+                    : null;
             case 'valueAggSubMenu':
                 if (this.gos.assertModuleRegistered('RowGroupingCoreModule', 'Aggregation from Menu')) {
                     if (!column?.isPrimary() && !column?.getColDef().pivotValueColumn) {
@@ -214,7 +206,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         disabled:
                             !this.rowGroupColsService ||
                             this.gos.get('functionsReadOnly') ||
-                            (underlyingColumn != null && this.columnModel.isColGroupLocked(underlyingColumn)),
+                            (underlyingColumn != null &&
+                                isRowGroupColLocked(this.gos, underlyingColumn, this.rowGroupColsService)),
                         action: () => this.rowGroupColsService?.removeColumns([showRowGroup], source),
                         icon: icon,
                     };
@@ -230,7 +223,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         this.gos.get('functionsReadOnly') ||
                         !column?.isRowGroupActive() ||
                         !column?.getColDef().enableRowGroup ||
-                        this.columnModel.isColGroupLocked(column),
+                        isRowGroupColLocked(this.gos, column, this.rowGroupColsService),
                     action: () => this.rowGroupColsService?.removeColumns([column], source),
                     icon: icon,
                 };
@@ -238,7 +231,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             case 'resetColumns':
                 return {
                     name: localeTextFunc('resetColumns', 'Reset Columns'),
-                    action: () => this.columnStateService.resetColumnState(source),
+                    action: () => this.beans.columnStateService.resetColumnState(source),
                 };
             case 'expandAll':
                 return {
@@ -286,8 +279,8 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 }
             case 'cut':
                 if (this.gos.assertModuleRegistered('ClipboardCoreModule', 'Cut from Menu')) {
-                    const focusedCell = this.focusService.getFocusedCell();
-                    const rowNode = focusedCell ? this.positionUtils.getRowNode(focusedCell) : null;
+                    const focusedCell = this.beans.focusService.getFocusedCell();
+                    const rowNode = focusedCell ? _getRowNode(this.beans, focusedCell) : null;
                     const isEditable = rowNode ? focusedCell?.column.isCellEditable(rowNode) : false;
                     return {
                         name: localeTextFunc('cut', 'Cut'),
@@ -333,13 +326,13 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 return {
                     name: localeTextFunc('csvExport', 'CSV Export'),
                     icon: _createIconNoSpan('csvExport', this.gos, null),
-                    action: () => this.csvCreator?.exportDataAsCsv(),
+                    action: () => this.beans.csvCreator?.exportDataAsCsv(),
                 };
             case 'excelExport':
                 return {
                     name: localeTextFunc('excelExport', 'Excel Export'),
                     icon: _createIconNoSpan('excelExport', this.gos, null),
-                    action: () => this.excelCreator?.exportDataAsExcel(),
+                    action: () => this.beans.excelCreator?.exportDataAsExcel(),
                 };
             case 'separator':
                 return 'separator';
@@ -352,7 +345,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         name: localeTextFunc('columnFilter', 'Column Filter'),
                         icon: _createIconNoSpan('filter', this.gos, null),
                         action: () =>
-                            this.menuService.showFilterMenu({
+                            this.beans.menuService!.showFilterMenu({
                                 column,
                                 buttonElement: sourceElement(),
                                 containerType: 'columnFilter',
@@ -392,14 +385,14 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     action: () => this.sortController?.setSortForColumn(column!, null, false, source),
                 };
             default: {
-                _warnOnce(`unknown menu item type ${key}`);
+                _warn(176, { key });
                 return null;
             }
         }
     }
 
     private createAggregationSubMenu(column: AgColumn, aggFuncService: IAggFuncService): MenuItemDef[] {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
 
         let columnToUse: AgColumn | undefined;
         if (column.isPrimary()) {

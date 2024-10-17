@@ -18,12 +18,11 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    NumberSequence,
     ServerSideTransactionResultStatus,
     _getGroupTotalRowCallback,
     _getRowHeightAsNumber,
     _getRowIdCallback,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import type { BlockUtils } from '../../blocks/blockUtils';
@@ -62,7 +61,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private groupField: string | undefined;
     private rowGroupColumn: AgColumn;
 
-    private idSequence = new NumberSequence();
+    private idSequence = { value: 0 };
     private cache: LazyCache;
     private info: any;
 
@@ -124,7 +123,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
         const idFunc = _getRowIdCallback(this.gos);
         if (!idFunc) {
-            _warnOnce('getRowId callback must be implemented for transactions to work. Transaction was ignored.');
+            _warn(206);
             return {
                 status: ServerSideTransactionResultStatus.Cancelled,
             };
@@ -280,8 +279,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @param displayIndexSeq the number sequence for generating the display index of each row
      * @param nextRowTop an object containing the next row top value intended to be modified by ref per row
      */
-    setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: { value: number }, uiLevel: number): void {
-        this.displayIndexStart = displayIndexSeq.peek();
+    setDisplayIndexes(displayIndexSeq: { value: number }, nextRowTop: { value: number }, uiLevel: number): void {
+        this.displayIndexStart = displayIndexSeq.value;
         this.topPx = nextRowTop.value;
 
         const footerNode =
@@ -303,7 +302,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             this.blockUtils.setDisplayIndex(this.parentRowNode.sibling, displayIndexSeq, nextRowTop, uiLevel);
         }
 
-        this.displayIndexEnd = displayIndexSeq.peek();
+        this.displayIndexEnd = displayIndexSeq.value;
         this.heightPx = nextRowTop.value - this.topPx;
     }
 
@@ -312,8 +311,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      *
      * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeepAfterFilterAndSort
      */
-    forEachStoreDeep(callback: (store: LazyStore, index: number) => void, sequence = new NumberSequence()): void {
-        callback(this, sequence.next());
+    forEachStoreDeep(callback: (store: LazyStore, index: number) => void, sequence = { value: 0 }): void {
+        callback(this, sequence.value++);
         this.cache.getNodes().forEach((lazyNode) => {
             const childCache = lazyNode.node.childStore as LazyStore | undefined;
             if (childCache) {
@@ -327,9 +326,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      *
      * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeepAfterFilterAndSort
      */
-    forEachNodeDeep(callback: (rowNode: RowNode<any>, index: number) => void, sequence = new NumberSequence()): void {
+    forEachNodeDeep(callback: (rowNode: RowNode<any>, index: number) => void, sequence = { value: 0 }): void {
         this.cache.getNodes().forEach((lazyNode) => {
-            callback(lazyNode.node, sequence.next());
+            callback(lazyNode.node, sequence.value++);
             const childCache = lazyNode.node.childStore as LazyStore | undefined;
             if (childCache) {
                 childCache.forEachNodeDeep(callback, sequence);
@@ -344,19 +343,19 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      */
     forEachNodeDeepAfterFilterAndSort(
         callback: (rowNode: RowNode<any>, index: number) => void,
-        sequence = new NumberSequence(),
+        sequence = { value: 0 },
         includeFooterNodes = false
     ): void {
         const footerNode =
             this.parentRowNode.level > -1 && _getGroupTotalRowCallback(this.gos)({ node: this.parentRowNode });
         if (footerNode === 'top') {
-            callback(this.parentRowNode.sibling, sequence.next());
+            callback(this.parentRowNode.sibling, sequence.value++);
         }
 
         const orderedNodes = this.cache.getOrderedNodeMap();
         for (const key in orderedNodes) {
             const lazyNode = orderedNodes[key];
-            callback(lazyNode.node, sequence.next());
+            callback(lazyNode.node, sequence.value++);
             const childCache = lazyNode.node.childStore as LazyStore | undefined;
             if (childCache) {
                 childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence, includeFooterNodes);
@@ -364,7 +363,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
 
         if (footerNode === 'bottom') {
-            callback(this.parentRowNode.sibling, sequence.next());
+            callback(this.parentRowNode.sibling, sequence.value++);
         }
     }
 
@@ -682,7 +681,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.forEachChildStoreShallow((childStore) => childStore.addStoreStates(result));
     }
 
-    public getIdSequence() {
+    public getIdSequence(): { value: number } {
         return this.idSequence;
     }
 

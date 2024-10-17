@@ -16,9 +16,8 @@ import { LocalEventService } from './localEventService';
 import { _isModuleRegistered } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
 import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
-import { _log } from './utils/function';
-import { _exists, toBoolean } from './utils/generic';
-import { toConstrainedNum, toNumber } from './utils/number';
+import { _logIfDebug } from './utils/function';
+import { _exists } from './utils/generic';
 import { _warn } from './validation/logging';
 import type { ValidationService } from './validation/validationService';
 
@@ -76,6 +75,45 @@ export interface PropertyValueChangedEvent<K extends keyof GridOptions> extends 
 
 export type PropertyChangedListener = (event: PropertyChangedEvent) => void;
 export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void;
+
+function toBoolean(value: any): boolean {
+    if (typeof value === 'boolean') {
+        return value;
+    }
+
+    if (typeof value === 'string') {
+        // for boolean, compare to empty String to allow attributes appearing with
+        // no value to be treated as 'true'
+        return value.toUpperCase() === 'TRUE' || value == '';
+    }
+
+    return false;
+}
+
+function toNumber(value: any): number | undefined {
+    if (typeof value === 'number') {
+        return value;
+    }
+
+    if (typeof value === 'string') {
+        const parsed = parseInt(value);
+        if (isNaN(parsed)) {
+            return undefined;
+        }
+        return parsed;
+    }
+    return undefined;
+}
+
+function toConstrainedNum(min: number, max: number = Number.MAX_VALUE): (value: any) => number | undefined {
+    return (value: any) => {
+        const num = toNumber(value);
+        if (num == null || num < min || num > max) {
+            return undefined; // return undefined if outside bounds, this will then be coerced to the default value.
+        }
+        return num;
+    };
+}
 
 /**
  * Handles value coercion including validation of ranges etc. If value is invalid, undefined is set, allowing default to be used.
@@ -245,9 +283,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         changeSet.properties = events.map((event) => event.type);
 
         events.forEach((event) => {
-            if (this.gridOptions.debug) {
-                _log(`Updated property ${event.type} from`, event.previousValue, ` to `, event.currentValue);
-            }
+            _logIfDebug(this, `Updated property ${event.type} from`, event.previousValue, ` to `, event.currentValue);
             this.propertyEventService.dispatchEvent(event);
         });
     }

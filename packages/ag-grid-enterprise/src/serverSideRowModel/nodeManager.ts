@@ -1,5 +1,5 @@
 import type { NamedBean, RowNode } from 'ag-grid-community';
-import { BeanStub, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _warn } from 'ag-grid-community';
 
 export class NodeManager extends BeanStub implements NamedBean {
     beanName = 'ssrmNodeManager' as const;
@@ -9,11 +9,11 @@ export class NodeManager extends BeanStub implements NamedBean {
     public addRowNode(rowNode: RowNode): void {
         const id = rowNode.id!;
         if (this.rowNodes[id]) {
-            _warnOnce(
-                `Duplicate node id ${rowNode.id}. Row IDs are provided via the getRowId() callback. Please modify the getRowId() callback code to provide unique row id values.`
-            );
-            _warnOnce('first instance', this.rowNodes[id]!.data);
-            _warnOnce('second instance', rowNode.data);
+            _warn(187, {
+                rowId: id,
+                firstData: this.rowNodes[id]!.data,
+                secondData: rowNode.data,
+            });
         }
 
         this.rowNodes[id] = rowNode;

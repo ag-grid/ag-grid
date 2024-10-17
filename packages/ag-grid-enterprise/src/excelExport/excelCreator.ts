@@ -16,8 +16,7 @@ import type {
     NamedBean,
     ValueService,
 } from 'ag-grid-community';
-import { _getHeaderClassesFromColDef, _warnOnce } from 'ag-grid-community';
-import { BaseCreator, RowType, _downloadFile } from 'ag-grid-community';
+import { BaseCreator, _downloadFile, _getHeaderClassesFromColDef, _warn } from 'ag-grid-community';
 
 import type { ExcelGridSerializingParams, StyleLinkerInterface } from './excelSerializingSession';
 import { ExcelSerializingSession } from './excelSerializingSession';
@@ -179,7 +178,7 @@ const createExcelFileForExcel = (
     } = {}
 ): boolean => {
     if (!data || data.length === 0) {
-        _warnOnce('Invalid params supplied to createExcelFileForExcel() - `ExcelExportParams.data` is empty.');
+        _warn(159);
         resetXlsxFactory();
         return false;
     }
@@ -285,7 +284,7 @@ export class ExcelCreator
 
     protected export(userParams?: ExcelExportParams): void {
         if (this.isExportSuppressed()) {
-            _warnOnce(`Export cancelled. Export is not allowed as per your configuration.`);
+            _warn(160);
             return;
         }
 
@@ -375,8 +374,8 @@ export class ExcelCreator
 
     private styleLinker(params: StyleLinkerInterface): string[] {
         const { rowType, rowIndex, value, column, columnGroup, node } = params;
-        const isHeader = rowType === RowType.HEADER;
-        const isGroupHeader = rowType === RowType.HEADER_GROUPING;
+        const isHeader = rowType === 'HEADER';
+        const isGroupHeader = rowType === 'HEADER_GROUPING';
         const col = (isHeader ? column : columnGroup) as AgColumn | AgColumnGroup | null;
         let headerClasses: string[] = [];
 

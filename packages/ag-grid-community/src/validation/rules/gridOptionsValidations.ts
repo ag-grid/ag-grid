@@ -2,6 +2,7 @@ import { ComponentUtil } from '../../components/componentUtil';
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
 import { PropertyKeys } from '../../propertyKeys';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortController';
+import { toStringWithNullUndefined } from '../logging';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 import { COL_DEF_VALIDATORS } from './colDefValidations';
 
@@ -93,13 +94,13 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
     enableAdvancedFilter: { module: 'AdvancedFilterModule' },
     treeData: {
         supportedRowModels: ['clientSide', 'serverSide'],
-        module: 'RowGroupingModule',
+        module: 'TreeDataModule',
         validate: (options) => {
             const rowModel = options.rowModelType ?? 'clientSide';
             switch (rowModel) {
                 case 'clientSide': {
-                    const csrmWarning = `treeData requires 'getDataPath' in the ${rowModel} row model.`;
-                    return options.getDataPath ? null : csrmWarning;
+                    const csrmWarning = `treeData requires 'treeDataChildrenField' or 'getDataPath' in the ${rowModel} row model.`;
+                    return options.treeDataChildrenField || options.getDataPath ? null : csrmWarning;
                 }
                 case 'serverSide': {
                     const ssrmWarning = `treeData requires 'isServerSideGroup' and 'getServerSideGroupKey' in the ${rowModel} row model.`;
@@ -173,6 +174,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
         },
     },
 
+    treeDataChildrenField: {
+        module: 'TreeDataModule',
+    },
     viewportDatasource: {
         supportedRowModels: ['viewport'],
         module: 'ViewportRowModelModule',
@@ -269,8 +273,10 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
             const sortingOrder = _options.sortingOrder;
 
             if (Array.isArray(sortingOrder) && sortingOrder.length > 0) {
-                sortingOrder.some((a) => !DEFAULT_SORTING_ORDER.includes(a));
-                return `sortingOrder must be an array with elements from [${DEFAULT_SORTING_ORDER.join(', ')}], currently it includes ${sortingOrder}`;
+                const invalidItems = sortingOrder.filter((a) => !DEFAULT_SORTING_ORDER.includes(a));
+                if (invalidItems.length > 0) {
+                    return `sortingOrder must be an array with elements from [${DEFAULT_SORTING_ORDER.map(toStringWithNullUndefined).join()}], currently it includes [${invalidItems.map(toStringWithNullUndefined).join()}]`;
+                }
             } else if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
                 return `sortingOrder must be an array with at least one element, currently it's ${sortingOrder}`;
             }
@@ -286,6 +292,12 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => ({
             }
             return null;
         },
+    },
+    serverSideSortAllLevels: {
+        supportedRowModels: ['serverSide'],
+    },
+    serverSideOnlyRefreshFilteredGroups: {
+        supportedRowModels: ['serverSide'],
     },
 
     columnDefs: () => COL_DEF_VALIDATORS,

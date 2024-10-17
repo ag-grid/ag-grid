@@ -5,7 +5,6 @@ import type {
     CellPosition,
     CellRange,
     CsvExportParams,
-    CtrlsService,
     FocusService,
     GridCtrl,
     GridOptions,
@@ -14,17 +13,14 @@ import type {
     IClipboardCopyRowsParams,
     IClipboardService,
     IColsService,
-    ICsvCreator,
     IRangeService,
     IRowModel,
     ISelectionService,
     NamedBean,
-    PositionUtils,
     ProcessCellForExportParams,
     ProcessRowGroupForExportParams,
     RowNode,
     RowPosition,
-    RowRenderer,
     ValueService,
     VisibleColsService,
     WithoutGridCommon,
@@ -36,11 +32,12 @@ import {
     _exists,
     _getActiveDomElement,
     _getDocument,
+    _getRowNode,
     _isClientSideRowModel,
     _isSameRow,
     _last,
     _removeFromArray,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 interface RowCallback {
@@ -70,13 +67,6 @@ enum CellClearType {
     SelectedRows,
     FocusedCell,
 }
-
-const apiError = (method: string) =>
-    `AG Grid: Unable to use the Clipboard API (navigator.clipboard.${method}()). ` +
-    'The reason why it could not be used has been logged in the previous line. ' +
-    "For this reason the grid has defaulted to using a workaround which doesn't perform as well. " +
-    'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
-    'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.';
 
 // This will parse a delimited string into an array of arrays.
 export function stringToArray(strData: string, delimiter = ','): string[][] {
@@ -159,31 +149,25 @@ export function stringToArray(strData: string, delimiter = ','): string[][] {
 export class ClipboardService extends BeanStub implements NamedBean, IClipboardService {
     beanName = 'clipboardService' as const;
 
-    private csvCreator: ICsvCreator;
+    private beans: BeanCollection;
     private selectionService?: ISelectionService;
     private rowModel: IRowModel;
-    private ctrlsService: CtrlsService;
     private valueService: ValueService;
     private focusService: FocusService;
-    private rowRenderer: RowRenderer;
     private visibleColsService: VisibleColsService;
     private rowGroupColsService?: IColsService;
     private cellNavigationService: CellNavigationService;
-    public positionUtils: PositionUtils;
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.csvCreator = beans.csvCreator!;
+        this.beans = beans;
         this.selectionService = beans.selectionService;
         this.rowModel = beans.rowModel;
-        this.ctrlsService = beans.ctrlsService;
         this.valueService = beans.valueService;
         this.focusService = beans.focusService;
-        this.rowRenderer = beans.rowRenderer;
         this.visibleColsService = beans.visibleColsService;
         this.rowGroupColsService = beans.rowGroupColsService;
         this.cellNavigationService = beans.cellNavigationService!;
-        this.positionUtils = beans.positionUtils;
         this.rangeService = beans.rangeService;
     }
 
@@ -198,7 +182,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             this.clientSideRowModel = this.rowModel;
         }
 
-        this.ctrlsService.whenReady(this, (p) => {
+        this.beans.ctrlsService.whenReady(this, (p) => {
             this.gridCtrl = p.gridCtrl;
         });
     }
@@ -214,7 +198,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 .readText()
                 .then(this.processClipboardData.bind(this))
                 .catch((e) => {
-                    _warnOnce(`${e}\n${apiError('readText')}`);
+                    _warn(40, { e, method: 'readText' });
                     this.navigatorApiFailed = true;
                     this.pasteFromClipboardLegacy();
                 });
@@ -351,7 +335,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         // clipboardService has to do changeDetection itself, to prevent repeat logic in favour of batching.
         // changeDetectionService is disabled for this action.
-        this.rowRenderer.refreshCells({ rowNodes: nodesToRefresh });
+        this.beans.rowRenderer.refreshCells({ rowNodes: nodesToRefresh });
 
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
@@ -629,7 +613,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 if (!rowPointer) {
                     return null;
                 }
-                const res = this.positionUtils.getRowNode(rowPointer);
+                const res = _getRowNode(this.beans, rowPointer);
                 // move to next row down for next set of values
                 rowPointer = this.cellNavigationService.getRowBelow({
                     rowPinned: rowPointer.rowPinned,
@@ -800,7 +784,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 return;
             }
 
-            const rowNode = this.positionUtils.getRowNode(focusedCell);
+            const rowNode = _getRowNode(this.beans, focusedCell);
             if (rowNode) {
                 this.clearCellValue(rowNode, focusedCell.column as AgColumn);
             }
@@ -866,7 +850,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         // the currentRow could be missing if the user sets the active range manually, and sets a range
         // that is outside of the grid (eg. sets range rows 0 to 100, but grid has only 20 rows).
         while (!isLastRow && currentRow != null) {
-            const rowNode = this.positionUtils.getRowNode(currentRow);
+            const rowNode = _getRowNode(this.beans, currentRow);
             isLastRow = _isSameRow(currentRow, lastRow);
 
             rowCallback(currentRow, rowNode, range.columns as AgColumn[], rangeIndex++, isLastRow && isLastRange);
@@ -1056,7 +1040,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             processGroupHeaderCallback: this.gos.getCallback('processGroupHeaderForClipboard'),
         };
 
-        return this.csvCreator.getDataAsCsv(exportParams, true);
+        return this.beans.csvCreator!.getDataAsCsv(exportParams, true);
     }
 
     private processRowGroupCallback(params: ProcessRowGroupForExportParams) {
@@ -1094,7 +1078,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             let column = node.rowGroupColumn as AgColumn;
 
             if (!column && node.footer && node.level === -1) {
-                column = this.rowGroupColsService?.columns[0] as AgColumn;
+                column = this.beans.rowGroupColsService?.columns[0] as AgColumn;
             }
             return processCellForClipboard({
                 value,
@@ -1178,7 +1162,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const allowNavigator = !this.gos.get('suppressClipboardApi');
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.writeText(data).catch((e) => {
-                _warnOnce(`${e}\n${apiError('writeText')}`);
+                _warn(40, { e, method: 'writeText' });
                 this.copyDataToClipboardLegacy(data);
             });
             return;
@@ -1200,11 +1184,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             const result = eDocument.execCommand('copy');
 
             if (!result) {
-                _warnOnce(
-                    "Browser did not allow document.execCommand('copy'). Ensure " +
-                        'api.copySelectedRowsToClipboard() is invoked via a user event, i.e. button click, otherwise ' +
-                        'the browser will prevent it for security reasons.'
-                );
+                _warn(41);
             }
 
             if (focusedElementBefore != null && focusedElementBefore.focus != null) {
@@ -1238,7 +1218,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         try {
             callbackNow(eTempInput);
         } catch (err) {
-            _warnOnce("Browser does not support document.execCommand('copy') for clipboard operations");
+            _warn(42);
         }
 
         //It needs 100 otherwise OS X seemed to not always be able to paste... Go figure...

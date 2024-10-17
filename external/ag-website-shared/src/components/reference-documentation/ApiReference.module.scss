@@ -205,8 +205,9 @@
 .propNameChevron {
     --icon-size: 15px;
 
-    position: relative;
-    top: -1px;
+    position: absolute;
+    top: 4px;
+    left: 2px;
     transition: transform 0.33s ease-in-out;
 
     .expandedChildProps & {
@@ -215,6 +216,8 @@
 }
 
 .propNameExpander {
+    position: relative;
+    padding-left: $spacing-size-6;
     cursor: pointer;
 }
 
@@ -313,6 +316,8 @@ a.metaValue {
 }
 
 .childButton {
+    font-weight: var(--text-semibold);
+
     svg {
         transition: transform 0.33s ease-in-out;
     }
@@ -350,6 +355,10 @@ button.seeMore {
 
     &:active {
         background-color: transparent;
+    }
+
+    &.isExpanded svg {
+        transform: scaleY(-1) translateY(1px);
     }
 
     svg {
@@ -447,6 +456,10 @@ button.seeMore {
         @container (min-width: #{$breakpoint-table-small}) {
             padding-left: calc($spacing-size-4 * var(--nested-path-depth));
         }
+    }
+
+    .propertyRow:last-child {
+        border-bottom: none;
     }
 }
 

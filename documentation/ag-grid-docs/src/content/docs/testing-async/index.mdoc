@@ -4,7 +4,7 @@ frameworks: ["angular"]
 ---
 
 We will walk through an example that tests asynchronous grid code as part of your Angular application,
-using default build tools provided when using the [Angular CLI](https://cli.angular.io/).
+using default build tools provided when using the [Angular CLI](https://angular.dev/cli).
 
 ## Application To Test
 
@@ -87,7 +87,7 @@ function validateState({ gridRows, displayedRows, templateRows }) {
 
 ## async await
 
-The easiest way to test asynchronous behaviour is to use `async` and `await` syntax along with the Angular method [fixture.whenStable()](https://angular.io/api/core/Testability#whenstable).
+The easiest way to test asynchronous behaviour is to use `async` and `await` syntax along with the Angular method [fixture.whenStable()](https://angular.dev/guide/testing/components-scenarios#whenstable).
 
 ### Filter Test (Concise)
 
@@ -184,7 +184,7 @@ it('should filter rows by quickFilterText', (async () => {
 
 ## FakeAsync
 
-Angular provides [fakeAsync](https://angular.io/api/core/testing/fakeAsync) as a tool for testing asynchronous code. It enables tests to control the flow of time and when asynchronous tasks are executed.
+Angular provides [fakeAsync](https://angular.dev/guide/testing/components-scenarios#async-test-with-fakeasync) as a tool for testing asynchronous code. It enables tests to control the flow of time and when asynchronous tasks are executed.
 
 ### Filter Test (Verbose)
 

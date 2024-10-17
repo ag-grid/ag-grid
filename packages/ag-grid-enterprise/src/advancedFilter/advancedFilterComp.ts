@@ -1,4 +1,4 @@
-import type { BeanCollection, FilterManager, ITooltipParams, WithoutGridCommon } from 'ag-grid-community';
+import type { BeanCollection, FilterManager, ITooltipCtrl, Registry, TooltipFeature } from 'ag-grid-community';
 import { Component, RefPlaceholder, _createIconNoSpan, _makeNull, _setDisabled } from 'ag-grid-community';
 
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
@@ -19,11 +19,13 @@ export class AdvancedFilterComp extends Component {
     private advancedFilterService: AdvancedFilterService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
     private filterManager?: FilterManager;
+    private registry: Registry;
 
     public wireBeans(beans: BeanCollection): void {
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
         this.advancedFilterService = beans.advancedFilterService as AdvancedFilterService;
         this.filterManager = beans.filterManager;
+        this.registry = beans.registry;
     }
 
     private readonly eAutocomplete: AgAutocomplete = RefPlaceholder;
@@ -35,6 +37,7 @@ export class AdvancedFilterComp extends Component {
     private expressionParser: FilterExpressionParser | null = null;
     private isApplyDisabled = true;
     private builderOpen = false;
+    private tooltipFeature?: TooltipFeature;
 
     constructor() {
         super(
@@ -52,6 +55,13 @@ export class AdvancedFilterComp extends Component {
     }
 
     public postConstruct(): void {
+        this.tooltipFeature = this.createOptionalManagedBean(
+            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', {
+                getGui: () => this.getGui(),
+                getTooltipShowDelayOverride: () => 1000,
+                getLocation: () => 'advancedFilter',
+            } as ITooltipCtrl)
+        );
         this.eAutocomplete
             .setListGenerator((_value, position) => this.generateAutocompleteListParams(position))
             .setValidator(() => this.validateValue())
@@ -88,12 +98,6 @@ export class AdvancedFilterComp extends Component {
     public setInputDisabled(disabled: boolean): void {
         this.eAutocomplete.setInputDisabled(disabled);
         _setDisabled(this.eApplyFilterButton, disabled || this.isApplyDisabled);
-    }
-
-    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
-        const res = super.getTooltipParams();
-        res.location = 'advancedFilter';
-        return res;
     }
 
     private setupApplyButton(): void {
@@ -152,10 +156,7 @@ export class AdvancedFilterComp extends Component {
     private onValidChanged(isValid: boolean, validationMessage: string | null): void {
         this.isApplyDisabled = !isValid || this.advancedFilterService.isCurrentExpressionApplied();
         _setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
-        this.setTooltip({
-            newTooltipText: validationMessage,
-            showDelayOverride: 1000,
-        });
+        this.tooltipFeature?.setTooltipAndRefresh(validationMessage);
     }
 
     private generateAutocompleteListParams(position: number): AutocompleteListParams {

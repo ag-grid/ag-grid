@@ -12,7 +12,7 @@ import {
     _setAriaSetSize,
     _stopPropagationForAgGrid,
     _waitUntil,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import type { VirtualListModel } from './iVirtualList';
@@ -93,7 +93,7 @@ export class VirtualList<
     }
 
     private setAriaProperties(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const listName = translate('ariaDefaultListName', this.listName || 'List');
         const ariaEl = this.eContainer;
 
@@ -254,7 +254,7 @@ export class VirtualList<
         const lastRow = this.model.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= lastRow) {
-            _warnOnce('invalid row index for ensureIndexVisible: ', index);
+            _warn(229, { index });
             return false;
         }
 

@@ -1,7 +1,6 @@
 import type { GridOptionsService } from '../gridOptionsService';
 import { _getDomData } from '../gridOptionsUtils';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
-import { _includes } from './array';
 
 const AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel', 'scroll'];
@@ -117,7 +116,7 @@ export function _addSafePassiveEventListener(
     event: string,
     listener: (event?: any) => void
 ) {
-    const isPassive = _includes(PASSIVE_EVENTS, event);
+    const isPassive = PASSIVE_EVENTS.includes(event);
     const options = isPassive ? { passive: true } : undefined;
 
     // this check is here for certain scenarios where I believe the user must be destroying

@@ -1,7 +1,7 @@
 import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager } from '../../test-utils';
 
@@ -9,7 +9,7 @@ const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree duplicate keys', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
     const gridRowsOptions = {
@@ -46,8 +46,12 @@ describe('ag-grid tree duplicate keys', () => {
         });
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            'AG Grid: duplicate group keys for row data, keys should be unique',
-            [rowData[0].id, rowData[0], rowData[1]]
+            'AG Grid: error #186',
+            'duplicate group keys for row data, keys should be unique',
+            rowData[0].id,
+            rowData[0],
+            rowData[1],
+            expect.stringContaining('errors/186?')
         );
         consoleWarnSpy?.mockRestore();
 
@@ -92,8 +96,12 @@ describe('ag-grid tree duplicate keys', () => {
         });
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            'AG Grid: duplicate group keys for row data, keys should be unique',
-            [rowData[0].id, rowData[0], rowData[1]]
+            'AG Grid: error #186',
+            'duplicate group keys for row data, keys should be unique',
+            rowData[0].id,
+            rowData[0],
+            rowData[1],
+            expect.stringContaining('errors/186?')
         );
         consoleWarnSpy?.mockRestore();
 
@@ -141,8 +149,12 @@ describe('ag-grid tree duplicate keys', () => {
         });
 
         expect(consoleWarnSpy).toHaveBeenCalledWith(
-            'AG Grid: duplicate group keys for row data, keys should be unique',
-            [rowData[0].id, rowData[0], rowData[2]]
+            'AG Grid: error #186',
+            'duplicate group keys for row data, keys should be unique',
+            rowData[0].id,
+            rowData[0],
+            rowData[2],
+            expect.stringContaining('errors/186?')
         );
 
         consoleWarnSpy?.mockRestore();

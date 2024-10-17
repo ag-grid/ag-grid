@@ -23,13 +23,16 @@ function getAllPathsRecursively(menuSection: MenuSection) {
 }
 
 async function getAllMenuPages() {
-    const { data: menuData } = await getEntry('menu', 'data');
+    const { data: headerData } = await getEntry('site-header', 'siteHeader');
+    const { data: apiNavData } = await getEntry('api-nav', 'apiNav');
+    const { data: docsNavData } = await getEntry('docs-nav', 'docsNav');
+
     const menuPages = {
-        header: getAllPathsRecursively(menuData.header),
-        api: menuData.api.sections.flatMap((menuSection) => {
+        header: getAllPathsRecursively(headerData),
+        api: apiNavData.sections.flatMap((menuSection) => {
             return getAllPathsRecursively(menuSection);
         }),
-        main: menuData.main.sections.flatMap((menuSection) => {
+        main: docsNavData.sections.flatMap((menuSection) => {
             return getAllPathsRecursively(menuSection);
         }),
     };

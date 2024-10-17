@@ -1,5 +1,6 @@
 import type { GridApi } from '../api/gridApi';
 import type { ColumnResizeService } from '../columnResize/columnResizeService';
+import type { ColumnGroupService } from '../columns/columnGroups/columnGroupService';
 import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnStateService } from '../columns/columnStateService';
 import type { NamedBean } from '../context/bean';
@@ -28,12 +29,14 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
     private columnResizeService?: ColumnResizeService;
     private ctrlsService: CtrlsService;
     private columnStateService: ColumnStateService;
+    private columnGroupService?: ColumnGroupService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.columnResizeService = beans.columnResizeService;
         this.ctrlsService = beans.ctrlsService;
         this.columnStateService = beans.columnStateService;
+        this.columnGroupService = beans.columnGroupService;
     }
 
     // flag to mark if we are consuming. to avoid cyclic events (ie other grid firing back to master
@@ -185,20 +188,23 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
     }
 
     private processGroupOpenedEvent(groupOpenedEvent: ColumnGroupOpenedEvent): void {
-        const { columnModel } = this;
+        const { columnGroupService } = this;
+        if (!columnGroupService) {
+            return;
+        }
         groupOpenedEvent.columnGroups.forEach((masterGroup) => {
             // likewise for column group
             let otherColumnGroup: AgProvidedColumnGroup | null = null;
 
             if (masterGroup) {
-                otherColumnGroup = columnModel.getProvidedColGroup(masterGroup.getGroupId());
+                otherColumnGroup = columnGroupService.getProvidedColGroup(masterGroup.getGroupId());
             }
 
             if (masterGroup && !otherColumnGroup) {
                 return;
             }
 
-            columnModel.setColumnGroupOpened(otherColumnGroup, masterGroup.isExpanded(), 'alignedGridChanged');
+            columnGroupService.setColumnGroupOpened(otherColumnGroup, masterGroup.isExpanded(), 'alignedGridChanged');
         });
     }
 

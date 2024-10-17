@@ -1,5 +1,3 @@
-import { _missingOrEmpty } from 'ag-grid-community';
-
 import { MD5 } from './md5';
 
 const LICENSE_TYPES = {
@@ -84,7 +82,7 @@ export class LicenseManager {
 
     public getLicenseDetails(licenseKey: string) {
         const currentLicenseType = LicenseManager.chartsLicenseManager ? 'BOTH' : 'GRID';
-        if (_missingOrEmpty(licenseKey)) {
+        if (!licenseKey?.length) {
             return {
                 licenseKey,
                 valid: false,
@@ -124,7 +122,7 @@ export class LicenseManager {
                         break;
                     }
                     case '3': {
-                        if (_missingOrEmpty(type)) {
+                        if (!type?.length) {
                             valid = false;
                         } else {
                             suppliedLicenseType = type;
@@ -169,8 +167,7 @@ export class LicenseManager {
 
     public isDisplayWatermark(): boolean {
         return (
-            this.isForceWatermark() ||
-            (!this.isLocalhost() && !this.isWebsiteUrl() && !_missingOrEmpty(this.watermarkMessage))
+            this.isForceWatermark() || (!this.isLocalhost() && !this.isWebsiteUrl() && !!this.watermarkMessage?.length)
         );
     }
 

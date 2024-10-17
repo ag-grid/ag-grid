@@ -3,28 +3,32 @@ import { RowApiModule, ScrollApiModule } from './api/apiModule';
 import { ColumnAutosizeModule } from './columnAutosize/columnAutosizeModule';
 import { ColumnMoveModule } from './columnMove/columnMoveModule';
 import { ColumnResizeModule } from './columnResize/columnResizeModule';
+import { ColumnGroupModule } from './columns/columnGroups/columnGroupModule';
 import { ColumnHoverModule } from './columns/columnHover/columnHoverModule';
 import {
     ColumnApiModule,
     ColumnFlexModule,
-    ControlsColumnModule,
     DataTypeModule,
     GetColumnDefsApiModule,
+    SelectionColumnModule,
 } from './columns/columnModule';
 import { CellRendererFunctionModule } from './components/framework/cellRendererFunctionModule';
 import { DragAndDropModule, RowDragModule } from './dragAndDrop/dragModule';
 import { EditModule } from './edit/editModule';
 import { FilterModule } from './filter/filterModule';
-import { ColumnGroupHeaderModule, ColumnHeaderModule } from './headerRendering/cells/headerModule';
+import { ColumnGroupHeaderCompModule, ColumnHeaderCompModule } from './headerRendering/cells/headerModule';
 import type { _ModuleWithoutApi } from './interfaces/iModule';
 import { baseCommunityModule } from './interfaces/iModule';
 import { AnimationFrameModule } from './misc/animationFrameModule';
 import { EventApiModule } from './misc/apiEvents/apiEventModule';
+import { LocaleModule } from './misc/locale/localeModule';
 import { CommunityMenuApiModule } from './misc/menu/sharedMenuModule';
 import { StateModule } from './misc/state/stateModule';
 import { KeyboardNavigationModule } from './navigation/navigationModule';
 import { PaginationModule } from './pagination/paginationModule';
+import { PinnedColumnModule } from './pinnedColumns/pinnedColumnModule';
 import { PinnedRowModule } from './pinnedRowModel/pinnedRowModule';
+import { CellFlashModule } from './rendering/cell/cellFlashModule';
 import {
     AnimateShowChangeCellRendererModule,
     AnimateSlideCellRendererModule,
@@ -34,9 +38,11 @@ import { ColumnAnimationModule } from './rendering/columnAnimationModule';
 import { StickyRowModule } from './rendering/features/stickyRowModule';
 import { OverlayModule } from './rendering/overlays/overlayModule';
 import { RenderApiModule } from './rendering/renderModule';
+import { RowAutoHeightModule } from './rendering/row/rowAutoHeightModule';
 import { RowSelectionModule } from './selection/rowSelectionModule';
 import { SortModule } from './sort/sortModule';
 import { CellStyleModule, RowStyleModule } from './styling/stylingModule';
+import { TooltipModule } from './tooltip/tooltipModule';
 import { ValidationModule } from './validation/validationModule';
 import { CellApiModule, ChangeDetectionModule, ExpressionModule, ValueCacheModule } from './valueService/valueModule';
 import { PopupModule } from './widgets/popupModule';
@@ -57,7 +63,7 @@ export const CommunityFeaturesModule: _ModuleWithoutApi = {
         RenderApiModule,
         ColumnMoveModule,
         ColumnAutosizeModule,
-        ControlsColumnModule,
+        SelectionColumnModule,
         ColumnResizeModule,
         DragAndDropModule,
         RowDragModule,
@@ -70,8 +76,9 @@ export const CommunityFeaturesModule: _ModuleWithoutApi = {
         AnimateShowChangeCellRendererModule,
         AnimateSlideCellRendererModule,
         CheckboxCellRendererModule,
-        ColumnHeaderModule,
-        ColumnGroupHeaderModule,
+        ColumnHeaderCompModule,
+        ColumnGroupHeaderCompModule,
+        ColumnGroupModule,
         OverlayModule,
         CellRendererFunctionModule,
         PopupModule,
@@ -87,5 +94,10 @@ export const CommunityFeaturesModule: _ModuleWithoutApi = {
         KeyboardNavigationModule,
         CellApiModule,
         CommunityMenuApiModule,
+        CellFlashModule,
+        TooltipModule,
+        PinnedColumnModule,
+        LocaleModule,
+        RowAutoHeightModule,
     ],
 };

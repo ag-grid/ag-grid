@@ -11,12 +11,10 @@ import {
     Component,
     _clearElement,
     _exists,
-    _flatten,
     _getActiveDomElement,
-    _includes,
     _mergeDeep,
     _setAriaLabel,
-    _warnOnce,
+    _warn,
     isProvidedColumnGroup,
 } from 'ag-grid-community';
 
@@ -91,7 +89,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             },
         });
 
-        if (this.columnModel.isReady()) {
+        if (this.columnModel.ready) {
             this.onColumnsChanged();
         }
     }
@@ -170,10 +168,10 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         depth: number,
         expansionState: Map<string, boolean>
     ): (ToolPanelFilterGroupComp | ToolPanelFilterComp)[] {
-        return _flatten(
-            tree.map((child) => {
+        return tree
+            .map((child) => {
                 if (isProvidedColumnGroup(child)) {
-                    return _flatten(this.recursivelyAddFilterGroupComps(child, depth, expansionState)!);
+                    return this.recursivelyAddFilterGroupComps(child, depth, expansionState)?.flatMap((a) => a) ?? [];
                 }
 
                 const column = child;
@@ -206,11 +204,11 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
                 }
                 return filterGroupComp;
             })
-        );
+            .flatMap((a) => a);
     }
 
     private refreshAriaLabel(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const filterListName = translate('ariaFilterPanelList', 'Filter List');
         const localeFilters = translate('filters', 'Filters');
 
@@ -240,8 +238,8 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         }
 
         const newDepth = columnGroup.isPadding() ? depth : depth + 1;
-        const childFilterComps = _flatten(
-            this.recursivelyAddComps(columnGroup.getChildren(), newDepth, expansionState)
+        const childFilterComps = this.recursivelyAddComps(columnGroup.getChildren(), newDepth, expansionState).flatMap(
+            (a) => a
         );
 
         if (columnGroup.isPadding()) {
@@ -323,7 +321,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
         const updateGroupExpandState = (filterGroup: ToolPanelFilterGroupComp) => {
             const groupId = filterGroup.getFilterGroupId();
-            const shouldExpandOrCollapse = !groupIds || _includes(groupIds, groupId);
+            const shouldExpandOrCollapse = !groupIds || groupIds.includes(groupId);
             if (shouldExpandOrCollapse) {
                 // don't expand 'column groups', i.e. top level columns wrapped in a group
                 if (expand && filterGroup.isColumnGroup()) {
@@ -350,7 +348,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         if (groupIds) {
             const unrecognisedGroupIds = groupIds.filter((groupId) => updatedGroupIds.indexOf(groupId) < 0);
             if (unrecognisedGroupIds.length > 0) {
-                _warnOnce('unable to find groups for these supplied groupIds:', unrecognisedGroupIds);
+                _warn(166, { unrecognisedGroupIds });
             }
         }
     }
@@ -377,7 +375,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
             }
 
             const colId = filterComp.getColumn().getColId();
-            const updateFilterExpandState = !colIds || _includes(colIds, colId);
+            const updateFilterExpandState = !colIds || colIds.includes(colId);
 
             if (updateFilterExpandState) {
                 expand ? filterComp.expand() : filterComp.collapse();
@@ -395,7 +393,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         if (colIds) {
             const unrecognisedColIds = colIds.filter((colId) => updatedColIds.indexOf(colId) < 0);
             if (unrecognisedColIds.length > 0) {
-                _warnOnce('unable to find columns for these supplied colIds:' + unrecognisedColIds);
+                _warn(167, { unrecognisedColIds });
             }
         }
     }

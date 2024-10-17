@@ -1,5 +1,5 @@
 import type { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import { HorizontalDirection } from '../../../constants/direction';
+import type { HorizontalDirection } from '../../../constants/direction';
 import { BeanStub } from '../../../context/beanStub';
 import type { BeanCollection } from '../../../context/context';
 import type { CtrlsService } from '../../../ctrlsService';
@@ -7,16 +7,17 @@ import type { DragAndDropService, DragSource } from '../../../dragAndDrop/dragAn
 import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../../../entities/agProvidedColumnGroup';
+import type { SuppressHeaderKeyboardEventParams } from '../../../entities/colDef';
 import type { FocusService } from '../../../focusService';
-import type { PinnedWidthService } from '../../../gridBodyComp/pinnedWidthService';
 import { _getActiveDomElement, _getDocument, _setDomData } from '../../../gridOptionsUtils';
 import type { BrandedType } from '../../../interfaces/brandedType';
 import type { ColumnPinnedType } from '../../../interfaces/iColumn';
 import { _requestAnimationFrame } from '../../../misc/animationFrameService';
 import type { MenuService } from '../../../misc/menu/menuService';
+import type { PinnedColumnService } from '../../../pinnedColumns/pinnedColumnService';
 import { _setAriaColIndex } from '../../../utils/aria';
 import { _addOrRemoveAttribute, _getElementSize, _getInnerWidth, _observeResize } from '../../../utils/dom';
-import { _isUserSuppressingHeaderKeyboardEvent } from '../../../utils/keyboard';
+import { _exists } from '../../../utils/generic';
 import { KeyCode } from '../.././../constants/keyCode';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import { refreshFirstAndLastStyles } from '../cssClassApplier';
@@ -42,7 +43,7 @@ export abstract class AbstractHeaderCellCtrl<
 > extends BeanStub {
     public readonly instanceId: HeaderCellCtrlInstanceId;
 
-    private pinnedWidthService: PinnedWidthService;
+    private pinnedColumnService?: PinnedColumnService;
     protected focusService: FocusService;
     protected userComponentFactory: UserComponentFactory;
     protected ctrlsService: CtrlsService;
@@ -50,7 +51,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected menuService?: MenuService;
 
     public wireBeans(beans: BeanCollection) {
-        this.pinnedWidthService = beans.pinnedWidthService;
+        this.pinnedColumnService = beans.pinnedColumnService;
         this.focusService = beans.focusService;
         this.userComponentFactory = beans.userComponentFactory;
         this.ctrlsService = beans.ctrlsService;
@@ -69,7 +70,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected eGui: HTMLElement;
     protected resizeFeature: TFeature | null = null;
     protected comp: TComp;
-    protected column: TColumn;
+    public column: TColumn;
 
     public lastFocusEvent: KeyboardEvent | null = null;
 
@@ -96,10 +97,24 @@ export abstract class AbstractHeaderCellCtrl<
         });
     }
 
-    protected shouldStopEventPropagation(e: KeyboardEvent): boolean {
+    protected shouldStopEventPropagation(event: KeyboardEvent): boolean {
         const { headerRowIndex, column } = this.focusService.getFocusedHeader()!;
 
-        return _isUserSuppressingHeaderKeyboardEvent(this.gos, e, headerRowIndex, column as AgColumn);
+        const colDef = column.getDefinition();
+        const colDefFunc = colDef && colDef.suppressHeaderKeyboardEvent;
+
+        if (!_exists(colDefFunc)) {
+            return false;
+        }
+
+        const params: SuppressHeaderKeyboardEventParams = this.gos.addGridCommonParams({
+            colDef: colDef,
+            column,
+            headerRowIndex,
+            event,
+        });
+
+        return !!colDefFunc(params);
     }
 
     protected getWrapperHasFocus(): boolean {
@@ -136,7 +151,7 @@ export abstract class AbstractHeaderCellCtrl<
         compBean: BeanStub;
     }) {
         const { wrapperElement, checkMeasuringCallback, compBean } = params;
-        const { columnModel, gos } = this.beans;
+        const { gos } = this.beans;
         const measureHeight = (timesCalled: number) => {
             if (!this.isAlive() || !compBean.isAlive()) {
                 return;
@@ -164,7 +179,7 @@ export abstract class AbstractHeaderCellCtrl<
                 }
             }
 
-            columnModel.setColHeaderHeight(this.column, autoHeight);
+            this.setColHeaderHeight(this.column, autoHeight);
         };
 
         let isMeasuring = false;
@@ -276,7 +291,7 @@ export abstract class AbstractHeaderCellCtrl<
         }
 
         const isLeft = (e.key === KeyCode.LEFT) !== this.gos.get('enableRtl');
-        const direction = HorizontalDirection[isLeft ? 'Left' : 'Right'];
+        const direction = isLeft ? 'left' : 'right';
 
         if (e.altKey) {
             this.isResizing = true;
@@ -298,8 +313,8 @@ export abstract class AbstractHeaderCellCtrl<
 
         const pinned = this.column.getPinned();
         if (pinned) {
-            const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
-            const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
+            const leftWidth = this.pinnedColumnService?.getPinnedLeftWidth() ?? 0;
+            const rightWidth = this.pinnedColumnService?.getPinnedRightWidth() ?? 0;
             const bodyWidth = _getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
 
             if (leftWidth + rightWidth + diff > bodyWidth) {
@@ -427,6 +442,26 @@ export abstract class AbstractHeaderCellCtrl<
             type: eventType,
             column,
         });
+    }
+
+    private setColHeaderHeight(col: AgColumn | AgColumnGroup, height: number): void {
+        if (!col.setAutoHeaderHeight(height)) {
+            return;
+        }
+        if (col.isColumn) {
+            this.eventService.dispatchEvent({
+                type: 'columnHeaderHeightChanged',
+                column: col,
+                columns: [col],
+                source: 'autosizeColumnHeaderHeight',
+            });
+        } else {
+            this.eventService.dispatchEvent({
+                type: 'columnGroupHeaderHeightChanged',
+                columnGroup: col,
+                source: 'autosizeColumnGroupHeaderHeight',
+            });
+        }
     }
 
     protected clearComponent(): void {

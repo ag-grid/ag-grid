@@ -9,8 +9,9 @@ import type {
     DragItem,
     DragSource,
     IAggFunc,
-    ITooltipParams,
-    WithoutGridCommon,
+    ITooltipCtrl,
+    Registry,
+    TooltipFeature,
 } from 'ag-grid-community';
 import {
     AgCheckboxSelector,
@@ -21,6 +22,7 @@ import {
     TouchListener,
     _createIcon,
     _createIconNoSpan,
+    _getShouldDisplayTooltip,
     _getToolPanelClassesFromColDef,
     _setAriaDescribedBy,
     _setAriaExpanded,
@@ -36,11 +38,13 @@ export class ToolPanelColumnGroupComp extends Component {
     private columnModel: ColumnModel;
     private dragAndDropService: DragAndDropService;
     private modelItemUtils: ModelItemUtils;
+    private registry: Registry;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.dragAndDropService = beans.dragAndDropService!;
         this.modelItemUtils = beans.modelItemUtils as ModelItemUtils;
+        this.registry = beans.registry;
     }
 
     private readonly cbSelect: AgCheckbox = RefPlaceholder;
@@ -57,6 +61,7 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private displayName: string | null;
     private processingColumnStateChange = false;
+    private tooltipFeature?: TooltipFeature;
 
     constructor(
         private readonly modelItem: ColumnModelItem,
@@ -101,6 +106,14 @@ export class ToolPanelColumnGroupComp extends Component {
         this.addCssClass('ag-column-select-indent-' + this.columnDept);
         this.getGui().style.setProperty('--ag-indentation-level', String(this.columnDept));
 
+        this.tooltipFeature = this.createOptionalManagedBean(
+            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', {
+                getGui: () => this.getGui(),
+                getLocation: () => 'columnToolPanelColumnGroup',
+                shouldDisplayTooltip: _getShouldDisplayTooltip(this.gos, () => this.eLabel),
+            } as ITooltipCtrl)
+        );
+
         this.addManagedEventListeners({ columnPivotModeChanged: this.onColumnStateChanged.bind(this) });
 
         this.addManagedElementListeners(this.eLabel, { click: this.onLabelClicked.bind(this) });
@@ -139,28 +152,11 @@ export class ToolPanelColumnGroupComp extends Component {
             return;
         }
 
-        const isTooltipWhenTruncated = this.gos.get('tooltipShowMode') === 'whenTruncated';
-
-        let shouldDisplayTooltip: (() => boolean) | undefined;
-
-        if (isTooltipWhenTruncated) {
-            shouldDisplayTooltip = () => this.eLabel.scrollWidth > this.eLabel.clientWidth;
-        }
-
-        const refresh = () => {
-            const newTooltipText = colGroupDef.headerTooltip;
-            this.setTooltip({ newTooltipText, location: 'columnToolPanelColumnGroup', shouldDisplayTooltip });
-        };
+        const refresh = () => this.tooltipFeature?.setTooltipAndRefresh(colGroupDef.headerTooltip);
 
         refresh();
 
         this.addManagedEventListeners({ newColumnsLoaded: refresh });
-    }
-
-    public override getTooltipParams(): WithoutGridCommon<ITooltipParams> {
-        const res = super.getTooltipParams();
-        res.location = 'columnToolPanelColumnGroup';
-        return res;
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
@@ -335,7 +331,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private refreshAriaLabel(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const columnLabel = translate('ariaColumnGroup', 'Column Group');
         const checkboxValue = this.cbSelect.getValue();
         const state =

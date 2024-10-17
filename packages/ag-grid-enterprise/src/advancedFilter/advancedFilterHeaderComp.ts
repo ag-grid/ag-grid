@@ -4,6 +4,7 @@ import {
     KeyCode,
     _clearElement,
     _getActiveDomElement,
+    _getFloatingFiltersHeight,
     _setAriaColIndex,
     _setAriaColSpan,
     _setAriaRole,
@@ -14,11 +15,13 @@ import {
 import { AdvancedFilterComp } from './advancedFilterComp';
 
 export class AdvancedFilterHeaderComp extends Component {
+    private beans: BeanCollection;
     private columnModel: ColumnModel;
     private focusService: FocusService;
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
         this.columnModel = beans.columnModel;
         this.focusService = beans.focusService;
         this.ctrlsService = beans.ctrlsService;
@@ -112,7 +115,7 @@ export class AdvancedFilterHeaderComp extends Component {
 
     private setEnabledHeight(): void {
         const eGui = this.getGui();
-        this.height = this.columnModel.getFloatingFiltersHeight();
+        this.height = _getFloatingFiltersHeight(this.beans);
         const height = `${this.height}px`;
         eGui.style.height = height;
         eGui.style.minHeight = height;

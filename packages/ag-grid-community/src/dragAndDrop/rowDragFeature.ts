@@ -1,5 +1,4 @@
 import { AutoScrollService } from '../autoScrollService';
-import { VerticalDirection } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
@@ -20,7 +19,6 @@ import type { IRangeService } from '../interfaces/IRangeService';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IColsService } from '../interfaces/iColsService';
 import type { IRowModel } from '../interfaces/iRowModel';
-import { RowHighlightPosition } from '../interfaces/iRowNode';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { SortController } from '../sort/sortController';
@@ -257,7 +255,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private moveRowAndClearHighlight(draggingEvent: DraggingEvent): void {
         const lastHighlightedRowNode = this.clientSideRowModel.getLastHighlightedRowNode();
-        const isBelow = lastHighlightedRowNode && lastHighlightedRowNode.highlighted === RowHighlightPosition.Below;
+        const isBelow = lastHighlightedRowNode && lastHighlightedRowNode.highlighted === 'Below';
         const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
         const rowNodes = draggingEvent.dragItem.rowNodes as RowNode[];
 
@@ -275,7 +273,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
             let addIndex = this.clientSideRowModel.getRowIndexAtPixel(pixel) + 1;
 
-            if (this.clientSideRowModel.getHighlightPosition(pixel) === RowHighlightPosition.Above) {
+            if (this.clientSideRowModel.getHighlightPosition(pixel) === 'Above') {
                 addIndex--;
             }
 
@@ -434,20 +432,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             overNode = this.rowModel.getRow(overIndex);
         }
 
-        let vDirectionString: string | null;
-
-        switch (draggingEvent.vDirection) {
-            case VerticalDirection.Down:
-                vDirectionString = 'down';
-                break;
-            case VerticalDirection.Up:
-                vDirectionString = 'up';
-                break;
-            default:
-                vDirectionString = null;
-                break;
-        }
-
         const event: RowDragEvent<T> = this.gos.addGridCommonParams({
             type: type,
             event: draggingEvent.event,
@@ -456,7 +440,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             overIndex: overIndex,
             overNode: overNode,
             y: yNormalised,
-            vDirection: vDirectionString!,
+            vDirection: draggingEvent.vDirection,
         });
 
         return event;

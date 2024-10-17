@@ -7,21 +7,20 @@ import { _getActiveDomElement } from '../../gridOptionsUtils';
 import type { ICellEditorComp, ICellEditorParams } from '../../interfaces/iCellEditor';
 import type { PopupPositionParams } from '../../interfaces/iPopup';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
+import { _getLocaleTextFunc } from '../../misc/locale/localeUtils';
 import type { CheckboxSelectionComponent } from '../../selection/checkboxSelectionComponent';
 import { _setAriaRole } from '../../utils/aria';
-import { _browserSupportsPreventScroll } from '../../utils/browser';
 import { _addStylesToElement, _clearElement, _removeFromParent } from '../../utils/dom';
 import { _missing } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import { _warn } from '../../validation/logging';
 import { Component } from '../../widgets/component';
-import type { TooltipParentComp } from '../../widgets/tooltipStateManager';
 import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from './../dndSourceComp';
 import type { RowCtrl } from './../row/rowCtrl';
 import type { CellCtrl, ICellComp } from './cellCtrl';
 
-export class CellComp extends Component implements TooltipParentComp {
+export class CellComp extends Component {
     private eCellWrapper: HTMLElement | undefined;
     private eCellValue: HTMLElement | undefined;
 
@@ -471,7 +470,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.addOrRemoveCssClass('ag-cell-popup-editing', editing && !!isPopup);
         this.addOrRemoveCssClass('ag-cell-not-inline-editing', !editing || !!isPopup);
 
-        this.rowCtrl?.setInlineEditingCss();
+        this.cellCtrl.setInlineEditingCss();
     }
 
     private addInCellEditor(): void {
@@ -531,7 +530,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const positionCallback = popupService.positionPopupByComponent.bind(popupService, positionParams);
 
-        const translate = this.beans.localeService.getLocaleTextFunc();
+        const translate = _getLocaleTextFunc(this.beans.localeService);
 
         const addPopupRes = popupService.addPopup({
             modal: useModelPopup,
@@ -573,7 +572,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
-        if (eGui.contains(_getActiveDomElement(this.beans.gos)) && _browserSupportsPreventScroll()) {
+        if (eGui.contains(_getActiveDomElement(this.beans.gos))) {
             eGui.focus({ preventScroll: true });
         }
 

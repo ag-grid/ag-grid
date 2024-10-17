@@ -16,6 +16,7 @@ import { Component, DragSourceType, KeyCode, RefPlaceholder, _loadTemplate } fro
 
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { VirtualList } from '../../widgets/virtualList';
+import { isRowGroupColLocked } from '../rowGroupingUtils';
 import type { TDropZone } from './baseDropZonePanel';
 
 export class DropZoneColumnComp extends PillDragComp<AgColumn> {
@@ -134,7 +135,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     protected getAriaDisplayName(): string {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         const { name, aggFuncName } = this.getColumnAndAggFuncName();
         const aggSeparator = translate('ariaDropZoneColumnComponentAggFuncSeparator', ' of ');
@@ -161,7 +162,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             const aggFunc = this.column.getAggFunc();
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
             const aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'agg';
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const localeTextFunc = this.getLocaleTextFunc();
             aggFuncName = localeTextFunc(aggFuncString, aggFuncString);
         }
 
@@ -279,7 +280,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             }
         };
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,
@@ -334,7 +335,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             this.valueColsService?.setColumnAggFunc?.(this.column, value, 'toolPanelDragAndDrop');
         };
 
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         const aggFuncString = value.toString();
         const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
         const comp = new AggItemComp(itemSelected, aggFuncStringTranslated);
@@ -343,7 +344,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     private isGroupingAndLocked(): boolean {
-        return this.isGroupingZone() && this.columnModel.isColGroupLocked(this.column);
+        return this.isGroupingZone() && isRowGroupColLocked(this.funcColsService, this.gos, this.column);
     }
 
     private isAggregationZone() {

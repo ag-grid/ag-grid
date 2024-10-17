@@ -10,8 +10,10 @@ import type {
     IMenuConfigParams,
     IMenuItemComp,
     IMenuItemParams,
+    ITooltipCtrl,
     MenuItemDef,
     PopupService,
+    TooltipFeature,
     UserCompDetails,
     UserComponentFactory,
     WithoutGridCommon,
@@ -19,13 +21,13 @@ import type {
 import {
     BeanStub,
     KeyCode,
-    TooltipFeature,
     _loadTemplate,
     _setAriaDisabled,
     _setAriaExpanded,
     _setAriaLevel,
     _setAriaRole,
 } from 'ag-grid-community';
+import type { Registry } from 'ag-grid-community';
 
 import { AgMenuList } from './agMenuList';
 import { AgMenuPanel } from './agMenuPanel';
@@ -65,10 +67,12 @@ const MenuItemComponent: ComponentType = {
 export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
     private popupService?: PopupService;
     private userComponentFactory: UserComponentFactory;
+    private registry: Registry;
 
     public wireBeans(beans: BeanCollection) {
         this.popupService = beans.popupService;
         this.userComponentFactory = beans.userComponentFactory;
+        this.registry = beans.registry;
     }
 
     private ACTIVATION_DELAY = 80;
@@ -234,7 +238,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
             );
         };
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         const addPopupRes = popupService?.addPopup({
             modal: true,
@@ -474,28 +478,26 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
     private refreshTooltip(tooltip?: string, shouldDisplayTooltip?: () => boolean): void {
         this.tooltip = tooltip;
 
-        if (this.tooltipFeature) {
-            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
-        }
+        this.tooltipFeature = this.destroyBean(this.tooltipFeature);
 
         if (!tooltip || !this.menuItemComp) {
             return;
         }
 
-        this.tooltipFeature = this.createBean(
-            new TooltipFeature({
-                getGui: () => this.getGui(),
-                getTooltipValue: () => this.tooltip,
-                getLocation: () => 'menu',
-                shouldDisplayTooltip,
-            })
-        );
+        const tooltipFeature = this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', {
+            getGui: () => this.getGui(),
+            getTooltipValue: () => this.tooltip,
+            getLocation: () => 'menu',
+            shouldDisplayTooltip,
+        } as ITooltipCtrl);
+
+        if (tooltipFeature) {
+            this.tooltipFeature = this.createBean(tooltipFeature);
+        }
     }
 
     public override destroy(): void {
-        if (this.tooltipFeature) {
-            this.tooltipFeature = this.destroyBean(this.tooltipFeature);
-        }
+        this.tooltipFeature = this.destroyBean(this.tooltipFeature);
         this.menuItemComp?.destroy?.();
         super.destroy();
     }

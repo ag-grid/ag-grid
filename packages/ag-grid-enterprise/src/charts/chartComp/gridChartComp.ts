@@ -18,11 +18,10 @@ import {
     _clearElement,
     _getAbsoluteHeight,
     _getAbsoluteWidth,
-    _includes,
     _mergeDeep,
     _removeFromParent,
     _setDisplayed,
-    _warnOnce,
+    _warn,
 } from 'ag-grid-community';
 
 import { AgDialog } from '../../widgets/agDialog';
@@ -202,7 +201,7 @@ export class GridChartComp extends Component {
 
         this.chartProxy = this.createChartProxy(chartProxyParams);
         if (!this.chartProxy) {
-            _warnOnce('invalid chart type supplied: ' + chartProxyParams.chartType);
+            _warn(138, { chartType: chartProxyParams.chartType });
             return;
         }
 
@@ -527,7 +526,7 @@ export class GridChartComp extends Component {
         }
 
         const { chartThemeName } = this.params;
-        return _includes(availableChartThemes, chartThemeName) ? chartThemeName! : availableChartThemes[0];
+        return availableChartThemes.includes(chartThemeName!) ? chartThemeName! : availableChartThemes[0];
     }
 
     private getAllKeysInObjects(objects: any[]): string[] {
@@ -547,13 +546,8 @@ export class GridChartComp extends Component {
         const customChartThemes = this.gos.get('customChartThemes');
         if (customChartThemes) {
             this.getAllKeysInObjects([customChartThemes]).forEach((customThemeName) => {
-                if (!_includes(suppliedThemes, customThemeName)) {
-                    _warnOnce(
-                        "a custom chart theme with the name '" +
-                            customThemeName +
-                            "' has been " +
-                            "supplied but not added to the 'chartThemes' list"
-                    );
+                if (!suppliedThemes.includes(customThemeName)) {
+                    _warn(139, { customThemeName });
                 }
             });
         }

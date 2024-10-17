@@ -106,7 +106,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         let mainJs = readAsJsFile(entryFile, 'vanilla');
 
         const symbolsImportedGridPackage = bindings.imports
-            .filter((i) => i.module.includes('ag-grid-'))
+            .filter((i) => i.module.includes('ag-grid-') && !i.module.includes('@ag-grid-community/locale'))
             .flatMap((i) => i.imports);
 
         const importNamePattern = '\\b(' + symbolsImportedGridPackage.map(regExpEscape).join('|') + ')\\b';

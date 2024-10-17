@@ -66,7 +66,10 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         this.formatter =
             this.textFilterParams.textFormatter ||
             (this.textFilterParams.caseSensitive ? this.defaultFormatter : this.defaultLowercaseFormatter);
-        this.filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
+        this.filterModelFormatter = new TextFilterModelFormatter(
+            this.getLocaleTextFunc.bind(this),
+            this.optionsFactory
+        );
     }
 
     protected createCondition(position: number): TextFilterModel {

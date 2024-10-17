@@ -61,7 +61,7 @@ export class AggColumnNameService extends BeanStub implements NamedBean, IAggCol
 
         if (aggFuncFound) {
             const aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'func';
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const localeTextFunc = this.getLocaleTextFunc();
             const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
             return `${aggFuncStringTranslated}(${headerName})`;
         }

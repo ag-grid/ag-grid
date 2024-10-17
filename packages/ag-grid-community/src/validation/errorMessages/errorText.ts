@@ -1,6 +1,5 @@
 import { BASE_URL } from '../../baseUrl';
 import type { UserComponentName } from '../../context/context';
-import type { ClientSideRowModelStep } from '../../interfaces/iClientSideRowModel';
 import type { Column } from '../../interfaces/iColumn';
 import type { ModuleName } from '../../interfaces/iModule';
 import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
@@ -27,6 +26,13 @@ ModuleRegistry.registerModules([ ${moduleName} ]);
 
 For more info see: ${BASE_URL}/javascript-grid/modules/`;
 
+const clipboardApiError = (method: string) =>
+    `AG Grid: Unable to use the Clipboard API (navigator.clipboard.${method}()). ` +
+    'The reason why it could not be used has been logged in the previous line. ' +
+    "For this reason the grid has defaulted to using a workaround which doesn't perform as well. " +
+    'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
+    'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.';
+
 /**
  * NOTES on setting console messages:
  * 1. The message is a function that returns either a string or an array of any type.
@@ -50,8 +56,7 @@ export const AG_GRID_ERRORS = {
     8: ({ key }: { key: string }) => `Unknown key for navigation ${key}` as const,
     9: ({ variable }: { variable: { cssName: string; defaultValue: number } }) =>
         `No value for ${variable.cssName}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${variable.defaultValue} will be used and updated when styles load.` as const,
-    10: ({ step, stepsMapped }: { step: ClientSideRowModelStep | undefined; stepsMapped: string[] }) =>
-        `Invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}` as const,
+    10: () => '',
     11: () => 'No gridOptions provided to createGrid' as const,
     12: ({ colKey }: { colKey: string | Column }) => ['column ', colKey, ' not found'] as const,
     13: () =>
@@ -69,7 +74,7 @@ export const AG_GRID_ERRORS = {
             'Exception = ',
             e,
         ] as const,
-    // 17: () => '' as const,
+    17: () => 'you need either field or valueSetter set on colDef for editing to work' as const,
     18: () => `alignedGrids contains an undefined option.` as const,
     19: () => `alignedGrids - No api found on the linked grid.` as const,
     20: () =>
@@ -112,9 +117,10 @@ export const AG_GRID_ERRORS = {
     // 38: () => '' as const,
     39: () =>
         'Applying column order broke a group where columns should be married together. Applying new order has been discarded.' as const,
-    // 40: () => '' as const,
-    // 41: () => '' as const,
-    // 42: () => '' as const,
+    40: ({ e, method }: { e: any; method: string }) => `${e}\n${clipboardApiError(method)}` as const,
+    41: () =>
+        "Browser did not allow document.execCommand('copy'). Ensure 'api.copySelectedRowsToClipboard() is invoked via a user event, i.e. button click, otherwise the browser will prevent it for security reasons." as const,
+    42: () => "Browser does not support document.execCommand('copy') for clipboard operations" as const,
     // 43: () => '' as const,
     44: () =>
         'Data type definition hierarchies (via the "extendsDataType" property) cannot contain circular references.' as const,
@@ -304,18 +310,190 @@ export const AG_GRID_ERRORS = {
     133: () => 'iconRenderer should return back a string or a dom object' as const,
     134: ({ iconName }: { iconName: string }) => `Did not find icon ${iconName}` as const,
     135: () => `Data type of the new value does not match the cell data type of the column` as const,
-    136: () => '' as const,
-    137: () => '' as const,
-    138: () => '' as const,
-    139: () => '' as const,
-    140: () => '' as const,
-    141: () => '' as const,
-    142: () => '' as const,
-    143: () => '' as const,
-    144: () => '' as const,
+    136: () =>
+        `Unable to update chart as the 'type' is missing. It must be either 'rangeChartUpdate', 'pivotChartUpdate', or 'crossFilterChartUpdate'.` as const,
+    137: ({ type, currentChartType }: { type: string; currentChartType: string }) =>
+        `Unable to update chart as a '${type}' update type is not permitted on a ${currentChartType}.` as const,
+    138: ({ chartType }: { chartType: string }) => `invalid chart type supplied: ${chartType}` as const,
+    139: ({ customThemeName }: { customThemeName: string }) =>
+        `a custom chart theme with the name ${customThemeName} has been supplied but not added to the 'chartThemes' list` as const,
+    140: ({ name }: { name: string }) =>
+        `no stock theme exists with the name '${name}' and no custom chart theme with that name was supplied to 'customChartThemes'` as const,
+    141: () => 'cross filtering with row grouping is not supported.' as const,
+    142: () => 'cross filtering is only supported in the client side row model.' as const,
+    143: ({ panel }: { panel: string | undefined }) => `'${panel}' is not a valid Chart Tool Panel name` as const,
+    144: ({ type }: { type: string }) => `Invalid charts data panel group name supplied: '${type}'` as const,
+    145: ({ group }: { group: string }) =>
+        `As of v32, only one charts customize panel group can be expanded at a time. '${group}' will not be expanded.` as const,
+    146: () =>
+        `'navigator' is now displayed in the charts advanced settings instead of the customize panel, and this setting will be ignored.` as const,
+    147: ({ group }: { group: string }) => `Invalid charts customize panel group name supplied: '${group}'` as const,
+    148: ({ group }: { group: string }) => `invalid chartGroupsDef config '${group}'` as const,
+    149: ({ group, chartType }: { group: string; chartType: string }) =>
+        `invalid chartGroupsDef config '${group}.${chartType}'` as const,
+    150: () => `'seriesChartTypes' are required when the 'customCombo' chart type is specified.` as const,
+    151: ({ chartType }: { chartType: string }) =>
+        `invalid chartType '${chartType}' supplied in 'seriesChartTypes', converting to 'line' instead.` as const,
+    152: ({ colId }: { colId: string }) =>
+        `no 'seriesChartType' found for colId = '${colId}', defaulting to 'line'.` as const,
+    153: ({ chartDataType }: { chartDataType: string }) =>
+        `unexpected chartDataType value '${chartDataType}' supplied, instead use 'category', 'series' or 'excluded'` as const,
+    154: ({ colId }: { colId: string }) =>
+        `cross filtering requires a 'agSetColumnFilter' or 'agMultiColumnFilter' to be defined on the column with id: ${colId}` as const,
+    155: ({ option }: { option: string }) => `'${option}' is not a valid Chart Toolbar Option` as const,
+    156: ({ panel }: { panel: string }) => `Invalid panel in chartToolPanelsDef.panels: '${panel}'` as const,
+    157: ({ unrecognisedGroupIds }: { unrecognisedGroupIds: string[] }) =>
+        ['unable to find group(s) for supplied groupIds:', unrecognisedGroupIds] as const,
+    158: () => 'can not expand a column item that does not represent a column group header' as const,
+    159: () => 'Invalid params supplied to createExcelFileForExcel() - `ExcelExportParams.data` is empty.' as const,
+    160: () => `Export cancelled. Export is not allowed as per your configuration.` as const,
+    161: () =>
+        "The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'" as const,
+    162: ({ id, dataType }: { id: string; dataType: string }) =>
+        `Unrecognized data type for excel export [${id}.dataType=${dataType}]` as const,
+    163: ({ featureName }: { featureName: string }) =>
+        `Excel table export does not work with ${featureName}. The exported Excel file will not contain any Excel tables.\n Please turn off ${featureName} to enable Excel table exports.` as const,
+    164: () => 'Unable to add data table to Excel sheet: A table already exists.' as const,
+    165: () => 'Unable to add data table to Excel sheet: Missing required parameters.' as const,
+    166: ({ unrecognisedGroupIds }: { unrecognisedGroupIds: string[] }) =>
+        ['unable to find groups for these supplied groupIds:', unrecognisedGroupIds] as const,
+    167: ({ unrecognisedColIds }: { unrecognisedColIds: string[] }) =>
+        ['unable to find columns for these supplied colIds:', unrecognisedColIds] as const,
+    168: () => 'detailCellRendererParams.template should be function or string' as const,
+    169: () =>
+        'Reference to eDetailGrid was missing from the details template. Please add data-ref="eDetailGrid" to the template.' as const,
+    170: ({ providedStrategy }: { providedStrategy: string }) =>
+        `invalid cellRendererParams.refreshStrategy = ${providedStrategy} supplied, defaulting to refreshStrategy = 'rows'.` as const,
+    171: () =>
+        'could not find detail grid options for master detail, please set gridOptions.detailCellRendererParams.detailGridOptions' as const,
+    172: () =>
+        'could not find getDetailRowData for master / detail, please set gridOptions.detailCellRendererParams.getDetailRowData' as const,
+    173: ({ group }: { group: string }) => `invalid chartGroupsDef config '${group}'` as const,
+    174: ({ group, chartType }: { group: string; chartType: string }) =>
+        `invalid chartGroupsDef config '${group}.${chartType}'` as const,
+    175: ({ menuTabName, itemsToConsider }: { menuTabName: string; itemsToConsider: string[] }) =>
+        [
+            `Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of `,
+            itemsToConsider,
+        ] as const,
+    176: ({ key }: { key: string }) => `unknown menu item type ${key}` as const,
+    177: () => `valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.` as const,
+    178: ({ colId }: { colId: string }) => `column ${colId} is not visible` as const,
+    179: () => 'totalValueGetter should be either a function or a string (expression)' as const,
+    180: () => 'agRichSelectCellEditor requires cellEditorParams.values to be set' as const,
+    181: () =>
+        'agRichSelectCellEditor cannot have `multiSelect` and `allowTyping` set to `true`. AllowTyping has been turned off.' as const,
+    182: () =>
+        'you cannot mix groupDisplayType = "multipleColumns" with treeData, only one column can be used to display groups when doing tree data' as const,
+    183: () => 'Group Column Filter only works on group columns. Please use a different filter.' as const,
+    184: ({ parentGroupData, childNodeData }: { parentGroupData: any; childNodeData: any }) =>
+        [`duplicate group keys for row data, keys should be unique`, [parentGroupData, childNodeData]] as const,
+    185: ({ data }: { data: any }) => [`getDataPath() should not return an empty path`, [data]] as const,
+    186: ({
+        rowId,
+        rowData,
+        duplicateRowsData,
+    }: {
+        rowId: string | undefined;
+        rowData: any;
+        duplicateRowsData: any[];
+    }) => [`duplicate group keys for row data, keys should be unique`, rowId, rowData, ...duplicateRowsData] as const,
+    187: ({ rowId, firstData, secondData }: { rowId: string; firstData: any; secondData: any }) =>
+        [
+            `Duplicate node id ${rowId}. Row IDs are provided via the getRowId() callback. Please modify the getRowId() callback code to provide unique row id values.`,
+            'first instance',
+            firstData,
+            'second instance',
+            secondData,
+        ] as const,
+    188: () => `getRowId callback must be provided for Server Side Row Model selection to work correctly.` as const,
+    189: ({ startRow }: { startRow: number }) =>
+        `invalid value ${startRow} for startRow, the value should be >= 0` as const,
+    190: ({ rowGroupId, data }: { rowGroupId: string | undefined; data: any }) =>
+        [
+            `null and undefined values are not allowed for server side row model keys`,
+            rowGroupId ? `column = ${rowGroupId}` : ``,
+            `data is `,
+            data,
+        ] as const,
+    191: () => `cannot multi select unless selection mode is 'multiRow'` as const,
+    192: () => `cannot use range selection when multi selecting rows` as const,
+    193: () => "cannot multi select unless selection mode is 'multiRow'" as const,
+    194: () =>
+        'calling gridApi.getBestCostNodeSelection() is only possible when using rowModelType=`clientSide`.' as const,
+    195: ({ justCurrentPage }: { justCurrentPage: boolean | undefined }) =>
+        `selecting just ${justCurrentPage ? 'current page' : 'filtered'} only works when gridOptions.rowModelType='clientSide'` as const,
+    196: ({ key }: { key: string }) => `Provided ids must be of string type. Invalid id provided: ${key}` as const,
+    197: () => '`toggledNodes` must be an array of string ids.' as const,
+    198: () => `cannot multi select unless selection mode is 'multiRow'` as const,
+    199: () =>
+        `getSelectedNodes and getSelectedRows functions cannot be used with select all functionality with the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
 
     200: missingModule,
     201: ({ rowModelType }: { rowModelType: string }) => `Could not find row model for rowModelType = ${rowModelType}`,
+
+    202: () =>
+        `\`getSelectedNodes\` and \`getSelectedRows\` functions cannot be used with \`groupSelectsChildren\` and the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
+    203: () =>
+        'Server Side Row Model does not support Dynamic Row Height and Cache Purging. Either a) remove getRowHeight() callback or b) remove maxBlocksInCache property. Purging has been disabled.' as const,
+    204: () =>
+        'Server Side Row Model does not support Auto Row Height and Cache Purging. Either a) remove colDef.autoHeight or b) remove maxBlocksInCache property. Purging has been disabled.' as const,
+    205: ({ duplicateIdText }: { duplicateIdText: string }) =>
+        `Unable to display rows as duplicate row ids (${duplicateIdText}) were returned by the getRowId callback. Please modify the getRowId callback to provide unique ids.` as const,
+    206: () => 'getRowId callback must be implemented for transactions to work. Transaction was ignored.' as const,
+    207: () =>
+        'The Set Filter Parameter "defaultToNothingSelected" value was ignored because it does not work when "excelMode" is used.' as const,
+    208: () =>
+        `Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects.` as const,
+    209: () =>
+        'Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types' as const,
+    210: () =>
+        'Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects?' as const,
+    211: () =>
+        'property treeList=true for Set Filter params, but you did not provide a treeListPathGetter or values of type Date.' as const,
+    212: () =>
+        `please review all your toolPanel components, it seems like at least one of them doesn't have an id` as const,
+    213: () => 'Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.' as const,
+    214: ({ key }: { key: string }) => `unable to lookup Tool Panel as invalid key supplied: ${key}` as const,
+    215: ({ key, defaultByKey }: { key: string; defaultByKey: object }) =>
+        `the key ${key} is not a valid key for specifying a tool panel, valid keys are: ${Object.keys(defaultByKey).join(',')}` as const,
+    216: ({ id }: { id: string }) =>
+        `error processing tool panel component ${id}. You need to specify 'toolPanel'` as const,
+    217: ({ invalidColIds }: { invalidColIds: any[] }) =>
+        ['unable to find grid columns for the supplied colDef(s):', invalidColIds] as const,
+    218: ({ property, defaultOffset }: { property: string; defaultOffset: number | undefined }) =>
+        `${property} must be a number, the value you provided is not a valid number. Using the default of ${defaultOffset}px.` as const,
+    219: ({ property }: { property: string }) => `Property ${property} does not exist on the target object.` as const,
+    220: ({ lineDash }: { lineDash: string }) => `'${lineDash}' is not a valid 'lineDash' option.` as const,
+    221: () => `agAggregationComponent should only be used with the client and server side row model.` as const,
+    222: () => `agFilteredRowCountComponent should only be used with the client side row model.` as const,
+    223: () => `agSelectedRowCountComponent should only be used with the client and server side row model.` as const,
+    224: () => `agTotalAndFilteredRowCountComponent should only be used with the client side row model.` as const,
+    225: () => 'agTotalRowCountComponent should only be used with the client side row model.' as const,
+    226: () => 'viewport is missing init method.' as const,
+    227: () => 'menu item icon must be DOM node or string' as const,
+    228: ({ menuItemOrString }: { menuItemOrString: string }) => `unrecognised menu item ${menuItemOrString}` as const,
+    229: ({ index }: { index: number }) => ['invalid row index for ensureIndexVisible: ', index] as const,
+    230: () =>
+        'detailCellRendererParams.template is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://ag-grid.com/react-data-grid/master-detail-custom-detail/' as const,
+    // @deprecated v32 mark for removal as part of v32 deprecated features
+    231: () => 'As of v32, using custom components with `reactiveCustomComponents = false` is deprecated.' as const,
+    232: () => 'Using both rowData and v-model. rowData will be ignored.' as const,
+    233: ({ methodName }: { methodName: string }) =>
+        `Framework component is missing the method ${methodName}()` as const,
+    234: () =>
+        'Group Column Filter does not work with the colDef property "field". This property will be ignored.' as const,
+    235: () =>
+        'Group Column Filter does not work with the colDef property "filterValueGetter". This property will be ignored.' as const,
+    236: () =>
+        'Group Column Filter does not work with the colDef property "filterParams". This property will be ignored.' as const,
+    237: () =>
+        'Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.' as const,
+    238: ({ message }: { message: string }) => ['Failed to deserialize state with error ', message] as const,
+    239: () =>
+        'Invalid mixing of Theming API and CSS File Themes in the same page. No value was provided to the `theme` grid option so it defaulted to themeQuartz, but the file (ag-grid.css) is also included and will cause styling issues. Pass the string "legacy" to the theme grid option to use v32 style themes, or remove ag-grid.css from the page.' as const,
+    240: ({ theme }: { theme: any }) =>
+        `theme grid option must be a Theming API theme object or the string "legacy", received: ${theme}` as const,
 } as const;
 
 export type ErrorMap = typeof AG_GRID_ERRORS;

@@ -28,7 +28,7 @@ import {
     _createIconNoSpan,
     _isColumnMenuAnchoringEnabled,
     _isLegacyMenuEnabled,
-    _warnOnce,
+    _warn,
     isColumn,
 } from 'ag-grid-community';
 
@@ -209,7 +209,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             }
         });
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
@@ -459,9 +459,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
         isValid = isValid && TABS_DEFAULT.indexOf(menuTabName) > -1;
 
         if (!isValid) {
-            _warnOnce(
-                `Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${itemsToConsider}]`
-            );
+            _warn(175, { menuTabName, itemsToConsider });
         }
 
         return isValid;

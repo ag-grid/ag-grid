@@ -4,11 +4,11 @@ import type {
     ChartType,
     GridOptionsService,
     IChartService,
-    LocaleService,
+    LocaleTextFunc,
     MenuItemDef,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, _warnOnce } from 'ag-grid-community';
+import { BeanStub, _createIconNoSpan, _warn } from 'ag-grid-community';
 
 export class ChartMenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'chartMenuItemMapper' as const;
@@ -25,10 +25,11 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
             return undefined;
         }
 
+        const getLocaleTextFunc = this.getLocaleTextFunc.bind(this);
         const builder =
             key === 'pivotChart'
-                ? new PivotMenuItemMapper(this.gos, this.chartService, this.localeService)
-                : new RangeMenuItemMapper(this.gos, this.chartService, this.localeService);
+                ? new PivotMenuItemMapper(this.gos, this.chartService, getLocaleTextFunc)
+                : new RangeMenuItemMapper(this.gos, this.chartService, getLocaleTextFunc);
 
         const isEnterprise = this.chartService.isEnterprise();
 
@@ -100,7 +101,7 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
             if (chartConfigGroup === null) return;
 
             if (chartConfigGroup == undefined) {
-                _warnOnce(`invalid chartGroupsDef config '${group}'`);
+                _warn(173, { group });
                 return undefined;
             }
 
@@ -111,7 +112,7 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
                         .map((chartType) => {
                             const itemKey = (chartConfigGroup as any)[chartType];
                             if (itemKey == undefined) {
-                                _warnOnce(`invalid chartGroupsDef config '${group}.${chartType}'`);
+                                _warn(174, { group, chartType });
                                 return undefined;
                             }
                             return menuItemLookup[itemKey];
@@ -191,11 +192,11 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
     constructor(
         private gos: GridOptionsService,
         private chartService: IChartService,
-        private localeService: LocaleService
+        private getLocaleTextFunc: () => LocaleTextFunc
     ) {}
 
     getMenuItem(): MenuItemDefWithKey<PivotMenuOptionName> {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         const getMenuItem = (
             localeKey: string,
             defaultText: string,
@@ -411,11 +412,11 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
     constructor(
         private gos: GridOptionsService,
         private chartService: IChartService,
-        private localeService: LocaleService
+        private getLocaleTextFunc: () => LocaleTextFunc
     ) {}
 
     getMenuItem(): MenuItemDefWithKey<RangeMenuOptionName> {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         const getMenuItem = (
             localeKey: string,
             defaultText: string,

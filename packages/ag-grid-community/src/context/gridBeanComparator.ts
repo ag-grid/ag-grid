@@ -12,7 +12,6 @@ import type { GenericBean } from './genericBean';
  */
 const orderedCoreBeans: BeanName[] = [
     // core beans only
-    'positionUtils',
     'paginationAutoPageSizeService',
     'apiFunctionService',
     'gridApi',
@@ -25,6 +24,7 @@ const orderedCoreBeans: BeanName[] = [
     'validationService',
     'pinnedRowModel',
     'dragService',
+    'columnGroupService',
     'visibleColsService',
     'eventService',
     'gos',
@@ -60,7 +60,7 @@ const orderedCoreBeans: BeanName[] = [
     'columnHoverService',
     'columnAnimationService',
     'autoColService',
-    'controlsColService',
+    'selectionColService',
     'changeDetectionService',
     'animationFrameService',
     'undoRedoService',
@@ -69,7 +69,7 @@ const orderedCoreBeans: BeanName[] = [
     'rowNodeBlockLoader',
     'rowNodeSorter',
     'ctrlsService',
-    'pinnedWidthService',
+    'pinnedColumnService',
     'rowNodeEventThrottle',
     'dataTypeService',
     'syncService',

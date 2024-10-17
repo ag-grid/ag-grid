@@ -236,7 +236,7 @@
             },
             {
                 "text": "Prevent Group Column Reordering and Removal",
-                "path": "./grouping-locking-group-columns"
+                "path": "./grouping-group-panel/#prevent-changes-to-group-order"
             },
             {
                 "text": "Pagination Panel Page Size Selector",
@@ -263,7 +263,7 @@
             },
             {
                 "text": "Dynamic Group Footer Rows",
-                "path": "./aggregation-total-rows/#dynamically-display-group-total-rows"
+                "path": "./aggregation-total-rows/#selectively-display-group-total-rows"
             },
             {
                 "text": "Documentation Examples on CodeSandbox"

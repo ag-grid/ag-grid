@@ -2,7 +2,10 @@ import type {
     AgPromise,
     BeanCollection,
     IRichCellEditorRendererParams,
+    ITooltipCtrl,
+    Registry,
     RichSelectParams,
+    TooltipFeature,
     UserCompDetails,
     UserComponentFactory,
 } from 'ag-grid-community';
@@ -14,22 +17,36 @@ import {
     _getDocument,
     _getEditorRendererDetails,
     _setAriaSelected,
+    _shouldDisplayTooltip,
 } from 'ag-grid-community';
 
 import type { AgRichSelect } from './agRichSelect';
 
 export class RichSelectRow<TValue> extends Component {
     private userComponentFactory: UserComponentFactory;
+    private registry: Registry;
 
     public wireBeans(beans: BeanCollection) {
         this.userComponentFactory = beans.userComponentFactory;
+        this.registry = beans.registry;
     }
 
     private value: TValue;
     private parsedValue: string | null;
+    private tooltipFeature?: TooltipFeature;
+    private shouldDisplayTooltip?: () => boolean;
 
     constructor(private readonly params: RichSelectParams<TValue>) {
         super(/* html */ `<div class="ag-rich-select-row" role="presentation"></div>`);
+    }
+
+    public postConstruct(): void {
+        this.tooltipFeature = this.createOptionalManagedBean(
+            this.registry.createDynamicBean<TooltipFeature>('tooltipFeature', {
+                getGui: () => this.getGui(),
+                shouldDisplayTooltip: () => this.shouldDisplayTooltip?.() ?? true,
+            } as ITooltipCtrl)
+        );
     }
 
     public setState(value: TValue): void {
@@ -104,10 +121,8 @@ export class RichSelectRow<TValue> extends Component {
 
         eGui.appendChild(span);
         this.renderValueWithoutRenderer(parsedValue);
-        this.setTooltip({
-            newTooltipText: this.parsedValue,
-            shouldDisplayTooltip: () => span.scrollWidth > span.clientWidth,
-        });
+        this.shouldDisplayTooltip = _shouldDisplayTooltip(() => span);
+        this.tooltipFeature?.setTooltipAndRefresh(this.parsedValue);
     }
 
     private renderValueWithoutRenderer(value: string | null): void {
@@ -136,7 +151,8 @@ export class RichSelectRow<TValue> extends Component {
                         richSelect?.setValue(value, true);
                     },
                     setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
-                        this.setTooltip({ newTooltipText: value, shouldDisplayTooltip });
+                        this.shouldDisplayTooltip = shouldDisplayTooltip;
+                        this.tooltipFeature?.setTooltipAndRefresh(value);
                     },
                 }
             );
