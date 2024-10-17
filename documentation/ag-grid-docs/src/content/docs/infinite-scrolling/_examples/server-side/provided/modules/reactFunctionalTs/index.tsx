@@ -103,7 +103,6 @@ const filterData = (filterModel: any, data: any[]) => {
 
 const rowSelection: RowSelectionOptions = {
     mode: 'multiRow',
-    checkboxes: false,
     headerCheckbox: false,
 };
 

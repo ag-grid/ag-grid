@@ -21,7 +21,7 @@ const gridOptions: GridOptions = {
         flex: 1,
     },
     rowData: getData(),
-    rowSelection: { mode: 'multiRow', checkboxes: false, headerCheckbox: false },
+    rowSelection: { mode: 'multiRow' },
 };
 
 let newCount = 1;

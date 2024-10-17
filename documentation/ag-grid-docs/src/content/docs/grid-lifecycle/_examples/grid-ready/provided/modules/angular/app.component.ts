@@ -1,6 +1,6 @@
 import { AgGridAngular } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridReadyEvent, RowSelectionOptions } from '@ag-grid-community/core';
+import { ColDef, GridApi, GridReadyEvent } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
@@ -33,7 +33,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                     [class]="themeClass"
                     [columnDefs]="columnDefs"
                     [rowData]="rowData"
-                    [rowSelection]="rowSelection"
                     (gridReady)="onGridReady($event)"
                 />
             }
@@ -56,11 +55,6 @@ export class AppComponent {
     ];
 
     public rowData: any[] | null = getData();
-    public rowSelection: RowSelectionOptions = {
-        mode: 'multiRow',
-        checkboxes: false,
-        headerCheckbox: false,
-    };
 
     reloadGrid() {
         this.isVisible = false;

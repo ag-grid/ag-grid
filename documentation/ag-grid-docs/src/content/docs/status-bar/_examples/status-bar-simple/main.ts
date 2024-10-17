@@ -27,6 +27,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: true,
     },
     rowSelection: { mode: 'multiRow' },
+    cellSelection: true,
     statusBar: {
         statusPanels: [
             { statusPanel: 'agTotalAndFilteredRowCountComponent' },

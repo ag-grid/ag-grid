@@ -51,11 +51,6 @@ const gridOptions: GridOptions = {
         flex: 1,
     },
     rowData,
-    rowSelection: {
-        mode: 'multiRow',
-        checkboxes: false,
-        headerCheckbox: false,
-    },
     getRowId: (params: GetRowIdParams) => String(params.data.id),
 };
 

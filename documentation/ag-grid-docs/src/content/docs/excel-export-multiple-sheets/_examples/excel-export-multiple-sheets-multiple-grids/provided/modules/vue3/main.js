@@ -82,8 +82,6 @@ const VueExample = {
 
             rowSelection: {
                 mode: 'multiRow',
-                checkboxes: false,
-                headerCheckbox: false,
             },
             defaultColDef: {
                 flex: 1,

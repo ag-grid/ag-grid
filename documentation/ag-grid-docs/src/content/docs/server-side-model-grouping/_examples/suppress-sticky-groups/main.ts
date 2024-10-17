@@ -34,11 +34,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 280,
     },
     rowModelType: 'serverSide',
-    rowSelection: {
-        mode: 'multiRow',
-        checkboxes: false,
-        headerCheckbox: false,
-    },
     isServerSideGroupOpenByDefault,
     getRowId,
     suppressGroupRowsSticky: true,

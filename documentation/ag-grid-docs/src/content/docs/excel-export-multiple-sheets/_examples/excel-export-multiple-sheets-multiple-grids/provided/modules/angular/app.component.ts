@@ -114,8 +114,6 @@ export class AppComponent {
 
     rowSelection: RowSelectionOptions = {
         mode: 'multiRow',
-        checkboxes: false,
-        headerCheckbox: false,
     };
 
     leftColumns: ColDef[] = [

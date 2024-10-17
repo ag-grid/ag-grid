@@ -33,7 +33,7 @@ let gridApi: GridApi<ICar>;
 const gridOptions: GridOptions<ICar> = {
     columnDefs: columnDefs,
     rowData: rowDataA,
-    rowSelection: { mode: 'singleRow', checkboxes: false },
+    rowSelection: { mode: 'singleRow', checkboxes: false, enableClickSelection: true },
 };
 
 function onRowDataA() {
