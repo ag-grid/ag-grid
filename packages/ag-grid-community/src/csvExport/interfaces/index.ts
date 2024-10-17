@@ -9,8 +9,8 @@ import type {
     ProcessHeaderForExportParams,
     ProcessRowGroupForExportParams,
 } from '../../interfaces/exportParams';
+import type { IColsService } from '../../interfaces/iColsService';
 import type { ColumnGroup } from '../../interfaces/iColumn';
-import { IColsService } from '../../main-umd-noStyles';
 import type { ValueService } from '../../valueService/valueService';
 import type { GridSerializer } from '../gridSerializer';
 

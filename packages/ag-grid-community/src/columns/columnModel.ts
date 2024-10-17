@@ -24,10 +24,10 @@ import {
 import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderRowCtrl } from '../headerRendering/row/headerRowCtrl';
 import type { IAutoColService } from '../interfaces/iAutoColService';
+import type { IColsService } from '../interfaces/iColsService';
 import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
-import { IColsService } from '../main-umd-noStyles';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import { _areEqual, _includes, _insertIntoArray, _moveInArray } from '../utils/array';
 import { _missingOrEmpty } from '../utils/generic';

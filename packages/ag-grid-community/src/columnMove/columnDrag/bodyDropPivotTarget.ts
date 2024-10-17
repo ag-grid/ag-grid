@@ -2,8 +2,8 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { DragAndDropIcon, DraggingEvent } from '../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../entities/agColumn';
+import type { IColsService } from '../../interfaces/iColsService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
-import { IColsService } from '../../main-umd-noStyles';
 import type { DropListener } from './bodyDropTarget';
 
 export class BodyDropPivotTarget extends BeanStub implements DropListener {

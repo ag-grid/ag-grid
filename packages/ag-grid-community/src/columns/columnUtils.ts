@@ -4,7 +4,7 @@ import { isColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
-import { _exists } from '../main-umd-noStyles';
+import { _exists } from '../utils/generic';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnState, ColumnStateParams } from './columnStateService';
 import { CONTROLS_COLUMN_ID_PREFIX } from './controlsColService';
