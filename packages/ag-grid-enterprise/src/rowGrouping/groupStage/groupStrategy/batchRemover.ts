@@ -21,8 +21,6 @@ export class BatchRemover {
     private allSets: { [parentId: string]: RemoveDetails } = {};
     private allParents: RowNode[] = [];
 
-    constructor() {}
-
     public removeFromChildrenAfterGroup(parent: RowNode, child: RowNode): void {
         const set = this.getSet(parent);
         set.removeFromChildrenAfterGroup[child.id!] = true;
