@@ -9,12 +9,7 @@ import type {
     IColsService,
     NamedBean,
 } from 'ag-grid-community';
-import {
-    BaseColsService,
-    _missingOrEmpty,
-    _removeFromArray,
-    _shouldUpdateColVisibilityAfterGroup,
-} from 'ag-grid-community';
+import { BaseColsService, _removeFromArray, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
 export class RowGroupColsService extends BaseColsService implements NamedBean, IColsService {
     beanName = 'rowGroupColsService' as const;
@@ -56,7 +51,7 @@ export class RowGroupColsService extends BaseColsService implements NamedBean, I
     }
 
     public override isRowGroupEmpty(): boolean {
-        return _missingOrEmpty(this.columns);
+        return this.columns.length === 0;
     }
 
     public override moveColumn(fromIndex: number, toIndex: number, source: ColumnEventType): void {

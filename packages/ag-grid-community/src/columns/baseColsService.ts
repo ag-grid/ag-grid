@@ -7,7 +7,7 @@ import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IColsService } from '../interfaces/iColsService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _removeFromArray } from '../utils/array';
-import { _attrToBoolean, _attrToNumber, _exists, _missingOrEmpty } from '../utils/generic';
+import { _exists } from '../utils/generic';
 import { dispatchColumnChangedEvent } from './columnEventUtils';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateService';
@@ -49,7 +49,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         source: ColumnEventType
     ): void {
         const gridColumns = this.columnModel.getCols();
-        if (_missingOrEmpty(gridColumns)) {
+        if (!gridColumns || gridColumns.length === 0) {
             return;
         }
 
@@ -108,7 +108,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         eventType: ReturnType<BaseColsService['getEventName']>,
         source: ColumnEventType
     ) {
-        if (!keys || _missingOrEmpty(keys)) {
+        if (!keys || keys.length === 0) {
             return;
         }
 
@@ -188,10 +188,10 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
             const colIsNew = oldProvidedCols.indexOf(col) < 0;
             const colDef = col.getColDef();
 
-            const value = _attrToBoolean(getValueFunc(colDef));
-            const initialValue = _attrToBoolean(getInitialValueFunc(colDef));
-            const index = _attrToNumber(getIndexFunc(colDef));
-            const initialIndex = _attrToNumber(getInitialIndexFunc(colDef));
+            const value = getValueFunc(colDef);
+            const initialValue = getInitialValueFunc(colDef);
+            const index = getIndexFunc(colDef);
+            const initialIndex = getInitialIndexFunc(colDef);
 
             let include: boolean;
 

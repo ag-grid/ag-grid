@@ -24,6 +24,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     private sortController?: SortController;
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
+    private rowGroupColsService?: IColsService;
     private valueColsService?: IColsService;
     private aggFuncService?: IAggFuncService;
 
@@ -33,6 +34,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         this.sortController = beans.sortController;
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
+        this.rowGroupColsService = beans.rowGroupColsService;
         this.valueColsService = beans.valueColsService!;
         this.aggFuncService = beans.aggFuncService;
     }
@@ -344,7 +346,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     private isGroupingAndLocked(): boolean {
-        return this.isGroupingZone() && isRowGroupColLocked(this.funcColsService, this.gos, this.column);
+        return this.isGroupingZone() && isRowGroupColLocked(this.gos, this.column, this.rowGroupColsService);
     }
 
     private isAggregationZone() {

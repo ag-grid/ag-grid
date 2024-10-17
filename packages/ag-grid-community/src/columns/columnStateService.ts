@@ -5,8 +5,8 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { IAggFunc } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType } from '../events';
-import type { IColsService } from '../interfaces/iColsService';
 import type { IAutoColService } from '../interfaces/iAutoColService';
+import type { IColsService } from '../interfaces/iColsService';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
@@ -194,15 +194,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
                 colStates.forEach((stateItem) => {
                     const col = getCol(stateItem.colId);
                     _removeFromArray(columns, col);
-                    this.syncColumnWithStateItem(
-                        col,
-                        stateItem,
-                        params.defaultState,
-                        null,
-                        null,
-                        true,
-                        source
-                    );
+                    this.syncColumnWithStateItem(col, stateItem, params.defaultState, null, null, true, source);
                 });
                 columns.forEach(applyDefaultsFunc);
             };
@@ -675,7 +667,6 @@ export class ColumnStateService extends BeanStub implements NamedBean {
         const rowGroupColumns = this.rowGroupColsService?.columns ?? [];
         const pivotColumns = this.pivotColsService?.columns ?? [];
 
-        const rowGroupIndex = column.isRowGroupActive() ? rowGroupColumns.indexOf(column) : null;
         const rowGroupIndex = column.isRowGroupActive() ? rowGroupColumns.indexOf(column) : null;
         const pivotIndex = column.isPivotActive() ? pivotColumns.indexOf(column) : null;
 
