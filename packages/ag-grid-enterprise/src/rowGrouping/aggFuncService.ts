@@ -208,7 +208,7 @@ function aggAvg(params: IAggFuncParams): {
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
         const currentValue = values[i];
-        let valueToAdd = null;
+        let valueToAdd: number | bigint | null = null;
 
         if (typeof currentValue === 'number' || typeof currentValue === 'bigint') {
             valueToAdd = currentValue;
@@ -232,7 +232,7 @@ function aggAvg(params: IAggFuncParams): {
         }
     }
 
-    let value = null;
+    let value: null | number = null;
 
     // avoid divide by zero error
     if (count > 0) {

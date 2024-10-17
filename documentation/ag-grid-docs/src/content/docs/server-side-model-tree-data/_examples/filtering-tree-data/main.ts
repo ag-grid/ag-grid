@@ -14,7 +14,7 @@ import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { TreeDataModule } from 'ag-grid-enterprise';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
@@ -23,7 +23,7 @@ import { FakeServer } from './fakeServer';
 ModuleRegistry.registerModules([
     ColumnsToolPanelModule,
     MenuModule,
-    RowGroupingModule,
+    TreeDataModule,
     ServerSideRowModelModule,
     SetFilterModule,
 ]);

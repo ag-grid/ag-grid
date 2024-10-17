@@ -434,6 +434,8 @@ export {
     ClientSideRowModelStep,
     RefreshModelParams,
 } from './interfaces/iClientSideRowModel';
+export { IClientSideNodeManager, ClientSideNodeManagerUpdateRowDataResult } from './interfaces/iClientSideNodeManager';
+export { AbstractClientSideNodeManager } from './clientSideRowModel/abstractClientSideNodeManager';
 export { IGroupHideOpenParentsService } from './interfaces/iGroupHideOpenParentsService';
 
 export { ColumnVO } from './interfaces/iColumnVO';
@@ -594,7 +596,7 @@ export {
     _AdvancedFilterGridApi,
 } from './api/gridApi';
 export { IDetailGridApiService } from './interfaces/iDetailGridApiService';
-export { _getServerSideRowModel } from './api/rowModelApiUtils';
+export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
 export { AgEventType, AgPublicEventType } from './eventTypes';
 export type { FocusService } from './focusService';
 export type { GridOptionsService } from './gridOptionsService';
@@ -950,7 +952,7 @@ export {
 } from './utils/dom';
 export { _stopPropagationForAgGrid, _isStopPropagationForAgGrid, _isElementInEventPath } from './utils/event';
 export { _warnOnce, _debounce, _doOnce, _waitUntil } from './utils/function';
-export { _warn as _warn, _error as _error } from './validation/logging';
+export { _warn, _error } from './validation/logging';
 export { _createIcon, _createIconNoSpan } from './utils/icon';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export { _exists, _missing, _jsonEquals, _toStringOrNull, _makeNull, _defaultComparator } from './utils/generic';
@@ -1001,7 +1003,7 @@ export { CommunityFeaturesModule } from './communityFeaturesModule';
 export { SortModule } from './sort/sortModule';
 export { AlignedGridsModule } from './alignedGrids/alignedGridsModule';
 export { ClientSideRowModelModule, ClientSideRowModelCoreModule } from './clientSideRowModel/clientSideRowModelModule';
-export { CsvExportModule, CsvExportCoreModule as CsvExportCoreModule } from './csvExport/csvExportModule';
+export { CsvExportModule, CsvExportCoreModule } from './csvExport/csvExportModule';
 export { InfiniteRowModelModule } from './infiniteRowModel/infiniteRowModelModule';
 export { PopupModule } from './widgets/popupModule';
 export { SharedMenuModule } from './misc/menu/sharedMenuModule';

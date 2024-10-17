@@ -160,6 +160,6 @@
       }
     }
   },
-  "tags": ["package", "enterprise", "framework"],
+  "tags": ["package", "enterprise"],
   "implicitDependencies": ["ag-grid-community"]
 }
