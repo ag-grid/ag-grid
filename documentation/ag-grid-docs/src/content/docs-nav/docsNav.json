@@ -114,7 +114,7 @@
                         },
                         {
                             "type": "item",
-                            "title": "Customisation",
+                            "title": "Features",
                             "children": [
                                 {
                                     "type": "item",
@@ -129,32 +129,32 @@
                                 {
                                     "type": "item",
                                     "title": "Variable Reference",
-                                    "path": "global-style-customisation-variables"
+                                    "path": "theming-variables"
                                 },
                                 {
                                     "type": "item",
                                     "title": "Colours & Fonts",
-                                    "path": "global-style-customisation-colours"
+                                    "path": "theming-colours"
                                 },
                                 {
                                     "type": "item",
                                     "title": "Compactness & Row Height",
-                                    "path": "global-style-customisation-compactness"
+                                    "path": "theming-compactness"
                                 },
                                 {
                                     "type": "item",
                                     "title": "Selections",
-                                    "path": "global-style-customisation-selections"
+                                    "path": "theming-selections"
                                 },
                                 {
                                     "type": "item",
                                     "title": "Headers",
-                                    "path": "global-style-customisation-headers"
+                                    "path": "theming-headers"
                                 },
                                 {
                                     "type": "item",
                                     "title": "Borders",
-                                    "path": "global-style-customisation-borders"
+                                    "path": "theming-borders"
                                 },
                                 {
                                     "type": "item",
@@ -164,17 +164,17 @@
                                 {
                                     "type": "item",
                                     "title": "Tool Panels",
-                                    "path": "global-style-customisation-tool-panels"
+                                    "path": "theming-tool-panels"
                                 },
                                 {
                                     "type": "item",
                                     "title": "Inputs & Widgets",
-                                    "path": "global-style-customisation-widgets"
+                                    "path": "theming-widgets"
                                 },
                                 {
                                     "type": "item",
                                     "title": "Menus & Popups",
-                                    "path": "global-style-customisation-popups"
+                                    "path": "theming-popups"
                                 },
                                 {
                                     "type": "item",
