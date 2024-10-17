@@ -412,7 +412,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 disabled: !this.valueColsService,
                 action: () => {
                     this.valueColsService?.removeColumns([columnToUse!], 'contextMenu');
-                    this.valueColsService?.setColumnAggFunc?.(columnToUse, undefined, 'contextMenu');
+                    this.valueColsService?.setColumnAggFunc?.(columnToUse!, undefined, 'contextMenu');
                 },
                 checked: !columnIsAlreadyAggValue,
             });
@@ -422,7 +422,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     name: localeTextFunc(funcName, aggFuncService.getDefaultFuncLabel(funcName)),
                     disabled: !this.valueColsService,
                     action: () => {
-                        this.valueColsService?.setColumnAggFunc!(columnToUse, funcName, 'contextMenu');
+                        this.valueColsService?.setColumnAggFunc!(columnToUse!, funcName, 'contextMenu');
                         this.valueColsService?.addColumns?.([columnToUse!], 'contextMenu');
                     },
                     checked: columnIsAlreadyAggValue && columnToUse!.getAggFunc() === funcName,
