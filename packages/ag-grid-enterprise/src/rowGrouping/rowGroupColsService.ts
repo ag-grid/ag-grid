@@ -34,11 +34,13 @@ export class RowGroupColsService extends BaseColsService implements NamedBean, I
     }
 
     public override addColumns(colKeys: (ColKey | null | undefined)[], source: ColumnEventType): void {
-        this._addColumns(colKeys, source, (column) => this.setRowGroupActive(true, column, source));
+        const processColumn = (column: AgColumn) => this.setRowGroupActive(true, column, source);
+        this.updateColList(colKeys, this.columns, true, true, processColumn, this.getEventName(), source);
     }
 
     public override removeColumns(colKeys: (ColKey | null | undefined)[] | null, source: ColumnEventType): void {
-        this._removeColumns(colKeys, source, (column) => this.setRowGroupActive(false, column, source));
+        const processColumn = (column: AgColumn) => this.setRowGroupActive(false, column, source);
+        this.updateColList(colKeys, this.columns, false, true, processColumn, this.getEventName(), source);
     }
 
     public override extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {

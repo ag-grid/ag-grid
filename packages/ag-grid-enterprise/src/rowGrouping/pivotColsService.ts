@@ -28,11 +28,13 @@ export class PivotColsService extends BaseColsService implements NamedBean, ICol
     }
 
     public override addColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this._addColumns(colKeys, source, (column) => column.setPivotActive(true, source));
+        const processColumn = (column: AgColumn) => column.setPivotActive(true, source);
+        this.updateColList(colKeys, this.columns, true, true, processColumn, this.getEventName(), source);
     }
 
     public override removeColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this._removeColumns(colKeys, source, (column) => column.setPivotActive(false, source));
+        const processColumn = (column: AgColumn) => column.setPivotActive(false, source);
+        this.updateColList(colKeys, this.columns, false, true, processColumn, this.getEventName(), source);
     }
 
     public override orderColumns(

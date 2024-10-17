@@ -37,23 +37,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
     public abstract addColumns(keys: Maybe<ColKey>[], source: ColumnEventType): void;
 
-    protected _addColumns(
-        keys: Maybe<ColKey>[],
-        source: ColumnEventType,
-        processColumn: (column: AgColumn) => void
-    ): void {
-        this.updateColList(keys, this.columns, true, true, processColumn, this.getEventName(), source);
-    }
-
     public abstract removeColumns(keys: Maybe<ColKey>[] | null, source: ColumnEventType): void;
-
-    protected _removeColumns(
-        keys: Maybe<ColKey>[] | null,
-        source: ColumnEventType,
-        processColumn: (column: any) => void
-    ): void {
-        this.updateColList(keys, this.columns, false, true, processColumn, this.getEventName(), source);
-    }
 
     protected setColList(
         colKeys: ColKey[],

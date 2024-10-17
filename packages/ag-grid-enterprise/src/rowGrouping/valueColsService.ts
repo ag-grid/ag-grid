@@ -36,11 +36,13 @@ export class ValueColsService extends BaseColsService implements NamedBean, ICol
     }
 
     public override addColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this._addColumns(colKeys, source, (column) => this.setValueActive(true, column, source));
+        const processColumn = (column: AgColumn) => this.setValueActive(true, column, source);
+        this.updateColList(colKeys, this.columns, true, true, processColumn, this.getEventName(), source);
     }
 
     public override removeColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this._removeColumns(colKeys, source, (column) => this.setValueActive(false, column, source));
+        const processColumn = (column: AgColumn) => this.setValueActive(false, column, source);
+        this.updateColList(colKeys, this.columns, false, true, processColumn, this.getEventName(), source);
     }
 
     public override extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {
