@@ -1,8 +1,8 @@
 import React, { memo, useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import type { CellCtrl } from 'ag-grid-community';
-import type { PopupEditorWrapper } from 'ag-grid-community';
+import { _getLocaleTextFunc } from 'ag-grid-community';
+import type { CellCtrl, PopupEditorWrapper } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { useEffectOnce } from '../useEffectOnce';
@@ -47,7 +47,7 @@ const PopupEditorComp = (props: {
 
         const positionCallback = popupService?.positionPopupByComponent.bind(popupService, positionParams);
 
-        const translate = localeService.getLocaleTextFunc();
+        const translate = _getLocaleTextFunc(localeService);
 
         const addPopupRes = popupService?.addPopup({
             modal: useModelPopup,

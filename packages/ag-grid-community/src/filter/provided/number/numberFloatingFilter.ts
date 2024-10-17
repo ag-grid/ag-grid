@@ -88,7 +88,7 @@ export class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterMo
     public override init(params: INumberFloatingFilterParams): void {
         super.init(params);
         this.filterModelFormatter = new NumberFilterModelFormatter(
-            this.localeService,
+            this.getLocaleTextFunc.bind(this),
             this.optionsFactory,
             (params.filterParams as NumberFilterParams)?.numberFormatter
         );

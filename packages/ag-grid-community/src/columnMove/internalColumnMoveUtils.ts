@@ -23,6 +23,25 @@ export interface ColumnMoveParams {
     visibleColsService: VisibleColsService;
 }
 
+// returns the provided cols sorted in same order as they appear in this.cols, eg if this.cols
+// contains [a,b,c,d,e] and col passed is [e,a] then the passed cols are sorted into [a,e]
+function sortColsLikeCols(colsList: AgColumn[], cols: AgColumn[]): void {
+    if (!cols || cols.length <= 1) {
+        return;
+    }
+
+    const notAllColsPresent = cols.filter((c) => colsList.indexOf(c) < 0).length > 0;
+    if (notAllColsPresent) {
+        return;
+    }
+
+    cols.sort((a, b) => {
+        const indexA = colsList.indexOf(a);
+        const indexB = colsList.indexOf(b);
+        return indexA - indexB;
+    });
+}
+
 export function getBestColumnMoveIndexFromXPosition(
     params: ColumnMoveParams
 ): { columns: AgColumn[]; toIndex: number } | undefined {
@@ -75,7 +94,7 @@ export function getBestColumnMoveIndexFromXPosition(
     // could themselves be part of 'married children' groups, which means we need to maintain the order within
     // the moving list.
     const allMovingColumnsOrdered = allMovingColumns.slice();
-    columnModel.sortColsLikeCols(allMovingColumnsOrdered);
+    sortColsLikeCols(columnModel.getCols(), allMovingColumnsOrdered);
 
     const validMoves = calculateValidMoves({
         movingCols: allMovingColumnsOrdered,

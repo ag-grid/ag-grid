@@ -28,13 +28,14 @@ export class TotalAndFilteredRowsComp extends AgNameValue implements IStatusPane
     }
 
     private onDataChanged() {
-        const rowCount = _formatNumberCommas(this.getFilteredRowCountValue(), this.localeService);
-        const totalRowCount = _formatNumberCommas(this.getTotalRowCount(), this.localeService);
+        const getLocaleTextFunc = this.getLocaleTextFunc.bind(this);
+        const rowCount = _formatNumberCommas(this.getFilteredRowCountValue(), getLocaleTextFunc);
+        const totalRowCount = _formatNumberCommas(this.getTotalRowCount(), getLocaleTextFunc);
 
         if (rowCount === totalRowCount) {
             this.setValue(rowCount);
         } else {
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const localeTextFunc = this.getLocaleTextFunc();
             this.setValue(`${rowCount} ${localeTextFunc('of', 'of')} ${totalRowCount}`);
         }
     }

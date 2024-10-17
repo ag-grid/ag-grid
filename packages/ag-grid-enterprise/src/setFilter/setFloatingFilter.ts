@@ -50,7 +50,7 @@ export class SetFloatingFilterComp<V = string> extends Component implements IFlo
 
     private setParams(params: IFloatingFilterParams): void {
         const displayName = this.columnNameService.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         this.eFloatingFilterText.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }

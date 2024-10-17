@@ -10,12 +10,13 @@ import { _getActiveDomElement } from '../gridOptionsUtils';
 import { _requestAnimationFrame } from '../misc/animationFrameService';
 import type { MenuService } from '../misc/menu/menuService';
 import type { HeaderNavigationService } from '../navigation/headerNavigationService';
-import { HeaderNavigationDirection } from '../navigation/headerNavigationService';
+import type { HeaderNavigationDirection } from '../navigation/headerNavigationService';
 import { _isIOSUserAgent } from '../utils/browser';
 import { _exists } from '../utils/generic';
 import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
 import type { LongTapEvent } from '../widgets/touchListener';
 import { TouchListener } from '../widgets/touchListener';
+import { getColumnHeaderRowHeight, getFloatingFiltersHeight, getGroupRowsHeight } from './headerUtils';
 
 export interface IGridHeaderComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -23,6 +24,7 @@ export interface IGridHeaderComp {
 }
 
 export class GridHeaderCtrl extends BeanStub {
+    private beans: BeanCollection;
     private headerNavigationService?: HeaderNavigationService;
     private focusService: FocusService;
     private columnModel: ColumnModel;
@@ -32,6 +34,7 @@ export class GridHeaderCtrl extends BeanStub {
     private menuService?: MenuService;
 
     public wireBeans(beans: BeanCollection) {
+        this.beans = beans;
         this.headerNavigationService = beans.headerNavigationService;
         this.focusService = beans.focusService;
         this.columnModel = beans.columnModel;
@@ -105,15 +108,15 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private setHeaderHeight(): void {
-        const { columnModel } = this;
+        const { beans } = this;
 
         let totalHeaderHeight: number = 0;
 
-        const groupHeight = this.columnModel.getGroupRowsHeight().reduce((prev, curr) => prev + curr, 0);
-        const headerHeight = this.columnModel.getColumnHeaderRowHeight();
+        const groupHeight = getGroupRowsHeight(beans).reduce((prev, curr) => prev + curr, 0);
+        const headerHeight = getColumnHeaderRowHeight(this.beans);
 
         if (this.filterManager?.hasFloatingFilters()) {
-            totalHeaderHeight += columnModel.getFloatingFiltersHeight()!;
+            totalHeaderHeight += getFloatingFiltersHeight(beans)!;
         }
 
         totalHeaderHeight += groupHeight;
@@ -152,7 +155,7 @@ export class GridHeaderCtrl extends BeanStub {
     protected onTabKeyDown(e: KeyboardEvent): void {
         const isRtl = this.gos.get('enableRtl');
         const backwards = e.shiftKey;
-        const direction = backwards !== isRtl ? HeaderNavigationDirection.LEFT : HeaderNavigationDirection.RIGHT;
+        const direction = backwards !== isRtl ? 'LEFT' : 'RIGHT';
 
         if (
             this.headerNavigationService!.navigateHorizontally(direction, true, e) ||
@@ -169,11 +172,11 @@ export class GridHeaderCtrl extends BeanStub {
 
         switch (e.key) {
             case KeyCode.LEFT:
-                direction = HeaderNavigationDirection.LEFT;
+                direction = 'LEFT';
             // eslint-disable-next-line no-fallthrough
             case KeyCode.RIGHT: {
                 if (!_exists(direction)) {
-                    direction = HeaderNavigationDirection.RIGHT;
+                    direction = 'RIGHT';
                 }
                 if (this.headerNavigationService!.navigateHorizontally(direction, false, e)) {
                     // preventDefault so that the arrow keys don't cause an extra scroll
@@ -182,11 +185,11 @@ export class GridHeaderCtrl extends BeanStub {
                 break;
             }
             case KeyCode.UP:
-                direction = HeaderNavigationDirection.UP;
+                direction = 'UP';
             // eslint-disable-next-line no-fallthrough
             case KeyCode.DOWN: {
                 if (!_exists(direction)) {
-                    direction = HeaderNavigationDirection.DOWN;
+                    direction = 'DOWN';
                 }
                 if (this.headerNavigationService!.navigateVertically(direction, null, e)) {
                     // preventDefault so that the arrow keys don't cause an extra scroll

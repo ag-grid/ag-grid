@@ -246,7 +246,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             nudgeY: 1,
         };
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({
             modal: true,

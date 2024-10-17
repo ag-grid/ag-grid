@@ -131,7 +131,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
 
         this.filterModelFormatter = new DateFilterModelFormatter(
             this.dateFilterParams,
-            this.localeService,
+            this.getLocaleTextFunc.bind(this),
             this.optionsFactory
         );
     }
@@ -281,7 +281,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     }
 
     protected override resetPlaceholder(): void {
-        const globalTranslate = this.localeService.getLocaleTextFunc();
+        const globalTranslate = this.getLocaleTextFunc();
         const placeholder = this.translate('dateFormatOoo');
         const ariaLabel = globalTranslate('ariaFilterValue', 'Filter Value');
 

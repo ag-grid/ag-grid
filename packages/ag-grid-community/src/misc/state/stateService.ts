@@ -1,3 +1,4 @@
+import type { ColumnGroupService } from '../../columns/columnGroups/columnGroupService';
 import type { ColumnModel } from '../../columns/columnModel';
 import type { ColumnState, ColumnStateParams, ColumnStateService } from '../../columns/columnStateService';
 import type { VisibleColsService } from '../../columns/visibleColsService';
@@ -62,6 +63,7 @@ export class StateService extends BeanStub implements NamedBean {
     private sideBarService?: ISideBarService;
     private rangeService?: IRangeService;
     private rowModel: IRowModel;
+    private columnGroupService?: ColumnGroupService;
 
     public wireBeans(beans: BeanCollection): void {
         this.filterManager = beans.filterManager;
@@ -78,6 +80,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.sideBarService = beans.sideBarService;
         this.rangeService = beans.rangeService;
         this.rowModel = beans.rowModel;
+        this.columnGroupService = beans.columnGroupService;
     }
 
     private isClientSideRowModel: boolean;
@@ -503,12 +506,15 @@ export class StateService extends BeanStub implements NamedBean {
 
         if (columnGroupStates) {
             // no easy/performant way of knowing which column groups are pivot column groups
-            this.columnStateService.setColumnGroupState(columnGroupStates, 'gridInitializing');
+            this.columnGroupService?.setColumnGroupState(columnGroupStates, 'gridInitializing');
         }
     }
 
     private getColumnGroupState(): ColumnGroupState | undefined {
-        const columnGroupState = this.columnStateService.getColumnGroupState();
+        if (!this.columnGroupService) {
+            return undefined;
+        }
+        const columnGroupState = this.columnGroupService.getColumnGroupState();
         const openColumnGroups: string[] = [];
         columnGroupState.forEach(({ groupId, open }) => {
             if (open) {
@@ -519,12 +525,12 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setColumnGroupState(initialState: GridState): void {
-        if (!Object.prototype.hasOwnProperty.call(initialState, 'columnGroup')) {
+        if (!Object.prototype.hasOwnProperty.call(initialState, 'columnGroup') || !this.columnGroupService) {
             return;
         }
 
         const openColumnGroups = new Set(initialState.columnGroup?.openColumnGroupIds);
-        const existingColumnGroupState = this.columnStateService.getColumnGroupState();
+        const existingColumnGroupState = this.columnGroupService.getColumnGroupState();
         const stateItems = existingColumnGroupState.map(({ groupId }) => {
             const open = openColumnGroups.has(groupId);
             if (open) {
@@ -545,7 +551,7 @@ export class StateService extends BeanStub implements NamedBean {
         if (stateItems.length) {
             this.columnGroupStates = stateItems;
         }
-        this.columnStateService.setColumnGroupState(stateItems, 'gridInitializing');
+        this.columnGroupService.setColumnGroupState(stateItems, 'gridInitializing');
     }
 
     private getFilterState(): FilterState | undefined {

@@ -1,42 +1,30 @@
 import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
-import { doesMovePassMarryChildren, placeLockedColumns } from '../columnMove/columnMoveUtils';
+import { placeLockedColumns } from '../columnMove/columnMoveUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection, Context } from '../context/context';
-import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
-import type { GridOptions } from '../entities/gridOptions';
-import type { Environment } from '../environment';
 import type { ColumnEventType } from '../events';
 import type { QuickFilterService } from '../filter/quickFilterService';
-import type { PropertyChangedSource } from '../gridOptionsService';
-import {
-    _getCheckboxes,
-    _getHeaderCheckbox,
-    _isDomLayout,
-    _isGroupUseEntireRow,
-    _shouldMaintainColumnOrder,
-} from '../gridOptionsUtils';
-import type { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
-import type { HeaderRowCtrl } from '../headerRendering/row/headerRowCtrl';
+import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
 import type { IAutoColService } from '../interfaces/iAutoColService';
-import type { Column, ColumnPinnedType } from '../interfaces/iColumn';
+import type { Column } from '../interfaces/iColumn';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
-import type { ColumnAnimationService } from '../rendering/columnAnimationService';
-import { _areEqual, _moveInArray } from '../utils/array';
-import { _warn } from '../validation/logging';
+import { _areEqual } from '../utils/array';
 import type { ValueCache } from '../valueService/valueCache';
 import type { ColumnDefFactory } from './columnDefFactory';
-import { dispatchColumnPinnedEvent } from './columnEventUtils';
 import type { ColumnFactory } from './columnFactory';
-import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnState, ColumnStateService } from './columnStateService';
-import { GROUP_AUTO_COLUMN_ID, _destroyColumnTree, _getColumnsFromTree, isColumnGroupAutoCol } from './columnUtils';
+import {
+    _columnsMatch,
+    _convertColumnEventSourceType,
+    _destroyColumnTree,
+    _getColumnsFromTree,
+    isColumnGroupAutoCol,
+} from './columnUtils';
 import type { ColumnViewportService } from './columnViewportService';
 import type { FuncColsService } from './funcColsService';
 import type { SelectionColService } from './selectionColService';
@@ -59,12 +47,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
     beanName = 'columnModel' as const;
 
     private context: Context;
-    private ctrlsService: CtrlsService;
     private columnFactory: ColumnFactory;
     private visibleColsService: VisibleColsService;
     private columnViewportService: ColumnViewportService;
     private pivotResultColsService?: IPivotResultColsService;
-    private columnAnimationService?: ColumnAnimationService;
     private autoColService?: IAutoColService;
     private selectionColService?: SelectionColService;
     private valueCache?: ValueCache;
@@ -74,16 +60,13 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private funcColsService: FuncColsService;
     private quickFilterService?: QuickFilterService;
     private showRowGroupColsService?: IShowRowGroupColsService;
-    private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
         this.context = beans.context;
-        this.ctrlsService = beans.ctrlsService;
         this.columnFactory = beans.columnFactory;
         this.visibleColsService = beans.visibleColsService;
         this.columnViewportService = beans.columnViewportService;
         this.pivotResultColsService = beans.pivotResultColsService;
-        this.columnAnimationService = beans.columnAnimationService;
         this.autoColService = beans.autoColService;
         this.selectionColService = beans.selectionColService;
         this.valueCache = beans.valueCache;
@@ -93,25 +76,18 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.funcColsService = beans.funcColsService;
         this.quickFilterService = beans.quickFilterService;
         this.showRowGroupColsService = beans.showRowGroupColsService;
-        this.environment = beans.environment;
     }
 
     // as provided by gridProp columnsDefs
-    private colDefs: (ColDef | ColGroupDef)[];
+    private colDefs?: (ColDef | ColGroupDef)[];
 
     // columns generated from columnDefs
     // this doesn't change (including order) unless columnDefs prop changses.
-    private colDefCols: ColumnCollections;
-
-    // group auto columns
-    private autoCols: ColumnCollections | null;
-
-    // selection checkbox columns
-    private selectionCols: ColumnCollections | null;
+    public colDefCols?: ColumnCollections;
 
     // [providedCols OR pivotResultCols] PLUS autoGroupCols PLUS selectionCols
     // this cols.list maintains column order.
-    private cols: ColumnCollections;
+    public cols?: ColumnCollections;
 
     // if pivotMode is on, however pivot results are NOT shown if no pivot columns are set
     private pivotMode = false;
@@ -123,38 +99,28 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private lastPivotOrder: AgColumn[] | null;
 
     // true if we are doing column spanning
-    private colSpanActive: boolean;
+    public colSpanActive: boolean;
 
     // grid columns that have colDef.autoHeight set
-    private autoHeightActive: boolean;
-    private autoHeightActiveAtLeastOnce = false;
+    public autoRowHeightActive: boolean;
+    public wasAutoRowHeightEverActive = false;
 
-    private ready = false;
-    private changeEventsDispatching = false;
-
-    // when we're waiting for cell data types to be inferred, we need to defer column resizing
-    private shouldQueueResizeOperations: boolean = false;
-    private resizeOperationQueue: (() => void)[] = [];
+    public ready = false;
+    public changeEventsDispatching = false;
 
     public postConstruct(): void {
         this.pivotMode = this.gos.get('pivotMode');
 
         this.addManagedPropertyListeners(
             ['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'],
-            (event) => this.refreshAll(convertSourceType(event.source))
-        );
-        this.addManagedPropertyListener('rowSelection', (event) => {
-            this.onSelectionOptionsChanged(event.currentValue, event.previousValue, convertSourceType(event.source));
-        });
-        this.addManagedPropertyListener('autoGroupColumnDef', (event) =>
-            this.onAutoGroupColumnDefChanged(convertSourceType(event.source))
+            (event) => this.refreshAll(_convertColumnEventSourceType(event.source))
         );
         this.addManagedPropertyListeners(
             ['defaultColDef', 'defaultColGroupDef', 'columnTypes', 'suppressFieldDotNotation'],
-            (event) => this.recreateColumnDefs(convertSourceType(event.source))
+            (event) => this.recreateColumnDefs(_convertColumnEventSourceType(event.source))
         );
         this.addManagedPropertyListener('pivotMode', (event) =>
-            this.setPivotMode(this.gos.get('pivotMode'), convertSourceType(event.source))
+            this.setPivotMode(this.gos.get('pivotMode'), _convertColumnEventSourceType(event.source))
         );
     }
 
@@ -232,25 +198,25 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         this.saveColOrder();
 
-        this.selectCols();
+        const cols = this.selectCols(this.colDefCols);
 
-        this.createAutoCols();
-        this.addAutoCols();
+        this.createAutoCols(cols);
+        this.autoColService?.addAutoCols(cols);
 
-        this.createSelectionCols();
-        this.addSelectionCols();
+        this.createSelectionCols(cols);
+        this.selectionColService?.addSelectionCols(cols);
 
         const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
         if (!newColDefs || shouldSortNewColDefs) {
-            this.restoreColOrder();
+            this.restoreColOrder(cols);
         }
 
-        this.positionLockedCols();
+        this.positionLockedCols(cols);
         this.showRowGroupColsService?.refresh();
         this.quickFilterService?.refreshQuickFilterCols();
 
         this.setColSpanActive();
-        this.setAutoHeightActive();
+        this.setAutoHeightActive(cols);
 
         // make sure any part of the gui that tries to draw, eg the header,
         // will get empty lists of columns rather than stale columns.
@@ -259,7 +225,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.visibleColsService.clear();
         this.columnViewportService.clear();
 
-        const dispatchChangedEvent = !_areEqual(prevColTree, this.cols.tree);
+        const dispatchChangedEvent = !_areEqual(prevColTree, this.cols!.tree);
         if (dispatchChangedEvent) {
             this.eventService.dispatchEvent({
                 type: 'gridColumnsChanged',
@@ -267,11 +233,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
     }
 
-    private selectCols(): void {
+    private selectCols(colDefCols: ColumnCollections): ColumnCollections {
         const pivotResultCols = this.pivotResultColsService?.getPivotResultCols() ?? null;
         this.showingPivotResult = pivotResultCols != null;
 
-        const { map, list, tree, treeDepth } = pivotResultCols ?? this.colDefCols;
+        const { map, list, tree, treeDepth } = pivotResultCols ?? colDefCols;
         this.cols = {
             list: list.slice(),
             map: { ...map },
@@ -288,13 +254,17 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 this.lastPivotOrder = null;
             }
         }
+        return this.cols;
     }
 
     public getColsToShow(): AgColumn[] {
+        if (!this.cols) {
+            return [];
+        }
         // pivot mode is on, but we are not pivoting, so we only
         // show columns we are aggregating on
 
-        const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.isShowingPivotResult();
+        const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.showingPivotResult;
         const valueColumns = this.funcColsService.valueCols;
 
         const res = this.cols.list.filter((col) => {
@@ -311,125 +281,23 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return res;
     }
 
-    private addAutoCols(): void {
-        if (this.autoCols == null) {
-            return;
-        }
-        this.cols.list = this.autoCols.list.concat(this.cols.list);
-        this.cols.tree = this.autoCols.tree.concat(this.cols.tree);
-        updateColsMap(this.cols);
+    private createAutoCols(cols: ColumnCollections): void {
+        this.autoColService?.createAutoCols(cols, (updateOrder) => {
+            this.lastOrder = updateOrder(this.lastOrder);
+            this.lastPivotOrder = updateOrder(this.lastPivotOrder);
+        });
     }
 
-    private createAutoCols(): void {
-        const groupFullWidthRow = _isGroupUseEntireRow(this.gos, this.pivotMode);
-        // we need to allow suppressing auto-column separately for group and pivot as the normal situation
-        // is CSRM and user provides group column themselves for normal view, but when they go into pivot the
-        // columns are generated by the grid so no opportunity for user to provide group column. so need a way
-        // to suppress auto-col for grouping only, and not pivot.
-        // however if using Viewport RM or SSRM and user is providing the columns, the user may wish full control
-        // of the group column in this instance.
-        const suppressAutoColumn = this.pivotMode ? this.gos.get('pivotSuppressAutoColumn') : this.isSuppressAutoCol();
-
-        const rowGroupCols = this.funcColsService.rowGroupCols;
-
-        const groupingActive = rowGroupCols.length > 0 || this.gos.get('treeData');
-
-        const noAutoCols = !groupingActive || suppressAutoColumn || groupFullWidthRow;
-
-        const destroyPrevious = () => {
-            if (this.autoCols) {
-                _destroyColumnTree(this.context, this.autoCols.tree);
-                this.autoCols = null;
-            }
-        };
-
-        // function
-        if (noAutoCols || !this.autoColService) {
-            destroyPrevious();
-            return;
-        }
-
-        const list = this.autoColService.createAutoCols(rowGroupCols) ?? [];
-        const autoColsSame = areColIdsEqual(list, this.autoCols?.list || null);
-
-        // the new tree dept will equal the current tree dept of cols
-        const newTreeDepth = this.cols.treeDepth;
-        const oldTreeDepth = this.autoCols ? this.autoCols.treeDepth : -1;
-        const treeDeptSame = oldTreeDepth == newTreeDepth;
-
-        if (autoColsSame && treeDeptSame) {
-            return;
-        }
-
-        destroyPrevious();
-        const [tree, treeDepth] = this.columnFactory.balanceTreeForAutoCols(list, this.cols.tree);
-        this.autoCols = {
-            list,
-            tree,
-            treeDepth,
-            map: {},
-        };
-
-        const putAutocolsFirstInList = (cols: AgColumn[] | null): AgColumn[] | null => {
-            if (!cols) {
-                return null;
-            }
-            // we use colId, and not instance, to remove old autoGroupCols
-            const colsFiltered = cols.filter((col) => !isColumnGroupAutoCol(col));
-            return [...list, ...colsFiltered];
-        };
-
-        this.lastOrder = putAutocolsFirstInList(this.lastOrder);
-        this.lastPivotOrder = putAutocolsFirstInList(this.lastPivotOrder);
-    }
-
-    private createSelectionCols(): void {
-        const destroyCollection = () => {
-            _destroyColumnTree(this.context, this.selectionCols?.tree);
-            this.selectionCols = null;
-        };
-
-        if (!this.selectionColService) {
-            destroyCollection();
-        }
-
-        // the new tree dept will equal the current tree dept of cols
-        const newTreeDepth = this.cols.treeDepth;
-        const oldTreeDepth = this.selectionCols?.treeDepth ?? -1;
-        const treeDeptSame = oldTreeDepth == newTreeDepth;
-
-        const list = this.selectionColService?.createSelectionCols() ?? [];
-        const areSame = areColIdsEqual(list, this.selectionCols?.list ?? []);
-
-        if (areSame && treeDeptSame) {
-            return;
-        }
-
-        destroyCollection();
-        const [tree, treeDepth] = this.columnFactory.balanceTreeForAutoCols(list, this.cols.tree);
-        this.selectionCols = {
-            list,
-            tree,
-            treeDepth,
-            map: {},
-        };
-
-        this.lastOrder = this.selectionColService?.putSelectionColsFirstInList(list, this.lastOrder) ?? null;
-        this.lastPivotOrder = this.selectionColService?.putSelectionColsFirstInList(list, this.lastPivotOrder) ?? null;
-    }
-
-    private addSelectionCols(): void {
-        if (this.selectionCols == null) {
-            return;
-        }
-        this.cols.list = this.selectionCols.list.concat(this.cols.list);
-        this.cols.tree = this.selectionCols.tree.concat(this.cols.tree);
-        updateColsMap(this.cols);
+    private createSelectionCols(cols: ColumnCollections): void {
+        this.selectionColService?.createSelectionCols(cols, (updateOrder) => {
+            this.lastOrder = updateOrder(this.lastOrder) ?? null;
+            this.lastPivotOrder = updateOrder(this.lastPivotOrder) ?? null;
+        });
     }
 
     // on events 'groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'
-    private refreshAll(source: ColumnEventType) {
-        if (!this.isReady()) {
+    public refreshAll(source: ColumnEventType) {
+        if (!this.ready) {
             return;
         }
         this.refreshCols(false);
@@ -448,120 +316,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
         );
     }
 
-    public setColsPinned(keys: Maybe<ColKey>[], pinned: ColumnPinnedType, source: ColumnEventType): void {
-        if (!this.cols) {
-            return;
-        }
-        if (!keys?.length) {
-            return;
-        }
+    private setAutoHeightActive(cols: ColumnCollections): void {
+        this.autoRowHeightActive = cols.list.some((col) => col.isVisible() && col.isAutoHeight());
 
-        if (_isDomLayout(this.gos, 'print')) {
-            _warn(37);
-            return;
-        }
-
-        this.columnAnimationService?.start();
-
-        let actualPinned: ColumnPinnedType;
-        if (pinned === true || pinned === 'left') {
-            actualPinned = 'left';
-        } else if (pinned === 'right') {
-            actualPinned = 'right';
-        } else {
-            actualPinned = null;
-        }
-
-        const updatedCols: AgColumn[] = [];
-
-        keys.forEach((key) => {
-            if (!key) {
-                return;
-            }
-            const column = this.getCol(key);
-            if (!column) {
-                return;
-            }
-
-            if (column.getPinned() !== actualPinned) {
-                column.setPinned(actualPinned);
-                updatedCols.push(column);
-            }
-        });
-
-        if (updatedCols.length) {
-            this.visibleColsService.refresh(source);
-            dispatchColumnPinnedEvent(this.eventService, updatedCols, source);
-        }
-
-        this.columnAnimationService?.finish();
-    }
-
-    // called by headerRenderer - when a header is opened or closed
-    public setColumnGroupOpened(
-        key: AgProvidedColumnGroup | string | null,
-        newValue: boolean,
-        source: ColumnEventType
-    ): void {
-        let keyAsString: string;
-
-        if (isProvidedColumnGroup(key)) {
-            keyAsString = key.getId();
-        } else {
-            keyAsString = key || '';
-        }
-        this.columnStateService.setColumnGroupState([{ groupId: keyAsString, open: newValue }], source);
-    }
-
-    public getProvidedColGroup(key: string): AgProvidedColumnGroup | null {
-        let res: AgProvidedColumnGroup | null = null;
-
-        depthFirstOriginalTreeSearch(null, this.cols?.tree, (node) => {
-            if (isProvidedColumnGroup(node)) {
-                if (node.getId() === key) {
-                    res = node;
-                }
-            }
-        });
-
-        return res;
-    }
-
-    public isColGroupLocked(column: AgColumn): boolean {
-        const groupLockGroupColumns = this.gos.get('groupLockGroupColumns');
-        if (!column.isRowGroupActive() || groupLockGroupColumns === 0) {
-            return false;
-        }
-
-        if (groupLockGroupColumns === -1) {
-            return true;
-        }
-
-        const rowGroupCols = this.funcColsService.rowGroupCols;
-        const colIndex = rowGroupCols.findIndex((groupCol) => groupCol.getColId() === column.getColId());
-        return groupLockGroupColumns > colIndex;
-    }
-
-    public isSuppressAutoCol() {
-        const groupDisplayType = this.gos.get('groupDisplayType');
-        const isCustomRowGroups = groupDisplayType === 'custom';
-        if (isCustomRowGroups) {
-            return true;
-        }
-
-        const treeDataDisplayType = this.gos.get('treeDataDisplayType');
-        return treeDataDisplayType === 'custom';
-    }
-
-    private setAutoHeightActive(): void {
-        this.autoHeightActive = this.cols.list.some((col) => col.isVisible() && col.isAutoHeight());
-
-        if (this.autoHeightActive) {
-            this.autoHeightActiveAtLeastOnce = true;
+        if (this.autoRowHeightActive) {
+            this.wasAutoRowHeightEverActive = true;
         }
     }
 
-    private restoreColOrder(): void {
+    private restoreColOrder(cols: ColumnCollections): void {
         const lastOrder = this.showingPivotResult ? this.lastPivotOrder : this.lastOrder;
         if (!lastOrder) {
             return;
@@ -571,17 +334,17 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         // only do the sort if at least one column is accounted for. columns will be not accounted for
         // if changing from pivot result cols to provided columns
-        const noColsFound = !this.cols.list.some((col) => lastOrderMapped.has(col));
+        const noColsFound = !cols.list.some((col) => lastOrderMapped.has(col));
         if (noColsFound) {
             return;
         }
 
         // order cols in the same order as before. we need to make sure that all
         // cols still exists, so filter out any that no longer exist.
-        const colsMap = new Map<AgColumn, boolean>(this.cols.list.map((col) => [col, true]));
+        const colsMap = new Map<AgColumn, boolean>(cols.list.map((col) => [col, true]));
         const lastOrderFiltered = lastOrder.filter((col) => colsMap.has(col));
         const lastOrderFilteredMap = new Map<AgColumn, boolean>(lastOrderFiltered.map((col) => [col, true]));
-        const missingFromLastOrder = this.cols.list.filter((col) => !lastOrderFilteredMap.has(col));
+        const missingFromLastOrder = cols.list.filter((col) => !lastOrderFilteredMap.has(col));
 
         // add in the new columns, at the end (if no group), or at the end of the group (if a group)
         const res = lastOrderFiltered.slice();
@@ -623,125 +386,18 @@ export class ColumnModel extends BeanStub implements NamedBean {
             res.splice(lastIndex + 1, 0, newCol);
         });
 
-        this.cols.list = res;
+        cols.list = res;
     }
 
-    public sortColsLikeKeys(colIds: string[]): void {
-        if (this.cols == null) {
-            return;
-        }
-
-        let newOrder: AgColumn[] = [];
-        const processedColIds: { [id: string]: boolean } = {};
-
-        colIds.forEach((colId) => {
-            if (processedColIds[colId]) {
-                return;
-            }
-            const col = this.cols.map[colId];
-            if (col) {
-                newOrder.push(col);
-                processedColIds[colId] = true;
-            }
-        });
-
-        // add in all other columns
-        let autoGroupInsertIndex = 0;
-        this.cols.list.forEach((col) => {
-            const colId = col.getColId();
-            const alreadyProcessed = processedColIds[colId] != null;
-            if (alreadyProcessed) {
-                return;
-            }
-
-            const isAutoGroupCol = colId.startsWith(GROUP_AUTO_COLUMN_ID);
-            if (isAutoGroupCol) {
-                // auto group columns, if missing from state list, are added to the start.
-                // it's common to have autoGroup missing, as grouping could be on by default
-                // on a column, but the user could of since removed the grouping via the UI.
-                // if we don't inc the insert index, autoGroups will be inserted in reverse order
-                newOrder.splice(autoGroupInsertIndex++, 0, col);
-            } else {
-                // normal columns, if missing from state list, are added at the end
-                newOrder.push(col);
-            }
-        });
-
-        // this is already done in updateCols, however we changed the order above (to match the order of the state
-        // columns) so we need to do it again. we could of put logic into the order above to take into account fixed
-        // columns, however if we did then we would have logic for updating fixed columns twice. reusing the logic here
-        // is less sexy for the code here, but it keeps consistency.
-        newOrder = placeLockedColumns(newOrder, this.gos);
-
-        if (!doesMovePassMarryChildren(newOrder, this.getColTree())) {
-            _warn(39);
-            return;
-        }
-
-        this.cols.list = newOrder;
-    }
-
-    // returns the provided cols sorted in same order as they appear in this.cols, eg if this.cols
-    // contains [a,b,c,d,e] and col passed is [e,a] then the passed cols are sorted into [a,e]
-    public sortColsLikeCols(cols: AgColumn[]): void {
-        if (!cols || cols.length <= 1) {
-            return;
-        }
-
-        const notAllColsPresent = cols.filter((c) => this.cols.list.indexOf(c) < 0).length > 0;
-        if (notAllColsPresent) {
-            return;
-        }
-
-        cols.sort((a, b) => {
-            const indexA = this.cols.list.indexOf(a);
-            const indexB = this.cols.list.indexOf(b);
-            return indexA - indexB;
-        });
-    }
-
-    public resetColDefIntoCol(column: AgColumn, source: ColumnEventType): boolean {
-        const userColDef = column.getUserProvidedColDef();
-        if (!userColDef) {
-            return false;
-        }
-        const newColDef = this.columnFactory.addColumnDefaultAndTypes(userColDef, column.getColId());
-        column.setColDef(newColDef, userColDef, source);
-        return true;
-    }
-
-    public queueResizeOperations(): void {
-        this.shouldQueueResizeOperations = true;
-    }
-
-    public isShouldQueueResizeOperations(): boolean {
-        return this.shouldQueueResizeOperations;
-    }
-
-    public processResizeOperations(): void {
-        this.shouldQueueResizeOperations = false;
-        this.resizeOperationQueue.forEach((resizeOperation) => resizeOperation());
-        this.resizeOperationQueue = [];
-    }
-
-    public pushResizeOperation(func: () => void): void {
-        this.resizeOperationQueue.push(func);
-    }
-
-    public moveInCols(movedColumns: AgColumn[], toIndex: number, source: ColumnEventType): void {
-        _moveInArray(this.cols?.list, movedColumns, toIndex);
-        this.visibleColsService.refresh(source);
-    }
-
-    private positionLockedCols(): void {
-        this.cols.list = placeLockedColumns(this.cols.list, this.gos);
+    private positionLockedCols(cols: ColumnCollections): void {
+        cols.list = placeLockedColumns(cols.list, this.gos);
     }
 
     private saveColOrder(): void {
         if (this.showingPivotResult) {
-            this.lastPivotOrder = this.cols?.list;
+            this.lastPivotOrder = this.cols?.list ?? null;
         } else {
-            this.lastOrder = this.cols?.list;
+            this.lastOrder = this.cols?.list ?? null;
         }
     }
 
@@ -751,48 +407,13 @@ export class ColumnModel extends BeanStub implements NamedBean {
                   this.colDefCols.list,
                   this.showingPivotResult,
                   this.lastOrder,
-                  this.cols.list
+                  this.cols?.list ?? []
               )
             : undefined;
     }
 
-    public isShowingPivotResult(): boolean {
-        return this.showingPivotResult;
-    }
-
-    // called by clientSideRowModel.refreshModel
-    public isChangeEventsDispatching(): boolean {
-        return this.changeEventsDispatching;
-    }
-
-    public isColSpanActive(): boolean {
-        return this.colSpanActive;
-    }
-
-    // used by Column Tool Panel
-    public isProvidedColGroupsPresent(): boolean {
-        return this.colDefCols?.treeDepth > 0;
-    }
-
     private setColSpanActive(): void {
-        this.colSpanActive = this.cols.list.some((col) => col.getColDef().colSpan != null);
-    }
-
-    public isAutoRowHeightActive(): boolean {
-        return this.autoHeightActive;
-    }
-
-    public wasAutoRowHeightEverActive(): boolean {
-        return this.autoHeightActiveAtLeastOnce;
-    }
-
-    // + gridPanel -> for resizing the body and setting top margin
-    public getHeaderRowCount(): number {
-        return this.cols ? this.cols.treeDepth + 1 : -1;
-    }
-
-    public isReady(): boolean {
-        return this.ready;
+        this.colSpanActive = !!this.cols?.list.some((col) => col.getColDef().colSpan != null);
     }
 
     public isPivotMode(): boolean {
@@ -834,9 +455,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         // if we aren't going to force, update the auto cols in place
-        if (this.autoCols) {
-            this.autoColService!.updateAutoCols(this.autoCols.list, source);
-        }
+        this.autoColService?.updateAutoCols(source);
         this.createColsFromColDefs(source);
     }
 
@@ -847,18 +466,16 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     public override destroy(): void {
         _destroyColumnTree(this.context, this.colDefCols?.tree);
-        _destroyColumnTree(this.context, this.autoCols?.tree);
-        _destroyColumnTree(this.context, this.selectionCols?.tree);
         super.destroy();
     }
 
     public getColTree(): (AgColumn | AgProvidedColumnGroup)[] {
-        return this.cols.tree;
+        return this.cols?.tree ?? [];
     }
 
     // + columnSelectPanel
     public getColDefColTree(): (AgColumn | AgProvidedColumnGroup)[] {
-        return this.colDefCols.tree;
+        return this.colDefCols?.tree ?? [];
     }
 
     // + clientSideRowController -> sorting, building quick filter text
@@ -877,8 +494,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const pivotResultColsList = this.pivotResultColsService?.getPivotResultCols()?.list;
         return [
             this.colDefCols?.list ?? [],
-            this.autoCols?.list ?? [],
-            this.selectionCols?.list ?? [],
+            this.autoColService?.autoCols?.list ?? [],
+            this.selectionColService?.selectionCols?.list ?? [],
             pivotResultColsList ?? [],
         ].flat();
     }
@@ -904,7 +521,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return this.getColFromCollection(key, this.cols);
     }
 
-    public getColFromCollection(key: ColKey, cols: ColumnCollections): AgColumn | null {
+    public getColFromCollection(key: ColKey, cols?: ColumnCollections): AgColumn | null {
         if (cols == null) {
             return null;
         }
@@ -918,171 +535,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         for (let i = 0; i < list.length; i++) {
-            if (columnsMatch(list[i], key)) {
+            if (_columnsMatch(list[i], key)) {
                 return list[i];
             }
         }
 
-        return this.getAutoCol(key);
+        return this.autoColService?.getAutoCol(key) ?? null;
     }
-
-    public getAutoCol(key: ColKey): AgColumn | null {
-        return this.autoCols?.list.find((groupCol) => columnsMatch(groupCol, key)) ?? null;
-    }
-
-    public getAutoCols(): AgColumn[] | null {
-        return this.autoCols?.list ?? null;
-    }
-
-    public getSelectionCol(key: ColKey): AgColumn | null {
-        return this.selectionCols?.list.find((col) => columnsMatch(col, key)) ?? null;
-    }
-
-    public getSelectionCols(): AgColumn[] | null {
-        return this.selectionCols?.list ?? null;
-    }
-
-    public setColHeaderHeight(col: AgColumn | AgColumnGroup, height: number): void {
-        const changed = col.setAutoHeaderHeight(height);
-
-        if (changed) {
-            if (col.isColumn) {
-                this.eventService.dispatchEvent({
-                    type: 'columnHeaderHeightChanged',
-                    column: col,
-                    columns: [col],
-                    source: 'autosizeColumnHeaderHeight',
-                });
-            } else {
-                this.eventService.dispatchEvent({
-                    type: 'columnGroupHeaderHeightChanged',
-                    columnGroup: col,
-                    source: 'autosizeColumnGroupHeaderHeight',
-                });
-            }
-        }
-    }
-
-    public getGroupRowsHeight(): number[] {
-        const heights: number[] = [];
-        const headerRowContainerCtrls = this.ctrlsService.getHeaderRowContainerCtrls();
-
-        for (const headerRowContainerCtrl of headerRowContainerCtrls) {
-            if (!headerRowContainerCtrl) {
-                continue;
-            }
-
-            const groupRowCount = headerRowContainerCtrl.getGroupRowCount() || 0;
-
-            for (let i = 0; i < groupRowCount; i++) {
-                const headerRowCtrl = headerRowContainerCtrl.getGroupRowCtrlAtIndex(i);
-
-                const currentHeightAtPos = heights[i];
-                if (headerRowCtrl) {
-                    const newHeight = this.getColumnGroupHeaderRowHeight(headerRowCtrl);
-                    if (currentHeightAtPos == null || newHeight > currentHeightAtPos) {
-                        heights[i] = newHeight;
-                    }
-                }
-            }
-        }
-
-        return heights;
-    }
-
-    private getColumnGroupHeaderRowHeight(headerRowCtrl: HeaderRowCtrl): number {
-        const defaultHeight: number = (
-            this.isPivotMode() ? this.getPivotGroupHeaderHeight() : this.getGroupHeaderHeight()
-        ) as number;
-
-        let displayedHeights = 0;
-        const headerRowCellCtrls = headerRowCtrl.getHeaderCtrls() as HeaderGroupCellCtrl[];
-        for (const headerCellCtrl of headerRowCellCtrls) {
-            const column = headerCellCtrl.getColumn();
-            if (column.isAutoHeaderHeight()) {
-                const height = column.getAutoHeaderHeight();
-                if (height != null && height > displayedHeights) {
-                    displayedHeights = height;
-                }
-            }
-        }
-
-        return Math.max(defaultHeight, displayedHeights);
-    }
-
-    public getColumnHeaderRowHeight(): number {
-        const defaultHeight: number = (
-            this.isPivotMode() ? this.getPivotHeaderHeight() : this.getHeaderHeight()
-        ) as number;
-
-        const allDisplayedCols = this.visibleColsService.allCols;
-
-        const displayedHeights = allDisplayedCols
-            .filter((col) => col.isAutoHeaderHeight())
-            .map((col) => col.getAutoHeaderHeight() || 0);
-
-        return Math.max(defaultHeight, ...displayedHeights);
-    }
-
-    public getHeaderHeight(): number {
-        return this.gos.get('headerHeight') ?? this.environment.getDefaultHeaderHeight();
-    }
-    public getFloatingFiltersHeight(): number {
-        return this.gos.get('floatingFiltersHeight') ?? this.getHeaderHeight();
-    }
-    public getGroupHeaderHeight(): number {
-        return this.gos.get('groupHeaderHeight') ?? this.getHeaderHeight();
-    }
-    private getPivotHeaderHeight(): number {
-        return this.gos.get('pivotHeaderHeight') ?? this.getHeaderHeight();
-    }
-    public getPivotGroupHeaderHeight(): number {
-        return this.gos.get('pivotGroupHeaderHeight') ?? this.getGroupHeaderHeight();
-    }
-
-    private onAutoGroupColumnDefChanged(source: ColumnEventType) {
-        if (this.autoCols) {
-            this.autoColService!.updateAutoCols(this.autoCols.list, source);
-        }
-    }
-
-    private onSelectionOptionsChanged(
-        current: GridOptions['rowSelection'],
-        prev: GridOptions['rowSelection'],
-        source: ColumnEventType
-    ) {
-        const prevCheckbox = prev && typeof prev !== 'string' ? _getCheckboxes(prev) : undefined;
-        const currCheckbox = current && typeof current !== 'string' ? _getCheckboxes(current) : undefined;
-        const checkboxHasChanged = prevCheckbox !== currCheckbox;
-
-        const prevHeaderCheckbox = prev && typeof prev !== 'string' ? _getHeaderCheckbox(prev) : undefined;
-        const currHeaderCheckbox = current && typeof current !== 'string' ? _getHeaderCheckbox(current) : undefined;
-        const headerCheckboxHasChanged = prevHeaderCheckbox !== currHeaderCheckbox;
-
-        if (checkboxHasChanged || headerCheckboxHasChanged) {
-            this.refreshAll(source);
-        }
-    }
-}
-
-export function convertSourceType(source: PropertyChangedSource): ColumnEventType {
-    // unfortunately they do not match so need to perform conversion
-    return source === 'gridOptionsUpdated' ? 'gridOptionsChanged' : source;
-}
-
-function updateColsMap(cols: ColumnCollections): void {
-    cols.map = {};
-    cols.list.forEach((col) => (cols.map[col.getId()] = col));
-}
-
-function columnsMatch(column: AgColumn, key: ColKey): boolean {
-    const columnMatches = column === key;
-    const colDefMatches = column.getColDef() === key;
-    const idMatches = column.getColId() == key;
-
-    return columnMatches || colDefMatches || idMatches;
-}
-
-function areColIdsEqual(colsA: AgColumn[] | null, colsB: AgColumn[] | null): boolean {
-    return _areEqual(colsA, colsB, (a, b) => a.getColId() === b.getColId());
 }

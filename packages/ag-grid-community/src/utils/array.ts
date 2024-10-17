@@ -8,7 +8,11 @@ export function _last(arr: any): any {
     return arr[arr.length - 1];
 }
 
-export function _areEqual<T>(a?: T[] | null, b?: T[] | null, comparator?: (a: T, b: T) => boolean): boolean {
+export function _areEqual<T>(
+    a?: readonly T[] | null,
+    b?: readonly T[] | null,
+    comparator?: (a: T, b: T) => boolean
+): boolean {
     if (a == null && b == null) {
         return true;
     }
