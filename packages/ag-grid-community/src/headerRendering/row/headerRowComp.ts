@@ -11,11 +11,7 @@ import { HeaderFilterCellComp } from '../cells/floatingFilter/headerFilterCellCo
 import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
 import type { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 
-export enum HeaderRowType {
-    COLUMN_GROUP = 'group',
-    COLUMN = 'column',
-    FLOATING_FILTER = 'filter',
-}
+export type HeaderRowType = 'group' | 'column' | 'filter';
 
 export class HeaderRowComp extends Component {
     private ctrl: HeaderRowCtrl;
@@ -95,10 +91,10 @@ export class HeaderRowComp extends Component {
         let result: AbstractHeaderCellComp<AbstractHeaderCellCtrl>;
 
         switch (this.ctrl.getType()) {
-            case HeaderRowType.COLUMN_GROUP:
+            case 'group':
                 result = new HeaderGroupCellComp(headerCtrl as HeaderGroupCellCtrl);
                 break;
-            case HeaderRowType.FLOATING_FILTER:
+            case 'filter':
                 result = new HeaderFilterCellComp(headerCtrl as HeaderFilterCellCtrl);
                 break;
             default:

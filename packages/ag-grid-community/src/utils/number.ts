@@ -1,4 +1,4 @@
-import type { LocaleService } from '../localeService';
+import type { LocaleTextFunc } from '../misc/locale/localeUtils';
 
 /**
  * the native method number.toLocaleString(undefined, {minimumFractionDigits: 0})
@@ -7,12 +7,12 @@ import type { LocaleService } from '../localeService';
  * @param {number} value
  * @returns {string}
  */
-export function _formatNumberCommas(value: number, localeService: LocaleService): string {
+export function _formatNumberCommas(value: number, getLocaleTextFunc: () => LocaleTextFunc): string {
     if (typeof value !== 'number') {
         return '';
     }
 
-    const localeTextFunc = localeService.getLocaleTextFunc();
+    const localeTextFunc = getLocaleTextFunc();
     const thousandSeparator = localeTextFunc('thousandSeparator', ',');
     const decimalSeparator = localeTextFunc('decimalSeparator', '.');
 

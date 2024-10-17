@@ -106,11 +106,6 @@ export interface HasChildrenChangedEvent<TData = any> extends RowNodeEvent<'hasC
 export interface RowHighlightChangedEvent<TData = any> extends RowNodeEvent<'rowHighlightChanged', TData> {}
 export interface DraggingChangedEvent<TData = any> extends RowNodeEvent<'draggingChanged', TData> {}
 
-export enum RowHighlightPosition {
-    Above,
-    Below,
-}
-
 export type RowPinnedType = 'top' | 'bottom' | null | undefined;
 
 export interface VerticalScrollPosition {

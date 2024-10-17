@@ -82,7 +82,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
         this.hideActiveColumnChooser();
 
         const columnSelectPanel = this.createColumnSelectPanel(this, column, true, chooserParams);
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const columnIndex = this.visibleColsService.allCols.indexOf(column as AgColumn);
         const headerPosition = column ? this.focusService.getFocusedHeader() : null;
 

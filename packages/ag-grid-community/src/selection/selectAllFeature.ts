@@ -14,7 +14,7 @@ import {
 import type { HeaderCellCtrl } from '../headerRendering/cells/column/headerCellCtrl';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
-import { _setAriaHidden, _setAriaRole } from '../utils/aria';
+import { _setAriaRole } from '../utils/aria';
 import { _warn } from '../validation/logging';
 import { AgCheckbox } from '../widgets/agCheckbox';
 
@@ -80,7 +80,6 @@ export class SelectAllFeature extends BeanStub {
         });
 
         this.addManagedListeners(this.cbSelectAll, { fieldValueChanged: this.onCbSelectAll.bind(this) });
-        _setAriaHidden(this.cbSelectAll.getGui(), true);
         this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
         this.refreshSelectAllLabel();
     }
@@ -98,7 +97,7 @@ export class SelectAllFeature extends BeanStub {
 
     private showOrHideSelectAll(): void {
         this.cbSelectAllVisible = this.isCheckboxSelection();
-        this.cbSelectAll.setDisplayed(this.cbSelectAllVisible, { skipAriaHidden: true });
+        this.cbSelectAll.setDisplayed(this.cbSelectAllVisible);
         if (this.cbSelectAllVisible) {
             // in case user is trying this feature with the wrong model type
             this.checkRightRowModelType('selectAllCheckbox');
@@ -145,7 +144,7 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private refreshSelectAllLabel(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const checked = this.cbSelectAll.getValue();
         const ariaStatus = checked ? translate('ariaChecked', 'checked') : translate('ariaUnchecked', 'unchecked');
         const ariaLabel = translate('ariaRowSelectAll', 'Press Space to toggle all rows selection');

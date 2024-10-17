@@ -4,11 +4,11 @@ import type { FocusService } from '../focusService';
 import { _getDocument } from '../gridOptionsUtils';
 import { ManagedFocusFeature } from './managedFocusFeature';
 
-export enum TabGuardClassNames {
-    TAB_GUARD = 'ag-tab-guard',
-    TAB_GUARD_TOP = 'ag-tab-guard-top',
-    TAB_GUARD_BOTTOM = 'ag-tab-guard-bottom',
-}
+export const TabGuardClassNames = {
+    TAB_GUARD: 'ag-tab-guard',
+    TAB_GUARD_TOP: 'ag-tab-guard-top',
+    TAB_GUARD_BOTTOM: 'ag-tab-guard-bottom',
+} as const;
 
 export interface ITabGuard {
     setTabIndex(tabIndex?: string): void;

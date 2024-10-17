@@ -78,7 +78,7 @@ export class SimpleCellEditor<
     }
 
     public afterGuiAttached(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const eInput = this.eInput;
 
         eInput.setInputAriaLabel(translate('ariaInputEditor', 'Input Editor'));

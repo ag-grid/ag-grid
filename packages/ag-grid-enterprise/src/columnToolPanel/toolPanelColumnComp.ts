@@ -199,7 +199,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     private refreshAriaLabel(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const columnLabel = translate('ariaColumn', 'Column');
         const state = this.cbSelect.getValue()
             ? translate('ariaVisible', 'visible')

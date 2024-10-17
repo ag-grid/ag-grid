@@ -1,27 +1,37 @@
-import type { RowNode } from '../entities/rowNode';
-import type { RowHighlightPosition } from '../interfaces/iRowNode';
+import type { RowHighlightPosition, RowNode } from '../entities/rowNode';
 import type { ChangedPath } from '../utils/changedPath';
 import type { IRowModel } from './iRowModel';
 import type { RowDataTransaction } from './rowDataTransaction';
 import type { RowNodeTransaction } from './rowNodeTransaction';
 
-export type ClientSideRowModelStep = `${ClientSideRowModelSteps}`;
-export enum ClientSideRowModelSteps {
-    EVERYTHING = 'group',
-    FILTER = 'filter',
-    SORT = 'sort',
-    MAP = 'map',
-    AGGREGATE = 'aggregate',
-    FILTER_AGGREGATES = 'filter_aggregates',
-    PIVOT = 'pivot',
-    NOTHING = 'nothing',
-}
+// Type exposed to user
+export type ClientSideRowModelStep =
+    | 'everything'
+    | 'group'
+    | 'filter'
+    | 'sort'
+    | 'map'
+    | 'aggregate'
+    | 'filter_aggregates'
+    | 'pivot'
+    | 'nothing';
+
+// Internal type - without `everything`
+export type ClientSideRowModelStage =
+    | 'group'
+    | 'filter'
+    | 'sort'
+    | 'map'
+    | 'aggregate'
+    | 'filter_aggregates'
+    | 'pivot'
+    | 'nothing';
 
 export interface IClientSideRowModel<TData = any> extends IRowModel {
     onRowGroupOpened(): void;
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
     setRowData(rowData: any[]): void;
-    refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void;
+    refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStage | undefined): void;
     forEachLeafNode(callback: (node: RowNode, index: number) => void): void;
     forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
     forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;
@@ -46,7 +56,7 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
 
 export interface RefreshModelParams<TData = any> {
     // how much of the pipeline to execute
-    step: ClientSideRowModelSteps;
+    step: ClientSideRowModelStage;
     // if NOT new data, then this flag tells grid to check if rows already
     // exist for the nodes (matching by node id) and reuses the row if it does.
     keepRenderedRows?: boolean;

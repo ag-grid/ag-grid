@@ -114,7 +114,7 @@ export class AgGroupComponent extends Component<AgGroupComponentEvent> {
             this.addItems(initialItems);
         }
 
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         this.cbGroupEnabled.setLabel(localeTextFunc('enabled', 'Enabled'));
 
         if (this.enabled) {

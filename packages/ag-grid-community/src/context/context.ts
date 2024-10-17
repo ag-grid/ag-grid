@@ -8,6 +8,7 @@ import type { ColumnResizeService } from '../columnResize/columnResizeService';
 import type { ColumnDefFactory } from '../columns/columnDefFactory';
 import type { ColumnFactory } from '../columns/columnFactory';
 import type { ColumnFlexService } from '../columns/columnFlexService';
+import type { ColumnGroupService } from '../columns/columnGroups/columnGroupService';
 import type { ColumnHoverService } from '../columns/columnHover/columnHoverService';
 import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnNameService } from '../columns/columnNameService';
@@ -29,7 +30,6 @@ import type { RowDragService } from '../dragAndDrop/rowDragService';
 import type { EditService } from '../edit/editService';
 import type { RowEditService } from '../edit/rowEditService';
 import type { GridOptions } from '../entities/gridOptions';
-import type { PositionUtils } from '../entities/positionUtils';
 import type { Environment } from '../environment';
 import type { EventService } from '../eventService';
 import type { AgGlobalEventListener } from '../events';
@@ -39,7 +39,6 @@ import type { FilterValueService } from '../filter/filterValueService';
 import type { QuickFilterService } from '../filter/quickFilterService';
 import type { FocusService } from '../focusService';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
-import type { PinnedWidthService } from '../gridBodyComp/pinnedWidthService';
 import type { ScrollVisibleService } from '../gridBodyComp/scrollVisibleService';
 import type { GridDestroyService } from '../gridDestroyService';
 import type { GridOptionsService } from '../gridOptionsService';
@@ -69,9 +68,9 @@ import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsSe
 import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IMasterDetailService } from '../interfaces/masterDetail';
 import type { IRenderStatusService } from '../interfaces/renderStatusService';
-import type { LocaleService } from '../localeService';
 import type { AnimationFrameService } from '../misc/animationFrameService';
 import type { ApiEventService } from '../misc/apiEvents/apiEventService';
+import type { LocaleService } from '../misc/locale/localeService';
 import type { MenuService } from '../misc/menu/menuService';
 import type { StateService } from '../misc/state/stateService';
 import { _unRegisterGridModules } from '../modules/moduleRegistry';
@@ -82,6 +81,7 @@ import type { PageBoundsListener } from '../pagination/pageBoundsListener';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
 import type { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageSizeService';
 import type { PaginationService } from '../pagination/paginationService';
+import type { PinnedColumnService } from '../pinnedColumns/pinnedColumnService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
@@ -89,6 +89,7 @@ import type { CellFlashService } from '../rendering/cell/cellFlashService';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
 import type { StickyRowService } from '../rendering/features/stickyRowService';
 import type { OverlayService } from '../rendering/overlays/overlayService';
+import type { RowAutoHeightService } from '../rendering/row/rowAutoHeightService';
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { RowNodeSorter } from '../sort/rowNodeSorter';
@@ -212,14 +213,13 @@ export interface CoreBeanCollection {
     filterManager?: FilterManager;
     rowContainerHeightService: RowContainerHeightService;
     frameworkOverrides: IFrameworkOverrides;
-    positionUtils: PositionUtils;
     selectionService?: ISelectionService;
     rowStyleService?: RowStyleService;
     rowModel: IRowModel;
     ctrlsService: CtrlsService;
     valueCache?: ValueCache;
     rowNodeEventThrottle?: RowNodeEventThrottle;
-    localeService: LocaleService;
+    localeService?: LocaleService;
     syncService: SyncService;
     ariaAnnouncementService: AriaAnnouncementService;
     rangeService?: IRangeService;
@@ -253,7 +253,7 @@ export interface CoreBeanCollection {
     mouseEventService: MouseEventService;
     cellNavigationService?: CellNavigationService;
     scrollVisibleService: ScrollVisibleService;
-    pinnedWidthService: PinnedWidthService;
+    pinnedColumnService?: PinnedColumnService;
     expressionService?: ExpressionService;
     autoWidthCalculator?: AutoWidthCalculator;
     agComponentUtils?: AgComponentUtils;
@@ -295,6 +295,8 @@ export interface CoreBeanCollection {
     cellFlashService?: CellFlashService;
     masterDetailService?: IMasterDetailService;
     tooltipService?: TooltipService;
+    columnGroupService?: ColumnGroupService;
+    rowAutoHeightService?: RowAutoHeightService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -354,26 +356,27 @@ export type BeanName =
     | 'chartTranslationService'
     | 'chartService'
     | 'clipboardService'
+    | 'columnAnimationService'
     | 'columnAutosizeService'
     | 'columnChooserFactory'
     | 'columnController'
     | 'columnDefFactory'
     | 'columnEditorFactory'
+    | 'columnFactory'
     | 'columnFilterService'
     | 'columnFlexService'
-    | 'columnResizeService'
-    | 'columnFactory'
-    | 'columnAnimationService'
+    | 'columnGroupService'
     | 'columnHoverService'
     | 'columnMenuFactory'
     | 'columnModel'
     | 'columnMoveService'
-    | 'columnPositionService'
     | 'columnNameService'
-    | 'columnViewportService'
+    | 'columnPositionService'
+    | 'columnResizeService'
     | 'columnStateService'
     | 'columnToolPanelFactory'
     | 'columnUtils'
+    | 'columnViewportService'
     | 'pivotResultColsService'
     | 'context'
     | 'contextMenuService'
@@ -399,6 +402,7 @@ export type BeanName =
     | 'filterMenuFactory'
     | 'filterStage'
     | 'filterValueService'
+    | 'flashCellService'
     | 'flattenStage'
     | 'focusService'
     | 'funcColsService'
@@ -432,7 +436,7 @@ export type BeanName =
     | 'paginationAutoPageSizeService'
     | 'paginationService'
     | 'pinnedRowModel'
-    | 'pinnedWidthService'
+    | 'pinnedColumnService'
     | 'pivotColDefService'
     | 'pivotStage'
     | 'popupService'
@@ -440,9 +444,9 @@ export type BeanName =
     | 'rangeService'
     | 'pageBoundsListener'
     | 'pageBoundsService'
-    | 'positionUtils'
     | 'registry'
     | 'renderStatusService'
+    | 'rowAutoHeightService'
     | 'rowContainerHeightService'
     | 'rowDragService'
     | 'rowEditService'

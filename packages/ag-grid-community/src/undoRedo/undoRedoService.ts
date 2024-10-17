@@ -1,13 +1,9 @@
-import type { ColumnModel } from '../columns/columnModel';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
-import { _areCellsEqual, _isSameRow } from '../entities/positionUtils';
-import type { PositionUtils } from '../entities/positionUtils';
+import { _areCellsEqual, _getRowNode, _isSameRow } from '../entities/positionUtils';
 import type { CellValueChangedEvent } from '../events';
-import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import { _isCellSelectionEnabled } from '../gridOptionsUtils';
 import type { CellRange, CellRangeParams, IRangeService } from '../interfaces/IRangeService';
@@ -19,17 +15,11 @@ import { RangeUndoRedoAction, UndoRedoAction, UndoRedoStack } from './undoRedoSt
 export class UndoRedoService extends BeanStub implements NamedBean {
     beanName = 'undoRedoService' as const;
 
-    private focusService: FocusService;
-    private ctrlsService: CtrlsService;
-    private positionUtils: PositionUtils;
-    private columnModel: ColumnModel;
+    private beans: BeanCollection;
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.focusService = beans.focusService;
-        this.ctrlsService = beans.ctrlsService;
-        this.positionUtils = beans.positionUtils;
-        this.columnModel = beans.columnModel;
+        this.beans = beans;
         this.rangeService = beans.rangeService;
     }
 
@@ -82,7 +72,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
             rowDragEnd: listener,
         });
 
-        this.ctrlsService.whenReady(this, (p) => {
+        this.beans.ctrlsService.whenReady(this, (p) => {
             this.gridBodyCtrl = p.gridBodyCtrl;
         });
     }
@@ -196,7 +186,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         action.cellValueChanges.forEach((cellValueChange) => {
             const { rowIndex, rowPinned, columnId } = cellValueChange;
             const rowPosition: RowPosition = { rowIndex, rowPinned };
-            const currentRow = this.positionUtils.getRowNode(rowPosition);
+            const currentRow = _getRowNode(this.beans, rowPosition);
 
             // checks if the row has been filtered out
             if (!currentRow!.displayed) {
@@ -246,7 +236,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         const cellValueChange = cellValueChanges[0];
         const { rowIndex, rowPinned } = cellValueChange;
         const rowPosition: RowPosition = { rowIndex, rowPinned };
-        const row = this.positionUtils.getRowNode(rowPosition);
+        const row = _getRowNode(this.beans, rowPosition);
 
         const lastFocusedCell: LastFocusedCell = {
             rowPinned: cellValueChange.rowPinned,
@@ -264,7 +254,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         const { rowIndex, columnId, rowPinned } = lastFocusedCell;
         const scrollFeature = this.gridBodyCtrl.getScrollFeature();
 
-        const column: AgColumn | null = this.columnModel.getCol(columnId);
+        const column: AgColumn | null = this.beans.columnModel.getCol(columnId);
 
         if (!column) {
             return;
@@ -274,7 +264,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         scrollFeature.ensureColumnVisible(column);
 
         const cellPosition: CellPosition = { rowIndex, column, rowPinned };
-        this.focusService.setFocusedCell({ ...cellPosition, forceBrowserFocus: true });
+        this.beans.focusService.setFocusedCell({ ...cellPosition, forceBrowserFocus: true });
 
         rangeService?.setRangeToCell(cellPosition);
     }

@@ -1,8 +1,2 @@
-export enum VerticalDirection {
-    Up,
-    Down,
-}
-export enum HorizontalDirection {
-    Left,
-    Right,
-}
+export type VerticalDirection = 'up' | 'down';
+export type HorizontalDirection = 'left' | 'right';

@@ -285,7 +285,7 @@ export class ChartTranslationService extends BeanStub implements NamedBean {
     beanName = 'chartTranslationService' as const;
 
     public translate(toTranslate: ChartTranslationKey): string {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const defaultTranslation = DEFAULT_CHART_TRANSLATIONS[toTranslate];
         return translate(toTranslate, defaultTranslation);
     }

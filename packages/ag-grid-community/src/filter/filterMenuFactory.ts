@@ -149,7 +149,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             this.dispatchVisibleChangedEvent(false, containerType, column);
         };
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         const ariaLabel =
             isLegacyMenuEnabled && containerType !== 'columnFilter'

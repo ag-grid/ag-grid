@@ -4,35 +4,25 @@ import type {
     BeanCollection,
     ColumnModel,
     ColumnNameService,
-    FuncColsService,
-    IShowRowGroupColsService,
     NamedBean,
-    PositionUtils,
     RowNode,
     ValueService,
-    VisibleColsService,
 } from 'ag-grid-community';
-import { BeanStub, _warn } from 'ag-grid-community';
+import { BeanStub, _getRowNode, _warn } from 'ag-grid-community';
 
 export class ChartColumnService extends BeanStub implements NamedBean {
     beanName = 'chartColumnService' as const;
 
+    private beans: BeanCollection;
     private columnModel: ColumnModel;
-    private showRowGroupColsService?: IShowRowGroupColsService;
     private columnNameService: ColumnNameService;
-    private visibleColsService: VisibleColsService;
-    private funcColsService: FuncColsService;
     private valueService: ValueService;
-    private positionUtils: PositionUtils;
 
     public wireBeans(beans: BeanCollection): void {
+        this.beans = beans;
         this.columnModel = beans.columnModel;
-        this.showRowGroupColsService = beans.showRowGroupColsService;
         this.columnNameService = beans.columnNameService;
-        this.visibleColsService = beans.visibleColsService;
-        this.funcColsService = beans.funcColsService;
         this.valueService = beans.valueService;
-        this.positionUtils = beans.positionUtils;
     }
 
     private valueColsWithoutSeriesType: Set<string> = new Set();
@@ -50,7 +40,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
     }
 
     public getAllDisplayedColumns(): AgColumn[] {
-        return this.visibleColsService.allCols;
+        return this.beans.visibleColsService.allCols;
     }
 
     public getColDisplayName(col: AgColumn, includePath?: boolean): string | null {
@@ -75,11 +65,11 @@ export class ChartColumnService extends BeanStub implements NamedBean {
     }
 
     public getRowGroupColumns(): AgColumn[] {
-        return this.funcColsService.rowGroupCols;
+        return this.beans.funcColsService.rowGroupCols;
     }
 
     public getGroupDisplayColumns(): AgColumn[] {
-        return this.showRowGroupColsService?.getShowRowGroupCols() ?? [];
+        return this.beans.showRowGroupColsService?.getShowRowGroupCols() ?? [];
     }
 
     public isPivotMode(): boolean {
@@ -141,7 +131,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
             return false;
         }
 
-        const row = this.positionUtils.getRowNode({ rowIndex: 0, rowPinned: null });
+        const row = _getRowNode(this.beans, { rowIndex: 0, rowPinned: null });
 
         if (!row) {
             return this.valueColsWithoutSeriesType.has(colId);

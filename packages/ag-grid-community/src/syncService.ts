@@ -1,5 +1,5 @@
 import type { ColumnModel } from './columns/columnModel';
-import { convertSourceType } from './columns/columnModel';
+import { _convertColumnEventSourceType } from './columns/columnUtils';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
@@ -68,6 +68,6 @@ export class SyncService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.columnModel.setColumnDefs(columnDefs, convertSourceType(event.source));
+        this.columnModel.setColumnDefs(columnDefs, _convertColumnEventSourceType(event.source));
     }
 }

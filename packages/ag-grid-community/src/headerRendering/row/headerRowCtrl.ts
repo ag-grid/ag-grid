@@ -10,7 +10,8 @@ import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeade
 import { HeaderCellCtrl } from '../cells/column/headerCellCtrl';
 import type { HeaderGroupCellCtrl } from '../cells/columnGroup/headerGroupCellCtrl';
 import type { HeaderFilterCellCtrl } from '../cells/floatingFilter/headerFilterCellCtrl';
-import { HeaderRowType } from './headerRowComp';
+import { getColumnHeaderRowHeight, getFloatingFiltersHeight, getGroupRowsHeight } from '../headerUtils';
+import type { HeaderRowType } from './headerRowComp';
 
 export interface IHeaderRowComp {
     setTop(top: string): void;
@@ -48,9 +49,9 @@ export class HeaderRowCtrl extends BeanStub {
         this.type = type;
 
         const typeClass =
-            type == HeaderRowType.COLUMN_GROUP
+            type == 'group'
                 ? `ag-header-row-column-group`
-                : type == HeaderRowType.FLOATING_FILTER
+                : type == 'filter'
                   ? `ag-header-row-column-filter`
                   : `ag-header-row-column`;
         this.headerRowClass = `ag-header-row ${typeClass}`;
@@ -184,17 +185,17 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     public getTopAndHeight() {
-        const { columnModel, filterManager } = this.beans;
+        const { filterManager } = this.beans;
         const sizes: number[] = [];
 
-        const groupHeadersHeight = columnModel.getGroupRowsHeight();
-        const headerHeight = columnModel.getColumnHeaderRowHeight();
+        const groupHeadersHeight = getGroupRowsHeight(this.beans);
+        const headerHeight = getColumnHeaderRowHeight(this.beans);
 
         sizes.push(...groupHeadersHeight);
         sizes.push(headerHeight);
 
         if (filterManager?.hasFloatingFilters()) {
-            sizes.push(columnModel.getFloatingFiltersHeight() as number);
+            sizes.push(getFloatingFiltersHeight(this.beans) as number);
         }
 
         let topOffset = 0;
@@ -297,7 +298,7 @@ export class HeaderRowCtrl extends BeanStub {
 
         if (headerCtrl == null) {
             switch (this.type) {
-                case HeaderRowType.FLOATING_FILTER: {
+                case 'filter': {
                     headerCtrl = this.createBean(
                         this.beans.registry.createDynamicBean<HeaderFilterCellCtrl>(
                             'headerFilterCellCtrl',
@@ -308,7 +309,7 @@ export class HeaderRowCtrl extends BeanStub {
                     );
                     break;
                 }
-                case HeaderRowType.COLUMN_GROUP:
+                case 'group':
                     headerCtrl = this.createBean(
                         this.beans.registry.createDynamicBean<HeaderGroupCellCtrl>(
                             'headerGroupCellCtrl',
@@ -350,7 +351,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getActualDepth(): number {
-        return this.type == HeaderRowType.FLOATING_FILTER ? this.rowIndex - 1 : this.rowIndex;
+        return this.type == 'filter' ? this.rowIndex - 1 : this.rowIndex;
     }
 
     private getColumnsInViewportNormalLayout(): (AgColumn | AgColumnGroup)[] {

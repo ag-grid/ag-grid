@@ -5,7 +5,7 @@
             "children": [
                 {
                     "type": "item",
-                    "title": "Overview",
+                    "title": "AG Grid: Reference",
                     "path": "reference"
                 }
             ]

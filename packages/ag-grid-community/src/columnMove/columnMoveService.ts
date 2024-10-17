@@ -1,6 +1,6 @@
 import type { ColKey, ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
-import { HorizontalDirection } from '../constants/direction';
+import type { HorizontalDirection } from '../constants/direction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -78,7 +78,8 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         const movedColumns = this.columnModel.getColsForKeys(columnsToMoveKeys);
 
         if (this.doesMovePassRules(movedColumns, toIndex)) {
-            this.columnModel.moveInCols(movedColumns, toIndex, source);
+            _moveInArray(this.columnModel.getCols(), movedColumns, toIndex);
+            this.visibleColsService.refresh(source);
             this.eventService.dispatchEvent({
                 type: 'columnMoved',
                 columns: movedColumns,
@@ -161,7 +162,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         const left = rect.left;
         const isGroup = isColumnGroup(column);
         const width = isGroup ? rect.width : column.getActualWidth();
-        const isLeft = (hDirection === HorizontalDirection.Left) !== gos.get('enableRtl');
+        const isLeft = (hDirection === 'left') !== gos.get('enableRtl');
 
         const xPosition = normaliseX({
             x: isLeft ? left - 20 : left + width + 20,
@@ -175,7 +176,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         attemptMoveColumns({
             allMovingColumns: isGroup ? column.getLeafColumns() : [column],
             isFromHeader: true,
-            fromLeft: hDirection === HorizontalDirection.Right,
+            fromLeft: hDirection === 'right',
             xPosition,
             pinned,
             fromEnter: false,
