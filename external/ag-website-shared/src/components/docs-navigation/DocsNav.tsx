@@ -202,7 +202,7 @@ export function DocsNav({
 
     return (
         <Collapsible id="docs-mobile-nav-collapser" isOpen={mobileNavOpen}>
-            <div className={styles.docsNavOuter}>
+            <div id="docs-nav-scroll" className={styles.docsNavOuter}>
                 <div className={styles.docsNavInner}>
                     {showWhatsNew && (
                         <div className={styles.whatsNewLink}>
