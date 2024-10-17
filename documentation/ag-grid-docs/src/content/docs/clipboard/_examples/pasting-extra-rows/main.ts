@@ -28,6 +28,8 @@ const gridOptions: GridOptions = {
         mode: 'multiRow',
         checkboxes: false,
         headerCheckbox: false,
+        enableClickSelection: true,
+        copySelectedRows: true,
     },
     processDataFromClipboard,
 };
