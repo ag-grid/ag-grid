@@ -88,18 +88,25 @@ export class StateService extends BeanStub implements NamedBean {
     private cachedState: GridState;
     private suppressEvents = true;
     private queuedUpdateSources: Set<keyof GridState | 'gridInitializing'> = new Set();
-    private dispatchStateUpdateEventDebounced = _debounce(() => this.dispatchQueuedStateUpdateEvents(), 0);
+    private dispatchStateUpdateEventDebounced = _debounce(this, () => this.dispatchQueuedStateUpdateEvents(), 0);
     // If user is doing a manual expand all node by node, we don't want to process one at a time.
     // EVENT_ROW_GROUP_OPENED is already async, so no impact of making the state async here.
     private onRowGroupOpenedDebounced = _debounce(
-        () => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()),
+        this,
+        () => {
+            this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState());
+        },
         0
     );
     // similar to row expansion, want to debounce. However, selection is synchronous, so need to mark as stale in case `getState` is called.
-    private onRowSelectedDebounced = _debounce(() => {
-        this.staleStateKeys.delete('rowSelection');
-        this.updateCachedState('rowSelection', this.getRowSelectionState());
-    }, 0);
+    private onRowSelectedDebounced = _debounce(
+        this,
+        () => {
+            this.staleStateKeys.delete('rowSelection');
+            this.updateCachedState('rowSelection', this.getRowSelectionState());
+        },
+        0
+    );
     private columnStates?: ColumnState[];
     private columnGroupStates?: { groupId: string; open: boolean | undefined }[];
     private staleStateKeys: Set<keyof GridState> = new Set();
@@ -135,8 +142,9 @@ export class StateService extends BeanStub implements NamedBean {
     public override destroy(): void {
         super.destroy();
 
-        // Clear pending timers
+        // Release memory
         clearTimeout(this.updateRowGroupExpansionStateTimer);
+        this.queuedUpdateSources.clear();
     }
 
     private getInitialState(): GridState {

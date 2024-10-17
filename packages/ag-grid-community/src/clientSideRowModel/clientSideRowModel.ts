@@ -101,7 +101,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.filterAggregatesStage = beans.filterAggregatesStage;
     }
 
-    private onRowHeightChanged_debounced = _debounce(this.onRowHeightChanged.bind(this), 100);
+    private onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
 
     // top most node of the tree. the children are the user provided data.
     public rootNode: RowNode | null = null;

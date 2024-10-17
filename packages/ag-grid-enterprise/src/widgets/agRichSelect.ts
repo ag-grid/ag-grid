@@ -140,7 +140,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.setupAriaProperties();
 
         const { searchDebounceDelay = 300 } = this.config;
-        this.clearSearchString = _debounce(this.clearSearchString, searchDebounceDelay);
+        this.clearSearchString = _debounce(this, this.clearSearchString.bind(this), searchDebounceDelay);
 
         this.renderSelectedValue();
 
