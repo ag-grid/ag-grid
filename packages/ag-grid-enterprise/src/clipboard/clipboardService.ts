@@ -168,8 +168,8 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.rangeService = beans.rangeService;
     }
 
-    private gridCtrl: GridCtrl;
     private clientSideRowModel: IClientSideRowModel | null = null;
+    private gridCtrl: GridCtrl | null = null;
     private lastPasteOperationTime: number = 0;
 
     private navigatorApiFailed = false;
@@ -182,6 +182,13 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.beans.ctrlsService.whenReady(this, (p) => {
             this.gridCtrl = p.gridCtrl;
         });
+    }
+
+    public override destroy(): void {
+        super.destroy();
+
+        this.clientSideRowModel = null;
+        this.gridCtrl = null;
     }
 
     public pasteFromClipboard(): void {
@@ -1191,6 +1198,10 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         callbackNow: (element: HTMLTextAreaElement) => void,
         callbackAfter?: (element: HTMLTextAreaElement) => void
     ): void {
+        if (!this.gridCtrl) {
+            return;
+        }
+
         const eDoc = _getDocument(this.gos);
         const eTempInput = eDoc.createElement('textarea');
         eTempInput.style.width = '1px';

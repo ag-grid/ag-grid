@@ -7,6 +7,8 @@ export class GridDestroyService extends BeanStub implements NamedBean {
 
     private beans: BeanCollection;
 
+    private destroyCalled = false;
+
     public wireBeans(beans: BeanCollection): void {
         this.beans = beans;
     }
