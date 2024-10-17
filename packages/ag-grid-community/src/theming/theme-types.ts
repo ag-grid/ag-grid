@@ -126,7 +126,7 @@ const colorValueToCss = (value: ColorValue): string | false => {
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme
  */
-export type ColorSchemeValue = 'light' | 'dark' | 'inherit' | 'normal';
+export type ColorSchemeValue = 'light' | 'dark' | 'inherit' | 'normal' | AnyString;
 
 const colorSchemeValueToCss = literalToCSS;
 

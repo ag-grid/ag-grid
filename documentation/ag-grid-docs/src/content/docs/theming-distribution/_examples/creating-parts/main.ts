@@ -27,6 +27,7 @@ const myCheckboxStyle = createPart('checkboxStyle')
                 &::before {
                     content: '✔';
                     position: absolute;
+                    pointer-events: none;
                     inset: 0;
                     text-align: center;
                     line-height: 16px;

@@ -1,0 +1,28 @@
+.ag-checkbox-input-wrapper {
+    border-radius: 4px;
+    /* Parts' CSS can use new parameters - define support
+       for them using withAdditionalParams below */
+    box-shadow: 0 0 5px 4px red;
+    width: 16px;
+    height: 16px;
+
+    &.ag-checked {
+        box-shadow: 0 0 5px 4px red;
+        &::before {
+            content: '✔';
+            position: absolute;
+            pointer-events: none;
+            inset: 0;
+            text-align: center;
+            line-height: 16px;
+            font-size: 14px;
+        }
+    }
+}
+
+.ag-checkbox-input {
+    width: 16px;
+    height: 16px;
+    appearance: none;
+    -webkit-appearance: none;
+}

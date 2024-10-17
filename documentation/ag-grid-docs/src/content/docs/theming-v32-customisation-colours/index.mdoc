@@ -1,0 +1,53 @@
+---
+title: "v32 Themes: Customising Colours & Fonts"
+---
+
+Change the overall colour scheme and appearance of data.
+
+{% note %}
+This page describes the grid's theming system from v32 and before, for the benefit of applications that have not yet migrated to the Theming API. These themes are deprecated and will be removed in a future major version. You may want to visit the [new theming docs](./theming-colors/) or check out the [migration guide](./theming-migration/).
+{% /note %}
+
+The grid exposes many CSS `--ag-*-color` variables that affect the colour of elements. `--ag-font-size` and `--ag-font-family` control the default font for the grid.
+
+## Example
+
+```css
+.ag-theme-quartz {
+    --ag-foreground-color: rgb(126, 46, 132);
+    --ag-background-color: rgb(249, 245, 227);
+    --ag-header-foreground-color: rgb(204, 245, 172);
+    --ag-header-background-color: rgb(209, 64, 129);
+    --ag-odd-row-background-color: rgb(0, 0, 0, 0.03);
+    --ag-header-column-resize-handle-color: rgb(126, 46, 132);
+
+    --ag-font-size: 17px;
+    --ag-font-family: monospace;
+}
+```
+
+The above code produces these results:
+
+{% gridExampleRunner title="Colour Customisation" name="colour-customisation"  exampleHeight=400 /%}
+
+## Key colour variables
+
+Some of the most important colour variables are listed below. For the full list check the full [CSS variables reference](./theming-v32-customisation-variables/) - every colour variable ends with `-color`.
+
+{% apiDocumentation source="global-style-customisation-variables/variables.json" section="variables" names=["--ag-active-color","--ag-alpine-active-color", "--ag-balham-active-color", "--ag-material-primary-color", "--ag-material-accent-color", "--ag-foreground-color", "--ag-background-color", "--ag-secondary-foreground-color", "--ag-data-color", "--ag-header-foreground-color", "--ag-header-background-color", "--ag-disabled-foreground-color", "--ag-odd-row-background-color", "--ag-row-hover-color", "--ag-border-color", "--ag-row-border-color"] config={"hideHeader": true} /%}
+
+{% note %}
+There are a lot of colour variables - the easiest way to find the variable that colours a specific element is often to inspect the element in your browser's developer tools and check the value of its `color` or `background-color` properties.
+{% /note %}
+
+## Colour blending
+
+The Quartz theme automatically generates semi-transparent versions of colour variables based on the ones that you define. For example if you set `--ag-active-color` to `red` then `--ag-range-selection-background-color` will default to a 20% opaque red.
+
+If you're on a theme other than Quartz, you can achieve this effect yourself using the CSS [color-mix()](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color-mix) function. Here is how you would set the range selection background to a 20% opaque red when using the Alpine theme:
+
+```css
+.ag-theme-alpine {
+    --ag-range-selection-background-color: color-mix(in srgb, transparent, red 20%);
+}
+```

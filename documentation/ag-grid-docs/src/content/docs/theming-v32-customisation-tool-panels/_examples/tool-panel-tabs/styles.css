@@ -1,0 +1,17 @@
+.ag-theme-quartz,
+.ag-theme-quartz-dark {
+    --ag-control-panel-background-color: #cc222244;
+    --ag-side-button-selected-background-color: #cc222244;
+
+    --ag-selected-tab-underline-color: deeppink;
+    --ag-selected-tab-underline-width: 2px;
+    --ag-selected-tab-underline-transition-speed: 0.5s;
+
+    --ag-side-bar-panel-width: 300px;
+}
+
+.ag-theme-quartz .ag-filter-toolpanel-group-title-bar,
+.ag-theme-quartz-dark .ag-filter-toolpanel-group-title-bar {
+    /* use a semi-transparent background to show the background colour behind */
+    background-color: rgb(255, 255, 255, 0.2);
+}

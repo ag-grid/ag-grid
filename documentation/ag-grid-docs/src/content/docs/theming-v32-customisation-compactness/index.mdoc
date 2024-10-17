@@ -1,0 +1,47 @@
+---
+title: "v32 Themes: Customising Compactness & Row Height"
+---
+
+Add more white space or pack more data into the UI.
+
+{% note %}
+This page describes the grid's theming system from v32 and before, for the benefit of applications that have not yet migrated to the Theming API. These themes are deprecated and will be removed in a future major version. You may want to visit the [new theming docs](./theming-compactness/) or check out the [migration guide](./theming-migration/).
+{% /note %}
+
+`--ag-grid-size` is the main control for affecting how tightly data and UI elements are packed together. It should be a value with pixel units e.g. `8px`. All padding and spacing in the grid is defined as a multiple of grid-size, so increasing it will make most components larger by increasing their internal white space while leaving the size of text and icons unchanged.
+
+```css
+.ag-theme-quartz {
+    --ag-grid-size: 3px; /* very compact */
+}
+```
+
+After grid size, the most common variables to change are:
+
+* `--ag-row-height` and `--ag-header-height` set the height of rows and headers.
+* `--ag-list-item-height` sets the height of items in lists of values, such as the [rich select editor](./provided-cell-editors-rich-select/) and [set filter](./filter-set/).
+
+In the following example, classes are applied to the grid container that change compactness dynamically:
+
+{% gridExampleRunner title="Dynamic Height" name="dynamic-height"  exampleHeight=450 /%}
+
+## Full list of compactness variables
+
+{% apiDocumentation source="global-style-customisation-variables/variables.json" section="variables" names=["--ag-row-height", "--ag-header-height", "--ag-list-item-height", "--ag-widget-container-horizontal-padding", "--ag-widget-container-vertical-padding", "--ag-widget-horizontal-spacing", "--ag-widget-vertical-spacing", "--ag-cell-horizontal-padding", "--ag-column-select-indent-size", "--ag-set-filter-indent-size", "--ag-advanced-filter-builder-indent-size"] config={"hideHeader": true} /%}
+
+## Using CSS rules to customise compactness
+
+The grid contains thousands of elements. Most of them respond to `--ag-grid-size` but many of them don't have their own specific variables to customise size. For all elements except rows, headers and list items (see note below), you can set their height, margin or paddings using CSS rules that target a class name, e.g.
+
+```css
+/* set the height of text inputs */
+.ag-theme-quartz .ag-text-field-input {
+    height: 30px;
+}
+```
+
+### Setting the height of rows, headers and list items
+
+To change the height of rows, headers and list item heights, you *must* use the provided CSS variables (`--ag-row-height`, `--ag-header-height` and `--ag-list-item-height`). The grid uses [DOM virtualisation](./dom-virtualisation/) for rendering large amounts of data, and needs to know the height of virtualised elements in order to calculate their layout. It does this by measuring the values of CSS variables such as `--ag-row-height`.
+
+Using CSS to set a height on a row element itself e.g. `.ag-row { height: 50px; }` is not supported.
