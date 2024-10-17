@@ -4,6 +4,7 @@ import type {
     ChartType,
     GridOptionsService,
     IChartService,
+    LocaleTextFunc,
     MenuItemDef,
     NamedBean,
 } from 'ag-grid-community';
@@ -191,7 +192,7 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
     constructor(
         private gos: GridOptionsService,
         private chartService: IChartService,
-        private getLocaleTextFunc: () => (key: string, defaultValue: string, variableValues?: string[]) => string
+        private getLocaleTextFunc: () => LocaleTextFunc
     ) {}
 
     getMenuItem(): MenuItemDefWithKey<PivotMenuOptionName> {
@@ -411,7 +412,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
     constructor(
         private gos: GridOptionsService,
         private chartService: IChartService,
-        private getLocaleTextFunc: () => (key: string, defaultValue: string, variableValues?: string[]) => string
+        private getLocaleTextFunc: () => LocaleTextFunc
     ) {}
 
     getMenuItem(): MenuItemDefWithKey<RangeMenuOptionName> {

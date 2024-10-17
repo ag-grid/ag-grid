@@ -13,6 +13,7 @@ import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import { LocalEventService } from '../localEventService';
 import type { LocaleService } from '../misc/locale/localeService';
+import type { LocaleTextFunc } from '../misc/locale/localeUtils';
 import { _getLocaleTextFunc } from '../misc/locale/localeUtils';
 import { _addSafePassiveEventListener } from '../utils/event';
 import type { Bean } from './bean';
@@ -257,7 +258,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
 
     public isAlive = (): boolean => !this.destroyed;
 
-    public getLocaleTextFunc(): (key: string, defaultValue: string, variableValues?: string[]) => string {
+    public getLocaleTextFunc(): LocaleTextFunc {
         return _getLocaleTextFunc(this.localeService);
     }
 

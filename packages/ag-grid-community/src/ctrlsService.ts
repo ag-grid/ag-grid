@@ -10,9 +10,7 @@ import type { GridHeaderCtrl } from './headerRendering/gridHeaderCtrl';
 import type { HeaderRowContainerCtrl } from './headerRendering/rowContainer/headerRowContainerCtrl';
 import type { ColumnPinnedType } from './interfaces/iColumn';
 
-// for all controllers that are singletons, they can register here so other parts
-// of the application can access them.
-
+/** If adding or removing a control, update `NUM_CTRLS` below. */
 interface ReadyParams {
     gridCtrl: GridCtrl;
     gridBodyCtrl: GridBodyCtrl;
@@ -46,12 +44,18 @@ interface ReadyParams {
     rightHeader: HeaderRowContainerCtrl;
 }
 
+/**
+ * This is the number of controls defined above in `ReadyParams`.
+ * This allows us to quickly know when all controls have been registered.
+ */
 const NUM_CTRLS = 23;
 
 type CtrlType = keyof ReadyParams;
 
 type BeanDestroyFunc = Pick<BeanStub<any>, 'addDestroyFunc'>;
 
+// for all controllers that are singletons, they can register here so other parts
+// of the application can access them.
 export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     beanName = 'ctrlsService' as const;
 
@@ -85,6 +89,7 @@ export class CtrlsService extends BeanStub<'ready'> implements NamedBean {
     }
     private updateReady(): void {
         const values = Object.values(this.params);
+        // ready when all ctrls have been registered and are alive
         this.ready =
             values.length === NUM_CTRLS &&
             values.every((ctrl: BeanStub<any> | undefined) => {

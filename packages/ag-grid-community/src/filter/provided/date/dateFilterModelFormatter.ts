@@ -1,4 +1,5 @@
 import type { IFilterOptionDef } from '../../../interfaces/iFilter';
+import type { LocaleTextFunc } from '../../../misc/locale/localeUtils';
 import { _dateToFormattedString, _parseDateTimeFromString } from '../../../utils/date';
 import type { OptionsFactory } from '../optionsFactory';
 import { SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
@@ -7,7 +8,7 @@ import type { DateFilterModel, DateFilterParams } from './iDateFilter';
 export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
     constructor(
         private dateFilterParams: DateFilterParams,
-        getLocaleTextFunc: () => (key: string, defaultValue: string, variableValues?: string[]) => string,
+        getLocaleTextFunc: () => LocaleTextFunc,
         optionsFactory: OptionsFactory
     ) {
         super(getLocaleTextFunc, optionsFactory);

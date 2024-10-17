@@ -5,6 +5,7 @@ import type {
     BeanCollection,
     IRangeService,
     IStatusPanelComp,
+    LocaleTextFunc,
     RowPosition,
 } from 'ag-grid-community';
 import {
@@ -24,10 +25,7 @@ import {
 import type { AgNameValue } from './agNameValue';
 import { AgNameValueSelector } from './agNameValue';
 
-function _formatNumberTwoDecimalPlacesAndCommas(
-    value: number,
-    getLocaleTextFunc: () => (key: string, defaultValue: string, variableValues?: string[]) => string
-): string {
+function _formatNumberTwoDecimalPlacesAndCommas(value: number, getLocaleTextFunc: () => LocaleTextFunc): string {
     if (typeof value !== 'number') {
         return '';
     }
