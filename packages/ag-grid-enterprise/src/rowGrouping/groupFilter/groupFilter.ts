@@ -1,6 +1,7 @@
 import type {
     AgColumn,
     BeanCollection,
+    ColumnModel,
     ColumnNameService,
     FilterDestroyedEvent,
     FilterManager,
@@ -30,6 +31,7 @@ interface FilterColumnPair {
 
 export type GroupFilterEvent = 'columnRowGroupChanged' | 'selectedColumnChanged';
 export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilterComp {
+    private columnModel: ColumnModel;
     private filterManager?: FilterManager;
     private columnNameService: ColumnNameService;
     private rowGroupColsService?: IColsService;
@@ -38,6 +40,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
         this.filterManager = beans.filterManager;
         this.columnNameService = beans.columnNameService;
         this.rowGroupColsService = beans.rowGroupColsService;
+        this.columnModel = beans.columnModel;
     }
 
     private readonly eGroupField: HTMLElement = RefPlaceholder;
@@ -117,12 +120,26 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
             );
             return [];
         }
-        const sourceColumns = this.rowGroupColsService?.getSourceColumnsForGroupColumn?.(this.groupColumn);
+        const sourceColumns = this.getSourceColumnsForGroupColumn?.(this.groupColumn);
         if (!sourceColumns) {
             _warnOnce('Group Column Filter only works on group columns. Please use a different filter.');
             return [];
         }
         return sourceColumns;
+    }
+
+    public getSourceColumnsForGroupColumn(groupCol: AgColumn): AgColumn[] | null {
+        const sourceColumnId = groupCol.getColDef().showRowGroup;
+        if (!sourceColumnId) {
+            return null;
+        }
+
+        if (sourceColumnId === true) {
+            return this.rowGroupColsService?.columns.slice(0) ?? null;
+        }
+
+        const column = this.columnModel.getColDefCol(sourceColumnId);
+        return column ? [column] : null;
     }
 
     private updateGroupField(): AgColumn[] | null {

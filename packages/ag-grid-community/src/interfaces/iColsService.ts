@@ -27,7 +27,6 @@ export interface IColsService {
 
     // RowGroup
     isRowGroupEmpty?(): boolean;
-    getSourceColumnsForGroupColumn?(groupCol: AgColumn): AgColumn[] | null;
     moveColumn?(fromIndex: number, toIndex: number, source: ColumnEventType): void;
 
     // Value

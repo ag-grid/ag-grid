@@ -32,10 +32,6 @@ export class FuncColsService extends BeanStub implements NamedBean {
         return this.pivotColsService.columns;
     }
 
-    public getSourceColumnsForGroupColumn(groupCol: AgColumn): AgColumn[] | null {
-        return this.rowGroupColsService?.getSourceColumnsForGroupColumn?.(groupCol) ?? null;
-    }
-
     public sortRowGroupColumns(compareFn?: (a: AgColumn, b: AgColumn) => number): void {
         this.rowGroupColsService.sortColumns(compareFn);
     }

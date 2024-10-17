@@ -75,20 +75,6 @@ export class RowGroupColsService extends BaseColsService implements NamedBean, I
         } as AllEventsWithoutGridCommon);
     }
 
-    public override getSourceColumnsForGroupColumn(groupCol: AgColumn): AgColumn[] | null {
-        const sourceColumnId = groupCol.getColDef().showRowGroup;
-        if (!sourceColumnId) {
-            return null;
-        }
-
-        if (sourceColumnId === true) {
-            return this.columns.slice(0);
-        }
-
-        const column = this.columnModel.getColDefCol(sourceColumnId);
-        return column ? [column] : null;
-    }
-
     public override orderColumns(
         columnStateAccumulator: { [colId: string]: ColumnState },
         incomingColumnState: { [colId: string]: ColumnState }
