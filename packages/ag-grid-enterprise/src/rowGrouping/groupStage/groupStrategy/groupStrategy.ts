@@ -92,6 +92,9 @@ export class GroupStrategy extends BeanStub {
         this.orderGroups(details);
     }
 
+    /** Galled by GroupStage when the strategy changes, but we never destroyed group stage state before */
+    public deactivate?(): void;
+
     private positionLeafsAndGroups(changedPath: ChangedPath) {
         changedPath.forEachChangedNodeDepthFirst((group: GroupRow) => {
             if (group.childrenAfterGroup) {

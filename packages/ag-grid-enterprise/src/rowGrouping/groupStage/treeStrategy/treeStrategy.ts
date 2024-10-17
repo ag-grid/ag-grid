@@ -52,14 +52,15 @@ export class TreeStrategy extends BeanStub {
     private rowsPendingDestruction: Set<RowNode> | null = null;
 
     /** The root node of the tree. */
-    private readonly root: TreeNode = new TreeNode(null, '', -1);
+    private root: TreeNode = new TreeNode(null, '', -1);
 
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;
         this.showRowGroupColsService = beans.showRowGroupColsService!;
     }
 
-    public override destroy(): void {
+    /** Galled by GroupStage when the strategy changes, destroys the tree */
+    public deactivate(): void {
         const rootRow = this.root.row;
         if (rootRow !== null) {
             this.root.removeRow(rootRow);
@@ -67,7 +68,6 @@ export class TreeStrategy extends BeanStub {
         }
         this.destroyTree(this.root);
         this.commitDestroyedRows();
-        super.destroy();
     }
 
     public execute(params: StageExecuteParams): void {

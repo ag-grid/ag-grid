@@ -36,6 +36,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
 
         let strategy = this.strategy;
         if (strategy?.constructor !== Strategy) {
+            strategy?.deactivate?.();
             this.destroyBean(strategy);
             strategy = this.createManagedBean(new Strategy());
             this.strategy = strategy;

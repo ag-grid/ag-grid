@@ -1330,14 +1330,18 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     public override destroy(): void {
         super.destroy();
 
-        // TODO: We should unassign the local properties below to avoid memory leaks.
-        // (this.rootNode as any) = null;
-        // (this.rowsToDisplay as any) = null;
-        // (this.nodeManager as any) = null;
-        // this.rowDataTransactionBatch = null;
-        // this.lastHighlightedRow = null;
-        // (this.orderedStages as any) = null;
-
+        // Forcefully deallocate memory
         this.clearHighlightedRow();
+        this.nodeManager = null!;
+        this.rowsToDisplay.length = 0;
+        this.rowDataTransactionBatch = null;
+        this.lastHighlightedRow = null;
+        this.orderedStages.length = 0;
+
+        // We do not yet set rootNode to null as there might be some services or
+        // async code (setTimeout, promises, debounce, etc) still pending that might access it
+        // For this reason we create a dummy node with a dummy list of beans to reduce the risk of null reference
+        // exception and to avoid memory leaks
+        this.rootNode = new RowNode({} as any);
     }
 }

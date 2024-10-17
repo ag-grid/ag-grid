@@ -64,6 +64,7 @@ export class StateService extends BeanStub implements NamedBean {
     private rangeService?: IRangeService;
     private rowModel: IRowModel;
     private columnGroupService?: ColumnGroupService;
+    private updateRowGroupExpansionStateTimer: number = 0;
 
     public wireBeans(beans: BeanCollection): void {
         this.filterManager = beans.filterManager;
@@ -129,6 +130,13 @@ export class StateService extends BeanStub implements NamedBean {
                     this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnFirstDataRendered());
                 },
             });
+    }
+
+    public override destroy(): void {
+        super.destroy();
+
+        // Clear pending timers
+        clearTimeout(this.updateRowGroupExpansionStateTimer);
     }
 
     private getInitialState(): GridState {
@@ -222,8 +230,11 @@ export class StateService extends BeanStub implements NamedBean {
         this.updateCachedState('rowSelection', this.getRowSelectionState());
         this.updateCachedState('pagination', this.getPaginationState());
 
-        const updateRowGroupExpansionState = () =>
+        const updateRowGroupExpansionState = () => {
+            this.updateRowGroupExpansionStateTimer = 0;
             this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState());
+        };
+
         this.addManagedEventListeners({
             filterChanged: () => this.updateCachedState('filter', this.getFilterState()),
             rowGroupOpened: () => this.onRowGroupOpenedDebounced(),
@@ -232,10 +243,8 @@ export class StateService extends BeanStub implements NamedBean {
             columnRowGroupChanged: updateRowGroupExpansionState,
             rowDataUpdated: () => {
                 if (this.gos.get('groupDefaultExpanded') !== 0) {
-                    setTimeout(() => {
-                        // once rows are loaded, they may be expanded
-                        updateRowGroupExpansionState();
-                    });
+                    // once rows are loaded, they may be expanded, start the timer only once
+                    this.updateRowGroupExpansionStateTimer ||= setTimeout(updateRowGroupExpansionState);
                 }
             },
             selectionChanged: () => {
@@ -734,7 +743,11 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getRowGroupExpansionState(): RowGroupExpansionState | undefined {
-        if (!this.expansionService) {
+        if (
+            !this.expansionService ||
+            // Check if alive is required as this method might be debounced
+            !this.isAlive()
+        ) {
             return undefined;
         }
 
