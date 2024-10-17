@@ -5,7 +5,7 @@ import type { RowNode } from '../entities/rowNode';
 import type { FilterManager } from '../filter/filterManager';
 import { _getRowHeightAsNumber, _getRowIdCallback } from '../gridOptionsUtils';
 import type { IDatasource } from '../interfaces/iDatasource';
-import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
+import type { IRowModel, RowBounds, RowModelType } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { SortController } from '../sort/sortController';
@@ -14,7 +14,7 @@ import type { InfiniteCacheParams } from './infiniteCache';
 import { InfiniteCache } from './infiniteCache';
 import type { RowNodeBlockLoader } from './rowNodeBlockLoader';
 
-export class InfiniteRowModel extends BeanStub implements NamedBean {
+export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
 
     private filterManager?: FilterManager;

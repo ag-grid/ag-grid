@@ -73,8 +73,8 @@ input[type='submit']#{$selector-exclude-grid},
 
     :where(.icon) {
         --icon-size: 2em;
+        --color-icon: var(--color-button-primary-fg);
 
-        fill: var(--color-button-primary-fg);
         display: inline-block;
         position: relative;
         bottom: 0.05em;
@@ -103,7 +103,7 @@ a.button:hover {
     }
 
     :where(.icon) {
-        fill: var(--color-button-secondary-fg);
+        --color-icon: var(--color-button-secondary-fg);
     }
 }
 
@@ -128,7 +128,7 @@ a.button-secondary:hover {
     }
 
     :where(.icon) {
-        fill: var(--color-button-tertiary-fg);
+        --color-icon: var(--color-button-tertiary-fg);
     }
 }
 

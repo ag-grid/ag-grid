@@ -3,6 +3,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { IsRowSelectable } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
+import { _createGlobalRowEvent } from '../entities/rowNodeUtils';
 import type { SelectionEventSourceType } from '../events';
 import {
     _getActiveDomElement,
@@ -16,11 +17,12 @@ import {
 } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
-import type { ISetNodesSelectedParams } from '../interfaces/iSelectionService';
+import type { ISetNodesSelectedParams, SetSelectedParams } from '../interfaces/iSelectionService';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { RowCtrl, RowGui } from '../rendering/row/rowCtrl';
 import { _setAriaSelected } from '../utils/aria';
 import { ChangedPath } from '../utils/changedPath';
+import { _warn } from '../validation/logging';
 import { CheckboxSelectionComponent } from './checkboxSelectionComponent';
 import { SelectAllFeature } from './selectAllFeature';
 
@@ -91,14 +93,15 @@ export abstract class BaseSelectionService extends BeanStub {
 
         if (isSelected) {
             if (multiSelectOnClick) {
-                rowNode.setSelectedParams({ newValue: false, event: mouseEvent, source });
+                this.setSelectedParams({ rowNode, newValue: false, event: mouseEvent, source });
             } else if (isMultiKey) {
                 if (rowDeselectionWithCtrl) {
-                    rowNode.setSelectedParams({ newValue: false, event: mouseEvent, source });
+                    this.setSelectedParams({ rowNode, newValue: false, event: mouseEvent, source });
                 }
             } else if (rowClickSelection) {
                 // selected with no multi key, must make sure anything else is unselected
-                rowNode.setSelectedParams({
+                this.setSelectedParams({
+                    rowNode,
                     newValue: true,
                     clearSelection: !isShiftKey,
                     rangeSelect: isShiftKey,
@@ -108,7 +111,8 @@ export abstract class BaseSelectionService extends BeanStub {
             }
         } else {
             const clearSelection = multiSelectOnClick ? false : !isMultiKey;
-            rowNode.setSelectedParams({
+            this.setSelectedParams({
+                rowNode,
                 newValue: true,
                 clearSelection: clearSelection,
                 rangeSelect: isShiftKey,
@@ -164,6 +168,20 @@ export abstract class BaseSelectionService extends BeanStub {
 
     public abstract setNodesSelected(params: ISetNodesSelectedParams): number;
 
+    public updateSelectableAfterGrouping(changedPath: ChangedPath | undefined): void {
+        this.updateSelectable(true);
+
+        if (_getGroupSelectsDescendants(this.gos)) {
+            const selectionChanged = this.updateGroupsFromChildrenSelections?.('rowGroupChanged', changedPath);
+            if (selectionChanged) {
+                this.eventService.dispatchEvent({
+                    type: 'selectionChanged',
+                    source: 'rowGroupChanged',
+                });
+            }
+        }
+    }
+
     /**
      * Updates the selectable state for a node by invoking isRowSelectable callback.
      * If the node is not selectable, it will be deselected.
@@ -172,7 +190,7 @@ export abstract class BaseSelectionService extends BeanStub {
      *  - property isRowSelectable changed
      *  - after grouping / treeData
      */
-    public updateSelectable(skipLeafNodes: boolean) {
+    private updateSelectable(skipLeafNodes: boolean) {
         const { gos } = this;
 
         if (!_isRowSelection(gos)) {
@@ -192,12 +210,12 @@ export abstract class BaseSelectionService extends BeanStub {
             // Only in the CSRM, we allow group node selection if a child has a selectable=true when using groupSelectsChildren
             if (isCsrmGroupSelectsChildren && node.group) {
                 const hasSelectableChild = node.childrenAfterGroup!.some((rowNode) => rowNode.selectable === true);
-                node.setRowSelectable(hasSelectableChild, true);
+                this.setRowSelectable(node, hasSelectableChild, true);
                 return;
             }
 
             const rowSelectable = this.isRowSelectable?.(node) ?? true;
-            node.setRowSelectable(rowSelectable, true);
+            this.setRowSelectable(node, rowSelectable, true);
 
             if (!rowSelectable && node.isSelected()) {
                 nodesToDeselect.push(node);
@@ -230,5 +248,135 @@ export abstract class BaseSelectionService extends BeanStub {
 
     private isRowSelectionBlocked(rowNode: RowNode): boolean {
         return !rowNode.selectable || !!rowNode.rowPinned || !_isRowSelection(this.gos);
+    }
+
+    public checkRowSelectable(rowNode: RowNode): void {
+        const isRowSelectableFunc = _getIsRowSelectable(this.gos);
+        this.setRowSelectable(rowNode, isRowSelectableFunc ? isRowSelectableFunc!(rowNode) : true);
+    }
+
+    private setRowSelectable(rowNode: RowNode, newVal: boolean, suppressSelectionUpdate?: boolean): void {
+        if (rowNode.selectable !== newVal) {
+            rowNode.selectable = newVal;
+            rowNode.dispatchRowEvent('selectableChanged');
+
+            if (suppressSelectionUpdate) {
+                return;
+            }
+
+            const isGroupSelectsChildren = _getGroupSelectsDescendants(this.gos);
+            if (isGroupSelectsChildren) {
+                const selected = this.calculateSelectedFromChildren(rowNode);
+                this.setSelectedParams({ rowNode, newValue: selected ?? false, source: 'selectableChanged' });
+                return;
+            }
+
+            // if row is selected but shouldn't be selectable, then deselect.
+            if (rowNode.isSelected() && !rowNode.selectable) {
+                this.setSelectedParams({ rowNode, newValue: false, source: 'selectableChanged' });
+            }
+        }
+    }
+
+    // + selectionController.calculatedSelectedForAllGroupNodes()
+    protected calculateSelectedFromChildren(rowNode: RowNode): boolean | undefined | null {
+        let atLeastOneSelected = false;
+        let atLeastOneDeSelected = false;
+
+        if (!rowNode.childrenAfterGroup?.length) {
+            return rowNode.selectable ? rowNode.__selected : null;
+        }
+
+        for (let i = 0; i < rowNode.childrenAfterGroup.length; i++) {
+            const child = rowNode.childrenAfterGroup[i];
+
+            let childState = child.isSelected();
+            // non-selectable nodes must be calculated from their children, or ignored if no value results.
+            if (!child.selectable) {
+                const selectable = this.calculateSelectedFromChildren(child);
+                if (selectable === null) {
+                    continue;
+                }
+                childState = selectable;
+            }
+
+            switch (childState) {
+                case true:
+                    atLeastOneSelected = true;
+                    break;
+                case false:
+                    atLeastOneDeSelected = true;
+                    break;
+                default:
+                    return undefined;
+            }
+        }
+
+        if (atLeastOneSelected && atLeastOneDeSelected) {
+            return undefined;
+        }
+
+        if (atLeastOneSelected) {
+            return true;
+        }
+
+        if (atLeastOneDeSelected) {
+            return false;
+        }
+
+        if (!rowNode.selectable) {
+            return null;
+        }
+
+        return rowNode.__selected;
+    }
+
+    public selectRowNode(
+        rowNode: RowNode,
+        newValue?: boolean,
+        e?: Event,
+        source: SelectionEventSourceType = 'api'
+    ): boolean {
+        // we only check selectable when newValue=true (ie selecting) to allow unselecting values,
+        // as selectable is dynamic, need a way to unselect rows when selectable becomes false.
+        const selectionNotAllowed = !rowNode.selectable && newValue;
+        const selectionNotChanged = rowNode.__selected === newValue;
+
+        if (selectionNotAllowed || selectionNotChanged) {
+            return false;
+        }
+
+        rowNode.__selected = newValue;
+
+        rowNode.dispatchRowEvent('rowSelected');
+
+        // in case of root node, sibling may have service while this row may not
+        const sibling = rowNode.sibling;
+        if (sibling && sibling.footer && sibling.__localEventService) {
+            sibling.dispatchRowEvent('rowSelected');
+        }
+
+        this.eventService.dispatchEvent({
+            ..._createGlobalRowEvent(rowNode, this.gos, 'rowSelected'),
+            event: e || null,
+            source,
+        });
+
+        return true;
+    }
+
+    public setSelectedParams(params: SetSelectedParams & { event?: Event }): number {
+        const { rowNode } = params;
+        if (rowNode.rowPinned) {
+            _warn(59);
+            return 0;
+        }
+
+        if (rowNode.id === undefined) {
+            _warn(60);
+            return 0;
+        }
+
+        return this.setNodesSelected({ ...params, nodes: [rowNode.footer ? rowNode.sibling : rowNode] });
     }
 }

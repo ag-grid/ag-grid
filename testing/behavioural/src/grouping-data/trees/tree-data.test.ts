@@ -1,8 +1,8 @@
 import type { MockInstance } from 'vitest';
 
-import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import type { GridOptions } from 'ag-grid-community';
+import { TreeDataModule } from 'ag-grid-enterprise';
 
 import { GridRows, TestGridsManager } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
@@ -13,7 +13,7 @@ const getDataPath = (data: any) => data.orgHierarchy;
 
 describe('ag-grid tree data', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, TreeDataModule],
     });
 
     let consoleWarnSpy: MockInstance;
@@ -220,7 +220,7 @@ function hierarchyWithInvertedOrderRowSnapshot(): RowSnapshot[] {
             lastChild: true,
             leafGroup: false,
             level: 0,
-            master: undefined,
+            master: false,
             parentKey: null,
             rowGroupIndex: null,
             rowPinned: undefined,

@@ -28,9 +28,11 @@ export type ClientSideRowModelStage =
     | 'nothing';
 
 export interface IClientSideRowModel<TData = any> extends IRowModel {
+    /** The root row containing all the rows */
+    readonly rootNode: RowNode;
+
     onRowGroupOpened(): void;
     updateRowData(rowDataTran: RowDataTransaction<TData>): RowNodeTransaction<TData> | null;
-    setRowData(rowData: any[]): void;
     refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStage | undefined): void;
     forEachLeafNode(callback: (node: RowNode, index: number) => void): void;
     forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void, includeFooterNodes?: boolean): void;

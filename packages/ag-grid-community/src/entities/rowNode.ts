@@ -1,13 +1,7 @@
 import type { DetailGridInfo } from '../api/gridApi';
 import type { BeanCollection } from '../context/context';
-import type { AgEventType } from '../eventTypes';
-import type { RowEvent, SelectionEventSourceType } from '../events';
-import {
-    _getGroupSelectsDescendants,
-    _getIsRowSelectable,
-    _getRowIdCallback,
-    _isServerSideRowModel,
-} from '../gridOptionsUtils';
+import type { SelectionEventSourceType } from '../events';
+import { _getRowIdCallback } from '../gridOptionsUtils';
 import type { IServerSideStore } from '../interfaces/IServerSideStore';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
@@ -19,11 +13,8 @@ import type {
     RowNodeEvent,
     RowNodeEventType,
     RowPinnedType,
-    SetSelectedParams,
 } from '../interfaces/iRowNode';
 import { LocalEventService } from '../localEventService';
-import { _debounce } from '../utils/function';
-import { _exists, _missing } from '../utils/generic';
 import { _error, _warn } from '../validation/logging';
 import type { AgColumn } from './agColumn';
 
@@ -35,9 +26,9 @@ import type { AgColumn } from './agColumn';
  * added explicitly to this list. Take care when adding or renaming private properties
  * of `RowNode`.
  */
-const IGNORED_SIBLING_PROPERTIES = new Set<
-    keyof RowNode | 'localEventService' | '__autoHeights' | 'checkAutoHeightsDebounced'
->(['localEventService', '__objectId', 'sticky', '__autoHeights', 'checkAutoHeightsDebounced']);
+export const IGNORED_SIBLING_PROPERTIES = new Set<
+    keyof RowNode | '__localEventService' | '__autoHeights' | '__checkAutoHeightsDebounced'
+>(['__localEventService', '__objectId', 'sticky', '__autoHeights', '__checkAutoHeightsDebounced']);
 
 /**
  * This is used only when using tree data.
@@ -49,6 +40,8 @@ export interface ITreeNode {
 
     /** Updated during commit to be the same as row.sourceRowIndex */
     readonly oldSourceRowIndex: number;
+
+    invalidate(): void;
 }
 
 export const ROW_ID_PREFIX_ROW_GROUP = 'row-group-';
@@ -97,10 +90,10 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public dragging: boolean;
 
     /** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail) */
-    public master: boolean;
+    public master: boolean = false;
 
     /** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/
-    public detail: boolean | undefined;
+    public detail: boolean | undefined = undefined;
 
     /** If this row is a master row that was expanded, this points to the associated detail row. */
     public detailNode: RowNode;
@@ -274,7 +267,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
     /** When one or more Columns are using autoHeight, this keeps track of height of each autoHeight Cell,
      * indexed by the Column ID. */
-    private __autoHeights?: { [id: string]: number | undefined };
+    public __autoHeights?: { [id: string]: number | undefined };
 
     /** `true` when nodes with the same id are being removed and added as part of the same batch transaction */
     public alreadyRendered = false;
@@ -283,14 +276,14 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
     private hovered: boolean = false;
 
-    private selected: boolean | undefined = false;
+    public __selected: boolean | undefined = false;
     /** If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES` */
-    private localEventService: LocalEventService<RowNodeEventType> | null;
+    public __localEventService: LocalEventService<RowNodeEventType> | null;
     private frameworkEventListenerService?: IFrameworkEventListenerService<any, any>;
 
     private beans: BeanCollection;
 
-    private checkAutoHeightsDebounced: () => void;
+    public __checkAutoHeightsDebounced: () => void;
 
     constructor(beans: BeanCollection) {
         this.beans = beans;
@@ -322,12 +315,12 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.data = data;
         this.beans.valueCache?.onDataChanged();
         this.updateDataOnDetailNode();
-        this.checkRowSelectable();
+        this.beans.selectionService?.checkRowSelectable(this);
         this.resetQuickFilterAggregateText();
 
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, update);
 
-        this.localEventService?.dispatchEvent(event);
+        this.__localEventService?.dispatchEvent(event);
     }
 
     // when we are doing master / detail, the detail node is lazy created, but then kept around.
@@ -371,71 +364,25 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         return this.rowIndex.toString();
     }
 
-    private createDaemonNode(): RowNode {
-        const oldNode = new RowNode(this.beans);
-
-        // just copy the id and data, this is enough for the node to be used
-        // in the selection controller (the selection controller is the only
-        // place where daemon nodes can live).
-        oldNode.id = this.id;
-        oldNode.data = this.data;
-        oldNode.__daemon = true;
-        oldNode.selected = this.selected;
-        oldNode.level = this.level;
-
-        return oldNode;
-    }
-
     public setDataAndId(data: TData, id: string | undefined): void {
-        const oldNode = _exists(this.id) ? this.createDaemonNode() : null;
+        const { selectionService } = this.beans;
+        const oldNode = selectionService?.createDaemonNode?.(this);
         const oldData = this.data;
 
         this.data = data;
         this.updateDataOnDetailNode();
         this.setId(id);
-        this.checkRowSelectable();
-        this.beans.selectionService?.syncInRowNode(this, oldNode);
+        if (selectionService) {
+            selectionService.checkRowSelectable(this);
+            selectionService.syncInRowNode(this, oldNode);
+        }
 
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, false);
 
-        this.localEventService?.dispatchEvent(event);
+        this.__localEventService?.dispatchEvent(event);
     }
 
-    private checkRowSelectable() {
-        const isRowSelectableFunc = _getIsRowSelectable(this.beans.gos);
-        this.setRowSelectable(isRowSelectableFunc ? isRowSelectableFunc!(this) : true);
-    }
-
-    public setRowSelectable(newVal: boolean, suppressSelectionUpdate?: boolean) {
-        if (this.selectable !== newVal) {
-            this.selectable = newVal;
-            this.dispatchRowEvent('selectableChanged');
-
-            if (suppressSelectionUpdate) {
-                return;
-            }
-
-            const isGroupSelectsChildren = _getGroupSelectsDescendants(this.beans.gos);
-            if (isGroupSelectsChildren) {
-                const selected = this.calculateSelectedFromChildren();
-                this.setSelectedParams({
-                    newValue: selected ?? false,
-                    source: 'selectableChanged',
-                });
-                return;
-            }
-
-            // if row is selected but shouldn't be selectable, then deselect.
-            if (this.isSelected() && !this.selectable) {
-                this.setSelectedParams({
-                    newValue: false,
-                    source: 'selectableChanged',
-                });
-            }
-        }
-    }
-
-    public setId(id?: string): void {
+    private setId(id?: string): void {
         // see if user is providing the id's
         const getRowIdFunc = _getRowIdCallback(this.beans.gos);
 
@@ -500,22 +447,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         return this.hovered;
     }
 
-    public setGroup(group: boolean): void {
-        if (this.group === group) {
-            return;
-        }
-
-        // if we used to be a group, and no longer, then close the node
-        if (this.group && !group) {
-            this.expanded = false;
-        }
-
-        this.group = group;
-        this.updateHasChildren();
-        this.checkRowSelectable();
-        this.dispatchRowEvent('groupChanged');
-    }
-
     /**
      * Sets the row height.
      * Call if you want to change the height initially assigned to the row.
@@ -527,61 +458,8 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.dispatchRowEvent('heightChanged');
     }
 
-    public setRowAutoHeight(cellHeight: number | undefined, column: AgColumn): void {
-        if (!this.__autoHeights) {
-            this.__autoHeights = {};
-        }
-        this.__autoHeights[column.getId()] = cellHeight;
-
-        if (cellHeight != null) {
-            if (this.checkAutoHeightsDebounced == null) {
-                this.checkAutoHeightsDebounced = _debounce(this.checkAutoHeights.bind(this), 1);
-            }
-            this.checkAutoHeightsDebounced();
-        }
-    }
-
-    public checkAutoHeights(): void {
-        this.beans.rowAutoHeightService?.checkAutoHeights(this, this.__autoHeights);
-    }
-
-    /**
-     * Set the expanded state of this rowNode. Pass `true` to expand and `false` to collapse.
-     */
     public setExpanded(expanded: boolean, e?: MouseEvent | KeyboardEvent, forceSync?: boolean): void {
-        if (this.expanded === expanded) {
-            return;
-        }
-
-        this.expanded = expanded;
-
-        this.dispatchRowEvent('expandedChanged');
-
-        const event = { ...this.createGlobalRowEvent('rowGroupOpened'), expanded, event: e || null };
-
-        const { rowNodeEventThrottle } = this.beans;
-
-        // throttle used for CSRM only
-        if (rowNodeEventThrottle) {
-            rowNodeEventThrottle.dispatchExpanded(event, forceSync);
-        } else {
-            this.beans.eventService.dispatchEvent(event);
-        }
-
-        // when using footers we need to refresh the group row, as the aggregation
-        // values jump between group and footer, because the footer can be callback
-        // we refresh regardless as the output of the callback could be a moving target
-        this.beans.rowRenderer.refreshCells({ rowNodes: [this] });
-    }
-
-    private createGlobalRowEvent<T extends AgEventType>(type: T): RowEvent<T, TData> {
-        return this.beans.gos.addGridCommonParams({
-            type: type,
-            node: this,
-            data: this.data,
-            rowIndex: this.rowIndex,
-            rowPinned: this.rowPinned,
-        });
+        this.beans.expansionService?.setExpanded(this, expanded, e, forceSync);
     }
 
     /**
@@ -630,62 +508,9 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         const valueChanged = this.beans.valueService.setValue(this, column, newValue, eventSource);
 
         this.dispatchCellChangedEvent(column, newValue, oldValue);
-        this.checkRowSelectable();
+        this.beans.selectionService?.checkRowSelectable(this);
 
         return valueChanged;
-    }
-
-    public setGroupValue(colKey: string | AgColumn, newValue: any): void {
-        const column = this.beans.columnModel.getCol(colKey)!;
-
-        if (_missing(this.groupData)) {
-            this.groupData = {};
-        }
-
-        const columnId = column.getColId();
-        const oldValue = this.groupData[columnId];
-
-        if (oldValue === newValue) {
-            return;
-        }
-
-        this.groupData[columnId] = newValue;
-        this.dispatchCellChangedEvent(column, newValue, oldValue);
-    }
-
-    // sets the data for an aggregation
-    public setAggData(newAggData: any): void {
-        const oldAggData = this.aggData;
-        this.aggData = newAggData;
-
-        // if no event service, nobody has registered for events, so no need fire event
-        if (this.localEventService) {
-            const eventFunc = (colId: string) => {
-                const value = this.aggData ? this.aggData[colId] : undefined;
-                const oldValue = oldAggData ? oldAggData[colId] : undefined;
-
-                if (value === oldValue) {
-                    return;
-                }
-
-                // do a quick lookup - despite the event it's possible the column no longer exists
-                const column = this.beans.columnModel.getCol(colId)!;
-                if (!column) {
-                    return;
-                }
-
-                this.dispatchCellChangedEvent(column, value, oldValue);
-            };
-
-            for (const key in oldAggData) {
-                eventFunc(key); // raise for old keys
-            }
-            for (const key in newAggData) {
-                if (!oldAggData || !(key in oldAggData)) {
-                    eventFunc(key); // new key, event not yet raised
-                }
-            }
-        }
     }
 
     public updateHasChildren(): void {
@@ -693,14 +518,9 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         let newValue: boolean | null =
             (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
 
-        const isSsrm = _isServerSideRowModel(this.beans.gos);
-        if (isSsrm) {
-            const isTreeData = this.beans.gos.get('treeData');
-            const isGroupFunc = this.beans.gos.get('isServerSideGroup');
-            // stubs and footers can never have children, as they're grid rows. if tree data the presence of children
-            // is determined by the isServerSideGroup callback, if not tree data then the rows group property will be set.
-            newValue =
-                !this.stub && !this.footer && (isTreeData ? !!isGroupFunc && isGroupFunc(this.data) : !!this.group);
+        const { rowChildrenService } = this.beans;
+        if (rowChildrenService) {
+            newValue = rowChildrenService.getHasChildrenValue(this);
         }
 
         if (newValue !== this.__hasChildren) {
@@ -716,7 +536,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         return this.__hasChildren;
     }
 
-    private dispatchCellChangedEvent(column: AgColumn, newValue: TData, oldValue: TData): void {
+    public dispatchCellChangedEvent(column: AgColumn, newValue: TData, oldValue: TData): void {
         const cellChangedEvent: CellChangedEvent<TData> = {
             type: 'cellChanged',
             node: this,
@@ -724,7 +544,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             newValue: newValue,
             oldValue: oldValue,
         };
-        this.localEventService?.dispatchEvent(cellChangedEvent);
+        this.__localEventService?.dispatchEvent(cellChangedEvent);
     }
 
     /**
@@ -742,15 +562,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      * - `false` if the node cannot be expanded
      */
     public isExpandable(): boolean {
-        if (this.footer) {
-            return false;
-        }
-
-        if (this.beans.columnModel.isPivotMode()) {
-            // master detail and leaf groups aren't expandable in pivot mode.
-            return this.hasChildren() && !this.leafGroup;
-        }
-        return this.hasChildren() || !!this.master;
+        return this.beans.expansionService?.isExpandable(this) ?? false;
     }
 
     /** Returns:
@@ -763,7 +575,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             return this.sibling.isSelected();
         }
 
-        return this.selected;
+        return this.__selected;
     }
 
     /** Perform a depth-first search of this node and its children. */
@@ -774,97 +586,11 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         callback(this);
     }
 
-    // + selectionController.calculatedSelectedForAllGroupNodes()
-    public calculateSelectedFromChildren(): boolean | undefined | null {
-        let atLeastOneSelected = false;
-        let atLeastOneDeSelected = false;
-
-        if (!this.childrenAfterGroup?.length) {
-            return this.selectable ? this.selected : null;
-        }
-
-        for (let i = 0; i < this.childrenAfterGroup.length; i++) {
-            const child = this.childrenAfterGroup[i];
-
-            let childState = child.isSelected();
-            // non-selectable nodes must be calculated from their children, or ignored if no value results.
-            if (!child.selectable) {
-                const selectable = child.calculateSelectedFromChildren();
-                if (selectable === null) {
-                    continue;
-                }
-                childState = selectable;
-            }
-
-            switch (childState) {
-                case true:
-                    atLeastOneSelected = true;
-                    break;
-                case false:
-                    atLeastOneDeSelected = true;
-                    break;
-                default:
-                    return undefined;
-            }
-        }
-
-        if (atLeastOneSelected && atLeastOneDeSelected) {
-            return undefined;
-        }
-
-        if (atLeastOneSelected) {
-            return true;
-        }
-
-        if (atLeastOneDeSelected) {
-            return false;
-        }
-
-        if (!this.selectable) {
-            return null;
-        }
-
-        return this.selected;
-    }
-
-    public setSelectedInitialValue(selected?: boolean): void {
-        this.selected = selected;
-    }
-
     public dispatchRowEvent<T extends RowNodeEventType>(type: T): void {
-        this.localEventService?.dispatchEvent({
+        this.__localEventService?.dispatchEvent({
             type: type,
             node: this,
         } as RowNodeEvent<T, TData>);
-    }
-
-    public selectThisNode(newValue?: boolean, e?: Event, source: SelectionEventSourceType = 'api'): boolean {
-        // we only check selectable when newValue=true (ie selecting) to allow unselecting values,
-        // as selectable is dynamic, need a way to unselect rows when selectable becomes false.
-        const selectionNotAllowed = !this.selectable && newValue;
-        const selectionNotChanged = this.selected === newValue;
-
-        if (selectionNotAllowed || selectionNotChanged) {
-            return false;
-        }
-
-        this.selected = newValue;
-
-        this.dispatchRowEvent('rowSelected');
-
-        // in case of root node, sibling may have service while this row may not
-        const sibling = this.sibling;
-        if (sibling && sibling.footer && sibling.localEventService) {
-            sibling.dispatchRowEvent('rowSelected');
-        }
-
-        this.beans.eventService.dispatchEvent({
-            ...this.createGlobalRowEvent('rowSelected'),
-            event: e || null,
-            source,
-        });
-
-        return true;
     }
 
     /**
@@ -873,31 +599,18 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact.
      * @param source - Source property that will appear in the `selectionChanged` event.
      */
-    public setSelected(newValue: boolean, clearSelection: boolean = false, source: SelectionEventSourceType = 'api') {
-        this.setSelectedParams({
+    public setSelected(
+        newValue: boolean,
+        clearSelection: boolean = false,
+        source: SelectionEventSourceType = 'api'
+    ): void {
+        this.beans.selectionService?.setSelectedParams({
+            rowNode: this,
             newValue,
             clearSelection,
             rangeSelect: false,
             source,
         });
-    }
-
-    // this is for internal use only. To make calling code more readable, this is the same method as setSelected except it takes names parameters
-    public setSelectedParams(params: SetSelectedParams & { event?: Event }): number {
-        if (!this.beans.selectionService) {
-            return 0;
-        }
-        if (this.rowPinned) {
-            _warn(59);
-            return 0;
-        }
-
-        if (this.id === undefined) {
-            _warn(60);
-            return 0;
-        }
-
-        return this.beans.selectionService.setNodesSelected({ ...params, nodes: [this.footer ? this.sibling : this] });
     }
 
     /**
@@ -911,16 +624,16 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
     /** Add an event listener. */
     public addEventListener<T extends RowNodeEventType>(eventType: T, userListener: AgRowNodeEventListener<T>): void {
-        if (!this.localEventService) {
-            this.localEventService = new LocalEventService();
+        if (!this.__localEventService) {
+            this.__localEventService = new LocalEventService();
         }
         this.frameworkEventListenerService = this.beans.frameworkOverrides.createLocalEventListenerWrapper?.(
             this.frameworkEventListenerService,
-            this.localEventService
+            this.__localEventService
         );
 
         const listener = this.frameworkEventListenerService?.wrap(userListener) ?? userListener;
-        this.localEventService.addEventListener(eventType, listener);
+        this.__localEventService.addEventListener(eventType, listener);
     }
 
     /** Remove event listener. */
@@ -928,23 +641,15 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         eventType: T,
         userListener: AgRowNodeEventListener<T>
     ): void {
-        if (!this.localEventService) {
+        if (!this.__localEventService) {
             return;
         }
 
         const listener = this.frameworkEventListenerService?.unwrap(userListener) ?? userListener;
-        this.localEventService.removeEventListener(eventType, listener);
-        if (this.localEventService.noRegisteredListenersExist()) {
-            this.localEventService = null;
+        this.__localEventService.removeEventListener(eventType, listener);
+        if (this.__localEventService.noRegisteredListenersExist()) {
+            this.__localEventService = null;
         }
-    }
-
-    public onMouseEnter(): void {
-        this.dispatchRowEvent('mouseEnter');
-    }
-
-    public onMouseLeave(): void {
-        this.dispatchRowEvent('mouseLeave');
     }
 
     /**
@@ -989,68 +694,10 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         return res.reverse();
     }
 
-    public createFooter(): void {
-        // only create footer node once, otherwise we have daemons and
-        // the animate screws up with the daemons hanging around
-        if (this.sibling) {
-            return;
-        }
-
-        const footerNode = new RowNode(this.beans);
-
-        Object.keys(this).forEach((key: keyof RowNode) => {
-            if (IGNORED_SIBLING_PROPERTIES.has(key)) {
-                return;
-            }
-            (footerNode as any)[key] = (this as any)[key];
-        });
-
-        footerNode.footer = true;
-        footerNode.setRowTop(null);
-        footerNode.setRowIndex(null);
-
-        // manually set oldRowTop to null so we discard any
-        // previous information about its position.
-        footerNode.oldRowTop = null;
-
-        footerNode.id = 'rowGroupFooter_' + this.id;
-
-        // get both header and footer to reference each other as siblings. this is never undone,
-        // only overwritten. so if a group is expanded, then contracted, it will have a ghost
-        // sibling - but that's fine, as we can ignore this if the header is contracted.
-        footerNode.sibling = this;
-        this.sibling = footerNode;
-    }
-
-    public destroyFooter(): void {
-        if (!this.sibling) {
-            return;
-        }
-
-        this.sibling.setRowTop(null);
-        this.sibling.setRowIndex(null);
-
-        this.sibling = undefined as any;
-    }
-
     public setFirstChild(firstChild: boolean): void {
         if (this.firstChild !== firstChild) {
             this.firstChild = firstChild;
             this.dispatchRowEvent('firstChildChanged');
-        }
-    }
-
-    public setLastChild(lastChild: boolean): void {
-        if (this.lastChild !== lastChild) {
-            this.lastChild = lastChild;
-            this.dispatchRowEvent('lastChildChanged');
-        }
-    }
-
-    public setChildIndex(childIndex: number): void {
-        if (this.childIndex !== childIndex) {
-            this.childIndex = childIndex;
-            this.dispatchRowEvent('childIndexChanged');
         }
     }
 
@@ -1061,17 +708,10 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         }
     }
 
-    public setDragging(dragging: boolean): void {
-        if (this.dragging !== dragging) {
-            this.dragging = dragging;
-            this.dispatchRowEvent('draggingChanged');
-        }
-    }
-
-    public setHighlighted(highlighted: RowHighlightPosition | null): void {
-        if (this.highlighted !== highlighted) {
-            this.highlighted = highlighted;
-            this.dispatchRowEvent('rowHighlightChanged');
+    public setRowIndex(rowIndex: number | null): void {
+        if (this.rowIndex !== rowIndex) {
+            this.rowIndex = rowIndex;
+            this.dispatchRowEvent('rowIndexChanged');
         }
     }
 
@@ -1079,13 +719,6 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         if (this.allChildrenCount !== allChildrenCount) {
             this.allChildrenCount = allChildrenCount;
             this.dispatchRowEvent('allChildrenCountChanged');
-        }
-    }
-
-    public setRowIndex(rowIndex: number | null): void {
-        if (this.rowIndex !== rowIndex) {
-            this.rowIndex = rowIndex;
-            this.dispatchRowEvent('rowIndexChanged');
         }
     }
 

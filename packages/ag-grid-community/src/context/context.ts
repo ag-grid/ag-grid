@@ -49,6 +49,7 @@ import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterServic
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IAutoColService } from '../interfaces/iAutoColService';
+import type { IClientSideNodeManager } from '../interfaces/iClientSideNodeManager';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
@@ -60,6 +61,7 @@ import type { IGroupHideOpenParentsService } from '../interfaces/iGroupHideOpenP
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
+import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
@@ -292,11 +294,15 @@ export interface CoreBeanCollection {
     stickyRowService?: StickyRowService;
     groupHideOpenParentsService?: IGroupHideOpenParentsService;
     filterValueService?: FilterValueService;
+    clientSideNodeManager?: IClientSideNodeManager;
+    clientSidePathTreeNodeManager?: IClientSideNodeManager;
+    clientSideChildrenTreeNodeManager?: IClientSideNodeManager;
     cellFlashService?: CellFlashService;
     masterDetailService?: IMasterDetailService;
     tooltipService?: TooltipService;
     columnGroupService?: ColumnGroupService;
     rowAutoHeightService?: RowAutoHeightService;
+    rowChildrenService?: IRowChildrenService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -420,7 +426,6 @@ export type BeanName =
     | 'groupStage'
     | 'headerNavigationService'
     | 'horizontalResizeService'
-    | 'immutableService'
     | 'lazyBlockLoadingService'
     | 'licenseManager'
     | 'localeService'
@@ -447,6 +452,7 @@ export type BeanName =
     | 'registry'
     | 'renderStatusService'
     | 'rowAutoHeightService'
+    | 'rowChildrenService'
     | 'rowContainerHeightService'
     | 'rowDragService'
     | 'rowEditService'
@@ -485,4 +491,7 @@ export type BeanName =
     | 'valueCache'
     | 'valueService'
     | 'validationLogger'
-    | 'validationService';
+    | 'validationService'
+    | 'clientSideNodeManager'
+    | 'clientSidePathTreeNodeManager'
+    | 'clientSideChildrenTreeNodeManager';
