@@ -15,7 +15,7 @@ import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 type ValueType = string | number | boolean | Date;
 
 const DEFAULT_OPTS = {
-    values: ['A', 'B', 'C'] as ValueType[] | ValueType[][],
+    values: ['A', 'B', 'C'] as (ValueType | null | undefined)[] | (ValueType | null | undefined)[][],
     filterParams: {} as any,
     doesRowPassOtherFilters: (_) => true,
     suppressSorting: false,
@@ -97,7 +97,7 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
         valueFormatter: (params) => _toStringOrNull(params.value)!,
         gos,
         valueService,
-        addManagedEventListeners: () => undefined,
+        addManagedEventListeners: () => [],
         rowGroupColsService,
     });
 }

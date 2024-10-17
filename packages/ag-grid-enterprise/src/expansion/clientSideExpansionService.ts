@@ -1,11 +1,4 @@
-import type {
-    BeanCollection,
-    ColumnModel,
-    IClientSideRowModel,
-    IExpansionService,
-    NamedBean,
-    RowNode,
-} from 'ag-grid-community';
+import type { BeanCollection, IClientSideRowModel, IExpansionService, NamedBean, RowNode } from 'ag-grid-community';
 import { _exists } from 'ag-grid-community';
 
 import { BaseExpansionService } from './baseExpansionService';
@@ -14,11 +7,10 @@ export class ClientSideExpansionService extends BaseExpansionService implements 
     beanName = 'expansionService' as const;
 
     private rowModel: IClientSideRowModel;
-    private columnModel: ColumnModel;
 
-    public wireBeans(beans: BeanCollection): void {
+    public override wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
         this.rowModel = beans.rowModel as IClientSideRowModel;
-        this.columnModel = beans.columnModel;
     }
 
     public expandRows(rowIds: string[]): void {

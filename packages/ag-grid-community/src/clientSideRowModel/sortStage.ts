@@ -30,8 +30,14 @@ function updateChildIndexes(rowNode: RowNode): void {
         const firstChild = i === 0;
         const lastChild = i === rowNode.childrenAfterSort.length - 1;
         child.setFirstChild(firstChild);
-        child.setLastChild(lastChild);
-        child.setChildIndex(i);
+        if (child.lastChild !== lastChild) {
+            child.lastChild = lastChild;
+            child.dispatchRowEvent('lastChildChanged');
+        }
+        if (child.childIndex !== i) {
+            child.childIndex = i;
+            child.dispatchRowEvent('childIndexChanged');
+        }
     }
 }
 

@@ -4,6 +4,7 @@ import type {
     ChangedPath,
     ClientSideRowModelStage,
     ColumnModel,
+    FuncColsService,
     GridOptions,
     IColsService,
     IRowNodeStage,
@@ -21,6 +22,7 @@ import type {
 import { _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
 import { BeanStub, RowNode, _areEqual, _exists, _removeFromArray } from 'ag-grid-community';
 
+import { setRowNodeGroup } from '../rowGroupingUtils';
 import { BatchRemover } from './batchRemover';
 import type { GroupRow } from './groupRow';
 import { sortGroupChildren } from './sortGroupChildren';
@@ -62,7 +64,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     public step: ClientSideRowModelStage = 'group';
 
     private columnModel: ColumnModel;
-    private rowGroupColsService?: IColsService;
+    private funcColsService: FuncColsService;
     private valueService: ValueService;
     private beans: BeanCollection;
     private selectionService?: ISelectionService;
@@ -71,7 +73,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;
         this.columnModel = beans.columnModel;
-        this.rowGroupColsService = beans.rowGroupColsService;
+        this.funcColsService = beans.funcColsService;
         this.valueService = beans.valueService;
         this.selectionService = beans.selectionService;
         this.showRowGroupColsService = beans.showRowGroupColsService!;
@@ -135,7 +137,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
         const { rowNode, changedPath, rowNodeTransactions, rowNodesOrderChanged } = params;
 
-        const groupedCols = this.rowGroupColsService?.columns ?? [];
+        const groupedCols = this.funcColsService.rowGroupCols;
 
         const details: GroupingDetails = {
             expandByDefault: this.gos.get('groupDefaultExpanded'),
@@ -355,7 +357,11 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
                         this.removeFromParent(rowNode, batchRemover);
                         // we remove selection on filler nodes here, as the selection would not be removed
                         // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                        rowNode.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
+                        this.selectionService?.setSelectedParams({
+                            rowNode,
+                            newValue: false,
+                            source: 'rowGroupChanged',
+                        });
                     }
                 });
             });
@@ -396,7 +402,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             if (parent.childrenMapped[mapKey] !== child) {
                 parent.childrenMapped[mapKey] = child;
                 parent.childrenAfterGroup!.push(child);
-                parent.setGroup(true); // calls `.updateHasChildren` internally
+                setRowNodeGroup(parent, this.beans, true); // calls `.updateHasChildren` internally
             }
         }
     }

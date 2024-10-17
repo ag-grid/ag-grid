@@ -197,7 +197,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.dispatchGridEvent('rowDragEnter', draggingEvent);
 
         this.getRowNodes(draggingEvent).forEach((rowNode) => {
-            rowNode.setDragging(true);
+            this.setRowNodeDragging(rowNode, true);
         });
 
         this.onEnterOrDragging(draggingEvent);
@@ -491,7 +491,14 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.autoScrollService.ensureCleared();
 
         this.getRowNodes(draggingEvent).forEach((rowNode) => {
-            rowNode.setDragging(false);
+            this.setRowNodeDragging(rowNode, false);
         });
+    }
+
+    private setRowNodeDragging(rowNode: RowNode, dragging: boolean): void {
+        if (rowNode.dragging !== dragging) {
+            rowNode.dragging = dragging;
+            rowNode.dispatchRowEvent('draggingChanged');
+        }
     }
 }

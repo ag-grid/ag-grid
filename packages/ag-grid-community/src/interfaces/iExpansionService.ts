@@ -14,4 +14,8 @@ export interface IExpansionService {
     expandAll(value: boolean): void;
 
     onGroupExpandedOrCollapsed(): void;
+
+    setExpanded(rowNode: RowNode, expanded: boolean, e?: MouseEvent | KeyboardEvent, forceSync?: boolean): void;
+
+    isExpandable(rowNode: RowNode): boolean;
 }

@@ -134,7 +134,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
             const isNodeSelected = this.selectionStrategy.isNodeSelected(node);
             if (isNodeSelected !== node.isSelected()) {
-                node.selectThisNode(isNodeSelected, undefined, source);
+                this.selectRowNode(node, isNodeSelected, undefined, source);
             }
         });
     }
@@ -172,7 +172,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
             this.dispatchSelectionChanged('api');
             return;
         }
-        rowNode.setSelectedInitialValue(isNodeSelected);
+        rowNode.__selected = isNodeSelected;
     }
 
     public reset(): void {
@@ -201,7 +201,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
                 return;
             }
 
-            node.selectThisNode(true, undefined, params.source);
+            this.selectRowNode(node, true, undefined, params.source);
         });
 
         this.dispatchSelectionChanged(params.source);
@@ -217,7 +217,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
                 return;
             }
 
-            node.selectThisNode(false, undefined, params.source);
+            this.selectRowNode(node, false, undefined, params.source);
         });
 
         this.dispatchSelectionChanged(params.source);
