@@ -134,8 +134,8 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
         handlers: EventHandlers<TEvent>
     ) {
         const destroyFuncs: (() => null)[] = [];
-        for (const k in handlers) {
-            const handler = handlers[k];
+        for (const k of Object.keys(handlers)) {
+            const handler = handlers[k as TEvent];
             if (handler) {
                 destroyFuncs.push(this._setupListener(object, k, handler));
             }

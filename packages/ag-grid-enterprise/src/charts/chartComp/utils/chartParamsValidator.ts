@@ -266,7 +266,7 @@ function validateProperties<T extends object>(
 
     if (validPropertyNames) {
         // Check for unexpected properties
-        for (const property in params) {
+        for (const property of Object.keys(params)) {
             if (!validPropertyNames.includes(property as keyof T)) {
                 _warnOnce(`Unexpected property supplied. ${paramsType} does not contain: \`${property}\`.`);
                 return false;

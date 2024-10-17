@@ -1,4 +1,4 @@
-import type { ColDef, ValueGetterFunc } from '../entities/colDef';
+import type { ColDef } from '../entities/colDef';
 import type { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 import type { Column } from '../interfaces/iColumn';
 import type { AgPromise } from '../utils/promise';

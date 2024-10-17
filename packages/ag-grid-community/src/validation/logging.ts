@@ -43,7 +43,7 @@ function getMsgOrDefault<TId extends ErrorId>(
 function stringifyObject(inputObj: any) {
     const object: Record<string, any> = {};
 
-    for (const prop in Object.entries(inputObj)) {
+    for (const prop of Object.keys(inputObj)) {
         if (typeof inputObj[prop] !== 'object' && typeof inputObj[prop] !== 'function') {
             object[prop] = inputObj[prop];
         }

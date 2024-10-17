@@ -520,7 +520,7 @@ function jsonMutate(path: string | string[], json: any, mutator: (v: any) => any
             json[arrayName] = json[arrayName].map((v: any) => jsonMutate(pathElements.slice(1), v, mutator));
         }
     } else if (pathElements[0] === '*') {
-        for (const jsonProp in json) {
+        for (const jsonProp of Object.keys(json)) {
             json[jsonProp] = jsonMutate(pathElements.slice(1), json[jsonProp], mutator);
         }
     } else if (json[pathElements[0]] != null) {

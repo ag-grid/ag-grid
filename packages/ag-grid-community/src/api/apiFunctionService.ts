@@ -44,7 +44,7 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
         super();
 
         const { api } = this;
-        for (const key in gridApiFunctionsMap) {
+        for (const key of Object.keys(gridApiFunctionsMap)) {
             api[key as ApiFunctionName] = this.makeApi(key as ApiFunctionName)[key];
         }
     }
