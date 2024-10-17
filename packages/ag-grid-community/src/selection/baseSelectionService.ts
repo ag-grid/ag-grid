@@ -224,9 +224,11 @@ export abstract class BaseSelectionService extends BeanStub {
 
         // Needs to be depth first in this case, so that parents can be updated based on child.
         if (isCsrmGroupSelectsChildren) {
-            const csrm = this.rowModel as IClientSideRowModel;
-            const changedPath = new ChangedPath(false, csrm.rootNode);
-            changedPath.forEachChangedNodeDepthFirst(nodeCallback, true, true);
+            const rootNode = (this.rowModel as IClientSideRowModel).rootNode;
+            if (rootNode) {
+                const changedPath = new ChangedPath(false, rootNode);
+                changedPath.forEachChangedNodeDepthFirst(nodeCallback, true, true);
+            }
         } else {
             // Normal case, update all rows
             this.rowModel.forEachNode(nodeCallback);

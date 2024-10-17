@@ -286,8 +286,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             return false;
         }
 
-        const clientSideRowModel = this.rowModel;
-        const rootNode = clientSideRowModel.rootNode;
+        const rootNode = this.rowModel.rootNode;
+        if (!rootNode) {
+            return false;
+        }
 
         if (!changedPath) {
             changedPath = new ChangedPath(true, rootNode);

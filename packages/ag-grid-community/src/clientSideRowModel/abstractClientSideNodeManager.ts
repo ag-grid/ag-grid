@@ -63,16 +63,14 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     public activate(rootNode: ClientSideNodeManagerRootNode<TData>): void {
         this.rootNode = rootNode;
 
-        if (rootNode) {
-            rootNode.group = true;
-            rootNode.level = -1;
-            rootNode.id = ROOT_NODE_ID;
-            rootNode.allLeafChildren = [];
-            rootNode.childrenAfterGroup = [];
-            rootNode.childrenAfterSort = [];
-            rootNode.childrenAfterAggFilter = [];
-            rootNode.childrenAfterFilter = [];
-        }
+        rootNode.group = true;
+        rootNode.level = -1;
+        rootNode.id = ROOT_NODE_ID;
+        rootNode.allLeafChildren = [];
+        rootNode.childrenAfterGroup = [];
+        rootNode.childrenAfterSort = [];
+        rootNode.childrenAfterAggFilter = [];
+        rootNode.childrenAfterFilter = [];
     }
 
     public deactivate(): void {
@@ -88,16 +86,15 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         // Forcefully deallocate memory
         this.allNodesMap = {};
         this.rootNode = null;
-        this.beans = null!;
     }
 
     public setNewRowData(rowData: TData[]): void {
-        this.dispatchRowDataUpdateStartedEvent(rowData);
-
         const rootNode = this.rootNode;
         if (!rootNode) {
             return;
         }
+
+        this.dispatchRowDataUpdateStartedEvent(rowData);
 
         const sibling = rootNode.sibling;
 
