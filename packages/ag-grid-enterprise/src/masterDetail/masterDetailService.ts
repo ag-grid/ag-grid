@@ -1,5 +1,3 @@
-import { _getClientSideRowModel } from 'packages/ag-grid-community/src/api/rowModelApiUtils';
-
 import type {
     BeanCollection,
     BeanName,
@@ -14,7 +12,7 @@ import type {
 import { RowNode, _exists } from 'ag-grid-community';
 import {
     BeanStub,
-    ClientSideRowModelSteps,
+    _getClientSideRowModel,
     _isClientSideRowModel,
     _isServerSideRowModel,
     _observeResize,

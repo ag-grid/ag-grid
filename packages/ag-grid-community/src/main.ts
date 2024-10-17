@@ -596,7 +596,7 @@ export {
     _AdvancedFilterGridApi,
 } from './api/gridApi';
 export { IDetailGridApiService } from './interfaces/iDetailGridApiService';
-export { _getServerSideRowModel } from './api/rowModelApiUtils';
+export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
 export { AgEventType, AgPublicEventType } from './eventTypes';
 export type { FocusService } from './focusService';
 export type { GridOptionsService } from './gridOptionsService';
