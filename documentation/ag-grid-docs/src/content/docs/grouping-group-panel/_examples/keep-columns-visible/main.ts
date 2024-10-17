@@ -27,7 +27,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function onPropertyChange() {
-    const prop = (document.querySelector('#input-display-type') as HTMLSelectElement).value;
+    const prop = (document.querySelector('#visibility-behaviour') as HTMLSelectElement).value;
     if (prop === 'true' || prop === 'false') {
         gridApi!.setGridOption('suppressGroupChangesColumnVisibility', prop === 'true');
     } else {
