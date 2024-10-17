@@ -2,9 +2,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { ColumnEventType } from '../events';
 import type { IColsService } from '../interfaces/iColsService';
-import type { ColKey, Maybe } from './columnModel';
 import type { ColumnState } from './columnStateService';
 
 export class FuncColsService extends BeanStub implements NamedBean {
@@ -18,10 +16,6 @@ export class FuncColsService extends BeanStub implements NamedBean {
         this.rowGroupColsService = beans.rowGroupColsService!;
         this.valueColsService = beans.valueColsService!;
         this.pivotColsService = beans.pivotColsService!;
-    }
-
-    public get rowGroupCols(): AgColumn[] {
-        return this.rowGroupColsService.columns;
     }
 
     public get valueCols(): AgColumn[] {

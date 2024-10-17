@@ -7,13 +7,13 @@ import type {
     CsvExportParams,
     CtrlsService,
     FocusService,
-    FuncColsService,
     GridCtrl,
     GridOptions,
     IClientSideRowModel,
     IClipboardCopyParams,
     IClipboardCopyRowsParams,
     IClipboardService,
+    IColsService,
     ICsvCreator,
     IRangeService,
     IRowModel,
@@ -167,7 +167,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private focusService: FocusService;
     private rowRenderer: RowRenderer;
     private visibleColsService: VisibleColsService;
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
     private cellNavigationService: CellNavigationService;
     public positionUtils: PositionUtils;
     private rangeService?: IRangeService;
@@ -181,7 +181,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.focusService = beans.focusService;
         this.rowRenderer = beans.rowRenderer;
         this.visibleColsService = beans.visibleColsService;
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
         this.cellNavigationService = beans.cellNavigationService!;
         this.positionUtils = beans.positionUtils;
         this.rangeService = beans.rangeService;
@@ -1094,7 +1094,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             let column = node.rowGroupColumn as AgColumn;
 
             if (!column && node.footer && node.level === -1) {
-                column = this.funcColsService.rowGroupCols[0];
+                column = this.rowGroupColsService?.columns[0] as AgColumn;
             }
             return processCellForClipboard({
                 value,

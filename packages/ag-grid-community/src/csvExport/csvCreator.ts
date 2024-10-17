@@ -1,9 +1,9 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { ColumnNameService } from '../columns/columnNameService';
-import type { FuncColsService } from '../columns/funcColsService';
 import type { NamedBean } from '../context/bean';
 import type { BeanCollection } from '../context/context';
 import type { CsvCustomContent, CsvExportParams } from '../interfaces/exportParams';
+import type { IColsService } from '../interfaces/iColsService';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import { _warn } from '../validation/logging';
 import type { ValueService } from '../valueService/valueService';
@@ -20,14 +20,14 @@ export class CsvCreator
 
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
     private valueService: ValueService;
     private gridSerializer: GridSerializer;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
         this.valueService = beans.valueService;
         this.gridSerializer = beans.gridSerializer as GridSerializer;
     }
@@ -79,7 +79,7 @@ export class CsvCreator
     }
 
     public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
-        const { columnModel, columnNameService, funcColsService, valueService, gos } = this;
+        const { columnModel, columnNameService, rowGroupColsService, valueService, gos } = this;
         const {
             processCellCallback,
             processHeaderCallback,
@@ -92,7 +92,7 @@ export class CsvCreator
         return new CsvSerializingSession({
             columnModel,
             columnNameService,
-            funcColsService,
+            rowGroupColsService,
             valueService,
             gos,
             processCellCallback: processCellCallback || undefined,

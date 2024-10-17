@@ -4,7 +4,7 @@ import type {
     BeanCollection,
     ColumnModel,
     ColumnNameService,
-    FuncColsService,
+    IColsService,
     IShowRowGroupColsService,
     NamedBean,
     PositionUtils,
@@ -21,7 +21,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
     private showRowGroupColsService?: IShowRowGroupColsService;
     private columnNameService: ColumnNameService;
     private visibleColsService: VisibleColsService;
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
     private valueService: ValueService;
     private positionUtils: PositionUtils;
 
@@ -30,7 +30,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
         this.showRowGroupColsService = beans.showRowGroupColsService;
         this.columnNameService = beans.columnNameService;
         this.visibleColsService = beans.visibleColsService;
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
         this.valueService = beans.valueService;
         this.positionUtils = beans.positionUtils;
     }
@@ -75,7 +75,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
     }
 
     public getRowGroupColumns(): AgColumn[] {
-        return this.funcColsService.rowGroupCols;
+        return this.rowGroupColsService?.columns ?? [];
     }
 
     public getGroupDisplayColumns(): AgColumn[] {

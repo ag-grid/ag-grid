@@ -126,8 +126,8 @@ export class ColumnStateService extends BeanStub implements NamedBean {
             const unmatchedAndAutoStates: ColumnState[] = [];
             let unmatchedCount = 0;
 
-            const previousRowGroupCols = this.funcColsService.rowGroupCols.slice();
-            const previousPivotCols = this.funcColsService.pivotCols.slice();
+            const previousRowGroupCols = this.rowGroupColsService?.columns.slice() ?? [];
+            const previousPivotCols = this.pivotColsService?.columns.slice() ?? [];
 
             states.forEach((state: ColumnState) => {
                 const colId = state.colId || '';
@@ -409,7 +409,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
     // b) apply new column definitions (so changes from old cols)
     public compareColumnStatesAndDispatchEvents(source: ColumnEventType): () => void {
         const startState = {
-            rowGroupColumns: this.funcColsService.rowGroupCols.slice(),
+            rowGroupColumns: this.rowGroupColsService?.columns.slice() ?? [],
             pivotColumns: this.funcColsService.pivotCols.slice(),
             valueColumns: this.funcColsService.valueCols.slice(),
         };
@@ -477,14 +477,14 @@ export class ColumnStateService extends BeanStub implements NamedBean {
             dispatchWhenListsDifferent(
                 'columnRowGroupChanged',
                 startState.rowGroupColumns,
-                this.funcColsService.rowGroupCols,
+                this.rowGroupColsService?.columns ?? [],
                 columnIdMapper
             );
 
             dispatchWhenListsDifferent(
                 'columnPivotChanged',
                 startState.pivotColumns,
-                this.funcColsService.pivotCols,
+                this.pivotColsService?.columns ?? [],
                 columnIdMapper
             );
 
@@ -585,10 +585,10 @@ export class ColumnStateService extends BeanStub implements NamedBean {
     }
 
     private createStateItemFromColumn(column: AgColumn): ColumnState {
-        const rowGorupColumns = this.funcColsService.rowGroupCols;
-        const pivotColumns = this.funcColsService.pivotCols;
+        const rowGroupColumns = this.rowGroupColsService?.columns ?? [];
+        const pivotColumns = this.pivotColsService?.columns ?? [];
 
-        const rowGroupIndex = column.isRowGroupActive() ? rowGorupColumns.indexOf(column) : null;
+        const rowGroupIndex = column.isRowGroupActive() ? rowGroupColumns.indexOf(column) : null;
         const pivotIndex = column.isPivotActive() ? pivotColumns.indexOf(column) : null;
 
         const aggFunc = column.isValueActive() ? column.getAggFunc() : null;

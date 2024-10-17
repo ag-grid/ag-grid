@@ -3,7 +3,7 @@ import type {
     AgColumn,
     BeanCollection,
     ColumnModel,
-    FuncColsService,
+    IColsService,
     IShowRowGroupColsService,
     NamedBean,
 } from 'ag-grid-community';
@@ -12,11 +12,11 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
     beanName = 'showRowGroupColsService' as const;
 
     private columnModel: ColumnModel;
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
     }
 
     private showRowGroupCols: AgColumn[];
@@ -42,7 +42,7 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
             if (isString) {
                 this.showRowGroupColsMap[showRowGroup] = col;
             } else {
-                const rowGroupCols = this.funcColsService.rowGroupCols;
+                const rowGroupCols = this.rowGroupColsService?.columns ?? [];
                 rowGroupCols.forEach((rowGroupCol) => {
                     this.showRowGroupColsMap[rowGroupCol.getId()] = col;
                 });

@@ -1,7 +1,7 @@
 import type {
     BeanCollection,
     DetailGridInfo,
-    FuncColsService,
+    IColsService,
     IDetailGridApiService,
     NamedBean,
     RowNode,
@@ -11,10 +11,10 @@ import { BeanStub, _exists, _iterateObject } from 'ag-grid-community';
 export class DetailGridApiService extends BeanStub implements NamedBean, IDetailGridApiService {
     beanName = 'detailGridApiService' as const;
 
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
     }
 
     private detailGridInfoMap: { [id: string]: DetailGridInfo | undefined } = {};
@@ -37,7 +37,7 @@ export class DetailGridApiService extends BeanStub implements NamedBean, IDetail
                     expanded = true;
                 } else {
                     // need to take row group into account when determining level
-                    const masterRowLevel = this.funcColsService.rowGroupCols?.length ?? 0;
+                    const masterRowLevel = this.rowGroupColsService?.columns.length ?? 0;
                     expanded = masterRowLevel < expandByDefault;
                 }
             }

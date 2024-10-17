@@ -1,5 +1,4 @@
 import { AutoScrollService } from '../autoScrollService';
-import type { FuncColsService } from '../columns/funcColsService';
 import { VerticalDirection } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -19,6 +18,7 @@ import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IRangeService } from '../interfaces/IRangeService';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { IColsService } from '../interfaces/iColsService';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { RowHighlightPosition } from '../interfaces/iRowNode';
 import type { ISelectionService } from '../interfaces/iSelectionService';
@@ -87,7 +87,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private selectionService?: ISelectionService;
     private mouseEventService: MouseEventService;
     private ctrlsService: CtrlsService;
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -100,7 +100,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.selectionService = beans.selectionService;
         this.mouseEventService = beans.mouseEventService;
         this.ctrlsService = beans.ctrlsService;
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
         this.rangeService = beans.rangeService;
     }
 
@@ -152,7 +152,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public shouldPreventRowMove(): boolean {
-        const rowGroupCols = this.funcColsService.rowGroupCols;
+        const rowGroupCols = this.rowGroupColsService?.columns ?? [];
         if (rowGroupCols.length) {
             return true;
         }

@@ -11,6 +11,7 @@ import type {
     ProcessRowGroupForExportParams,
 } from '../../interfaces/exportParams';
 import type { ColumnGroup } from '../../interfaces/iColumn';
+import { IColsService } from '../../main-umd-noStyles';
 import type { ValueService } from '../../valueService/valueService';
 import type { GridSerializer } from '../gridSerializer';
 
@@ -35,7 +36,7 @@ export interface RowSpanningAccumulator {
 
 export interface GridSerializingParams {
     columnModel: ColumnModel;
-    funcColsService: FuncColsService;
+    rowGroupColsService?: IColsService;
     columnNameService: ColumnNameService;
     valueService: ValueService;
     gos: GridOptionsService;

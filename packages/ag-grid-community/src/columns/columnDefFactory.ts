@@ -4,16 +4,18 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef } from '../entities/colDef';
+import type { IColsService } from '../interfaces/iColsService';
 import { _deepCloneDefinition } from '../utils/object';
-import type { FuncColsService } from './funcColsService';
 
 export class ColumnDefFactory extends BeanStub implements NamedBean {
     beanName = 'columnDefFactory' as const;
 
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
+    private pivotColsService?: IColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
+        this.pivotColsService = beans.pivotColsService;
     }
 
     public getColumnDefs(
@@ -30,8 +32,8 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
             cols.sort((a, b) => colsList.indexOf(a) - colsList.indexOf(b));
         }
 
-        const rowGroupColumns = this.funcColsService.rowGroupCols;
-        const pivotColumns = this.funcColsService.pivotCols;
+        const rowGroupColumns = this.rowGroupColsService?.columns ?? [];
+        const pivotColumns = this.pivotColsService?.columns ?? [];
 
         return this.buildColumnDefs(cols, rowGroupColumns, pivotColumns);
     }

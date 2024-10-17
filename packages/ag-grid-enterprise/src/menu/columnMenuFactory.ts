@@ -3,7 +3,7 @@ import type {
     AgProvidedColumnGroup,
     BeanCollection,
     ColumnModel,
-    FuncColsService,
+    IColsService,
     MenuItemDef,
     MenuService,
     NamedBean,
@@ -20,13 +20,13 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
     private menuItemMapper: MenuItemMapper;
     private columnModel: ColumnModel;
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
     private menuService: MenuService;
 
     public wireBeans(beans: BeanCollection) {
         this.menuItemMapper = beans.menuItemMapper as MenuItemMapper;
         this.columnModel = beans.columnModel;
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
         this.menuService = beans.menuService!;
     }
 
@@ -106,7 +106,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
         const allowPinning = !column.getColDef().lockPinned;
 
-        const rowGroupCount = this.funcColsService.rowGroupCols.length;
+        const rowGroupCount = this.rowGroupColsService?.columns.length ?? 0;
         const doingGrouping = rowGroupCount > 0;
 
         const allowValue = column.isAllowValue();
