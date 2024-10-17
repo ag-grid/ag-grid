@@ -62,7 +62,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
             getDependenciesSnippet({
                 library,
                 framework,
-                isIntegratedCharts,
             }),
         [library, framework, isIntegratedCharts]
     );
@@ -71,7 +70,6 @@ export const LicenseSetup: FunctionComponent<Props> = ({ library, framework, pat
             getNpmInstallSnippet({
                 library,
                 framework,
-                isIntegratedCharts,
             }),
         [framework, isIntegratedCharts]
     );
