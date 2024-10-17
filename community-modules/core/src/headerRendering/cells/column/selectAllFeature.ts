@@ -13,7 +13,7 @@ import {
 } from '../../../gridOptionsUtils';
 import type { IRowModel } from '../../../interfaces/iRowModel';
 import type { ISelectionService } from '../../../interfaces/iSelectionService';
-import { _setAriaHidden, _setAriaRole } from '../../../utils/aria';
+import { _setAriaRole } from '../../../utils/aria';
 import { _warnOnce } from '../../../utils/function';
 import { AgCheckbox } from '../../../widgets/agCheckbox';
 import type { HeaderCellCtrl } from './headerCellCtrl';
@@ -80,7 +80,6 @@ export class SelectAllFeature extends BeanStub {
         });
 
         this.addManagedListeners(this.cbSelectAll, { fieldValueChanged: this.onCbSelectAll.bind(this) });
-        _setAriaHidden(this.cbSelectAll.getGui(), true);
         this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
         this.refreshSelectAllLabel();
     }
@@ -98,7 +97,7 @@ export class SelectAllFeature extends BeanStub {
 
     private showOrHideSelectAll(): void {
         this.cbSelectAllVisible = this.isCheckboxSelection();
-        this.cbSelectAll.setDisplayed(this.cbSelectAllVisible, { skipAriaHidden: true });
+        this.cbSelectAll.setDisplayed(this.cbSelectAllVisible);
         if (this.cbSelectAllVisible) {
             // in case user is trying this feature with the wrong model type
             this.checkRightRowModelType('selectAllCheckbox');
