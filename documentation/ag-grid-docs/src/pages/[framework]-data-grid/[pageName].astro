@@ -111,11 +111,14 @@ const headings =
      */
     const SCROLL_POSITION_LOCALSTORAGE_KEY = 'docs-scroll-position';
     // NOTE: Need page nav to be on page on page load (ie, not generated on client side)
-    const NAV_SCROLL_CONTAINER_SELECTOR = '#docs-nav-collapser aside';
+    const NAV_SCROLL_CONTAINER_SELECTOR = '#docs-nav-scroll';
 
     window.addEventListener('load', () => {
         const nav = document.querySelector(NAV_SCROLL_CONTAINER_SELECTOR);
         const top = sessionStorage.getItem(SCROLL_POSITION_LOCALSTORAGE_KEY);
+
+        console.log({ nav, top });
+
         if (nav && top !== null) {
             nav.scrollTop = parseInt(top, 10);
         }
