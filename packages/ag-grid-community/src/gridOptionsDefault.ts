@@ -1,6 +1,6 @@
 import type { GridOptions } from './entities/gridOptions';
 
-// Leave untyped. so it can be inferred.
+// Leave untyped. so it can be inferred. Might be possible to type in the future with NoInfer<T>
 export const GRID_OPTION_DEFAULTS = {
     suppressContextMenu: false,
     preventDefaultOnContextMenu: false,
@@ -176,8 +176,19 @@ export const GRID_OPTION_DEFAULTS = {
  * Used simply to type check the default grid options.
  * Done here to allow inference of the above type, for gridOptionsService.get to infer where defaults exist.
  */
+type AllValidKeys = Exclude<keyof typeof GRID_OPTION_DEFAULTS, keyof GridOptions> extends never ? true : false;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const GRID_OPTIONS_DEFAULT_ASSERTION: GridOptions = GRID_OPTION_DEFAULTS;
+const allValidKeys: AllValidKeys = true;
+
+// validate each default value is the right type
+type AllTypesValid = {
+    [K in keyof typeof GRID_OPTION_DEFAULTS]: (typeof GRID_OPTION_DEFAULTS)[K] extends NonNullable<GridOptions[K]>
+        ? 'V'
+        : 'X';
+}[keyof typeof GRID_OPTION_DEFAULTS];
+type AllTypeValid = Exclude<AllTypesValid, 'V'> extends never ? 'V' : false;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const allValidValues: AllTypeValid = 'V';
 
 export type GridOptionOrDefault<K extends keyof GridOptions> = K extends keyof typeof GRID_OPTION_DEFAULTS
     ? NonNullable<GridOptions[K]>

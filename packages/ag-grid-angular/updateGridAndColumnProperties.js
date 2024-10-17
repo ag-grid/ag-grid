@@ -2,8 +2,9 @@ const replace = require('replace-in-file');
 const fs = require('fs');
 const { EOL } = require('os');
 const ts = require('typescript');
-const ComponentUtil = require('ag-grid-community').ComponentUtil;
+const { _getCallbackForEvent, _PUBLIC_EVENTS } = require('ag-grid-community');
 const { getFormatterForTS } = require('./../../scripts/formatAST');
+const { _ALL_GRID_OPTIONS } = require('ag-grid-community');
 
 const { formatNode, findNode, getFullJsDoc } = getFormatterForTS(ts);
 
@@ -53,13 +54,14 @@ function extractTypesFromNode(srcFile, node, { typeLookup, eventTypeLookup, publ
     );
 }
 
-function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, docLookup }) {
-    const skippableProperties = ['gridOptions', 'reactiveCustomComponents', 'GridPreDestroyedEvent'];
+function generateAngularInputOutputs({ typeLookup, eventTypeLookup, docLookup }) {
+    const skippableProperties = ['gridOptions', 'reactiveCustomComponents'];
     const skippableEvents = ['gridPreDestroyed'];
+    const skippableEventTypes = ['GridPreDestroyedEvent'];
     let propsToWrite = [];
     const typeKeysOrder = Object.keys(typeLookup);
 
-    compUtils.ALL_PROPERTIES.forEach((property) => {
+    _ALL_GRID_OPTIONS.forEach((property) => {
         if (skippableProperties.includes(property)) return;
 
         const typeName = typeLookup[property];
@@ -81,16 +83,15 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
 
     let eventsToWrite = [];
     const missingEventTypes = [];
-    compUtils.PUBLIC_EVENTS.forEach((event) => {
+    _PUBLIC_EVENTS.forEach((event) => {
         if (skippableEvents.includes(event)) return;
 
-        const onEvent = compUtils.getCallbackForEvent(event);
+        const onEvent = _getCallbackForEvent(event);
         const eventType = eventTypeLookup[onEvent];
         if (eventType) {
-            const callbackName = ComponentUtil.getCallbackForEvent(event);
-            let line = addDocLine(docLookup, callbackName, '');
+            let line = addDocLine(docLookup, onEvent, '');
             line += `    @Output() public ${event}: EventEmitter<${eventType}> = new EventEmitter<${eventType}>();${EOL}`;
-            const order = typeKeysOrder.findIndex((p) => p === callbackName);
+            const order = typeKeysOrder.findIndex((p) => p === onEvent);
             eventsToWrite.push({ order, line });
         } else {
             missingEventTypes.push(event);
@@ -99,13 +100,13 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
 
     if (missingEventTypes.length > 0) {
         throw new Error(
-            `The following events are missing type information: [${missingEventTypes.join()}]\n If this is a public event add it to the GridOptions interface. \n If a private event add it to INTERNAL_EVENTS.\n`
+            `The following events are missing type information: [${missingEventTypes.join()}]\n If this is a public event add it to the GridOptions interface. \n If a private event add it to _INTERNAL_EVENTS.\n`
         );
     }
 
     result = writeSortedLines(eventsToWrite, result);
 
-    const typesToImport = extractTypes({ eventTypeLookup, typeLookup }, skippableProperties);
+    const typesToImport = extractTypes({ eventTypeLookup, typeLookup }, skippableProperties, skippableEventTypes);
     return { code: result, types: typesToImport };
 }
 
@@ -149,7 +150,7 @@ function parseFile(sourceFile) {
     return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
 }
 
-function extractTypes(context, propsToSkip = []) {
+function extractTypes(context, propsToSkip = [], typesToSkip = []) {
     let allTypes = [
         ...Object.entries(context.typeLookup)
             .filter(([k, v]) => !propsToSkip.includes(k))
@@ -171,7 +172,7 @@ function extractTypes(context, propsToSkip = []) {
     expandedTypes = [...new Set(expandedTypes)]
         .filter((t) => !nonAgTypes.includes(t) && !AG_CHART_TYPES.includes(t))
         .sort();
-    return expandedTypes;
+    return expandedTypes.filter((t) => !typesToSkip.includes(t));
 }
 
 function getGridPropertiesAndEventsJs() {
@@ -181,7 +182,7 @@ function getGridPropertiesAndEventsJs() {
 
     // Apply @Output formatting to public events that are present in this lookup
     const publicEventLookup = {};
-    ComponentUtil.PUBLIC_EVENTS.forEach((e) => (publicEventLookup[ComponentUtil.getCallbackForEvent(e)] = true));
+    _PUBLIC_EVENTS.forEach((e) => (publicEventLookup[_getCallbackForEvent(e)] = true));
 
     let context = {
         typeLookup: {},
@@ -191,7 +192,7 @@ function getGridPropertiesAndEventsJs() {
     };
     extractTypesFromNode(srcFile, gridOptionsNode, context);
 
-    return generateAngularInputOutputs(ComponentUtil, context);
+    return generateAngularInputOutputs(context);
 }
 
 const updateGridProperties = (getGridPropertiesAndEvents) => {

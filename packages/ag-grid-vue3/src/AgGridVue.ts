@@ -5,8 +5,10 @@ import { defineComponent, getCurrentInstance, h } from 'vue';
 import type { AgEventType, GridApi, GridOptions, IRowNode, Module } from 'ag-grid-community';
 import {
     ALWAYS_SYNC_GLOBAL_EVENTS,
-    ComponentUtil,
+    _ALL_EVENTS,
+    _ALL_GRID_OPTIONS,
     _combineAttributesAndGridOptions,
+    _getCallbackForEvent,
     _processOnChange,
     _warn,
     createGrid,
@@ -198,12 +200,17 @@ export const AgGridVue = defineComponent({
 
         // the gridOptions we pass to the grid don't need to be reactive (and shouldn't be - it'll cause issues
         // with mergeDeep for example
-        const gridOptions = markRaw(_combineAttributesAndGridOptions(toRaw(this.gridOptions), this));
+        const gridOptions = markRaw(
+            _combineAttributesAndGridOptions(toRaw(this.gridOptions), this, [
+                ..._ALL_GRID_OPTIONS,
+                ..._ALL_EVENTS.map((event) => _getCallbackForEvent(event)),
+            ])
+        );
 
         this.checkForBindingConflicts();
 
         const rowData = this.getRowDataBasedOnBindings();
-        if (rowData !== ComponentUtil.VUE_OMITTED_PROPERTY) {
+        if (rowData !== undefined) {
             gridOptions.rowData = convertToRaw(rowData);
         }
 

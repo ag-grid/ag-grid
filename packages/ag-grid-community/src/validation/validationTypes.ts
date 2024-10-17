@@ -27,6 +27,7 @@ export type Validations<T extends object> = Partial<{
         | OptionsValidation<T>
         | undefined;
 }>;
+export type ValidationsRequired<T extends object> = Required<Validations<T>>;
 
 // Rules object, if present, module is required.
 export interface OptionsValidation<T extends object> {

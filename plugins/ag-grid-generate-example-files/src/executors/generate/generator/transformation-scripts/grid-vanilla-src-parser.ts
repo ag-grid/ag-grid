@@ -1,8 +1,8 @@
 import * as cheerio from 'cheerio';
 import ts from 'typescript';
 
-import { ALL_EVENTS } from '../_copiedFromCore/eventTypes';
-import { PropertyKeys } from '../_copiedFromCore/propertyKeys';
+import { _ALL_EVENTS } from '../_copiedFromCore/eventTypes';
+import { _ALL_GRID_OPTIONS, _FUNCTION_GRID_OPTIONS } from '../_copiedFromCore/propertyKeys';
 import type { GridOptionsType, InlineGridStyles, ParsedBindings } from '../types';
 import {
     extractClassDeclarations,
@@ -29,9 +29,8 @@ import {
 } from './parser-utils';
 
 export const templatePlaceholder = 'GRID_TEMPLATE_PLACEHOLDER';
-const EVENTS = ALL_EVENTS;
-const PROPERTIES: any = PropertyKeys.ALL_PROPERTIES;
-const FUNCTION_PROPERTIES: any = PropertyKeys.FUNCTION_PROPERTIES;
+const PROPERTIES: any = _ALL_GRID_OPTIONS;
+const FUNCTION_PROPERTIES: any = _FUNCTION_GRID_OPTIONS;
 
 function tsNodeIsDocumentContentLoaded(node) {
     try {
@@ -238,7 +237,7 @@ function internalParser(
 
     // all onXXX will be handled here
     // note: gridOptions = { onGridSizeChanged = function() {}  handled below
-    EVENTS.forEach((eventName) => {
+    _ALL_EVENTS.forEach((eventName) => {
         const onEventName = 'on' + eventName.replace(/^\w/, (w) => w.toUpperCase());
         registered.push(onEventName);
 
@@ -254,7 +253,7 @@ function internalParser(
         });
     });
 
-    EVENTS.forEach((eventName) => {
+    _ALL_EVENTS.forEach((eventName) => {
         const onEventName = 'on' + eventName.replace(/^\w/, (w) => w.toUpperCase());
         tsGridOptionsCollectors.push({
             // onGridReady is handled separately

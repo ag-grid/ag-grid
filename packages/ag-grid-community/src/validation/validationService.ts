@@ -3,6 +3,8 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
+import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
+import type { PropertyChangedSource } from '../gridOptionsService';
 import type { EnterpriseModuleName, ModuleName } from '../interfaces/iModule';
 import { _areModulesGridScoped } from '../modules/moduleRegistry';
 import { _warnOnce } from '../utils/function';
@@ -11,7 +13,7 @@ import { validateApiFunction } from './apiFunctionValidator';
 import { ENTERPRISE_MODULE_NAMES } from './enterpriseModuleNames';
 import type { ErrorId, GetErrorParams } from './errorMessages/errorText';
 import { getError } from './errorMessages/errorText';
-import { _error, provideValidationServiceLogger } from './logging';
+import { _error, _warn, provideValidationServiceLogger } from './logging';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
 import type { DependentValues, OptionsValidation, OptionsValidator, RequiredOptions } from './validationTypes';
 
@@ -29,6 +31,12 @@ export class ValidationService extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         this.processGridOptions(this.gridOptions);
+    }
+
+    public warnOnInitialPropertyUpdate(source: PropertyChangedSource, key: string): void {
+        if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
+            _warn(22, { key });
+        }
     }
 
     public processGridOptions(options: GridOptions): void {

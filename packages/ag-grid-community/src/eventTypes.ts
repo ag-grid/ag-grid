@@ -1,6 +1,6 @@
 // events that are available for use by users of AG Grid and so should be documented
 /** EVENTS that should be exposed via code generation for the framework components.  */
-export const PUBLIC_EVENTS = [
+export const _PUBLIC_EVENTS = [
     'columnEverythingChanged',
     'newColumnsLoaded',
     'columnPivotModeChanged',
@@ -102,7 +102,7 @@ export const PUBLIC_EVENTS = [
 // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
 // These events are still available to users via the API if the eventName is cast to any to stop Typescript from complaining, but they are not intended for general use
 /** Exclude the following internal events from code generation to prevent exposing these events via framework components */
-export const INTERNAL_EVENTS = [
+export const _INTERNAL_EVENTS = [
     'scrollbarWidthChanged',
     'keyShortcutChangedCellStart',
     'keyShortcutChangedCellEnd',
@@ -151,8 +151,8 @@ export const INTERNAL_EVENTS = [
     'overlayExclusiveChanged',
 ] as const;
 
-export const ALL_EVENTS = [...PUBLIC_EVENTS, ...INTERNAL_EVENTS] as const;
+export const _ALL_EVENTS = [..._PUBLIC_EVENTS, ..._INTERNAL_EVENTS] as const;
 
-export type AgPublicEventType = (typeof PUBLIC_EVENTS)[number];
-export type AgInternalEventType = (typeof INTERNAL_EVENTS)[number];
+export type AgPublicEventType = (typeof _PUBLIC_EVENTS)[number];
+export type AgInternalEventType = (typeof _INTERNAL_EVENTS)[number];
 export type AgEventType = AgPublicEventType | AgInternalEventType;

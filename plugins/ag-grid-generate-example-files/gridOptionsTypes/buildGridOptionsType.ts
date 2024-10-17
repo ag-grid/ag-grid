@@ -1,7 +1,7 @@
 import ts from 'typescript';
 
 import { writeJSONFile } from '../src/executors-utils';
-import { PropertyKeys } from '../src/executors/generate/generator/_copiedFromCore/propertyKeys';
+import { _ALL_GRID_OPTIONS } from '../src/executors/generate/generator/_copiedFromCore/propertyKeys';
 
 function getTypes(node: ts.Node) {
     let typesToInclude: string[] = [];
@@ -46,7 +46,7 @@ function getTypeLookupFunc(fileName) {
         };
 
         const fullLookup = {};
-        PropertyKeys.ALL_PROPERTIES.forEach((prop) => {
+        _ALL_GRID_OPTIONS.forEach((prop) => {
             fullLookup[prop] = lookupType(prop as string);
         });
         console.log('Writing gridOptions types to file');

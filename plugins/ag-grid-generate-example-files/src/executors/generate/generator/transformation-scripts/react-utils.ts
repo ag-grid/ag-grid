@@ -1,7 +1,7 @@
 import * as JSON5 from 'json5';
 
-import { ALL_EVENTS } from '../_copiedFromCore/eventTypes';
-import { PropertyKeys } from '../_copiedFromCore/propertyKeys';
+import { _ALL_EVENTS } from '../_copiedFromCore/eventTypes';
+import { _FUNCTION_GRID_OPTIONS } from '../_copiedFromCore/propertyKeys';
 import { getFunctionName, recognizedDomEvents } from './parser-utils';
 
 const toTitleCase = (value: string) => value[0].toUpperCase() + value.slice(1);
@@ -105,4 +105,4 @@ export const convertFunctionToConstCallbackTs = (code: string, callbackDependenc
     return `${code.replace(/function\s+([^(\s]+)\s*\(([^)]*)\)(:?\s+[^{]*)/, 'const $1 = useCallback(($2) $3 =>')}, [${callbackDependencies[functionName] || ''}])`;
 };
 
-export const EventAndCallbackNames = new Set([...PropertyKeys.FUNCTION_PROPERTIES, ...ALL_EVENTS]);
+export const EventAndCallbackNames = new Set([..._FUNCTION_GRID_OPTIONS, ..._ALL_EVENTS]);

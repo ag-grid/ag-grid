@@ -48,7 +48,6 @@ export {
 export { IRenderStatusService } from './interfaces/renderStatusService';
 
 // components
-export { ComponentUtil, _combineAttributesAndGridOptions, _processOnChange } from './components/componentUtil';
 export { EmptyBean as _EmptyBean } from './components/emptyBean';
 export { ComponentSelector, AgComponentSelector, RefPlaceholder, ComponentEvent } from './widgets/component';
 
@@ -600,11 +599,14 @@ export {
 } from './api/gridApi';
 export { IDetailGridApiService } from './interfaces/iDetailGridApiService';
 export { _getClientSideRowModel, _getServerSideRowModel } from './api/rowModelApiUtils';
-export { AgEventType, AgPublicEventType } from './eventTypes';
+export { AgEventType, AgPublicEventType, _ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes'; // TODO: remove _ALL_EVENTS, _PUBLIC_EVENTS if not required by VUE
 export type { FocusService } from './focusService';
 export type { GridOptionsService } from './gridOptionsService';
 export { PropertyChangedEvent } from './gridOptionsService';
 export {
+    _getCallbackForEvent,
+    _combineAttributesAndGridOptions,
+    _processOnChange,
     _getMaxConcurrentDatasourceRequests,
     _getRowIdCallback,
     _getRowHeightForNode,
@@ -851,7 +853,7 @@ export {
 } from './interfaces/iCallbackParams';
 export { WithoutGridCommon } from './interfaces/iCommon';
 
-export { ManagedGridOptionKey, ManagedGridOptions, PropertyKeys } from './propertyKeys';
+export { _ALL_GRID_OPTIONS, _BOOLEAN_GRID_OPTIONS } from './propertyKeys'; // TODO: remove if not required by VUE
 export { IPivotColDefService } from './interfaces/iPivotColDefService';
 export { IViewportDatasource, IViewportDatasourceParams } from './interfaces/iViewportDatasource';
 export {
