@@ -1,0 +1,42 @@
+---
+title: "v32 Themes: Customising Borders"
+---
+
+Control the borders around rows, cells and UI elements.
+
+{% note %}
+This page describes the grid's theming system from v32 and before, for the benefit of applications that have not yet migrated to the Theming API. These themes are deprecated and will be removed in a future major version. You may want to visit the [new theming docs](./theming-borders/) or check out the [migration guide](./theming-migration/).
+{% /note %}
+
+The grid exposes many variables for customising borders. For each kind of border, the style and colour are controlled by two different variables. For a given kind of border, `--ag-borders-{kind}` should be set to a CSS border style and width (e.g. `solid 1px`) or `none` to disable; and `--ag-{kind}-border-color` can be set to a CSS border color e.g. `red`.
+
+These variables use [Variable Cascading](./theming-v32-customisation-css/#variable-cascading) to allow you to enable/disable all borders quickly or fine tune the borders shown. In the list below, setting a parent item in the list will set the default value for all children:
+
+* `--ag-borders` and `--ag-border-color` - the master control for all borders in the grid
+  * `--ag-borders-critical` and `--ag-critical-border-color` - borders that are important for UX even on grids without many borders - for example to differentiate pinned from regular columns. Themes that disable borders generally may want to enable these borders
+  * `--ag-borders-secondary` and `--ag-secondary-border-color` - borders separating UI elements within components.
+    * `--ag-borders-input` and `--ag-secondary-border-row` - borders around text inputs
+* `--ag-row-border-style`, `--ag-row-border-color` and `--ag-row-border-width` - borders separating the grid rows. Row borders are configured independently of other border properties.
+* `--ag-cell-horizontal-border` - borders between horizontally adjacent cells (i.e. between columns). This accepts a style and a color, e.g. `solid black`.
+
+## Example: row borders
+
+```css
+.ag-theme-quartz {
+    /* disable all borders */
+    --ag-borders: none;
+    /* then add back a border between rows */
+    --ag-row-border-style: dashed;
+    --ag-row-border-width: 5px;
+    --ag-row-border-color: rgb(150, 150, 200);
+    /* and between columns */
+    --ag-cell-horizontal-border: solid rgb(150, 150, 200);
+}
+```
+
+{% gridExampleRunner title="Border Customisation" name="border-customisation"  exampleHeight=450 /%}
+
+### Borders between header cells
+
+`--ag-cell-horizontal-border` adds a border between cells in the grid area. To add a border between header cells, use [header column separators](./theming-v32-customisation-headers/#header-column-separators-and-resize-handles).
+

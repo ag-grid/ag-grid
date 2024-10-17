@@ -6,10 +6,6 @@ Migrating to the Theming API
 
 Before v33, themes were imported as CSS files in our NPM modules, and applied by setting a class name on the grid's container element, e.g. `class="ag-theme-quartz"`. In v33, the default method of styling the grid is the Theming API, in which themes are imported as JavaScript objects and passed to the grid as a grid option. This guide covers migrating from v32 Themes to the Theming API.
 
-{% note %}
-If your application is split between multiple pages, it can be migrated one page at a time. However a single HTML document can not contain both legacy styling and the Theming API, because the two styles conflict with each other.
-{% /note %}
-
 ## Understanding the Theming API
 
 If you are familiar with the method of theming applications used in v32 and earlier, the following technical context will help you understand what is changing and what remains the same.
@@ -28,7 +24,13 @@ None of this is changing - the grid is still styled with CSS and CSS custom prop
     * [Selector specificity](https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity) has been reduced across the board, making it easier to override in your own stylesheets. For example, in v32 Themes if you added the following code to your application's stylesheet - `.ag-cell-inline-editing { box-shadow: none; }` - it would not have the intended effect of removing the shadow from cells being edited. This was because our CSS that added the shadow had a more specific selector. In the Theming API this code works as expected.
     * Custom properties have been added, removed and renamed to make a more consistent and logical set. See below for a list.
 
-### What do I need to change in my app to migrate
+## Incremental migration
+
+If your application is split between multiple pages, it can be migrated one page at a time. However a single HTML document can not contain both legacy styling and the Theming API, because the two styles conflict with each other.
+
+## Updating your app for v33
+
+If you want to upgrade to v33 without immediately adopting the Theming API, you can opt back in to the v32 style of themes by passing the string `"legacy"` to the theme grid option. You can then continue to use v32 themes. To adopt the v33 themes, follow these steps:
 
 ### 1. Remove CSS imports
 
