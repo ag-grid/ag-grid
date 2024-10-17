@@ -1,4 +1,4 @@
-import type { IRowChildrenService, RowNode } from 'ag-grid-community';
+import type { RowNode } from 'ag-grid-community';
 
 import type { GroupRow } from './groupRow';
 
@@ -21,7 +21,7 @@ export class BatchRemover {
     private allSets: { [parentId: string]: RemoveDetails } = {};
     private allParents: RowNode[] = [];
 
-    constructor(private readonly rowChildrenService: IRowChildrenService | undefined) {}
+    constructor() {}
 
     public removeFromChildrenAfterGroup(parent: RowNode, child: RowNode): void {
         const set = this.getSet(parent);
@@ -67,7 +67,7 @@ export class BatchRemover {
             );
             parent.allLeafChildren =
                 parent.allLeafChildren?.filter((child) => !nodeDetails.removeFromAllLeafChildren[child.id!]) ?? null;
-            this.rowChildrenService?.updateHasChildren(parent);
+            parent.updateHasChildren();
 
             const sibling: GroupRow = parent.sibling;
             if (sibling) {

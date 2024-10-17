@@ -3,7 +3,6 @@ import type {
     ColumnModel,
     FocusService,
     GetRowIdParams,
-    IRowChildrenService,
     IRowNode,
     LoadSuccessParams,
     RowNode,
@@ -41,7 +40,6 @@ export class LazyCache extends BeanStub {
     private sortController?: SortController;
     private lazyBlockLoadingService: LazyBlockLoadingService;
     private columnModel: ColumnModel;
-    private rowChildrenService?: IRowChildrenService;
 
     public wireBeans(beans: BeanCollection) {
         this.rowRenderer = beans.rowRenderer;
@@ -53,7 +51,6 @@ export class LazyCache extends BeanStub {
         this.sortController = beans.sortController;
         this.lazyBlockLoadingService = beans.lazyBlockLoadingService as LazyBlockLoadingService;
         this.columnModel = beans.columnModel;
-        this.rowChildrenService = beans.rowChildrenService;
     }
 
     /**
@@ -473,7 +470,7 @@ export class LazyCache extends BeanStub {
 
             // if there's no id and this is an open group, protect this node from changes
             // hasChildren also checks for tree data and master detail
-            if (this.getRowIdFunc == null && this.rowChildrenService?.hasChildren(node) && node.expanded) {
+            if (this.getRowIdFunc == null && node.hasChildren() && node.expanded) {
                 this.nodesToRefresh.delete(node);
                 return node;
             }

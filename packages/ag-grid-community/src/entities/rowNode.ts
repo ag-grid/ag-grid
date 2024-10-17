@@ -261,7 +261,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     /** We cache the result of hasChildren() so that we can be aware of when it has changed, and hence
      * fire the event. Really we should just have hasChildren as an attribute and do away with hasChildren()
      * method, however that would be a breaking change. */
-    public __hasChildren: boolean;
+    private __hasChildren: boolean;
 
     /** When one or more Columns are using autoHeight, this keeps track of height of each autoHeight Cell,
      * indexed by the Column ID. */
@@ -371,8 +371,8 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.updateDataOnDetailNode();
         this.setId(id);
         if (selectionService) {
-            selectionService?.checkRowSelectable(this);
-            selectionService?.syncInRowNode(this, oldNode);
+            selectionService.checkRowSelectable(this);
+            selectionService.syncInRowNode(this, oldNode);
         }
 
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, false);
@@ -509,6 +509,29 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.beans.selectionService?.checkRowSelectable(this);
 
         return valueChanged;
+    }
+
+    public updateHasChildren(): void {
+        // in CSRM, the group property will be set before the childrenAfterGroup property, check both to prevent flickering
+        let newValue: boolean | null =
+            (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+
+        const { rowChildrenService } = this.beans;
+        if (rowChildrenService) {
+            newValue = rowChildrenService.getHasChildrenValue(this);
+        }
+
+        if (newValue !== this.__hasChildren) {
+            this.__hasChildren = !!newValue;
+            this.dispatchRowEvent('hasChildrenChanged');
+        }
+    }
+
+    public hasChildren(): boolean {
+        if (this.__hasChildren == null) {
+            this.updateHasChildren();
+        }
+        return this.__hasChildren;
     }
 
     public dispatchCellChangedEvent(column: AgColumn, newValue: TData, oldValue: TData): void {
@@ -687,6 +710,13 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         if (this.rowIndex !== rowIndex) {
             this.rowIndex = rowIndex;
             this.dispatchRowEvent('rowIndexChanged');
+        }
+    }
+
+    public setAllChildrenCount(allChildrenCount: number | null): void {
+        if (this.allChildrenCount !== allChildrenCount) {
+            this.allChildrenCount = allChildrenCount;
+            this.dispatchRowEvent('allChildrenCountChanged');
         }
     }
 

@@ -5,7 +5,6 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { FilterManager } from '../filter/filterManager';
 import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
-import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
 import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
 import type { ChangedPath } from '../utils/changedPath';
 
@@ -22,11 +21,9 @@ export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
     public step: ClientSideRowModelStage = 'filter';
 
     private filterManager?: FilterManager;
-    private rowChildrenService?: IRowChildrenService;
 
     public wireBeans(beans: BeanCollection): void {
         this.filterManager = beans.filterManager;
-        this.rowChildrenService = beans.rowChildrenService;
     }
 
     public execute(params: StageExecuteParams): void {
@@ -42,7 +39,7 @@ export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
     private filterNodes(filterActive: boolean, changedPath: ChangedPath): void {
         const filterCallback = (rowNode: RowNode, includeChildNodes: boolean) => {
             // recursively get all children that are groups to also filter
-            if (this.rowChildrenService?.hasChildren(rowNode)) {
+            if (rowNode.hasChildren()) {
                 // result of filter for this node. when filtering tree data, includeChildNodes = true when parent passes
                 if (filterActive && !includeChildNodes) {
                     rowNode.childrenAfterFilter = rowNode.childrenAfterGroup!.filter((childNode) => {

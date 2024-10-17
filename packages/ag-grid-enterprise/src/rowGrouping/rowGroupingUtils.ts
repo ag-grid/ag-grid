@@ -61,7 +61,7 @@ export function setRowNodeGroup(rowNode: RowNode, beans: BeanCollection, group: 
     }
 
     rowNode.group = group;
-    beans.rowChildrenService?.updateHasChildren(rowNode);
+    rowNode.updateHasChildren();
     beans.selectionService?.checkRowSelectable(rowNode);
     rowNode.dispatchRowEvent('groupChanged');
 }

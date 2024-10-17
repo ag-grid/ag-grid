@@ -4,7 +4,6 @@ import type { CtrlsService } from '../../ctrlsService';
 import type { RowNode } from '../../entities/rowNode';
 import type { GridBodyCtrl } from '../../gridBodyComp/gridBodyCtrl';
 import { _getRowHeightForNode, _isClientSideRowModel, _isGroupRowsSticky } from '../../gridOptionsUtils';
-import type { IRowChildrenService } from '../../interfaces/iRowChildrenService';
 import type { IRowModel } from '../../interfaces/iRowModel';
 import type { PageBoundsService } from '../../pagination/pageBoundsService';
 import { _last } from '../../utils/array';
@@ -16,14 +15,12 @@ export class StickyRowFeature extends BeanStub {
     private rowRenderer: RowRenderer;
     private ctrlsService: CtrlsService;
     private pageBoundsService: PageBoundsService;
-    private rowChildrenService?: IRowChildrenService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
         this.rowRenderer = beans.rowRenderer;
         this.ctrlsService = beans.ctrlsService;
         this.pageBoundsService = beans.pageBoundsService;
-        this.rowChildrenService = beans.rowChildrenService;
     }
 
     private stickyTopRowCtrls: RowCtrl[] = [];
@@ -111,7 +108,7 @@ export class StickyRowFeature extends BeanStub {
             return row.sibling!.rowTop! + row.sibling!.rowHeight! - 1;
         }
 
-        if (this.rowChildrenService?.hasChildren(row)) {
+        if (row.hasChildren()) {
             return row.rowTop! - 1;
         }
 

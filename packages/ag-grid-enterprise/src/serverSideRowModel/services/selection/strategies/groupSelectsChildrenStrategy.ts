@@ -2,7 +2,6 @@ import type {
     BeanCollection,
     FilterManager,
     FuncColsService,
-    IRowChildrenService,
     IRowModel,
     IRowNode,
     ISelectionService,
@@ -28,7 +27,6 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     private funcColsService: FuncColsService;
     private filterManager?: FilterManager;
     private selectionService: ISelectionService;
-    private rowChildrenService?: IRowChildrenService;
     private selectionCtx = new ServerSideRowRangeSelectionContext();
 
     public wireBeans(beans: BeanCollection) {
@@ -36,7 +34,6 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         this.funcColsService = beans.funcColsService;
         this.filterManager = beans.filterManager;
         this.selectionService = beans.selectionService!;
-        this.rowChildrenService = beans.rowChildrenService;
     }
 
     private selectedState: SelectionState = { selectAllChildren: false, toggledNodes: new Map() };
@@ -253,7 +250,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     private isNodePathSelected([nextNode, ...nodes]: RowNode[], state: SelectionState): boolean | undefined {
         if (nodes.length === 0) {
             const isToggled = state.toggledNodes.has(nextNode.id!);
-            if (this.rowChildrenService?.hasChildren(nextNode)) {
+            if (nextNode.hasChildren()) {
                 const groupState = state.toggledNodes.get(nextNode.id!);
                 if (groupState && groupState.toggledNodes.size) {
                     return undefined;

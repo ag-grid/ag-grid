@@ -5,7 +5,6 @@ import type {
     Column,
     ColumnModel,
     IGroupHideOpenParentsService,
-    IRowChildrenService,
     IRowNode,
     IShowRowGroupColsService,
     RowNode,
@@ -19,12 +18,10 @@ export class GroupHideOpenParentsService extends BeanStub implements IGroupHideO
 
     private columnModel: ColumnModel;
     private showRowGroupColsService?: IShowRowGroupColsService;
-    private rowChildrenService?: IRowChildrenService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.showRowGroupColsService = beans.showRowGroupColsService;
-        this.rowChildrenService = beans.rowChildrenService;
     }
 
     public updateGroupDataForHideOpenParents(changedPath?: ChangedPath): void {
@@ -36,7 +33,7 @@ export class GroupHideOpenParentsService extends BeanStub implements IGroupHideO
         const callback = (rowNode: RowNode) => {
             this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterSort, false);
             rowNode.childrenAfterSort!.forEach((child) => {
-                if (this.rowChildrenService?.hasChildren(child)) {
+                if (child.hasChildren()) {
                     callback(child);
                 }
             });

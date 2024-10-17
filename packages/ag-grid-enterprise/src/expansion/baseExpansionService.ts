@@ -1,7 +1,6 @@
 import type {
     BeanCollection,
     ColumnModel,
-    IRowChildrenService,
     RowCtrl,
     RowNode,
     RowNodeEventThrottle,
@@ -13,13 +12,11 @@ export abstract class BaseExpansionService extends BeanStub {
     private rowRenderer: RowRenderer;
     private rowNodeEventThrottle?: RowNodeEventThrottle;
     protected columnModel: ColumnModel;
-    private rowChildrenService?: IRowChildrenService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowRenderer = beans.rowRenderer;
         this.rowNodeEventThrottle = beans.rowNodeEventThrottle;
         this.columnModel = beans.columnModel;
-        this.rowChildrenService = beans.rowChildrenService;
     }
 
     public addExpandedCss(classes: string[], rowNode: RowNode): void {
@@ -72,9 +69,9 @@ export abstract class BaseExpansionService extends BeanStub {
 
         if (this.columnModel.isPivotMode()) {
             // master detail and leaf groups aren't expandable in pivot mode.
-            return !!this.rowChildrenService?.hasChildren(rowNode) && !rowNode.leafGroup;
+            return rowNode.hasChildren() && !rowNode.leafGroup;
         }
-        return this.rowChildrenService?.hasChildren(rowNode) || !!rowNode.master;
+        return rowNode.hasChildren() || !!rowNode.master;
     }
 
     private updateExpandedCss(rowCtrl: RowCtrl, rowNode: RowNode): void {

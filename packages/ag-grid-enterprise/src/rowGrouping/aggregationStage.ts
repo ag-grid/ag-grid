@@ -10,7 +10,6 @@ import type {
     IAggFunc,
     IAggFuncParams,
     IPivotResultColsService,
-    IRowChildrenService,
     IRowNodeStage,
     NamedBean,
     RowNode,
@@ -48,7 +47,6 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
     private aggFuncService: AggFuncService;
     private funcColsService: FuncColsService;
     private pivotResultColsService?: IPivotResultColsService;
-    private rowChildrenService?: IRowChildrenService;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
@@ -56,7 +54,6 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         this.funcColsService = beans.funcColsService;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.valueService = beans.valueService;
-        this.rowChildrenService = beans.rowChildrenService;
     }
 
     // it's possible to recompute the aggregate without doing the other parts
@@ -105,7 +102,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
 
     private recursivelyCreateAggData(aggDetails: AggregationDetails) {
         const callback = (rowNode: RowNode) => {
-            const hasNoChildren = !this.rowChildrenService?.hasChildren(rowNode);
+            const hasNoChildren = !rowNode.hasChildren();
             if (hasNoChildren) {
                 // this check is needed for TreeData, in case the node is no longer a child,
                 // but it was a child previously.

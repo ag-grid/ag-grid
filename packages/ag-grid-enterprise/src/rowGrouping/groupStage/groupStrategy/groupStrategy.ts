@@ -4,7 +4,6 @@ import type {
     ChangedPath,
     ColumnModel,
     FuncColsService,
-    IRowChildrenService,
     ISelectionService,
     IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
@@ -61,7 +60,6 @@ export class GroupStrategy extends BeanStub {
     private beans: BeanCollection;
     private selectionService?: ISelectionService;
     private showRowGroupColsService: IShowRowGroupColsService;
-    private rowChildrenService?: IRowChildrenService;
 
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;
@@ -70,7 +68,6 @@ export class GroupStrategy extends BeanStub {
         this.valueService = beans.valueService;
         this.selectionService = beans.selectionService;
         this.showRowGroupColsService = beans.showRowGroupColsService!;
-        this.rowChildrenService = beans.rowChildrenService;
     }
 
     // when grouping, these items are of note:
@@ -150,7 +147,7 @@ export class GroupStrategy extends BeanStub {
 
     private handleTransaction(details: GroupingDetails): void {
         details.transactions.forEach((tran) => {
-            const batchRemover = new BatchRemover(this.rowChildrenService);
+            const batchRemover = new BatchRemover();
 
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
@@ -297,7 +294,7 @@ export class GroupStrategy extends BeanStub {
         // this method can be called with BatchRemover as optional. if it is missed, we created a local version
         // and flush it at the end. if one is provided, we add to the provided one and it gets flushed elsewhere.
         const batchRemoverIsLocal = provided == null;
-        const batchRemoverToUse = provided ? provided : new BatchRemover(this.rowChildrenService);
+        const batchRemoverToUse = provided ? provided : new BatchRemover();
 
         nodesToRemove.forEach((nodeToRemove) => {
             this.removeFromParent(nodeToRemove, batchRemoverToUse);
@@ -337,7 +334,7 @@ export class GroupStrategy extends BeanStub {
 
         while (checkAgain) {
             checkAgain = false;
-            const batchRemover = new BatchRemover(this.rowChildrenService);
+            const batchRemover = new BatchRemover();
             possibleEmptyGroups.forEach((possibleEmptyGroup) => {
                 // remove empty groups
                 this.forEachParentGroup(details, possibleEmptyGroup, (rowNode) => {
@@ -370,7 +367,7 @@ export class GroupStrategy extends BeanStub {
                 batchRemover.removeFromChildrenAfterGroup(child.parent, child);
             } else {
                 _removeFromArray(child.parent.childrenAfterGroup!, child);
-                this.rowChildrenService?.updateHasChildren(child.parent);
+                child.parent.updateHasChildren();
             }
         }
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
@@ -446,7 +443,7 @@ export class GroupStrategy extends BeanStub {
         // we are doing everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
         rootNode.childrenAfterGroup = [];
         rootNode.childrenMapped = {};
-        this.rowChildrenService?.updateHasChildren(rootNode);
+        rootNode.updateHasChildren();
 
         const sibling: GroupRow = rootNode.sibling;
         if (sibling) {
@@ -501,7 +498,7 @@ export class GroupStrategy extends BeanStub {
         childNode.parent = parentGroup;
         childNode.level = path.length;
         parentGroup.childrenAfterGroup!.push(childNode);
-        this.rowChildrenService?.updateHasChildren(parentGroup);
+        parentGroup.updateHasChildren();
     }
 
     private findParentForNode(
@@ -565,13 +562,13 @@ export class GroupStrategy extends BeanStub {
 
         // why is this done here? we are not updating the children count as we go,
         // i suspect this is updated in the filter stage
-        this.rowChildrenService?.setAllChildrenCount(groupNode, 0);
+        groupNode.setAllChildrenCount(0);
 
         groupNode.rowGroupIndex = level;
 
         groupNode.childrenAfterGroup = [];
         groupNode.childrenMapped = {};
-        this.rowChildrenService?.updateHasChildren(groupNode);
+        groupNode.updateHasChildren();
 
         groupNode.parent = parent;
 

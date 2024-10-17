@@ -2,7 +2,6 @@ import type {
     BeanCollection,
     ChangedPath,
     GetDataPath,
-    IRowChildrenService,
     IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
@@ -48,7 +47,6 @@ export interface TreeExecutionDetails {
 export class TreeStrategy extends BeanStub {
     private beans: BeanCollection;
     private showRowGroupColsService: IShowRowGroupColsService;
-    private rowChildrenService?: IRowChildrenService;
 
     private oldGroupDisplayColIds: string | undefined;
 
@@ -61,7 +59,6 @@ export class TreeStrategy extends BeanStub {
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;
         this.showRowGroupColsService = beans.showRowGroupColsService!;
-        this.rowChildrenService = beans.rowChildrenService;
     }
 
     public override destroy(): void {
@@ -306,7 +303,7 @@ export class TreeStrategy extends BeanStub {
             }
         }
 
-        this.rowChildrenService?.updateHasChildren(rootRow);
+        rootRow.updateHasChildren();
 
         if (isTreeRowPathChanged(rootRow)) {
             if (details.changedPath?.isActive()) {
@@ -413,9 +410,9 @@ export class TreeStrategy extends BeanStub {
             if (!group && !row.expanded) {
                 setTreeRowExpandedInitialized(row, false);
             }
-        } else if (this.rowChildrenService?.hasChildren(row) !== hasChildren) {
+        } else if (row.hasChildren() !== hasChildren) {
             markTreeRowPathChanged(row);
-            this.rowChildrenService?.updateHasChildren(row);
+            row.updateHasChildren();
         }
 
         if (row.group && !isTreeRowExpandedInitialized(row)) {

@@ -101,12 +101,10 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
             return;
         }
 
-        const { rowChildrenService } = this.beans;
-
         for (let i = 0; i < rowsToFlatten!.length; i++) {
             const rowNode = rowsToFlatten![i];
             // check all these cases, for working out if this row should be included in the final mapped list
-            const isParent = rowChildrenService?.hasChildren(rowNode);
+            const isParent = rowNode.hasChildren();
 
             const isSkippedLeafNode = skipLeafNodes && !isParent;
 

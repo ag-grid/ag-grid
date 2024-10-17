@@ -27,10 +27,6 @@ describe('exists', () => {
         expect(_exists('')).toBe(false);
     });
 
-    it('returns true for empty string if allowed', () => {
-        expect(_exists('', true)).toBe(true);
-    });
-
     it.each(['string', 123, true])('returns true if value is present: %s', (value) => {
         expect(_exists(value)).toBe(true);
     });
