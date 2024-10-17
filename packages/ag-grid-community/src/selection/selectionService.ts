@@ -6,7 +6,6 @@ import type { RowSelectedEvent, SelectionEventSourceType } from '../events';
 import { isSelectionUIEvent } from '../events';
 import {
     _getGroupSelectsDescendants,
-    _getIsRowSelectable,
     _getRowSelectionMode,
     _isClientSideRowModel,
     _isMultiRowSelection,

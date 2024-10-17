@@ -9,11 +9,11 @@ import type {
 } from 'ag-grid-community';
 import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
+import { ColumnsToolPanelModule, TreeDataModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([ColumnsToolPanelModule, MenuModule, ServerSideRowModelModule]);
+ModuleRegistry.registerModules([ColumnsToolPanelModule, TreeDataModule, MenuModule, ServerSideRowModelModule]);
 
 const columnDefs: ColDef[] = [
     { field: 'employeeId', hide: true },
