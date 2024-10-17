@@ -1,3 +1,5 @@
+import { _getClientSideRowModel } from 'packages/ag-grid-community/src/api/rowModelApiUtils';
+
 import type {
     BeanCollection,
     BeanName,
@@ -53,7 +55,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
         const enabled = this.isEnabled();
         if (this.enabled !== enabled) {
             if (this.setMasters(null)) {
-                this.rowModel.refreshModel?.({ step: 'map' });
+                _getClientSideRowModel(this.beans)?.refreshModel({ step: 'map' });
             }
         }
     }
