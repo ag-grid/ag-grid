@@ -117,8 +117,6 @@ const headings =
         const nav = document.querySelector(NAV_SCROLL_CONTAINER_SELECTOR);
         const top = sessionStorage.getItem(SCROLL_POSITION_LOCALSTORAGE_KEY);
 
-        console.log({ nav, top });
-
         if (nav && top !== null) {
             nav.scrollTop = parseInt(top, 10);
         }
