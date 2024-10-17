@@ -82,7 +82,7 @@ describe.each([
         isValid: false,
         message: validGridChartsVersionErrorMessage({
             type: 'invalidGrid',
-            gridVersion: null,
+            gridVersion: null as any,
             chartsVersion: '7.0.0',
         }),
     },
@@ -103,7 +103,7 @@ describe.each([
         message: validGridChartsVersionErrorMessage({
             type: 'invalidCharts',
             gridVersion: '29.0.0',
-            chartsVersion: null,
+            chartsVersion: null as any,
         }),
     },
     // Weird version numbers
