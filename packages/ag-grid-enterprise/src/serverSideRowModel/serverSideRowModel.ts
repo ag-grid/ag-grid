@@ -82,7 +82,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private onRowHeightChanged_debounced = _debounce(this.onRowHeightChanged.bind(this), 100);
 
-    private rootNode: RowNode;
+    public rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
 
     private storeParams: SSRMParams;

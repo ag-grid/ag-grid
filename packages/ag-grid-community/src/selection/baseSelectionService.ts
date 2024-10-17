@@ -168,6 +168,20 @@ export abstract class BaseSelectionService extends BeanStub {
 
     public abstract setNodesSelected(params: ISetNodesSelectedParams): number;
 
+    public updateSelectableAfterGrouping(changedPath: ChangedPath | undefined): void {
+        this.updateSelectable(true);
+
+        if (_getGroupSelectsDescendants(this.gos)) {
+            const selectionChanged = this.updateGroupsFromChildrenSelections?.('rowGroupChanged', changedPath);
+            if (selectionChanged) {
+                this.eventService.dispatchEvent({
+                    type: 'selectionChanged',
+                    source: 'rowGroupChanged',
+                });
+            }
+        }
+    }
+
     /**
      * Updates the selectable state for a node by invoking isRowSelectable callback.
      * If the node is not selectable, it will be deselected.
@@ -176,7 +190,7 @@ export abstract class BaseSelectionService extends BeanStub {
      *  - property isRowSelectable changed
      *  - after grouping / treeData
      */
-    public updateSelectable(skipLeafNodes: boolean) {
+    private updateSelectable(skipLeafNodes: boolean) {
         const { gos } = this;
 
         if (!_isRowSelection(gos)) {

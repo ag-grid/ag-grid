@@ -7,14 +7,14 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { TreeDataModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
 import CustomGroupCellRenderer from './customGroupCellRenderer.jsx';
 import { getData } from './data.jsx';
 import './styles.css';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule]);
+ModuleRegistry.registerModules([ClientSideRowModelModule, TreeDataModule]);
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);

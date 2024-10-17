@@ -54,7 +54,7 @@ export interface ISelectionService {
     onRowCtrlSelected(rowCtrl: RowCtrl, hasFocusFunc: (gui: RowGui) => void, gui?: RowGui): void;
     announceAriaRowSelection(rowNode: RowNode): void;
     /** Called after grouping / treeData */
-    updateSelectable(skipLeafNodes: boolean): void;
+    updateSelectableAfterGrouping(changedPath: ChangedPath | undefined): void;
     checkRowSelectable(rowNode: RowNode): void;
     selectRowNode(rowNode: RowNode, newValue?: boolean, e?: Event, source?: SelectionEventSourceType): boolean;
     setSelectedParams(params: SetSelectedParams & { event?: Event }): number;

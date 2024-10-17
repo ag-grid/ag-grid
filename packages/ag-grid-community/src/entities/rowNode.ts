@@ -40,6 +40,8 @@ export interface ITreeNode {
 
     /** Updated during commit to be the same as row.sourceRowIndex */
     readonly oldSourceRowIndex: number;
+
+    invalidate(): void;
 }
 
 export const ROW_ID_PREFIX_ROW_GROUP = 'row-group-';
@@ -88,10 +90,10 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     public dragging: boolean;
 
     /** `true` if this row is a master row, part of master / detail (ie row can be expanded to show detail) */
-    public master: boolean;
+    public master: boolean = false;
 
     /** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/
-    public detail: boolean | undefined;
+    public detail: boolean | undefined = undefined;
 
     /** If this row is a master row that was expanded, this points to the associated detail row. */
     public detailNode: RowNode;

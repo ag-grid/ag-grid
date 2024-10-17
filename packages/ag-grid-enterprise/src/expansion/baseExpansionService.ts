@@ -71,7 +71,7 @@ export abstract class BaseExpansionService extends BeanStub {
             // master detail and leaf groups aren't expandable in pivot mode.
             return rowNode.hasChildren() && !rowNode.leafGroup;
         }
-        return rowNode.hasChildren() || !!rowNode.master;
+        return rowNode.hasChildren() || rowNode.master;
     }
 
     private updateExpandedCss(rowCtrl: RowCtrl, rowNode: RowNode): void {
