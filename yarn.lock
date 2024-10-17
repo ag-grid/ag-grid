@@ -7776,48 +7776,48 @@ adjust-sourcemap-loader@^4.0.0:
     loader-utils "^2.0.0"
     regex-parser "^2.2.11"
 
-ag-charts-angular@10.2.0-beta.20241013:
-  version "10.2.0-beta.20241013"
-  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-10.2.0-beta.20241013.tgz#4b1c71003002e90143945b5d64ed018b3d3d3309"
-  integrity sha512-7kveQwt1pFCWYHoJvcrbfLTEAqeZZcNhTkovswvelGBv9Ls6AaOi0RcG1JV4AsQ2IYhcKi+nK7TGcvQYm/U37g==
+ag-charts-angular@10.2.0-beta.20241015:
+  version "10.2.0-beta.20241015"
+  resolved "http://52.50.158.57:4873/ag-charts-angular/-/ag-charts-angular-10.2.0-beta.20241015.tgz#bc00eb7f3e216c019765f5ed4827fe80d6b17c20"
+  integrity sha512-t58+Dk6brH1EC2UZtqYXmb+bGkl4vhDCmsiRGy0rxhgPAg5fNGkCnfaW2ZaGmrupUeUG4LDQLYRhtE0PrvAOwA==
   dependencies:
-    ag-charts-community "10.2.0-beta.20241013"
+    ag-charts-community "10.2.0-beta.20241015"
     tslib "^2.3.0"
 
-ag-charts-community@10.2.0-beta.20241013:
-  version "10.2.0-beta.20241013"
-  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-10.2.0-beta.20241013.tgz#20f3583167a829f5180ef754846ebf179db71ae3"
-  integrity sha512-EnAu+PNJm3nXR0ib9RwfbrHmNap2wuLU87ye4CidhHiru6+YZG43mVIw9uQhFoCXJSXRVm4v5bgLAxD+/4hNrQ==
+ag-charts-community@10.2.0-beta.20241015:
+  version "10.2.0-beta.20241015"
+  resolved "http://52.50.158.57:4873/ag-charts-community/-/ag-charts-community-10.2.0-beta.20241015.tgz#ec09c7511a6343e6d609f7cfef961286b5006608"
+  integrity sha512-s0z7ksR4jCJ23NsKkQ2wamx4HlS64tWG9uECqke34AVNNOgCQ3ODcYZALZYl7mR4bqFP8qYsneoNEHgnVhgOpw==
   dependencies:
-    ag-charts-locale "10.2.0-beta.20241013"
-    ag-charts-types "10.2.0-beta.20241013"
+    ag-charts-locale "10.2.0-beta.20241015"
+    ag-charts-types "10.2.0-beta.20241015"
 
-ag-charts-enterprise@10.2.0-beta.20241013:
-  version "10.2.0-beta.20241013"
-  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-10.2.0-beta.20241013.tgz#3655f52eb6a3076f3ec078e23b0ad63e6ef5165d"
-  integrity sha512-W/uzT7OgjXYRV1q3EScTR2LHiFMPjpnFwJgB4/MDYa8xjm+LWM7ReOkzSSLs316WUcJCJUa1F2pO9ZIJbPSmZg==
+ag-charts-enterprise@10.2.0-beta.20241015:
+  version "10.2.0-beta.20241015"
+  resolved "http://52.50.158.57:4873/ag-charts-enterprise/-/ag-charts-enterprise-10.2.0-beta.20241015.tgz#92a8457683327ed68c88882520c707f8c758f158"
+  integrity sha512-fMEJMeddlEaiIjx0dLnp26EWHlsse6YB9hThT2LoiaPALZdOS/UChT88nk1e1uRf6ZrKZu524qC/ezbRX3v50Q==
   dependencies:
-    ag-charts-community "10.2.0-beta.20241013"
+    ag-charts-community "10.2.0-beta.20241015"
 
-ag-charts-locale@10.2.0-beta.20241013:
-  version "10.2.0-beta.20241013"
-  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-10.2.0-beta.20241013.tgz#a4eff5c8ed44533e67e59e144e714d341eb0b98b"
-  integrity sha512-XQT25InXJaMX1q/dIVdZTcDXjnIKgFsg+1q9CSn/i924X3pqgPqM7NV4pZcTostD4yqiCeyWanBaXVzuWijTMQ==
+ag-charts-locale@10.2.0-beta.20241015:
+  version "10.2.0-beta.20241015"
+  resolved "http://52.50.158.57:4873/ag-charts-locale/-/ag-charts-locale-10.2.0-beta.20241015.tgz#d9b0f091da5ea5db4c251cee9e02cbd2ba43b726"
+  integrity sha512-RazIHMyIdH4ipfJvxe98E/fgaf3Qvq7C9UD433Pu+EOowsbfnY1AhItaTMGH+M9Mvy2WWs5OYm9kX2kJ0wIxZA==
 
-ag-charts-react@10.2.0-beta.20241013:
-  version "10.2.0-beta.20241013"
-  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-10.2.0-beta.20241013.tgz#9b9326bcc92a66f88565d58dca1a89817fe4f5fd"
-  integrity sha512-Rwo9NyQItnWjb2jDT+JVrJRBtaVmKE+2eaC4gtrbvgTXFL6959SggbN/nUKiPAqMi9AfhNOMKfIWnTcofMQRbQ==
+ag-charts-react@10.2.0-beta.20241015:
+  version "10.2.0-beta.20241015"
+  resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-10.2.0-beta.20241015.tgz#c14aa46f1a5083cc8c1b54b96c5cc77fbb6ec383"
+  integrity sha512-sdI1jfD5I1TU+6mcYL9pg9MjKFpe5AgBAKezWxdkXAvN8QQB+7luxx8khSN6yYjGWWNUInOD4Al4aUdPFjjlmA==
 
-ag-charts-types@10.2.0-beta.20241013:
-  version "10.2.0-beta.20241013"
-  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-10.2.0-beta.20241013.tgz#cb8068fa07fa8d7e0b07f3ea8f11d3389141f820"
-  integrity sha512-PcDn8uxJGEzqhnbteSFBCeZeSHk23uT31euK/bhpWdJbvHdvhfD/S+Qo0HsS9Z7XbYvmsO0mgmRfTdlkpsjzcg==
+ag-charts-types@10.2.0-beta.20241015:
+  version "10.2.0-beta.20241015"
+  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-10.2.0-beta.20241015.tgz#ef99e44f83d037a2bbd3558d5107f495b541383b"
+  integrity sha512-34YeaRk0IJD8yMepjtfSlVmfuFwEYJfPenhXgwZjQne+G1SmcghEhN59f/ERCtTbLNdoXEwJd/JJM8kRek7slQ==
 
-ag-charts-vue3@10.2.0-beta.20241013:
-  version "10.2.0-beta.20241013"
-  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-10.2.0-beta.20241013.tgz#3167606ea2dedeba545826d42ff201046fd4a49a"
-  integrity sha512-SgPiYmVO8Ky2HLoUTh6aHOTLn6cahEfI8m03nTAzbQO5Zu2CVhAbWhDbIbcawY+PRyjpZ/MlKDX8ISI2ocRf6w==
+ag-charts-vue3@10.2.0-beta.20241015:
+  version "10.2.0-beta.20241015"
+  resolved "http://52.50.158.57:4873/ag-charts-vue3/-/ag-charts-vue3-10.2.0-beta.20241015.tgz#043f58bfe4321086adcd7a9a985e110cad9e0165"
+  integrity sha512-rdW+tijEeJepRMj/JfKL/QM9P1xwC9Drl79iItF//ggGohhEKHvHAihX3QBG33WifDitCCdQ2ZLMqVyLYF8/Zg==
 
 agent-base@4, agent-base@^4.1.0, agent-base@^4.3.0:
   version "4.3.0"
