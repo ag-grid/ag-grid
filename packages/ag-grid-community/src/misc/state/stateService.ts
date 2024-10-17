@@ -751,11 +751,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getRowGroupExpansionState(): RowGroupExpansionState | undefined {
-        if (
-            !this.expansionService ||
-            // Check if alive is required as this method might be debounced
-            !this.isAlive()
-        ) {
+        if (!this.expansionService) {
             return undefined;
         }
 
