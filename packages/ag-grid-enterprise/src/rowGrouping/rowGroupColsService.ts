@@ -28,8 +28,9 @@ export class RowGroupColsService extends BaseColsService implements NamedBean, I
         return 'columnRowGroupChanged';
     }
 
-    public override setColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this._setColumns(colKeys, source, (added, column) => this.setRowGroupActive(added, column, source));
+    public setColumns(colKeys: ColKey[], source: ColumnEventType): void {
+        const processColumn = (added: boolean, column: AgColumn) => this.setRowGroupActive(added, column, source);
+        this.setColList(colKeys, this.columns, this.getEventName(), true, true, processColumn, source);
     }
 
     public override addColumns(colKeys: (ColKey | null | undefined)[], source: ColumnEventType): void {

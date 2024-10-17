@@ -30,8 +30,9 @@ export class ValueColsService extends BaseColsService implements NamedBean, ICol
         return 'columnValueChanged';
     }
 
-    public override setColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this._setColumns(colKeys, source, (added, column) => this.setValueActive(added, column, source));
+    public setColumns(colKeys: ColKey[], source: ColumnEventType): void {
+        const processColumn = (added: boolean, column: AgColumn) => this.setValueActive(added, column, source);
+        this.setColList(colKeys, this.columns, this.getEventName(), true, true, processColumn, source);
     }
 
     public override addColumns(colKeys: ColKey[], source: ColumnEventType): void {
