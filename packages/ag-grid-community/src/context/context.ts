@@ -15,7 +15,6 @@ import type { ColumnStateService } from '../columns/columnStateService';
 import type { ColumnViewportService } from '../columns/columnViewportService';
 import type { ControlsColService } from '../columns/controlsColService';
 import type { DataTypeService } from '../columns/dataTypeService';
-import type { FuncColsService } from '../columns/funcColsService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { AgComponentUtils } from '../components/framework/agComponentUtils';
 import type { FrameworkComponentWrapper } from '../components/framework/frameworkComponentWrapper';
@@ -230,7 +229,6 @@ export interface CoreBeanCollection {
     controlsColService?: ControlsColService;
     columnDefFactory?: ColumnDefFactory;
     columnAutosizeService?: ColumnAutosizeService;
-    funcColsService: FuncColsService;
     rowGroupColsService?: IColsService;
     valueColsService?: IColsService;
     pivotColsService?: IColsService;

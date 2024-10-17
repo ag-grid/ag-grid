@@ -1,4 +1,3 @@
-import type { FuncColsService } from '../../columns/funcColsService';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { DragAndDropIcon, DraggingEvent } from '../../dragAndDrop/dragAndDropService';

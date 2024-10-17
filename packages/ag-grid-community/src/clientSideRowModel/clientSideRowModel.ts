@@ -1,5 +1,4 @@
 import type { ColumnModel } from '../columns/columnModel';
-import type { FuncColsService } from '../columns/funcColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -68,7 +67,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private beans: BeanCollection;
 
     private columnModel: ColumnModel;
-    private funcColsService: FuncColsService;
     private selectionService?: ISelectionService;
     private valueCache?: ValueCache;
     private environment: Environment;
@@ -89,7 +87,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.beans = beans;
 
         this.columnModel = beans.columnModel;
-        this.funcColsService = beans.funcColsService;
         this.selectionService = beans.selectionService;
         this.valueCache = beans.valueCache;
         this.environment = beans.environment;
@@ -168,7 +165,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             this.rootNode,
             this.gos,
             this.eventService,
-            this.funcColsService,
             this.selectionService,
             this.beans
         );

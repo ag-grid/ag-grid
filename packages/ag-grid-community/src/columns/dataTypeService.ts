@@ -1,3 +1,5 @@
+import { IColsService } from 'ag-grid-community';
+
 import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -29,7 +31,6 @@ import type { ColumnModel } from './columnModel';
 import { convertSourceType } from './columnModel';
 import type { ColumnState, ColumnStateParams, ColumnStateService } from './columnStateService';
 import { convertColumnTypes } from './columnUtils';
-import type { FuncColsService } from './funcColsService';
 
 interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
@@ -40,15 +41,17 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     private rowModel: IRowModel;
     private columnModel: ColumnModel;
-    private funcColsService: FuncColsService;
     private valueService: ValueService;
     private columnStateService: ColumnStateService;
     private filterManager?: FilterManager;
+    private rowGroupColsService?: IColsService;
+    private pivotColsService?: IColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
         this.columnModel = beans.columnModel;
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService!;
+        this.pivotColsService = beans.pivotColsService!;
         this.valueService = beans.valueService;
         this.columnStateService = beans.columnStateService;
         this.filterManager = beans.filterManager;
@@ -498,7 +501,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         });
         if (columnTypeOverridesExist) {
             state.push(
-                ...this.funcColsService.generateColumnStateForRowGroupAndPivotIndexes(
+                ...this.generateColumnStateForRowGroupAndPivotIndexes(
                     newRowGroupColumnStateWithoutIndex,
                     newPivotColumnStateWithoutIndex
                 )
@@ -508,6 +511,21 @@ export class DataTypeService extends BeanStub implements NamedBean {
             this.columnStateService.applyColumnState({ state }, 'cellDataTypeInferred');
         }
         this.initialData = null;
+    }
+
+    public generateColumnStateForRowGroupAndPivotIndexes(
+        updatedRowGroupColumnState: { [colId: string]: ColumnState },
+        updatedPivotColumnState: { [colId: string]: ColumnState }
+    ): ColumnState[] {
+        // Generally columns should appear in the order they were before. For any new columns, these should appear in the original col def order.
+        // The exception is for columns that were added via `addGroupColumns`. These should appear at the end.
+        // We don't have to worry about full updates, as in this case the arrays are correct, and they won't appear in the updated lists.
+        const updatedState: { [colId: string]: ColumnState } = {};
+
+        this.rowGroupColsService?.orderColumns(updatedState, updatedRowGroupColumnState);
+        this.pivotColsService?.orderColumns(updatedState, updatedPivotColumnState);
+
+        return Object.values(updatedState);
     }
 
     private getUpdatedColumnState(column: AgColumn, columnStateUpdates: Set<keyof ColumnStateParams>): ColumnState {

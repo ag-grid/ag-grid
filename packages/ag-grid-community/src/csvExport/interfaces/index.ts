@@ -1,6 +1,5 @@
 import type { ColumnModel } from '../../columns/columnModel';
 import type { ColumnNameService } from '../../columns/columnNameService';
-import type { FuncColsService } from '../../columns/funcColsService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import type { GridOptionsService } from '../../gridOptionsService';

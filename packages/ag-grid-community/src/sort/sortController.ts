@@ -1,7 +1,6 @@
 import { IColsService } from 'ag-grid-community';
 
 import type { ColumnModel } from '../columns/columnModel';
-import type { FuncColsService } from '../columns/funcColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';

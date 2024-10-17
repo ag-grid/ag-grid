@@ -24,7 +24,6 @@ import {
 import { depthFirstOriginalTreeSearch } from './columnFactory';
 import type { ColumnModel } from './columnModel';
 import { GROUP_AUTO_COLUMN_ID, _getColumnsFromTree, getValueFactory } from './columnUtils';
-import type { FuncColsService } from './funcColsService';
 import type { VisibleColsService } from './visibleColsService';
 
 export type ModifyColumnsNoEventsCallback = {
@@ -76,7 +75,6 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
     private columnModel: ColumnModel;
     private sortController?: SortController;
-    private funcColsService: FuncColsService;
     private visibleColsService: VisibleColsService;
     private columnAnimationService?: ColumnAnimationService;
     private pivotResultColsService?: IPivotResultColsService;
@@ -87,7 +85,6 @@ export class ColumnStateService extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.sortController = beans.sortController;
-        this.funcColsService = beans.funcColsService;
         this.visibleColsService = beans.visibleColsService;
         this.columnAnimationService = beans.columnAnimationService;
         this.pivotResultColsService = beans.pivotResultColsService;
@@ -410,8 +407,8 @@ export class ColumnStateService extends BeanStub implements NamedBean {
     public compareColumnStatesAndDispatchEvents(source: ColumnEventType): () => void {
         const startState = {
             rowGroupColumns: this.rowGroupColsService?.columns.slice() ?? [],
-            pivotColumns: this.funcColsService.pivotCols.slice(),
-            valueColumns: this.funcColsService.valueCols.slice(),
+            pivotColumns: this.pivotColsService?.columns.slice() ?? [],
+            valueColumns: this.valueColsService?.columns.slice() ?? [],
         };
 
         const columnStateBefore = this.getColumnState();

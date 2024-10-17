@@ -6,7 +6,6 @@ import type {
     DragItem,
     DraggingEvent,
     DropTarget,
-    FuncColsService,
 } from 'ag-grid-community';
 import { DragSourceType, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 

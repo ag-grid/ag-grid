@@ -1,4 +1,3 @@
-import type { FuncColsService } from '../columns/funcColsService';
 import type { BeanCollection } from '../context/context';
 import { RowNode } from '../entities/rowNode';
 import type { EventService } from '../eventService';
@@ -60,7 +59,6 @@ export class ClientSideNodeManager {
         rootNode: RowNode,
         gos: GridOptionsService,
         eventService: EventService,
-        funcColsService: FuncColsService,
         selectionService: ISelectionService | undefined,
         beans: BeanCollection
     ) {
