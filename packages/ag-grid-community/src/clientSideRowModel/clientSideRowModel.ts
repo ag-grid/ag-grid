@@ -1333,10 +1333,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // Forcefully deallocate memory
         this.clearHighlightedRow();
         this.nodeManager = null!;
-        this.rowsToDisplay.length = 0;
         this.rowDataTransactionBatch = null;
         this.lastHighlightedRow = null;
         this.orderedStages.length = 0;
+        this.rowsToDisplay.length = 0;
 
         // We do not yet set rootNode to null as there might be some services or
         // async code (setTimeout, promises, debounce, etc) still pending that might access it
