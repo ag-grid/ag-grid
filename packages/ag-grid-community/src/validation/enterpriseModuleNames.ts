@@ -43,6 +43,7 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     RangeSelectionModule: 1,
     RangeSelectionRangeHandleModule: 1,
     RichSelectModule: 1,
+    RowChildrenModule: 1,
     RowGroupingApiModule: 1,
     RowGroupingCoreModule: 1,
     RowGroupingModule: 1,

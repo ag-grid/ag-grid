@@ -5,21 +5,26 @@ import type {
     Column,
     ColumnModel,
     IGroupHideOpenParentsService,
+    IRowChildrenService,
     IRowNode,
     IShowRowGroupColsService,
     RowNode,
 } from 'ag-grid-community';
 import { BeanStub, _error, _missing } from 'ag-grid-community';
 
+import { setRowNodeGroupValue } from './rowGroupingUtils';
+
 export class GroupHideOpenParentsService extends BeanStub implements IGroupHideOpenParentsService {
     beanName = 'groupHideOpenParentsService' as const;
 
     private columnModel: ColumnModel;
     private showRowGroupColsService?: IShowRowGroupColsService;
+    private rowChildrenService?: IRowChildrenService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.showRowGroupColsService = beans.showRowGroupColsService;
+        this.rowChildrenService = beans.rowChildrenService;
     }
 
     public updateGroupDataForHideOpenParents(changedPath?: ChangedPath): void {
@@ -31,7 +36,7 @@ export class GroupHideOpenParentsService extends BeanStub implements IGroupHideO
         const callback = (rowNode: RowNode) => {
             this.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterSort, false);
             rowNode.childrenAfterSort!.forEach((child) => {
-                if (child.hasChildren()) {
+                if (this.rowChildrenService?.hasChildren(child)) {
                     callback(child);
                 }
             });
@@ -66,12 +71,17 @@ export class GroupHideOpenParentsService extends BeanStub implements IGroupHideO
 
                 if (clearOperation) {
                     // if doing a clear operation, we clear down the value for every possible group column
-                    childRowNode.setGroupValue(groupDisplayCol.getId(), undefined);
+                    setRowNodeGroupValue(childRowNode, this.columnModel, groupDisplayCol.getId(), undefined);
                 } else {
                     // if doing a set operation, we set only where the pull down is to occur
                     const parentToStealFrom = this.getFirstChildOfFirstChild(childRowNode, rowGroupColumn);
                     if (parentToStealFrom) {
-                        childRowNode.setGroupValue(groupDisplayCol.getId(), parentToStealFrom.key);
+                        setRowNodeGroupValue(
+                            childRowNode,
+                            this.columnModel,
+                            groupDisplayCol.getId(),
+                            parentToStealFrom.key
+                        );
                     }
                 }
             });

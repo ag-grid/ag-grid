@@ -60,6 +60,7 @@ import type { IGroupHideOpenParentsService } from '../interfaces/iGroupHideOpenP
 import type { IMenuFactory } from '../interfaces/iMenuFactory';
 import type { IPivotColDefService } from '../interfaces/iPivotColDefService';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
+import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
@@ -297,6 +298,7 @@ export interface CoreBeanCollection {
     tooltipService?: TooltipService;
     columnGroupService?: ColumnGroupService;
     rowAutoHeightService?: RowAutoHeightService;
+    rowChildrenService?: IRowChildrenService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -447,6 +449,7 @@ export type BeanName =
     | 'registry'
     | 'renderStatusService'
     | 'rowAutoHeightService'
+    | 'rowChildrenService'
     | 'rowContainerHeightService'
     | 'rowDragService'
     | 'rowEditService'

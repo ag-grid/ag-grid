@@ -10,6 +10,7 @@ import type {
     FuncColsService,
     IPivotColDefService,
     IPivotResultColsService,
+    IRowChildrenService,
     IServerSideDatasource,
     IServerSideRowModel,
     LoadSuccessParams,
@@ -65,6 +66,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     private storeFactory: StoreFactory;
     private beans: BeanCollection;
     private pivotColDefService?: IPivotColDefService;
+    private rowChildrenService?: IRowChildrenService;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
@@ -78,6 +80,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
         this.beans = beans;
         this.pivotColDefService = beans.pivotColDefService;
+        this.rowChildrenService = beans.rowChildrenService;
     }
 
     private onRowHeightChanged_debounced = _debounce(this.onRowHeightChanged.bind(this), 100);
@@ -484,7 +487,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
                 return;
             }
 
-            if (node.hasChildren()) {
+            if (this.rowChildrenService?.hasChildren(node)) {
                 node.setExpanded(value);
             }
         });

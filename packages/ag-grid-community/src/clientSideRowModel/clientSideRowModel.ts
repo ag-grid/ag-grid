@@ -6,6 +6,7 @@ import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowHighlightPosition } from '../entities/rowNode';
 import { ROW_ID_PREFIX_ROW_GROUP, RowNode } from '../entities/rowNode';
+import { _createRowNodeFooter } from '../entities/rowNodeUtils';
 import type { Environment } from '../environment';
 import type { CssVariablesChanged, FilterChangedEvent } from '../events';
 import {
@@ -19,6 +20,7 @@ import {
 import type { IClientSideRowModel, RefreshModelParams } from '../interfaces/iClientSideRowModel';
 import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
 import type { IGroupHideOpenParentsService } from '../interfaces/iGroupHideOpenParentsService';
+import type { IRowChildrenService } from '../interfaces/iRowChildrenService';
 import type { RowBounds, RowModelType } from '../interfaces/iRowModel';
 import type { IRowNodeStage } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
@@ -68,6 +70,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private valueCache?: ValueCache;
     private environment: Environment;
     private groupHideOpenParentsService?: IGroupHideOpenParentsService;
+    private rowChildrenService?: IRowChildrenService;
 
     // standard stages
     private filterStage?: IRowNodeStage;
@@ -89,6 +92,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.valueCache = beans.valueCache;
         this.environment = beans.environment;
         this.groupHideOpenParentsService = beans.groupHideOpenParentsService;
+        this.rowChildrenService = beans.rowChildrenService;
 
         this.filterStage = beans.filterStage!;
         this.sortStage = beans.sortStage!;
@@ -331,7 +335,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             clearIfNotDisplayed(rowNode.detailNode);
             clearIfNotDisplayed(rowNode.sibling);
 
-            if (rowNode.hasChildren()) {
+            if (this.rowChildrenService?.hasChildren(rowNode)) {
                 if (rowNode.childrenAfterGroup) {
                     // if a changedPath is active, it means we are here because of a transaction update or
                     // a change detection. neither of these impacts the open/closed state of groups. so if
@@ -408,8 +412,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
         }
 
-        rowNodeAtPixelNow.setHighlighted(highlight);
+        this.setRowNodeHighlighted(rowNodeAtPixelNow, highlight);
         this.lastHighlightedRow = rowNodeAtPixelNow;
+    }
+
+    private setRowNodeHighlighted(rowNode: RowNode, highlighted: RowHighlightPosition | null): void {
+        if (rowNode.highlighted !== highlighted) {
+            rowNode.highlighted = highlighted;
+            rowNode.dispatchRowEvent('rowHighlightChanged');
+        }
     }
 
     public getHighlightPosition(pixel: number, rowNode?: RowNode): RowHighlightPosition {
@@ -451,7 +462,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private clearHighlightedRow(): void {
         if (this.lastHighlightedRow) {
-            this.lastHighlightedRow.setHighlighted(null);
+            this.setRowNodeHighlighted(this.lastHighlightedRow, null);
             this.lastHighlightedRow = null;
         }
     }
@@ -919,14 +930,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             const isRootNode = parentNode === this.rootNode;
             if (isRootNode) {
                 if (grandTotal === position) {
-                    parentNode.createFooter();
+                    _createRowNodeFooter(parentNode, this.beans);
                     callback(parentNode.sibling, index++);
                 }
                 return;
             }
 
             if (groupTotal === position) {
-                parentNode.createFooter();
+                _createRowNodeFooter(parentNode, this.beans);
                 callback(parentNode.sibling, index++);
             }
         };
@@ -937,7 +948,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             const node = nodes[i];
             callback(node, index++);
             // go to the next level if it is a group
-            if (node.hasChildren() && !node.footer) {
+            if (this.rowChildrenService?.hasChildren(node) && !node.footer) {
                 // depending on the recursion type, we pick a difference set of children
                 let nodeChildren: RowNode[] | null = null;
                 switch (recursionType) {
@@ -1052,7 +1063,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             if (sibling) {
                 sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
             }
-            this.rootNode.updateHasChildren();
+            this.rowChildrenService?.updateHasChildren(rootNode);
         }
 
         if (this.nodeManager.isRowCountReady()) {
@@ -1307,7 +1318,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private onGridStylesChanges(e: CssVariablesChanged) {
         if (e.rowHeightChanged) {
-            if (this.columnModel.autoRowHeightActive) {
+            if (this.beans.rowAutoHeightService?.active) {
                 return;
             }
 

@@ -25,6 +25,7 @@ import { GroupStage } from './groupStage/groupStage';
 import { PivotColDefService } from './pivotColDefService';
 import { PivotResultColsService } from './pivotResultColsService';
 import { PivotStage } from './pivotStage';
+import { RowChildrenService } from './rowChildrenService';
 import {
     addAggFuncs,
     addPivotColumns,
@@ -48,6 +49,11 @@ import {
     setValueColumns,
 } from './rowGroupingApi';
 import { ShowRowGroupColsService } from './showRowGroupColsService';
+
+export const RowChildrenModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('RowChildrenModule'),
+    beans: [RowChildrenService],
+};
 
 export const RowGroupingCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('RowGroupingCoreModule'),
@@ -76,6 +82,7 @@ export const RowGroupingCoreModule: _ModuleWithoutApi = {
         EnterpriseCoreModule,
         PopupModule, // can be extracted into row group panel module
         AggregationModule,
+        RowChildrenModule,
     ],
 };
 

@@ -4,6 +4,7 @@ import type {
     ColumnModel,
     FilterManager,
     GridOptions,
+    IRowChildrenService,
     IRowNodeStage,
     NamedBean,
     RowNode,
@@ -19,10 +20,12 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNo
 
     private filterManager?: FilterManager;
     private columnModel: ColumnModel;
+    private rowChildrenService?: IRowChildrenService;
 
     public wireBeans(beans: BeanCollection): void {
         this.filterManager = beans.filterManager;
         this.columnModel = beans.columnModel;
+        this.rowChildrenService = beans.rowChildrenService;
     }
 
     public execute(params: StageExecuteParams): void {
@@ -95,7 +98,8 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNo
                 allChildrenCount += childrenAfterAggFilter[i].allChildrenCount ?? 0; // include children of children
             }
         }
-        rowNode.setAllChildrenCount(
+        this.rowChildrenService?.setAllChildrenCount(
+            rowNode,
             // Maintain the historical behaviour:
             // - allChildrenCount is 0 in the root if there are no children
             // - allChildrenCount is null in any non-root row if there are no children
@@ -113,12 +117,12 @@ export class FilterAggregatesStage extends BeanStub implements NamedBean, IRowNo
                 allChildrenCount++;
             }
         });
-        rowNode.setAllChildrenCount(allChildrenCount);
+        this.rowChildrenService?.setAllChildrenCount(rowNode, allChildrenCount);
     }
 
     private setAllChildrenCount(rowNode: RowNode) {
-        if (!rowNode.hasChildren()) {
-            rowNode.setAllChildrenCount(null);
+        if (!this.rowChildrenService?.hasChildren(rowNode)) {
+            this.rowChildrenService?.setAllChildrenCount(rowNode, null);
             return;
         }
 

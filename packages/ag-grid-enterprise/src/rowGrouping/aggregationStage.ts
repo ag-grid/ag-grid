@@ -10,6 +10,7 @@ import type {
     IAggFunc,
     IAggFuncParams,
     IPivotResultColsService,
+    IRowChildrenService,
     IRowNodeStage,
     NamedBean,
     RowNode,
@@ -47,6 +48,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
     private aggFuncService: AggFuncService;
     private funcColsService: FuncColsService;
     private pivotResultColsService?: IPivotResultColsService;
+    private rowChildrenService?: IRowChildrenService;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
@@ -54,6 +56,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         this.funcColsService = beans.funcColsService;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.valueService = beans.valueService;
+        this.rowChildrenService = beans.rowChildrenService;
     }
 
     // it's possible to recompute the aggregate without doing the other parts
@@ -102,12 +105,12 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
 
     private recursivelyCreateAggData(aggDetails: AggregationDetails) {
         const callback = (rowNode: RowNode) => {
-            const hasNoChildren = !rowNode.hasChildren();
+            const hasNoChildren = !this.rowChildrenService?.hasChildren(rowNode);
             if (hasNoChildren) {
                 // this check is needed for TreeData, in case the node is no longer a child,
                 // but it was a child previously.
                 if (rowNode.aggData) {
-                    rowNode.setAggData(null);
+                    this.setAggData(rowNode, null);
                 }
                 // never agg data for leaf nodes
                 return;
@@ -119,7 +122,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
             if (isRootNode && !aggDetails.groupIncludeTotalFooter) {
                 const notPivoting = !this.columnModel.isPivotMode();
                 if (!aggDetails.alwaysAggregateAtRootLevel && notPivoting) {
-                    rowNode.setAggData(null);
+                    this.setAggData(rowNode, null);
                     return;
                 }
             }
@@ -145,12 +148,12 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
             aggResult = this.aggregateRowNodeUsingValuesAndPivot(rowNode);
         }
 
-        rowNode.setAggData(aggResult);
+        this.setAggData(rowNode, aggResult);
 
         // if we are grouping, then it's possible there is a sibling footer
         // to the group, so update the data here also if there is one
         if (rowNode.sibling) {
-            rowNode.sibling.setAggData(aggResult);
+            this.setAggData(rowNode.sibling, aggResult);
         }
     }
 
@@ -315,5 +318,39 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         } as any); // the "as any" is needed to allow the deprecation warning messages
 
         return aggFuncAny(params);
+    }
+
+    private setAggData(rowNode: RowNode, newAggData: any): void {
+        const oldAggData = rowNode.aggData;
+        rowNode.aggData = newAggData;
+
+        // if no event service, nobody has registered for events, so no need fire event
+        if (rowNode.__localEventService) {
+            const eventFunc = (colId: string) => {
+                const value = rowNode.aggData ? rowNode.aggData[colId] : undefined;
+                const oldValue = oldAggData ? oldAggData[colId] : undefined;
+
+                if (value === oldValue) {
+                    return;
+                }
+
+                // do a quick lookup - despite the event it's possible the column no longer exists
+                const column = this.columnModel.getCol(colId)!;
+                if (!column) {
+                    return;
+                }
+
+                rowNode.dispatchCellChangedEvent(column, value, oldValue);
+            };
+
+            for (const key in oldAggData) {
+                eventFunc(key); // raise for old keys
+            }
+            for (const key in newAggData) {
+                if (!oldAggData || !(key in oldAggData)) {
+                    eventFunc(key); // new key, event not yet raised
+                }
+            }
+        }
     }
 }

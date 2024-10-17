@@ -105,7 +105,7 @@ export class ClientSideNodeManager {
         rootNode.childrenAfterAggFilter = null;
         rootNode.childrenAfterSort = null;
         rootNode.childrenMapped = null;
-        rootNode.updateHasChildren();
+        this.beans.rowChildrenService?.updateHasChildren(rootNode);
 
         this.nextId = 0;
         this.allNodesMap = {};

@@ -4,6 +4,7 @@ import type {
     ChangedPath,
     ColumnModel,
     FuncColsService,
+    IRowChildrenService,
     ISelectionService,
     IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
@@ -24,6 +25,7 @@ import {
     _warn,
 } from 'ag-grid-community';
 
+import { setRowNodeGroup } from '../../rowGroupingUtils';
 import { BatchRemover } from './batchRemover';
 import type { GroupRow } from './groupRow';
 import { sortGroupChildren } from './sortGroupChildren';
@@ -59,6 +61,7 @@ export class GroupStrategy extends BeanStub {
     private beans: BeanCollection;
     private selectionService?: ISelectionService;
     private showRowGroupColsService: IShowRowGroupColsService;
+    private rowChildrenService?: IRowChildrenService;
 
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;
@@ -67,6 +70,7 @@ export class GroupStrategy extends BeanStub {
         this.valueService = beans.valueService;
         this.selectionService = beans.selectionService;
         this.showRowGroupColsService = beans.showRowGroupColsService!;
+        this.rowChildrenService = beans.rowChildrenService;
     }
 
     // when grouping, these items are of note:
@@ -146,7 +150,7 @@ export class GroupStrategy extends BeanStub {
 
     private handleTransaction(details: GroupingDetails): void {
         details.transactions.forEach((tran) => {
-            const batchRemover = new BatchRemover();
+            const batchRemover = new BatchRemover(this.rowChildrenService);
 
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
@@ -293,7 +297,7 @@ export class GroupStrategy extends BeanStub {
         // this method can be called with BatchRemover as optional. if it is missed, we created a local version
         // and flush it at the end. if one is provided, we add to the provided one and it gets flushed elsewhere.
         const batchRemoverIsLocal = provided == null;
-        const batchRemoverToUse = provided ? provided : new BatchRemover();
+        const batchRemoverToUse = provided ? provided : new BatchRemover(this.rowChildrenService);
 
         nodesToRemove.forEach((nodeToRemove) => {
             this.removeFromParent(nodeToRemove, batchRemoverToUse);
@@ -333,7 +337,7 @@ export class GroupStrategy extends BeanStub {
 
         while (checkAgain) {
             checkAgain = false;
-            const batchRemover = new BatchRemover();
+            const batchRemover = new BatchRemover(this.rowChildrenService);
             possibleEmptyGroups.forEach((possibleEmptyGroup) => {
                 // remove empty groups
                 this.forEachParentGroup(details, possibleEmptyGroup, (rowNode) => {
@@ -343,7 +347,11 @@ export class GroupStrategy extends BeanStub {
                         this.removeFromParent(rowNode, batchRemover);
                         // we remove selection on filler nodes here, as the selection would not be removed
                         // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                        rowNode.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
+                        this.selectionService?.setSelectedParams({
+                            rowNode,
+                            newValue: false,
+                            source: 'rowGroupChanged',
+                        });
                     }
                 });
             });
@@ -362,7 +370,7 @@ export class GroupStrategy extends BeanStub {
                 batchRemover.removeFromChildrenAfterGroup(child.parent, child);
             } else {
                 _removeFromArray(child.parent.childrenAfterGroup!, child);
-                child.parent.updateHasChildren();
+                this.rowChildrenService?.updateHasChildren(child.parent);
             }
         }
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
@@ -384,7 +392,7 @@ export class GroupStrategy extends BeanStub {
             if (parent.childrenMapped[mapKey] !== child) {
                 parent.childrenMapped[mapKey] = child;
                 parent.childrenAfterGroup!.push(child);
-                parent.setGroup(true); // calls `.updateHasChildren` internally
+                setRowNodeGroup(parent, this.beans, true); // calls `.updateHasChildren` internally
             }
         }
     }
@@ -438,7 +446,7 @@ export class GroupStrategy extends BeanStub {
         // we are doing everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
         rootNode.childrenAfterGroup = [];
         rootNode.childrenMapped = {};
-        rootNode.updateHasChildren();
+        this.rowChildrenService?.updateHasChildren(rootNode);
 
         const sibling: GroupRow = rootNode.sibling;
         if (sibling) {
@@ -493,7 +501,7 @@ export class GroupStrategy extends BeanStub {
         childNode.parent = parentGroup;
         childNode.level = path.length;
         parentGroup.childrenAfterGroup!.push(childNode);
-        parentGroup.updateHasChildren();
+        this.rowChildrenService?.updateHasChildren(parentGroup);
     }
 
     private findParentForNode(
@@ -557,13 +565,13 @@ export class GroupStrategy extends BeanStub {
 
         // why is this done here? we are not updating the children count as we go,
         // i suspect this is updated in the filter stage
-        groupNode.setAllChildrenCount(0);
+        this.rowChildrenService?.setAllChildrenCount(groupNode, 0);
 
         groupNode.rowGroupIndex = level;
 
         groupNode.childrenAfterGroup = [];
         groupNode.childrenMapped = {};
-        groupNode.updateHasChildren();
+        this.rowChildrenService?.updateHasChildren(groupNode);
 
         groupNode.parent = parent;
 

@@ -1,6 +1,7 @@
 import type {
     AgColumn,
     BeanCollection,
+    IRowChildrenService,
     IShowRowGroupColsService,
     NamedBean,
     RowBounds,
@@ -9,6 +10,8 @@ import type {
 import {
     BeanStub,
     RowNode,
+    _createRowNodeFooter,
+    _destroyRowNodeFooter,
     _doOnce,
     _exists,
     _getGroupTotalRowCallback,
@@ -35,6 +38,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     private expansionService?: ServerSideExpansionService;
     private serverSideRowModel: ServerSideRowModel;
     private storeFactory: StoreFactory;
+    private rowChildrenService?: IRowChildrenService;
 
     public wireBeans(beans: BeanCollection) {
         this.valueService = beans.valueService;
@@ -44,6 +48,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         this.expansionService = beans.expansionService as ServerSideExpansionService;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
+        this.rowChildrenService = beans.rowChildrenService;
     }
 
     public createRowNode(params: {
@@ -100,14 +105,15 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     private setTreeGroupInfo(rowNode: RowNode): void {
-        rowNode.updateHasChildren();
+        this.rowChildrenService?.updateHasChildren(rowNode);
 
         const getKeyFunc = this.gos.get('getServerSideGroupKey');
-        if (rowNode.hasChildren() && getKeyFunc != null) {
+        const hasChildren = this.rowChildrenService?.hasChildren(rowNode);
+        if (hasChildren && getKeyFunc != null) {
             rowNode.key = getKeyFunc(rowNode.data);
         }
 
-        if (!rowNode.hasChildren() && rowNode.childStore != null) {
+        if (!hasChildren && rowNode.childStore != null) {
             this.destroyBean(rowNode.childStore);
             rowNode.childStore = null;
             rowNode.expanded = false;
@@ -132,7 +138,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         const getGroupIncludeFooter = _getGroupTotalRowCallback(this.beans.gos);
         const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
         if (doesRowShowFooter) {
-            rowNode.createFooter();
+            _createRowNodeFooter(rowNode, this.beans);
             if (rowNode.sibling) {
                 rowNode.sibling.uiLevel = rowNode.uiLevel + 1;
             }
@@ -164,10 +170,10 @@ export class BlockUtils extends BeanStub implements NamedBean {
                     if (rowNode.sibling) {
                         rowNode.sibling.updateData(data);
                     } else {
-                        rowNode.createFooter();
+                        _createRowNodeFooter(rowNode, this.beans);
                     }
                 } else if (rowNode.sibling) {
-                    rowNode.destroyFooter();
+                    _destroyRowNodeFooter(rowNode);
                 }
             }
 
@@ -190,19 +196,14 @@ export class BlockUtils extends BeanStub implements NamedBean {
         rowNode.stub = false;
         const treeData = this.gos.get('treeData');
 
-        if (_exists(data)) {
-            rowNode.setDataAndId(data, defaultId);
+        rowNode.setDataAndId(data, defaultId);
 
-            if (treeData) {
-                this.setTreeGroupInfo(rowNode);
-            } else if (rowNode.group) {
-                this.setRowGroupInfo(rowNode);
-            } else if (this.gos.get('masterDetail')) {
-                this.setMasterDetailInfo(rowNode);
-            }
-        } else {
-            rowNode.setDataAndId(undefined, undefined);
-            rowNode.key = null;
+        if (treeData) {
+            this.setTreeGroupInfo(rowNode);
+        } else if (rowNode.group) {
+            this.setRowGroupInfo(rowNode);
+        } else if (this.gos.get('masterDetail')) {
+            this.setMasterDetailInfo(rowNode);
         }
 
         if (treeData || rowNode.group) {
@@ -223,7 +224,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     private setChildCountIntoRowNode(rowNode: RowNode): void {
         const getChildCount = this.gos.get('getChildCount');
         if (getChildCount) {
-            rowNode.setAllChildrenCount(getChildCount(rowNode.data));
+            this.rowChildrenService?.setAllChildrenCount(rowNode, getChildCount(rowNode.data));
         }
     }
 
@@ -248,7 +249,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     public clearDisplayIndex(rowNode: RowNode): void {
         rowNode.clearRowTopAndRowIndex();
 
-        const hasChildStore = rowNode.hasChildren() && !!rowNode.childStore;
+        const hasChildStore = this.rowChildrenService?.hasChildren(rowNode) && !!rowNode.childStore;
         if (hasChildStore) {
             (rowNode.childStore as LazyStore | undefined)?.clearDisplayIndexes();
         }
@@ -295,7 +296,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         }
 
         // set children for SSRM child rows
-        const hasChildStore = rowNode.hasChildren() && !!rowNode.childStore;
+        const hasChildStore = this.rowChildrenService?.hasChildren(rowNode) && !!rowNode.childStore;
         if (hasChildStore) {
             const childStore = rowNode.childStore as LazyStore;
             // unbalanced group always behaves as if it was expanded
@@ -319,7 +320,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
             return extractRowBounds(rowNode);
         }
 
-        if (rowNode.hasChildren() && rowNode.expanded && !!rowNode.childStore) {
+        if (this.rowChildrenService?.hasChildren(rowNode) && rowNode.expanded && !!rowNode.childStore) {
             const childStore = rowNode.childStore as LazyStore;
             if (childStore.isDisplayIndexInStore(index)) {
                 return childStore.getRowBounds(index)!;
@@ -353,7 +354,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         }
 
         // then check if it's a group row with a child cache with pixel in range
-        if (rowNode.hasChildren() && rowNode.expanded && !!rowNode.childStore) {
+        if (this.rowChildrenService?.hasChildren(rowNode) && rowNode.expanded && !!rowNode.childStore) {
             const childStore = rowNode.childStore as LazyStore;
             if (childStore.isPixelInRange(pixel)) {
                 return childStore.getRowIndexAtPixel(pixel);

@@ -219,6 +219,7 @@ export type EnterpriseModuleName =
     | 'RangeSelectionModule'
     | 'RangeSelectionRangeHandleModule'
     | 'RichSelectModule'
+    | 'RowChildrenModule'
     | 'RowGroupingApiModule'
     | 'RowGroupingCoreModule'
     | 'RowGroupingModule'

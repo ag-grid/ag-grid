@@ -2,6 +2,7 @@ import type {
     BeanCollection,
     ChangedPath,
     GetDataPath,
+    IRowChildrenService,
     IShowRowGroupColsService,
     InitialGroupOrderComparatorParams,
     IsGroupOpenByDefaultParams,
@@ -11,6 +12,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, RowNode, _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
 
+import { setRowNodeGroup } from '../../rowGroupingUtils';
 import { EMPTY_ARRAY, TreeNode } from './treeNode';
 import type { TreeRow } from './treeRow';
 import {
@@ -46,6 +48,8 @@ export interface TreeExecutionDetails {
 export class TreeStrategy extends BeanStub {
     private beans: BeanCollection;
     private showRowGroupColsService: IShowRowGroupColsService;
+    private rowChildrenService?: IRowChildrenService;
+
     private oldGroupDisplayColIds: string | undefined;
 
     /** Rows that are pending deletion, this.commitDeletedRows() will finalize removal. */
@@ -57,6 +61,7 @@ export class TreeStrategy extends BeanStub {
     public wireBeans(beans: BeanCollection) {
         this.beans = beans;
         this.showRowGroupColsService = beans.showRowGroupColsService!;
+        this.rowChildrenService = beans.rowChildrenService;
     }
 
     public override destroy(): void {
@@ -301,7 +306,7 @@ export class TreeStrategy extends BeanStub {
             }
         }
 
-        rootRow.updateHasChildren();
+        this.rowChildrenService?.updateHasChildren(rootRow);
 
         if (isTreeRowPathChanged(rootRow)) {
             if (details.changedPath?.isActive()) {
@@ -404,13 +409,13 @@ export class TreeStrategy extends BeanStub {
         const oldGroup = row.group;
         if (oldGroup !== group) {
             markTreeRowPathChanged(row);
-            row.setGroup(group); // Internally calls updateHasChildren
+            setRowNodeGroup(row, this.beans, group); // Internally calls updateHasChildren
             if (!group && !row.expanded) {
                 setTreeRowExpandedInitialized(row, false);
             }
-        } else if (row.hasChildren() !== hasChildren) {
+        } else if (this.rowChildrenService?.hasChildren(row) !== hasChildren) {
             markTreeRowPathChanged(row);
-            row.updateHasChildren();
+            this.rowChildrenService?.updateHasChildren(row);
         }
 
         if (row.group && !isTreeRowExpandedInitialized(row)) {
@@ -611,7 +616,11 @@ export class TreeStrategy extends BeanStub {
         if (!row.data && row.isSelected()) {
             //we remove selection on filler nodes here, as the selection would not be removed
             // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-            row.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
+            this.beans.selectionService?.setSelectedParams({
+                rowNode: row,
+                newValue: false,
+                source: 'rowGroupChanged',
+            });
         }
     }
 

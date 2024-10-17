@@ -135,6 +135,7 @@ export { AgColumn, isColumn } from './entities/agColumn';
 export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 export { type ITreeNode, RowNode, ROW_ID_PREFIX_ROW_GROUP as _ROW_ID_PREFIX_ROW_GROUP } from './entities/rowNode';
+export { _createRowNodeFooter, _destroyRowNodeFooter, _createGlobalRowEvent } from './entities/rowNodeUtils';
 export {
     RowPinnedType,
     IRowNode,
@@ -435,6 +436,8 @@ export {
     RefreshModelParams,
 } from './interfaces/iClientSideRowModel';
 export { IGroupHideOpenParentsService } from './interfaces/iGroupHideOpenParentsService';
+export type { RowNodeEventThrottle } from './clientSideRowModel/rowNodeEventThrottle';
+export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
 
 export { ColumnVO } from './interfaces/iColumnVO';
 
@@ -896,7 +899,7 @@ export {
     BaseMenuItemParams,
 } from './interfaces/menuItem';
 export { IWatermark } from './interfaces/iWatermark';
-
+export { IRowChildrenService } from './interfaces/iRowChildrenService';
 export type { AriaAnnouncementService } from './rendering/ariaAnnouncementService';
 
 // utils
