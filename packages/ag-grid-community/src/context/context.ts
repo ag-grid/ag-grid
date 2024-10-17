@@ -49,6 +49,7 @@ import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterServic
 import type { IAggColumnNameService } from '../interfaces/iAggColumnNameService';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IAutoColService } from '../interfaces/iAutoColService';
+import type { IClientSideNodeManager } from '../interfaces/iClientSideNodeManager';
 import type { IClipboardService } from '../interfaces/iClipboardService';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
@@ -292,6 +293,9 @@ export interface CoreBeanCollection {
     stickyRowService?: StickyRowService;
     groupHideOpenParentsService?: IGroupHideOpenParentsService;
     filterValueService?: FilterValueService;
+    clientSideNodeManager?: IClientSideNodeManager;
+    clientSidePathTreeNodeManager?: IClientSideNodeManager;
+    clientSideChildrenTreeNodeManager?: IClientSideNodeManager;
     cellFlashService?: CellFlashService;
     masterDetailService?: IMasterDetailService;
     tooltipService?: TooltipService;
@@ -420,7 +424,6 @@ export type BeanName =
     | 'groupStage'
     | 'headerNavigationService'
     | 'horizontalResizeService'
-    | 'immutableService'
     | 'lazyBlockLoadingService'
     | 'licenseManager'
     | 'localeService'
@@ -485,4 +488,7 @@ export type BeanName =
     | 'valueCache'
     | 'valueService'
     | 'validationLogger'
-    | 'validationService';
+    | 'validationService'
+    | 'clientSideNodeManager'
+    | 'clientSidePathTreeNodeManager'
+    | 'clientSideChildrenTreeNodeManager';

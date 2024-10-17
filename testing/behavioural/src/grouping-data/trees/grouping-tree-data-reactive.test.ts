@@ -1,6 +1,6 @@
-import type { GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import type { GridOptions } from 'ag-grid-community';
+import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../../test-utils';
 import { GridRows, TestGridsManager } from '../../test-utils';
@@ -9,7 +9,7 @@ import { getRowsSnapshot } from '../row-snapshot-test-utils';
 
 describe('ag-grid grouping treeData is reactive', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
     });
 
     beforeEach(() => {
@@ -98,7 +98,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     lastChild: false,
                     leafGroup: true,
                     level: 0,
-                    master: undefined,
+                    master: false,
                     parentKey: null,
                     rowGroupIndex: 0,
                     rowPinned: undefined,
@@ -182,7 +182,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     lastChild: true,
                     leafGroup: true,
                     level: 0,
-                    master: undefined,
+                    master: false,
                     parentKey: null,
                     rowGroupIndex: 0,
                     rowPinned: undefined,
@@ -295,7 +295,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     lastChild: true,
                     leafGroup: false,
                     level: 1,
-                    master: undefined,
+                    master: false,
                     parentKey: 'A',
                     rowGroupIndex: null,
                     rowPinned: undefined,
@@ -351,7 +351,7 @@ describe('ag-grid grouping treeData is reactive', () => {
                     lastChild: true,
                     leafGroup: false,
                     level: 0,
-                    master: undefined,
+                    master: false,
                     parentKey: null,
                     rowGroupIndex: null,
                     rowPinned: undefined,

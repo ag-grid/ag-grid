@@ -240,6 +240,7 @@ export type EnterpriseModuleName =
     | 'StatusBarCoreModule'
     | 'StatusBarModule'
     | 'StatusBarSelectionModule'
+    | 'TreeDataModule'
     | 'ViewportRowModelCoreModule'
     | 'ViewportRowModelModule';
 
