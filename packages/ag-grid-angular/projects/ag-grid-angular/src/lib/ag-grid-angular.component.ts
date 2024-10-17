@@ -248,15 +248,20 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
                 this._angularFrameworkOverrides
             );
 
-            const excludeAngularCompProps = [
-                'gridOptions',
-                'modules',
-                ...Object.entries(this)
-                    .filter(([key, value]) => key.startsWith('_') || value instanceof EventEmitter)
-                    .map(([key]) => key),
-            ];
+            // Get all the inputs that are valid GridOptions
+            const gridOptionKeys = Object.entries(this)
+                .filter(
+                    ([key, value]) =>
+                        !(
+                            key.startsWith('_') ||
+                            key == 'gridOptions' ||
+                            key == 'modules' ||
+                            value instanceof EventEmitter
+                        )
+                )
+                .map(([key]) => key);
 
-            const mergedGridOps = _combineAttributesAndGridOptions(this.gridOptions, this, excludeAngularCompProps);
+            const mergedGridOps = _combineAttributesAndGridOptions(this.gridOptions, this, gridOptionKeys);
 
             const gridParams: GridParams = {
                 globalEventListener: this.globalEventListener.bind(this),

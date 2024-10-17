@@ -56,6 +56,21 @@ import GridComp from './gridComp';
 import { RenderStatusService } from './renderStatusService';
 import { CssClasses, isReact19, runWithoutFlushSync } from './utils';
 
+type ReactCompProps = Omit<AgGridReactProps, keyof GridOptions>;
+
+// Used to only pass gridOptions to the GridCoreCreator from the props
+const reactPropsNotGridOptions: ReactCompProps = {
+    gridOptions: undefined,
+    modules: undefined,
+    containerStyle: undefined,
+    className: undefined,
+    setGridApi: undefined,
+    componentWrappingElement: undefined,
+    maxComponentCreationTimeMs: undefined,
+    children: undefined,
+};
+const excludeReactCompProps = Object.keys(reactPropsNotGridOptions);
+
 export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     const apiRef = useRef<GridApi<TData>>();
     const eGui = useRef<HTMLDivElement | null>(null);
@@ -95,17 +110,11 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
             });
         }
 
-        const excludeReactCompProps: Exclude<keyof AgGridReactProps, keyof GridOptions>[] = [
-            'gridOptions',
-            'modules',
-            'containerStyle',
-            'className',
-            'setGridApi',
-            'componentWrappingElement',
-            'maxComponentCreationTimeMs',
-            'children',
-        ];
-        const mergedGridOps = _combineAttributesAndGridOptions(props.gridOptions, props, excludeReactCompProps);
+        const mergedGridOps = _combineAttributesAndGridOptions(
+            props.gridOptions,
+            props,
+            Object.keys(props).filter((key) => !excludeReactCompProps.includes(key))
+        );
 
         const processQueuedUpdates = () => {
             if (ready.current) {

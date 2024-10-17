@@ -543,8 +543,7 @@ export function _getCallbackForEvent(eventName: string): string {
 export function _combineAttributesAndGridOptions(
     gridOptions: GridOptions | undefined,
     component: any,
-    excludeComponentKeys: string[] = [],
-    allVueGridOptionsKeys: string[] | undefined = undefined
+    gridOptionsKeys: string[]
 ): GridOptions {
     // create empty grid options if none were passed
     if (typeof gridOptions !== 'object') {
@@ -552,14 +551,8 @@ export function _combineAttributesAndGridOptions(
     }
     // shallow copy (so we don't change the provided object)
     const mergedOptions = { ...gridOptions } as any;
-    // Vue does not have keys in prod so instead need to run through all the
-    // gridOptions checking for presence of a gridOption key.
-    const keys = allVueGridOptionsKeys ?? Object.keys(component);
     // Loop through component props, if they are not undefined and a valid gridOption copy to gridOptions
-    keys.forEach((key) => {
-        if (excludeComponentKeys.includes(key)) {
-            return;
-        }
+    gridOptionsKeys.forEach((key) => {
         const value = component[key];
         if (typeof value !== 'undefined') {
             mergedOptions[key] = value;
