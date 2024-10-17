@@ -1,4 +1,4 @@
-import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
+import type { ExampleConfig, ParsedBindings } from '../types';
 import { convertTemplate, getImport, toConst, toInput, toMemberWithValue, toOutput } from './angular-utils';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
@@ -150,7 +150,7 @@ export function vanillaToAngular(
     exampleConfig: ExampleConfig,
     componentFileNames: string[],
     allStylesheets: string[]
-): (importType: ImportType) => string {
+): () => string {
     const { data, properties, typeDeclares, interfaces, tData } = bindings;
     const rowDataType = tData || 'any';
     const diParams = [];
@@ -165,7 +165,7 @@ export function vanillaToAngular(
     const externalEventHandlers = bindings.externalEventHandlers.map((handler) => removeFunctionKeyword(handler.body));
     const genericParams = rowDataType !== 'any' ? `<${rowDataType}>` : '';
 
-    return (importType) => {
+    return () => {
         const imports = getImports(bindings, exampleConfig, componentFileNames, allStylesheets);
         const propertyAttributes = [];
         const propertyVars = [];

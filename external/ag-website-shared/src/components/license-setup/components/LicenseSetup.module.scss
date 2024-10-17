@@ -108,34 +108,9 @@
     color: var(--color-negative);
 }
 
-.frameworkImportContainer,
-.frameworkContainer,
-.importContainer {
+.frameworkContainer {
     display: flex;
     align-items: center;
-}
-
-.frameworkImportContainer {
-    flex-wrap: wrap;
-    gap: $spacing-size-4;
-
-    .divider {
-        align-self: stretch;
-        width: 1px;
-        background-color: var(--color-util-gray-300);
-    }
-}
-
-.importsLink {
-    width: 100%;
-    margin-top: -$spacing-size-2;
-
-    a {
-        font-weight: var(--text-regular);
-    }
-}
-
-.frameworkContainer {
     gap: $spacing-size-2;
 }
 
@@ -294,10 +269,6 @@
         }
 
         [data-column='Framework'] {
-            width: 140px;
-        }
-
-        [data-column='Import Type'] {
             width: 140px;
         }
     }

@@ -1,7 +1,5 @@
 export type Framework = 'javascript' | 'react' | 'angular' | 'vue';
 
-export type ImportType = 'modules' | 'packages';
-
 export type InternalFramework = 'vanilla' | 'typescript' | 'reactFunctional' | 'reactFunctionalTs' | 'angular' | 'vue3';
 
 export type Library = 'charts' | 'grid';

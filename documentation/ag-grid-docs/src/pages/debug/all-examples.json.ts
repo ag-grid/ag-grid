@@ -17,7 +17,6 @@ export async function GET() {
         return {
             pageName: example.params.pageName,
             exampleName: example.params.exampleName,
-            importType: example.params.importType,
             internalFramework: example.params.internalFramework,
         };
     });

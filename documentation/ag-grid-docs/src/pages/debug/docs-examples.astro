@@ -24,23 +24,20 @@ if (ENABLE_GENERATE_DEBUG_PAGES) {
             <th><code>params.internalFramework</code></th>
             <th><code>params.pageName</code></th>
             <th><code>params.exampleName</code></th>
-            <th><code>params.importType</code></th>
         </thead>
         <tbody>
             {
                 examples.map((example, index) => {
-                    const { internalFramework, pageName, exampleName, importType } = example.params;
+                    const { internalFramework, pageName, exampleName } = example.params;
                     const url = getExampleUrl({
                         internalFramework,
                         pageName,
                         exampleName,
-                        importType,
                     });
                     const contentsUrl = getExampleContentsUrl({
                         internalFramework,
                         pageName,
                         exampleName,
-                        importType,
                     });
                     return (
                         <tr>
@@ -54,7 +51,6 @@ if (ENABLE_GENERATE_DEBUG_PAGES) {
                             <td>{internalFramework}</td>
                             <td>{pageName}</td>
                             <td>{exampleName}</td>
-                            <td>{importType}</td>
                         </tr>
                     );
                 })

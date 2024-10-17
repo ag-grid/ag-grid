@@ -1,4 +1,4 @@
-import type { ImportType, InternalFramework } from '@ag-grid-types';
+import type { InternalFramework } from '@ag-grid-types';
 import { getDocExampleFiles } from '@features/docs/utils/pageData';
 import { getGeneratedContents } from '@features/example-generator';
 import { getIsDev } from '@utils/env';
@@ -10,7 +10,6 @@ interface Params {
     internalFramework: InternalFramework;
     pageName: string;
     exampleName: string;
-    importType: ImportType;
     fileName: string;
 }
 
@@ -23,7 +22,7 @@ export async function getStaticPaths() {
 }
 
 export async function GET({ params }: { params: Params }) {
-    const { internalFramework, pageName, exampleName, importType, fileName } = params;
+    const { internalFramework, pageName, exampleName, fileName } = params;
 
     const contentRoot = getContentRootFileUrl();
     const createErrorBody = ({ availableFiles }: any) => {
@@ -45,7 +44,6 @@ export async function GET({ params }: { params: Params }) {
             type: 'docs',
             framework: internalFramework,
             pageName,
-            importType,
             exampleName,
         })) || {};
     const file = files && files[fileName];

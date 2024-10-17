@@ -1,6 +1,6 @@
 import * as JSON5 from 'json5';
 
-import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
+import type { ExampleConfig, ParsedBindings } from '../types';
 import {
     GRID_WIDE_COMPONENTS,
     OVERRIDABLE_AG_COMPONENTS,
@@ -319,7 +319,7 @@ export function vanillaToVue3(
     exampleConfig: ExampleConfig,
     componentFileNames: string[],
     allStylesheets: string[]
-): (importType: ImportType) => string {
+): () => string {
     const vueComponents = bindings.components.map((component) => `${component.name}:${component.value}`);
 
     const onGridReady = getOnGridReadyCode(bindings);
@@ -334,7 +334,7 @@ export function vanillaToVue3(
         ? convertDefaultColDef(bindings.autoGroupColumnDef, vueComponents, componentFileNames)
         : null;
 
-    return (importType) => {
+    return () => {
         const imports = getImports(bindings, exampleConfig, componentFileNames, allStylesheets);
         const [propertyAssignments, propertyVars, propertyAttributes, _, propertyNames] = getPropertyBindings(
             bindings,

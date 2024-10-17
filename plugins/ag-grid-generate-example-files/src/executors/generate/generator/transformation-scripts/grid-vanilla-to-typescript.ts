@@ -1,4 +1,4 @@
-import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
+import type { ParsedBindings } from '../types';
 import {
     addBindingImports,
     addGenericInterfaceImport,
@@ -66,12 +66,7 @@ function getImports(bindings: ParsedBindings): string[] {
     return imports;
 }
 
-export function vanillaToTypescript(
-    bindings: ParsedBindings,
-    exampleConfig: ExampleConfig,
-    mainFilePath: string,
-    tsFile: string
-): (importType: ImportType) => string {
+export function vanillaToTypescript(bindings: ParsedBindings, mainFilePath: string, tsFile: string): () => string {
     const { externalEventHandlers } = bindings;
 
     // attach external handlers to window
@@ -99,7 +94,7 @@ export function vanillaToTypescript(
         throw Error('DomContentLoaded replace failed for ' + mainFilePath);
     }
 
-    return (importType) => {
+    return () => {
         const importStrings = getImports(bindings);
         const formattedImports = `${importStrings.join('\n')}\n`;
 

@@ -1,5 +1,5 @@
 ---
-import type { ImportType, InternalFramework } from '@ag-grid-types';
+import type { InternalFramework } from '@ag-grid-types';
 import FrameworkTemplate from '@features/example-runner/components/FrameworkTemplate.astro';
 import { getExampleUrl } from '../utils/urlPaths';
 import { getGeneratedContents } from '@features/example-generator';
@@ -8,7 +8,6 @@ interface Props {
     internalFramework: InternalFramework;
     pageName: string;
     exampleName: string;
-    importType: ImportType;
     /**
      * Whether to use relative paths for script files references
      */
@@ -27,21 +26,12 @@ interface Props {
     extraStyles?: string;
 }
 
-const {
-    internalFramework,
-    pageName,
-    exampleName,
-    importType,
-    relativePath,
-    addInitMessageScript,
-    ignoreSystemJs,
-    extraStyles,
-} = Astro.props as Props;
+const { internalFramework, pageName, exampleName, relativePath, addInitMessageScript, ignoreSystemJs, extraStyles } =
+    Astro.props as Props;
 
 const contentParams = {
     framework: internalFramework,
     pageName,
-    importType,
     exampleName,
 };
 let generatedContents;
@@ -59,7 +49,6 @@ const exampleUrl = getExampleUrl({
     internalFramework,
     pageName,
     exampleName,
-    importType,
 });
 ---
 

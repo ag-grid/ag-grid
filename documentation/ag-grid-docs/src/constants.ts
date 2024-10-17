@@ -1,5 +1,5 @@
 import corePackageJson from '../../../packages/ag-grid-community/package.json';
-import type { Framework, ImportType, InternalFramework } from './types/ag-grid';
+import type { Framework, InternalFramework } from './types/ag-grid';
 
 const isTruthy = (val: string | boolean) => ['1', 'true', true].includes(val);
 
@@ -25,8 +25,6 @@ export const FRAMEWORK_DISPLAY_TEXT: Record<Framework, string> = {
 };
 
 export const DISABLE_EXAMPLE_RUNNER = isTruthy(import.meta.env?.DISABLE_EXAMPLE_RUNNER);
-
-export const IMPORT_TYPES: ImportType[] = USE_PACKAGES ? ['modules', 'packages'] : ['modules'];
 
 export const agGridVersion = import.meta.env?.PUBLIC_PACKAGE_VERSION ?? corePackageJson.version;
 export const agGridEnterpriseVersion = agGridVersion;
