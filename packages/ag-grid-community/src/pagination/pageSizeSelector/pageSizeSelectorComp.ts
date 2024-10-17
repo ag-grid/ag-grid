@@ -169,7 +169,7 @@ export class PageSizeSelectorComp extends Component {
     }
 
     private createPageSizeSelectorComp(pageSizeOptions: (string | number)[], value: string): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
 
         const localisedLabel = localeTextFunc('pageSizeSelectorLabel', 'Page Size:');
         const localisedAriaLabel = localeTextFunc('ariaPageSizeSelectorLabel', 'Page Size');

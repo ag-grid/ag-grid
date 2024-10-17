@@ -11,7 +11,10 @@ export class TextFloatingFilter extends TextInputFloatingFilter<TextFilterModel>
 
     public override init(params: ITextFloatingFilterParams): void {
         super.init(params);
-        this.filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
+        this.filterModelFormatter = new TextFilterModelFormatter(
+            this.getLocaleTextFunc.bind(this),
+            this.optionsFactory
+        );
     }
 
     public override refresh(params: ITextFloatingFilterParams): void {

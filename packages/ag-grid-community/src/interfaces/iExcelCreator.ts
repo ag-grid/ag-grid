@@ -379,10 +379,7 @@ export interface ExcelOOXMLTemplate {
 }
 
 // Excel Export
-export enum ExcelFactoryMode {
-    SINGLE_SHEET,
-    MULTI_SHEET,
-}
+export type ExcelFactoryMode = 'SINGLE_SHEET' | 'MULTI_SHEET';
 
 export interface ExcelSheetNameGetterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
 

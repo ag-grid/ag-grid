@@ -1,3 +1,4 @@
+import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
 import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -13,7 +14,7 @@ import type {
     ValueFormatterLiteParams,
     ValueParserLiteParams,
 } from '../entities/dataType';
-import type { AgGridEvent } from '../events';
+import type { AgGridEvent, ColumnEventType } from '../events';
 import type { FilterManager } from '../filter/filterManager';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
@@ -25,10 +26,10 @@ import { _toStringOrNull } from '../utils/generic';
 import { _getValueUsingField } from '../utils/object';
 import { _warn } from '../validation/logging';
 import type { ValueService } from '../valueService/valueService';
+import type { ColumnFactory } from './columnFactory';
 import type { ColumnModel } from './columnModel';
-import { convertSourceType } from './columnModel';
 import type { ColumnState, ColumnStateParams, ColumnStateService } from './columnStateService';
-import { convertColumnTypes } from './columnUtils';
+import { _convertColumnEventSourceType, convertColumnTypes } from './columnUtils';
 import type { FuncColsService } from './funcColsService';
 
 interface GroupSafeValueFormatter {
@@ -44,6 +45,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private valueService: ValueService;
     private columnStateService: ColumnStateService;
     private filterManager?: FilterManager;
+    private columnAutosizeService?: ColumnAutosizeService;
+    private columnFactory: ColumnFactory;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
@@ -52,6 +55,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.valueService = beans.valueService;
         this.columnStateService = beans.columnStateService;
         this.filterManager = beans.filterManager;
+        this.columnAutosizeService = beans.columnAutosizeService;
+        this.columnFactory = beans.columnFactory;
     }
 
     private dataTypeDefinitions: {
@@ -78,7 +83,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
         this.addManagedPropertyListener('dataTypeDefinitions', (event) => {
             this.processDataTypeDefinitions();
-            this.columnModel.recreateColumnDefs(convertSourceType(event.source));
+            this.columnModel.recreateColumnDefs(_convertColumnEventSourceType(event.source));
         });
     }
 
@@ -442,8 +447,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
         this.isWaitingForRowData = true;
         const columnTypeOverridesExist = this.isColumnTypeOverrideInDataTypeDefinitions;
-        if (columnTypeOverridesExist) {
-            this.columnModel.queueResizeOperations();
+        if (columnTypeOverridesExist && this.columnAutosizeService) {
+            this.columnAutosizeService.shouldQueueResizeOperations = true;
         }
         const [destroyFunc] = this.addManagedEventListeners({
             rowDataUpdateStarted: (event) => {
@@ -456,7 +461,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 this.processColumnsPendingInference(firstRowData, columnTypeOverridesExist);
                 this.columnStateUpdatesPendingInference = {};
                 if (columnTypeOverridesExist) {
-                    this.columnModel.processResizeOperations();
+                    this.columnAutosizeService?.processResizeOperations();
                 }
                 this.eventService.dispatchEvent({
                     type: 'dataTypesInferred',
@@ -481,7 +486,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 return;
             }
             const oldColDef = column.getColDef();
-            if (!this.columnModel.resetColDefIntoCol(column, 'cellDataTypeInferred')) {
+            if (!this.resetColDefIntoCol(column, 'cellDataTypeInferred')) {
                 return;
             }
             const newColDef = column.getColDef();
@@ -508,6 +513,16 @@ export class DataTypeService extends BeanStub implements NamedBean {
             this.columnStateService.applyColumnState({ state }, 'cellDataTypeInferred');
         }
         this.initialData = null;
+    }
+
+    private resetColDefIntoCol(column: AgColumn, source: ColumnEventType): boolean {
+        const userColDef = column.getUserProvidedColDef();
+        if (!userColDef) {
+            return false;
+        }
+        const newColDef = this.columnFactory.addColumnDefaultAndTypes(userColDef, column.getColId());
+        column.setColDef(newColDef, userColDef, source);
+        return true;
     }
 
     private getUpdatedColumnState(column: AgColumn, columnStateUpdates: Set<keyof ColumnStateParams>): ColumnState {
@@ -648,7 +663,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     private getDefaultDataTypes(): { [key: string]: CoreDataTypeDefinition } {
         const defaultDateFormatMatcher = (value: string) => !!value.match('^\\d{4}-\\d{2}-\\d{2}$');
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         return {
             number: {
                 baseDataType: 'number',

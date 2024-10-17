@@ -7,7 +7,7 @@ import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import { _isColumnsSortingCoupledToGroup } from '../gridOptionsUtils';
 import type { PostSortRowsParams } from '../interfaces/iCallbackParams';
-import { ClientSideRowModelSteps } from '../interfaces/iClientSideRowModel';
+import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IGroupHideOpenParentsService } from '../interfaces/iGroupHideOpenParentsService';
 import type { IRowNode } from '../interfaces/iRowNode';
@@ -47,7 +47,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
     beanName = 'sortStage' as const;
 
     public refreshProps: Set<keyof GridOptions<any>> = new Set(['postSortRows', 'groupDisplayType', 'accentedSort']);
-    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.SORT;
+    public step: ClientSideRowModelStage = 'sort';
 
     private sortController: SortController;
     private columnModel: ColumnModel;

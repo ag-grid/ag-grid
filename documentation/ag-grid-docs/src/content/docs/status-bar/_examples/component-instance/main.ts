@@ -56,8 +56,6 @@ const gridOptions: GridOptions = {
     ],
     rowSelection: {
         mode: 'multiRow',
-        checkboxes: false,
-        headerCheckbox: false,
     },
     statusBar: {
         statusPanels: [

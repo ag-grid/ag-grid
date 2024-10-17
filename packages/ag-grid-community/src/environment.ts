@@ -2,6 +2,7 @@ import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { GridTheme } from './entities/gridOptions';
+import { _areEqual } from './utils/array';
 import { _observeResize } from './utils/dom';
 import { _warn } from './validation/logging';
 
@@ -196,7 +197,7 @@ export class Environment extends BeanStub implements NamedBean {
     private setUpThemeClassObservers() {
         const observer = new MutationObserver(() => {
             const newThemeClasses = this.readAncestorThemeClasses();
-            if (!arraysEqual(newThemeClasses, this.ancestorThemeClasses)) {
+            if (!_areEqual(newThemeClasses, this.ancestorThemeClasses)) {
                 this.ancestorThemeClasses = newThemeClasses;
                 this.fireGridStylesChangedEvent('themeChanged');
             }
@@ -250,9 +251,6 @@ export class Environment extends BeanStub implements NamedBean {
         this.gridTheme = null;
     }
 }
-
-const arraysEqual = <T>(a: readonly T[], b: readonly T[]): boolean =>
-    a.length === b.length && a.findIndex((_, i) => a[i] !== b[i]) === -1;
 
 type Variable = {
     cssName: string;

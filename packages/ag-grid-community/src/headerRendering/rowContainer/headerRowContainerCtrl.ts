@@ -10,12 +10,13 @@ import type { FilterManager } from '../../filter/filterManager';
 import type { FocusService } from '../../focusService';
 import { CenterWidthFeature } from '../../gridBodyComp/centerWidthFeature';
 import type { ScrollPartner } from '../../gridBodyComp/gridBodyScrollFeature';
-import type { PinnedWidthService } from '../../gridBodyComp/pinnedWidthService';
 import type { ScrollVisibleService } from '../../gridBodyComp/scrollVisibleService';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { HeaderPosition } from '../../interfaces/iHeaderPosition';
+import type { PinnedColumnService } from '../../pinnedColumns/pinnedColumnService';
 import type { AbstractHeaderCellCtrl } from '../cells/abstractCell/abstractHeaderCellCtrl';
-import { HeaderRowType } from '../row/headerRowComp';
+import { getHeaderRowCount } from '../headerUtils';
+import type { HeaderRowType } from '../row/headerRowComp';
 import { HeaderRowCtrl } from '../row/headerRowCtrl';
 
 export interface IHeaderRowContainerComp {
@@ -29,7 +30,7 @@ export interface IHeaderRowContainerComp {
 export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     private ctrlsService: CtrlsService;
     private scrollVisibleService: ScrollVisibleService;
-    private pinnedWidthService: PinnedWidthService;
+    private pinnedColumnService?: PinnedColumnService;
     private columnModel: ColumnModel;
     private focusService: FocusService;
     private filterManager?: FilterManager;
@@ -38,7 +39,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
         this.scrollVisibleService = beans.scrollVisibleService;
-        this.pinnedWidthService = beans.pinnedWidthService;
+        this.pinnedColumnService = beans.pinnedColumnService;
         this.columnModel = beans.columnModel;
         this.focusService = beans.focusService;
         this.filterManager = beans.filterManager;
@@ -79,7 +80,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         const headerType = `${typeof this.pinned === 'string' ? this.pinned : 'center'}Header` as const;
         this.ctrlsService.register(headerType, this);
 
-        if (this.columnModel.isReady()) {
+        if (this.columnModel.ready) {
             this.refresh();
         }
     }
@@ -103,12 +104,12 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         const focusedHeaderPosition = this.focusService.getFocusHeaderToUseAfterRefresh();
 
         const refreshColumnGroups = () => {
-            const groupRowCount = this.columnModel.getHeaderRowCount() - 1;
+            const groupRowCount = getHeaderRowCount(this.columnModel) - 1;
 
             this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
 
             for (let i = 0; i < groupRowCount; i++) {
-                const ctrl = this.createBean(new HeaderRowCtrl(sequence++, this.pinned, HeaderRowType.COLUMN_GROUP));
+                const ctrl = this.createBean(new HeaderRowCtrl(sequence++, this.pinned, 'group'));
                 this.groupsRowCtrls.push(ctrl);
             }
         };
@@ -126,7 +127,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             }
 
             if (needNewInstance) {
-                this.columnsRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.COLUMN));
+                this.columnsRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, 'column'));
             }
         };
 
@@ -152,9 +153,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             }
 
             if (!this.filtersRowCtrl) {
-                this.filtersRowCtrl = this.createBean(
-                    new HeaderRowCtrl(rowIndex, this.pinned, HeaderRowType.FLOATING_FILTER)
-                );
+                this.filtersRowCtrl = this.createBean(new HeaderRowCtrl(rowIndex, this.pinned, 'filter'));
             }
         };
 
@@ -295,7 +294,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     private setupPinnedWidth(): void {
-        if (this.pinned == null) {
+        if (this.pinned == null || !this.pinnedColumnService) {
             return;
         }
 
@@ -306,8 +305,8 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
 
         const listener = () => {
             const width = pinningLeft
-                ? this.pinnedWidthService.getPinnedLeftWidth()
-                : this.pinnedWidthService.getPinnedRightWidth();
+                ? this.pinnedColumnService!.getPinnedLeftWidth()
+                : this.pinnedColumnService!.getPinnedRightWidth();
             if (width == null) {
                 return;
             } // can happen at initialisation, width not yet set

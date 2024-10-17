@@ -212,7 +212,7 @@ export abstract class AgPickerField<
             });
         }
 
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         const { pickerAriaLabelKey, pickerAriaLabelValue, modalPicker = true } = this.config;
 

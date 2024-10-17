@@ -341,7 +341,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
                 this.params.column?.isRowGroupDisplayed(this.displayedGroupNode.rowGroupColumn.getId());
 
             if (this.displayedGroupNode.key === '' && this.displayedGroupNode.group && isGroupColForNode) {
-                const localeTextFunc = this.localeService.getLocaleTextFunc();
+                const localeTextFunc = this.getLocaleTextFunc();
                 valueWhenNoRenderer = localeTextFunc('blanks', '(Blanks)');
             } else {
                 valueWhenNoRenderer = value ?? null;
@@ -404,7 +404,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
                 _warn(179);
             }
         } else {
-            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            const localeTextFunc = this.getLocaleTextFunc();
             const footerTotalPrefix = localeTextFunc('footerTotal', 'Total');
             footerValue = footerTotalPrefix + ' ' + (this.params.value != null ? this.params.value : '');
         }

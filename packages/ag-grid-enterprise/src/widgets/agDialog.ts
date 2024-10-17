@@ -127,7 +127,7 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
     protected override renderComponent() {
         const eGui = this.getGui();
         const { alwaysOnTop, modal, title, afterGuiAttached } = this.config;
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         const addPopupRes = this.popupService?.addPopup({
             modal,

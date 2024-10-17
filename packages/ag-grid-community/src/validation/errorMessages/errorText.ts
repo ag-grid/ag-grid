@@ -1,6 +1,5 @@
 import { BASE_URL } from '../../baseUrl';
 import type { UserComponentName } from '../../context/context';
-import type { ClientSideRowModelStep } from '../../interfaces/iClientSideRowModel';
 import type { Column } from '../../interfaces/iColumn';
 import type { ModuleName } from '../../interfaces/iModule';
 import { _fuzzySuggestions } from '../../utils/fuzzyMatch';
@@ -57,8 +56,7 @@ export const AG_GRID_ERRORS = {
     8: ({ key }: { key: string }) => `Unknown key for navigation ${key}` as const,
     9: ({ variable }: { variable: { cssName: string; defaultValue: number } }) =>
         `No value for ${variable.cssName}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${variable.defaultValue} will be used and updated when styles load.` as const,
-    10: ({ step, stepsMapped }: { step: ClientSideRowModelStep | undefined; stepsMapped: string[] }) =>
-        `Invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}` as const,
+    10: () => '',
     11: () => 'No gridOptions provided to createGrid' as const,
     12: ({ colKey }: { colKey: string | Column }) => ['column ', colKey, ' not found'] as const,
     13: () =>

@@ -55,7 +55,7 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private onSelectionChanged(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const state = this.rowNode.isSelected();
         const stateName = _getAriaCheckboxStateName(translate, state);
         const [ariaKey, ariaLabel] = this.rowNode.selectable

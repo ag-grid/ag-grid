@@ -1171,7 +1171,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** How many milliseconds to wait before executing a batch of async transactions.
      */
     @Input() public asyncTransactionWaitMillis: number | undefined = undefined;
-    /** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. up
+    /** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates.
      * @default false
      */
     @Input({ transform: booleanAttribute }) public suppressModelUpdateAfterUpdateTransaction: boolean | undefined =

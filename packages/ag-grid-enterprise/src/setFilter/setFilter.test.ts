@@ -8,7 +8,6 @@ import type {
     GridOptionsService,
     IClientSideRowModel,
     IRowModel,
-    LocaleService,
     SetFilterModel,
     SetFilterParams,
     ValueService,
@@ -22,7 +21,6 @@ import type { SetValueModel } from './setValueModel';
 let rowModel: jest.Mocked<IRowModel>;
 let eventService: jest.Mocked<EventService>;
 let valueService: jest.Mocked<ValueService>;
-let localeService: jest.Mocked<LocaleService>;
 let context: jest.Mocked<Context>;
 let eMiniFilter: jest.Mocked<AgInputTextField>;
 let eGui: jest.Mocked<HTMLElement>;
@@ -39,9 +37,6 @@ beforeEach(() => {
 
     valueService = mock<ValueService>('formatValue');
     valueService.formatValue.mockImplementation((_1, _2, value) => value);
-
-    localeService = mock<LocaleService>('getLocaleTextFunc');
-    localeService.getLocaleTextFunc.mockImplementation(() => (_: string, defaultValue: string) => defaultValue);
 
     context = mock<Context>('createBean');
     context.createBean.mockImplementation((bean) => bean);
@@ -102,7 +97,6 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
 
     const setFilter = new SetFilter();
     (setFilter as any).eventService = eventService;
-    (setFilter as any).localeService = localeService;
     (setFilter as any).valueService = valueService;
     (setFilter as any).rowModel = rowModel;
     (setFilter as any).context = context;

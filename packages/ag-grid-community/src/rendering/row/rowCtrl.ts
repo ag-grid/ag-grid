@@ -31,7 +31,6 @@ import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IEventListener } from '../../interfaces/iEventEmitter';
 import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
-import { RowHighlightPosition } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { calculateRowLevel } from '../../styling/rowStyleService';
@@ -245,7 +244,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.onSuppressCellFocusChanged(this.beans.gos.get('suppressCellFocus'));
 
         this.listenOnDomOrder(gui);
-        if (this.beans.columnModel.wasAutoRowHeightEverActive()) {
+        if (this.beans.columnModel.wasAutoRowHeightEverActive) {
             this.rowNode.checkAutoHeights();
         }
         this.onRowHeightChanged(gui);
@@ -813,8 +812,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const highlighted = this.rowNode.highlighted;
 
         this.allRowGuis.forEach((gui) => {
-            const aboveOn = highlighted === RowHighlightPosition.Above;
-            const belowOn = highlighted === RowHighlightPosition.Below;
+            const aboveOn = highlighted === 'Above';
+            const belowOn = highlighted === 'Below';
             gui.rowComp.addOrRemoveCssClass('ag-row-highlight-above', aboveOn);
             gui.rowComp.addOrRemoveCssClass('ag-row-highlight-below', belowOn);
         });
@@ -830,7 +829,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // then set data, and any old valueGetter's (ie from cols that were removed) would still get called.
         this.updateColumnLists(true);
 
-        if (this.beans.columnModel.wasAutoRowHeightEverActive()) {
+        if (this.beans.columnModel.wasAutoRowHeightEverActive) {
             this.rowNode.checkAutoHeights();
         }
     }

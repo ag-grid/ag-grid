@@ -3,9 +3,12 @@ import type { AgColumn } from '../entities/agColumn';
 import { isColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import type { ColumnEventType } from '../events';
+import type { PropertyChangedSource } from '../gridOptionsService';
 import type { ColumnInstanceId } from '../interfaces/iColumn';
+import { _areEqual } from '../utils/array';
 import { depthFirstOriginalTreeSearch } from './columnFactory';
-import type { ColKey } from './columnModel';
+import type { ColKey, ColumnCollections } from './columnModel';
 import { CONTROLS_COLUMN_ID_PREFIX } from './selectionColService';
 
 export const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn' as const;
@@ -81,4 +84,26 @@ export function convertColumnTypes(type: string | string[]): string[] {
         typeKeys = type.split(',');
     }
     return typeKeys;
+}
+
+export function _areColIdsEqual(colsA: AgColumn[] | null, colsB: AgColumn[] | null): boolean {
+    return _areEqual(colsA, colsB, (a, b) => a.getColId() === b.getColId());
+}
+
+export function _updateColsMap(cols: ColumnCollections): void {
+    cols.map = {};
+    cols.list.forEach((col) => (cols.map[col.getId()] = col));
+}
+
+export function _convertColumnEventSourceType(source: PropertyChangedSource): ColumnEventType {
+    // unfortunately they do not match so need to perform conversion
+    return source === 'gridOptionsUpdated' ? 'gridOptionsChanged' : source;
+}
+
+export function _columnsMatch(column: AgColumn, key: ColKey): boolean {
+    const columnMatches = column === key;
+    const colDefMatches = column.getColDef() === key;
+    const idMatches = column.getColId() == key;
+
+    return columnMatches || colDefMatches || idMatches;
 }

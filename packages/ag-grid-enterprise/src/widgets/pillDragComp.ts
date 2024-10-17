@@ -106,7 +106,7 @@ export abstract class PillDragComp<TItem> extends Component<PillDragCompEvent> {
     }
 
     protected setupAria() {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
 
         const ariaInstructions = [this.getAriaDisplayName()];
 

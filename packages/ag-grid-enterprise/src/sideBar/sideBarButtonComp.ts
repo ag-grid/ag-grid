@@ -40,7 +40,7 @@ export class SideBarButtonComp extends Component<SideBarButtonCompEvent> {
     }
 
     private setLabel(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const def = this.toolPanelDef;
         const label = translate(def.labelKey, def.labelDefault);
 

@@ -45,7 +45,7 @@ export class RowDragService extends BeanStub implements NamedBean {
         if (_isCellSelectionEnabled(this.gos)) {
             return undefined;
         }
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         return this.createRowDragComp(
             () => `1 ${translate('rowDragRow', 'row')}`,
             rowNode,

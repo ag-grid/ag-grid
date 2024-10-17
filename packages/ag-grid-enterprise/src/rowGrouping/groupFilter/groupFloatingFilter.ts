@@ -72,7 +72,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
             'header',
             true
         );
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         this.eFloatingFilterText?.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }
 

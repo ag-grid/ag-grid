@@ -9,7 +9,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     }
 
     public postConstruct(): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('valueColumnsEmptyMessage', 'Drag here to aggregate');
         const title = localeTextFunc('values', 'Values');
 
@@ -23,7 +23,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getAriaLabel(): string {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const label = translate('ariaValuesDropZonePanelLabel', 'Values');
 
         return label;

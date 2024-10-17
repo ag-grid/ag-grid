@@ -1,6 +1,6 @@
 import { _getDragAndDropImageCompDetails } from '../components/framework/userCompUtils';
 import type { UserComponentFactory } from '../components/framework/userComponentFactory';
-import { HorizontalDirection, VerticalDirection } from '../constants/direction';
+import type { HorizontalDirection, VerticalDirection } from '../constants/direction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -471,7 +471,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             return null;
         }
 
-        return clientX! > eClientX ? HorizontalDirection.Left : HorizontalDirection.Right;
+        return clientX! > eClientX ? 'left' : 'right';
     }
 
     public getVerticalDirection(event: MouseEvent): VerticalDirection | null {
@@ -482,7 +482,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             return null;
         }
 
-        return clientY! > eClientY ? VerticalDirection.Up : VerticalDirection.Down;
+        return clientY! > eClientY ? 'up' : 'down';
     }
 
     public createDropTargetEvent(
