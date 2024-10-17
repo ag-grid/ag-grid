@@ -1,4 +1,4 @@
-import type { ColumnModel } from '../../columns/columnModel';
+import type { ColumnCollections, ColumnModel } from '../../columns/columnModel';
 import type { ColumnViewportService } from '../../columns/columnViewportService';
 import type { VisibleColsService } from '../../columns/visibleColsService';
 import type { NamedBean } from '../../context/bean';
@@ -6,10 +6,13 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
-import { _getRowHeightForNode } from '../../gridOptionsUtils';
+import { _getDocument, _getRowHeightForNode } from '../../gridOptionsUtils';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../../interfaces/iRowModel';
 import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
+import { _getElementSize, _observeResize } from '../../utils/dom';
+import { _debounce } from '../../utils/function';
+import type { CellCtrl } from '../cell/cellCtrl';
 
 export class RowAutoHeightService extends BeanStub implements NamedBean {
     beanName = 'rowAutoHeightService' as const;
@@ -19,6 +22,10 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
     private rowModel: IRowModel;
     private columnModel: ColumnModel;
 
+    /** grid columns have colDef.autoHeight set */
+    public active: boolean;
+    private wasEverActive = false;
+
     public wireBeans(beans: BeanCollection): void {
         this.visibleColsService = beans.visibleColsService;
         this.columnViewportService = beans.columnViewportService;
@@ -26,7 +33,28 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         this.columnModel = beans.columnModel;
     }
 
-    public checkAutoHeights(rowNode: RowNode, autoHeights?: { [id: string]: number | undefined }): void {
+    public setRowAutoHeight(rowNode: RowNode, cellHeight: number | undefined, column: AgColumn): void {
+        if (!rowNode.__autoHeights) {
+            rowNode.__autoHeights = {};
+        }
+        rowNode.__autoHeights[column.getId()] = cellHeight;
+
+        if (cellHeight != null) {
+            if (rowNode.__checkAutoHeightsDebounced == null) {
+                rowNode.__checkAutoHeightsDebounced = _debounce(this.doCheckAutoHeights.bind(this, rowNode), 1);
+            }
+            rowNode.__checkAutoHeightsDebounced();
+        }
+    }
+
+    public checkAutoHeights(rowNode: RowNode): void {
+        if (this.wasEverActive) {
+            this.doCheckAutoHeights(rowNode);
+        }
+    }
+
+    private doCheckAutoHeights(rowNode: RowNode): void {
+        const autoHeights = rowNode.__autoHeights;
         if (autoHeights == null) {
             return;
         }
@@ -97,5 +125,70 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
 
         const rowModel = this.rowModel as IClientSideRowModel | IServerSideRowModel;
         rowModel.onRowHeightChangedDebounced?.();
+    }
+
+    public setupCellAutoHeight(cellCtrl: CellCtrl, eCellWrapper: HTMLElement, compBean: BeanStub): void {
+        const eParentCell = eCellWrapper.parentElement!;
+        const rowNode = cellCtrl.getRowNode();
+        const column = cellCtrl.getColumn();
+        // taking minRowHeight from getRowHeightForNode means the getRowHeight() callback is used,
+        // thus allowing different min heights for different rows.
+        const minRowHeight = _getRowHeightForNode(this.gos, rowNode).height;
+
+        const measureHeight = (timesCalled: number) => {
+            if (cellCtrl.isEditing()) {
+                return;
+            }
+            // because of the retry's below, it's possible the retry's go beyond
+            // the rows life.
+            if (!cellCtrl.isAlive() || !compBean.isAlive()) {
+                return;
+            }
+
+            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = _getElementSize(eParentCell);
+            const extraHeight = paddingTop + paddingBottom + borderBottomWidth + borderTopWidth;
+
+            const wrapperHeight = eCellWrapper!.offsetHeight;
+            const autoHeight = wrapperHeight + extraHeight;
+
+            if (timesCalled < 5) {
+                // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
+                // maybe it will be ready next VM turn
+                const doc = _getDocument(this.gos);
+                const notYetInDom = !doc || !doc.contains(eCellWrapper);
+
+                // this happens in React, where React hasn't put any content in. we say 'possibly'
+                // as a) may not be React and b) the cell could be empty anyway
+                const possiblyNoContentYet = autoHeight == 0;
+
+                if (notYetInDom || possiblyNoContentYet) {
+                    window.setTimeout(() => measureHeight(timesCalled + 1), 0);
+                    return;
+                }
+            }
+
+            const newHeight = Math.max(autoHeight, minRowHeight);
+            this.setRowAutoHeight(rowNode, newHeight, column);
+        };
+
+        const listener = () => measureHeight(0);
+
+        // do once to set size in case size doesn't change, common when cell is blank
+        listener();
+
+        const destroyResizeObserver = _observeResize(this.gos, eCellWrapper, listener);
+
+        compBean.addDestroyFunc(() => {
+            destroyResizeObserver();
+            this.setRowAutoHeight(rowNode, undefined, column);
+        });
+    }
+
+    public setAutoHeightActive(cols: ColumnCollections): void {
+        this.active = cols.list.some((col) => col.isVisible() && col.isAutoHeight());
+
+        if (this.active) {
+            this.wasEverActive = true;
+        }
     }
 }

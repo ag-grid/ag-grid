@@ -56,7 +56,7 @@ export const AG_GRID_ERRORS = {
     8: ({ key }: { key: string }) => `Unknown key for navigation ${key}` as const,
     9: ({ variable }: { variable: { cssName: string; defaultValue: number } }) =>
         `No value for ${variable.cssName}. This usually means that the grid has been initialised before styles have been loaded. The default value of ${variable.defaultValue} will be used and updated when styles load.` as const,
-    10: () => '',
+    // 10: () => '',
     11: () => 'No gridOptions provided to createGrid' as const,
     12: ({ colKey }: { colKey: string | Column }) => ['column ', colKey, ' not found'] as const,
     13: () =>
@@ -144,7 +144,7 @@ export const AG_GRID_ERRORS = {
     // 57: () => '' as const,
     58: () => 'no values found for select cellEditor' as const,
     59: () => 'cannot select pinned rows' as const,
-    60: () => 'cannot select node until id for node is known' as const,
+    60: () => 'cannot select node until it has finished loading' as const,
     61: () =>
         'since version v32.2.0, rowNode.isFullWidthCell() has been deprecated. Instead check `rowNode.detail` followed by the user provided `isFullWidthRow` grid option.' as const,
     62: ({ colId }: { colId: string }) => `setFilterModel() - no column found for colId: ${colId}` as const,
@@ -288,8 +288,8 @@ export const AG_GRID_ERRORS = {
     116: () => 'Invalid selection state. The state must conform to `IServerSideSelectionState`.' as const,
     117: () => 'selectAll must be of boolean type.' as const,
     118: () => 'Infinite scrolling must be enabled in order to set the row count.' as const,
-    119: () => 'cannot select pinned rows' as const,
-    120: () => 'cannot select node until id for node is known' as const,
+    // 119: () => '',
+    // 120: () => '',
     121: () =>
         'a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (see AG Grid docs) or b) to toString() on the object to return a key' as const,
     122: () => 'could not find the document, document is empty' as const,

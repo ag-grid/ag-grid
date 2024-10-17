@@ -13,6 +13,7 @@ import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { Column } from '../interfaces/iColumn';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
+import type { RowAutoHeightService } from '../rendering/row/rowAutoHeightService';
 import { _areEqual } from '../utils/array';
 import type { ValueCache } from '../valueService/valueCache';
 import type { ColumnDefFactory } from './columnDefFactory';
@@ -60,6 +61,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private funcColsService: FuncColsService;
     private quickFilterService?: QuickFilterService;
     private showRowGroupColsService?: IShowRowGroupColsService;
+    private rowAutoHeightService?: RowAutoHeightService;
 
     public wireBeans(beans: BeanCollection): void {
         this.context = beans.context;
@@ -76,6 +78,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.funcColsService = beans.funcColsService;
         this.quickFilterService = beans.quickFilterService;
         this.showRowGroupColsService = beans.showRowGroupColsService;
+        this.rowAutoHeightService = beans.rowAutoHeightService;
     }
 
     // as provided by gridProp columnsDefs
@@ -100,10 +103,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     // true if we are doing column spanning
     public colSpanActive: boolean;
-
-    // grid columns that have colDef.autoHeight set
-    public autoRowHeightActive: boolean;
-    public wasAutoRowHeightEverActive = false;
 
     public ready = false;
     public changeEventsDispatching = false;
@@ -216,7 +215,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.quickFilterService?.refreshQuickFilterCols();
 
         this.setColSpanActive();
-        this.setAutoHeightActive(cols);
+        this.rowAutoHeightService?.setAutoHeightActive(cols);
 
         // make sure any part of the gui that tries to draw, eg the header,
         // will get empty lists of columns rather than stale columns.
@@ -314,14 +313,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
             },
             source
         );
-    }
-
-    private setAutoHeightActive(cols: ColumnCollections): void {
-        this.autoRowHeightActive = cols.list.some((col) => col.isVisible() && col.isAutoHeight());
-
-        if (this.autoRowHeightActive) {
-            this.wasAutoRowHeightEverActive = true;
-        }
     }
 
     private restoreColOrder(cols: ColumnCollections): void {

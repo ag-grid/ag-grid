@@ -250,58 +250,7 @@ export class CellCtrl extends BeanStub {
             return;
         }
 
-        const eParentCell = eCellWrapper.parentElement!;
-        // taking minRowHeight from getRowHeightForNode means the getRowHeight() callback is used,
-        // thus allowing different min heights for different rows.
-        const minRowHeight = _getRowHeightForNode(this.beans.gos, this.rowNode).height;
-
-        const measureHeight = (timesCalled: number) => {
-            if (this.editing) {
-                return;
-            }
-            // because of the retry's below, it's possible the retry's go beyond
-            // the rows life.
-            if (!this.isAlive() || !compBean.isAlive()) {
-                return;
-            }
-
-            const { paddingTop, paddingBottom, borderBottomWidth, borderTopWidth } = _getElementSize(eParentCell);
-            const extraHeight = paddingTop + paddingBottom + borderBottomWidth + borderTopWidth;
-
-            const wrapperHeight = eCellWrapper!.offsetHeight;
-            const autoHeight = wrapperHeight + extraHeight;
-
-            if (timesCalled < 5) {
-                // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
-                // maybe it will be ready next VM turn
-                const doc = _getDocument(this.beans.gos);
-                const notYetInDom = !doc || !doc.contains(eCellWrapper);
-
-                // this happens in React, where React hasn't put any content in. we say 'possibly'
-                // as a) may not be React and b) the cell could be empty anyway
-                const possiblyNoContentYet = autoHeight == 0;
-
-                if (notYetInDom || possiblyNoContentYet) {
-                    window.setTimeout(() => measureHeight(timesCalled + 1), 0);
-                    return;
-                }
-            }
-
-            const newHeight = Math.max(autoHeight, minRowHeight);
-            this.rowNode.setRowAutoHeight(newHeight, this.column);
-        };
-
-        const listener = () => measureHeight(0);
-
-        // do once to set size in case size doesn't change, common when cell is blank
-        listener();
-
-        const destroyResizeObserver = _observeResize(this.beans.gos, eCellWrapper, listener);
-
-        compBean.addDestroyFunc(() => {
-            destroyResizeObserver();
-            this.rowNode.setRowAutoHeight(undefined, this.column);
-        });
+        this.beans.rowAutoHeightService?.setupCellAutoHeight(this, eCellWrapper, compBean);
     }
 
     public getCellAriaRole(): string {

@@ -29,6 +29,7 @@ import {
 } from './serverSideRowModelApi';
 import { ServerSideExpansionService } from './services/serverSideExpansionService';
 import { ServerSideSelectionService } from './services/serverSideSelectionService';
+import { SsrmRowChildrenService } from './services/ssrmRowChildrenService';
 import { LazyBlockLoadingService } from './stores/lazy/lazyBlockLoadingService';
 import { StoreFactory } from './stores/storeFactory';
 import { StoreUtils } from './stores/storeUtils';
@@ -49,6 +50,7 @@ export const ServerSideRowModelCoreModule: _ModuleWithoutApi = {
         ListenerUtils,
         ServerSideSelectionService,
         LazyBlockLoadingService,
+        SsrmRowChildrenService,
     ],
     dependsOn: [EnterpriseCoreModule],
 };

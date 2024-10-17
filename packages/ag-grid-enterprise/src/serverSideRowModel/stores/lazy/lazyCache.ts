@@ -1,5 +1,6 @@
 import type {
     BeanCollection,
+    ColumnModel,
     FocusService,
     GetRowIdParams,
     IRowNode,
@@ -13,6 +14,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _getRowHeightAsNumber, _getRowIdCallback, _warn } from 'ag-grid-community';
 
+import { setRowNodeGroupValue } from '../../../rowGrouping/rowGroupingUtils';
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { NodeManager } from '../../nodeManager';
 import type { ServerSideRowModel } from '../../serverSideRowModel';
@@ -37,6 +39,7 @@ export class LazyCache extends BeanStub {
     private rowNodeSorter?: RowNodeSorter;
     private sortController?: SortController;
     private lazyBlockLoadingService: LazyBlockLoadingService;
+    private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
         this.rowRenderer = beans.rowRenderer;
@@ -47,6 +50,7 @@ export class LazyCache extends BeanStub {
         this.rowNodeSorter = beans.rowNodeSorter;
         this.sortController = beans.sortController;
         this.lazyBlockLoadingService = beans.lazyBlockLoadingService as LazyBlockLoadingService;
+        this.columnModel = beans.columnModel;
     }
 
     /**
@@ -248,10 +252,8 @@ export class LazyCache extends BeanStub {
         // if group hide open parents we need to populate with the parent group data for the first stub node
         if (storeIndex === 0 && this.gos.get('groupHideOpenParents')) {
             const parentGroupData = this.store.getParentNode().groupData;
-            if (parentGroupData) {
-                for (const key of Object.keys(parentGroupData)) {
-                    newNode.setGroupValue(key, parentGroupData[key]);
-                }
+            for (const key in parentGroupData) {
+                setRowNodeGroupValue(newNode, this.columnModel, key, parentGroupData[key]);
             }
         }
         this.lazyBlockLoadingService.queueLoadCheck();
@@ -316,10 +318,8 @@ export class LazyCache extends BeanStub {
             // if hiding open parents, then the first node should inherit the group values
             if (isFirstChild && this.gos.get('groupHideOpenParents')) {
                 const parentGroupData = this.store.getParentNode().groupData;
-                if (parentGroupData) {
-                    for (const key of Object.keys(parentGroupData)) {
-                        node.setGroupValue(key, isFirstChild ? parentGroupData[key] : undefined);
-                    }
+                for (const key in parentGroupData) {
+                    setRowNodeGroupValue(node, this.columnModel, key, isFirstChild ? parentGroupData[key] : undefined);
                 }
             }
 

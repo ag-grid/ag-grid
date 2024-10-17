@@ -244,9 +244,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.onSuppressCellFocusChanged(this.beans.gos.get('suppressCellFocus'));
 
         this.listenOnDomOrder(gui);
-        if (this.beans.columnModel.wasAutoRowHeightEverActive) {
-            this.rowNode.checkAutoHeights();
-        }
+        this.beans.rowAutoHeightService?.checkAutoHeights(this.rowNode);
         this.onRowHeightChanged(gui);
         this.updateRowIndexes(gui);
         this.setFocusedClasses(gui);
@@ -829,9 +827,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // then set data, and any old valueGetter's (ie from cols that were removed) would still get called.
         this.updateColumnLists(true);
 
-        if (this.beans.columnModel.wasAutoRowHeightEverActive) {
-            this.rowNode.checkAutoHeights();
-        }
+        this.beans.rowAutoHeightService?.checkAutoHeights(this.rowNode);
     }
 
     private onVirtualColumnsChanged(): void {
@@ -1370,8 +1366,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const { rowNode, beans, gos } = this;
         // step 1 - add listener, to set flag on row node
         compBean.addManagedListeners(element, {
-            mouseenter: () => rowNode.onMouseEnter(),
-            mouseleave: () => rowNode.onMouseLeave(),
+            mouseenter: () => rowNode.dispatchRowEvent('mouseEnter'),
+            mouseleave: () => rowNode.dispatchRowEvent('mouseLeave'),
         });
 
         // step 2 - listen for changes on row node (which any element can trigger)
