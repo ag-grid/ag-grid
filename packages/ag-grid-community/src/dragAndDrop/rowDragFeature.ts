@@ -4,6 +4,7 @@ import { VerticalDirection } from '../constants/direction';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
+import type { PositionUtils } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type {
     RowDragCancelEvent,
@@ -17,7 +18,6 @@ import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
-import type { IRangeService } from '../interfaces/IRangeService';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { RowHighlightPosition } from '../interfaces/iRowNode';
@@ -88,9 +88,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private mouseEventService: MouseEventService;
     private ctrlsService: CtrlsService;
     private funcColsService: FuncColsService;
-    private rangeService?: IRangeService;
+    private positionUtils: PositionUtils;
 
     public wireBeans(beans: BeanCollection): void {
+        this.positionUtils = beans.positionUtils;
         this.dragAndDropService = beans.dragAndDropService!;
         this.rowModel = beans.rowModel;
         this.pageBoundsService = beans.pageBoundsService;
@@ -101,7 +102,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.mouseEventService = beans.mouseEventService;
         this.ctrlsService = beans.ctrlsService;
         this.funcColsService = beans.funcColsService;
-        this.rangeService = beans.rangeService;
     }
 
     private clientSideRowModel: IClientSideRowModel;
@@ -302,17 +302,13 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private moveRows(rowNodes: RowNode[], pixel: number, increment: number = 0): void {
         // Find the focussed row node so we can ensure it remains focussed after the move
         // (we can't rely on the rowIndex because it's not updated during the move)
-        const cell = this.focusService.getFocusedCell();
-        const focussedRowNode = rowNodes.find((n) => n.rowIndex === cell?.rowIndex && n.rowPinned == cell.rowPinned);
+        const cellPosition = this.focusService.getFocusedCell();
+        const cellCtrl = cellPosition && this.positionUtils.getCellByPosition(cellPosition);
 
         const rowWasMoved = this.clientSideRowModel.ensureRowsAtPixel(rowNodes, pixel, increment);
         if (rowWasMoved) {
-            if (focussedRowNode) {
-                this.focusService.setFocusedCell({
-                    column: cell?.column ?? null,
-                    rowIndex: focussedRowNode.rowIndex,
-                    rowPinned: focussedRowNode.rowPinned,
-                });
+            if (cellCtrl) {
+                cellCtrl.focusCell();
             } else {
                 this.focusService.clearFocusedCell();
             }
