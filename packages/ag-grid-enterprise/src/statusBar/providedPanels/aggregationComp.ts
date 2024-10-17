@@ -3,13 +3,10 @@ import type {
     AggregationStatusPanelAggFunc,
     AggregationStatusPanelParams,
     BeanCollection,
-    CellNavigationService,
     IRangeService,
     IStatusPanelComp,
-    LocaleService,
-    PositionUtils,
+    LocaleTextFunc,
     RowPosition,
-    ValueService,
 } from 'ag-grid-community';
 import {
     Component,
@@ -17,6 +14,7 @@ import {
     _createCellId,
     _exists,
     _formatNumberCommas,
+    _getRowNode,
     _isClientSideRowModel,
     _isRowBefore,
     _isServerSideRowModel,
@@ -27,24 +25,20 @@ import {
 import type { AgNameValue } from './agNameValue';
 import { AgNameValueSelector } from './agNameValue';
 
-function _formatNumberTwoDecimalPlacesAndCommas(value: number, localeService: LocaleService): string {
+function _formatNumberTwoDecimalPlacesAndCommas(value: number, getLocaleTextFunc: () => LocaleTextFunc): string {
     if (typeof value !== 'number') {
         return '';
     }
 
-    return _formatNumberCommas(Math.round(value * 100) / 100, localeService);
+    return _formatNumberCommas(Math.round(value * 100) / 100, getLocaleTextFunc);
 }
 
 export class AggregationComp extends Component implements IStatusPanelComp {
-    private valueService: ValueService;
-    private cellNavigationService: CellNavigationService;
-    private positionUtils: PositionUtils;
+    private beans: BeanCollection;
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection) {
-        this.valueService = beans.valueService;
-        this.cellNavigationService = beans.cellNavigationService!;
-        this.positionUtils = beans.positionUtils;
+        this.beans = beans;
         this.rangeService = beans.rangeService;
     }
 
@@ -110,7 +104,9 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     ) {
         const statusBarValueComponent = this.getAllowedAggregationValueComponent(aggFuncName);
         if (_exists(statusBarValueComponent) && statusBarValueComponent) {
-            statusBarValueComponent.setValue(_formatNumberTwoDecimalPlacesAndCommas(value!, this.localeService));
+            statusBarValueComponent.setValue(
+                _formatNumberTwoDecimalPlacesAndCommas(value!, this.getLocaleTextFunc.bind(this))
+            );
             statusBarValueComponent.setDisplayed(visible);
         } else {
             // might have previously been visible, so hide now
@@ -177,12 +173,12 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
                         cellsSoFar[cellId] = true;
 
-                        const rowNode = this.positionUtils.getRowNode(currentRow);
+                        const rowNode = _getRowNode(this.beans, currentRow);
                         if (_missing(rowNode)) {
                             return;
                         }
 
-                        let value = this.valueService.getValue(col, rowNode);
+                        let value = this.beans.valueService.getValue(col, rowNode);
 
                         // if empty cell, skip it, doesn't impact count or anything
                         if (_missing(value) || value === '') {
@@ -220,7 +216,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
                     });
 
-                    currentRow = this.cellNavigationService.getRowBelow(currentRow);
+                    currentRow = this.beans.cellNavigationService!.getRowBelow(currentRow);
                 }
             }
         }

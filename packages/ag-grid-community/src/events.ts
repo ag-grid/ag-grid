@@ -487,7 +487,7 @@ export interface RowDragEvent<TData = any, TContext = any, T extends AgEventType
     /** The `eventPath` persists the `event.composedPath()` result for access within AG Grid event handlers.  */
     eventPath?: EventTarget[];
     /** Direction of the drag, either `'up'`, `'down'` or `null` (if mouse is moving horizontally and not vertically). */
-    vDirection: string;
+    vDirection: 'up' | 'down' | null;
     /** The row index the mouse is dragging over or -1 if over no row. */
     overIndex: number;
     /** The row node the mouse is dragging over or undefined if over no row. */

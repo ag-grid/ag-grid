@@ -357,6 +357,10 @@ button.seeMore {
         background-color: transparent;
     }
 
+    &.isExpanded svg {
+        transform: scaleY(-1) translateY(1px);
+    }
+
     svg {
         --icon-size: 16px;
 

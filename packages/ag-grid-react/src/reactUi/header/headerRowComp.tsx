@@ -8,7 +8,7 @@ import type {
     HeaderRowCtrl,
     IHeaderRowComp,
 } from 'ag-grid-community';
-import { HeaderRowType, _EmptyBean } from 'ag-grid-community';
+import { _EmptyBean } from 'ag-grid-community';
 
 import { BeansContext } from '../beansContext';
 import { agFlushSync, getNextValueIfDifferent } from '../utils';
@@ -72,10 +72,10 @@ const HeaderRowComp = ({ ctrl }: { ctrl: HeaderRowCtrl }) => {
 
     const createCellJsx = useCallback((cellCtrl: AbstractHeaderCellCtrl) => {
         switch (ctrl.getType()) {
-            case HeaderRowType.COLUMN_GROUP:
+            case 'group':
                 return <HeaderGroupCellComp ctrl={cellCtrl as HeaderGroupCellCtrl} key={cellCtrl.instanceId} />;
 
-            case HeaderRowType.FLOATING_FILTER:
+            case 'filter':
                 return <HeaderFilterCellComp ctrl={cellCtrl as HeaderFilterCellCtrl} key={cellCtrl.instanceId} />;
 
             default:

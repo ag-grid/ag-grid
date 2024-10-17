@@ -2,6 +2,7 @@ import type {
     AgColumn,
     BeanCollection,
     ChangedPath,
+    ClientSideRowModelStage,
     ColumnModel,
     FuncColsService,
     GridOptions,
@@ -17,7 +18,7 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { ClientSideRowModelSteps, _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
+import { _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
 import { BeanStub, RowNode, _areEqual, _exists, _removeFromArray } from 'ag-grid-community';
 
 import { BatchRemover } from './batchRemover';
@@ -58,7 +59,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         'groupHideOpenParents',
         'groupDisplayType',
     ]);
-    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.EVERYTHING;
+    public step: ClientSideRowModelStage = 'group';
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;

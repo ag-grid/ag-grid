@@ -125,7 +125,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             return this.createComponentFromItem(item, listItemElement);
         });
 
-        if (this.columnModel.isReady()) {
+        if (this.columnModel.ready) {
             this.onColumnsChanged();
         }
 
@@ -255,7 +255,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private buildTreeFromProvidedColumnDefs(): void {
         // add column / group comps to tool panel
         this.buildListModel(this.columnModel.getColDefColTree());
-        this.groupsExist = this.columnModel.isProvidedColGroupsPresent();
+        this.groupsExist = !!this.columnModel.colDefCols?.treeDepth;
     }
 
     private buildListModel(columnTree: (AgColumn | AgProvidedColumnGroup)[]): void {
@@ -364,7 +364,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     private refreshAriaLabel(): void {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const columnListName = translate('ariaColumnPanelList', 'Column List');
         const localeColumns = translate('columns', 'Columns');
         const items = this.displayedColsList.length;

@@ -26,12 +26,6 @@ import type { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } f
 
 type ProcessGroupHeaderCallback = (params: ProcessGroupHeaderForExportParams) => string;
 
-export enum RowType {
-    HEADER_GROUPING,
-    HEADER,
-    BODY,
-}
-
 export class GridSerializer extends BeanStub implements NamedBean {
     beanName = 'gridSerializer' as const;
 

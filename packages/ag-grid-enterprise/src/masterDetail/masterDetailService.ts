@@ -53,7 +53,7 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
         const enabled = this.isEnabled();
         if (this.enabled !== enabled) {
             if (this.setMasters(null)) {
-                this.rowModel.refreshModel?.({ step: ClientSideRowModelSteps.MAP });
+                this.rowModel.refreshModel?.({ step: 'map' });
             }
         }
     }

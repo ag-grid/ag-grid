@@ -10,6 +10,7 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
 // columns
 export type { ColumnFactory } from './columns/columnFactory';
+export type { ColumnGroupService } from './columns/columnGroups/columnGroupService';
 export type { ColumnModel } from './columns/columnModel';
 export { ColumnCollections as _ColumnCollections, ColKey } from './columns/columnModel';
 export type { ColumnAutosizeService } from './columnAutosize/columnAutosizeService';
@@ -30,6 +31,10 @@ export {
     isColumnGroupAutoCol,
     _destroyColumnTree,
     _getColumnsFromTree,
+    _areColIdsEqual,
+    _updateColsMap,
+    _convertColumnEventSourceType,
+    _columnsMatch,
 } from './columns/columnUtils';
 export { IAutoColService } from './interfaces/iAutoColService';
 export {
@@ -131,7 +136,6 @@ export { AgColumnGroup, isColumnGroup } from './entities/agColumnGroup';
 export { AgProvidedColumnGroup, isProvidedColumnGroup } from './entities/agProvidedColumnGroup';
 export { type ITreeNode, RowNode, ROW_ID_PREFIX_ROW_GROUP as _ROW_ID_PREFIX_ROW_GROUP } from './entities/rowNode';
 export {
-    RowHighlightPosition,
     RowPinnedType,
     IRowNode,
     RowNodeSelectedEvent,
@@ -296,6 +300,10 @@ export type {
     IAbstractHeaderCellComp,
 } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 export { HeaderRowContainerCtrl, IHeaderRowContainerComp } from './headerRendering/rowContainer/headerRowContainerCtrl';
+export {
+    getFloatingFiltersHeight as _getFloatingFiltersHeight,
+    getHeaderRowCount as _getHeaderRowCount,
+} from './headerRendering/headerUtils';
 
 // misc
 export { _requestAnimationFrame } from './misc/animationFrameService';
@@ -422,7 +430,7 @@ export { RowNodeTransaction } from './interfaces/rowNodeTransaction';
 export { RowDataTransaction } from './interfaces/rowDataTransaction';
 export {
     IClientSideRowModel,
-    ClientSideRowModelSteps,
+    ClientSideRowModelStage,
     ClientSideRowModelStep,
     RefreshModelParams,
 } from './interfaces/iClientSideRowModel';
@@ -459,7 +467,6 @@ export { BaseSelectionService } from './selection/baseSelectionService';
 
 // styling
 export type { CellStyleService } from './styling/cellStyleService';
-export { UpdateLayoutClassesParams, LayoutCssClasses } from './styling/layoutFeature';
 
 // widgets
 export {
@@ -559,7 +566,6 @@ export { AutoScrollService } from './autoScrollService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 export type { CellNavigationService } from './navigation/cellNavigationService';
 export { KeyCode } from './constants/keyCode';
-export { VerticalDirection, HorizontalDirection } from './constants/direction';
 export {
     GridParams,
     Params,
@@ -640,7 +646,8 @@ export type { CtrlsService } from './ctrlsService';
 export { GridCtrl, IGridComp } from './gridComp/gridCtrl';
 export type { SortController } from './sort/sortController';
 export { SortModelItem } from './interfaces/iSortModelItem';
-export type { LocaleService } from './localeService';
+export { LocaleService } from './misc/locale/localeService';
+export { _getLocaleTextFunc, LocaleTextFunc } from './misc/locale/localeUtils';
 export type { ValueService } from './valueService/valueService';
 export type { ValueCache } from './valueService/valueCache';
 export type { ExpressionService } from './valueService/expressionService';
@@ -681,12 +688,17 @@ export { IAggFuncService } from './interfaces/iAggFuncService';
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from './interfaces/iClipboardService';
 export { IMenuFactory } from './interfaces/iMenuFactory';
 export { CellPosition } from './interfaces/iCellPosition';
-export type { PositionUtils } from './entities/positionUtils';
-export { _areCellsEqual, _createCellId, _isRowBefore, _isSameRow } from './entities/positionUtils';
+export {
+    _areCellsEqual,
+    _createCellId,
+    _isRowBefore,
+    _isSameRow,
+    _getRowNode,
+    _getCellByPosition,
+} from './entities/positionUtils';
 export { RowPosition } from './interfaces/iRowPosition';
 export { HeaderPosition } from './interfaces/iHeaderPosition';
 export type { HeaderNavigationService } from './navigation/headerNavigationService';
-export { HeaderNavigationDirection } from './navigation/headerNavigationService';
 export {
     IAggFunc,
     IAggFuncParams,
@@ -962,7 +974,6 @@ export { BaseCreator } from './csvExport/baseCreator';
 export { BaseGridSerializingSession } from './csvExport/sessions/baseGridSerializingSession';
 export { _downloadFile } from './csvExport/downloader';
 export type { GridSerializer } from './csvExport/gridSerializer';
-export { RowType } from './csvExport/gridSerializer';
 export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from './csvExport/interfaces';
 
 // modules
@@ -998,6 +1009,7 @@ export { PopupModule } from './widgets/popupModule';
 export { SharedMenuModule } from './misc/menu/sharedMenuModule';
 export { KeyboardNavigationCoreModule } from './navigation/navigationModule';
 export { CellFlashModule } from './rendering/cell/cellFlashModule';
+export { ColumnGroupCoreModule } from './columns/columnGroups/columnGroupModule';
 
 //  events
 export * from './events';

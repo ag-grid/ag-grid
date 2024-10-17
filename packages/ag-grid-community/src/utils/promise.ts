@@ -1,6 +1,6 @@
 export type ResolveAndRejectCallback<T> = (resolve: (value: T | null) => void, reject: (params: any) => void) => void;
 
-export enum AgPromiseStatus {
+enum AgPromiseStatus {
     IN_PROGRESS,
     RESOLVED,
 }

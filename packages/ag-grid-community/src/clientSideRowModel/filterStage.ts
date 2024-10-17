@@ -4,8 +4,8 @@ import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import type { RowNode } from '../entities/rowNode';
 import type { FilterManager } from '../filter/filterManager';
+import type { ClientSideRowModelStage } from '../interfaces/iClientSideRowModel';
 import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeStage';
-import { ClientSideRowModelSteps } from '../main';
 import type { ChangedPath } from '../utils/changedPath';
 
 export function updateRowNodeAfterFilter(rowNode: RowNode): void {
@@ -18,7 +18,7 @@ export class FilterStage extends BeanStub implements IRowNodeStage, NamedBean {
     beanName = 'filterStage' as const;
 
     public refreshProps: Set<keyof GridOptions<any>> = new Set(['excludeChildrenWhenTreeDataFiltering']);
-    public step: ClientSideRowModelSteps = ClientSideRowModelSteps.FILTER;
+    public step: ClientSideRowModelStage = 'filter';
 
     private filterManager?: FilterManager;
 

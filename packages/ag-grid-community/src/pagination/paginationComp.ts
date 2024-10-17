@@ -159,11 +159,11 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
             return userFunc(params);
         }
 
-        return _formatNumberCommas(value, this.localeService);
+        return _formatNumberCommas(value, this.getLocaleTextFunc.bind(this));
     }
 
     private getTemplate(): string {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
 
         const strPage = localeTextFunc('page', 'Page');
         const strTo = localeTextFunc('to', 'to');
@@ -287,7 +287,7 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
         const lbFirstRowOnPage = this.formatNumber(startRow);
         this.lbFirstRowOnPage.textContent = lbFirstRowOnPage;
         let lbLastRowOnPage: string;
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         if (isLoadingPageSize) {
             lbLastRowOnPage = localeTextFunc('pageLastRowUnknown', '?');
         } else {
@@ -324,7 +324,7 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
         lbCurrent: string,
         lbTotal: string
     ): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         const strPage = localeTextFunc('page', 'Page');
         const strTo = localeTextFunc('to', 'to');
         const strOf = localeTextFunc('of', 'of');

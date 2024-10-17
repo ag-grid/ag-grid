@@ -34,7 +34,7 @@ export class SelectedRowsComp extends AgNameValue implements IStatusPanelComp {
             this.setDisplayed(true);
             return;
         }
-        this.setValue(_formatNumberCommas(selectedRowCount, this.localeService));
+        this.setValue(_formatNumberCommas(selectedRowCount, this.getLocaleTextFunc.bind(this)));
         this.setDisplayed(selectedRowCount > 0);
     }
 

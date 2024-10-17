@@ -1,12 +1,12 @@
 import type { IFilterOptionDef, ProvidedFilterModel } from '../../interfaces/iFilter';
-import type { LocaleService } from '../../localeService';
+import type { LocaleTextFunc } from '../../misc/locale/localeUtils';
 import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import type { ICombinedSimpleModel, ISimpleFilterModel } from './iSimpleFilter';
 import type { OptionsFactory } from './optionsFactory';
 
 export abstract class SimpleFilterModelFormatter<TValue = any> {
     constructor(
-        private readonly localeService: LocaleService,
+        private readonly getLocaleTextFunc: () => LocaleTextFunc,
         private optionsFactory: OptionsFactory,
         protected readonly valueFormatter?: (value: TValue | null) => string | null
     ) {}
@@ -19,7 +19,7 @@ export abstract class SimpleFilterModelFormatter<TValue = any> {
             return null;
         }
         const isCombined = (model as any).operator != null;
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
             const conditions = combinedModel.conditions ?? [];

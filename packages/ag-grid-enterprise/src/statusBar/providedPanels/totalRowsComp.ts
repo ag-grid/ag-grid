@@ -28,7 +28,7 @@ export class TotalRowsComp extends AgNameValue implements IStatusPanelComp {
     }
 
     private onDataChanged() {
-        this.setValue(_formatNumberCommas(this.getRowCountValue(), this.localeService));
+        this.setValue(_formatNumberCommas(this.getRowCountValue(), this.getLocaleTextFunc.bind(this)));
     }
 
     private getRowCountValue(): number {

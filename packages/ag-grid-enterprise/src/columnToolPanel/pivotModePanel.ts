@@ -22,7 +22,7 @@ export class PivotModePanel extends Component {
         this.setTemplate(this.createTemplate(), [AgToggleButtonSelector]);
 
         this.cbPivotMode.setValue(this.columnModel.isPivotMode());
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
 
         this.addManagedListeners(this.cbPivotMode, { fieldValueChanged: this.onBtPivotMode.bind(this) });

@@ -9,7 +9,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     public postConstruct(): void {
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localeTextFunc = this.getLocaleTextFunc();
         const emptyMessage = localeTextFunc('rowGroupColumnsEmptyMessage', 'Drag here to set row groups');
         const title = localeTextFunc('groups', 'Row Groups');
 
@@ -23,7 +23,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     }
 
     protected getAriaLabel(): string {
-        const translate = this.localeService.getLocaleTextFunc();
+        const translate = this.getLocaleTextFunc();
         const label = translate('ariaRowGroupDropZonePanelLabel', 'Row Groups');
 
         return label;
