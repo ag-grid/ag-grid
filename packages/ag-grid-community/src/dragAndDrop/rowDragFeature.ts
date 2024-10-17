@@ -300,8 +300,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private moveRows(rowNodes: RowNode[], pixel: number, increment: number = 0): void {
-        // Find the focussed row node so we can ensure it remains focussed after the move
-        // (we can't rely on the rowIndex because it's not updated during the move)
+        // Get the focussed cell so we can ensure it remains focussed after the move
         const cellPosition = this.focusService.getFocusedCell();
         const cellCtrl = cellPosition && this.positionUtils.getCellByPosition(cellPosition);
 
