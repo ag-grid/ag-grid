@@ -252,8 +252,10 @@ export class LazyCache extends BeanStub {
         // if group hide open parents we need to populate with the parent group data for the first stub node
         if (storeIndex === 0 && this.gos.get('groupHideOpenParents')) {
             const parentGroupData = this.store.getParentNode().groupData;
-            for (const key in parentGroupData) {
-                setRowNodeGroupValue(newNode, this.columnModel, key, parentGroupData[key]);
+            if (parentGroupData) {
+                for (const key of Object.keys(parentGroupData)) {
+                    setRowNodeGroupValue(newNode, this.columnModel, key, parentGroupData[key]);
+                }
             }
         }
         this.lazyBlockLoadingService.queueLoadCheck();
@@ -318,8 +320,15 @@ export class LazyCache extends BeanStub {
             // if hiding open parents, then the first node should inherit the group values
             if (isFirstChild && this.gos.get('groupHideOpenParents')) {
                 const parentGroupData = this.store.getParentNode().groupData;
-                for (const key in parentGroupData) {
-                    setRowNodeGroupValue(node, this.columnModel, key, isFirstChild ? parentGroupData[key] : undefined);
+                if (parentGroupData) {
+                    for (const key of Object.keys(parentGroupData)) {
+                        setRowNodeGroupValue(
+                            node,
+                            this.columnModel,
+                            key,
+                            isFirstChild ? parentGroupData[key] : undefined
+                        );
+                    }
                 }
             }
 
