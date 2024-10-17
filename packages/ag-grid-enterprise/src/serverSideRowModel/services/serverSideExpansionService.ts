@@ -15,7 +15,8 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
 
     private serverSideRowModel: ServerSideRowModel;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
     }
 

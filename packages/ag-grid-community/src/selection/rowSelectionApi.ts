@@ -10,12 +10,12 @@ export function setNodesSelected(
 ) {
     const allNodesValid = params.nodes.every((node) => {
         if (node.rowPinned) {
-            _warn(119);
+            _warn(59);
             return false;
         }
 
         if (node.id === undefined) {
-            _warn(120);
+            _warn(60);
             return false;
         }
         return true;

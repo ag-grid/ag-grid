@@ -21,6 +21,7 @@ import type {
 import { _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
 import { BeanStub, RowNode, _areEqual, _exists, _removeFromArray } from 'ag-grid-community';
 
+import { setRowNodeGroup } from '../rowGroupingUtils';
 import { BatchRemover } from './batchRemover';
 import type { GroupRow } from './groupRow';
 import { sortGroupChildren } from './sortGroupChildren';
@@ -355,7 +356,11 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
                         this.removeFromParent(rowNode, batchRemover);
                         // we remove selection on filler nodes here, as the selection would not be removed
                         // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                        rowNode.setSelectedParams({ newValue: false, source: 'rowGroupChanged' });
+                        this.selectionService?.setSelectedParams({
+                            rowNode,
+                            newValue: false,
+                            source: 'rowGroupChanged',
+                        });
                     }
                 });
             });
@@ -396,7 +401,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             if (parent.childrenMapped[mapKey] !== child) {
                 parent.childrenMapped[mapKey] = child;
                 parent.childrenAfterGroup!.push(child);
-                parent.setGroup(true); // calls `.updateHasChildren` internally
+                setRowNodeGroup(parent, this.beans, true); // calls `.updateHasChildren` internally
             }
         }
     }
