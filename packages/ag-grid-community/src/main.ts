@@ -594,7 +594,7 @@ export {
 } from './api/gridApi';
 export { IDetailGridApiService } from './interfaces/iDetailGridApiService';
 export { _getServerSideRowModel } from './api/rowModelApiUtils';
-export { AgEventType, AgPublicEventType, _ALL_EVENTS, _PUBLIC_EVENTS, _INTERNAL_EVENTS } from './eventTypes';
+export { AgEventType, AgPublicEventType, _ALL_EVENTS, _PUBLIC_EVENTS } from './eventTypes'; // TODO: remove _ALL_EVENTS, _PUBLIC_EVENTS if not required by VUE
 export type { FocusService } from './focusService';
 export type { GridOptionsService } from './gridOptionsService';
 export { PropertyChangedEvent } from './gridOptionsService';
@@ -848,7 +848,7 @@ export {
 } from './interfaces/iCallbackParams';
 export { WithoutGridCommon } from './interfaces/iCommon';
 
-export { _ALL_GRID_OPTIONS, _BOOLEAN_GRID_OPTIONS, _FUNCTION_GRID_OPTIONS } from './propertyKeys';
+export { _ALL_GRID_OPTIONS, _BOOLEAN_GRID_OPTIONS } from './propertyKeys'; // TODO: remove if not required by VUE
 export { IPivotColDefService } from './interfaces/iPivotColDefService';
 export { IViewportDatasource, IViewportDatasourceParams } from './interfaces/iViewportDatasource';
 export {
