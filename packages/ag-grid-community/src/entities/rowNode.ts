@@ -749,10 +749,10 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
                 this.dispatchCellChangedEvent(column, value, oldValue);
             };
 
-            for (const key in oldAggData) {
+            for (const key of Object.keys(oldAggData)) {
                 eventFunc(key); // raise for old keys
             }
-            for (const key in newAggData) {
+            for (const key of Object.keys(newAggData)) {
                 if (!oldAggData || !(key in oldAggData)) {
                     eventFunc(key); // new key, event not yet raised
                 }

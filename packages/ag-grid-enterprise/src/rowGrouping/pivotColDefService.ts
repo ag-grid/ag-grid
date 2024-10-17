@@ -483,7 +483,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             depth: number
         ): ColDef | ColGroupDef => {
             const children: (ColDef | ColGroupDef)[] = [];
-            for (const key in uniqueValues) {
+            for (const key of Object.keys(uniqueValues)) {
                 const item = uniqueValues[key];
                 const child = uniqueValuesToGroups(`${id}${this.fieldSeparator}${key}`, key, item, depth + 1);
                 children.push(child);
@@ -528,7 +528,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         };
 
         const res: (ColDef | ColGroupDef)[] = [];
-        for (const key in uniqueValues) {
+        for (const key of Object.keys(uniqueValues)) {
             const item = uniqueValues[key];
             const col = uniqueValuesToGroups(key, key, item, 0);
             res.push(col);

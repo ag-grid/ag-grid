@@ -353,8 +353,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
 
         const orderedNodes = this.cache.getOrderedNodeMap();
-        for (const key in orderedNodes) {
-            const lazyNode = orderedNodes[key];
+        for (const lazyNode of Object.values(orderedNodes)) {
             callback(lazyNode.node, sequence.value++);
             const childCache = lazyNode.node.childStore as LazyStore | undefined;
             if (childCache) {

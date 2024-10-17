@@ -29,8 +29,8 @@ export default [
             '@typescript-eslint/no-non-null-asserted-optional-chain': 'warn',
             '@typescript-eslint/no-unnecessary-type-constraint': 'warn',
             '@typescript-eslint/no-this-alias': 'off',
-            // TODO
-            // '@typescript-eslint/no-for-in-array': 'error',
+            '@typescript-eslint/no-for-in-array': 'error',
+            'no-restricted-syntax': ['error', 'ForInStatement'],
         },
     },
     {

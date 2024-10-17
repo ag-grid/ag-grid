@@ -248,8 +248,10 @@ export class LazyCache extends BeanStub {
         // if group hide open parents we need to populate with the parent group data for the first stub node
         if (storeIndex === 0 && this.gos.get('groupHideOpenParents')) {
             const parentGroupData = this.store.getParentNode().groupData;
-            for (const key in parentGroupData) {
-                newNode.setGroupValue(key, parentGroupData[key]);
+            if (parentGroupData) {
+                for (const key of Object.keys(parentGroupData)) {
+                    newNode.setGroupValue(key, parentGroupData[key]);
+                }
             }
         }
         this.lazyBlockLoadingService.queueLoadCheck();
@@ -301,8 +303,8 @@ export class LazyCache extends BeanStub {
 
         let lastIndex = -1;
         // iterate over the nodes in order, setting the display index on each node.
-        for (const stringIndex in orderedMap) {
-            const node = orderedMap[stringIndex];
+        for (const stringIndex of Object.keys(orderedMap)) {
+            const node = orderedMap[stringIndex as any];
             const numericIndex = Number(stringIndex);
 
             // if any nodes aren't currently in the store, skip the display indexes too
@@ -314,8 +316,10 @@ export class LazyCache extends BeanStub {
             // if hiding open parents, then the first node should inherit the group values
             if (isFirstChild && this.gos.get('groupHideOpenParents')) {
                 const parentGroupData = this.store.getParentNode().groupData;
-                for (const key in parentGroupData) {
-                    node.setGroupValue(key, isFirstChild ? parentGroupData[key] : undefined);
+                if (parentGroupData) {
+                    for (const key of Object.keys(parentGroupData)) {
+                        node.setGroupValue(key, isFirstChild ? parentGroupData[key] : undefined);
+                    }
                 }
             }
 
@@ -1149,9 +1153,9 @@ export class LazyCache extends BeanStub {
 
         const allNodes = this.getOrderedNodeMap();
         let contiguousIndex = -1;
-        for (const stringIndex in allNodes) {
+        for (const stringIndex of Object.keys(allNodes)) {
             contiguousIndex += 1;
-            const node = allNodes[stringIndex];
+            const node = allNodes[stringIndex as any];
 
             // finding the index allows the use of splice which should be slightly faster than both a check and filter
             const matchIndex = remainingIdsToRemove.findIndex((idToRemove) => idToRemove === node.id);
@@ -1176,7 +1180,7 @@ export class LazyCache extends BeanStub {
             }
 
             // shift normal node up by number of deleted prior to this point
-            this.nodeMap.delete(allNodes[stringIndex]);
+            this.nodeMap.delete(node);
             this.nodeMap.set({
                 id: node.id!,
                 node: node.node,
