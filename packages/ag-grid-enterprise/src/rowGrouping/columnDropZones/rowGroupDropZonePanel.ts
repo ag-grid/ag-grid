@@ -12,7 +12,7 @@ import { _createIconNoSpan } from 'ag-grid-community';
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel {
-    protected rowGroupColsService?: IColsService;
+    private rowGroupColsService?: IColsService;
 
     constructor(horizontal: boolean) {
         super(horizontal, 'rowGroup');

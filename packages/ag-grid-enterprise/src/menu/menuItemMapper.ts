@@ -174,6 +174,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ' ' +
                         _escapeString(this.columnNameService.getDisplayNameForColumn(column, 'header')),
                     disabled:
+                        !this.rowGroupColsService ||
                         this.gos.get('functionsReadOnly') ||
                         column?.isRowGroupActive() ||
                         !column?.getColDef().enableRowGroup,
@@ -415,6 +416,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
 
             result.push({
                 name: localeTextFunc('noAggregation', 'None'),
+                disabled: !this.valueColsService,
                 action: () => {
                     this.valueColsService?.removeColumns([columnToUse!], 'contextMenu');
                     this.valueColsService?.setColumnAggFunc?.(columnToUse, undefined, 'contextMenu');
@@ -425,6 +427,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             funcNames.forEach((funcName) => {
                 result.push({
                     name: localeTextFunc(funcName, aggFuncService.getDefaultFuncLabel(funcName)),
+                    disabled: !this.valueColsService,
                     action: () => {
                         this.valueColsService?.setColumnAggFunc!(columnToUse, funcName, 'contextMenu');
                         this.valueColsService?.addColumns?.([columnToUse!], 'contextMenu');
