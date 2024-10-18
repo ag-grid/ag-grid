@@ -90,7 +90,8 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     private addThemeToDetailGrid(): void {
         // this is needed by environment service of the child grid, the class needs to be on
         // the grid div itself - the browser's CSS on the other hand just inherits from the parent grid theme.
-        for (const themeClass of this.environment.getThemeClasses()) {
+        const themeClass = this.environment.getThemeClass();
+        if (themeClass) {
             this.comp.addOrRemoveDetailGridCssClass(themeClass, true);
         }
     }

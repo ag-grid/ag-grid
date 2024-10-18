@@ -95,90 +95,27 @@
                         {
                             "type": "item",
                             "title": "Overview",
-                            "path": "global-style"
+                            "path": "theming"
                         },
                         {
                             "type": "item",
-                            "title": "Themes",
+                            "title": "Built-in Themes",
                             "path": "themes"
                         },
                         {
                             "type": "item",
+                            "title": "Theme Parameters",
+                            "path": "theming-parameters"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Theme Parts",
+                            "path": "theming-parts"
+                        },
+                        {
+                            "type": "item",
                             "title": "Customisation",
-                            "path": "global-style-customisation",
                             "children": [
-                                {
-                                    "type": "item",
-                                    "title": "Variable Reference",
-                                    "path": "global-style-customisation-variables"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Colours & Fonts",
-                                    "path": "global-style-customisation-colours"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Compactness & Row Height",
-                                    "path": "global-style-customisation-compactness"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Selections",
-                                    "path": "global-style-customisation-selections"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Headers",
-                                    "path": "global-style-customisation-headers"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Borders",
-                                    "path": "global-style-customisation-borders"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Icons",
-                                    "path": "custom-icons"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Tool Panels",
-                                    "path": "global-style-customisation-tool-panels"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Inputs & Widgets",
-                                    "path": "global-style-customisation-widgets"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Menus & Popups",
-                                    "path": "global-style-customisation-popups"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Advanced CSS",
-                                    "path": "global-style-customisation-css"
-                                }
-                            ]
-                        },
-                        {
-                            "type": "item",
-                            "title": "Sass",
-                            "path": "global-style-customisation-sass"
-                        },
-                        {
-                            "type": "item",
-                            "title": "Theming API",
-                            "path": "theming-api",
-                            "children": [
-                                {
-                                    "type": "item",
-                                    "title": "Extending with CSS",
-                                    "path": "theming-css"
-                                },
                                 {
                                     "type": "item",
                                     "title": "Colors & Dark Mode",
@@ -191,15 +128,60 @@
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Distributing Shared Themes",
-                                    "path": "theming-distribution"
+                                    "title": "Compactness & Row Height",
+                                    "path": "theming-compactness"
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Migration",
-                                    "path": "theming-migration"
+                                    "title": "Selections",
+                                    "path": "theming-selections"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Headers",
+                                    "path": "theming-headers"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Icons",
+                                    "path": "custom-icons"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Tool Panels",
+                                    "path": "theming-tool-panels"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Inputs & Widgets",
+                                    "path": "theming-widgets"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Menus & Popups",
+                                    "path": "theming-popups"
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Extending with CSS",
+                                    "path": "theming-css"
                                 }
                             ]
+                        },
+                        {
+                            "type": "item",
+                            "title": "Distributing Shared Themes",
+                            "path": "theming-distribution"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Migration from v32",
+                            "path": "theming-migration"
+                        },
+                        {
+                            "type": "item",
+                            "title": "v32 Themes",
+                            "path": "theming-v32"
                         }
                     ]
                 },

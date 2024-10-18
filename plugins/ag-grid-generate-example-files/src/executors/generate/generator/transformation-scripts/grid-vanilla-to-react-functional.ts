@@ -1,6 +1,6 @@
 import { basename } from 'path';
 
-import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
+import type { ExampleConfig, ParsedBindings } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
@@ -8,12 +8,10 @@ import {
     addRelativeImports,
     convertFunctionToConstProperty,
     findLocaleImport,
-    getActiveTheme,
     getFunctionName,
     getIntegratedDarkModeCode,
     isInstanceMethod,
     preferParamsApi,
-    usesThemingApi,
 } from './parser-utils';
 import {
     EventAndCallbackNames,
@@ -36,17 +34,6 @@ function getModuleImports(
     ];
 
     addLicenseManager(imports, exampleConfig);
-
-    if (!usesThemingApi(bindings)) {
-        imports.push("import 'ag-grid-community/styles/ag-grid.css';");
-        // to account for the (rare) example that has more than one class...just default to quartz if it does
-        // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
-        // "source" non dark version
-        const theme = bindings.inlineGridStyles.theme
-            ? bindings.inlineGridStyles.theme.replace('-dark', '')
-            : 'ag-theme-quartz';
-        imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
-    }
 
     if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));
@@ -88,8 +75,11 @@ function getImports(
 }
 
 function getTemplate(bindings: ParsedBindings, componentAttributes: string[], exampleConfig: ExampleConfig): string {
+    const className = bindings.inlineGridStyles.className;
+    const classAttr = className ? ` className="${className}"` : '';
+
     const agGridTag = `
-        <div ${exampleConfig.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className={${getActiveTheme(bindings.inlineGridStyles.theme, false)}}>
+        <div ${exampleConfig.myGridReference ? 'id="myGrid"' : ''} style={gridStyle}${classAttr}>
             <AgGridReact
                 ref={gridRef}
                 ${componentAttributes.join('\n')}
@@ -132,7 +122,7 @@ export function vanillaToReactFunctional(
     exampleConfig: ExampleConfig,
     componentFilenames: string[],
     allStylesheets: string[]
-): (importType: ImportType) => string {
+): () => string {
     const { properties, data, inlineGridStyles, onGridReady } = bindings;
 
     const utilMethodNames = bindings.utils.map(getFunctionName);
@@ -143,7 +133,7 @@ export function vanillaToReactFunctional(
         return acc;
     }, {});
 
-    return (importType) => {
+    return () => {
         // instance values
         const stateProperties = [
             `const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);`,
@@ -295,6 +285,7 @@ export function vanillaToReactFunctional(
                 : '';
 
         let generatedOutput = `
+'use client';
 'use strict';
 
 ${imports.join('\n')}

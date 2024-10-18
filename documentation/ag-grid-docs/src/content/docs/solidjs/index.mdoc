@@ -49,19 +49,15 @@ Once the Solid grid component is imported, it can then be inserted into the Soli
 />
 ```
 
-It's best to place the grid component inside another DOM element that has a set size. The grid will then fill the size of the parent element. You also need to import CSS files for a) the core CSS which is mandatory and b) a grid theme which is optional. The theme also needs to be specified as a CSS class in a parent element to the grid.
+It's best to place the grid component inside another DOM element that has a set size. The grid will then fill the size of the parent element.
 
 ```jsx
 import AgGridSolid from 'ag-grid-solid';
 
-import 'ag-grid-community/styles/ag-grid.css'; // grid core CSS
-import "ag-grid-community/styles/ag-theme-quartz.css"; // optional theme
-
 const MySolidApp = ()=> {
-
     return (
-        // set fixed size to parent div, and apply grid theme ag-theme-quartz
-        <div style={{height: '500px'}} class="ag-theme-quartz">
+        // set height on parent div as grid fills available 
+        <div style={{height: '500px'}}>
             <AgGridSolid
                 rowData={...}
                 columnDefs={...}
@@ -78,9 +74,6 @@ You can use [Grid Properties](./grid-options/), either bind Solid Signals (for c
 
 ```jsx
 import AgGridSolid from 'ag-grid-solid';
-
-import 'ag-grid-community/styles/ag-grid.css'; // grid core CSS
-import "ag-grid-community/styles/ag-theme-quartz.css"; // optional theme
 
 const MySolidApp = ()=> {
 
@@ -100,7 +93,7 @@ const MySolidApp = ()=> {
     };
 
     return (
-        <div style={{height: '500px'}} class="ag-theme-quartz">
+        <div style={{height: '500px'}}>
             <AgGridSolid
                 rowData={rowData()} // use signal
                 columnDefs={columnDefs} // no signal
@@ -129,7 +122,7 @@ const MySolidApp = ()=> {
     };
 
     return (
-        <div style={{height: '500px'}} class="ag-theme-quartz">
+        <div style={{height: '500px'}}>
             <AgGridSolid
                 rowData={...}
                 columnDefs={...}

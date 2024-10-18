@@ -1,4 +1,4 @@
-import type { Framework, ImportType, InternalFramework } from '@ag-grid-types';
+import type { Framework, InternalFramework } from '@ag-grid-types';
 import type { GeneratedContents } from '@features/example-generator/types';
 import { ExampleRunner } from '@features/example-runner/components/ExampleRunner';
 import { ExternalLinks } from '@features/example-runner/components/ExternalLinks';
@@ -24,11 +24,9 @@ interface Props {
     exampleHeight?: number;
     framework: Framework;
     pageName: string;
-    importType: ImportType;
     isDev: boolean;
     typescriptOnly?: boolean;
     suppressDarkMode?: boolean;
-    overrideImportType?: ImportType;
 }
 
 const getInternalFramework = (
@@ -54,18 +52,8 @@ const getInternalFramework = (
         }
     }
 
-    // if (internalFramework === 'vanilla' && importType === 'modules') {
-    //     internalFramework = 'typescript';
-    // }
     return internalFramework;
 };
-
-function getImportType(framework: InternalFramework): ImportType {
-    if (framework === 'vanilla') {
-        return 'packages';
-    }
-    return 'modules';
-}
 
 const DocsExampleRunnerInner = ({
     name,
@@ -87,14 +75,13 @@ const DocsExampleRunnerInner = ({
     const internalFramework = typescriptOnly
         ? 'typescript'
         : getInternalFramework(storeInternalFramework, supportedFrameworks);
-    const importType = getImportType(internalFramework);
     const urlConfig: UrlParams = useMemo(
-        () => ({ internalFramework, pageName, exampleName, importType }),
-        [internalFramework, pageName, exampleName, importType]
+        () => ({ internalFramework, pageName, exampleName }),
+        [internalFramework, pageName, exampleName]
     );
 
     const { data: [contents] = [undefined, undefined], isError } = useQuery({
-        queryKey: ['docsExampleContents', pageName, exampleName, internalFramework, importType, internalFrameworkState],
+        queryKey: ['docsExampleContents', pageName, exampleName, internalFramework, internalFrameworkState],
 
         queryFn: () => {
             if (internalFrameworkState !== 'synced') {
@@ -179,7 +166,6 @@ const DocsExampleRunnerInner = ({
             externalLinks={externalLinks}
             loadingIFrameId={loadingIFrameId}
             supportedFrameworks={supportedFrameworks}
-            supportedImportTypes={[getImportType(internalFramework)]}
             suppressDarkMode={suppressDarkMode}
         />
     ) : null;

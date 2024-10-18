@@ -433,18 +433,9 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
             return this.restrictTo;
         }
 
-        return (this.column?.getColDef().menuTabs ?? TABS_DEFAULT)
-            .filter((tabName) => this.isValidMenuTabItem(tabName))
-            .filter((tabName) => this.isNotSuppressed(tabName))
-            .filter((tabName) => this.isModuleLoaded(tabName));
-    }
-
-    private isModuleLoaded(menuTabName: string): boolean {
-        if (menuTabName === TAB_COLUMNS) {
-            return this.gos.isModuleRegistered('ColumnsToolPanelCoreModule');
-        }
-
-        return true;
+        return (this.column?.getColDef().menuTabs ?? TABS_DEFAULT).filter(
+            (tabName) => this.isValidMenuTabItem(tabName) && this.isNotSuppressed(tabName)
+        );
     }
 
     private isValidMenuTabItem(menuTabName: ColumnMenuTab): boolean {

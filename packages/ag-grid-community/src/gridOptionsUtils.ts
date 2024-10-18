@@ -1,7 +1,9 @@
+import type { GridApi } from './api/gridApi';
 import type {
     DomLayoutType,
     FillHandleOptions,
     GetRowIdFunc,
+    GridOptions,
     GroupSelectionMode,
     IsRowSelectable,
     MultiRowSelectionOptions,
@@ -11,6 +13,7 @@ import type {
     SingleRowSelectionOptions,
 } from './entities/gridOptions';
 import type { RowNode } from './entities/rowNode';
+import type { ComponentStateChangedEvent, GridOptionsChangedEvent } from './events';
 import type {
     ExtractParamsFromCallback,
     ExtractReturnTypeFromCallback,
@@ -527,4 +530,64 @@ export function _isColumnMenuAnchoringEnabled(gos: GridOptionsService): boolean 
 
 export function _areAdditionalColumnMenuItemsEnabled(gos: GridOptionsService): boolean {
     return gos.get('columnMenu') === 'new';
+}
+
+export function _getCallbackForEvent(eventName: string): string {
+    if (!eventName || eventName.length < 2) {
+        return eventName;
+    }
+    return 'on' + eventName[0].toUpperCase() + eventName.substring(1);
+}
+
+/** Combines component props / attributes with the provided gridOptions returning a new combined gridOptions object */
+export function _combineAttributesAndGridOptions(
+    gridOptions: GridOptions | undefined,
+    component: any,
+    gridOptionsKeys: string[]
+): GridOptions {
+    // create empty grid options if none were passed
+    if (typeof gridOptions !== 'object') {
+        gridOptions = {} as GridOptions;
+    }
+    // shallow copy (so we don't change the provided object)
+    const mergedOptions = { ...gridOptions } as any;
+    // Loop through component props, if they are not undefined and a valid gridOption copy to gridOptions
+    gridOptionsKeys.forEach((key) => {
+        const value = component[key];
+        if (typeof value !== 'undefined') {
+            mergedOptions[key] = value;
+        }
+    });
+    return mergedOptions;
+}
+
+export function _processOnChange(changes: any, api: GridApi): void {
+    if (!changes) {
+        return;
+    }
+
+    const gridChanges: Record<string, any> = {};
+    let hasChanges = false;
+    Object.keys(changes).forEach((key) => {
+        gridChanges[key] = changes[key];
+        hasChanges = true;
+    });
+
+    if (!hasChanges) {
+        return;
+    }
+
+    const internalUpdateEvent: WithoutGridCommon<GridOptionsChangedEvent> = {
+        type: 'gridOptionsChanged',
+        options: gridChanges,
+    };
+    api.dispatchEvent(internalUpdateEvent);
+
+    // copy gridChanges into an event for dispatch
+    const event: WithoutGridCommon<ComponentStateChangedEvent> = {
+        type: 'componentStateChanged',
+        ...gridChanges,
+    };
+
+    api.dispatchEvent(event);
 }

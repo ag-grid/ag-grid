@@ -101,7 +101,7 @@ class GridComponent extends Component {
 
     render() {
         return (
-            <div className="ag-theme-balham" style={{ height: 100 }}>
+            <div style={{ height: 100 }}>
                 <button onClick={this.scrollToBottom}>Scroll To Bottom</button>
                 <button onClick={this.scrollToTop}>Scroll To Top</button>
                 <AgGridReact

@@ -185,7 +185,7 @@
         color $transition-default-timing,
         border-color $transition-default-timing;
 
-    &:hover,
+    &:not(a:not([href])):hover,
     &.isActive {
         background-color: var(--item-active-bg-color);
         color: var(--item-active-color);
@@ -206,7 +206,7 @@
         padding-left: calc(var(--indent-initial-offset) + var(--indent-border-offset));
         border-left: 1px solid var(--item-border-color);
 
-        &:not(:hover, .isActive) {
+        &:not([href]:hover, .isActive) {
             color: var(--color-fg-secondary);
         }
 

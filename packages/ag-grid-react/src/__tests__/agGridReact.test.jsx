@@ -90,7 +90,6 @@ class App extends Component {
                     Deselect All Rows
                 </button>
                 <div
-                    className="ag-theme-balham"
                     style={{
                         height: '500px',
                         width: '600px',

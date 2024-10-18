@@ -2,6 +2,7 @@ import type { ModuleName } from '../interfaces/iModule';
 import type {
     GridApi,
     _AdvancedFilterGridApi,
+    _AggregationGridApi,
     _ClientSideRowModelGridApi,
     _ClipboardGridApi,
     _CoreModuleGridApi,
@@ -11,6 +12,7 @@ import type {
     _InfiniteRowModelGridApi,
     _MasterDetailGridApi,
     _MenuGridApi,
+    _PivotGridApi,
     _RangeSelectionGridApi,
     _RowGroupingGridApi,
     _ServerSideRowModelGridApi,
@@ -22,7 +24,7 @@ const mod = <TGridApi extends Partial<GridApi>>(
     moduleName: ModuleName,
     input: Record<keyof TGridApi, 0>
 ): Record<keyof TGridApi, ModuleName> => {
-    for (const key in input) {
+    for (const key of Object.keys(input)) {
         (input as any)[key] = moduleName;
     }
     return input as any;
@@ -261,21 +263,27 @@ export const gridApiFunctionsMap = {
         clearCellSelection: 0,
     }),
 
-    ...mod<_RowGroupingGridApi<any>>('RowGroupingApiModule', {
+    ...mod<_RowGroupingGridApi>('RowGroupingApiModule', {
+        setRowGroupColumns: 0,
+        removeRowGroupColumns: 0,
+        addRowGroupColumns: 0,
+        getRowGroupColumns: 0,
+        moveRowGroupColumn: 0,
+    }),
+
+    ...mod<_AggregationGridApi<any>>('AggregationModule', {
         addAggFuncs: 0,
         clearAggFuncs: 0,
         setColumnAggFunc: 0,
+    }),
+
+    ...mod<_PivotGridApi<any>>('PivotApiModule', {
         isPivotMode: 0,
         getPivotResultColumn: 0,
         setValueColumns: 0,
         getValueColumns: 0,
         removeValueColumns: 0,
         addValueColumns: 0,
-        setRowGroupColumns: 0,
-        removeRowGroupColumns: 0,
-        addRowGroupColumns: 0,
-        getRowGroupColumns: 0,
-        moveRowGroupColumn: 0,
         setPivotColumns: 0,
         removePivotColumns: 0,
         addPivotColumns: 0,

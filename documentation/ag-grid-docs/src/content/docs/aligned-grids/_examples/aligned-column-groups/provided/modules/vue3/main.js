@@ -2,8 +2,6 @@ import { createApp } from 'vue';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from 'ag-grid-vue3';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -13,7 +11,6 @@ const VueExample = {
         <div style="height: 100%">
             <ag-grid-vue
                 style="width: 100%; height: 45%;"
-                :class="themeClass"
                 ref="topGrid"
                 :gridOptions="topOptions"
                 :columnDefs="columnDefs"
@@ -22,7 +19,6 @@ const VueExample = {
             <div style='height: 5%'></div>
             <ag-grid-vue
                 style="width: 100%; height: 45%;"
-                :class="themeClass"
                 ref="bottomGrid"
                 :gridOptions="bottomOptions"
                 :columnDefs="columnDefs"
@@ -83,9 +79,6 @@ const VueExample = {
             ],
 
             rowData: null,
-            themeClass:
-                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
-                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
     mounted() {

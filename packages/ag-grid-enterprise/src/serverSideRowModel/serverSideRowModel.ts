@@ -286,7 +286,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     public generateSecondaryColumns(pivotFields: string[]) {
         if (!this.pivotColDefService) {
-            this.gos.assertModuleRegistered('PivotModule', 'pivotResultFields');
+            this.gos.assertModuleRegistered('PivotCoreModule', 'pivotResultFields');
             return;
         }
 

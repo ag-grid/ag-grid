@@ -470,7 +470,7 @@ export function addBindingImports(
 
     bindingImports
         .filter((i: BindingImport) => {
-            return !i.module.includes('@ag-grid-community/locale');
+            return !i.module.includes('@ag-grid-community/locale') && !i.module.includes('.css');
         })
         .forEach((i: BindingImport) => {
             const path = stripTypescriptSuffix(i.module);
@@ -529,11 +529,6 @@ export function addBindingImports(
         }
     });
 }
-
-export const usesThemingApi = (bindings: ParsedBindings) => {
-    // bindings.imports.some((b) => b.module.includes('ag-grid-community/theming')); Update
-    return bindings.properties.some((p) => p.name === 'theme') || bindings.exampleName.includes('theming-');
-};
 
 /** Add imports such as "import { colors } from './colors.js';"
  * Does not include the imports for framework component
@@ -658,14 +653,8 @@ export interface IAccount {
     return interfaceStr;
 }
 
-export const DARK_MODE_START = '/** DARK MODE START **/';
-export const DARK_MODE_END = '/** DARK MODE END **/';
 export const DARK_INTEGRATED_START = '/** DARK INTEGRATED START **/';
 export const DARK_INTEGRATED_END = '/** DARK INTEGRATED END **/';
-
-export function getActiveTheme(theme: string, typescript: boolean) {
-    return `${DARK_MODE_START}document.documentElement${typescript ? '?' : ''}.dataset.defaultTheme || '${theme}'${DARK_MODE_END}`;
-}
 
 // TODO detecting "enableCharts" in the example source would do this more reliably
 const chartsExamplePathSubstrings = [
@@ -684,10 +673,7 @@ export function getIntegratedDarkModeCode(exampleName: string, typescript?: bool
 }
 
 const darkModeTs = `
-        const isInitialModeDark = (): boolean => {
-            const attr: string | null = document.documentElement.getAttribute('data-default-theme');
-            return attr ? attr.endsWith('-dark') : false;
-        };
+        const isInitialModeDark = document.documentElement.dataset.agThemeMode?.includes("dark");
                   
         // update chart themes based on dark mode status
         const updateChartThemes = (isDark: boolean): void => {
@@ -704,7 +690,7 @@ const darkModeTs = `
         };
         
         // update chart themes when example first loads
-        updateChartThemes(isInitialModeDark());
+        updateChartThemes(isInitialModeDark);
                       
         interface ColorSchemeChangeEventDetail {
             darkMode: boolean;
@@ -721,12 +707,9 @@ const darkModeTs = `
     `;
 
 const darkModeJS = `
-    const isInitialModeDark = () => {
-            const attr = document.documentElement.getAttribute('data-default-theme');
-            return attr ? attr.endsWith('-dark') : false;
-        };
+        const isInitialModeDark = document.documentElement.dataset.agThemeMode?.includes("dark");
       
-        const updateChartThemes = (isDark) => {           
+        const updateChartThemes = (isDark) => { 
             const themes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];            
             const currentThemes = params.api.getGridOption('chartThemes');                    
             const customTheme = currentThemes && currentThemes.some(theme => theme.startsWith('my-custom-theme'));
@@ -740,7 +723,7 @@ const darkModeJS = `
         };
 
         // update chart themes when example first loads
-        updateChartThemes(isInitialModeDark());
+        updateChartThemes(isInitialModeDark);
 
         const handleColorSchemeChange = (event) => {
             const { darkMode } = event.detail;

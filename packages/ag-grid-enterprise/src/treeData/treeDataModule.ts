@@ -1,29 +1,22 @@
 import type { _ModuleWithoutApi } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { StickyRowModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
+import { AggregationModule } from '../aggregation/aggregationModule';
 import { ClientSideRowModelExpansionModule } from '../expansion/expansionModule';
+import { GroupColumnModule } from '../groupColumn/groupColumnModule';
 import { baseEnterpriseModule } from '../moduleUtils';
-// TODO: we should not include here the whole RowGroupingModule
-import { RowGroupingModule } from '../rowGrouping/rowGroupingModule';
 import { ClientSideChildrenTreeNodeManager } from './clientSideChildrenTreeNodeManager';
 import { ClientSidePathTreeNodeManager } from './clientSidePathTreeNodeManager';
 
 export const TreeDataCoreModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule('TreeDataModule'),
-    beans: [ClientSidePathTreeNodeManager, ClientSideChildrenTreeNodeManager],
-    dependsOn: [
-        EnterpriseCoreModule,
-        ClientSideRowModelModule,
-        ClientSideRowModelExpansionModule,
-        // TODO: we should not include here the whole RowGroupingModule
-        // we should move what's needed by both in a specific module
-        RowGroupingModule,
-    ],
+    ...baseEnterpriseModule('TreeDataCoreModule'),
+    dependsOn: [EnterpriseCoreModule, AggregationModule, GroupColumnModule],
 };
 
 export const TreeDataModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('TreeDataModule'),
+    beans: [ClientSidePathTreeNodeManager, ClientSideChildrenTreeNodeManager],
     rowModels: ['clientSide', 'serverSide'],
-    dependsOn: [TreeDataCoreModule],
+    dependsOn: [TreeDataCoreModule, StickyRowModule, ClientSideRowModelExpansionModule],
 };

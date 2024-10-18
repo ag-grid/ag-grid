@@ -11,6 +11,7 @@ import {
     RowGroupingModule,
     SetFilterModule,
     StatusBarModule,
+    TreeDataModule,
 } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -30,6 +31,7 @@ ModuleRegistry.registerModules([
     RichSelectModule,
     SetFilterModule,
     StatusBarModule,
+    TreeDataModule,
 ]);
 
 interface Props {
@@ -146,6 +148,7 @@ export const HRExample: FunctionComponent<Props> = ({ gridTheme = 'ag-theme-quar
             <div className={styles.container}>
                 <div className={`${themeClass} ${styles.grid}`}>
                     <AgGridReact
+                        theme="legacy"
                         ref={gridRef}
                         columnDefs={colDefs}
                         rowData={rowData}
