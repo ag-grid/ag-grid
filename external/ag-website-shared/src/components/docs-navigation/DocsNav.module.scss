@@ -185,7 +185,7 @@
         color $transition-default-timing,
         border-color $transition-default-timing;
 
-    &:not(a:not([href])):hover,
+    &:where([href]):hover,
     &.isActive {
         background-color: var(--item-active-bg-color);
         color: var(--item-active-color);
@@ -199,6 +199,11 @@
 
     &.hasIcon:not(:last-child) {
         margin-bottom: $spacing-size-1;
+    }
+
+    // Style for 'section headers'
+    &:not([href]) {
+        color: var(--color-fg-quinary) !important;
     }
 
     .groupChildren & {
