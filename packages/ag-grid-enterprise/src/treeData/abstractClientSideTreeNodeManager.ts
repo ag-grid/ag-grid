@@ -71,6 +71,10 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
     /** The root node of the tree. */
     public treeRoot: TreeNode = new TreeNode(null, '', -1);
 
+    public override get treeData(): boolean {
+        return this.gos.get('treeData');
+    }
+
     public override activate(rootNode: RowNode<TData>): void {
         super.activate(rootNode);
         this.treeRoot.setRow(rootNode);
