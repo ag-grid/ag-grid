@@ -2,17 +2,19 @@ import type { MockInstance } from 'vitest';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { TestGridsManager } from '../test-utils';
-import { GROUP_ROW_DATA } from './data';
+import { fakeFetch } from './data';
 import {
     assertSelectedRowElementsById,
     assertSelectedRowsByIndex,
     clickRowByIndex,
+    expandGroupRowByIndex,
     selectRowsByIndex,
     toggleCheckboxByIndex,
     toggleHeaderCheckboxByIndex,
+    waitForEvent,
 } from './utils';
 
 describe('Row Selection Grid Options', () => {
@@ -40,7 +42,7 @@ describe('Row Selection Grid Options', () => {
     }
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, ServerSideRowModelModule],
     });
 
     beforeEach(() => {
@@ -59,11 +61,16 @@ describe('Row Selection Grid Options', () => {
 
     describe('User Interactions', () => {
         describe('Single Row Selection', () => {
-            test('Select single row', () => {
-                const api = createGrid({
+            test('Select single row', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
                     rowSelection: { mode: 'singleRow' },
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
                 });
 
                 toggleCheckboxByIndex(2);
@@ -71,11 +78,16 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([2], api);
             });
 
-            test('Clicking two rows selects only the last clicked row', () => {
-                const api = createGrid({
+            test('Clicking two rows selects only the last clicked row', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
                     rowSelection: { mode: 'singleRow' },
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
                 });
 
                 toggleCheckboxByIndex(2);
@@ -84,11 +96,16 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([5], api);
             });
 
-            test("SHIFT-click doesn't select multiple rows in single row selection mode", () => {
-                const api = createGrid({
+            test("SHIFT-click doesn't select multiple rows in single row selection mode", async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
                     rowSelection: { mode: 'singleRow' },
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
                 });
 
                 toggleCheckboxByIndex(2);
@@ -97,11 +114,16 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([5], api);
             });
 
-            test("CTRL-click doesn't select multiple rows in single row selection mode", () => {
-                const api = createGrid({
+            test("CTRL-click doesn't select multiple rows in single row selection mode", async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
                     rowSelection: { mode: 'singleRow' },
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
                 });
 
                 toggleCheckboxByIndex(2);
@@ -110,12 +132,15 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([5], api);
             });
 
-            test('By default, prevents row from being selected when clicked', () => {
-                const api = createGrid({
+            test('By default, prevents row from being selected when clicked', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
-                    rowSelection: {
-                        mode: 'singleRow',
+                    rowSelection: { mode: 'singleRow' },
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
                     },
                 });
 
@@ -124,13 +149,18 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
-            test('enableClickSelection allows row to be selected when clicked', () => {
-                const api = createGrid({
+            test('enableClickSelection allows row to be selected when clicked', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
                     rowSelection: {
                         mode: 'singleRow',
                         enableClickSelection: true,
+                    },
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
                     },
                 });
 
@@ -139,11 +169,16 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([2], api);
             });
 
-            test('enableClickSelection="enableDeselection" allows deselection via clicking', () => {
-                const api = createGrid({
+            test('enableClickSelection="enableDeselection" allows deselection via clicking', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
                     rowSelection: { mode: 'multiRow', enableClickSelection: 'enableDeselection' },
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
                 });
 
                 toggleCheckboxByIndex(2);
@@ -153,49 +188,37 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
-            test('un-selectable row cannot be selected', () => {
-                const api = createGrid({
+            test('un-selectable row cannot be selected', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
                     rowSelection: {
                         mode: 'singleRow',
-                        isRowSelectable: (node) => node.data?.sport !== 'football',
+                        isRowSelectable: (node) => node.data.sport !== 'football',
+                    },
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
                     },
                 });
 
                 toggleCheckboxByIndex(0);
                 assertSelectedRowsByIndex([], api);
-            });
-
-            test('can update `isRowSelectable` to `undefined` to make all rows selectable', () => {
-                const api = createGrid({
-                    columnDefs,
-                    rowData,
-                    rowSelection: {
-                        mode: 'singleRow',
-                        isRowSelectable: () => false,
-                    },
-                });
-
-                toggleCheckboxByIndex(0);
-                assertSelectedRowsByIndex([], api);
-
-                api.setGridOption('rowSelection', {
-                    mode: 'singleRow',
-                    isRowSelectable: undefined,
-                });
-
-                toggleCheckboxByIndex(0);
-                assertSelectedRowsByIndex([0], api);
             });
         });
 
         describe('Multiple Row Selection', () => {
-            test('un-selectable row cannot be selected', () => {
-                const api = createGrid({
+            test('un-selectable row cannot be selected', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
-                    rowSelection: { mode: 'multiRow', isRowSelectable: (node) => node.data?.sport !== 'football' },
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
+                    rowSelection: { mode: 'multiRow', isRowSelectable: (node) => node.data.sport !== 'football' },
                 });
 
                 toggleCheckboxByIndex(0);
@@ -211,10 +234,15 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
-            test('row-click interaction with multiple selected rows', () => {
-                const api = createGrid({
+            test('row-click interaction with multiple selected rows', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
                     rowSelection: {
                         mode: 'multiRow',
                     },
@@ -230,8 +258,17 @@ describe('Row Selection Grid Options', () => {
             });
 
             describe('Range selection behaviour', () => {
-                test('CTRL-click and CMD-click selects multiple rows', () => {
-                    const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+                test('CTRL-click and CMD-click selects multiple rows', async () => {
+                    const api = await createGridAndWait({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: { mode: 'multiRow' },
+                    });
 
                     toggleCheckboxByIndex(2);
                     toggleCheckboxByIndex(5, { metaKey: true });
@@ -240,10 +277,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([2, 5, 3], api);
                 });
 
-                test('Single click after multiple selection clears previous selection', () => {
-                    const api = createGrid({
+                test('Single click after multiple selection clears previous selection', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', enableClickSelection: true },
                     });
 
@@ -254,8 +296,17 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([2], api);
                 });
 
-                test('SHIFT-click selects range of rows', () => {
-                    const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+                test('SHIFT-click selects range of rows', async () => {
+                    const api = await createGridAndWait({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: { mode: 'multiRow' },
+                    });
 
                     toggleCheckboxByIndex(2);
                     toggleCheckboxByIndex(5, { shiftKey: true });
@@ -263,8 +314,17 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([2, 3, 4, 5], api);
                 });
 
-                test('SHIFT-click extends range downwards from from last selected row', () => {
-                    const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+                test('SHIFT-click extends range downwards from from last selected row', async () => {
+                    const api = await createGridAndWait({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: { mode: 'multiRow' },
+                    });
 
                     selectRowsByIndex([1, 3], false, api);
 
@@ -273,8 +333,17 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([1, 3, 4, 5], api);
                 });
 
-                test('SHIFT-click extends range upwards from from last selected row', () => {
-                    const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+                test('SHIFT-click extends range upwards from from last selected row', async () => {
+                    const api = await createGridAndWait({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: { mode: 'multiRow' },
+                    });
 
                     selectRowsByIndex([2, 4], false, api);
 
@@ -283,8 +352,17 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([2, 4, 1, 3], api);
                 });
 
-                test('SHIFT-click on un-selected table selects only clicked row', () => {
-                    const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+                test('SHIFT-click on un-selected table selects only clicked row', async () => {
+                    const api = await createGridAndWait({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: { mode: 'multiRow' },
+                    });
 
                     toggleCheckboxByIndex(4, { shiftKey: true });
                     assertSelectedRowsByIndex([4], api);
@@ -293,8 +371,17 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([4, 5, 6], api);
                 });
 
-                test('Range selection is preserved on CTRL-click and CMD-click', () => {
-                    const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+                test('Range selection is preserved on CTRL-click and CMD-click', async () => {
+                    const api = await createGridAndWait({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: { mode: 'multiRow' },
+                    });
 
                     toggleCheckboxByIndex(1);
                     toggleCheckboxByIndex(3, { shiftKey: true });
@@ -304,8 +391,17 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([1, 2, 3, 5], api);
                 });
 
-                test('Range members can be un-selected with CTRL-click or CMD-click', () => {
-                    const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+                test('Range members can be un-selected with CTRL-click or CMD-click', async () => {
+                    const api = await createGridAndWait({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: { mode: 'multiRow' },
+                    });
 
                     toggleCheckboxByIndex(1);
                     toggleCheckboxByIndex(4, { shiftKey: true });
@@ -318,8 +414,17 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([1, 4], api);
                 });
 
-                test('Range is extended downwards from selection root', () => {
-                    const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+                test('Range is extended downwards from selection root', async () => {
+                    const api = await createGridAndWait({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: { mode: 'multiRow' },
+                    });
 
                     toggleCheckboxByIndex(2);
                     toggleCheckboxByIndex(4, { shiftKey: true });
@@ -329,8 +434,17 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([2, 3, 4, 5, 6], api);
                 });
 
-                test('Range is extended upwards from selection root', () => {
-                    const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+                test('Range is extended upwards from selection root', async () => {
+                    const api = await createGridAndWait({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: { mode: 'multiRow' },
+                    });
 
                     toggleCheckboxByIndex(6);
                     toggleCheckboxByIndex(4, { shiftKey: true });
@@ -340,8 +454,17 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([6, 4, 5, 2, 3], api);
                 });
 
-                test('Range can be inverted', () => {
-                    const api = createGrid({ columnDefs, rowData, rowSelection: { mode: 'multiRow' } });
+                test('Range can be inverted', async () => {
+                    const api = await createGridAndWait({
+                        columnDefs,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
+                        rowSelection: { mode: 'multiRow' },
+                    });
 
                     toggleCheckboxByIndex(4);
                     toggleCheckboxByIndex(6, { shiftKey: true });
@@ -480,10 +603,15 @@ describe('Row Selection Grid Options', () => {
         });
 
         describe('Multiple Row Selection with Click', () => {
-            test('Select multiple rows without modifier keys', () => {
-                const api = createGrid({
+            test('Select multiple rows without modifier keys', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
                     rowSelection: { mode: 'multiRow', enableSelectionWithoutKeys: true, enableClickSelection: true },
                 });
 
@@ -494,10 +622,15 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([2, 5, 3], api);
             });
 
-            test('De-select row with click', () => {
-                const api = createGrid({
+            test('De-select row with click', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
                     rowSelection: { mode: 'multiRow', enableSelectionWithoutKeys: true, enableClickSelection: true },
                 });
 
@@ -513,7 +646,12 @@ describe('Row Selection Grid Options', () => {
             test('Checkbox can be toggled on and off', async () => {
                 const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
                     rowSelection: { mode: 'multiRow', checkboxes: true },
                 });
 
@@ -524,10 +662,15 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
-            test('Multiple rows can be selected without modifier keys nor rowMultiSelectWithClick', () => {
-                const api = createGrid({
+            test('Multiple rows can be selected without modifier keys nor rowMultiSelectWithClick', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
                     rowSelection: { mode: 'multiRow', checkboxes: true },
                 });
 
@@ -538,10 +681,15 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([1, 2], api);
             });
 
-            test('Clicking a row selects it when `enableClickSelection` is false', () => {
-                const api = createGrid({
+            test('Clicking a row selects it when `enableClickSelection` is false', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
                     rowSelection: {
                         mode: 'multiRow',
                         checkboxes: true,
@@ -559,10 +707,15 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
-            test('Clicking a row does nothing when `enableClickSelection` is false', () => {
-                const api = createGrid({
+            test('Clicking a row does nothing when `enableClickSelection` is false', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
                     rowSelection: {
                         mode: 'multiRow',
                         checkboxes: true,
@@ -575,14 +728,19 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowsByIndex([], api);
             });
 
-            test('Un-selectable checkboxes cannot be toggled', () => {
-                const api = createGrid({
+            test('Un-selectable checkboxes cannot be toggled', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
                     rowSelection: {
                         mode: 'multiRow',
                         checkboxes: true,
-                        isRowSelectable: (node) => node.data?.sport !== 'golf',
+                        isRowSelectable: (node) => node.data.sport !== 'golf',
                     },
                 });
 
@@ -595,10 +753,15 @@ describe('Row Selection Grid Options', () => {
             });
 
             describe('Range selection behaviour', () => {
-                test('CTRL-click and CMD-click does not affect ability to select multiple rows', () => {
-                    const api = createGrid({
+                test('CTRL-click and CMD-click does not affect ability to select multiple rows', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', checkboxes: true },
                     });
 
@@ -609,10 +772,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([2, 5, 3], api);
                 });
 
-                test('SHIFT-click selects range of rows', () => {
-                    const api = createGrid({
+                test('SHIFT-click selects range of rows', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', checkboxes: true },
                     });
 
@@ -622,10 +790,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([2, 3, 4, 5], api);
                 });
 
-                test('SHIFT-click extends range downwards from from last selected row', () => {
-                    const api = createGrid({
+                test('SHIFT-click extends range downwards from from last selected row', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', checkboxes: true },
                     });
 
@@ -636,10 +809,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([1, 3, 4, 5], api);
                 });
 
-                test('SHIFT-click extends range upwards from from last selected row', () => {
-                    const api = createGrid({
+                test('SHIFT-click extends range upwards from from last selected row', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', checkboxes: true },
                     });
 
@@ -650,10 +828,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([2, 4, 1, 3], api);
                 });
 
-                test('SHIFT-click on un-selected table selects only clicked row', () => {
-                    const api = createGrid({
+                test('SHIFT-click on un-selected table selects only clicked row', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', checkboxes: true },
                     });
 
@@ -664,10 +847,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([4, 5, 6], api);
                 });
 
-                test('Range selection is preserved on CTRL-click and CMD-click', () => {
-                    const api = createGrid({
+                test('Range selection is preserved on CTRL-click and CMD-click', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', checkboxes: true },
                     });
 
@@ -679,10 +867,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([1, 2, 3, 5], api);
                 });
 
-                test('Range selection is preserved on checkbox toggle', () => {
-                    const api = createGrid({
+                test('Range selection is preserved on checkbox toggle', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', checkboxes: true },
                     });
 
@@ -694,10 +887,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([1, 2, 3, 5], api);
                 });
 
-                test('Range members can be un-selected with CTRL-click or CMD-click', () => {
-                    const api = createGrid({
+                test('Range members can be un-selected with CTRL-click or CMD-click', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', checkboxes: true },
                     });
 
@@ -712,10 +910,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([1, 4], api);
                 });
 
-                test('Range members can be un-selected with toggle', () => {
-                    const api = createGrid({
+                test('Range members can be un-selected with toggle', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', checkboxes: true },
                     });
 
@@ -727,10 +930,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([1, 2, 4], api);
                 });
 
-                test('Range is extended downwards from selection root', () => {
-                    const api = createGrid({
+                test('Range is extended downwards from selection root', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', checkboxes: true },
                     });
 
@@ -742,10 +950,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([2, 3, 4, 5, 6], api);
                 });
 
-                test('Range is extended upwards from selection root', () => {
-                    const api = createGrid({
+                test('Range is extended upwards from selection root', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', checkboxes: true },
                     });
 
@@ -757,10 +970,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([6, 4, 5, 2, 3], api);
                 });
 
-                test('Range can be inverted', () => {
-                    const api = createGrid({
+                test('Range can be inverted', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', checkboxes: true },
                     });
 
@@ -772,10 +990,15 @@ describe('Row Selection Grid Options', () => {
                     assertSelectedRowsByIndex([2, 3, 4], api);
                 });
 
-                test('SHIFT can be used for range de-selection (Checkbox selection ONLY)', () => {
-                    const api = createGrid({
+                test('SHIFT can be used for range de-selection (Checkbox selection ONLY)', async () => {
+                    const api = await createGridAndWait({
                         columnDefs,
-                        rowData,
+                        rowModelType: 'serverSide',
+                        serverSideDatasource: {
+                            getRows(params) {
+                                return params.success({ rowData, rowCount: rowData.length });
+                            },
+                        },
                         rowSelection: { mode: 'multiRow', checkboxes: true },
                     });
 
@@ -901,105 +1124,83 @@ describe('Row Selection Grid Options', () => {
         });
 
         describe('Header checkbox selection', () => {
-            test('can be used to select and deselect all rows', () => {
-                const api = createGrid({
+            test('can be used to select and deselect all rows', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
                     rowSelection: { mode: 'multiRow', headerCheckbox: true },
                 });
 
                 toggleHeaderCheckboxByIndex(0);
-                assertSelectedRowsByIndex([0, 1, 2, 3, 4, 5, 6], api);
+                assertSelectedRowElementsById(['0', '1', '2', '3', '4', '5', '6'], api);
 
                 toggleHeaderCheckboxByIndex(0);
-                assertSelectedRowsByIndex([], api);
+                assertSelectedRowElementsById([], api);
             });
 
-            test('can select multiple pages of data', () => {
-                const api = createGrid({
+            test('can select multiple pages of data', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
                     rowSelection: { mode: 'multiRow', headerCheckbox: true },
                     pagination: true,
                     paginationPageSize: 5,
                 });
 
                 toggleHeaderCheckboxByIndex(0);
-                assertSelectedRowsByIndex([0, 1, 2, 3, 4, 5, 6], api);
+                assertSelectedRowElementsById(['0', '1', '2', '3', '4', '5', '6'], api);
 
                 toggleHeaderCheckboxByIndex(0);
-                assertSelectedRowsByIndex([], api);
+                assertSelectedRowElementsById([], api);
             });
 
-            test('can select only current page of data', () => {
-                const api = createGrid({
+            test('indeterminate selection state transitions to select all', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
-                    rowSelection: {
-                        mode: 'multiRow',
-                        headerCheckbox: true,
-                        selectAll: 'currentPage',
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
                     },
-                    pagination: true,
-                    paginationPageSize: 5,
-                });
-
-                toggleHeaderCheckboxByIndex(0);
-                assertSelectedRowsByIndex([0, 1, 2, 3, 4], api);
-
-                toggleHeaderCheckboxByIndex(0);
-                assertSelectedRowsByIndex([], api);
-            });
-
-            test('can select only filtered data', () => {
-                const api = createGrid({
-                    columnDefs,
-                    rowData,
-                    rowSelection: {
-                        mode: 'multiRow',
-                        headerCheckbox: true,
-                        selectAll: 'filtered',
-                    },
-                    pagination: true,
-                    paginationPageSize: 5,
-                });
-
-                api.setGridOption('quickFilterText', 'ing');
-
-                toggleHeaderCheckboxByIndex(0);
-                assertSelectedRowsByIndex([0, 1], api);
-
-                api.setGridOption('quickFilterText', '');
-
-                assertSelectedRowsByIndex([5, 6], api);
-            });
-
-            test('indeterminate selection state transitions to select all', () => {
-                const api = createGrid({
-                    columnDefs,
-                    rowData,
                     rowSelection: { mode: 'multiRow', headerCheckbox: true },
                 });
 
-                selectRowsByIndex([3], false, api);
+                toggleCheckboxByIndex(3);
+                assertSelectedRowElementsById(['3'], api);
 
                 toggleHeaderCheckboxByIndex(0);
-                assertSelectedRowsByIndex([3, 0, 1, 2, 4, 5, 6], api);
+                assertSelectedRowElementsById(['3', '0', '1', '2', '4', '5', '6'], api);
             });
 
-            test('un-selectable rows are not part of the selection', () => {
-                const api = createGrid({
+            test('un-selectable rows are not part of the selection', async () => {
+                const api = await createGridAndWait({
                     columnDefs,
-                    rowData,
+                    rowModelType: 'serverSide',
+                    serverSideDatasource: {
+                        getRows(params) {
+                            return params.success({ rowData, rowCount: rowData.length });
+                        },
+                    },
                     rowSelection: {
                         mode: 'multiRow',
                         headerCheckbox: true,
-                        isRowSelectable: (node) => node.data?.sport !== 'football',
+                        isRowSelectable: (node) => node.data.sport !== 'football',
                     },
                 });
 
                 toggleHeaderCheckboxByIndex(0);
-                assertSelectedRowsByIndex([1, 2, 3, 4, 5, 6], api);
+                assertSelectedRowElementsById(['1', '2', '3', '4', '5', '6'], api);
             });
         });
 
@@ -1016,12 +1217,17 @@ describe('Row Selection Grid Options', () => {
                     headerName: 'Athlete',
                     field: 'athlete',
                     cellRenderer: 'agGroupCellRenderer',
-                    cellRendererParams: {
-                        checkbox: true,
+                },
+                rowModelType: 'serverSide',
+                serverSideDatasource: {
+                    getRows(params) {
+                        const data = fakeFetch(params.request);
+                        return params.success({ rowData: data, rowCount: data.length });
                     },
                 },
-                rowData: GROUP_ROW_DATA,
-                groupDefaultExpanded: -1,
+                getRowId(params) {
+                    return JSON.stringify(params.data);
+                },
             };
 
             test('clicking group row selects only that row', async () => {
@@ -1042,19 +1248,46 @@ describe('Row Selection Grid Options', () => {
 
                 // Group selects children
                 toggleCheckboxByIndex(0);
-                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13], api);
+                const updated = waitForEvent('modelUpdated', api, 2); // attach listener first
+                expandGroupRowByIndex(0);
+                await updated;
+
+                assertSelectedRowElementsById(
+                    [
+                        { country: 'United States' },
+                        { sport: 'Swimming' },
+                        { sport: 'Gymnastics' },
+                        { sport: 'Speed Skating' },
+                        { sport: 'Cross Country Skiing' },
+                    ].map((r) => JSON.stringify(r)),
+                    api
+                );
 
                 // Can un-select child row
                 toggleCheckboxByIndex(4);
-                assertSelectedRowsByIndex([2, 3, 5, 6, 7, 8, 9, 10, 11, 13], api);
+                assertSelectedRowElementsById(
+                    [{ sport: 'Swimming' }, { sport: 'Gymnastics' }, { sport: 'Speed Skating' }].map((r) =>
+                        JSON.stringify(r)
+                    ),
+                    api
+                );
 
                 // Toggling group row from indeterminate state selects all children
                 toggleCheckboxByIndex(0);
-                assertSelectedRowsByIndex([2, 3, 5, 6, 7, 8, 9, 10, 11, 13, 4], api);
+                assertSelectedRowElementsById(
+                    [
+                        { country: 'United States' },
+                        { sport: 'Swimming' },
+                        { sport: 'Gymnastics' },
+                        { sport: 'Speed Skating' },
+                        { sport: 'Cross Country Skiing' },
+                    ].map((r) => JSON.stringify(r)),
+                    api
+                );
 
                 // Toggle group row again de-selects all children
                 toggleCheckboxByIndex(0);
-                assertSelectedRowsByIndex([], api);
+                assertSelectedRowElementsById([], api);
             });
 
             test('Cannot select group rows where `isRowSelectable` returns false and `groupSelects` = "self"', async () => {
@@ -1066,14 +1299,21 @@ describe('Row Selection Grid Options', () => {
                     },
                 });
 
-                toggleCheckboxByIndex(0);
-                assertSelectedRowsByIndex([], api);
+                const updated = waitForEvent('modelUpdated', api, 2); // attach listener first
+                expandGroupRowByIndex(0);
+                await updated;
 
-                toggleCheckboxByIndex(2);
-                assertSelectedRowsByIndex([2], api);
+                toggleCheckboxByIndex(0);
+                assertSelectedRowElementsById([], api);
+
+                toggleCheckboxByIndex(1);
+                assertSelectedRowElementsById(
+                    [{ sport: 'Swimming' }].map((r) => JSON.stringify(r)),
+                    api
+                );
             });
 
-            test('Can select group rows where `isRowSelectable` returns false and `groupSelects` = "descendants"', async () => {
+            test('Cannot select group rows where `isRowSelectable` returns false and `groupSelects` = "descendants"', async () => {
                 const api = await createGridAndWait({
                     ...groupGridOptions,
                     rowSelection: {
@@ -1083,11 +1323,15 @@ describe('Row Selection Grid Options', () => {
                     },
                 });
 
+                const updated = waitForEvent('modelUpdated', api, 2); // attach listener first
+                expandGroupRowByIndex(0);
+                await updated;
+
                 toggleCheckboxByIndex(0);
-                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11], api);
+                assertSelectedRowElementsById([], api);
             });
 
-            test('Selection state changes when `isRowSelectable` changes', async () => {
+            test('Selection state does not change when `isRowSelectable` changes', async () => {
                 const api = await createGridAndWait({
                     ...groupGridOptions,
                     rowSelection: {
@@ -1097,8 +1341,15 @@ describe('Row Selection Grid Options', () => {
                     },
                 });
 
-                toggleCheckboxByIndex(0);
-                assertSelectedRowsByIndex([2, 3, 4, 5, 6, 7, 8, 9, 10, 11], api);
+                const updated = waitForEvent('modelUpdated', api, 2); // attach listener first
+                expandGroupRowByIndex(0);
+                await updated;
+
+                toggleCheckboxByIndex(1);
+                assertSelectedRowElementsById(
+                    [{ sport: 'Swimming' }].map((r) => JSON.stringify(r)),
+                    api
+                );
 
                 api.setGridOption('rowSelection', {
                     mode: 'multiRow',
@@ -1106,42 +1357,10 @@ describe('Row Selection Grid Options', () => {
                     isRowSelectable: (node) => node.data?.sport === 'Gymnastics',
                 });
 
-                assertSelectedRowsByIndex([], api);
-            });
-
-            test('Selection state changes when grouping is updated', async () => {
-                const api = await createGridAndWait({
-                    ...groupGridOptions,
-                    rowSelection: {
-                        mode: 'multiRow',
-                        groupSelects: 'descendants',
-                        isRowSelectable: (node) => node.data?.sport === 'Swimming',
-                    },
-                });
-
-                // Selects all nodes in country 'United States'
-                toggleCheckboxByIndex(0);
                 assertSelectedRowElementsById(
-                    [
-                        '0',
-                        '1',
-                        '2',
-                        '3',
-                        '6',
-                        '7',
-                        '8',
-                        '9',
-                        '11',
-                        '18',
-                        'row-group-country-United States',
-                        'row-group-country-United States-sport-Swimming',
-                    ],
+                    [{ sport: 'Swimming' }].map((r) => JSON.stringify(r)),
                     api
                 );
-                const applied = api.applyColumnState({ state: [{ colId: 'country', rowGroup: false }] });
-                expect(applied).toBeTruthy();
-
-                assertSelectedRowElementsById(['0', '1', '2', '3', '6', '7', '8', '9', '11', '18'], api);
             });
 
             describe('Range selection behaviour', () => {
