@@ -127,6 +127,7 @@ const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
 
             htmlEl.classList.add('no-transitions');
             htmlEl.dataset.darkMode = localDarkmode !== undefined ? localDarkmode : isOSDarkmode;
+            htmlEl.dataset.agThemeMode = htmlEl.dataset.darkMode === 'true' ? 'dark-blue' : 'light';
             htmlEl.offsetHeight; // Trigger a reflow, flushing the CSS changes
             htmlEl.classList.remove('no-transitions');
         </script>

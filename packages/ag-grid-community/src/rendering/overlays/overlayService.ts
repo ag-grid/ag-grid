@@ -128,6 +128,11 @@ export class OverlayService extends BeanStub implements NamedBean {
 
         let loading = this.gos.get('loading');
 
+        if (loading !== undefined) {
+            // If loading is defined, we don't show the initial overlay.
+            this.showInitialOverlay = false;
+        }
+
         if (this.showInitialOverlay && loading === undefined && !this.gos.get('suppressLoadingOverlay')) {
             loading =
                 !this.gos.get('columnDefs') ||

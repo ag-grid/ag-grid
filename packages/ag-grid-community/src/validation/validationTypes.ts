@@ -27,6 +27,7 @@ export type Validations<T extends object> = Partial<{
         | OptionsValidation<T>
         | undefined;
 }>;
+export type ValidationsRequired<T extends object> = Required<Validations<T>>;
 
 // Rules object, if present, module is required.
 export interface OptionsValidation<T extends object> {
@@ -34,6 +35,8 @@ export interface OptionsValidation<T extends object> {
     supportedRowModels?: RowModelType[];
     dependencies?: RequiredOptions<T>;
     validate?: (options: T, gridOptions: GridOptions) => string | null;
+    /** Currently only supports boolean or number */
+    expectedType?: 'boolean' | 'number';
 }
 
 // Each property key requires one of the values in the array to also be present.

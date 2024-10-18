@@ -4,8 +4,6 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { ClipboardModule } from 'ag-grid-enterprise';
 import { ExcelExportModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
@@ -24,7 +22,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule]);
         <div class="example-wrapper">
             <div class="inner-col">
                 <ag-grid-angular
-                    [class]="themeClass"
                     [defaultColDef]="defaultColDef"
                     [rowData]="leftRowData"
                     [modules]="leftModules"
@@ -34,7 +31,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule]);
 
             <div class="inner-col">
                 <ag-grid-angular
-                    [class]="themeClass"
                     [defaultColDef]="defaultColDef"
                     [rowData]="leftRowData"
                     [modules]="rightModules"
@@ -45,9 +41,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule]);
     `,
 })
 export class AppComponent {
-    themeClass =
-        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-        'ag-theme-quartz' /** DARK MODE END **/;
     leftModules = [SetFilterModule, ClipboardModule];
     rightModules = [ExcelExportModule];
     leftRowData: any[] = [];

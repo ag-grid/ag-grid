@@ -2,8 +2,6 @@ import { createApp } from 'vue';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from 'ag-grid-vue3';
 
 import './styles.css';
@@ -72,7 +70,6 @@ const VueExample = {
             </div>
             <ag-grid-vue
                     style="width: 100%; height: 100%;"
-                    :class="themeClass"
                     :components="components"
                     :columnDefs="columnDefs"
                     :rowData="rowData"
@@ -102,9 +99,7 @@ const VueExample = {
                 filter: true,
             },
             rowData: null,
-            themeClass:
-                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
-                'ag-theme-quartz' /** DARK MODE END **/,
+
             frostPrefix: false,
         };
     },

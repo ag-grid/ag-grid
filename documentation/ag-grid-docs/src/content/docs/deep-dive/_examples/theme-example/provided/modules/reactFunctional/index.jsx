@@ -5,9 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 // Theme
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
 // Core CSS
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -61,13 +59,7 @@ const GridExample = () => {
 
     // Container: Defines the grid's theme & dimensions.
     return (
-        <div
-            className={
-                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
-                'ag-theme-quartz' /** DARK MODE END **/
-            }
-            style={{ width: '100%', height: '100%' }}
-        >
+        <div style={{ width: '100%', height: '100%' }}>
             <AgGridReact rowData={rowData} columnDefs={colDefs} />
         </div>
     );

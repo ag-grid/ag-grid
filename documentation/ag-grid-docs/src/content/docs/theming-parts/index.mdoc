@@ -1,0 +1,67 @@
+---
+title: "Theme Parts"
+---
+
+Parts contain the CSS styles for a single feature like icons or text inputs.
+
+Using parts you can, for example, select a text input style that matches you application, or disable our provided text input styles so that you can write your own.
+
+## Configuring Theme Parts
+
+To add a part to a theme, call the `theme.withPart(...)` method which returns a new theme using that part. A theme can only have one part for a given feature, so for example adding a `colorScheme` part will remove any existing `colorScheme` part.
+
+The `theme.withPart(...)` method generates a new theme with the specified part:
+
+```js
+import { themeQuartz, colorSchemeDark, iconSetMaterial } from 'ag-grid-community';
+
+// withPart() returns a new theme and calls can be chained
+const myTheme = themeQuartz
+    .withPart(iconSetMaterial)
+    .withPart(colorSchemeDark);
+```
+
+This example demonstrates mixing and matching any built-in theme, icon set, and color scheme:
+
+{% gridExampleRunner title="Configuring Theme Parts" name="configuring-theme-parts" /%}
+
+## Parts Reference
+
+The following parts are available:
+
+* `colorScheme` feature:
+    * `colorSchemeLight` - neutral light scheme
+    * `colorSchemeLightCold` - light scheme with subtle cold tint used by Balham theme
+    * `colorSchemeLightWarm` - light scheme with subtle warm tint
+    * `colorSchemeDark` - neutral dark scheme
+    * `colorSchemeDarkBlue` - our preferred dark scheme used on this website
+    * `colorSchemeDarkWarm` - dark scheme with subtle warm tint
+* `iconSet` feature:
+    * `iconSetQuartz` - our default icon set
+        * `iconSetQuartz({strokeWidth: number})` you can call iconSetQuartz as a function to provide a custom stroke width in pixels (the default is 1.5)
+        * `iconSetQuartzLight` and `iconSetQuartzBold` preset lighter and bolder versions of the Quartz icons.
+    * `iconSetAlpine` - the icon set used by the Alpine theme
+    * `iconSetMaterial` - the Material Design icon set
+* `checkboxStyle` feature:
+    * `checkboxStyleDefault` - checkbox style used by our themes. There is only one style provided which is configurable through parameters. It being a part allows you to replace it with your own checkbox styles if desired.
+* `inputStyle` feature:
+    * `inputStyleBase` - unstyled inputs with many parameters to configure their appearance
+    * `inputStyleBordered` - inputs with a border around them
+    * `inputStyleUnderlined` - inputs with a line underneath them as used in Material Design
+* `tabStyle` feature:
+    * `tabStyleBase` - unstyled tabs with many parameters to configure their appearance
+    * `tabStyleQuartz` - tabs styled as per the Quartz theme
+    * `tabStyleMaterial` - tabs styled as per the Material theme
+    * `tabStyleAlpine` - tabs styled as per the Alpine theme
+    * `tabStyleRolodex` - tabs designed to imitate paper cards, as used by the Balham theme
+
+## Removing a Part from a Built-in Theme
+
+Adding a part to a theme will remove any part of the same feature. So to remove a part, just add an empty part with the same feature name:
+
+```js
+const noCheckboxStyle = createPart('checkboxStyle');
+const myCustomTheme = themeQuartz.withPart(noCheckboxStyle);
+```
+
+{% gridExampleRunner title="Configuring Theme Parts" name="removing-parts" /%}

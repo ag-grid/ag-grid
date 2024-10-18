@@ -1,0 +1,7 @@
+.ag-theme-quartz,
+.ag-theme-quartz-dark {
+    --ag-checkbox-background-color: yellow;
+    --ag-checkbox-checked-color: red;
+    --ag-checkbox-unchecked-color: darkred;
+    --ag-checkbox-indeterminate-color: grey;
+}

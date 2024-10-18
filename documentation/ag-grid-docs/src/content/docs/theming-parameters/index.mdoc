@@ -1,0 +1,110 @@
+---
+title: "Theme Parameters"
+---
+
+Parameters are configuration values that affect the appearance of the grid.
+
+Some parameters such as `headerTextColor` affect a single aspect of grid appearance. Others have a wider effect, such as `spacing` which adjusts padding across the whole grid.
+
+## Setting Theme Parameters
+
+To set parameters on a theme, call the `theme.withParams(...)` method which returns a new theme with different default values for its parameters.
+
+```js
+const myTheme = themeQuartz.withParams({
+    spacing: 12,
+    accentColor: 'red',
+});
+```
+
+{% gridExampleRunner title="Theming API Parameters Example" name="with-params" /%}
+
+Under the hood, theme parameters are implemented using CSS custom properties (variables), and `withParams()` sets _default_ values for these, so you can override them in your application stylesheets (see [Customising the grid with CSS](./theming-css/)). However using the API provides validation, typescript autocompletion, and an [extended syntax for defining CSS values](#extended-syntax-for-css-values).
+
+## Finding Theme Parameters
+
+There are many parameters available, and several ways of finding the right one to use:
+
+1. **[Theme Builder](/theme-builder/)** - In the "All Parameters" section of the Theme Builder you can search for parameters and view documentation.
+2. **TypeScript auto-complete** - When using an editor with TypeScript language support, you can see all available parameters with inline documentation.
+3. **Dev tools** - When inspecting an element in the grid, the styles panel shows the CSS custom properties that are being used. A custom property `var(--ag-column-border)` corresponds to the theme parameter `columnBorder`.
+
+## Extended Syntax for CSS Values
+
+Every parameter can accept a string, in which case it is treated as a CSS value.
+
+### Length Values
+
+Parameters that refer to on-screen measurements are length values. These will have suffixes like Width, Height, Padding, Spacing etc - in fact, any parameter that does not have one of the more specific suffixes documented below is a length. They can accept any [valid CSS length value](https://developer.mozilla.org/en-US/docs/Web/CSS/length), including pixels (`10px`) and variable expressions (`var(--myLengthVar)`). In addition, the following syntax is supported:
+
+| Syntax | Description |
+|-|-|
+| `4` | A number without units is assumed to be pixels |
+| `{ ref: 'spacing' }` | Use the same value as the `spacing` parameter |
+| `{ calc: '4 * spacing - 2px' }` | A CSS calc expression, mapping parameter names to the appropriate CSS custom property. This expression would map to the CSS string  `"calc(4 * var(--ag-spacing) - 2px)"`. Note that `-` is a valid character in CSS identifiers, so if you use it for subtraction then spaces are required around it. |
+
+### Color Values
+
+All parameters ending "Color" are color values. These can accept any [valid CSS color value](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value), including named colors (`red`), hex values (`#FF0000`) CSS functions (`rgb(255, 0, 0)`) and variable expressions (`var(--myColorVar)`). In addition, the following syntax is supported:
+
+| Syntax | Description |
+|-|-|
+| `{ ref: 'accentColor' }` | Use the same value as the `accentColor` parameter |
+| `{ ref: 'accentColor', mix: 0.25 }` | A mix of 25%, `accentColor` 75% transparent |
+| `{ ref: 'accentColor', mix: 0.25, onto: 'backgroundColor' }` | A mix of 25%, `accentColor` 75% `backgroundColor` |
+
+### Border Values
+
+All parameters ending "Border" are border values. These can accept any [valid CSS border value](https://developer.mozilla.org/en-US/docs/Web/CSS/border), such as `1px solid red` and variable expressions (`var(--myBorderVar)`). In addition, the following syntax is supported:
+
+| Syntax | Description |
+|-|-|
+| `{ width: 2, style: 'dashed', color: 'blue' }` | An object with 3 optional properties. `width` can take any [length value](#length-values) and defaults to 1. `style` takes a [CSS border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) string and defaults to "solid". `color` takes any [color value](#color-values) and defaults to `{ ref: 'borderColor' }` |
+| `true` | The default border: `{width: 1, style: 'solid' { ref: 'borderColor' }` |
+| `false` | A shorthand for `0` |
+
+### Border Style Values
+
+All parameters ending "BorderStyle" are border style values. These can accept any [valid CSS border-style value](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style), such as `dashed`, `solid` and variable expressions (`var(--myBorderStyleVar)`).
+
+### Font Family Values
+
+All parameters ending "FontFamily" are font family values. These can accept any [valid CSS font-family value](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family), such as `Arial, sans-serif` and variable expressions (`var(--myFontFamilyVar)`). In addition, the following syntax is supported:
+
+| Syntax | Description |
+|-|-|
+| `{ googleFont: 'IBM Plex Sans' }` | A Google font. To prevent potential licensing and privacy implications of accidentally loading Google fonts, you must set the `loadThemeGoogleFonts` grid option to true. A warning will be logged to the console if this option is unset. |
+| `['Arial', 'sans-serif']` | An array of fonts. Each item can be a string font name or a `{ googleFont: "..." }` object. The browser will attempt to use the first font and fall back to later fonts if the first one fails to load or is not available on the host system. |
+
+### Font Weight Values
+
+All parameters ending "FontWeight" are font weight values. These can accept any [valid CSS font-weight value](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight), such as `bold`, `700` and variable expressions (`var(--myFontWeightVar)`).
+
+### Scale Values
+
+All parameters ending "Scale" are scale values, which are multiplied by other values to create a final size. They accept a number with optional decimal point. `1` means "no change", `0.5` means "half size", `2` means "double size".
+
+### Shadow Values
+
+All parameters ending "Shadow" are shadow values. These can accept any [valid CSS box-shadow value](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow), such as `2px 2px 4px 2px rgba(0, 0, 0, 0.5)` and variable expressions (`var(--myShadowVar)`). In addition, the following syntax is supported:
+
+| Syntax | Description |
+|-|-|
+| `{ offsetX: 2, offsetY: 2, radius: 4, spread: 2, color: 'rgba(0, 0, 0, 0.5)' }` | An object with 5 optional properties. `offsetX`, `offsetY`, `radius` and `spread` take any [length value](#length-values) and default to 0. `color` takes any [color value](#color-values) and defaults to `{ ref: 'foregroundColor' }` |
+
+### Image Values
+
+All parameters ending "Image" are image values. These can accept any [valid CSS image value](https://developer.mozilla.org/en-US/docs/Web/CSS/image), such as `url('https://example.com/my-image.png')` and variable expressions (`var(--myImageVar)`). In addition, the following syntax is supported:
+
+| Syntax | Description |
+|-|-|
+| `{ url: 'https://example.com/my-image.png' }` | Load an image from a URL, or embed a PNG if converted to a data: URL |
+| `{ svg: '<svg> ... SVG string ... </svg>' }` | Use an SVG source code string |
+
+### Color Scheme Values
+
+All parameters ending "ColorScheme" (and there is only one: `browserColorScheme`) are color scheme values. These can accept any [valid CSS color-scheme value](https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme), including`dark`, `light`, `normal`, `inherit` and variable expressions (`var(--myColorScheme)`).
+
+### Duration Values
+
+All parameters ending "Duration" are duration values. These can accept any [valid CSS time value](https://developer.mozilla.org/en-US/docs/Web/CSS/time), such as `1s`, `500ms` and variable expressions (`var(--myAnimationDelayTime)`).
