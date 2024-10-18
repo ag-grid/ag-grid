@@ -11,6 +11,13 @@ export const REDIRECTS_FILE = 'documentation/ag-grid-docs/src/utils/htaccess/red
 
 export const IGNORE_PAGES = ['/ecommerce/', '/ag-grid-jobs-board'];
 
+const pageForAllFrameworks = (from: string, to: string): Redirect[] => [
+    { from: `/javascript-data-grid/${from}`, to: `/javascript-data-grid/${to}` },
+    { from: `/angular-data-grid/${from}`, to: `/javascript-data-grid/${to}` },
+    { from: `/react-data-grid/${from}`, to: `/javascript-data-grid/${to}` },
+    { from: `/vue-data-grid/${from}`, to: `/javascript-data-grid/${to}` },
+];
+
 export const SITE_301_REDIRECTS: Redirect[] = [
     // Redirect pipeline and changelog to new gatsby components (instead of old php ones)
     { from: '/ag-grid-changelog/', to: '/changelog/' },
@@ -2695,91 +2702,35 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-data-grid/whats-new', to: '/whats-new' },
     { from: '/javascript-data-grid/whats-new', to: '/whats-new' },
 
-    { from: '/javascript-data-grid/range-selection', to: '/javascript-data-grid/cell-selection' },
-    { from: '/angular-data-grid/range-selection', to: '/angular-data-grid/cell-selection' },
-    { from: '/react-data-grid/range-selection', to: '/react-data-grid/cell-selection' },
-    { from: '/vue-data-grid/range-selection', to: '/vue-data-grid/cell-selection' },
-
-    { from: '/javascript-data-grid/range-selection-handle', to: '/javascript-data-grid/cell-selection-handle' },
-    { from: '/angular-data-grid/range-selection-handle', to: '/angular-data-grid/cell-selection-handle' },
-    { from: '/react-data-grid/range-selection-handle', to: '/react-data-grid/cell-selection-handle' },
-    { from: '/vue-data-grid/range-selection-handle', to: '/vue-data-grid/cell-selection-handle' },
-
-    {
-        from: '/javascript-data-grid/range-selection-fill-handle',
-        to: '/javascript-data-grid/cell-selection-fill-handle',
-    },
-    { from: '/angular-data-grid/range-selection-fill-handle', to: '/angular-data-grid/cell-selection-fill-handle' },
-    { from: '/react-data-grid/range-selection-fill-handle', to: '/react-data-grid/cell-selection-fill-handle' },
-    { from: '/vue-data-grid/range-selection-fill-handle', to: '/vue-data-grid/cell-selection-fill-handle' },
-
-    { from: '/javascript-data-grid/selection-overview', to: '/javascript-data-grid/row-selection' },
-    { from: '/angular-data-grid/selection-overview', to: '/angular-data-grid/row-selection' },
-    { from: '/react-data-grid/selection-overview', to: '/react-data-grid/row-selection' },
-    { from: '/vue-data-grid/selection-overview', to: '/vue-data-grid/row-selection' },
-
-    { from: '/javascript-data-grid/applying-theme-builder-styling-grid', to: '/javascript-data-grid/theming-api' },
-    { from: '/angular-data-grid/applying-theme-builder-styling-grid', to: '/angular-data-grid/theming-api' },
-    { from: '/react-data-grid/applying-theme-builder-styling-grid', to: '/react-data-grid/theming-api' },
-    { from: '/vue-data-grid/applying-theme-builder-styling-grid', to: '/vue-data-grid/theming-api' },
-
-    { from: '/javascript-data-grid/group-expand-collapse-comp', to: '/javascript-data-grid/grouping' },
-    { from: '/angular-data-grid/group-expand-collapse-comp', to: '/angular-data-grid/grouping' },
-    { from: '/react-data-grid/group-expand-collapse-comp', to: '/react-data-grid/grouping' },
-    { from: '/vue-data-grid/group-expand-collapse-comp', to: '/vue-data-grid/grouping' },
-
-    { from: '/javascript-data-grid/group-cell-renderer', to: '/javascript-data-grid/grouping' },
-    { from: '/angular-data-grid/group-cell-renderer', to: '/angular-data-grid/grouping' },
-    { from: '/react-data-grid/group-cell-renderer', to: '/react-data-grid/grouping' },
-    { from: '/vue-data-grid/group-cell-renderer', to: '/vue-data-grid/grouping' },
-
-    { from: '/javascript-data-grid/group-custom-group-comp', to: '/javascript-data-grid/grouping' },
-    { from: '/angular-data-grid/group-custom-group-comp', to: '/angular-data-grid/grouping' },
-    { from: '/react-data-grid/group-custom-group-comp', to: '/react-data-grid/grouping' },
-    { from: '/vue-data-grid/group-custom-group-comp', to: '/vue-data-grid/grouping' },
-
-    { from: '/javascript-data-grid/grouping-filtering', to: '/javascript-data-grid/grouping' },
-    { from: '/angular-data-grid/grouping-filtering', to: '/angular-data-grid/grouping' },
-    { from: '/react-data-grid/grouping-filtering', to: '/react-data-grid/grouping' },
-    { from: '/vue-data-grid/grouping-filtering', to: '/vue-data-grid/grouping' },
-
-    { from: '/javascript-data-grid/grouping-column-filter', to: '/javascript-data-grid/grouping' },
-    { from: '/angular-data-grid/grouping-column-filter', to: '/angular-data-grid/grouping' },
-    { from: '/react-data-grid/grouping-column-filter', to: '/react-data-grid/grouping' },
-    { from: '/vue-data-grid/grouping-column-filter', to: '/vue-data-grid/grouping' },
-
-    { from: '/javascript-data-grid/grouping-custom-filtering', to: '/javascript-data-grid/grouping' },
-    { from: '/angular-data-grid/grouping-custom-filtering', to: '/angular-data-grid/grouping' },
-    { from: '/react-data-grid/grouping-custom-filtering', to: '/react-data-grid/grouping' },
-    { from: '/vue-data-grid/grouping-custom-filtering', to: '/vue-data-grid/grouping' },
-
-    { from: '/javascript-data-grid/grouping-locking-group-columns', to: '/javascript-data-grid/grouping' },
-    { from: '/angular-data-grid/grouping-locking-group-columns', to: '/angular-data-grid/grouping' },
-    { from: '/react-data-grid/grouping-locking-group-columns', to: '/react-data-grid/grouping' },
-    { from: '/vue-data-grid/grouping-locking-group-columns', to: '/vue-data-grid/grouping' },
-
-    { from: '/javascript-data-grid/grouping-group-order', to: '/javascript-data-grid/grouping' },
-    { from: '/angular-data-grid/grouping-group-order', to: '/angular-data-grid/grouping' },
-    { from: '/react-data-grid/grouping-group-order', to: '/react-data-grid/grouping' },
-    { from: '/vue-data-grid/grouping-group-order', to: '/vue-data-grid/grouping' },
-
-    { from: '/javascript-data-grid/grouping-complex-objects', to: '/javascript-data-grid/grouping' },
-    { from: '/angular-data-grid/grouping-complex-objects', to: '/angular-data-grid/grouping' },
-    { from: '/react-data-grid/grouping-complex-objects', to: '/react-data-grid/grouping' },
-    { from: '/vue-data-grid/grouping-complex-objects', to: '/vue-data-grid/grouping' },
-
-    { from: '/javascript-data-grid/grouping-unbalanced-groups', to: '/javascript-data-grid/grouping' },
-    { from: '/angular-data-grid/grouping-unbalanced-groups', to: '/angular-data-grid/grouping' },
-    { from: '/react-data-grid/grouping-unbalanced-groups', to: '/react-data-grid/grouping' },
-    { from: '/vue-data-grid/grouping-unbalanced-groups', to: '/vue-data-grid/grouping' },
-
-    { from: '/javascript-data-grid/total-rows', to: '/javascript-data-grid/aggregation-total-rows' },
-    { from: '/angular-data-grid/total-rows', to: '/javascript-data-grid/aggregation-total-rows' },
-    { from: '/react-data-grid/total-rows', to: '/javascript-data-grid/aggregation-total-rows' },
-    { from: '/vue-data-grid/total-rows', to: '/javascript-data-grid/aggregation-total-rows' },
-
-    { from: '/javascript-data-grid/aggregation-other', to: '/javascript-data-grid/aggregation' },
-    { from: '/angular-data-grid/aggregation-other', to: '/javascript-data-grid/aggregation' },
-    { from: '/react-data-grid/aggregation-other', to: '/javascript-data-grid/aggregation' },
-    { from: '/vue-data-grid/aggregation-other', to: '/javascript-data-grid/aggregation' },
+    ...pageForAllFrameworks('range-selection', 'cell-selection'),
+    ...pageForAllFrameworks('range-selection-handle', 'cell-selection-handle'),
+    ...pageForAllFrameworks('range-selection-fill-handle', 'cell-selection-fill-handle'),
+    ...pageForAllFrameworks('selection-overview', 'row-selection'),
+    ...pageForAllFrameworks('applying-theme-builder-styling-grid', 'theming'),
+    ...pageForAllFrameworks('group-expand-collapse-comp', 'grouping'),
+    ...pageForAllFrameworks('group-cell-renderer', 'grouping'),
+    ...pageForAllFrameworks('group-custom-group-comp', 'grouping'),
+    ...pageForAllFrameworks('grouping-filtering', 'grouping'),
+    ...pageForAllFrameworks('grouping-column-filter', 'grouping'),
+    ...pageForAllFrameworks('grouping-custom-filtering', 'grouping'),
+    ...pageForAllFrameworks('grouping-locking-group-columns', 'grouping'),
+    ...pageForAllFrameworks('grouping-group-order', 'grouping'),
+    ...pageForAllFrameworks('grouping-complex-objects', 'grouping'),
+    ...pageForAllFrameworks('grouping-unbalanced-groups', 'grouping'),
+    ...pageForAllFrameworks('total-rows', 'aggregation-total-rows'),
+    ...pageForAllFrameworks('aggregation-other', 'aggregation'),
+    ...pageForAllFrameworks('global-style', 'theming'),
+    ...pageForAllFrameworks('theming-api', 'theming'),
+    ...pageForAllFrameworks('global-style-customisation-variables', 'theming-parameters'),
+    ...pageForAllFrameworks('global-style-customisation-colours', 'theming-colors'),
+    ...pageForAllFrameworks('global-style-customisation-compactness', 'theming-compactness'),
+    ...pageForAllFrameworks('global-style-customisation-selections', 'theming-selections'),
+    ...pageForAllFrameworks('global-style-customisation-headers', 'theming-headers'),
+    ...pageForAllFrameworks('global-style-customisation-borders', 'theming-borders'),
+    ...pageForAllFrameworks('global-style-customisation-tool-panels', 'theming-tool-panels'),
+    ...pageForAllFrameworks('global-style-customisation-widgets', 'theming-widgets'),
+    ...pageForAllFrameworks('global-style-customisation-popups', 'theming-popups'),
+    ...pageForAllFrameworks('global-style-customisation-css', 'theming-css'),
+    ...pageForAllFrameworks('global-style-customisation-sass', 'theming-v32-customisation-sass'),
+    ...pageForAllFrameworks('global-style-customisation-sass-legacy', 'theming-v32-customisation-sass-legacy'),
 ];

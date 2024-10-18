@@ -1,13 +1,9 @@
-'use strict';
-
 import React, { StrictMode, useCallback, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, GetMainMenuItemsParams, GridReadyEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { ClipboardModule } from 'ag-grid-enterprise';
 import { ExcelExportModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
@@ -73,13 +69,7 @@ const GridExample = () => {
 
     return (
         <div style={containerStyle}>
-            <div
-                style={gridStyle}
-                className={
-                    /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-                    'ag-theme-quartz' /** DARK MODE END **/
-                }
-            >
+            <div style={gridStyle}>
                 <AgGridReact<IOlympicData>
                     rowData={rowData}
                     columnDefs={columnDefs}

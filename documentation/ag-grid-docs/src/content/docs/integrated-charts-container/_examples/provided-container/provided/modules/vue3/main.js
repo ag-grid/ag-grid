@@ -2,8 +2,6 @@ import { createApp, onBeforeMount, ref, shallowRef } from 'vue';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { GridChartsModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
 import { RowGroupingModule } from 'ag-grid-enterprise';
@@ -19,7 +17,6 @@ const VueExample = {
     <div id="container">
         <ag-grid-vue
             style="width: 100%; height: 300px"
-            :class="themeClass"
             :columnDefs="columnDefs"
             :rowData="rowData"
             :defaultColDef="defaultColDef"
@@ -30,7 +27,7 @@ const VueExample = {
             @grid-ready="onGridReady"
         ></ag-grid-vue>
         <div id="chartParent" class="chart-wrapper">
-            <div :class="'chart-placeholder ' + themeClass">Chart will be displayed here.</div>
+            <div class="chart-placeholder">Chart will be displayed here.</div>
         </div>
     </div>
 </div>
@@ -40,9 +37,6 @@ const VueExample = {
         'ag-grid-vue': AgGridVue,
     },
     setup(props) {
-        const themeClass =
-            /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
-            'ag-theme-quartz'; /** DARK MODE END **/
         const columnDefs = ref([
             { field: 'athlete', width: 150, chartDataType: 'category' },
             { field: 'gold', chartDataType: 'series' },
@@ -61,12 +55,11 @@ const VueExample = {
 
         const updateChart = (chartRef) => {
             const eParent = document.querySelector('#chartParent');
-            eParent.classList.add(themeClass);
             eParent.innerHTML = ''; // Clear existing content
-            const placeHolder = `<div class="chart-placeholder ${themeClass}">Chart will be displayed here.</div>`;
+            const placeHolder = `<div class="chart-placeholder">Chart will be displayed here.</div>`;
             if (chartRef) {
                 const chartWrapperHTML = `
-            <div class="chart-wrapper ${themeClass}">
+            <div class="chart-wrapper">
               <div class="chart-wrapper-top">
                 <h2 class="chart-wrapper-title">Chart created ${new Date().toLocaleString()}</h2>
                 <button class="chart-wrapper-close">Destroy Chart</button>
@@ -110,7 +103,6 @@ const VueExample = {
             rowData,
             createChartContainer,
             onGridReady,
-            themeClass,
         };
     },
 };

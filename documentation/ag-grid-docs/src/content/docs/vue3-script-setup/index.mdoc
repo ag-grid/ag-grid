@@ -16,15 +16,12 @@ with `defineExpose`, as follows:
 <template>
  <ag-grid-vue
      :columnDefs="columnDefs"
-     :rowData="rowData"
-     class="ag-theme-quartz">
+     :rowData="rowData">
  </ag-grid-vue>
 </template>
 
 <script setup>
 import {ref} from 'vue';
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
 import {AgGridVue} from "ag-grid-vue3";
 
 import CellComponentRenderer from "./CellComponentRenderer.vue"

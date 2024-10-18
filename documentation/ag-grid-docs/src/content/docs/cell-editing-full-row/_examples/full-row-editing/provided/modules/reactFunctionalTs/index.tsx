@@ -1,13 +1,9 @@
-'use strict';
-
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { CellValueChangedEvent, ColDef, RowValueChangedEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
@@ -114,13 +110,7 @@ const GridExample = () => {
                         Stop Editing
                     </button>
                 </div>
-                <div
-                    style={gridStyle}
-                    className={
-                        /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
-                        'ag-theme-quartz' /** DARK MODE END **/
-                    }
-                >
+                <div style={gridStyle}>
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}

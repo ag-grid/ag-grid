@@ -13,8 +13,6 @@ import type {
     RowSelectionOptions,
 } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { FiltersToolPanelModule, RowGroupingModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import './styles.css';
@@ -63,7 +61,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, Set
             [autoGroupColumnDef]="autoGroupColumnDef"
             [rowSelection]="rowSelection"
             [rowData]="rowData"
-            [class]="themeClass"
             (gridReady)="onGridReady($event)"
         />
     </div>`,
@@ -158,9 +155,6 @@ export class AppComponent {
         groupSelects: 'descendants',
     };
     public rowData!: any[];
-    public themeClass: string =
-        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-        'ag-theme-quartz'; /** DARK MODE END **/
 
     constructor(private http: HttpClient) {}
 

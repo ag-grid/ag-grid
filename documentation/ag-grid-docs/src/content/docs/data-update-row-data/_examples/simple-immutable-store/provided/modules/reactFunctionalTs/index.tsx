@@ -1,13 +1,9 @@
-'use strict';
-
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, GetRowIdParams, GridApi, GridReadyEvent, RowSelectionOptions } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { RangeSelectionModule } from 'ag-grid-enterprise';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 import { StatusBarModule } from 'ag-grid-enterprise';
@@ -220,13 +216,7 @@ const GridExample = () => {
                     </div>
                 </div>
                 <div style={{ flex: '1 1 0px' }}>
-                    <div
-                        style={gridStyle}
-                        className={
-                            /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-                            'ag-theme-quartz' /** DARK MODE END **/
-                        }
-                    >
+                    <div style={gridStyle}>
                         <AgGridReact
                             ref={gridRef}
                             rowData={rowData}

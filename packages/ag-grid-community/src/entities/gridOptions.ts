@@ -1636,9 +1636,14 @@ export interface GridOptions<TData = any> {
     reactiveCustomComponents?: boolean;
 
     /**
-     * Theme to apply to the grid.
+     * Theme to apply to the grid. In no value is provided, the default theme
+     * will be applied.
+     *
+     * In AG Grid v23 and earlier, themes were applied by setting a class name
+     * on the parent element of the grid. To opt back in to this behaviour, pass
+     * the string "legacy"
      */
-    theme?: GridTheme;
+    theme?: GridTheme | 'legacy';
 
     /**
      * Whether to load supported theme fonts from the Google Fonts server.

@@ -181,12 +181,6 @@
       "SideBarDef"
     ]
   },
-  "theme": {
-    "typeName": "GridTheme",
-    "typesToInclude": [
-      "GridTheme"
-    ]
-  },
   "chartThemeOverrides": {
     "typeName": "AgChartThemeOverrides",
     "typesToInclude": [
@@ -1368,6 +1362,12 @@
   "suppressStickyTotalRow": {
     "typeName": "boolean | 'grand' | 'group'",
     "typesToInclude": []
+  },
+  "theme": {
+    "typeName": "GridTheme | 'legacy'",
+    "typesToInclude": [
+      "GridTheme"
+    ]
   },
   "loadThemeGoogleFonts": {
     "typeName": "boolean",

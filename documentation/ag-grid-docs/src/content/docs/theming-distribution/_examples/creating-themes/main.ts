@@ -1,5 +1,3 @@
-'use strict';
-
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import type { ColDef, GridOptions } from 'ag-grid-community';

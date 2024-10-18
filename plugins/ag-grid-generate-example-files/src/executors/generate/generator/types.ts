@@ -26,9 +26,9 @@ export interface BindingImport {
 }
 
 export interface InlineGridStyles {
-    theme: string;
     width: string;
     height: string;
+    className?: string;
 }
 export interface EventHandler {
     name: string;

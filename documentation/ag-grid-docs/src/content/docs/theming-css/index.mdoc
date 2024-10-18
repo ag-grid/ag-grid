@@ -4,11 +4,13 @@ title: "Theming API: Customising the grid with CSS"
 
 Customising the grid with CSS
 
-The [Theming API](./theming-api/) works by generating CSS that is inserted into your document. This is a starting point, and you can use your own CSS to create advanced customisations.
+A running grid instance contains thousands of DOM elements, and each of them has class names like `ag-header` and `ag-row` that can be used in CSS rules that change the style of that element.
+
+The [Theming API](./theming/) works by generating CSS that is inserted into your document. These styles are just a starting point, and you can use your own CSS to create advanced customisations.
 
 ## Overriding Theme Parameters with Custom Properties
 
-Themes created by the theming API support over a hundred [Theme Parameters](./theming-api/#finding-theme-parameters). The values provided through the theming API are default values, and can be overridden using CSS, meaning that many grids can share the same theme and CSS can be used to create differences between the grids.
+Themes created by the theming API support over a hundred [Theme Parameters](./theming-parameters/#finding-theme-parameters). The values provided through the theming API are default values, and can be overridden using CSS, meaning that many grids can share the same theme and CSS can be used to create differences between the grids.
 
 The names of the CSS custom properties are prefixed with `--ag-` to avoid conflicts with other custom properties in your application, and use kebab-case:
 
@@ -21,7 +23,7 @@ body {
 }
 ```
 
-TODO example here
+TODO example here (due in AG-13129)
 
 Values for CSS custom properties are inherited by child elements. The above example sets the variable on the `body` element, so will affect every grid on the page. You can use different selectors to target individual grids or groups of grids.
 
@@ -46,7 +48,7 @@ Some design effects can't be achieved through CSS variables alone. For example, 
 }
 ```
 
-TODO example here
+TODO example here (due in AG-13129)
 
 The best way to find the right class name to use in a CSS rule is using the browser's developer tools. You will notice that components often have multiple class names, some more general than others. For example, the [row grouping panel](./tool-panel-columns/#example) is a component onto which you can drag columns to group them. The internal name for this is the "column drop" component, and there are two kinds - a horizontal one at the top of the header and a vertical one in the columns tool panel. You can use the class name `ag-column-drop` to target either kind, or `ag-column-drop-vertical` / `ag-column-drop-horizontal` to target one only.
 

@@ -5,8 +5,6 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, GridApi, GridOptions, GridPreDestroyedEvent, GridReadyEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import type { TAthlete } from './data';
 import { getData } from './data';
@@ -50,7 +48,6 @@ interface ColumnWidth {
             @if (isVisible) {
                 <ag-grid-angular
                     style="width: 100%; height: 100%;"
-                    [class]="themeClass"
                     [columnDefs]="columnDefs"
                     [defaultColDef]="defaultColDef"
                     [rowData]="rowData"
@@ -62,9 +59,6 @@ interface ColumnWidth {
     `,
 })
 export class AppComponent {
-    public themeClass =
-        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-        'ag-theme-quartz' /** DARK MODE END **/;
     public isVisible = true;
     public showPreDestroyState = false;
     private gridApi: GridApi | undefined;

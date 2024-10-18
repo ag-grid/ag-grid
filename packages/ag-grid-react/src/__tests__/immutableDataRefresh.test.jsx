@@ -166,7 +166,7 @@ class GridComponent extends Component {
 
     render() {
         return (
-            <div className="ag-theme-balham">
+            <div>
                 <button onClick={this.addNew}>Add New Row</button>
                 <button onClick={this.modifyRow}>Modify Row</button>
                 <AgGridReact

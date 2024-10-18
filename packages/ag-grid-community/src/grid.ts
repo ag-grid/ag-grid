@@ -7,7 +7,6 @@ import { gridBeanDestroyComparator, gridBeanInitComparator } from './context/gri
 import type { GridOptions } from './entities/gridOptions';
 import { GridComp } from './gridComp/gridComp';
 import { CommunityCoreModule } from './gridCoreModule';
-import { getCoercedGridOptions } from './gridOptionsService';
 import type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 import type { Module, ModuleName, _ModuleWithApi, _ModuleWithoutApi } from './interfaces/iModule';
 import type { RowModelType } from './interfaces/iRowModel';
@@ -31,6 +30,8 @@ export interface GridParams {
     frameworkOverrides?: IFrameworkOverrides;
     // INTERNAL - bean instances to add to the context
     providedBeanInstances?: { [key: string]: any };
+    // INTERNAL - set by frameworks if the provided grid div is safe to set a theme class on
+    setThemeOnGridDiv?: boolean;
 
     /**
      * Modules to be registered directly with this grid instance.
@@ -49,9 +50,14 @@ class GlobalGridOptions {
     static gridOptions: GridOptions | undefined = undefined;
     static mergeStrategy: GlobalGridOptionsMergeStrategy = 'shallow';
 
+    /**
+     * @param providedOptions
+     * @returns Shallow copy of the provided options with global options merged in.
+     */
     static applyGlobalGridOptions(providedOptions: GridOptions): GridOptions {
         if (!GlobalGridOptions.gridOptions) {
-            return providedOptions;
+            // No global options provided, return a shallow copy of the provided options
+            return { ...providedOptions };
         }
 
         let mergedGridOps: GridOptions = {};
@@ -123,6 +129,17 @@ export function createGrid<TData>(
         _error(11);
         return {} as GridApi;
     }
+    const gridParams: GridParams | undefined = params;
+    if (!gridParams?.setThemeOnGridDiv) {
+        // frameworks already create an element owned by our code, so we can set
+        // the theme class on it. JS users calling createGrid directly are
+        // passing an element owned by their application, so we can't set a
+        // class name on it and must create a wrapper.
+        const newGridDiv = document.createElement('div');
+        newGridDiv.style.height = '100%';
+        eGridDiv.appendChild(newGridDiv);
+        eGridDiv = newGridDiv;
+    }
     const api = new GridCoreCreator().create(
         eGridDiv,
         gridOptions,
@@ -149,9 +166,8 @@ export class GridCoreCreator {
         acceptChanges?: (context: Context) => void,
         params?: GridParams
     ): GridApi {
-        const mergedGridOps = GlobalGridOptions.applyGlobalGridOptions(providedOptions);
-
-        const gridOptions = getCoercedGridOptions(mergedGridOps);
+        // Returns a shallow copy of the provided options, with global options merged in
+        const gridOptions = GlobalGridOptions.applyGlobalGridOptions(providedOptions);
 
         const gridId = gridOptions.gridId ?? String(nextGridId++);
 

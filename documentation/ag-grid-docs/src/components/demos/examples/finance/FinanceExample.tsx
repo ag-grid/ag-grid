@@ -189,6 +189,7 @@ export const FinanceExample: React.FC<Props> = ({
             className={`${themeClass} ${styles.grid} ${gridHeight ? '' : styles.gridHeight}`}
         >
             <AgGridReact
+                theme="legacy"
                 ref={gridRef}
                 getRowId={getRowId}
                 rowData={rowData}
@@ -200,6 +201,7 @@ export const FinanceExample: React.FC<Props> = ({
                 suppressAggFuncInHeader
                 groupDefaultExpanded={-1}
                 statusBar={statusBar}
+                popupParent={typeof document === 'object' ? document.body : undefined}
             />
         </div>
     );
