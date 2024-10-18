@@ -45,7 +45,7 @@ describe('ag-grid tree selection', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['name'],
-            checkDom: 'myGrid',
+            checkDom: true,
             checkSelectedNodes: true,
         };
 

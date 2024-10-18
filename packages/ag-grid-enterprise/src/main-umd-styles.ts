@@ -42,6 +42,7 @@ import {
     SideBarModule,
     SparklinesModule,
     StatusBarModule,
+    TreeDataModule,
     ViewportRowModelModule,
 } from './main';
 
@@ -67,6 +68,7 @@ ModuleRegistry.registerModules([
     SideBarModule,
     SparklinesModule,
     StatusBarModule,
+    TreeDataModule,
     ViewportRowModelModule,
 ]);
 

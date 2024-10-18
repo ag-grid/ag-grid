@@ -6,7 +6,7 @@ import { GridRows, TestGridsManager, executeTransactionsAsync } from '../../test
 import type { GridRowsOptions } from '../../test-utils';
 
 const gridRowsOptions: GridRowsOptions = {
-    checkDom: 'myGrid',
+    checkDom: true,
 };
 
 describe('ag-grid tree transactions', () => {

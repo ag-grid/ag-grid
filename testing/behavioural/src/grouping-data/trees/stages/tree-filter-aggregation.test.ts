@@ -52,7 +52,7 @@ describe('ag-grid tree aggregation and filter', () => {
 
         const gridRowsOptions: GridRowsOptions = {
             columns: ['x', 'y'],
-            checkDom: 'myGrid',
+            checkDom: true,
         };
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`
