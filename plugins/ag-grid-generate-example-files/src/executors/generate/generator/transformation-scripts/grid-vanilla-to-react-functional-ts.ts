@@ -319,6 +319,7 @@ export function vanillaToReactFunctionalTs(
                 : '';
 
         let generatedOutput = `
+'use client';
 'use strict';
 
 ${imports.join('\n')}
