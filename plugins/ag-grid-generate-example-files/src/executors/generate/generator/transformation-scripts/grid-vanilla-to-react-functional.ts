@@ -75,8 +75,11 @@ function getImports(
 }
 
 function getTemplate(bindings: ParsedBindings, componentAttributes: string[], exampleConfig: ExampleConfig): string {
+    const className = bindings.inlineGridStyles.className;
+    const classAttr = className ? ` className="${className}"` : '';
+
     const agGridTag = `
-        <div ${exampleConfig.myGridReference ? 'id="myGrid"' : ''} style={gridStyle}>
+        <div ${exampleConfig.myGridReference ? 'id="myGrid"' : ''} style={gridStyle}${classAttr}>
             <AgGridReact
                 ref={gridRef}
                 ${componentAttributes.join('\n')}

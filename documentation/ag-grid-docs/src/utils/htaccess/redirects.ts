@@ -2792,4 +2792,103 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-data-grid/theming-api', to: '/javascript-data-grid/theming' },
     { from: '/react-data-grid/theming-api', to: '/javascript-data-grid/theming' },
     { from: '/vue-data-grid/theming-api', to: '/javascript-data-grid/theming' },
+
+    {
+        from: '/javascript-data-grid/global-style-customisation-variables',
+        to: '/javascript-data-grid/theming-parameters',
+    },
+    { from: '/angular-data-grid/global-style-customisation-variables', to: '/javascript-data-grid/theming-parameters' },
+    { from: '/react-data-grid/global-style-customisation-variables', to: '/javascript-data-grid/theming-parameters' },
+    { from: '/vue-data-grid/global-style-customisation-variables', to: '/javascript-data-grid/theming-parameters' },
+
+    { from: '/javascript-data-grid/global-style-customisation-colours', to: '/javascript-data-grid/theming-colors' },
+    { from: '/angular-data-grid/global-style-customisation-colours', to: '/javascript-data-grid/theming-colors' },
+    { from: '/react-data-grid/global-style-customisation-colours', to: '/javascript-data-grid/theming-colors' },
+    { from: '/vue-data-grid/global-style-customisation-colours', to: '/javascript-data-grid/theming-colors' },
+
+    {
+        from: '/javascript-data-grid/global-style-customisation-compactness',
+        to: '/javascript-data-grid/theming-compactness',
+    },
+    {
+        from: '/angular-data-grid/global-style-customisation-compactness',
+        to: '/javascript-data-grid/theming-compactness',
+    },
+    {
+        from: '/react-data-grid/global-style-customisation-compactness',
+        to: '/javascript-data-grid/theming-compactness',
+    },
+    { from: '/vue-data-grid/global-style-customisation-compactness', to: '/javascript-data-grid/theming-compactness' },
+
+    {
+        from: '/javascript-data-grid/global-style-customisation-selections',
+        to: '/javascript-data-grid/theming-selections',
+    },
+    {
+        from: '/angular-data-grid/global-style-customisation-selections',
+        to: '/javascript-data-grid/theming-selections',
+    },
+    { from: '/react-data-grid/global-style-customisation-selections', to: '/javascript-data-grid/theming-selections' },
+    { from: '/vue-data-grid/global-style-customisation-selections', to: '/javascript-data-grid/theming-selections' },
+
+    { from: '/javascript-data-grid/global-style-customisation-headers', to: '/javascript-data-grid/theming-headers' },
+    { from: '/angular-data-grid/global-style-customisation-headers', to: '/javascript-data-grid/theming-headers' },
+    { from: '/react-data-grid/global-style-customisation-headers', to: '/javascript-data-grid/theming-headers' },
+    { from: '/vue-data-grid/global-style-customisation-headers', to: '/javascript-data-grid/theming-headers' },
+
+    { from: '/javascript-data-grid/global-style-customisation-borders', to: '/javascript-data-grid/theming-borders' },
+    { from: '/angular-data-grid/global-style-customisation-borders', to: '/javascript-data-grid/theming-borders' },
+    { from: '/react-data-grid/global-style-customisation-borders', to: '/javascript-data-grid/theming-borders' },
+    { from: '/vue-data-grid/global-style-customisation-borders', to: '/javascript-data-grid/theming-borders' },
+
+    {
+        from: '/javascript-data-grid/global-style-customisation-tool-panels',
+        to: '/javascript-data-grid/theming-tool-panels',
+    },
+    {
+        from: '/angular-data-grid/global-style-customisation-tool-panels',
+        to: '/javascript-data-grid/theming-tool-panels',
+    },
+    {
+        from: '/react-data-grid/global-style-customisation-tool-panels',
+        to: '/javascript-data-grid/theming-tool-panels',
+    },
+    { from: '/vue-data-grid/global-style-customisation-tool-panels', to: '/javascript-data-grid/theming-tool-panels' },
+
+    { from: '/javascript-data-grid/global-style-customisation-widgets', to: '/javascript-data-grid/theming-widgets' },
+    { from: '/angular-data-grid/global-style-customisation-widgets', to: '/javascript-data-grid/theming-widgets' },
+    { from: '/react-data-grid/global-style-customisation-widgets', to: '/javascript-data-grid/theming-widgets' },
+    { from: '/vue-data-grid/global-style-customisation-widgets', to: '/javascript-data-grid/theming-widgets' },
+
+    { from: '/javascript-data-grid/global-style-customisation-popups', to: '/javascript-data-grid/theming-popups' },
+    { from: '/angular-data-grid/global-style-customisation-popups', to: '/javascript-data-grid/theming-popups' },
+    { from: '/react-data-grid/global-style-customisation-popups', to: '/javascript-data-grid/theming-popups' },
+    { from: '/vue-data-grid/global-style-customisation-popups', to: '/javascript-data-grid/theming-popups' },
+
+    { from: '/javascript-data-grid/global-style-customisation-css', to: '/javascript-data-grid/theming-css' },
+    { from: '/angular-data-grid/global-style-customisation-css', to: '/javascript-data-grid/theming-css' },
+    { from: '/react-data-grid/global-style-customisation-css', to: '/javascript-data-grid/theming-css' },
+    { from: '/vue-data-grid/global-style-customisation-css', to: '/javascript-data-grid/theming-css' },
+
+    { from: '/javascript-data-grid/global-style-customisation-sass', to: '/javascript-data-grid/theming-v32-sass' },
+    { from: '/angular-data-grid/global-style-customisation-sass', to: '/javascript-data-grid/theming-v32-sass' },
+    { from: '/react-data-grid/global-style-customisation-sass', to: '/javascript-data-grid/theming-v32-sass' },
+    { from: '/vue-data-grid/global-style-customisation-sass', to: '/javascript-data-grid/theming-v32-sass' },
+
+    {
+        from: '/javascript-data-grid/global-style-customisation-sass-legacy',
+        to: '/javascript-data-grid/theming-v32-sass-legacy',
+    },
+    {
+        from: '/angular-data-grid/global-style-customisation-sass-legacy',
+        to: '/javascript-data-grid/theming-v32-sass-legacy',
+    },
+    {
+        from: '/react-data-grid/global-style-customisation-sass-legacy',
+        to: '/javascript-data-grid/theming-v32-sass-legacy',
+    },
+    {
+        from: '/vue-data-grid/global-style-customisation-sass-legacy',
+        to: '/javascript-data-grid/theming-v32-sass-legacy',
+    },
 ];

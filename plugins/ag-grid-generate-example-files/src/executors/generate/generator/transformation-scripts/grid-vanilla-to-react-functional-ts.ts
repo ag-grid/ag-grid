@@ -90,8 +90,11 @@ function getTemplate(
     rowDataGeneric: string,
     exampleConfig: ExampleConfig
 ): string {
+    const className = bindings.inlineGridStyles.className;
+    const classAttr = className ? ` className="${className}"` : '';
+
     const agGridTag = `
-        <div ${exampleConfig.myGridReference ? 'id="myGrid"' : ''} style={gridStyle}>
+        <div ${exampleConfig.myGridReference ? 'id="myGrid"' : ''} style={gridStyle}${classAttr}>
             <AgGridReact${rowDataGeneric}
                 ref={gridRef}
                 ${componentAttributes.join('\n')}
