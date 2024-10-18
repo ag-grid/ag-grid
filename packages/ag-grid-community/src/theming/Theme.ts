@@ -132,7 +132,8 @@ class ThemeImpl<TParams = unknown> implements Theme {
             if (loadThemeGoogleFonts) {
                 loadGoogleFont(googleFont);
             } else if (loadThemeGoogleFonts == null) {
-                _warn(112, { googleFont, googleFontsDomain });
+                // Temporarily disable warning until AG-13135 fixes false positive
+                // _warn(112, { googleFont, googleFontsDomain });
             }
         }
 
