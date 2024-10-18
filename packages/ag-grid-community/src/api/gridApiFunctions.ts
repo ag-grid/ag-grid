@@ -24,7 +24,7 @@ const mod = <TGridApi extends Partial<GridApi>>(
     moduleName: ModuleName,
     input: Record<keyof TGridApi, 0>
 ): Record<keyof TGridApi, ModuleName> => {
-    for (const key in input) {
+    for (const key of Object.keys(input)) {
         (input as any)[key] = moduleName;
     }
     return input as any;
