@@ -90,7 +90,7 @@ const publishedConfiguration: Configuration = {
         'ag-charts-community': `${NPM_CDN}/ag-charts-community@${agChartsCommunity.version}/`,
         '@ag-grid-community/client-side-row-model': `https://cdn.jsdelivr.net/npm/@ag-grid-community/client-side-row-model@${agGridVersion}/dist/package/main.cjs.js`,
         '@ag-grid-community/core': `https://cdn.jsdelivr.net/npm/@ag-grid-community/core@${agGridVersion}/dist/package/main.cjs.js`,
-        '@ag-grid-community/csv-export': `https://cdn.jsdelivr.net/npm/@ag-grid-community/csv-export@${agGridVersion}/dist/csv-export.cjs.min.js`,
+        '@ag-grid-community/csv-export': `https://cdn.jsdelivr.net/npm/@ag-grid-community/csv-export@${agGridVersion}/dist/package/main.cjs.min.js`,
         '@ag-grid-community/infinite-row-model': `https://cdn.jsdelivr.net/npm/@ag-grid-community/infinite-row-model@${agGridVersion}/dist/package/main.cjs.js`,
         '@ag-grid-community/locale': `https://cdn.jsdelivr.net/npm/@ag-grid-community/locale@${agGridVersion}/dist/package/main.cjs.js`,
         '@ag-grid-community/theming': `https://cdn.jsdelivr.net/npm/@ag-grid-community/theming@${agGridVersion}/dist/package/main.cjs.js`,
