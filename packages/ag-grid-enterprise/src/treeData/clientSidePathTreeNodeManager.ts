@@ -11,14 +11,15 @@ export class ClientSidePathTreeNodeManager<TData>
     beanName = 'clientSidePathTreeNodeManager' as const;
 
     protected override loadNewRowData(rowData: TData[]): void {
-        const rootNode = this.rootNode;
+        const rootNode = this.rootNode!;
+        const treeRoot = this.treeRoot!;
 
-        this.treeClear(this.treeRoot);
-        this.treeRoot.setRow(rootNode);
+        this.treeClear(treeRoot);
+        treeRoot.setRow(rootNode);
 
         super.loadNewRowData(rowData);
 
-        this.addOrUpdateRows(rootNode.allLeafChildren!, false);
+        this.addOrUpdateRows(rootNode.allLeafChildren, false);
 
         this.treeCommit();
     }
@@ -28,7 +29,7 @@ export class ClientSidePathTreeNodeManager<TData>
         changedPath: ChangedPath | undefined,
         rowNodesOrderChanged: boolean
     ): void {
-        this.treeRoot.setRow(this.rootNode);
+        this.treeRoot?.setRow(this.rootNode);
 
         for (const { remove, update, add } of transactions) {
             // the order of [add, remove, update] is the same as in ClientSideNodeManager.
@@ -39,7 +40,7 @@ export class ClientSidePathTreeNodeManager<TData>
         }
 
         if (rowNodesOrderChanged) {
-            const rows = this.treeRoot.row?.allLeafChildren;
+            const rows = this.treeRoot?.row?.allLeafChildren;
             if (rows) {
                 for (let rowIdx = 0, rowsLen = rows.length; rowIdx < rowsLen; ++rowIdx) {
                     const node = rows[rowIdx].treeNode as TreeNode | null;
@@ -66,6 +67,10 @@ export class ClientSidePathTreeNodeManager<TData>
 
     /** Transactional add/update */
     private addOrUpdateRows(rows: RowNode[] | null, update: boolean): void {
+        const treeRoot = this.treeRoot;
+        if (!treeRoot) {
+            return;
+        }
         const getDataPath = this.gos.get('getDataPath');
         for (let i = 0, len = rows?.length ?? 0; i < len; ++i) {
             const row = rows![i];
@@ -76,7 +81,7 @@ export class ClientSidePathTreeNodeManager<TData>
             } else {
                 // Gets the last node of a path. Inserts filler nodes where needed.
                 let level = 0;
-                let node = this.treeRoot;
+                let node = treeRoot;
                 do {
                     node = node.upsertKey(path[level++]);
                 } while (level < pathLength);

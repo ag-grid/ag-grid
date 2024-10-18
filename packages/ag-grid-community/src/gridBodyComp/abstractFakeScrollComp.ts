@@ -10,7 +10,7 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
     protected readonly eContainer: HTMLElement = RefPlaceholder;
 
     protected invisibleScrollbar: boolean;
-    protected hideTimeout: number | null = null;
+    protected hideTimeout: number = 0;
 
     protected abstract setScrollVisible(): void;
     public abstract getScrollPosition(): number;
@@ -30,6 +30,12 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
         });
         this.onScrollVisibilityChanged();
         this.addOrRemoveCssClass('ag-apple-scrollbar', _isMacOsUserAgent() || _isIOSUserAgent());
+    }
+
+    public override destroy(): void {
+        super.destroy();
+
+        window.clearTimeout(this.hideTimeout);
     }
 
     protected initialiseInvisibleScrollbar(): void {
@@ -73,9 +79,9 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
         this.addManagedEventListeners({
             bodyScroll: (params) => {
                 if (params.direction === this.direction) {
-                    if (this.hideTimeout !== null) {
+                    if (this.hideTimeout) {
                         window.clearTimeout(this.hideTimeout);
-                        this.hideTimeout = null;
+                        this.hideTimeout = 0;
                     }
                     this.addOrRemoveCssClass('ag-scrollbar-scrolling', true);
                 }
@@ -83,7 +89,7 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
             bodyScrollEnd: () => {
                 this.hideTimeout = window.setTimeout(() => {
                     this.addOrRemoveCssClass('ag-scrollbar-scrolling', false);
-                    this.hideTimeout = null;
+                    this.hideTimeout = 0;
                 }, 400);
             },
         });

@@ -22,6 +22,7 @@ export class RowNodeBlockLoader extends BeanStub<RowNodeBlockLoaderEvent> implem
 
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
             this.checkBlockToLoadDebounce = _debounce(
+                this,
                 this.performCheckBlocksToLoad.bind(this),
                 blockLoadDebounceMillis
             );
