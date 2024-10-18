@@ -5,7 +5,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
 import type { GridRowsOptions } from '../test-utils';
-import { GridRows, TestGridsManager } from '../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout } from '../test-utils';
 
 describe('ag-grid hierarchical tree data', () => {
     const gridsManager = new TestGridsManager({
@@ -14,6 +14,14 @@ describe('ag-grid hierarchical tree data', () => {
 
     let consoleWarnSpy: MockInstance;
 
+    function hasLoadingOverlay() {
+        return !!document.querySelector('.ag-overlay-loading-center');
+    }
+
+    function hasNoRowsOverlay() {
+        return !!document.querySelector('.ag-overlay-no-rows-center');
+    }
+
     beforeEach(() => {
         gridsManager.reset();
     });
@@ -21,6 +29,44 @@ describe('ag-grid hierarchical tree data', () => {
     afterEach(() => {
         gridsManager.reset();
         consoleWarnSpy?.mockRestore();
+    });
+
+    test('ag-grid hierarchical tree data loading and no-show overlay', async () => {
+        const rowData = [{ x: 1 }];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'x' }],
+            autoGroupColumnDef: {
+                headerName: 'Organisation Hierarchy',
+                cellRendererParams: { suppressCount: true },
+            },
+            treeData: true,
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            treeDataChildrenField: 'children',
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        expect(hasLoadingOverlay()).toBe(true);
+        expect(hasNoRowsOverlay()).toBe(false);
+
+        api.setGridOption('rowData', []);
+
+        expect(hasLoadingOverlay()).toBe(false);
+        expect(hasNoRowsOverlay()).toBe(true);
+
+        api.setGridOption('rowData', rowData);
+
+        expect(hasLoadingOverlay()).toBe(false);
+        expect(hasNoRowsOverlay()).toBe(false);
+
+        api.setGridOption('rowData', []);
+
+        await asyncSetTimeout(10);
+
+        expect(hasLoadingOverlay()).toBe(false);
+        expect(hasNoRowsOverlay()).toBe(true);
     });
 
     test('ag-grid hierarchical tree data (without id)', async () => {
