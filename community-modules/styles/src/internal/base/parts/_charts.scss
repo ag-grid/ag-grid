@@ -418,4 +418,12 @@
         --ag-charts-align: none !important;
         --ag-charts-justify: none !important;
     }
+
+    // AG-13202 - Workaround for Charts use of :focus-visible conflicting with Grids styling of :focus.
+    .ag-charts-wrapper .ag-charts-proxy-legend-toolbar button:focus {
+        box-shadow: none;
+    }
+    .ag-charts-wrapper .ag-charts-proxy-legend-toolbar button:focus-visible {
+        box-shadow: var(--ag-input-focus-box-shadow);
+    }
 }
