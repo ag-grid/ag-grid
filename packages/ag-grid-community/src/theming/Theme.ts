@@ -225,7 +225,8 @@ const makeVariablesChunk = (themeArg: Theme): ThemeCssChunk => {
     const modes = ['default', ...params.getModes().filter((mode) => mode !== 'default')];
     for (const mode of modes) {
         if (mode !== 'default') {
-            const wrapPrefix = `:where([data-ag-theme-mode="${CSS.escape(mode)}"]) & {\n`;
+            const escapedMode = typeof CSS === 'object' ? CSS.escape(mode) : mode; // check for CSS global in case we're running in tests
+            const wrapPrefix = `:where([data-ag-theme-mode="${escapedMode}"]) & {\n`;
             variablesCss += wrapPrefix;
             inheritanceCss += wrapPrefix;
         }
