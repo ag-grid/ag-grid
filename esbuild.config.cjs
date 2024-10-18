@@ -91,6 +91,9 @@ const options = {
     outExtension,
     plugins,
     // alias,
+    banner: {
+        js: '"use client"',
+    },
 };
 
 module.exports = options;
