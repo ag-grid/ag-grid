@@ -83,8 +83,8 @@
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
     "ag-grid-community": "32.3.0",
-    "ag-charts-community": "10.2.0-beta.20241015",
-    "ag-charts-enterprise": "10.2.0-beta.20241015"
+    "ag-charts-community": "10.2.0-beta.20241017",
+    "ag-charts-enterprise": "10.2.0-beta.20241017"
   },
   "devDependencies": {
     "source-map-loader": "^5.0.0",
