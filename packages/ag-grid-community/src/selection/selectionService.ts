@@ -678,7 +678,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
      *
      * Callers:
      *  - property isRowSelectable changed
-     *  - after grouping / treeData
+     *  - after grouping / treeData via `updateSelectableAfterGrouping`
      */
     protected updateSelectable(skipLeafNodes: boolean) {
         const { gos } = this;
@@ -687,8 +687,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             return;
         }
 
-        const isGroupSelectsChildren = _getGroupSelectsDescendants(gos);
-        const isCsrmGroupSelectsChildren = _isClientSideRowModel(gos) && isGroupSelectsChildren;
+        const isCSRMGroupSelectsDescendants = _isClientSideRowModel(gos) && this.groupSelectsDescendants;
 
         const nodesToDeselect: RowNode[] = [];
 
@@ -698,7 +697,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             }
 
             // Only in the CSRM, we allow group node selection if a child has a selectable=true when using groupSelectsChildren
-            if (isCsrmGroupSelectsChildren && node.group) {
+            if (isCSRMGroupSelectsDescendants && node.group) {
                 const hasSelectableChild = node.childrenAfterGroup!.some((rowNode) => rowNode.selectable === true);
                 this.setRowSelectable(node, hasSelectableChild, true);
                 return;
@@ -713,7 +712,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         };
 
         // Needs to be depth first in this case, so that parents can be updated based on child.
-        if (isCsrmGroupSelectsChildren) {
+        if (isCSRMGroupSelectsDescendants) {
             const csrm = this.rowModel as IClientSideRowModel;
             const changedPath = new ChangedPath(false, csrm.getRootNode());
             changedPath.forEachChangedNodeDepthFirst(nodeCallback, true, true);
@@ -731,15 +730,16 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         // if csrm and group selects children, update the groups after deselecting leaf nodes.
-        if (!skipLeafNodes && isCsrmGroupSelectsChildren) {
+        if (!skipLeafNodes && isCSRMGroupSelectsDescendants) {
             this.updateGroupsFromChildrenSelections?.('selectableChanged');
         }
     }
 
+    // only called by CSRM
     public override updateSelectableAfterGrouping(changedPath: ChangedPath | undefined): void {
         this.updateSelectable(true);
 
-        if (_getGroupSelectsDescendants(this.gos)) {
+        if (this.groupSelectsDescendants) {
             const selectionChanged = this.updateGroupsFromChildrenSelections?.('rowGroupChanged', changedPath);
             if (selectionChanged) {
                 this.eventService.dispatchEvent({
