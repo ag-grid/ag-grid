@@ -143,11 +143,6 @@
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Borders",
-                                    "path": "theming-borders"
-                                },
-                                {
-                                    "type": "item",
                                     "title": "Icons",
                                     "path": "custom-icons"
                                 },
