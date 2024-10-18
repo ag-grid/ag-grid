@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import type { InternalFramework } from '@ag-grid-types';
+import DocsFrameworkTemplate from '@features/docs/components/DocsFrameworkTemplate.astro';
+import { getDocsExamplePages } from '@features/docs/utils/pageData';
+import { getIsDev } from '@utils/env';
+
+export async function getStaticPaths() {
+    const pages = await getCollection('docs');
+    return getDocsExamplePages({
+        pages,
+    });
+}
+
+// NOTE: Render as a partial, so that astro does not insert any website styles into the page (when not dev)
+export const partial = !getIsDev();
+
+const { internalFramework, pageName, exampleName } = Astro.params;
+---
+
+<DocsFrameworkTemplate
+    internalFramework={internalFramework as InternalFramework}
+    pageName={pageName!}
+    exampleName={exampleName!}
+    addInitMessageScript={true}
+/>

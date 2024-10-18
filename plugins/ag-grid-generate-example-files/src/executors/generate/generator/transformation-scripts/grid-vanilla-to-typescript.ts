@@ -1,10 +1,9 @@
-import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
+import type { ParsedBindings } from '../types';
 import {
     addBindingImports,
     addGenericInterfaceImport,
     findLocaleImport,
     getIntegratedDarkModeCode,
-    usesThemingApi,
 } from './parser-utils';
 import { toTitleCase } from './string-utils';
 
@@ -24,17 +23,9 @@ function getPropertyInterfaces(properties) {
 }
 
 function getModuleImports(bindings: ParsedBindings): string[] {
-    const { inlineGridStyles, imports: bindingImports, properties } = bindings;
+    const { imports: bindingImports, properties } = bindings;
 
     const imports = [];
-    if (!usesThemingApi(bindings)) {
-        imports.push("import 'ag-grid-community/styles/ag-grid.css';");
-        // to account for the (rare) example that has more than one class...just default to quartz if it does
-        // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
-        // "source" non dark version
-        const theme = inlineGridStyles.theme ? inlineGridStyles.theme.replace('-dark', '') : 'ag-theme-quartz';
-        imports.push(`import "ag-grid-community/styles/${theme}.css";`);
-    }
 
     const propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
@@ -66,12 +57,7 @@ function getImports(bindings: ParsedBindings): string[] {
     return imports;
 }
 
-export function vanillaToTypescript(
-    bindings: ParsedBindings,
-    exampleConfig: ExampleConfig,
-    mainFilePath: string,
-    tsFile: string
-): (importType: ImportType) => string {
+export function vanillaToTypescript(bindings: ParsedBindings, mainFilePath: string, tsFile: string): () => string {
     const { externalEventHandlers } = bindings;
 
     // attach external handlers to window
@@ -99,14 +85,15 @@ export function vanillaToTypescript(
         throw Error('DomContentLoaded replace failed for ' + mainFilePath);
     }
 
-    return (importType) => {
+    return () => {
         const importStrings = getImports(bindings);
         const formattedImports = `${importStrings.join('\n')}\n`;
 
         // Remove the original import statements
         unWrapped = unWrapped.replace(/import ((.|\n)*?)from.*\n/g, '');
 
-        return `${formattedImports}${unWrapped} ${toAttach || ''} ${getIntegratedDarkModeCode(bindings.exampleName, true, 'gridApi')}`;
+        const result = `${formattedImports}${unWrapped} ${toAttach || ''} ${getIntegratedDarkModeCode(bindings.exampleName, true, 'gridApi')}`;
+        return result;
     };
 }
 

@@ -1,6 +1,6 @@
 import { basename } from 'path';
 
-import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
+import type { ExampleConfig, ParsedBindings } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
@@ -8,14 +8,12 @@ import {
     addLicenseManager,
     convertFunctionToConstPropertyTs,
     findLocaleImport,
-    getActiveTheme,
     getFunctionName,
     getIntegratedDarkModeCode,
     getPropertyInterfaces,
     handleRowGenericInterface,
     isInstanceMethod,
     preferParamsApi,
-    usesThemingApi,
 } from './parser-utils';
 import {
     EventAndCallbackNames,
@@ -37,17 +35,6 @@ function getModuleImports(
         "import { createRoot } from 'react-dom/client';",
         "import { AgGridReact } from 'ag-grid-react';",
     ];
-
-    if (!usesThemingApi(bindings)) {
-        imports.push("import 'ag-grid-community/styles/ag-grid.css';");
-        // to account for the (rare) example that has more than one class...just default to quartz if it does
-        // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
-        // "source" non dark version
-        const theme = bindings.inlineGridStyles.theme
-            ? bindings.inlineGridStyles.theme.replace('-dark', '')
-            : 'ag-theme-quartz';
-        imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
-    }
 
     if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach((styleSheet) => imports.push(`import './${basename(styleSheet)}';`));
@@ -103,9 +90,11 @@ function getTemplate(
     rowDataGeneric: string,
     exampleConfig: ExampleConfig
 ): string {
-    const { inlineGridStyles } = bindings;
+    const className = bindings.inlineGridStyles.className;
+    const classAttr = className ? ` className="${className}"` : '';
+
     const agGridTag = `
-        <div ${exampleConfig.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className={${getActiveTheme(inlineGridStyles.theme, true)}}>
+        <div ${exampleConfig.myGridReference ? 'id="myGrid"' : ''} style={gridStyle}${classAttr}>
             <AgGridReact${rowDataGeneric}
                 ref={gridRef}
                 ${componentAttributes.join('\n')}
@@ -148,7 +137,7 @@ export function vanillaToReactFunctionalTs(
     exampleConfig: ExampleConfig,
     componentFilenames: string[],
     allStylesheets: string[]
-): (importType: ImportType) => string {
+): () => string {
     const { properties, data, tData, inlineGridStyles, onGridReady, typeDeclares, interfaces } = bindings;
 
     const utilMethodNames = bindings.utils.map(getFunctionName);
@@ -163,7 +152,7 @@ export function vanillaToReactFunctionalTs(
     const rowDataState = `const [rowData, setRowData] = useState<${rowDataType}[]>();`;
     const gridRefHook = `const gridRef = useRef<AgGridReact${rowDataGeneric}>(null);`;
 
-    return (importType) => {
+    return () => {
         // instance values
         const stateProperties = [
             `const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);`,

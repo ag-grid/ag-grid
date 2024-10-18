@@ -1,6 +1,6 @@
 .my-simple-editor {
     box-sizing: border-box;
-    padding-left: var(--ag-grid-size);
+    padding-left: var(--ag-padding);
     width: 100%;
     height: 100%;
 }

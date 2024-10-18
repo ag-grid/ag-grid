@@ -4,8 +4,6 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -26,7 +24,6 @@ interface IRow {
             <!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
             <ag-grid-angular
                 style="width: 100%; height: 100%;"
-                [class]="themeClass"
                 [rowData]="rowData"
                 [columnDefs]="colDefs"
                 [defaultColDef]="defaultColDef"
@@ -35,10 +32,6 @@ interface IRow {
     `,
 })
 export class AppComponent {
-    themeClass =
-        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-        'ag-theme-quartz' /** DARK MODE END **/;
-
     // Row Data: The data to be displayed.
     rowData: IRow[] = [
         { make: 'Tesla', model: 'Model Y', price: 64950, electric: true },

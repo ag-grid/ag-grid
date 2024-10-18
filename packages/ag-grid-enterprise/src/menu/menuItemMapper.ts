@@ -133,7 +133,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                       }
                     : null;
             case 'valueAggSubMenu':
-                if (this.gos.assertModuleRegistered('RowGroupingCoreModule', 'Aggregation from Menu')) {
+                if (this.gos.assertModuleRegistered('PivotCoreModule', 'Aggregation from Menu')) {
                     if (!column?.isPrimary() && !column?.getColDef().pivotValueColumn) {
                         return null;
                     }
@@ -350,16 +350,12 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return null;
                 }
             case 'columnChooser':
-                if (this.gos.isModuleRegistered('ColumnsToolPanelCoreModule')) {
-                    return {
-                        name: localeTextFunc('columnChooser', 'Choose Columns'),
-                        icon: _createIconNoSpan('columns', this.gos, null),
-                        action: () =>
-                            this.columnChooserFactory?.showColumnChooser({ column, eventSource: sourceElement() }),
-                    };
-                } else {
-                    return null;
-                }
+                return {
+                    name: localeTextFunc('columnChooser', 'Choose Columns'),
+                    icon: _createIconNoSpan('columns', this.gos, null),
+                    action: () =>
+                        this.columnChooserFactory?.showColumnChooser({ column, eventSource: sourceElement() }),
+                };
             case 'sortAscending':
                 return {
                     name: localeTextFunc('sortAscending', 'Sort Ascending'),

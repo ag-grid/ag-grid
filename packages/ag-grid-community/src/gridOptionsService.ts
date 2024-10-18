@@ -1,5 +1,4 @@
 import type { GridApi } from './api/gridApi';
-import { ComponentUtil } from './components/componentUtil';
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
@@ -8,17 +7,16 @@ import type { Environment } from './environment';
 import type { AgEventType } from './eventTypes';
 import type { AgEvent } from './events';
 import { ALWAYS_SYNC_GLOBAL_EVENTS } from './events';
-import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
 import type { GridOptionOrDefault } from './gridOptionsDefault';
+import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
+import { _getCallbackForEvent } from './gridOptionsUtils';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
 import type { ModuleName } from './interfaces/iModule';
 import { LocalEventService } from './localEventService';
 import { _isModuleRegistered } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
-import { INITIAL_GRID_OPTION_KEYS, PropertyKeys } from './propertyKeys';
 import { _logIfDebug } from './utils/function';
 import { _exists } from './utils/generic';
-import { _warn } from './validation/logging';
 import type { ValidationService } from './validation/validationService';
 
 type GetKeys<T, U> = {
@@ -75,83 +73,6 @@ export interface PropertyValueChangedEvent<K extends keyof GridOptions> extends 
 
 export type PropertyChangedListener = (event: PropertyChangedEvent) => void;
 export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void;
-
-function toBoolean(value: any): boolean {
-    if (typeof value === 'boolean') {
-        return value;
-    }
-
-    if (typeof value === 'string') {
-        // for boolean, compare to empty String to allow attributes appearing with
-        // no value to be treated as 'true'
-        return value.toUpperCase() === 'TRUE' || value == '';
-    }
-
-    return false;
-}
-
-function toNumber(value: any): number | undefined {
-    if (typeof value === 'number') {
-        return value;
-    }
-
-    if (typeof value === 'string') {
-        const parsed = parseInt(value);
-        if (isNaN(parsed)) {
-            return undefined;
-        }
-        return parsed;
-    }
-    return undefined;
-}
-
-function toConstrainedNum(min: number, max: number = Number.MAX_VALUE): (value: any) => number | undefined {
-    return (value: any) => {
-        const num = toNumber(value);
-        if (num == null || num < min || num > max) {
-            return undefined; // return undefined if outside bounds, this will then be coerced to the default value.
-        }
-        return num;
-    };
-}
-
-/**
- * Handles value coercion including validation of ranges etc. If value is invalid, undefined is set, allowing default to be used.
- */
-const PROPERTY_COERCIONS: Map<keyof GridOptions, (value: any) => GridOptions[keyof GridOptions]> = new Map([
-    ...PropertyKeys.BOOLEAN_PROPERTIES.map((key) => [key as keyof GridOptions, toBoolean]),
-    ...PropertyKeys.NUMBER_PROPERTIES.map((key) => [key as keyof GridOptions, toNumber]),
-    ['groupAggFiltering', (val: any) => (typeof val === 'function' ? val : toBoolean(val))],
-    ['pageSize', toConstrainedNum(1)],
-    ['autoSizePadding', toConstrainedNum(0)],
-    ['keepDetailRowsCount', toConstrainedNum(1)],
-    ['rowBuffer', toConstrainedNum(0)],
-    ['infiniteInitialRowCount', toConstrainedNum(1)],
-    ['cacheOverflowSize', toConstrainedNum(1)],
-    ['cacheBlockSize', toConstrainedNum(1)],
-    ['serverSideInitialRowCount', toConstrainedNum(1)],
-    ['viewportRowModelPageSize', toConstrainedNum(1)],
-    ['viewportRowModelBufferSize', toConstrainedNum(0)],
-] as [keyof GridOptions, (value: any) => GridOptions[keyof GridOptions]][]);
-
-function getCoercedValue<K extends keyof GridOptions>(key: K, value: GridOptions[K]): GridOptions[K] {
-    const coerceFunc = PROPERTY_COERCIONS.get(key);
-
-    if (!coerceFunc) {
-        return value;
-    }
-
-    return coerceFunc(value);
-}
-
-export function getCoercedGridOptions(gridOptions: GridOptions): GridOptions {
-    const newGo: GridOptions = {};
-    Object.entries(gridOptions).forEach(([key, value]: [keyof GridOptions, any]) => {
-        const coercedValue = getCoercedValue(key, value);
-        newGo[key] = coercedValue;
-    });
-    return newGo;
-}
 
 let changeSetId = 0;
 
@@ -257,18 +178,16 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         // all events are fired after grid options has finished updating.
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
         Object.entries(options).forEach(([key, value]) => {
-            if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
-                _warn(22, { key });
-            }
-            const coercedValue = getCoercedValue(key as keyof GridOptions, value);
-            const shouldForce = force || (typeof coercedValue === 'object' && source === 'api'); // force objects as they could have been mutated.
+            this.validationService?.warnOnInitialPropertyUpdate(source, key);
+
+            const shouldForce = force || (typeof value === 'object' && source === 'api'); // force objects as they could have been mutated.
 
             const previousValue = this.gridOptions[key as keyof GridOptions];
-            if (shouldForce || previousValue !== coercedValue) {
-                this.gridOptions[key as keyof GridOptions] = coercedValue;
+            if (shouldForce || previousValue !== value) {
+                this.gridOptions[key as keyof GridOptions] = value;
                 const event: PropertyValueChangedEvent<keyof GridOptions> = {
                     type: key as keyof GridOptions,
-                    currentValue: coercedValue,
+                    currentValue: value,
                     previousValue,
                     changeSet,
                     source,
@@ -311,7 +230,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
                 return;
             }
 
-            const eventHandlerName = ComponentUtil.getCallbackForEvent(eventName);
+            const eventHandlerName = _getCallbackForEvent(eventName);
             const eventHandler = (this.gridOptions as any)[eventHandlerName];
             if (typeof eventHandler === 'function') {
                 this.frameworkOverrides.wrapOutgoing(() => {

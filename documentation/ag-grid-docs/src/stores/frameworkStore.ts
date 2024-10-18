@@ -1,4 +1,4 @@
-import type { Framework, ImportType, InternalFramework } from '@ag-grid-types';
+import type { Framework, InternalFramework } from '@ag-grid-types';
 import { DEFAULT_INTERNAL_FRAMEWORK, INTERNAL_FRAMEWORKS } from '@constants';
 import { persistentAtom, persistentMap } from '@nanostores/persistent';
 import { getInternalFramework } from '@utils/framework';
@@ -6,7 +6,6 @@ import { atom } from 'nanostores';
 
 export type FrameworkContext = {
     useTypescript: string;
-    importType: ImportType;
 };
 
 export type InternalFrameworkState = 'init' | 'synced';
@@ -20,7 +19,6 @@ export const $internalFramework = persistentAtom<InternalFramework>(
 );
 export const $frameworkContext = persistentMap<FrameworkContext>(`${LOCALSTORAGE_PREFIX}:context`, {
     useTypescript: 'true',
-    importType: 'modules',
 });
 export const $internalFrameworkState = atom<InternalFrameworkState>('init');
 
@@ -45,21 +43,6 @@ export const setInternalFramework = (internalFramework: InternalFramework) => {
         // eslint-disable-next-line no-console
         console.error('Unsupported internal framework', internalFramework);
         $internalFramework.set(DEFAULT_INTERNAL_FRAMEWORK);
-    }
-};
-
-/**
- * Set import type
- */
-export const setImportType = (importType: ImportType) => {
-    if (importType === 'packages') {
-        $frameworkContext.setKey('importType', importType);
-    } else if (importType === 'modules') {
-        $frameworkContext.setKey('importType', importType);
-    } else {
-        // eslint-disable-next-line no-console
-        console.error('Unsupported import type', importType);
-        $frameworkContext.setKey('importType', 'modules');
     }
 };
 
