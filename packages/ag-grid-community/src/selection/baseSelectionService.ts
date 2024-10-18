@@ -40,7 +40,7 @@ export abstract class BaseSelectionService extends BeanStub {
             const callback = _getIsRowSelectable(this.gos);
             if (callback !== this.isRowSelectable) {
                 this.isRowSelectable = callback;
-                this.updateSelectable(false);
+                this.updateSelectable();
             }
         });
 
@@ -166,9 +166,9 @@ export abstract class BaseSelectionService extends BeanStub {
 
     public abstract setNodesSelected(params: ISetNodesSelectedParams): number;
 
-    public abstract updateSelectableAfterGrouping(changedPath: ChangedPath | undefined): void;
+    public abstract updateSelectableAfterGrouping(changedPath?: ChangedPath): void;
 
-    protected abstract updateSelectable(skipLeafNodes: boolean): void;
+    protected abstract updateSelectable(changedPath?: ChangedPath): void;
 
     private isRowSelectionBlocked(rowNode: RowNode): boolean {
         return !rowNode.selectable || !!rowNode.rowPinned || !_isRowSelection(this.gos);

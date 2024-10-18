@@ -242,7 +242,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
      *  - property isRowSelectable changed
      *  - after grouping / treeData
      */
-    protected override updateSelectable(skipLeafNodes: boolean): void {
+    protected override updateSelectable(): void {
         const { gos } = this;
 
         const isRowSelecting = _isRowSelection(gos);
@@ -253,20 +253,14 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
         const nodesToDeselect: RowNode[] = [];
 
-        const nodeCallback = (node: RowNode) => {
-            if (skipLeafNodes && !node.group) {
-                return;
-            }
-
+        this.rowModel.forEachNode((node) => {
             const rowSelectable = this.isRowSelectable?.(node) ?? true;
             this.setRowSelectable(node, rowSelectable, true);
 
             if (!rowSelectable && node.isSelected()) {
                 nodesToDeselect.push(node);
             }
-        };
-
-        this.rowModel.forEachNode(nodeCallback);
+        });
 
         if (nodesToDeselect.length) {
             this.setNodesSelected({

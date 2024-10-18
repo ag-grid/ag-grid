@@ -680,18 +680,20 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
      *  - property isRowSelectable changed
      *  - after grouping / treeData via `updateSelectableAfterGrouping`
      */
-    protected updateSelectable(skipLeafNodes: boolean) {
+    protected updateSelectable(changedPath?: ChangedPath) {
         const { gos } = this;
 
         if (!_isRowSelection(gos)) {
             return;
         }
 
+        const skipLeafNodes = changedPath !== undefined;
         const isCSRMGroupSelectsDescendants = _isClientSideRowModel(gos) && this.groupSelectsDescendants;
 
         const nodesToDeselect: RowNode[] = [];
 
-        const nodeCallback = (node: RowNode) => {
+        const nodeCallback = (node: RowNode): void => {
+            console.log('calling');
             if (skipLeafNodes && !node.group) {
                 return;
             }
@@ -713,9 +715,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
         // Needs to be depth first in this case, so that parents can be updated based on child.
         if (isCSRMGroupSelectsDescendants) {
-            const csrm = this.rowModel as IClientSideRowModel;
-            const changedPath = new ChangedPath(false, csrm.getRootNode());
-            changedPath.forEachChangedNodeDepthFirst(nodeCallback, true, true);
+            if (changedPath === undefined) {
+                changedPath = new ChangedPath(false, (this.rowModel as IClientSideRowModel).getRootNode());
+            }
+            changedPath.forEachChangedNodeDepthFirst(nodeCallback, !skipLeafNodes, !skipLeafNodes);
         } else {
             // Normal case, update all rows
             this.rowModel.forEachNode(nodeCallback);
@@ -737,7 +740,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
     // only called by CSRM
     public override updateSelectableAfterGrouping(changedPath: ChangedPath | undefined): void {
-        this.updateSelectable(true);
+        this.updateSelectable(changedPath);
 
         if (this.groupSelectsDescendants) {
             const selectionChanged = this.updateGroupsFromChildrenSelections?.('rowGroupChanged', changedPath);
