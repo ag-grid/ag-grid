@@ -128,12 +128,16 @@ class ThemeImpl<TParams = unknown> implements Theme {
         // Core CSS is loaded once per shadow root and shared between themes
         loadPromises.push(installCSS({ css: coreCSS, part: 'core', root }));
 
-        for (const googleFont of getGoogleFontsUsed(this)) {
-            if (loadThemeGoogleFonts) {
-                loadGoogleFont(googleFont);
-            } else if (loadThemeGoogleFonts == null) {
-                // Temporarily disable warning until AG-13135 fixes false positive
-                // _warn(112, { googleFont, googleFontsDomain });
+        const googleFontsUsed = getGoogleFontsUsed(this);
+        if (googleFontsUsed.length > 0) {
+            const googleFontsLoaded = new Set<string>();
+            document.fonts.forEach((font) => googleFontsLoaded.add(font.family));
+            for (const googleFont of googleFontsUsed) {
+                if (loadThemeGoogleFonts) {
+                    loadGoogleFont(googleFont);
+                } else if (loadThemeGoogleFonts == null && !googleFontsLoaded.has(googleFont)) {
+                    _warn(112, { googleFont, googleFontsDomain });
+                }
             }
         }
 
