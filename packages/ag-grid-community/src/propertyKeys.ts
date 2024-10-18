@@ -116,8 +116,8 @@ const ARRAY_GRID_OPTIONS: KeysOfType<any[]>[] = [
     'paginationPageSizeSelector',
 ];
 
-// only used internally
-const NUMBER_GRID_OPTIONS: KeysOfType<number>[] = [
+// Used in validations to check type of number inputs
+export const _NUMBER_GRID_OPTIONS: KeysOfType<number>[] = [
     'rowHeight',
     'detailRowHeight',
     'rowBuffer',
@@ -376,7 +376,7 @@ export const _ALL_GRID_OPTIONS: GridOptionKey[] = [
     ...ARRAY_GRID_OPTIONS,
     ...OBJECT_GRID_OPTIONS,
     ...STRING_GRID_OPTIONS,
-    ...NUMBER_GRID_OPTIONS,
+    ..._NUMBER_GRID_OPTIONS,
     ..._FUNCTION_GRID_OPTIONS,
     ..._BOOLEAN_GRID_OPTIONS,
     ...OTHER_GRID_OPTIONS,
