@@ -19,9 +19,9 @@
         "img": "custom-themes.png",
         "img_alt": "Learn how to customise a React Table with unique CSS themes",
         "title": "Custom Styles",
-        "content": "Customise your React Table using CSS variables to create a unique theme for your brand.",
+        "content": "Customise your React Table with the Theming API to create a unique theme for your brand.",
         "docs": "./react-data-grid/theming/",
-        "demo": "./examples/theming-v32-customisation-colours/colour-customisation/modules/reactFunctionalTs"
+        "demo": "./examples/theming-parameters/with-params/reactFunctionalTs"
     },
     {
         "img": "integrated-charts.png",
