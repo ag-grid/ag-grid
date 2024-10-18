@@ -131,7 +131,7 @@ class ThemeImpl<TParams = unknown> implements Theme {
         const googleFontsUsed = getGoogleFontsUsed(this);
         if (googleFontsUsed.length > 0) {
             const googleFontsLoaded = new Set<string>();
-            document.fonts.forEach((font) => googleFontsLoaded.add(font.family));
+            document.fonts?.forEach?.((font) => googleFontsLoaded.add(font.family));
             for (const googleFont of googleFontsUsed) {
                 if (loadThemeGoogleFonts) {
                     loadGoogleFont(googleFont);
