@@ -1017,6 +1017,7 @@ export { SharedMenuModule } from './misc/menu/sharedMenuModule';
 export { KeyboardNavigationCoreModule } from './navigation/navigationModule';
 export { CellFlashModule } from './rendering/cell/cellFlashModule';
 export { ColumnGroupCoreModule } from './columns/columnGroups/columnGroupModule';
+export { ColumnGroupHeaderCompModule, ColumnHeaderCompModule } from './headerRendering/cells/headerModule';
 
 //  events
 export * from './events';

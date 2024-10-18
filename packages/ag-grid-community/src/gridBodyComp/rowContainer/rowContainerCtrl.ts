@@ -312,13 +312,13 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
 
         const pinnedWidthChanged = () => this.onPinnedWidthChanged();
         this.forContainers(allLeft, () => {
-            this.pinnedWidthFeature = this.createManagedBean(
+            this.pinnedWidthFeature = this.createOptionalManagedBean(
                 this.pinnedColumnService?.createPinnedWidthFeature(this.eContainer, true)
             );
             this.addManagedEventListeners({ leftPinnedWidthChanged: pinnedWidthChanged });
         });
         this.forContainers(allRight, () => {
-            this.pinnedWidthFeature = this.createManagedBean(
+            this.pinnedWidthFeature = this.createOptionalManagedBean(
                 this.pinnedColumnService?.createPinnedWidthFeature(this.eContainer, false)
             );
             this.addManagedEventListeners({ rightPinnedWidthChanged: pinnedWidthChanged });
