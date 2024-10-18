@@ -23,18 +23,16 @@ if (ENABLE_GENERATE_DEBUG_PAGES) {
             <th><code>params.internalFramework</code></th>
             <th><code>params.pageName</code></th>
             <th><code>params.exampleName</code></th>
-            <th><code>params.importType</code></th>
             <th><code>params.fileName</code></th>
         </thead>
         <tbody>
             {
                 exampleFiles.map((example, index) => {
-                    const { internalFramework, pageName, exampleName, importType, fileName } = example.params;
+                    const { internalFramework, pageName, exampleName, fileName } = example.params;
                     const url = getExampleFileUrl({
                         internalFramework,
                         pageName,
                         exampleName,
-                        importType,
                         fileName,
                     });
                     return (
@@ -46,7 +44,6 @@ if (ENABLE_GENERATE_DEBUG_PAGES) {
                             <td>{internalFramework}</td>
                             <td>{pageName}</td>
                             <td>{exampleName}</td>
-                            <td>{importType}</td>
                             <td>{fileName}</td>
                         </tr>
                     );

@@ -1,6 +1,6 @@
 import { basename } from 'path';
 
-import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
+import type { ExampleConfig, ParsedBindings } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
@@ -132,7 +132,7 @@ export function vanillaToReactFunctional(
     exampleConfig: ExampleConfig,
     componentFilenames: string[],
     allStylesheets: string[]
-): (importType: ImportType) => string {
+): () => string {
     const { properties, data, inlineGridStyles, onGridReady } = bindings;
 
     const utilMethodNames = bindings.utils.map(getFunctionName);
@@ -143,7 +143,7 @@ export function vanillaToReactFunctional(
         return acc;
     }, {});
 
-    return (importType) => {
+    return () => {
         // instance values
         const stateProperties = [
             `const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);`,
