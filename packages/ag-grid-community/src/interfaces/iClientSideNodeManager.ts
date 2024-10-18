@@ -18,6 +18,8 @@ export interface ClientSideNodeManagerUpdateRowDataResult<TData = any> {
 }
 
 export interface IClientSideNodeManager<TData = any> {
+    readonly treeData: boolean;
+
     activate(rootNode: RowNode<TData> | null): void;
 
     deactivate(): void;

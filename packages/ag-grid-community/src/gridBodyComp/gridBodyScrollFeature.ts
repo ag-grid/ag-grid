@@ -255,10 +255,10 @@ export class GridBodyScrollFeature extends BeanStub {
         // the `scrollGridIfNeeded` will recalculate the rows to be rendered by the grid
         // so it should only be called after `eBodyViewport` has been scrolled to the correct
         // position, otherwise the `first` and `last` row could be miscalculated.
-        if (this.gos.get('suppressAnimationFrame')) {
+        if (!this.animationFrameService || this.gos.get('suppressAnimationFrame')) {
             this.scrollGridIfNeeded();
         } else {
-            this.animationFrameService?.schedule();
+            this.animationFrameService.schedule();
         }
 
         this.resetLastVScrollDebounced();

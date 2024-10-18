@@ -28,7 +28,6 @@ const VueExample = {
                         :defaultColDef="defaultColDef"
                         :rowData="rowData"
                         :theme="theme1"
-                        :loadThemeGoogleFonts="true"
                     ></ag-grid-vue>
                 </div>
                 <div style="flex: 1 1 0%">
@@ -38,7 +37,6 @@ const VueExample = {
                         :defaultColDef="defaultColDef"
                         :rowData="rowData"
                         :theme="theme2"
-                        :loadThemeGoogleFonts="true"
                     ></ag-grid-vue>
                 </div>
             </div>
@@ -54,7 +52,6 @@ const VueExample = {
                         :defaultColDef="defaultColDef"
                         :rowData="rowData"
                         :theme="theme3"
-                        :loadThemeGoogleFonts="true"
                     ></ag-grid-vue>
                 </div>
                 <div style="flex: 1 1 0%;">
@@ -64,7 +61,6 @@ const VueExample = {
                         :defaultColDef="defaultColDef"
                         :rowData="rowData"
                         :theme="theme4"
-                        :loadThemeGoogleFonts="true"
                     ></ag-grid-vue>
                 </div>
             </div>

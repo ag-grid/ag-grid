@@ -44,6 +44,10 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     private nextId = 0;
     protected allNodesMap: { [id: string]: RowNode<TData> } = {};
 
+    public get treeData(): boolean {
+        return false; // not supported by this node manager
+    }
+
     public rootNode: AbstractClientSideNodeManager.RootNode<TData>;
 
     protected beans: BeanCollection;

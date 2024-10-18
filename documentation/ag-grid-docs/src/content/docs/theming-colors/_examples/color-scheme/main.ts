@@ -34,7 +34,6 @@ const defaultColDef = {
 const createThemedGrid = (colorScheme: Part, selector: string) => {
     const gridOptions: GridOptions<IOlympicData> = {
         theme: themeQuartz.withPart(colorScheme),
-        loadThemeGoogleFonts: true,
         columnDefs,
         rowData,
         defaultColDef,
