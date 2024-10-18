@@ -7,6 +7,7 @@ import { RowGroupingModule } from 'ag-grid-enterprise';
 import { TestGridsManager } from '../test-utils';
 import { GROUP_ROW_DATA } from './data';
 import {
+    assertSelectedRowElementsById,
     assertSelectedRowsByIndex,
     clickRowByIndex,
     selectRowsByIndex,
@@ -1106,6 +1107,41 @@ describe('Row Selection Grid Options', () => {
                 });
 
                 assertSelectedRowsByIndex([], api);
+            });
+
+            test('Selection state changes when grouping is updated', async () => {
+                const api = await createGridAndWait({
+                    ...groupGridOptions,
+                    rowSelection: {
+                        mode: 'multiRow',
+                        groupSelects: 'descendants',
+                        isRowSelectable: (node) => node.data?.sport === 'Swimming',
+                    },
+                });
+
+                // Selects all nodes in country 'United States'
+                toggleCheckboxByIndex(0);
+                assertSelectedRowElementsById(
+                    [
+                        '0',
+                        '1',
+                        '2',
+                        '3',
+                        '6',
+                        '7',
+                        '8',
+                        '9',
+                        '11',
+                        '18',
+                        'row-group-country-United States',
+                        'row-group-country-United States-sport-Swimming',
+                    ],
+                    api
+                );
+                const applied = api.applyColumnState({ state: [{ colId: 'country', rowGroup: false }] });
+                expect(applied).toBeTruthy();
+
+                assertSelectedRowElementsById(['0', '1', '2', '3', '6', '7', '8', '9', '11', '18'], api);
             });
 
             describe('Range selection behaviour', () => {

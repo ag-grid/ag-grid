@@ -693,7 +693,6 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         const nodesToDeselect: RowNode[] = [];
 
         const nodeCallback = (node: RowNode): void => {
-            console.log('calling');
             if (skipLeafNodes && !node.group) {
                 return;
             }

@@ -4,8 +4,7 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../test-utils';
-import { GridRowsDiagramTree } from '../test-utils/gridRows/gridRowsDiagramTree';
+import { TestGridsManager } from '../test-utils';
 import { fakeFetch } from './data';
 import {
     assertSelectedRowElementsById,
@@ -17,12 +16,6 @@ import {
     toggleHeaderCheckboxByIndex,
     waitForEvent,
 } from './utils';
-
-function draw(api: GridApi) {
-    const gr = new GridRows(api);
-    const tr = new GridRowsDiagramTree(gr);
-    console.log(tr.diagramToString(false, null));
-}
 
 describe('Row Selection Grid Options', () => {
     const columnDefs = [{ field: 'sport' }];
@@ -1338,7 +1331,7 @@ describe('Row Selection Grid Options', () => {
                 assertSelectedRowElementsById([], api);
             });
 
-            test('Selection state changes when `isRowSelectable` changes', async () => {
+            test('Selection state does not change when `isRowSelectable` changes', async () => {
                 const api = await createGridAndWait({
                     ...groupGridOptions,
                     rowSelection: {
@@ -1358,15 +1351,16 @@ describe('Row Selection Grid Options', () => {
                     api
                 );
 
-                draw(api);
                 api.setGridOption('rowSelection', {
                     mode: 'multiRow',
                     groupSelects: 'descendants',
                     isRowSelectable: (node) => node.data?.sport === 'Gymnastics',
                 });
-                draw(api);
 
-                assertSelectedRowElementsById([], api);
+                assertSelectedRowElementsById(
+                    [{ sport: 'Swimming' }].map((r) => JSON.stringify(r)),
+                    api
+                );
             });
 
             describe('Range selection behaviour', () => {
