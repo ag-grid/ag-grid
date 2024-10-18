@@ -1,4 +1,4 @@
-import type { ImportType, InternalFramework } from '@ag-grid-types';
+import type { InternalFramework } from '@ag-grid-types';
 import Code from '@ag-website-shared/components/code/Code';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import type { FileContents } from '@features/example-generator/types';
@@ -60,7 +60,6 @@ export const CodeViewer = ({
     internalFramework,
     hideInternalFrameworkSelection,
     supportedFrameworks,
-    supportedImportTypes,
 }: {
     id: string;
     isActive?: boolean;
@@ -69,7 +68,6 @@ export const CodeViewer = ({
     internalFramework: InternalFramework;
     hideInternalFrameworkSelection?: boolean;
     supportedFrameworks: InternalFramework[];
-    supportedImportTypes: ImportType[];
 }) => {
     const [activeFile, setActiveFile] = useState(initialSelectedFile);
     const [showFiles, setShowFiles] = useState(true);
@@ -131,7 +129,6 @@ export const CodeViewer = ({
                             id={id}
                             internalFramework={internalFramework}
                             supportedFrameworks={supportedFrameworks}
-                            supportedImportTypes={supportedImportTypes}
                         />
                     )}
                 </div>

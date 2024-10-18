@@ -1,6 +1,6 @@
 import { basename } from 'path';
 
-import type { ExampleConfig, ImportType, ParsedBindings } from '../types';
+import type { ExampleConfig, ParsedBindings } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
     addBindingImports,
@@ -148,7 +148,7 @@ export function vanillaToReactFunctionalTs(
     exampleConfig: ExampleConfig,
     componentFilenames: string[],
     allStylesheets: string[]
-): (importType: ImportType) => string {
+): () => string {
     const { properties, data, tData, inlineGridStyles, onGridReady, typeDeclares, interfaces } = bindings;
 
     const utilMethodNames = bindings.utils.map(getFunctionName);
@@ -163,7 +163,7 @@ export function vanillaToReactFunctionalTs(
     const rowDataState = `const [rowData, setRowData] = useState<${rowDataType}[]>();`;
     const gridRefHook = `const gridRef = useRef<AgGridReact${rowDataGeneric}>(null);`;
 
-    return (importType) => {
+    return () => {
         // instance values
         const stateProperties = [
             `const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);`,

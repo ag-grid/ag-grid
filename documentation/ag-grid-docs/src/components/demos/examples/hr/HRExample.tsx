@@ -11,6 +11,7 @@ import {
     RowGroupingModule,
     SetFilterModule,
     StatusBarModule,
+    TreeDataModule,
 } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -30,6 +31,7 @@ ModuleRegistry.registerModules([
     RichSelectModule,
     SetFilterModule,
     StatusBarModule,
+    TreeDataModule,
 ]);
 
 interface Props {

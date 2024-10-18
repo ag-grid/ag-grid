@@ -15,13 +15,12 @@ export async function getStaticPaths() {
 // NOTE: Render as a partial, so that astro does not insert any website styles into the page (when not dev)
 export const partial = !getIsDev();
 
-const { internalFramework, pageName, exampleName, importType } = Astro.params;
+const { internalFramework, pageName, exampleName } = Astro.params;
 ---
 
 <DocsFrameworkTemplate
     internalFramework={internalFramework as InternalFramework}
     pageName={pageName!}
     exampleName={exampleName!}
-    importType={importType}
     addInitMessageScript={true}
 />

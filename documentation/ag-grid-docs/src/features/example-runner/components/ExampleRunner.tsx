@@ -1,4 +1,4 @@
-import type { ImportType, InternalFramework } from '@ag-grid-types';
+import type { InternalFramework } from '@ag-grid-types';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import { OpenInCTA } from '@ag-website-shared/components/open-in-cta/OpenInCTA';
 import type { FileContents } from '@features/example-generator/types';
@@ -22,7 +22,6 @@ interface Props {
     hideInternalFrameworkSelection?: boolean;
     loadingIFrameId: string;
     supportedFrameworks: InternalFramework[];
-    supportedImportTypes: ImportType[];
     suppressDarkMode?: boolean;
 }
 
@@ -41,7 +40,6 @@ export const ExampleRunner: FunctionComponent<Props> = ({
     hideInternalFrameworkSelection,
     loadingIFrameId,
     supportedFrameworks,
-    supportedImportTypes,
     suppressDarkMode,
 }) => {
     const [showCode, setShowCode] = useState(false);
@@ -72,7 +70,6 @@ export const ExampleRunner: FunctionComponent<Props> = ({
                             internalFramework={internalFramework}
                             hideInternalFrameworkSelection={hideInternalFrameworkSelection}
                             supportedFrameworks={supportedFrameworks}
-                            supportedImportTypes={supportedImportTypes}
                         />
                     )}
                 </div>

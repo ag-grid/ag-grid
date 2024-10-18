@@ -4,7 +4,7 @@ import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { GridOptions } from 'ag-grid-community';
 import { TreeDataModule } from 'ag-grid-enterprise';
 
-import { GridRows, TestGridsManager } from '../../test-utils';
+import { GridRows, TestGridsManager, asyncSetTimeout } from '../../test-utils';
 import type { GridRowsOptions } from '../../test-utils';
 import { getRowsSnapshot, simpleHierarchyRowSnapshot } from '../row-snapshot-test-utils';
 import type { RowSnapshot } from '../row-snapshot-test-utils';
@@ -18,6 +18,14 @@ describe('ag-grid tree data', () => {
 
     let consoleWarnSpy: MockInstance;
 
+    function hasLoadingOverlay() {
+        return !!document.querySelector('.ag-overlay-loading-center');
+    }
+
+    function hasNoRowsOverlay() {
+        return !!document.querySelector('.ag-overlay-no-rows-center');
+    }
+
     beforeEach(() => {
         gridsManager.reset();
     });
@@ -25,6 +33,54 @@ describe('ag-grid tree data', () => {
     afterEach(() => {
         gridsManager.reset();
         consoleWarnSpy?.mockRestore();
+    });
+
+    test('ag-grid tree data loading and no-show overlay', async () => {
+        const rowData = [
+            { orgHierarchy: ['A'] },
+            { orgHierarchy: ['A', 'B'] },
+            { orgHierarchy: ['C', 'D'] },
+            { orgHierarchy: ['E', 'F', 'G', 'H'] },
+        ];
+
+        const gridOptions: GridOptions = {
+            columnDefs: [
+                {
+                    field: 'groupType',
+                    valueGetter: (params) => (params.data ? 'Provided' : 'Filler'),
+                },
+            ],
+            autoGroupColumnDef: {
+                headerName: 'Organisation Hierarchy',
+                cellRendererParams: { suppressCount: true },
+            },
+            treeData: true,
+            animateRows: false,
+            groupDefaultExpanded: -1,
+            getDataPath,
+        };
+
+        const api = gridsManager.createGrid('myGrid', gridOptions);
+
+        expect(hasLoadingOverlay()).toBe(true);
+        expect(hasNoRowsOverlay()).toBe(false);
+
+        api.setGridOption('rowData', []);
+
+        expect(hasLoadingOverlay()).toBe(false);
+        expect(hasNoRowsOverlay()).toBe(true);
+
+        api.setGridOption('rowData', rowData);
+
+        expect(hasLoadingOverlay()).toBe(false);
+        expect(hasNoRowsOverlay()).toBe(false);
+
+        api.setGridOption('rowData', []);
+
+        await asyncSetTimeout(10);
+
+        expect(hasLoadingOverlay()).toBe(false);
+        expect(hasNoRowsOverlay()).toBe(true);
     });
 
     test('ag-grid tree data', async () => {
