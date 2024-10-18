@@ -1,38 +1,31 @@
-<div class="test-container">
-    <div class="test-header">
-        <table>
-            <tr>
-                <td>Sort:</td>
-                <td>
-                    <button onclick="onBtSortAthlete()">Sort Athlete</button>
-                    <button onclick="onBtSortCountryThenSportClearOthers()">
-                        Sort Country, then Sport - Clear Others
-                    </button>
-                    <button onclick="onBtClearAllSorting()">Clear All Sorting</button>
-                </td>
-            </tr>
-            <tr>
-                <td>Column Order:</td>
-                <td>
-                    <button onclick="onBtOrderColsMedalsFirst()">Show Medals First</button>
-                    <button onclick="onBtOrderColsMedalsLast()">Show Medals Last</button>
-                </td>
-            </tr>
-            <tr>
-                <td>Column Visibility:</td>
-                <td>
-                    <button onclick="onBtHideMedals()">Hide Medals</button>
-                    <button onclick="onBtShowMedals()">Show Medals</button>
-                </td>
-            </tr>
-            <tr>
-                <td>Row Group:</td>
-                <td>
-                    <button onclick="onBtRowGroupCountryThenSport()">Group Country then Sport</button>
-                    <button onclick="onBtRemoveCountryRowGroup()">Remove Country</button>
-                    <button onclick="onBtClearAllRowGroups()">Clear All Groups</button>
-                </td>
-            </tr>
-        </table>
+<div class="toolbar">
+    <div>
+        <span>Sort:</span>
+        <button onclick="onBtSortAthlete()">Sort Athlete</button>
+        <button onclick="onBtSortCountryThenSportClearOthers()">
+            Sort Country, then Sport - Clear Others
+        </button>
+        <button onclick="onBtClearAllSorting()">Clear All Sorting</button>
     </div>
-    <div id="myGrid" class="ag-theme-quartz"></div>
+
+    <div>
+        <span>Column Order:</span>
+        <button onclick="onBtOrderColsMedalsFirst()">Show Medals First</button>
+        <button onclick="onBtOrderColsMedalsLast()">Show Medals Last</button>
+    </div>
+
+    <div>
+        <span>Column Visibility:</span>
+        <button onclick="onBtHideMedals()">Hide Medals</button>
+        <button onclick="onBtShowMedals()">Show Medals</button>
+    </div>
+
+    <div>
+        <span>Row Group:</span>
+        <button onclick="onBtRowGroupCountryThenSport()">Group Country then Sport</button>
+        <button onclick="onBtRemoveCountryRowGroup()">Remove Country</button>
+        <button onclick="onBtClearAllRowGroups()">Clear All Groups</button>
+    </div>
+</div>
+
+<div id="myGrid" class="ag-theme-quartz"></div>

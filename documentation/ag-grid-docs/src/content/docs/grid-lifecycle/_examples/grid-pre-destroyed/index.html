@@ -1,14 +1,15 @@
-<div class="test-container">
-    <div class="test-header">
-        <div id="exampleButtons" style="margin-bottom: 1rem">
-            <button onclick="updateColumnWidth()">Change Columns Width</button>
-            <button onclick="destroyGrid()">Destroy Grid</button>
-        </div>
-        <div style="display: none" id="gridPreDestroyedState">
-            State captured on grid pre-destroyed event:<br />
-            <strong>Column fields and widths</strong>
-            <pre class="values"></pre>
-            <button onclick="reloadGrid()">Reload Grid</button>
-        </div>
+<div class="toolbar">
+    <div id="exampleButtons">
+        <button onclick="updateColumnWidth()">Change Columns Width</button>
+        <button onclick="destroyGrid()">Destroy Grid</button>
     </div>
-    <div id="myGrid" style="height: 100%" class="ag-theme-quartz"></div>
+
+    <div style="display: none" id="gridPreDestroyedState">
+        State captured on grid pre-destroyed event:<br />
+        <strong>Column fields and widths</strong>
+        <pre class="values"></pre>
+        <button onclick="reloadGrid()">Reload Grid</button>
+    </div>
+</div>
+
+<div id="myGrid" class="ag-theme-quartz"></div>
