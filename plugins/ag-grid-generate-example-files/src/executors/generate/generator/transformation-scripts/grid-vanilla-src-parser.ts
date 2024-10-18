@@ -540,15 +540,15 @@ function internalParser(
     );
 
     const gridElement = domTree('#myGrid').replaceWith(templatePlaceholder);
+    const inlineClass = gridElement.attr('class');
     const inlineHeight = gridElement.css('height');
     const inlineWidth = gridElement.css('width');
 
     const inlineGridStyles: InlineGridStyles = {
-        width: '100%',
-        height: '100%',
+        width: parseInt(inlineHeight) ? inlineHeight : '100%',
+        height: parseInt(inlineWidth) ? inlineWidth : '100%',
+        className: inlineClass || undefined,
     };
-    inlineGridStyles.height = parseInt(inlineHeight) ? inlineHeight : '100%';
-    inlineGridStyles.width = parseInt(inlineWidth) ? inlineWidth : '100%';
 
     tsBindings.template = domTree.html().replace(/<br>/g, '<br />');
     tsBindings.imports = extractImportStatements(tsTree);

@@ -114,7 +114,7 @@
                         },
                         {
                             "type": "item",
-                            "title": "Features",
+                            "title": "Customisation",
                             "children": [
                                 {
                                     "type": "item",
@@ -125,16 +125,6 @@
                                     "type": "item",
                                     "title": "Borders",
                                     "path": "theming-borders"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Variable Reference",
-                                    "path": "theming-variables"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Colours & Fonts",
-                                    "path": "theming-colours"
                                 },
                                 {
                                     "type": "item",
