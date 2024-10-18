@@ -15,7 +15,7 @@ export { SetFilterModule } from './setFilter/setFilterModule';
 export { StatusBarModule } from './statusBar/statusBarModule';
 export { ExcelExportModule } from './excelExport/excelExportModule';
 export { MultiFilterModule } from './multiFilter/multiFilterModule';
-export { RowGroupingModule } from './rowGrouping/rowGroupingModule';
+export { RowGroupingModule } from './rowGrouping/rowGroupingBundleModule';
 export { SideBarModule } from './sideBar/sideBarModule';
 export { ViewportRowModelModule } from './viewportRowModel/viewportRowModelModule';
 export { ClipboardModule } from './clipboard/clipboardModule';

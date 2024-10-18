@@ -2,9 +2,9 @@ import type { _MasterDetailGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { ClientSideRowModelExpansionModule } from '../expansion/expansionModule';
+import { GroupCellRenderer } from '../groupColumn/rendering/groupCellRenderer';
+import { GroupCellRendererCtrl } from '../groupColumn/rendering/groupCellRendererCtrl';
 import { baseEnterpriseModule } from '../moduleUtils';
-import { GroupCellRenderer } from '../rendering/groupCellRenderer';
-import { GroupCellRendererCtrl } from '../rendering/groupCellRendererCtrl';
 import { DetailCellRenderer } from './detailCellRenderer';
 import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 import { DetailGridApiService } from './detailGridApiService';

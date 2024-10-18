@@ -119,7 +119,18 @@ export class ValidationService extends BeanStub implements NamedBean {
                 rules = rulesOrGetter;
             }
 
-            const { module, dependencies, validate, supportedRowModels } = rules;
+            const { module, dependencies, validate, supportedRowModels, expectedType } = rules;
+
+            if (expectedType) {
+                const actualType = typeof value;
+                if (actualType !== expectedType) {
+                    warnings.add(
+                        `${String(key)} should be of type '${expectedType}' but received '${actualType}' (${value}).`
+                    );
+                    return;
+                }
+            }
+
             if (supportedRowModels) {
                 const rowModel = this.gridOptions.rowModelType ?? 'clientSide';
                 if (!supportedRowModels.includes(rowModel)) {
