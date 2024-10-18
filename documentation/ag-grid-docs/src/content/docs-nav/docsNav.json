@@ -123,6 +123,11 @@
                                 },
                                 {
                                     "type": "item",
+                                    "title": "Fonts",
+                                    "path": "theming-fonts"
+                                },
+                                {
+                                    "type": "item",
                                     "title": "Borders",
                                     "path": "theming-borders"
                                 },

@@ -70,7 +70,6 @@ const GridExample = () => {
             <div style={{ flex: 1 }}>
                 <AgGridReact
                     theme={theme}
-                    loadThemeGoogleFonts
                     columnDefs={columnDefs}
                     rowData={rowData}
                     defaultColDef={defaultColDef}

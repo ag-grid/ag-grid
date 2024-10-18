@@ -28,7 +28,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                         [defaultColDef]="defaultColDef"
                         [rowData]="rowData"
                         [theme]="theme1"
-                        loadThemeGoogleFonts
                     />
                 </div>
                 <div style="flex: 1 1 0%">
@@ -38,7 +37,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                         [defaultColDef]="defaultColDef"
                         [rowData]="rowData"
                         [theme]="theme2"
-                        loadThemeGoogleFonts
                     />
                 </div>
             </div>
@@ -54,7 +52,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                         [defaultColDef]="defaultColDef"
                         [rowData]="rowData"
                         [theme]="theme3"
-                        loadThemeGoogleFonts
                     />
                 </div>
                 <div style="flex: 1 1 0%" class="red-header">
@@ -64,7 +61,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
                         [defaultColDef]="defaultColDef"
                         [rowData]="rowData"
                         [theme]="theme3"
-                        loadThemeGoogleFonts
                     />
                 </div>
             </div>

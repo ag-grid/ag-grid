@@ -1,7 +1,15 @@
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, createGrid, themeQuartz } from 'ag-grid-community';
+import { ColumnsToolPanelModule, FiltersToolPanelModule, SideBarModule } from 'ag-grid-enterprise';
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+import './style.css';
+
+ModuleRegistry.registerModules([
+    ClientSideRowModelModule,
+    SideBarModule,
+    ColumnsToolPanelModule,
+    FiltersToolPanelModule,
+]);
 
 const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 170 },
@@ -14,12 +22,9 @@ const columnDefs: ColDef[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const myTheme = themeQuartz.withParams({
-    backgroundColor: 'rgb(249, 245, 227)',
-    foregroundColor: 'rgb(126, 46, 132)',
-    headerTextColor: 'rgb(204, 245, 172)',
-    headerBackgroundColor: 'rgb(209, 64, 129)',
-    oddRowBackgroundColor: 'rgb(0, 0, 0, 0.03)',
-    headerColumnResizeHandleColor: 'rgb(126, 46, 132)',
+    fontFamily: 'serif',
+    headerFontFamily: 'Brush Script MT',
+    cellFontFamily: 'monospace',
 });
 
 const gridOptions: GridOptions<IOlympicData> = {
@@ -30,6 +35,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         editable: true,
         filter: true,
     },
+    sideBar: true,
 };
 
 // setup the grid after the page has finished loading

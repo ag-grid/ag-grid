@@ -30,7 +30,6 @@ const defaultColDef = {
 
 const gridOptions: GridOptions<IOlympicData> = {
     theme: myCustomTheme,
-    loadThemeGoogleFonts: true,
     columnDefs,
     rowData,
     defaultColDef,

@@ -22,7 +22,6 @@ const GridExample = () => {
                     {
                         <AgGridReact
                             theme={themeQuartz}
-                            loadThemeGoogleFonts
                             columnDefs={columnDefs}
                             rowData={rowData}
                             defaultColDef={defaultColDef}
@@ -33,7 +32,6 @@ const GridExample = () => {
                     {
                         <AgGridReact
                             theme={themeAlpine}
-                            loadThemeGoogleFonts
                             columnDefs={columnDefs}
                             rowData={rowData}
                             defaultColDef={defaultColDef}
@@ -50,7 +48,6 @@ const GridExample = () => {
                     {
                         <AgGridReact
                             theme={themeBalham}
-                            loadThemeGoogleFonts
                             columnDefs={columnDefs}
                             rowData={rowData}
                             defaultColDef={defaultColDef}
@@ -61,7 +58,6 @@ const GridExample = () => {
                     {
                         <AgGridReact
                             theme={themeBalham}
-                            loadThemeGoogleFonts
                             columnDefs={columnDefs}
                             rowData={rowData}
                             defaultColDef={defaultColDef}

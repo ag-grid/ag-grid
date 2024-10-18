@@ -30,7 +30,6 @@ const defaultColDef = {
 const createThemedGrid = (theme: GridTheme, selector: string) => {
     const gridOptions: GridOptions<IOlympicData> = {
         theme,
-        loadThemeGoogleFonts: true,
         columnDefs,
         rowData,
         defaultColDef,
