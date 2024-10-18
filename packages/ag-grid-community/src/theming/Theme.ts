@@ -38,7 +38,7 @@ let customThemeCounter = 0;
 export const createTheme = (id: string = `customTheme${++customThemeCounter}`): Theme<CoreParams> =>
     /*#__PURE__*/ new ThemeImpl(id);
 
-const IS_SSR = typeof window !== 'object' || !window || typeof document !== 'object' || window.document !== document;
+const IS_SSR = typeof window !== 'object' || !window?.document?.fonts?.forEach;
 let themeClassCounter = 0;
 let uninstalledLegacyCSS = false;
 
@@ -131,7 +131,7 @@ class ThemeImpl<TParams = unknown> implements Theme {
         const googleFontsUsed = getGoogleFontsUsed(this);
         if (googleFontsUsed.length > 0) {
             const googleFontsLoaded = new Set<string>();
-            document.fonts?.forEach?.((font) => googleFontsLoaded.add(font.family));
+            document.fonts.forEach((font) => googleFontsLoaded.add(font.family));
             for (const googleFont of googleFontsUsed) {
                 if (loadThemeGoogleFonts) {
                     loadGoogleFont(googleFont);
