@@ -1,8 +1,6 @@
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ChartRef, GridApi, GridOptions } from 'ag-grid-community';
 import { ModuleRegistry, createGrid } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { GridChartsModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
 import { RowGroupingModule } from 'ag-grid-enterprise';
@@ -28,14 +26,12 @@ const gridOptions: GridOptions = {
 
 function updateChart(chartRef: ChartRef | undefined) {
     const eParent = document.querySelector('#chartParent') as HTMLElement;
-    const themeName = document.documentElement?.getAttribute('data-default-theme') || 'ag-theme-quartz';
-    eParent.classList.add(themeName);
     eParent.innerHTML = ''; // Clear existing content
-    const placeHolder = `<div class="chart-placeholder ${themeName}">Chart will be displayed here.</div>`;
+    const placeHolder = `<div class="chart-placeholder">Chart will be displayed here.</div>`;
 
     if (chartRef) {
         const chartWrapperHTML = `
-    <div class="chart-wrapper ${themeName}">
+    <div class="chart-wrapper">
       <div class="chart-wrapper-top">
         <h2 class="chart-wrapper-title">Chart created ${new Date().toLocaleString()}</h2>
         <button class="chart-wrapper-close">Destroy Chart</button>

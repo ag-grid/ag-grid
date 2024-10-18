@@ -2,8 +2,6 @@ import { createApp } from 'vue';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from 'ag-grid-vue3';
 
 import './styles.css';
@@ -12,7 +10,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column" :class="themeClass">
+        <div style="height: 100%; display: flex; flex-direction: column">
             <ag-grid-vue style="flex: 1 1 auto;"
                          ref="topGrid"
                          class="top"
@@ -47,9 +45,6 @@ const VueExample = {
             ageVisible: true,
             countryVisible: true,
             rowStyle: { fontWeight: 'bold' },
-            themeClass:
-                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
-                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
     beforeMount() {

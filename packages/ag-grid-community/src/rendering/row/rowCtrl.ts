@@ -366,18 +366,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private setupFullWidth(gui: RowGui): void {
         const pinned = this.getPinnedForContainer(gui.containerType);
-
-        if (this.rowType == 'FullWidthDetail') {
-            if (
-                !this.gos.assertModuleRegistered(
-                    'MasterDetailCoreModule',
-                    "cell renderer 'agDetailCellRenderer' (for master detail)"
-                )
-            ) {
-                return;
-            }
-        }
-
         const compDetails = this.createFullWidthCompDetails(gui.element, pinned);
         gui.rowComp.showFullWidth(compDetails);
     }

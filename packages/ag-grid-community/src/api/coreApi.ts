@@ -1,6 +1,6 @@
 import type { BeanCollection } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
-import type { ManagedGridOptionKey, ManagedGridOptions } from '../propertyKeys';
+import type { ManagedGridOptionKey, ManagedGridOptions } from '../gridOptionsInitial';
 
 export function getGridId(beans: BeanCollection): string {
     return beans.context.getGridId();

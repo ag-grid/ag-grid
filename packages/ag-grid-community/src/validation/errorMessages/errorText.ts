@@ -270,7 +270,8 @@ export const AG_GRID_ERRORS = {
     104: ({ value, param }: { value: number; param: string }) =>
         `Numeric value ${value} passed to ${param} param will be interpreted as ${value} seconds. If this is intentional use "${value}s" to silence this warning.` as const,
     105: ({ e }: { e: any }) => [`chart rendering failed`, e] as const,
-    106: () => 'both Theming API and the ag-grid.css are used on the same page, styling will be incorrect' as const,
+    106: () =>
+        'Invalid mixing of Theming API and CSS File Themes in the same page. A Theming API theme has been provided to the `theme` grid option, but the file (ag-grid.css) is also included and will cause styling issues. Remove ag-grid.css from the page.' as const,
     107: ({ key, value }: { key: string; value: string }) => `Invalid value for param ${key} - ${value}` as const,
     108: ({ e }: { e: any }) => ['chart update failed', e] as const,
     109: ({ aggFuncOrString }: { aggFuncOrString: any }) =>
@@ -279,7 +280,7 @@ export const AG_GRID_ERRORS = {
     111: () =>
         'Invalid selection state. When `groupSelectsChildren` is enabled, the state must conform to `IServerSideGroupSelectionState`.' as const,
     112: ({ googleFont, googleFontsDomain }: { googleFont: string; googleFontsDomain: string }) =>
-        `theme uses google font ${googleFont} but no value for loadThemeGoogleFonts was provided. Pass true to load fonts from ${googleFontsDomain} or false to silence this warning.` as const,
+        `Theme uses google font ${googleFont} but no value for loadThemeGoogleFonts was provided. Pass true to load fonts from ${googleFontsDomain} or false to silence this warning.` as const,
     113: () =>
         'Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values' as const,
     114: ({ component }: { component: string }) =>
@@ -428,7 +429,6 @@ export const AG_GRID_ERRORS = {
     198: () => `cannot multi select unless selection mode is 'multiRow'` as const,
     199: () =>
         `getSelectedNodes and getSelectedRows functions cannot be used with select all functionality with the server-side row model. Use \`api.getServerSideSelectionState()\` instead.` as const,
-
     200: missingModule,
     201: ({ rowModelType }: { rowModelType: string }) => `Could not find row model for rowModelType = ${rowModelType}`,
 

@@ -18,8 +18,15 @@ import type {
     ValueService,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { _ROW_ID_PREFIX_ROW_GROUP, _warn } from 'ag-grid-community';
-import { BeanStub, RowNode, _areEqual, _exists, _removeFromArray } from 'ag-grid-community';
+import {
+    BeanStub,
+    RowNode,
+    _ROW_ID_PREFIX_ROW_GROUP,
+    _areEqual,
+    _exists,
+    _removeFromArray,
+    _warn,
+} from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGroupingUtils';
 import { BatchRemover } from './batchRemover';

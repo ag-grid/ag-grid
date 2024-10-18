@@ -2,15 +2,19 @@
 title: "Cell Styles"
 ---
 
-Cell customisation is done at the column level via the column definition. You can mix and match any of the following mechanisms:
+Cells can be styled based on the column that they belong to or the data that they contain.
 
-* **Cell Style:** Providing a CSS style for the cells.
-* **Cell Class:** Providing a CSS class for the cells.
-* **Cell Class Rules:** Providing rules for applying CSS classes.
+You can mix and match any of the following mechanisms:
+
+* **Cell Style:** Set CSS properties on a cell to directly change its appearance.
+* **Cell Class:** Attach a CSS class to a cell so that it can be styled by your application's stylesheets.
+* **Cell Class Rules:** Provide rules for applying CSS classes.
 
 Each of these approaches are presented in the following sections.
 
-Some cell styles may also be overridden with CSS variables. See the full [CSS variables reference](./global-style-customisation-variables/).
+{% note %}
+If you want to change the default appearance of _all_ cells in order to customise the grid to match your application's design, check out the [Theming documentation](./theming/).
+{% /note %}
 
 ## Cell Style
 

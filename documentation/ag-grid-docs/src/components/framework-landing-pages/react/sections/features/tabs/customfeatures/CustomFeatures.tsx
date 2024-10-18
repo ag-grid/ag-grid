@@ -5,20 +5,20 @@ import React from 'react';
 import styles from '../FeatureTabs.module.scss';
 
 const CustomFeatures: React.FC = () => {
-    const codeExample = `.ag-theme-quartz {
-    /* Colours */
-    --ag-foreground-color: rgb(126, 46, 132);
-    --ag-background-color: rgb(249, 245, 227);
-    /* Fonts */
-    --ag-font-size: 17px;
-    --ag-font-family: monospace;
-    /* Sizing */
-    --ag-grid-size: 3px; /* very compact */
-    --ag-header-height: 30px;
-    /* Borders */
-    --ag-borders: none;
-    --ag-row-border-style: dashed;
-}
+    const codeExample = `import { themeQuartz }; // or themeBalham, themeMaterial, themeAlpine
+
+const myTheme = themeQuartz
+    // Customise Theme Parameters 
+    .withParams({ 
+        spacing: 2,
+        foregroundColor: 'rgb(14, 68, 145)',
+    })
+    // Use Material Icons
+    .withPart(iconSetMaterial);
+
+return (
+    <AgGridReact theme={myTheme} ... />
+)
 `;
 
     return (
@@ -27,22 +27,22 @@ const CustomFeatures: React.FC = () => {
                 <div className={styles.featureContainer}>
                     <h3 className={styles.title}>Customise</h3>
                     <div className={styles.feature}>
-                        <h5 className={styles.featureHeading}>100+ CSS Variables</h5>
+                        <h5 className={styles.featureHeading}>Flexible Theming API</h5>
                         <span className={styles.featureDetail}>
-                            Customise every part of your React Table with over{' '}
-                            <a href={urlWithBaseUrl('./react-data-grid/global-style-customisation-variables/')}>
-                                100 CSS variables
-                            </a>
-                            . Customise colours, spacing, fonts, and component styles.
+                            Customise our <a href="./react-data-grid/themes/">Built-in Themes</a> with the{' '}
+                            <a href="./react-data-grid/theming/">Theming API</a>. Define a{' '}
+                            <a href="./react-data-grid/theming-colors/#color-schemes">Color Scheme</a>, modify{' '}
+                            <a href="/react-data-grid/theming-parameters/">Theme Parameters</a>, mix and match{' '}
+                            <a href=".react-data-grid/theming-parts/">Theme Parts</a>, and use{' '}
+                            <a href="./react-data-grid/theming-css/">CSS</a> for unlimited control.
                         </span>
                     </div>
                     <div className={styles.feature}>
-                        <h5 className={styles.featureHeading}>4 Default Themes</h5>
+                        <h5 className={styles.featureHeading}>Powerful Theming Tools</h5>
                         <span className={styles.featureDetail}>
-                            Choose from four themes including our new{' '}
-                            <a href={urlWithBaseUrl('./example?theme=ag-theme-quartz')}>Quartz</a> and{' '}
-                            <a href={urlWithBaseUrl('./example?theme=ag-theme-material/')}>Material</a> themes or design
-                            your own theme with our <a href={urlWithBaseUrl('./theme-builder/')}>Theme Builder</a> or{' '}
+                            Use our <a href={urlWithBaseUrl('./theme-builder/')}>Theme Builder</a> to create
+                            ready-to-use custom themes which can be imported into your app, or build them from scratch
+                            with our{' '}
                             <a href={urlWithBaseUrl('./react-data-grid/ag-grid-design-system/')}>Figma Design System</a>
                             .
                         </span>
@@ -60,7 +60,7 @@ const CustomFeatures: React.FC = () => {
                 </div>
             </div>
             <div className={styles.column}>
-                <Snippet framework={'react'} language={'css'} content={codeExample} transform={false} copyToClipboard />
+                <Snippet framework={'react'} language={'js'} content={codeExample} transform={false} copyToClipboard />
             </div>
         </div>
     );

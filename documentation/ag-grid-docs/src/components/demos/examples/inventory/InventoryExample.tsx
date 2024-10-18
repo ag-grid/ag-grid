@@ -191,6 +191,7 @@ export const InventoryExample: FunctionComponent<Props> = ({ gridTheme = 'ag-the
                 </div>
                 <div className={`${themeClass} ${styles.grid}`}>
                     <AgGridReact
+                        theme="legacy"
                         ref={gridRef}
                         columnDefs={colDefs}
                         rowData={rowData}

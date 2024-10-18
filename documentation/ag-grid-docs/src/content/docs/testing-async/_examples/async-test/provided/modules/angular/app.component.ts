@@ -6,8 +6,6 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, ModelUpdatedEvent } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import { getData } from './data';
 import './styles.css';
@@ -25,7 +23,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
         </div>
         <ag-grid-angular
             style="width: 100%; height: 100%;"
-            [class]="themeClass"
             [columnDefs]="columnDefs"
             [rowData]="rowData"
             [quickFilterText]="quickFilterText"
@@ -34,9 +31,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     </div>`,
 })
 export class AppComponent implements OnInit {
-    public themeClass =
-        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-        'ag-theme-quartz' /** DARK MODE END **/;
     public displayedRows: number = 10;
     public quickFilterText: string = '';
 

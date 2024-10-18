@@ -14,7 +14,7 @@ const BasicFeatures: React.FC = () => {
     ]);
     
     return (
-        <div className={"ag-theme-quartz-dark"}>
+        <div style={{height: 500}}>
             <AgGridReact rowData={rowData} columnDefs={colDefs}  />
         </div>
     );
@@ -29,9 +29,8 @@ const BasicFeatures: React.FC = () => {
                     <div className={styles.feature}>
                         <h5 className={styles.featureHeading}>Get Started in Minutes</h5>
                         <span className={styles.featureDetail}>
-                            Add a React Table with less than 20 lines of code. Choose a{' '}
-                            <a href={urlWithBaseUrl('./react-data-grid/themes/')}>theme</a>, add your data, and define
-                            your column structure. View the{' '}
+                            Add a React Table with less than 15 lines of code. Just add your data, and define your
+                            column structure. View the{' '}
                             <a href={urlWithBaseUrl('./react-data-grid/getting-started/')}>Quick Start</a> to learn
                             more.
                         </span>

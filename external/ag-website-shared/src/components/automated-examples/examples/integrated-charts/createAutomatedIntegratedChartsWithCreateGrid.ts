@@ -120,6 +120,7 @@ const columnDefs: ColDef[] = [
 ];
 let api: GridApi;
 const gridOptions: GridOptions = {
+    theme: 'legacy',
     columnDefs,
     defaultColDef: {
         flex: 1,
@@ -138,7 +139,7 @@ const gridOptions: GridOptions = {
         },
     },
     enableCharts: true,
-    selection: { mode: 'cell' },
+    cellSelection: true,
     suppressAggFuncInHeader: true,
     rowGroupPanelShow: 'always',
     chartToolPanelsDef: {

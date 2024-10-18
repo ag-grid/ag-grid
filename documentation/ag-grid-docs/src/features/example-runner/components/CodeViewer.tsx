@@ -1,4 +1,4 @@
-import type { ImportType, InternalFramework } from '@ag-grid-types';
+import type { InternalFramework } from '@ag-grid-types';
 import Code from '@ag-website-shared/components/code/Code';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import type { FileContents } from '@features/example-generator/types';
@@ -9,9 +9,6 @@ import { useEffect, useState } from 'react';
 import { CodeOptions } from './CodeOptions';
 import styles from './CodeViewer.module.scss';
 
-export const DARK_MODE_START = '/** DARK MODE START **/';
-export const DARK_MODE_END = '/** DARK MODE END **/';
-
 const ExtensionMap = {
     sh: 'bash',
     vue: 'html',
@@ -21,21 +18,8 @@ const ExtensionMap = {
 
 export function stripOutDarkModeCode(files: FileContents) {
     const mainFiles = ['main.js', 'main.ts', 'index.tsx', 'index.jsx', 'app.component.ts'];
-    const defaultTheme =
-        document.documentElement.dataset.darkMode?.toUpperCase() === 'TRUE'
-            ? 'ag-theme-quartz-dark'
-            : 'ag-theme-quartz';
     mainFiles.forEach((mainFile) => {
         if (files[mainFile]) {
-            // Integrated charts examples can only be viewed in light mode so that chart and grid match
-            const useDefaultTheme = !files[mainFile]?.includes('DARK INTEGRATED START');
-
-            // Hide theme switcher
-            files[mainFile] = files[mainFile]?.replace(
-                /\/\*\* DARK MODE START \*\*\/([\s\S]*?)\/\*\* DARK MODE END \*\*\//g,
-                `"${useDefaultTheme ? defaultTheme : 'ag-theme-quartz'}"`
-            );
-
             // hide integrated theme switcher
             files[mainFile] = files[mainFile]?.replace(
                 /\/\*\* DARK INTEGRATED START \*\*\/([\s\S]*?)\/\*\* DARK INTEGRATED END \*\*\//g,
@@ -43,10 +27,6 @@ export function stripOutDarkModeCode(files: FileContents) {
             );
         }
     });
-    /* RTI-1751 Would break JS master detail example that provides a grid too,
-   if (files['index.html']) {        
-        files['index.html'] = files['index.html']?.replace(/(['"\s])ag-theme-quartz(['"\s])/g, "$1" + defaultTheme + "$2");
-    } */
 }
 
 /**
@@ -60,7 +40,6 @@ export const CodeViewer = ({
     internalFramework,
     hideInternalFrameworkSelection,
     supportedFrameworks,
-    supportedImportTypes,
 }: {
     id: string;
     isActive?: boolean;
@@ -69,7 +48,6 @@ export const CodeViewer = ({
     internalFramework: InternalFramework;
     hideInternalFrameworkSelection?: boolean;
     supportedFrameworks: InternalFramework[];
-    supportedImportTypes: ImportType[];
 }) => {
     const [activeFile, setActiveFile] = useState(initialSelectedFile);
     const [showFiles, setShowFiles] = useState(true);
@@ -131,7 +109,6 @@ export const CodeViewer = ({
                             id={id}
                             internalFramework={internalFramework}
                             supportedFrameworks={supportedFrameworks}
-                            supportedImportTypes={supportedImportTypes}
                         />
                     )}
                 </div>

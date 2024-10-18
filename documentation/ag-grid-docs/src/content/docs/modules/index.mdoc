@@ -291,7 +291,7 @@ const GridExample = () => {
    // ... rest of function ...
 
    return (
-       <div style={{height: 400, width: 900}} className="ag-theme-quartz">
+       <div style={{height: 400, width: 900}}>
            <AgGridReact
                // properties
                columnDefs={columnDefs}
@@ -352,7 +352,7 @@ To see the difference in features open the ContextMenu and open the column filte
 * The Right grid has options for CSV and Excel export.
 * The Left grid uses the Set Filter  while the Right grid uses the Text Filter or Number Filter depending on the cell data type.
 
-{% gridExampleRunner title="Grids with Individual Registration" name="individual-registration" overrideImportType="modules" /%}
+{% gridExampleRunner title="Grids with Individual Registration" name="individual-registration" /%}
 
 ## Core Modules
 
@@ -378,32 +378,6 @@ import { LicenseManager } from "@ag-grid-enterprise/core";
 
 LicenseManager.setLicenseKey(...your key...);
 ```
-
-## CSS/SCSS Paths
-
-CSS & SCSS is available in the `@ag-grid-community/styles` module.
-
-CSS users should import the correct file for their theme:
-
-```css
-/* CSS Community */
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-quartz.css";
-```
-
-If using SCSS, the import is the same regardless of the theme used:
-
-```scss
-// SCSS Community
-@use "~@ag-grid-community/styles" as ag;
-
-// Choose alpine over default quartz
-@include ag.grid-styles((
-   theme: balham
-));
-```
-
-See [Choosing a Theme](./global-style-customisation-sass/#choosing-a-theme) for full details of how to select a theme using Sass.
 
 ## Module Examples
 

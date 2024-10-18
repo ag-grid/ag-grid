@@ -1,0 +1,54 @@
+---
+title: "Customising Menus & Popups"
+---
+
+Style UI elements that float above the main UI, including menus.
+
+{% warning %}
+## TODO: content due in AG-13129
+This page is a copy of the v32 theme docs, and needs updating for the Theming API.
+{% /warning %}
+
+## Rounding corners
+
+* `--ag-border-radius` sets the radius of most rectangular elements within the grid, including the grid itself.
+* `--ag-wrapper-border-radius` sets the radius of the grid wrapper, if you want it to be different from `--ag-border-radius`.
+* `--ag-card-radius` sets the radius of floating elements (cards and popups) and defaults to the value of `--ag-border-radius`.
+* `ag-root-wrapper` is the class name applied to the grid's outer element. Apply a border radius using a CSS selector: `.ag-root-wrapper { border-radius: 2px }`.
+
+## Drop shadows
+
+Elements that float above the user interface are called cards or popups. Internally there is an implementation difference between the two, but they are the same from the user's point of view, so it is appropriate to style them in the same way. To set a drop shadow on all floating elements, set the `--ag-card-shadow` and `--ag-popup-shadow` variables to a [CSS box shadow value](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow):
+
+```css
+.ag-theme-quartz {
+    --ag-card-shadow: 0 3px 4px black;
+    --ag-popup-shadow: 0 3px 4px black;
+}
+```
+
+## Styling menus
+
+Menus such as the column menu and context menu are cards and so respond to the instructions above for rounded corners and shadows. Additionally:
+
+* Use CSS rules targeting `.ag-menu` to style the body of all menus - column menus, filter menus and right-click context menus
+* To style a specific kind of menu, use the CSS `:has()` selector to select menus containing a specific component, e.g. `.ag-menu:has(.ag-filter)`. Use the browser developer tools to find the component class.
+
+## Example
+
+This example combines all of the above techniques to style the column menus. Click on the menu icon in a column header, or right click on the grid to show a floating menu:
+
+```css
+.ag-theme-quartz {
+    --ag-card-radius: 10px;
+    --ag-card-shadow: 0 10px 40px rgb(83, 0, 106);
+    --ag-popup-shadow: var(--ag-card-shadow);
+}
+
+.ag-theme-quartz .ag-menu {
+    min-width: 350px;
+    background-color: #55AA77;
+}
+```
+
+{% gridExampleRunner title="Styling Menus" name="styling-menus"  exampleHeight=450 /%}
