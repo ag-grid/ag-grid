@@ -204,6 +204,15 @@ export async function generateFiles(options: ExecutorOptions) {
                     }
                 }
 
+                if (internalFramework === 'reactFunctional' || internalFramework === 'reactFunctionalTs') {
+                    // add use client to the provided files if they contain AgGridReact
+                    const useClientCode = "'use client';\n";
+                    const fileContent = provideFrameworkFiles[fileName];
+                    if (fileContent.includes('AgGridReact') && !fileContent.includes('use client')) {
+                        provideFrameworkFiles[fileName] = useClientCode + fileContent;
+                    }
+                }
+
                 // Add Dark Mode code to the provided files if they are an integrated example
                 if (isIntegratedCharts && fileName === mainFileName) {
                     const code = getIntegratedDarkModeCode(
