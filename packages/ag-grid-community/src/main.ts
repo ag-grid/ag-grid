@@ -587,6 +587,8 @@ export {
     _ClientSideRowModelGridApi,
     _SideBarGridApi,
     _RowGroupingGridApi,
+    _AggregationGridApi,
+    _PivotGridApi,
     _RangeSelectionGridApi,
     _MenuGridApi,
     _ServerSideRowModelGridApi,

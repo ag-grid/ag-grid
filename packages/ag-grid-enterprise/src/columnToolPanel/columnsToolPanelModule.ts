@@ -3,7 +3,7 @@ import { ColumnMoveModule, DragAndDropModule, PopupModule } from 'ag-grid-commun
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
-import { RowGroupingModule } from '../rowGrouping/rowGroupingModule';
+import { RowGroupingCoreModule } from '../rowGrouping/rowGroupingModule';
 import { ToolPanelColDefService } from '../sideBar/common/toolPanelColDefService';
 import { SideBarModule } from '../sideBar/sideBarModule';
 import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
@@ -27,7 +27,7 @@ export const ColumnsToolPanelCoreModule: _ModuleWithoutApi = {
 export const ColumnsToolPanelRowGroupingModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('ColumnsToolPanelRowGroupingModule'),
     beans: [ColumnToolPanelFactory],
-    dependsOn: [ColumnsToolPanelCoreModule, RowGroupingModule],
+    dependsOn: [ColumnsToolPanelCoreModule, RowGroupingCoreModule],
 };
 
 export const ColumnsToolPanelModule: _ModuleWithoutApi = {
