@@ -11,6 +11,7 @@ import type {
 } from 'ag-grid-community';
 import {
     BaseSelectionService,
+    _error,
     _getGroupSelectsDescendants,
     _getRowSelectionMode,
     _isMultiRowSelection,
@@ -230,7 +231,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
     // used by CSRM
     public getBestCostNodeSelection(): RowNode<any>[] | undefined {
-        return _warn(194) as undefined;
+        return _warn(194, { method: 'getBestCostNodeSelection' }) as undefined;
     }
 
     /**
@@ -274,6 +275,10 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
                 source: 'selectableChanged',
             });
         }
+    }
+
+    public override updateSelectableAfterGrouping(): void {
+        return _error(194, { method: 'updateSelectableAfterGrouping' }) as undefined;
     }
 }
 function validateSelectionParameters({ selectAll }: { source: SelectionEventSourceType; selectAll?: SelectAllMode }) {

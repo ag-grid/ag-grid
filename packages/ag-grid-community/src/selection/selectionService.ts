@@ -731,8 +731,22 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         // if csrm and group selects children, update the groups after deselecting leaf nodes.
-        if (isCsrmGroupSelectsChildren) {
+        if (!skipLeafNodes && isCsrmGroupSelectsChildren) {
             this.updateGroupsFromChildrenSelections?.('selectableChanged');
+        }
+    }
+
+    public override updateSelectableAfterGrouping(changedPath: ChangedPath | undefined): void {
+        this.updateSelectable(true);
+
+        if (_getGroupSelectsDescendants(this.gos)) {
+            const selectionChanged = this.updateGroupsFromChildrenSelections?.('rowGroupChanged', changedPath);
+            if (selectionChanged) {
+                this.eventService.dispatchEvent({
+                    type: 'selectionChanged',
+                    source: 'rowGroupChanged',
+                });
+            }
         }
     }
 }

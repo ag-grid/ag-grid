@@ -166,19 +166,7 @@ export abstract class BaseSelectionService extends BeanStub {
 
     public abstract setNodesSelected(params: ISetNodesSelectedParams): number;
 
-    public updateSelectableAfterGrouping(changedPath: ChangedPath | undefined): void {
-        this.updateSelectable(true);
-
-        if (_getGroupSelectsDescendants(this.gos)) {
-            const selectionChanged = this.updateGroupsFromChildrenSelections?.('rowGroupChanged', changedPath);
-            if (selectionChanged) {
-                this.eventService.dispatchEvent({
-                    type: 'selectionChanged',
-                    source: 'rowGroupChanged',
-                });
-            }
-        }
-    }
+    public abstract updateSelectableAfterGrouping(changedPath: ChangedPath | undefined): void;
 
     protected abstract updateSelectable(skipLeafNodes: boolean): void;
 
