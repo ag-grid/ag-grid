@@ -128,12 +128,16 @@ class ThemeImpl<TParams = unknown> implements Theme {
         // Core CSS is loaded once per shadow root and shared between themes
         loadPromises.push(installCSS({ css: coreCSS, part: 'core', root }));
 
-        for (const googleFont of getGoogleFontsUsed(this)) {
-            if (loadThemeGoogleFonts) {
-                loadGoogleFont(googleFont);
-            } else if (loadThemeGoogleFonts == null) {
-                // Temporarily disable warning until AG-13135 fixes false positive
-                // _warn(112, { googleFont, googleFontsDomain });
+        const googleFontsUsed = getGoogleFontsUsed(this);
+        if (googleFontsUsed.length > 0) {
+            const googleFontsLoaded = new Set<string>();
+            document.fonts.forEach((font) => googleFontsLoaded.add(font.family));
+            for (const googleFont of googleFontsUsed) {
+                if (loadThemeGoogleFonts) {
+                    loadGoogleFont(googleFont);
+                } else if (loadThemeGoogleFonts == null && !googleFontsLoaded.has(googleFont)) {
+                    _warn(112, { googleFont, googleFontsDomain });
+                }
             }
         }
 
@@ -225,7 +229,8 @@ const makeVariablesChunk = (themeArg: Theme): ThemeCssChunk => {
     const modes = ['default', ...params.getModes().filter((mode) => mode !== 'default')];
     for (const mode of modes) {
         if (mode !== 'default') {
-            const wrapPrefix = `:where([data-ag-theme-mode="${CSS.escape(mode)}"]) & {\n`;
+            const escapedMode = typeof CSS === 'object' ? CSS.escape(mode) : mode; // check for CSS global in case we're running in tests
+            const wrapPrefix = `:where([data-ag-theme-mode="${escapedMode}"]) & {\n`;
             variablesCss += wrapPrefix;
             inheritanceCss += wrapPrefix;
         }

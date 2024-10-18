@@ -1,6 +1,9 @@
 @use 'design-system' as *;
 
 .clipboardButtonOuter {
+    --clipboard-button-bg: transparent;
+    --clipboard-button-fg: var(--color-fg-tertiary);
+
     display: flex;
     align-items: center;
     position: absolute;
@@ -10,25 +13,25 @@
     z-index: 2;
     transition: opacity 0.33s ease-in-out;
 
-    pre:hover & {
+    pre:hover &,
+    &.hasCopied {
         opacity: 1;
     }
 
     &:hover {
-        .clipboardButtonCopied {
-            color: var(--color-util-brand-400);
+        --clipboard-button-fg: var(--color-util-brand-400);
 
-            #{$selector-darkmode} & {
-                color: var(--color-link-hover);
-            }
+        #{$selector-darkmode} & {
+            --clipboard-button-fg: var(--color-link-hover);
         }
+    }
 
-        svg {
-            --color-icon: var(--color-util-brand-400);
+    &.hasCopied {
+        --clipboard-button-bg: var(--color-util-gray-700);
+        --clipboard-button-fg: var(--color-fg-white);
 
-            #{$selector-darkmode} & {
-                --color-icon: var(--color-link-hover);
-            }
+        #{$selector-darkmode} & {
+            --clipboard-button-fg: var(--color-bg-primary);
         }
     }
 
@@ -43,13 +46,9 @@
     display: flex;
     align-items: center;
     height: $spacing-size-8;
-    background-color: var(--color-bg-primary);
+    background-color: var(--clipboard-button-bg);
     border-top: 1px solid var(--color-border-primary);
     border-bottom: 1px solid var(--color-border-primary);
-
-    #{$selector-darkmode} & {
-        background-color: var(--color-code-background);
-    }
 }
 
 .clipboardButton {
@@ -62,7 +61,7 @@
 
     svg {
         --icon-size: 22px;
-        --color-icon: var(--color-util-gray-500);
+        --color-icon: var(--clipboard-button-fg);
 
         transition: fill $transition-default-timing;
     }
@@ -81,45 +80,9 @@
     border-bottom-left-radius: var(--radius-sm);
     border-left: 1px solid var(--color-border-primary);
     font-weight: var(--text-regular);
-    color: var(--color-fg-tertiary);
+    color: var(--clipboard-button-fg);
     transition:
-        transform $transition-default-timing,
         background-color $transition-default-timing,
         color $transition-default-timing;
     cursor: pointer;
-
-    #{$selector-darkmode} & {
-        color: var(--color-bg-primary);
-    }
-}
-
-.hasCopied {
-    opacity: 1;
-
-    .clipboardButton {
-        background-color: var(--color-util-gray-700);
-    }
-
-    .clipboardButton svg {
-        --color-icon: var(--color-fg-white);
-
-        #{$selector-darkmode} & {
-            --color-icon: var(--color-bg-primary);
-        }
-    }
-
-    .clipboardButton:hover svg {
-        --color-icon: var(--color-fg-white);
-
-        #{$selector-darkmode} & {
-            --color-icon: var(--color-bg-primary);
-        }
-    }
-
-    .clipboardButtonCopied,
-    &:hover .clipboardButtonCopied {
-        color: var(--color-fg-white);
-        transform: translateX(0);
-        background-color: var(--color-util-gray-700);
-    }
 }

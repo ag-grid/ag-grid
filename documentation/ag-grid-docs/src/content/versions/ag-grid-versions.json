@@ -10,7 +10,7 @@
             },
             {
                 "text": "New Theming API",
-                "path": "./theming-api"
+                "path": "./theming"
             },
             {
                 "text": "New Selection API",
@@ -38,7 +38,7 @@
             },
             {
                 "text": "New Theming API",
-                "path": "./theming-api"
+                "path": "./theming"
             },
             {
                 "text": "New Selection API",
@@ -170,7 +170,7 @@
             },
             {
                 "text": "Dark Mode for Material Design Theme",
-                "path": "./themes/#provided-themes"
+                "path": "./themes/"
             },
             {
                 "text": "Figma Design System Includes Material Design Theme",

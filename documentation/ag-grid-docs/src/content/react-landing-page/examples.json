@@ -5,7 +5,7 @@
         "title": "Quick Start",
         "content": "Create your first React Table and learn the basics in just a few minutes.",
         "docs": "./react-data-grid/getting-started",
-        "demo": "./examples/getting-started/working-with-data-example/modules/reactFunctionalTs"
+        "demo": "./examples/getting-started/working-with-data-example/reactFunctionalTs"
     },
     {
         "img": "beginner-tutorial.png",
@@ -13,15 +13,15 @@
         "title": "Beginner Tutorial",
         "content": "Learn key concepts by building a React Table with common functionality & customisations.",
         "docs": "./react-data-grid/deep-dive/",
-        "demo": "./examples/deep-dive/testing-example/modules/reactFunctionalTs"
+        "demo": "./examples/deep-dive/testing-example/reactFunctionalTs"
     },
     {
         "img": "custom-themes.png",
         "img_alt": "Learn how to customise a React Table with unique CSS themes",
         "title": "Custom Styles",
-        "content": "Customise your React Table using CSS variables to create a unique theme for your brand.",
+        "content": "Customise your React Table with the Theming API to create a unique theme for your brand.",
         "docs": "./react-data-grid/theming/",
-        "demo": "./examples/theming-v32-customisation-colours/colour-customisation/modules/reactFunctionalTs"
+        "demo": "./examples/theming-colors/color-customisation/reactFunctionalTs"
     },
     {
         "img": "integrated-charts.png",
@@ -29,6 +29,6 @@
         "title": "Integrated Charts",
         "content": "Build & style charts programatically, or let users create their own from the table.",
         "docs": "./react-data-grid/integrated-charts/",
-        "demo": "./examples/integrated-charts-chart-tool-panels/chart-tool-panels/modules/reactFunctionalTs"
+        "demo": "./examples/integrated-charts-chart-tool-panels/chart-tool-panels/reactFunctionalTs"
     }
 ]
