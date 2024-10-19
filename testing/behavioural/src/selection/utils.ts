@@ -1,20 +1,12 @@
-import type { GridApi, IRowNode } from 'ag-grid-community';
+import type { AgPublicEventType, GridApi, IRowNode } from 'ag-grid-community';
 import { _areEqual } from 'ag-grid-community';
-
-export function wait(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 export function getRowByIndex(index: number): HTMLElement | null {
     return document.getElementById('myGrid')!.querySelector(`[row-index="${index}"]`);
 }
 
 export function getCheckboxByIndex(index: number): HTMLElement | null {
-    return document
-        .getElementById('myGrid')!
-        .querySelectorAll<HTMLElement>('.ag-selection-checkbox')
-        .item(index)
-        .querySelector('input[type=checkbox]');
+    return getRowByIndex(index)?.querySelector<HTMLElement>('.ag-selection-checkbox input[type=checkbox]') ?? null;
 }
 
 export function getHeaderCheckboxByIndex(index: number): HTMLElement | null {
@@ -44,10 +36,22 @@ export function toggleHeaderCheckboxByIndex(index: number, opts?: MouseEventInit
     getHeaderCheckboxByIndex(index)?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
 }
 
+export function expandGroupRowByIndex(index: number, opts?: MouseEventInit): void {
+    getRowByIndex(index)
+        ?.querySelector<HTMLElement>('.ag-group-contracted')
+        ?.dispatchEvent(new MouseEvent('click', { ...opts, bubbles: true }));
+}
+
 export function assertSelectedRowsByIndex(indices: number[], api: GridApi): void {
     const actual = new Set(api.getSelectedNodes().map((n) => n.rowIndex));
     const expected = new Set(indices);
     expect(actual).toEqual(expected);
+}
+
+export function assertSelectedRowElementsById(ids: string[], api: GridApi): void {
+    const selected = new Set<string>();
+    api.forEachNode((node) => (node.isSelected() ? selected.add(node.id!) : null));
+    expect(selected).toEqual(new Set(ids));
 }
 
 export function assertSelectedRowNodes(nodes: IRowNode[], api: GridApi): void {
@@ -89,4 +93,15 @@ export function assertSelectedCellRanges(cellRanges: CellRangeSpec[], api: GridA
         }
     }
     expect(notFound).toEqual([]);
+}
+
+export function waitForEvent(event: AgPublicEventType, api: GridApi, n = 1): Promise<void> {
+    let count = n;
+    return new Promise((resolve) =>
+        api.addEventListener(event, () => {
+            if (--count === 0) {
+                resolve();
+            }
+        })
+    );
 }

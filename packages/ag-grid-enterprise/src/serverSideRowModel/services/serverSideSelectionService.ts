@@ -11,9 +11,11 @@ import type {
 } from 'ag-grid-community';
 import {
     BaseSelectionService,
+    _error,
     _getGroupSelectsDescendants,
     _getRowSelectionMode,
     _isMultiRowSelection,
+    _isRowSelection,
     _isUsingNewRowSelectionAPI,
     _warn,
 } from 'ag-grid-community';
@@ -229,8 +231,48 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
     // used by CSRM
     public getBestCostNodeSelection(): RowNode<any>[] | undefined {
-        _warn(194);
-        return undefined;
+        return _warn(194, { method: 'getBestCostNodeSelection' }) as undefined;
+    }
+
+    /**
+     * Updates the selectable state for a node by invoking isRowSelectable callback.
+     * If the node is not selectable, it will be deselected.
+     *
+     * Callers:
+     *  - property isRowSelectable changed
+     *  - after grouping / treeData
+     */
+    protected override updateSelectable(): void {
+        const { gos } = this;
+
+        const isRowSelecting = _isRowSelection(gos);
+
+        if (!isRowSelecting) {
+            return;
+        }
+
+        const nodesToDeselect: RowNode[] = [];
+
+        this.rowModel.forEachNode((node) => {
+            const rowSelectable = this.isRowSelectable?.(node) ?? true;
+            this.setRowSelectable(node, rowSelectable, true);
+
+            if (!rowSelectable && node.isSelected()) {
+                nodesToDeselect.push(node);
+            }
+        });
+
+        if (nodesToDeselect.length) {
+            this.setNodesSelected({
+                nodes: nodesToDeselect,
+                newValue: false,
+                source: 'selectableChanged',
+            });
+        }
+    }
+
+    public override updateSelectableAfterGrouping(): void {
+        return _error(194, { method: 'updateSelectableAfterGrouping' }) as undefined;
     }
 }
 function validateSelectionParameters({ selectAll }: { source: SelectionEventSourceType; selectAll?: SelectAllMode }) {
