@@ -7,23 +7,23 @@ To implement the filtering logic, a custom filter needs to implement the `doesFi
 {% if isFramework("react") %}
 ```jsx
 export default ({ model, onModelChange, getValue }) => {
-   const doesFilterPass = useCallback(({ node }) => {
-       // filtering logic
-       return getValue(node).contains(model);
-   }, [model]);
+    const doesFilterPass = useCallback(({ node }) => {
+        // filtering logic
+        return getValue(node).contains(model);
+    }, [model]);
 
-   // register filter callbacks with the grid
-   useGridFilter({ doesFilterPass });
+    // register filter callbacks with the grid
+    useGridFilter({ doesFilterPass });
 
-   return (
-       <div>
-           <input
-               type="text"
-               value={model || ''}
-               onChange={({ target: { value }}) => onModelChange(value === '' ? null : value)}
-           />
-       </div>
-   );
+    return (
+        <div>
+            <input
+                type="text"
+                value={model || ''}
+                onChange={({ target: { value }}) => onModelChange(value === '' ? null : value)}
+            />
+        </div>
+    );
 }
 ```
 {% /if %}

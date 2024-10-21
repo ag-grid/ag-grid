@@ -8,21 +8,21 @@ Implement this interface to provide a custom drag and drop image component when 
 {% if isFramework("javascript") %}
 ```ts
 interface IDragAndDropImageComponent {
-   // Optional - props for rendering.
-   init?(params: IDragAndDropImageParams): void;
+    // Optional - props for rendering.
+    init?(params: IDragAndDropImageParams): void;
 
-   // Mandatory - Return the DOM element of the component, this is what the grid will display while dragging
-   getGui(): HTMLElement;
+    // Mandatory - Return the DOM element of the component, this is what the grid will display while dragging
+    getGui(): HTMLElement;
 
-   // Optional - Gets called once by grid after rendering is finished - if your renderer needs to do any cleanup,
-   // do it here
-   destroy?(): void;
+    // Optional - Gets called once by grid after rendering is finished - if your renderer needs to do any cleanup,
+    // do it here
+    destroy?(): void;
 
-   // Mandatory - Gets called every time the grid needs to update the label of the Drag Image.
-   setLabel(label: string): void;
+    // Mandatory - Gets called every time the grid needs to update the label of the Drag Image.
+    setLabel(label: string): void;
 
-    // Mandatory - Gets called every time the grid needs to update the icon of the Drag Image.
-   setIcon(icon: string | null, shake: boolean): void;
+        // Mandatory - Gets called every time the grid needs to update the icon of the Drag Image.
+    setIcon(icon: string | null, shake: boolean): void;
 }
 ```
 {% /if %}
@@ -56,20 +56,20 @@ This is useful if you want to allow configuring the component. For example, you 
 {% if isFramework("javascript", "angular", "react") %}
 ```js
 colDef = {
-   dragAndDropImageComponent: MyDragAndDropImageComponent;
-   dragAndDropImageComponentParams : {
-       accentColour: 'SlateGray'
-   }
+    dragAndDropImageComponent: MyDragAndDropImageComponent;
+    dragAndDropImageComponentParams : {
+        accentColour: 'SlateGray'
+    }
 }
 ```
 {% /if %}
 {% if isFramework("vue") %}
 ```js
 colDef = {
-   dragAndDropImageComponent: 'MyDragAndDropImageComponent';
-   dragAndDropImageComponentParams : {
-       accentColour: 'SlateGray'
-   }
+    dragAndDropImageComponent: 'MyDragAndDropImageComponent';
+    dragAndDropImageComponentParams : {
+        accentColour: 'SlateGray'
+    }
 }
 ```
 {% /if %}

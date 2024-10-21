@@ -5,11 +5,11 @@ The interface for the loading cell renderer component is as follows:
 {% if isFramework("javascript") %}
 ```ts
 interface ILoadingCellRendererComp {
-   // The init(params) method is called on the loading cell renderer once. See below for details on the parameters.
-   init(params: ILoadingCellRendererParams): void;
+    // The init(params) method is called on the loading cell renderer once. See below for details on the parameters.
+    init(params: ILoadingCellRendererParams): void;
 
-   // Returns the DOM element for this loading cell renderer
-   getGui(): HTMLElement;
+    // Returns the DOM element for this loading cell renderer
+    getGui(): HTMLElement;
 }
 ```
 {% /if %}

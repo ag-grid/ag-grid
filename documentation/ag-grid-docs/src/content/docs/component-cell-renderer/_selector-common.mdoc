@@ -1,10 +1,10 @@
 {% if isFramework("javascript", "angular", "react") %}
 ```js
 cellRendererSelector: params => {
-   return {
-       component: GenderCellRenderer,
-       params: {values: ['Male', 'Female']}
-   };
+    return {
+        component: GenderCellRenderer,
+        params: {values: ['Male', 'Female']}
+    };
 }
 ```
 
@@ -13,22 +13,22 @@ However a selector only makes sense when a selection is made. The following demo
 ```js
 cellRendererSelector: params => {
 
-   const type = params.data.type;
+    const type = params.data.type;
 
-   if (type === 'gender') {
-       return {
-           component: GenderCellRenderer,
-           params: {values: ['Male', 'Female']}
-       };
-   }
+    if (type === 'gender') {
+        return {
+            component: GenderCellRenderer,
+            params: {values: ['Male', 'Female']}
+        };
+    }
 
-   if (type === 'mood') {
-       return {
-           component: MoodCellRenderer
-       };
-   }
+    if (type === 'mood') {
+        return {
+            component: MoodCellRenderer
+        };
+    }
 
-   return undefined;
+    return undefined;
 }
 ```
 {% /if %}

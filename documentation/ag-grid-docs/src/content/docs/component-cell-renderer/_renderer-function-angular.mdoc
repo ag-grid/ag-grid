@@ -11,19 +11,19 @@ In the example below we're outputting a string value that depends on the cell va
 {% if isFramework("angular") %}
 ```js
 @Component({
-   selector: 'my-app',
-   template: `
-       <ag-grid-angular
-               [columnDefs]="columnDefs"
-               ...other properties />`
+    selector: 'my-app',
+    template: `
+        <ag-grid-angular
+                [columnDefs]="columnDefs"
+                ...other properties />`
 })
 export class AppComponent {
-   columnDefs = [
-       {
-           headerName: "Value",
-           field: "value",
-           cellRenderer: params => params.value > 1000 ? "LARGE VALUE" : "SMALL VALUE"
-       }
+    columnDefs = [
+        {
+            headerName: "Value",
+            field: "value",
+            cellRenderer: params => params.value > 1000 ? "LARGE VALUE" : "SMALL VALUE"
+        }
     ];
     //...
 }

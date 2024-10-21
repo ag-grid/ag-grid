@@ -132,11 +132,11 @@ Additionally we're writing a Vue application, so we need to specify the `@ag-gri
 {% if isFramework("javascript") %}
 ```js
 "dependencies": {
-   "@ag-grid-community/client-side-row-model": "~{% $agGridVersion %}",
-   "@ag-grid-community/csv-export": "~{% $agGridVersion %}",
-   "@ag-grid-enterprise/excel-export": "~{% $agGridVersion %}",
-   "@ag-grid-enterprise/master-detail": "~{% $agGridVersion %}",
-   //...other dependencies...
+    "@ag-grid-community/client-side-row-model": "~{% $agGridVersion %}",
+    "@ag-grid-community/csv-export": "~{% $agGridVersion %}",
+    "@ag-grid-enterprise/excel-export": "~{% $agGridVersion %}",
+    "@ag-grid-enterprise/master-detail": "~{% $agGridVersion %}",
+    //...other dependencies...
 }
 ```
 {% /if %}
@@ -144,12 +144,12 @@ Additionally we're writing a Vue application, so we need to specify the `@ag-gri
 {% if isFramework("angular") %}
 ```js
 "dependencies": {
-   "@ag-grid-community/client-side-row-model": "~{% $agGridVersion %}",
-   "@ag-grid-community/csv-export": "~{% $agGridVersion %}",
-   "@ag-grid-enterprise/excel-export": "~{% $agGridVersion %}",
-   "@ag-grid-enterprise/master-detail": "~{% $agGridVersion %}",
-   "@ag-grid-community/angular": "~{% $agGridVersion %}",
-   //...other dependencies...
+    "@ag-grid-community/client-side-row-model": "~{% $agGridVersion %}",
+    "@ag-grid-community/csv-export": "~{% $agGridVersion %}",
+    "@ag-grid-enterprise/excel-export": "~{% $agGridVersion %}",
+    "@ag-grid-enterprise/master-detail": "~{% $agGridVersion %}",
+    "@ag-grid-community/angular": "~{% $agGridVersion %}",
+    //...other dependencies...
 }
 ```
 {% /if %}
@@ -157,12 +157,12 @@ Additionally we're writing a Vue application, so we need to specify the `@ag-gri
 {% if isFramework("react") %}
 ```js
 "dependencies": {
-   "@ag-grid-community/client-side-row-model": "~{% $agGridVersion %}",
-   "@ag-grid-community/csv-export": "~{% $agGridVersion %}",
-   "@ag-grid-enterprise/excel-export": "~{% $agGridVersion %}",
-   "@ag-grid-enterprise/master-detail": "~{% $agGridVersion %}",
-   "@ag-grid-community/react": "~{% $agGridVersion %}",
-   //...other dependencies...
+    "@ag-grid-community/client-side-row-model": "~{% $agGridVersion %}",
+    "@ag-grid-community/csv-export": "~{% $agGridVersion %}",
+    "@ag-grid-enterprise/excel-export": "~{% $agGridVersion %}",
+    "@ag-grid-enterprise/master-detail": "~{% $agGridVersion %}",
+    "@ag-grid-community/react": "~{% $agGridVersion %}",
+    //...other dependencies...
 }
 ```
 {% /if %}
@@ -170,12 +170,12 @@ Additionally we're writing a Vue application, so we need to specify the `@ag-gri
 {% if isFramework("vue") %}
 ```js
 "dependencies": {
-   "@ag-grid-community/client-side-row-model": "~{% $agGridVersion %}",
-   "@ag-grid-community/csv-export": "~{% $agGridVersion %}",
-   "@ag-grid-enterprise/excel-export": "~{% $agGridVersion %}",
-   "@ag-grid-enterprise/master-detail": "~{% $agGridVersion %}",
-   "@ag-grid-community/vue3": "~{% $agGridVersion %}",
-   //...other dependencies...
+    "@ag-grid-community/client-side-row-model": "~{% $agGridVersion %}",
+    "@ag-grid-community/csv-export": "~{% $agGridVersion %}",
+    "@ag-grid-enterprise/excel-export": "~{% $agGridVersion %}",
+    "@ag-grid-enterprise/master-detail": "~{% $agGridVersion %}",
+    "@ag-grid-community/vue3": "~{% $agGridVersion %}",
+    //...other dependencies...
 }
 ```
 {% /if %}
@@ -205,10 +205,10 @@ import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
 import { MasterDetailModule } from "@ag-grid-enterprise/master-detail";
 
 ModuleRegistry.registerModules([
-   ClientSideRowModelModule,
-   CsvExportModule,
-   ExcelExportModule,
-   MasterDetailModule
+    ClientSideRowModelModule,
+    CsvExportModule,
+    ExcelExportModule,
+    MasterDetailModule
 ]);
 ```
 
@@ -238,10 +238,10 @@ import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
 import { MasterDetailModule } from "@ag-grid-enterprise/master-detail"; 
 
 createGrid(<dom element>, gridOptions, { modules: [
-   ClientSideRowModelModule,
-   CsvExportModule,
-   ExcelExportModule,
-   MasterDetailModule
+    ClientSideRowModelModule,
+    CsvExportModule,
+    ExcelExportModule,
+    MasterDetailModule
 ]});
 ```
 {% /if %}
@@ -259,16 +259,16 @@ import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
 import { MasterDetailModule } from "@ag-grid-enterprise/master-detail"; 
 
 public modules: Module[] = [
-   ClientSideRowModelModule,
-   CsvExportModule,
-   ExcelExportModule,
-   MasterDetailModule
+    ClientSideRowModelModule,
+    CsvExportModule,
+    ExcelExportModule,
+    MasterDetailModule
 ];
 
 <ag-grid-angular>
-   [rowData]="rowData"
-   [columnDefs]="columnDefs"
-   [modules]="modules" />
+    [rowData]="rowData"
+    [columnDefs]="columnDefs"
+    [modules]="modules" />
 ```
 {% /if %}
 
@@ -288,25 +288,25 @@ import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
 import { MasterDetailModule } from "@ag-grid-enterprise/master-detail";
 
 const GridExample = () => {
-   // ... rest of function ...
+    // ... rest of function ...
 
-   return (
-       <div style={{height: 400, width: 900}}>
-           <AgGridReact
-               // properties
-               columnDefs={columnDefs}
-               rowData={rowData}
+    return (
+        <div style={{height: 400, width: 900}}>
+            <AgGridReact
+                // properties
+                columnDefs={columnDefs}
+                rowData={rowData}
 
-               // Pass Modules to this individual grid
-               modules={[
-                   ClientSideRowModelModule,
-                   CsvExportModule,
-                   ExcelExportModule,
-                   MasterDetailModule
-               ]}>
-           </AgGridReact>
-       </div>
-   );
+                // Pass Modules to this individual grid
+                modules={[
+                    ClientSideRowModelModule,
+                    CsvExportModule,
+                    ExcelExportModule,
+                    MasterDetailModule
+                ]}>
+            </AgGridReact>
+        </div>
+    );
 };
 ```
 {% /if %}
@@ -321,21 +321,21 @@ import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
 import { MasterDetailModule } from "@ag-grid-enterprise/master-detail";
 
 data() {
-   return {
-       columnDefs: ...column defs...,
-       rowData: ....row data...,
-       modules: [
-           ClientSideRowModelModule,
-           CsvExportModule,
-           ExcelExportModule,
-           MasterDetailModule
-       ]
-   }
+    return {
+        columnDefs: ...column defs...,
+        rowData: ....row data...,
+        modules: [
+            ClientSideRowModelModule,
+            CsvExportModule,
+            ExcelExportModule,
+            MasterDetailModule
+        ]
+    }
 }
 <ag-grid-vue
-   :columnDefs="columnDefs"
-   :rowData="rowData"
-   :modules="modules">
+    :columnDefs="columnDefs"
+    :rowData="rowData"
+    :modules="modules">
 </ag-grid-vue>
 ```
 {% /if %}
@@ -364,9 +364,9 @@ If we have the following modules specified:
 
 ```js
 "dependencies": {
-   "@ag-grid-community/client-side-row-model": "~{% $agGridVersion %}",
-   "@ag-grid-enterprise/excel-export": "~{% $agGridVersion %}",
-   //...other dependencies...
+    "@ag-grid-community/client-side-row-model": "~{% $agGridVersion %}",
+    "@ag-grid-enterprise/excel-export": "~{% $agGridVersion %}",
+    //...other dependencies...
 }
 ```
 

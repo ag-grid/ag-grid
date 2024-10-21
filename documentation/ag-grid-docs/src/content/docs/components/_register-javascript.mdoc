@@ -15,15 +15,15 @@ The easiest approach is to refer to the Component class directly.
 ```js
 gridOptions = {
 
-   columnDefs: [
-       {
-           field: 'country',
-           cellRenderer: CountryCellRenderer,
-           filter: CountryFilter
-       },
-   ],
+    columnDefs: [
+        {
+            field: 'country',
+            cellRenderer: CountryCellRenderer,
+            filter: CountryFilter
+        },
+    ],
 
-   ...
+    ...
 }
 ```
 {% /if %}
@@ -41,24 +41,24 @@ A Component is registered with the grid by providing it through the `components`
 ```js
 gridOptions = {
 
-   // register the components using 'components' grid property
-   components: {
-       // 'countryCellRenderer' is mapped to class CountryCellRenderer
-       countryCellRenderer: CountryCellRenderer,
-       // 'countryFilter' is mapped to class CountryFilter
-       countryFilter: CountryFilter
-   },
+    // register the components using 'components' grid property
+    components: {
+        // 'countryCellRenderer' is mapped to class CountryCellRenderer
+        countryCellRenderer: CountryCellRenderer,
+        // 'countryFilter' is mapped to class CountryFilter
+        countryFilter: CountryFilter
+    },
 
-   // then refer to the component by name
-   columnDefs: [
-       {
-           field: 'country',
-           cellRenderer: 'countryCellRenderer',
-           filter: 'countryFilter'
-       },
-   ],
+    // then refer to the component by name
+    columnDefs: [
+        {
+            field: 'country',
+            cellRenderer: 'countryCellRenderer',
+            filter: 'countryFilter'
+        },
+    ],
 
-   ...
+    ...
 }
 ```
 {% /if %}

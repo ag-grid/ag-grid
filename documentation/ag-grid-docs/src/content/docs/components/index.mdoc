@@ -91,10 +91,10 @@ If you use `connect` to use Redux, or if you're using a Higher Order Component (
 {% if isFramework("react") %}
 ```jsx
 export default connect((state) => {
-   return {
-       currencySymbol: state.currencySymbol,
-       exchangeRate: state.exchangeRate
-   }
+    return {
+        currencySymbol: state.currencySymbol,
+        exchangeRate: state.exchangeRate
+    }
 }, null, null, { forwardRef: true } // must be supplied for react/redux when using AgGridReact
 )(PriceRenderer);
 ```
@@ -247,31 +247,31 @@ When using Vue Components within AG Grid you are able to use `provide` / `contex
 ```jsx
 // Parent Grid
 const VueExample = {
-   template: `
-       <ag-grid-vue
-               style="width: 100%; height: 100%;"
-               :columnDefs="columnDefs"
-               :rowData="rowData">
-       </ag-grid-vue>
-   `,
-   components: {
-       'ag-grid-vue': AgGridVue,
-       'myRenderer': MyRenderer
-   },
-   provide: {
-       'providedValue': 'testValue' // provide this value to grid components
-   },
+    template: `
+        <ag-grid-vue
+                style="width: 100%; height: 100%;"
+                :columnDefs="columnDefs"
+                :rowData="rowData">
+        </ag-grid-vue>
+    `,
+    components: {
+        'ag-grid-vue': AgGridVue,
+        'myRenderer': MyRenderer
+    },
+    provide: {
+        'providedValue': 'testValue' // provide this value to grid components
+    },
 
-   //...rest of the component definition
+    //...rest of the component definition
 }
 
 // Child Grid Component
 export default {
-   name: 'myRenderer',
-   template: `<span>{{ value }} {{ test }}</span>`,
-   inject: ['providedValue'],   // retrieve/inject the provided value
-   
-   //...rest of the component definition
+    name: 'myRenderer',
+    template: `<span>{{ value }} {{ test }}</span>`,
+    inject: ['providedValue'],   // retrieve/inject the provided value
+
+    //...rest of the component definition
 };
 ```
 {% /if %}
@@ -397,11 +397,11 @@ To override the default component, register the custom component in the GridOpti
 {% if isFramework("javascript") %}
 ```js
 const gridOptions = {
-   // Here is where we specify the components to be used instead of the default
-   components: {
-       agDateInput: CustomDateComponent,
-       agColumnHeader: CustomHeaderComponent
-   }
+    // Here is where we specify the components to be used instead of the default
+    components: {
+        agDateInput: CustomDateComponent,
+        agColumnHeader: CustomHeaderComponent
+    }
 };
 ```
 {% /if %}
@@ -409,33 +409,33 @@ const gridOptions = {
 {% if isFramework("angular") %}
 ```ts
 @Component({
-   selector: 'my-app',
-   template: `
-     <ag-grid-angular
-         [components]="components"
-         ...other properties...  
-      />
-   `
+    selector: 'my-app',
+    template: `
+        <ag-grid-angular
+            [components]="components"
+            ...other properties...  
+        />
+    `
 })
 export class AppComponent {
-   // Here is where we specify the components to be used instead of the default
-   public components = {
-       agDateInput: CustomDateComponent,
-       agColumnHeader: CustomHeaderComponent
-   };
+    // Here is where we specify the components to be used instead of the default
+    public components = {
+        agDateInput: CustomDateComponent,
+        agColumnHeader: CustomHeaderComponent
+    };
 ```
 {% /if %}
 
 {% if isFramework("react") %}
 ```jsx
 const components = useMemo(() => (
-   { agDateInput: CustomDateComponent,
-     agColumnHeader: CustomHeaderComponent 
-   }), []);
+    { agDateInput: CustomDateComponent,
+        agColumnHeader: CustomHeaderComponent 
+    }), []);
 
 <AgGridReact
-   components={components}
-   ...other properties...
+    components={components}
+    ...other properties...
 />
 ```
 {% /if %}
@@ -443,12 +443,12 @@ const components = useMemo(() => (
 {% if isFramework("vue") %}
 ```ts
 const MyApp = {
-   // Here is where we specify the components to be used instead of the default
-   components: {
-       'ag-grid-vue': AgGridVue
-       agDateInput: CustomDateComponent,
-       agColumnHeader: CustomHeaderComponent
-   },
+    // Here is where we specify the components to be used instead of the default
+    components: {
+        'ag-grid-vue': AgGridVue
+        agDateInput: CustomDateComponent,
+        agColumnHeader: CustomHeaderComponent
+    },
 ```
 {% /if %}
 

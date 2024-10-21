@@ -279,15 +279,15 @@ To know when a column's sort state has changed (e.g. when to update your icons),
 // listen to the column for sort events
 column.addEventListener('sortChanged', function() {
 
-   // get sort state from column
-   var sort = column.getSort();
-   console.log('sort state of column is ' + sort); // prints one of ['asc',desc',null]
+    // get sort state from column
+    var sort = column.getSort();
+    console.log('sort state of column is ' + sort); // prints one of ['asc',desc',null]
 
-   // then do what you need, e.g. set relevant icons visible
-   var sortingAscending = sort==='asc';
-   var sortingDescending = sort==='desc';
-   var notSorting = !sortingAscending && !sortingDescending;
-   // how you update your GUI accordingly is up to you
+    // then do what you need, e.g. set relevant icons visible
+    var sortingAscending = sort==='asc';
+    var sortingDescending = sort==='desc';
+    var notSorting = !sortingAscending && !sortingDescending;
+    // how you update your GUI accordingly is up to you
 });
 
 // don't forget to remove your listener in your destroy code
@@ -300,8 +300,8 @@ The header doesn't normally initiate filtering. If it does, use the standard gri
 ```js
 // listen to the column for filter events
 column.addEventListener('filterChanged', function() {
-   // when filter changes on the col, this will print one of [true,false]
-   console.log('filter of column is ' + column.isFilterActive());
+    // when filter changes on the col, this will print one of [true,false]
+    console.log('filter of column is ' + column.isFilterActive());
 });
 
 // don't forget to remove your listener in your destroy code
@@ -380,11 +380,11 @@ This is useful if you want to allow configuring the header component. For exampl
 {% if isFramework("javascript", "angular", "react") %}
 ```js
 colDef = {
-   ...
-   headerComponent: MyHeaderComponent;
-   headerComponentParams : {
-       currencySymbol: '£' // the pound symbol will be placed into params
-   }
+    ...
+    headerComponent: MyHeaderComponent;
+    headerComponentParams : {
+        currencySymbol: '£' // the pound symbol will be placed into params
+    }
 }
 ```
 {% /if %}
@@ -392,11 +392,11 @@ colDef = {
 {% if isFramework("vue") %}
 ```js
 colDef = {
-   ...
-   headerComponent: 'MyHeaderComponent';
-   headerComponentParams : {
-       currencySymbol: '£' // the pound symbol will be placed into params
-   }
+    ...
+    headerComponent: 'MyHeaderComponent';
+    headerComponentParams : {
+        currencySymbol: '£' // the pound symbol will be placed into params
+    }
 }
 ```
 {% /if %}

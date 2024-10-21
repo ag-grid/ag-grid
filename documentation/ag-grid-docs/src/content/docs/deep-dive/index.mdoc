@@ -100,16 +100,16 @@ Now that we're loading data from an external source, we can empty our `rowData` 
 
 ```jsx
 const gridOptions = {
- rowData: [],
- colDefs: [
-   { field: "mission" },
-   { field: "company" },
-   { field: "location" },
-   { field: "date" },
-   { field: "price" },
-   { field: "successful" },
-   { field: "rocket" }
- ]
+    rowData: [],
+    colDefs: [
+        { field: "mission" },
+        { field: "company" },
+        { field: "location" },
+        { field: "date" },
+        { field: "price" },
+        { field: "successful" },
+        { field: "rocket" }
+    ]
 }
 ```
 
@@ -130,9 +130,9 @@ As `rowData` is a reactive property, any updates to its state will be reflected 
 ```jsx
 // Fetch data & update rowData state
 useEffect(() => {
- fetch('https://www.ag-grid.com/example-assets/space-mission-data.json') // Fetch data from server
-   .then(result => result.json()) // Convert to JSON
-   .then(rowData => setRowData(rowData)); // Update state of `rowData`
+    fetch('https://www.ag-grid.com/example-assets/space-mission-data.json') // Fetch data from server
+        .then(result => result.json()) // Convert to JSON
+        .then(rowData => setRowData(rowData)); // Update state of `rowData`
 }, [])
 ```
 
@@ -140,18 +140,18 @@ Now that we're loading data from an external source, we can empty our `rowData` 
 
 ```jsx
 const GridExample = () => {
- // Row Data: The data to be displayed.
- const [rowData, setRowData] = useState([]);
- const [colDefs, setColDefs] = useState([
-   { field: "mission" },
-   { field: "company" },
-   { field: "location" },
-   { field: "date" },
-   { field: "price" },
-   { field: "successful" },
-   { field: "rocket" }
- ]);
- // ...
+    // Row Data: The data to be displayed.
+    const [rowData, setRowData] = useState([]);
+    const [colDefs, setColDefs] = useState([
+        { field: "mission" },
+        { field: "company" },
+        { field: "location" },
+        { field: "date" },
+        { field: "price" },
+        { field: "successful" },
+        { field: "rocket" }
+    ]);
+    // ...
 }
 ```
 
@@ -188,9 +188,9 @@ And then executing a HTTP request when the onGridReady event is fired, subscribi
 ```ts
 // Load data into grid when ready
 onGridReady(params: GridReadyEvent) {
- this.http
-   .get<any[]>('https://www.ag-grid.com/example-assets/space-mission-data.json')
-   .subscribe(data => this.rowData = data);
+    this.http
+        .get<any[]>('https://www.ag-grid.com/example-assets/space-mission-data.json')
+        .subscribe(data => this.rowData = data);
 }
 ```
 
@@ -198,18 +198,18 @@ Finally, now that we're loading data from an external source, we can empty our `
 
 ```jsx
 export class AppComponent {
- // Row Data: The data to be displayed.
- rowData: IRow[] = [];
- colDefs: ColDef[] = [
-   { field: "mission" },
-   { field: "company" },
-   { field: "location" },
-   { field: "date" },
-   { field: "price" },
-   { field: "successful" },
-   { field: "rocket" }
- ];
- // ...
+    // Row Data: The data to be displayed.
+    rowData: IRow[] = [];
+    colDefs: ColDef[] = [
+        { field: "mission" },
+        { field: "company" },
+        { field: "location" },
+        { field: "date" },
+        { field: "price" },
+        { field: "successful" },
+        { field: "rocket" }
+    ];
+    // ...
 }
 ```
 
@@ -243,20 +243,20 @@ Now that we're loading data from an external source, we can empty our `rowData` 
 
 ```jsx
 const App = {
- setup() {
-   const rowData = ref([]);
-   const colDefs = ref([
-     { field: "mission" },
-     { field: "company" },
-     { field: "location" },
-     { field: "date" },
-     { field: "price" },
-     { field: "successful" },
-     { field: "rocket" }
-   ]);
-   // ...
- }
- // ...
+    setup() {
+        const rowData = ref([]);
+        const colDefs = ref([
+            { field: "mission" },
+            { field: "company" },
+            { field: "location" },
+            { field: "date" },
+            { field: "price" },
+            { field: "successful" },
+            { field: "rocket" }
+        ]);
+        // ...
+    }
+    // ...
 }
 ```
 
@@ -280,8 +280,8 @@ Column Properties can be added to one or more columns to enable/disable column-s
 
 ```jsx
 columnDefs: [
- { field: "mission", filter: true },
- // ...
+    { field: "mission", filter: true },
+    // ...
 ],
 ```
 
@@ -301,8 +301,8 @@ Column Properties can be added to one or more columns to enable/disable column-s
 
 ```jsx
 const [colDefs] = useState([
- { field: "mission", filter: true },
- // ...
+    { field: "mission", filter: true },
+    // ...
 ]);
 ```
 
@@ -322,8 +322,8 @@ Column Properties can be added to one or more columns to enable/disable column-s
 
 ```jsx
 colDefs: ColDef[] = [
- { field: "mission", filter: true },
- // ...
+    { field: "mission", filter: true },
+    // ...
 ];
 ```
 
@@ -343,8 +343,8 @@ Column Properties can be added to one or more columns to enable/disable column-s
 
 ```jsx
 const colDefs = ref([
- { field: "mission", filter: true },
- // ...
+    { field: "mission", filter: true },
+    // ...
 ];
 ```
 
@@ -364,10 +364,10 @@ The example above demonstrates how to configure a single column. To apply this c
 
 ```jsx
 const gridOptions = {
- defaultColDef: {
-   filter: true
- }
- // ...
+    defaultColDef: {
+        filter: true
+    }
+    // ...
 }
 ```
 
@@ -388,14 +388,14 @@ The example above demonstrates how to configure a single column. To apply this c
 ```jsx
 // Apply settings across all columns
 const defaultColDef = useMemo(() => ({
- filter: true // Enable filtering on all columns
+    filter: true // Enable filtering on all columns
 }))
 
 <div style={{ width: 600, height: 500 }}>
- <AgGridReact
-   defaultColDef={defaultColDef}
-   //...
- />
+    <AgGridReact
+        defaultColDef={defaultColDef}
+        //...
+    />
 </div>
 ```
 
@@ -415,24 +415,24 @@ The example above demonstrates how to configure a single column. To apply this c
 
 ```jsx
 @Component({
- template:
- `
- <div class="content">
-   <ag-grid-angular
-     ...
-     [defaultColDef]="defaultColDef"
-    />
- </div>
- `,
- // ...
+    template:
+    `
+    <div class="content">
+        <ag-grid-angular
+            ...
+            [defaultColDef]="defaultColDef"
+            />
+    </div>
+    `,
+    // ...
 })
 
 export class AppComponent {
- // Default Column Definitions: Apply configuration across all columns
- defaultColDef: ColDef = {
-   filter: true
- }
- // ...
+    // Default Column Definitions: Apply configuration across all columns
+    defaultColDef: ColDef = {
+        filter: true
+    }
+    // ...
 }
 ```
 
@@ -452,17 +452,17 @@ The example above demonstrates how to configure a single column. To apply this c
 
 ```jsx
 const App = {
- setup() {
-   const defaultColDef = ref({
-     filter: true
-   });
-   // ...
- }
- return {
-   defaultColDef
-   // ...
- };
- // ...
+    setup() {
+        const defaultColDef = ref({
+            filter: true
+        });
+        // ...
+    }
+    return {
+        defaultColDef
+        // ...
+    };
+    // ...
 }
 ```
 
@@ -470,17 +470,17 @@ And then adding this to our `ag-grid-vue` component:
 
 ```jsx
 const App = {
- template:
-   `
-   <ag-grid-vue
-     style="width: 100%; height: 100%"
-     :columnDefs="colDefs"
-     :rowData="rowData"
-     :defaultColDef="defaultColDef"
-   >
-   </ag-grid-vue>
-   `,
- // ...
+    template:
+        `
+        <ag-grid-vue
+            style="width: 100%; height: 100%"
+            :columnDefs="colDefs"
+            :rowData="rowData"
+            :defaultColDef="defaultColDef"
+        >
+        </ag-grid-vue>
+        `,
+    // ...
 }
 ```
 
@@ -527,10 +527,10 @@ Grid Options are passed to the grid component directly as props. Let's enable pa
 
 ```jsx
 <div style={{ width: 600, height: 500 }}>
- <AgGridReact
-   // ...
-   pagination={true} // Enable Pagination
- />
+    <AgGridReact
+        // ...
+        pagination={true} // Enable Pagination
+    />
 </div>
 ```
 
@@ -576,19 +576,19 @@ Grid Options are added directly to the `ag-grid-vue` component. Let's test this 
 
 ```jsx
 const App = {
- name: "App",
- template: 
-   `
-   <ag-grid-vue
-     style="width: 100%; height: 100%"
-     :columnDefs="colDefs"
-     :rowData="rowData"
-     :defaultColDef="defaultColDef"
-     :pagination="true"
-   >
-   </ag-grid-vue>
-   `,
- //...
+    name: "App",
+    template: 
+        `
+        <ag-grid-vue
+            style="width: 100%; height: 100%"
+            :columnDefs="colDefs"
+            :rowData="rowData"
+            :defaultColDef="defaultColDef"
+            :pagination="true"
+        >
+        </ag-grid-vue>
+        `,
+    //...
 }
 ```
 
@@ -612,11 +612,11 @@ The data supplied to the grid usually requires some degree of formatting. For ba
 
 ```jsx
 columnDefs: [
- {
-   field: "price",
-   // Return formatted value
-   valueFormatter: (params) => { return '£' + params.value.toLocaleString(); }
- },
+    {
+        field: "price",
+        // Return formatted value
+        valueFormatter: (params) => { return '£' + params.value.toLocaleString(); }
+    },
 ],
 ```
 
@@ -638,12 +638,12 @@ The data supplied to the grid usually requires some degree of formatting. For ba
 
 ```jsx
 const [colDefs] = useState([
- {
-   field: "price",
-   // Return a formatted string for this column
-   valueFormatter: params => { return '£' + params.value.toLocaleString(); }
- },
- // ...
+    {
+        field: "price",
+        // Return a formatted string for this column
+        valueFormatter: params => { return '£' + params.value.toLocaleString(); }
+    },
+    // ...
 ]);
 ```
 
@@ -665,11 +665,11 @@ The data supplied to the grid usually requires some degree of formatting. For ba
 
 ```ts
 colDefs: ColDef[] = [
- {
-   field: "price",
-   valueFormatter: params => { return '£' + params.value.toLocaleString(); } // Format with inline function
- },
- // ...
+    {
+        field: "price",
+        valueFormatter: params => { return '£' + params.value.toLocaleString(); } // Format with inline function
+    },
+    // ...
 ];
 ```
 
@@ -691,8 +691,8 @@ The data supplied to the grid usually requires some degree of formatting. For ba
 
 ```jsx
 const colDefs = ref([
-  { field: "price", valueFormatter: (params) => { return '£' + params.value.toLocaleString(); } },
-  // ...
+    { field: "price", valueFormatter: (params) => { return '£' + params.value.toLocaleString(); } },
+    // ...
 ]);
 ```
 
@@ -716,31 +716,31 @@ Let's try this by creating a new component to display the company logo in the 'c
 
 ```jsx
 class CompanyLogoRenderer {
- eGui;
+    eGui;
 
- // Optional: Params for rendering. The same params that are passed to the cellRenderer function.
- init(params) {
-   let companyLogo = document.createElement('img');
-   companyLogo.src = `https://www.ag-grid.com/example-assets/space-company-logos/${params.value.toLowerCase()}.png`
-   companyLogo.setAttribute('style', 'display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1)');
-   let companyName = document.createElement('p');
-   companyName.textContent = params.value;
-   companyName.setAttribute('style', 'text-overflow: ellipsis; overflow: hidden; white-space: nowrap;');
-   this.eGui = document.createElement('span');
-   this.eGui.setAttribute('style', 'display: flex; height: 100%; width: 100%; align-items: center')
-   this.eGui.appendChild(companyLogo)
-   this.eGui.appendChild(companyName)
- }
+    // Optional: Params for rendering. The same params that are passed to the cellRenderer function.
+    init(params) {
+        let companyLogo = document.createElement('img');
+        companyLogo.src = `https://www.ag-grid.com/example-assets/space-company-logos/${params.value.toLowerCase()}.png`
+        companyLogo.setAttribute('style', 'display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1)');
+        let companyName = document.createElement('p');
+        companyName.textContent = params.value;
+        companyName.setAttribute('style', 'text-overflow: ellipsis; overflow: hidden; white-space: nowrap;');
+        this.eGui = document.createElement('span');
+        this.eGui.setAttribute('style', 'display: flex; height: 100%; width: 100%; align-items: center')
+        this.eGui.appendChild(companyLogo)
+        this.eGui.appendChild(companyName)
+    }
 
- // Required: Return the DOM element of the component, this is what the grid puts into the cell
- getGui() {
-   return this.eGui;
- }
+    // Required: Return the DOM element of the component, this is what the grid puts into the cell
+    getGui() {
+        return this.eGui;
+    }
 
- // Required: Get the cell to refresh.
- refresh(params) {
-   return false
- }
+    // Required: Get the cell to refresh.
+    refresh(params) {
+        return false
+    }
 }
 ```
 
@@ -748,11 +748,11 @@ And then adding `cellRenderer: CompanyLogoRenderer` to the 'company' column defi
 
 ```jsx
 columnDefs: [
- {
-   field: "company",
-   cellRenderer: CompanyLogoRenderer
- },
- // ...
+    {
+        field: "company",
+        cellRenderer: CompanyLogoRenderer
+    },
+    // ...
 ],
 ```
 
@@ -777,7 +777,7 @@ Let's try this by creating a new component to display the company logo in the 'c
 ```jsx
 // Custom Cell Renderer (Display flags based on cell value)
 const CompanyLogoRenderer = ({ value }) => (
- <span style={{ display: "flex", height: "100%", width: "100%", alignItems: "center" }}>{value && <img alt={`${value} Flag`} src={`https://www.ag-grid.com/example-assets/space-company-logos/${value.toLowerCase()}.png`} style={{display: "block", width: "25px", height: "auto", maxHeight: "50%", marginRight: "12px", filter: "brightness(1.1)"}} />}<p style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{value}</p></span>
+    <span style={{ display: "flex", height: "100%", width: "100%", alignItems: "center" }}>{value && <img alt={`${value} Flag`} src={`https://www.ag-grid.com/example-assets/space-company-logos/${value.toLowerCase()}.png`} style={{display: "block", width: "25px", height: "auto", maxHeight: "50%", marginRight: "12px", filter: "brightness(1.1)"}} />}<p style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{value}</p></span>
 );
 ```
 
@@ -785,12 +785,12 @@ And then adding the `cellRenderer` prop on our 'company' column to use our compo
 
 ```jsx
 const [colDefs] = useState([
- {
-   field: "company",
-   // Add component to column via cellRenderer
-   cellRenderer: CompanyLogoRenderer
- },
- // ...
+    {
+        field: "company",
+        // Add component to column via cellRenderer
+        cellRenderer: CompanyLogoRenderer
+    },
+    // ...
 ]);
 ```
 
@@ -815,25 +815,25 @@ Let's try this by creating a new component to display the company logo in the 'c
 ```jsx
 // Custom Cell Renderer Component
 @Component({
- selector: 'app-company-logo-renderer',
- standalone: true,
- imports: [CommonModule],
- template: `<span>@if(value){<img [alt]="value" [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + value.toLowerCase() + '.png'" /> <p>{{ value }}</p>}</span>`,
- styles: ["img {display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.2);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }"]
+    selector: 'app-company-logo-renderer',
+    standalone: true,
+    imports: [CommonModule],
+    template: `<span>@if(value){<img [alt]="value" [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + value.toLowerCase() + '.png'" /> <p>{{ value }}</p>}</span>`,
+    styles: ["img {display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.2);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }"]
 })
 
 export class CompanyLogoRenderer implements ICellRendererAngularComp {
- // Init Cell Value
- public value!: string;
- agInit(params: ICellRendererParams): void {
-   this.value = params.value;
- }
+    // Init Cell Value
+    public value!: string;
+    agInit(params: ICellRendererParams): void {
+        this.value = params.value;
+    }
 
- // Return Cell Value
- refresh(params: ICellRendererParams): boolean {
-   this.value = params.value;
-   return true;
- }
+    // Return Cell Value
+    refresh(params: ICellRendererParams): boolean {
+        this.value = params.value;
+        return true;
+    }
 }
 ```
 
@@ -841,11 +841,11 @@ And then adding the cellRenderer prop on our 'company' column to use our compone
 
 ```ts
 colDefs: ColDef[] = [
- {
-   field: "company",
-   cellRenderer: CompanyLogoRenderer // Render a custom component
- }
- // ...
+    {
+        field: "company",
+        cellRenderer: CompanyLogoRenderer // Render a custom component
+    }
+    // ...
 ];
 ```
 
@@ -869,21 +869,21 @@ Let's try this by creating a new component to display the company logo in the 'c
 
 ```jsx
 const CompanyLogoRenderer = {
- template:
-   `
-   <span style="display: flex; height: 100%; width: 100%; align-items: center;">
-     <img :src="'https://www.ag-grid.com/example-assets/space-company-logos/' + cellValueLowerCase + '.png'" style="display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1);" />
-     <p style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ cellValue }}</p>
-   </span>
-   `,
- setup(props) {
-   const cellValue = props.params.value;
-   const cellValueLowerCase = cellValue.toLowerCase();
-   return {
-     cellValue,
-     cellValueLowerCase
-   };
- },
+    template:
+        `
+        <span style="display: flex; height: 100%; width: 100%; align-items: center;">
+            <img :src="'https://www.ag-grid.com/example-assets/space-company-logos/' + cellValueLowerCase + '.png'" style="display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1);" />
+            <p style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ cellValue }}</p>
+        </span>
+        `,
+    setup(props) {
+        const cellValue = props.params.value;
+        const cellValueLowerCase = cellValue.toLowerCase();
+        return {
+            cellValue,
+            cellValueLowerCase
+        };
+    },
 };
 ```
 
@@ -891,18 +891,18 @@ And then adding the `cellRenderer` property to the 'company' column:
 
 ```jsx
 const App = {
- components: {
-   AgGridVue,
-   companyLogoRenderer: CompanyLogoRenderer
- },
- setup() {
-   const colDefs = ref([
-     { field: "company", cellRenderer: "companyLogoRenderer" },
-     // ...
-   ]);
-   // ...
- }
- // ...
+    components: {
+        AgGridVue,
+        companyLogoRenderer: CompanyLogoRenderer
+    },
+    setup() {
+        const colDefs = ref([
+            { field: "company", cellRenderer: "companyLogoRenderer" },
+            // ...
+        ]);
+        // ...
+    }
+    // ...
 }
 ```
 
@@ -928,16 +928,16 @@ Let's try this out by enabling cell editing in our DefaultColDefs with `editable
 
 ```jsx
 const gridOptions = {
- // Configurations applied to all columns
- defaultColDef: {
-   editable: true,
-   // ...
- },
- // Log new value when cell value changes
- onCellValueChanged: (event) => {
-   console.log(`New Cell Value: ${event.value}`)
- }
- // ...
+    // Configurations applied to all columns
+    defaultColDef: {
+        editable: true,
+        // ...
+    },
+    // Log new value when cell value changes
+    onCellValueChanged: (event) => {
+        console.log(`New Cell Value: ${event.value}`)
+    }
+    // ...
 }
 ```
 
@@ -964,11 +964,11 @@ const defaultColDef = useMemo(() => ({
 }))
 
 <div style={{ width: 600, height: 500 }}>
- <AgGridReact
-   // Hook into CellValueChanged event and log value
-   onCellValueChanged={event => console.log(`New Cell Value: ${event.value}`)}
-   // ...
- />
+    <AgGridReact
+        // Hook into CellValueChanged event and log value
+        onCellValueChanged={event => console.log(`New Cell Value: ${event.value}`)}
+        // ...
+    />
 </div>
 ```
 
@@ -992,9 +992,9 @@ Let's try this out by enabling cell editing with `editable: true` on the Default
 
 ```ts
 // Default Column Definitions: Apply configuration across all columns
-defaultColDef: ColDef = {
- editable: true
- // ...
+    defaultColDef: ColDef = {
+    editable: true
+    // ...
 }
 ```
 
@@ -1003,7 +1003,7 @@ Next, lets create a function to handle the event:
 ```jsx
 // Handle cell editing event
 onCellValueChanged = (event: CellValueChangedEvent) => {
- console.log(`New Cell Value: ${event.value}`)
+    console.log(`New Cell Value: ${event.value}`)
 }
 ```
 
@@ -1012,9 +1012,9 @@ Finally, let's add the `gridReady` attribute to the `ag-grid-angular` component,
 ```ts
 <!-- The AG Grid component, with various Grid Option properties -->
 <ag-grid-angular
- (gridReady)="onGridReady($event)"
- ...
- />
+    (gridReady)="onGridReady($event)"
+    ...
+    />
 ```
 
 Now, when we click on a cell we should be able to edit it and see the new value logged to the console:
@@ -1035,27 +1035,27 @@ To be notified of when an event is raised by the grid we need to use the relevan
 
 ```jsx
 const App = {
- template:
-   `
-   <ag-grid-vue
-     ...
-     @cell-value-changed="onCellValueChanged"
-   >
-   </ag-grid-vue>
-   `,
- methods: {
-   onCellValueChanged(event) {
-     console.log(`New Cell Value: ${event.value}`);
-   }
- },
- setup() {
-   const defaultColDef = ref({
-     editable: true,
-     // ...
-   });
-   // ...
- }
- // ...
+    template:
+        `
+        <ag-grid-vue
+            ...
+            @cell-value-changed="onCellValueChanged"
+        >
+        </ag-grid-vue>
+        `,
+    methods: {
+        onCellValueChanged(event) {
+            console.log(`New Cell Value: ${event.value}`);
+        }
+    },
+    setup() {
+        const defaultColDef = ref({
+            editable: true,
+            // ...
+        });
+        // ...
+    }
+    // ...
 }
 ```
 

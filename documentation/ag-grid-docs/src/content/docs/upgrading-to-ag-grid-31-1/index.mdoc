@@ -19,13 +19,13 @@ Follow these steps to upgrade your project's AG Grid version to `31.1.0`:
 
 1. Run the `migrate` command of version `31.1` of the AG Grid codemod runner, where `$FROM_VERSION` refers to your project's existing AG Grid version:
 
-   ```
-   npx @ag-grid-devtools/cli@31.1 migrate --from=$FROM_VERSION
-   ```
+    ```
+    npx @ag-grid-devtools/cli@31.1 migrate --from=$FROM_VERSION
+    ```
 
-   This will update your project's source files to prepare for the new release.
+    This will update your project's source files to prepare for the new release.
 
-   By default the Codemod runner will locate all source files within the current directory. For projects with more specific requirements, pass a list of input files to the `migrate` command, or specify the `--help` argument to see more fine-grained usage instructions.
+    By default the Codemod runner will locate all source files within the current directory. For projects with more specific requirements, pass a list of input files to the `migrate` command, or specify the `--help` argument to see more fine-grained usage instructions.
 
 {% note %}
 The Codemod runner will check the state of your project to ensure that you don't lose any work. If you would rather see a diff of the changes instead of applying them, pass the `--dry-run` argument.

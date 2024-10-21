@@ -2,52 +2,52 @@
 ```js
 // define Cell Component to be reused
 @Component({
-   selector: 'colour-cell',
-   template: `<span [style.colour]="params.color">{{params.value}}</span>`
+    selector: 'colour-cell',
+    template: `<span [style.colour]="params.color">{{params.value}}</span>`
 })
 class ColourCellComp implements ICellRendererAngularComp {
-   params!: ICellRendererParams;
+    params!: ICellRendererParams;
 
-   agInit(params: ICellRendererParams) {
-       this.params = params;
-   }
+    agInit(params: ICellRendererParams) {
+        this.params = params;
+    }
 
-   refresh(params: ICellRendererParams) {
-       this.params = params;
-       // As we have updated the params we return true to let AG Grid know we have handled the refresh.
-       // So AG Grid will not recreate the cell renderer from scratch.
-       return true;
-   }
+    refresh(params: ICellRendererParams) {
+        this.params = params;
+        // As we have updated the params we return true to let AG Grid know we have handled the refresh.
+        // So AG Grid will not recreate the cell renderer from scratch.
+        return true;
+    }
 }
 
 @Component({
-   selector: 'my-app',
-   template: `
-       <ag-grid-angular
-               [columnDefs]="columnDefs"
-               ...other properties />`
+    selector: 'my-app',
+    template: `
+        <ag-grid-angular
+                [columnDefs]="columnDefs"
+                ...other properties />`
 })
 export class AppComponent {
     columnDefs = [
-       {
-           headerName: "Colour 1",
-           field: "value",
-           cellRenderer: ColourCellComp,
-           cellRendererParams: {
-              color: 'guinnessBlack'
-           }
-       },
-       {
-           headerName: "Colour 2",
-           field: "value",
-           cellRenderer: ColourCellComp,
-           cellRendererParams: {
-              color: 'irishGreen'
-           }
-       }
-   ];
+        {
+            headerName: "Colour 1",
+            field: "value",
+            cellRenderer: ColourCellComp,
+            cellRendererParams: {
+                color: 'guinnessBlack'
+            }
+        },
+        {
+            headerName: "Colour 2",
+            field: "value",
+            cellRenderer: ColourCellComp,
+            cellRendererParams: {
+                color: 'irishGreen'
+            }
+        }
+    ];
 
-  //...
+    //...
 }
 
 ```

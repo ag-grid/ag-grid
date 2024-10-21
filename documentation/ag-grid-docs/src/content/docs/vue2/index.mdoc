@@ -281,8 +281,8 @@ export default {
 };
 </script>
 <style lang="scss">
-   @import "~ag-grid-community/styles/ag-grid.css";
-   @import "~ag-grid-community/styles/ag-theme-quartz.css";
+    @import "~ag-grid-community/styles/ag-grid.css";
+    @import "~ag-grid-community/styles/ag-theme-quartz.css";
 </style>
 ```
 
@@ -337,15 +337,15 @@ add the following fetch statement:
 ```js
 beforeMount() {
      this.columnDefs = [
-       { field: 'make', filter: true },
-       { field: 'model', filter: true },
-       { field: 'price', filter: true }
-     ];
+        { field: 'make', filter: true },
+        { field: 'model', filter: true },
+        { field: 'price', filter: true }
+        ];
 
-     fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
-             .then(result => result.json())
-             .then(rowData => this.rowData = rowData);
-   },
+        fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
+            .then(result => result.json())
+            .then(rowData => this.rowData = rowData);
+    },
 }
 ```
 
@@ -366,45 +366,45 @@ just a matter of adding and changing couple of properties.
 
 ```diff
 <template>
- <ag-grid-vue
-   style="width: 500px; height: 200px"
-   class="ag-theme-quartz"
-   :columnDefs="columnDefs"
-   :rowData="rowData"
- >
- </ag-grid-vue>
+    <ag-grid-vue
+        style="width: 500px; height: 200px"
+        class="ag-theme-quartz"
+        :columnDefs="columnDefs"
+        :rowData="rowData"
+    >
+    </ag-grid-vue>
 </template>
 
 <script>
 import { AgGridVue } from "ag-grid-vue";
 
 export default {
- name: "App",
- data() {
-   return {
-     columnDefs: null,
-     rowData: null,
-   };
- },
- components: {
-   AgGridVue,
- },
- beforeMount() {
-   this.columnDefs = [
-+      { field: 'make', filter: true, checkboxSelection: true },
-       { field: 'model', filter: true },
-       { field: 'price', filter: true }
-     ];
+    name: "App",
+    data() {
+        return {
+            columnDefs: null,
+            rowData: null,
+        };
+    },
+    components: {
+        AgGridVue,
+    },
+    beforeMount() {
+        this.columnDefs = [
++           { field: 'make', filter: true, checkboxSelection: true },
+            { field: 'model', filter: true },
+            { field: 'price', filter: true }
+            ];
 
-     fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
-             .then(result => result.json())
-             .then(rowData => this.rowData = rowData);
- },
+            fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
+                .then(result => result.json())
+                .then(rowData => this.rowData = rowData);
+    },
 };
 </script>
 <style lang="scss">
- @import "~ag-grid-community/styles/ag-grid.css";
- @import "~ag-grid-community/styles/ag-theme-quartz.css";
+    @import "~ag-grid-community/styles/ag-grid.css";
+    @import "~ag-grid-community/styles/ag-theme-quartz.css";
 </style>
 ```
 
@@ -422,60 +422,60 @@ Let's go ahead and make these changes:
 
 ```diff
 <template>
-+  <div>
-+     <button @click="getSelectedRows()">Get Selected Rows</button>
-      <ag-grid-vue
-          style="width: 500px; height: 200px"
-          class="ag-theme-quartz"
-          :columnDefs="columnDefs"
-          :rowData="rowData"
-      >
-      </ag-grid-vue>
-+  </div>
++   <div>
++       <button @click="getSelectedRows()">Get Selected Rows</button>
+        <ag-grid-vue
+            style="width: 500px; height: 200px"
+            class="ag-theme-quartz"
+            :columnDefs="columnDefs"
+            :rowData="rowData"
+        >
+        </ag-grid-vue>
++   </div>
 </template>
 
 <script>
 import { AgGridVue } from "ag-grid-vue";
 
 export default {
- name: "App",
- data() {
-   return {
-     columnDefs: null,
-     rowData: null,
-+    gridApi: null,
-   };
- },
- components: {
-   AgGridVue,
- },
- beforeMount() {
-   this.columnDefs = [
-       { field: 'make', filter: true, checkboxSelection: true },
-       { field: 'model', filter: true },
-       { field: 'price', filter: true }
-     ];
+    name: "App",
+    data() {
+        return {
+            columnDefs: null,
+            rowData: null,
++           gridApi: null,
+        };
+    },
+    components: {
+        AgGridVue,
+    },
+    beforeMount() {
+        this.columnDefs = [
+            { field: 'make', filter: true, checkboxSelection: true },
+            { field: 'model', filter: true },
+            { field: 'price', filter: true }
+            ];
 
-     fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
-             .then(result => result.json())
-             .then(rowData => this.rowData = rowData);
- },
-+ methods: {
-+    onGridReady(params) {
-+        this.gridApi = params.api;
-+    },
-+    getSelectedRows() {
-+        const selectedNodes = this.gridApi.getSelectedNodes();
-+        const selectedData = selectedNodes.map( node => node.data );
-+        const selectedDataStringPresentation = selectedData.map( data => `${data.make} ${data.model}`).join(', ');
-+        alert(`Selected nodes: ${selectedDataStringPresentation}`);
-+    }
-+ },
+            fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
+                .then(result => result.json())
+                .then(rowData => this.rowData = rowData);
+    },
++   methods: {
++       onGridReady(params) {
++           this.gridApi = params.api;
++       },
++       getSelectedRows() {
++           const selectedNodes = this.gridApi.getSelectedNodes();
++           const selectedData = selectedNodes.map( node => node.data );
++           const selectedDataStringPresentation = selectedData.map( data => `${data.make} ${data.model}`).join(', ');
++           alert(`Selected nodes: ${selectedDataStringPresentation}`);
++       }
++   },
 };
 </script>
 <style lang="scss">
- @import "~ag-grid-community/styles/ag-grid.css";
- @import "~ag-grid-community/styles/ag-theme-quartz.css";
+    @import "~ag-grid-community/styles/ag-grid.css";
+    @import "~ag-grid-community/styles/ag-theme-quartz.css";
 </style>
 ```
 
@@ -530,28 +530,28 @@ the `columnDefs` with a `rowGroup`:
 
 ```diff
 <template>
-   <div>
-       <button @click="getSelectedRows()">Get Selected Rows</button>
-       <ag-grid-vue style="width: 500px; height: 500px;"
-                    class="ag-theme-quartz"
-                    :columnDefs="columnDefs"
-                    :rowData="rowData"
-+                   :autoGroupColumnDef="autoGroupColumnDef"
-                    @grid-ready="onGridReady">
-       </ag-grid-vue>
-   </div>
+    <div>
+        <button @click="getSelectedRows()">Get Selected Rows</button>
+        <ag-grid-vue style="width: 500px; height: 500px;"
+                        class="ag-theme-quartz"
+                        :columnDefs="columnDefs"
+                        :rowData="rowData"
++                       :autoGroupColumnDef="autoGroupColumnDef"
+                        @grid-ready="onGridReady">
+        </ag-grid-vue>
+    </div>
 </template>
 
 <script>
-   import {AgGridVue} from "ag-grid-vue";
+    import {AgGridVue} from "ag-grid-vue";
 
-   export default {
-       name: "App",
-       data() {
-           return {
-               columnDefs: null,
-               rowData: null,
-               gridApi: null,
+    export default {
+        name: "App",
+        data() {
+            return {
+                columnDefs: null,
+                rowData: null,
+                gridApi: null,
 +               autoGroupColumnDef: {
 +                   headerName: 'Model',
 +                   field: 'model',
@@ -560,38 +560,38 @@ the `columnDefs` with a `rowGroup`:
 +                       checkbox: true
 +                   }
 +               }
-           };
-       },
-       components: {
-           AgGridVue,
-       },
-       beforeMount() {
-           this.columnDefs = [
-+              {field: 'make', filter: true, checkboxSelection: true, rowGroup: true },
-               {field: 'model', filter: true},
-               {field: 'price', filter: true}
-           ];
+            };
+        },
+        components: {
+            AgGridVue,
+        },
+        beforeMount() {
+            this.columnDefs = [
++               {field: 'make', filter: true, checkboxSelection: true, rowGroup: true },
+                {field: 'model', filter: true},
+                {field: 'price', filter: true}
+            ];
 
-           fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
-               .then(result => result.json())
-               .then(rowData => this.rowData = rowData);
-       },
-       methods: {
-           onGridReady(params) {
-               this.gridApi = params.api;
-           },
-           getSelectedRows() {
-               const selectedNodes = this.gridApi.getSelectedNodes();
-               const selectedData = selectedNodes.map(node => node.data);
-               const selectedDataStringPresentation = selectedData.map(node => `${node.make} ${node.model}`).join(', ');
-               alert(`Selected nodes: ${selectedDataStringPresentation}`);
-           }
-       },
-   };
+            fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
+                .then(result => result.json())
+                .then(rowData => this.rowData = rowData);
+        },
+        methods: {
+            onGridReady(params) {
+                this.gridApi = params.api;
+            },
+            getSelectedRows() {
+                const selectedNodes = this.gridApi.getSelectedNodes();
+                const selectedData = selectedNodes.map(node => node.data);
+                const selectedDataStringPresentation = selectedData.map(node => `${node.make} ${node.model}`).join(', ');
+                alert(`Selected nodes: ${selectedDataStringPresentation}`);
+            }
+        },
+    };
 </script>
 <style lang="scss">
-   @import "~ag-grid-community/styles/ag-grid.css";
-   @import "~ag-grid-community/styles/ag-theme-quartz.css";
+    @import "~ag-grid-community/styles/ag-grid.css";
+    @import "~ag-grid-community/styles/ag-theme-quartz.css";
 </style>
 ```
 
@@ -624,11 +624,11 @@ the provided AG Grid SCSS files - replace the `style` block in `src/App.vue` wit
 
 ```scss
 <style lang="scss">
-  @use "ag-grid-community/styles" as ag;
-  @include ag.grid-styles((
-    theme: alpine,
-    --ag-odd-row-background-color: #ACE
-  ));
+    @use "ag-grid-community/styles" as ag;
+    @include ag.grid-styles((
+        theme: alpine,
+        --ag-odd-row-background-color: #ACE
+    ));
 </style>
 ```
 

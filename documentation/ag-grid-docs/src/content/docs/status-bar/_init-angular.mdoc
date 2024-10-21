@@ -1,17 +1,17 @@
 {% if isFramework("angular") %}
 ```ts
 class ClickableStatusBarComponent() {
- agInit(params: IStatusPanelParams) {
-   this.params = params;
+    agInit(params: IStatusPanelParams) {
+        this.params = params;
 
-   // Remove event listener when destroyed
-   params.api.addEventListener('modelUpdated', () => {
-       // On the modelUpdated event rows will be available
-       this.updateStatusBar();
-   });
- }
- 
-  updateStatusBar() { ... }
+        // Remove event listener when destroyed
+        params.api.addEventListener('modelUpdated', () => {
+            // On the modelUpdated event rows will be available
+            this.updateStatusBar();
+        });
+    }
+
+    updateStatusBar() { ... }
 }
 ```
 {% /if %}

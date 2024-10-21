@@ -17,8 +17,8 @@ The filter value uses two way data binding, via `[(ngModel)]=quickFilterText`, t
 <div id="numberOfRows">Number of rows: {{displayedRows}}</div>
 
 <ag-grid-angular 
-   [quickFilterText]="quickFilterText" 
-   (modelUpdated)="onModelUpdated($event)" />
+    [quickFilterText]="quickFilterText" 
+    (modelUpdated)="onModelUpdated($event)" />
 ```
 
 The current number of displayed rows is shown in the template and is kept up to date by adding an event listener to the `(modelUpdated)` output.
@@ -44,17 +44,17 @@ The first part of the test is to configure the test module.
 
 ```ts
 beforeEach(() => {
-   TestBed.configureTestingModule({
-       declarations: [TestHostComponent],
-   });
-   // Create the test component fixture
-   fixture = TestBed.createComponent(AppComponent);
-   component = fixture.componentInstance;
-   let compDebugElement = fixture.debugElement;
+    TestBed.configureTestingModule({
+        declarations: [TestHostComponent],
+    });
+    // Create the test component fixture
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
+    let compDebugElement = fixture.debugElement;
 
-   // Get a reference to the quickFilter input and rendered template
-   quickFilterDE = compDebugElement.query(By.css('#quickFilter'))
-   rowNumberDE = compDebugElement.query(By.css('#numberOfRows'))
+    // Get a reference to the quickFilter input and rendered template
+    quickFilterDE = compDebugElement.query(By.css('#quickFilter'))
+    rowNumberDE = compDebugElement.query(By.css('#numberOfRows'))
 });
 ```
 
@@ -122,62 +122,62 @@ If you do not wish to use `fixture.autoDetectChanges()` then this is how you can
 ```ts
 it('should filter rows by quickFilterText', (async () => {
 
-   // When the test starts the component has been created but is not initialised.
-   // This means the <ag-grid-angular> component has not been created or had data passed to it.
-   // To validate this, test that the grid is undefined at the start of the test.
-   expect(component.grid).toBeUndefined()
+    // When the test starts the component has been created but is not initialised.
+    // This means the <ag-grid-angular> component has not been created or had data passed to it.
+    // To validate this, test that the grid is undefined at the start of the test.
+    expect(component.grid).toBeUndefined()
 
-   // When working with fakeAsync ensure the first call to `fixture.detectChanges()`
-   // is within the test body and NOT in a beforeEach section.
-   // This is vital as it means that during the construction of <ag-grid-component>
-   // all async behaviour is correctly patched.
+    // When working with fakeAsync ensure the first call to `fixture.detectChanges()`
+    // is within the test body and NOT in a beforeEach section.
+    // This is vital as it means that during the construction of <ag-grid-component>
+    // all async behaviour is correctly patched.
 
-   // The first call to detectChanges, creates the grid and binds the component values to the grid via its @Inputs.
-   fixture.detectChanges()
-   // Next validate that the grid has now been created.
-   expect(component.grid.api).toBeDefined()
+    // The first call to detectChanges, creates the grid and binds the component values to the grid via its @Inputs.
+    fixture.detectChanges()
+    // Next validate that the grid has now been created.
+    expect(component.grid.api).toBeDefined()
 
-   // Now validate that the internal grid model is correct. It should have 1000 rows.
-   // However, at this point the asynchronous grid callbacks have not run.
-   // i.e the (modelUpdated) @Output has not fired.
-   // This is why the internal grid state has 1000 rows, but the component and template still have 0 values.
-   validateState({ gridRows: 1000, displayedRows: 0, templateRows: 0 })
+    // Now validate that the internal grid model is correct. It should have 1000 rows.
+    // However, at this point the asynchronous grid callbacks have not run.
+    // i.e the (modelUpdated) @Output has not fired.
+    // This is why the internal grid state has 1000 rows, but the component and template still have 0 values.
+    validateState({ gridRows: 1000, displayedRows: 0, templateRows: 0 })
 
-   // Wait for the fixture to be stable which allows all the asynchronous code to run.
-   await fixture.whenStable()
+    // Wait for the fixture to be stable which allows all the asynchronous code to run.
+    await fixture.whenStable()
 
-   // Now that the fixture is stable validate that the async callback (modelUpdated) has run.
-   validateState({ gridRows: 1000, displayedRows: 1000, templateRows: 0 })
+    // Now that the fixture is stable validate that the async callback (modelUpdated) has run.
+    validateState({ gridRows: 1000, displayedRows: 1000, templateRows: 0 })
 
-   // Run change detection to update the template based off the new component state
-   fixture.detectChanges()
+    // Run change detection to update the template based off the new component state
+    fixture.detectChanges()
 
-   // The grid is now stable and the template value matches
-   validateState({ gridRows: 1000, displayedRows: 1000, templateRows: 1000 })
+    // The grid is now stable and the template value matches
+    validateState({ gridRows: 1000, displayedRows: 1000, templateRows: 1000 })
 
-   // Now update the filter text input.
-   // Set the filter value to 'Germany' and fire the input event
-   // which is required for ngModel to see the change.
-   quickFilterDE.nativeElement.value = 'Germany'
-   quickFilterDE.nativeElement.dispatchEvent(new Event('input'));
+    // Now update the filter text input.
+    // Set the filter value to 'Germany' and fire the input event
+    // which is required for ngModel to see the change.
+    quickFilterDE.nativeElement.value = 'Germany'
+    quickFilterDE.nativeElement.dispatchEvent(new Event('input'));
 
-   // Force change detection to run to apply the update to the <ag-grid-angular [quickFilterText] Input.
-   fixture.detectChanges()
+    // Force change detection to run to apply the update to the <ag-grid-angular [quickFilterText] Input.
+    fixture.detectChanges()
 
-   // The grid filtering is done synchronously so the internal model is already updated.
-   validateState({ gridRows: 68, displayedRows: 1000, templateRows: 1000 })
+    // The grid filtering is done synchronously so the internal model is already updated.
+    validateState({ gridRows: 68, displayedRows: 1000, templateRows: 1000 })
 
-   // Wait for the asynchronous code to complete
-   await fixture.whenStable()
+    // Wait for the asynchronous code to complete
+    await fixture.whenStable()
 
-   // The grid callback has now completed updating the component state
-   validateState({ gridRows: 68, displayedRows: 68, templateRows: 1000 })
+    // The grid callback has now completed updating the component state
+    validateState({ gridRows: 68, displayedRows: 68, templateRows: 1000 })
 
-   // Run change detection again to update the template.
-   fixture.detectChanges()
+    // Run change detection again to update the template.
+    fixture.detectChanges()
 
-   // State is now stable and the quick filter has been validated    
-   validateState({ gridRows: 68, displayedRows: 68, templateRows: 68 })
+    // State is now stable and the quick filter has been validated    
+    validateState({ gridRows: 68, displayedRows: 68, templateRows: 68 })
 
 }))
 ```

@@ -39,12 +39,12 @@ For example:
 {% if isFramework("vue") %}
 ```js
 <script lang="ts">
-   import {defineComponent} from "vue";
+    import {defineComponent} from "vue";
 
-   export default defineComponent({
-       name: "MyComponent",
-       props: ['params'],  // required for TypeScript ...
-   })
+    export default defineComponent({
+        name: "MyComponent",
+        props: ['params'],  // required for TypeScript ...
+    })
 </script>
 ```
 {% /if %}
@@ -269,7 +269,7 @@ An example of calling `getCellEditorInstances()` is as follows:
 ```js
 const instances = api.getCellEditorInstances(params);
 if (instances.length > 0) {
-   const instance = instances[0];
+    const instance = instances[0];
 }
 ```
 {% /if %}
@@ -278,9 +278,9 @@ if (instances.length > 0) {
 ```js
 const instances = api.getCellEditorInstances(params);
 if (instances.length > 0) {
-   getInstance(instances[0], instance => {
-       ...
-   });
+    getInstance(instances[0], instance => {
+        ...
+    });
 }
 ```
 {% /if %}

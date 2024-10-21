@@ -106,14 +106,14 @@ These can be used to create unique group IDs as shown below:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-   getRowId: params => {
-       const parentKeysJoined = (params.parentKeys || []).join('-');
-       if (params.data.id != null) {
-           parentKeysJoined + params.data.id;
-       }
-       const rowGroupCols = params.api.getRowGroupColumns();
-       const thisGroupCol = rowGroupCols[params.level];
-       parentKeysJoined + params.data[thisGroupCol.getColDef().field];
+    getRowId: params => {
+        const parentKeysJoined = (params.parentKeys || []).join('-');
+        if (params.data.id != null) {
+            parentKeysJoined + params.data.id;
+        }
+        const rowGroupCols = params.api.getRowGroupColumns();
+        const thisGroupCol = rowGroupCols[params.level];
+        parentKeysJoined + params.data[thisGroupCol.getColDef().field];
     }
 }
 ```

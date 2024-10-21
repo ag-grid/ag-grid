@@ -15,9 +15,9 @@ In the examples below we will use the `ICar` interface to represent row data.
 ```js
 // Row Data interface
 interface ICar {
-   make: string;
-   model: string;
-   price: number;
+    make: string;
+    model: string;
+    price: number;
 }
 ```
 
@@ -31,9 +31,9 @@ The `<AgGridReact>` component accepts a generic parameter as `<AgGridReact<ICar>
 {% if isFramework("react") %}
 ```jsx
 <AgGridReact<ICar>
-   ref={gridRef}
-   rowData={rowData}
-   onRowSelected={onRowSelected}
+    ref={gridRef}
+    rowData={rowData}
+    onRowSelected={onRowSelected}
 />
 ```
 {% /if %}
@@ -59,22 +59,22 @@ Set the row data type on the grid options interface via `GridOptions<ICar>`. The
 ```js
 // Pass ICar to GridOptions as a generic
 const gridOptions: GridOptions<ICar> = {
-   // rowData is typed as ICar[]
-   rowData: [ { make: 'Ford', model: 'Galaxy', price: 20000 } ],
+    // rowData is typed as ICar[]
+    rowData: [ { make: 'Ford', model: 'Galaxy', price: 20000 } ],
 
-   // Callback with params type: GetRowIdParams<ICar>
-   getRowId: (params) => {
-       // params.data : ICar
-       return params.data.make + params.data.model;
-   },
+    // Callback with params type: GetRowIdParams<ICar>
+    getRowId: (params) => {
+        // params.data : ICar
+        return params.data.make + params.data.model;
+    },
 
-   // Event with type: RowSelectedEvent<ICar>
-   onRowSelected: (event) => {
-       // event.data: ICar | undefined
-       if (event.data) {
-           const price = event.data.price;
-       }
-   }
+    // Event with type: RowSelectedEvent<ICar>
+    onRowSelected: (event) => {
+        // event.data: ICar | undefined
+        if (event.data) {
+            const price = event.data.price;
+        }
+    }
 }
 
 // Grid Api methods use ICar interface
@@ -124,8 +124,8 @@ Then set this on your component template as `[columnDefs]="columnDefs"`. This pr
 {% if isFramework("angular") %}
 ```html
 <ag-grid-angular 
-   [columnDefs]="columnDefs"    
-   (rowSelected)="onRowSelected($event)"
+    [columnDefs]="columnDefs"    
+    (rowSelected)="onRowSelected($event)"
  />
 ```
 {% /if %}
@@ -153,13 +153,13 @@ A good example of this is [Row Grouping](./grouping). The `onRowSelected` event 
 
 ```js
 function onRowSelected(event: RowSelectedEvent<ICar>) {
-   // event.data is typed as ICar | undefined
-   if (event.data) {
-       // Leaf row with data
-       const price = event.data.price;
-   } else {
-       // This is a group row
-   }
+    // event.data is typed as ICar | undefined
+    if (event.data) {
+        // Leaf row with data
+        const price = event.data.price;
+    } else {
+        // This is a group row
+    }
 }
 ```
 
@@ -178,12 +178,12 @@ Each interface that accepts a generic type of `TValue` can also be configured in
 ```js
 const colDefs: ColDef<ICar>[] = [
     {
-       field: 'price',
-       valueFormatter: (params: ValueFormatterParams<ICar, number>) => {
-           // params.value : number
-           return "£" + params.value;
-       }
-   }
+        field: 'price',
+        valueFormatter: (params: ValueFormatterParams<ICar, number>) => {
+            // params.value : number
+            return "£" + params.value;
+        }
+    }
 ];
 ```
 
@@ -204,22 +204,22 @@ The generic parameter `TContext` needs to be explicitly provided to each interfa
 ```js
 // Define the interface for your context
 interface IDiscountRate {
-   discount: number;
+    discount: number;
 }
 
 // Set the context property on gridOptions using `as` to apply the type
 const gridOptions: GridOptions<ICar> {
-   context: {
-       discount: 0.9
-   } as IDiscountRate;
+    context: {
+        discount: 0.9
+    } as IDiscountRate;
 }
 
 // Provide to the interface to the TContext generic parameter to type the params.context property
 function onRowSelected(event: RowSelectedEvent<ICar, IDiscountRate>) {
-   if (event.data) {
-       // event.context.discount is typed as number
-       const price = event.data.price * event.context.discount;
-   }
+    if (event.data) {
+        // event.context.discount is typed as number
+        const price = event.data.price * event.context.discount;
+    }
 }
 ```
 

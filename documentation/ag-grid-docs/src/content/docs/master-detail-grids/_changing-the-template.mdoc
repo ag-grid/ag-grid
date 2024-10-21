@@ -13,12 +13,12 @@ For comparison, the default template is as follows. It is simplistic, only inten
 ```html
 <!-- for when fixed height (normal) -->
 <div class="ag-details-row ag-details-row-fixed-height">
-   <div data-ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>
+    <div data-ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>
 </div>
 
 <!-- for when auto-height (detailRowAutoHeight=true) -->
 <div class="ag-details-row ag-details-row-auto-height">
-   <div data-ref="eDetailGrid" class="ag-details-grid ag-details-grid-auto-height"/>
+    <div data-ref="eDetailGrid" class="ag-details-grid ag-details-grid-auto-height"/>
 </div>
 ```
 {% /if %}
@@ -32,14 +32,14 @@ To change the Detail Template, set the `template` inside the Detail Cell Rendere
 
 {% if isFramework("javascript", "angular", "vue") %}
 ```js
-   // example override using string template
-   detailCellRendererParams: {
-       template:
-       '<div style="background-color: #edf6ff;">' +
-           '  <div style="height: 10%;">Call Details</div>' +
-           '  <div data-ref="eDetailGrid" style="height: 90%;"></div>' +
-           '</div>'
-   }
+    // example override using string template
+    detailCellRendererParams: {
+        template:
+        '<div style="background-color: #edf6ff;">' +
+            '  <div style="height: 10%;">Call Details</div>' +
+            '  <div data-ref="eDetailGrid" style="height: 90%;"></div>' +
+            '</div>'
+    }
 ```
 {% /if %}
 
@@ -49,16 +49,16 @@ To change the Detail Template, set the `template` inside the Detail Cell Rendere
 
 {% if isFramework("javascript", "angular", "vue") %}
 ```js
-   // override using template callback
-   detailCellRendererParams: {
-       template: params => {
-           const personName = params.data.name;
-           return '<div style="height: 100%; background-color: #EDF6FF;">' +
-           '  <div style="height: 10%;">Name: ' + personName + '</div>' +
-           '  <div data-ref="eDetailGrid" style="height: 90%;"></div>' +
-           '</div>';
-       }
-   }
+    // override using template callback
+    detailCellRendererParams: {
+        template: params => {
+            const personName = params.data.name;
+            return '<div style="height: 100%; background-color: #EDF6FF;">' +
+            '  <div style="height: 10%;">Name: ' + personName + '</div>' +
+            '  <div data-ref="eDetailGrid" style="height: 90%;"></div>' +
+            '</div>';
+        }
+    }
 ```
 {% /if %}
 

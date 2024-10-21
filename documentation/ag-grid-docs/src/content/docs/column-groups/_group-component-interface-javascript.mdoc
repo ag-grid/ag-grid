@@ -5,14 +5,14 @@ The Header Group Component interface is as follows:
 {% if isFramework("javascript") %}
 ```ts
 interface IHeaderGroupComp {
-   // optional method, gets called once with params
-   init?(params: IHeaderGroupParams): void;
+    // optional method, gets called once with params
+    init?(params: IHeaderGroupParams): void;
 
-   // can be called more than once, you should return the HTML element
-   getGui(): HTMLElement;
+    // can be called more than once, you should return the HTML element
+    getGui(): HTMLElement;
 
-   // optional method, gets called once, when component is destroyed
-   destroy?(): void;
+    // optional method, gets called once, when component is destroyed
+    destroy?(): void;
 }
 ```
 {% /if %}

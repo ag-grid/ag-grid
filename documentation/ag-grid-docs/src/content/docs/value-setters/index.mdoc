@@ -63,11 +63,11 @@ Read Only Edit is a mode in the grid whereby Cell Editing will not update the da
 {% if isFramework("javascript") %}
 ```ts
 const gridOptions = {
-   readOnlyEdit: true,
-   onCellEditRequest: event => {
-       console.log('Cell Editing updated a cell, but the grid did nothing!');
-       // the application should update the data somehow
-   }
+    readOnlyEdit: true,
+    onCellEditRequest: event => {
+        console.log('Cell Editing updated a cell, but the grid did nothing!');
+        // the application should update the data somehow
+    }
 }
 ```
 {% /if %}
@@ -75,13 +75,13 @@ const gridOptions = {
 {% if isFramework("angular") %}
 ```ts
 <ag-grid-angular
-   [readOnlyEdit]="true"
-   (cellEditRequest)="onCellEditRequest($event)"
-   /* other grid options ... */ />
+    [readOnlyEdit]="true"
+    (cellEditRequest)="onCellEditRequest($event)"
+    /* other grid options ... */ />
 
 this.onCellEditRequest = event => {
-   console.log('Cell Editing updated a cell, but the grid did nothing!');
-   // the application should update the data somehow
+    console.log('Cell Editing updated a cell, but the grid did nothing!');
+    // the application should update the data somehow
 };
 ```
 {% /if %}
@@ -90,8 +90,8 @@ this.onCellEditRequest = event => {
 ```jsx
 const readOnlyEdit = true;
 const onCellEditRequest = event => {
-   console.log('Cell Editing updated a cell, but the grid did nothing!');
-   // the application should update the data somehow
+    console.log('Cell Editing updated a cell, but the grid did nothing!');
+    // the application should update the data somehow
 };
 
 <AgGridReact readOnlyEdit={readOnlyEdit} onCellEditRequest={onCellEditRequest}></AgGridReact>
@@ -101,14 +101,14 @@ const onCellEditRequest = event => {
 {% if isFramework("vue") %}
 ```ts
 <ag-grid-vue
-   :readOnlyEdit="true"
-   @cell-edit-request="onCellEditRequest"
-   /* other grid options ... */>
+    :readOnlyEdit="true"
+    @cell-edit-request="onCellEditRequest"
+    /* other grid options ... */>
 </ag-grid-vue>
 
 this.onCellEditRequest = event => {
-   console.log('Cell Editing updated a cell, but the grid did nothing!');
-   // the application should update the data somehow
+    console.log('Cell Editing updated a cell, but the grid did nothing!');
+    // the application should update the data somehow
 };
 ```
 {% /if %}

@@ -5,16 +5,16 @@ Implement this interface to provide a custom tooltip.
 {% if isFramework("javascript") %}
 ```ts
 interface ITooltipComp {
-   // mandatory methods
+    // mandatory methods
 
-   // Returns the DOM element for this tooltip
-   getGui(): HTMLElement;
+    // Returns the DOM element for this tooltip
+    getGui(): HTMLElement;
 
-   // optional methods
+    // optional methods
 
-   // The init(params) method is called on the tooltip component once.
-   // See below for details on the parameters.
-   init(params: ITooltipParams): void;
+    // The init(params) method is called on the tooltip component once.
+    // See below for details on the parameters.
+    init(params: ITooltipParams): void;
 }
 ```
 {% /if %}

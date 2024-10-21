@@ -18,12 +18,12 @@ In `jest.config.js` add the following lines:
 {% if isFramework("javascript") %}
 ```js
 module.exports = {
- "transform": {
-   "^.+\\.(ts|tsx|js|jsx|mjs)$": [
-     "babel-jest"  // or "ts-test" or whichever transformer you're using
-   ]
- },
- transformIgnorePatterns: ['/node_modules/(?!(@ag-grid-community|@ag-grid-enterprise)/)']
+    "transform": {
+        "^.+\\.(ts|tsx|js|jsx|mjs)$": [
+            "babel-jest"  // or "ts-test" or whichever transformer you're using
+        ]
+    },
+    transformIgnorePatterns: ['/node_modules/(?!(@ag-grid-community|@ag-grid-enterprise)/)']
 }
 ```
 {% /if %}
@@ -45,37 +45,37 @@ import '@testing-library/jest-dom';
 import { createGrid, GridOptions } from 'ag-grid-community';
 
 function createAgGrid() {
-   const div = document.createElement('div');
+    const div = document.createElement('div');
 
-   const gridOptions: GridOptions = {
-       columnDefs: [
-           { headerName: 'Make', field: 'make' },
-           { headerName: 'Model', field: 'model' },
-           { field: 'price', valueFormatter: (params) => '$' + params.value.toLocaleString() },
-       ],
-       rowData: [
-           { make: 'Toyota', model: 'Celica', price: 35000 },
-           { make: 'Ford', model: 'Mondeo', price: 32000 },
-           { make: 'Porsche', model: 'Boxster', price: 72000 },
-       ],
-   };
+    const gridOptions: GridOptions = {
+        columnDefs: [
+            { headerName: 'Make', field: 'make' },
+            { headerName: 'Model', field: 'model' },
+            { field: 'price', valueFormatter: (params) => '$' + params.value.toLocaleString() },
+        ],
+        rowData: [
+            { make: 'Toyota', model: 'Celica', price: 35000 },
+            { make: 'Ford', model: 'Mondeo', price: 32000 },
+            { make: 'Porsche', model: 'Boxster', price: 72000 },
+        ],
+    };
 
-   const api = createGrid(div, gridOptions);
+    const api = createGrid(div, gridOptions);
 
-   return { div, api };
+    return { div, api };
 }
 
 test('examples of some things', async () => {
-   const { div, api } = createAgGrid();
+    const { div, api } = createAgGrid();
 
-   // Get a cell value
-   expect(getByText(div, 'Ford')).toHaveTextContent('Ford');
+    // Get a cell value
+    expect(getByText(div, 'Ford')).toHaveTextContent('Ford');
 
-   // Test the value formatter by searching for the correct price string
-   expect(getByText(div, '$72,000')).toBeDefined();
+    // Test the value formatter by searching for the correct price string
+    expect(getByText(div, '$72,000')).toBeDefined();
 
-   // Test via the api even though this is not a recommended approach
-   expect(api.getDisplayedRowCount()).toBe(3);
+    // Test via the api even though this is not a recommended approach
+    expect(api.getDisplayedRowCount()).toBe(3);
 });
 ```
 {% /if %}
@@ -419,23 +419,23 @@ Then create a file called `myResolver.js` in the root directory of your project:
 {% if isFramework("angular") %}
 ```js
 module.exports = (request, options) => {
-   return options.defaultResolver(request, {
-       ...options,
-       packageFilter: pkg => {
-           const packageName = pkg.name;
-           if (packageName === '@ag-grid-community/angular') {
-               return {
-                   ...pkg,
-               };
-           }
-           const agDependency = packageName.startsWith("@ag-grid");
-           return {
-               ...pkg,
-               // default to use the CommonJS ES5 entry point for Jest testing with AG Grid
-               main: agDependency ? './dist/cjs/es5/main.js' : pkg.module || pkg.main,
-           };
-       },
-   });
+    return options.defaultResolver(request, {
+        ...options,
+        packageFilter: pkg => {
+            const packageName = pkg.name;
+            if (packageName === '@ag-grid-community/angular') {
+                return {
+                    ...pkg,
+                };
+            }
+            const agDependency = packageName.startsWith("@ag-grid");
+            return {
+                ...pkg,
+                // default to use the CommonJS ES5 entry point for Jest testing with AG Grid
+                main: agDependency ? './dist/cjs/es5/main.js' : pkg.module || pkg.main,
+            };
+        },
+    });
 };
 ```
 {% /if %}
@@ -475,12 +475,12 @@ export class TestHostComponent {
 
 
 beforeEach(async () => {
-  await TestBed.configureTestingModule({
-      imports: [TestHostComponent],
-   }).compileComponents();
+    await TestBed.configureTestingModule({
+        imports: [TestHostComponent],
+    }).compileComponents();
 
-   fixture = TestBed.createComponent(TestHostComponent);
-   component = fixture.componentInstance;
+    fixture = TestBed.createComponent(TestHostComponent);
+    component = fixture.componentInstance;
 });
 ```
 {% /if %}
@@ -495,16 +495,16 @@ The grid api will be available after `detectChanges()` has run and the fixture i
 {% if isFramework("angular") %}
 ```js
 it('ViewChild not available until `detectChanges`', () => {
-   expect(component.agGrid).not.toBeTruthy();
+    expect(component.agGrid).not.toBeTruthy();
 });
 
 it('ViewChild is available after `detectChanges`', async () => {
-   // Detect changes triggers the AgGridAngular lifecycle hooks
-   fixture.detectChanges();
-   // Wait for the fixture to stabilise
-   await fixture.whenStable();
-   // ViewChild now has a reference to the component
-   expect(component.agGrid.api).toBeTruthy();
+    // Detect changes triggers the AgGridAngular lifecycle hooks
+    fixture.detectChanges();
+    // Wait for the fixture to stabilise
+    await fixture.whenStable();
+    // ViewChild now has a reference to the component
+    expect(component.agGrid.api).toBeTruthy();
 });
 ```
 {% /if %}
@@ -545,22 +545,22 @@ For example, given the following code:
 {% if isFramework("angular") %}
 ```ts
 
-  @Component({
+@Component({
     standalone: true,
     template: `£{{params?.value}}`,
-  })
-  export class PoundRenderer implements ICellRendererAngularComp {
+})
+export class PoundRenderer implements ICellRendererAngularComp {
     params: ICellRendererParams | undefined;
-  
+
     agInit(params: ICellRendererParams): void {
         this.params = params;
     }
-  
+
     refresh(params: ICellRendererParams) {
         this.params = params;
         return true;
     }
-  }
+}
 
 @Component({
     selector: 'editor-cell',
@@ -713,12 +713,12 @@ In `jest.config.js` add the following lines:
 {% if isFramework("react") %}
 ```js
 module.exports = {
- "transform": {
-   "^.+\\.(ts|tsx|js|jsx|mjs)$": [
-     "babel-jest"  // or "ts-test" or whichever transformer you're using
-   ]
- },
- transformIgnorePatterns: ['/node_modules/(?!(@ag-grid-community|@ag-grid-enterprise)/)']
+    "transform": {
+        "^.+\\.(ts|tsx|js|jsx|mjs)$": [
+            "babel-jest"  // or "ts-test" or whichever transformer you're using
+        ]
+    },
+    transformIgnorePatterns: ['/node_modules/(?!(@ag-grid-community|@ag-grid-enterprise)/)']
 }
 ```
 {% /if %}

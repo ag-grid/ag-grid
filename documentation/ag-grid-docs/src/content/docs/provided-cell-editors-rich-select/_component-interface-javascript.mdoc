@@ -5,15 +5,15 @@ The interface for the Cell Component is as follows:
 {% if isFramework("javascript") %}
 ```ts
 interface ICellEditorRendererComp {
-   // Optional - props for rendering.
-   init?(props: IRichCellEditorRendererParams): void;
+    // Optional - props for rendering.
+    init?(props: IRichCellEditorRendererParams): void;
 
-   // Mandatory - Return the DOM element of the component, this is what the grid puts into the cell
-   getGui(): HTMLElement;
+    // Mandatory - Return the DOM element of the component, this is what the grid puts into the cell
+    getGui(): HTMLElement;
 
-   // Optional - Gets called once by grid after rendering is finished - if your renderer needs to do any cleanup,
-   // do it here
-   destroy?(): void;
+    // Optional - Gets called once by grid after rendering is finished - if your renderer needs to do any cleanup,
+    // do it here
+    destroy?(): void;
 }
 ```
 {% /if %}

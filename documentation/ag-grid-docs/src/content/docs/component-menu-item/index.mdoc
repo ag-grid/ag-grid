@@ -16,28 +16,28 @@ Implement this interface to provide a custom menu item.
 {% if isFramework("angular") %}
 ```ts
 interface extends IMenuItemAngularComp {
-   // mandatory methods
+    // mandatory methods
 
-   // The agInit(params) method is called on the menu item once.
-   agInit(params: IMenuItemParams);
+    // The agInit(params) method is called on the menu item once.
+    agInit(params: IMenuItemParams);
 
-   // optional methods
+    // optional methods
 
-   // Configure the default grid behaviour for this item, including styling,
-   // and mouse and keyboard interactions.
-   // Return `true` to use all default behaviour, `false` to use no default behaviour
-   // (equivalent to `configureDefaults` not being defined),
-   // or `IMenuConfigParams` to choose what default behaviour to use.
-   configureDefaults(): boolean | IMenuConfigParams;
+    // Configure the default grid behaviour for this item, including styling,
+    // and mouse and keyboard interactions.
+    // Return `true` to use all default behaviour, `false` to use no default behaviour
+    // (equivalent to `configureDefaults` not being defined),
+    // or `IMenuConfigParams` to choose what default behaviour to use.
+    configureDefaults(): boolean | IMenuConfigParams;
 
-   // Called when the item is activated/deactivated, either via mouseover or keyboard navigation.
-   setActive(active: boolean): void;
+    // Called when the item is activated/deactivated, either via mouseover or keyboard navigation.
+    setActive(active: boolean): void;
 
-   // If the item has a sub menu, called when the sub menu is opened/closed.
-   setExpanded(expanded: boolean): void;
+    // If the item has a sub menu, called when the sub menu is opened/closed.
+    setExpanded(expanded: boolean): void;
 
-   // Called when the item is selected, e.g. clicked or Enter is pressed.
-   select(): void;
+    // Called when the item is selected, e.g. clicked or Enter is pressed.
+    select(): void;
 }
 ```
 {% /if %}
@@ -45,31 +45,31 @@ interface extends IMenuItemAngularComp {
 {% if isFramework("javascript") %}
 ```ts
 interface IMenuItemComp {
-   // mandatory methods
+    // mandatory methods
 
-   // Returns the DOM element for this menu item
-   getGui(): HTMLElement;
+    // Returns the DOM element for this menu item
+    getGui(): HTMLElement;
 
-   // optional methods
+    // optional methods
 
-   // The init(params) method is called on the menu item once. See below for details on the parameters.
-   init(params: IMenuItemParams): void;
+    // The init(params) method is called on the menu item once. See below for details on the parameters.
+    init(params: IMenuItemParams): void;
 
-   // Configure the default grid behaviour for this item, including styling,
-   // and mouse and keyboard interactions.
-   // Return `true` to use all default behaviour, `false` to use no default behaviour
-   // (equivalent to `configureDefaults` not being defined),
-   // or `IMenuConfigParams` to choose what default behaviour to use.
-   configureDefaults(): boolean | IMenuConfigParams;
+    // Configure the default grid behaviour for this item, including styling,
+    // and mouse and keyboard interactions.
+    // Return `true` to use all default behaviour, `false` to use no default behaviour
+    // (equivalent to `configureDefaults` not being defined),
+    // or `IMenuConfigParams` to choose what default behaviour to use.
+    configureDefaults(): boolean | IMenuConfigParams;
 
-   // Called when the item is activated/deactivated, either via mouseover or keyboard navigation.
-   setActive(active: boolean): void;
+    // Called when the item is activated/deactivated, either via mouseover or keyboard navigation.
+    setActive(active: boolean): void;
 
-   // If the item has a sub menu, called when the sub menu is opened/closed.
-   setExpanded(expanded: boolean): void;
+    // If the item has a sub menu, called when the sub menu is opened/closed.
+    setExpanded(expanded: boolean): void;
 
-   // Called when the item is selected, e.g. clicked or Enter is pressed.
-   select(): void;
+    // Called when the item is selected, e.g. clicked or Enter is pressed.
+    select(): void;
 }
 ```
 {% /if %}
@@ -77,23 +77,23 @@ interface IMenuItemComp {
 {% if isFramework("vue") %}
 ```ts
 interface IMenuItem {
-   // optional methods
+    // optional methods
 
-   // Configure the default grid behaviour for this item, including styling,
-   // and mouse and keyboard interactions.
-   // Return `true` to use all default behaviour, `false` to use no default behaviour
-   // (equivalent to `configureDefaults` not being defined),
-   // or `IMenuConfigParams` to choose what default behaviour to use.
-   configureDefaults(): boolean | IMenuConfigParams;
+    // Configure the default grid behaviour for this item, including styling,
+    // and mouse and keyboard interactions.
+    // Return `true` to use all default behaviour, `false` to use no default behaviour
+    // (equivalent to `configureDefaults` not being defined),
+    // or `IMenuConfigParams` to choose what default behaviour to use.
+    configureDefaults(): boolean | IMenuConfigParams;
 
-   // Called when the item is activated/deactivated, either via mouseover or keyboard navigation.
-   setActive(active: boolean): void;
+    // Called when the item is activated/deactivated, either via mouseover or keyboard navigation.
+    setActive(active: boolean): void;
 
-   // If the item has a sub menu, called when the sub menu is opened/closed.
-   setExpanded(expanded: boolean): void;
+    // If the item has a sub menu, called when the sub menu is opened/closed.
+    setExpanded(expanded: boolean): void;
 
-   // Called when the item is selected, e.g. clicked or Enter is pressed.
-   select(): void;
+    // Called when the item is selected, e.g. clicked or Enter is pressed.
+    select(): void;
 }
 ```
 {% /if %}
@@ -101,17 +101,17 @@ interface IMenuItem {
 {% if isFramework("react") %}
 ```jsx
 export default ({ name, icon, shortcut, subMenu }) => {
-   useGridMenuItem(() => {
-       configureDefaults: () => true;
-   });
-   return (
-       <div>
-           <span className="ag-menu-option-part ag-menu-option-icon">{icon}</span>
-           <span className="ag-menu-option-part ag-menu-option-text">{name}</span>
-           <span className="ag-menu-option-part ag-menu-option-shortcut">{shortcut}</span>
-           <span className="ag-menu-option-part ag-menu-option-popup-pointer">{subMenu ? '>': ''}</span>
-       </div>
-   );
+    useGridMenuItem(() => {
+        configureDefaults: () => true;
+    });
+    return (
+        <div>
+            <span className="ag-menu-option-part ag-menu-option-icon">{icon}</span>
+            <span className="ag-menu-option-part ag-menu-option-text">{name}</span>
+            <span className="ag-menu-option-part ag-menu-option-shortcut">{shortcut}</span>
+            <span className="ag-menu-option-part ag-menu-option-popup-pointer">{subMenu ? '>': ''}</span>
+        </div>
+    );
 };
 ```
 {% /if %}

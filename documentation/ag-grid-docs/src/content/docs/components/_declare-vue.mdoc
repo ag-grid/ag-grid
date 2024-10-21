@@ -41,12 +41,12 @@ them as **case-sensitive** strings.
 {% if isFramework("vue") %}
 ```js
 const SquareComponent = {
-   template: '<span>{{ valueSquared() }}</span>',
-   methods: {
-       valueSquared() {
-           return this.params.value * this.params.value;
-       }
-   }
+    template: '<span>{{ valueSquared() }}</span>',
+    methods: {
+        valueSquared() {
+            return this.params.value * this.params.value;
+        }
+    }
 };
 ```
 {% /if %}
@@ -59,12 +59,12 @@ const SquareComponent = {
 ```js
 // SquareComponent.js
 export default {
-   template: '<span>{{ valueSquared() }}</span>',
-   methods: {
-       valueSquared() {
-           return this.params.value * this.params.value;
-       }
-   }
+    template: '<span>{{ valueSquared() }}</span>',
+    methods: {
+        valueSquared() {
+            return this.params.value * this.params.value;
+        }
+    }
 };
 ```
 {% /if %}
