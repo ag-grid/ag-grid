@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
             field: 'col1',
             filter: 'agSetColumnFilter',
             editable: true,
-            flex: 1,
+            minWidth: 250,
         },
     ],
     sideBar: 'filters',
