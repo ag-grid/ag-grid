@@ -60,7 +60,7 @@ The following is captured in the grid state:
 * [Sort](./row-sorting/) (column state)
 
 {% note %}
-When restoring current page using the [Server Side Row Model](./server-side-model/) or [Infinite Row Model](./infinite-scrolling/)
+When restoring the current page using the [Server Side Row Model](./server-side-model/) or [Infinite Row Model](./infinite-scrolling/),
 additional configuration is required:
 
 * For the Server Side Row Model - set the `serverSideInitialRowCount` property to a value which includes the rows to be shown.
@@ -71,5 +71,7 @@ additional configuration is required:
 All state properties are optional, so a property can be excluded if you do not want to restore it.
 
 If applying some but not all of the column state properties, then `initialState.partialColumnState` must be set to `true`.
+
+The state also contains the grid version number. When applying state with older version numbers, any old state properties will be automatically migrated to the current format.
 
 {% interfaceDocumentation interfaceName="GridState" /%}
