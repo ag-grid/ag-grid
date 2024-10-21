@@ -44,9 +44,6 @@ describe('React Suspense', () => {
                         Suspend Ag Grid
                     </button>
                     <AgGridReact
-                        containerStyle={{
-                            height: '200px',
-                        }}
                         rowHeight={80}
                         rowData={rowData}
                         getRowId={(data) => data.data.item}

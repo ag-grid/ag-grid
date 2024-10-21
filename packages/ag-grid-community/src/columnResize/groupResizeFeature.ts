@@ -152,14 +152,6 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         this.resizeTakeFromRatios = groupAfterRatios;
     }
 
-    private clearLocalValues(): void {
-        this.resizeCols = undefined;
-        this.resizeRatios = undefined;
-
-        this.resizeTakeFromCols = undefined;
-        this.resizeTakeFromRatios = undefined;
-    }
-
     public resizeLeafColumnsToFit(source: ColumnEventType): void {
         const preferredSize = this.autoWidthCalculator.getPreferredWidthForColumnGroup(this.columnGroup);
         const initialValues = this.getInitialValues();
@@ -266,6 +258,11 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
 
     public override destroy(): void {
         super.destroy();
-        this.clearLocalValues();
+
+        this.resizeCols = undefined;
+        this.resizeRatios = undefined;
+
+        this.resizeTakeFromCols = undefined;
+        this.resizeTakeFromRatios = undefined;
     }
 }
