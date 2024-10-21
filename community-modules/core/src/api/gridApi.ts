@@ -867,7 +867,7 @@ export interface _SideBarGridApi<TData> {
     /** Returns the ID of the currently shown tool panel if any, otherwise `null`. */
     getOpenedToolPanel(): string | null;
 
-    /** Force refresh all tool panels by calling their `refresh` method. */
+    /** Force refreshes all tool panels by calling their `refresh` method. */
     refreshToolPanel(): void;
 
     /** Returns `true` if the tool panel is showing, otherwise `false`. */
