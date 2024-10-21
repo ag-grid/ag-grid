@@ -21,6 +21,37 @@ interface ICar {
 }
 ```
 
+{% if isFramework("react") %}
+### Configure via Component
+
+The `<AgGridReact>` component accepts a generic parameter as `<AgGridReact<ICar>>`.
+
+{% /if %}
+
+{% if isFramework("react") %}
+```jsx
+<AgGridReact<ICar>
+   ref={gridRef}
+   rowData={rowData}
+   onRowSelected={onRowSelected}
+/>
+```
+{% /if %}
+
+{% if isFramework("react") %}
+This ensures all the props defined on `<AgGridReact>` conform to the `ICar` interface. These props can be defined with types like this.
+{% /if %}
+
+{% if isFramework("react") %}
+```ts
+const gridRef = useRef<AgGridReact<ICar>>(null);
+
+const [rowData, setRowData] = useState<ICar[]>([ ... ]);
+
+const onRowSelected = useCallback((event: RowSelectedEvent<ICar>) => { ... }, [])
+```
+{% /if %}
+
 ### Configure via GridOptions
 
 Set the row data type on the grid options interface via `GridOptions<ICar>`. The `ICar` interface will then be used throughout the grid options whenever row data is present. This is true for: properties, callbacks, events and the gridApi.
@@ -113,36 +144,6 @@ onRowSelected(event: RowSelectedEvent<ICar>) {}
 ```
 {% /if %}
 
-{% if isFramework("react") %}
-### Configure via Component
-
-The `<AgGridReact>` component accepts a generic parameter as `<AgGridReact<ICar>>`.
-
-{% /if %}
-
-{% if isFramework("react") %}
-```jsx
-<AgGridReact<ICar>
-   ref={gridRef}
-   rowData={rowData}
-   onRowSelected={onRowSelected}
-/>
-```
-{% /if %}
-
-{% if isFramework("react") %}
-This ensures all the props defined on `<AgGridReact>` conform to the `ICar` interface. These props can be defined with types like this.
-{% /if %}
-
-{% if isFramework("react") %}
-```ts
-const gridRef = useRef<AgGridReact<ICar>>(null);
-
-const [rowData, setRowData] = useState<ICar[]>([ ... ]);
-
-const onRowSelected = useCallback((event: RowSelectedEvent<ICar>) => { ... }, [])
-```
-{% /if %}
 
 ### Type: TData | undefined
 
