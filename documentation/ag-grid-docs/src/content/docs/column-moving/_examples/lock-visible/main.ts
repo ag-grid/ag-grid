@@ -58,6 +58,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         width: 100,
     },
+    allowDragFromColumnsToolPanel: true,
 };
 
 // setup the grid after the page has finished loading
