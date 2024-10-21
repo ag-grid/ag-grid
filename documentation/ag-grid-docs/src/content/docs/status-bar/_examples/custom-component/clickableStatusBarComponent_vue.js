@@ -2,7 +2,7 @@ export default {
     template: `
       <div class="ag-status-name-value">
           <span>Status Bar Component&nbsp; 
-            <input type="button" v-on:click="onClick" value="Click Me"/>
+            <input class="status-bar-input" type="button" v-on:click="onClick" value="Click Me"/>
           </span>
       </div>
     `,

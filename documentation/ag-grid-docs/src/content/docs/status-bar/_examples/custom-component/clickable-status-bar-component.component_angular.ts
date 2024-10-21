@@ -6,9 +6,10 @@ import { Component } from '@angular/core';
     standalone: true,
     template: `
         <div class="ag-status-name-value">
-            <span class="component"
-                >Status Bar Component <input type="button" (click)="onClick()" value="Click Me"
-            /></span>
+            <span class="component">
+                Status Bar Component
+                <input class="status-bar-input" type="button" (click)="onClick()" value="Click Me" />
+            </span>
         </div>
     `,
 })
