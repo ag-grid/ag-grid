@@ -334,6 +334,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     private createAggSelect(hidePopup: () => void, value: any): Component {
         const itemSelected = () => {
             hidePopup();
+            this.getGui().focus();
             this.valueColsService?.setColumnAggFunc?.(this.column, value, 'toolPanelDragAndDrop');
         };
 

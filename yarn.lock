@@ -9704,11 +9704,6 @@ ag-charts-react@10.2.0-beta.20241020:
   resolved "http://52.50.158.57:4873/ag-charts-react/-/ag-charts-react-10.2.0-beta.20241020.tgz#0bfc0e8438fdf05953556bca75521c313930c6ec"
   integrity sha512-Ge3VoTc8pTioT9vqblOk64vY1cz/P1ix2KBT0bOGBo+/miQK9BE39f/B1/6en2JuzPo8GY9rgoyCbdgkirwRAg==
 
-ag-charts-types@10.2.0-beta.20241009:
-  version "10.2.0-beta.20241009"
-  resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-10.2.0-beta.20241009.tgz#c841c5aee391af86542edd2dcc2b72d9f77a734d"
-  integrity sha512-nuNjFO08Azy9IfcbcpQJgqGqIBFsOwMchlfaUZBvCNZD3lDhStpmNyRDN9KPlBWC85ygQBtE429RJJ4OrrGNpQ==
-
 ag-charts-types@10.2.0-beta.20241020:
   version "10.2.0-beta.20241020"
   resolved "http://52.50.158.57:4873/ag-charts-types/-/ag-charts-types-10.2.0-beta.20241020.tgz#99c1bc1962e58d13d7a23c9dc5e1e9268e9dc764"

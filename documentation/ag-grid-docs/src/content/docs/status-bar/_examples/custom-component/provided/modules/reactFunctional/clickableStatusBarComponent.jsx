@@ -9,7 +9,7 @@ export default (props) => {
         <div className="ag-status-name-value">
             <span>
                 Status Bar Component&nbsp;
-                <input type="button" onClick={() => onClick()} value="Click Me" />
+                <input type="button" className="status-bar-input" onClick={() => onClick()} value="Click Me" />
             </span>
         </div>
     );

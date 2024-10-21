@@ -91,6 +91,7 @@
     &:hover,
     &:focus {
         background-color: var(--hover-bg-color);
+        color: var(--color-logo-orange);
     }
 
     #{$selector-darkmode} & {

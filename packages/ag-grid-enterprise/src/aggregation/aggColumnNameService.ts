@@ -9,9 +9,6 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _exists } from 'ag-grid-community';
 
-import type { RowGroupColsService } from '../rowGrouping/rowGroupColsService';
-import type { ValueColsService } from '../rowGrouping/valueColsService';
-
 export class AggColumnNameService extends BeanStub implements NamedBean, IAggColumnNameService {
     beanName = 'aggColumnNameService' as const;
 

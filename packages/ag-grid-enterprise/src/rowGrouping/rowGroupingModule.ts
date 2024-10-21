@@ -1,11 +1,5 @@
 import type { _ModuleWithApi, _ModuleWithoutApi, _RowGroupingGridApi } from 'ag-grid-community';
-import {
-    ColumnFilterModule,
-    ColumnGroupCoreModule,
-    FloatingFilterModule,
-    PopupModule,
-    StickyRowModule,
-} from 'ag-grid-community';
+import { ColumnFilterModule, FloatingFilterModule, PopupModule, StickyRowModule } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { AggregationModule } from '../aggregation/aggregationModule';
@@ -17,7 +11,6 @@ import { GroupFilter } from './groupFilter/groupFilter';
 import { GroupFloatingFilterComp } from './groupFilter/groupFloatingFilter';
 import { GroupHideOpenParentsService } from './groupHideOpenParentsService';
 import { GroupStage } from './groupStage/groupStage';
-import { PivotColsService } from './pivotColsService';
 import { RowGroupColsService } from './rowGroupColsService';
 import {
     addRowGroupColumns,
@@ -26,11 +19,10 @@ import {
     removeRowGroupColumns,
     setRowGroupColumns,
 } from './rowGroupingApi';
-import { ValueColsService } from './valueColsService';
 
 export const RowGroupingCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('RowGroupingCoreModule'),
-    beans: [GroupStage, GroupHideOpenParentsService],
+    beans: [GroupStage, GroupHideOpenParentsService, RowGroupColsService],
     dependsOn: [EnterpriseCoreModule, AggregationModule, GroupColumnModule],
 };
 

@@ -413,7 +413,6 @@ export type BeanName =
     | 'flashCellService'
     | 'flattenStage'
     | 'focusService'
-    | 'funcColsService'
     | 'pivotColsService'
     | 'rowGroupColsService'
     | 'valueColsService'
