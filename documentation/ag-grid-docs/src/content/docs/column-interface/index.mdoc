@@ -10,6 +10,14 @@ Column Options, also known as column definitions, implement the `ColDef<TData, T
 
 See [Column Options](./column-properties/) for a complete list of configuration options.
 
+### Initial Column Options
+
+A small number of Column Options do **not** support updating their value. Their value is only read during the initial creation of the column. These options are marked as `Initial` on the [Options Reference](./column-properties). See [Changing Column State](./column-updating-definitions/#changing-column-state) for more information.
+
+{% note %}
+Not all Column Options support updates. These are marked as Initial.
+{% /note %}
+
 ## Column
 
 Each column in the grid is represented by a `Column` instance, which has a reference to the underlying column definition. The `Column` has attributes, methods and events for interacting with the specific column e.g. `column.isVisible()`.

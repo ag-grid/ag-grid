@@ -178,6 +178,9 @@ export interface Config {
 
     /** Show the description of what an initial property is against initial properties */
     showInitialDescription?: boolean;
+
+    /** Override link shown for initial properties */
+    initialLink?: string;
 }
 
 export type Properties = DocEntryMap | DocEntry | ChildDocEntry;
