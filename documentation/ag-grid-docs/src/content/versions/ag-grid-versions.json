@@ -2,13 +2,12 @@
     {
         "version": "32.3.0",
         "date": "October 22nd 2024",
-        "landingPageHighlight": "Quality ImprovementsUpdate",
+        "landingPageHighlight": "Quality Improvements",
         "highlights": [
             {
                 "text": "Quality Improvements"
             }
-        ],
-        "notesPath": "./upgrading-to-ag-grid-32-3"
+        ]
     },
     {
         "version": "32.2.0",
@@ -113,7 +112,7 @@
         "highlights": [
             {
                 "text": "Sticky Group Total and Grand Total Rows",
-                "path": "./total-rows"
+                "path": "./aggregation-total-rows"
             },
             {
                 "text": "Skeleton Content Displayed in Loading Grid Cells",
@@ -153,7 +152,7 @@
             },
             {
                 "text": "Dark Mode for Material Design Theme",
-                "path": "./themes/#provided-themes"
+                "path": "./themes/"
             },
             {
                 "text": "Figma Design System Includes Material Design Theme",
@@ -219,7 +218,7 @@
             },
             {
                 "text": "Prevent Group Column Reordering and Removal",
-                "path": "./grouping-locking-group-columns"
+                "path": "./grouping-group-panel/#prevent-changes-to-group-order"
             },
             {
                 "text": "Pagination Panel Page Size Selector",
@@ -246,7 +245,7 @@
             },
             {
                 "text": "Dynamic Group Footer Rows",
-                "path": "./total-rows/#dynamically-display-group-total-rows"
+                "path": "./aggregation-total-rows/#selectively-display-group-total-rows"
             },
             {
                 "text": "Documentation Examples on CodeSandbox"
