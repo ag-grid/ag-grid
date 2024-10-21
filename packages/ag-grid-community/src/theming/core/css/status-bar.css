@@ -14,6 +14,10 @@
 
 .ag-status-name-value {
     white-space: nowrap;
+    margin-left: var(--ag-spacing);
+    margin-right: var(--ag-spacing);
+    padding-top: var(--ag-widget-container-vertical-padding);
+    padding-bottom: var(--ag-widget-container-vertical-padding);
 }
 
 .ag-status-bar-left {
@@ -22,21 +26,11 @@
 
 .ag-status-bar-center {
     display: inline-flex;
+    text-align: center;
 }
 
 .ag-status-bar-right {
     display: inline-flex;
-}
-
-.ag-status-bar-center {
-    text-align: center;
-}
-
-.ag-status-name-value {
-    margin-left: var(--ag-spacing);
-    margin-right: var(--ag-spacing);
-    padding-top: var(--ag-widget-container-vertical-padding);
-    padding-bottom: var(--ag-widget-container-vertical-padding);
 }
 
 .ag-status-name-value-value {

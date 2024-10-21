@@ -16,6 +16,7 @@
 
 .ag-set-filter-group-icons {
     display: block;
+
     > * {
         cursor: pointer;
     }
