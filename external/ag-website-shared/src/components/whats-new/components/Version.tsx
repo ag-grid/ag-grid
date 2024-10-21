@@ -55,7 +55,7 @@ export const Version = ({ date, version, blogUrl, highlights, notesPath, isLates
                     <div className={styles.flex}>
                         <b>Version {version}</b>
                         <a className={styles.bloglink} href={blogUrl}>
-                            Read more →
+                            {!blogUrl?.includes('32-3') && 'Read more →'}
                         </a>
                     </div>
                     <span className={styles.line}></span>
