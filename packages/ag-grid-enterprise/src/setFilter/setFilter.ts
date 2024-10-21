@@ -852,7 +852,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             if (eMiniFilter.isDisplayed()) {
                 eMiniFilter.getFocusableElement().focus();
             } else {
-                this.virtualList?.focusRow(0);
+                this.virtualList?.awaitStable(() => this.virtualList?.focusRow(0));
             }
         }
     }
