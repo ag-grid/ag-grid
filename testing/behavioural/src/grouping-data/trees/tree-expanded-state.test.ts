@@ -12,7 +12,7 @@ describe('ag-grid tree expanded state', () => {
     });
 
     const gridRowsOptions: GridRowsOptions = {
-        checkDom: 'myGrid',
+        checkDom: true,
     };
 
     beforeEach(() => {

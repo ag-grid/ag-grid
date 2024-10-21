@@ -1,0 +1,78 @@
+---
+title: "Theming: Customising Fonts"
+---
+
+Altering typography within the grid
+
+## Font Family Parameters
+
+The grid provides the following [Theme Parameters](./theming-parameters/) to control fonts:
+
+* `fontFamily` sets a default font for all text in the grid
+* `headerFontFamily` optionally overrides the font used in the header
+* `cellFontFamily` optionally overrides the font used in the data Cells
+
+```js
+const myTheme = themeQuartz.withParams({
+    fontFamily: 'serif',
+    headerFontFamily: 'Brush Script MT',
+    cellFontFamily: 'monospace',
+});
+```
+
+To customise another element, [use CSS rules](./theming-css/):
+
+```css
+/* Set the subtitles within the columns tool panel in CSS */
+.ag-column-drop-title {
+    font-family: 'Brush Script MT';
+    font-size: 1.5em;
+}
+```
+
+{% gridExampleRunner title="Font Customisation" name="font-customisation" /%}
+
+## Extended Syntax for CSS Parameters
+
+Font family parameters can accept the following value types:
+
+| Syntax | Description |
+|-|-|
+| `string` | A [CSS font-family value](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family), such as `'Arial, sans-serif'` or variable expression `'var(--myFontFamilyVar)'`. |
+| `{ googleFont: 'IBM Plex Sans' }` | A Google font. You must load the font or ask the grid to load it for you, see [Loading Google Fonts](#loading-google-fonts) below. |
+| `['Arial', 'sans-serif']` | An array of fonts. Each item can be a string font name or a `{ googleFont: "..." }` object. The browser will attempt to use the first font and fall back to later fonts if the first one fails to load or is not available on the host system. |
+
+## Loading Google Fonts
+
+To prevent potential licensing and privacy implications, the grid will not load Google fonts unless requested to. If your theme uses Google fonts you should either:
+
+* set the `loadThemeGoogleFonts` grid option to `true`, and the grid will load the font from Google's CDN
+* load the font yourself using a `@font-face` rule in your application's CSS
+
+If the font has not been loaded through either of the above methods, a warning will be logged to the console. Set `loadThemeGoogleFonts` to `false` to silence this warning.
+
+This example demonstrates fonts loaded by teh grid and by the application's stylesheets:
+
+```js
+const myTheme = themeQuartz.withParams({
+    // the grid will load these fonts for you if loadThemeGoogleFonts=true
+    fontFamily: { googleFont: 'Delius' },
+    headerFontFamily: { googleFont: 'Sixtyfour Convergence' },
+    cellFontFamily: { googleFont: 'Turret Road' },
+    // these fonts are awesome, so they should be large too
+    fontSize: 20,
+    headerFontSize: 25,
+});
+```
+```css
+/* If you use a Google font in CSS and not in theme parameters, you are
+   responsible for loading it yourself */
+@import url('https://fonts.googleapis.com/css2?family=Kablammo&display=swap');
+
+.ag-column-drop-title {
+    font-family: 'Kablammo';
+    font-size: 1.5em;
+}
+```
+
+{% gridExampleRunner title="Font Loading" name="font-loading" exampleHeight=600 /%}

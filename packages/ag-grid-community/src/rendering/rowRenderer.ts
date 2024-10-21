@@ -727,11 +727,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
     public getAllRowCtrls(): RowCtrl[] {
         const stickyTopRowCtrls = this.getStickyTopRowCtrls();
         const stickyBottomRowCtrls = this.getStickyBottomRowCtrls();
-        const res = [...this.topRowCtrls, ...this.bottomRowCtrls, ...stickyTopRowCtrls, ...stickyBottomRowCtrls];
+        const res = [
+            ...this.topRowCtrls,
+            ...this.bottomRowCtrls,
+            ...stickyTopRowCtrls,
+            ...stickyBottomRowCtrls,
+            ...Object.values(this.rowCtrlsByRowIndex),
+        ];
 
-        for (const key in this.rowCtrlsByRowIndex) {
-            res.push(this.rowCtrlsByRowIndex[key]);
-        }
         return res;
     }
 

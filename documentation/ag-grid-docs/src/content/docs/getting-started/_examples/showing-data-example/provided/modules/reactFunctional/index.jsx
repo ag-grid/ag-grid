@@ -1,12 +1,8 @@
-'use strict';
-
 import React, { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -41,13 +37,7 @@ const GridExample = () => {
 
     return (
         <div style={{ width: '100%', height: '100%' }}>
-            <div
-                style={{ width: '100%', height: '100%' }}
-                className={
-                    /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
-                    'ag-theme-quartz' /** DARK MODE END **/
-                }
-            >
+            <div style={{ width: '100%', height: '100%' }}>
                 <AgGridReact rowData={rowData} columnDefs={columnDefs} />
             </div>
         </div>

@@ -1,8 +1,8 @@
 ---
-title: "Theming API: Colors & Dark Mode"
+title: "Theming: Colors & Dark Mode"
 ---
 
-The grid provides several ways to customise colours
+The grid provides several ways to customise colors
 
 ## Overview
 
@@ -42,14 +42,14 @@ const myTheme = themeQuartz.withParams({
 });
 ```
 
-{% gridExampleRunner title="Colour Customisation" name="colour-customisation" exampleHeight=400 suppressDarkMode=true /%}
+{% gridExampleRunner title="Colour Customisation" name="color-customisation" exampleHeight=400 suppressDarkMode=true /%}
 
 
 ## Color Schemes
 
 The grid defines a number of dark and light color schemes that you can apply.
 
- * `colorSchemeVariable` - the default color scheme for all our [built-in themes](./theming-api/#built-in-themes). By default it appears light, but can be adjusted using [theme modes](#theme-modes) (see below).
+ * `colorSchemeVariable` - the default color scheme for all our [built-in themes](./themes/#built-in-themes). By default it appears light, but can be adjusted using [theme modes](#theme-modes) (see below).
  * `colorSchemeLight` - a neutral light color scheme
  * `colorSchemeLightWarm`, `colorSchemeLightCold` - light color schemes with subtle warm and cold tints
  * `colorSchemeDark` - a neutral dark color scheme
@@ -66,7 +66,7 @@ const myTheme = themeQuartz.withPart(colorSchemeDark);
 
 {% gridExampleRunner title="Colour Scheme" name="color-scheme" /%}
 
-A color scheme is simply a theme part with values defined for the key color params, so if none of the built-in schemes suit you can use params to create the same effect, and fine-tune the colours to your requirements. For example, `colorSchemeDarkBlue` is equivalent to:
+A color scheme is simply a theme part with values defined for the key color params, so if none of the built-in schemes suit you can use params to create the same effect, and fine-tune the colors to your requirements. For example, `colorSchemeDarkBlue` is equivalent to:
 
 ```js
 const myTheme = themeQuartz.withParams({
@@ -87,7 +87,7 @@ The `theme` grid option can be updated after the grid is initialised, so for mos
 
 Often however, a grid application is embedded within a website, and the website and grid application have different codebases. It may not be easy to update the theme grid option in response to the website's dark mode changing.
 
-For this use case we provide theme modes. When a theme uses the `colorSchemeVariable` color scheme, which is the default for our [built-in themes](./theming-api/#built-in-themes), the color scheme can be controlled by setting the `data-ag-theme-mode="mode"` attribute on any parent element of the grid, commonly the `html` or `body` elements, where `mode` is any of:
+For this use case we provide theme modes. When a theme uses the `colorSchemeVariable` color scheme, which is the default for our [built-in themes](./themes/#built-in-themes), the color scheme can be controlled by setting the `data-ag-theme-mode="mode"` attribute on any parent element of the grid, commonly the `html` or `body` elements, where `mode` is any of:
 
  * `light`
  * `light-warm`

@@ -1,4 +1,3 @@
-import type { ImportType } from '@ag-grid-types';
 import { getIsDev } from '@utils/env';
 import { getExampleRootFileUrl } from '@utils/pages';
 import fs from 'node:fs/promises';
@@ -17,18 +16,16 @@ type DocsExampleParams = {
     type: 'docs';
     framework: InternalFramework;
     pageName: string;
-    importType: ImportType;
 };
 
 const getFolderPath = (params: GeneratedExampleParams) => {
-    const { exampleName, importType } = params;
+    const { exampleName } = params;
 
     const contentRoot = getExampleRootFileUrl();
 
     const result = [contentRoot.pathname];
     if (params.type === 'docs') {
-        result.push(params.type, params.pageName, '_examples', exampleName);
-        result.push(importType, params.framework);
+        result.push(params.type, params.pageName, '_examples', exampleName, params.framework);
     }
 
     return path.join(...result);

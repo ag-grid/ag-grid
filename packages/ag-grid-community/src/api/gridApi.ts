@@ -11,6 +11,7 @@ import type {
     FilterChangedEventSourceType,
     SelectionEventSourceType,
 } from '../events';
+import type { ManagedGridOptionKey, ManagedGridOptions } from '../gridOptionsInitial';
 import type {
     ChartDownloadParams,
     ChartModel,
@@ -50,7 +51,6 @@ import type { IToolPanel } from '../interfaces/iToolPanel';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { ServerSideTransaction, ServerSideTransactionResult } from '../interfaces/serverSideTransaction';
-import type { ManagedGridOptionKey, ManagedGridOptions } from '../propertyKeys';
 import type { GetCellRendererInstancesParams, ICellRenderer } from '../rendering/cellRenderers/iCellRenderer';
 
 export interface DetailGridInfo {
@@ -877,7 +877,24 @@ export interface _CsvExportGridApi {
     exportDataAsCsv(params?: CsvExportParams): void;
 }
 
-export interface _RowGroupingGridApi<TData> {
+export interface _RowGroupingGridApi {
+    /** Set the row group columns. */
+    setRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
+
+    /** Move the column to a new position in the row grouping order. */
+    moveRowGroupColumn(fromIndex: number, toIndex: number): void;
+
+    /** Remove columns from the row groups. */
+    removeRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
+
+    /** Add columns to the row groups. */
+    addRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
+
+    /** Get row group columns. */
+    getRowGroupColumns(): Column[];
+}
+
+export interface _AggregationGridApi<TData> {
     /** Add aggregations function with the specified keys. */
     addAggFuncs(aggFuncs: { [key: string]: IAggFunc<TData> }): void;
 
@@ -889,7 +906,9 @@ export interface _RowGroupingGridApi<TData> {
         key: string | ColDef<TData, TValue> | Column<TValue>,
         aggFunc: string | IAggFunc<TData, TValue> | null | undefined
     ): void;
+}
 
+export interface _PivotGridApi<TData> {
     /** Returns whether pivot mode is currently active. */
     isPivotMode(): boolean;
 
@@ -910,21 +929,6 @@ export interface _RowGroupingGridApi<TData> {
 
     /** Add the given list of columns to the existing set of value columns. */
     addValueColumns(colKeys: (string | ColDef | Column)[]): void;
-
-    /** Set the row group columns. */
-    setRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
-
-    /** Move the column to a new position in the row grouping order. */
-    moveRowGroupColumn(fromIndex: number, toIndex: number): void;
-
-    /** Remove columns from the row groups. */
-    removeRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
-
-    /** Add columns to the row groups. */
-    addRowGroupColumns(colKeys: (string | ColDef | Column)[]): void;
-
-    /** Get row group columns. */
-    getRowGroupColumns(): Column[];
 
     /** Set the columns for the grid to pivot on. */
     setPivotColumns(colKeys: (string | ColDef | Column)[]): void;
@@ -1139,7 +1143,7 @@ export interface _AdvancedFilterGridApi {
     hideAdvancedFilterBuilder(): void;
 }
 
-export interface _CoreModuleGridApi<TData>
+export interface GridApi<TData = any>
     extends _CoreGridApi<TData>,
         _StateGridApi,
         _RowSelectionGridApi<TData>,
@@ -1169,18 +1173,15 @@ export interface _CoreModuleGridApi<TData>
         _QuickFilterGridApi,
         _PaginationGridApi,
         _CsrmSsrmSharedGridApi,
-        _SsrmInfiniteSharedGridApi {
-    dispatchEvent(event: AgEvent): void;
-}
-
-export interface GridApi<TData = any>
-    extends _CoreModuleGridApi<TData>,
+        _SsrmInfiniteSharedGridApi,
         _ClientSideRowModelGridApi<TData>,
         _SideBarGridApi<TData>,
         _StatusBarGridApi<TData>,
         _InfiniteRowModelGridApi,
         _CsvExportGridApi,
-        _RowGroupingGridApi<TData>,
+        _RowGroupingGridApi,
+        _AggregationGridApi<TData>,
+        _PivotGridApi<TData>,
         _RangeSelectionGridApi,
         _ServerSideRowModelGridApi<TData>,
         _MenuGridApi,
@@ -1188,4 +1189,6 @@ export interface GridApi<TData = any>
         _ExcelExportGridApi,
         _ClipboardGridApi,
         _GridChartsGridApi,
-        _AdvancedFilterGridApi {}
+        _AdvancedFilterGridApi {
+    dispatchEvent(event: AgEvent): void;
+}

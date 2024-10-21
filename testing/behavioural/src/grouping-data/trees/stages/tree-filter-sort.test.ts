@@ -41,7 +41,7 @@ describe('ag-grid tree filter', () => {
         const gridRowsOptions: GridRowsOptions = {
             printIds: false,
             columns: ['name'],
-            checkDom: 'myGrid',
+            checkDom: true,
         };
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`
@@ -189,7 +189,7 @@ describe('ag-grid tree filter', () => {
         const gridRowsOptions: GridRowsOptions = {
             printIds: false,
             columns: ['value', 'x'],
-            checkDom: 'myGrid',
+            checkDom: true,
         };
 
         await new GridRows(api, 'initial', gridRowsOptions).check(`

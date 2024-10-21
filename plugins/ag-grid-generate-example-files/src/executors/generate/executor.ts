@@ -11,7 +11,7 @@ import {
     getInterfaceFileContents,
     removeModuleRegistration,
 } from './generator/transformation-scripts/parser-utils';
-import type { ExampleConfig, GeneratedContents, ImportType, InternalFramework } from './generator/types';
+import type { ExampleConfig, GeneratedContents, InternalFramework } from './generator/types';
 import { FRAMEWORKS, TYPESCRIPT_INTERNAL_FRAMEWORKS } from './generator/types';
 import {
     getBoilerPlateFiles,
@@ -136,8 +136,7 @@ export async function generateFiles(options: ExecutorOptions) {
     for (const internalFramework of FRAMEWORKS) {
         if (exampleConfig.supportedFrameworks && !exampleConfig.supportedFrameworks.includes(internalFramework)) {
             const result = { excluded: true, ...exampleConfig } as any;
-            writeContents(options, 'packages', internalFramework, result);
-            writeContents(options, 'modules', internalFramework, result);
+            writeContents(options, internalFramework, result);
             continue;
         }
 
@@ -151,115 +150,114 @@ export async function generateFiles(options: ExecutorOptions) {
         const mainFileName = getMainFileName(internalFramework)!;
         const provideFrameworkFiles = frameworkProvidedExamples[internalFramework];
 
-        const importTypes = internalFramework === 'vanilla' ? (['packages'] as const) : (['modules'] as const);
-        for (const importType of importTypes) {
-            const packageJson = getPackageJson({
+        const packageJson = getPackageJson({
+            isLocale,
+            internalFramework,
+        });
+        const frameworkExampleConfig = {
+            ...exampleConfig,
+            ...(provideFrameworkFiles ? provideFrameworkFiles['exampleConfig.json'] : {}),
+        };
+        const [otherScriptFiles, componentScriptFiles] = await getOtherScriptFiles({
+            folderPath,
+            sourceFileList,
+            transformTsFileExt: getTransformTsFileExt(internalFramework),
+            internalFramework,
+        });
+
+        let files = {};
+        let scriptFiles = [];
+        const mergedStyleFiles = { ...styleFiles };
+        if (provideFrameworkFiles === undefined) {
+            const result = await getFrameworkFiles({
+                entryFile,
+                indexHtml,
                 isEnterprise,
-                isLocale,
-                internalFramework,
-                importType,
+                bindings,
+                typedBindings,
+                componentScriptFiles,
+                otherScriptFiles,
+                styleFiles,
+                ignoreDarkMode: false,
+                isDev,
+                exampleConfig: frameworkExampleConfig,
             });
+            files = result.files;
+            scriptFiles = result.scriptFiles;
+        } else {
+            if (internalFramework === 'vanilla') {
+                // NOTE: Vanilla provided examples, we need to include the entryfile
+                scriptFiles = [entryFileName];
+            }
 
-            const frameworkExampleConfig = {
-                ...exampleConfig,
-                ...(provideFrameworkFiles ? provideFrameworkFiles['exampleConfig.json'] : {}),
-            };
-
-            const [otherScriptFiles, componentScriptFiles] = await getOtherScriptFiles({
-                folderPath,
-                sourceFileList,
-                transformTsFileExt: getTransformTsFileExt(internalFramework),
-                internalFramework,
-                importType,
-            });
-
-            let files = {};
-            let scriptFiles = [];
-            const mergedStyleFiles = { ...styleFiles };
-            if (provideFrameworkFiles === undefined) {
-                const result = await getFrameworkFiles({
-                    entryFile,
-                    indexHtml,
-                    isEnterprise,
-                    bindings,
-                    typedBindings,
-                    componentScriptFiles,
-                    otherScriptFiles,
-                    styleFiles,
-                    ignoreDarkMode: false,
-                    isDev,
-                    importType,
-                    exampleConfig: frameworkExampleConfig,
-                });
-                files = result.files;
-                scriptFiles = result.scriptFiles;
-            } else {
-                if (internalFramework === 'vanilla') {
-                    // NOTE: Vanilla provided examples, we need to include the entryfile
-                    scriptFiles = [entryFileName];
-                }
-
-                for (const fileName of Object.keys(provideFrameworkFiles)) {
-                    if (fileName.endsWith('.css')) {
-                        mergedStyleFiles[fileName] = provideFrameworkFiles[fileName];
-                    } else {
-                        // if (importType === 'packages')
-                        const fileContent = provideFrameworkFiles[fileName];
-                        if (fileContent) {
-                            provideFrameworkFiles[fileName] = await convertModulesToPackages(
-                                fileContent,
-                                isDev,
-                                internalFramework
-                            );
-                        }
-                    }
-
-                    // Add Dark Mode code to the provided files if they are an integrated example
-                    if (isIntegratedCharts && fileName === mainFileName) {
-                        const code = getIntegratedDarkModeCode(
-                            folderPath,
-                            TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework)
-                        );
-                        const fileContent = provideFrameworkFiles[fileName];
-                        const providedPlaceholder = '/** PROVIDED EXAMPLE DARK INTEGRATED **/';
-                        if (
-                            !fileContent.includes(providedPlaceholder) &&
-                            !fileContent.includes(DARK_INTEGRATED_START) // might have already been replaced
-                        ) {
-                            throw new Error(
-                                `Provided example ${folderPath}/provided/modules/${internalFramework}/${fileName} does not contain the expected comment: ${providedPlaceholder} in gridReady code for an example that includes integrated charts`
-                            );
-                        }
-                        provideFrameworkFiles[fileName] = provideFrameworkFiles[fileName].replace(
-                            providedPlaceholder,
-                            code
+            for (const fileName of Object.keys(provideFrameworkFiles)) {
+                if (fileName.endsWith('.css')) {
+                    mergedStyleFiles[fileName] = provideFrameworkFiles[fileName];
+                } else {
+                    const fileContent = provideFrameworkFiles[fileName];
+                    if (fileContent) {
+                        provideFrameworkFiles[fileName] = await convertModulesToPackages(
+                            fileContent,
+                            isDev,
+                            internalFramework
                         );
                     }
                 }
-            }
 
-            let styleFilesKeys = [];
-            const mergedFiles = { ...mergedStyleFiles, ...files, ...provideFrameworkFiles, ...interfaceContents };
-            if ((['typescript', 'vanilla'] as InternalFramework[]).includes(internalFramework)) {
-                styleFilesKeys = Object.keys(mergedStyleFiles);
-            }
-            // Replace files with provided examples
-            const result: GeneratedContents = {
-                isEnterprise,
-                isLocale,
-                isIntegratedCharts,
-                entryFileName,
-                mainFileName,
-                scriptFiles: scriptFiles!,
-                styleFiles: styleFilesKeys,
-                files: mergedFiles,
-                boilerPlateFiles,
-                packageJson,
-                ...frameworkExampleConfig,
-            };
+                if (internalFramework === 'reactFunctional' || internalFramework === 'reactFunctionalTs') {
+                    // add use client to the provided files if they contain AgGridReact
+                    const useClientCode = "'use client';\n";
+                    const fileContent = provideFrameworkFiles[fileName];
+                    if (fileContent.includes('AgGridReact') && !fileContent.includes('use client')) {
+                        provideFrameworkFiles[fileName] = useClientCode + fileContent;
+                    }
+                }
 
-            await writeContents(options, importType, internalFramework, result);
+                // Add Dark Mode code to the provided files if they are an integrated example
+                if (isIntegratedCharts && fileName === mainFileName) {
+                    const code = getIntegratedDarkModeCode(
+                        folderPath,
+                        TYPESCRIPT_INTERNAL_FRAMEWORKS.includes(internalFramework)
+                    );
+                    const fileContent = provideFrameworkFiles[fileName];
+                    const providedPlaceholder = '/** PROVIDED EXAMPLE DARK INTEGRATED **/';
+                    if (
+                        !fileContent.includes(providedPlaceholder) &&
+                        !fileContent.includes(DARK_INTEGRATED_START) // might have already been replaced
+                    ) {
+                        throw new Error(
+                            `Provided example ${folderPath}/provided/modules/${internalFramework}/${fileName} does not contain the expected comment: ${providedPlaceholder} in gridReady code for an example that includes integrated charts`
+                        );
+                    }
+                    provideFrameworkFiles[fileName] = provideFrameworkFiles[fileName].replace(
+                        providedPlaceholder,
+                        code
+                    );
+                }
+            }
         }
+
+        let styleFilesKeys = [];
+        const mergedFiles = { ...mergedStyleFiles, ...files, ...provideFrameworkFiles, ...interfaceContents };
+        if ((['typescript', 'vanilla'] as InternalFramework[]).includes(internalFramework)) {
+            styleFilesKeys = Object.keys(mergedStyleFiles);
+        }
+        // Replace files with provided examples
+        const result: GeneratedContents = {
+            isEnterprise,
+            isLocale,
+            isIntegratedCharts,
+            entryFileName,
+            mainFileName,
+            scriptFiles: scriptFiles!,
+            styleFiles: styleFilesKeys,
+            files: mergedFiles,
+            boilerPlateFiles,
+            packageJson,
+            ...frameworkExampleConfig,
+        };
+
+        await writeContents(options, internalFramework, result);
     }
 }
 
@@ -288,11 +286,10 @@ async function convertModulesToPackages(fileContent: any, isDev: boolean, intern
 
 async function writeContents(
     options: ExecutorOptions,
-    importType: ImportType,
     internalFramework: InternalFramework,
     result: GeneratedContents
 ) {
-    const outputPath = path.join(options.outputPath, importType, internalFramework, 'contents.json');
+    const outputPath = path.join(options.outputPath, internalFramework, 'contents.json');
     await writeFile(outputPath, JSON.stringify(result));
 
     for (const name in result.files) {

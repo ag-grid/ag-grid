@@ -41,6 +41,7 @@ const generator = createGenerator({
     },
 });
 const gridOptions: GridOptions = {
+    theme: 'legacy',
     columnDefs,
     rowData,
     rowHeight: 48,

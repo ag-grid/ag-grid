@@ -1,5 +1,3 @@
-'use strict';
-
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -12,8 +10,6 @@ import type {
     GridReadyEvent,
 } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { ColumnsToolPanelModule } from 'ag-grid-enterprise';
 import { MasterDetailModule } from 'ag-grid-enterprise';
 import { MenuModule } from 'ag-grid-enterprise';
@@ -115,13 +111,7 @@ const GridExample = () => {
 
     return (
         <div style={containerStyle}>
-            <div
-                style={gridStyle}
-                className={
-                    /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-                    'ag-theme-quartz' /** DARK MODE END **/
-                }
-            >
+            <div style={gridStyle}>
                 <AgGridReact
                     ref={gridRef}
                     rowData={rowData}

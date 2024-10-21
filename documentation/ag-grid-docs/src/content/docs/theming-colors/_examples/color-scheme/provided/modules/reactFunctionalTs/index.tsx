@@ -1,5 +1,3 @@
-'use strict';
-
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -33,7 +31,6 @@ const GridExample = () => {
                     {
                         <AgGridReact
                             theme={themeLightWarm}
-                            loadThemeGoogleFonts
                             columnDefs={columnDefs}
                             rowData={rowData}
                             defaultColDef={defaultColDef}
@@ -44,7 +41,6 @@ const GridExample = () => {
                     {
                         <AgGridReact
                             theme={themeLightCold}
-                            loadThemeGoogleFonts
                             columnDefs={columnDefs}
                             rowData={rowData}
                             defaultColDef={defaultColDef}
@@ -61,7 +57,6 @@ const GridExample = () => {
                     {
                         <AgGridReact
                             theme={themeDarkWarm}
-                            loadThemeGoogleFonts
                             columnDefs={columnDefs}
                             rowData={rowData}
                             defaultColDef={defaultColDef}
@@ -72,7 +67,6 @@ const GridExample = () => {
                     {
                         <AgGridReact
                             theme={themeDarkBlue}
-                            loadThemeGoogleFonts
                             columnDefs={columnDefs}
                             rowData={rowData}
                             defaultColDef={defaultColDef}

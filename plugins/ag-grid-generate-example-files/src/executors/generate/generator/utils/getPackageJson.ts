@@ -4,10 +4,8 @@ import { getEnterprisePackageName } from '../constants';
 import type { InternalFramework } from '../types';
 
 interface Params {
-    isEnterprise: boolean;
     isLocale: boolean;
     internalFramework: InternalFramework;
-    importType: 'modules' | 'packages';
 }
 
 function getPackageJsonVersion(packageName: string, isModule: boolean = false) {
@@ -19,19 +17,19 @@ function getPackageJsonVersion(packageName: string, isModule: boolean = false) {
     return '^' + packageJson.version;
 }
 
-export function getPackageJson({ isEnterprise, isLocale, internalFramework, importType }: Params) {
-    return addPackageJson(isEnterprise, isLocale, internalFramework, 'packages');
+export function getPackageJson({ isLocale, internalFramework }: Params) {
+    return addPackageJson(isLocale, internalFramework);
 }
 
 /** Used for type checking in plunker, and type checking & dep installation with codesandbox */
-function addPackageJson(isEnterprise, isLocale, framework, importType) {
+function addPackageJson(isLocale, framework) {
     const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctional', 'reactFunctionalTs', 'vanilla']);
     if (!supportedFrameworks.has(framework)) {
         return;
     }
 
     const packageJson = {
-        name: `ag-grid-${importType}`,
+        name: `ag-grid-example`,
         dependencies: {},
     };
 

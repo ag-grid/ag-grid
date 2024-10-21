@@ -18,8 +18,6 @@ export interface ExampleConfig {
     myGridReference?: boolean;
 }
 
-export type ImportType = 'packages' | 'modules';
-
 export interface BindingImport {
     isNamespaced: boolean;
     module: string;
@@ -28,9 +26,9 @@ export interface BindingImport {
 }
 
 export interface InlineGridStyles {
-    theme: string;
     width: string;
     height: string;
+    className?: string;
 }
 export interface EventHandler {
     name: string;

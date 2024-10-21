@@ -22,7 +22,6 @@ const VueExample = {
                 <ag-grid-vue
                     style="height: 100%;"
                     :theme="theme"
-                    :loadThemeGoogleFonts="true"
                     :columnDefs="columnDefs"
                     :defaultColDef="defaultColDef"
                     :rowData="rowData"

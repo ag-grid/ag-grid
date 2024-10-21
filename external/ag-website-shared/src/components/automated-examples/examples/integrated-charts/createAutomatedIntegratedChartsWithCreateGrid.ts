@@ -120,6 +120,7 @@ const columnDefs: ColDef[] = [
 ];
 let api: GridApi;
 const gridOptions: GridOptions = {
+    theme: 'legacy',
     columnDefs,
     defaultColDef: {
         flex: 1,

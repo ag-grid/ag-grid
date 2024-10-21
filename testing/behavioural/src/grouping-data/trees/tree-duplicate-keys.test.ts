@@ -13,7 +13,7 @@ describe('ag-grid tree duplicate keys', () => {
     });
 
     const gridRowsOptions = {
-        checkDom: 'myGrid',
+        checkDom: true,
     };
 
     let consoleWarnSpy: MockInstance;

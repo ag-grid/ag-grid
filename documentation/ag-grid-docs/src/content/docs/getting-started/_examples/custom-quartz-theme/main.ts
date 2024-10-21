@@ -1,9 +1,20 @@
-import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { createGrid } from 'ag-grid-community';
-import { ModuleRegistry } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, createGrid, themeQuartz } from 'ag-grid-community';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
+
+const myTheme = themeQuartz.withParams({
+    /* Low spacing = very compact */
+    spacing: 2,
+    /* Changes the color of the grid text */
+    foregroundColor: 'rgb(14, 68, 145)',
+    /* Changes the color of the grid background */
+    backgroundColor: 'rgb(241, 247, 255)',
+    /* Changes the header color of the top row */
+    headerBackgroundColor: 'rgb(228, 237, 250)',
+    /* Changes the hover color of the row*/
+    rowHoverColor: 'rgb(216, 226, 255)',
+});
 
 const columnDefs: ColDef[] = [
     { field: 'athlete', minWidth: 170 },
@@ -21,6 +32,7 @@ const columnDefs: ColDef[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
+    theme: myTheme,
     rowData: null,
     columnDefs: columnDefs,
     defaultColDef: {

@@ -1,0 +1,20 @@
+.ag-theme-quartz,
+.ag-theme-quartz-dark {
+    --ag-column-select-indent-size: 40px;
+}
+
+.ag-theme-quartz .ag-column-drop-cell,
+.ag-theme-quartz-dark .ag-column-drop-cell {
+    background-color: purple;
+}
+
+.ag-theme-quartz .ag-column-drop-cell .ag-icon,
+.ag-theme-quartz-dark .ag-column-drop-cell .ag-icon {
+    color: white;
+}
+
+.ag-theme-quartz .ag-column-drop-cell-text,
+.ag-theme-quartz-dark .ag-column-drop-cell-text {
+    color: white;
+    font-weight: bold;
+}

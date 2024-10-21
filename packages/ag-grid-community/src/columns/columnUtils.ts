@@ -77,10 +77,6 @@ export function isColumnSelectionCol(col: ColKey): boolean {
     return id?.startsWith(CONTROLS_COLUMN_ID_PREFIX) ?? false;
 }
 
-export function isColumnControlsCol(col: AgColumn): boolean {
-    return col.getColId().startsWith(CONTROLS_COLUMN_ID_PREFIX);
-}
-
 export function convertColumnTypes(type: string | string[]): string[] {
     let typeKeys: string[] = [];
 

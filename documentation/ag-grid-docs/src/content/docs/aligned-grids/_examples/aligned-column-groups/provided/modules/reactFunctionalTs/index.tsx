@@ -10,8 +10,6 @@ import type {
     SizeColumnsToFitGridStrategy,
 } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 
 import './styles.css';
@@ -86,13 +84,7 @@ const GridExample = () => {
 
     return (
         <div className="container">
-            <div
-                className={
-                    'grid ' +
-                    /** DARK MODE START **/ (document.documentElement?.dataset.defaultTheme ||
-                        'ag-theme-quartz') /** DARK MODE END **/
-                }
-            >
+            <div className="grid">
                 <AgGridReact
                     ref={topGridRef}
                     rowData={rowData}
@@ -107,13 +99,7 @@ const GridExample = () => {
 
             <div className="divider"></div>
 
-            <div
-                className={
-                    'grid ' +
-                    /** DARK MODE START **/ (document.documentElement?.dataset.defaultTheme ||
-                        'ag-theme-quartz') /** DARK MODE END **/
-                }
-            >
+            <div className="grid">
                 <AgGridReact
                     ref={bottomGridRef}
                     rowData={rowData}

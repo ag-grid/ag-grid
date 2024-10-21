@@ -4,8 +4,6 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import type { ColDef, GridApi, GridReadyEvent, IRowNode } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 
 import { ChildMessageRenderer } from './child-message-renderer.component';
 import { CubeRenderer } from './cube-renderer.component';
@@ -28,7 +26,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
             #agGrid
             style="width: 100%; height: 100%;"
             id="myGrid"
-            [class]="themeClass"
             [columnDefs]="columnDefs"
             [rowData]="rowData"
             [context]="context"
@@ -38,9 +35,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     </div>`,
 })
 export class AppComponent {
-    themeClass =
-        /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-        'ag-theme-quartz' /** DARK MODE END **/;
     private gridApi!: GridApi;
 
     public columnDefs: ColDef[] = [

@@ -1,5 +1,3 @@
-'use strict';
-
 import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -13,8 +11,6 @@ import type {
 } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import { InfiniteRowModelModule } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -216,13 +212,7 @@ const GridExample = () => {
                     <button onClick={purgeCache}>Purge Cache</button>
                 </div>
                 <div style={{ flexGrow: '1' }}>
-                    <div
-                        style={gridStyle}
-                        className={
-                            /** DARK MODE START **/ document.documentElement?.dataset.defaultTheme ||
-                            'ag-theme-quartz' /** DARK MODE END **/
-                        }
-                    >
+                    <div style={gridStyle}>
                         <AgGridReact
                             ref={gridRef}
                             columnDefs={columnDefs}

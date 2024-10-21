@@ -3,8 +3,6 @@ import { onMounted, ref } from 'vue';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from 'ag-grid-vue3';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -15,7 +13,6 @@ const App = {
     template: `
     <ag-grid-vue
         style="width: 100%; height: 100%"
-        :class="themeClass"
         :columnDefs="colDefs"
         :rowData="rowData"
         :defaultColDef="defaultColDef"
@@ -56,9 +53,6 @@ const App = {
             rowData,
             colDefs,
             defaultColDef,
-            themeClass:
-                /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
-                'ag-theme-quartz' /** DARK MODE END **/,
         };
     },
 };

@@ -1,5 +1,4 @@
 ---
-import type { Library } from '@ag-grid-types';
 import { ExampleStyle } from './lib/ExampleStyle';
 import { MetaData } from './lib/MetaData';
 import { Scripts } from './lib/Scripts';
@@ -25,8 +24,6 @@ interface Props {
     extraStyles?: string;
     children?: any;
     extras?: string[];
-
-    vueFramework: 'vue3';
 }
 
 const {
@@ -39,7 +36,6 @@ const {
     entryFileName,
     scriptFiles = [],
     styleFiles = [],
-    vueFramework,
     extraStyles,
     extras,
 } = Astro.props as Props;
@@ -63,7 +59,7 @@ const startFile = pathJoin(appLocation, entryFileName);
             boilerplatePath={boilerplatePath}
             appLocation={appLocation}
             startFile={startFile}
-            internalFramework={vueFramework}
+            internalFramework={'vue3'}
             isEnterprise={isEnterprise}
         />
         <slot />
