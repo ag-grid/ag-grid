@@ -44,6 +44,7 @@ import type { PaginationService } from '../../pagination/paginationService';
 import type { ColumnAnimationService } from '../../rendering/columnAnimationService';
 import { _debounce } from '../../utils/function';
 import { _jsonEquals } from '../../utils/generic';
+import { VERSION } from '../../version';
 import { migrateGridStateModel } from './stateModelMigration';
 
 export class StateService extends BeanStub implements NamedBean {
@@ -107,6 +108,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.isClientSideRowModel = _isClientSideRowModel(this.gos);
 
         this.cachedState = this.getInitialState();
+        this.setCachedStateValue('version', VERSION);
 
         this.ctrlsService.whenReady(this, () =>
             this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnGridReady())
