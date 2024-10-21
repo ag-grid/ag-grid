@@ -4,6 +4,12 @@ title: "Parsing Values"
 
 After editing cells in the grid you have the opportunity to parse the value before inserting it into your data. This is done using Value Parsers.
 
+{% note %}
+If using [Cell Data Types](./cell-data-types/) (which are enabled by default), Value Parsers are automatically set to handle the conversion of each of the basic data types - e.g. `number`, `date`, `boolean`. In this scenario, Value Parsers only need to be defined for object data types, or if the default behaviour needs to be overridden.
+
+The example below assumes Cell Data Types are disabled.
+{% /note %}
+
 ## Value Parser
 
 For example suppose you are editing a number using a text editor. The result will be a `string`, however you will probably want to store the result as a `number`. Use a Value Parser to convert the `string` to a `number`.
@@ -27,10 +33,6 @@ const gridOptions = {
 ```
 
 {% apiDocumentation source="column-properties/properties.json" section="editing" names=["valueParser"] /%}
-
-{% note %}
-If using [Cell Data Types](./cell-data-types/), Value Parsers are set by default to handle the conversion of each of the different data types.
-{% /note %}
 
 The return value of a value parser should be the result of the parse, i.e. return the value you want stored in the data.
 
