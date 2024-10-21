@@ -181,21 +181,6 @@
                                 },
                                 {
                                     "type": "item",
-                                    "title": "Colors & Dark Mode",
-                                    "path": "theming-colors"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Borders",
-                                    "path": "theming-borders"
-                                },
-                                {
-                                    "type": "item",
-                                    "title": "Distributing Shared Themes",
-                                    "path": "theming-distribution"
-                                },
-                                {
-                                    "type": "item",
                                     "title": "Migration",
                                     "path": "theming-migration"
                                 }
@@ -950,13 +935,7 @@
                         },
                         {
                             "type": "item",
-                            "title": "Grouping Data",
-                            "path": "grouping-data",
-                            "isEnterprise": true
-                        },
-                        {
-                            "type": "item",
-                            "title": "Group Display Types",
+                            "title": "Display Types",
                             "path": "grouping-display-types",
                             "isEnterprise": true,
                             "children": [
@@ -977,6 +956,32 @@
                                     "title": "Group Rows",
                                     "path": "grouping-group-rows",
                                     "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Custom Group",
+                                    "path": "grouping-custom-group-columns",
+                                    "isEnterprise": true
+                                }
+                            ]
+                        },
+                        {
+                            "type": "item",
+                            "title": "Group Cell Component",
+                            "path": "group-expand-collapse-comp",
+                            "isEnterprise": true,
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Provided Component",
+                                    "path": "group-cell-renderer",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Custom Component",
+                                    "path": "group-custom-group-comp",
+                                    "isEnterprise": true
                                 }
                             ]
                         },
@@ -988,20 +993,64 @@
                         },
                         {
                             "type": "item",
-                            "title": "Expanding Groups",
-                            "path": "grouping-opening-groups",
+                            "title": "Locking Group Columns",
+                            "path": "grouping-locking-group-columns",
                             "isEnterprise": true
                         },
                         {
                             "type": "item",
-                            "title": "Hierarchy Selection",
+                            "title": "Group Order",
+                            "path": "grouping-group-order",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Sorting Groups",
+                            "path": "grouping-sorting",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Filtering Groups",
+                            "path": "grouping-filtering",
+                            "isEnterprise": true,
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Group Column Filter",
+                                    "path": "grouping-column-filter",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Custom Filtering",
+                                    "path": "grouping-custom-filtering",
+                                    "isEnterprise": true
+                                }
+                            ]
+                        },
+                        {
+                            "type": "item",
+                            "title": "Selecting Groups",
                             "path": "grouping-row-selection",
                             "isEnterprise": true
                         },
                         {
                             "type": "item",
-                            "title": "Sorting",
-                            "path": "grouping-sorting",
+                            "title": "Opening Groups",
+                            "path": "grouping-opening-groups",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Complex Objects",
+                            "path": "grouping-complex-objects",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Unbalanced Groups",
+                            "path": "grouping-unbalanced-groups",
                             "isEnterprise": true
                         }
                     ]
@@ -1018,12 +1067,6 @@
                         },
                         {
                             "type": "item",
-                            "title": "Configure Columns",
-                            "path": "aggregation-columns",
-                            "isEnterprise": true
-                        },
-                        {
-                            "type": "item",
                             "title": "Custom Functions",
                             "path": "aggregation-custom-functions",
                             "isEnterprise": true
@@ -1031,13 +1074,19 @@
                         {
                             "type": "item",
                             "title": "Total Rows",
-                            "path": "aggregation-total-rows",
+                            "path": "total-rows",
                             "isEnterprise": true
                         },
                         {
                             "type": "item",
                             "title": "Filtering ",
                             "path": "aggregation-filtering",
+                            "isEnterprise": true
+                        },
+                        {
+                            "type": "item",
+                            "title": "Other",
+                            "path": "aggregation-other",
                             "isEnterprise": true
                         }
                     ]
@@ -1582,11 +1631,6 @@
                     "type": "group",
                     "title": "Migration",
                     "children": [
-                        {
-                            "type": "item",
-                            "title": "Upgrading to AG Grid 32.3",
-                            "path": "upgrading-to-ag-grid-32-3"
-                        },
                         {
                             "type": "item",
                             "title": "Upgrading to AG Grid 32.2",
