@@ -1073,14 +1073,14 @@
                         },
                         {
                             "type": "item",
-                            "title": "Total Rows",
-                            "path": "total-rows",
+                            "title": "Filtering ",
+                            "path": "aggregation-filtering",
                             "isEnterprise": true
                         },
                         {
                             "type": "item",
-                            "title": "Filtering ",
-                            "path": "aggregation-filtering",
+                            "title": "Total Rows",
+                            "path": "total-rows",
                             "isEnterprise": true
                         },
                         {
