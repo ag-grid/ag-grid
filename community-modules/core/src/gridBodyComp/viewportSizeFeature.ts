@@ -9,6 +9,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { ScrollVisibleService, SetScrollsVisibleParams } from '../gridBodyComp/scrollVisibleService';
 import type { ProcessUnpinnedColumnsParams } from '../interfaces/iCallbackParams';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
+import type { AnimationFrameService } from '../misc/animationFrameService';
 import { _getInnerHeight, _getInnerWidth } from '../utils/dom';
 import type { GridBodyCtrl } from './gridBodyCtrl';
 import type { PinnedWidthService } from './pinnedWidthService';
@@ -25,8 +26,10 @@ export class ViewportSizeFeature extends BeanStub {
     private columnSizeService: ColumnSizeService;
     private scrollVisibleService: ScrollVisibleService;
     private columnViewportService: ColumnViewportService;
+    private animationFrameService: AnimationFrameService;
 
     public wireBeans(beans: BeanCollection): void {
+        this.animationFrameService = beans.animationFrameService;
         this.ctrlsService = beans.ctrlsService;
         this.pinnedWidthService = beans.pinnedWidthService;
         this.columnModel = beans.columnModel;
@@ -59,7 +62,17 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private listenForResize(): void {
-        const listener = () => this.onCenterViewportResized();
+        const listener = () => {
+            // onCenterViewportResize causes resize events to be fired (flex-columns).
+            // when any resize event happens, style and layout are re-evaluated — which in turn may
+            // trigger more resize events. Infinite loops from cyclic dependencies are addressed by
+            // only processing elements deeper in the DOM during each iteration.
+            // so the solution here is to use the animation frame service to avoid infinite loops.
+            // For more info, see: https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver#observation_errors
+            this.animationFrameService.requestAnimationFrame(() => {
+                this.onCenterViewportResized();
+            });
+        };
 
         // centerContainer gets horizontal resizes
         this.centerContainerCtrl.registerViewportResizeListener(listener);
