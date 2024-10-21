@@ -8,6 +8,7 @@
     box-shadow: var(--ag-menu-shadow);
     background-color: var(--ag-menu-background-color);
     color: var(--ag-menu-text-color);
+
     /* Add a minimum width to avoid having zero width when the content tries to
     size itself to the menu */
     min-width: 180px;
@@ -205,13 +206,16 @@
     flex-direction: column;
     padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     padding-bottom: calc(var(--ag-widget-container-vertical-padding) - var(--ag-widget-vertical-spacing));
+
     & > * {
         margin-bottom: var(--ag-widget-vertical-spacing);
     }
+
     overflow-y: auto;
     min-height: calc(
         var(--ag-list-item-height) + var(--ag-widget-container-vertical-padding) + var(--ag-widget-vertical-spacing)
     );
+
     .ag-resizer-wrapper {
         margin: 0;
     }

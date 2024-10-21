@@ -1,4 +1,12 @@
 {
     "extends": "stylelint-config-standard",
-    "rules": {}
+    "rules": {
+        "comment-empty-line-before": [
+            "always",
+            {
+                "except": ["first-nested"],
+                "ignoreComments": ["/rtl:.*/"]
+            }
+        ]
+    }
 }

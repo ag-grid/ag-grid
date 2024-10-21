@@ -18,12 +18,9 @@
         color: inherit;
         font-size: inherit;
         font-family: inherit;
+        font-weight: inherit;
         line-height: inherit;
         cursor: pointer;
-    }
-
-    &:where(button) {
-        font-weight: inherit;
     }
 
     &::-ms-clear {
