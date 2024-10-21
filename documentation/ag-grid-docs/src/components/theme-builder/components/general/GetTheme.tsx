@@ -102,7 +102,7 @@ const Paragraph = styled('div')``;
 
 const Links = styled('div')`
     display: flex;
-    gap: 40px;
+    gap: 16px;
 `;
 
 const DownloadThemeWrapper = styled('div')`
