@@ -4,20 +4,20 @@ Properties are registered using their 'dash' syntax and not camel-case. For exam
 
 ```jsx
 <ag-grid-vue
-   // Attribute, not bound, give an explicit value
-   rowGroupPanelShow="always"
+    // Attribute, not bound, give an explicit value
+    rowGroupPanelShow="always"
 
-   // A boolean value
-   :pivot-mode="true"
+    // A boolean value
+    :pivot-mode="true"
 
-   // A bound property
-   :columnDefs="columnDefs"
+    // A bound property
+    :columnDefs="columnDefs"
 
-   // A callback
-   :getRowHeight="myGetRowHeightFunction"
+    // A callback
+    :getRowHeight="myGetRowHeightFunction"
 
-   // Event handlers
-   @cell-clicked="onCellClicked"
+    // Event handlers
+    @cell-clicked="onCellClicked"
 </ag-grid-vue>
 ```
 {% /if %}

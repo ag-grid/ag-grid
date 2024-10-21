@@ -5,14 +5,14 @@ Custom date components are controlled components, which receive a date value as 
 {% if isFramework("react") %}
 ```jsx
 export default ({ date, onDateChange }) => {
-   ...
-   return (
-       <input
-           type="date"
-           value={convertToString(date)}
-           onChange={({ target: { value } }) => onDateChange(convertToDate(value))}
-       />
-   );
+    ...
+    return (
+        <input
+            type="date"
+            value={convertToString(date)}
+            onChange={({ target: { value } }) => onDateChange(convertToDate(value))}
+        />
+    );
 }
 ```
 {% /if %}

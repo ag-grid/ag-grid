@@ -81,14 +81,14 @@ Load the AG Grid library and create a container div. The div should have a heigh
 
 ```html
 <html lang="en">
- <head>
-   <!-- Includes all JS & CSS for the JavaScript Data Grid -->
-   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
- </head>
- <body>
-   <!-- Your Data Grid container -->
-   <div id="myGrid" style="height: 500px"></div>
- </body>
+    <head>
+        <!-- Includes all JS & CSS for the JavaScript Data Grid -->
+        <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
+    </head>
+    <body>
+        <!-- Your Data Grid container -->
+        <div id="myGrid" style="height: 500px"></div>
+    </body>
 </html>
 ```
 
@@ -110,19 +110,19 @@ agGrid.createGrid(myGridElement, gridOptions);
 ```js
 // Grid Options: Contains all of the Data Grid configurations
 const gridOptions = {
- // Row Data: The data to be displayed.
- rowData: [
-   { make: "Tesla", model: "Model Y", price: 64950, electric: true },
-   { make: "Ford", model: "F-Series", price: 33850, electric: false },
-   { make: "Toyota", model: "Corolla", price: 29600, electric: false },
- ],
- // Column Definitions: Defines the columns to be displayed.
- columnDefs: [
-   { field: "make" },
-   { field: "model" },
-   { field: "price" },
-   { field: "electric" }
- ]
+    // Row Data: The data to be displayed.
+    rowData: [
+        { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+        { make: "Ford", model: "F-Series", price: 33850, electric: false },
+        { make: "Toyota", model: "Corolla", price: 29600, electric: false },
+    ],
+    // Column Definitions: Defines the columns to be displayed.
+    columnDefs: [
+        { field: "make" },
+        { field: "model" },
+        { field: "price" },
+        { field: "electric" }
+    ]
 };
 ```
 
@@ -142,23 +142,22 @@ import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
 
 ```js
 const GridExample = () => {
- // Row Data: The data to be displayed.
- const [rowData, setRowData] = useState([
-   { make: "Tesla", model: "Model Y", price: 64950, electric: true },
-   { make: "Ford", model: "F-Series", price: 33850, electric: false },
-   { make: "Toyota", model: "Corolla", price: 29600, electric: false },
- ]);
- 
- // Column Definitions: Defines the columns to be displayed.
- const [colDefs, setColDefs] = useState([
-   { field: "make" },
-   { field: "model" },
-   { field: "price" },
-   { field: "electric" }
- ]);
+    // Row Data: The data to be displayed.
+    const [rowData, setRowData] = useState([
+        { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+        { make: "Ford", model: "F-Series", price: 33850, electric: false },
+        { make: "Toyota", model: "Corolla", price: 29600, electric: false },
+    ]);
 
- // ...
+    // Column Definitions: Defines the columns to be displayed.
+    const [colDefs, setColDefs] = useState([
+        { field: "make" },
+        { field: "model" },
+        { field: "price" },
+        { field: "electric" }
+    ]);
 
+    // ...
 }
 ```
 
@@ -169,15 +168,15 @@ Rows and Columns are set as `AgGridReact` component attributes.
 
 ```jsx
 return (
- <div
-  // define a height because the Data Grid will fill the size of the parent container
-  style={{ height: 500 }}
- >
-   <AgGridReact
-       rowData={rowData}
-       columnDefs={colDefs}
-   />
- </div>
+    <div
+        // define a height because the Data Grid will fill the size of the parent container
+        style={{ height: 500 }}
+    >
+        <AgGridReact
+                rowData={rowData}
+                columnDefs={colDefs}
+        />
+    </div>
 )
 ```
 {% /if %}
@@ -196,28 +195,28 @@ import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
 
 ```jsx
 @Component({
- selector: 'app-root',
- standalone: true,
- imports: [AgGridAngular], // Add Angular Data Grid Component
- styleUrls: ['./app.component.css'],
- template: ``
+    selector: 'app-root',
+    standalone: true,
+    imports: [AgGridAngular], // Add Angular Data Grid Component
+    styleUrls: ['./app.component.css'],
+    template: ``
 })
 
 export class AppComponent {
- // Row Data: The data to be displayed.
- rowData = [
-   { make: "Tesla", model: "Model Y", price: 64950, electric: true },
-   { make: "Ford", model: "F-Series", price: 33850, electric: false },
-   { make: "Toyota", model: "Corolla", price: 29600, electric: false },
- ];
+    // Row Data: The data to be displayed.
+    rowData = [
+        { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+        { make: "Ford", model: "F-Series", price: 33850, electric: false },
+        { make: "Toyota", model: "Corolla", price: 29600, electric: false },
+    ];
 
- // Column Definitions: Defines the columns to be displayed.
- colDefs: ColDef[] = [
-   { field: "make" },
-   { field: "model" },
-   { field: "price" },
-   { field: "electric" }
- ];
+    // Column Definitions: Defines the columns to be displayed.
+    colDefs: ColDef[] = [
+        { field: "make" },
+        { field: "model" },
+        { field: "price" },
+        { field: "electric" }
+    ];
 }
 ```
 
@@ -228,10 +227,10 @@ Rows and Columns are set as `ag-grid-angular` component attributes.
 ```js
 template:
 `
- <!-- The AG Grid component -->
- <ag-grid-angular
-   [rowData]="rowData"
-   [columnDefs]="colDefs" />
+    <!-- The AG Grid component -->
+    <ag-grid-angular
+        [rowData]="rowData"
+        [columnDefs]="colDefs" />
 `
 ```
 
@@ -249,11 +248,11 @@ import { ref } from 'vue';
 import { AgGridVue } from "ag-grid-vue3"; // Vue Data Grid Component
 
 export default {
- name: "App",
- components: {
-   AgGridVue, // Add Vue Data Grid component
- },
- setup() {},
+    name: "App",
+    components: {
+        AgGridVue, // Add Vue Data Grid component
+    },
+    setup() {},
 };
 </script>
 ```
@@ -262,25 +261,25 @@ export default {
 
 ```js
 setup() {
- // Row Data: The data to be displayed.
- const rowData = ref([
-   { make: "Tesla", model: "Model Y", price: 64950, electric: true },
-   { make: "Ford", model: "F-Series", price: 33850, electric: false },
-   { make: "Toyota", model: "Corolla", price: 29600, electric: false },
- ]);
+    // Row Data: The data to be displayed.
+    const rowData = ref([
+        { make: "Tesla", model: "Model Y", price: 64950, electric: true },
+        { make: "Ford", model: "F-Series", price: 33850, electric: false },
+        { make: "Toyota", model: "Corolla", price: 29600, electric: false },
+    ]);
 
- // Column Definitions: Defines the columns to be displayed.
- const colDefs = ref([
-   { field: "make" },
-   { field: "model" },
-   { field: "price" },
-   { field: "electric" }
- ]);
+    // Column Definitions: Defines the columns to be displayed.
+    const colDefs = ref([
+        { field: "make" },
+        { field: "model" },
+        { field: "price" },
+        { field: "electric" }
+    ]);
 
- return {
-   rowData,
-   colDefs,
- };
+    return {
+        rowData,
+        colDefs,
+    };
 },
 ```
 
@@ -290,13 +289,13 @@ Rows and Columns are set as `ag-grid-vue` component attributes. Styling is appli
 
 ```html
 <template>
- <!-- The AG Grid component -->
- <ag-grid-vue
-   :rowData="rowData"
-   :columnDefs="colDefs"
-   style="height: 500px"
- >
- </ag-grid-vue>
+    <!-- The AG Grid component -->
+    <ag-grid-vue
+        :rowData="rowData"
+        :columnDefs="colDefs"
+        style="height: 500px"
+    >
+    </ag-grid-vue>
 </template>
 ```
 {% /if %}
@@ -377,52 +376,52 @@ Add buttons, checkboxes or images to cells with a [Cell Component](./component-c
 {% if isFramework("react") %}
 ```jsx
 const CustomButtonComponent = (props) => {
-   return <button onClick={() => window.alert('clicked') }>Push Me!</button>;
- };
+    return <button onClick={() => window.alert('clicked') }>Push Me!</button>;
+};
 
 const [colDefs, setColDefs] = useState([
-   { field: "button", cellRenderer: CustomButtonComponent },
-   // ...
- ]);
+    { field: "button", cellRenderer: CustomButtonComponent },
+    // ...
+]);
 ```
 {% /if %}
 
 {% if isFramework("javascript") %}
 ```js
 class CustomButtonComponent {
- eGui;
- eButton;
- eventListener;
+    eGui;
+    eButton;
+    eventListener;
 
- init(params) {
-   this.eGui = document.createElement("div");
-   let button = document.createElement("button");
-   button.className = "btn-simple";
-   button.textContent = "Push Me!";
-   this.eventListener = () => alert("clicked");
-   button.addEventListener("click", this.eventListener);
-   this.eGui.appendChild(button);
- }
+    init(params) {
+        this.eGui = document.createElement("div");
+        let button = document.createElement("button");
+        button.className = "btn-simple";
+        button.textContent = "Push Me!";
+        this.eventListener = () => alert("clicked");
+        button.addEventListener("click", this.eventListener);
+        this.eGui.appendChild(button);
+    }
 
- getGui() {
-   return this.eGui;
- }
+    getGui() {
+        return this.eGui;
+    }
 
- refresh(params) {
-   return true;
- }
+    refresh(params) {
+        return true;
+    }
 
- destroy() {
-   if (button) {
-     button.removeEventListener("click", this.eventListener);
-   }
- }
+    destroy() {
+        if (button) {
+            button.removeEventListener("click", this.eventListener);
+        }
+    }
 }
 
 
 const columnDefs = [
-   { field: "button", cellRenderer: CustomButtonComponent },
-   // ...
+    { field: "button", cellRenderer: CustomButtonComponent },
+    // ...
 ];
 ```
 {% /if %}
@@ -430,22 +429,22 @@ const columnDefs = [
 {% if isFramework("angular") %}
 ```js
 @Component({
- standalone: true,
- template: `<button (click)="buttonClicked()">Push Me!</button>`,
+    standalone: true,
+    template: `<button (click)="buttonClicked()">Push Me!</button>`,
 })
 export class CustomButtonComponent implements ICellRendererAngularComp {
- agInit(params: ICellRendererParams): void {}
- refresh(params: ICellRendererParams) {
-   return true;
- }
- buttonClicked() {
-   alert("clicked");
- }
+    agInit(params: ICellRendererParams): void {}
+    refresh(params: ICellRendererParams) {
+        return true;
+    }
+    buttonClicked() {
+        alert("clicked");
+    }
 }
 
 columnDefs: ColDef[] = [
-   { field: "button", cellRenderer: CustomButtonComponent },
-   // ...
+    { field: "button", cellRenderer: CustomButtonComponent },
+    // ...
 ];
 ```
 {% /if %}
@@ -453,26 +452,26 @@ columnDefs: ColDef[] = [
 {% if isFramework("vue") %}
 ```js
 // ...
- components: {
-   "ag-grid-vue": AgGridVue,
-   CustomButtonComponent: {
-     template: `
-        <button @click="buttonClicked()">Push Me!</button>
-       `,
-     methods: {
-       buttonClicked() {
-         alert("clicked");
-       },
-     },
-   },
- },
- data: function () {
-   return {
-   columnDefs: [
-       { field: "button", cellRenderer: CustomButtonComponent },
-       // ...
-   ],
- };
+    components: {
+        "ag-grid-vue": AgGridVue,
+        CustomButtonComponent: {
+            template: `
+                <button @click="buttonClicked()">Push Me!</button>
+            `,
+            methods: {
+            buttonClicked() {
+                alert("clicked");
+            },
+            },
+        },
+    },
+    data: function () {
+        return {
+        columnDefs: [
+            { field: "button", cellRenderer: CustomButtonComponent },
+            // ...
+        ],
+    };
 },
 // ...
 ```
@@ -622,45 +621,45 @@ const myTheme = themeQuartz.withParams({
 {% if isFramework("react") %}
 ...
 return (
- <div>
-   <AgGridReact theme={myTheme} rowData={...} columnDefs={...} />
- </div>
+    <div>
+        <AgGridReact theme={myTheme} rowData={...} columnDefs={...} />
+    </div>
 )
 {% /if %}
 {% if isFramework("javascript") %}
 const gridOptions = {
-  theme: myTheme,
-  ...
+    theme: myTheme,
+    ...
 }
 {% /if %}
 {% if isFramework("angular") %}
 // ...
- template: `<div style="height: 100%; box-sizing: border-box;">
-   <ag-grid-angular
-     // ...
-     [theme]="theme"
-    />
- </div>`,
+    template: `<div style="height: 100%; box-sizing: border-box;">
+        <ag-grid-angular
+            // ...
+            [theme]="theme"
+            />
+    </div>`,
 // ...
 public theme = myTheme;
 {% /if %}
 {% if isFramework("vue") %}
 const VueExample = {
- template: `
-       <div style="height: 100%">
-           <div style="height: 100%; box-sizing: border-box;">
-               <ag-grid-vue
-               // ...
-               :theme="theme"></ag-grid-vue>
-           </div>
-       </div>
-   `,
+    template: `
+        <div style="height: 100%">
+            <div style="height: 100%; box-sizing: border-box;">
+                <ag-grid-vue
+                // ...
+                :theme="theme"></ag-grid-vue>
+            </div>
+        </div>
+    `,
 // ...
  data: function () {
-   return {
-     // ...
-     theme: myTheme,
-   };
+    return {
+        // ...
+        theme: myTheme,
+    };
  },
 // ...
 {% /if %}

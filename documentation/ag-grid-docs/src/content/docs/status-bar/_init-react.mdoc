@@ -1,16 +1,16 @@
 {% if isFramework("react") %}
 ```jsx
- const updateStatusBar = () => { ... }
+    const updateStatusBar = () => { ... }
 
- useEffect(() => {
-   props.api.addEventListener('modelUpdated', updateStatusBar);
+    useEffect(() => {
+        props.api.addEventListener('modelUpdated', updateStatusBar);
 
-   // Remove event listener when destroyed
-   return () => {
-       if (!props.api.isDestroyed()) {
-           props.api.removeEventListener('modelUpdated', updateStatusBar);
-       }
-   }
- }, []);
+        // Remove event listener when destroyed
+        return () => {
+            if (!props.api.isDestroyed()) {
+                props.api.removeEventListener('modelUpdated', updateStatusBar);
+            }
+        }
+    }, []);
 ```
 {% /if %}

@@ -53,11 +53,11 @@ Applying the model is then typically followed by calling `gridApi.onFilterChange
 ```{% frameworkTransform=true %}
 // Get a reference to the 'name' filter instance
 api.getColumnFilterInstance('name').then(filterInstance => {
-   // Apply the model to ensure any changes in the UI or via API methods are recognised
-   filterInstance.applyModel();
+    // Apply the model to ensure any changes in the UI or via API methods are recognised
+    filterInstance.applyModel();
 
-   // Tell grid to run filter operation again
-   api.onFilterChanged();
+    // Tell grid to run filter operation again
+    api.onFilterChanged();
 });
 ```
 

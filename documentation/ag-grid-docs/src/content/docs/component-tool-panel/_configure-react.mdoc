@@ -1,20 +1,20 @@
 {% if isFramework("react") %}
 ```jsx
 <AgGridReact
-   sideBar: {{
-       toolPanels: [
-           {
-               id: 'customStats',
-               labelDefault: 'Custom Stats',
-               labelKey: 'customStats',
-               iconKey: 'custom-stats',
-               toolPanel: CustomStatsToolPanel,
-               toolPanelParams: {
-                   // can pass any custom props here
-               },
-           }
-       ]
-   }}
+    sideBar: {{
+        toolPanels: [
+            {
+                id: 'customStats',
+                labelDefault: 'Custom Stats',
+                labelKey: 'customStats',
+                iconKey: 'custom-stats',
+                toolPanel: CustomStatsToolPanel,
+                toolPanelParams: {
+                    // can pass any custom props here
+                },
+            }
+        ]
+    }}
       ...other props...
 />
 ```
