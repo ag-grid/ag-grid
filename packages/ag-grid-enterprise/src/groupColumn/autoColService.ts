@@ -8,8 +8,8 @@ import type {
     ColumnModel,
     ColumnNameService,
     Context,
-    FuncColsService,
     IAutoColService,
+    IColsService,
     NamedBean,
     _ColumnCollections,
 } from 'ag-grid-community';
@@ -38,7 +38,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
     private columnFactory: ColumnFactory;
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
     private context: Context;
     private columnGroupService?: ColumnGroupService;
 
@@ -49,7 +49,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.columnFactory = beans.columnFactory;
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
         this.context = beans.context;
         this.columnGroupService = beans.columnGroupService;
     }
@@ -83,7 +83,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         // of the group column in this instance.
         const suppressAutoColumn = isPivotMode ? this.gos.get('pivotSuppressAutoColumn') : this.isSuppressAutoCol();
 
-        const rowGroupCols = this.funcColsService.rowGroupCols;
+        const rowGroupCols = this.rowGroupColsService?.columns ?? [];
 
         const groupingActive = rowGroupCols.length > 0 || this.gos.get('treeData');
 
