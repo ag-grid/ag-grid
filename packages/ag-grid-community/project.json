@@ -108,7 +108,7 @@
       }
     },
     "lint": {
-      "command": "eslint",
+      "command": "eslint && stylelint './src/**/*css'",
       "options": {
         "cwd": "{projectRoot}"
       }
