@@ -41,9 +41,9 @@ const gridOptions: GridOptions = {
             headerName: 'Set filter column',
             field: 'value',
             filter: 'agSetColumnFilter',
+            flex: 1,
             floatingFilter: true,
             filterParams: filterParams,
-            minWidth: 250,
         },
     ],
 };
