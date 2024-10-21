@@ -7,7 +7,8 @@
             {
                 "text": "Quality Improvements"
             }
-        ]
+        ],
+        "notesPath": "./upgrading-to-ag-grid-32-3"
     },
     {
         "version": "32.2.0",
