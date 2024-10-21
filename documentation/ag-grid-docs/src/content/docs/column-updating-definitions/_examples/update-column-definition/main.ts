@@ -4,20 +4,18 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-function getColumnDefs(): ColDef<IOlympicData>[] {
-    return [
-        { field: 'athlete' },
-        { field: 'age' },
-        { field: 'country' },
-        { field: 'sport' },
-        { field: 'year' },
-        { field: 'date' },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
-        { field: 'total' },
-    ];
-}
+const COL_DEFS: ColDef<IOlympicData>[] = [
+    { field: 'athlete' },
+    { field: 'age' },
+    { field: 'country' },
+    { field: 'sport' },
+    { field: 'year' },
+    { field: 'date' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' },
+];
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -26,41 +24,37 @@ const gridOptions: GridOptions<IOlympicData> = {
         initialWidth: 100,
         filter: true,
     },
-    columnDefs: getColumnDefs(),
+    columnDefs: COL_DEFS,
 };
 
 function setHeaderNames() {
-    const columnDefs = getColumnDefs();
-    columnDefs.forEach((colDef, index) => {
+    COL_DEFS.forEach((colDef, index) => {
         colDef.headerName = 'C' + index;
     });
-    gridApi!.setGridOption('columnDefs', columnDefs);
+    gridApi!.setGridOption('columnDefs', COL_DEFS);
 }
 
 function removeHeaderNames() {
-    const columnDefs = getColumnDefs();
-    columnDefs.forEach((colDef, index) => {
+    COL_DEFS.forEach((colDef) => {
         colDef.headerName = undefined;
     });
-    gridApi!.setGridOption('columnDefs', columnDefs);
+    gridApi!.setGridOption('columnDefs', COL_DEFS);
 }
 
 function setValueFormatters() {
-    const columnDefs = getColumnDefs();
-    columnDefs.forEach((colDef, index) => {
+    COL_DEFS.forEach((colDef) => {
         colDef.valueFormatter = function (params) {
             return '[ ' + params.value + ' ]';
         };
     });
-    gridApi!.setGridOption('columnDefs', columnDefs);
+    gridApi!.setGridOption('columnDefs', COL_DEFS);
 }
 
 function removeValueFormatters() {
-    const columnDefs = getColumnDefs();
-    columnDefs.forEach((colDef, index) => {
+    COL_DEFS.forEach((colDef) => {
         colDef.valueFormatter = undefined;
     });
-    gridApi!.setGridOption('columnDefs', columnDefs);
+    gridApi!.setGridOption('columnDefs', COL_DEFS);
 }
 
 // setup the grid after the page has finished loading
