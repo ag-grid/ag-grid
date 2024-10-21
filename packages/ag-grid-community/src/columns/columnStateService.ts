@@ -654,7 +654,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
         if (_missing(primaryCols) || !this.columnModel.isAlive()) {
             return [];
         }
-        ß;
+
         const colsForState = this.columnModel.getAllCols();
         const res = colsForState.map((col) => this.createStateItemFromColumn(col));
 
