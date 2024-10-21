@@ -115,7 +115,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         this.eventService.dispatchEvent({
             type: 'cellEditingStarted',
             column: column!,
-            colDef: column?.getColDef()!,
+            colDef: column!.getColDef(),
             data: node.data,
             node,
             rowIndex: node.rowIndex,
@@ -128,7 +128,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
         this.eventService.dispatchEvent({
             type: 'cellEditingStopped',
             column: column!,
-            colDef: column?.getColDef()!,
+            colDef: column!.getColDef(),
             data: node.data,
             node,
             rowIndex: node.rowIndex,
