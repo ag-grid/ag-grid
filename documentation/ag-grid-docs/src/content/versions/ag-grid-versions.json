@@ -113,7 +113,7 @@
         "highlights": [
             {
                 "text": "Sticky Group Total and Grand Total Rows",
-                "path": "./aggregation-total-rows"
+                "path": "./total-rows"
             },
             {
                 "text": "Skeleton Content Displayed in Loading Grid Cells",
@@ -153,7 +153,7 @@
             },
             {
                 "text": "Dark Mode for Material Design Theme",
-                "path": "./themes/"
+                "path": "./themes/#provided-themes"
             },
             {
                 "text": "Figma Design System Includes Material Design Theme",
@@ -219,7 +219,7 @@
             },
             {
                 "text": "Prevent Group Column Reordering and Removal",
-                "path": "./grouping-group-panel/#prevent-changes-to-group-order"
+                "path": "./grouping-locking-group-columns"
             },
             {
                 "text": "Pagination Panel Page Size Selector",
@@ -246,7 +246,7 @@
             },
             {
                 "text": "Dynamic Group Footer Rows",
-                "path": "./aggregation-total-rows/#selectively-display-group-total-rows"
+                "path": "./total-rows/#dynamically-display-group-total-rows"
             },
             {
                 "text": "Documentation Examples on CodeSandbox"
