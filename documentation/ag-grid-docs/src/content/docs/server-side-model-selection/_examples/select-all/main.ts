@@ -10,8 +10,8 @@ ModuleRegistry.registerModules([RowGroupingModule, ServerSideRowModelModule]);
 let gridApi: GridApi<IOlympicDataWithId>;
 const gridOptions: GridOptions<IOlympicDataWithId> = {
     columnDefs: [
-        { field: 'country', enableRowGroup: true },
-        { field: 'year', enableRowGroup: true, rowGroup: true, hide: true },
+        { field: 'country', enableRowGroup: true, rowGroup: true, hide: true },
+        { field: 'year', enableRowGroup: true },
         { field: 'sport', enableRowGroup: true, filter: 'agTextColumnFilter' },
         { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
         { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter' },
@@ -53,6 +53,9 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
     },
 
     suppressAggFuncInHeader: true,
+
+    pagination: true,
+    paginationPageSize: 20,
 };
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
