@@ -26,8 +26,9 @@ const COLUMN_DEFINITION_DEPRECATIONS: Deprecations<ColDef | ColGroupDef> = {
     },
 };
 
-const CSRM_REQUIRES_ROW_GROUP_MODULE = (_options: never, gridOptions: GridOptions) => {
-    if ((gridOptions.rowModelType ?? 'clientSide') === 'clientSide') {
+const CSRM_SSRM_REQUIRES_ROW_GROUP_MODULE = (_options: never, gridOptions: GridOptions) => {
+    const rowModel = gridOptions.rowModelType ?? 'clientSide';
+    if (rowModel === 'clientSide' || rowModel === 'serverSide') {
         return { module: ModuleNames.RowGroupingModule };
     }
     return null;
@@ -35,14 +36,14 @@ const CSRM_REQUIRES_ROW_GROUP_MODULE = (_options: never, gridOptions: GridOption
 
 const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
     // supported on all row models, but need module for client side.
-    enableRowGroup: CSRM_REQUIRES_ROW_GROUP_MODULE,
-    rowGroup: CSRM_REQUIRES_ROW_GROUP_MODULE,
-    rowGroupIndex: CSRM_REQUIRES_ROW_GROUP_MODULE,
-    enablePivot: CSRM_REQUIRES_ROW_GROUP_MODULE,
-    enableValue: CSRM_REQUIRES_ROW_GROUP_MODULE,
-    pivot: CSRM_REQUIRES_ROW_GROUP_MODULE,
-    pivotIndex: CSRM_REQUIRES_ROW_GROUP_MODULE,
-    aggFunc: CSRM_REQUIRES_ROW_GROUP_MODULE,
+    enableRowGroup: CSRM_SSRM_REQUIRES_ROW_GROUP_MODULE,
+    rowGroup: CSRM_SSRM_REQUIRES_ROW_GROUP_MODULE,
+    rowGroupIndex: CSRM_SSRM_REQUIRES_ROW_GROUP_MODULE,
+    enablePivot: CSRM_SSRM_REQUIRES_ROW_GROUP_MODULE,
+    enableValue: CSRM_SSRM_REQUIRES_ROW_GROUP_MODULE,
+    pivot: CSRM_SSRM_REQUIRES_ROW_GROUP_MODULE,
+    pivotIndex: CSRM_SSRM_REQUIRES_ROW_GROUP_MODULE,
+    aggFunc: CSRM_SSRM_REQUIRES_ROW_GROUP_MODULE,
 
     cellEditor: (options) => {
         if (options.cellEditor === 'agRichSelect' || options.cellEditor === 'agRichSelectCellEditor') {
