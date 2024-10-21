@@ -29,7 +29,6 @@ ModuleRegistry.registerModules([
                     [defaultColDef]="defaultColDef"
                     [rowData]="rowData"
                     [theme]="theme"
-                    loadThemeGoogleFonts
                     sideBar
                 />
             </div>

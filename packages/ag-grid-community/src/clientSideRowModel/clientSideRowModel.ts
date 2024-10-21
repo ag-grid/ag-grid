@@ -1127,8 +1127,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         rowNodesOrderChanged: boolean,
         afterColumnsChanged: boolean
     ) {
-        const rootNode = this.rootNode as ClientSideRowModelRootNode;
-        const treeData = this.gos.get('treeData');
+        const treeData = this.nodeManager.treeData;
+        const rootNode: ClientSideRowModelRootNode = this.rootNode!;
         if (!treeData) {
             const groupStage = this.groupStage;
             if (groupStage) {

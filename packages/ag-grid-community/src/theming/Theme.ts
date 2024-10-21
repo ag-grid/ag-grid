@@ -38,7 +38,7 @@ let customThemeCounter = 0;
 export const createTheme = (id: string = `customTheme${++customThemeCounter}`): Theme<CoreParams> =>
     /*#__PURE__*/ new ThemeImpl(id);
 
-const IS_SSR = typeof window !== 'object' || !window || typeof document !== 'object' || window.document !== document;
+const IS_SSR = typeof window !== 'object' || !window?.document?.fonts?.forEach;
 let themeClassCounter = 0;
 let uninstalledLegacyCSS = false;
 
@@ -67,6 +67,7 @@ class ThemeImpl<TParams = unknown> implements Theme {
     private useCount = 0;
 
     startUse(args: GridThemeUseArgs): void {
+        if (IS_SSR) return;
         ++this.useCount;
         if (this.useCount === 1) {
             void this._install(args);
@@ -74,6 +75,7 @@ class ThemeImpl<TParams = unknown> implements Theme {
     }
 
     stopUse(): void {
+        if (IS_SSR) return;
         --this.useCount;
         if (this.useCount === 0) {
             // delay slightly to give the new theme time to load before removing the old styles
@@ -108,8 +110,6 @@ class ThemeImpl<TParams = unknown> implements Theme {
 
     private _installRoot: HTMLElement;
     private async _install({ container, loadThemeGoogleFonts }: GridThemeUseArgs) {
-        if (IS_SSR) return;
-
         if (!uninstalledLegacyCSS) {
             uninstalledLegacyCSS = true;
             // Remove the CSS from @ag-grid-community/styles that is

@@ -8,7 +8,7 @@ import { GridRows, TestGridsManager, cachedJSONObjects } from '../../test-utils'
 import type { GridRowsOptions } from '../../test-utils';
 
 const defaultGridRowsOptions: GridRowsOptions = {
-    checkDom: 'myGrid',
+    checkDom: true,
 };
 
 const getDataPath = (data: any) => data.orgHierarchy;

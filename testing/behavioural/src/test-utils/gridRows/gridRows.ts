@@ -15,7 +15,7 @@ export interface GridRowsOptions<TData = any> {
     checkSelectedNodes?: boolean;
 
     /** If true, the DOM will be checked as well. Default is true. */
-    checkDom?: boolean | string;
+    checkDom?: boolean;
 
     /**
      * Columns to include when making the diagram. If true, all columns will be included.
@@ -30,6 +30,9 @@ export interface GridRowsOptions<TData = any> {
     printHiddenRows?: boolean;
 
     errors?: GridRowsErrors<TData>;
+
+    /** Forces treeData to be checked as true or false */
+    treeData?: boolean;
 }
 
 export class GridRows<TData = any> {
@@ -56,7 +59,7 @@ export class GridRows<TData = any> {
     ) {
         const errors = options.errors || new GridRowsErrors<TData>();
         this.errors = errors;
-        this.treeData = !!api.getGridOption('treeData');
+        this.treeData = options.treeData ?? !!api.getGridOption('treeData');
         const rowNodes: RowNode<TData>[] = [];
         const displayedRows: RowNode<TData>[] = [];
         const rootNodesSet = new Set<RowNode<TData>>();

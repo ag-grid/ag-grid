@@ -1,5 +1,3 @@
-'use strict';
-
 // NOTE: The details of this web worker are not important it's just used to simulate streaming updates in the grid.
 
 // Constants

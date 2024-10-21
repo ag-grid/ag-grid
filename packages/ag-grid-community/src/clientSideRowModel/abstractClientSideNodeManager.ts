@@ -48,6 +48,10 @@ export abstract class AbstractClientSideNodeManager<TData = any>
 
     protected beans: BeanCollection;
 
+    public get treeData(): boolean {
+        return false; // not supported by this node manager
+    }
+
     public wireBeans(beans: BeanCollection): void {
         this.beans = beans;
     }

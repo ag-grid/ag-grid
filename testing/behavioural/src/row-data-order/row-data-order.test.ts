@@ -9,7 +9,7 @@ import { VERSION } from '../version';
 
 const defaultGridRowsOptions: GridRowsOptions = {
     columns: ['x'],
-    checkDom: 'myGrid',
+    checkDom: true,
 };
 
 describe('ag-grid rows-ordering', () => {
