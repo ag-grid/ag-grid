@@ -23,6 +23,13 @@ export default [
             ],
             'import-x/consistent-type-specifier-style': 'error',
             '@typescript-eslint/no-this-alias': 'off',
+            '@typescript-eslint/no-unused-vars': [
+                'warn',
+                {
+                    argsIgnorePattern: '^_+$',
+                    varsIgnorePattern: '^_+$',
+                },
+            ],
         },
     },
 ];

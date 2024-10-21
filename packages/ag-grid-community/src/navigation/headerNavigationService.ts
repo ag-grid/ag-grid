@@ -297,11 +297,11 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     }
 
     private findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition | undefined {
-        let nextColumn: AgColumn | AgColumnGroup;
+        let nextColumn: AgColumn | AgColumnGroup | undefined;
         let getColMethod: 'getColBefore' | 'getColAfter';
 
         if (isColumnGroup(focusedHeader.column)) {
-            nextColumn = this.columnGroupService?.getGroupAtDirection(focusedHeader.column, direction)!;
+            nextColumn = this.columnGroupService?.getGroupAtDirection(focusedHeader.column, direction) ?? undefined;
         } else {
             getColMethod = `getCol${direction}` as any;
             nextColumn = this.visibleColsService[getColMethod](focusedHeader.column as AgColumn)!;
