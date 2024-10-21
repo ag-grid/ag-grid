@@ -7,21 +7,9 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-    columnDefs: [
-        { field: 'athlete' },
-        { field: 'age' },
-        { field: 'country' },
-        { field: 'year' },
-        { field: 'date' },
-        { field: 'sport' },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
-        { field: 'total' },
-    ],
+    columnDefs: [{ field: 'athlete' }, { field: 'age' }, { field: 'country' }, { field: 'year' }, { field: 'total' }],
     defaultColDef: {
         editable: true,
-        cellDataType: false,
     },
 };
 
