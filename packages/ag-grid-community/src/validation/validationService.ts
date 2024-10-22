@@ -20,11 +20,9 @@ import type { DependentValues, OptionsValidation, OptionsValidator, RequiredOpti
 export class ValidationService extends BeanStub implements NamedBean {
     beanName = 'validationService' as const;
 
-    private beans: BeanCollection;
     private gridOptions: GridOptions;
 
     public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
         this.gridOptions = beans.gridOptions;
         provideValidationServiceLogger(this);
     }

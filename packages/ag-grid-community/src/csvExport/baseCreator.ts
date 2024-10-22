@@ -3,10 +3,10 @@ import type { ExportParams } from '../interfaces/exportParams';
 import type { BaseCreatorBeans, GridSerializingSession } from './interfaces';
 
 export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P extends ExportParams<T>> extends BeanStub {
-    private beans: BaseCreatorBeans;
+    private baseCreatorBeans: BaseCreatorBeans;
 
     protected setBeans(beans: BaseCreatorBeans) {
-        this.beans = beans;
+        this.baseCreatorBeans = beans;
     }
 
     protected abstract export(userParams?: P, compress?: boolean): void;
@@ -25,7 +25,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
 
     protected getData(params: P): string {
         const serializingSession = this.createSerializingSession(params);
-        return this.beans.gridSerializer.serialize(serializingSession, params);
+        return this.baseCreatorBeans.gridSerializer.serialize(serializingSession, params);
     }
 
     public getDefaultFileName(): string {

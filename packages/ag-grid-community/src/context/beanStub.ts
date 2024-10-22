@@ -12,7 +12,6 @@ import type {
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import { LocalEventService } from '../localEventService';
-import type { LocaleService } from '../misc/locale/localeService';
 import type { LocaleTextFunc } from '../misc/locale/localeUtils';
 import { _getLocaleTextFunc } from '../misc/locale/localeUtils';
 import { _addSafePassiveEventListener } from '../utils/event';
@@ -40,17 +39,15 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     // prevents vue from creating proxies for created objects and prevents identity related issues
     public __v_skip = true;
 
-    protected frameworkOverrides: IFrameworkOverrides;
+    protected beans: BeanCollection;
     protected eventService: EventService;
     protected gos: GridOptionsService;
-    private localeService?: LocaleService;
 
     public preWireBeans(beans: BeanCollection): void {
-        this.frameworkOverrides = beans.frameworkOverrides;
+        this.beans = beans;
         this.stubContext = beans.context;
         this.eventService = beans.eventService;
         this.gos = beans.gos;
-        this.localeService = beans.localeService;
     }
 
     // this was a test constructor niall built, when active, it prints after 5 seconds all beans/components that are
@@ -70,7 +67,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
 
     // CellComp and GridComp and override this because they get the FrameworkOverrides from the Beans bean
     protected getFrameworkOverrides(): IFrameworkOverrides {
-        return this.frameworkOverrides;
+        return this.beans.frameworkOverrides;
     }
 
     public destroy(): void {
@@ -259,7 +256,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     public isAlive = (): boolean => !this.destroyed;
 
     public getLocaleTextFunc(): LocaleTextFunc {
-        return _getLocaleTextFunc(this.localeService);
+        return _getLocaleTextFunc(this.beans.localeService);
     }
 
     public addDestroyFunc(func: () => void): void {

@@ -3,7 +3,6 @@ import { setupCompBean } from '../../../components/emptyBean';
 import { _getHeaderCompDetails } from '../../../components/framework/userCompUtils';
 import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
-import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SortDirection } from '../../../entities/colDef';
 import { _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
@@ -51,8 +50,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private ariaDescriptionProperties = new Map<HeaderAriaDescriptionKey, string>();
     private tooltipFeature: TooltipFeature | undefined;
 
-    constructor(column: AgColumn, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
-        super(column, beans, parentRowCtrl);
+    constructor(column: AgColumn, parentRowCtrl: HeaderRowCtrl) {
+        super(column, parentRowCtrl);
         this.column = column;
     }
 

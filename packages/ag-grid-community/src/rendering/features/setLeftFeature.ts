@@ -18,8 +18,6 @@ export class SetLeftFeature extends BeanStub {
     // otherwise this is empty
     private colsSpanning: AgColumn[] | undefined;
 
-    private beans: BeanCollection;
-
     constructor(
         private readonly columnOrGroup: AgColumn | AgColumnGroup,
         eCell: HTMLElement,

@@ -140,12 +140,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     constructor(
         private readonly rowNode: RowNode,
-        private readonly beans: BeanCollection,
+        beans: BeanCollection,
         animateIn: boolean,
         private readonly useAnimationFrameForCreate: boolean,
         private readonly printLayout: boolean
     ) {
         super();
+        this.beans = beans;
         this.gos = beans.gos;
         this.paginationPage = beans.paginationService?.getCurrentPage() ?? 0;
         this.suppressRowTransform = this.gos.get('suppressRowTransform');

@@ -36,8 +36,6 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
         dispatchEvent,
     };
 
-    private beans: BeanCollection | null = null;
-
     private preDestroyLink: string = '';
 
     public constructor() {
@@ -49,12 +47,8 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
         }
     }
 
-    public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
-    }
-
     public postConstruct(): void {
-        this.preDestroyLink = this.frameworkOverrides.getDocLink('grid-lifecycle/#grid-pre-destroyed');
+        this.preDestroyLink = this.beans.frameworkOverrides.getDocLink('grid-lifecycle/#grid-pre-destroyed');
     }
 
     public addFunction<TFunctionName extends ApiFunctionName>(
@@ -98,6 +92,6 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
     public override destroy(): void {
         super.destroy();
         this.fns = defaultFns;
-        this.beans = null;
+        (this.beans as any) = null;
     }
 }

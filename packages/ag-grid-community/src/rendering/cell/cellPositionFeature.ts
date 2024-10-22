@@ -23,8 +23,6 @@ export class CellPositionFeature extends BeanStub {
     private colsSpanning: AgColumn[];
     private rowSpan: number;
 
-    private beans: BeanCollection;
-
     constructor(ctrl: CellCtrl, beans: BeanCollection) {
         super();
 

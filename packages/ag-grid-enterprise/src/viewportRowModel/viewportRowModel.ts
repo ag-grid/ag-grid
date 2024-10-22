@@ -15,12 +15,10 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
 
     private rowRenderer: RowRenderer;
     private focusService: FocusService;
-    private beans: BeanCollection;
 
     public wireBeans(beans: BeanCollection) {
         this.rowRenderer = beans.rowRenderer;
         this.focusService = beans.focusService;
-        this.beans = beans;
     }
 
     // rowRenderer tells us these

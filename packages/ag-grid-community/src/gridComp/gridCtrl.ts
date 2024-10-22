@@ -29,12 +29,10 @@ export interface OptionalGridComponents {
 }
 
 export class GridCtrl extends BeanStub {
-    private beans: BeanCollection;
     private focusService: FocusService;
     private visibleColsService: VisibleColsService;
 
     public wireBeans(beans: BeanCollection) {
-        this.beans = beans;
         this.focusService = beans.focusService;
         this.visibleColsService = beans.visibleColsService;
     }

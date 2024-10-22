@@ -63,7 +63,6 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     private rowRenderer: RowRenderer;
     private nodeManager: NodeManager;
     private storeFactory: StoreFactory;
-    private beans: BeanCollection;
     private pivotColDefService?: IPivotColDefService;
 
     public wireBeans(beans: BeanCollection) {
@@ -76,7 +75,6 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.rowRenderer = beans.rowRenderer;
         this.nodeManager = beans.ssrmNodeManager as NodeManager;
         this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
-        this.beans = beans;
         this.pivotColDefService = beans.pivotColDefService;
     }
 

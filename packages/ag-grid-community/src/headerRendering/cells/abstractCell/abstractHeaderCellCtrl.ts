@@ -59,7 +59,6 @@ export abstract class AbstractHeaderCellCtrl<
         this.menuService = beans.menuService;
     }
 
-    protected beans: BeanCollection;
     private columnGroupChild: AgColumn | AgColumnGroup;
     private parentRowCtrl: HeaderRowCtrl;
 
@@ -78,12 +77,11 @@ export abstract class AbstractHeaderCellCtrl<
 
     protected abstract resizeHeader(delta: number, shiftKey: boolean): void;
 
-    constructor(columnGroupChild: AgColumn | AgColumnGroup, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
+    constructor(columnGroupChild: AgColumn | AgColumnGroup, parentRowCtrl: HeaderRowCtrl) {
         super();
 
         this.columnGroupChild = columnGroupChild;
         this.parentRowCtrl = parentRowCtrl;
-        this.beans = beans;
 
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = (columnGroupChild.getUniqueId() + '-' + instanceIdSequence++) as HeaderCellCtrlInstanceId;

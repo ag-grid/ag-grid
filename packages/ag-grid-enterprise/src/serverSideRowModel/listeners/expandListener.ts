@@ -9,12 +9,10 @@ export class ExpandListener extends BeanStub implements NamedBean {
 
     private serverSideRowModel: ServerSideRowModel;
     private storeFactory: StoreFactory;
-    private beans: BeanCollection;
 
     public wireBeans(beans: BeanCollection) {
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
-        this.beans = beans;
     }
 
     public postConstruct(): void {

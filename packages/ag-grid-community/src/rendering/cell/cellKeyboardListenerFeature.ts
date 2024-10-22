@@ -1,7 +1,6 @@
 import { KeyCode } from '../../constants/keyCode';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
-import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import { _getGroupSelection, _isCellSelectionEnabled, _isRowSelection } from '../../gridOptionsUtils';
 import { _isMacOsUserAgent } from '../../utils/browser';
@@ -20,13 +19,12 @@ function _isDeleteKey(key: string, alwaysReturnFalseOnBackspace = false) {
 
 export class CellKeyboardListenerFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;
-    private readonly beans: BeanCollection;
     private readonly rowNode: RowNode;
     private readonly rowCtrl: RowCtrl;
 
     private eGui: HTMLElement;
 
-    constructor(ctrl: CellCtrl, beans: BeanCollection, column: AgColumn, rowNode: RowNode, rowCtrl: RowCtrl) {
+    constructor(ctrl: CellCtrl, beans: BeanCollection, rowNode: RowNode, rowCtrl: RowCtrl) {
         super();
         this.cellCtrl = ctrl;
         this.beans = beans;

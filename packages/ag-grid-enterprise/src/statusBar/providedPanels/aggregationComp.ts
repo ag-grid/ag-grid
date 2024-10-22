@@ -34,11 +34,9 @@ function _formatNumberTwoDecimalPlacesAndCommas(value: number, getLocaleTextFunc
 }
 
 export class AggregationComp extends Component implements IStatusPanelComp {
-    private beans: BeanCollection;
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection) {
-        this.beans = beans;
         this.rangeService = beans.rangeService;
     }
 

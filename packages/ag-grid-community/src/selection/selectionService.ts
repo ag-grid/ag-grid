@@ -25,12 +25,10 @@ import { RowRangeSelectionContext } from './rowRangeSelectionContext';
 export class SelectionService extends BaseSelectionService implements NamedBean, ISelectionService {
     beanName = 'selectionService' as const;
 
-    private beans: BeanCollection;
     private pageBoundsService: PageBoundsService;
 
     public override wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
-        this.beans = beans;
         this.pageBoundsService = beans.pageBoundsService;
     }
 

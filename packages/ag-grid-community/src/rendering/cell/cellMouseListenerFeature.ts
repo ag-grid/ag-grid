@@ -9,7 +9,6 @@ import type { CellCtrl } from './cellCtrl';
 
 export class CellMouseListenerFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;
-    private readonly beans: BeanCollection;
     private readonly column: AgColumn;
 
     private lastIPadMouseClickEvent: number;

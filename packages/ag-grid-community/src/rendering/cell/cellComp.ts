@@ -24,7 +24,6 @@ export class CellComp extends Component {
     private eCellWrapper: HTMLElement | undefined;
     private eCellValue: HTMLElement | undefined;
 
-    private beans: BeanCollection;
     private column: AgColumn;
     private rowNode: RowNode;
     private eRow: HTMLElement;

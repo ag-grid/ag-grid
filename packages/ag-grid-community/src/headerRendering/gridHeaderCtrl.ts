@@ -24,7 +24,6 @@ export interface IGridHeaderComp {
 }
 
 export class GridHeaderCtrl extends BeanStub {
-    private beans: BeanCollection;
     private headerNavigationService?: HeaderNavigationService;
     private focusService: FocusService;
     private columnModel: ColumnModel;
@@ -34,7 +33,6 @@ export class GridHeaderCtrl extends BeanStub {
     private menuService?: MenuService;
 
     public wireBeans(beans: BeanCollection) {
-        this.beans = beans;
         this.headerNavigationService = beans.headerNavigationService;
         this.focusService = beans.focusService;
         this.columnModel = beans.columnModel;

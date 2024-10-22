@@ -21,7 +21,6 @@ import {
 export class MasterDetailService extends BeanStub implements NamedBean, IMasterDetailService {
     beanName: BeanName = 'masterDetailService' as const;
 
-    private beans: BeanCollection;
     private enabled: boolean;
     private rowModel: IRowModel;
     private funcColsService: FuncColsService;
@@ -36,7 +35,6 @@ export class MasterDetailService extends BeanStub implements NamedBean, IMasterD
     }
 
     public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
         this.funcColsService = beans.funcColsService;
         this.rowModel = beans.rowModel;
     }
