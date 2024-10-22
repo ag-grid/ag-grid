@@ -65,7 +65,7 @@ export class StateService extends BeanStub implements NamedBean {
     private rangeService?: IRangeService;
     private rowModel: IRowModel;
     private columnGroupService?: ColumnGroupService;
-    private updateRowGroupExpansionStateTimer: number = 0;
+    private updateRowGroupExpansionStateTimer: ReturnType<typeof setTimeout> | number = 0;
 
     public wireBeans(beans: BeanCollection): void {
         this.filterManager = beans.filterManager;

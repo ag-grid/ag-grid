@@ -1,4 +1,3 @@
-import type { BeanCollection } from '../../context/context';
 import { RowComp } from '../../rendering/row/rowComp';
 import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
 import { _setAriaRole } from '../../utils/aria';
@@ -24,12 +23,6 @@ function templateFactory(options: RowContainerOptions): string {
 }
 
 export class RowContainerComp extends Component {
-    private beans: BeanCollection;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
-    }
-
     private readonly eViewport: HTMLElement = RefPlaceholder;
     private readonly eContainer: HTMLElement = RefPlaceholder;
 

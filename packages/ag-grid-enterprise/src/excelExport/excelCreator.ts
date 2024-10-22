@@ -10,7 +10,6 @@ import type {
     ExcelFactoryMode,
     ExcelRow,
     ExcelStyle,
-    GridSerializer,
     IColsService,
     IExcelCreator,
     NamedBean,
@@ -258,23 +257,12 @@ export class ExcelCreator
     private valueService: ValueService;
     private cellStyleService?: CellStyleService;
 
-    private gridSerializer: GridSerializer;
-
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.rowGroupColsService = beans.rowGroupColsService;
         this.valueService = beans.valueService;
         this.cellStyleService = beans.cellStyleService;
-        this.gridSerializer = beans.gridSerializer as GridSerializer;
-        this.gos = beans.gos;
-    }
-
-    public postConstruct(): void {
-        this.setBeans({
-            gridSerializer: this.gridSerializer,
-            gos: this.gos,
-        });
     }
 
     protected getMergedParams(params?: ExcelExportParams): ExcelExportParams {

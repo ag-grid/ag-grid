@@ -109,7 +109,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
 
         // Ensure the propertyEventService has framework overrides set so that it can fire events outside of angular
-        this.propertyEventService.setFrameworkOverrides(this.frameworkOverrides);
+        this.propertyEventService.setFrameworkOverrides(this.beans.frameworkOverrides);
 
         this.addManagedEventListeners({
             gridOptionsChanged: ({ options }) => {
@@ -234,7 +234,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             const eventHandlerName = _getCallbackForEvent(eventName);
             const eventHandler = (this.gridOptions as any)[eventHandlerName];
             if (typeof eventHandler === 'function') {
-                this.frameworkOverrides.wrapOutgoing(() => {
+                this.beans.frameworkOverrides.wrapOutgoing(() => {
                     eventHandler(event);
                 });
             }

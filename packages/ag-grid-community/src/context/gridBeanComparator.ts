@@ -12,6 +12,9 @@ import type { GenericBean } from './genericBean';
  */
 const orderedCoreBeans: BeanName[] = [
     // core beans only
+    'environment',
+    'eventService',
+    'gos',
     'paginationAutoPageSizeService',
     'apiFunctionService',
     'gridApi',
@@ -26,8 +29,6 @@ const orderedCoreBeans: BeanName[] = [
     'dragService',
     'columnGroupService',
     'visibleColsService',
-    'eventService',
-    'gos',
     'popupService',
     'selectionService',
     'columnFilterService',
@@ -52,7 +53,6 @@ const orderedCoreBeans: BeanName[] = [
     'dragAndDropService',
     'focusService',
     'mouseEventService',
-    'environment',
     'cellNavigationService',
     'cellStyleService',
     'scrollVisibleService',

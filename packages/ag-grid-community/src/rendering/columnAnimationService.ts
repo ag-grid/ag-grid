@@ -117,7 +117,7 @@ export class ColumnAnimationService extends BeanStub implements NamedBean {
             }
         };
 
-        this.getFrameworkOverrides().wrapIncoming(() => {
+        this.beans.frameworkOverrides.wrapIncoming(() => {
             window.setTimeout(() => {
                 callbackNext();
                 runFuncs(this.executeNextFuncs);

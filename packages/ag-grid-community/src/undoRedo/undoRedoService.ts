@@ -15,11 +15,9 @@ import { RangeUndoRedoAction, UndoRedoAction, UndoRedoStack } from './undoRedoSt
 export class UndoRedoService extends BeanStub implements NamedBean {
     beanName = 'undoRedoService' as const;
 
-    private beans: BeanCollection;
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
         this.rangeService = beans.rangeService;
     }
 

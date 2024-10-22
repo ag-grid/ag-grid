@@ -8,7 +8,8 @@
                 "text": "Quality Improvements"
             }
         ],
-        "notesPath": "./upgrading-to-ag-grid-32-3"
+        "notesPath": "./upgrading-to-ag-grid-32-3",
+        "hideBlogPostLink": true
     },
     {
         "version": "32.2.0",

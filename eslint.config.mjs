@@ -30,7 +30,7 @@ export default [
                     varsIgnorePattern: '^_+$',
                 },
             ],
-            'no-undef': 'error',
+            'no-undef': 'warn',
         },
     },
     {

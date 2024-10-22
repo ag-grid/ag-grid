@@ -1,6 +1,5 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
 import { ROW_ID_PREFIX_BOTTOM_PINNED, ROW_ID_PREFIX_TOP_PINNED, RowNode } from '../entities/rowNode';
 import type { CssVariablesChanged } from '../events';
 import { _getRowHeightForNode, _getRowIdCallback } from '../gridOptionsUtils';
@@ -9,12 +8,6 @@ import { _warn } from '../validation/logging';
 
 export class PinnedRowModel extends BeanStub implements NamedBean {
     beanName = 'pinnedRowModel' as const;
-
-    private beans: BeanCollection;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
-    }
 
     private nextId = 0;
     private pinnedTopRows = new OrderedCache<RowNode>();

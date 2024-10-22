@@ -1,8 +1,6 @@
-import type { ColumnHoverService } from '../columns/columnHover/columnHoverService';
 import type { ColumnState } from '../columns/columnStateService';
 import { isColumnSelectionCol } from '../columns/columnUtils';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
 import type { AgEvent, ColumnEvent, ColumnEventType } from '../events';
 import { _getCheckboxes } from '../gridOptionsUtils';
 import type {
@@ -56,12 +54,6 @@ export function isColumn(col: Column | ColumnGroup | ProvidedColumnGroup): col i
 // can only appear in OriginalColumn tree).
 export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements Column {
     public readonly isColumn = true as const;
-
-    private columnHoverService?: ColumnHoverService;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.columnHoverService = beans.columnHoverService;
-    }
 
     private frameworkEventListenerService?: IFrameworkEventListenerService<any, any>;
 
@@ -323,7 +315,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
         eventType: T,
         userListener: (params: ColumnEvent<T>) => void
     ): void {
-        this.frameworkEventListenerService = this.frameworkOverrides.createLocalEventListenerWrapper?.(
+        this.frameworkEventListenerService = this.beans.frameworkOverrides.createLocalEventListenerWrapper?.(
             this.frameworkEventListenerService,
             this.columnEventService
         );
@@ -576,7 +568,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     }
 
     public isHovered(): boolean {
-        return !!this.columnHoverService?.isHovered(this);
+        return !!this.beans.columnHoverService?.isHovered(this);
     }
 
     public setPinned(pinned: ColumnPinnedType): void {

@@ -18,7 +18,7 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
     private frameworkEventWrappingService?: IFrameworkEventListenerService<AgEventListener, AgGlobalEventListener>;
 
     public postConstruct(): void {
-        this.frameworkEventWrappingService = this.getFrameworkOverrides().createGlobalEventListenerWrapper?.();
+        this.frameworkEventWrappingService = this.beans.frameworkOverrides.createGlobalEventListenerWrapper?.();
     }
 
     public override addEventListener<T extends AgEventType>(eventType: T, userListener: AgEventListener): void {

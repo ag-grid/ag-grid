@@ -1,5 +1,4 @@
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
 import { RowNode } from '../entities/rowNode';
 import type { SelectionEventSourceType } from '../events';
 import { _getRowIdCallback } from '../gridOptionsUtils';
@@ -46,14 +45,8 @@ export abstract class AbstractClientSideNodeManager<TData = any>
 
     public rootNode: AbstractClientSideNodeManager.RootNode<TData> | null = null;
 
-    protected beans: BeanCollection;
-
     public get treeData(): boolean {
         return false; // not supported by this node manager
-    }
-
-    public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
     }
 
     public getRowNode(id: string): RowNode | undefined {

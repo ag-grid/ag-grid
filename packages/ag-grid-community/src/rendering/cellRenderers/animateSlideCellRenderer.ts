@@ -59,7 +59,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         // having timeout of 0 allows use to skip to the next css turn,
         // so we know the previous css classes have been applied. so the
         // complex set of setTimeout below creates the animation
-        this.getFrameworkOverrides().wrapIncoming(() => {
+        this.beans.frameworkOverrides.wrapIncoming(() => {
             window.setTimeout(() => {
                 if (refreshCountCopy !== this.refreshCount) {
                     return;

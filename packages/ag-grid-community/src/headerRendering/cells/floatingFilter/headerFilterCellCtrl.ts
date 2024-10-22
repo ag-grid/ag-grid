@@ -1,7 +1,6 @@
 import { setupCompBean } from '../../../components/emptyBean';
 import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
-import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { ColumnEvent, FilterChangedEvent } from '../../../events';
 import { _getActiveDomElement, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
@@ -28,8 +27,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     private destroySyncListener: () => null;
     private destroyFilterChangedListener: () => null;
 
-    constructor(column: AgColumn, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
-        super(column, beans, parentRowCtrl);
+    constructor(column: AgColumn, parentRowCtrl: HeaderRowCtrl) {
+        super(column, parentRowCtrl);
         this.column = column;
     }
 

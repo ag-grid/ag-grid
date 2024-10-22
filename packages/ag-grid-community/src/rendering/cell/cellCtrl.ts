@@ -119,10 +119,11 @@ export class CellCtrl extends BeanStub {
     constructor(
         private readonly column: AgColumn,
         private readonly rowNode: RowNode,
-        private readonly beans: BeanCollection,
+        beans: BeanCollection,
         private readonly rowCtrl: RowCtrl
     ) {
         super();
+        this.beans = beans;
 
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = (column.getId() + '-' + instanceIdSequence++) as CellCtrlInstanceId;
@@ -151,7 +152,6 @@ export class CellCtrl extends BeanStub {
         this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(
             this,
             this.beans,
-            this.column,
             this.rowNode,
             this.rowCtrl
         );

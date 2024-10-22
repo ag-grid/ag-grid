@@ -678,7 +678,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             filterParams
         );
 
-        let defaultFloatingFilterType = _getDefaultFloatingFilterType(this.frameworkOverrides, colDef, () =>
+        let defaultFloatingFilterType = _getDefaultFloatingFilterType(this.beans.frameworkOverrides, colDef, () =>
             this.getDefaultFloatingFilter(column)
         );
 

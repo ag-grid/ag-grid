@@ -13,6 +13,7 @@ export type VersionProps = {
     highlights?: Array<{ text: string; url: string }>;
     notesPath?: string;
     isLatest: boolean;
+    hideBlogPostLink?: boolean;
 };
 
 interface HighlightParams {
@@ -54,9 +55,11 @@ export const Version = ({ date, version, blogUrl, highlights, notesPath, isLates
                     </div>
                     <div className={styles.flex}>
                         <b>Version {version}</b>
-                        <a className={styles.bloglink} href={blogUrl}>
-                            Read more →
-                        </a>
+                        {blogUrl && (
+                            <a className={styles.bloglink} href={blogUrl}>
+                                Read more →
+                            </a>
+                        )}
                     </div>
                     <span className={styles.line}></span>
                 </header>

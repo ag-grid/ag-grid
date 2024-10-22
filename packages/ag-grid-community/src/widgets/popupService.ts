@@ -697,7 +697,7 @@ export class PopupService extends BeanStub implements NamedBean {
         const topPosition = createPosition('top', DIRECTION.vertical);
         const leftPosition = createPosition('left', DIRECTION.horizontal);
 
-        const fwOverrides = this.getFrameworkOverrides();
+        const fwOverrides = this.beans.frameworkOverrides;
         return new AgPromise<() => void>((resolve) => {
             fwOverrides.wrapIncoming(() => {
                 fwOverrides

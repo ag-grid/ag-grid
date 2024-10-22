@@ -138,7 +138,10 @@ function migrateV26_2(model: ChartModel) {
     model = jsonDelete('chartOptions.yAxis', model);
     const {
         chartType: providedChartType,
-        chartOptions: { axes, seriesDefaults, ...otherChartOptions },
+        // disable no-unused-vars because `series` is required here, even though
+        // unused, because it serves to take the `series` key out of otherChartOptions
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        chartOptions: { axes, series, seriesDefaults, ...otherChartOptions },
         ...otherModelProps
     } = model as any;
 

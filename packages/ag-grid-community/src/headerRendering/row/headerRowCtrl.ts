@@ -1,6 +1,5 @@
 import { setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
 import { _isDomLayout } from '../../gridOptionsUtils';
@@ -24,11 +23,6 @@ let instanceIdSequence = 0;
 export type HeaderRowCtrlInstanceId = BrandedType<number, 'HeaderRowCtrlInstanceId'>;
 
 export class HeaderRowCtrl extends BeanStub {
-    private beans: BeanCollection;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
-    }
     public readonly instanceId: HeaderRowCtrlInstanceId = instanceIdSequence++ as HeaderRowCtrlInstanceId;
 
     private comp: IHeaderRowComp;
@@ -303,7 +297,6 @@ export class HeaderRowCtrl extends BeanStub {
                         this.beans.registry.createDynamicBean<HeaderFilterCellCtrl>(
                             'headerFilterCellCtrl',
                             headerColumn as AgColumn,
-                            this.beans,
                             this
                         )!
                     );
@@ -314,13 +307,12 @@ export class HeaderRowCtrl extends BeanStub {
                         this.beans.registry.createDynamicBean<HeaderGroupCellCtrl>(
                             'headerGroupCellCtrl',
                             headerColumn as AgColumnGroup,
-                            this.beans,
                             this
                         )!
                     );
                     break;
                 default:
-                    headerCtrl = this.createBean(new HeaderCellCtrl(headerColumn as AgColumn, this.beans, this));
+                    headerCtrl = this.createBean(new HeaderCellCtrl(headerColumn as AgColumn, this));
                     break;
             }
         }
