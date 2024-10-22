@@ -11,7 +11,6 @@ import type {
     ExcelRow,
     ExcelStyle,
     FuncColsService,
-    GridSerializer,
     IExcelCreator,
     NamedBean,
     ValueService,
@@ -258,23 +257,12 @@ export class ExcelCreator
     private valueService: ValueService;
     private cellStyleService?: CellStyleService;
 
-    private gridSerializer: GridSerializer;
-
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.funcColsService = beans.funcColsService;
         this.valueService = beans.valueService;
         this.cellStyleService = beans.cellStyleService;
-        this.gridSerializer = beans.gridSerializer as GridSerializer;
-        this.gos = beans.gos;
-    }
-
-    public postConstruct(): void {
-        this.setBeans({
-            gridSerializer: this.gridSerializer,
-            gos: this.gos,
-        });
     }
 
     protected getMergedParams(params?: ExcelExportParams): ExcelExportParams {
