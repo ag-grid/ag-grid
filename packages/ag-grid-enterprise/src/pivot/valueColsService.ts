@@ -46,7 +46,7 @@ export class ValueColsService extends BaseColsService implements NamedBean, ICol
     }
 
     public override extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {
-        this.columns = this._extractColsCommon(
+        this.columns = this.extractColumnsCommon(
             oldProvidedCols,
             this.columns,
             (col, flag) => col.setValueActive(flag, source),

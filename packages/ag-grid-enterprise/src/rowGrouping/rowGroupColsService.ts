@@ -39,7 +39,7 @@ export class RowGroupColsService extends BaseColsService implements NamedBean, I
     }
 
     public override extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {
-        this.columns = this._extractColsCommon(
+        this.columns = this.extractColumnsCommon(
             oldProvidedCols,
             this.columns,
             (col, flag) => col.setRowGroupActive(flag, source),
@@ -77,7 +77,7 @@ export class RowGroupColsService extends BaseColsService implements NamedBean, I
         columnStateAccumulator: { [colId: string]: ColumnState },
         incomingColumnState: { [colId: string]: ColumnState }
     ): { [colId: string]: ColumnState } {
-        return this._orderColumns(
+        return this.orderColumnsCommon(
             columnStateAccumulator,
             incomingColumnState,
             this.columns,

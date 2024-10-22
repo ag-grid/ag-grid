@@ -167,7 +167,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
     public abstract extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void;
 
-    protected _extractColsCommon(
+    protected extractColumnsCommon(
         oldProvidedCols: AgColumn[] = [],
         previousCols: AgColumn[] = [],
         setFlagFunc: (col: AgColumn, flag: boolean) => void,
@@ -305,7 +305,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         incomingColumnState: { [colId: string]: ColumnState }
     ): { [colId: string]: ColumnState };
 
-    protected _orderColumns(
+    protected orderColumnsCommon(
         columnStateAccumulator: { [colId: string]: ColumnState },
         incomingColumnState: { [colId: string]: ColumnState },
         colList: AgColumn[],

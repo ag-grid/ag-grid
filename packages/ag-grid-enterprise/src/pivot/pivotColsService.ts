@@ -41,7 +41,7 @@ export class PivotColsService extends BaseColsService implements NamedBean, ICol
         columnStateAccumulator: { [colId: string]: ColumnState },
         incomingColumnState: { [colId: string]: ColumnState }
     ): { [colId: string]: ColumnState } {
-        return this._orderColumns(
+        return this.orderColumnsCommon(
             columnStateAccumulator,
             incomingColumnState,
             this.columns,
@@ -53,7 +53,7 @@ export class PivotColsService extends BaseColsService implements NamedBean, ICol
     }
 
     public override extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {
-        this.columns = this._extractColsCommon(
+        this.columns = this.extractColumnsCommon(
             oldProvidedCols,
             this.columns,
             (col, flag) => col.setPivotActive(flag, source),
