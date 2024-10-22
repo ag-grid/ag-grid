@@ -368,7 +368,7 @@ export class ValueService extends BeanStub implements NamedBean {
     private callColumnCellValueChangedHandler(event: CellValueChangedEvent) {
         const onCellValueChanged = event.colDef.onCellValueChanged;
         if (typeof onCellValueChanged === 'function') {
-            this.getFrameworkOverrides().wrapOutgoing(() => {
+            this.beans.frameworkOverrides.wrapOutgoing(() => {
                 onCellValueChanged({
                     node: event.node,
                     data: event.data,

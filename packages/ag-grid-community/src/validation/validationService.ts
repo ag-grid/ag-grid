@@ -234,7 +234,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         });
 
         if (Object.keys(invalidProperties).length > 0 && docsUrl) {
-            const url = this.getFrameworkOverrides().getDocLink(docsUrl);
+            const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
             _warnOnce(`to see all the valid ${containerName} properties please check: ${url}`);
         }
     }

@@ -515,7 +515,7 @@ export class GridBodyScrollFeature extends BeanStub {
         const isPaging = this.gos.get('pagination');
         const paginationPanelEnabled = isPaging && !this.gos.get('suppressPaginationPanel');
 
-        this.getFrameworkOverrides().wrapIncoming(() => {
+        this.beans.frameworkOverrides.wrapIncoming(() => {
             if (!paginationPanelEnabled) {
                 this.paginationService?.goToPageWithIndex(index);
             }
@@ -606,7 +606,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
         const newHorizontalScroll: number | null = this.getPositionedHorizontalScroll(column, position);
 
-        this.getFrameworkOverrides().wrapIncoming(() => {
+        this.beans.frameworkOverrides.wrapIncoming(() => {
             if (newHorizontalScroll !== null) {
                 this.centerRowsCtrl.setCenterViewportScrollLeft(newHorizontalScroll);
             }
@@ -623,7 +623,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     public setScrollPosition(top: number, left: number): void {
-        this.getFrameworkOverrides().wrapIncoming(() => {
+        this.beans.frameworkOverrides.wrapIncoming(() => {
             this.centerRowsCtrl.setCenterViewportScrollLeft(left);
             this.setVerticalScrollPosition(top);
             this.rowRenderer.redraw({ afterScroll: true });

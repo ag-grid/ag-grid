@@ -10,7 +10,6 @@ import type {
     PropertyValueChangedListener,
 } from '../gridOptionsService';
 import type { IEventEmitter } from '../interfaces/iEventEmitter';
-import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
 import { LocalEventService } from '../localEventService';
 import type { LocaleTextFunc } from '../misc/locale/localeUtils';
 import { _getLocaleTextFunc } from '../misc/locale/localeUtils';
@@ -64,11 +63,6 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     //         }
     //     }, 5000);
     // }
-
-    // CellComp and GridComp and override this because they get the FrameworkOverrides from the Beans bean
-    protected getFrameworkOverrides(): IFrameworkOverrides {
-        return this.beans.frameworkOverrides;
-    }
 
     public destroy(): void {
         for (let i = 0; i < this.destroyFunctions.length; i++) {
@@ -150,7 +144,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
         }
 
         if (object instanceof HTMLElement) {
-            _addSafePassiveEventListener(this.getFrameworkOverrides(), object, event, listener);
+            _addSafePassiveEventListener(this.beans.frameworkOverrides, object, event, listener);
         } else {
             object.addEventListener(event, listener);
         }

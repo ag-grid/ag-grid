@@ -246,7 +246,7 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public setRestoreFocusedCell(cellPosition: CellPosition): void {
-        if (this.getFrameworkOverrides().renderingEngine === 'react') {
+        if (this.beans.frameworkOverrides.renderingEngine === 'react') {
             // The restoredFocusedCellPosition is used in the React Rendering engine as we have to be able
             // to support restoring focus after an async rendering.
             this.restoredFocusedCellPosition = cellPosition;
