@@ -7,7 +7,7 @@ import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
 import { RangeSelectionModule } from '../rangeSelection/rangeSelectionModule';
 import { VERSION as GRID_VERSION } from '../version';
-import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
+import { MenuItemModule } from '../widgets/menuItemModule';
 import { EnterpriseChartProxyFactory } from './chartComp/chartProxies/enterpriseChartProxyFactory';
 import { AdvancedSettingsMenuFactory } from './chartComp/menu/advancedSettings/advancedSettingsMenuFactory';
 import { ChartMenuListFactory } from './chartComp/menu/chartMenuList';
@@ -39,13 +39,7 @@ export const GridChartsCoreModule: _ModuleWithoutApi = {
         });
     },
     beans: [ChartService, ChartTranslationService, ChartCrossFilterService, ChartMenuListFactory, ChartMenuService],
-    userComponents: [
-        {
-            name: 'agMenuItem',
-            classImp: AgMenuItemRenderer,
-        },
-    ],
-    dependsOn: [RangeSelectionModule, EnterpriseCoreModule, DragAndDropModule, PopupModule],
+    dependsOn: [RangeSelectionModule, EnterpriseCoreModule, DragAndDropModule, PopupModule, MenuItemModule],
 };
 
 export const GridChartsApiModule: _ModuleWithApi<_GridChartsGridApi> = {

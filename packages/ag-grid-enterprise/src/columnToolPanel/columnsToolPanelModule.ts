@@ -6,7 +6,7 @@ import { baseEnterpriseModule } from '../moduleUtils';
 import { RowGroupingCoreModule } from '../rowGrouping/rowGroupingModule';
 import { ToolPanelColDefService } from '../sideBar/common/toolPanelColDefService';
 import { SideBarModule } from '../sideBar/sideBarModule';
-import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
+import { MenuItemModule } from '../widgets/menuItemModule';
 import { ColumnToolPanel } from './columnToolPanel';
 import { ColumnToolPanelFactory } from './columnToolPanelFactory';
 import { ModelItemUtils } from './modelItemUtils';
@@ -14,14 +14,8 @@ import { ModelItemUtils } from './modelItemUtils';
 export const ColumnsToolPanelCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('ColumnsToolPanelCoreModule'),
     beans: [ModelItemUtils, ToolPanelColDefService],
-    userComponents: [
-        { name: 'agColumnsToolPanel', classImp: ColumnToolPanel },
-        {
-            name: 'agMenuItem',
-            classImp: AgMenuItemRenderer,
-        },
-    ],
-    dependsOn: [EnterpriseCoreModule, SideBarModule, ColumnMoveModule, DragAndDropModule, PopupModule],
+    userComponents: [{ name: 'agColumnsToolPanel', classImp: ColumnToolPanel }],
+    dependsOn: [EnterpriseCoreModule, SideBarModule, ColumnMoveModule, DragAndDropModule, PopupModule, MenuItemModule],
 };
 
 export const ColumnsToolPanelRowGroupingModule: _ModuleWithoutApi = {

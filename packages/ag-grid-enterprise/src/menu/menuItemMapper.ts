@@ -133,7 +133,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                       }
                     : null;
             case 'valueAggSubMenu':
-                if (this.gos.assertModuleRegistered('PivotCoreModule', 'Aggregation from Menu')) {
+                if (this.gos.assertModuleRegistered('PivotCoreModule', 4)) {
                     if (!column?.isPrimary() && !column?.getColDef().pivotValueColumn) {
                         return null;
                     }
@@ -238,7 +238,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     action: () => this.expansionService?.expandAll(false),
                 };
             case 'copy':
-                if (this.gos.assertModuleRegistered('ClipboardCoreModule', 'Copy from Menu')) {
+                if (this.gos.assertModuleRegistered('ClipboardCoreModule', 5)) {
                     return {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
@@ -249,7 +249,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return null;
                 }
             case 'copyWithHeaders':
-                if (this.gos.assertModuleRegistered('ClipboardCoreModule', 'Copy with Headers from Menu')) {
+                if (this.gos.assertModuleRegistered('ClipboardCoreModule', 6)) {
                     return {
                         name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
@@ -260,7 +260,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return null;
                 }
             case 'copyWithGroupHeaders':
-                if (this.gos.assertModuleRegistered('ClipboardCoreModule', 'Copy with Group Headers from Menu')) {
+                if (this.gos.assertModuleRegistered('ClipboardCoreModule', 7)) {
                     return {
                         name: localeTextFunc('copyWithGroupHeaders', 'Copy with Group Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
@@ -272,7 +272,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return null;
                 }
             case 'cut':
-                if (this.gos.assertModuleRegistered('ClipboardCoreModule', 'Cut from Menu')) {
+                if (this.gos.assertModuleRegistered('ClipboardCoreModule', 8)) {
                     const focusedCell = this.beans.focusService.getFocusedCell();
                     const rowNode = focusedCell ? _getRowNode(this.beans, focusedCell) : null;
                     const isEditable = rowNode ? focusedCell?.column.isCellEditable(rowNode) : false;
@@ -287,7 +287,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return null;
                 }
             case 'paste':
-                if (this.gos.assertModuleRegistered('ClipboardCoreModule', 'Paste from Clipboard')) {
+                if (this.gos.assertModuleRegistered('ClipboardCoreModule', 9)) {
                     return {
                         name: localeTextFunc('paste', 'Paste'),
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
