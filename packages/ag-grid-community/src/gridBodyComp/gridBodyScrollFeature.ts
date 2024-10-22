@@ -84,7 +84,7 @@ export class GridBodyScrollFeature extends BeanStub {
     private lastOffsetHeight = -1;
     private lastScrollTop = -1;
 
-    private scrollTimer: number | undefined;
+    private scrollTimer: number = 0;
 
     private readonly resetLastHScrollDebounced: () => void;
     private readonly resetLastVScrollDebounced: () => void;
@@ -95,10 +95,21 @@ export class GridBodyScrollFeature extends BeanStub {
         super();
         this.eBodyViewport = eBodyViewport;
         this.resetLastHScrollDebounced = _debounce(
+            this,
             () => (this.lastScrollSource[ScrollDirection.Horizontal] = null),
             500
         );
-        this.resetLastVScrollDebounced = _debounce(() => (this.lastScrollSource[ScrollDirection.Vertical] = null), 500);
+        this.resetLastVScrollDebounced = _debounce(
+            this,
+            () => (this.lastScrollSource[ScrollDirection.Vertical] = null),
+            500
+        );
+    }
+
+    public override destroy(): void {
+        super.destroy();
+
+        window.clearTimeout(this.scrollTimer);
     }
 
     public postConstruct(): void {
@@ -135,10 +146,10 @@ export class GridBodyScrollFeature extends BeanStub {
         const isDebounce = this.gos.get('debounceVerticalScrollbar');
 
         const onVScroll = isDebounce
-            ? _debounce(this.onVScroll.bind(this, VIEWPORT), 100)
+            ? _debounce(this, this.onVScroll.bind(this, VIEWPORT), 100)
             : this.onVScroll.bind(this, VIEWPORT);
         const onFakeVScroll = isDebounce
-            ? _debounce(this.onVScroll.bind(this, FAKE_V_SCROLLBAR), 100)
+            ? _debounce(this, this.onVScroll.bind(this, FAKE_V_SCROLLBAR), 100)
             : this.onVScroll.bind(this, FAKE_V_SCROLLBAR);
 
         this.addManagedElementListeners(this.eBodyViewport, { scroll: onVScroll });
@@ -288,9 +299,9 @@ export class GridBodyScrollFeature extends BeanStub {
         this.eventService.dispatchEvent(bodyScrollEvent);
 
         window.clearTimeout(this.scrollTimer);
-        this.scrollTimer = undefined;
 
         this.scrollTimer = window.setTimeout(() => {
+            this.scrollTimer = 0;
             this.eventService.dispatchEvent({
                 ...bodyScrollEvent,
                 type: 'bodyScrollEnd',

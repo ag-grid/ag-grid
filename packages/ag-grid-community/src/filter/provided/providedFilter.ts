@@ -249,7 +249,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     private setupOnBtApplyDebounce(): void {
         const debounceMs = getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
-        const debounceFunc = _debounce(this.checkApplyDebounce.bind(this), debounceMs);
+        const debounceFunc = _debounce(this, this.checkApplyDebounce.bind(this), debounceMs);
         this.onBtApplyDebounce = () => {
             this.debouncePending = true;
             debounceFunc();

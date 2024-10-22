@@ -74,6 +74,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         if (!this.isReadOnly()) {
             const debounceMs = getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
             const toDebounce: (e: KeyboardEvent) => void = _debounce(
+                this,
                 this.syncUpWithParentFilter.bind(this),
                 debounceMs
             );

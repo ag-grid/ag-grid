@@ -257,7 +257,7 @@ export class PaginationService extends BeanStub implements NamedBean {
 
     private calculatePagesMasterRowsOnly(): void {
         // const csrm = <ClientSideRowModel> this.rowModel;
-        // const rootNode = csrm.getRootNode();
+        // const rootNode = csrm.rootNode;
         // const masterRows = rootNode.childrenAfterSort;
 
         this.masterRowCount = this.rowModel.getTopLevelRowCount();
