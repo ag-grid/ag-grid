@@ -17,6 +17,7 @@ import { _isModuleRegistered } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
 import { _logIfDebug } from './utils/function';
 import { _exists } from './utils/generic';
+import type { MissingModuleErrors } from './validation/errorMessages/errorText';
 import type { ValidationService } from './validation/validationService';
 
 type GetKeys<T, U> = {
@@ -260,10 +261,14 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return updatedParams;
     }
 
-    public assertModuleRegistered(moduleName: ModuleName, reason: string): boolean {
+    public assertModuleRegistered<
+        TId extends keyof MissingModuleErrors,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        TShowMessageAtCallLocation = MissingModuleErrors[TId],
+    >(moduleName: ModuleName, reasonOrId: string | TId): boolean {
         const registered = this.isModuleRegistered(moduleName);
         if (!registered) {
-            this.validationService?.missingModule(moduleName, reason, this.gridId);
+            this.validationService?.missingModule(moduleName, reasonOrId, this.gridId);
         }
         return registered;
     }

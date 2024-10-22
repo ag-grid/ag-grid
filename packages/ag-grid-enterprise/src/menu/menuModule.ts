@@ -4,7 +4,7 @@ import { CommunityMenuApiModule, PopupModule, SharedMenuModule } from 'ag-grid-c
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
 import { ToolPanelColDefService } from '../sideBar/common/toolPanelColDefService';
-import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
+import { MenuItemModule } from '../widgets/menuItemModule';
 import { ChartMenuItemMapper } from './chartMenuItemMapper';
 import { ColumnChooserFactory } from './columnChooserFactory';
 import { ColumnMenuFactory } from './columnMenuFactory';
@@ -17,13 +17,7 @@ import { MenuUtils } from './menuUtils';
 export const MenuCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('MenuCoreModule'),
     beans: [MenuItemMapper, ChartMenuItemMapper, MenuUtils],
-    dependsOn: [EnterpriseCoreModule, PopupModule, SharedMenuModule],
-    userComponents: [
-        {
-            name: 'agMenuItem',
-            classImp: AgMenuItemRenderer,
-        },
-    ],
+    dependsOn: [EnterpriseCoreModule, PopupModule, SharedMenuModule, MenuItemModule],
 };
 
 export const ColumnMenuModule: _ModuleWithoutApi = {

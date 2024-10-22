@@ -2,8 +2,7 @@ import type { _MasterDetailGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { ClientSideRowModelExpansionModule } from '../expansion/expansionModule';
-import { GroupCellRenderer } from '../groupColumn/rendering/groupCellRenderer';
-import { GroupCellRendererCtrl } from '../groupColumn/rendering/groupCellRendererCtrl';
+import { GroupCellRendererModule } from '../groupColumn/groupColumnModule';
 import { baseEnterpriseModule } from '../moduleUtils';
 import { DetailCellRenderer } from './detailCellRenderer';
 import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
@@ -14,22 +13,9 @@ import { MasterDetailService } from './masterDetailService';
 export const MasterDetailCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('MasterDetailCoreModule'),
     beans: [MasterDetailService],
-    userComponents: [
-        {
-            name: 'agGroupRowRenderer',
-            classImp: GroupCellRenderer,
-        },
-        {
-            name: 'agGroupCellRenderer',
-            classImp: GroupCellRenderer,
-        },
-        { name: 'agDetailCellRenderer', classImp: DetailCellRenderer },
-    ],
-    dynamicBeans: [
-        { name: 'detailCellRendererCtrl', classImp: DetailCellRendererCtrl },
-        { name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl },
-    ],
-    dependsOn: [EnterpriseCoreModule],
+    userComponents: [{ name: 'agDetailCellRenderer', classImp: DetailCellRenderer }],
+    dynamicBeans: [{ name: 'detailCellRendererCtrl', classImp: DetailCellRendererCtrl }],
+    dependsOn: [EnterpriseCoreModule, GroupCellRendererModule],
 };
 
 export const MasterDetailApiModule: _ModuleWithApi<_MasterDetailGridApi> = {

@@ -3,20 +3,14 @@ import { ColumnFilterModule, ReadOnlyFloatingFilterModule } from 'ag-grid-commun
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
-import { AgMenuItemRenderer } from '../widgets/agMenuItemRenderer';
+import { MenuItemModule } from '../widgets/menuItemModule';
 import { MultiFilter } from './multiFilter';
 import { MultiFloatingFilterComp } from './multiFloatingFilter';
 
 export const MultiFilterCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('MultiFilterCoreModule'),
-    userComponents: [
-        { name: 'agMultiColumnFilter', classImp: MultiFilter },
-        {
-            name: 'agMenuItem',
-            classImp: AgMenuItemRenderer,
-        },
-    ],
-    dependsOn: [EnterpriseCoreModule, ColumnFilterModule],
+    userComponents: [{ name: 'agMultiColumnFilter', classImp: MultiFilter }],
+    dependsOn: [EnterpriseCoreModule, ColumnFilterModule, MenuItemModule],
 };
 
 const MultiFloatingFilterModule: _ModuleWithoutApi = {

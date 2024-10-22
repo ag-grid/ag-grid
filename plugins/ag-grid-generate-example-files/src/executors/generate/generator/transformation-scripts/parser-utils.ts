@@ -506,7 +506,7 @@ export function addBindingImports(
 
     let hasEnterpriseModules = false;
     Object.entries(workingImports).forEach(([k, v]: [string, { namedImport: string; imports: string[] }]) => {
-        let unique = [...new Set([...v.imports])].sort();
+        const unique = [...new Set([...v.imports])].sort();
 
         if (convertToPackage && k.includes('ag-grid')) {
             // Remove module related imports
@@ -579,7 +579,7 @@ export function replaceGridReadyRowData(callback: string, rowDataSetter: string)
 
 export function preferParamsApi(code: string): string {
     // use params.api instead of gridApi.api when we have access to the params object
-    return code.replace(/([\s\(!])gridApi(\W)/g, '$1params.api$2');
+    return code.replace(/([\s(!])gridApi(\W)/g, '$1params.api$2');
 }
 
 export function getInterfaceFileContents(tsBindings: ParsedBindings, currentFile) {

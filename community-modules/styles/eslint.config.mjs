@@ -4,8 +4,8 @@ export default [
     ...rootESLint,
     {
         rules: {
-            '@typescript-eslint/no-var-requires': 'warn',
-            '@typescript-eslint/no-unused-vars': 'warn',
+            '@typescript-eslint/no-var-requires': 'error',
+            '@typescript-eslint/no-unused-vars': 'error',
         },
     },
 ];

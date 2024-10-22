@@ -1,4 +1,3 @@
-// @ts-nocheck
 // events that are available for use by users of AG Grid and so should be documented
 /** EVENTS that should be exposed via code generation for the framework components.  */
 export const PUBLIC_EVENTS = [

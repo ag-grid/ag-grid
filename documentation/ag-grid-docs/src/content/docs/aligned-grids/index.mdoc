@@ -31,13 +31,13 @@ To link two grids provide `alignedGrids` with callbacks that return the correspo
 
 ```js
 gridOptionsFirst = {
-   alignedGrids: () => [secondApi]
-   ...
+    alignedGrids: () => [secondApi]
+    ...
 };
 
 gridOptionsSecond = {
-   alignedGrids: () => [firstApi]
-   ...
+    alignedGrids: () => [firstApi]
+    ...
 }
 firstApi = createGrid(gridDiv1, gridOptionsFirst);
 secondApi = createGrid(gridDiv2, gridOptionsSecond);
@@ -51,7 +51,7 @@ Align grids in your component by providing the `alignedGrids` property with the 
 const firstApi: GridApi;
 
 gridOptionsSecond = {
-   alignedGrids: () => [this.firstApi],
+    alignedGrids: () => [this.firstApi],
 }
 ```
 
@@ -61,8 +61,8 @@ Align grids in your component by providing `alignedGrids` with a template refere
 @ViewChild('firstGrid') firstGrid!: AgGridAngular;
 
 gridOptionsSecond = {
-   // Configure via callback as ViewChild only set after ngAfterViewInit
-   alignedGrids: () => [this.firstGrid],
+    // Configure via callback as ViewChild only set after ngAfterViewInit
+    alignedGrids: () => [this.firstGrid],
 }
 ```
 
@@ -81,7 +81,7 @@ Align grids in your component by providing the `alignedGrids` property with the 
 
 ```js
 gridOptionsSecond = {
-   alignedGrids: () => [this.firstApi],
+    alignedGrids: () => [this.firstApi],
 }
 ```
 
@@ -92,8 +92,8 @@ Align grids in your component by providing `alignedGrids` with a reference to th
 <ag-grid-vue ref="firstGrid"
 
 gridOptionsSecond = {
-   // register first grid to receive events from the second
-   alignedGrids: () => [this.$refs.firstGrid],
+    // register first grid to receive events from the second
+    alignedGrids: () => [this.$refs.firstGrid],
 }
 ```
 

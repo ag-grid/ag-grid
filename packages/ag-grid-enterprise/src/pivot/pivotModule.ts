@@ -6,9 +6,7 @@ import { baseEnterpriseModule } from '../moduleUtils';
 import {
     GroupFilterModule,
     GroupFloatingFilterModule,
-    RowGroupingApiModule,
     RowGroupingCoreModule,
-    RowGroupingNoPivotModule,
     RowGroupingPanelModule,
 } from '../rowGrouping/rowGroupingModule';
 import {

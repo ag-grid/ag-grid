@@ -283,14 +283,14 @@ export class AgSideBar extends Component implements ISideBar {
 
         // helpers, in case user doesn't have the right module loaded
         if (def.toolPanel === 'agColumnsToolPanel') {
-            const moduleMissing = !this.gos.assertModuleRegistered('ColumnsToolPanelCoreModule', 'Column Tool Panel');
+            const moduleMissing = !this.gos.assertModuleRegistered('ColumnsToolPanelCoreModule', 11);
             if (moduleMissing) {
                 return false;
             }
         }
 
         if (def.toolPanel === 'agFiltersToolPanel') {
-            const moduleMissing = !this.gos.assertModuleRegistered('FiltersToolPanelModule', 'Filters Tool Panel');
+            const moduleMissing = !this.gos.assertModuleRegistered('FiltersToolPanelModule', 12);
             if (moduleMissing) {
                 return false;
             }

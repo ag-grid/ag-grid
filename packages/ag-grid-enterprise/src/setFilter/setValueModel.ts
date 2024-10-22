@@ -158,16 +158,12 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
             this.entryComparator = this.createTreeDataOrGroupingComparator() as any;
         } else if (treeList && !treeListPathGetter && !keyComparator) {
             this.entryComparator = (
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 [_aKey, aValue]: [string | null, V | null],
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 [_bKey, bValue]: [string | null, V | null]
             ) => _defaultComparator(aValue, bValue);
         } else {
             this.entryComparator = (
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 [_aKey, aValue]: [string | null, V | null],
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 [_bKey, bValue]: [string | null, V | null]
             ) => keyComparator(aValue, bValue);
         }
@@ -732,9 +728,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
         b: [string | null, string[] | null]
     ) => number {
         return (
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             [_aKey, aValue]: [string | null, string[] | null],
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             [_bKey, bValue]: [string | null, string[] | null]
         ) => {
             if (aValue == null) {

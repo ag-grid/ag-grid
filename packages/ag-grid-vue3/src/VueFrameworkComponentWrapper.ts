@@ -25,9 +25,10 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
     }
 
     protected createWrapper(component: any): WrappableInterface {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const that = this;
 
-        class DynamicComponent extends VueComponent<any, any> implements WrappableInterface {
+        class DynamicComponent extends VueComponent<any> implements WrappableInterface {
             public override init(params: any): void {
                 super.init(params);
             }
@@ -76,7 +77,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
         return wrapper;
     }
 
-    public createComponent<T>(component: any, params: any): any {
+    public createComponent(component: any, params: any): any {
         return VueComponentFactory.createAndMountComponent(
             component,
             params,
@@ -92,6 +93,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
     ): () => any {
         return function () {
             if (wrapper.hasMethod(methodName)) {
+                // eslint-disable-next-line prefer-rest-params
                 return wrapper.callMethod(methodName, arguments);
             }
 
@@ -107,7 +109,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
     }
 }
 
-abstract class VueComponent<P, T> {
+abstract class VueComponent<P> {
     private componentInstance: any;
     private element!: HTMLElement;
     private unmount: any;

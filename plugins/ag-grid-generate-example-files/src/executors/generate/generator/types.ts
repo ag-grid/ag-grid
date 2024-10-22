@@ -64,7 +64,7 @@ export interface ParsedBindings {
     eventHandlers: EventHandler[];
     properties: Property[];
     components: Component[];
-    vuePropertyBindings: {};
+    vuePropertyBindings: Record<string, any>;
     defaultColDef: string;
     autoGroupColumnDef: string;
     onGridReady: string;
@@ -74,7 +74,7 @@ export interface ParsedBindings {
     externalEventHandlers: ExternalEventHandlers[];
     utils: string[];
     declarations: string[];
-    callbackDependencies: {};
+    callbackDependencies: Record<string, any>;
     template: string;
     imports: BindingImport[];
     typeDeclares: string[];

@@ -1,7 +1,6 @@
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
-import type { RowNodeEventThrottle } from '../clientSideRowModel/rowNodeEventThrottle';
 import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
 import type { ColumnMoveService } from '../columnMove/columnMoveService';
 import type { ColumnResizeService } from '../columnResize/columnResizeService';
@@ -220,7 +219,6 @@ export interface CoreBeanCollection {
     rowModel: IRowModel;
     ctrlsService: CtrlsService;
     valueCache?: ValueCache;
-    rowNodeEventThrottle?: RowNodeEventThrottle;
     localeService?: LocaleService;
     syncService: SyncService;
     ariaAnnouncementService: AriaAnnouncementService;
@@ -462,7 +460,6 @@ export type BeanName =
     | 'rowEditService'
     | 'rowModel'
     | 'rowNodeBlockLoader'
-    | 'rowNodeEventThrottle'
     | 'rowNodeSorter'
     | 'rowRenderer'
     | 'rowStyleService'

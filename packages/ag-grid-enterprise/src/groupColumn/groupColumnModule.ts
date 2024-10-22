@@ -6,10 +6,8 @@ import { GroupCellRenderer } from './rendering/groupCellRenderer';
 import { GroupCellRendererCtrl } from './rendering/groupCellRendererCtrl';
 import { ShowRowGroupColsService } from './showRowGroupColsService';
 
-/** Shared between row grouping and tree data */
-export const GroupColumnModule: _ModuleWithoutApi = {
-    ...baseEnterpriseModule('GroupColumnModule'),
-    beans: [AutoColService, ShowRowGroupColsService],
+export const GroupCellRendererModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('GroupCellRendererModule'),
     userComponents: [
         {
             name: 'agGroupRowRenderer',
@@ -21,4 +19,11 @@ export const GroupColumnModule: _ModuleWithoutApi = {
         },
     ],
     dynamicBeans: [{ name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl }],
+};
+
+/** Shared between row grouping and tree data */
+export const GroupColumnModule: _ModuleWithoutApi = {
+    ...baseEnterpriseModule('GroupColumnModule'),
+    beans: [AutoColService, ShowRowGroupColsService],
+    dependsOn: [GroupCellRendererModule],
 };

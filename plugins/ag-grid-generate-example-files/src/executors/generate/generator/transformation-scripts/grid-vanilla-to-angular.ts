@@ -16,6 +16,7 @@ import {
 } from './parser-utils';
 import { toTitleCase } from './string-utils';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 
 function getOnGridReadyCode(

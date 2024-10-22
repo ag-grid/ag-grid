@@ -22,13 +22,12 @@ import {
 } from './clientSideRowModelApi';
 import { FilterStage } from './filterStage';
 import { FlattenStage } from './flattenStage';
-import { RowNodeEventThrottle } from './rowNodeEventThrottle';
 import { SortStage } from './sortStage';
 
 export const ClientSideRowModelCoreModule: _ModuleWithoutApi = {
     ...baseCommunityModule('ClientSideRowModelCoreModule'),
     rowModels: ['clientSide'],
-    beans: [ClientSideNodeManager, ClientSideRowModel, FlattenStage, RowNodeEventThrottle],
+    beans: [ClientSideNodeManager, ClientSideRowModel, FlattenStage],
 };
 
 export const ClientSideRowModelSortModule: _ModuleWithoutApi = {

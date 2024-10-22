@@ -2,20 +2,20 @@ import type {
     BeanCollection,
     ColumnModel,
     RowCtrl,
+    RowGroupOpenedEvent,
     RowNode,
-    RowNodeEventThrottle,
     RowRenderer,
 } from 'ag-grid-community';
 import { BeanStub, _createGlobalRowEvent, _setAriaExpanded } from 'ag-grid-community';
 
 export abstract class BaseExpansionService extends BeanStub {
     private rowRenderer: RowRenderer;
-    private rowNodeEventThrottle?: RowNodeEventThrottle;
     protected columnModel: ColumnModel;
+
+    protected abstract dispatchExpandedEvent(event: RowGroupOpenedEvent, forceSync?: boolean): void;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowRenderer = beans.rowRenderer;
-        this.rowNodeEventThrottle = beans.rowNodeEventThrottle;
         this.columnModel = beans.columnModel;
     }
 
@@ -49,12 +49,7 @@ export abstract class BaseExpansionService extends BeanStub {
 
         const event = { ..._createGlobalRowEvent(rowNode, this.gos, 'rowGroupOpened'), expanded, event: e || null };
 
-        // throttle used for CSRM only
-        if (this.rowNodeEventThrottle) {
-            this.rowNodeEventThrottle.dispatchExpanded(event, forceSync);
-        } else {
-            this.eventService.dispatchEvent(event);
-        }
+        this.dispatchExpandedEvent(event, forceSync);
 
         // when using footers we need to refresh the group row, as the aggregation
         // values jump between group and footer, because the footer can be callback

@@ -5,21 +5,21 @@ Implement this interface to create a status bar component.
 {% if isFramework("angular") %}
 ```ts
 interface IStatusPanelAngularComp {
-   // mandatory methods
+    // mandatory methods
 
-   // The agInit(params) method is called on the status bar component once.
-   // See below for details on the parameters.
-   agInit(params: IStatusPanelParams): void;
+    // The agInit(params) method is called on the status bar component once.
+    // See below for details on the parameters.
+    agInit(params: IStatusPanelParams): void;
 
-   // optional methods
+    // optional methods
 
-   // Called when the `statusBar` grid option is updated.
-   // If this method returns `true`, the grid assumes that
-   // the status panel has updated with the latest params,
-   // and takes no further action. If this method returns `false`,
-   // or is not implemented, the grid will destroy and
-   // recreate the status panel.
-   refresh(params: IStatusPanelParams): boolean;
+    // Called when the `statusBar` grid option is updated.
+    // If this method returns `true`, the grid assumes that
+    // the status panel has updated with the latest params,
+    // and takes no further action. If this method returns `false`,
+    // or is not implemented, the grid will destroy and
+    // recreate the status panel.
+    refresh(params: IStatusPanelParams): boolean;
 }
 ```
 {% /if %}

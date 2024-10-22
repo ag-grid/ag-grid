@@ -27,11 +27,11 @@ Simply update the bound property and the grid will respond to the new value. In 
 {% if isFramework("angular") %}
 ```js
 <ag-grid-angular
-   [rowHeight]="rowHeight"    
-   />
+    [rowHeight]="rowHeight"    
+    />
 
 updateHeight() {
-  this.rowHeight = 50;
+    this.rowHeight = 50;
 }
 ```
 {% /if %}
@@ -39,11 +39,11 @@ updateHeight() {
 {% if isFramework("vue") %}
 ```jsx
 <ag-grid-vue
-   :row-height="rowHeight"
+    :row-height="rowHeight"
 </ag-grid-vue>
 
 updateHeight() {
-  this.rowHeight = 50;
+    this.rowHeight = 50;
 }
 ```
 {% /if %}
@@ -62,7 +62,7 @@ const [rowHeight, setRowHeight] = useState(25);
 const updateHeight = () => setRowHeight(50);
 
 <AgGridReact
-   rowHeight={rowHeight}
+    rowHeight={rowHeight}
 />
 ```
 
@@ -95,7 +95,7 @@ import { provideGlobalGridOptions } from 'ag-grid-community';
 
 // provide localeText to all grids via global options
 provideGlobalGridOptions({
-   localeText: userLocaleText,
+    localeText: userLocaleText,
 });
 ```
 
