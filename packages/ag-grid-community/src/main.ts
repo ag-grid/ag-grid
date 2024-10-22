@@ -437,7 +437,6 @@ export {
 export { IClientSideNodeManager, ClientSideNodeManagerUpdateRowDataResult } from './interfaces/iClientSideNodeManager';
 export { AbstractClientSideNodeManager } from './clientSideRowModel/abstractClientSideNodeManager';
 export { IGroupHideOpenParentsService } from './interfaces/iGroupHideOpenParentsService';
-export type { RowNodeEventThrottle } from './clientSideRowModel/rowNodeEventThrottle';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
 
 export { ColumnVO } from './interfaces/iColumnVO';

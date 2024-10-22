@@ -1,38 +1,28 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { DynamicBeanMeta, DynamicBeanName, UserComponentName } from '../../context/context';
-import type { Module, ModuleName } from '../../interfaces/iModule';
-import { _warn } from '../../validation/logging';
+import type { BeanCollection, DynamicBeanMeta, DynamicBeanName, UserComponentName } from '../../context/context';
+import type { Module } from '../../interfaces/iModule';
+import type { ValidationService } from '../../validation/validationService';
 import type { AgComponentSelector, ComponentSelector } from '../../widgets/component';
 
 export class Registry extends BeanStub implements NamedBean {
     beanName = 'registry' as const;
 
+    private validationService?: ValidationService;
+
     private agGridDefaults: { [key in UserComponentName]?: any } = {};
 
     private agGridDefaultParams: { [key in UserComponentName]?: any } = {};
-
-    /** Used to provide useful error messages if a user is trying to use an enterprise component without loading the module. */
-    private enterpriseAgDefaultCompsModule: Record<string, ModuleName> = {
-        agSetColumnFilter: 'SetFilterModule',
-        agSetColumnFloatingFilter: 'SetFilterModule',
-        agMultiColumnFilter: 'MultiFilterModule',
-        agMultiColumnFloatingFilter: 'MultiFilterModule',
-        agGroupColumnFilter: 'RowGroupingModule',
-        agGroupColumnFloatingFilter: 'RowGroupingModule',
-        agGroupCellRenderer: 'RowGroupingModule', // Actually in enterprise core as used by MasterDetail too but best guess is they are grouping
-        agGroupRowRenderer: 'RowGroupingModule', // Actually in enterprise core as used by MasterDetail but best guess is they are grouping
-        agRichSelect: 'RichSelectModule',
-        agRichSelectCellEditor: 'RichSelectModule',
-        agDetailCellRenderer: 'MasterDetailModule',
-        agSparklineCellRenderer: 'SparklinesModule',
-    };
 
     private jsComps: { [key: string]: any } = {};
 
     private dynamicBeans: { [K in DynamicBeanName]?: new (args?: any[]) => object } = {};
 
     private selectors: { [name in AgComponentSelector]?: ComponentSelector } = {};
+
+    public wireBeans(beans: BeanCollection): void {
+        this.validationService = beans.validationService;
+    }
 
     public postConstruct(): void {
         const comps = this.gos.get('components');
@@ -94,17 +84,7 @@ export class Registry extends BeanStub implements NamedBean {
             return createResult(defaultComponent, false, this.agGridDefaultParams[name as UserComponentName]);
         }
 
-        const moduleForComponent = this.enterpriseAgDefaultCompsModule[name];
-        if (moduleForComponent) {
-            this.gos.assertModuleRegistered(moduleForComponent, `AG Grid '${propertyName}' component: ${name}`);
-        } else {
-            _warn(101, {
-                propertyName,
-                componentName: name,
-                agGridDefaults: this.agGridDefaults,
-                jsComps: this.jsComps,
-            });
-        }
+        this.validationService?.missingUserComponent(propertyName, name, this.agGridDefaults, this.jsComps);
 
         return null;
     }
