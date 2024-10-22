@@ -18,11 +18,11 @@ colDef.cellRenderer = params => `<span title="the tooltip">${params.value}</span
 
 // create a DOM object
 colDef.cellRenderer = params => {
-   const eDiv = document.createElement('div');
-   eDiv.innerHTML = '<span class="my-css-class"><button class="btn-simple">Push Me</button></span>';
-   const eButton = eDiv.querySelectorAll('.btn-simple')[0];
+    const eDiv = document.createElement('div');
+    eDiv.innerHTML = '<span class="my-css-class"><button class="btn-simple">Push Me</button></span>';
+    const eButton = eDiv.querySelectorAll('.btn-simple')[0];
 
-   return eDiv;
+    return eDiv;
 }
 ```
 {% /if %}

@@ -37,12 +37,12 @@ In order to upgrade, you need to:
 @import "~ag-grid-community/src/styles/ag-grid.scss";
 @import "~ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
 .ag-theme-alpine {
-  @include ag-theme-alpine((
-    alpine-active-color: red
-  ));
-  .ag-header-cell {
-    font-style: italic;
-  }
+    @include ag-theme-alpine((
+        alpine-active-color: red
+    ));
+    .ag-header-cell {
+        font-style: italic;
+    }
 }
 
 // NOTE: Depending on how you have configured your Sass build the import paths may be
@@ -53,17 +53,17 @@ In order to upgrade, you need to:
 @use "~ag-grid-community/styles" as ag;
 // ^^^ Update the import path. Note that `@import` has changed to `@use {path} as {name}`
 @include ag.grid-styles((
-  // ^^^ Include ag.grid-styles which it is no longer nested  in .ag-theme-{name} {}
-  theme: alpine,
-  // ^^^ Add the theme name to the mixin
-  alpine-active-color: red,
-  // ^^^ Pass the same parameters. The new API validates parameters so you will be
-  //     notified if any of the names or values you pass are not valid for the new API
+    // ^^^ Include ag.grid-styles which it is no longer nested  in .ag-theme-{name} {}
+    theme: alpine,
+    // ^^^ Add the theme name to the mixin
+    alpine-active-color: red,
+    // ^^^ Pass the same parameters. The new API validates parameters so you will be
+    //     notified if any of the names or values you pass are not valid for the new API
 ));
 .ag-theme-alpine {
-  .ag-header-cell {
-    font-style: italic;
-  }
+    .ag-header-cell {
+        font-style: italic;
+    }
 }
 // ^^^ put any custom CSS rules below the grid-styles mixin, wrapped in the theme class
 ```
@@ -73,24 +73,24 @@ In the above example the Alpine theme is modified but not renamed. If you have r
 ```scss
 // Renaming Alpine ag-theme-custom-name in the Legacy API
 .ag-theme-custom-name {
-  @include ag-theme-alpine((
-    alpine-active-color: red
-  ));
-  .ag-header-cell {
-    font-style: italic;
-  }
+    @include ag-theme-alpine((
+        alpine-active-color: red
+    ));
+    .ag-header-cell {
+        font-style: italic;
+    }
 }
 
 // Renaming Alpine to ag-theme-custom-name in the new API
 @include ag.grid-styles((
-  theme: custom-name,
-  extend-theme: alpine,
-  alpine-active-color: red,
+    theme: custom-name,
+    extend-theme: alpine,
+    alpine-active-color: red,
 ));
 .ag-theme-custom-name {
-  .ag-header-cell {
-    font-style: italic;
-  }
+    .ag-header-cell {
+            font-style: italic;
+    }
 }
 // ^^^ put any custom CSS rules below the grid-styles mixin, wrapped in the theme class
 ```
@@ -117,48 +117,48 @@ We have tried to make the new Sass Styling API as backwards-compatible as possib
 
 1. Removed `full-width-tabs`. This caused the tabs to expand to fill the space available and was used by the Material theme. If you need the same effect, use CSS:
 
-   ```css
-   .your-theme .ag-tab {
-     flex: 1 1 auto;
-   }
-   ```
+    ```css
+    .your-theme .ag-tab {
+        flex: 1 1 auto;
+    }
+    ```
 
 1. Removed `ag-param($param)`, a Sass function that was replaced at compile time with the value of `$param`. All theme variables are now dynamic. Use `var` instead:
 
-   ```scss
-   // old way:
-   .my-element {
-     color: ag-param(foreground-color);
-   }
-   // new way:
-   .my-element {
-     color: var(--ag-foreground-color);
-     // ^^^ note the --ag- prefix
-   }
-   ```
+    ```scss
+    // old way:
+    .my-element {
+        color: ag-param(foreground-color);
+    }
+    // new way:
+    .my-element {
+        color: var(--ag-foreground-color);
+        // ^^^ note the --ag- prefix
+    }
+    ```
 
 1. Removed `ag-color-property()`, a Sass mixin that outputted a CSS variables with a fallback for IE11. It is no longer required now that IE11 is not a supported browser. Use `var` instead:
 
-   ```scss
-   // old way
-   .my-element {
-     @include ag-color-property(color, header-foreground-color);
-   }
-   // new way
-   .my-element {
-     color: var(--ag-header-foreground-color);
-   }
-   ```
+    ```scss
+    // old way
+    .my-element {
+        @include ag-color-property(color, header-foreground-color);
+    }
+    // new way
+    .my-element {
+        color: var(--ag-header-foreground-color);
+    }
+    ```
 
 1. Removed `%ag-text-input`, a Sass placeholder selector for styling text inputs, is now a mixin:
 
-   ```scss
-   // old way
-   %ag-text-input {
-     color: #999;
-   }
-   // new way
-   @include ag.text-input {
-     color: #999;
-   }
-   ```
+    ```scss
+    // old way
+    %ag-text-input {
+        color: #999;
+    }
+    // new way
+    @include ag.text-input {
+        color: #999;
+    }
+    ```

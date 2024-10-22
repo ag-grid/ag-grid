@@ -5,15 +5,15 @@ Custom floating filter components are controlled components, which receive a fil
 {% if isFramework("react") %}
 ```jsx
 export default ({ model, onModelChange }) => {
-   return (
-       <div>
-           <input
-               type="text"
-               value={model || ''}
-               onChange={({ target: { value }}) => onModelChange(value === '' ? null : value)}
-           />
-       </div>
-   );
+    return (
+        <div>
+            <input
+                type="text"
+                value={model || ''}
+                onChange={({ target: { value }}) => onModelChange(value === '' ? null : value)}
+            />
+        </div>
+    );
 }
 ```
 {% /if %}

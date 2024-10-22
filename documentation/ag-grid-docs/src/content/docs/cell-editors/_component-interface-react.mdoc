@@ -5,13 +5,13 @@ Custom Cell Editor Components are Controlled Components, which receive a value a
 {% if isFramework("react") %}
 ```jsx
 export default ({ value, onValueChange }) => {
-   return (
-       <input
-           type="text"
-           value={value || ''}
-           onChange={({ target: { value }}) => onValueChange(value === '' ? null : value)}
-       />
-   );
+    return (
+        <input
+            type="text"
+            value={value || ''}
+            onChange={({ target: { value }}) => onValueChange(value === '' ? null : value)}
+        />
+    );
 }
 ```
 {% /if %}
