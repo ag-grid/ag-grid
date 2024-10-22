@@ -9,10 +9,6 @@ a#{$selector-exclude-grid} {
 
     &[href]:hover {
         color: var(--color-link-hover);
-
-        > :where(.icon) {
-            --color-icon: var(--color-link-hover);
-        }
     }
 
     > :where(.icon) {
