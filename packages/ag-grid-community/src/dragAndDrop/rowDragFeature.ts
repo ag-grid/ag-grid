@@ -3,7 +3,7 @@ import type { FuncColsService } from '../columns/funcColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
-import type { PositionUtils } from '../entities/positionUtils';
+import { _getCellByPosition } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type {
     RowDragCancelEvent,
@@ -86,10 +86,10 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private mouseEventService: MouseEventService;
     private ctrlsService: CtrlsService;
     private funcColsService: FuncColsService;
-    private positionUtils: PositionUtils;
+    private beans: BeanCollection;
 
     public wireBeans(beans: BeanCollection): void {
-        this.positionUtils = beans.positionUtils;
+        this.beans = beans;
         this.dragAndDropService = beans.dragAndDropService!;
         this.rowModel = beans.rowModel;
         this.pageBoundsService = beans.pageBoundsService;
@@ -300,7 +300,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private moveRows(rowNodes: RowNode[], pixel: number, increment: number = 0): void {
         // Get the focussed cell so we can ensure it remains focussed after the move
         const cellPosition = this.focusService.getFocusedCell();
-        const cellCtrl = cellPosition && this.positionUtils.getCellByPosition(cellPosition);
+        const cellCtrl = cellPosition && _getCellByPosition(this.beans, cellPosition);
 
         const rowWasMoved = this.clientSideRowModel.ensureRowsAtPixel(rowNodes, pixel, increment);
         if (rowWasMoved) {
