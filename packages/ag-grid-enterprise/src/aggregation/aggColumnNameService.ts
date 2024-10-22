@@ -2,9 +2,9 @@ import type {
     AgColumn,
     BeanCollection,
     ColumnModel,
-    FuncColsService,
     IAggColumnNameService,
     IAggFunc,
+    IColsService,
     NamedBean,
 } from 'ag-grid-community';
 import { BeanStub, _exists } from 'ag-grid-community';
@@ -12,11 +12,13 @@ import { BeanStub, _exists } from 'ag-grid-community';
 export class AggColumnNameService extends BeanStub implements NamedBean, IAggColumnNameService {
     beanName = 'aggColumnNameService' as const;
 
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
+    private valueColsService?: IColsService;
     private columnModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
+        this.valueColsService = beans.valueColsService;
         this.columnModel = beans.columnModel;
     }
 
@@ -33,7 +35,7 @@ export class AggColumnNameService extends BeanStub implements NamedBean, IAggCol
 
         // otherwise we have a measure that is active, and we are doing aggregation on it
         if (pivotActiveOnThisColumn) {
-            const valueColumns = this.funcColsService.valueCols;
+            const valueColumns = this.valueColsService?.columns ?? [];
             const isCollapsedHeaderEnabled =
                 this.gos.get('removePivotHeaderRowWhenSingleValueColumn') && valueColumns.length === 1;
             const isTotalColumn = column.getColDef().pivotTotalColumnIds !== undefined;
@@ -44,7 +46,7 @@ export class AggColumnNameService extends BeanStub implements NamedBean, IAggCol
             aggFuncFound = true;
         } else {
             const measureActive = column.isValueActive();
-            const aggregationPresent = this.columnModel.isPivotMode() || !this.funcColsService.isRowGroupEmpty();
+            const aggregationPresent = this.columnModel.isPivotMode() || !this.rowGroupColsService?.isRowGroupEmpty?.();
 
             if (measureActive && aggregationPresent) {
                 aggFunc = column.getAggFunc();

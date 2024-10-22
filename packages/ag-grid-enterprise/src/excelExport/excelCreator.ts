@@ -10,8 +10,8 @@ import type {
     ExcelFactoryMode,
     ExcelRow,
     ExcelStyle,
-    FuncColsService,
     GridSerializer,
+    IColsService,
     IExcelCreator,
     NamedBean,
     ValueService,
@@ -254,7 +254,7 @@ export class ExcelCreator
 
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
     private valueService: ValueService;
     private cellStyleService?: CellStyleService;
 
@@ -263,7 +263,7 @@ export class ExcelCreator
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
         this.valueService = beans.valueService;
         this.cellStyleService = beans.cellStyleService;
         this.gridSerializer = beans.gridSerializer as GridSerializer;
@@ -353,13 +353,13 @@ export class ExcelCreator
     }
 
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
-        const { columnModel, columnNameService, funcColsService, valueService, gos } = this;
+        const { columnModel, columnNameService, rowGroupColsService, valueService, gos } = this;
 
         const config: ExcelGridSerializingParams = {
             ...params,
             columnModel,
             columnNameService,
-            funcColsService,
+            rowGroupColsService,
             valueService,
             gos,
             suppressRowOutline: params.suppressRowOutline || params.skipRowGroups,

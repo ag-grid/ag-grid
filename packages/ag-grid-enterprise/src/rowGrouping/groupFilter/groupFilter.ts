@@ -1,11 +1,12 @@
 import type {
     AgColumn,
     BeanCollection,
+    ColumnModel,
     ColumnNameService,
     FilterDestroyedEvent,
     FilterManager,
-    FuncColsService,
     IAfterGuiAttachedParams,
+    IColsService,
     IFilterComp,
     IFilterParams,
 } from 'ag-grid-community';
@@ -21,6 +22,8 @@ import {
     _warn,
 } from 'ag-grid-community';
 
+import type { RowGroupColsService } from '../rowGroupColsService';
+
 interface FilterColumnPair {
     filter: IFilterComp;
     column: AgColumn;
@@ -28,14 +31,16 @@ interface FilterColumnPair {
 
 export type GroupFilterEvent = 'columnRowGroupChanged' | 'selectedColumnChanged';
 export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilterComp {
+    private columnModel: ColumnModel;
     private filterManager?: FilterManager;
     private columnNameService: ColumnNameService;
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.filterManager = beans.filterManager;
         this.columnNameService = beans.columnNameService;
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
+        this.columnModel = beans.columnModel;
     }
 
     private readonly eGroupField: HTMLElement = RefPlaceholder;
@@ -107,12 +112,26 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
             _warn(237);
             return [];
         }
-        const sourceColumns = this.funcColsService.getSourceColumnsForGroupColumn(this.groupColumn);
+        const sourceColumns = this.getSourceColumnsForGroupColumn?.(this.groupColumn);
         if (!sourceColumns) {
             _warn(183);
             return [];
         }
         return sourceColumns;
+    }
+
+    public getSourceColumnsForGroupColumn(groupCol: AgColumn): AgColumn[] | null {
+        const sourceColumnId = groupCol.getColDef().showRowGroup;
+        if (!sourceColumnId) {
+            return null;
+        }
+
+        if (sourceColumnId === true) {
+            return this.rowGroupColsService?.columns.slice(0) ?? null;
+        }
+
+        const column = this.columnModel.getColDefCol(sourceColumnId);
+        return column ? [column] : null;
     }
 
     private updateGroupField(): AgColumn[] | null {
