@@ -348,7 +348,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
     private onItemSelected(event: MouseEvent | KeyboardEvent): void {
         this.menuItemComp.select?.();
         if (this.params.action) {
-            this.getFrameworkOverrides().wrapOutgoing(() =>
+            this.beans.frameworkOverrides.wrapOutgoing(() =>
                 this.params.action!(
                     this.gos.addGridCommonParams({
                         ...this.contextParams,

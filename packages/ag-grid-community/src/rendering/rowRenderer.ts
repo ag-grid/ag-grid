@@ -60,7 +60,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private pinnedRowModel?: PinnedRowModel;
     private rowModel: IRowModel;
     private focusService: FocusService;
-    private beans: BeanCollection;
     private rowContainerHeightService: RowContainerHeightService;
     private ctrlsService: CtrlsService;
     private environment: Environment;
@@ -75,7 +74,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.pinnedRowModel = beans.pinnedRowModel;
         this.rowModel = beans.rowModel;
         this.focusService = beans.focusService;
-        this.beans = beans;
         this.rowContainerHeightService = beans.rowContainerHeightService;
         this.ctrlsService = beans.ctrlsService;
         this.environment = beans.environment;
@@ -669,12 +667,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
 
         this.refreshInProgress = true;
-        this.frameworkOverrides.getLockOnRefresh?.();
+        this.beans.frameworkOverrides.getLockOnRefresh?.();
     }
 
     private releaseLockOnRefresh(): void {
         this.refreshInProgress = false;
-        this.frameworkOverrides.releaseLockOnRefresh?.();
+        this.beans.frameworkOverrides.releaseLockOnRefresh?.();
     }
 
     public isRefreshInProgress(): boolean {

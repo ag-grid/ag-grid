@@ -11,7 +11,6 @@ export class CellCustomStyleFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;
     private readonly column: AgColumn;
     private readonly rowNode: RowNode;
-    private readonly beans: BeanCollection;
     private staticClasses: string[] = [];
 
     private cellComp: ICellComp;

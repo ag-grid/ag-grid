@@ -1,4 +1,3 @@
-import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { CheckboxSelectionCallback } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
@@ -19,8 +18,6 @@ import { Component, RefPlaceholder } from '../widgets/component';
 export class CheckboxSelectionComponent extends Component {
     private readonly eCheckbox: AgCheckbox = RefPlaceholder;
 
-    private beans: BeanCollection;
-
     private rowNode: RowNode;
     private column: AgColumn | undefined;
     private overrides?: {
@@ -37,10 +34,6 @@ export class CheckboxSelectionComponent extends Component {
             </div>`,
             [AgCheckboxSelector]
         );
-    }
-
-    public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
     }
 
     public postConstruct(): void {

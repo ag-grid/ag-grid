@@ -118,7 +118,7 @@ export class UserComponentFactory extends BeanStub implements NamedBean {
 
         // eslint-disable-next-line prefer-const
         let { compName, jsComp, fwComp, paramsFromSelector, popupFromSelector, popupPositionFromSelector } =
-            _getUserCompKeys(this.frameworkOverrides, defObject, type, params);
+            _getUserCompKeys(this.beans.frameworkOverrides, defObject, type, params);
 
         // for grid-provided comps only
         let defaultCompParams: any;

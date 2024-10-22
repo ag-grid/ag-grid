@@ -14,11 +14,9 @@ import { _isShowTooltipWhenTruncated, _shouldDisplayTooltip } from './tooltipFea
 export class TooltipService extends BeanStub implements NamedBean {
     beanName = 'tooltipService' as const;
 
-    private beans: BeanCollection;
     private registry: Registry;
 
     public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
         this.registry = beans.registry;
     }
 

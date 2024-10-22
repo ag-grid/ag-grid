@@ -979,7 +979,6 @@ export * from './interfaces/iSparklineCellRendererParams';
 export { BaseCreator } from './csvExport/baseCreator';
 export { BaseGridSerializingSession } from './csvExport/sessions/baseGridSerializingSession';
 export { _downloadFile } from './csvExport/downloader';
-export type { GridSerializer } from './csvExport/gridSerializer';
 export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from './csvExport/interfaces';
 
 // modules

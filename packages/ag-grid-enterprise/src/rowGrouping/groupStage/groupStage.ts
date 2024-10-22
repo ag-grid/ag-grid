@@ -72,12 +72,10 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
     private valueService: ValueService;
-    private beans: BeanCollection;
     private selectionService?: ISelectionService;
     private showRowGroupColsService: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection) {
-        this.beans = beans;
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
         this.valueService = beans.valueService;

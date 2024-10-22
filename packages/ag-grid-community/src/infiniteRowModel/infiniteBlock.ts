@@ -1,4 +1,3 @@
-import type { BeanCollection } from '../context/context';
 import { RowNode } from '../entities/rowNode';
 import type { IGetRowsParams } from '../interfaces/iDatasource';
 import type { LoadSuccessParams } from '../interfaces/iServerSideRowModel';
@@ -8,12 +7,6 @@ import type { InfiniteCache, InfiniteCacheParams } from './infiniteCache';
 import { RowNodeBlock } from './rowNodeBlock';
 
 export class InfiniteBlock extends RowNodeBlock {
-    private beans: BeanCollection;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
-    }
-
     private readonly startRow: number;
     private readonly endRow: number;
     private readonly parentCache: InfiniteCache;

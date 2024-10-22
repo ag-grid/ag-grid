@@ -33,7 +33,6 @@ export class BlockUtils extends BeanStub implements NamedBean {
     private valueService: ValueService;
     private showRowGroupColsService?: IShowRowGroupColsService;
     private nodeManager: NodeManager;
-    private beans: BeanCollection;
     private expansionService?: ServerSideExpansionService;
     private serverSideRowModel: ServerSideRowModel;
     private storeFactory: StoreFactory;
@@ -42,7 +41,6 @@ export class BlockUtils extends BeanStub implements NamedBean {
         this.valueService = beans.valueService;
         this.showRowGroupColsService = beans.showRowGroupColsService;
         this.nodeManager = beans.ssrmNodeManager as NodeManager;
-        this.beans = beans;
         this.expansionService = beans.expansionService as ServerSideExpansionService;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.storeFactory = beans.ssrmStoreFactory as StoreFactory;

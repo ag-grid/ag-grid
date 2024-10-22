@@ -51,12 +51,6 @@ export function _shouldDisplayTooltip(getElement: () => HTMLElement | undefined)
 }
 
 export class TooltipFeature extends BeanStub {
-    private beans: BeanCollection;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
-    }
-
     private tooltip: any;
 
     private tooltipManager: TooltipStateManager | undefined;

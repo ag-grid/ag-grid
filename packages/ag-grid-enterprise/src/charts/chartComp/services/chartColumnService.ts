@@ -13,13 +13,11 @@ import { BeanStub, _getRowNode, _warn } from 'ag-grid-community';
 export class ChartColumnService extends BeanStub implements NamedBean {
     beanName = 'chartColumnService' as const;
 
-    private beans: BeanCollection;
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
     private valueService: ValueService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.valueService = beans.valueService;

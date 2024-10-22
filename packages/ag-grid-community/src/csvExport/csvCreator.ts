@@ -9,7 +9,6 @@ import { _warn } from '../validation/logging';
 import type { ValueService } from '../valueService/valueService';
 import { BaseCreator } from './baseCreator';
 import { _downloadFile } from './downloader';
-import type { GridSerializer } from './gridSerializer';
 import { CsvSerializingSession } from './sessions/csvSerializingSession';
 
 export class CsvCreator
@@ -22,21 +21,12 @@ export class CsvCreator
     private columnNameService: ColumnNameService;
     private funcColsService: FuncColsService;
     private valueService: ValueService;
-    private gridSerializer: GridSerializer;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.funcColsService = beans.funcColsService;
         this.valueService = beans.valueService;
-        this.gridSerializer = beans.gridSerializer as GridSerializer;
-    }
-
-    public postConstruct(): void {
-        this.setBeans({
-            gridSerializer: this.gridSerializer,
-            gos: this.gos,
-        });
     }
 
     protected getMergedParams(params?: CsvExportParams): CsvExportParams {

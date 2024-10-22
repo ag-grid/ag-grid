@@ -1,4 +1,3 @@
-import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { KeyCode } from '../constants/keyCode';
 import type { NamedBean } from '../context/bean';
@@ -42,10 +41,8 @@ interface NavigateParams {
 export class NavigationService extends BeanStub implements NamedBean {
     beanName = 'navigationService' as const;
 
-    private beans: BeanCollection;
     private pageBoundsService: PageBoundsService;
     private focusService: FocusService;
-    private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
     private rowModel: IRowModel;
     private ctrlsService: CtrlsService;
@@ -55,10 +52,8 @@ export class NavigationService extends BeanStub implements NamedBean {
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
         this.pageBoundsService = beans.pageBoundsService;
         this.focusService = beans.focusService;
-        this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
         this.rowModel = beans.rowModel;
         this.ctrlsService = beans.ctrlsService;

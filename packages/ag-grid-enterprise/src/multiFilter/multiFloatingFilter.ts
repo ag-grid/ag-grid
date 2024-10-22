@@ -173,7 +173,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
 
     private getCompDetails(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
         const defaultComponentName =
-            _getDefaultFloatingFilterType(this.frameworkOverrides, filterDef, () =>
+            _getDefaultFloatingFilterType(this.beans.frameworkOverrides, filterDef, () =>
                 this.filterManager!.getDefaultFloatingFilter(this.params.column as AgColumn)
             ) ?? 'agReadOnlyFloatingFilter';
 

@@ -33,14 +33,12 @@ import type { StoreUtils } from '../storeUtils';
 import { LazyCache } from './lazyCache';
 
 export class LazyStore extends BeanStub implements IServerSideStore {
-    private beans: BeanCollection;
     private blockUtils: BlockUtils;
     private storeUtils: StoreUtils;
     private selectionService?: ISelectionService;
     private funcColsService: FuncColsService;
 
     public wireBeans(beans: BeanCollection) {
-        this.beans = beans;
         this.blockUtils = beans.ssrmBlockUtils as BlockUtils;
         this.storeUtils = beans.ssrmStoreUtils as StoreUtils;
         this.selectionService = beans.selectionService;

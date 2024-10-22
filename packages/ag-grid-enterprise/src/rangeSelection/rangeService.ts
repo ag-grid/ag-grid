@@ -47,7 +47,6 @@ import { DragListenerFeature } from './dragListenerFeature';
 export class RangeService extends BeanStub implements NamedBean, IRangeService {
     beanName = 'rangeService' as const;
 
-    private beans: BeanCollection;
     private rowModel: IRowModel;
     private dragService: DragService;
     private columnModel: ColumnModel;
@@ -57,7 +56,6 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection) {
-        this.beans = beans;
         this.rowModel = beans.rowModel;
         this.dragService = beans.dragService!;
         this.columnModel = beans.columnModel;

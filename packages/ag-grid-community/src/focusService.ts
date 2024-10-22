@@ -36,7 +36,6 @@ import { TabGuardClassNames } from './widgets/tabGuardCtrl';
 export class FocusService extends BeanStub implements NamedBean {
     beanName = 'focusService' as const;
 
-    private beans: BeanCollection;
     private eGridDiv: HTMLElement;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
@@ -48,7 +47,6 @@ export class FocusService extends BeanStub implements NamedBean {
     private overlayService?: OverlayService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
         this.eGridDiv = beans.eGridDiv;
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
@@ -248,7 +246,7 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public setRestoreFocusedCell(cellPosition: CellPosition): void {
-        if (this.getFrameworkOverrides().renderingEngine === 'react') {
+        if (this.beans.frameworkOverrides.renderingEngine === 'react') {
             // The restoredFocusedCellPosition is used in the React Rendering engine as we have to be able
             // to support restoring focus after an async rendering.
             this.restoredFocusedCellPosition = cellPosition;

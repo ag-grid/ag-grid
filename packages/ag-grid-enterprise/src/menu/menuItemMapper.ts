@@ -22,7 +22,6 @@ import type { ColumnChooserFactory } from './columnChooserFactory';
 export class MenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'menuItemMapper' as const;
 
-    private beans: BeanCollection;
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
     private funcColsService: FuncColsService;
@@ -35,7 +34,6 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private columnChooserFactory?: ColumnChooserFactory;
 
     public wireBeans(beans: BeanCollection) {
-        this.beans = beans;
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.funcColsService = beans.funcColsService;

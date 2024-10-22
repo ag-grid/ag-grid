@@ -96,7 +96,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         // this is only used by Angular and Vue, as React uses native React AG Grid detail grids
         const parentFrameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
         const frameworkComponentWrapper = new DetailFrameworkComponentWrapper(parentFrameworkComponentWrapper);
-        const frameworkOverrides = this.getFrameworkOverrides();
+        const { frameworkOverrides } = this.beans;
 
         const api = createGrid(this.eDetailGrid, gridOptions, {
             frameworkOverrides,

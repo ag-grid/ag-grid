@@ -15,13 +15,11 @@ import {
 import { AdvancedFilterComp } from './advancedFilterComp';
 
 export class AdvancedFilterHeaderComp extends Component {
-    private beans: BeanCollection;
     private columnModel: ColumnModel;
     private focusService: FocusService;
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
         this.columnModel = beans.columnModel;
         this.focusService = beans.focusService;
         this.ctrlsService = beans.ctrlsService;
