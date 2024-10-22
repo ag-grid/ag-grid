@@ -22,8 +22,6 @@ import {
     _warn,
 } from 'ag-grid-community';
 
-import type { RowGroupColsService } from '../rowGroupColsService';
-
 interface FilterColumnPair {
     filter: IFilterComp;
     column: AgColumn;
