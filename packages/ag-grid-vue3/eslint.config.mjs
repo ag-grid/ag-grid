@@ -4,12 +4,11 @@ export default [
     ...rootESLint,
     {
         rules: {
-            'no-undef': 'warn',
-            'prefer-rest-params': 'warn',
-            'no-extra-boolean-cast': 'warn',
-            '@typescript-eslint/no-unused-vars': 'warn',
-            '@typescript-eslint/ban-types': 'warn',
-            '@typescript-eslint/no-this-alias': 'warn',
+            'prefer-rest-params': 'error',
+            'no-extra-boolean-cast': 'error',
+            '@typescript-eslint/no-unused-vars': 'error',
+            '@typescript-eslint/ban-types': 'error',
+            '@typescript-eslint/no-this-alias': 'off',
         },
     },
 ];

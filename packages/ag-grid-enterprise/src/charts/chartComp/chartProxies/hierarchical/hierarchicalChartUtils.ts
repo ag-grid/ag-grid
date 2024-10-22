@@ -10,7 +10,7 @@ export function createCategoryHierarchy<T extends object>(data: T[], categoryKey
     const hierarchy = buildNestedHierarchy(data, getItemDepth, getItemCategoryLabel);
     return formatCategoryHierarchy(hierarchy);
 
-    function getItemDepth(item: T) {
+    function getItemDepth(_item: T) {
         return categoryKeys.length;
     }
 

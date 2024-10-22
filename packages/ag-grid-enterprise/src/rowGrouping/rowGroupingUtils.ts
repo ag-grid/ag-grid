@@ -4,7 +4,6 @@ import type {
     ColumnModel,
     FuncColsService,
     GridOptionsService,
-    ISelectionService,
     RowNode,
 } from 'ag-grid-community';
 

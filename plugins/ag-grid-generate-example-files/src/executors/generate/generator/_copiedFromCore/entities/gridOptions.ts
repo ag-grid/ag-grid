@@ -1,3 +1,3 @@
-export interface GridOptions<T = any> {
+export interface GridOptions<_ = any> {
     [key: string]: any;
 }

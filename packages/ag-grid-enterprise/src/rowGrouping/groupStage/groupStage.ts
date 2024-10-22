@@ -437,7 +437,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
                     rowGroupColumn: rowNode.rowGroupColumn,
                     leafNode: rowNode.allLeafChildren?.[0],
                 };
-                this.setGroupData(rowNode, groupInfo, details);
+                this.setGroupData(rowNode, groupInfo);
                 recurse(rowNode.childrenAfterGroup);
             });
         };
@@ -569,7 +569,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         groupNode.field = groupInfo.field;
         groupNode.rowGroupColumn = groupInfo.rowGroupColumn;
 
-        this.setGroupData(groupNode, groupInfo, details);
+        this.setGroupData(groupNode, groupInfo);
 
         groupNode.key = groupInfo.key;
         groupNode.id = this.createGroupId(groupNode, parent, level);
@@ -613,7 +613,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         return _ROW_ID_PREFIX_ROW_GROUP + createGroupId(node, parent, level);
     }
 
-    private setGroupData(groupNode: RowNode, groupInfo: GroupInfo, details: GroupingDetails): void {
+    private setGroupData(groupNode: RowNode, groupInfo: GroupInfo): void {
         groupNode.groupData = {};
         const groupDisplayCols = this.showRowGroupColsService.getShowRowGroupCols();
         groupDisplayCols.forEach((col) => {

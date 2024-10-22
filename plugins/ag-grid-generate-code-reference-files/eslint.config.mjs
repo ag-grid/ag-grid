@@ -4,10 +4,10 @@ export default [
     ...rootESLint,
     {
         rules: {
-            '@typescript-eslint/no-unused-vars': 'warn',
-            '@typescript-eslint/no-var-requires': 'warn',
-            '@typescript-eslint/prefer-as-const': 'warn',
-            '@typescript-eslint/ban-ts-comment': 'warn',
+            '@typescript-eslint/no-unused-vars': 'error',
+            '@typescript-eslint/no-var-requires': 'error',
+            '@typescript-eslint/prefer-as-const': 'error',
+            '@typescript-eslint/ban-ts-comment': 'error',
         },
     },
 ];

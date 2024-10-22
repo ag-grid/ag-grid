@@ -125,7 +125,7 @@ export abstract class AbstractSelectionHandle extends Component {
         e.stopPropagation();
     }
 
-    protected onDragStart(e: MouseEvent) {
+    protected onDragStart(_: MouseEvent) {
         [this.cellHoverListener] = this.addManagedElementListeners(this.ctrlsService.get('gridCtrl').getGui(), {
             mousemove: this.updateValuesOnMove.bind(this),
         });

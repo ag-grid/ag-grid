@@ -298,7 +298,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         }
     }
 
-    protected handleDragEnterEnd(draggingEvent: DraggingEvent): void {}
+    protected handleDragEnterEnd(_: DraggingEvent): void {}
 
     private onDragEnter(draggingEvent: DraggingEvent): void {
         // this will contain all items that are potential drops
@@ -331,7 +331,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         return !!this.potentialDndItems?.length;
     }
 
-    protected handleDragLeaveEnd(draggingEvent: DraggingEvent): void {}
+    protected handleDragLeaveEnd(_: DraggingEvent): void {}
 
     private onDragLeave(draggingEvent: DraggingEvent): void {
         // if the dragging started from us, we remove the group, however if it started

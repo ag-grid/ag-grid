@@ -334,7 +334,6 @@ export class ToolPanelColumnComp extends Component {
         return false;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public setExpanded(_value: boolean): void {
         _warn(158);
     }

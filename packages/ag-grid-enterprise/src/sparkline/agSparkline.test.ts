@@ -47,7 +47,7 @@ const data = [
 describe('line sparkline', () => {
     let sparkline: any;
     const containerDiv: HTMLElement = document.createElement('div');
-    const markerFormatter = (params: MarkerFormatterParams): MarkerFormat => {
+    const markerFormatter = (_params: MarkerFormatterParams): MarkerFormat => {
         return {};
     };
 
@@ -140,7 +140,7 @@ describe('line sparkline', () => {
 describe('area sparkline', () => {
     let sparkline: any;
     const containerDiv: HTMLElement = document.createElement('div');
-    const markerFormatter = (params: MarkerFormatterParams): MarkerFormat => {
+    const markerFormatter = (_params: MarkerFormatterParams): MarkerFormat => {
         return {};
     };
 
@@ -233,7 +233,7 @@ describe('area sparkline', () => {
 describe('column sparkline', () => {
     let sparkline: any;
     const containerDiv: HTMLElement = document.createElement('div');
-    const columnFormatter = (params: ColumnFormatterParams): ColumnFormat => {
+    const columnFormatter = (_params: ColumnFormatterParams): ColumnFormat => {
         return {};
     };
 

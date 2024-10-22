@@ -276,7 +276,7 @@ export function vanillaToReactFunctionalTs(
         if (additionalInReady.length > 0) {
             componentProps.push('onGridReady={onGridReady}');
         }
-        componentProps.push.apply(componentProps, componentEventAttributes);
+        componentProps.push(...componentEventAttributes);
 
         // convert this.xxx to just xxx
         // no real need for "this" in hooks
@@ -287,7 +287,7 @@ export function vanillaToReactFunctionalTs(
                 .replace(/params\.api(!?)\.setGridOption\('rowData', data\)/g, 'setRowData(data)')
                 .replace(/gridApi(!?)\./g, 'gridRef.current!.api.')
                 .replace(/gridApi;/g, 'gridRef.current!.api;')
-                .replace(/gridRef\.current(!?)\.api(!?)\.setGridOption\(\'rowData\',/g, 'setRowData(')
+                .replace(/gridRef\.current(!?)\.api(!?)\.setGridOption\('rowData',/g, 'setRowData(')
                 .replace(/gridApi/g, 'gridRef.current!.api');
 
         const template = getTemplate(

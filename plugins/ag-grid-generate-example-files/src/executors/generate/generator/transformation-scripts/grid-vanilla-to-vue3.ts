@@ -24,6 +24,7 @@ import {
 } from './parser-utils';
 import { getImport, toConst, toInput, toOutput, toRef } from './vue-utils';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
 
 function getOnGridReadyCode(bindings: ParsedBindings): string {
@@ -110,7 +111,7 @@ function getAllMethods(bindings: ParsedBindings): [string[], string[], string[],
 
 function toAssignment(property: any): string {
     // convert to arrow functions
-    const value = property.value.replace(/function\s*\(([^\)]+)\)/, '($1) =>');
+    const value = property.value.replace(/function\s*\(([^)]+)\)/, '($1) =>');
 
     return `${property.name}.value = ${value}`;
 }
