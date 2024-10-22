@@ -342,84 +342,48 @@ export const createScript = ({
         },
         { type: 'wait', duration: 1000 },
 
-        // Move to canvas legend
+        // Toggle legend items
         {
-            type: 'custom',
-            action: async () => {
-                const chartsCanvas = agElementFinder.get('chartsCanvas')!;
-                const chartsCanvasEl = chartsCanvas?.get();
-                if (!chartsCanvasEl) {
-                    throw new Error('No charts canvas found');
-                }
-
-                const speed = 1;
-                // Offset coordinates for different legend positions
-                // NOTE: Get these dynamically, so that they are the most up to date when
-                // the action is run
-
-                const getOffsetCoords1 = () => {
-                    const desktopCoords = {
-                        offsetX: -25,
-                        offsetY: isMobile() ? -103 : -23,
-                    };
-                    const coords = getLegendOffset({
-                        chartsCanvas,
-                        ...desktopCoords,
-                    });
-
-                    return coords;
-                };
-
-                const getOffsetCoords2 = () => {
-                    const desktopCoords = {
-                        offsetX: -25,
-                        offsetY: isMobile() ? -118 : -43,
-                    };
-                    const coords = getLegendOffset({
-                        chartsCanvas,
-                        ...desktopCoords,
-                    });
-
-                    return coords;
-                };
-
-                // Select offset1 legend
-                await moveTo({
-                    mouse,
-                    getOverlay,
-                    toPos: getOffsetCoords1(),
-                    speed,
-                    tweenGroup,
-                    scriptDebugger,
-                });
-                await waitFor(100);
-                await mouseClick({
-                    mouse,
-                    element: chartsCanvasEl,
-                    coords: getOffsetCoords1(),
-                    withClick: true,
-                    scriptDebugger,
-                });
-                await waitFor(600);
-
-                // Select offset2 legend
-                await moveTo({
-                    mouse,
-                    getOverlay,
-                    toPos: getOffsetCoords2(),
-                    speed,
-                    tweenGroup,
-                    scriptDebugger,
-                });
-                await waitFor(100);
-                await mouseClick({
-                    mouse,
-                    element: chartsCanvasEl,
-                    coords: getOffsetCoords2(),
-                    withClick: true,
-                    scriptDebugger,
-                });
-                await waitFor(600);
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartsLegendItem',
+                targetParams: {
+                    index: 5,
+                },
+            },
+        },
+        { type: 'wait', duration: 600 },
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartsLegendItem',
+                targetParams: {
+                    index: 1,
+                },
+            },
+        },
+        { type: 'wait', duration: 600 },
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartsLegendItem',
+                targetParams: {
+                    index: 5,
+                },
+            },
+        },
+        { type: 'wait', duration: 600 },
+        {
+            type: 'agAction',
+            actionType: 'moveToElementAndClick',
+            actionParams: {
+                target: 'chartsLegendItem',
+                targetParams: {
+                    index: 1,
+                },
             },
         },
         { type: 'wait', duration: 600 },
