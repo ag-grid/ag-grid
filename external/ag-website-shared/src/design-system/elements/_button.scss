@@ -73,9 +73,7 @@ input[type='submit']#{$selector-exclude-grid},
 
     :where(.icon) {
         --icon-size: 2em;
-        --color-icon: var(
-            --color-button-primary-fg
-        ) !important; // !important required to fix a.button hover specificity issues
+        --color-icon: var(--color-button-primary-fg);
 
         display: inline-block;
         position: relative;
@@ -86,6 +84,8 @@ input[type='submit']#{$selector-exclude-grid},
 
 // Fix hover issues for links with .button class
 a.button:hover {
+    --color-icon: var(--color-button-primary-fg);
+
     color: var(--color-button-primary-fg);
 }
 

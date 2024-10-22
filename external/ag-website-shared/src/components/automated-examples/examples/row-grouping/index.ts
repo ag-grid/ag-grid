@@ -118,7 +118,7 @@ const gridOptions: GridOptions = {
         },
     },
     enableCharts: true,
-    selection: { mode: 'cell' },
+    cellSelection: true,
     suppressAggFuncInHeader: true,
     getRowId: (params) => String(params.data.id),
     rowGroupPanelShow: 'always',
