@@ -79,8 +79,8 @@ const gridOptions: GridOptions<ICar> = {
 
 // Grid Api methods use ICar interface
 function onSelection() {
- // api.getSelectedRows() : ICar[]
- const cars: ICar[] = api!.getSelectedRows();  
+    // api.getSelectedRows() : ICar[]
+    const cars: ICar[] = api!.getSelectedRows();  
 }
 ```
 
@@ -126,7 +126,7 @@ Then set this on your component template as `[columnDefs]="columnDefs"`. This pr
 <ag-grid-angular 
     [columnDefs]="columnDefs"    
     (rowSelected)="onRowSelected($event)"
- />
+    />
 ```
 {% /if %}
 

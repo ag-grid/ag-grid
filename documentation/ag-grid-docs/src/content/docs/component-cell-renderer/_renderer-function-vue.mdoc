@@ -20,21 +20,21 @@ In the example below we're outputting a string value that depends on the cell va
 import {AgGridVue} from "ag-grid-vue3";
 
 export default {
- components: {
-     AgGridVue
- },
- data() {
-     return {
-         columnDefs: [
-             {
-                 headerName: "Value",
-                 field: "value",
-                 cellRenderer: params => params.value > 1000 ? "LARGE VALUE" : "SMALL VALUE"
-             }
-         ]
-     }
- }
- //...
+    components: {
+        AgGridVue
+    },
+    data() {
+        return {
+            columnDefs: [
+                {
+                    headerName: "Value",
+                    field: "value",
+                    cellRenderer: params => params.value > 1000 ? "LARGE VALUE" : "SMALL VALUE"
+                }
+            ]
+        }
+    }
+    //...
 }
 </script>
 ```

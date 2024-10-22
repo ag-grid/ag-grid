@@ -464,13 +464,13 @@ export default {
 +       onGridReady(params) {
 +           this.gridApi = params.api;
 +       },
-+       getSelectedRows() {
-+           const selectedNodes = this.gridApi.getSelectedNodes();
-+           const selectedData = selectedNodes.map( node => node.data );
-+           const selectedDataStringPresentation = selectedData.map( data => `${data.make} ${data.model}`).join(', ');
-+           alert(`Selected nodes: ${selectedDataStringPresentation}`);
-+       }
-+   },
++   getSelectedRows() {
++       const selectedNodes = this.gridApi.getSelectedNodes();
++       const selectedData = selectedNodes.map( node => node.data );
++       const selectedDataStringPresentation = selectedData.map( data => `${data.make} ${data.model}`).join(', ');
++       alert(`Selected nodes: ${selectedDataStringPresentation}`);
++   }
++},
 };
 </script>
 <style lang="scss">
@@ -511,11 +511,11 @@ npm install --save ag-grid-enterprise
 Then, add the import to `src/main.js`:
 
 ```diff
-  import Vue from 'vue'
+    import Vue from 'vue'
 
-+ import 'ag-grid-enterprise';
++   import 'ag-grid-enterprise';
 
-  import App from './App'
+    import App from './App'
 ```
 
 After restarting the application you should see a message in the console that tells you there is no

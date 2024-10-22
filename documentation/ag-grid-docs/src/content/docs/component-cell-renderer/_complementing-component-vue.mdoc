@@ -15,33 +15,33 @@ const ColourComponent = {
 };
 
 export default {
- components: {
-     AgGridVue,
-     ColourComponent
- },
- data() {
-     return {
-         columnDefs: [
-             {
-                 headerName: "Colour 1",
-                 field: "value",
-                 cellRenderer: 'ColourComponent',
-                 cellRendererParams: {
-                      color: 'guinnessBlack'
-                 }
-             },
-             {
-                 headerName: "Colour 2",
-                 field: "value",
-                 cellRenderer: 'ColourComponent',     
-                 cellRendererParams: {
-                      color: 'irishGreen'
-                 }
-             }
-         ]
-     }
- }
- //...other properties & methods
+    components: {
+        AgGridVue,
+        ColourComponent
+    },
+    data() {
+        return {
+            columnDefs: [
+                {
+                    headerName: "Colour 1",
+                    field: "value",
+                    cellRenderer: 'ColourComponent',
+                    cellRendererParams: {
+                        color: 'guinnessBlack'
+                    }
+                },
+                {
+                    headerName: "Colour 2",
+                    field: "value",
+                    cellRenderer: 'ColourComponent',     
+                    cellRendererParams: {
+                        color: 'irishGreen'
+                    }
+                }
+            ]
+        }
+    }
+    //...other properties & methods
 }
 </script>
 ```
