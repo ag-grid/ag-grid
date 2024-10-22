@@ -86,7 +86,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private mouseEventService: MouseEventService;
     private ctrlsService: CtrlsService;
     private rowGroupColsService?: IColsService;
-    private beans: BeanCollection;
 
     public wireBeans(beans: BeanCollection): void {
         this.dragAndDropService = beans.dragAndDropService!;
