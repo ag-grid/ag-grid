@@ -81,7 +81,11 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             // This is needed for React, as it doesn't render the headers synchronously all the time.
             // Added a defensive check to avoid infinite loop in case headers are never rendered.
             this.timesDelayed++;
-            setTimeout(() => this.autoSizeCols(params));
+            setTimeout(() => {
+                if (this.isAlive()) {
+                    this.autoSizeCols(params);
+                }
+            });
             return;
         }
         this.timesDelayed = 0;
@@ -249,6 +253,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     // method will call itself if no available width. this covers if the grid
     // isn't visible, but is just about to be visible.
     public sizeColumnsToFitGridBody(params?: ISizeColumnsToFitParams, nextTimeout?: number): void {
+        if (!this.isAlive()) {
+            return;
+        }
+
         const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
         const removeScrollWidth = gridBodyCtrl.isVerticalScrollShowing();
         const scrollWidthToRemove = removeScrollWidth ? this.scrollVisibleService.getScrollbarWidth() : 0;

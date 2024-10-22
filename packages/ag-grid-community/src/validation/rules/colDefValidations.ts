@@ -1,7 +1,7 @@
 import type { AbstractColDef, ColDef, ColGroupDef, ColumnMenuTab } from '../../entities/colDef';
 import type { GridOptions } from '../../entities/gridOptions';
+import type { ModuleName } from '../../interfaces/iModule';
 import { DEFAULT_SORTING_ORDER } from '../../sort/sortController';
-import { _missing } from '../../utils/generic';
 import { toStringWithNullUndefined } from '../logging';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';
 
@@ -25,23 +25,24 @@ const COLUMN_DEFINITION_DEPRECATIONS: Deprecations<ColDef | ColGroupDef> = {
     },
 };
 
-const CSRM_REQUIRES_ROW_GROUP_MODULE = (_options: never, gridOptions: GridOptions) => {
-    if ((gridOptions.rowModelType ?? 'clientSide') === 'clientSide') {
-        return { module: 'RowGroupingCoreModule' as const };
+const SSRM_CSRM_REQUIRES_MODULE = (module: ModuleName) => (_options: never, gridOptions: GridOptions) => {
+    const rowModel = gridOptions.rowModelType ?? 'clientSide';
+    if (rowModel === 'clientSide' || rowModel === 'serverSide') {
+        return { module };
     }
     return null;
 };
 
 const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
-    // supported on all row models, but need module for client side.
-    enableRowGroup: CSRM_REQUIRES_ROW_GROUP_MODULE,
-    rowGroup: CSRM_REQUIRES_ROW_GROUP_MODULE,
-    rowGroupIndex: CSRM_REQUIRES_ROW_GROUP_MODULE,
-    enablePivot: CSRM_REQUIRES_ROW_GROUP_MODULE,
-    enableValue: CSRM_REQUIRES_ROW_GROUP_MODULE,
-    pivot: CSRM_REQUIRES_ROW_GROUP_MODULE,
-    pivotIndex: CSRM_REQUIRES_ROW_GROUP_MODULE,
-    aggFunc: CSRM_REQUIRES_ROW_GROUP_MODULE,
+    // supported on all row models, but need module for client side / server side.
+    enableRowGroup: SSRM_CSRM_REQUIRES_MODULE('RowGroupingCoreModule'),
+    rowGroup: SSRM_CSRM_REQUIRES_MODULE('RowGroupingCoreModule'),
+    rowGroupIndex: SSRM_CSRM_REQUIRES_MODULE('RowGroupingCoreModule'),
+    enablePivot: SSRM_CSRM_REQUIRES_MODULE('PivotCoreModule'),
+    enableValue: SSRM_CSRM_REQUIRES_MODULE('PivotCoreModule'),
+    pivot: SSRM_CSRM_REQUIRES_MODULE('PivotCoreModule'),
+    pivotIndex: SSRM_CSRM_REQUIRES_MODULE('PivotCoreModule'),
+    aggFunc: SSRM_CSRM_REQUIRES_MODULE('AggregationModule'),
 
     cellEditor: (options) => {
         if (options.cellEditor === 'agRichSelect' || options.cellEditor === 'agRichSelectCellEditor') {
@@ -59,7 +60,7 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
         return null;
     },
     columnChooserParams: {
-        module: ['MenuModule', 'ColumnsToolPanelCoreModule'],
+        module: 'MenuModule',
     },
 
     headerCheckboxSelection: {

@@ -69,7 +69,7 @@ const reactPropsNotGridOptions: ReactCompProps = {
     maxComponentCreationTimeMs: undefined,
     children: undefined,
 };
-const excludeReactCompProps = Object.keys(reactPropsNotGridOptions);
+const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
 
 export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
     const apiRef = useRef<GridApi<TData>>();
@@ -113,7 +113,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
         const mergedGridOps = _combineAttributesAndGridOptions(
             props.gridOptions,
             props,
-            Object.keys(props).filter((key) => !excludeReactCompProps.includes(key))
+            Object.keys(props).filter((key) => !excludeReactCompProps.has(key))
         );
 
         const processQueuedUpdates = () => {
@@ -244,6 +244,9 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
 function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: string]: any } {
     const changes: { [p: string]: any } = {};
     Object.keys(nextProps).forEach((propKey) => {
+        if (excludeReactCompProps.has(propKey)) {
+            return;
+        }
         const propValue = nextProps[propKey];
         if (prevProps[propKey] !== propValue) {
             changes[propKey] = propValue;

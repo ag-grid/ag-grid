@@ -49,11 +49,16 @@ export function _executeNextVMTurn(func: () => void): void {
 }
 
 /**
+ * Creates a debounced function a function, and attach it to a bean for lifecycle
  * @param {Function} func The function to be debounced
  * @param {number} delay The time in ms to debounce
  * @return {Function} The debounced function
  */
-export function _debounce(func: (...args: any[]) => void, delay: number): (...args: any[]) => void {
+export function _debounce(
+    bean: { isAlive(): boolean },
+    func: (...args: any[]) => void,
+    delay: number
+): (...args: any[]) => void {
     let timeout: any;
 
     // Calling debounce returns a new anonymous function
@@ -64,7 +69,11 @@ export function _debounce(func: (...args: any[]) => void, delay: number): (...ar
 
         // Set the new timeout
         timeout = window.setTimeout(function () {
-            func.apply(context, args);
+            // at the moment we just check if the bean is still alive, in the future the bean stub should
+            // another option is to manage a list of active timers and clear them when the bean is destroyed.
+            if (bean.isAlive()) {
+                func.apply(context, args);
+            }
         }, delay);
     };
 }

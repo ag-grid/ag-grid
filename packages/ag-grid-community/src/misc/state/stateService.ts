@@ -44,6 +44,7 @@ import type { PaginationService } from '../../pagination/paginationService';
 import type { ColumnAnimationService } from '../../rendering/columnAnimationService';
 import { _debounce } from '../../utils/function';
 import { _jsonEquals } from '../../utils/generic';
+import { VERSION } from '../../version';
 import { migrateGridStateModel } from './stateModelMigration';
 
 export class StateService extends BeanStub implements NamedBean {
@@ -64,6 +65,7 @@ export class StateService extends BeanStub implements NamedBean {
     private rangeService?: IRangeService;
     private rowModel: IRowModel;
     private columnGroupService?: ColumnGroupService;
+    private updateRowGroupExpansionStateTimer: number = 0;
 
     public wireBeans(beans: BeanCollection): void {
         this.filterManager = beans.filterManager;
@@ -87,18 +89,25 @@ export class StateService extends BeanStub implements NamedBean {
     private cachedState: GridState;
     private suppressEvents = true;
     private queuedUpdateSources: Set<keyof GridState | 'gridInitializing'> = new Set();
-    private dispatchStateUpdateEventDebounced = _debounce(() => this.dispatchQueuedStateUpdateEvents(), 0);
+    private dispatchStateUpdateEventDebounced = _debounce(this, () => this.dispatchQueuedStateUpdateEvents(), 0);
     // If user is doing a manual expand all node by node, we don't want to process one at a time.
     // EVENT_ROW_GROUP_OPENED is already async, so no impact of making the state async here.
     private onRowGroupOpenedDebounced = _debounce(
-        () => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()),
+        this,
+        () => {
+            this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState());
+        },
         0
     );
     // similar to row expansion, want to debounce. However, selection is synchronous, so need to mark as stale in case `getState` is called.
-    private onRowSelectedDebounced = _debounce(() => {
-        this.staleStateKeys.delete('rowSelection');
-        this.updateCachedState('rowSelection', this.getRowSelectionState());
-    }, 0);
+    private onRowSelectedDebounced = _debounce(
+        this,
+        () => {
+            this.staleStateKeys.delete('rowSelection');
+            this.updateCachedState('rowSelection', this.getRowSelectionState());
+        },
+        0
+    );
     private columnStates?: ColumnState[];
     private columnGroupStates?: { groupId: string; open: boolean | undefined }[];
     private staleStateKeys: Set<keyof GridState> = new Set();
@@ -107,6 +116,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.isClientSideRowModel = _isClientSideRowModel(this.gos);
 
         this.cachedState = this.getInitialState();
+        this.setCachedStateValue('version', VERSION);
 
         this.ctrlsService.whenReady(this, () =>
             this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnGridReady())
@@ -129,6 +139,14 @@ export class StateService extends BeanStub implements NamedBean {
                     this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnFirstDataRendered());
                 },
             });
+    }
+
+    public override destroy(): void {
+        super.destroy();
+
+        // Release memory
+        clearTimeout(this.updateRowGroupExpansionStateTimer);
+        this.queuedUpdateSources.clear();
     }
 
     private getInitialState(): GridState {
@@ -222,8 +240,11 @@ export class StateService extends BeanStub implements NamedBean {
         this.updateCachedState('rowSelection', this.getRowSelectionState());
         this.updateCachedState('pagination', this.getPaginationState());
 
-        const updateRowGroupExpansionState = () =>
+        const updateRowGroupExpansionState = () => {
+            this.updateRowGroupExpansionStateTimer = 0;
             this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState());
+        };
+
         this.addManagedEventListeners({
             filterChanged: () => this.updateCachedState('filter', this.getFilterState()),
             rowGroupOpened: () => this.onRowGroupOpenedDebounced(),
@@ -232,10 +253,8 @@ export class StateService extends BeanStub implements NamedBean {
             columnRowGroupChanged: updateRowGroupExpansionState,
             rowDataUpdated: () => {
                 if (this.gos.get('groupDefaultExpanded') !== 0) {
-                    setTimeout(() => {
-                        // once rows are loaded, they may be expanded
-                        updateRowGroupExpansionState();
-                    });
+                    // once rows are loaded, they may be expanded, start the timer only once
+                    this.updateRowGroupExpansionStateTimer ||= setTimeout(updateRowGroupExpansionState);
                 }
             },
             selectionChanged: () => {

@@ -19,11 +19,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         { field: 'age', type: 'editableColumn' },
         { field: 'year' },
         { field: 'country' },
-        { field: 'date' },
         { field: 'sport' },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
         { field: 'total' },
     ],
     columnTypes: {

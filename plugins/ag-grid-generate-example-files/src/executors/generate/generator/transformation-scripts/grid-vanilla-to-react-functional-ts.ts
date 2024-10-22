@@ -319,7 +319,7 @@ export function vanillaToReactFunctionalTs(
                 : '';
 
         let generatedOutput = `
-'use strict';
+'use client';
 
 ${imports.join('\n')}
 ${exampleConfig.licenseKey ? "// enter your license key here to suppress license message in the console and watermark\nLicenseManager.setLicenseKey('');\n" : ''}

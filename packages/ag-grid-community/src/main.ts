@@ -935,7 +935,7 @@ export {
     _setAriaHidden,
     _getAriaPosInSet,
 } from './utils/aria';
-export { _removeFromArray, _last, _areEqual } from './utils/array';
+export { _EmptyArray, _removeFromArray, _last, _areEqual } from './utils/array';
 export { _isIOSUserAgent } from './utils/browser';
 export { ChangedPath } from './utils/changedPath';
 export { _serialiseDate, _parseDateTimeFromString } from './utils/date';
@@ -1017,6 +1017,7 @@ export { SharedMenuModule } from './misc/menu/sharedMenuModule';
 export { KeyboardNavigationCoreModule } from './navigation/navigationModule';
 export { CellFlashModule } from './rendering/cell/cellFlashModule';
 export { ColumnGroupCoreModule } from './columns/columnGroups/columnGroupModule';
+export { ColumnGroupHeaderCompModule, ColumnHeaderCompModule } from './headerRendering/cells/headerModule';
 
 //  events
 export * from './events';

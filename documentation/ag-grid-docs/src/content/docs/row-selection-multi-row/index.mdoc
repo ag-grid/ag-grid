@@ -25,7 +25,7 @@ Click checkboxes to select or deselect a row. Alternatively, you can do this via
 Users can hold {% kbd "⇧ Shift" /%} and then click a checkbox to add a range of adjacent rows to the selection.
 
 Ranges of rows can be selected by holding down {% kbd "⇧ Shift" /%} while clicking on rows. 
-This behaviour also applies when [Checkbox Selection](#checkbox-selection) is enabled, and in [Group Selection](./grouping-row-selection).
+This behaviour also applies when [Checkbox Selection](#removing-selection-checkbox) is enabled, and in [Group Selection](./grouping-row-selection).
 
 ## Removing Selection Checkboxes
 
@@ -128,7 +128,7 @@ The `rowSelection.enableClickSelection` property configures whether a row's sele
 
 {% interfaceDocumentation interfaceName="MultiRowSelectionOptions" names=["enableClickSelection"] config={"description": ""}/%}
 
-This is typically used when [Checkbox Selection](#checkbox-selection) is disabled, though both can be enabled simultaneously if desired. 
+This is typically used when [Checkbox Selection](#removing-selection-checkboxes) is disabled, though both can be enabled simultaneously if desired. 
 Click-selection and deselection can be enabled by setting `enableClickSelection` to `true`, otherwise they may be enabled separately using the values `'enableSelection'` and `'enableDeselection'`.
 
 ```{% frameworkTransform=true %}

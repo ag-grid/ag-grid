@@ -35,11 +35,11 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
     wrapIncoming: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T = (callback) => callback();
     wrapOutgoing: <T>(callback: () => T) => T = (callback) => callback();
 
-    frameworkComponent(name: string): any {
+    frameworkComponent(_: string): any {
         return null;
     }
 
-    isFrameworkComponent(comp: any): boolean {
+    isFrameworkComponent(_: any): boolean {
         return false;
     }
 

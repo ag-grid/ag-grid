@@ -80,7 +80,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.pivotColDefService = beans.pivotColDefService;
     }
 
-    private onRowHeightChanged_debounced = _debounce(this.onRowHeightChanged.bind(this), 100);
+    private onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
 
     public rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;

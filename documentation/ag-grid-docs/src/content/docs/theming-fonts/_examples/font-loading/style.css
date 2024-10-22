@@ -1,0 +1,12 @@
+/* If you use a Google font in CSS and not in theme parameters, you are
+   responsible for loading it yourself */
+@import url('https://fonts.googleapis.com/css2?family=Kablammo&display=swap');
+
+.ag-column-drop-title {
+    font-family: 'Kablammo';
+    font-size: 1.5em;
+}
+
+.ag-column-drop-vertical {
+    min-height: 150px;
+}

@@ -279,7 +279,7 @@ export const Property: FunctionComponent<{
                                         <a
                                             className={classnames(styles.metaValue)}
                                             href={urlWithPrefix({
-                                                url: './grid-interface/#initial-grid-options',
+                                                url: config?.initialLink ?? './grid-interface/#initial-grid-options',
                                                 framework,
                                             })}
                                         >

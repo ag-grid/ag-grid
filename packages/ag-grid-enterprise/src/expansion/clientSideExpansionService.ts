@@ -60,7 +60,7 @@ export class ClientSideExpansionService extends BaseExpansionService implements 
             });
         };
 
-        const rootNode = this.rowModel.getRootNode();
+        const rootNode = this.rowModel.rootNode;
         if (rootNode) {
             recursiveExpandOrCollapse(rootNode.childrenAfterGroup);
         }

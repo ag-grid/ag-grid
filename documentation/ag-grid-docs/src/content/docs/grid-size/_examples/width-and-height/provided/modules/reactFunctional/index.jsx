@@ -1,5 +1,3 @@
-'use strict';
-
 import React, { StrictMode, useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 

@@ -178,7 +178,7 @@ export type CoreParams = {
     focusShadow: ShadowValue;
 
     /**
-     * Font family used for all text.
+     * Default font family for all text. Can be overridden by more specific parameters like `headerFontFamily`
      */
     fontFamily: FontFamilyValue;
 
@@ -256,6 +256,11 @@ export type CoreParams = {
      * Font family of text in the header
      */
     headerFontFamily: FontFamilyValue;
+
+    /**
+     * Font family of text in grid cells
+     */
+    cellFontFamily: FontFamilyValue;
 
     /**
      * Size of text in the header
@@ -644,6 +649,9 @@ export const coreDefaults = (): CoreParams => ({
         ref: 'chromeBackgroundColor',
     },
     headerFontFamily: {
+        ref: 'fontFamily',
+    },
+    cellFontFamily: {
         ref: 'fontFamily',
     },
     headerFontWeight: 500,

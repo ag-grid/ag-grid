@@ -1,5 +1,3 @@
-'use strict';
-
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
 import type { ColDef, GridOptions } from 'ag-grid-community';
@@ -34,7 +32,6 @@ const defaultColDef = {
 
 const gridOptions: GridOptions<IOlympicData> = {
     theme: myTheme,
-    loadThemeGoogleFonts: true,
     columnDefs,
     rowData,
     defaultColDef,

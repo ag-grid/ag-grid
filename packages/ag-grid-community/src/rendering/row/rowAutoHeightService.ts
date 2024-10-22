@@ -41,7 +41,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
 
         if (cellHeight != null) {
             if (rowNode.__checkAutoHeightsDebounced == null) {
-                rowNode.__checkAutoHeightsDebounced = _debounce(this.doCheckAutoHeights.bind(this, rowNode), 1);
+                rowNode.__checkAutoHeightsDebounced = _debounce(this, this.doCheckAutoHeights.bind(this, rowNode), 1);
             }
             rowNode.__checkAutoHeightsDebounced();
         }

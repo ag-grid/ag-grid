@@ -287,8 +287,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             return false;
         }
 
-        const clientSideRowModel = this.rowModel;
-        const rootNode = clientSideRowModel.getRootNode();
+        const rootNode = this.rowModel.rootNode;
+        if (!rootNode) {
+            return false;
+        }
 
         if (!changedPath) {
             changedPath = new ChangedPath(true, rootNode);
@@ -715,7 +717,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         // Needs to be depth first in this case, so that parents can be updated based on child.
         if (isCSRMGroupSelectsDescendants) {
             if (changedPath === undefined) {
-                changedPath = new ChangedPath(false, (this.rowModel as IClientSideRowModel).getRootNode());
+                changedPath = new ChangedPath(false, (this.rowModel as IClientSideRowModel).rootNode!);
             }
             changedPath.forEachChangedNodeDepthFirst(nodeCallback, !skipLeafNodes, !skipLeafNodes);
         } else {

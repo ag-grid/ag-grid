@@ -825,7 +825,7 @@ export interface _SideBarGridApi<TData> {
     /** Returns the ID of the currently shown tool panel if any, otherwise `null`. */
     getOpenedToolPanel(): string | null;
 
-    /** Force refresh all tool panels by calling their `refresh` method. */
+    /** Force refreshes all tool panels by calling their `refresh` method. */
     refreshToolPanel(): void;
 
     /** Returns `true` if the tool panel is showing, otherwise `false`. */
@@ -1143,7 +1143,7 @@ export interface _AdvancedFilterGridApi {
     hideAdvancedFilterBuilder(): void;
 }
 
-export interface _CoreModuleGridApi<TData>
+export interface GridApi<TData = any>
     extends _CoreGridApi<TData>,
         _StateGridApi,
         _RowSelectionGridApi<TData>,
@@ -1173,12 +1173,7 @@ export interface _CoreModuleGridApi<TData>
         _QuickFilterGridApi,
         _PaginationGridApi,
         _CsrmSsrmSharedGridApi,
-        _SsrmInfiniteSharedGridApi {
-    dispatchEvent(event: AgEvent): void;
-}
-
-export interface GridApi<TData = any>
-    extends _CoreModuleGridApi<TData>,
+        _SsrmInfiniteSharedGridApi,
         _ClientSideRowModelGridApi<TData>,
         _SideBarGridApi<TData>,
         _StatusBarGridApi<TData>,
@@ -1194,4 +1189,6 @@ export interface GridApi<TData = any>
         _ExcelExportGridApi,
         _ClipboardGridApi,
         _GridChartsGridApi,
-        _AdvancedFilterGridApi {}
+        _AdvancedFilterGridApi {
+    dispatchEvent(event: AgEvent): void;
+}

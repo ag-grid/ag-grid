@@ -99,9 +99,11 @@ export class AgFiltersToolPanelHeader extends Component<AgFiltersToolPanelHeader
 
     private onSearchTextChanged(): void {
         if (!this.onSearchTextChangedDebounced) {
-            this.onSearchTextChangedDebounced = _debounce(() => {
-                this.dispatchLocalEvent({ type: 'searchChanged', searchText: this.eFilterTextField.getValue() });
-            }, 300);
+            this.onSearchTextChangedDebounced = _debounce(
+                this,
+                () => this.dispatchLocalEvent({ type: 'searchChanged', searchText: this.eFilterTextField.getValue() }),
+                300
+            );
         }
 
         this.onSearchTextChangedDebounced();

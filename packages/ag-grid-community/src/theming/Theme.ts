@@ -38,7 +38,7 @@ let customThemeCounter = 0;
 export const createTheme = (id: string = `customTheme${++customThemeCounter}`): Theme<CoreParams> =>
     /*#__PURE__*/ new ThemeImpl(id);
 
-const IS_SSR = typeof window !== 'object' || !window || typeof document !== 'object' || window.document !== document;
+const IS_SSR = typeof window !== 'object' || !window?.document?.fonts?.forEach;
 let themeClassCounter = 0;
 let uninstalledLegacyCSS = false;
 
@@ -67,6 +67,7 @@ class ThemeImpl<TParams = unknown> implements Theme {
     private useCount = 0;
 
     startUse(args: GridThemeUseArgs): void {
+        if (IS_SSR) return;
         ++this.useCount;
         if (this.useCount === 1) {
             void this._install(args);
@@ -74,6 +75,7 @@ class ThemeImpl<TParams = unknown> implements Theme {
     }
 
     stopUse(): void {
+        if (IS_SSR) return;
         --this.useCount;
         if (this.useCount === 0) {
             // delay slightly to give the new theme time to load before removing the old styles
@@ -108,8 +110,6 @@ class ThemeImpl<TParams = unknown> implements Theme {
 
     private _installRoot: HTMLElement;
     private async _install({ container, loadThemeGoogleFonts }: GridThemeUseArgs) {
-        if (IS_SSR) return;
-
         if (!uninstalledLegacyCSS) {
             uninstalledLegacyCSS = true;
             // Remove the CSS from @ag-grid-community/styles that is
@@ -128,12 +128,16 @@ class ThemeImpl<TParams = unknown> implements Theme {
         // Core CSS is loaded once per shadow root and shared between themes
         loadPromises.push(installCSS({ css: coreCSS, part: 'core', root }));
 
-        for (const googleFont of getGoogleFontsUsed(this)) {
-            if (loadThemeGoogleFonts) {
-                loadGoogleFont(googleFont);
-            } else if (loadThemeGoogleFonts == null) {
-                // Temporarily disable warning until AG-13135 fixes false positive
-                // _warn(112, { googleFont, googleFontsDomain });
+        const googleFontsUsed = getGoogleFontsUsed(this);
+        if (googleFontsUsed.length > 0) {
+            const googleFontsLoaded = new Set<string>();
+            document.fonts.forEach((font) => googleFontsLoaded.add(font.family));
+            for (const googleFont of googleFontsUsed) {
+                if (loadThemeGoogleFonts) {
+                    loadGoogleFont(googleFont);
+                } else if (loadThemeGoogleFonts == null && !googleFontsLoaded.has(googleFont)) {
+                    _warn(112, { googleFont, googleFontsDomain });
+                }
             }
         }
 

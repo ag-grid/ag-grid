@@ -42,20 +42,21 @@ Columns can be updated via the `colDefs` grid option when a sufficient ID has be
 
 ### Column IDs
 
-Every column in the grid needs a unique ID. If this is not provided, one will be generated.
+Every column in the grid will be given a unique ID to identify it. The ID can be provided explicitly via the `colId`. If the `colId` is omitted, the grid will try to use the `field` property. If neither of these are provided, the grid will generate a numeric column ID.
 
-This can be provided via the `colId` [Column Option](./column-properties/#reference-columns-colId).
-If this is omitted, the grid will try to use the `field` [Column Option](./column-properties/#reference-columns-field).
-If neither of these is provided, the grid will generate a numeric column ID.
-Where the provided `colId` or `field` is not unique, the grid will append `_n` where necessary (`n` being the first positive number that allows uniqueness).
+It is recommended to provide an explicit `colId` for any column that will be referenced elsewhere in the application.
 
-In the example below, columns are set up to demonstrate the different ways IDs are generated. Open the example in a new tab and observe the output in the dev console. Note the following:
+In the example below, the column IDs are logged to the dev console. Note the following:
 
-* Col 1 and Col 2 both use `colId`. The grid appends `'_1'` to Col 2 to make the ID unique.
-* Col 3 and Col 4 both use `field`. The grid appends `'_1'` to Col 4 to make the ID unique.
-* Col 5 and Col 6 have neither `colId` or `field` so the grid generates column IDs.
+* Col 1 uses the `field`.
+* Col 2 and 3 use the `colId`.
+* Col 4 and Col 5 have neither `colId` or `field` so the grid generates column IDs.
 
 {% gridExampleRunner title="Column IDs" name="column-ids" exampleHeight=300 /%}
+
+{% warning %}
+Column Ids should be unique across the grid. Where the provided `colId` or `field` are not unique, the grid will append `_n` where necessary (`n` being the first positive number that allows uniqueness). It is not recommend to rely on IDs generated with this behaviour.
+{% /warning %}
 
 ### Column Objects
 
