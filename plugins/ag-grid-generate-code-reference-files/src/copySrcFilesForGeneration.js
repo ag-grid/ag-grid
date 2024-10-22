@@ -13,7 +13,7 @@ function copyFileWithTSNoCheck(sourceFile, destinationDir, destinationFile) {
         }
 
         // Prepend '@ts-nocheck' to the content so we don't have to worry about typescript errors
-        const modifiedContent = `// @ts-nocheck\n${data}`;
+        const modifiedContent = `// eslint-disable-next-line @typescript-eslint/ban-ts-comment\n// @ts-nocheck\n${data}`;
         fs.writeFile(
             `${targetDir}/${destinationFile}`,
             modifiedContent,
