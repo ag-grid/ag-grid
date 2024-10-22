@@ -13,17 +13,18 @@ export class ClientSideChildrenTreeNodeManager<TData>
 {
     beanName = 'clientSideChildrenTreeNodeManager' as const;
 
-    private childrenGetter: DataFieldGetter<TData, TData[] | null | undefined>;
+    private childrenGetter: DataFieldGetter<TData, TData[] | null | undefined> | null = null;
 
     public override extractRowData(): TData[] | null | undefined {
-        return Array.from(this.treeRoot.enumChildren(), (node) => node.row!.data);
+        const treeRoot = this.treeRoot;
+        return treeRoot && Array.from(treeRoot.enumChildren(), (node) => node.row!.data);
     }
 
     public override destroy(): void {
         super.destroy();
 
         // Forcefully deallocate memory
-        this.childrenGetter = null!;
+        this.childrenGetter = null;
     }
 
     public override activate(rootNode: RowNode<TData>): void {
@@ -37,15 +38,17 @@ export class ClientSideChildrenTreeNodeManager<TData>
     }
 
     protected override loadNewRowData(rowData: TData[]): void {
-        const { rootNode, childrenGetter } = this;
+        const treeRoot = this.treeRoot!;
+        const rootNode = this.rootNode!;
+        const childrenGetter = this.childrenGetter;
 
         const processedDataSet = new Set<TData>();
         const allLeafChildren: TreeRow<TData>[] = [];
 
         rootNode.allLeafChildren = allLeafChildren;
 
-        this.treeClear(this.treeRoot);
-        this.treeRoot.setRow(rootNode);
+        this.treeClear(treeRoot);
+        treeRoot.setRow(rootNode);
 
         const addChild = (parent: TreeNode, data: TData) => {
             if (processedDataSet.has(data)) {
@@ -61,7 +64,7 @@ export class ClientSideChildrenTreeNodeManager<TData>
             parent = parent.upsertKey(row.id!);
             this.treeSetRow(parent, row, false);
 
-            const children = childrenGetter(data);
+            const children = childrenGetter?.(data);
             if (children) {
                 for (let i = 0, len = children.length; i < len; ++i) {
                     addChild(parent, children[i]);
@@ -69,20 +72,21 @@ export class ClientSideChildrenTreeNodeManager<TData>
             }
         };
 
-        const rootTreeNode = this.treeRoot;
         for (let i = 0, len = rowData.length; i < len; ++i) {
-            addChild(rootTreeNode, rowData[i]);
+            addChild(treeRoot, rowData[i]);
         }
 
         this.treeCommit();
     }
 
     public onTreeDataChanged() {
-        const { rootNode } = this;
-        this.treeRoot.setRow(rootNode);
-        const allLeafChildren = rootNode.allLeafChildren!;
-        for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
-            allLeafChildren[i].treeNode?.invalidate();
+        const { rootNode, treeRoot } = this;
+        treeRoot?.setRow(rootNode);
+        const allLeafChildren = rootNode?.allLeafChildren;
+        if (allLeafChildren) {
+            for (let i = 0, len = allLeafChildren.length; i < len; ++i) {
+                allLeafChildren[i].treeNode?.invalidate();
+            }
         }
         this.treeCommit();
     }

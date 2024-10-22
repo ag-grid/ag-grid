@@ -168,8 +168,8 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.rangeService = beans.rangeService;
     }
 
-    private clientSideRowModel: IClientSideRowModel;
-    private gridCtrl: GridCtrl;
+    private clientSideRowModel: IClientSideRowModel | null = null;
+    private gridCtrl: GridCtrl | null = null;
     private lastPasteOperationTime: number = 0;
 
     private navigatorApiFailed = false;
@@ -182,6 +182,13 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.beans.ctrlsService.whenReady(this, (p) => {
             this.gridCtrl = p.gridCtrl;
         });
+    }
+
+    public override destroy(): void {
+        super.destroy();
+
+        this.clientSideRowModel = null;
+        this.gridCtrl = null;
     }
 
     public pasteFromClipboard(): void {
@@ -297,7 +304,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             cellsToFlash: any,
             updatedRowNodes: RowNode[],
             focusedCell: CellPosition | null,
-            changedPath: ChangedPath | undefined
+            changedPath: ChangedPath | null | undefined
         ) => void
     ): void {
         const source = 'clipboard';
@@ -307,12 +314,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             source,
         });
 
-        let changedPath: ChangedPath | undefined;
-
-        if (this.clientSideRowModel) {
-            const onlyChangedColumns = this.gos.get('aggregateOnlyChangedColumns');
-            changedPath = new ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
-        }
+        const clientSideRowModel = this.clientSideRowModel;
+        const rootNode = clientSideRowModel?.rootNode;
+        const changedPath = rootNode && new ChangedPath(this.gos.get('aggregateOnlyChangedColumns'), rootNode);
 
         const cellsToFlash = {} as any;
         const updatedRowNodes: RowNode[] = [];
@@ -322,7 +326,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         const nodesToRefresh: RowNode[] = [...updatedRowNodes];
         if (changedPath) {
-            this.clientSideRowModel.doAggregate(changedPath);
+            clientSideRowModel.doAggregate(changedPath);
 
             // add all nodes impacted by aggregation, as they need refreshed also.
             changedPath.forEachChangedNodeDepthFirst((rowNode) => {
@@ -1194,6 +1198,10 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         callbackNow: (element: HTMLTextAreaElement) => void,
         callbackAfter?: (element: HTMLTextAreaElement) => void
     ): void {
+        if (!this.gridCtrl) {
+            return;
+        }
+
         const eDoc = _getDocument(this.gos);
         const eTempInput = eDoc.createElement('textarea');
         eTempInput.style.width = '1px';
