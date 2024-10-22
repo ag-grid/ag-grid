@@ -9,13 +9,7 @@ import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
 import type { CellContextMenuEvent, CellEvent, CellFocusedEvent } from '../../events';
 import type { GridOptionsService } from '../../gridOptionsService';
-import {
-    _getCheckboxes,
-    _getDocument,
-    _getRowHeightForNode,
-    _isCellSelectionEnabled,
-    _setDomData,
-} from '../../gridOptionsUtils';
+import { _getCheckboxes, _isCellSelectionEnabled, _setDomData } from '../../gridOptionsUtils';
 import { refreshFirstAndLastStyles } from '../../headerRendering/cells/cssClassApplier';
 import type { BrandedType } from '../../interfaces/brandedType';
 import type { ICellEditor } from '../../interfaces/iCellEditor';
@@ -29,7 +23,7 @@ import type { CheckboxSelectionComponent } from '../../selection/checkboxSelecti
 import type { CellCustomStyleFeature } from '../../styling/cellCustomStyleFeature';
 import type { TooltipFeature } from '../../tooltip/tooltipFeature';
 import { _setAriaColIndex } from '../../utils/aria';
-import { _addOrRemoveAttribute, _getElementSize, _observeResize } from '../../utils/dom';
+import { _addOrRemoveAttribute } from '../../utils/dom';
 import { _getCtrlForEventTarget } from '../../utils/event';
 import { _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
@@ -281,7 +275,9 @@ export class CellCtrl extends BeanStub {
             compDetails = _getCellRendererDetails(userComponentFactory, column.getColDef(), params);
         }
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
-        _requestAnimationFrame(gos, () => cellRangeFeature?.refreshHandle());
+        if (cellRangeFeature) {
+            _requestAnimationFrame(gos, () => cellRangeFeature?.refreshHandle());
+        }
     }
 
     private setupControlComps(): void {

@@ -9,19 +9,17 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
-        // colId will be 'firstCol'
-        { headerName: 'Col 1', colId: 'firstCol', field: 'height' },
-        // colId will be 'firstCol_1', cos 'firstCol' already taken
-        { headerName: 'Col 2', colId: 'firstCol', field: 'height' },
+        // colId will be 'height',
+        { headerName: 'Col 1', field: 'height' },
 
-        // colId will be 'height'
-        { headerName: 'Col 3', field: 'height' },
-        // colId will be 'height_1', cos 'height' already taken
-        { headerName: 'Col 4', field: 'height' },
+        // colId will be 'firstWidth',
+        { headerName: 'Col 2', colId: 'firstWidth', field: 'width' },
+        // colId will be 'secondWidth'
+        { headerName: 'Col 3', colId: 'secondWidth', field: 'width' },
 
         // no colId, no field, so grid generated ID
+        { headerName: 'Col 4', valueGetter: 'data.width' },
         { headerName: 'Col 5', valueGetter: 'data.width' },
-        { headerName: 'Col 6', valueGetter: 'data.width' },
     ],
     rowData: createRowData(),
     onGridReady: (params: GridReadyEvent) => {

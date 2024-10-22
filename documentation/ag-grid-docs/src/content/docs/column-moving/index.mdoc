@@ -90,7 +90,7 @@ From the example the following can be noted:
 When you move columns around it is possible to change their visibility as follows:
 
 * You can hide a column by dragging it outside of the grid.
-* You can show a column by dragging it from the [Tool Panel](./tool-panel/) onto the grid.
+* You can show a column by dragging it from the [Tool Panel](./tool-panel/) onto the grid (when the grid option `allowDragFromColumnsToolPanel=true`).
 
 The column property `lockVisible` will stop individual columns from being made visible or hidden via the UI. When `lockVisible=true`, the column will not hide when it is dragged out of the grid, and columns dragged from the tool panel onto the grid will not become visible.
 
@@ -100,7 +100,8 @@ There is a slight overlap with the property `suppressDragLeaveHidesColumns`. Whe
 
 The example below shows lock visible. The following can be noted:
 
-* The columns **Age**, **Gold**, **Silver** and **Bronze** are all locked visible. It is not possible to hide the columns by dragging them out of the grid and not possible to show the columns by dragging them in from the tool panel.
+* `allowDragFromColumnsToolPanel` is enabled, so that columns can be shown by dragging from the tool panel.
+* The columns **Age**, **Gold**, **Silver** and **Bronze** are all locked visible. It is not possible to hide the columns by dragging them out of the grid, and not possible to show the columns by dragging them in from the tool panel.
 * If you make a group visible or hidden in the tool panel, the locked columns are not impacted.
 * If you drag a group (e.g. the **Athlete** group) out of the grid, all normal columns in the group are removed and all locked columns in the group are left intact.
 

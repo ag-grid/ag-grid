@@ -16,7 +16,7 @@ function asyncAssert(done: (error?: Error) => void, ...assertions: (() => void)[
 describe('AgPromise', () => {
     it('executes initial function by default', () => {
         const initial = jest.fn();
-        const promise = new AgPromise((resolve) => initial());
+        new AgPromise(() => initial());
 
         expect(initial).toBeCalledTimes(1);
     });

@@ -8,6 +8,19 @@ import './styles.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
+const COL_DEFS = [
+    { field: 'athlete' },
+    { field: 'age' },
+    { field: 'country' },
+    { field: 'sport' },
+    { field: 'year' },
+    { field: 'date' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' },
+];
+
 const VueExample = {
     template: `
       <div style="height: 100%">
@@ -46,53 +59,35 @@ const VueExample = {
     },
     beforeMount() {
         this.gridOptions = {};
-        this.columnDefs = this.getColumnDefs();
+        this.columnDefs = COL_DEFS;
     },
     mounted() {},
     methods: {
         setHeaderNames() {
-            const columnDefs = this.getColumnDefs();
-            columnDefs.forEach(function (colDef, index) {
+            COL_DEFS.forEach(function (colDef, index) {
                 colDef.headerName = 'C' + index;
             });
-            this.gridApi.setGridOption('columnDefs', columnDefs);
+            this.gridApi.setGridOption('columnDefs', COL_DEFS);
         },
         removeHeaderNames() {
-            const columnDefs = this.getColumnDefs();
-            columnDefs.forEach(function (colDef, index) {
+            COL_DEFS.forEach(function (colDef, index) {
                 colDef.headerName = undefined;
             });
-            this.gridApi.setGridOption('columnDefs', columnDefs);
+            this.gridApi.setGridOption('columnDefs', COL_DEFS);
         },
         setValueFormatters() {
-            const columnDefs = this.getColumnDefs();
-            columnDefs.forEach(function (colDef, index) {
+            COL_DEFS.forEach(function (colDef, index) {
                 colDef.valueFormatter = function (params) {
                     return '[ ' + params.value + ' ]';
                 };
             });
-            this.gridApi.setGridOption('columnDefs', columnDefs);
+            this.gridApi.setGridOption('columnDefs', COL_DEFS);
         },
         removeValueFormatters() {
-            const columnDefs = this.getColumnDefs();
-            columnDefs.forEach(function (colDef, index) {
+            COL_DEFS.forEach(function (colDef, index) {
                 colDef.valueFormatter = undefined;
             });
-            this.gridApi.setGridOption('columnDefs', columnDefs);
-        },
-        getColumnDefs() {
-            return [
-                { field: 'athlete' },
-                { field: 'age' },
-                { field: 'country' },
-                { field: 'sport' },
-                { field: 'year' },
-                { field: 'date' },
-                { field: 'gold' },
-                { field: 'silver' },
-                { field: 'bronze' },
-                { field: 'total' },
-            ];
+            this.gridApi.setGridOption('columnDefs', COL_DEFS);
         },
         onGridReady(params) {
             this.gridApi = params.api;
