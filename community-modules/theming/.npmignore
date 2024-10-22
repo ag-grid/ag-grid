@@ -13,3 +13,7 @@ dist/**/*.test.*
 project.json
 jest.config.js
 *.map
+scripts
+eslint.config.mjs 
+index.html 
+tsconfig.dev.json
