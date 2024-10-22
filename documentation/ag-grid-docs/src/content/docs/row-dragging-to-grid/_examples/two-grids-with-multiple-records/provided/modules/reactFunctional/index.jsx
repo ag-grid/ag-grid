@@ -185,9 +185,8 @@ const GridExample = () => {
     const getGridWrapper = (id) => (
         <div className="panel panel-primary" style={{ marginRight: '10px' }}>
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
-            <div className="panel-body">
+            <div className="panel-body" style={{ height: '100%' }}>
                 <AgGridReact
-                    style={{ height: '100%' }}
                     defaultColDef={defaultColDef}
                     getRowId={getRowId}
                     rowDragManaged={true}
