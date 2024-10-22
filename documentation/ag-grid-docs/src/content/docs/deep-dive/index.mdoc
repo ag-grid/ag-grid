@@ -174,20 +174,11 @@ First we need to hook into the `gridReady` event by adding `(gridReady)="onGridR
 ```html
 <!-- The AG Grid component, with various Grid Option properties -->
 <ag-grid-angular
-<<<<<<< Updated upstream
- style="width: 100%; height: 550px;"
- [rowData]="rowData"
- [columnDefs]="colDefs"
- (gridReady)="onGridReady($event)"
- />
-=======
     style="width: 100%; height: 550px;"
-    class="ag-theme-quartz-dark"
     [rowData]="rowData"
     [columnDefs]="colDefs"
     (gridReady)="onGridReady($event)"
     />
->>>>>>> Stashed changes
 ```
 
 _Note: [Grid Events](./deep-dive/#handle-grid-events) are covered in more detail later on_
@@ -400,11 +391,7 @@ const defaultColDef = useMemo(() => ({
     filter: true // Enable filtering on all columns
 }))
 
-<<<<<<< Updated upstream
 <div style={{ width: 600, height: 500 }}>
-=======
-<div className="ag-theme-quartz" style={{ width: 600, height: 500 }}>
->>>>>>> Stashed changes
     <AgGridReact
         defaultColDef={defaultColDef}
         //...
@@ -487,10 +474,6 @@ const App = {
         `
         <ag-grid-vue
             style="width: 100%; height: 100%"
-<<<<<<< Updated upstream
-=======
-            class="ag-theme-quartz-dark"
->>>>>>> Stashed changes
             :columnDefs="colDefs"
             :rowData="rowData"
             :defaultColDef="defaultColDef"
@@ -543,11 +526,7 @@ So far we've covered creating a grid, updating the data within the grid, and con
 Grid Options are passed to the grid component directly as props. Let's enable pagination by adding `pagination={true}`:
 
 ```jsx
-<<<<<<< Updated upstream
 <div style={{ width: 600, height: 500 }}>
-=======
-<div className="ag-theme-quartz" style={{ width: 600, height: 500 }}>
->>>>>>> Stashed changes
     <AgGridReact
         // ...
         pagination={true} // Enable Pagination
@@ -602,10 +581,6 @@ const App = {
         `
         <ag-grid-vue
             style="width: 100%; height: 100%"
-<<<<<<< Updated upstream
-=======
-            class="ag-theme-quartz-dark"
->>>>>>> Stashed changes
             :columnDefs="colDefs"
             :rowData="rowData"
             :defaultColDef="defaultColDef"
@@ -845,15 +820,9 @@ Let's try this by creating a new component to display the company logo in the 'c
     imports: [CommonModule],
     template: `<span>@if(value){<img [alt]="value" [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + value.toLowerCase() + '.png'" /> <p>{{ value }}</p>}</span>`,
     styles: ["img {display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.2);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }"]
-<<<<<<< Updated upstream
-})
-
-export class CompanyLogoRenderer implements ICellRendererAngularComp {
-=======
     })
 
     export class CompanyLogoRenderer implements ICellRendererAngularComp {
->>>>>>> Stashed changes
     // Init Cell Value
     public value!: string;
     agInit(params: ICellRendererParams): void {

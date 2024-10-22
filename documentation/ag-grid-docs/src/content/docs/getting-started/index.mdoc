@@ -87,11 +87,7 @@ Load the AG Grid library and create a container div. The div should have a heigh
     </head>
     <body>
         <!-- Your Data Grid container -->
-<<<<<<< Updated upstream
         <div id="myGrid" style="height: 500px"></div>
-=======
-        <div id="myGrid"></div>
->>>>>>> Stashed changes
     </body>
 </html>
 ```
@@ -160,11 +156,6 @@ const GridExample = () => {
         { field: "price" },
         { field: "electric" }
     ]);
-<<<<<<< Updated upstream
-=======
-
-    // ...
->>>>>>> Stashed changes
 
     // ...
 }
@@ -177,7 +168,6 @@ Rows and Columns are set as `AgGridReact` component attributes.
 
 ```jsx
 return (
-<<<<<<< Updated upstream
     <div
         // define a height because the Data Grid will fill the size of the parent container
         style={{ height: 500 }}
@@ -185,16 +175,6 @@ return (
         <AgGridReact
                 rowData={rowData}
                 columnDefs={colDefs}
-=======
-    // wrapping container with theme & size
-    <div
-        className="ag-theme-quartz" // applying the Data Grid theme
-        style={{ height: 500 }} // the Data Grid will fill the size of the parent container
-    >
-        <AgGridReact
-            rowData={rowData}
-            columnDefs={colDefs}
->>>>>>> Stashed changes
         />
     </div>
 )
@@ -254,29 +234,6 @@ template:
 `
 ```
 
-<<<<<<< Updated upstream
-=======
-**5. Styling the Data Grid**
-
-Import the required dependencies into your `styles.css` file.
-
-```js
-/* Core Data Grid CSS */
-import 'ag-grid-community/styles/ag-grid.css';
-/* Quartz Theme Specific CSS */
-import 'ag-grid-community/styles/ag-theme-quartz.css';
-```
-
-Add the `class` and `style` props to the `ag-grid-angular` component.
-
-```html
-<ag-grid-angular
-    class="ag-theme-quartz"
-    style="height: 500px;"
-    ...
-    />
-```
->>>>>>> Stashed changes
 {% /if %}
 
 {% if isFramework("vue") %}
@@ -337,10 +294,6 @@ Rows and Columns are set as `ag-grid-vue` component attributes. Styling is appli
         :rowData="rowData"
         :columnDefs="colDefs"
         style="height: 500px"
-<<<<<<< Updated upstream
-=======
-        class="ag-theme-quartz"
->>>>>>> Stashed changes
     >
     </ag-grid-vue>
 </template>
@@ -668,13 +621,8 @@ const myTheme = themeQuartz.withParams({
 {% if isFramework("react") %}
 ...
 return (
-<<<<<<< Updated upstream
     <div>
         <AgGridReact theme={myTheme} rowData={...} columnDefs={...} />
-=======
-    <div class="ag-theme-quartz"> // set Quartz Theme on parent div
-        <AgGridReact rowData={...} columnDefs={...} />
->>>>>>> Stashed changes
     </div>
 )
 {% /if %}
@@ -689,11 +637,7 @@ const gridOptions = {
     template: `<div style="height: 100%; box-sizing: border-box;">
         <ag-grid-angular
             // ...
-<<<<<<< Updated upstream
             [theme]="theme"
-=======
-            [class]="themeClass"
->>>>>>> Stashed changes
             />
     </div>`,
 // ...
@@ -706,56 +650,19 @@ const VueExample = {
             <div style="height: 100%; box-sizing: border-box;">
                 <ag-grid-vue
                 // ...
-<<<<<<< Updated upstream
                 :theme="theme"></ag-grid-vue>
-=======
-                :class="themeClass"></ag-grid-vue>
->>>>>>> Stashed changes
             </div>
         </div>
     `,
 // ...
-<<<<<<< Updated upstream
  data: function () {
     return {
         // ...
         theme: myTheme,
     };
  },
-=======
-    data: function () {
-        return {
-            // ...
-            themeClass: "ag-theme-quartz",
-        };
-    },
->>>>>>> Stashed changes
 // ...
 {% /if %}
-<<<<<<< Updated upstream
-=======
-
-{% imageCaption imagePath="resources/ag-grid-alpine-quartz-themes.png" alt="AG Grid Themes" maxWidth="860px" /%}
-
-
-From left to right [Alpine Light](/example?theme=ag-theme-alpine), [Alpine Dark](/example?theme=ag-theme-alpine-dark), [Quartz Light](/example?theme=ag-theme-quartz), and [Quartz Dark](/example?theme=ag-theme-quartz-dark) AG Grid themes. 
-
-### Customising a Theme
-
-[Customise Themes](./global-style-customisation) using CSS variables.
-
-```css
-.ag-theme-quartz {
-    /* Changes the color of the grid text */
-    --ag-foreground-color: rgb(14, 68, 145);
-    /* Changes the color of the grid background */
-    --ag-background-color: rgb(241, 247, 255);
-    /* Changes the header color of the top row */
-    --ag-header-background-color: rgb(228, 237, 250);
-    /* Changes the hover color of the row*/
-    --ag-row-hover-color: rgb(216, 226, 255);
-}
->>>>>>> Stashed changes
 ```
 
 
