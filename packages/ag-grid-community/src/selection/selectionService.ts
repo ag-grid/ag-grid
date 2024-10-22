@@ -689,6 +689,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             return;
         }
 
+        const source: SelectionEventSourceType = 'selectableChanged';
         const skipLeafNodes = changedPath !== undefined;
         const isCSRMGroupSelectsDescendants = _isClientSideRowModel(gos) && this.groupSelectsDescendants;
 
@@ -717,9 +718,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         // Needs to be depth first in this case, so that parents can be updated based on child.
         if (isCSRMGroupSelectsDescendants) {
             if (changedPath === undefined) {
-                changedPath = new ChangedPath(false, (this.rowModel as IClientSideRowModel).rootNode!);
+                const rootNode = (this.rowModel as IClientSideRowModel).rootNode;
+                changedPath = rootNode ? new ChangedPath(false, rootNode) : undefined;
             }
-            changedPath.forEachChangedNodeDepthFirst(nodeCallback, !skipLeafNodes, !skipLeafNodes);
+            changedPath?.forEachChangedNodeDepthFirst(nodeCallback, !skipLeafNodes, !skipLeafNodes);
         } else {
             // Normal case, update all rows
             this.rowModel.forEachNode(nodeCallback);
@@ -729,13 +731,13 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             this.setNodesSelected({
                 nodes: nodesToDeselect,
                 newValue: false,
-                source: 'selectableChanged',
+                source,
             });
         }
 
         // if csrm and group selects children, update the groups after deselecting leaf nodes.
         if (!skipLeafNodes && isCSRMGroupSelectsDescendants) {
-            this.updateGroupsFromChildrenSelections?.('selectableChanged');
+            this.updateGroupsFromChildrenSelections?.(source);
         }
     }
 
