@@ -14,6 +14,8 @@ class TestFilter extends ProvidedFilter<ProvidedFilterModel, string> {
     constructor(params: ProvidedFilterParams, rowModelType: RowModelType = 'clientSide') {
         super('textFilter');
 
+        this.beans = {} as any;
+
         const eGui = mock<HTMLElement>('appendChild');
         this.setGui(eGui);
 

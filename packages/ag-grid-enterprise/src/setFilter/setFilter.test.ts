@@ -106,6 +106,7 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
     (setFilter as any).eSelectAll = eSelectAll;
     (setFilter as any).gos = gridOptionsService;
     (setFilter as any).funcColsService = funcColsService;
+    (setFilter as any).beans = {};
 
     setFilter.setParams(params);
 
