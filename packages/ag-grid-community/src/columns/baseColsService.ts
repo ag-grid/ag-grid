@@ -395,17 +395,4 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
 
         return columnStateAccumulator;
     }
-
-    // ValueColsService signature methods, pending refactor
-    public isRowGroupEmpty(): boolean {
-        return false;
-    }
-
-    public getSourceColumnsForGroupColumn(_groupCol: AgColumn<any>): AgColumn<any>[] | null {
-        return null;
-    }
-
-    public moveColumn(_fromIndex: number, _toIndex: number, _source: ColumnEventType): void {
-        // NOP
-    }
 }

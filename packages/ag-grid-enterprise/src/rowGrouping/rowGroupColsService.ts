@@ -50,11 +50,11 @@ export class RowGroupColsService extends BaseColsService implements NamedBean, I
         );
     }
 
-    public override isRowGroupEmpty(): boolean {
+    public isRowGroupEmpty(): boolean {
         return this.columns.length === 0;
     }
 
-    public override moveColumn(fromIndex: number, toIndex: number, source: ColumnEventType): void {
+    public moveColumn(fromIndex: number, toIndex: number, source: ColumnEventType): void {
         if (this.isRowGroupEmpty()) {
             return;
         }
