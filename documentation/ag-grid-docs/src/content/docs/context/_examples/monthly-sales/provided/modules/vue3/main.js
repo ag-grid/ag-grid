@@ -174,7 +174,7 @@ const VueExample = {
             context,
             defaultColDef,
             autoGroupColumnDef,
-            selection,
+            rowSelection,
             rowData,
             onGridReady,
             themeClass:
