@@ -1,6 +1,7 @@
 import type { _DragGridApi } from '../api/gridApi';
 import { baseCommunityModule } from '../interfaces/iModule';
 import type { _ModuleWithApi, _ModuleWithoutApi } from '../interfaces/iModule';
+import { DndSourceComp } from '../rendering/dndSourceComp';
 import { DragAndDropImageComponent } from './dragAndDropImageComponent';
 import { DragAndDropService } from './dragAndDropService';
 import { addRowDropZone, getRowDropZoneParams, removeRowDropZone } from './dragApi';
@@ -13,16 +14,20 @@ export const DragModule: _ModuleWithoutApi = {
     beans: [DragService],
 };
 
+export const NativeDragModule: _ModuleWithoutApi = {
+    ...baseCommunityModule('NativeDragModule'),
+    dynamicBeans: {
+        dndSourceComp: DndSourceComp as any,
+    },
+};
+
 export const DragAndDropModule: _ModuleWithoutApi = {
     ...baseCommunityModule('DragAndDropModule'),
     beans: [DragAndDropService],
     dependsOn: [DragModule],
-    userComponents: [
-        {
-            classImp: DragAndDropImageComponent,
-            name: 'agDragAndDropImage',
-        },
-    ],
+    userComponents: {
+        agDragAndDropImage: DragAndDropImageComponent,
+    },
 };
 
 export const RowDragCoreModule: _ModuleWithoutApi = {

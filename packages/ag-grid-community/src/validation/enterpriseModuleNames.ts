@@ -65,6 +65,7 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     SideBarApiModule: 1,
     SideBarCoreModule: 1,
     SideBarModule: 1,
+    SideBarSharedModule: 1,
     SkeletonCellRendererModule: 1,
     SparklinesModule: 1,
     StatusBarApiModule: 1,

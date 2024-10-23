@@ -6,30 +6,21 @@ import { CheckboxCellRenderer } from './checkboxCellRenderer';
 
 export const AnimateShowChangeCellRendererModule: _ModuleWithoutApi = {
     ...baseCommunityModule('AnimateShowChangeCellRendererModule'),
-    userComponents: [
-        {
-            classImp: AnimateShowChangeCellRenderer,
-            name: 'agAnimateShowChangeCellRenderer',
-        },
-    ],
+    userComponents: {
+        agAnimateShowChangeCellRenderer: AnimateShowChangeCellRenderer,
+    },
 };
 
 export const AnimateSlideCellRendererModule: _ModuleWithoutApi = {
     ...baseCommunityModule('AnimateSlideCellRendererModule'),
-    userComponents: [
-        {
-            classImp: AnimateSlideCellRenderer,
-            name: 'agAnimateSlideCellRenderer',
-        },
-    ],
+    userComponents: {
+        agAnimateSlideCellRenderer: AnimateSlideCellRenderer,
+    },
 };
 
 export const CheckboxCellRendererModule: _ModuleWithoutApi = {
     ...baseCommunityModule('CheckboxCellRendererModule'),
-    userComponents: [
-        {
-            classImp: CheckboxCellRenderer,
-            name: 'agCheckboxCellRenderer',
-        },
-    ],
+    userComponents: {
+        agCheckboxCellRenderer: CheckboxCellRenderer,
+    },
 };

@@ -1,5 +1,6 @@
 import type { GridApi } from '../api/gridApi';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
+import type { ClassImp, ComponentMeta, DynamicBeanName, SingletonBean, UserComponentName } from '../context/context';
 import type { ComponentMeta, DynamicBeanMeta, SingletonBean } from '../context/context';
 import { VERSION } from '../version';
 import type { ComponentSelector } from '../widgets/component';
@@ -30,9 +31,9 @@ export interface Module {
     /** singleton beans which are created once on grid init */
     beans?: SingletonBean[];
     /** beans which can have many instances, and can be created/destroyed at any time */
-    dynamicBeans?: DynamicBeanMeta[];
+    dynamicBeans?: Partial<Record<DynamicBeanName, ClassImp>>;
     /** components which can be overridden by the user (e.g. cell renderers). These are the default grid provided versions */
-    userComponents?: ComponentMeta[];
+    userComponents?: Partial<Record<UserComponentName, ComponentMeta>>;
     /** selectors for grid components that can be defined in templates and created by AG stack */
     selectors?: ComponentSelector[];
     rowModels?: RowModelType[];
@@ -127,6 +128,7 @@ type CommunityModuleName =
     | 'LargeTextEditorModule'
     | 'LoadingOverlayModule'
     | 'LocaleModule'
+    | 'NativeDragModule'
     | 'NoRowsOverlayModule'
     | 'OverlayApiModule'
     | 'OverlayCoreModule'
@@ -241,6 +243,7 @@ export type EnterpriseModuleName =
     | 'SideBarApiModule'
     | 'SideBarCoreModule'
     | 'SideBarModule'
+    | 'SideBarSharedModule'
     | 'SkeletonCellRendererModule'
     | 'SparklinesModule'
     | 'StatusBarApiModule'

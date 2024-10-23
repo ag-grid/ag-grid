@@ -23,23 +23,17 @@ export const OverlayApiModule: _ModuleWithApi<_OverlayGridApi> = {
 
 export const LoadingOverlayModule: _ModuleWithoutApi = {
     ...baseCommunityModule('LoadingOverlayModule'),
-    userComponents: [
-        {
-            classImp: LoadingOverlayComponent,
-            name: 'agLoadingOverlay',
-        },
-    ],
+    userComponents: {
+        agLoadingOverlay: LoadingOverlayComponent,
+    },
     dependsOn: [OverlayCoreModule],
 };
 
 export const NoRowsOverlayModule: _ModuleWithoutApi = {
     ...baseCommunityModule('NoRowsOverlayModule'),
-    userComponents: [
-        {
-            classImp: NoRowsOverlayComponent,
-            name: 'agNoRowsOverlay',
-        },
-    ],
+    userComponents: {
+        agNoRowsOverlay: NoRowsOverlayComponent,
+    },
     dependsOn: [OverlayCoreModule],
 };
 

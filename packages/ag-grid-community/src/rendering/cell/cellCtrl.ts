@@ -28,7 +28,7 @@ import { _getCtrlForEventTarget } from '../../utils/event';
 import { _makeNull } from '../../utils/generic';
 import { _escapeString } from '../../utils/string';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
-import { DndSourceComp } from '../dndSourceComp';
+import type { DndSourceComp } from '../dndSourceComp';
 import type { RowCtrl } from '../row/rowCtrl';
 import { CellKeyboardListenerFeature } from './cellKeyboardListenerFeature';
 import { CellMouseListenerFeature } from './cellMouseListenerFeature';
@@ -908,9 +908,16 @@ export class CellCtrl extends BeanStub {
         return cbSelectionComponent;
     }
 
-    public createDndSource(): DndSourceComp {
-        const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.eGui);
-        this.beans.context.createBean(dndSourceComp);
+    public createDndSource(): DndSourceComp | undefined {
+        const dndSourceComp = this.beans.registry.createDynamicBean<DndSourceComp>(
+            'dndSourceComp',
+            this.rowNode,
+            this.column,
+            this.eGui
+        );
+        if (dndSourceComp) {
+            this.beans.context.createBean(dndSourceComp);
+        }
 
         return dndSourceComp;
     }

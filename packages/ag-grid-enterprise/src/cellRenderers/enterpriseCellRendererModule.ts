@@ -6,20 +6,14 @@ import { SkeletonCellRenderer } from './skeletonCellRenderer';
 
 export const LoadingCellRendererModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('LoadingCellRendererModule'),
-    userComponents: [
-        {
-            classImp: LoadingCellRenderer,
-            name: 'agLoadingCellRenderer',
-        },
-    ],
+    userComponents: {
+        agLoadingCellRenderer: LoadingCellRenderer,
+    },
 };
 
 export const SkeletonCellRendererModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('SkeletonCellRendererModule'),
-    userComponents: [
-        {
-            classImp: SkeletonCellRenderer,
-            name: 'agSkeletonCellRenderer',
-        },
-    ],
+    userComponents: {
+        agSkeletonCellRenderer: SkeletonCellRenderer,
+    },
 };

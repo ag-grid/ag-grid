@@ -45,13 +45,13 @@ export const RowGroupingApiModule: _ModuleWithApi<_RowGroupingGridApi> = {
 
 export const GroupFilterModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('GroupFilterModule'),
-    userComponents: [{ name: 'agGroupColumnFilter', classImp: GroupFilter }],
+    userComponents: { agGroupColumnFilter: GroupFilter },
     dependsOn: [RowGroupingCoreModule, ColumnFilterModule],
 };
 
 export const GroupFloatingFilterModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('GroupFloatingFilterModule'),
-    userComponents: [{ name: 'agGroupColumnFloatingFilter', classImp: GroupFloatingFilterComp }],
+    userComponents: { agGroupColumnFloatingFilter: GroupFloatingFilterComp },
     dependsOn: [GroupFilterModule, FloatingFilterModule],
 };
 

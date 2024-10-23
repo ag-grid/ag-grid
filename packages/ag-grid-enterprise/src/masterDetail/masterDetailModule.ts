@@ -13,8 +13,8 @@ import { MasterDetailService } from './masterDetailService';
 export const MasterDetailCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('MasterDetailCoreModule'),
     beans: [MasterDetailService],
-    userComponents: [{ name: 'agDetailCellRenderer', classImp: DetailCellRenderer }],
-    dynamicBeans: [{ name: 'detailCellRendererCtrl', classImp: DetailCellRendererCtrl }],
+    userComponents: { agDetailCellRenderer: DetailCellRenderer },
+    dynamicBeans: { detailCellRendererCtrl: DetailCellRendererCtrl },
     dependsOn: [EnterpriseCoreModule, GroupCellRendererModule],
 };
 

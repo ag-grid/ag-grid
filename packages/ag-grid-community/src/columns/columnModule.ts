@@ -84,6 +84,6 @@ export const ColumnApiModule: _ModuleWithApi<_ColumnGridApi<any>> = {
 
 export const ColumnGroupModule: _ModuleWithoutApi = {
     ...baseCommunityModule('ColumnGroupModule'),
-    dynamicBeans: [{ name: 'headerGroupCellCtrl', classImp: HeaderGroupCellCtrl as any }],
+    dynamicBeans: { headerGroupCellCtrl: HeaderGroupCellCtrl as any },
     dependsOn: [ColumnGroupHeaderCompModule],
 };

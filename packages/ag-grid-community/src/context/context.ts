@@ -116,6 +116,7 @@ export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollec
 
 export type DynamicBeanName =
     | 'detailCellRendererCtrl'
+    | 'dndSourceComp'
     | 'fillHandle'
     | 'groupCellRendererCtrl'
     | 'headerFilterCellCtrl'
@@ -172,15 +173,15 @@ export type UserComponentName =
     | 'agTotalRowCountComponent'
     | 'agFilteredRowCountComponent'
     | 'agTotalAndFilteredRowCountComponent';
-export interface NamedClass<TName = string> {
-    classImp: new (...args: []) => object;
-    name: TName;
-}
-export type DynamicBeanMeta = NamedClass<DynamicBeanName>;
-export type ComponentMeta = NamedClass<UserComponentName> & {
-    /** Default params for provided components */
-    params?: any;
-};
+
+export type ClassImp = new (...args: []) => object;
+export type ComponentMeta =
+    | ClassImp
+    | {
+          classImp: ClassImp;
+          /** Default params for provided components */
+          params?: any;
+      };
 
 export interface CoreBeanCollection {
     context: Context;

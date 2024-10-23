@@ -8,17 +8,11 @@ import { ShowRowGroupColsService } from './showRowGroupColsService';
 
 export const GroupCellRendererModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('GroupCellRendererModule'),
-    userComponents: [
-        {
-            name: 'agGroupRowRenderer',
-            classImp: GroupCellRenderer,
-        },
-        {
-            name: 'agGroupCellRenderer',
-            classImp: GroupCellRenderer,
-        },
-    ],
-    dynamicBeans: [{ name: 'groupCellRendererCtrl', classImp: GroupCellRendererCtrl }],
+    userComponents: {
+        agGroupRowRenderer: GroupCellRenderer,
+        agGroupCellRenderer: GroupCellRenderer,
+    },
+    dynamicBeans: { groupCellRendererCtrl: GroupCellRendererCtrl },
 };
 
 /** Shared between row grouping and tree data */

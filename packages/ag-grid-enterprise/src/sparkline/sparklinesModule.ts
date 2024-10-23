@@ -8,6 +8,6 @@ import { SparklineTooltipSingleton } from './tooltip/sparklineTooltipSingleton';
 export const SparklinesModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('SparklinesModule'),
     beans: [SparklineTooltipSingleton],
-    userComponents: [{ name: 'agSparklineCellRenderer', classImp: SparklineCellRenderer }],
+    userComponents: { agSparklineCellRenderer: SparklineCellRenderer },
     dependsOn: [EnterpriseCoreModule],
 };

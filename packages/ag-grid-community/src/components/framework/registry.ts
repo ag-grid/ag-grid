@@ -1,6 +1,6 @@
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
-import type { BeanCollection, DynamicBeanMeta, DynamicBeanName, UserComponentName } from '../../context/context';
+import type { BeanCollection, DynamicBeanName, UserComponentName } from '../../context/context';
 import type { Module } from '../../interfaces/iModule';
 import type { ValidationService } from '../../validation/validationService';
 import type { AgComponentSelector, ComponentSelector } from '../../widgets/component';
@@ -32,6 +32,28 @@ export class Registry extends BeanStub implements NamedBean {
     }
 
     public registerModule(module: Module): void {
+        const { userComponents, dynamicBeans, selectors } = module;
+
+        if (userComponents) {
+            for (const name of Object.keys(userComponents) as UserComponentName[]) {
+                const comp = userComponents[name];
+                if (typeof comp === 'object') {
+                    this.registerUserComponent(name, comp.classImp, comp.params);
+                } else {
+                    this.registerUserComponent(name, comp);
+                }
+            }
+        }
+
+        if (dynamicBeans) {
+            for (const name of Object.keys(dynamicBeans) as DynamicBeanName[]) {
+                this.dynamicBeans[name] = dynamicBeans[name];
+            }
+        }
+
+        selectors?.forEach((selector) => {
+            this.selectors[selector.selector] = selector;
+        });
         module.userComponents?.forEach(({ name, classImp, params }) =>
             this.registerUserComponent(name, classImp, params)
         );
@@ -89,10 +111,6 @@ export class Registry extends BeanStub implements NamedBean {
         return null;
     }
 
-    private registerDynamicBean(meta: DynamicBeanMeta): void {
-        this.dynamicBeans[meta.name] = meta.classImp;
-    }
-
     public createDynamicBean<T>(name: DynamicBeanName, ...args: any[]): T | undefined {
         const BeanClass = this.dynamicBeans[name];
 
@@ -101,10 +119,6 @@ export class Registry extends BeanStub implements NamedBean {
         }
 
         return new BeanClass(...args) as any;
-    }
-
-    private registerSelector(selector: ComponentSelector): void {
-        this.selectors[selector.selector] = selector;
     }
 
     public getSelector(name: AgComponentSelector): ComponentSelector | undefined {

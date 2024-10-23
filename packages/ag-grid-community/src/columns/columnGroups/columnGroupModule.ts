@@ -19,7 +19,7 @@ import { ColumnGroupService } from './columnGroupService';
 
 export const ColumnGroupCoreModule: _ModuleWithoutApi = {
     ...baseCommunityModule('ColumnGroupCoreModule'),
-    dynamicBeans: [{ name: 'headerGroupCellCtrl', classImp: HeaderGroupCellCtrl as any }],
+    dynamicBeans: { headerGroupCellCtrl: HeaderGroupCellCtrl as any },
     beans: [ColumnGroupService],
 };
 

@@ -5,8 +5,7 @@ import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { baseEnterpriseModule } from '../moduleUtils';
 import { RowGroupingModule } from '../rowGrouping/rowGroupingBundleModule';
 import { RowGroupingCoreModule } from '../rowGrouping/rowGroupingModule';
-import { ToolPanelColDefService } from '../sideBar/common/toolPanelColDefService';
-import { SideBarModule } from '../sideBar/sideBarModule';
+import { SideBarModule, SideBarSharedModule } from '../sideBar/sideBarModule';
 import { MenuItemModule } from '../widgets/menuItemModule';
 import { ColumnToolPanel } from './columnToolPanel';
 import { ColumnToolPanelFactory } from './columnToolPanelFactory';
@@ -14,9 +13,17 @@ import { ModelItemUtils } from './modelItemUtils';
 
 export const ColumnsToolPanelCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('ColumnsToolPanelCoreModule'),
-    beans: [ModelItemUtils, ToolPanelColDefService],
-    userComponents: [{ name: 'agColumnsToolPanel', classImp: ColumnToolPanel }],
-    dependsOn: [EnterpriseCoreModule, SideBarModule, ColumnMoveModule, DragAndDropModule, PopupModule, MenuItemModule],
+    beans: [ModelItemUtils],
+    userComponents: { agColumnsToolPanel: ColumnToolPanel },
+    dependsOn: [
+        EnterpriseCoreModule,
+        SideBarModule,
+        ColumnMoveModule,
+        DragAndDropModule,
+        PopupModule,
+        MenuItemModule,
+        SideBarSharedModule,
+    ],
 };
 
 export const ColumnsToolPanelRowGroupingModule: _ModuleWithoutApi = {
