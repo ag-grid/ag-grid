@@ -249,7 +249,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return true;
         }
 
-        if (colDef!.showRowGroup === true) {
+        if (colDef.showRowGroup === true) {
             return true;
         }
 
@@ -259,9 +259,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return true;
         }
 
-        const firstRowGroupCol = rowGroupCols[0];
-
-        return firstRowGroupCol.getId() === colDef!.showRowGroup;
+        return rowGroupCols[0].getId() === colDef.showRowGroup;
     }
 
     // if we are doing embedded full width rows, we only show the renderer when
