@@ -155,7 +155,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
                 'enableRangeSelection',
                 'enableCellTextSelection',
-                'rowSelection',
+                'cellSelection',
             ],
             () => this.redrawRows()
         );
