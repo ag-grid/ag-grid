@@ -88,14 +88,14 @@ button.mobileNavButton {
 
     :global(.icon) {
         --icon-size: #{$spacing-size-6};
-        --color-icon: var(--color-button-primary-fg);
+        --icon-color: var(--color-button-primary-fg);
 
         margin-left: $spacing-size-1;
         margin-right: -$spacing-size-1;
         fill: var(--color-button-primary-fg);
 
         #{$selector-darkmode} & {
-            --color-icon: var(--color-fg-white);
+            --icon-color: var(--color-fg-white);
             fill: var(--color-fg-white);
         }
     }

@@ -14,7 +14,7 @@ input[type='submit']#{$selector-exclude-grid},
 .button-secondary,
 .button-tertiary {
     --icon-size: 2em;
-    --color-icon: var(--color-button-primary-fg);
+    --icon-color: var(--color-button-primary-fg);
 
     appearance: none;
     display: inline-block;
@@ -84,13 +84,13 @@ input[type='submit']#{$selector-exclude-grid},
 
 // Fix hover issues for links with .button class
 a.button:hover {
-    --color-icon: var(--color-button-primary-fg);
+    --icon-color: var(--color-button-primary-fg);
 
     color: var(--color-button-primary-fg);
 }
 
 .button-secondary {
-    --color-icon: var(--color-button-secondary-fg);
+    --icon-color: var(--color-button-secondary-fg);
 
     background-color: var(--color-button-secondary-bg);
     color: var(--color-button-secondary-fg);
@@ -113,7 +113,7 @@ a.button-secondary:hover {
 }
 
 .button-tertiary {
-    --color-icon: var(--color-button-tertiary-fg);
+    --icon-color: var(--color-button-tertiary-fg);
 
     background-color: var(--color-button-tertiary-bg);
     color: var(--color-button-tertiary-fg);

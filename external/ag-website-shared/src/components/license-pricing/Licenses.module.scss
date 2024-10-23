@@ -170,14 +170,14 @@ p.name {
 .learnMoreLink {
     svg {
         --icon-size: 16px;
-        --color-icon: var(--color-link);
+        --icon-color: var(--color-link);
 
         transform: translateX(2px);
         transition: transform $transition-default-timing;
     }
 
     &:hover svg {
-        --color-icon: var(--color-link-hover);
+        --icon-color: var(--color-link-hover);
 
         transform: translateX(5px);
     }

@@ -216,13 +216,13 @@
 }
 
 .iconsSpan {
-    --color-icon: red;
+    --icon-color: red;
 
     color: red;
 }
 
 .iconsButton {
-    --color-icon: white;
+    --icon-color: white;
 
     background-color: blue;
     color: white;
@@ -234,12 +234,12 @@
 }
 
 .iconsLink {
-    --color-icon: green;
+    --icon-color: green;
 
     color: green;
 
     &:hover {
-        --color-icon: orange;
+        --icon-color: orange;
 
         color: orange;
     }

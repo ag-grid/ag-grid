@@ -3,7 +3,7 @@
 
 a#{$selector-exclude-grid} {
     --icon-size: 1.5em;
-    --color-icon: var(--color-link);
+    --icon-color: var(--color-link);
 
     text-decoration: none;
     color: var(--color-link);
@@ -11,7 +11,7 @@ a#{$selector-exclude-grid} {
     font-weight: var(--text-semibold);
 
     &:where([href]):hover {
-        --color-icon: var(--color-link-hover);
+        --icon-color: var(--color-link-hover);
 
         color: var(--color-link-hover);
     }
