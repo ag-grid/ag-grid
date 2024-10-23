@@ -632,6 +632,8 @@ export {
     _getGroupSelection,
     _getGroupSelectsDescendants,
     _getIsRowSelectable,
+    _getCheckboxes,
+    _getCheckboxLocation,
     _getHeaderCheckbox,
     _isMultiRowSelection,
     _getFillHandle,
