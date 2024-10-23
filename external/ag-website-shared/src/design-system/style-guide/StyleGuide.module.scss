@@ -187,3 +187,60 @@
         top: unset; // Fix for existing odd behavior.
     }
 }
+
+// Icons
+// ===============================================
+.iconsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-8;
+    justify-content: center;
+    margin-top: $spacing-size-8;
+    margin-bottom: $spacing-size-16;
+
+    > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: $spacing-size-2;
+    }
+}
+
+.iconsElementsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-8;
+    align-items: center;
+    margin-top: $spacing-size-8;
+    margin-bottom: $spacing-size-8;
+}
+
+.iconsSpan {
+    --color-icon: red;
+
+    color: red;
+}
+
+.iconsButton {
+    --color-icon: white;
+
+    background-color: blue;
+    color: white;
+
+    &:hover {
+        background-color: green;
+        color: white;
+    }
+}
+
+.iconsLink {
+    --color-icon: green;
+
+    color: green;
+
+    &:hover {
+        --color-icon: orange;
+
+        color: orange;
+    }
+}
