@@ -1,4 +1,4 @@
-import { data } from './data';
+import { data } from './data.js';
 
 export function FakeServer() {
     alasql.options.cache = false;

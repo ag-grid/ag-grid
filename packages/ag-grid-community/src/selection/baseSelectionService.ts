@@ -12,16 +12,14 @@ import {
     _getEnableSelectionWithoutKeys,
     _getGroupSelectsDescendants,
     _getIsRowSelectable,
-    _isClientSideRowModel,
     _isRowSelection,
 } from '../gridOptionsUtils';
-import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISetNodesSelectedParams, SetSelectedParams } from '../interfaces/iSelectionService';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import type { RowCtrl, RowGui } from '../rendering/row/rowCtrl';
 import { _setAriaSelected } from '../utils/aria';
-import { ChangedPath } from '../utils/changedPath';
+import type { ChangedPath } from '../utils/changedPath';
 import { _warn } from '../validation/logging';
 import { CheckboxSelectionComponent } from './checkboxSelectionComponent';
 import { SelectAllFeature } from './selectAllFeature';
@@ -30,7 +28,7 @@ export abstract class BaseSelectionService extends BeanStub {
     protected rowModel: IRowModel;
     private ariaAnnouncementService: AriaAnnouncementService;
 
-    private isRowSelectable?: IsRowSelectable;
+    protected isRowSelectable?: IsRowSelectable;
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
@@ -42,7 +40,7 @@ export abstract class BaseSelectionService extends BeanStub {
             const callback = _getIsRowSelectable(this.gos);
             if (callback !== this.isRowSelectable) {
                 this.isRowSelectable = callback;
-                this.updateSelectable(false);
+                this.updateSelectable();
             }
         });
 
@@ -168,85 +166,9 @@ export abstract class BaseSelectionService extends BeanStub {
 
     public abstract setNodesSelected(params: ISetNodesSelectedParams): number;
 
-    public updateSelectableAfterGrouping(changedPath: ChangedPath | undefined): void {
-        this.updateSelectable(true);
+    public abstract updateSelectableAfterGrouping(changedPath?: ChangedPath): void;
 
-        if (_getGroupSelectsDescendants(this.gos)) {
-            const selectionChanged = this.updateGroupsFromChildrenSelections?.('rowGroupChanged', changedPath);
-            if (selectionChanged) {
-                this.eventService.dispatchEvent({
-                    type: 'selectionChanged',
-                    source: 'rowGroupChanged',
-                });
-            }
-        }
-    }
-
-    /**
-     * Updates the selectable state for a node by invoking isRowSelectable callback.
-     * If the node is not selectable, it will be deselected.
-     *
-     * Callers:
-     *  - property isRowSelectable changed
-     *  - after grouping / treeData
-     */
-    private updateSelectable(skipLeafNodes: boolean) {
-        const { gos } = this;
-
-        if (!_isRowSelection(gos)) {
-            return;
-        }
-
-        const isGroupSelectsChildren = _getGroupSelectsDescendants(gos);
-        const isCsrmGroupSelectsChildren = _isClientSideRowModel(gos) && isGroupSelectsChildren;
-
-        const nodesToDeselect: RowNode[] = [];
-
-        const nodeCallback = (node: RowNode) => {
-            if (skipLeafNodes && !node.group) {
-                return;
-            }
-
-            // Only in the CSRM, we allow group node selection if a child has a selectable=true when using groupSelectsChildren
-            if (isCsrmGroupSelectsChildren && node.group) {
-                const hasSelectableChild = node.childrenAfterGroup!.some((rowNode) => rowNode.selectable === true);
-                this.setRowSelectable(node, hasSelectableChild, true);
-                return;
-            }
-
-            const rowSelectable = this.isRowSelectable?.(node) ?? true;
-            this.setRowSelectable(node, rowSelectable, true);
-
-            if (!rowSelectable && node.isSelected()) {
-                nodesToDeselect.push(node);
-            }
-        };
-
-        // Needs to be depth first in this case, so that parents can be updated based on child.
-        if (isCsrmGroupSelectsChildren) {
-            const rootNode = (this.rowModel as IClientSideRowModel).rootNode;
-            if (rootNode) {
-                const changedPath = new ChangedPath(false, rootNode);
-                changedPath.forEachChangedNodeDepthFirst(nodeCallback, true, true);
-            }
-        } else {
-            // Normal case, update all rows
-            this.rowModel.forEachNode(nodeCallback);
-        }
-
-        if (nodesToDeselect.length) {
-            this.setNodesSelected({
-                nodes: nodesToDeselect,
-                newValue: false,
-                source: 'selectableChanged',
-            });
-        }
-
-        // if csrm and group selects children, update the groups after deselecting leaf nodes.
-        if (isCsrmGroupSelectsChildren) {
-            this.updateGroupsFromChildrenSelections?.('selectableChanged');
-        }
-    }
+    protected abstract updateSelectable(changedPath?: ChangedPath): void;
 
     private isRowSelectionBlocked(rowNode: RowNode): boolean {
         return !rowNode.selectable || !!rowNode.rowPinned || !_isRowSelection(this.gos);
@@ -257,7 +179,7 @@ export abstract class BaseSelectionService extends BeanStub {
         this.setRowSelectable(rowNode, isRowSelectableFunc ? isRowSelectableFunc!(rowNode) : true);
     }
 
-    private setRowSelectable(rowNode: RowNode, newVal: boolean, suppressSelectionUpdate?: boolean): void {
+    protected setRowSelectable(rowNode: RowNode, newVal: boolean, suppressSelectionUpdate?: boolean): void {
         if (rowNode.selectable !== newVal) {
             rowNode.selectable = newVal;
             rowNode.dispatchRowEvent('selectableChanged');

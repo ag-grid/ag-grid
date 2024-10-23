@@ -219,6 +219,8 @@ export const AG_GRID_LOCALE_EN = {
     donut: 'Donut',
 
     line: 'Line',
+    stackedLine: 'Stacked',
+    normalizedLine: '100% Stacked',
 
     xyChart: 'X Y (Scatter)',
     scatter: 'Scatter',
