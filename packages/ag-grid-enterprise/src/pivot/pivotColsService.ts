@@ -3,42 +3,32 @@ import { BaseColsService, _removeFromArray } from 'ag-grid-community';
 
 export class PivotColsService extends BaseColsService implements NamedBean, IColsService {
     beanName = 'pivotColsService' as const;
+    eventName = 'columnPivotChanged' as const;
+    override columnProcessors = {
+        set: (column: AgColumn, added: boolean, source: ColumnEventType) => column.setPivotActive(true, source),
+        add: (column: AgColumn, added: boolean, source: ColumnEventType) => column.setPivotActive(true, source),
+        remove: (column: AgColumn, added: boolean, source: ColumnEventType) => column.setPivotActive(false, source),
+    } as const;
+
+    override columnOrdering = {
+        enableProp: 'pivot',
+        initialEnableProp: 'initialPivot',
+        indexProp: 'pivotIndex',
+        initialIndexProp: 'initialPivotIndex',
+    } as const;
+
+    override columnExtractors = {
+        setFlagFunc: (col: AgColumn, flag: boolean, source: ColumnEventType) => col.setPivotActive(flag, source),
+        getIndexFunc: (colDef: ColDef) => colDef.pivotIndex,
+        getInitialIndexFunc: (colDef: ColDef) => colDef.initialPivotIndex,
+        getValueFunc: (colDef: ColDef) => colDef.pivot,
+        getInitialValueFunc: (colDef: ColDef) => colDef.initialPivot,
+    } as const;
 
     private modifyColumnsNoEventsCallbacks = {
         addCol: (column: AgColumn) => this.columns.push(column),
         removeCol: (column: AgColumn) => _removeFromArray(this.columns, column),
     };
-
-    public postConstruct(): void {
-        this.columnProcessors = {
-            set: (column: AgColumn, added: boolean, source: ColumnEventType) => column.setPivotActive(true, source),
-            add: (column: AgColumn, added: boolean, source: ColumnEventType) => column.setPivotActive(true, source),
-            remove: (column: AgColumn, added: boolean, source: ColumnEventType) => column.setPivotActive(false, source),
-        };
-
-        this.columnOrdering = {
-            enableProp: 'pivot',
-            initialEnableProp: 'initialPivot',
-            indexProp: 'pivotIndex',
-            initialIndexProp: 'initialPivotIndex',
-        };
-    }
-
-    protected override getEventName(): 'columnPivotChanged' {
-        return 'columnPivotChanged';
-    }
-
-    public override extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {
-        this.columns = this.extractColumnsCommon(
-            oldProvidedCols,
-            this.columns,
-            (col, flag) => col.setPivotActive(flag, source),
-            (colDef: ColDef) => colDef.pivotIndex,
-            (colDef: ColDef) => colDef.initialPivotIndex,
-            (colDef: ColDef) => colDef.pivot,
-            (colDef: ColDef) => colDef.initialPivot
-        );
-    }
 
     public syncColumnWithState(
         column: AgColumn,

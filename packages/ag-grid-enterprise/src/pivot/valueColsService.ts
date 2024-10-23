@@ -13,59 +13,44 @@ import { BaseColsService, _exists, _removeFromArray, _warn } from 'ag-grid-commu
 
 export class ValueColsService extends BaseColsService implements NamedBean, IColsService {
     beanName = 'valueColsService' as const;
+    eventName = 'columnValueChanged' as const;
 
-    public override wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
-        this.aggFuncService = beans.aggFuncService;
-        this.visibleColsService = beans.visibleColsService;
-    }
+    override columnProcessors = {
+        set: (column: AgColumn, added: boolean, source: ColumnEventType) => this.setValueActive(added, column, source),
+        add: (column: AgColumn, added: boolean, source: ColumnEventType) => this.setValueActive(true, column, source),
+        remove: (column: AgColumn, added: boolean, source: ColumnEventType) =>
+            this.setValueActive(false, column, source),
+    } as const;
+
+    override columnExtractors = {
+        setFlagFunc: (col: AgColumn, flag: boolean, source: ColumnEventType) => col.setValueActive(flag, source),
+        getIndexFunc: () => undefined,
+        getInitialIndexFunc: () => undefined,
+        getValueFunc: (colDef: ColDef) => {
+            const aggFunc = colDef.aggFunc;
+            // null or empty string means clear
+            if (aggFunc === null || aggFunc === '') {
+                return null;
+            }
+            if (aggFunc === undefined) {
+                return;
+            }
+
+            return !!aggFunc;
+        },
+        getInitialValueFunc: (colDef: ColDef) => {
+            // return false if any of the following: null, undefined, empty string
+            return colDef.initialAggFunc != null && colDef.initialAggFunc != '';
+        },
+    } as const;
 
     private modifyColumnsNoEventsCallbacks = {
         addCol: (column: AgColumn) => this.columns.push(column),
         removeCol: (column: AgColumn) => _removeFromArray(this.columns, column),
     };
 
-    public postConstruct(): void {
-        this.columnProcessors = {
-            set: (column: AgColumn, added: boolean, source: ColumnEventType) =>
-                this.setValueActive(added, column, source),
-            add: (column: AgColumn, added: boolean, source: ColumnEventType) =>
-                this.setValueActive(true, column, source),
-            remove: (column: AgColumn, added: boolean, source: ColumnEventType) =>
-                this.setValueActive(false, column, source),
-        };
-    }
-
-    protected override getEventName(): 'columnValueChanged' {
-        return 'columnValueChanged';
-    }
-
-    public override extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {
-        this.columns = this.extractColumnsCommon(
-            oldProvidedCols,
-            this.columns,
-            (col, flag) => col.setValueActive(flag, source),
-            // aggFunc doesn't have index variant, cos order of value cols doesn't matter, so always return null
-            () => undefined,
-            () => undefined,
-            // aggFunc is a string, so return it's existence
-            (colDef: ColDef) => {
-                const aggFunc = colDef.aggFunc;
-                // null or empty string means clear
-                if (aggFunc === null || aggFunc === '') {
-                    return null;
-                }
-                if (aggFunc === undefined) {
-                    return;
-                }
-
-                return !!aggFunc;
-            },
-            (colDef: ColDef) => {
-                // return false if any of the following: null, undefined, empty string
-                return colDef.initialAggFunc != null && colDef.initialAggFunc != '';
-            }
-        );
+    public override extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): AgColumn[] {
+        this.columns = super.extractCols(source, oldProvidedCols);
 
         // all new columns added will have aggFunc missing, so set it to what is in the colDef
         this.columns.forEach((col) => {
@@ -80,6 +65,8 @@ export class ValueColsService extends BaseColsService implements NamedBean, ICol
                 }
             }
         });
+
+        return this.columns;
     }
 
     public setColumnAggFunc(key: ColKey, aggFunc: string | IAggFunc | null | undefined, source: ColumnEventType): void {
@@ -94,7 +81,7 @@ export class ValueColsService extends BaseColsService implements NamedBean, ICol
 
         column.setAggFunc(aggFunc);
 
-        this.dispatchColumnChangedEvent(this.eventService, this.getEventName(), [column], source);
+        this.dispatchColumnChangedEvent(this.eventService, this.eventName, [column], source);
     }
 
     public override syncColumnWithState(

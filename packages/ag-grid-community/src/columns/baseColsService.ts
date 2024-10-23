@@ -1,10 +1,9 @@
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
-import type { ColDef } from '../entities/colDef';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
-import type { IColsService } from '../interfaces/iColsService';
+import type { ColumnExtractors, ColumnOrdering, ColumnProcessors, IColsService } from '../interfaces/iColsService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _removeFromArray } from '../utils/array';
 import { _exists } from '../utils/generic';
@@ -14,25 +13,16 @@ import type { ColKey, ColumnModel, Maybe } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateService';
 import type { VisibleColsService } from './visibleColsService';
 
-type ColumnProcessorKeys = 'add' | 'remove' | 'set';
-type ColumnProcessor = (column: AgColumn, added: boolean, source: ColumnEventType) => void;
-type ColumnProcessors = Record<ColumnProcessorKeys, ColumnProcessor>;
-
-type ColumnOrdering = {
-    enableProp: 'rowGroup' | 'pivot';
-    initialEnableProp: 'initialRowGroup' | 'initialPivot';
-    indexProp: 'rowGroupIndex' | 'pivotIndex';
-    initialIndexProp: 'initialRowGroupIndex' | 'initialPivotIndex';
-};
-
 export abstract class BaseColsService extends BeanStub implements IColsService {
     protected columnModel: ColumnModel;
     protected aggFuncService?: IAggFuncService;
     protected visibleColsService: VisibleColsService;
     protected dispatchColumnChangedEvent = dispatchColumnChangedEvent;
 
-    protected columnProcessors?: ColumnProcessors;
-    protected columnOrdering?: ColumnOrdering;
+    public abstract columnProcessors?: ColumnProcessors;
+    public abstract columnExtractors?: ColumnExtractors;
+    public abstract eventName: ColumnChangedEventType;
+    public columnOrdering?: ColumnOrdering;
 
     public columns: AgColumn[] = [];
 
@@ -46,26 +36,16 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.columns.sort(compareFn);
     }
 
-    protected abstract getEventName(): ColumnChangedEventType;
-
     public setColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this.setColList(colKeys, this.columns, this.getEventName(), true, true, this.columnProcessors!.set, source);
+        this.setColList(colKeys, this.columns, this.eventName, true, true, this.columnProcessors!.set, source);
     }
 
     public addColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this.updateColList(colKeys, this.columns, true, true, this.columnProcessors!.add, this.getEventName(), source);
+        this.updateColList(colKeys, this.columns, true, true, this.columnProcessors!.add, this.eventName, source);
     }
 
     public removeColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        this.updateColList(
-            colKeys,
-            this.columns,
-            false,
-            true,
-            this.columnProcessors!.remove,
-            this.getEventName(),
-            source
-        );
+        this.updateColList(colKeys, this.columns, false, true, this.columnProcessors!.remove, this.eventName, source);
     }
 
     protected setColList(
@@ -194,19 +174,13 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         } as WithoutGridCommon<ColumnEvent>);
     }
 
-    public abstract extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void;
-
-    protected extractColumnsCommon(
-        oldProvidedCols: AgColumn[] = [],
-        previousCols: AgColumn[] = [],
-        setFlagFunc: (col: AgColumn, flag: boolean) => void,
-        getIndexFunc: (colDef: ColDef) => number | null | undefined,
-        getInitialIndexFunc: (colDef: ColDef) => number | null | undefined,
-        getValueFunc: (colDef: ColDef) => boolean | null | undefined,
-        getInitialValueFunc: (colDef: ColDef) => boolean | undefined
-    ): AgColumn[] {
+    public extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] = []): AgColumn[] {
+        const previousCols = this.columns;
         const colsWithIndex: AgColumn[] = [];
         const colsWithValue: AgColumn[] = [];
+
+        const { setFlagFunc, getIndexFunc, getInitialIndexFunc, getValueFunc, getInitialValueFunc } =
+            this.columnExtractors!;
 
         const primaryCols = this.columnModel.getColDefCols() || [];
 
@@ -306,13 +280,13 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         // set flag=false for removed cols
         previousCols.forEach((col) => {
             if (res.indexOf(col) < 0) {
-                setFlagFunc(col, false);
+                setFlagFunc(col, false, source);
             }
         });
         // set flag=true for newly added cols
         res.forEach((col) => {
             if (previousCols.indexOf(col) < 0) {
-                setFlagFunc(col, true);
+                setFlagFunc(col, true, source);
             }
         });
 

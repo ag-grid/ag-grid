@@ -11,45 +11,33 @@ import { BaseColsService, _removeFromArray, _shouldUpdateColVisibilityAfterGroup
 
 export class RowGroupColsService extends BaseColsService implements NamedBean, IColsService {
     beanName = 'rowGroupColsService' as const;
+    eventName = 'columnRowGroupChanged' as const;
+
+    override columnProcessors = {
+        set: (column: AgColumn, added: boolean, source: ColumnEventType) => this.setActive(added, column, source),
+        add: (column: AgColumn, added: boolean, source: ColumnEventType) => this.setActive(true, column, source),
+        remove: (column: AgColumn, added: boolean, source: ColumnEventType) => this.setActive(false, column, source),
+    } as const;
+
+    override columnOrdering = {
+        enableProp: 'rowGroup',
+        initialEnableProp: 'initialRowGroup',
+        indexProp: 'rowGroupIndex',
+        initialIndexProp: 'initialRowGroupIndex',
+    } as const;
+
+    override columnExtractors = {
+        setFlagFunc: (col: AgColumn, flag: boolean, source: ColumnEventType) => col.setRowGroupActive(flag, source),
+        getIndexFunc: (colDef: ColDef) => colDef.rowGroupIndex,
+        getInitialIndexFunc: (colDef: ColDef) => colDef.initialRowGroupIndex,
+        getValueFunc: (colDef: ColDef) => colDef.rowGroup,
+        getInitialValueFunc: (colDef: ColDef) => colDef.initialRowGroup,
+    } as const;
 
     private modifyColumnsNoEventsCallbacks = {
         addCol: (column: AgColumn) => this.columns.push(column),
         removeCol: (column: AgColumn) => _removeFromArray(this.columns, column),
     };
-
-    protected override getEventName(): 'columnRowGroupChanged' {
-        return 'columnRowGroupChanged';
-    }
-
-    public postConstruct(): void {
-        this.columnProcessors = {
-            set: (column: AgColumn, added: boolean, source: ColumnEventType) =>
-                this.setRowGroupActive(added, column, source),
-            add: (column: AgColumn, added: boolean, source: ColumnEventType) =>
-                this.setRowGroupActive(true, column, source),
-            remove: (column: AgColumn, added: boolean, source: ColumnEventType) =>
-                this.setRowGroupActive(false, column, source),
-        };
-
-        this.columnOrdering = {
-            enableProp: 'rowGroup',
-            initialEnableProp: 'initialRowGroup',
-            indexProp: 'rowGroupIndex',
-            initialIndexProp: 'initialRowGroupIndex',
-        };
-    }
-
-    public override extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {
-        this.columns = this.extractColumnsCommon(
-            oldProvidedCols,
-            this.columns,
-            (col, flag) => col.setRowGroupActive(flag, source),
-            (colDef: ColDef) => colDef.rowGroupIndex,
-            (colDef: ColDef) => colDef.initialRowGroupIndex,
-            (colDef: ColDef) => colDef.rowGroup,
-            (colDef: ColDef) => colDef.initialRowGroup
-        );
-    }
 
     public isRowGroupEmpty(): boolean {
         return this.columns.length === 0;
@@ -67,7 +55,7 @@ export class RowGroupColsService extends BaseColsService implements NamedBean, I
         this.columns.splice(toIndex, 0, column);
 
         this.eventService.dispatchEvent({
-            type: this.getEventName(),
+            type: this.eventName,
             columns: impactedColumns,
             column: impactedColumns.length === 1 ? impactedColumns[0] : null,
             source,
@@ -102,7 +90,7 @@ export class RowGroupColsService extends BaseColsService implements NamedBean, I
         }
     }
 
-    private setRowGroupActive(active: boolean, column: AgColumn, source: ColumnEventType): void {
+    private setActive(active: boolean, column: AgColumn, source: ColumnEventType): void {
         if (active === column.isRowGroupActive()) {
             return;
         }
