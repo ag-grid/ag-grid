@@ -25,12 +25,12 @@
 
 .importInfoIcon svg {
     --icon-size: 1.25em;
-    --color-icon: var(--color-fg-secondary);
+    --icon-color: var(--color-fg-secondary);
 
     position: relative;
     bottom: 0.125em;
 
     &:hover {
-        --color-icon: var(--color-link);
+        --icon-color: var(--color-link);
     }
 }

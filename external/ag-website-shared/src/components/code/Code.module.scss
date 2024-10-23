@@ -61,7 +61,7 @@
 
     svg {
         --icon-size: 22px;
-        --color-icon: var(--clipboard-button-fg);
+        --icon-color: var(--clipboard-button-fg);
 
         transition: fill $transition-default-timing;
     }

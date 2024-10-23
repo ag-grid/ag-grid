@@ -5,6 +5,7 @@ import type { FunctionComponent } from 'react';
 import { Alerts } from './Alerts';
 import { Buttons } from './Buttons';
 import { Colors } from './Colors';
+import { Icons } from './Icons';
 import { Inputs } from './Inputs';
 import { Layout } from './Layout';
 import { Radii } from './Radii';
@@ -29,6 +30,7 @@ export const StyleGuide: FunctionComponent = () => {
                 <TextElements />
                 <Buttons />
                 <Inputs />
+                <Icons />
                 <Alerts />
                 <Tables />
             </div>

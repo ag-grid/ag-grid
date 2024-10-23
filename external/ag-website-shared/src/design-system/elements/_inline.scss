@@ -2,18 +2,18 @@
 @use 'sass:map';
 
 a#{$selector-exclude-grid} {
+    --icon-size: 1.5em;
+    --icon-color: var(--color-link);
+
     text-decoration: none;
     color: var(--color-link);
     transition: color $transition-default-timing;
     font-weight: var(--text-semibold);
 
-    &[href]:hover {
-        color: var(--color-link-hover);
-    }
+    &:where([href]):hover {
+        --icon-color: var(--color-link-hover);
 
-    > :where(.icon) {
-        --icon-size: 1.5em;
-        --color-icon: var(--color-link);
+        color: var(--color-link-hover);
     }
 }
 
