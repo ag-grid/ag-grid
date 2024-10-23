@@ -1,4 +1,5 @@
 import type { GridTheme, GridThemeUseArgs } from '../entities/gridOptions';
+import { _getAllRegisteredModules, _getRegisteredModules } from '../modules/moduleRegistry';
 import { _error, _warn } from '../validation/logging';
 import { Params } from './Params';
 import type { Part } from './Part';
@@ -125,8 +126,13 @@ class ThemeImpl<TParams = unknown> implements Theme {
 
         const loadPromises: Promise<void>[] = [];
 
+        const moduleCSS = Array.from(_getAllRegisteredModules())
+            .sort((a, b) => a.moduleName.localeCompare(b.moduleName))
+            .flatMap((module) => module.css || [])
+            .join('\n');
+
         // Core CSS is loaded once per shadow root and shared between themes
-        loadPromises.push(installCSS({ css: coreCSS, part: 'core', root }));
+        loadPromises.push(installCSS({ css: `${coreCSS}\n${moduleCSS}`, part: 'core', root }));
 
         const googleFontsUsed = getGoogleFontsUsed(this);
         if (googleFontsUsed.length > 0) {
