@@ -1,7 +1,7 @@
 import type { GridApi, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from 'ag-grid-community';
 import { createGrid } from 'ag-grid-community';
 import { ModuleRegistry } from 'ag-grid-community';
-import { ServerSideRowModelModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 ModuleRegistry.registerModules([ServerSideRowModelModule, RowGroupingModule]);
 
