@@ -194,6 +194,7 @@ export abstract class ChartProxy<
         } as const;
         newOptions.theme = theme;
         newOptions.container = this.chartProxyParams.parentElement;
+        (newOptions as any).styleContainer = this.chartProxyParams.parentElement;
         return newOptions;
     }
 
