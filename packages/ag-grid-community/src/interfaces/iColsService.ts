@@ -6,7 +6,7 @@ import type { ColDef, IAggFunc } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 
 type ColumnProcessorKeys = 'add' | 'remove' | 'set';
-type ColumnProcessor = (column: AgColumn, added: boolean, source: ColumnEventType) => void;
+export type ColumnProcessor = (column: AgColumn, added: boolean, source: ColumnEventType) => void;
 export type ColumnProcessors = Record<ColumnProcessorKeys, ColumnProcessor>;
 
 export type ColumnOrdering = {

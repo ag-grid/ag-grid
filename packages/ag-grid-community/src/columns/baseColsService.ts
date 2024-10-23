@@ -3,7 +3,13 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import type { IAggFuncService } from '../interfaces/iAggFuncService';
-import type { ColumnExtractors, ColumnOrdering, ColumnProcessors, IColsService } from '../interfaces/iColsService';
+import type {
+    ColumnExtractors,
+    ColumnOrdering,
+    ColumnProcessor,
+    ColumnProcessors,
+    IColsService,
+} from '../interfaces/iColsService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _removeFromArray } from '../utils/array';
 import { _exists } from '../utils/generic';
@@ -51,7 +57,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
     protected setColList(
         colKeys: ColKey[],
         masterList: AgColumn[],
-        eventName: ReturnType<BaseColsService['getEventName']>,
+        eventName: IColsService['eventName'],
         detectOrderChange: boolean,
         autoGroupsNeedBuilding: boolean,
         columnCallback: ColumnProcessor,
@@ -114,7 +120,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         actionIsAdd: boolean,
         autoGroupsNeedBuilding: boolean,
         columnCallback: ColumnProcessor,
-        eventType: ReturnType<BaseColsService['getEventName']>,
+        eventType: IColsService['eventName'],
         source: ColumnEventType
     ) {
         if (!keys || keys.length === 0) {

@@ -797,7 +797,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
         this.dispatchStateUpdatedEvent('pivot');
     }
 
-    public setActive(): boolean {
+    public isPivotActive(): boolean {
         return this.pivotActive;
     }
 
