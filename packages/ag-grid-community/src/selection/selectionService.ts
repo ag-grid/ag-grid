@@ -702,7 +702,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
             // Only in the CSRM, we allow group node selection if a child has a selectable=true when using groupSelectsChildren
             if (isCSRMGroupSelectsDescendants && node.group) {
-                const hasSelectableChild = node.childrenAfterGroup!.some((rowNode) => rowNode.selectable === true);
+                const hasSelectableChild = node.childrenAfterGroup?.some((rowNode) => rowNode.selectable) ?? false;
                 this.setRowSelectable(node, hasSelectableChild, true);
                 return;
             }
