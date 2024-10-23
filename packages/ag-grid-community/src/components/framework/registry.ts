@@ -54,13 +54,6 @@ export class Registry extends BeanStub implements NamedBean {
         selectors?.forEach((selector) => {
             this.selectors[selector.selector] = selector;
         });
-        module.userComponents?.forEach(({ name, classImp, params }) =>
-            this.registerUserComponent(name, classImp, params)
-        );
-
-        module.dynamicBeans?.forEach((meta) => this.registerDynamicBean(meta));
-
-        module.selectors?.forEach((selector) => this.registerSelector(selector));
     }
 
     private registerUserComponent(name: UserComponentName, component: any, params?: any) {

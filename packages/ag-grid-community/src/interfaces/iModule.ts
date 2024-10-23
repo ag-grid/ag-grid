@@ -1,7 +1,6 @@
 import type { GridApi } from '../api/gridApi';
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { ClassImp, ComponentMeta, DynamicBeanName, SingletonBean, UserComponentName } from '../context/context';
-import type { ComponentMeta, DynamicBeanMeta, SingletonBean } from '../context/context';
 import { VERSION } from '../version';
 import type { ComponentSelector } from '../widgets/component';
 import type { RowModelType } from './iRowModel';
