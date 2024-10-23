@@ -33,7 +33,7 @@ export function setNodesSelected(
 
 export function selectAll(
     beans: BeanCollection,
-    selectAll: SelectAllMode,
+    selectAll?: SelectAllMode,
     source: SelectionEventSourceType = 'apiSelectAll'
 ) {
     beans.selectionService?.selectAllRowNodes({ source, selectAll });
@@ -41,7 +41,7 @@ export function selectAll(
 
 export function deselectAll(
     beans: BeanCollection,
-    selectAll: SelectAllMode,
+    selectAll?: SelectAllMode,
     source: SelectionEventSourceType = 'apiSelectAll'
 ) {
     beans.selectionService?.deselectAllRowNodes({ source, selectAll });
