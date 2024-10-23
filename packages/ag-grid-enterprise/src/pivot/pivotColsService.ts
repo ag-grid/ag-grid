@@ -1,13 +1,4 @@
-import type {
-    AgColumn,
-    ColDef,
-    ColKey,
-    ColumnEventType,
-    ColumnState,
-    ColumnStateParams,
-    IColsService,
-    NamedBean,
-} from 'ag-grid-community';
+import type { AgColumn, ColDef, ColumnEventType, ColumnStateParams, IColsService, NamedBean } from 'ag-grid-community';
 import { BaseColsService, _removeFromArray } from 'ag-grid-community';
 
 export class PivotColsService extends BaseColsService implements NamedBean, IColsService {
@@ -18,38 +9,23 @@ export class PivotColsService extends BaseColsService implements NamedBean, ICol
         removeCol: (column: AgColumn) => _removeFromArray(this.columns, column),
     };
 
+    public postConstruct(): void {
+        this.columnProcessors = {
+            set: (column: AgColumn, added: boolean, source: ColumnEventType) => column.setPivotActive(true, source),
+            add: (column: AgColumn, added: boolean, source: ColumnEventType) => column.setPivotActive(true, source),
+            remove: (column: AgColumn, added: boolean, source: ColumnEventType) => column.setPivotActive(false, source),
+        };
+
+        this.columnOrdering = {
+            enableProp: 'pivot',
+            initialEnableProp: 'initialPivot',
+            indexProp: 'pivotIndex',
+            initialIndexProp: 'initialPivotIndex',
+        };
+    }
+
     protected override getEventName(): 'columnPivotChanged' {
         return 'columnPivotChanged';
-    }
-
-    public setColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        const processColumn = (added: boolean, column: AgColumn) => column.setPivotActive(true, source);
-        this.setColList(colKeys, this.columns, this.getEventName(), true, true, processColumn, source);
-    }
-
-    public override addColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        const processColumn = (column: AgColumn) => column.setPivotActive(true, source);
-        this.updateColList(colKeys, this.columns, true, true, processColumn, this.getEventName(), source);
-    }
-
-    public override removeColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        const processColumn = (column: AgColumn) => column.setPivotActive(false, source);
-        this.updateColList(colKeys, this.columns, false, true, processColumn, this.getEventName(), source);
-    }
-
-    public override orderColumns(
-        columnStateAccumulator: { [colId: string]: ColumnState },
-        incomingColumnState: { [colId: string]: ColumnState }
-    ): { [colId: string]: ColumnState } {
-        return this.orderColumnsCommon(
-            columnStateAccumulator,
-            incomingColumnState,
-            this.columns,
-            'pivot',
-            'initialPivot',
-            'pivotIndex',
-            'initialPivotIndex'
-        );
     }
 
     public override extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {

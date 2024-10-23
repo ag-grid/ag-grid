@@ -8,16 +8,31 @@ import type { IColsService } from '../interfaces/iColsService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _removeFromArray } from '../utils/array';
 import { _exists } from '../utils/generic';
+import type { ColumnChangedEventType } from './columnApi';
 import { dispatchColumnChangedEvent } from './columnEventUtils';
 import type { ColKey, ColumnModel, Maybe } from './columnModel';
 import type { ColumnState, ColumnStateParams } from './columnStateService';
 import type { VisibleColsService } from './visibleColsService';
+
+type ColumnProcessorKeys = 'add' | 'remove' | 'set';
+type ColumnProcessor = (column: AgColumn, added: boolean, source: ColumnEventType) => void;
+type ColumnProcessors = Record<ColumnProcessorKeys, ColumnProcessor>;
+
+type ColumnOrdering = {
+    enableProp: 'rowGroup' | 'pivot';
+    initialEnableProp: 'initialRowGroup' | 'initialPivot';
+    indexProp: 'rowGroupIndex' | 'pivotIndex';
+    initialIndexProp: 'initialRowGroupIndex' | 'initialPivotIndex';
+};
 
 export abstract class BaseColsService extends BeanStub implements IColsService {
     protected columnModel: ColumnModel;
     protected aggFuncService?: IAggFuncService;
     protected visibleColsService: VisibleColsService;
     protected dispatchColumnChangedEvent = dispatchColumnChangedEvent;
+
+    protected columnProcessors?: ColumnProcessors;
+    protected columnOrdering?: ColumnOrdering;
 
     public columns: AgColumn[] = [];
 
@@ -31,13 +46,27 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.columns.sort(compareFn);
     }
 
-    protected abstract getEventName(): 'columnValueChanged' | 'columnRowGroupChanged' | 'columnPivotChanged';
+    protected abstract getEventName(): ColumnChangedEventType;
 
-    public abstract setColumns(colKeys: ColKey[], source: ColumnEventType): void;
+    public setColumns(colKeys: ColKey[], source: ColumnEventType): void {
+        this.setColList(colKeys, this.columns, this.getEventName(), true, true, this.columnProcessors!.set, source);
+    }
 
-    public abstract addColumns(keys: Maybe<ColKey>[], source: ColumnEventType): void;
+    public addColumns(colKeys: ColKey[], source: ColumnEventType): void {
+        this.updateColList(colKeys, this.columns, true, true, this.columnProcessors!.add, this.getEventName(), source);
+    }
 
-    public abstract removeColumns(keys: Maybe<ColKey>[] | null, source: ColumnEventType): void;
+    public removeColumns(colKeys: ColKey[], source: ColumnEventType): void {
+        this.updateColList(
+            colKeys,
+            this.columns,
+            false,
+            true,
+            this.columnProcessors!.remove,
+            this.getEventName(),
+            source
+        );
+    }
 
     protected setColList(
         colKeys: ColKey[],
@@ -45,7 +74,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         eventName: ReturnType<BaseColsService['getEventName']>,
         detectOrderChange: boolean,
         autoGroupsNeedBuilding: boolean,
-        columnCallback: (added: boolean, column: AgColumn) => void,
+        columnCallback: ColumnProcessor,
         source: ColumnEventType
     ): void {
         const gridColumns = this.columnModel.getCols();
@@ -89,7 +118,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         const primaryCols = this.columnModel.getColDefCols();
         (primaryCols || []).forEach((column) => {
             const added = masterList.indexOf(column) >= 0;
-            columnCallback(added, column);
+            columnCallback(column, added, source);
         });
 
         autoGroupsNeedBuilding && this.columnModel.refreshCols(false);
@@ -104,7 +133,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         masterList: AgColumn[],
         actionIsAdd: boolean,
         autoGroupsNeedBuilding: boolean,
-        columnCallback: (column: AgColumn) => void,
+        columnCallback: ColumnProcessor,
         eventType: ReturnType<BaseColsService['getEventName']>,
         source: ColumnEventType
     ) {
@@ -142,7 +171,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
                 _removeFromArray(masterList, columnToAdd);
             }
 
-            columnCallback(columnToAdd);
+            columnCallback(columnToAdd, actionIsAdd, source);
             atLeastOne = true;
         });
 
@@ -300,20 +329,12 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         rowIndex: { [key: string]: number } | null
     ): void;
 
-    public abstract orderColumns(
+    public orderColumns(
         columnStateAccumulator: { [colId: string]: ColumnState },
         incomingColumnState: { [colId: string]: ColumnState }
-    ): { [colId: string]: ColumnState };
-
-    protected orderColumnsCommon(
-        columnStateAccumulator: { [colId: string]: ColumnState },
-        incomingColumnState: { [colId: string]: ColumnState },
-        colList: AgColumn[],
-        enableProp: 'rowGroup' | 'pivot',
-        initialEnableProp: 'initialRowGroup' | 'initialPivot',
-        indexProp: 'rowGroupIndex' | 'pivotIndex',
-        initialIndexProp: 'initialRowGroupIndex' | 'initialPivotIndex'
     ): { [colId: string]: ColumnState } {
+        const colList = this.columns;
+
         const primaryCols = this.columnModel.getColDefCols();
         if (!colList.length || !primaryCols) {
             return columnStateAccumulator;
@@ -346,6 +367,11 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         let index = 1000;
         let hasAddedNewCols = false;
         let lastIndex = 0;
+
+        const enableProp = this.columnOrdering!.enableProp;
+        const initialEnableProp = this.columnOrdering!.initialEnableProp;
+        const indexProp = this.columnOrdering!.indexProp;
+        const initialIndexProp = this.columnOrdering!.initialIndexProp;
 
         const processPrecedingNewCols = (colId: string) => {
             const originalOrderIndex = originalOrderMap[colId];

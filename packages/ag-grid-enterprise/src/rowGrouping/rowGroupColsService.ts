@@ -2,9 +2,7 @@ import type {
     AgColumn,
     AllEventsWithoutGridCommon,
     ColDef,
-    ColKey,
     ColumnEventType,
-    ColumnState,
     ColumnStateParams,
     IColsService,
     NamedBean,
@@ -23,19 +21,22 @@ export class RowGroupColsService extends BaseColsService implements NamedBean, I
         return 'columnRowGroupChanged';
     }
 
-    public setColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        const processColumn = (added: boolean, column: AgColumn) => this.setRowGroupActive(added, column, source);
-        this.setColList(colKeys, this.columns, this.getEventName(), true, true, processColumn, source);
-    }
+    public postConstruct(): void {
+        this.columnProcessors = {
+            set: (column: AgColumn, added: boolean, source: ColumnEventType) =>
+                this.setRowGroupActive(added, column, source),
+            add: (column: AgColumn, added: boolean, source: ColumnEventType) =>
+                this.setRowGroupActive(true, column, source),
+            remove: (column: AgColumn, added: boolean, source: ColumnEventType) =>
+                this.setRowGroupActive(false, column, source),
+        };
 
-    public override addColumns(colKeys: (ColKey | null | undefined)[], source: ColumnEventType): void {
-        const processColumn = (column: AgColumn) => this.setRowGroupActive(true, column, source);
-        this.updateColList(colKeys, this.columns, true, true, processColumn, this.getEventName(), source);
-    }
-
-    public override removeColumns(colKeys: (ColKey | null | undefined)[] | null, source: ColumnEventType): void {
-        const processColumn = (column: AgColumn) => this.setRowGroupActive(false, column, source);
-        this.updateColList(colKeys, this.columns, false, true, processColumn, this.getEventName(), source);
+        this.columnOrdering = {
+            enableProp: 'rowGroup',
+            initialEnableProp: 'initialRowGroup',
+            indexProp: 'rowGroupIndex',
+            initialIndexProp: 'initialRowGroupIndex',
+        };
     }
 
     public override extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {
@@ -71,21 +72,6 @@ export class RowGroupColsService extends BaseColsService implements NamedBean, I
             column: impactedColumns.length === 1 ? impactedColumns[0] : null,
             source,
         } as AllEventsWithoutGridCommon);
-    }
-
-    public override orderColumns(
-        columnStateAccumulator: { [colId: string]: ColumnState },
-        incomingColumnState: { [colId: string]: ColumnState }
-    ): { [colId: string]: ColumnState } {
-        return this.orderColumnsCommon(
-            columnStateAccumulator,
-            incomingColumnState,
-            this.columns,
-            'rowGroup',
-            'initialRowGroup',
-            'rowGroupIndex',
-            'initialRowGroupIndex'
-        );
     }
 
     public syncColumnWithState(

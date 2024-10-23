@@ -4,7 +4,6 @@ import type {
     ColDef,
     ColKey,
     ColumnEventType,
-    ColumnState,
     ColumnStateParams,
     IAggFunc,
     IColsService,
@@ -26,23 +25,19 @@ export class ValueColsService extends BaseColsService implements NamedBean, ICol
         removeCol: (column: AgColumn) => _removeFromArray(this.columns, column),
     };
 
+    public postConstruct(): void {
+        this.columnProcessors = {
+            set: (column: AgColumn, added: boolean, source: ColumnEventType) =>
+                this.setValueActive(added, column, source),
+            add: (column: AgColumn, added: boolean, source: ColumnEventType) =>
+                this.setValueActive(true, column, source),
+            remove: (column: AgColumn, added: boolean, source: ColumnEventType) =>
+                this.setValueActive(false, column, source),
+        };
+    }
+
     protected override getEventName(): 'columnValueChanged' {
         return 'columnValueChanged';
-    }
-
-    public setColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        const processColumn = (added: boolean, column: AgColumn) => this.setValueActive(added, column, source);
-        this.setColList(colKeys, this.columns, this.getEventName(), true, true, processColumn, source);
-    }
-
-    public override addColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        const processColumn = (column: AgColumn) => this.setValueActive(true, column, source);
-        this.updateColList(colKeys, this.columns, true, true, processColumn, this.getEventName(), source);
-    }
-
-    public override removeColumns(colKeys: ColKey[], source: ColumnEventType): void {
-        const processColumn = (column: AgColumn) => this.setValueActive(false, column, source);
-        this.updateColList(colKeys, this.columns, false, true, processColumn, this.getEventName(), source);
     }
 
     public override extractCols(source: ColumnEventType, oldProvidedCols: AgColumn[] | undefined): void {
@@ -100,12 +95,6 @@ export class ValueColsService extends BaseColsService implements NamedBean, ICol
         column.setAggFunc(aggFunc);
 
         this.dispatchColumnChangedEvent(this.eventService, this.getEventName(), [column], source);
-    }
-
-    public override orderColumns(columnStateAccumulator: { [colId: string]: ColumnState }): {
-        [colId: string]: ColumnState;
-    } {
-        return columnStateAccumulator;
     }
 
     public override syncColumnWithState(
