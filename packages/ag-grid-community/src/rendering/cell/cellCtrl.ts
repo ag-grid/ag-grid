@@ -334,8 +334,8 @@ export class CellCtrl extends BeanStub {
         cellStartedEdit = false,
         event: KeyboardEvent | MouseEvent | null = null
     ): boolean {
-        const { editService } = this.beans;
-        if (!this.isCellEditable() || this.editing || !editService) {
+        const { editSvc } = this.beans;
+        if (!this.isCellEditable() || this.editing || !editSvc) {
             return true;
         }
 
@@ -348,7 +348,7 @@ export class CellCtrl extends BeanStub {
             return true;
         }
 
-        return editService.startEditing(this, key, cellStartedEdit, event);
+        return editSvc.startEditing(this, key, cellStartedEdit, event);
     }
 
     public setEditing(editing: boolean, compDetails: UserCompDetails | undefined): void {
@@ -386,12 +386,12 @@ export class CellCtrl extends BeanStub {
      */
     public stopEditing(cancel = false): boolean {
         this.onCellEditorAttachedFuncs = [];
-        const { editService } = this.beans;
-        if (!this.editing || !editService) {
+        const { editSvc } = this.beans;
+        if (!this.editing || !editSvc) {
             return false;
         }
 
-        return editService.stopEditing(this, cancel);
+        return editSvc.stopEditing(this, cancel);
     }
 
     private createCellRendererParams(): ICellRendererParams {
@@ -432,14 +432,14 @@ export class CellCtrl extends BeanStub {
         if (!this.editing) {
             return;
         }
-        this.beans.editService?.setFocusOutOnEditor(this);
+        this.beans.editSvc?.setFocusOutOnEditor(this);
     }
 
     public setFocusInOnEditor(): void {
         if (!this.editing) {
             return;
         }
-        this.beans.editService?.setFocusInOnEditor(this);
+        this.beans.editSvc?.setFocusInOnEditor(this);
     }
 
     public onCellChanged(event: CellChangedEvent): void {
@@ -523,7 +523,7 @@ export class CellCtrl extends BeanStub {
     // cell editors call this, when they want to stop for reasons other
     // than what we pick up on. eg selecting from a dropdown ends editing.
     public stopEditingAndFocus(suppressNavigateAfterEdit = false, shiftKey: boolean = false): void {
-        this.beans.editService?.stopEditingAndFocus(this, suppressNavigateAfterEdit, shiftKey);
+        this.beans.editSvc?.stopEditingAndFocus(this, suppressNavigateAfterEdit, shiftKey);
     }
 
     public isCellEditable(): boolean {
@@ -818,7 +818,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public setInlineEditingCss(): void {
-        this.beans.editService?.setInlineEditingCss(this.rowCtrl);
+        this.beans.editSvc?.setInlineEditingCss(this.rowCtrl);
     }
 
     // CSS Classes that only get applied once, they never change
@@ -855,7 +855,7 @@ export class CellCtrl extends BeanStub {
         if (!this.editing) {
             this.refreshOrDestroyCell({ forceRefresh: true, suppressFlash: true });
         } else {
-            this.beans.editService?.handleColDefChanged(this);
+            this.beans.editSvc?.handleColDefChanged(this);
         }
     }
 

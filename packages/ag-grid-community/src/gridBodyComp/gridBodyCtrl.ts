@@ -61,7 +61,7 @@ export class GridBodyCtrl extends BeanStub {
     private contextMenuSvc?: IContextMenuService;
     private rowDragService?: RowDragService;
     private pinnedRowModel?: PinnedRowModel;
-    private editService?: EditService;
+    private editSvc?: EditService;
     private popupSvc?: PopupService;
     private mouseEventSvc: MouseEventService;
     private rowModel: IRowModel;
@@ -76,7 +76,7 @@ export class GridBodyCtrl extends BeanStub {
         this.contextMenuSvc = beans.contextMenuSvc;
         this.rowDragService = beans.rowDragService;
         this.pinnedRowModel = beans.pinnedRowModel;
-        this.editService = beans.editService;
+        this.editSvc = beans.editSvc;
         this.popupSvc = beans.popupSvc;
         this.mouseEventSvc = beans.mouseEventSvc;
         this.rowModel = beans.rowModel;
@@ -275,7 +275,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private addStopEditingWhenGridLosesFocus(): void {
-        this.editService?.addStopEditingWhenGridLosesFocus([
+        this.editSvc?.addStopEditingWhenGridLosesFocus([
             this.eBodyViewport,
             this.eBottom,
             this.eTop,

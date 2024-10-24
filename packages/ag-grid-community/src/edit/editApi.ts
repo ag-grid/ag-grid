@@ -48,7 +48,7 @@ export function getEditingCells(beans: BeanCollection): CellPosition[] {
 }
 
 export function stopEditing(beans: BeanCollection, cancel: boolean = false): void {
-    beans.editService?.stopAllEditing(cancel);
+    beans.editSvc?.stopAllEditing(cancel);
 }
 
 export function startEditingCell(beans: BeanCollection, params: StartEditingCellParams): void {

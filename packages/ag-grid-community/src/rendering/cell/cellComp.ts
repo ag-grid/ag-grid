@@ -498,7 +498,7 @@ export class CellComp extends Component {
 
         // if a popup, then we wrap in a popup editor and return the popup
         this.cellEditorPopupWrapper = this.beans.context.createBean(
-            this.beans.editService!.createPopupEditorWrapper(params)
+            this.beans.editSvc!.createPopupEditorWrapper(params)
         );
         const ePopupGui = this.cellEditorPopupWrapper.getGui();
         if (this.cellEditorGui) {

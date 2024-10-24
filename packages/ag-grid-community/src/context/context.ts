@@ -263,7 +263,7 @@ export interface CoreBeanCollection {
     filterMenuFactory?: IMenuFactory;
     enterpriseMenuFactory?: IMenuFactory;
     contextMenuSvc?: IContextMenuService;
-    editService?: EditService;
+    editSvc?: EditService;
     rowEditService?: RowEditService;
     alignedGridsService?: AlignedGridsService;
     paginationAutoPageSizeService?: PaginationAutoPageSizeService;
@@ -393,7 +393,7 @@ export type BeanName =
     | 'detailGridApiService'
     | 'dragAndDrop'
     | 'dragSvc'
-    | 'editService'
+    | 'editSvc'
     | 'excelCreator'
     | 'enterpriseMenuFactory'
     | 'environment'

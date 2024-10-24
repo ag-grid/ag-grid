@@ -19,7 +19,7 @@ import type { PopupService } from '../widgets/popupService';
 import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 
 export class EditService extends BeanStub implements NamedBean {
-    beanName = 'editService' as const;
+    beanName = 'editSvc' as const;
 
     private navigation?: NavigationService;
     private userCompFactory: UserComponentFactory;
