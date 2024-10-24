@@ -270,7 +270,7 @@ export interface CoreBeanCollection {
     pagination?: PaginationService;
     pageBounds: PageBoundsService;
     apiFunctionSvc: ApiFunctionService;
-    detailGridApiService?: IDetailGridApiService;
+    detailGridApiSvc?: IDetailGridApiService;
     gridDestroyService: GridDestroyService;
     expansionService?: IExpansionService;
     sideBarService?: ISideBarService;
@@ -390,7 +390,7 @@ export type BeanName =
     | 'csvCreator'
     | 'dataTypeSvc'
     | 'visibleCols'
-    | 'detailGridApiService'
+    | 'detailGridApiSvc'
     | 'dragAndDrop'
     | 'dragSvc'
     | 'editSvc'
