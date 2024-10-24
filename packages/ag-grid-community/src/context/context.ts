@@ -254,7 +254,7 @@ export interface CoreBeanCollection {
     mouseEventSvc: MouseEventService;
     cellNavigation?: CellNavigationService;
     scrollVisibleSvc: ScrollVisibleService;
-    pinnedColumnService?: PinnedColumnService;
+    pinnedCols?: PinnedColumnService;
     expressionService?: ExpressionService;
     autoWidthCalculator?: AutoWidthCalculator;
     agComponentUtils?: AgComponentUtils;
@@ -440,7 +440,7 @@ export type BeanName =
     | 'paginationAutoPageSizeService'
     | 'paginationService'
     | 'pinnedRowModel'
-    | 'pinnedColumnService'
+    | 'pinnedCols'
     | 'pivotColDefService'
     | 'pivotStage'
     | 'popupSvc'

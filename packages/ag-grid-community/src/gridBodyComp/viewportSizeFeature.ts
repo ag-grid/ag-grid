@@ -15,14 +15,14 @@ import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 // vertical scrolling.
 export class ViewportSizeFeature extends BeanStub {
     private ctrlsSvc: CtrlsService;
-    private pinnedColumnService?: PinnedColumnService;
+    private pinnedCols?: PinnedColumnService;
     private colFlex?: ColumnFlexService;
     private scrollVisibleSvc: ScrollVisibleService;
     private colViewport: ColumnViewportService;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsSvc = beans.ctrlsSvc;
-        this.pinnedColumnService = beans.pinnedColumnService;
+        this.pinnedCols = beans.pinnedCols;
         this.colFlex = beans.colFlex;
         this.scrollVisibleSvc = beans.scrollVisibleSvc;
         this.colViewport = beans.colViewport;
@@ -79,7 +79,7 @@ export class ViewportSizeFeature extends BeanStub {
     private onCenterViewportResized(): void {
         this.scrollVisibleSvc.onCentreViewportResized();
         if (this.centerContainerCtrl.isViewportInTheDOMTree()) {
-            this.pinnedColumnService?.keepPinnedColumnsNarrowerThanViewport();
+            this.pinnedCols?.keepPinnedColumnsNarrowerThanViewport();
             this.checkViewportAndScrolls();
 
             const newWidth = this.centerContainerCtrl.getCenterWidth();

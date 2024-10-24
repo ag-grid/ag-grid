@@ -31,7 +31,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private colMoves: ColumnMoveService;
     private dragAndDrop: DragAndDropService;
     private ctrlsSvc: CtrlsService;
-    private pinnedColumnService?: PinnedColumnService;
+    private pinnedCols?: PinnedColumnService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
@@ -39,7 +39,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.colMoves = beans.colMoves!;
         this.dragAndDrop = beans.dragAndDrop!;
         this.ctrlsSvc = beans.ctrlsSvc;
-        this.pinnedColumnService = beans.pinnedColumnService;
+        this.pinnedCols = beans.pinnedCols;
     }
 
     private gridBodyCon: GridBodyCtrl;
@@ -707,7 +707,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             pinned = this.getPinDirection();
         }
 
-        this.pinnedColumnService?.setColsPinned(allowedCols, pinned, 'uiColumnDragged');
+        this.pinnedCols?.setColsPinned(allowedCols, pinned, 'uiColumnDragged');
 
         if (fromMoving) {
             this.dragAndDrop.nudge();

@@ -95,11 +95,11 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     ): MenuItemDef | string | null {
         const localeTextFunc = this.getLocaleTextFunc();
         const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
-        const { pinnedColumnService } = this.beans;
+        const { pinnedCols } = this.beans;
 
         switch (key) {
             case 'pinSubMenu':
-                return pinnedColumnService && column
+                return pinnedCols && column
                     ? {
                           name: localeTextFunc('pinColumn', 'Pin Column'),
                           icon: _createIconNoSpan('menuPin', this.gos, null),
@@ -107,26 +107,26 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                       }
                     : null;
             case 'pinLeft':
-                return pinnedColumnService && column
+                return pinnedCols && column
                     ? {
                           name: localeTextFunc('pinLeft', 'Pin Left'),
-                          action: () => pinnedColumnService.setColsPinned([column], 'left', source),
+                          action: () => pinnedCols.setColsPinned([column], 'left', source),
                           checked: !!column && column.isPinnedLeft(),
                       }
                     : null;
             case 'pinRight':
-                return pinnedColumnService && column
+                return pinnedCols && column
                     ? {
                           name: localeTextFunc('pinRight', 'Pin Right'),
-                          action: () => pinnedColumnService.setColsPinned([column], 'right', source),
+                          action: () => pinnedCols.setColsPinned([column], 'right', source),
                           checked: !!column && column.isPinnedRight(),
                       }
                     : null;
             case 'clearPinned':
-                return pinnedColumnService && column
+                return pinnedCols && column
                     ? {
                           name: localeTextFunc('noPin', 'No Pin'),
-                          action: () => pinnedColumnService.setColsPinned([column], null, source),
+                          action: () => pinnedCols.setColsPinned([column], null, source),
                           checked: !!column && !column.isPinned(),
                       }
                     : null;

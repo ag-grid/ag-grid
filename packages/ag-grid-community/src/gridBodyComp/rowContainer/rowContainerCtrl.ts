@@ -235,7 +235,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     private colViewport: ColumnViewportService;
     private rowRenderer: RowRenderer;
     private rangeSvc?: IRangeService;
-    private pinnedColumnService?: PinnedColumnService;
+    private pinnedCols?: PinnedColumnService;
 
     public wireBeans(beans: BeanCollection) {
         this.dragSvc = beans.dragSvc;
@@ -243,7 +243,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         this.colViewport = beans.colViewport;
         this.rowRenderer = beans.rowRenderer;
         this.rangeSvc = beans.rangeSvc;
-        this.pinnedColumnService = beans.pinnedColumnService;
+        this.pinnedCols = beans.pinnedCols;
     }
 
     private readonly options: RowContainerOptions;
@@ -313,13 +313,13 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         const pinnedWidthChanged = () => this.onPinnedWidthChanged();
         this.forContainers(allLeft, () => {
             this.pinnedWidthFeature = this.createOptionalManagedBean(
-                this.pinnedColumnService?.createPinnedWidthFeature(this.eContainer, true)
+                this.pinnedCols?.createPinnedWidthFeature(this.eContainer, true)
             );
             this.addManagedEventListeners({ leftPinnedWidthChanged: pinnedWidthChanged });
         });
         this.forContainers(allRight, () => {
             this.pinnedWidthFeature = this.createOptionalManagedBean(
-                this.pinnedColumnService?.createPinnedWidthFeature(this.eContainer, false)
+                this.pinnedCols?.createPinnedWidthFeature(this.eContainer, false)
             );
             this.addManagedEventListeners({ rightPinnedWidthChanged: pinnedWidthChanged });
         });

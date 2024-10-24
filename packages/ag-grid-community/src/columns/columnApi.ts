@@ -75,7 +75,7 @@ export function setColumnsPinned(
     keys: (string | ColDef | Column)[],
     pinned: ColumnPinnedType
 ): void {
-    beans.pinnedColumnService?.setColsPinned(keys, pinned, 'api');
+    beans.pinnedCols?.setColsPinned(keys, pinned, 'api');
 }
 
 export function getAllGridColumns(beans: BeanCollection): Column[] {

@@ -18,7 +18,7 @@ import { _getInnerWidth } from '../utils/dom';
 import { _warn } from '../validation/logging';
 
 export class PinnedColumnService extends BeanStub implements NamedBean {
-    beanName = 'pinnedColumnService' as const;
+    beanName = 'pinnedCols' as const;
 
     private visibleCols: VisibleColsService;
     private ctrlsSvc: CtrlsService;

@@ -30,7 +30,7 @@ export interface IHeaderRowContainerComp {
 export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     private ctrlsSvc: CtrlsService;
     private scrollVisibleSvc: ScrollVisibleService;
-    private pinnedColumnService?: PinnedColumnService;
+    private pinnedCols?: PinnedColumnService;
     private colModel: ColumnModel;
     private focusSvc: FocusService;
     private filterManager?: FilterManager;
@@ -39,7 +39,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsSvc = beans.ctrlsSvc;
         this.scrollVisibleSvc = beans.scrollVisibleSvc;
-        this.pinnedColumnService = beans.pinnedColumnService;
+        this.pinnedCols = beans.pinnedCols;
         this.colModel = beans.colModel;
         this.focusSvc = beans.focusSvc;
         this.filterManager = beans.filterManager;
@@ -294,7 +294,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     private setupPinnedWidth(): void {
-        if (this.pinned == null || !this.pinnedColumnService) {
+        if (this.pinned == null || !this.pinnedCols) {
             return;
         }
 
@@ -304,9 +304,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         this.hidden = true;
 
         const listener = () => {
-            const width = pinningLeft
-                ? this.pinnedColumnService!.getPinnedLeftWidth()
-                : this.pinnedColumnService!.getPinnedRightWidth();
+            const width = pinningLeft ? this.pinnedCols!.getPinnedLeftWidth() : this.pinnedCols!.getPinnedRightWidth();
             if (width == null) {
                 return;
             } // can happen at initialisation, width not yet set

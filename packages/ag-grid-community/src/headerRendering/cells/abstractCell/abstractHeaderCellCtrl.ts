@@ -43,7 +43,7 @@ export abstract class AbstractHeaderCellCtrl<
 > extends BeanStub {
     public readonly instanceId: HeaderCellCtrlInstanceId;
 
-    private pinnedColumnService?: PinnedColumnService;
+    private pinnedCols?: PinnedColumnService;
     protected focusSvc: FocusService;
     protected userCompFactory: UserComponentFactory;
     protected ctrlsSvc: CtrlsService;
@@ -51,7 +51,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected menuSvc?: MenuService;
 
     public wireBeans(beans: BeanCollection) {
-        this.pinnedColumnService = beans.pinnedColumnService;
+        this.pinnedCols = beans.pinnedCols;
         this.focusSvc = beans.focusSvc;
         this.userCompFactory = beans.userCompFactory;
         this.ctrlsSvc = beans.ctrlsSvc;
@@ -311,8 +311,8 @@ export abstract class AbstractHeaderCellCtrl<
 
         const pinned = this.column.getPinned();
         if (pinned) {
-            const leftWidth = this.pinnedColumnService?.getPinnedLeftWidth() ?? 0;
-            const rightWidth = this.pinnedColumnService?.getPinnedRightWidth() ?? 0;
+            const leftWidth = this.pinnedCols?.getPinnedLeftWidth() ?? 0;
+            const rightWidth = this.pinnedCols?.getPinnedRightWidth() ?? 0;
             const bodyWidth = _getInnerWidth(this.ctrlsSvc.getGridBodyCtrl().getBodyViewportElement()) - 50;
 
             if (leftWidth + rightWidth + diff > bodyWidth) {

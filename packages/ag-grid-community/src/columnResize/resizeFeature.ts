@@ -13,14 +13,14 @@ import type { ColumnResizeService } from './columnResizeService';
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private horizontalResizeService: HorizontalResizeService;
-    private pinnedColumnService?: PinnedColumnService;
+    private pinnedCols?: PinnedColumnService;
     private ctrlsSvc: CtrlsService;
     private colResize?: ColumnResizeService;
     private colAutosize?: ColumnAutosizeService;
 
     public wireBeans(beans: BeanCollection) {
         this.horizontalResizeService = beans.horizontalResizeService!;
-        this.pinnedColumnService = beans.pinnedColumnService;
+        this.pinnedCols = beans.pinnedCols;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.colResize = beans.colResize;
         this.colAutosize = beans.colAutosize;
@@ -109,8 +109,8 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         const columnWidths = [{ key, newWidth }];
 
         if (this.column.getPinned()) {
-            const leftWidth = this.pinnedColumnService?.getPinnedLeftWidth() ?? 0;
-            const rightWidth = this.pinnedColumnService?.getPinnedRightWidth() ?? 0;
+            const leftWidth = this.pinnedCols?.getPinnedLeftWidth() ?? 0;
+            const rightWidth = this.pinnedCols?.getPinnedRightWidth() ?? 0;
             const bodyWidth = _getInnerWidth(this.ctrlsSvc.getGridBodyCtrl().getBodyViewportElement()) - 50;
 
             if (leftWidth + rightWidth + (resizeAmountNormalised - lastResizeAmount) > bodyWidth) {
