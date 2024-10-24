@@ -236,7 +236,7 @@ export interface CoreBeanCollection {
     colDefFactory?: ColumnDefFactory;
     colAutosize?: ColumnAutosizeService;
     funcColsSvc: FuncColsService;
-    quickFilterService?: QuickFilterService;
+    quickFilter?: QuickFilterService;
     showRowGroupColsService?: IShowRowGroupColsService;
     dataTypeService?: DataTypeService;
     globalEventListener: AgGlobalEventListener;
@@ -444,7 +444,7 @@ export type BeanName =
     | 'pivotColDefService'
     | 'pivotStage'
     | 'popupSvc'
-    | 'quickFilterService'
+    | 'quickFilter'
     | 'rangeSvc'
     | 'pageBoundsListener'
     | 'pageBoundsService'

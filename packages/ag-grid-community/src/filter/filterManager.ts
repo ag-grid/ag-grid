@@ -25,14 +25,14 @@ export class FilterManager extends BeanStub implements NamedBean {
 
     private colModel: ColumnModel;
     private dataTypeService?: DataTypeService;
-    private quickFilterService?: QuickFilterService;
+    private quickFilter?: QuickFilterService;
     private advancedFilterService: IAdvancedFilterService;
     private colFilter?: ColumnFilterService;
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
         this.dataTypeService = beans.dataTypeService;
-        this.quickFilterService = beans.quickFilterService;
+        this.quickFilter = beans.quickFilter;
         this.advancedFilterService = beans.advancedFilterService;
         this.colFilter = beans.colFilter;
     }
@@ -69,8 +69,8 @@ export class FilterManager extends BeanStub implements NamedBean {
             this.onFilterChanged();
         });
 
-        if (this.quickFilterService) {
-            this.addManagedListeners(this.quickFilterService, {
+        if (this.quickFilter) {
+            this.addManagedListeners(this.quickFilter, {
                 quickFilterChanged: () => this.onFilterChanged({ source: 'quickFilter' }),
             });
         }
@@ -162,7 +162,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     }
 
     public resetQuickFilterCache(): void {
-        this.quickFilterService?.resetQuickFilterCache();
+        this.quickFilter?.resetQuickFilterCache();
     }
 
     private refreshFiltersForAggregations() {
@@ -204,7 +204,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     }
 
     public isQuickFilterPresent(): boolean {
-        return !!this.quickFilterService?.isQuickFilterPresent();
+        return !!this.quickFilter?.isQuickFilterPresent();
     }
 
     private updateAggFiltering(): void {
@@ -229,7 +229,7 @@ export class FilterManager extends BeanStub implements NamedBean {
 
     public doesRowPassAggregateFilters(params: { rowNode: RowNode; filterInstanceToSkip?: IFilterComp }): boolean {
         // check quick filter
-        if (this.isAggregateQuickFilterPresent() && !this.quickFilterService!.doesRowPassQuickFilter(params.rowNode)) {
+        if (this.isAggregateQuickFilterPresent() && !this.quickFilter!.doesRowPassQuickFilter(params.rowNode)) {
             return false;
         }
 
@@ -250,10 +250,7 @@ export class FilterManager extends BeanStub implements NamedBean {
         // but fails the column filter, it fails overall
 
         // first up, check quick filter
-        if (
-            this.isNonAggregateQuickFilterPresent() &&
-            !this.quickFilterService!.doesRowPassQuickFilter(params.rowNode)
-        ) {
+        if (this.isNonAggregateQuickFilterPresent() && !this.quickFilter!.doesRowPassQuickFilter(params.rowNode)) {
             return false;
         }
 

@@ -32,7 +32,7 @@ const orderedCoreBeans: BeanName[] = [
     'popupSvc',
     'selectionSvc',
     'colFilter',
-    'quickFilterService',
+    'quickFilter',
     'filterManager',
     'colModel',
     'headerNavigation',

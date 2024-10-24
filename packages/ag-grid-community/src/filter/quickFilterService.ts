@@ -14,7 +14,7 @@ import type { FilterValueService } from './filterValueService';
 
 export type QuickFilterServiceEvent = 'quickFilterChanged';
 export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implements NamedBean {
-    beanName = 'quickFilterService' as const;
+    beanName = 'quickFilter' as const;
 
     private filterValueService: FilterValueService;
     private colModel: ColumnModel;
