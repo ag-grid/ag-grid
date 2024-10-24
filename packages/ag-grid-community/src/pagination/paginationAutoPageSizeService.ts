@@ -8,7 +8,7 @@ import { _debounce } from '../utils/function';
 import type { PaginationService } from './paginationService';
 
 export class PaginationAutoPageSizeService extends BeanStub implements NamedBean {
-    beanName = 'paginationAutoPageSizeService' as const;
+    beanName = 'paginationAutoPageSizeSvc' as const;
 
     private ctrlsSvc: CtrlsService;
     private paginationService: PaginationService;

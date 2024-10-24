@@ -266,7 +266,7 @@ export interface CoreBeanCollection {
     editSvc?: EditService;
     rowEditSvc?: RowEditService;
     alignedGridsSvc?: AlignedGridsService;
-    paginationAutoPageSizeService?: PaginationAutoPageSizeService;
+    paginationAutoPageSizeSvc?: PaginationAutoPageSizeService;
     paginationService?: PaginationService;
     pageBoundsService: PageBoundsService;
     apiFunctionService: ApiFunctionService;
@@ -437,7 +437,7 @@ export type BeanName =
     | 'mouseEventSvc'
     | 'navigation'
     | 'overlays'
-    | 'paginationAutoPageSizeService'
+    | 'paginationAutoPageSizeSvc'
     | 'paginationService'
     | 'pinnedRowModel'
     | 'pinnedCols'
