@@ -23,7 +23,7 @@ const orderedCoreBeans: BeanName[] = [
     'userCompFactory',
     'rowContainerHeight',
     'horizontalResizeService',
-    'localeService',
+    'localeSvc',
     'validationService',
     'pinnedRowModel',
     'dragSvc',

@@ -527,7 +527,7 @@ export class CellComp extends Component {
 
         const positionCallback = popupSvc.positionPopupByComponent.bind(popupSvc, positionParams);
 
-        const translate = _getLocaleTextFunc(this.beans.localeService);
+        const translate = _getLocaleTextFunc(this.beans.localeSvc);
 
         const addPopupRes = popupSvc.addPopup({
             modal: useModelPopup,

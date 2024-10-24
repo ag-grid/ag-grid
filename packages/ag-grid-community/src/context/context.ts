@@ -220,7 +220,7 @@ export interface CoreBeanCollection {
     rowModel: IRowModel;
     ctrlsSvc: CtrlsService;
     valueCache?: ValueCache;
-    localeService?: LocaleService;
+    localeSvc?: LocaleService;
     syncService: SyncService;
     ariaAnnouncementService: AriaAnnouncementService;
     rangeService?: IRangeService;
@@ -427,7 +427,7 @@ export type BeanName =
     | 'horizontalResizeService'
     | 'lazyBlockLoadingService'
     | 'licenseManager'
-    | 'localeService'
+    | 'localeSvc'
     | 'loggerFactory'
     | 'masterDetailService'
     | 'menuItemMapper'

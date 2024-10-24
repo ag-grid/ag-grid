@@ -250,7 +250,7 @@ export abstract class BeanStub<TEventType extends string = BeanStubEvent>
     public isAlive = (): boolean => !this.destroyed;
 
     public getLocaleTextFunc(): LocaleTextFunc {
-        return _getLocaleTextFunc(this.beans.localeService);
+        return _getLocaleTextFunc(this.beans.localeSvc);
     }
 
     public addDestroyFunc(func: () => void): void {
