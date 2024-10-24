@@ -73,7 +73,7 @@ const orderedCoreBeans: BeanName[] = [
     'dataTypeSvc',
     'syncSvc',
     'overlayService',
-    'stateService',
+    'stateSvc',
     'expansionService',
     'apiEventService',
     'ariaAnnounce',

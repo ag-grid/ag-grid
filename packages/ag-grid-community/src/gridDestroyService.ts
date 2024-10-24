@@ -14,7 +14,7 @@ export class GridDestroyService extends BeanStub implements NamedBean {
 
         this.eventSvc.dispatchEvent({
             type: 'gridPreDestroyed',
-            state: this.beans.stateService?.getState() ?? {},
+            state: this.beans.stateSvc?.getState() ?? {},
         });
 
         // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.

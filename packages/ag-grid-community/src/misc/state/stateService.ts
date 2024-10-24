@@ -48,7 +48,7 @@ import { VERSION } from '../../version';
 import { migrateGridStateModel } from './stateModelMigration';
 
 export class StateService extends BeanStub implements NamedBean {
-    beanName = 'stateService' as const;
+    beanName = 'stateSvc' as const;
 
     private filterManager?: FilterManager;
     private ctrlsSvc: CtrlsService;

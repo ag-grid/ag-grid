@@ -241,7 +241,7 @@ export interface CoreBeanCollection {
     dataTypeSvc?: DataTypeService;
     globalEventListener: AgGlobalEventListener;
     globalSyncEventListener: AgGlobalEventListener;
-    stateService?: StateService;
+    stateSvc?: StateService;
     overlayService?: OverlayService;
     pinnedRowModel?: PinnedRowModel;
     menuService?: MenuService;
@@ -477,7 +477,7 @@ export type BeanName =
     | 'ssrmStoreFactory'
     | 'ssrmStoreUtils'
     | 'ssrmTransactionManager'
-    | 'stateService'
+    | 'stateSvc'
     | 'statusBarService'
     | 'stickyRowService'
     | 'syncSvc'
