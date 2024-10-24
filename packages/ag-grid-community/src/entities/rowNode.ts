@@ -513,9 +513,9 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         let newValue: boolean | null =
             (this.group && !this.footer) || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
 
-        const { rowChildrenService } = this.beans;
-        if (rowChildrenService) {
-            newValue = rowChildrenService.getHasChildrenValue(this);
+        const { rowChildrenSvc } = this.beans;
+        if (rowChildrenSvc) {
+            newValue = rowChildrenSvc.getHasChildrenValue(this);
         }
 
         if (newValue !== this.__hasChildren) {

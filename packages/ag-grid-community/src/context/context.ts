@@ -301,7 +301,7 @@ export interface CoreBeanCollection {
     tooltipSvc?: TooltipService;
     columnGroupSvc?: ColumnGroupService;
     rowAutoHeight?: RowAutoHeightService;
-    rowChildrenService?: IRowChildrenService;
+    rowChildrenSvc?: IRowChildrenService;
 }
 
 export type BeanCollection = CoreBeanCollection & {
@@ -451,7 +451,7 @@ export type BeanName =
     | 'registry'
     | 'renderStatus'
     | 'rowAutoHeight'
-    | 'rowChildrenService'
+    | 'rowChildrenSvc'
     | 'rowContainerHeight'
     | 'rowDragSvc'
     | 'rowEditSvc'
