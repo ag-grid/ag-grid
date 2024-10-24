@@ -1,4 +1,4 @@
-import type { PositionableOptions, ResizableStructure } from 'ag-grid-community';
+import type { BeanCollection, PositionableOptions, ResizableStructure } from 'ag-grid-community';
 import {
     Component,
     PositionableFeature,
@@ -7,9 +7,12 @@ import {
     _getActiveDomElement,
     _getInnerHeight,
     _getInnerWidth,
+    _injectComponentCSS,
     _isVisible,
     _setDisplayed,
 } from 'ag-grid-community';
+
+import { agPanelCSS } from './agPanel.css-GENERATED';
 
 export interface PanelOptions extends PositionableOptions {
     component?: Component<any>;
@@ -33,6 +36,10 @@ function getTemplate(config: PanelOptions) {
 const CLOSE_BTN_TEMPLATE = /* html */ `<div class="ag-button"></div>`;
 
 export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Component {
+    public wireBeans(beans: BeanCollection) {
+        _injectComponentCSS(agPanelCSS, beans);
+    }
+
     protected closable = true;
 
     protected closeButtonComp: Component | undefined;

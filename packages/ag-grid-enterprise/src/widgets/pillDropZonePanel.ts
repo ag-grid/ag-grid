@@ -17,6 +17,7 @@ import {
     _clearElement,
     _createIconNoSpan,
     _getActiveDomElement,
+    _injectComponentCSS,
     _last,
     _setAriaHidden,
     _setAriaLabel,
@@ -26,6 +27,7 @@ import {
 } from 'ag-grid-community';
 
 import type { PillDragComp } from './pillDragComp';
+import { pillDropZonePanelCSS } from './pillDropZonePanel.css-GENERATED';
 
 export interface PillDropZonePanelParams {
     emptyMessage?: string;
@@ -50,6 +52,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
         this.dragAndDropService = beans.dragAndDropService;
+        _injectComponentCSS(pillDropZonePanelCSS, beans);
     }
 
     private state: PillState = 'notDragging';

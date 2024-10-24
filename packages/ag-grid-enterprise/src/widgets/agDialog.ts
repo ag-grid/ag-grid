@@ -45,7 +45,8 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
     private popupService?: PopupService;
     private focusService: FocusService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
+        super.wireBeans(beans);
         this.popupService = beans.popupService;
         this.focusService = beans.focusService;
     }

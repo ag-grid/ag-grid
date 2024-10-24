@@ -4,12 +4,12 @@
   "license": "MIT",
   "scripts": {
     "compressVideo": "tsx external/ag-website-shared/scripts/compress-video",
-    "build-generators": "nx run-many -p ag-grid-generate-code-reference-files,ag-grid-task-autogen -t build && npm run build-css",
+    "build-generators": "nx run-many -p ag-grid-generate-code-reference-files,ag-grid-task-autogen -t build && npm run build:css",
     "subrepo": "tsx external/ag-shared/scripts/subrepo",
     "postinstall": "patch-package && yarn run build-generators",
     "bootstrap": "SHARP_IGNORE_GLOBAL_LIBVIPS=true YARN_REGISTRY=\"http://52.50.158.57:4873\" yarn",
     "build:css": "tsx scripts/build-css.ts",
-    "build:css-debug": "tsx scripts/build-css.ts --dev"
+    "build:css-debug": "CSS_DEBUG=1 tsx scripts/build-css.ts"
   },
   "private": true,
   "engines": {

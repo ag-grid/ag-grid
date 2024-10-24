@@ -1,5 +1,5 @@
 import type { GridTheme, GridThemeUseArgs } from '../entities/gridOptions';
-import { _getAllRegisteredModules, _getRegisteredModules } from '../modules/moduleRegistry';
+import { _getAllRegisteredModules } from '../modules/moduleRegistry';
 import { _error, _warn } from '../validation/logging';
 import { Params } from './Params';
 import type { Part } from './Part';

@@ -4,6 +4,7 @@ import type { BeanCollection } from '../context/context';
 import type { BaseBean, ComponentBean } from '../context/genericContext';
 import type { AgEvent } from '../events';
 import { CssClassManager } from '../rendering/cssClassManager';
+import { _injectGlobalCSS } from '../theming/inject';
 import {
     _copyNodeList,
     _isNodeOrElement,
