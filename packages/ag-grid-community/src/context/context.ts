@@ -286,7 +286,7 @@ export interface CoreBeanCollection {
     filterAggregatesStage?: IRowNodeStage;
     rowNodeSorter?: RowNodeSorter;
     pivotColDefSvc?: IPivotColDefService;
-    chartService?: IChartService;
+    chartSvc?: IChartService;
     aggColumnNameService?: IAggColumnNameService;
     renderStatusService?: IRenderStatusService;
     rowDragService?: RowDragService;
@@ -359,7 +359,7 @@ export type BeanName =
     | 'chartMenuListFactory'
     | 'chartMenuService'
     | 'chartTranslationService'
-    | 'chartService'
+    | 'chartSvc'
     | 'clipboardSvc'
     | 'colAnimation'
     | 'colAutosize'

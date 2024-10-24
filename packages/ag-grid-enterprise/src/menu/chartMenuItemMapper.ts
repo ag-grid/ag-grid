@@ -13,25 +13,25 @@ import { BeanStub, _createIconNoSpan, _warn } from 'ag-grid-community';
 export class ChartMenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'chartMenuItemMapper' as const;
 
-    private chartService?: IChartService;
+    private chartSvc?: IChartService;
 
     public wireBeans(beans: BeanCollection) {
-        this.chartService = beans.chartService;
+        this.chartSvc = beans.chartSvc;
     }
 
     public getChartItems(key: 'pivotChart' | 'chartRange'): MenuItemDef | undefined {
         const isPivot = key === 'pivotChart';
-        if (!this.chartService) {
+        if (!this.chartSvc) {
             this.gos.assertModuleRegistered('GridChartsCoreModule', isPivot ? 2 : 3);
             return undefined;
         }
 
         const getLocaleTextFunc = this.getLocaleTextFunc.bind(this);
         const builder = isPivot
-            ? new PivotMenuItemMapper(this.gos, this.chartService, getLocaleTextFunc)
-            : new RangeMenuItemMapper(this.gos, this.chartService, getLocaleTextFunc);
+            ? new PivotMenuItemMapper(this.gos, this.chartSvc, getLocaleTextFunc)
+            : new RangeMenuItemMapper(this.gos, this.chartSvc, getLocaleTextFunc);
 
-        const isEnterprise = this.chartService.isEnterprise();
+        const isEnterprise = this.chartSvc.isEnterprise();
 
         let topLevelMenuItem: MenuItemDefWithKey | undefined = builder.getMenuItem();
 
@@ -191,7 +191,7 @@ export type PivotMenuOptionName =
 class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
     constructor(
         private gos: GridOptionsService,
-        private chartService: IChartService,
+        private chartSvc: IChartService,
         private getLocaleTextFunc: () => LocaleTextFunc
     ) {}
 
@@ -206,7 +206,7 @@ class PivotMenuItemMapper implements MenuItemBuilder<PivotMenuOptionName> {
         ) => {
             return {
                 name: localeTextFunc(localeKey, defaultText),
-                action: () => this.chartService.createPivotChart({ chartType }),
+                action: () => this.chartSvc.createPivotChart({ chartType }),
                 _key: key,
                 _enterprise: enterprise,
             };
@@ -411,7 +411,7 @@ export type RangeMenuOptionName =
 class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
     constructor(
         private gos: GridOptionsService,
-        private chartService: IChartService,
+        private chartSvc: IChartService,
         private getLocaleTextFunc: () => LocaleTextFunc
     ) {}
 
@@ -426,7 +426,7 @@ class RangeMenuItemMapper implements MenuItemBuilder<RangeMenuOptionName> {
         ) => {
             return {
                 name: localeTextFunc(localeKey, defaultText),
-                action: () => this.chartService.createChartFromCurrentRange(chartType),
+                action: () => this.chartSvc.createChartFromCurrentRange(chartType),
                 _key: key,
                 _enterprise: enterprise,
             };
