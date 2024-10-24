@@ -9,12 +9,12 @@ export function showColumnMenu(beans: BeanCollection, colKey: string | Column): 
         _error(12, { colKey });
         return;
     }
-    beans.menuService?.showColumnMenu({
+    beans.menuSvc?.showColumnMenu({
         column,
         positionBy: 'auto',
     });
 }
 
 export function hidePopupMenu(beans: BeanCollection): void {
-    beans.menuService?.hidePopupMenu();
+    beans.menuSvc?.hidePopupMenu();
 }

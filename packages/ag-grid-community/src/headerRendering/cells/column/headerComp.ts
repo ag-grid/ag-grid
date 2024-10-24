@@ -112,11 +112,11 @@ function getHeaderCompTemplate(includeSortIndicator: boolean): string {
 
 export class HeaderComp extends Component implements IHeaderComp {
     private sortSvc?: SortService;
-    private menuService?: MenuService;
+    private menuSvc?: MenuService;
 
     public wireBeans(beans: BeanCollection): void {
         this.sortSvc = beans.sortSvc;
-        this.menuService = beans.menuService;
+        this.menuSvc = beans.menuSvc;
     }
 
     private eFilter: HTMLElement = RefPlaceholder;
@@ -266,11 +266,11 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private workOutShowMenu(): boolean {
-        return this.params.enableMenu && !!this.menuService?.isHeaderMenuButtonEnabled();
+        return this.params.enableMenu && !!this.menuSvc?.isHeaderMenuButtonEnabled();
     }
 
     private shouldSuppressMenuHide(): boolean {
-        return !!this.menuService?.isHeaderMenuButtonAlwaysShowEnabled();
+        return !!this.menuSvc?.isHeaderMenuButtonAlwaysShowEnabled();
     }
 
     private setMenu(): void {
@@ -299,7 +299,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         const column = this.params.column as AgColumn;
         const isLegacyMenuEnabled = _isLegacyMenuEnabled(this.gos);
         if (isFilterShortcut && !isLegacyMenuEnabled) {
-            if (this.menuService?.isFilterMenuInHeaderEnabled(column)) {
+            if (this.menuSvc?.isFilterMenuInHeaderEnabled(column)) {
                 this.params.showFilter(this.eFilterButton ?? this.eMenu ?? this.getGui());
                 return true;
             }

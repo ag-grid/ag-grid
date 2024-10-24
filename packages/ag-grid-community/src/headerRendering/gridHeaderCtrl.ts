@@ -30,7 +30,7 @@ export class GridHeaderCtrl extends BeanStub {
     private visibleCols: VisibleColsService;
     private ctrlsSvc: CtrlsService;
     private filterManager?: FilterManager;
-    private menuService?: MenuService;
+    private menuSvc?: MenuService;
 
     public wireBeans(beans: BeanCollection) {
         this.headerNavigation = beans.headerNavigation;
@@ -39,7 +39,7 @@ export class GridHeaderCtrl extends BeanStub {
         this.visibleCols = beans.visibleCols;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.filterManager = beans.filterManager;
-        this.menuService = beans.menuService;
+        this.menuSvc = beans.menuSvc;
     }
 
     private comp: IGridHeaderComp;
@@ -213,14 +213,14 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private onHeaderContextMenu(mouseEvent?: MouseEvent, touch?: Touch, touchEvent?: TouchEvent): void {
-        if ((!mouseEvent && !touchEvent) || !this.menuService?.isHeaderContextMenuEnabled()) {
+        if ((!mouseEvent && !touchEvent) || !this.menuSvc?.isHeaderContextMenuEnabled()) {
             return;
         }
 
         const { target } = (mouseEvent ?? touch)!;
 
         if (target === this.eGui || target === this.ctrlsSvc.getHeaderRowContainerCtrl()?.getViewportElement()) {
-            this.menuService.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
+            this.menuSvc.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
         }
     }
 

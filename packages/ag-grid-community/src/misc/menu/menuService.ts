@@ -45,7 +45,7 @@ export type ShowFilterMenuParams = (MouseShowMenuParams | ButtonShowMenuParams |
     BaseShowFilterMenuParams;
 
 export class MenuService extends BeanStub implements NamedBean {
-    beanName = 'menuService' as const;
+    beanName = 'menuSvc' as const;
 
     private filterMenuFactory: IMenuFactory;
     private ctrlsSvc: CtrlsService;

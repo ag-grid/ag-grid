@@ -65,7 +65,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
     private visibleCols: VisibleColsService;
     private filterManager?: FilterManager;
     private menuUtils: MenuUtils;
-    private menuService: MenuService;
+    private menuSvc: MenuService;
     private columnMenuFactory: ColumnMenuFactory;
 
     public wireBeans(beans: BeanCollection) {
@@ -75,7 +75,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         this.visibleCols = beans.visibleCols;
         this.filterManager = beans.filterManager;
         this.menuUtils = beans.menuUtils as MenuUtils;
-        this.menuService = beans.menuService!;
+        this.menuSvc = beans.menuSvc!;
         this.columnMenuFactory = beans.columnMenuFactory as ColumnMenuFactory;
     }
 

@@ -37,13 +37,13 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
     private menuItemMapper: MenuItemMapper;
     private colModel: ColumnModel;
     private funcColsSvc: FuncColsService;
-    private menuService: MenuService;
+    private menuSvc: MenuService;
 
     public wireBeans(beans: BeanCollection) {
         this.menuItemMapper = beans.menuItemMapper as MenuItemMapper;
         this.colModel = beans.colModel;
         this.funcColsSvc = beans.funcColsSvc;
-        this.menuService = beans.menuService!;
+        this.menuSvc = beans.menuSvc!;
     }
 
     public createMenu(
@@ -154,7 +154,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             result.push(MENU_ITEM_SEPARATOR);
         }
 
-        if (this.menuService.isFilterMenuItemEnabled(column)) {
+        if (this.menuSvc.isFilterMenuItemEnabled(column)) {
             result.push('columnFilter');
             result.push(MENU_ITEM_SEPARATOR);
         }

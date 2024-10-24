@@ -49,7 +49,7 @@ export function showColumnFilter(beans: BeanCollection, colKey: string | Column)
         _error(12, { colKey });
         return;
     }
-    beans.menuService?.showFilterMenu({
+    beans.menuSvc?.showFilterMenu({
         column,
         containerType: 'columnFilter',
         positionBy: 'auto',

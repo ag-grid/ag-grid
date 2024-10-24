@@ -244,7 +244,7 @@ export interface CoreBeanCollection {
     stateSvc?: StateService;
     overlays?: OverlayService;
     pinnedRowModel?: PinnedRowModel;
-    menuService?: MenuService;
+    menuSvc?: MenuService;
     apiEventService?: ApiEventService;
     undoRedoService?: UndoRedoService;
     rowNodeBlockLoader?: RowNodeBlockLoader;
@@ -431,7 +431,7 @@ export type BeanName =
     | 'loggerFactory'
     | 'masterDetailService'
     | 'menuItemMapper'
-    | 'menuService'
+    | 'menuSvc'
     | 'menuUtils'
     | 'modelItemUtils'
     | 'mouseEventService'

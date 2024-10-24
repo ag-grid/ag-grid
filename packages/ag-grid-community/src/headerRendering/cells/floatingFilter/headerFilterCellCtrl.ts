@@ -242,7 +242,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private setupFilterButton(): void {
-        this.suppressFilterButton = !this.menuService?.isFloatingFilterButtonEnabled(this.column);
+        this.suppressFilterButton = !this.menuSvc?.isFloatingFilterButtonEnabled(this.column);
         this.highlightFilterButtonWhenActive = !_isLegacyMenuEnabled(this.gos);
     }
 
@@ -267,7 +267,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
     private showParentFilter() {
         const eventSource = this.suppressFilterButton ? this.eFloatingFilterBody : this.eButtonShowMainFilter;
-        this.menuService?.showFilterMenu({
+        this.menuSvc?.showFilterMenu({
             column: this.column,
             buttonElement: eventSource,
             containerType: 'floatingFilter',

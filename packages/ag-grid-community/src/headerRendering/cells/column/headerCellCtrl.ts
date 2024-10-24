@@ -163,24 +163,24 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             displayName: this.displayName!,
             enableSorting: this.column.isSortable(),
             enableMenu: this.menuEnabled,
-            enableFilterButton: this.openFilterEnabled && !!this.menuService?.isHeaderFilterButtonEnabled(this.column),
+            enableFilterButton: this.openFilterEnabled && !!this.menuSvc?.isHeaderFilterButtonEnabled(this.column),
             enableFilterIcon: !this.openFilterEnabled || _isLegacyMenuEnabled(this.gos),
             showColumnMenu: (buttonElement: HTMLElement) => {
-                this.menuService?.showColumnMenu({
+                this.menuSvc?.showColumnMenu({
                     column: this.column,
                     buttonElement,
                     positionBy: 'button',
                 });
             },
             showColumnMenuAfterMouseClick: (mouseEvent: MouseEvent | Touch) => {
-                this.menuService?.showColumnMenu({
+                this.menuSvc?.showColumnMenu({
                     column: this.column,
                     mouseEvent,
                     positionBy: 'mouse',
                 });
             },
             showFilter: (buttonElement: HTMLElement) => {
-                this.menuService?.showFilterMenu({
+                this.menuSvc?.showFilterMenu({
                     column: this.column,
                     buttonElement: buttonElement,
                     containerType: 'columnFilter',
@@ -315,8 +315,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private updateState(): void {
-        this.menuEnabled = !!this.menuService?.isColumnMenuInHeaderEnabled(this.column);
-        this.openFilterEnabled = !!this.menuService?.isFilterMenuInHeaderEnabled(this.column);
+        this.menuEnabled = !!this.menuSvc?.isColumnMenuInHeaderEnabled(this.column);
+        this.openFilterEnabled = !!this.menuSvc?.isFilterMenuInHeaderEnabled(this.column);
         this.sortable = this.column.isSortable();
         this.displayName = this.calculateDisplayName();
         this.draggable = this.workOutDraggable();

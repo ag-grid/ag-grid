@@ -48,7 +48,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected userCompFactory: UserComponentFactory;
     protected ctrlsSvc: CtrlsService;
     protected dragAndDrop?: DragAndDropService;
-    protected menuService?: MenuService;
+    protected menuSvc?: MenuService;
 
     public wireBeans(beans: BeanCollection) {
         this.pinnedColumnService = beans.pinnedColumnService;
@@ -56,7 +56,7 @@ export abstract class AbstractHeaderCellCtrl<
         this.userCompFactory = beans.userCompFactory;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.dragAndDrop = beans.dragAndDrop;
-        this.menuService = beans.menuService;
+        this.menuSvc = beans.menuSvc;
     }
 
     private columnGroupChild: AgColumn | AgColumnGroup;
@@ -425,8 +425,8 @@ export abstract class AbstractHeaderCellCtrl<
         if (this.gos.get('preventDefaultOnContextMenu')) {
             event.preventDefault();
         }
-        if (this.menuService?.isHeaderContextMenuEnabled(column)) {
-            this.menuService.showHeaderContextMenu(column, mouseEvent, touchEvent);
+        if (this.menuSvc?.isHeaderContextMenuEnabled(column)) {
+            this.menuSvc.showHeaderContextMenu(column, mouseEvent, touchEvent);
         }
 
         this.dispatchColumnMouseEvent('columnHeaderContextMenu', column);
