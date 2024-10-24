@@ -21,11 +21,11 @@ export function setFocusedCell(
 }
 
 export function tabToNextCell(beans: BeanCollection, event?: KeyboardEvent): boolean {
-    return beans$navigation?.tabToNextCell(false, event) ?? false;
+    return beans.navigation?.tabToNextCell(false, event) ?? false;
 }
 
 export function tabToPreviousCell(beans: BeanCollection, event?: KeyboardEvent): boolean {
-    return beans$navigation?.tabToNextCell(true, event) ?? false;
+    return beans.navigation?.tabToNextCell(true, event) ?? false;
 }
 
 export function setFocusedHeader(

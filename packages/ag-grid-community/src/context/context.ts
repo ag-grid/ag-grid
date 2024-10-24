@@ -199,7 +199,7 @@ export interface CoreBeanCollection {
     columnFlex?: ColumnFlexService;
     columnResize?: ColumnResizeService;
     headerNavigation?: HeaderNavigationService;
-   $navigation?: NavigationService;
+    navigation?: NavigationService;
     columnAnimationService?: ColumnAnimationService;
     focusService: FocusService;
     popupService?: PopupService;
@@ -435,7 +435,7 @@ export type BeanName =
     | 'menuUtils'
     | 'modelItemUtils'
     | 'mouseEventService'
-    | $navigation'
+    | 'navigation'
     | 'overlayService'
     | 'paginationAutoPageSizeService'
     | 'paginationService'

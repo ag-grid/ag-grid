@@ -21,7 +21,7 @@ import { PopupEditorWrapper } from './cellEditors/popupEditorWrapper';
 export class EditService extends BeanStub implements NamedBean {
     beanName = 'editService' as const;
 
-    private$navigation?: NavigationService;
+    private navigation?: NavigationService;
     private userComponentFactory: UserComponentFactory;
     private valueSvc: ValueService;
     private rowRenderer: RowRenderer;
@@ -29,7 +29,7 @@ export class EditService extends BeanStub implements NamedBean {
     private popupService?: PopupService;
 
     public wireBeans(beans: CoreBeanCollection): void {
-        this$navigation = beans$navigation;
+        this.navigation = beans.navigation;
         this.userComponentFactory = beans.userComponentFactory;
         this.valueSvc = beans.valueSvc;
         this.rowRenderer = beans.rowRenderer;
@@ -267,7 +267,7 @@ export class EditService extends BeanStub implements NamedBean {
 
         if (enterNavigatesVerticallyAfterEdit) {
             const key = shiftKey ? KeyCode.UP : KeyCode.DOWN;
-            this$navigation?.navigateToNextCell(null, key, cellPosition, false);
+            this.navigation?.navigateToNextCell(null, key, cellPosition, false);
         }
     }
 }

@@ -850,7 +850,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             column: (lastFocusedCell?.column as AgColumn) ?? this.getColumnForFullWidth(currentFullWidthComp),
         };
 
-        this.beans$navigation?.navigateToNextCell(keyboardEvent, keyboardEvent.key, cellPosition, true);
+        this.beans.navigation?.navigateToNextCell(keyboardEvent, keyboardEvent.key, cellPosition, true);
         keyboardEvent.preventDefault();
     }
 
@@ -882,7 +882,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         if ((this.isFullWidth() && isFullWidthContainerFocused) || !nextEl) {
-            this.beans$navigation?.onTabKeyDown(this, keyboardEvent);
+            this.beans.navigation?.onTabKeyDown(this, keyboardEvent);
         }
     }
 
