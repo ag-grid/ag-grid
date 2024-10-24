@@ -29,7 +29,7 @@ const orderedCoreBeans: BeanName[] = [
     'dragService',
     'columnGroupService',
     'visibleCols',
-    'popupService',
+    'popupSvc',
     'selectionService',
     'columnFilterService',
     'quickFilterService',

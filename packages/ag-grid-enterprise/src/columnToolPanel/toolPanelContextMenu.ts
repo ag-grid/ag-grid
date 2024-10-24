@@ -31,14 +31,14 @@ export class ToolPanelContextMenu extends Component {
     private colModel: ColumnModel;
     private colNames: ColumnNameService;
     private funcColsService: FuncColsService;
-    private popupService: PopupService;
+    private popupSvc: PopupService;
     private focusSvc: FocusService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
         this.colNames = beans.colNames;
         this.funcColsService = beans.funcColsService;
-        this.popupService = beans.popupService!;
+        this.popupSvc = beans.popupSvc!;
         this.focusSvc = beans.focusSvc;
     }
 
@@ -176,7 +176,7 @@ export class ToolPanelContextMenu extends Component {
             },
         });
 
-        const addPopupRes = this.popupService.addPopup({
+        const addPopupRes = this.popupSvc.addPopup({
             modal: true,
             eChild: eGui,
             closeOnEsc: true,
@@ -194,7 +194,7 @@ export class ToolPanelContextMenu extends Component {
             hideFunc = addPopupRes.hideFunc;
         }
 
-        this.popupService.positionPopupUnderMouseEvent({
+        this.popupSvc.positionPopupUnderMouseEvent({
             type: 'columnContextMenu',
             mouseEvent: this.mouseEvent,
             ePopup: eGui,

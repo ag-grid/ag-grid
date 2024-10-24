@@ -26,14 +26,14 @@ export class EditService extends BeanStub implements NamedBean {
     private valueSvc: ValueService;
     private rowRenderer: RowRenderer;
     private mouseEventService: MouseEventService;
-    private popupService?: PopupService;
+    private popupSvc?: PopupService;
 
     public wireBeans(beans: CoreBeanCollection): void {
         this.navigation = beans.navigation;
         this.userComponentFactory = beans.userComponentFactory;
         this.valueSvc = beans.valueSvc;
         this.rowRenderer = beans.rowRenderer;
-        this.popupService = beans.popupService;
+        this.popupSvc = beans.popupSvc;
     }
 
     public startEditing(
@@ -162,12 +162,12 @@ export class EditService extends BeanStub implements NamedBean {
                 this.mouseEventService.isElementInThisGrid(elementWithFocus);
 
             if (!clickInsideGrid) {
-                const popupService = this.popupService;
+                const popupSvc = this.popupSvc;
 
                 clickInsideGrid =
-                    !!popupService &&
-                    (popupService.getActivePopups().some((popup) => popup.contains(elementWithFocus)) ||
-                        popupService.isElementWithinCustomPopup(elementWithFocus));
+                    !!popupSvc &&
+                    (popupSvc.getActivePopups().some((popup) => popup.contains(elementWithFocus)) ||
+                        popupSvc.isElementWithinCustomPopup(elementWithFocus));
             }
 
             if (!clickInsideGrid) {

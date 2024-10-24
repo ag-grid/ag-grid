@@ -81,7 +81,7 @@ interface Position {
 }
 
 export class PopupService extends BeanStub implements NamedBean {
-    beanName = 'popupService' as const;
+    beanName = 'popupSvc' as const;
 
     private ctrlsService: CtrlsService;
     private environment: Environment;

@@ -20,7 +20,7 @@ import { isRowGroupColLocked } from '../rowGroupingUtils';
 import type { TDropZone } from './baseDropZonePanel';
 
 export class DropZoneColumnComp extends PillDragComp<AgColumn> {
-    private popupService: PopupService;
+    private popupSvc: PopupService;
     private sortController?: SortController;
     private colModel: ColumnModel;
     private colNames: ColumnNameService;
@@ -29,7 +29,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
-        this.popupService = beans.popupService!;
+        this.popupSvc = beans.popupSvc!;
         this.sortController = beans.sortController;
         this.colModel = beans.colModel;
         this.colNames = beans.colNames;
@@ -282,7 +282,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
 
         const translate = this.getLocaleTextFunc();
 
-        const addPopupRes = this.popupService.addPopup({
+        const addPopupRes = this.popupSvc.addPopup({
             modal: true,
             eChild: ePopup,
             closeOnEsc: true,
@@ -310,7 +310,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             }
         });
 
-        this.popupService.positionPopupByComponent({
+        this.popupSvc.positionPopupByComponent({
             type: 'aggFuncSelect',
             eventSource: eGui,
             ePopup: ePopup,

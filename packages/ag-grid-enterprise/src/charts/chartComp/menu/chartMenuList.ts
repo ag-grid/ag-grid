@@ -17,12 +17,12 @@ import type { ChartMenuContext } from './chartMenuContext';
 export class ChartMenuListFactory extends BeanStub implements NamedBean {
     beanName = 'chartMenuListFactory' as const;
 
-    private popupService: PopupService;
+    private popupSvc: PopupService;
     private chartMenuService: ChartMenuService;
     private chartTranslationService: ChartTranslationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.popupService = beans.popupService!;
+        this.popupSvc = beans.popupSvc!;
         this.chartMenuService = beans.chartMenuService as ChartMenuService;
         this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
@@ -61,7 +61,7 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
 
         const eGui = chartMenuList.getGui();
 
-        this.popupService.addPopup({
+        this.popupSvc.addPopup({
             modal: true,
             eChild: eGui,
             closeOnEsc: true,
@@ -75,7 +75,7 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
             afterGuiAttached: (params) => chartMenuList.afterGuiAttached(params),
             positionCallback: () => {
                 {
-                    this.popupService.positionPopupByComponent({
+                    this.popupSvc.positionPopupByComponent({
                         type: 'chartMenu',
                         eventSource,
                         ePopup: eGui,

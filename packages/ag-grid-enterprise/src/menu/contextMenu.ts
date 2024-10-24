@@ -33,7 +33,7 @@ const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
 export class ContextMenuService extends BeanStub implements NamedBean, IContextMenuService {
     beanName = 'contextMenuService' as const;
 
-    private popupService: PopupService;
+    private popupSvc: PopupService;
     private ctrlsService: CtrlsService;
     private colModel: ColumnModel;
     private menuUtils: MenuUtils;
@@ -43,7 +43,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     private rowRenderer: RowRenderer;
 
     public wireBeans(beans: BeanCollection): void {
-        this.popupService = beans.popupService!;
+        this.popupSvc = beans.popupSvc!;
         this.ctrlsService = beans.ctrlsService;
         this.colModel = beans.colModel;
         this.menuUtils = beans.menuUtils as MenuUtils;
@@ -248,7 +248,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
         const translate = this.getLocaleTextFunc();
 
-        const addPopupRes = this.popupService.addPopup({
+        const addPopupRes = this.popupSvc.addPopup({
             modal: true,
             eChild: eMenuGui,
             closeOnEsc: true,
@@ -260,7 +260,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             click: mouseEvent,
             positionCallback: () => {
                 const isRtl = this.gos.get('enableRtl');
-                this.popupService.positionPopupUnderMouseEvent({
+                this.popupSvc.positionPopupUnderMouseEvent({
                     ...positionParams,
                     nudgeX: isRtl ? (eMenuGui.offsetWidth + 1) * -1 : 1,
                 });

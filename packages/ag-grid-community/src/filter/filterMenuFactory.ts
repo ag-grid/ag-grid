@@ -16,12 +16,12 @@ import { FilterWrapperComp } from './filterWrapperComp';
 export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFactory {
     beanName = 'filterMenuFactory' as const;
 
-    private popupService?: PopupService;
+    private popupSvc?: PopupService;
     private focusSvc: FocusService;
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.popupService = beans.popupService;
+        this.popupSvc = beans.popupSvc;
         this.focusSvc = beans.focusSvc;
         this.ctrlsService = beans.ctrlsService;
     }
@@ -44,7 +44,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         this.showPopup(
             column,
             (eMenu) => {
-                this.popupService?.positionPopupUnderMouseEvent({
+                this.popupSvc?.positionPopupUnderMouseEvent({
                     column,
                     type: containerType,
                     mouseEvent,
@@ -76,7 +76,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         this.showPopup(
             column,
             (eMenu) => {
-                this.popupService?.positionPopupByComponent({
+                this.popupSvc?.positionPopupByComponent({
                     type: containerType,
                     eventSource,
                     ePopup: eMenu,
@@ -156,7 +156,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
                 ? translate('ariaLabelColumnMenu', 'Column Menu')
                 : translate('ariaLabelColumnFilter', 'Column Filter');
 
-        const addPopupRes = this.popupService?.addPopup({
+        const addPopupRes = this.popupSvc?.addPopup({
             modal: true,
             eChild: eMenu,
             closeOnEsc: true,

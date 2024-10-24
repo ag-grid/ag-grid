@@ -45,10 +45,10 @@ export type AgAutocompleteEvent =
     | 'eventOptionSelected'
     | 'eventValidChanged';
 export class AgAutocomplete extends Component<AgAutocompleteEvent> {
-    private popupService: PopupService;
+    private popupSvc: PopupService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.popupService = beans.popupService!;
+        this.popupSvc = beans.popupSvc!;
     }
 
     private eAutocompleteInput: AgInputTextField = RefPlaceholder;
@@ -279,10 +279,10 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
             keepWithinBounds: true,
         };
 
-        const addPopupRes = this.popupService.addPopup({
+        const addPopupRes = this.popupSvc.addPopup({
             eChild: ePopupGui,
             anchorToElement: this.getGui(),
-            positionCallback: () => this.popupService.positionPopupByComponent(positionParams),
+            positionCallback: () => this.popupSvc.positionPopupByComponent(positionParams),
             ariaLabel: this.listAriaLabel,
         });
         this.hidePopup = addPopupRes.hideFunc;

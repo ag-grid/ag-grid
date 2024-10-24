@@ -73,7 +73,7 @@ export class GridChartComp extends Component {
     private chartTranslationService: ChartTranslationService;
     private chartMenuService: ChartMenuService;
     private focusSvc: FocusService;
-    private popupService: PopupService;
+    private popupSvc: PopupService;
     private enterpriseChartProxyFactory?: EnterpriseChartProxyFactory;
 
     public wireBeans(beans: BeanCollection): void {
@@ -81,7 +81,7 @@ export class GridChartComp extends Component {
         this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
         this.chartMenuService = beans.chartMenuService as ChartMenuService;
         this.focusSvc = beans.focusSvc;
-        this.popupService = beans.popupService!;
+        this.popupSvc = beans.popupSvc!;
         this.enterpriseChartProxyFactory = beans.enterpriseChartProxyFactory as EnterpriseChartProxyFactory;
     }
 
@@ -324,7 +324,7 @@ export class GridChartComp extends Component {
     }
 
     private getBestDialogSize(): { width: number; height: number } {
-        const popupParent = this.popupService.getPopupParent();
+        const popupParent = this.popupSvc.getPopupParent();
         const maxWidth = _getAbsoluteWidth(popupParent) * 0.75;
         const maxHeight = _getAbsoluteHeight(popupParent) * 0.75;
         const ratio = 0.553;

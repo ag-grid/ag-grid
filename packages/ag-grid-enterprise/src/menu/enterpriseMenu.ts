@@ -59,7 +59,7 @@ const TABS_DEFAULT: ColumnMenuTab[] = [TAB_GENERAL, TAB_FILTER, TAB_COLUMNS];
 export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuFactory {
     beanName = 'enterpriseMenuFactory' as const;
 
-    private popupService: PopupService;
+    private popupSvc: PopupService;
     private focusSvc: FocusService;
     private ctrlsService: CtrlsService;
     private visibleCols: VisibleColsService;
@@ -69,7 +69,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
     private columnMenuFactory: ColumnMenuFactory;
 
     public wireBeans(beans: BeanCollection) {
-        this.popupService = beans.popupService!;
+        this.popupSvc = beans.popupSvc!;
         this.focusSvc = beans.focusSvc;
         this.ctrlsService = beans.ctrlsService;
         this.visibleCols = beans.visibleCols;
@@ -100,7 +100,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             (menu: EnterpriseColumnMenu) => {
                 const ePopup = menu.getGui();
 
-                this.popupService.positionPopupUnderMouseEvent({
+                this.popupSvc.positionPopupUnderMouseEvent({
                     type: containerType,
                     column,
                     mouseEvent,
@@ -158,7 +158,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             (menu: EnterpriseColumnMenu) => {
                 const ePopup = menu.getGui();
 
-                this.popupService.positionPopupByComponent({
+                this.popupSvc.positionPopupByComponent({
                     type: containerType,
                     column,
                     eventSource,
@@ -213,7 +213,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        this.popupService.addPopup({
+        this.popupSvc.addPopup({
             modal: true,
             eChild: eMenuGui,
             closeOnEsc: true,
@@ -241,7 +241,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             // if user starts showing / hiding columns, or otherwise move the underlying column
             // for this menu, we want to stop tracking the menu with the column position. otherwise
             // the menu would move as the user is using the columns tab inside the menu.
-            const stopAnchoringPromise = this.popupService.setPopupPositionRelatedToElement(eMenuGui, anchorToElement);
+            const stopAnchoringPromise = this.popupSvc.setPopupPositionRelatedToElement(eMenuGui, anchorToElement);
 
             if (stopAnchoringPromise && column) {
                 this.addStopAnchoring(stopAnchoringPromise, column, closedFuncs);

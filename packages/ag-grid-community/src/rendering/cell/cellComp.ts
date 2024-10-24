@@ -509,7 +509,7 @@ export class CellComp extends Component {
             ePopupGui.appendChild(this.cellEditorGui);
         }
 
-        const popupService = this.beans.popupService!;
+        const popupSvc = this.beans.popupSvc!;
 
         const useModelPopup = this.beans.gos.get('stopEditingWhenCellsLoseFocus');
 
@@ -529,11 +529,11 @@ export class CellComp extends Component {
             keepWithinBounds: true,
         };
 
-        const positionCallback = popupService.positionPopupByComponent.bind(popupService, positionParams);
+        const positionCallback = popupSvc.positionPopupByComponent.bind(popupSvc, positionParams);
 
         const translate = _getLocaleTextFunc(this.beans.localeService);
 
-        const addPopupRes = popupService.addPopup({
+        const addPopupRes = popupSvc.addPopup({
             modal: useModelPopup,
             eChild: ePopupGui,
             closeOnEsc: true,

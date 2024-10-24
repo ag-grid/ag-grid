@@ -17,7 +17,7 @@ const PopupEditorComp = (props: {
 }) => {
     const [popupEditorWrapper, setPopupEditorWrapper] = useState<PopupEditorWrapper>();
 
-    const { context, popupService, localeService, gos, editService } = useContext(BeansContext);
+    const { context, popupSvc, localeService, gos, editService } = useContext(BeansContext);
 
     useEffectOnce(() => {
         const { editDetails, cellCtrl, eParentCell } = props;
@@ -45,11 +45,11 @@ const PopupEditorComp = (props: {
             keepWithinBounds: true,
         };
 
-        const positionCallback = popupService?.positionPopupByComponent.bind(popupService, positionParams);
+        const positionCallback = popupSvc?.positionPopupByComponent.bind(popupSvc, positionParams);
 
         const translate = _getLocaleTextFunc(localeService);
 
-        const addPopupRes = popupService?.addPopup({
+        const addPopupRes = popupSvc?.addPopup({
             modal: useModelPopup,
             eChild: ePopupGui,
             closeOnEsc: true,

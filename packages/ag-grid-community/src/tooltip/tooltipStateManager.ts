@@ -29,11 +29,11 @@ let lastTooltipHideTime: number;
 let isLocked = false;
 
 export class TooltipStateManager extends BeanStub {
-    private popupService?: PopupService;
+    private popupSvc?: PopupService;
     private userComponentFactory: UserComponentFactory;
 
     public wireBeans(beans: BeanCollection): void {
-        this.popupService = beans.popupService;
+        this.popupSvc = beans.popupSvc;
         this.userComponentFactory = beans.userComponentFactory;
     }
 
@@ -359,7 +359,7 @@ export class TooltipStateManager extends BeanStub {
 
         const translate = this.getLocaleTextFunc();
 
-        const addPopupRes = this.popupService?.addPopup({
+        const addPopupRes = this.popupSvc?.addPopup({
             eChild: eGui,
             ariaLabel: translate('ariaLabelTooltip', 'Tooltip'),
         });
@@ -463,12 +463,12 @@ export class TooltipStateManager extends BeanStub {
         };
 
         if (this.lastMouseEvent) {
-            this.popupService?.positionPopupUnderMouseEvent({
+            this.popupSvc?.positionPopupUnderMouseEvent({
                 ...params,
                 mouseEvent: this.lastMouseEvent,
             });
         } else {
-            this.popupService?.positionPopupByComponent({
+            this.popupSvc?.positionPopupByComponent({
                 ...params,
                 eventSource: this.tooltipCtrl.getGui(),
                 position: 'under',

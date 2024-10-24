@@ -10,13 +10,13 @@ import { AdvancedFilterBuilderComp } from './builder/advancedFilterBuilderComp';
 export type AdvancedFilterCtrlEvent = 'advancedFilterBuilderClosed';
 export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implements IAdvancedFilterCtrl {
     private ctrlsService: CtrlsService;
-    private popupService: PopupService;
+    private popupSvc: PopupService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
-        this.popupService = beans.popupService!;
+        this.popupSvc = beans.popupSvc!;
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
         this.environment = beans.environment;
     }
@@ -152,7 +152,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
 
     private getBuilderDialogSize(): { width: number; height: number; minWidth: number } {
         const minWidth = this.gos.get('advancedFilterBuilderParams')?.minWidth ?? 500;
-        const popupParent = this.popupService.getPopupParent();
+        const popupParent = this.popupSvc.getPopupParent();
         const maxWidth = Math.round(_getAbsoluteWidth(popupParent)) - 2; // assume 1 pixel border
         const maxHeight = Math.round(_getAbsoluteHeight(popupParent) * 0.75) - 2;
 

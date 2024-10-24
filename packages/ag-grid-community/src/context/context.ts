@@ -202,7 +202,7 @@ export interface CoreBeanCollection {
     navigation?: NavigationService;
     colAnimation?: ColumnAnimationService;
     focusSvc: FocusService;
-    popupService?: PopupService;
+    popupSvc?: PopupService;
     cellStyleService?: CellStyleService;
     columnHoverService?: ColumnHoverService;
     userComponentFactory: UserComponentFactory;
@@ -443,7 +443,7 @@ export type BeanName =
     | 'pinnedColumnService'
     | 'pivotColDefService'
     | 'pivotStage'
-    | 'popupService'
+    | 'popupSvc'
     | 'quickFilterService'
     | 'rangeService'
     | 'pageBoundsListener'

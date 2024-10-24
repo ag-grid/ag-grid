@@ -65,12 +65,12 @@ const MenuItemComponent: ComponentType = {
 };
 
 export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
-    private popupService?: PopupService;
+    private popupSvc?: PopupService;
     private userComponentFactory: UserComponentFactory;
     private registry: Registry;
 
     public wireBeans(beans: BeanCollection) {
-        this.popupService = beans.popupService;
+        this.popupSvc = beans.popupSvc;
         this.userComponentFactory = beans.userComponentFactory;
         this.registry = beans.registry;
     }
@@ -220,15 +220,15 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
             }
         }
 
-        const { popupService } = this;
+        const { popupSvc } = this;
         const positionCallback = () => {
             const eventSource = this.eGui!;
-            popupService?.positionPopupForMenu({
+            popupSvc?.positionPopupForMenu({
                 eventSource,
                 ePopup,
             });
             const { column, node } = this.contextParams;
-            popupService?.callPostProcessPopup(
+            popupSvc?.callPostProcessPopup(
                 'subMenu',
                 ePopup,
                 eventSource,
@@ -240,7 +240,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
 
         const translate = this.getLocaleTextFunc();
 
-        const addPopupRes = popupService?.addPopup({
+        const addPopupRes = popupSvc?.addPopup({
             modal: true,
             eChild: ePopup,
             positionCallback,

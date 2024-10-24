@@ -62,7 +62,7 @@ export class GridBodyCtrl extends BeanStub {
     private rowDragService?: RowDragService;
     private pinnedRowModel?: PinnedRowModel;
     private editService?: EditService;
-    private popupService?: PopupService;
+    private popupSvc?: PopupService;
     private mouseEventService: MouseEventService;
     private rowModel: IRowModel;
     private filterManager?: FilterManager;
@@ -77,7 +77,7 @@ export class GridBodyCtrl extends BeanStub {
         this.rowDragService = beans.rowDragService;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.editService = beans.editService;
-        this.popupService = beans.popupService;
+        this.popupSvc = beans.popupSvc;
         this.mouseEventService = beans.mouseEventService;
         this.rowModel = beans.rowModel;
         this.filterManager = beans.filterManager;
@@ -449,7 +449,7 @@ export class GridBodyCtrl extends BeanStub {
             return;
         }
 
-        if (this.popupService?.hasAnchoredPopup()) {
+        if (this.popupSvc?.hasAnchoredPopup()) {
             e.preventDefault();
         }
     }
