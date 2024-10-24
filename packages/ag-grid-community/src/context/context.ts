@@ -250,7 +250,7 @@ export interface CoreBeanCollection {
     rowNodeBlockLoader?: RowNodeBlockLoader;
     csvCreator?: ICsvCreator;
     excelCreator?: IExcelCreator;
-    clipboardService?: IClipboardService;
+    clipboardSvc?: IClipboardService;
     mouseEventService: MouseEventService;
     cellNavigation?: CellNavigationService;
     scrollVisibleService: ScrollVisibleService;
@@ -360,7 +360,7 @@ export type BeanName =
     | 'chartMenuService'
     | 'chartTranslationService'
     | 'chartService'
-    | 'clipboardService'
+    | 'clipboardSvc'
     | 'colAnimation'
     | 'colAutosize'
     | 'columnChooserFactory'

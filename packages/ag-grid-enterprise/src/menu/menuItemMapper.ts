@@ -29,7 +29,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private sortSvc?: SortService;
     private colAutosize?: ColumnAutosizeService;
     private expansionService?: IExpansionService;
-    private clipboardService?: IClipboardService;
+    private clipboardSvc?: IClipboardService;
     private aggFuncService?: IAggFuncService;
     private columnChooserFactory?: ColumnChooserFactory;
 
@@ -41,7 +41,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         this.sortSvc = beans.sortSvc;
         this.colAutosize = beans.colAutosize;
         this.expansionService = beans.expansionService;
-        this.clipboardService = beans.clipboardService;
+        this.clipboardSvc = beans.clipboardSvc;
         this.aggFuncService = beans.aggFuncService;
         this.columnChooserFactory = beans.columnChooserFactory as ColumnChooserFactory;
     }
@@ -241,7 +241,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
                         icon: _createIconNoSpan('clipboardCopy', this.gos, null),
-                        action: () => this.clipboardService!.copyToClipboard(),
+                        action: () => this.clipboardSvc!.copyToClipboard(),
                     };
                 } else {
                     return null;
@@ -252,7 +252,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
                         icon: _createIconNoSpan('clipboardCopy', this.gos, null),
-                        action: () => this.clipboardService!.copyToClipboard({ includeHeaders: true }),
+                        action: () => this.clipboardSvc!.copyToClipboard({ includeHeaders: true }),
                     };
                 } else {
                     return null;
@@ -264,7 +264,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
                         icon: _createIconNoSpan('clipboardCopy', this.gos, null),
                         action: () =>
-                            this.clipboardService!.copyToClipboard({ includeHeaders: true, includeGroupHeaders: true }),
+                            this.clipboardSvc!.copyToClipboard({ includeHeaders: true, includeGroupHeaders: true }),
                     };
                 } else {
                     return null;
@@ -279,7 +279,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
                         icon: _createIconNoSpan('clipboardCut', this.gos, null),
                         disabled: !isEditable || this.gos.get('suppressCutToClipboard'),
-                        action: () => this.clipboardService!.cutToClipboard(undefined, 'contextMenu'),
+                        action: () => this.clipboardSvc!.cutToClipboard(undefined, 'contextMenu'),
                     };
                 } else {
                     return null;
@@ -291,7 +291,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
                         disabled: true,
                         icon: _createIconNoSpan('clipboardPaste', this.gos, null),
-                        action: () => this.clipboardService!.pasteFromClipboard(),
+                        action: () => this.clipboardSvc!.pasteFromClipboard(),
                     };
                 } else {
                     return null;

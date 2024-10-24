@@ -146,7 +146,7 @@ export function stringToArray(strData: string, delimiter = ','): string[][] {
 }
 
 export class ClipboardService extends BeanStub implements NamedBean, IClipboardService {
-    beanName = 'clipboardService' as const;
+    beanName = 'clipboardSvc' as const;
 
     private selectionSvc?: ISelectionService;
     private rowModel: IRowModel;
@@ -332,7 +332,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             });
         }
 
-        // clipboardService has to do changeDetection itself, to prevent repeat logic in favour of batching.
+        // clipboardSvc has to do changeDetection itself, to prevent repeat logic in favour of batching.
         // changeDetectionService is disabled for this action.
         this.beans.rowRenderer.refreshCells({ rowNodes: nodesToRefresh });
 
@@ -774,7 +774,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private clearCellsAfterCopy(type: CellClearType) {
         this.eventSvc.dispatchEvent({ type: 'keyShortcutChangedCellStart' });
         if (type === CellClearType.CellRange) {
-            this.rangeSvc!.clearCellRangeCellValues({ cellEventSource: 'clipboardService' });
+            this.rangeSvc!.clearCellRangeCellValues({ cellEventSource: 'clipboardSvc' });
         } else if (type === CellClearType.SelectedRows) {
             this.clearSelectedRows();
         } else {
@@ -807,7 +807,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             return;
         }
         const emptyValue = this.valueSvc.getDeleteValue(column, rowNode);
-        rowNode.setDataValue(column, emptyValue, 'clipboardService');
+        rowNode.setDataValue(column, emptyValue, 'clipboardSvc');
     }
 
     private iterateActiveRanges(onlyFirst: boolean, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {

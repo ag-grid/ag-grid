@@ -73,7 +73,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private rowModel: IRowModel;
     private pinnedRowModel?: PinnedRowModel;
     private rangeSvc?: IRangeService;
-    private clipboardService?: IClipboardService;
+    private clipboardSvc?: IClipboardService;
     private selectionSvc?: ISelectionService;
 
     public wireBeans(beans: BeanCollection) {
@@ -86,7 +86,7 @@ export class RowContainerEventsFeature extends BeanStub {
         this.rowModel = beans.rowModel;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.rangeSvc = beans.rangeSvc;
-        this.clipboardService = beans.clipboardService;
+        this.clipboardSvc = beans.clipboardSvc;
         this.selectionSvc = beans.selectionSvc;
     }
 
@@ -341,7 +341,7 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndC(event: KeyboardEvent): void {
-        if (!this.clipboardService || this.gos.get('enableCellTextSelection')) {
+        if (!this.clipboardSvc || this.gos.get('enableCellTextSelection')) {
             return;
         }
 
@@ -352,15 +352,11 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         event.preventDefault();
-        this.clipboardService.copyToClipboard();
+        this.clipboardSvc.copyToClipboard();
     }
 
     private onCtrlAndX(event: KeyboardEvent): void {
-        if (
-            !this.clipboardService ||
-            this.gos.get('enableCellTextSelection') ||
-            this.gos.get('suppressCutToClipboard')
-        ) {
+        if (!this.clipboardSvc || this.gos.get('enableCellTextSelection') || this.gos.get('suppressCutToClipboard')) {
             return;
         }
 
@@ -371,7 +367,7 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         event.preventDefault();
-        this.clipboardService.cutToClipboard(undefined, 'ui');
+        this.clipboardSvc.cutToClipboard(undefined, 'ui');
     }
 
     private onCtrlAndV(event: KeyboardEvent): void {
@@ -380,14 +376,14 @@ export class RowContainerEventsFeature extends BeanStub {
         if (cellCtrl?.isEditing() || rowCtrl?.isEditing()) {
             return;
         }
-        if (this.clipboardService && !this.gos.get('suppressClipboardPaste')) {
-            this.clipboardService.pasteFromClipboard();
+        if (this.clipboardSvc && !this.gos.get('suppressClipboardPaste')) {
+            this.clipboardSvc.pasteFromClipboard();
         }
     }
 
     private onCtrlAndD(event: KeyboardEvent): void {
-        if (this.clipboardService && !this.gos.get('suppressClipboardPaste')) {
-            this.clipboardService.copyRangeDown();
+        if (this.clipboardSvc && !this.gos.get('suppressClipboardPaste')) {
+            this.clipboardSvc.copyRangeDown();
         }
         event.preventDefault();
     }
