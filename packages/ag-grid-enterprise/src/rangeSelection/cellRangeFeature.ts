@@ -162,7 +162,7 @@ export class CellRangeFeature implements ICellRangeFeature {
             rightCol = presentedColsService.getColAfter(thisCol);
         }
 
-        const ranges = this.rangeService
+        const ranges = this.rangeSvc
             .getCellRanges()
             .filter((range) => this.rangeSvc.isCellInSpecificRange(this.cellCtrl.getCellPosition(), range));
 
