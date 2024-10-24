@@ -43,7 +43,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private colModel: ColumnModel;
     private funcColsService: FuncColsService;
     private valueSvc: ValueService;
-    private columnStateService: ColumnStateService;
+    private colState: ColumnStateService;
     private filterManager?: FilterManager;
     private columnAutosizeService?: ColumnAutosizeService;
     private columnFactory: ColumnFactory;
@@ -53,7 +53,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.colModel = beans.colModel;
         this.funcColsService = beans.funcColsService;
         this.valueSvc = beans.valueSvc;
-        this.columnStateService = beans.columnStateService;
+        this.colState = beans.colState;
         this.filterManager = beans.filterManager;
         this.columnAutosizeService = beans.columnAutosizeService;
         this.columnFactory = beans.columnFactory;
@@ -510,7 +510,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             );
         }
         if (state.length) {
-            this.columnStateService.applyColumnState({ state }, 'cellDataTypeInferred');
+            this.colState.applyColumnState({ state }, 'cellDataTypeInferred');
         }
         this.initialData = null;
     }
@@ -526,7 +526,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private getUpdatedColumnState(column: AgColumn, columnStateUpdates: Set<keyof ColumnStateParams>): ColumnState {
-        const columnState = this.columnStateService.getColumnStateFromColDef(column);
+        const columnState = this.colState.getColumnStateFromColDef(column);
         columnStateUpdates.forEach((key) => {
             // if the column state has been updated, don't update again
             delete columnState[key];

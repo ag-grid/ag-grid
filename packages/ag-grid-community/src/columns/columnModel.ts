@@ -56,7 +56,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private selectionColService?: SelectionColService;
     private valueCache?: ValueCache;
     private columnDefFactory?: ColumnDefFactory;
-    private columnStateService: ColumnStateService;
+    private colState: ColumnStateService;
     private columnAutosizeService?: ColumnAutosizeService;
     private funcColsService: FuncColsService;
     private quickFilterService?: QuickFilterService;
@@ -73,7 +73,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.selectionColService = beans.selectionColService;
         this.valueCache = beans.valueCache;
         this.columnDefFactory = beans.columnDefFactory;
-        this.columnStateService = beans.columnStateService;
+        this.colState = beans.colState;
         this.columnAutosizeService = beans.columnAutosizeService;
         this.funcColsService = beans.funcColsService;
         this.quickFilterService = beans.quickFilterService;
@@ -127,7 +127,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private createColsFromColDefs(source: ColumnEventType): void {
         // only need to dispatch before/after events if updating columns, never if setting columns for first time
         const dispatchEventsFunc = this.colDefs
-            ? this.columnStateService.compareColumnStatesAndDispatchEvents(source)
+            ? this.colState.compareColumnStatesAndDispatchEvents(source)
             : undefined;
 
         // always invalidate cache on changing columns, as the column id's for the new columns
@@ -304,7 +304,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     public setColsVisible(keys: (string | AgColumn)[], visible = false, source: ColumnEventType): void {
-        this.columnStateService.applyColumnState(
+        this.colState.applyColumnState(
             {
                 state: keys.map<ColumnState>((key) => ({
                     colId: typeof key === 'string' ? key : key.getColId(),

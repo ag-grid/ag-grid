@@ -35,15 +35,15 @@ export function getColumns(beans: BeanCollection): Column[] | null {
 }
 
 export function applyColumnState(beans: BeanCollection, params: ApplyColumnStateParams): boolean {
-    return beans.columnStateService.applyColumnState(params, 'api');
+    return beans.colState.applyColumnState(params, 'api');
 }
 
 export function getColumnState(beans: BeanCollection): ColumnState[] {
-    return beans.columnStateService.getColumnState();
+    return beans.colState.getColumnState();
 }
 
 export function resetColumnState(beans: BeanCollection): void {
-    beans.columnStateService.resetColumnState('api');
+    beans.colState.resetColumnState('api');
 }
 
 export function isPinning(beans: BeanCollection): boolean {

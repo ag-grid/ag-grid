@@ -18,12 +18,12 @@ export class ModelItemUtils extends BeanStub implements NamedBean {
 
     private aggFuncService?: IAggFuncService;
     private colModel: ColumnModel;
-    private columnStateService: ColumnStateService;
+    private colState: ColumnStateService;
 
     public wireBeans(beans: BeanCollection) {
         this.aggFuncService = beans.aggFuncService;
         this.colModel = beans.colModel;
-        this.columnStateService = beans.columnStateService;
+        this.colState = beans.colState;
     }
 
     public selectAllChildren(colTree: ColumnModelItem[], selectAllChecked: boolean, eventType: ColumnEventType): void {
@@ -80,7 +80,7 @@ export class ModelItemUtils extends BeanStub implements NamedBean {
         });
 
         if (colStateItems.length > 0) {
-            this.columnStateService.applyColumnState({ state: colStateItems }, eventType);
+            this.colState.applyColumnState({ state: colStateItems }, eventType);
         }
     }
 
@@ -136,7 +136,7 @@ export class ModelItemUtils extends BeanStub implements NamedBean {
         columns.forEach(action);
 
         if (colStateItems.length > 0) {
-            this.columnStateService.applyColumnState({ state: colStateItems }, eventType);
+            this.colState.applyColumnState({ state: colStateItems }, eventType);
         }
     }
 
@@ -170,7 +170,7 @@ export class ModelItemUtils extends BeanStub implements NamedBean {
                 };
             }
         });
-        this.columnStateService.applyColumnState({ state }, eventType);
+        this.colState.applyColumnState({ state }, eventType);
     }
 
     public createPivotState(column: AgColumn): {

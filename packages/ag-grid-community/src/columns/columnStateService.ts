@@ -75,7 +75,7 @@ export interface ApplyColumnStateParams {
 }
 
 export class ColumnStateService extends BeanStub implements NamedBean {
-    beanName = 'columnStateService' as const;
+    beanName = 'colState' as const;
 
     private colModel: ColumnModel;
     private sortSvc?: SortService;

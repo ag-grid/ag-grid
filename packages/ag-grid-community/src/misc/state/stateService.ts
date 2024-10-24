@@ -60,7 +60,7 @@ export class StateService extends BeanStub implements NamedBean {
     private selectionSvc?: ISelectionService;
     private expansionService?: IExpansionService;
     private colAnimation?: ColumnAnimationService;
-    private columnStateService: ColumnStateService;
+    private colState: ColumnStateService;
     private sideBarService?: ISideBarService;
     private rangeSvc?: IRangeService;
     private rowModel: IRowModel;
@@ -78,7 +78,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.selectionSvc = beans.selectionSvc;
         this.expansionService = beans.expansionService;
         this.colAnimation = beans.colAnimation;
-        this.columnStateService = beans.columnStateService;
+        this.colState = beans.colState;
         this.sideBarService = beans.sideBarService;
         this.rangeSvc = beans.rangeSvc;
         this.rowModel = beans.rowModel;
@@ -330,7 +330,7 @@ export class StateService extends BeanStub implements NamedBean {
         const columns: string[] = [];
 
         let defaultSortIndex = 0;
-        const columnState = this.columnStateService.getColumnState();
+        const columnState = this.colState.getColumnState();
         for (let i = 0; i < columnState.length; i++) {
             const {
                 colId,
@@ -485,7 +485,7 @@ export class StateService extends BeanStub implements NamedBean {
 
         if (columnStates.length) {
             this.columnStates = columnStates;
-            this.columnStateService.applyColumnState(
+            this.colState.applyColumnState(
                 {
                     state: columnStates,
                     applyOrder,
@@ -514,7 +514,7 @@ export class StateService extends BeanStub implements NamedBean {
                 }
             }
 
-            this.columnStateService.applyColumnState(
+            this.colState.applyColumnState(
                 {
                     state: secondaryColumnStates,
                     applyOrder,
