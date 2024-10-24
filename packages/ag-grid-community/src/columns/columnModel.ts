@@ -51,7 +51,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private colFactory: ColumnFactory;
     private visibleCols: VisibleColsService;
     private colViewport: ColumnViewportService;
-    private pivotResultColsService?: IPivotResultColsService;
+    private pivotResultCols?: IPivotResultColsService;
     private autoColService?: IAutoColService;
     private selectionColService?: SelectionColService;
     private valueCache?: ValueCache;
@@ -68,7 +68,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.colFactory = beans.colFactory;
         this.visibleCols = beans.visibleCols;
         this.colViewport = beans.colViewport;
-        this.pivotResultColsService = beans.pivotResultColsService;
+        this.pivotResultCols = beans.pivotResultCols;
         this.autoColService = beans.autoColService;
         this.selectionColService = beans.selectionColService;
         this.valueCache = beans.valueCache;
@@ -187,7 +187,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     // createColsFromColDefs (recreateColumnDefs, setColumnsDefs),
     // setPivotMode, applyColumnState,
     // functionColsService.setPrimaryColList, functionColsService.updatePrimaryColList,
-    // pivotResultColsService.setPivotResultCols
+    // pivotResultCols.setPivotResultCols
     public refreshCols(newColDefs: boolean): void {
         if (!this.colDefCols) {
             return;
@@ -233,7 +233,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private selectCols(colDefCols: ColumnCollections): ColumnCollections {
-        const pivotResultCols = this.pivotResultColsService?.getPivotResultCols() ?? null;
+        const pivotResultCols = this.pivotResultCols?.getPivotResultCols() ?? null;
         this.showingPivotResult = pivotResultCols != null;
 
         const { map, list, tree, treeDepth } = pivotResultCols ?? colDefCols;
@@ -482,7 +482,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     // returns colDefCols, pivotResultCols and autoCols
     public getAllCols(): AgColumn[] {
-        const pivotResultColsList = this.pivotResultColsService?.getPivotResultCols()?.list;
+        const pivotResultColsList = this.pivotResultCols?.getPivotResultCols()?.list;
         return [
             this.colDefCols?.list ?? [],
             this.autoColService?.autoCols?.list ?? [],

@@ -52,7 +52,7 @@ export class StateService extends BeanStub implements NamedBean {
 
     private filterManager?: FilterManager;
     private ctrlsSvc: CtrlsService;
-    private pivotResultColsService?: IPivotResultColsService;
+    private pivotResultCols?: IPivotResultColsService;
     private focusSvc: FocusService;
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
@@ -70,7 +70,7 @@ export class StateService extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.filterManager = beans.filterManager;
         this.ctrlsSvc = beans.ctrlsSvc;
-        this.pivotResultColsService = beans.pivotResultColsService;
+        this.pivotResultCols = beans.pivotResultCols;
         this.focusSvc = beans.focusSvc;
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
@@ -502,14 +502,14 @@ export class StateService extends BeanStub implements NamedBean {
         const columnGroupStates = this.columnGroupStates;
         this.columnGroupStates = undefined;
 
-        if (!this.pivotResultColsService?.isPivotResultColsPresent()) {
+        if (!this.pivotResultCols?.isPivotResultColsPresent()) {
             return;
         }
 
         if (columnStates) {
             const secondaryColumnStates: ColumnState[] = [];
             for (const columnState of columnStates) {
-                if (this.pivotResultColsService.getPivotResultCol(columnState.colId)) {
+                if (this.pivotResultCols.getPivotResultCol(columnState.colId)) {
                     secondaryColumnStates.push(columnState);
                 }
             }

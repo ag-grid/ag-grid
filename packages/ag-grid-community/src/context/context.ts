@@ -230,7 +230,7 @@ export interface CoreBeanCollection {
     eGridDiv: HTMLElement;
     colState: ColumnStateService;
     colFactory: ColumnFactory;
-    pivotResultColsService?: IPivotResultColsService;
+    pivotResultCols?: IPivotResultColsService;
     autoColService?: IAutoColService;
     selectionColService?: SelectionColService;
     columnDefFactory?: ColumnDefFactory;
@@ -382,7 +382,7 @@ export type BeanName =
     | 'columnToolPanelFactory'
     | 'columnUtils'
     | 'colViewport'
-    | 'pivotResultColsService'
+    | 'pivotResultCols'
     | 'context'
     | 'contextMenuService'
     | 'selectionColService'

@@ -33,14 +33,14 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
 
     private valueSvc: ValueService;
     private colModel: ColumnModel;
-    private pivotResultColsService: IPivotResultColsService;
+    private pivotResultCols: IPivotResultColsService;
     private funcColsService: FuncColsService;
     private pivotColDefService: PivotColDefService;
 
     public wireBeans(beans: BeanCollection) {
         this.valueSvc = beans.valueSvc;
         this.colModel = beans.colModel;
-        this.pivotResultColsService = beans.pivotResultColsService!;
+        this.pivotResultCols = beans.pivotResultCols!;
         this.funcColsService = beans.funcColsService;
         this.pivotColDefService = beans.pivotColDefService as PivotColDefService;
     }
@@ -75,8 +75,8 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
     private executePivotOff(changedPath: ChangedPath): void {
         this.aggregationColumnsHashLastTime = null;
         this.uniqueValues = {};
-        if (this.pivotResultColsService.isPivotResultColsPresent()) {
-            this.pivotResultColsService.setPivotResultCols(null, 'rowModelUpdated');
+        if (this.pivotResultCols.isPivotResultColsPresent()) {
+            this.pivotResultCols.setPivotResultCols(null, 'rowModelUpdated');
             if (changedPath) {
                 changedPath.setInactive();
             }
@@ -97,7 +97,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         } catch (e) {
             // message is checked rather than inheritance as the build seems to break instanceof
             if (e.message === EXCEEDED_MAX_UNIQUE_VALUES) {
-                this.pivotResultColsService.setPivotResultCols([], 'rowModelUpdated');
+                this.pivotResultCols.setPivotResultCols([], 'rowModelUpdated');
                 this.eventSvc.dispatchEvent({
                     type: 'pivotMaxColumnsExceeded',
                     message: e.message,
@@ -153,7 +153,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
                 this.uniqueValues
             );
             this.pivotColumnDefs = pivotColumnDefs;
-            this.pivotResultColsService.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
+            this.pivotResultCols.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
             // because the secondary columns have changed, then the aggregation needs to visit the whole
             // tree again, so we make the changedPath not active, to force aggregation to visit all paths.
             if (changedPath) {

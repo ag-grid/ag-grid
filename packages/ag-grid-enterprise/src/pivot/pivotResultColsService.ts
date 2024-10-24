@@ -18,7 +18,7 @@ import type {
 import { BeanStub, _areEqual, _destroyColumnTree, _exists, _getColumnsFromTree } from 'ag-grid-community';
 
 export class PivotResultColsService extends BeanStub implements NamedBean, IPivotResultColsService {
-    beanName = 'pivotResultColsService' as const;
+    beanName = 'pivotResultCols' as const;
 
     private context: Context;
     private colModel: ColumnModel;

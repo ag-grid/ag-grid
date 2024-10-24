@@ -56,7 +56,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     private colModel: ColumnModel;
     private colNames: ColumnNameService;
-    private pivotResultColsService?: IPivotResultColsService;
+    private pivotResultCols?: IPivotResultColsService;
     private funcColsService: FuncColsService;
     private filterManager?: FilterManager;
     private sortSvc?: SortService;
@@ -68,7 +68,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
         this.colNames = beans.colNames;
-        this.pivotResultColsService = beans.pivotResultColsService;
+        this.pivotResultCols = beans.pivotResultCols;
         this.funcColsService = beans.funcColsService;
         this.filterManager = beans.filterManager;
         this.sortSvc = beans.sortSvc;
@@ -290,7 +290,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
         const pivotColumnGroupDefs = this.pivotColDefService.createColDefsFromFields(pivotFields);
         this.managingPivotResultColumns = true;
-        this.pivotResultColsService?.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
+        this.pivotResultCols?.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
     }
 
     public resetRowHeights(): void {
@@ -349,7 +349,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
         if (this.managingPivotResultColumns) {
             // if managing pivot columns, also reset secondary columns.
-            this.pivotResultColsService?.setPivotResultCols(null, 'api');
+            this.pivotResultCols?.setPivotResultCols(null, 'api');
             this.managingPivotResultColumns = false;
         }
 

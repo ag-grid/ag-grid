@@ -82,7 +82,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
     private funcColsService: FuncColsService;
     private visibleCols: VisibleColsService;
     private colAnimation?: ColumnAnimationService;
-    private pivotResultColsService?: IPivotResultColsService;
+    private pivotResultCols?: IPivotResultColsService;
     private autoColService?: IAutoColService;
     private selectionColService?: SelectionColService;
 
@@ -92,7 +92,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
         this.funcColsService = beans.funcColsService;
         this.visibleCols = beans.visibleCols;
         this.colAnimation = beans.colAnimation;
-        this.pivotResultColsService = beans.pivotResultColsService;
+        this.pivotResultCols = beans.pivotResultCols;
         this.autoColService = beans.autoColService;
         this.selectionColService = beans.selectionColService;
     }
@@ -249,11 +249,11 @@ export class ColumnStateService extends BeanStub implements NamedBean {
         // If there are still states left over, see if we can apply them to newly generated
         // pivot result cols or auto cols. Also if defaults exist, ensure they are applied to pivot resul cols
         if (unmatchedAndAutoStates.length > 0 || _exists(params.defaultState)) {
-            const pivotResultColsList = this.pivotResultColsService?.getPivotResultCols()?.list ?? [];
+            const pivotResultColsList = this.pivotResultCols?.getPivotResultCols()?.list ?? [];
             unmatchedCount = applyStates(
                 unmatchedAndAutoStates,
                 pivotResultColsList,
-                (id) => this.pivotResultColsService?.getPivotResultCol(id) ?? null
+                (id) => this.pivotResultCols?.getPivotResultCol(id) ?? null
             ).unmatchedCount;
         }
         this.colAnimation?.finish();

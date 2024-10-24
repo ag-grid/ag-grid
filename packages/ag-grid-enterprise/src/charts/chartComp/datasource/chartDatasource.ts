@@ -41,7 +41,7 @@ interface IData {
 
 export class ChartDatasource extends BeanStub {
     private gridRowModel: IRowModel;
-    private pivotResultColsService?: IPivotResultColsService;
+    private pivotResultCols?: IPivotResultColsService;
     private valueSvc: ValueService;
     private colModel: ColumnModel;
     private rowNodeSorter?: RowNodeSorter;
@@ -53,7 +53,7 @@ export class ChartDatasource extends BeanStub {
         this.gridRowModel = beans.rowModel;
         this.colModel = beans.colModel;
         this.valueSvc = beans.valueSvc;
-        this.pivotResultColsService = beans.pivotResultColsService;
+        this.pivotResultCols = beans.pivotResultCols;
         this.rowNodeSorter = beans.rowNodeSorter;
         this.aggregationStage = beans.aggregationStage as (IRowNodeStage & IAggregationStage) | undefined;
     }
@@ -337,7 +337,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private updatePivotKeysForSSRM() {
-        const secondaryColumns = this.pivotResultColsService?.getPivotResultCols()?.list;
+        const secondaryColumns = this.pivotResultCols?.getPivotResultCols()?.list;
 
         if (!secondaryColumns) {
             return;

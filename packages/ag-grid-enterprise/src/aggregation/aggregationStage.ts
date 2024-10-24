@@ -46,13 +46,13 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
     private valueSvc: ValueService;
     private aggFuncService: AggFuncService;
     private funcColsService: FuncColsService;
-    private pivotResultColsService?: IPivotResultColsService;
+    private pivotResultCols?: IPivotResultColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
         this.aggFuncService = beans.aggFuncService as AggFuncService;
         this.funcColsService = beans.funcColsService;
-        this.pivotResultColsService = beans.pivotResultColsService;
+        this.pivotResultCols = beans.pivotResultCols;
         this.valueSvc = beans.valueSvc;
     }
 
@@ -157,7 +157,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
     private aggregateRowNodeUsingValuesAndPivot(rowNode: RowNode): any {
         const result: any = {};
 
-        const secondaryColumns = this.pivotResultColsService?.getPivotResultCols()?.list ?? [];
+        const secondaryColumns = this.pivotResultCols?.getPivotResultCols()?.list ?? [];
         let canSkipTotalColumns = true;
         for (let i = 0; i < secondaryColumns.length; i++) {
             const secondaryCol = secondaryColumns[i];

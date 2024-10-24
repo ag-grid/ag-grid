@@ -29,7 +29,7 @@ export function getPivotResultColumn<TValue = any, TData = any>(
     pivotKeys: string[],
     valueColKey: string | ColDef<TData, TValue> | Column<TValue>
 ): Column<TValue> | null {
-    return beans.pivotResultColsService?.lookupPivotResultCol(pivotKeys, valueColKey) ?? null;
+    return beans.pivotResultCols?.lookupPivotResultCol(pivotKeys, valueColKey) ?? null;
 }
 
 export function setValueColumns(beans: BeanCollection, colKeys: (string | ColDef | Column)[]): void {
@@ -85,10 +85,10 @@ export function getPivotColumns(beans: BeanCollection): Column[] {
 }
 
 export function setPivotResultColumns(beans: BeanCollection, colDefs: (ColDef | ColGroupDef)[] | null): void {
-    beans.pivotResultColsService?.setPivotResultCols(colDefs, 'api');
+    beans.pivotResultCols?.setPivotResultCols(colDefs, 'api');
 }
 
 export function getPivotResultColumns(beans: BeanCollection): Column[] | null {
-    const pivotResultCols = beans.pivotResultColsService?.getPivotResultCols();
+    const pivotResultCols = beans.pivotResultCols?.getPivotResultCols();
     return pivotResultCols ? pivotResultCols.list : null;
 }

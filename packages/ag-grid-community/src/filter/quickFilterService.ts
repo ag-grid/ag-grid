@@ -19,14 +19,14 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     private filterValueService: FilterValueService;
     private colModel: ColumnModel;
     private rowModel: IRowModel;
-    private pivotResultColsService?: IPivotResultColsService;
+    private pivotResultCols?: IPivotResultColsService;
     private autoColService?: IAutoColService;
 
     public wireBeans(beans: BeanCollection): void {
         this.filterValueService = beans.filterValueService!;
         this.colModel = beans.colModel;
         this.rowModel = beans.rowModel;
-        this.pivotResultColsService = beans.pivotResultColsService;
+        this.pivotResultCols = beans.pivotResultCols;
         this.autoColService = beans.autoColService;
     }
 
@@ -79,7 +79,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
 
         let columnsForQuickFilter =
             (pivotMode && !this.gos.get('applyQuickFilterBeforePivotOrAgg')
-                ? this.pivotResultColsService?.getPivotResultCols()?.list
+                ? this.pivotResultCols?.getPivotResultCols()?.list
                 : providedCols) ?? [];
         if (groupAutoCols) {
             columnsForQuickFilter = columnsForQuickFilter.concat(groupAutoCols);
