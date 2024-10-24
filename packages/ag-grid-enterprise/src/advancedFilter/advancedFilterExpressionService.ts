@@ -33,13 +33,13 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     private valueSvc: ValueService;
     private colModel: ColumnModel;
     private colNames: ColumnNameService;
-    private dataTypeService?: DataTypeService;
+    private dataTypeSvc?: DataTypeService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueSvc = beans.valueSvc;
         this.colModel = beans.colModel;
         this.colNames = beans.colNames;
-        this.dataTypeService = beans.dataTypeService;
+        this.dataTypeSvc = beans.dataTypeSvc;
     }
 
     private columnNameToIdMap: { [columnNameUpperCase: string]: { colId: string; columnName: string } } = {};
@@ -90,10 +90,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                 // displayed string format may be different from data string format, so parse before converting to date
                 const parsedDateString = this.valueSvc.parseValue(column, null, operand, undefined);
                 return this.dataTypeService
-                    ? _serialiseDate(
-                          this.dataTypeService.getDateParserFunction(column)(parsedDateString) ?? null,
-                          false
-                      )
+                    ? _serialiseDate(this.dataTypeSvc.getDateParserFunction(column)(parsedDateString) ?? null, false)
                     : parsedDateString;
             }
         }
@@ -117,11 +114,11 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                 }
                 case 'dateString': {
                     let dateStringStringValue;
-                    if (this.dataTypeService) {
+                    if (this.dataTypeSvc) {
                         // need to convert from ISO date string to Date to data string format to formatted string format
                         const dateStringDateValue = _parseDateTimeFromString(filter);
                         dateStringStringValue = column
-                            ? this.dataTypeService?.getDateFormatterFunction(column)(dateStringDateValue ?? undefined)
+                            ? this.dataTypeSvc?.getDateFormatterFunction(column)(dateStringDateValue ?? undefined)
                             : null;
                     } else {
                         dateStringStringValue = filter;
@@ -274,11 +271,11 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             return { valueConverter: (v: any) => v };
         }
 
-        const baseCellDataType = this.dataTypeService?.getBaseDataType(column);
+        const baseCellDataType = this.dataTypeSvc?.getBaseDataType(column);
         switch (baseCellDataType) {
             case 'dateString':
                 params = {
-                    valueConverter: this.dataTypeService?.getDateParserFunction(column) ?? ((v: any) => v),
+                    valueConverter: this.dataTypeSvc?.getDateParserFunction(column) ?? ((v: any) => v),
                 };
                 break;
             case 'object':
@@ -319,7 +316,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
 
     public getColumnDetails(colId: string): { column?: AgColumn; baseCellDataType: BaseCellDataType } {
         const column = this.colModel.getColDefCol(colId) ?? undefined;
-        const baseCellDataType = (column ? this.dataTypeService?.getBaseDataType(column) : undefined) ?? 'text';
+        const baseCellDataType = (column ? this.dataTypeSvc?.getBaseDataType(column) : undefined) ?? 'text';
         return { column, baseCellDataType };
     }
 

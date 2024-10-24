@@ -37,7 +37,7 @@ interface GroupSafeValueFormatter {
 }
 
 export class DataTypeService extends BeanStub implements NamedBean {
-    beanName = 'dataTypeService' as const;
+    beanName = 'dataTypeSvc' as const;
 
     private rowModel: IRowModel;
     private colModel: ColumnModel;

@@ -27,13 +27,13 @@ export class ValueService extends BeanStub implements NamedBean {
     private expressionService?: ExpressionService;
     private colModel: ColumnModel;
     private valueCache?: ValueCache;
-    private dataTypeService?: DataTypeService;
+    private dataTypeSvc?: DataTypeService;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionService = beans.expressionService;
         this.colModel = beans.colModel;
         this.valueCache = beans.valueCache;
-        this.dataTypeService = beans.dataTypeService;
+        this.dataTypeSvc = beans.dataTypeSvc;
     }
 
     private cellExpressions: boolean;
@@ -299,7 +299,7 @@ export class ValueService extends BeanStub implements NamedBean {
             return false;
         }
 
-        if (this.dataTypeService && !this.dataTypeService.checkType(column, newValue)) {
+        if (this.dataTypeSvc && !this.dataTypeSvc.checkType(column, newValue)) {
             _warn(135);
             return false;
         }

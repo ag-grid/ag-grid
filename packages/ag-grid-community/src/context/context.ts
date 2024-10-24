@@ -238,7 +238,7 @@ export interface CoreBeanCollection {
     funcColsSvc: FuncColsService;
     quickFilter?: QuickFilterService;
     showRowGroupCols?: IShowRowGroupColsService;
-    dataTypeService?: DataTypeService;
+    dataTypeSvc?: DataTypeService;
     globalEventListener: AgGlobalEventListener;
     globalSyncEventListener: AgGlobalEventListener;
     stateService?: StateService;
@@ -388,7 +388,7 @@ export type BeanName =
     | 'selectionColSvc'
     | 'ctrlsSvc'
     | 'csvCreator'
-    | 'dataTypeService'
+    | 'dataTypeSvc'
     | 'visibleCols'
     | 'detailGridApiService'
     | 'dragAndDrop'

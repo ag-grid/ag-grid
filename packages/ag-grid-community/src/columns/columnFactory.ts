@@ -19,11 +19,11 @@ import type { DataTypeService } from './dataTypeService';
 export class ColumnFactory extends BeanStub implements NamedBean {
     beanName = 'colFactory' as const;
 
-    private dataTypeService?: DataTypeService;
+    private dataTypeSvc?: DataTypeService;
     private columnGroupService?: ColumnGroupService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.dataTypeService = beans.dataTypeService;
+        this.dataTypeSvc = beans.dataTypeSvc;
         this.columnGroupService = beans.columnGroupService;
     }
 
@@ -165,7 +165,7 @@ export class ColumnFactory extends BeanStub implements NamedBean {
             this.applyColumnState(column, colDefMerged, source);
         }
 
-        this.dataTypeService?.addColumnListeners(column);
+        this.dataTypeSvc?.addColumnListeners(column);
 
         return column;
     }
@@ -277,17 +277,13 @@ export class ColumnFactory extends BeanStub implements NamedBean {
             );
         }
 
-        this.dataTypeService?.validateColDef(res);
+        this.dataTypeSvc?.validateColDef(res);
 
         return res;
     }
 
     private updateColDefAndGetColumnType(colDef: ColDef, userColDef: ColDef, colId: string): string[] | undefined {
-        const dataTypeDefinitionColumnType = this.dataTypeService?.updateColDefAndGetColumnType(
-            colDef,
-            userColDef,
-            colId
-        );
+        const dataTypeDefinitionColumnType = this.dataTypeSvc?.updateColDefAndGetColumnType(colDef, userColDef, colId);
         const columnTypes = userColDef.type ?? dataTypeDefinitionColumnType ?? colDef.type;
         colDef.type = columnTypes;
         return columnTypes ? convertColumnTypes(columnTypes) : undefined;

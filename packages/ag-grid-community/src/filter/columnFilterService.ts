@@ -82,7 +82,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     private rowModel: IRowModel;
     private userCompFactory: UserComponentFactory;
     private rowRenderer: RowRenderer;
-    private dataTypeService?: DataTypeService;
+    private dataTypeSvc?: DataTypeService;
     private filterManager?: FilterManager;
     private filterValueService: FilterValueService;
     private autoColSvc?: IAutoColService;
@@ -93,7 +93,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         this.rowModel = beans.rowModel;
         this.userCompFactory = beans.userCompFactory;
         this.rowRenderer = beans.rowRenderer;
-        this.dataTypeService = beans.dataTypeService;
+        this.dataTypeSvc = beans.dataTypeSvc;
         this.filterManager = beans.filterManager;
         this.filterValueService = beans.filterValueService!;
         this.autoColSvc = beans.autoColSvc;
@@ -130,7 +130,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     }
 
     public setFilterModel(model: FilterModel | null, source: FilterChangedEventSourceType = 'api'): void {
-        if (this.dataTypeService?.isPendingInference()) {
+        if (this.dataTypeSvc?.isPendingInference()) {
             this.filterModelUpdateQueue.push({ model, source });
             return;
         }
@@ -488,7 +488,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         if (_isSetFilterByDefault(this.gos)) {
             defaultFilter = 'agSetColumnFilter';
         } else {
-            const cellDataType = this.dataTypeService?.getBaseDataType(column);
+            const cellDataType = this.dataTypeSvc?.getBaseDataType(column);
             if (cellDataType === 'number') {
                 defaultFilter = 'agNumberColumnFilter';
             } else if (cellDataType === 'date' || cellDataType === 'dateString') {
@@ -505,7 +505,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         if (_isSetFilterByDefault(this.gos)) {
             defaultFloatingFilterType = 'agSetColumnFloatingFilter';
         } else {
-            const cellDataType = this.dataTypeService?.getBaseDataType(column);
+            const cellDataType = this.dataTypeSvc?.getBaseDataType(column);
             if (cellDataType === 'number') {
                 defaultFloatingFilterType = 'agNumberColumnFloatingFilter';
             } else if (cellDataType === 'date' || cellDataType === 'dateString') {
@@ -878,7 +878,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     }
 
     public setColumnFilterModel(key: string | AgColumn, model: any): Promise<void> {
-        if (this.dataTypeService?.isPendingInference()) {
+        if (this.dataTypeSvc?.isPendingInference()) {
             let resolve: () => void = () => {};
             const promise = new Promise<void>((res) => {
                 resolve = res;

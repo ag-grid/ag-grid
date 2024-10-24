@@ -70,7 +70,7 @@ const orderedCoreBeans: BeanName[] = [
     'rowNodeSorter',
     'ctrlsSvc',
     'pinnedColumnService',
-    'dataTypeService',
+    'dataTypeSvc',
     'syncSvc',
     'overlayService',
     'stateService',

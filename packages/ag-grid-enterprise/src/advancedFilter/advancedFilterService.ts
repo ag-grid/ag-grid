@@ -27,14 +27,14 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
     private valueSvc: ValueService;
     private colModel: ColumnModel;
-    private dataTypeService?: DataTypeService;
+    private dataTypeSvc?: DataTypeService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
     private filterValueService: FilterValueService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueSvc = beans.valueSvc;
         this.colModel = beans.colModel;
-        this.dataTypeService = beans.dataTypeService;
+        this.dataTypeSvc = beans.dataTypeSvc;
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
         this.filterValueService = beans.filterValueService!;
     }
@@ -129,7 +129,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         return new FilterExpressionParser({
             expression,
             colModel: this.colModel,
-            dataTypeService: this.dataTypeService,
+            dataTypeSvc: this.dataTypeSvc,
             valueSvc: this.valueSvc,
             advancedFilterExpressionService: this.advancedFilterExpressionService,
         });
@@ -226,7 +226,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     }
 
     private onNewColumnsLoaded(event: NewColumnsLoadedEvent): void {
-        if (event.source !== 'gridInitializing' || !this.dataTypeService?.isPendingInference()) {
+        if (event.source !== 'gridInitializing' || !this.dataTypeSvc?.isPendingInference()) {
             return;
         }
 

@@ -53,13 +53,13 @@ import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {
     private funcColsSvc: FuncColsService;
     private valueSvc: ValueService;
-    private dataTypeService?: DataTypeService;
+    private dataTypeSvc?: DataTypeService;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.funcColsSvc = beans.funcColsSvc;
         this.valueSvc = beans.valueSvc;
-        this.dataTypeService = beans.dataTypeService;
+        this.dataTypeSvc = beans.dataTypeSvc;
     }
 
     private readonly eMiniFilter: AgInputTextField = RefPlaceholder;
@@ -252,9 +252,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         const filterValueGetterChanged = colDef.filterValueGetter !== existingColDef?.filterValueGetter;
         const keyCreatorChanged = currentKeyCreator !== previousKeyCreator;
         const valueFormatterIsKeyCreatorAndHasChanged =
-            !!this.dataTypeService &&
+            !!this.dataTypeSvc &&
             !!currentKeyCreator &&
-            this.dataTypeService.getFormatValue(colDef.cellDataType as string) === currentKeyCreator &&
+            this.dataTypeSvc.getFormatValue(colDef.cellDataType as string) === currentKeyCreator &&
             colDef.valueFormatter !== existingColDef?.valueFormatter;
 
         return filterValueGetterChanged || keyCreatorChanged || valueFormatterIsKeyCreatorAndHasChanged;
