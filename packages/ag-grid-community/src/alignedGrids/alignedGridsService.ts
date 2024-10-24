@@ -26,14 +26,14 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
     beanName = 'alignedGridsService' as const;
 
     private columnModel: ColumnModel;
-    private columnResizeService?: ColumnResizeService;
+    private columnResize?: ColumnResizeService;
     private ctrlsService: CtrlsService;
     private columnStateService: ColumnStateService;
     private columnGroupService?: ColumnGroupService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
-        this.columnResizeService = beans.columnResizeService;
+        this.columnResize = beans.columnResize;
         this.ctrlsService = beans.ctrlsService;
         this.columnStateService = beans.columnStateService;
         this.columnGroupService = beans.columnGroupService;
@@ -226,7 +226,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         // in time, all the methods below should use the column ids, it's a more generic way
         // of handling columns, and also allows for single or multi column events
         const masterColumns = this.getMasterColumns(colEvent);
-        const { columnStateService, columnResizeService, ctrlsService } = this;
+        const { columnStateService, columnResize, ctrlsService } = this;
         switch (colEvent.type) {
             case 'columnMoved':
                 // when the user moves columns via applyColumnState, we can't depend on moving specific columns
@@ -276,7 +276,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                         delete columnWidths[col.getId()];
                     }
                 });
-                columnResizeService?.setColumnWidths(
+                columnResize?.setColumnWidths(
                     Object.values(columnWidths),
                     false,
                     resizedEvent.finished,

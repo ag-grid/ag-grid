@@ -15,14 +15,14 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private horizontalResizeService: HorizontalResizeService;
     private pinnedColumnService?: PinnedColumnService;
     private ctrlsService: CtrlsService;
-    private columnResizeService?: ColumnResizeService;
+    private columnResize?: ColumnResizeService;
     private columnAutosizeService?: ColumnAutosizeService;
 
     public wireBeans(beans: BeanCollection) {
         this.horizontalResizeService = beans.horizontalResizeService!;
         this.pinnedColumnService = beans.pinnedColumnService;
         this.ctrlsService = beans.ctrlsService;
-        this.columnResizeService = beans.columnResizeService;
+        this.columnResize = beans.columnResize;
         this.columnAutosizeService = beans.columnAutosizeService;
     }
 
@@ -120,7 +120,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
         this.lastResizeAmount = resizeAmountNormalised;
 
-        this.columnResizeService?.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, 'uiColumnResized');
+        this.columnResize?.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, 'uiColumnResized');
 
         if (finished) {
             this.toggleColumnResizing(false);

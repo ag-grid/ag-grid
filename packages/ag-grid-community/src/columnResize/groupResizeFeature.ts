@@ -24,14 +24,14 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     private horizontalResizeService: HorizontalResizeService;
     private autoWidthCalculator: AutoWidthCalculator;
     private columnGroupService?: ColumnGroupService;
-    private columnResizeService?: ColumnResizeService;
+    private columnResize?: ColumnResizeService;
     private columnAutosizeService?: ColumnAutosizeService;
 
     public wireBeans(beans: BeanCollection) {
         this.horizontalResizeService = beans.horizontalResizeService!;
         this.autoWidthCalculator = beans.autoWidthCalculator!;
         this.columnGroupService = beans.columnGroupService;
-        this.columnResizeService = beans.columnResizeService;
+        this.columnResize = beans.columnResize;
         this.columnAutosizeService = beans.columnAutosizeService;
     }
 
@@ -210,7 +210,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             });
         }
 
-        this.columnResizeService?.resizeColumnSets({
+        this.columnResize?.resizeColumnSets({
             resizeSets,
             finished,
             source: source,
