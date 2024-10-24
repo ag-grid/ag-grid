@@ -2,7 +2,7 @@ import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 
 export class GridDestroyService extends BeanStub implements NamedBean {
-    beanName = 'gridDestroyService' as const;
+    beanName = 'gridDestroySvc' as const;
 
     private destroyCalled = false;
 

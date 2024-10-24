@@ -271,7 +271,7 @@ export interface CoreBeanCollection {
     pageBounds: PageBoundsService;
     apiFunctionSvc: ApiFunctionService;
     detailGridApiSvc?: IDetailGridApiService;
-    gridDestroyService: GridDestroyService;
+    gridDestroySvc: GridDestroyService;
     expansionService?: IExpansionService;
     sideBarService?: ISideBarService;
     ssrmTransactionManager?: IServerSideTransactionManager;
@@ -416,7 +416,7 @@ export type BeanName =
     | 'globalEventListener'
     | 'globalSyncEventListener'
     | 'gridApi'
-    | 'gridDestroyService'
+    | 'gridDestroySvc'
     | 'gridOptions'
     | 'gos'
     | 'gridOptionsWrapper'

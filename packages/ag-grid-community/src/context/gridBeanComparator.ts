@@ -109,5 +109,5 @@ export function gridBeanDestroyComparator(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     bean2: GenericBean<BeanName, BeanCollection>
 ): number {
-    return bean1?.beanName === 'gridDestroyService' ? -1 : 0;
+    return bean1?.beanName === 'gridDestroySvc' ? -1 : 0;
 }
