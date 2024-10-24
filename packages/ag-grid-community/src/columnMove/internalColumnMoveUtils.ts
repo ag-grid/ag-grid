@@ -19,7 +19,7 @@ export interface ColumnMoveParams {
     pinned: ColumnPinnedType;
     gos: GridOptionsService;
     colModel: ColumnModel;
-    columnMove: ColumnMoveService;
+    colMoves: ColumnMoveService;
     visibleCols: VisibleColsService;
 }
 
@@ -45,7 +45,7 @@ function sortColsLikeCols(colsList: AgColumn[], cols: AgColumn[]): void {
 export function getBestColumnMoveIndexFromXPosition(
     params: ColumnMoveParams
 ): { columns: AgColumn[]; toIndex: number } | undefined {
-    const { isFromHeader, fromLeft, xPosition, fromEnter, fakeEvent, pinned, gos, colModel, columnMove, visibleCols } =
+    const { isFromHeader, fromLeft, xPosition, fromEnter, fakeEvent, pinned, gos, colModel, colMoves, visibleCols } =
         params;
 
     let { allMovingColumns } = params;
@@ -149,9 +149,9 @@ export function getBestColumnMoveIndexFromXPosition(
     for (let i = 0; i < validMoves.length; i++) {
         const move: number = validMoves[i];
 
-        const order = columnMove.getProposedColumnOrder(allMovingColumnsOrdered, move);
+        const order = colMoves.getProposedColumnOrder(allMovingColumnsOrdered, move);
 
-        if (!columnMove.doesOrderPassRules(order)) {
+        if (!colMoves.doesOrderPassRules(order)) {
             continue;
         }
         const displayedOrder = order.filter((col) => displayedCols.includes(col));
@@ -183,13 +183,13 @@ export function attemptMoveColumns(
     params: ColumnMoveParams & { finished: boolean }
 ): { columns: AgColumn[]; toIndex: number } | null | undefined {
     const { columns, toIndex } = getBestColumnMoveIndexFromXPosition(params) || {};
-    const { finished, columnMove } = params;
+    const { finished, colMoves } = params;
 
     if (!columns || toIndex == null) {
         return null;
     }
 
-    columnMove.moveColumns(columns, toIndex, 'uiColumnMoved', finished);
+    colMoves.moveColumns(columns, toIndex, 'uiColumnMoved', finished);
 
     return finished ? null : { columns, toIndex };
 }

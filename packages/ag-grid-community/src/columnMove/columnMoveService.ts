@@ -28,7 +28,7 @@ enum Direction {
     RIGHT = 1,
 }
 export class ColumnMoveService extends BeanStub implements NamedBean {
-    beanName = 'columnMove' as const;
+    beanName = 'colMoves' as const;
 
     private colModel: ColumnModel;
     private colAnimation?: ColumnAnimationService;
@@ -183,7 +183,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             fakeEvent: false,
             gos,
             colModel,
-            columnMove: this,
+            colMoves: this,
             visibleCols,
             finished: true,
         });

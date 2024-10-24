@@ -375,7 +375,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         }
 
         this.dragSource =
-            this.beans.columnMove?.setDragSourceForHeader(eHeaderGroup, this.column, this.displayName) ?? null;
+            this.beans.colMoves?.setDragSourceForHeader(eHeaderGroup, this.column, this.displayName) ?? null;
     }
 
     private isSuppressMoving(): boolean {

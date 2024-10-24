@@ -34,7 +34,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     private colModel: ColumnModel;
     private focusService: FocusService;
     private filterManager?: FilterManager;
-    private columnMove?: ColumnMoveService;
+    private colMoves?: ColumnMoveService;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
@@ -43,7 +43,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         this.colModel = beans.colModel;
         this.focusService = beans.focusService;
         this.filterManager = beans.filterManager;
-        this.columnMove = beans.columnMove;
+        this.colMoves = beans.colMoves;
     }
 
     private pinned: ColumnPinnedType;
@@ -252,7 +252,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     }
 
     private setupDragAndDrop(dropContainer: HTMLElement): void {
-        const bodyDropTarget = this.columnMove?.createBodyDropTarget(this.pinned, dropContainer);
+        const bodyDropTarget = this.colMoves?.createBodyDropTarget(this.pinned, dropContainer);
         if (bodyDropTarget) {
             this.createManagedBean(bodyDropTarget);
         }

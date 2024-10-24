@@ -313,7 +313,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             return;
         }
 
-        this.dragSource = this.beans.columnMove?.setDragSourceForHeader(eSource, this.column, this.displayName) ?? null;
+        this.dragSource = this.beans.colMoves?.setDragSourceForHeader(eSource, this.column, this.displayName) ?? null;
     }
 
     private updateState(): void {
