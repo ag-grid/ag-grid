@@ -31,7 +31,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     private ctrlsService: CtrlsService;
     private scrollVisibleService: ScrollVisibleService;
     private pinnedColumnService?: PinnedColumnService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private focusService: FocusService;
     private filterManager?: FilterManager;
     private columnMove?: ColumnMoveService;
@@ -40,7 +40,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         this.ctrlsService = beans.ctrlsService;
         this.scrollVisibleService = beans.scrollVisibleService;
         this.pinnedColumnService = beans.pinnedColumnService;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.focusService = beans.focusService;
         this.filterManager = beans.filterManager;
         this.columnMove = beans.columnMove;
@@ -80,7 +80,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         const headerType = `${typeof this.pinned === 'string' ? this.pinned : 'center'}Header` as const;
         this.ctrlsService.register(headerType, this);
 
-        if (this.columnModel.ready) {
+        if (this.colModel.ready) {
             this.refresh();
         }
     }
@@ -104,7 +104,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         const focusedHeaderPosition = this.focusService.getFocusHeaderToUseAfterRefresh();
 
         const refreshColumnGroups = () => {
-            const groupRowCount = getHeaderRowCount(this.columnModel) - 1;
+            const groupRowCount = getHeaderRowCount(this.colModel) - 1;
 
             this.groupsRowCtrls = this.destroyBeans(this.groupsRowCtrls);
 

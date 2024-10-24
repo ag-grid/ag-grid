@@ -61,7 +61,7 @@ function getFullWidthGroupRowInnerCellRenderer(
 export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendererCtrl {
     private expressionService?: ExpressionService;
     private valueSvc: ValueService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private userComponentFactory: UserComponentFactory;
     private ctrlsService: CtrlsService;
@@ -73,7 +73,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     public wireBeans(beans: BeanCollection): void {
         this.expressionService = beans.expressionService;
         this.valueSvc = beans.valueSvc;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.userComponentFactory = beans.userComponentFactory;
         this.ctrlsService = beans.ctrlsService;
@@ -171,7 +171,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             const isExpandable = this.isExpandable();
             // is showing pivot leaf cell
             const showPivotModeLeafValue =
-                this.columnModel.isPivotMode() &&
+                this.colModel.isPivotMode() &&
                 node.leafGroup &&
                 node.rowGroupColumn?.getColId() === params.column?.getColDef().showRowGroup;
 
@@ -596,7 +596,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         }
 
         const rowNode = this.displayedGroupNode;
-        const reducedLeafNode = this.columnModel.isPivotMode() && rowNode.leafGroup;
+        const reducedLeafNode = this.colModel.isPivotMode() && rowNode.leafGroup;
         const expandableGroup = rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode;
 
         if (!expandableGroup) {
@@ -616,7 +616,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     }
 
     private showExpandAndContractIcons(): void {
-        const { params, displayedGroupNode: displayedGroup, columnModel } = this;
+        const { params, displayedGroupNode: displayedGroup, colModel } = this;
         const { node } = params;
 
         const isExpandable = this.isExpandable();
@@ -634,7 +634,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         }
 
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon
-        const pivotMode = columnModel.isPivotMode();
+        const pivotMode = colModel.isPivotMode();
         const pivotModeAndLeafGroup = pivotMode && displayedGroup.leafGroup;
         const addExpandableCss = isExpandable && !pivotModeAndLeafGroup;
         const isTotalFooterNode = node.footer && node.level === -1;

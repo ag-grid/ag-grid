@@ -17,12 +17,12 @@ import { DropZoneColumnComp } from './dropZoneColumnComp';
 export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, AgColumn> {
-    protected columnModel: ColumnModel;
+    protected colModel: ColumnModel;
     protected funcColsService: FuncColsService;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.funcColsService = beans.funcColsService;
     }
 
@@ -91,7 +91,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     public setColumnsVisible(columns: AgColumn[] | null | undefined, visible: boolean, source: ColumnEventType) {
         if (columns) {
             const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
-            this.columnModel.setColsVisible(allowedCols, visible, source);
+            this.colModel.setColsVisible(allowedCols, visible, source);
         }
     }
 

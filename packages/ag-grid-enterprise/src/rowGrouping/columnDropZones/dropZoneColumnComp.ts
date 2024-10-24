@@ -22,7 +22,7 @@ import type { TDropZone } from './baseDropZonePanel';
 export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     private popupService: PopupService;
     private sortController?: SortController;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private columnNames: ColumnNameService;
     private funcColsService: FuncColsService;
     private aggFuncService?: IAggFuncService;
@@ -31,7 +31,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         super.wireBeans(beans);
         this.popupService = beans.popupService!;
         this.sortController = beans.sortController;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.columnNames = beans.columnNames;
         this.funcColsService = beans.funcColsService;
         this.aggFuncService = beans.aggFuncService;

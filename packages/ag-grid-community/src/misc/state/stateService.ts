@@ -54,7 +54,7 @@ export class StateService extends BeanStub implements NamedBean {
     private ctrlsService: CtrlsService;
     private pivotResultColsService?: IPivotResultColsService;
     private focusService: FocusService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private paginationService?: PaginationService;
     private selectionService?: ISelectionService;
@@ -72,7 +72,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.ctrlsService = beans.ctrlsService;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.focusService = beans.focusService;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.paginationService = beans.paginationService;
         this.selectionService = beans.selectionService;
@@ -318,7 +318,7 @@ export class StateService extends BeanStub implements NamedBean {
         columnSizing?: ColumnSizingState;
         columnOrder?: ColumnOrderState;
     } {
-        const pivotMode = this.columnModel.isPivotMode();
+        const pivotMode = this.colModel.isPivotMode();
         const sortColumns: SortModelItem[] = [];
         const groupColIds: string[] = [];
         const aggregationColumns: AggregationColumnState[] = [];
@@ -608,7 +608,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setCellSelectionState(cellSelectionState: CellSelectionState): void {
-        const { gos, rangeService, columnModel, visibleCols } = this;
+        const { gos, rangeService, colModel, visibleCols } = this;
 
         if (!_isCellSelectionEnabled(gos) || !rangeService) {
             return;
@@ -618,7 +618,7 @@ export class StateService extends BeanStub implements NamedBean {
         cellSelectionState.cellRanges.forEach((cellRange) => {
             const columns: AgColumn[] = [];
             cellRange.colIds.forEach((colId) => {
-                const column = columnModel.getCol(colId);
+                const column = colModel.getCol(colId);
                 if (column) {
                     columns.push(column);
                 }
@@ -626,7 +626,7 @@ export class StateService extends BeanStub implements NamedBean {
             if (!columns.length) {
                 return;
             }
-            let startColumn = columnModel.getCol(cellRange.startColId);
+            let startColumn = colModel.getCol(cellRange.startColId);
             if (!startColumn) {
                 // find the first remaining column
                 const allColumns = visibleCols.allCols;
@@ -694,7 +694,7 @@ export class StateService extends BeanStub implements NamedBean {
         }
         const { colId, rowIndex, rowPinned } = focusedCellState;
         this.focusService.setFocusedCell({
-            column: this.columnModel.getCol(colId),
+            column: this.colModel.getCol(colId),
             rowIndex,
             rowPinned,
             forceBrowserFocus: true,

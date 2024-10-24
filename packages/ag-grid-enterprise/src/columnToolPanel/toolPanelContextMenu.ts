@@ -28,14 +28,14 @@ type MenuItemProperty = {
 };
 
 export class ToolPanelContextMenu extends Component {
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private columnNames: ColumnNameService;
     private funcColsService: FuncColsService;
     private popupService: PopupService;
     private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection) {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.columnNames = beans.columnNames;
         this.funcColsService = beans.funcColsService;
         this.popupService = beans.popupService!;
@@ -92,7 +92,7 @@ export class ToolPanelContextMenu extends Component {
         this.allowGrouping = this.columns.some((col) => col.isPrimary() && col.isAllowRowGroup());
         this.allowValues = this.columns.some((col) => col.isPrimary() && col.isAllowValue());
         this.allowPivoting =
-            this.columnModel.isPivotMode() && this.columns.some((col) => col.isPrimary() && col.isAllowPivot());
+            this.colModel.isPivotMode() && this.columns.some((col) => col.isPrimary() && col.isAllowPivot());
     }
 
     private buildMenuItemMap(): void {
@@ -137,7 +137,7 @@ export class ToolPanelContextMenu extends Component {
         });
 
         this.menuItemMap.set('pivot', {
-            allowedFunction: (col) => this.columnModel.isPivotMode() && col.isPrimary() && col.isAllowPivot(),
+            allowedFunction: (col) => this.colModel.isPivotMode() && col.isPrimary() && col.isAllowPivot(),
             activeFunction: (col) => col.isPivotActive(),
             activateLabel: () =>
                 localeTextFunc('addToLabels', `Add ${this.displayName} to labels`, [this.displayName!]),

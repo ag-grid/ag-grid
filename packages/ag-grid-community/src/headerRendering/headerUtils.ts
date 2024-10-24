@@ -4,8 +4,8 @@ import type { HeaderGroupCellCtrl } from './cells/columnGroup/headerGroupCellCtr
 import type { HeaderRowCtrl } from './row/headerRowCtrl';
 
 // + gridPanel -> for resizing the body and setting top margin
-export function getHeaderRowCount(columnModel: ColumnModel): number {
-    return columnModel.cols ? columnModel.cols.treeDepth + 1 : -1;
+export function getHeaderRowCount(colModel: ColumnModel): number {
+    return colModel.cols ? colModel.cols.treeDepth + 1 : -1;
 }
 
 export function getGroupRowsHeight(beans: BeanCollection): number[] {
@@ -37,7 +37,7 @@ export function getGroupRowsHeight(beans: BeanCollection): number[] {
 
 function getColumnGroupHeaderRowHeight(beans: BeanCollection, headerRowCtrl: HeaderRowCtrl): number {
     const defaultHeight: number = (
-        beans.columnModel.isPivotMode() ? getPivotGroupHeaderHeight(beans) : getGroupHeaderHeight(beans)
+        beans.colModel.isPivotMode() ? getPivotGroupHeaderHeight(beans) : getGroupHeaderHeight(beans)
     ) as number;
 
     let displayedHeights = 0;
@@ -57,7 +57,7 @@ function getColumnGroupHeaderRowHeight(beans: BeanCollection, headerRowCtrl: Hea
 
 export function getColumnHeaderRowHeight(beans: BeanCollection): number {
     const defaultHeight: number = (
-        beans.columnModel.isPivotMode() ? getPivotHeaderHeight(beans) : getHeaderHeight(beans)
+        beans.colModel.isPivotMode() ? getPivotHeaderHeight(beans) : getHeaderHeight(beans)
     ) as number;
 
     const allDisplayedCols = beans.visibleCols.allCols;

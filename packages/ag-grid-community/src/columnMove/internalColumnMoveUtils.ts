@@ -18,7 +18,7 @@ export interface ColumnMoveParams {
     fakeEvent: boolean;
     pinned: ColumnPinnedType;
     gos: GridOptionsService;
-    columnModel: ColumnModel;
+    colModel: ColumnModel;
     columnMove: ColumnMoveService;
     visibleCols: VisibleColsService;
 }
@@ -45,18 +45,8 @@ function sortColsLikeCols(colsList: AgColumn[], cols: AgColumn[]): void {
 export function getBestColumnMoveIndexFromXPosition(
     params: ColumnMoveParams
 ): { columns: AgColumn[]; toIndex: number } | undefined {
-    const {
-        isFromHeader,
-        fromLeft,
-        xPosition,
-        fromEnter,
-        fakeEvent,
-        pinned,
-        gos,
-        columnModel,
-        columnMove,
-        visibleCols,
-    } = params;
+    const { isFromHeader, fromLeft, xPosition, fromEnter, fakeEvent, pinned, gos, colModel, columnMove, visibleCols } =
+        params;
 
     let { allMovingColumns } = params;
     if (isFromHeader) {
@@ -94,7 +84,7 @@ export function getBestColumnMoveIndexFromXPosition(
     // could themselves be part of 'married children' groups, which means we need to maintain the order within
     // the moving list.
     const allMovingColumnsOrdered = allMovingColumns.slice();
-    sortColsLikeCols(columnModel.getCols(), allMovingColumnsOrdered);
+    sortColsLikeCols(colModel.getCols(), allMovingColumnsOrdered);
 
     const validMoves = calculateValidMoves({
         movingCols: allMovingColumnsOrdered,
@@ -102,13 +92,13 @@ export function getBestColumnMoveIndexFromXPosition(
         xPosition,
         pinned,
         gos,
-        columnModel,
+        colModel,
         visibleCols,
     });
 
     // if cols are not adjacent, then this returns null. when moving, we constrain the direction of the move
     // (ie left or right) to the mouse direction. however
-    const oldIndex = calculateOldIndex(allMovingColumnsOrdered, columnModel);
+    const oldIndex = calculateOldIndex(allMovingColumnsOrdered, colModel);
 
     if (validMoves.length === 0) {
         return;
@@ -182,7 +172,7 @@ export function getBestColumnMoveIndexFromXPosition(
     potentialMoves.sort((a, b) => a.fragCount - b.fragCount);
     const toIndex = potentialMoves[0].move;
 
-    if (toIndex > columnModel.getCols().length - allMovingColumns.length) {
+    if (toIndex > colModel.getCols().length - allMovingColumns.length) {
         return;
     }
 
@@ -206,8 +196,8 @@ export function attemptMoveColumns(
 
 // returns the index of the first column in the list ONLY if the cols are all beside
 // each other. if the cols are not beside each other, then returns null
-function calculateOldIndex(movingCols: AgColumn[], columnModel: ColumnModel): number | null {
-    const gridCols: AgColumn[] = columnModel.getCols();
+function calculateOldIndex(movingCols: AgColumn[], colModel: ColumnModel): number | null {
+    const gridCols: AgColumn[] = colModel.getCols();
     const indexes = _sortNumerically(movingCols.map((col) => gridCols.indexOf(col)));
     const firstIndex = indexes[0];
     const lastIndex = _last(indexes);
@@ -260,10 +250,10 @@ function calculateValidMoves(params: {
     xPosition: number;
     pinned: ColumnPinnedType;
     gos: GridOptionsService;
-    columnModel: ColumnModel;
+    colModel: ColumnModel;
     visibleCols: VisibleColsService;
 }): number[] {
-    const { movingCols, draggingRight, xPosition, pinned, gos, columnModel, visibleCols } = params;
+    const { movingCols, draggingRight, xPosition, pinned, gos, colModel, visibleCols } = params;
     const isMoveBlocked =
         gos.get('suppressMovableColumns') || movingCols.some((col) => col.getColDef().suppressMovable);
 
@@ -274,7 +264,7 @@ function calculateValidMoves(params: {
     const allDisplayedCols = getDisplayedColumns(visibleCols, pinned);
     // but this list is the list of all cols, when we move a col it's the index within this list that gets used,
     // so the result we return has to be and index location for this list
-    const allGridCols = columnModel.getCols();
+    const allGridCols = colModel.getCols();
 
     const movingDisplayedCols = allDisplayedCols.filter((col) => movingCols.includes(col));
     const otherDisplayedCols = allDisplayedCols.filter((col) => !movingCols.includes(col));

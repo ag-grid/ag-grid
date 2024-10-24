@@ -17,12 +17,12 @@ import type { VisibleColsService } from './visibleColsService';
 export class FuncColsService extends BeanStub implements NamedBean {
     beanName = 'funcColsService' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private aggFuncService?: IAggFuncService;
     private visibleCols: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.aggFuncService = beans.aggFuncService;
         this.visibleCols = beans.visibleCols;
     }
@@ -52,7 +52,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             return this.rowGroupCols.slice(0);
         }
 
-        const column = this.columnModel.getColDefCol(sourceColumnId);
+        const column = this.colModel.getColDefCol(sourceColumnId);
         return column ? [column] : null;
     }
 
@@ -77,7 +77,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             return;
         }
 
-        const column = this.columnModel.getColDefCol(key);
+        const column = this.colModel.getColDefCol(key);
         if (!column) {
             return;
         }
@@ -107,7 +107,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
         column.setRowGroupActive(active, source);
 
         if (_shouldUpdateColVisibilityAfterGroup(this.gos, active)) {
-            this.columnModel.setColsVisible([column], !active, source);
+            this.colModel.setColsVisible([column], !active, source);
         }
     }
 
@@ -251,7 +251,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
         source: ColumnEventType
     ): void {
         // defer grid init until cols are present. array size does not matter, only presence.
-        if (!this.columnModel.getCols()) {
+        if (!this.colModel.getCols()) {
             return;
         }
 
@@ -263,7 +263,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
         if (_exists(colKeys)) {
             colKeys.forEach((key) => {
-                const column = this.columnModel.getColDefCol(key);
+                const column = this.colModel.getColDefCol(key);
                 if (column) {
                     masterList.push(column);
                 }
@@ -288,13 +288,13 @@ export class FuncColsService extends BeanStub implements NamedBean {
             changes.delete(col);
         });
 
-        const primaryCols = this.columnModel.getColDefCols();
+        const primaryCols = this.colModel.getColDefCols();
         (primaryCols || []).forEach((column) => {
             const added = masterList.indexOf(column) >= 0;
             columnCallback(added, column);
         });
 
-        autoGroupsNeedBuilding && this.columnModel.refreshCols(false);
+        autoGroupsNeedBuilding && this.colModel.refreshCols(false);
 
         this.visibleCols.refresh(source);
 
@@ -321,7 +321,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             if (!key) {
                 return;
             }
-            const columnToAdd = this.columnModel.getColDefCol(key);
+            const columnToAdd = this.colModel.getColDefCol(key);
             if (!columnToAdd) {
                 return;
             }
@@ -353,7 +353,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
         }
 
         if (autoGroupsNeedBuilding) {
-            this.columnModel.refreshCols(false);
+            this.colModel.refreshCols(false);
         }
 
         this.visibleCols.refresh(source);
@@ -451,7 +451,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
         const colsWithIndex: AgColumn[] = [];
         const colsWithValue: AgColumn[] = [];
 
-        const primaryCols = this.columnModel.getColDefCols() || [];
+        const primaryCols = this.colModel.getColDefCols() || [];
 
         // go though all cols.
         // if value, change
@@ -580,7 +580,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             indexProp: 'rowGroupIndex' | 'pivotIndex',
             initialIndexProp: 'initialRowGroupIndex' | 'initialPivotIndex'
         ) => {
-            const primaryCols = this.columnModel.getColDefCols();
+            const primaryCols = this.colModel.getColDefCols();
             if (!colList.length || !primaryCols) {
                 return [];
             }

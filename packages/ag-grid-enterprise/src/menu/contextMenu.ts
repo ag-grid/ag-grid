@@ -35,7 +35,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
     private popupService: PopupService;
     private ctrlsService: CtrlsService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private menuUtils: MenuUtils;
     private rangeService?: IRangeService;
     private focusService: FocusService;
@@ -45,7 +45,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     public wireBeans(beans: BeanCollection): void {
         this.popupService = beans.popupService!;
         this.ctrlsService = beans.ctrlsService;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.menuUtils = beans.menuUtils as MenuUtils;
         this.rangeService = beans.rangeService;
         this.focusService = beans.focusService;
@@ -77,7 +77,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         }
 
         if (this.gos.get('enableCharts') && this.gos.isModuleRegistered('GridChartsCoreModule')) {
-            if (this.columnModel.isPivotMode()) {
+            if (this.colModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
 

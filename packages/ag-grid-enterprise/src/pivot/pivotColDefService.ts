@@ -20,12 +20,12 @@ const PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
 export class PivotColDefService extends BeanStub implements NamedBean, IPivotColDefService {
     beanName = 'pivotColDefService' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private funcColsService: FuncColsService;
     private columnNames: ColumnNameService;
 
     public wireBeans(beans: BeanCollection) {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.funcColsService = beans.funcColsService;
         this.columnNames = beans.columnNames;
     }
@@ -48,7 +48,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
     }
 
     public createPivotColumnDefs(uniqueValues: any): PivotColDefServiceResult {
-        // this is passed to the columnModel, to configure the columns and groups we show
+        // this is passed to the colModel, to configure the columns and groups we show
 
         const pivotColumnGroupDefs: (ColDef | ColGroupDef)[] = this.createPivotColumnsFromUniqueValues(uniqueValues);
 
@@ -487,7 +487,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             }
 
             if (children.length === 0) {
-                const potentialAggCol = this.columnModel.getColDefCol(key);
+                const potentialAggCol = this.colModel.getColDefCol(key);
                 if (potentialAggCol) {
                     const headerName = this.columnNames.getDisplayNameForColumn(potentialAggCol, 'header') ?? key;
                     const colDef = this.createColDef(potentialAggCol, headerName, undefined, false);

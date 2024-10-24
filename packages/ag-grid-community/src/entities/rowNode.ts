@@ -473,7 +473,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
                 return colKey;
             }
             // if in pivot mode, grid columns wont include primary columns
-            return this.beans.columnModel.getCol(colKey) ?? this.beans.columnModel.getColDefCol(colKey);
+            return this.beans.colModel.getCol(colKey) ?? this.beans.colModel.getColDefCol(colKey);
         };
         // When it is done via the editors, no 'cell changed' event gets fired, as it's assumed that
         // the cell knows about the change given it's in charge of the editing.

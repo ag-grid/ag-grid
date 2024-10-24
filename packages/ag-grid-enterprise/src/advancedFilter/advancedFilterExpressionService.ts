@@ -31,13 +31,13 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     beanName = 'advancedFilterExpressionService' as const;
 
     private valueSvc: ValueService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private columnNames: ColumnNameService;
     private dataTypeService?: DataTypeService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueSvc = beans.valueSvc;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.columnNames = beans.columnNames;
         this.dataTypeService = beans.dataTypeService;
     }
@@ -102,7 +102,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
 
     public getOperandDisplayValue(model: ColumnAdvancedFilterModel, skipFormatting?: boolean): string {
         const { colId, filter } = model as any;
-        const column = this.columnModel.getColDefCol(colId);
+        const column = this.colModel.getColDefCol(colId);
         let operand = '';
         if (filter != null) {
             let operand1: string | null | undefined;
@@ -183,7 +183,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         if (this.columnAutocompleteEntries) {
             return this.columnAutocompleteEntries;
         }
-        const columns = this.columnModel.getColDefCols() ?? [];
+        const columns = this.colModel.getColDefCols() ?? [];
         const entries: AutocompleteEntry[] = [];
         const includeHiddenColumns = this.gos.get('includeHiddenColumnsInAdvancedFilter');
         columns.forEach((column) => {
@@ -269,7 +269,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             return params;
         }
 
-        const column = this.columnModel.getColDefCol(colId);
+        const column = this.colModel.getColDefCol(colId);
         if (!column) {
             return { valueConverter: (v: any) => v };
         }
@@ -318,7 +318,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     }
 
     public getColumnDetails(colId: string): { column?: AgColumn; baseCellDataType: BaseCellDataType } {
-        const column = this.columnModel.getColDefCol(colId) ?? undefined;
+        const column = this.colModel.getColDefCol(colId) ?? undefined;
         const baseCellDataType = (column ? this.dataTypeService?.getBaseDataType(column) : undefined) ?? 'text';
         return { column, baseCellDataType };
     }

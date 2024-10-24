@@ -17,12 +17,12 @@ import { LazyStore } from './lazy/lazyStore';
 export class StoreFactory extends BeanStub implements NamedBean {
     beanName = 'ssrmStoreFactory' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private funcColsService: FuncColsService;
     private rowAutoHeightService?: RowAutoHeightService;
 
     public wireBeans(beans: BeanCollection) {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.funcColsService = beans.funcColsService;
         this.rowAutoHeightService = beans.rowAutoHeightService;
     }
@@ -100,7 +100,7 @@ export class StoreFactory extends BeanStub implements NamedBean {
             parentRowNode: parentNode.level >= 0 ? parentNode : undefined,
             rowGroupColumns: this.funcColsService.rowGroupCols,
             pivotColumns: this.funcColsService.pivotCols,
-            pivotMode: this.columnModel.isPivotMode(),
+            pivotMode: this.colModel.isPivotMode(),
         };
 
         const res = callback(params);

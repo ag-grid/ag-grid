@@ -8,7 +8,7 @@ export function getColumnDef<TValue = any, TData = any>(
     beans: BeanCollection,
     key: string | Column<TValue>
 ): ColDef<TData, TValue> | null {
-    const column = beans.columnModel.getColDefCol(key);
+    const column = beans.colModel.getColDefCol(key);
     if (column) {
         return column.getColDef();
     }
@@ -16,7 +16,7 @@ export function getColumnDef<TValue = any, TData = any>(
 }
 
 export function getColumnDefs<TData = any>(beans: BeanCollection): (ColDef<TData> | ColGroupDef<TData>)[] | undefined {
-    return beans.columnModel.getColumnDefs();
+    return beans.colModel.getColumnDefs();
 }
 
 export function getDisplayNameForColumn(beans: BeanCollection, column: Column, location: HeaderLocation): string {
@@ -27,11 +27,11 @@ export function getColumn<TValue = any, TData = any>(
     beans: BeanCollection,
     key: string | ColDef<TData, TValue> | Column<TValue>
 ): Column<TValue> | null {
-    return beans.columnModel.getColDefCol(key);
+    return beans.colModel.getColDefCol(key);
 }
 
 export function getColumns(beans: BeanCollection): Column[] | null {
-    return beans.columnModel.getColDefCols();
+    return beans.colModel.getColDefCols();
 }
 
 export function applyColumnState(beans: BeanCollection, params: ApplyColumnStateParams): boolean {
@@ -67,7 +67,7 @@ export function getDisplayedColBefore(beans: BeanCollection, col: Column): Colum
 }
 
 export function setColumnsVisible(beans: BeanCollection, keys: (string | Column)[], visible: boolean): void {
-    beans.columnModel.setColsVisible(keys as (string | AgColumn)[], visible, 'api');
+    beans.colModel.setColsVisible(keys as (string | AgColumn)[], visible, 'api');
 }
 
 export function setColumnsPinned(
@@ -79,7 +79,7 @@ export function setColumnsPinned(
 }
 
 export function getAllGridColumns(beans: BeanCollection): Column[] {
-    return beans.columnModel.getCols();
+    return beans.colModel.getCols();
 }
 
 export function getDisplayedLeftColumns(beans: BeanCollection): Column[] {

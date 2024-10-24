@@ -26,7 +26,7 @@ export interface IGridHeaderComp {
 export class GridHeaderCtrl extends BeanStub {
     private headerNavigation?: HeaderNavigationService;
     private focusService: FocusService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private ctrlsService: CtrlsService;
     private filterManager?: FilterManager;
@@ -35,7 +35,7 @@ export class GridHeaderCtrl extends BeanStub {
     public wireBeans(beans: BeanCollection) {
         this.headerNavigation = beans.headerNavigation;
         this.focusService = beans.focusService;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.ctrlsService = beans.ctrlsService;
         this.filterManager = beans.filterManager;
@@ -137,7 +137,7 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private onPivotModeChanged(): void {
-        const pivotMode = this.columnModel.isPivotMode();
+        const pivotMode = this.colModel.isPivotMode();
 
         this.comp.addOrRemoveCssClass('ag-pivot-on', pivotMode);
         this.comp.addOrRemoveCssClass('ag-pivot-off', !pivotMode);

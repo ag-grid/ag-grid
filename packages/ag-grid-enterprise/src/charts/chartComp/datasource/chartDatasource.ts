@@ -43,7 +43,7 @@ export class ChartDatasource extends BeanStub {
     private gridRowModel: IRowModel;
     private pivotResultColsService?: IPivotResultColsService;
     private valueSvc: ValueService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private rowNodeSorter?: RowNodeSorter;
     private sortController?: SortController;
     private aggregationStage?: IRowNodeStage & IAggregationStage;
@@ -51,7 +51,7 @@ export class ChartDatasource extends BeanStub {
     public wireBeans(beans: BeanCollection): void {
         this.sortController = beans.sortController;
         this.gridRowModel = beans.rowModel;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.valueSvc = beans.valueSvc;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.rowNodeSorter = beans.rowNodeSorter;
@@ -153,7 +153,7 @@ export class ChartDatasource extends BeanStub {
             // first get data for dimensions columns
             dimensionCols.forEach((col) => {
                 const colId = col.colId;
-                const column = this.columnModel.getCol(colId);
+                const column = this.colModel.getCol(colId);
 
                 if (column) {
                     const valueObject = this.valueSvc.getValue(column, rowNode);

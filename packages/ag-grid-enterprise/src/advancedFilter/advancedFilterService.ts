@@ -26,14 +26,14 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     beanName = 'advancedFilterService' as const;
 
     private valueSvc: ValueService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private dataTypeService?: DataTypeService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
     private filterValueService: FilterValueService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueSvc = beans.valueSvc;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.dataTypeService = beans.dataTypeService;
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
         this.filterValueService = beans.filterValueService!;
@@ -57,7 +57,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
         this.expressionProxy = {
             getValue: (colId, node) => {
-                const column = this.columnModel.getColDefCol(colId);
+                const column = this.colModel.getColDefCol(colId);
                 return column ? this.filterValueService.getValue(column, node) : undefined;
             },
         };
@@ -128,7 +128,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
         return new FilterExpressionParser({
             expression,
-            columnModel: this.columnModel,
+            colModel: this.colModel,
             dataTypeService: this.dataTypeService,
             valueSvc: this.valueSvc,
             advancedFilterExpressionService: this.advancedFilterExpressionService,

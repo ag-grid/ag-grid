@@ -53,14 +53,14 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
 
     private focusService: FocusService;
     private ctrlsService: CtrlsService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private columnGroupService?: ColumnGroupService;
 
     public wireBeans(beans: BeanCollection): void {
         this.focusService = beans.focusService;
         this.ctrlsService = beans.ctrlsService;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.columnGroupService = beans.columnGroupService;
     }
@@ -84,7 +84,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         let column: AgColumn | AgColumnGroup | null;
 
         if (typeof colKey === 'string') {
-            column = this.columnModel.getCol(colKey);
+            column = this.colModel.getCol(colKey);
             if (!column) {
                 column = this.columnGroupService?.getColumnGroup(colKey) ?? null;
             }

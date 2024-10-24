@@ -32,13 +32,13 @@ function _removeAllFromUnorderedArray<T>(array: T[], toRemove: T[]) {
 export class VisibleColsService extends BeanStub implements NamedBean {
     beanName = 'visibleCols' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private columnFlex?: ColumnFlexService;
     private columnViewport: ColumnViewportService;
     private columnGroupService?: ColumnGroupService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.columnFlex = beans.columnFlex;
         this.columnViewport = beans.columnViewport;
         this.columnGroupService = beans.columnGroupService;
@@ -147,14 +147,14 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             firstRight = this.rightCols ? this.rightCols[0] : null;
         }
 
-        this.columnModel.getCols().forEach((col) => {
+        this.colModel.getCols().forEach((col) => {
             col.setLastLeftPinned(col === lastLeft, source);
             col.setFirstRightPinned(col === firstRight, source);
         });
     }
 
     private buildTrees() {
-        const cols = this.columnModel.getColsToShow();
+        const cols = this.colModel.getColsToShow();
 
         const leftCols = cols.filter((col) => col.getPinned() == 'left');
         const rightCols = cols.filter((col) => col.getPinned() == 'right');
@@ -193,7 +193,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     private joinColsAriaOrder(): void {
-        const allColumns = this.columnModel.getCols();
+        const allColumns = this.colModel.getCols();
         const pinnedLeft: AgColumn[] = [];
         const center: AgColumn[] = [];
         const pinnedRight: AgColumn[] = [];
@@ -237,13 +237,13 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     private setLeftValuesOfCols(source: ColumnEventType): void {
-        const primaryCols = this.columnModel.getColDefCols();
+        const primaryCols = this.colModel.getColDefCols();
         if (!primaryCols) {
             return;
         }
 
         // go through each list of displayed columns
-        const allColumns = this.columnModel.getCols().slice(0);
+        const allColumns = this.colModel.getCols().slice(0);
 
         // let totalColumnWidth = this.getWidthOfColsInList()
         const doingRtl = this.gos.get('enableRtl');
@@ -297,7 +297,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     public getLeftColsForRow(rowNode: RowNode): AgColumn[] {
-        const colSpanActive = this.columnModel.colSpanActive;
+        const colSpanActive = this.colModel.colSpanActive;
         if (!colSpanActive) {
             return this.leftCols;
         }
@@ -306,7 +306,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     public getRightColsForRow(rowNode: RowNode): AgColumn[] {
-        const colSpanActive = this.columnModel.colSpanActive;
+        const colSpanActive = this.colModel.colSpanActive;
         if (!colSpanActive) {
             return this.rightCols;
         }

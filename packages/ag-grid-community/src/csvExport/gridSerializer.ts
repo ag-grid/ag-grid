@@ -30,7 +30,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
     beanName = 'gridSerializer' as const;
 
     private visibleCols: VisibleColsService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private columnNames: ColumnNameService;
     private rowModel: IRowModel;
     private pinnedRowModel?: PinnedRowModel;
@@ -40,7 +40,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleCols = beans.visibleCols;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.columnNames = beans.columnNames;
         this.rowModel = beans.rowModel;
         this.pinnedRowModel = beans.pinnedRowModel;
@@ -84,7 +84,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         const isClipboardExport = params.rowPositions != null;
         const isExplicitExportSelection = isClipboardExport || !!params.onlySelected;
         const hideOpenParents = this.gos.get('groupHideOpenParents') && !isExplicitExportSelection;
-        const isLeafNode = this.columnModel.isPivotMode() ? node.leafGroup : !node.group;
+        const isLeafNode = this.colModel.isPivotMode() ? node.leafGroup : !node.group;
         const isFooter = !!node.footer;
         const shouldSkipCurrentGroup =
             node.allChildrenCount === 1 &&
@@ -244,7 +244,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
                 return gridSerializingSession;
             }
 
-            if (this.columnModel.isPivotMode()) {
+            if (this.colModel.isPivotMode()) {
                 if (usingCsrm) {
                     rowModel.forEachPivotNode(processRow, true);
                 } else if (usingSsrm) {
@@ -352,10 +352,10 @@ export class GridSerializer extends BeanStub implements NamedBean {
         skipRowGroups: boolean = false,
         columnKeys?: (string | AgColumn)[]
     ): AgColumn[] {
-        const isPivotMode = this.columnModel.isPivotMode();
+        const isPivotMode = this.colModel.isPivotMode();
 
         if (columnKeys && columnKeys.length) {
-            return this.columnModel.getColsForKeys(columnKeys);
+            return this.colModel.getColsForKeys(columnKeys);
         }
 
         const isTreeData = this.gos.get('treeData');
@@ -363,7 +363,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         let columnsToExport: AgColumn[] = [];
 
         if (allColumns && !isPivotMode) {
-            columnsToExport = this.columnModel.getCols();
+            columnsToExport = this.colModel.getCols();
         } else {
             columnsToExport = this.visibleCols.allCols;
         }

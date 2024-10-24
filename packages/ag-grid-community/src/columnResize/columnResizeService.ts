@@ -25,13 +25,13 @@ export interface ColumnResizeSet {
 export class ColumnResizeService extends BeanStub implements NamedBean {
     beanName = 'columnResize' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private columnViewport: ColumnViewportService;
     private visibleCols: VisibleColsService;
     private columnFlex?: ColumnFlexService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.columnViewport = beans.columnViewport;
         this.visibleCols = beans.visibleCols;
         this.columnFlex = beans.columnFlex;
@@ -49,7 +49,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         const sets: ColumnResizeSet[] = [];
 
         columnWidths.forEach((columnWidth) => {
-            const col = this.columnModel.getColDefCol(columnWidth.key) || this.columnModel.getCol(columnWidth.key);
+            const col = this.colModel.getColDefCol(columnWidth.key) || this.colModel.getCol(columnWidth.key);
 
             if (!col) {
                 return;

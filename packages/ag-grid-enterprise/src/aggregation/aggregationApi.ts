@@ -21,7 +21,7 @@ export function setColumnAggFunc(
 }
 
 export function isPivotMode(beans: BeanCollection): boolean {
-    return beans.columnModel.isPivotMode();
+    return beans.colModel.isPivotMode();
 }
 
 export function getPivotResultColumn<TValue = any, TData = any>(

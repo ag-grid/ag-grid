@@ -21,13 +21,13 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
     beanName = 'pivotResultColsService' as const;
 
     private context: Context;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private columnFactory: ColumnFactory;
     private visibleCols: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.context = beans.context;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.columnFactory = beans.columnFactory;
         this.visibleCols = beans.visibleCols;
     }
@@ -52,7 +52,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
             return null;
         }
 
-        const valueColumnToFind = this.columnModel.getColDefCol(valueColKey);
+        const valueColumnToFind = this.colModel.getColDefCol(valueColKey);
 
         let foundColumn: AgColumn | null = null;
 
@@ -79,11 +79,11 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
         if (!this.pivotResultCols) {
             return null;
         }
-        return this.columnModel.getColFromCollection(key, this.pivotResultCols);
+        return this.colModel.getColFromCollection(key, this.pivotResultCols);
     }
 
     public setPivotResultCols(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType): void {
-        if (!this.columnModel.ready) {
+        if (!this.colModel.ready) {
             return;
         }
 
@@ -111,12 +111,12 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
             this.pivotResultCols.list.forEach((col) => (this.pivotResultCols!.map[col.getId()] = col));
             const hasPreviousCols = !!this.previousPivotResultCols;
             this.previousPivotResultCols = null;
-            this.columnModel.refreshCols(!hasPreviousCols);
+            this.colModel.refreshCols(!hasPreviousCols);
         } else {
             this.previousPivotResultCols = this.pivotResultCols ? this.pivotResultCols.tree : null;
             this.pivotResultCols = null;
 
-            this.columnModel.refreshCols(false);
+            this.colModel.refreshCols(false);
         }
         this.visibleCols.refresh(source);
     }

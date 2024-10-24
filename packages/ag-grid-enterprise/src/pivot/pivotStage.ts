@@ -32,14 +32,14 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
     public step: ClientSideRowModelStage = 'pivot';
 
     private valueSvc: ValueService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private pivotResultColsService: IPivotResultColsService;
     private funcColsService: FuncColsService;
     private pivotColDefService: PivotColDefService;
 
     public wireBeans(beans: BeanCollection) {
         this.valueSvc = beans.valueSvc;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.pivotResultColsService = beans.pivotResultColsService!;
         this.funcColsService = beans.funcColsService;
         this.pivotColDefService = beans.pivotColDefService as PivotColDefService;
@@ -65,7 +65,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
 
     public execute(params: StageExecuteParams): void {
         const changedPath = params.changedPath;
-        if (this.columnModel.isPivotActive()) {
+        if (this.colModel.isPivotActive()) {
             this.executePivotOn(changedPath!);
         } else {
             this.executePivotOff(changedPath!);

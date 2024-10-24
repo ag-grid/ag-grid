@@ -54,7 +54,7 @@ export class GridBodyScrollFeature extends BeanStub {
     private rowModel: IRowModel;
     private heightScaler: RowContainerHeightService;
     private rowRenderer: RowRenderer;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -65,7 +65,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.rowModel = beans.rowModel;
         this.heightScaler = beans.rowContainerHeightService;
         this.rowRenderer = beans.rowRenderer;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
     }
 
@@ -588,7 +588,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     public ensureColumnVisible(key: any, position: 'auto' | 'start' | 'middle' | 'end' = 'auto'): void {
-        const column = this.columnModel.getCol(key);
+        const column = this.colModel.getCol(key);
 
         if (!column) {
             return;

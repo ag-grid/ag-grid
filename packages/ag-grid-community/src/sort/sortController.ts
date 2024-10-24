@@ -18,12 +18,12 @@ export const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
 export class SortController extends BeanStub implements NamedBean {
     beanName = 'sortController' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private funcColsService: FuncColsService;
     private showRowGroupColsService?: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.funcColsService = beans.funcColsService;
         this.showRowGroupColsService = beans.showRowGroupColsService;
     }
@@ -84,7 +84,7 @@ export class SortController extends BeanStub implements NamedBean {
         const allSortedCols = this.getColumnsWithSortingOrdered();
 
         // reset sort index on everything
-        this.columnModel.getAllCols().forEach((col) => col.setSortIndex(null));
+        this.colModel.getAllCols().forEach((col) => col.setSortIndex(null));
         const allSortedColsWithoutChangesOrGroups = allSortedCols.filter((col) => {
             if (isCoupled && col.getColDef().showRowGroup) {
                 return false;
@@ -107,7 +107,7 @@ export class SortController extends BeanStub implements NamedBean {
 
     public isSortActive(): boolean {
         // pull out all the columns that have sorting set
-        const allCols = this.columnModel.getAllCols();
+        const allCols = this.colModel.getAllCols();
         const sortedCols = allCols.filter((column) => !!column.getSort());
         return sortedCols && sortedCols.length > 0;
     }
@@ -126,7 +126,7 @@ export class SortController extends BeanStub implements NamedBean {
 
     private clearSortBarTheseColumns(columnsToSkip: AgColumn[], source: ColumnEventType): AgColumn[] {
         const clearedColumns: AgColumn[] = [];
-        this.columnModel.getAllCols().forEach((columnToClear) => {
+        this.colModel.getAllCols().forEach((columnToClear) => {
             // Do not clear if either holding shift, or if column in question was clicked
             if (!columnsToSkip.includes(columnToClear)) {
                 // add to list of cleared cols when sort direction is set
@@ -159,9 +159,9 @@ export class SortController extends BeanStub implements NamedBean {
      */
     private getIndexedSortMap(): Map<AgColumn, number> {
         // pull out all the columns that have sorting set
-        let allSortedCols = this.columnModel.getAllCols().filter((col) => !!col.getSort());
+        let allSortedCols = this.colModel.getAllCols().filter((col) => !!col.getSort());
 
-        if (this.columnModel.isPivotMode()) {
+        if (this.colModel.isPivotMode()) {
             const isSortingLinked = _isColumnsSortingCoupledToGroup(this.gos);
             allSortedCols = allSortedCols.filter((col) => {
                 const isAggregated = !!col.getAggFunc();

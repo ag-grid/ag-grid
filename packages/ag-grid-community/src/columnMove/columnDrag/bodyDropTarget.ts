@@ -24,12 +24,12 @@ export interface DropListener {
 
 export class BodyDropTarget extends BeanStub implements DropTarget {
     private dragAndDropService: DragAndDropService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection) {
         this.dragAndDropService = beans.dragAndDropService!;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.ctrlsService = beans.ctrlsService;
     }
 
@@ -109,7 +109,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         // in pivot mode, then if moving a column (ie didn't come from toolpanel) then it's
         // a standard column move, however if it came from the toolpanel, then we are introducing
         // dimensions or values to the grid
-        return this.columnModel.isPivotMode() && draggingEvent.dragSource.type === DragSourceType.ToolPanel;
+        return this.colModel.isPivotMode() && draggingEvent.dragSource.type === DragSourceType.ToolPanel;
     }
 
     public onDragEnter(draggingEvent: DraggingEvent): void {

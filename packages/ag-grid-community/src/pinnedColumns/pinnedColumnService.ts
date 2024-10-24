@@ -22,7 +22,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
 
     private visibleCols: VisibleColsService;
     private ctrlsService: CtrlsService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private colAnimation?: ColumnAnimationService;
 
     private gridBodyCtrl: GridBodyCtrl;
@@ -30,7 +30,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.visibleCols = beans.visibleCols;
         this.ctrlsService = beans.ctrlsService;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.colAnimation = beans.colAnimation;
     }
 
@@ -106,7 +106,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
     }
 
     public setColsPinned(keys: ColKey[], pinned: ColumnPinnedType, source: ColumnEventType): void {
-        if (!this.columnModel.cols) {
+        if (!this.colModel.cols) {
             return;
         }
         if (!keys?.length) {
@@ -135,7 +135,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             if (!key) {
                 return;
             }
-            const column = this.columnModel.getCol(key);
+            const column = this.colModel.getCol(key);
             if (!column) {
                 return;
             }

@@ -35,13 +35,13 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
     beanName = 'columnMenuFactory' as const;
 
     private menuItemMapper: MenuItemMapper;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private funcColsService: FuncColsService;
     private menuService: MenuService;
 
     public wireBeans(beans: BeanCollection) {
         this.menuItemMapper = beans.menuItemMapper as MenuItemMapper;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.funcColsService = beans.funcColsService;
         this.menuService = beans.menuService!;
     }
@@ -128,7 +128,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         const allowValue = column.isAllowValue();
         const allowRowGroup = column.isAllowRowGroup();
         const isPrimary = column.isPrimary();
-        const pivotModeOn = this.columnModel.isPivotMode();
+        const pivotModeOn = this.colModel.isPivotMode();
 
         const isInMemoryRowModel = _isClientSideRowModel(this.gos);
 

@@ -13,12 +13,12 @@ import { BeanStub, _getRowNode, _warn } from 'ag-grid-community';
 export class ChartColumnService extends BeanStub implements NamedBean {
     beanName = 'chartColumnService' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private columnNames: ColumnNameService;
     private valueSvc: ValueService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.columnNames = beans.columnNames;
         this.valueSvc = beans.valueSvc;
     }
@@ -34,7 +34,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
     }
 
     public getColumn(colId: string): AgColumn | null {
-        return this.columnModel.getColDefCol(colId);
+        return this.colModel.getColDefCol(colId);
     }
 
     public getAllDisplayedColumns(): AgColumn[] {
@@ -71,15 +71,15 @@ export class ChartColumnService extends BeanStub implements NamedBean {
     }
 
     public isPivotMode(): boolean {
-        return this.columnModel.isPivotMode();
+        return this.colModel.isPivotMode();
     }
 
     public isPivotActive(): boolean {
-        return this.columnModel.isPivotActive();
+        return this.colModel.isPivotActive();
     }
 
     public getChartColumns(): { dimensionCols: Set<AgColumn>; valueCols: Set<AgColumn> } {
-        const gridCols = this.columnModel.getCols();
+        const gridCols = this.colModel.getCols();
 
         const dimensionCols = new Set<AgColumn>();
         const valueCols = new Set<AgColumn>();

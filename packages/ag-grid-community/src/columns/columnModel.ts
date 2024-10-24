@@ -45,7 +45,7 @@ export interface ColumnCollections {
 }
 
 export class ColumnModel extends BeanStub implements NamedBean {
-    beanName = 'columnModel' as const;
+    beanName = 'colModel' as const;
 
     private context: Context;
     private columnFactory: ColumnFactory;

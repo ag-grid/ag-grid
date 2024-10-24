@@ -54,7 +54,7 @@ export interface SSRMParams {
 export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSideRowModel {
     beanName = 'rowModel' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private columnNames: ColumnNameService;
     private pivotResultColsService?: IPivotResultColsService;
     private funcColsService: FuncColsService;
@@ -66,7 +66,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     private pivotColDefService?: IPivotColDefService;
 
     public wireBeans(beans: BeanCollection) {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.columnNames = beans.columnNames;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.funcColsService = beans.funcColsService;
@@ -383,7 +383,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             valueCols: valueColumnVos,
             rowGroupCols: rowGroupColumnVos,
             pivotCols: pivotColumnVos,
-            pivotMode: this.columnModel.isPivotMode(),
+            pivotMode: this.colModel.isPivotMode(),
 
             // sort and filter model
             filterModel: this.filterManager?.isAdvancedFilterEnabled()

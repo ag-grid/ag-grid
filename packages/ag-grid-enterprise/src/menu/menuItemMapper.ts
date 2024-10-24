@@ -22,7 +22,7 @@ import type { ColumnChooserFactory } from './columnChooserFactory';
 export class MenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'menuItemMapper' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private columnNames: ColumnNameService;
     private funcColsService: FuncColsService;
     private chartMenuItemMapper: ChartMenuItemMapper;
@@ -34,7 +34,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private columnChooserFactory?: ColumnChooserFactory;
 
     public wireBeans(beans: BeanCollection) {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.columnNames = beans.columnNames;
         this.funcColsService = beans.funcColsService;
         this.chartMenuItemMapper = beans.chartMenuItemMapper as ChartMenuItemMapper;
@@ -190,7 +190,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 }
                 // Handle multiple auto group columns
                 if (typeof showRowGroup === 'string') {
-                    const underlyingColumn = this.columnModel.getColDefCol(showRowGroup);
+                    const underlyingColumn = this.colModel.getColDefCol(showRowGroup);
                     const ungroupByName =
                         underlyingColumn != null
                             ? _escapeString(this.columnNames.getDisplayNameForColumn(underlyingColumn, 'header'))

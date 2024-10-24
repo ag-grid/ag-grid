@@ -13,12 +13,12 @@ export class SyncService extends BeanStub implements NamedBean {
     beanName = 'syncService' as const;
 
     private ctrlsService: CtrlsService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private rowModel: IRowModel;
 
     public wireBeans(beans: BeanCollection) {
         this.ctrlsService = beans.ctrlsService;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.rowModel = beans.rowModel;
     }
 
@@ -42,7 +42,7 @@ export class SyncService extends BeanStub implements NamedBean {
     }
 
     private setColumnsAndData(columnDefs: (ColDef | ColGroupDef)[]): void {
-        this.columnModel.setColumnDefs(columnDefs ?? [], 'gridInitializing');
+        this.colModel.setColumnDefs(columnDefs ?? [], 'gridInitializing');
         this.rowModel.start();
     }
 
@@ -68,6 +68,6 @@ export class SyncService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.columnModel.setColumnDefs(columnDefs, _convertColumnEventSourceType(event.source));
+        this.colModel.setColumnDefs(columnDefs, _convertColumnEventSourceType(event.source));
     }
 }

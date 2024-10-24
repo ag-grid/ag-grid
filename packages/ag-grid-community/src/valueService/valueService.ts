@@ -25,13 +25,13 @@ export class ValueService extends BeanStub implements NamedBean {
     beanName = 'valueSvc' as const;
 
     private expressionService?: ExpressionService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private valueCache?: ValueCache;
     private dataTypeService?: DataTypeService;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionService = beans.expressionService;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.valueCache = beans.valueCache;
         this.dataTypeService = beans.dataTypeService;
     }
@@ -82,7 +82,7 @@ export class ValueService extends BeanStub implements NamedBean {
      */
     public getValueForDisplay(column: AgColumn, node: IRowNode) {
         // when in pivot mode, leafGroups cannot be expanded
-        const lockedClosedGroup = node.leafGroup && this.columnModel.isPivotMode();
+        const lockedClosedGroup = node.leafGroup && this.colModel.isPivotMode();
         const isOpenGroup = node.group && node.expanded && !node.footer && !lockedClosedGroup;
 
         // checks if we show header data regardless of footer
@@ -282,7 +282,7 @@ export class ValueService extends BeanStub implements NamedBean {
      * @returns `True` if the value has been updated, otherwise`False`.
      */
     public setValue(rowNode: IRowNode, colKey: string | AgColumn, newValue: any, eventSource?: string): boolean {
-        const column = this.columnModel.getColDefCol(colKey);
+        const column = this.colModel.getColDefCol(colKey);
 
         if (!rowNode || !column) {
             return false;
@@ -469,7 +469,7 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     public getValueCallback(node: IRowNode, field: string | AgColumn): any {
-        const otherColumn = this.columnModel.getColDefCol(field);
+        const otherColumn = this.colModel.getColDefCol(field);
 
         if (otherColumn) {
             return this.getValue(otherColumn, node);

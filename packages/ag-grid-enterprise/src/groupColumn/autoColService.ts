@@ -35,7 +35,7 @@ import {
 export class AutoColService extends BeanStub implements NamedBean, IAutoColService {
     beanName = 'autoColService' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private columnNames: ColumnNameService;
     private columnFactory: ColumnFactory;
     private funcColsService: FuncColsService;
@@ -46,7 +46,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
     public autoCols: _ColumnCollections | null;
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.columnNames = beans.columnNames;
         this.columnFactory = beans.columnFactory;
         this.funcColsService = beans.funcColsService;
@@ -73,7 +73,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         cols: _ColumnCollections,
         updateOrders: (callback: (cols: AgColumn[] | null) => AgColumn[] | null) => void
     ): void {
-        const isPivotMode = this.columnModel.isPivotMode();
+        const isPivotMode = this.colModel.isPivotMode();
         const groupFullWidthRow = _isGroupUseEntireRow(this.gos, isPivotMode);
         // we need to allow suppressing auto-column separately for group and pivot as the normal situation
         // is CSRM and user provides group column themselves for normal view, but when they go into pivot the
@@ -240,7 +240,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
     private updateOneAutoCol(colToUpdate: AgColumn, index: number, source: ColumnEventType) {
         const oldColDef = colToUpdate.getColDef();
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
-        const underlyingColumn = underlyingColId != null ? this.columnModel.getColDefCol(underlyingColId) : undefined;
+        const underlyingColumn = underlyingColId != null ? this.colModel.getColDefCol(underlyingColId) : undefined;
         const colDef = this.createAutoColDef(colToUpdate.getId(), underlyingColumn ?? undefined, index);
 
         colToUpdate.setColDef(colDef, null, source);

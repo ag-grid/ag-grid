@@ -17,11 +17,11 @@ import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     private columnMove?: ColumnMoveService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
         this.columnMove = beans.columnMove;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
     }
 
     constructor(
@@ -130,7 +130,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
             return null;
         }
 
-        const targetColumnIndex = this.columnModel.getCols().indexOf(lastHoveredColumn);
+        const targetColumnIndex = this.colModel.getCols().indexOf(lastHoveredColumn);
         const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
         const diff = this.getMoveDiff(currentColumns, adjustedTarget);
 
@@ -138,7 +138,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     }
 
     private getMoveDiff(currentColumns: AgColumn[] | null, end: number): number {
-        const allColumns = this.columnModel.getCols();
+        const allColumns = this.colModel.getCols();
 
         if (!currentColumns) {
             return 0;

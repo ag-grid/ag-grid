@@ -49,7 +49,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     private rowModel: IRowModel;
     private dragService: DragService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private cellNavigation: CellNavigationService;
     private pinnedRowModel?: PinnedRowModel;
@@ -58,7 +58,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
         this.dragService = beans.dragService!;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.cellNavigation = beans.cellNavigation!;
         this.pinnedRowModel = beans.pinnedRowModel;
@@ -412,7 +412,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                     return;
                 }
                 for (let i = 0; i < cellRange.columns.length; i++) {
-                    const column = this.columnModel.getCol(cellRange.columns[i]);
+                    const column = this.colModel.getCol(cellRange.columns[i]);
                     if (!column || !column.isCellEditable(rowNode)) {
                         continue;
                     }
@@ -447,10 +447,10 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         let startsOnTheRight: boolean = false;
 
         if (params.columns) {
-            columns = params.columns.map((c) => this.columnModel.getCol(c)!).filter((c) => c);
+            columns = params.columns.map((c) => this.colModel.getCol(c)!).filter((c) => c);
         } else {
-            const columnStart = this.columnModel.getCol(params.columnStart);
-            const columnEnd = this.columnModel.getCol(params.columnEnd);
+            const columnStart = this.colModel.getCol(params.columnStart);
+            const columnEnd = this.colModel.getCol(params.columnEnd);
 
             if (!columnStart || !columnEnd) {
                 return;

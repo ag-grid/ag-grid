@@ -26,7 +26,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     private rowModel: IRowModel;
     private ctrlsService: CtrlsService;
     private isClientSide: boolean;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
 
     private state: OverlayServiceState = OverlayServiceState.Hidden;
     private showInitialOverlay: boolean = true;
@@ -36,7 +36,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.userComponentFactory = beans.userComponentFactory;
         this.rowModel = beans.rowModel;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.ctrlsService = beans.ctrlsService;
     }
 
@@ -135,9 +135,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
         if (this.showInitialOverlay && loading === undefined && !this.gos.get('suppressLoadingOverlay')) {
             loading =
-                !this.gos.get('columnDefs') ||
-                !this.columnModel.ready ||
-                (!this.gos.get('rowData') && this.isClientSide);
+                !this.gos.get('columnDefs') || !this.colModel.ready || (!this.gos.get('rowData') && this.isClientSide);
         }
 
         if (loading) {

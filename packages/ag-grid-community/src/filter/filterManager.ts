@@ -23,14 +23,14 @@ import type { QuickFilterService } from './quickFilterService';
 export class FilterManager extends BeanStub implements NamedBean {
     beanName = 'filterManager' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private dataTypeService?: DataTypeService;
     private quickFilterService?: QuickFilterService;
     private advancedFilterService: IAdvancedFilterService;
     private columnFilterService?: ColumnFilterService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.dataTypeService = beans.dataTypeService;
         this.quickFilterService = beans.quickFilterService;
         this.advancedFilterService = beans.advancedFilterService;
@@ -223,9 +223,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     }
 
     private shouldApplyQuickFilterAfterAgg(): boolean {
-        return (
-            (this.aggFiltering || this.columnModel.isPivotMode()) && !this.gos.get('applyQuickFilterBeforePivotOrAgg')
-        );
+        return (this.aggFiltering || this.colModel.isPivotMode()) && !this.gos.get('applyQuickFilterBeforePivotOrAgg');
     }
 
     public doesRowPassOtherFilters(filterToSkip: IFilterComp, node: any): boolean {

@@ -56,14 +56,14 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
     public step: ClientSideRowModelStage = 'sort';
 
     private sortController: SortController;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private funcColsService: FuncColsService;
     private rowNodeSorter: RowNodeSorter;
     private groupHideOpenParentsService?: IGroupHideOpenParentsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.sortController = beans.sortController!;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.funcColsService = beans.funcColsService;
         this.rowNodeSorter = beans.rowNodeSorter!;
         this.groupHideOpenParentsService = beans.groupHideOpenParentsService;
@@ -108,14 +108,14 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
         sortContainsGroupColumns: boolean
     ): void {
         const groupMaintainOrder = this.gos.get('groupMaintainOrder');
-        const groupColumnsPresent = this.columnModel.getCols().some((c) => c.isRowGroupActive());
+        const groupColumnsPresent = this.colModel.getCols().some((c) => c.isRowGroupActive());
 
         let allDirtyNodes: { [key: string]: true } = {};
         if (useDeltaSort && rowNodeTransactions) {
             allDirtyNodes = this.calculateDirtyNodes(rowNodeTransactions);
         }
 
-        const isPivotMode = this.columnModel.isPivotMode();
+        const isPivotMode = this.colModel.isPivotMode();
         const postSortFunc = this.gos.getCallback('postSortRows');
 
         const callback = (rowNode: RowNode) => {

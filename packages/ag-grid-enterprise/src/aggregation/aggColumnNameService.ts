@@ -13,11 +13,11 @@ export class AggColumnNameService extends BeanStub implements NamedBean, IAggCol
     beanName = 'aggColumnNameService' as const;
 
     private funcColsService: FuncColsService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
         this.funcColsService = beans.funcColsService;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
     }
 
     public getHeaderName(column: AgColumn, headerName: string | null): string | null {
@@ -44,7 +44,7 @@ export class AggColumnNameService extends BeanStub implements NamedBean, IAggCol
             aggFuncFound = true;
         } else {
             const measureActive = column.isValueActive();
-            const aggregationPresent = this.columnModel.isPivotMode() || !this.funcColsService.isRowGroupEmpty();
+            const aggregationPresent = this.colModel.isPivotMode() || !this.funcColsService.isRowGroupEmpty();
 
             if (measureActive && aggregationPresent) {
                 aggFunc = column.getAggFunc();

@@ -10,7 +10,7 @@ export function expireValueCache(beans: BeanCollection): void {
 export function getCellValue<TValue = any>(beans: BeanCollection, params: GetCellValueParams<TValue>): any {
     const { colKey, rowNode, useFormatter } = params;
 
-    const column = beans.columnModel.getColDefCol(colKey) ?? beans.columnModel.getCol(colKey);
+    const column = beans.colModel.getColDefCol(colKey) ?? beans.colModel.getCol(colKey);
     if (_missing(column)) {
         return null;
     }

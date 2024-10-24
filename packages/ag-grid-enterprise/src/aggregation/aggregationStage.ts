@@ -42,14 +42,14 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
     ]);
     public step: ClientSideRowModelStage = 'aggregate';
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private valueSvc: ValueService;
     private aggFuncService: AggFuncService;
     private funcColsService: FuncColsService;
     private pivotResultColsService?: IPivotResultColsService;
 
     public wireBeans(beans: BeanCollection) {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.aggFuncService = beans.aggFuncService as AggFuncService;
         this.funcColsService = beans.funcColsService;
         this.pivotResultColsService = beans.pivotResultColsService;
@@ -77,7 +77,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
     }
 
     private createAggDetails(params: StageExecuteParams): AggregationDetails {
-        const pivotActive = this.columnModel.isPivotActive();
+        const pivotActive = this.colModel.isPivotActive();
 
         const measureColumns = this.funcColsService.valueCols;
         const pivotColumns = pivotActive ? this.funcColsService.pivotCols : [];
@@ -117,7 +117,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
             const isRootNode = rowNode.level === -1;
             // if total footer is displayed, the value is in use
             if (isRootNode && !aggDetails.groupIncludeTotalFooter) {
-                const notPivoting = !this.columnModel.isPivotMode();
+                const notPivoting = !this.colModel.isPivotMode();
                 if (!aggDetails.alwaysAggregateAtRootLevel && notPivoting) {
                     this.setAggData(rowNode, null);
                     return;
@@ -332,7 +332,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
                 }
 
                 // do a quick lookup - despite the event it's possible the column no longer exists
-                const column = this.columnModel.getCol(colId)!;
+                const column = this.colModel.getCol(colId)!;
                 if (!column) {
                     return;
                 }

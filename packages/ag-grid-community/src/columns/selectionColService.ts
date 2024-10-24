@@ -26,7 +26,7 @@ export class SelectionColService extends BeanStub implements NamedBean {
     private context: Context;
     private columnGroupService?: ColumnGroupService;
     private autoColService?: IAutoColService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
 
     // selection checkbox columns
     public selectionCols: ColumnCollections | null;
@@ -35,7 +35,7 @@ export class SelectionColService extends BeanStub implements NamedBean {
         this.context = beans.context;
         this.columnGroupService = beans.columnGroupService;
         this.autoColService = beans.autoColService;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
     }
 
     public postConstruct(): void {
@@ -172,7 +172,7 @@ export class SelectionColService extends BeanStub implements NamedBean {
         const headerCheckboxHasChanged = prevHeaderCheckbox !== currHeaderCheckbox;
 
         if (checkboxHasChanged || headerCheckboxHasChanged) {
-            this.columnModel.refreshAll(source);
+            this.colModel.refreshAll(source);
         }
     }
 

@@ -40,7 +40,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     beanName = 'dataTypeService' as const;
 
     private rowModel: IRowModel;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private funcColsService: FuncColsService;
     private valueSvc: ValueService;
     private columnStateService: ColumnStateService;
@@ -50,7 +50,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.funcColsService = beans.funcColsService;
         this.valueSvc = beans.valueSvc;
         this.columnStateService = beans.columnStateService;
@@ -83,7 +83,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
         this.addManagedPropertyListener('dataTypeDefinitions', (event) => {
             this.processDataTypeDefinitions();
-            this.columnModel.recreateColumnDefs(_convertColumnEventSourceType(event.source));
+            this.colModel.recreateColumnDefs(_convertColumnEventSourceType(event.source));
         });
     }
 
@@ -481,7 +481,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         const newRowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
         const newPivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = {};
         Object.entries(this.columnStateUpdatesPendingInference).forEach(([colId, columnStateUpdates]) => {
-            const column = this.columnModel.getCol(colId);
+            const column = this.colModel.getCol(colId);
             if (!column) {
                 return;
             }
@@ -644,7 +644,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     useFormatter: true,
                 };
                 colDef.comparator = (a: any, b: any) => {
-                    const column = this.columnModel.getColDefCol(colId);
+                    const column = this.colModel.getColDefCol(colId);
                     const colDef = column?.getColDef();
                     if (!column || !colDef) {
                         return 0;

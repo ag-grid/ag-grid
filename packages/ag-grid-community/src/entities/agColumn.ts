@@ -766,7 +766,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
         return this.flex;
     }
 
-    // this method should only be used by the columnModel to
+    // this method should only be used by the colModel to
     // change flex when required by the applyColumnState method.
     public setFlex(flex: number | null) {
         this.flex = flex ?? null;

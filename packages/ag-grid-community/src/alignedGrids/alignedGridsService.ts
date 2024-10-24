@@ -25,14 +25,14 @@ import { _error, _warn } from '../validation/logging';
 export class AlignedGridsService extends BeanStub implements NamedBean {
     beanName = 'alignedGridsService' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private columnResize?: ColumnResizeService;
     private ctrlsService: CtrlsService;
     private columnStateService: ColumnStateService;
     private columnGroupService?: ColumnGroupService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.columnResize = beans.columnResize;
         this.ctrlsService = beans.ctrlsService;
         this.columnStateService = beans.columnStateService;
@@ -215,7 +215,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         let otherColumn: AgColumn | null = null;
 
         if (masterColumn) {
-            otherColumn = this.columnModel.getColDefCol(masterColumn.getColId());
+            otherColumn = this.colModel.getColDefCol(masterColumn.getColId());
         }
         // if event was with respect to a master column, that is not present in this
         // grid, then we ignore the event

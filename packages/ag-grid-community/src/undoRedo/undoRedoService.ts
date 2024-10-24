@@ -252,7 +252,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         const { rowIndex, columnId, rowPinned } = lastFocusedCell;
         const scrollFeature = this.gridBodyCtrl.getScrollFeature();
 
-        const column: AgColumn | null = this.beans.columnModel.getCol(columnId);
+        const column: AgColumn | null = this.beans.colModel.getCol(columnId);
 
         if (!column) {
             return;

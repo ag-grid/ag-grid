@@ -52,7 +52,7 @@ export function stopEditing(beans: BeanCollection, cancel: boolean = false): voi
 }
 
 export function startEditingCell(beans: BeanCollection, params: StartEditingCellParams): void {
-    const column = beans.columnModel.getCol(params.colKey);
+    const column = beans.colModel.getCol(params.colKey);
     if (!column) {
         _warn(12, { colKey: params.colKey });
         return;

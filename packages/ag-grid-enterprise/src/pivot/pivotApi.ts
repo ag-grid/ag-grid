@@ -1,7 +1,7 @@
 import type { BeanCollection, ColDef, ColGroupDef, Column } from 'ag-grid-community';
 
 export function isPivotMode(beans: BeanCollection): boolean {
-    return beans.columnModel.isPivotMode();
+    return beans.colModel.isPivotMode();
 }
 
 export function getPivotResultColumn<TValue = any, TData = any>(

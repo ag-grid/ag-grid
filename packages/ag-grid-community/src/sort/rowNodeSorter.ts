@@ -21,12 +21,12 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
     beanName = 'rowNodeSorter' as const;
 
     private valueSvc: ValueService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private showRowGroupColsService?: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueSvc = beans.valueSvc;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.showRowGroupColsService = beans.showRowGroupColsService;
     }
 
@@ -112,7 +112,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             return;
         }
 
-        const primaryColumn = this.columnModel.getColDefCol(groupLeafField);
+        const primaryColumn = this.colModel.getColDefCol(groupLeafField);
         if (!primaryColumn) {
             return;
         }
@@ -127,7 +127,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
         const isNodeGroupedAtLevel = node.rowGroupColumn === column;
         if (isNodeGroupedAtLevel) {
-            const isGroupRows = _isGroupUseEntireRow(this.gos, this.columnModel.isPivotActive());
+            const isGroupRows = _isGroupUseEntireRow(this.gos, this.colModel.isPivotActive());
             // because they're group rows, no display cols exist, so groupData never populated.
             // instead delegate to getting value from leaf child.
             if (isGroupRows) {

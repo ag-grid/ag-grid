@@ -28,11 +28,11 @@ export function isRowGroupColLocked(
 
 export function setRowNodeGroupValue(
     rowNode: RowNode,
-    columnModel: ColumnModel,
+    colModel: ColumnModel,
     colKey: string | AgColumn,
     newValue: any
 ): void {
-    const column = columnModel.getCol(colKey)!;
+    const column = colModel.getCol(colKey)!;
 
     if (!rowNode.groupData) {
         rowNode.groupData = {};

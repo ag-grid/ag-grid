@@ -20,7 +20,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
     private visibleCols: VisibleColsService;
     private columnViewport: ColumnViewportService;
     private rowModel: IRowModel;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
 
     /** grid columns have colDef.autoHeight set */
     public active: boolean;
@@ -30,7 +30,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         this.visibleCols = beans.visibleCols;
         this.columnViewport = beans.columnViewport;
         this.rowModel = beans.rowModel;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
     }
 
     public setRowAutoHeight(rowNode: RowNode, cellHeight: number | undefined, column: AgColumn): void {
@@ -70,7 +70,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
             if (cellHeight == null) {
                 // If column spanning is active a column may not provide auto height for a row if that
                 // cell is not present for the given row due to a previous cell spanning over the auto height column.
-                if (this.columnModel.colSpanActive) {
+                if (this.colModel.colSpanActive) {
                     let activeColsForRow: AgColumn[] = [];
                     switch (col.getPinned()) {
                         case 'left':

@@ -55,7 +55,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private animationFrameService?: AnimationFrameService;
     private paginationService?: PaginationService;
     private pageBoundsService: PageBoundsService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private pinnedRowModel?: PinnedRowModel;
     private rowModel: IRowModel;
@@ -69,7 +69,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.animationFrameService = beans.animationFrameService;
         this.paginationService = beans.paginationService;
         this.pageBoundsService = beans.pageBoundsService;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.rowModel = beans.rowModel;
@@ -321,7 +321,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private refreshListenersToColumnsForCellComps(): void {
         this.removeGridColumnListeners();
 
-        const cols = this.columnModel.getCols();
+        const cols = this.colModel.getCols();
 
         cols.forEach((col) => {
             const forEachCellWithThisCol = (callback: (cellCtrl: CellCtrl) => void) => {
@@ -813,7 +813,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (_exists(columns)) {
             colIdsMap = {};
             columns.forEach((colKey: string | AgColumn) => {
-                const column: AgColumn | null = this.columnModel.getCol(colKey);
+                const column: AgColumn | null = this.colModel.getCol(colKey);
                 if (_exists(column)) {
                     colIdsMap[column.getId()] = true;
                 }

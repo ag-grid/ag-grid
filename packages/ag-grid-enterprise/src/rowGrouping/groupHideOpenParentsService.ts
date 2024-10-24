@@ -16,11 +16,11 @@ import { setRowNodeGroupValue } from './rowGroupingUtils';
 export class GroupHideOpenParentsService extends BeanStub implements IGroupHideOpenParentsService {
     beanName = 'groupHideOpenParentsService' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private showRowGroupColsService?: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.showRowGroupColsService = beans.showRowGroupColsService;
     }
 
@@ -59,7 +59,7 @@ export class GroupHideOpenParentsService extends BeanStub implements IGroupHideO
                 }
 
                 const displayingGroupKey = showRowGroup;
-                const rowGroupColumn = this.columnModel.getColDefCol(displayingGroupKey);
+                const rowGroupColumn = this.colModel.getColDefCol(displayingGroupKey);
                 const thisRowNodeMatches = rowGroupColumn === childRowNode.rowGroupColumn;
 
                 if (thisRowNodeMatches) {
@@ -68,14 +68,14 @@ export class GroupHideOpenParentsService extends BeanStub implements IGroupHideO
 
                 if (clearOperation) {
                     // if doing a clear operation, we clear down the value for every possible group column
-                    setRowNodeGroupValue(childRowNode, this.columnModel, groupDisplayCol.getId(), undefined);
+                    setRowNodeGroupValue(childRowNode, this.colModel, groupDisplayCol.getId(), undefined);
                 } else {
                     // if doing a set operation, we set only where the pull down is to occur
                     const parentToStealFrom = this.getFirstChildOfFirstChild(childRowNode, rowGroupColumn);
                     if (parentToStealFrom) {
                         setRowNodeGroupValue(
                             childRowNode,
-                            this.columnModel,
+                            this.colModel,
                             groupDisplayCol.getId(),
                             parentToStealFrom.key
                         );

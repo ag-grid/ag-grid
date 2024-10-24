@@ -5,7 +5,7 @@ import type { FilterExpressionEvaluatorParams, FilterExpressionOperator } from '
 
 export interface FilterExpressionParserParams {
     expression: string;
-    columnModel: ColumnModel;
+    colModel: ColumnModel;
     dataTypeService?: DataTypeService;
     valueSvc: ValueService;
     advancedFilterExpressionService: AdvancedFilterExpressionService;

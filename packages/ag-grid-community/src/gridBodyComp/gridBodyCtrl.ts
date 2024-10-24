@@ -56,7 +56,7 @@ export interface IGridBodyComp extends LayoutView {
 export class GridBodyCtrl extends BeanStub {
     private rowContainerHeightService: RowContainerHeightService;
     private ctrlsService: CtrlsService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private scrollVisibleService: ScrollVisibleService;
     private contextMenuService?: IContextMenuService;
     private rowDragService?: RowDragService;
@@ -71,7 +71,7 @@ export class GridBodyCtrl extends BeanStub {
     public wireBeans(beans: BeanCollection): void {
         this.rowContainerHeightService = beans.rowContainerHeightService;
         this.ctrlsService = beans.ctrlsService;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.scrollVisibleService = beans.scrollVisibleService;
         this.contextMenuService = beans.contextMenuService;
         this.rowDragService = beans.rowDragService;
@@ -257,7 +257,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private onGridColumnsChanged(): void {
-        const columns = this.columnModel.getCols();
+        const columns = this.colModel.getCols();
         this.comp.setColumnCount(columns.length);
     }
 

@@ -14,11 +14,11 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     beanName = 'columnViewport' as const;
 
     private visibleCols: VisibleColsService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleCols = beans.visibleCols;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
     }
 
     // cols in center that are in the viewport
@@ -71,7 +71,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
             this.viewportRight = this.scrollWidth + this.scrollPosition;
         }
 
-        if (this.columnModel.ready) {
+        if (this.colModel.ready) {
             this.checkViewportColumns(afterScroll);
         }
     }
@@ -175,7 +175,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     // however if we are column spanning, then different rows can have different virtual
     // columns, so we have to work out the list for each individual row.
     public getColsWithinViewport(rowNode: RowNode): AgColumn[] {
-        if (!this.columnModel.colSpanActive) {
+        if (!this.colModel.colSpanActive) {
             return this.colsWithinViewport;
         }
 

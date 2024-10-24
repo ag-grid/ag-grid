@@ -94,7 +94,7 @@ class ColumnParser implements Parser {
             this.colId = colValue.colId;
             checkAndUpdateExpression(this.params, this.colName, colValue.columnName, endPosition - 1);
             this.colName = colValue.columnName;
-            this.column = this.params.columnModel.getColDefCol(this.colId);
+            this.column = this.params.colModel.getColDefCol(this.colId);
             if (this.column) {
                 this.baseCellDataType = this.params.dataTypeService?.getBaseDataType(this.column) ?? 'text';
                 return true;

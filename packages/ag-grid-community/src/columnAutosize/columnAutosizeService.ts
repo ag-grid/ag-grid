@@ -23,7 +23,7 @@ import { TouchListener } from '../widgets/touchListener';
 export class ColumnAutosizeService extends BeanStub implements NamedBean {
     beanName = 'columnAutosizeService' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private animationFrameService?: AnimationFrameService;
     private autoWidthCalculator: AutoWidthCalculator;
@@ -38,7 +38,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private resizeOperationQueue: (() => void)[] = [];
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.animationFrameService = beans.animationFrameService;
         this.autoWidthCalculator = beans.autoWidthCalculator!;
@@ -107,7 +107,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 if (!key) {
                     return;
                 }
-                const column = this.columnModel.getCol(key);
+                const column = this.colModel.getCol(key);
                 if (!column) {
                     return;
                 }
@@ -157,7 +157,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         stopAtGroup?: AgColumnGroup
     ): AgColumn[] {
         const columnGroups: Set<AgColumnGroup> = new Set();
-        const columns = this.columnModel.getColsForKeys(keys);
+        const columns = this.colModel.getColsForKeys(keys);
 
         columns.forEach((col) => {
             let parent: AgColumnGroup | null = col.getParent();

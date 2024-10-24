@@ -36,19 +36,19 @@ export interface CreateGroupsParams {
 export class ColumnGroupService extends BeanStub implements NamedBean {
     beanName = 'columnGroupService' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private colAnimation?: ColumnAnimationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.colAnimation = beans.colAnimation;
     }
 
     public getColumnGroupState(): { groupId: string; open: boolean }[] {
         const columnGroupState: { groupId: string; open: boolean }[] = [];
-        const gridBalancedTree = this.columnModel.getColTree();
+        const gridBalancedTree = this.colModel.getColTree();
 
         depthFirstOriginalTreeSearch(null, gridBalancedTree, (node) => {
             if (isProvidedColumnGroup(node)) {
@@ -63,7 +63,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
     }
 
     public resetColumnGroupState(source: ColumnEventType): void {
-        const primaryColumnTree = this.columnModel.getColDefColTree();
+        const primaryColumnTree = this.colModel.getColDefColTree();
         if (!primaryColumnTree) {
             return;
         }
@@ -88,7 +88,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         stateItems: { groupId: string; open: boolean | undefined }[],
         source: ColumnEventType
     ): void {
-        const gridBalancedTree = this.columnModel.getColTree();
+        const gridBalancedTree = this.colModel.getColTree();
         if (!gridBalancedTree) {
             return;
         }
@@ -145,7 +145,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
     public getProvidedColGroup(key: string): AgProvidedColumnGroup | null {
         let res: AgProvidedColumnGroup | null = null;
 
-        depthFirstOriginalTreeSearch(null, this.columnModel.getColTree(), (node) => {
+        depthFirstOriginalTreeSearch(null, this.colModel.getColTree(), (node) => {
             if (isProvidedColumnGroup(node)) {
                 if (node.getId() === key) {
                     res = node;

@@ -15,12 +15,12 @@ import {
 import { AdvancedFilterComp } from './advancedFilterComp';
 
 export class AdvancedFilterHeaderComp extends Component {
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private focusService: FocusService;
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.focusService = beans.focusService;
         this.ctrlsService = beans.ctrlsService;
     }
@@ -120,7 +120,7 @@ export class AdvancedFilterHeaderComp extends Component {
     }
 
     private setAriaColumnCount(eAdvancedFilterGui: HTMLElement): void {
-        _setAriaColSpan(eAdvancedFilterGui, this.columnModel.getCols().length);
+        _setAriaColSpan(eAdvancedFilterGui, this.colModel.getCols().length);
     }
 
     private setAriaRowIndex(): void {

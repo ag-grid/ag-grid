@@ -30,7 +30,7 @@ enum Direction {
 export class ColumnMoveService extends BeanStub implements NamedBean {
     beanName = 'columnMove' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private colAnimation?: ColumnAnimationService;
     private ctrlsService: CtrlsService;
     private visibleCols: VisibleColsService;
@@ -38,7 +38,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
     private dragAndDropService: DragAndDropService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.colAnimation = beans.colAnimation;
         this.ctrlsService = beans.ctrlsService;
         this.visibleCols = beans.visibleCols;
@@ -47,7 +47,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
     }
 
     public moveColumnByIndex(fromIndex: number, toIndex: number, source: ColumnEventType): void {
-        const gridColumns = this.columnModel.getCols();
+        const gridColumns = this.colModel.getCols();
         if (!gridColumns) {
             return;
         }
@@ -62,7 +62,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         source: ColumnEventType,
         finished: boolean = true
     ): void {
-        const gridColumns = this.columnModel.getCols();
+        const gridColumns = this.colModel.getCols();
         if (!gridColumns) {
             return;
         }
@@ -75,10 +75,10 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
 
         this.colAnimation?.start();
         // we want to pull all the columns out first and put them into an ordered list
-        const movedColumns = this.columnModel.getColsForKeys(columnsToMoveKeys);
+        const movedColumns = this.colModel.getColsForKeys(columnsToMoveKeys);
 
         if (this.doesMovePassRules(movedColumns, toIndex)) {
-            _moveInArray(this.columnModel.getCols(), movedColumns, toIndex);
+            _moveInArray(this.colModel.getCols(), movedColumns, toIndex);
             this.visibleCols.refresh(source);
             this.eventSvc.dispatchEvent({
                 type: 'columnMoved',
@@ -100,7 +100,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
     }
 
     public doesOrderPassRules(gridOrder: AgColumn[]) {
-        if (!doesMovePassMarryChildren(gridOrder, this.columnModel.getColTree())) {
+        if (!doesMovePassMarryChildren(gridOrder, this.colModel.getColTree())) {
             return false;
         }
         if (!this.doesMovePassLockedPositions(gridOrder)) {
@@ -110,7 +110,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
     }
 
     public getProposedColumnOrder(columnsToMove: AgColumn[], toIndex: number): AgColumn[] {
-        const gridColumns = this.columnModel.getCols();
+        const gridColumns = this.colModel.getCols();
         const proposedColumnOrder = gridColumns.slice();
         _moveInArray(proposedColumnOrder, columnsToMove as AgColumn[], toIndex);
         return proposedColumnOrder;
@@ -157,7 +157,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         pinned: ColumnPinnedType,
         bean: BeanStub
     ): void {
-        const { ctrlsService, gos, columnModel, visibleCols } = this;
+        const { ctrlsService, gos, colModel, visibleCols } = this;
         const rect = eGui.getBoundingClientRect();
         const left = rect.left;
         const isGroup = isColumnGroup(column);
@@ -182,7 +182,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             fromEnter: false,
             fakeEvent: false,
             gos,
-            columnModel,
+            colModel,
             columnMove: this,
             visibleCols,
             finished: true,
@@ -267,13 +267,13 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
                     const unlockedColumns = columns.filter(
                         (col) => !col.getColDef().lockVisible && hasVisibleState(col)
                     );
-                    this.columnModel.setColsVisible(unlockedColumns as AgColumn[], true, 'uiColumnMoved');
+                    this.colModel.setColsVisible(unlockedColumns as AgColumn[], true, 'uiColumnMoved');
                 }
             },
             onGridExit: (dragItem) => {
                 if (hideColumnOnExit) {
                     const unlockedColumns = dragItem?.columns?.filter((col) => !col.getColDef().lockVisible) || [];
-                    this.columnModel.setColsVisible(unlockedColumns as AgColumn[], false, 'uiColumnMoved');
+                    this.colModel.setColsVisible(unlockedColumns as AgColumn[], false, 'uiColumnMoved');
                 }
             },
         };

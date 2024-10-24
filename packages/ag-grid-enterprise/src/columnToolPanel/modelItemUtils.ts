@@ -17,12 +17,12 @@ export class ModelItemUtils extends BeanStub implements NamedBean {
     beanName = 'modelItemUtils' as const;
 
     private aggFuncService?: IAggFuncService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private columnStateService: ColumnStateService;
 
     public wireBeans(beans: BeanCollection) {
         this.aggFuncService = beans.aggFuncService;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.columnStateService = beans.columnStateService;
     }
 
@@ -36,7 +36,7 @@ export class ModelItemUtils extends BeanStub implements NamedBean {
     }
 
     public setAllColumns(cols: AgColumn[], selectAllChecked: boolean, eventType: ColumnEventType): void {
-        if (this.columnModel.isPivotMode()) {
+        if (this.colModel.isPivotMode()) {
             this.setAllPivot(cols, selectAllChecked, eventType);
         } else {
             this.setAllVisible(cols, selectAllChecked, eventType);
@@ -155,7 +155,7 @@ export class ModelItemUtils extends BeanStub implements NamedBean {
         const { columns, visibleState, pivotState, eventType } = params;
         const state: ColumnState[] = columns.map((column) => {
             const colId = column.getColId();
-            if (this.columnModel.isPivotMode()) {
+            if (this.colModel.isPivotMode()) {
                 const pivotStateForColumn = pivotState?.[colId];
                 return {
                     colId,

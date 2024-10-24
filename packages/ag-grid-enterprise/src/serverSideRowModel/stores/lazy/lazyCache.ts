@@ -39,7 +39,7 @@ export class LazyCache extends BeanStub {
     private rowNodeSorter?: RowNodeSorter;
     private sortController?: SortController;
     private lazyBlockLoadingService: LazyBlockLoadingService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
 
     public wireBeans(beans: BeanCollection) {
         this.rowRenderer = beans.rowRenderer;
@@ -50,7 +50,7 @@ export class LazyCache extends BeanStub {
         this.rowNodeSorter = beans.rowNodeSorter;
         this.sortController = beans.sortController;
         this.lazyBlockLoadingService = beans.lazyBlockLoadingService as LazyBlockLoadingService;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
     }
 
     /**
@@ -254,7 +254,7 @@ export class LazyCache extends BeanStub {
             const parentGroupData = this.store.getParentNode().groupData;
             if (parentGroupData) {
                 for (const key of Object.keys(parentGroupData)) {
-                    setRowNodeGroupValue(newNode, this.columnModel, key, parentGroupData[key]);
+                    setRowNodeGroupValue(newNode, this.colModel, key, parentGroupData[key]);
                 }
             }
         }
@@ -322,12 +322,7 @@ export class LazyCache extends BeanStub {
                 const parentGroupData = this.store.getParentNode().groupData;
                 if (parentGroupData) {
                     for (const key of Object.keys(parentGroupData)) {
-                        setRowNodeGroupValue(
-                            node,
-                            this.columnModel,
-                            key,
-                            isFirstChild ? parentGroupData[key] : undefined
-                        );
+                        setRowNodeGroupValue(node, this.colModel, key, isFirstChild ? parentGroupData[key] : undefined);
                     }
                 }
             }

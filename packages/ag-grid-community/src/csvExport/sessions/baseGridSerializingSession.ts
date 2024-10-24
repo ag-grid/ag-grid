@@ -20,7 +20,7 @@ import type {
 } from '../interfaces';
 
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
-    public columnModel: ColumnModel;
+    public colModel: ColumnModel;
     private columnNames: ColumnNameService;
     public funcColsService: FuncColsService;
     public valueSvc: ValueService;
@@ -34,7 +34,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     constructor(config: GridSerializingParams) {
         const {
-            columnModel,
+            colModel,
             funcColsService,
             columnNames,
             valueSvc,
@@ -45,7 +45,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             processRowGroupCallback,
         } = config;
 
-        this.columnModel = columnModel;
+        this.colModel = colModel;
         this.funcColsService = funcColsService;
         this.columnNames = columnNames;
         this.valueSvc = valueSvc;
@@ -124,7 +124,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             }
         }
 
-        const isGroupUseEntireRow = _isGroupUseEntireRow(this.gos, this.columnModel.isPivotMode());
+        const isGroupUseEntireRow = _isGroupUseEntireRow(this.gos, this.colModel.isPivotMode());
 
         return currentColumnIndex === 0 && isGroupUseEntireRow;
     }

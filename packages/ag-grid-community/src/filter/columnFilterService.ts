@@ -78,7 +78,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     beanName: BeanName = 'columnFilterService';
 
     private valueSvc: ValueService;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private rowModel: IRowModel;
     private userComponentFactory: UserComponentFactory;
     private rowRenderer: RowRenderer;
@@ -89,7 +89,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.valueSvc = beans.valueSvc;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.rowModel = beans.rowModel;
         this.userComponentFactory = beans.userComponentFactory;
         this.rowRenderer = beans.rowRenderer;
@@ -151,7 +151,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
 
             // at this point, processedFields contains data for which we don't have a filter working yet
             modelKeys.forEach((colId) => {
-                const column = this.columnModel.getColDefCol(colId) || this.columnModel.getCol(colId);
+                const column = this.colModel.getColDefCol(colId) || this.colModel.getCol(colId);
 
                 if (!column) {
                     _warn(62, { colId });
@@ -223,11 +223,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
 
         if (!excludeInitialState) {
             Object.entries(initialFilterModel).forEach(([colId, model]) => {
-                if (
-                    _exists(model) &&
-                    !allColumnFilters.has(colId) &&
-                    this.columnModel.getCol(colId)?.isFilterAllowed()
-                ) {
+                if (_exists(model) && !allColumnFilters.has(colId) && this.colModel.getCol(colId)?.isFilterAllowed()) {
                     result[colId] = model;
                 }
             });
@@ -298,7 +294,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                 return true;
             }
 
-            const isShowingPrimaryColumns = !this.columnModel.isPivotActive();
+            const isShowingPrimaryColumns = !this.colModel.isPivotActive();
             const isValueActive = column.isValueActive();
 
             // primary columns are only ever groupAgg filters if a) value is active and b) showing primary columns
@@ -307,7 +303,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             }
 
             // from here on we know: isPrimary=true, isValueActive=true, isShowingPrimaryColumns=true
-            if (this.columnModel.isPivotMode()) {
+            if (this.colModel.isPivotMode()) {
                 // primary column is pretending to be a pivot column, ie pivotMode=true, but we are
                 // still showing primary columns
                 return true;
@@ -454,7 +450,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
 
     private createGetValue(filterColumn: AgColumn): IFilterParams['getValue'] {
         return (rowNode, column) => {
-            const columnToUse = column ? this.columnModel.getCol(column) : filterColumn;
+            const columnToUse = column ? this.colModel.getCol(column) : filterColumn;
             return columnToUse ? this.filterValueService.getValue(columnToUse, rowNode) : undefined;
         };
     }
@@ -599,9 +595,9 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         this.allColumnFilters.forEach((wrapper, colId) => {
             let currentColumn: AgColumn | null;
             if (wrapper.column.isPrimary()) {
-                currentColumn = this.columnModel.getColDefCol(colId);
+                currentColumn = this.colModel.getColDefCol(colId);
             } else {
-                currentColumn = this.columnModel.getCol(colId);
+                currentColumn = this.colModel.getCol(colId);
             }
             // group columns can be recreated with the same colId
             if (currentColumn && currentColumn === wrapper.column) {
@@ -842,7 +838,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     }
 
     public hasFloatingFilters(): boolean {
-        const gridColumns = this.columnModel.getCols();
+        const gridColumns = this.colModel.getCols();
         return gridColumns.some((col) => col.getColDef().floatingFilter);
     }
 
@@ -857,7 +853,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     }
 
     private getFilterInstanceImpl(key: string | AgColumn): AgPromise<IFilter | null | undefined> {
-        const column = this.columnModel.getColDefCol(key);
+        const column = this.colModel.getColDefCol(key);
 
         if (!column) {
             return AgPromise.resolve(undefined);
@@ -891,7 +887,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             return promise;
         }
 
-        const column = this.columnModel.getColDefCol(key);
+        const column = this.colModel.getColDefCol(key);
         const filterWrapper = column ? this.getOrCreateFilterWrapper(column) : null;
         const convertPromise = <T>(promise: AgPromise<T>): Promise<T> => {
             return new Promise((resolve) => {
@@ -904,7 +900,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     }
 
     private getFilterWrapper(key: string | AgColumn): FilterWrapper | null {
-        const column = this.columnModel.getColDefCol(key);
+        const column = this.colModel.getColDefCol(key);
         return column ? this.cachedFilter(column) ?? null : null;
     }
 

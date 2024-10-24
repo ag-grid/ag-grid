@@ -191,7 +191,7 @@ export interface CoreBeanCollection {
     rowRenderer: RowRenderer;
     valueSvc: ValueService;
     eventSvc: EventService;
-    columnModel: ColumnModel;
+    colModel: ColumnModel;
     columnViewport: ColumnViewportService;
     columnNames: ColumnNameService;
     visibleCols: VisibleColsService;
@@ -373,7 +373,7 @@ export type BeanName =
     | 'columnGroupService'
     | 'columnHoverService'
     | 'columnMenuFactory'
-    | 'columnModel'
+    | 'colModel'
     | 'columnMove'
     | 'columnNames'
     | 'columnPositionService'

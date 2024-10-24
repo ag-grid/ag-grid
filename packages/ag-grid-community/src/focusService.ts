@@ -37,7 +37,7 @@ export class FocusService extends BeanStub implements NamedBean {
     beanName = 'focusService' as const;
 
     private eGridDiv: HTMLElement;
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private headerNavigation?: HeaderNavigationService;
     private rowRenderer: RowRenderer;
@@ -48,7 +48,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.eGridDiv = beans.eGridDiv;
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.headerNavigation = beans.headerNavigation;
         this.rowRenderer = beans.rowRenderer;
@@ -138,7 +138,7 @@ export class FocusService extends BeanStub implements NamedBean {
         }
 
         const col = this.focusedCellPosition.column;
-        const colFromColumnModel = this.columnModel.getCol(col.getId());
+        const colFromColumnModel = this.colModel.getCol(col.getId());
 
         if (col !== colFromColumnModel) {
             this.clearFocusedCell();
@@ -291,7 +291,7 @@ export class FocusService extends BeanStub implements NamedBean {
     public setFocusedCell(params: CellFocusedParams): void {
         const { column, rowIndex, rowPinned, forceBrowserFocus = false, preventScrollOnBrowserFocus = false } = params;
 
-        const gridColumn = this.columnModel.getCol(column!);
+        const gridColumn = this.colModel.getCol(column!);
 
         // if column doesn't exist, then blank the focused cell and return. this can happen when user sets new columns,
         // and the focused cell is in a column that no longer exists. after columns change, the grid refreshes and tries

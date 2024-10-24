@@ -5,11 +5,11 @@ import { PivotDropZonePanel } from './pivotDropZonePanel';
 import { RowGroupDropZonePanel } from './rowGroupDropZonePanel';
 
 export class AgGridHeaderDropZones extends Component {
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private funcColsService: FuncColsService;
 
     public wireBeans(beans: BeanCollection) {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.funcColsService = beans.funcColsService;
     }
 
@@ -95,7 +95,7 @@ export class AgGridHeaderDropZones extends Component {
         if (pivotPanelShow === 'always') {
             this.pivotComp.setDisplayed(true);
         } else if (pivotPanelShow === 'onlyWhenPivoting') {
-            const pivoting = this.columnModel.isPivotActive();
+            const pivoting = this.colModel.isPivotActive();
             this.pivotComp.setDisplayed(pivoting);
         } else {
             this.pivotComp.setDisplayed(false);

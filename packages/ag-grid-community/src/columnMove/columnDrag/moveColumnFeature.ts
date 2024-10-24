@@ -26,7 +26,7 @@ const SCROLL_ACCELERATION_RATE = 5;
 const SCROLL_TIME_INTERVAL = 100;
 
 export class MoveColumnFeature extends BeanStub implements DropListener {
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private columnMove: ColumnMoveService;
     private dragAndDropService: DragAndDropService;
@@ -34,7 +34,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private pinnedColumnService?: PinnedColumnService;
 
     public wireBeans(beans: BeanCollection) {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.columnMove = beans.columnMove!;
         this.dragAndDropService = beans.dragAndDropService!;
@@ -193,7 +193,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         }
 
         const allowedCols = columns.filter((c) => !c.getColDef().lockVisible);
-        this.columnModel.setColsVisible(allowedCols, visible, source);
+        this.colModel.setColsVisible(allowedCols, visible, source);
     }
 
     private finishColumnMoving(): void {
@@ -307,7 +307,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         fakeEvent: boolean;
     }): ColumnMoveParams {
         const { allMovingColumns, isFromHeader, xPosition, fromLeft, fromEnter, fakeEvent } = params;
-        const { pinned, gos, columnModel, columnMove, visibleCols } = this;
+        const { pinned, gos, colModel, columnMove, visibleCols } = this;
 
         return {
             allMovingColumns,
@@ -318,7 +318,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             fromEnter,
             fakeEvent,
             gos,
-            columnModel,
+            colModel,
             columnMove,
             visibleCols,
         };
@@ -357,9 +357,9 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     private highlightHoveredColumn(movingColumns: AgColumn[], mouseX: number) {
-        const { gos, columnModel } = this;
+        const { gos, colModel } = this;
         const isRtl = gos.get('enableRtl');
-        const consideredColumns = columnModel
+        const consideredColumns = colModel
             .getCols()
             .filter((col) => col.isVisible() && col.getPinned() === this.pinned);
 

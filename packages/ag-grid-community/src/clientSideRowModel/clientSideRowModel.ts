@@ -63,7 +63,7 @@ export interface RowNodeMap {
 export class ClientSideRowModel extends BeanStub implements IClientSideRowModel, NamedBean {
     beanName = 'rowModel' as const;
 
-    private columnModel: ColumnModel;
+    private colModel: ColumnModel;
     private selectionService?: ISelectionService;
     private valueCache?: ValueCache;
     private environment: Environment;
@@ -81,7 +81,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private filterAggregatesStage?: IRowNodeStage;
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnModel = beans.columnModel;
+        this.colModel = beans.colModel;
         this.selectionService = beans.selectionService;
         this.valueCache = beans.valueCache;
         this.environment = beans.environment;
@@ -672,7 +672,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private onValueChanged(): void {
-        if (this.columnModel.isPivotActive()) {
+        if (this.colModel.isPivotActive()) {
             this.refreshModel({ step: 'pivot' });
         } else {
             this.refreshModel({ step: 'aggregate' });
@@ -731,7 +731,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         paramsOrStep: RefreshModelParams | ClientSideRowModelStage | undefined,
         changedPath?: ChangedPath | undefined
     ): void {
-        if (!this.hasStarted || this.isRefreshingModel || this.columnModel.changeEventsDispatching || !this.rootNode) {
+        if (!this.hasStarted || this.isRefreshingModel || this.colModel.changeEventsDispatching || !this.rootNode) {
             return;
         }
 
@@ -815,7 +815,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     public isEmpty(): boolean {
-        return !this.rootNode?.allLeafChildren?.length || !this.columnModel?.ready;
+        return !this.rootNode?.allLeafChildren?.length || !this.colModel?.ready;
     }
 
     public isRowsToRender(): boolean {
