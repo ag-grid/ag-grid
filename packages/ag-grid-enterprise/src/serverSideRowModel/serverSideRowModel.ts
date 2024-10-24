@@ -210,9 +210,9 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
         // check if anything pertaining to fetching data has changed, and if it has, reset, but if
         // it has not, don't reset
-        const rowGroupColumnVos = this.columnsToValueObjects(this.rowGroupColsService?.columns ?? []);
-        const valueColumnVos = this.columnsToValueObjects(this.valueColsService?.columns ?? []);
-        const pivotColumnVos = this.columnsToValueObjects(this.pivotColsService?.columns ?? []);
+        const rowGroupColumnVos = this.columnsToValueObjects(this.rowGroupColsService?.columns);
+        const valueColumnVos = this.columnsToValueObjects(this.valueColsService?.columns);
+        const pivotColumnVos = this.columnsToValueObjects(this.pivotColsService?.columns);
 
         // compares two sets of columns, ensuring no columns have been added or removed (unless specified via allowRemovedColumns)
         // if the columns are found, also ensures the field and aggFunc properties have not been changed.
@@ -363,7 +363,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.dispatchModelUpdated(true);
     }
 
-    public columnsToValueObjects(columns: AgColumn[]): ColumnVO[] {
+    public columnsToValueObjects(columns: AgColumn[] = []): ColumnVO[] {
         return columns.map(
             (col) =>
                 ({
