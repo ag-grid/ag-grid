@@ -785,7 +785,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
     private focusAdvancedFilter(position: HeaderPosition | null): boolean {
         this.advancedFilterFocusColumn = position?.column as AgColumn | undefined;
-        return this.beans.advancedFilterService?.getCtrl().focusHeaderComp() ?? false;
+        return this.beans.advancedFilter?.getCtrl().focusHeaderComp() ?? false;
     }
 
     public focusNextFromAdvancedFilter(backwards?: boolean, forceFirstColumn?: boolean): boolean {

@@ -276,7 +276,7 @@ export interface CoreBeanCollection {
     sideBar?: ISideBarService;
     ssrmTransactionManager?: IServerSideTransactionManager;
     aggFuncSvc?: IAggFuncService;
-    advancedFilterService: IAdvancedFilterService;
+    advancedFilter: IAdvancedFilterService;
     filterStage?: IRowNodeStage;
     sortStage?: IRowNodeStage;
     flattenStage?: IRowNodeStage;
@@ -332,7 +332,7 @@ export class Context extends GenericContext<BeanName, BeanCollection> {
 
 export type BeanName =
     | 'advancedFilterExpressionService'
-    | 'advancedFilterService'
+    | 'advancedFilter'
     | 'advancedSettingsMenuFactory'
     | 'aggFuncSvc'
     | 'agComponentUtils'

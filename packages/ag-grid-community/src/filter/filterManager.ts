@@ -26,14 +26,14 @@ export class FilterManager extends BeanStub implements NamedBean {
     private colModel: ColumnModel;
     private dataTypeSvc?: DataTypeService;
     private quickFilter?: QuickFilterService;
-    private advancedFilterService: IAdvancedFilterService;
+    private advancedFilter: IAdvancedFilterService;
     private colFilter?: ColumnFilterService;
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
         this.dataTypeSvc = beans.dataTypeSvc;
         this.quickFilter = beans.quickFilter;
-        this.advancedFilterService = beans.advancedFilterService;
+        this.advancedFilter = beans.advancedFilter;
         this.colFilter = beans.colFilter;
     }
 
@@ -127,7 +127,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     }
 
     private isAdvancedFilterPresent(): boolean {
-        return this.isAdvancedFilterEnabled() && this.advancedFilterService.isFilterPresent();
+        return this.isAdvancedFilterEnabled() && this.advancedFilter.isFilterPresent();
     }
 
     private onAdvancedFilterEnabledChanged(enabled: boolean): void {
@@ -136,19 +136,19 @@ export class FilterManager extends BeanStub implements NamedBean {
                 this.onFilterChanged({ source: 'advancedFilter' });
             }
         } else {
-            if (this.advancedFilterService?.isFilterPresent()) {
-                this.advancedFilterService.setModel(null);
+            if (this.advancedFilter?.isFilterPresent()) {
+                this.advancedFilter.setModel(null);
                 this.onFilterChanged({ source: 'advancedFilter' });
             }
         }
     }
 
     public isAdvancedFilterEnabled(): boolean {
-        return !!this.advancedFilterService?.isEnabled();
+        return !!this.advancedFilter?.isEnabled();
     }
 
     public isAdvancedFilterHeaderActive(): boolean {
-        return this.isAdvancedFilterEnabled() && this.advancedFilterService.isHeaderActive();
+        return this.isAdvancedFilterEnabled() && this.advancedFilter.isHeaderActive();
     }
 
     public isAnyFilterPresent(): boolean {
@@ -267,7 +267,7 @@ export class FilterManager extends BeanStub implements NamedBean {
             return false;
         }
 
-        if (this.isAdvancedFilterPresent() && !this.advancedFilterService.doesFilterPass(params.rowNode)) {
+        if (this.isAdvancedFilterPresent() && !this.advancedFilter.doesFilterPass(params.rowNode)) {
             return false;
         }
 
@@ -320,7 +320,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     }
 
     public getAdvancedFilterModel(): AdvancedFilterModel | null {
-        return this.isAdvancedFilterEnabled() ? this.advancedFilterService.getModel() : null;
+        return this.isAdvancedFilterEnabled() ? this.advancedFilter.getModel() : null;
     }
 
     public setAdvancedFilterModel(expression: AdvancedFilterModel | null | undefined): void {
@@ -331,7 +331,7 @@ export class FilterManager extends BeanStub implements NamedBean {
             this.advancedFilterModelUpdateQueue.push(expression);
             return;
         }
-        this.advancedFilterService.setModel(expression ?? null);
+        this.advancedFilter.setModel(expression ?? null);
         this.onFilterChanged({ source: 'advancedFilter' });
     }
 
@@ -339,14 +339,14 @@ export class FilterManager extends BeanStub implements NamedBean {
         if (!this.isAdvancedFilterEnabled()) {
             return;
         }
-        this.advancedFilterService.getCtrl().toggleFilterBuilder({ source, force: show });
+        this.advancedFilter.getCtrl().toggleFilterBuilder({ source, force: show });
     }
 
     private updateAdvancedFilterColumns(): void {
         if (!this.isAdvancedFilterEnabled()) {
             return;
         }
-        if (this.advancedFilterService.updateValidity()) {
+        if (this.advancedFilter.updateValidity()) {
             this.onFilterChanged({ source: 'advancedFilter' });
         }
     }
@@ -374,7 +374,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     }
 
     public setupAdvancedFilterHeaderComp(eCompToInsertBefore: HTMLElement): void {
-        this.advancedFilterService?.getCtrl().setupHeaderComp(eCompToInsertBefore);
+        this.advancedFilter?.getCtrl().setupHeaderComp(eCompToInsertBefore);
     }
 
     public getHeaderRowCount(): number {
@@ -382,7 +382,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     }
 
     public getHeaderHeight(): number {
-        return this.isAdvancedFilterHeaderActive() ? this.advancedFilterService.getCtrl().getHeaderHeight() : 0;
+        return this.isAdvancedFilterHeaderActive() ? this.advancedFilter.getCtrl().getHeaderHeight() : 0;
     }
 
     private processFilterModelUpdateQueue(): void {

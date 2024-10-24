@@ -23,7 +23,7 @@ import type {
 } from './filterExpressionUtils';
 
 export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvancedFilterService {
-    beanName = 'advancedFilterService' as const;
+    beanName = 'advancedFilter' as const;
 
     private valueSvc: ValueService;
     private colModel: ColumnModel;

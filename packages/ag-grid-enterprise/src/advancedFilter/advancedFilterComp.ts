@@ -16,14 +16,14 @@ import type { FilterExpressionParser } from './filterExpressionParser';
 import type { AutocompleteUpdate } from './filterExpressionUtils';
 
 export class AdvancedFilterComp extends Component {
-    private advancedFilterService: AdvancedFilterService;
+    private advancedFilter: AdvancedFilterService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
     private filterManager?: FilterManager;
     private registry: Registry;
 
     public wireBeans(beans: BeanCollection): void {
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
-        this.advancedFilterService = beans.advancedFilterService as AdvancedFilterService;
+        this.advancedFilter = beans.advancedFilter as AdvancedFilterService;
         this.filterManager = beans.filterManager;
         this.registry = beans.registry;
     }
@@ -87,7 +87,7 @@ export class AdvancedFilterComp extends Component {
     }
 
     public refresh(): void {
-        const expression = this.advancedFilterService.getExpressionDisplayValue();
+        const expression = this.advancedFilter.getExpressionDisplayValue();
         this.eAutocomplete.setValue({
             value: expression ?? '',
             position: expression?.length,
@@ -115,15 +115,15 @@ export class AdvancedFilterComp extends Component {
             this.advancedFilterExpressionService.translate('advancedFilterBuilder');
         this.activateTabIndex([this.eBuilderFilterButton]);
         this.addManagedElementListeners(this.eBuilderFilterButton, { click: () => this.openBuilder() });
-        this.addManagedListeners(this.advancedFilterService.getCtrl(), {
+        this.addManagedListeners(this.advancedFilter.getCtrl(), {
             advancedFilterBuilderClosed: () => this.closeBuilder(),
         });
     }
 
     private onValueChanged(value: string | null): void {
         value = _makeNull(value);
-        this.advancedFilterService.setExpressionDisplayValue(value);
-        this.expressionParser = this.advancedFilterService.createExpressionParser(value);
+        this.advancedFilter.setExpressionDisplayValue(value);
+        this.expressionParser = this.advancedFilter.createExpressionParser(value);
         const updatedExpression = this.expressionParser?.parseExpression();
         if (updatedExpression && updatedExpression !== value) {
             this.eAutocomplete.setValue({ value: updatedExpression, silent: true, restoreFocus: true });
@@ -135,7 +135,7 @@ export class AdvancedFilterComp extends Component {
             return;
         }
         _setDisabled(this.eApplyFilterButton, true);
-        this.advancedFilterService.applyExpression();
+        this.advancedFilter.applyExpression();
         this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
     }
 
@@ -154,7 +154,7 @@ export class AdvancedFilterComp extends Component {
     }
 
     private onValidChanged(isValid: boolean, validationMessage: string | null): void {
-        this.isApplyDisabled = !isValid || this.advancedFilterService.isCurrentExpressionApplied();
+        this.isApplyDisabled = !isValid || this.advancedFilter.isCurrentExpressionApplied();
         _setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
         this.tooltipFeature?.setTooltipAndRefresh(validationMessage);
     }
@@ -169,7 +169,7 @@ export class AdvancedFilterComp extends Component {
         this.advancedFilterExpressionService.updateAutocompleteCache(updateEntry, type);
         return (
             this.expressionParser?.updateExpression(position, updateEntry, type) ??
-            this.advancedFilterService.getDefaultExpression(updateEntry)
+            this.advancedFilter.getDefaultExpression(updateEntry)
         );
     }
 
