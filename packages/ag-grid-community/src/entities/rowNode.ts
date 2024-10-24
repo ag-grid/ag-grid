@@ -454,7 +454,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     public setExpanded(expanded: boolean, e?: MouseEvent | KeyboardEvent, forceSync?: boolean): void {
-        this.beans.expansionService?.setExpanded(this, expanded, e, forceSync);
+        this.beans.expansionSvc?.setExpanded(this, expanded, e, forceSync);
     }
 
     /**
@@ -557,7 +557,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
      * - `false` if the node cannot be expanded
      */
     public isExpandable(): boolean {
-        return this.beans.expansionService?.isExpandable(this) ?? false;
+        return this.beans.expansionSvc?.isExpandable(this) ?? false;
     }
 
     /** Returns:

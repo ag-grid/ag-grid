@@ -28,7 +28,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private chartMenuItemMapper: ChartMenuItemMapper;
     private sortSvc?: SortService;
     private colAutosize?: ColumnAutosizeService;
-    private expansionService?: IExpansionService;
+    private expansionSvc?: IExpansionService;
     private clipboardSvc?: IClipboardService;
     private aggFuncService?: IAggFuncService;
     private columnChooserFactory?: ColumnChooserFactory;
@@ -40,7 +40,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         this.chartMenuItemMapper = beans.chartMenuItemMapper as ChartMenuItemMapper;
         this.sortSvc = beans.sortSvc;
         this.colAutosize = beans.colAutosize;
-        this.expansionService = beans.expansionService;
+        this.expansionSvc = beans.expansionSvc;
         this.clipboardSvc = beans.clipboardSvc;
         this.aggFuncService = beans.aggFuncService;
         this.columnChooserFactory = beans.columnChooserFactory as ColumnChooserFactory;
@@ -228,12 +228,12 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             case 'expandAll':
                 return {
                     name: localeTextFunc('expandAll', 'Expand All Row Groups'),
-                    action: () => this.expansionService?.expandAll(true),
+                    action: () => this.expansionSvc?.expandAll(true),
                 };
             case 'contractAll':
                 return {
                     name: localeTextFunc('collapseAll', 'Collapse All Row Groups'),
-                    action: () => this.expansionService?.expandAll(false),
+                    action: () => this.expansionSvc?.expandAll(false),
                 };
             case 'copy':
                 if (this.gos.assertModuleRegistered('ClipboardCoreModule', 5)) {

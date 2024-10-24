@@ -679,7 +679,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             rowSelected: () => this.onRowSelected(),
             rowIndexChanged: this.onRowIndexChanged.bind(this),
             topChanged: this.onTopChanged.bind(this),
-            ...(this.beans.expansionService?.getRowExpandedListeners(this) ?? {}),
+            ...(this.beans.expansionSvc?.getRowExpandedListeners(this) ?? {}),
         });
 
         if (this.rowNode.detail) {
@@ -1279,7 +1279,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             classes.push('ag-full-width-row');
         }
 
-        beans.expansionService?.addExpandedCss(classes, rowNode);
+        beans.expansionSvc?.addExpandedCss(classes, rowNode);
 
         if (rowNode.dragging) {
             classes.push('ag-row-dragging');

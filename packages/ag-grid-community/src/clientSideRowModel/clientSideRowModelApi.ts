@@ -7,7 +7,7 @@ import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import { _warn } from '../validation/logging';
 
 export function onGroupExpandedOrCollapsed(beans: BeanCollection): void {
-    beans.expansionService?.onGroupExpandedOrCollapsed();
+    beans.expansionSvc?.onGroupExpandedOrCollapsed();
 }
 
 export function refreshClientSideRowModel(beans: BeanCollection, step?: ClientSideRowModelStep): void {

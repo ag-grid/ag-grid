@@ -272,7 +272,7 @@ export interface CoreBeanCollection {
     apiFunctionSvc: ApiFunctionService;
     detailGridApiSvc?: IDetailGridApiService;
     gridDestroySvc: GridDestroyService;
-    expansionService?: IExpansionService;
+    expansionSvc?: IExpansionService;
     sideBarService?: ISideBarService;
     ssrmTransactionManager?: IServerSideTransactionManager;
     aggFuncService?: IAggFuncService;
@@ -400,7 +400,7 @@ export type BeanName =
     | 'eventSvc'
     | 'eGridDiv'
     | 'enterpriseChartProxyFactory'
-    | 'expansionService'
+    | 'expansionSvc'
     | 'expressionSvc'
     | 'filterAggregatesStage'
     | 'filterManager'

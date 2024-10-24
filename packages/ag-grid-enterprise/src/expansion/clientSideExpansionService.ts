@@ -12,7 +12,7 @@ import { _exists } from 'ag-grid-community';
 import { BaseExpansionService } from './baseExpansionService';
 
 export class ClientSideExpansionService extends BaseExpansionService implements NamedBean, IExpansionService {
-    beanName = 'expansionService' as const;
+    beanName = 'expansionSvc' as const;
 
     private rowModel: IClientSideRowModel;
     private animationFrameSvc?: AnimationFrameService;

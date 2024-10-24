@@ -58,7 +58,7 @@ export class StateService extends BeanStub implements NamedBean {
     private visibleCols: VisibleColsService;
     private pagination?: PaginationService;
     private selectionSvc?: ISelectionService;
-    private expansionService?: IExpansionService;
+    private expansionSvc?: IExpansionService;
     private colAnimation?: ColumnAnimationService;
     private colState: ColumnStateService;
     private sideBarService?: ISideBarService;
@@ -76,7 +76,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.visibleCols = beans.visibleCols;
         this.pagination = beans.pagination;
         this.selectionSvc = beans.selectionSvc;
-        this.expansionService = beans.expansionService;
+        this.expansionSvc = beans.expansionSvc;
         this.colAnimation = beans.colAnimation;
         this.colState = beans.colState;
         this.sideBarService = beans.sideBarService;
@@ -753,7 +753,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getRowGroupExpansionState(): RowGroupExpansionState | undefined {
-        if (!this.expansionService) {
+        if (!this.expansionSvc) {
             return undefined;
         }
 
@@ -771,7 +771,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setRowGroupExpansionState(rowGroupExpansionState: RowGroupExpansionState): void {
-        this.expansionService?.expandRows(rowGroupExpansionState.expandedRowGroupIds);
+        this.expansionSvc?.expandRows(rowGroupExpansionState.expandedRowGroupIds);
     }
 
     private updateColumnState(features: (keyof GridState)[]): void {
