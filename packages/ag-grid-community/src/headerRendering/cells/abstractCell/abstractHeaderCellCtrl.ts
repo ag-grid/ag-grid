@@ -44,7 +44,7 @@ export abstract class AbstractHeaderCellCtrl<
     public readonly instanceId: HeaderCellCtrlInstanceId;
 
     private pinnedColumnService?: PinnedColumnService;
-    protected focusService: FocusService;
+    protected focusSvc: FocusService;
     protected userComponentFactory: UserComponentFactory;
     protected ctrlsService: CtrlsService;
     protected dragAndDropService?: DragAndDropService;
@@ -52,7 +52,7 @@ export abstract class AbstractHeaderCellCtrl<
 
     public wireBeans(beans: BeanCollection) {
         this.pinnedColumnService = beans.pinnedColumnService;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.userComponentFactory = beans.userComponentFactory;
         this.ctrlsService = beans.ctrlsService;
         this.dragAndDropService = beans.dragAndDropService;
@@ -96,7 +96,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     protected shouldStopEventPropagation(event: KeyboardEvent): boolean {
-        const { headerRowIndex, column } = this.focusService.getFocusedHeader()!;
+        const { headerRowIndex, column } = this.focusSvc.getFocusedHeader()!;
 
         const colDef = column.getDefinition();
         const colDefFunc = colDef && colDef.suppressHeaderKeyboardEvent;
@@ -254,7 +254,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     private refreshTabIndex(): void {
-        const suppressHeaderFocus = this.focusService.isHeaderFocusSuppressed();
+        const suppressHeaderFocus = this.focusSvc.isHeaderFocusSuppressed();
         if (this.eGui) {
             _addOrRemoveAttribute(this.eGui, 'tabindex', suppressHeaderFocus ? null : '-1');
         }

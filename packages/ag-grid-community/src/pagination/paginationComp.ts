@@ -20,13 +20,13 @@ import type { PaginationService } from './paginationService';
 export class PaginationComp extends TabGuardComp implements FocusableContainer {
     private rowModel: IRowModel;
     private paginationService: PaginationService;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private ariaAnnouncementService: AriaAnnouncementService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
         this.paginationService = beans.paginationService!;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.ariaAnnouncementService = beans.ariaAnnouncementService;
     }
 
@@ -84,7 +84,7 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
                 if (this.allowFocusInnerElement) {
                     this.tabGuardFeature.getTabGuardCtrl().focusInnerElement(fromBottom);
                 } else {
-                    this.focusService.focusGridInnerElement(fromBottom);
+                    this.focusSvc.focusGridInnerElement(fromBottom);
                 }
             },
             forceFocusOutWhenTabGuardsAreEmpty: true,
@@ -139,7 +139,7 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
                 });
             });
 
-            _addFocusableContainerListener(this, this.getGui(), this.focusService);
+            _addFocusableContainerListener(this, this.getGui(), this.focusSvc);
 
             this.areListenersSetup = true;
         }

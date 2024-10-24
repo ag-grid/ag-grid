@@ -29,11 +29,11 @@ export interface OptionalGridComponents {
 }
 
 export class GridCtrl extends BeanStub {
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private visibleCols: VisibleColsService;
 
     public wireBeans(beans: BeanCollection) {
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.visibleCols = beans.visibleCols;
     }
 
@@ -67,7 +67,7 @@ export class GridCtrl extends BeanStub {
     }
 
     public isDetailGrid(): boolean {
-        const el = this.focusService.findTabbableParent(this.getGui());
+        const el = this.focusSvc.findTabbableParent(this.getGui());
 
         return el?.getAttribute('row-id')?.startsWith('detail') || false;
     }
@@ -119,7 +119,7 @@ export class GridCtrl extends BeanStub {
             if (indexWithFocus > 0) {
                 const allColumns = this.visibleCols.allCols;
                 const lastColumn = _last(allColumns);
-                if (this.focusService.focusGridView(lastColumn, true)) {
+                if (this.focusSvc.focusGridView(lastColumn, true)) {
                     return true;
                 }
             }
@@ -144,25 +144,25 @@ export class GridCtrl extends BeanStub {
             }
 
             const lastColumn = _last(allColumns);
-            if (this.focusService.focusGridView(lastColumn, true)) {
+            if (this.focusSvc.focusGridView(lastColumn, true)) {
                 return true;
             }
         }
 
-        if (this.gos.get('headerHeight') === 0 || this.focusService.isHeaderFocusSuppressed()) {
-            if (this.focusService.focusGridView(allColumns[0])) {
+        if (this.gos.get('headerHeight') === 0 || this.focusSvc.isHeaderFocusSuppressed()) {
+            if (this.focusSvc.focusGridView(allColumns[0])) {
                 return true;
             }
 
             for (let i = 1; i < focusableContainers.length; i++) {
-                if (this.focusService.focusInto(focusableContainers[i].getGui())) {
+                if (this.focusSvc.focusInto(focusableContainers[i].getGui())) {
                     return true;
                 }
             }
             return false;
         }
 
-        return this.focusService.focusFirstHeader();
+        return this.focusSvc.focusFirstHeader();
     }
 
     public forceFocusOutOfContainer(up = false): void {
@@ -210,7 +210,7 @@ export class GridCtrl extends BeanStub {
 
     private focusContainer(comp: FocusableContainer, up?: boolean): boolean {
         comp.setAllowFocus?.(true);
-        const result = this.focusService.focusInto(comp.getGui(), up);
+        const result = this.focusSvc.focusInto(comp.getGui(), up);
         comp.setAllowFocus?.(false);
         return result;
     }

@@ -31,11 +31,11 @@ const MAX_EMPTY_BLOCKS_TO_KEEP = 2;
 
 export class InfiniteCache extends BeanStub {
     protected rowRenderer: RowRenderer;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowRenderer = beans.rowRenderer;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
     }
 
     private readonly params: InfiniteCacheParams;
@@ -167,7 +167,7 @@ export class InfiniteCache extends BeanStub {
     }
 
     private isBlockFocused(block: InfiniteBlock): boolean {
-        const focusedCell = this.focusService.getFocusCellToUseAfterRefresh();
+        const focusedCell = this.focusSvc.getFocusCellToUseAfterRefresh();
         if (!focusedCell) {
             return false;
         }

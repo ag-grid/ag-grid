@@ -53,7 +53,7 @@ export class StateService extends BeanStub implements NamedBean {
     private filterManager?: FilterManager;
     private ctrlsService: CtrlsService;
     private pivotResultColsService?: IPivotResultColsService;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private paginationService?: PaginationService;
@@ -71,7 +71,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.filterManager = beans.filterManager;
         this.ctrlsService = beans.ctrlsService;
         this.pivotResultColsService = beans.pivotResultColsService;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.paginationService = beans.paginationService;
@@ -676,7 +676,7 @@ export class StateService extends BeanStub implements NamedBean {
             // can't restore, so don't provide
             return undefined;
         }
-        const focusedCell = this.focusService.getFocusedCell();
+        const focusedCell = this.focusSvc.getFocusedCell();
         if (focusedCell) {
             const { column, rowIndex, rowPinned } = focusedCell;
             return {
@@ -693,7 +693,7 @@ export class StateService extends BeanStub implements NamedBean {
             return;
         }
         const { colId, rowIndex, rowPinned } = focusedCellState;
-        this.focusService.setFocusedCell({
+        this.focusSvc.setFocusedCell({
             column: this.colModel.getCol(colId),
             rowIndex,
             rowPinned,

@@ -17,12 +17,12 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
     beanName = 'filterMenuFactory' as const;
 
     private popupService?: PopupService;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.popupService = beans.popupService;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.ctrlsService = beans.ctrlsService;
     }
 
@@ -138,7 +138,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             }
 
             if (isKeyboardEvent && eventSource && _isVisible(eventSource)) {
-                const focusableEl = this.focusService.findTabbableParent(eventSource);
+                const focusableEl = this.focusSvc.findTabbableParent(eventSource);
 
                 if (focusableEl) {
                     focusableEl.focus();
@@ -187,14 +187,14 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         if (
             e.key !== KeyCode.TAB ||
             e.defaultPrevented ||
-            this.focusService.findNextFocusableElement(menu, false, e.shiftKey)
+            this.focusSvc.findNextFocusableElement(menu, false, e.shiftKey)
         ) {
             return;
         }
 
         e.preventDefault();
 
-        this.focusService.focusInto(menu, e.shiftKey);
+        this.focusSvc.focusInto(menu, e.shiftKey);
     }
 
     private dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: AgColumn): void {

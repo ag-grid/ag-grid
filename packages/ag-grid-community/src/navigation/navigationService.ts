@@ -42,7 +42,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     beanName = 'navigation' as const;
 
     private pageBoundsService: PageBoundsService;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private visibleCols: VisibleColsService;
     private rowModel: IRowModel;
     private ctrlsService: CtrlsService;
@@ -53,7 +53,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.pageBoundsService = beans.pageBoundsService;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.visibleCols = beans.visibleCols;
         this.rowModel = beans.rowModel;
         this.ctrlsService = beans.ctrlsService;
@@ -129,7 +129,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     private handlePageUpDown(key: string, currentCell: CellPosition | null, fromFullWidth: boolean): boolean {
         if (fromFullWidth) {
-            currentCell = this.focusService.getFocusedCell();
+            currentCell = this.focusSvc.getFocusedCell();
         }
 
         if (!currentCell) {
@@ -166,7 +166,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
         // if we don't do this, the range will be left on the last cell, which will leave the last focused cell
         // highlighted.
-        this.focusService.setFocusedCell({
+        this.focusSvc.setFocusedCell({
             rowIndex: focusIndex,
             column: focusColumn,
             rowPinned: null,
@@ -392,7 +392,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                 keyboardEvent.preventDefault();
             } else if (movedToNextCell === null) {
                 // want to let browser handle, however some of the containers prevent browser focus
-                this.focusService.allowFocusForNextGridCoreContainer(backwards);
+                this.focusSvc.allowFocusForNextGridCoreContainer(backwards);
             }
             return;
         }
@@ -403,11 +403,11 @@ export class NavigationService extends BeanStub implements NamedBean {
             const { rowIndex, rowPinned } = previous.getRowPosition();
             const firstRow = rowPinned ? rowIndex === 0 : rowIndex === this.pageBoundsService.getFirstRow();
             if (firstRow) {
-                if (this.gos.get('headerHeight') === 0 || this.focusService.isHeaderFocusSuppressed()) {
-                    this.focusService.focusNextGridCoreContainer(true, true);
+                if (this.gos.get('headerHeight') === 0 || this.focusSvc.isHeaderFocusSuppressed()) {
+                    this.focusSvc.focusNextGridCoreContainer(true, true);
                 } else {
                     keyboardEvent.preventDefault();
-                    this.focusService.focusPreviousFromFirstCell(keyboardEvent);
+                    this.focusSvc.focusPreviousFromFirstCell(keyboardEvent);
                 }
             }
         } else {
@@ -419,8 +419,8 @@ export class NavigationService extends BeanStub implements NamedBean {
             }
 
             if (
-                (!backwards && this.focusService.focusOverlay(false)) ||
-                this.focusService.focusNextGridCoreContainer(backwards)
+                (!backwards && this.focusSvc.focusOverlay(false)) ||
+                this.focusSvc.focusNextGridCoreContainer(backwards)
             ) {
                 keyboardEvent.preventDefault();
             }
@@ -429,7 +429,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     // comes from API
     public tabToNextCell(backwards: boolean, event?: KeyboardEvent): boolean {
-        const focusedCell = this.focusService.getFocusedCell();
+        const focusedCell = this.focusSvc.getFocusedCell();
         // if no focus, then cannot navigate
         if (!focusedCell) {
             return false;
@@ -483,7 +483,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
 
         // if a cell wasn't found, it's possible that focus was moved to the header
-        return res || !!this.focusService.getFocusedHeader();
+        return res || !!this.focusSvc.getFocusedHeader();
     }
 
     // returns null if no navigation should be performed
@@ -649,9 +649,9 @@ export class NavigationService extends BeanStub implements NamedBean {
             }
 
             if (nextPosition.rowIndex < 0) {
-                const headerLen = this.focusService.getHeaderRowCount();
+                const headerLen = this.focusSvc.getHeaderRowCount();
 
-                this.focusService.focusHeaderPosition({
+                this.focusSvc.focusHeaderPosition({
                     headerPosition: {
                         headerRowIndex: headerLen + nextPosition.rowIndex,
                         column: nextPosition.column,
@@ -794,9 +794,9 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
 
         if (nextCell.rowIndex < 0) {
-            const headerLen = this.focusService.getHeaderRowCount();
+            const headerLen = this.focusSvc.getHeaderRowCount();
 
-            this.focusService.focusHeaderPosition({
+            this.focusSvc.focusHeaderPosition({
                 headerPosition: { headerRowIndex: headerLen + nextCell.rowIndex, column: currentCell.column },
                 event: event || undefined,
                 fromCell: true,
@@ -844,7 +844,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             return false;
         }
 
-        const currentCellFocused = this.focusService.getFocusedCell();
+        const currentCellFocused = this.focusSvc.getFocusedCell();
 
         const cellPosition: CellPosition = {
             rowIndex: position.rowIndex,
@@ -872,7 +872,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     private focusPosition(cellPosition: CellPosition) {
-        this.focusService.setFocusedCell({
+        this.focusSvc.setFocusedCell({
             rowIndex: cellPosition.rowIndex,
             column: cellPosition.column,
             rowPinned: cellPosition.rowPinned,

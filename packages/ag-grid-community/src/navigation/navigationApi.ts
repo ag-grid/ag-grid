@@ -4,11 +4,11 @@ import type { Column, ColumnGroup } from '../interfaces/iColumn';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 
 export function getFocusedCell(beans: BeanCollection): CellPosition | null {
-    return beans.focusService.getFocusedCell();
+    return beans.focusSvc.getFocusedCell();
 }
 
 export function clearFocusedCell(beans: BeanCollection): void {
-    return beans.focusService.clearFocusedCell();
+    return beans.focusSvc.clearFocusedCell();
 }
 
 export function setFocusedCell(
@@ -17,7 +17,7 @@ export function setFocusedCell(
     colKey: string | Column,
     rowPinned?: RowPinnedType
 ) {
-    beans.focusService.setFocusedCell({ rowIndex, column: colKey, rowPinned, forceBrowserFocus: true });
+    beans.focusSvc.setFocusedCell({ rowIndex, column: colKey, rowPinned, forceBrowserFocus: true });
 }
 
 export function tabToNextCell(beans: BeanCollection, event?: KeyboardEvent): boolean {
@@ -39,5 +39,5 @@ export function setFocusedHeader(
         return;
     }
 
-    beans.focusService.focusHeaderPosition({ headerPosition });
+    beans.focusSvc.focusHeaderPosition({ headerPosition });
 }

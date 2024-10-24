@@ -59,7 +59,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private visibleCols: VisibleColsService;
     private pinnedRowModel?: PinnedRowModel;
     private rowModel: IRowModel;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private rowContainerHeightService: RowContainerHeightService;
     private ctrlsService: CtrlsService;
     private environment: Environment;
@@ -73,7 +73,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.visibleCols = beans.visibleCols;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.rowModel = beans.rowModel;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.rowContainerHeightService = beans.rowContainerHeightService;
         this.ctrlsService = beans.ctrlsService;
         this.environment = beans.environment;
@@ -546,7 +546,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private getCellToRestoreFocusToAfterRefresh(params?: RefreshViewParams): CellPosition | null {
-        const focusedCell = params?.suppressKeepFocus ? null : this.focusService.getFocusCellToUseAfterRefresh();
+        const focusedCell = params?.suppressKeepFocus ? null : this.focusSvc.getFocusCellToUseAfterRefresh();
 
         if (focusedCell == null) {
             return null;
@@ -688,7 +688,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return;
         }
 
-        this.focusService.restoreFocusedCell(cellPosition, () => {
+        this.focusSvc.restoreFocusedCell(cellPosition, () => {
             // we don't wish to dispatch an event as the rowRenderer is not capable of changing the selected cell,
             // so we mock a change event for the full width rows and cells to ensure they update to the newly selected state
 
@@ -1380,7 +1380,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const KEEP_ROW: boolean = true;
         const rowNode = rowComp.getRowNode();
 
-        const rowHasFocus = this.focusService.isRowNodeFocused(rowNode);
+        const rowHasFocus = this.focusSvc.isRowNodeFocused(rowNode);
         const rowIsEditing = rowComp.isEditing();
         const rowIsDetail = rowNode.detail;
 

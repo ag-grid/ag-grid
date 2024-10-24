@@ -28,7 +28,7 @@ let eGui: jest.Mocked<HTMLElement>;
 let filterManager: jest.Mocked<FilterManager>;
 let tabGuardCtrl: jest.Mocked<TabGuardCtrl>;
 let userComponentFactory: jest.Mocked<UserComponentFactory>;
-let focusService: jest.Mocked<FocusService>;
+let focusSvc: jest.Mocked<FocusService>;
 
 let colDef: jest.Mocked<ColDef>;
 let column: jest.Mocked<Column>;
@@ -77,7 +77,7 @@ function createFilter(filterParams: any = {}): MultiFilter {
     (multiFilter as any).eFocusableElement = eGui;
     (multiFilter as any).filterManager = filterManager;
     (multiFilter as any).userComponentFactory = userComponentFactory;
-    (multiFilter as any).focusService = focusService;
+    (multiFilter as any).focusSvc = focusSvc;
     (multiFilter as any).context = context;
     (multiFilter as any).tabGuardCtrl = tabGuardCtrl;
 
@@ -91,7 +91,7 @@ beforeEach(() => {
     filterManager = mock<FilterManager>('createFilterParams');
     tabGuardCtrl = mock<TabGuardCtrl>('forceFocusOutOfContainer');
     userComponentFactory = mock<UserComponentFactory>('newFilterComponent');
-    focusService = mock<FocusService>('findFocusableElements');
+    focusSvc = mock<FocusService>('findFocusableElements');
     context = mock<Context>('createBean', 'destroyBean');
 
     colDef = mock<ColDef>();
@@ -388,7 +388,7 @@ describe('afterGuiAttached', () => {
         filter2.getGui.mockReturnValue(filter2Gui);
 
         context.createBean.mockImplementation(bean => bean);
-        focusService.findFocusableElements.mockReturnValue([]);
+        focusSvc.findFocusableElements.mockReturnValue([]);
     });
 
     it('passes through to filter if it has afterGuiAttached function', () => {

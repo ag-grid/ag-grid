@@ -336,7 +336,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private onFocusIn(e: FocusEvent) {
         if (!this.eGui.contains(e.relatedTarget as HTMLElement)) {
             const rowIndex = this.getRowIndex();
-            this.beans.focusService.setFocusedHeader(rowIndex, this.column);
+            this.beans.focusSvc.setFocusedHeader(rowIndex, this.column);
         }
     }
 

@@ -67,7 +67,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private mouseEventService: MouseEventService;
     private contextMenuService?: IContextMenuService;
     private navigation?: NavigationService;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private undoRedoService?: UndoRedoService;
     private visibleCols: VisibleColsService;
     private rowModel: IRowModel;
@@ -80,7 +80,7 @@ export class RowContainerEventsFeature extends BeanStub {
         this.mouseEventService = beans.mouseEventService;
         this.contextMenuService = beans.contextMenuService;
         this.navigation = beans.navigation;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.undoRedoService = beans.undoRedoService;
         this.visibleCols = beans.visibleCols;
         this.rowModel = beans.rowModel;
@@ -223,7 +223,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private processFullWidthRowKeyboardEvent(rowComp: RowCtrl, eventName: string, keyboardEvent: KeyboardEvent) {
         const rowNode = rowComp.getRowNode();
-        const focusedCell = this.focusService.getFocusedCell();
+        const focusedCell = this.focusSvc.getFocusedCell();
         const column = (focusedCell && focusedCell.column) as AgColumn;
         const gridProcessingAllowed = !_isUserSuppressingKeyboardEvent(this.gos, keyboardEvent, rowNode, column, false);
 

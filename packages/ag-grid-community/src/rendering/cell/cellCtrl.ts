@@ -136,12 +136,12 @@ export class CellCtrl extends BeanStub {
 
     public shouldRestoreFocus(): boolean {
         // Used in React to determine if the cell should restore focus after re-rendering
-        return this.beans.focusService.shouldRestoreFocus(this.cellPosition);
+        return this.beans.focusSvc.shouldRestoreFocus(this.cellPosition);
     }
 
     public onFocusOut(): void {
         // Used in React
-        this.beans.focusService.clearRestoreFocus();
+        this.beans.focusSvc.clearRestoreFocus();
     }
 
     private addFeatures(): void {
@@ -721,7 +721,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public focusCell(forceBrowserFocus = false): void {
-        this.beans.focusService.setFocusedCell({
+        this.beans.focusSvc.setFocusedCell({
             rowIndex: this.getCellPosition().rowIndex,
             column: this.column,
             rowPinned: this.rowNode.rowPinned,
@@ -765,10 +765,10 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
-        if (this.beans.focusService.isCellFocusSuppressed()) {
+        if (this.beans.focusSvc.isCellFocusSuppressed()) {
             return;
         }
-        const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
+        const cellFocused = this.beans.focusSvc.isCellFocused(this.cellPosition);
 
         if (!this.cellComp) {
             if (cellFocused && event?.forceBrowserFocus) {
@@ -788,7 +788,7 @@ export class CellCtrl extends BeanStub {
             let focusEl = this.cellComp.getFocusableElement();
 
             if (this.editing) {
-                const focusableEls = this.beans.focusService.findFocusableElements(focusEl, null, true);
+                const focusableEls = this.beans.focusSvc.findFocusableElements(focusEl, null, true);
                 if (focusableEls.length) {
                     focusEl = focusableEls[0];
                 }

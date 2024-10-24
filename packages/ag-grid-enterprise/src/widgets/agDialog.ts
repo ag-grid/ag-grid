@@ -43,11 +43,11 @@ export interface DialogOptions extends PanelOptions {
 
 export class AgDialog extends AgPanel<DialogOptions> implements FocusableContainer {
     private popupService?: PopupService;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
 
     public wireBeans(beans: BeanCollection) {
         this.popupService = beans.popupService;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
     }
 
     private tabGuardFeature: TabGuardFeature;
@@ -94,9 +94,9 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
                     return;
                 }
                 const backwards = e.shiftKey;
-                const nextFocusableElement = this.focusService.findNextFocusableElement(eGui, false, backwards);
+                const nextFocusableElement = this.focusSvc.findNextFocusableElement(eGui, false, backwards);
                 if (!nextFocusableElement || this.tabGuardFeature.getTabGuardCtrl().isTabGuard(nextFocusableElement)) {
-                    if (this.focusService.focusNextGridCoreContainer(backwards)) {
+                    if (this.focusSvc.focusNextGridCoreContainer(backwards)) {
                         e.preventDefault();
                     }
                 }
@@ -114,9 +114,9 @@ export class AgDialog extends AgPanel<DialogOptions> implements FocusableContain
         }
 
         if (!this.config.modal) {
-            const { focusService } = this;
-            focusService.addFocusableContainer(this);
-            this.addDestroyFunc(() => focusService.removeFocusableContainer(this));
+            const { focusSvc } = this;
+            focusSvc.addFocusableContainer(this);
+            this.addDestroyFunc(() => focusSvc.removeFocusableContainer(this));
         }
     }
 

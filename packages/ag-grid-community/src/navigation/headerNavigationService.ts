@@ -51,14 +51,14 @@ export function getHeaderIndexToFocus(column: AgColumn | AgColumnGroup, currentI
 export class HeaderNavigationService extends BeanStub implements NamedBean {
     beanName = 'headerNavigation' as const;
 
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private ctrlsService: CtrlsService;
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private columnGroupService?: ColumnGroupService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.ctrlsService = beans.ctrlsService;
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
@@ -99,7 +99,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
         const allCtrls = centerHeaderContainer?.getAllCtrls();
         const isFloatingFilterVisible = _last(allCtrls || []).getType() === 'filter';
-        const headerRowCount = this.focusService.getHeaderRowCount() - 1;
+        const headerRowCount = this.focusSvc.getHeaderRowCount() - 1;
 
         let row = -1;
         let col: AgColumn | AgColumnGroup | null = column;
@@ -133,7 +133,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         event: KeyboardEvent
     ): boolean {
         if (!fromHeader) {
-            fromHeader = this.focusService.getFocusedHeader();
+            fromHeader = this.focusSvc.getFocusedHeader();
         }
 
         if (!fromHeader) {
@@ -142,7 +142,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
 
         const { headerRowIndex } = fromHeader;
         const column = fromHeader.column as AgColumn;
-        const rowLen = this.focusService.getHeaderRowCount();
+        const rowLen = this.focusSvc.getHeaderRowCount();
         const isUp = direction === 'UP';
 
         let {
@@ -173,7 +173,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             return false;
         }
 
-        return this.focusService.focusHeaderPosition({
+        return this.focusSvc.focusHeaderPosition({
             headerPosition: { headerRowIndex: nextRow, column: nextFocusColumn! },
             allowUserOverride: true,
             event,
@@ -193,7 +193,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         fromTab: boolean = false,
         event: KeyboardEvent
     ): boolean {
-        const focusedHeader = this.focusService.getFocusedHeader()!;
+        const focusedHeader = this.focusSvc.getFocusedHeader()!;
         const isLeft = direction === 'LEFT';
         const isRtl = this.gos.get('enableRtl');
         let nextHeader: HeaderPosition;
@@ -215,7 +215,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         }
 
         if (nextHeader || !fromTab) {
-            return this.focusService.focusHeaderPosition({
+            return this.focusSvc.focusHeaderPosition({
                 headerPosition: nextHeader,
                 direction: normalisedDirection,
                 fromTab,
@@ -225,7 +225,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         } else if (fromTab) {
             const userFunc = this.gos.getCallback('tabToNextHeader');
             if (userFunc) {
-                return this.focusService.focusHeaderPositionFromUserFunc({
+                return this.focusSvc.focusHeaderPositionFromUserFunc({
                     userFunc,
                     headerPosition: nextHeader,
                     direction: normalisedDirection,
@@ -253,7 +253,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             }
         } else {
             nextRowIndex = currentIndex + 1;
-            if (this.currentHeaderRowWithoutSpan < this.focusService.getHeaderRowCount()) {
+            if (this.currentHeaderRowWithoutSpan < this.focusSvc.getHeaderRowCount()) {
                 this.currentHeaderRowWithoutSpan += 1;
             } else {
                 this.setCurrentHeaderRowWithoutSpan(-1);
@@ -270,7 +270,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             nextPosition?.headerRowIndex
         );
 
-        return this.focusService.focusHeaderPosition({
+        return this.focusSvc.focusHeaderPosition({
             headerPosition: { column, headerRowIndex },
             direction,
             fromTab: true,

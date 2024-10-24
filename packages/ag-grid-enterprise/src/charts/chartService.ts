@@ -60,13 +60,13 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
     private visibleCols: VisibleColsService;
     private rangeService?: IRangeService;
     private environment: Environment;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleCols = beans.visibleCols;
         this.rangeService = beans.rangeService;
         this.environment = beans.environment;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
     }
 
     // we destroy all charts bound to this grid when grid is destroyed. activeCharts contains all charts, including
@@ -310,7 +310,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
                 }
             },
             focusChart: () => {
-                this.focusService.focusInto(chartComp.getGui());
+                this.focusSvc.focusInto(chartComp.getGui());
             },
             chartElement: chartComp.getGui(),
             chart: chartComp.getUnderlyingChart(),

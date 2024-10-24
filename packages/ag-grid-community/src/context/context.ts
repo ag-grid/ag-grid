@@ -201,7 +201,7 @@ export interface CoreBeanCollection {
     headerNavigation?: HeaderNavigationService;
     navigation?: NavigationService;
     colAnimation?: ColumnAnimationService;
-    focusService: FocusService;
+    focusSvc: FocusService;
     popupService?: PopupService;
     cellStyleService?: CellStyleService;
     columnHoverService?: ColumnHoverService;
@@ -409,7 +409,7 @@ export type BeanName =
     | 'filterValueService'
     | 'flashCellService'
     | 'flattenStage'
-    | 'focusService'
+    | 'focusSvc'
     | 'funcColsService'
     | 'frameworkComponentWrapper'
     | 'frameworkOverrides'

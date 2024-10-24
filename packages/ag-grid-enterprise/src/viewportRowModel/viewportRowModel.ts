@@ -14,11 +14,11 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     beanName = 'rowModel' as const;
 
     private rowRenderer: RowRenderer;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
 
     public wireBeans(beans: BeanCollection) {
         this.rowRenderer = beans.rowRenderer;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
     }
 
     // rowRenderer tells us these
@@ -147,7 +147,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     }
 
     private isRowFocused(rowIndex: number): boolean {
-        const focusedCell = this.focusService.getFocusCellToUseAfterRefresh();
+        const focusedCell = this.focusSvc.getFocusCellToUseAfterRefresh();
         if (!focusedCell) {
             return false;
         }

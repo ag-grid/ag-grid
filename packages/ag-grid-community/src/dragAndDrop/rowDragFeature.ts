@@ -79,7 +79,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private dragAndDropService: DragAndDropService;
     private rowModel: IRowModel;
     private pageBoundsService: PageBoundsService;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private sortController?: SortController;
     private filterManager?: FilterManager;
     private selectionService?: ISelectionService;
@@ -91,7 +91,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.dragAndDropService = beans.dragAndDropService!;
         this.rowModel = beans.rowModel;
         this.pageBoundsService = beans.pageBoundsService;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.sortController = beans.sortController;
         this.filterManager = beans.filterManager;
         this.selectionService = beans.selectionService;
@@ -297,7 +297,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private moveRows(rowNodes: RowNode[], pixel: number, increment: number = 0): void {
         // Get the focussed cell so we can ensure it remains focussed after the move
-        const cellPosition = this.focusService.getFocusedCell();
+        const cellPosition = this.focusSvc.getFocusedCell();
         const cellCtrl = cellPosition && _getCellByPosition(this.beans, cellPosition);
 
         const rowWasMoved = this.clientSideRowModel.ensureRowsAtPixel(rowNodes, pixel, increment);
@@ -305,7 +305,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             if (cellCtrl) {
                 cellCtrl.focusCell();
             } else {
-                this.focusService.clearFocusedCell();
+                this.focusSvc.clearFocusedCell();
             }
         }
     }

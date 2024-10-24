@@ -38,7 +38,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     private colModel: ColumnModel;
     private menuUtils: MenuUtils;
     private rangeService?: IRangeService;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private valueSvc: ValueService;
     private rowRenderer: RowRenderer;
 
@@ -48,7 +48,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         this.colModel = beans.colModel;
         this.menuUtils = beans.menuUtils as MenuUtils;
         this.rangeService = beans.rangeService;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.valueSvc = beans.valueSvc;
         this.rowRenderer = beans.rowRenderer;
     }
@@ -232,7 +232,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         if (!column) {
             // the context menu has been opened not on a cell, therefore we don't want to
             // display the previous cell as focused, or return focus there after
-            this.focusService.clearFocusedCell();
+            this.focusSvc.clearFocusedCell();
         }
 
         const positionParams = {
@@ -364,11 +364,11 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 export type ContextMenuEvent = 'closeMenu';
 
 class ContextMenu extends Component<ContextMenuEvent> {
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private menuItemMapper: MenuItemMapper;
 
     public wireBeans(beans: BeanCollection): void {
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.menuItemMapper = beans.menuItemMapper as MenuItemMapper;
     }
 
@@ -412,26 +412,26 @@ class ContextMenu extends Component<ContextMenuEvent> {
             this.addDestroyFunc(params.hidePopup);
         }
 
-        this.focusedCell = this.focusService.getFocusedCell();
+        this.focusedCell = this.focusSvc.getFocusedCell();
 
         if (this.menuList) {
-            this.focusService.focusInto(this.menuList.getGui());
+            this.focusSvc.focusInto(this.menuList.getGui());
         }
     }
 
     private restoreFocusedCell(): void {
-        const currentFocusedCell = this.focusService.getFocusedCell();
+        const currentFocusedCell = this.focusSvc.getFocusedCell();
 
         if (currentFocusedCell && this.focusedCell && _areCellsEqual(currentFocusedCell, this.focusedCell)) {
             const { rowIndex, rowPinned, column } = this.focusedCell;
 
             if (_isNothingFocused(this.gos)) {
-                this.focusService.setFocusedCell({
+                this.focusSvc.setFocusedCell({
                     rowIndex,
                     column,
                     rowPinned,
                     forceBrowserFocus: true,
-                    preventScrollOnBrowserFocus: !this.focusService.isKeyboardMode(),
+                    preventScrollOnBrowserFocus: !this.focusSvc.isKeyboardMode(),
                 });
             }
         }

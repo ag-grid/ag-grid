@@ -218,10 +218,10 @@ export class ChartMenuListFactory extends BeanStub implements NamedBean {
 }
 
 class ChartMenuList extends Component {
-    private focusService: FocusService;
+    private focusSvc: FocusService;
 
     public wireBeans(beans: BeanCollection) {
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
     }
 
     private readonly eChartsMenu: HTMLElement = RefPlaceholder;
@@ -251,6 +251,6 @@ class ChartMenuList extends Component {
             this.hidePopupFunc = hidePopup;
             this.addDestroyFunc(hidePopup);
         }
-        this.focusService.focusInto(this.mainMenuList.getGui());
+        this.focusSvc.focusInto(this.mainMenuList.getGui());
     }
 }

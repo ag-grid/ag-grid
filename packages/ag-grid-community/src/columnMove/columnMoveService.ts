@@ -34,7 +34,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
     private colAnimation?: ColumnAnimationService;
     private ctrlsService: CtrlsService;
     private visibleCols: VisibleColsService;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private dragAndDropService: DragAndDropService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -42,7 +42,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         this.colAnimation = beans.colAnimation;
         this.ctrlsService = beans.ctrlsService;
         this.visibleCols = beans.visibleCols;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.dragAndDropService = beans.dragAndDropService!;
     }
 
@@ -171,7 +171,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             gos,
             ctrlsService,
         });
-        const headerPosition = this.focusService.getFocusedHeader();
+        const headerPosition = this.focusSvc.getFocusedHeader();
 
         attemptMoveColumns({
             allMovingColumns: isGroup ? column.getLeafColumns() : [column],
@@ -216,7 +216,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
                 restoreFocusColumn = column;
             }
             if (restoreFocusColumn) {
-                this.focusService.focusHeaderPosition({
+                this.focusSvc.focusHeaderPosition({
                     headerPosition: {
                         ...headerPosition,
                         column: restoreFocusColumn,

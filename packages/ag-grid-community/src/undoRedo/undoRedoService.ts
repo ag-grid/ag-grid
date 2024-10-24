@@ -262,7 +262,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         scrollFeature.ensureColumnVisible(column);
 
         const cellPosition: CellPosition = { rowIndex, column, rowPinned };
-        this.beans.focusService.setFocusedCell({ ...cellPosition, forceBrowserFocus: true });
+        this.beans.focusSvc.setFocusedCell({ ...cellPosition, forceBrowserFocus: true });
 
         rangeService?.setRangeToCell(cellPosition);
     }

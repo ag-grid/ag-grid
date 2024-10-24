@@ -155,7 +155,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         this.initRowBusinessKey();
 
-        this.rowFocused = beans.focusService.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
+        this.rowFocused = beans.focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
         this.rowLevel = calculateRowLevel(this.rowNode);
 
         this.setRowType();
@@ -583,7 +583,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         // we want to try and keep editing and focused cells
         const editing = cellCtrl.isEditing();
-        const focused = this.beans.focusService.isCellFocused(cellCtrl.getCellPosition());
+        const focused = this.beans.focusSvc.isCellFocused(cellCtrl.getCellPosition());
 
         const mightWantToKeepCell = editing || focused;
 
@@ -843,7 +843,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         const node = this.rowNode;
-        const lastFocusedCell = this.beans.focusService.getFocusedCell();
+        const lastFocusedCell = this.beans.focusSvc.getFocusedCell();
         const cellPosition: CellPosition = {
             rowIndex: node.rowIndex!,
             rowPinned: node.rowPinned,
@@ -874,7 +874,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         let nextEl: HTMLElement | null = null;
 
         if (!isFullWidthContainerFocused && !isDetailGridCellFocused) {
-            nextEl = this.beans.focusService.findNextFocusableElement(
+            nextEl = this.beans.focusSvc.findNextFocusableElement(
                 currentFullWidthContainer!,
                 false,
                 keyboardEvent.shiftKey
@@ -1036,7 +1036,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             forceBrowserFocus = false;
         }
 
-        this.beans.focusService.setFocusedCell({
+        this.beans.focusSvc.setFocusedCell({
             rowIndex: node.rowIndex!,
             column: this.getColumnForFullWidth(fullWidthRowGui),
             rowPinned: node.rowPinned,
@@ -1492,7 +1492,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onCellFocusChanged(): void {
-        const rowFocused = this.beans.focusService.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
+        const rowFocused = this.beans.focusSvc.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
 
         if (rowFocused !== this.rowFocused) {
             this.rowFocused = rowFocused;

@@ -22,12 +22,12 @@ export interface MenuRestoreFocusParams {
 export class MenuUtils extends BeanStub implements NamedBean {
     beanName = 'menuUtils' as const;
 
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private headerNavigation?: HeaderNavigationService;
     private visibleCols: VisibleColsService;
 
     public wireBeans(beans: BeanCollection) {
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.headerNavigation = beans.headerNavigation;
         this.visibleCols = beans.visibleCols;
     }
@@ -72,12 +72,12 @@ export class MenuUtils extends BeanStub implements NamedBean {
 
         // this method only gets called when the menu was closed by selecting an option
         // in this case we focus the cell that was previously focused, otherwise the header
-        const focusedCell = this.focusService.getFocusedCell();
+        const focusedCell = this.focusSvc.getFocusedCell();
 
         if (_isNothingFocused(this.gos)) {
             if (focusedCell) {
                 const { rowIndex, rowPinned, column } = focusedCell;
-                this.focusService.setFocusedCell({
+                this.focusSvc.setFocusedCell({
                     rowIndex,
                     column,
                     rowPinned,
@@ -137,7 +137,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
         }
 
         if (isColumnStillVisible && eventSource && _isVisible(eventSource)) {
-            const focusableEl = this.focusService.findTabbableParent(eventSource);
+            const focusableEl = this.focusSvc.findTabbableParent(eventSource);
             if (focusableEl) {
                 if (column) {
                     this.headerNavigation?.scrollToColumn(column);
@@ -152,7 +152,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
             const columnToFocus = allColumns[columnIndex] || _last(allColumns);
 
             if (columnToFocus) {
-                this.focusService.focusHeaderPosition({
+                this.focusSvc.focusHeaderPosition({
                     headerPosition: {
                         headerRowIndex: headerPosition.headerRowIndex,
                         column: columnToFocus,

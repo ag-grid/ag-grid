@@ -130,7 +130,7 @@ export class CellMouseListenerFeature extends BeanStub {
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
         const target = mouseEvent.target as HTMLElement;
         const { cellCtrl, beans } = this;
-        const { eventSvc, rangeService, focusService, gos } = beans;
+        const { eventSvc, rangeService, focusSvc, gos } = beans;
 
         // do not change the range for right-clicks inside an existing range
         if (this.isRightClickInExistingRange(mouseEvent)) {
@@ -160,11 +160,11 @@ export class CellMouseListenerFeature extends BeanStub {
 
         // if shift clicking, and a range exists, we keep the focus on the cell that started the
         // range as the user then changes the range selection.
-        if (shiftKey && ranges && !focusService.isCellFocused(cellCtrl.getCellPosition())) {
+        if (shiftKey && ranges && !focusSvc.isCellFocused(cellCtrl.getCellPosition())) {
             // this stops the cell from getting focused
             mouseEvent.preventDefault();
 
-            const focusedCellPosition = focusService.getFocusedCell();
+            const focusedCellPosition = focusSvc.getFocusedCell();
             if (focusedCellPosition) {
                 const { column, rowIndex, rowPinned } = focusedCellPosition;
                 const focusedRowCtrl = beans.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
@@ -176,7 +176,7 @@ export class CellMouseListenerFeature extends BeanStub {
                 }
 
                 // focus could have been lost, so restore it to the starting cell in the range if needed
-                focusService.setFocusedCell({
+                focusSvc.setFocusedCell({
                     column,
                     rowIndex,
                     rowPinned,

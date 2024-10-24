@@ -17,11 +17,11 @@ import type { OverlayService } from './overlayService';
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
     private overlayService: OverlayService;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
         this.overlayService = beans.overlayService!;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.visibleCols = beans.visibleCols;
     }
 
@@ -49,16 +49,16 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
             return;
         }
 
-        const nextEl = this.focusService.findNextFocusableElement(this.eOverlayWrapper, false, e.shiftKey);
+        const nextEl = this.focusSvc.findNextFocusableElement(this.eOverlayWrapper, false, e.shiftKey);
         if (nextEl) {
             return;
         }
 
         let isFocused = false;
         if (e.shiftKey) {
-            isFocused = this.focusService.focusGridView(_last(this.visibleCols.allCols), true, false);
+            isFocused = this.focusSvc.focusGridView(_last(this.visibleCols.allCols), true, false);
         } else {
-            isFocused = this.focusService.focusNextGridCoreContainer(false);
+            isFocused = this.focusSvc.focusNextGridCoreContainer(false);
         }
 
         if (isFocused) {
@@ -108,7 +108,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
         this.setDisplayed(true, { skipAriaHidden: true });
 
-        if (exclusive && this.focusService.isGridFocused()) {
+        if (exclusive && this.focusSvc.isGridFocused()) {
             const activeElement = _getActiveDomElement(this.gos);
             if (activeElement && !_isNothingFocused(this.gos)) {
                 this.elToFocusAfter = activeElement as HTMLElement;
@@ -144,9 +144,9 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
                 }
             }
 
-            const focusService = this.focusService;
-            if (exclusive && focusService.isGridFocused()) {
-                focusService.focusInto(this.eOverlayWrapper);
+            const focusSvc = this.focusSvc;
+            if (exclusive && focusSvc.isGridFocused()) {
+                focusSvc.focusInto(this.eOverlayWrapper);
             }
         });
     }
@@ -167,7 +167,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.activeOverlay = null;
         this.elToFocusAfter = null;
 
-        if (elementToFocus && !this.focusService.isGridFocused()) {
+        if (elementToFocus && !this.focusSvc.isGridFocused()) {
             elementToFocus = null;
         }
 

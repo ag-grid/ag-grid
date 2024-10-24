@@ -25,7 +25,7 @@ export interface IGridHeaderComp {
 
 export class GridHeaderCtrl extends BeanStub {
     private headerNavigation?: HeaderNavigationService;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private ctrlsService: CtrlsService;
@@ -34,7 +34,7 @@ export class GridHeaderCtrl extends BeanStub {
 
     public wireBeans(beans: BeanCollection) {
         this.headerNavigation = beans.headerNavigation;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.ctrlsService = beans.ctrlsService;
@@ -157,8 +157,8 @@ export class GridHeaderCtrl extends BeanStub {
 
         if (
             this.headerNavigation!.navigateHorizontally(direction, true, e) ||
-            (!backwards && this.focusService.focusOverlay(false)) ||
-            this.focusService.focusNextGridCoreContainer(backwards, true)
+            (!backwards && this.focusSvc.focusOverlay(false)) ||
+            this.focusSvc.focusNextGridCoreContainer(backwards, true)
         ) {
             // preventDefault so that the tab key doesn't cause focus to get lost
             e.preventDefault();
@@ -208,7 +208,7 @@ export class GridHeaderCtrl extends BeanStub {
         }
 
         if (!this.eGui.contains(relatedTarget as HTMLElement)) {
-            this.focusService.clearFocusedHeader();
+            this.focusSvc.clearFocusedHeader();
         }
     }
 

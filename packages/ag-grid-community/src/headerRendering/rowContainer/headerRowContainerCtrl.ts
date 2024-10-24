@@ -32,7 +32,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     private scrollVisibleService: ScrollVisibleService;
     private pinnedColumnService?: PinnedColumnService;
     private colModel: ColumnModel;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private filterManager?: FilterManager;
     private colMoves?: ColumnMoveService;
 
@@ -41,7 +41,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         this.scrollVisibleService = beans.scrollVisibleService;
         this.pinnedColumnService = beans.pinnedColumnService;
         this.colModel = beans.colModel;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.filterManager = beans.filterManager;
         this.colMoves = beans.colMoves;
     }
@@ -101,7 +101,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
 
     public refresh(keepColumns = false): void {
         let sequence = 0;
-        const focusedHeaderPosition = this.focusService.getFocusHeaderToUseAfterRefresh();
+        const focusedHeaderPosition = this.focusSvc.getFocusHeaderToUseAfterRefresh();
 
         const refreshColumnGroups = () => {
             const groupRowCount = getHeaderRowCount(this.colModel) - 1;
@@ -269,7 +269,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             return;
         }
 
-        this.focusService.focusHeaderPosition({ headerPosition: position });
+        this.focusSvc.focusHeaderPosition({ headerPosition: position });
     }
 
     // grid cols have changed - this also means the number of rows in the header can have

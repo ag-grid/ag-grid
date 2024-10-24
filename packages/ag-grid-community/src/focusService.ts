@@ -34,7 +34,7 @@ import { FOCUS_MANAGED_CLASS } from './widgets/managedFocusFeature';
 import { TabGuardClassNames } from './widgets/tabGuardCtrl';
 
 export class FocusService extends BeanStub implements NamedBean {
-    beanName = 'focusService' as const;
+    beanName = 'focusSvc' as const;
 
     private eGridDiv: HTMLElement;
     private colModel: ColumnModel;

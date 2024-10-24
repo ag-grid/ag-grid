@@ -60,7 +60,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
     beanName = 'enterpriseMenuFactory' as const;
 
     private popupService: PopupService;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private ctrlsService: CtrlsService;
     private visibleCols: VisibleColsService;
     private filterManager?: FilterManager;
@@ -70,7 +70,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
 
     public wireBeans(beans: BeanCollection) {
         this.popupService = beans.popupService!;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.ctrlsService = beans.ctrlsService;
         this.visibleCols = beans.visibleCols;
         this.filterManager = beans.filterManager;
@@ -289,7 +289,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
     ) {
         const restoreFocusParams = {
             column,
-            headerPosition: this.focusService.getFocusedHeader(),
+            headerPosition: this.focusSvc.getFocusedHeader(),
             columnIndex: this.visibleCols.allCols.indexOf(column as AgColumn),
             eventSource,
         };
@@ -600,12 +600,12 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
 class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
     private columnMenuFactory: ColumnMenuFactory;
     private menuUtils: MenuUtils;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
 
     public wireBeans(beans: BeanCollection) {
         this.columnMenuFactory = beans.columnMenuFactory as ColumnMenuFactory;
         this.menuUtils = beans.menuUtils as MenuUtils;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
     }
 
     private readonly eColumnMenu: HTMLElement = RefPlaceholder;
@@ -644,6 +644,6 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
             this.hidePopupFunc = hidePopup;
             this.addDestroyFunc(hidePopup);
         }
-        this.focusService.focusInto(this.mainMenuList.getGui());
+        this.focusSvc.focusInto(this.mainMenuList.getGui());
     }
 }

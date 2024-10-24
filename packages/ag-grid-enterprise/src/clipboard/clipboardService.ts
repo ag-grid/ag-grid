@@ -151,7 +151,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private selectionService?: ISelectionService;
     private rowModel: IRowModel;
     private valueSvc: ValueService;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private visibleCols: VisibleColsService;
     private cellNavigation: CellNavigationService;
     private rangeService?: IRangeService;
@@ -160,7 +160,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.selectionService = beans.selectionService;
         this.rowModel = beans.rowModel;
         this.valueSvc = beans.valueSvc;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.visibleCols = beans.visibleCols;
         this.cellNavigation = beans.cellNavigation!;
         this.rangeService = beans.rangeService;
@@ -239,10 +239,10 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private refocusLastFocusedCell(): void {
-        const focusedCell = this.focusService.getFocusedCell();
+        const focusedCell = this.focusSvc.getFocusedCell();
 
         if (focusedCell) {
-            this.focusService.setFocusedCell({
+            this.focusSvc.setFocusedCell({
                 rowIndex: focusedCell.rowIndex,
                 column: focusedCell.column,
                 rowPinned: focusedCell.rowPinned,
@@ -318,7 +318,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         const cellsToFlash = {} as any;
         const updatedRowNodes: RowNode[] = [];
-        const focusedCell = this.focusService.getFocusedCell();
+        const focusedCell = this.focusSvc.getFocusedCell();
 
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
 
@@ -727,7 +727,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         } else if (this.shouldCopyRows(rowSelection)) {
             this.copySelectedRowsToClipboard(copyParams);
             cellClearType = CellClearType.SelectedRows;
-        } else if (this.focusService.isAnyCellFocused()) {
+        } else if (this.focusSvc.isAnyCellFocused()) {
             this.copyFocusedCellToClipboard(copyParams);
             cellClearType = CellClearType.FocusedCell;
         }
@@ -778,7 +778,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         } else if (type === CellClearType.SelectedRows) {
             this.clearSelectedRows();
         } else {
-            const focusedCell = this.focusService.getFocusedCell();
+            const focusedCell = this.focusSvc.getFocusedCell();
             if (focusedCell == null) {
                 return;
             }
@@ -982,7 +982,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private copyFocusedCellToClipboard(params: IClipboardCopyParams = {}): void {
-        const focusedCell = this.focusService.getFocusedCell();
+        const focusedCell = this.focusSvc.getFocusedCell();
 
         if (focusedCell == null) {
             return;

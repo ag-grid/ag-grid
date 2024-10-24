@@ -16,12 +16,12 @@ import { AdvancedFilterComp } from './advancedFilterComp';
 
 export class AdvancedFilterHeaderComp extends Component {
     private colModel: ColumnModel;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.ctrlsService = beans.ctrlsService;
     }
 
@@ -58,7 +58,7 @@ export class AdvancedFilterHeaderComp extends Component {
 
         this.addGuiEventListener('focusout', (event: FocusEvent) => {
             if (!this.getFocusableElement().contains(event.relatedTarget as HTMLElement)) {
-                this.focusService.clearAdvancedFilterColumn();
+                this.focusSvc.clearAdvancedFilterColumn();
             }
         });
     }
@@ -139,7 +139,7 @@ export class AdvancedFilterHeaderComp extends Component {
         switch (event.key) {
             case KeyCode.ENTER: {
                 if (this.hasFocus()) {
-                    if (this.focusService.focusInto(this.getFocusableElement())) {
+                    if (this.focusSvc.focusInto(this.getFocusableElement())) {
                         event.preventDefault();
                     }
                 }
@@ -160,7 +160,7 @@ export class AdvancedFilterHeaderComp extends Component {
                 if (this.hasFocus()) {
                     this.navigateLeftRight(event);
                 } else {
-                    const nextFocusableEl = this.focusService.findNextFocusableElement(
+                    const nextFocusableEl = this.focusSvc.findNextFocusableElement(
                         this.getFocusableElement(),
                         null,
                         event.shiftKey
@@ -178,18 +178,14 @@ export class AdvancedFilterHeaderComp extends Component {
 
     private navigateUpDown(backwards: boolean, event: KeyboardEvent): void {
         if (this.hasFocus()) {
-            if (this.focusService.focusNextFromAdvancedFilter(backwards)) {
+            if (this.focusSvc.focusNextFromAdvancedFilter(backwards)) {
                 event.preventDefault();
             }
         }
     }
 
     private navigateLeftRight(event: KeyboardEvent): void {
-        if (
-            event.shiftKey
-                ? this.focusService.focusLastHeader()
-                : this.focusService.focusNextFromAdvancedFilter(false, true)
-        ) {
+        if (event.shiftKey ? this.focusSvc.focusLastHeader() : this.focusSvc.focusNextFromAdvancedFilter(false, true)) {
             event.preventDefault();
         }
     }

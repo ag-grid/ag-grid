@@ -33,7 +33,7 @@ const DEFAULT_BLOCK_SIZE = 100 as const;
 export class LazyCache extends BeanStub {
     private rowRenderer: RowRenderer;
     private blockUtils: BlockUtils;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
     private nodeManager: NodeManager;
     private serverSideRowModel: ServerSideRowModel;
     private rowNodeSorter?: RowNodeSorter;
@@ -44,7 +44,7 @@ export class LazyCache extends BeanStub {
     public wireBeans(beans: BeanCollection) {
         this.rowRenderer = beans.rowRenderer;
         this.blockUtils = beans.ssrmBlockUtils as BlockUtils;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
         this.nodeManager = beans.ssrmNodeManager as NodeManager;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.rowNodeSorter = beans.rowNodeSorter;
@@ -790,7 +790,7 @@ export class LazyCache extends BeanStub {
     }
 
     private isNodeFocused(node: RowNode): boolean {
-        const focusedCell = this.focusService.getFocusCellToUseAfterRefresh();
+        const focusedCell = this.focusSvc.getFocusCellToUseAfterRefresh();
         if (!focusedCell) {
             return false;
         }

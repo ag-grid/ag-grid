@@ -51,7 +51,7 @@ const orderedCoreBeans: BeanName[] = [
     'autoWidthCalculator',
     'filterMenuFactory',
     'dragAndDropService',
-    'focusService',
+    'focusSvc',
     'mouseEventService',
     'cellNavigation',
     'cellStyleService',

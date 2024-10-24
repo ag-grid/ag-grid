@@ -32,14 +32,14 @@ export class ToolPanelContextMenu extends Component {
     private colNames: ColumnNameService;
     private funcColsService: FuncColsService;
     private popupService: PopupService;
-    private focusService: FocusService;
+    private focusSvc: FocusService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
         this.colNames = beans.colNames;
         this.funcColsService = beans.funcColsService;
         this.popupService = beans.popupService!;
-        this.focusService = beans.focusService;
+        this.focusSvc = beans.focusSvc;
     }
 
     private columns: AgColumn[];
@@ -180,7 +180,7 @@ export class ToolPanelContextMenu extends Component {
             modal: true,
             eChild: eGui,
             closeOnEsc: true,
-            afterGuiAttached: () => this.focusService.focusInto(menuList.getGui()),
+            afterGuiAttached: () => this.focusSvc.focusInto(menuList.getGui()),
             ariaLabel: localeTextFunc('ariaLabelContextMenu', 'Context Menu'),
             closedCallback: (e: KeyboardEvent) => {
                 if (e instanceof KeyboardEvent) {

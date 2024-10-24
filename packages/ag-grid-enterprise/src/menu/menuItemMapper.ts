@@ -271,7 +271,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 }
             case 'cut':
                 if (this.gos.assertModuleRegistered('ClipboardCoreModule', 8)) {
-                    const focusedCell = this.beans.focusService.getFocusedCell();
+                    const focusedCell = this.beans.focusSvc.getFocusedCell();
                     const rowNode = focusedCell ? _getRowNode(this.beans, focusedCell) : null;
                     const isEditable = rowNode ? focusedCell?.column.isCellEditable(rowNode) : false;
                     return {

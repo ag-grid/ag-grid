@@ -253,11 +253,11 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private onFocusIn(e: FocusEvent) {
         if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
             const rowIndex = this.getRowIndex();
-            this.focusService.setFocusedHeader(rowIndex, this.column);
+            this.focusSvc.setFocusedHeader(rowIndex, this.column);
             this.announceAriaDescription();
         }
 
-        if (this.focusService.isKeyboardMode()) {
+        if (this.focusSvc.isKeyboardMode()) {
             this.setActiveHeader(true);
         }
     }
