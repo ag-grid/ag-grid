@@ -87,7 +87,7 @@ const orderedCoreBeans: BeanName[] = [
     'colNames',
     'colViewport',
     'pivotResultCols',
-    'showRowGroupColsService',
+    'showRowGroupCols',
 ];
 
 const beanNamePosition: { [key in BeanName]?: number } = Object.fromEntries(

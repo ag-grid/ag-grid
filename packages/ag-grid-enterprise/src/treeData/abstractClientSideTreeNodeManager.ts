@@ -438,7 +438,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
     private setGroupData(row: RowNode, key: string): void {
         const groupData: Record<string, string> = {};
         row.groupData = groupData;
-        const groupDisplayCols = this.beans.showRowGroupColsService?.getShowRowGroupCols();
+        const groupDisplayCols = this.beans.showRowGroupCols?.getShowRowGroupCols();
         if (groupDisplayCols) {
             for (const col of groupDisplayCols) {
                 // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column

@@ -9,7 +9,7 @@ import type {
 } from 'ag-grid-community';
 
 export class ShowRowGroupColsService extends BeanStub implements NamedBean, IShowRowGroupColsService {
-    beanName = 'showRowGroupColsService' as const;
+    beanName = 'showRowGroupCols' as const;
 
     private colModel: ColumnModel;
     private funcColsSvc: FuncColsService;

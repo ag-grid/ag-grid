@@ -20,12 +20,12 @@ export class SortService extends BeanStub implements NamedBean {
 
     private colModel: ColumnModel;
     private funcColsSvc: FuncColsService;
-    private showRowGroupColsService?: IShowRowGroupColsService;
+    private showRowGroupCols?: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
         this.funcColsSvc = beans.funcColsSvc;
-        this.showRowGroupColsService = beans.showRowGroupColsService;
+        this.showRowGroupCols = beans.showRowGroupCols;
     }
 
     public progressSort(column: AgColumn, multiSort: boolean, source: ColumnEventType): void {
@@ -78,7 +78,7 @@ export class SortService extends BeanStub implements NamedBean {
 
     private updateSortIndex(lastColToChange: AgColumn) {
         const isCoupled = _isColumnsSortingCoupledToGroup(this.gos);
-        const groupParent = this.showRowGroupColsService?.getShowRowGroupCol(lastColToChange.getId());
+        const groupParent = this.showRowGroupCols?.getShowRowGroupCol(lastColToChange.getId());
         const lastSortIndexCol = isCoupled ? groupParent || lastColToChange : lastColToChange;
 
         const allSortedCols = this.getColumnsWithSortingOrdered();
@@ -167,7 +167,7 @@ export class SortService extends BeanStub implements NamedBean {
                 const isAggregated = !!col.getAggFunc();
                 const isSecondary = !col.isPrimary();
                 const isGroup = isSortingLinked
-                    ? this.showRowGroupColsService?.getShowRowGroupCol(col.getId())
+                    ? this.showRowGroupCols?.getShowRowGroupCol(col.getId())
                     : col.getColDef().showRowGroup;
                 return isAggregated || isSecondary || isGroup;
             });
@@ -204,7 +204,7 @@ export class SortService extends BeanStub implements NamedBean {
             allSortedCols = [
                 ...new Set(
                     // if linked sorting, replace all columns with the display group column for index purposes, and ensure uniqueness
-                    allSortedCols.map((col) => this.showRowGroupColsService?.getShowRowGroupCol(col.getId()) ?? col)
+                    allSortedCols.map((col) => this.showRowGroupCols?.getShowRowGroupCol(col.getId()) ?? col)
                 ),
             ];
         }
@@ -216,7 +216,7 @@ export class SortService extends BeanStub implements NamedBean {
         // add the row group cols back
         if (isSortLinked) {
             sortedRowGroupCols.forEach((col) => {
-                const groupDisplayCol = this.showRowGroupColsService!.getShowRowGroupCol(col.getId())!;
+                const groupDisplayCol = this.showRowGroupCols!.getShowRowGroupCol(col.getId())!;
                 indexMap.set(col, indexMap.get(groupDisplayCol)!);
             });
         }

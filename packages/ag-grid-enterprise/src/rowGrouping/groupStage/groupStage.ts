@@ -73,14 +73,14 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     private funcColsSvc: FuncColsService;
     private valueSvc: ValueService;
     private selectionSvc?: ISelectionService;
-    private showRowGroupColsService: IShowRowGroupColsService;
+    private showRowGroupCols: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
         this.funcColsSvc = beans.funcColsSvc;
         this.valueSvc = beans.valueSvc;
         this.selectionSvc = beans.selectionSvc;
-        this.showRowGroupColsService = beans.showRowGroupColsService!;
+        this.showRowGroupCols = beans.showRowGroupCols!;
     }
 
     // when grouping, these items are of note:
@@ -474,7 +474,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
         let noFurtherProcessingNeeded = false;
 
-        const groupDisplayColumns = this.showRowGroupColsService.getShowRowGroupCols();
+        const groupDisplayColumns = this.showRowGroupCols.getShowRowGroupCols();
         const newGroupDisplayColIds = groupDisplayColumns ? groupDisplayColumns.map((c) => c.getId()).join('-') : '';
 
         if (afterColumnsChanged) {
@@ -613,7 +613,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo): void {
         groupNode.groupData = {};
-        const groupDisplayCols = this.showRowGroupColsService.getShowRowGroupCols();
+        const groupDisplayCols = this.showRowGroupCols.getShowRowGroupCols();
         groupDisplayCols.forEach((col) => {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so

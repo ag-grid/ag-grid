@@ -31,7 +31,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     beanName = 'ssrmBlockUtils' as const;
 
     private valueSvc: ValueService;
-    private showRowGroupColsService?: IShowRowGroupColsService;
+    private showRowGroupCols?: IShowRowGroupColsService;
     private nodeManager: NodeManager;
     private expansionService?: ServerSideExpansionService;
     private serverSideRowModel: ServerSideRowModel;
@@ -39,7 +39,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection) {
         this.valueSvc = beans.valueSvc;
-        this.showRowGroupColsService = beans.showRowGroupColsService;
+        this.showRowGroupCols = beans.showRowGroupCols;
         this.nodeManager = beans.ssrmNodeManager as NodeManager;
         this.expansionService = beans.expansionService as ServerSideExpansionService;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
@@ -224,7 +224,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
-        const groupDisplayCols = this.showRowGroupColsService?.getShowRowGroupCols() ?? [];
+        const groupDisplayCols = this.showRowGroupCols?.getShowRowGroupCols() ?? [];
 
         const usingTreeData = this.gos.get('treeData');
 

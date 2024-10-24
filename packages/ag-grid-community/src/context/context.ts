@@ -237,7 +237,7 @@ export interface CoreBeanCollection {
     colAutosize?: ColumnAutosizeService;
     funcColsSvc: FuncColsService;
     quickFilter?: QuickFilterService;
-    showRowGroupColsService?: IShowRowGroupColsService;
+    showRowGroupCols?: IShowRowGroupColsService;
     dataTypeService?: DataTypeService;
     globalEventListener: AgGlobalEventListener;
     globalSyncEventListener: AgGlobalEventListener;
@@ -463,7 +463,7 @@ export type BeanName =
     | 'scrollVisibleService'
     | 'selectionController'
     | 'selectionSvc'
-    | 'showRowGroupColsService'
+    | 'showRowGroupCols'
     | 'sideBarService'
     | 'sortSvc'
     | 'sortStage'

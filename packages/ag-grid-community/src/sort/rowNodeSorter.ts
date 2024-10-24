@@ -22,12 +22,12 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
     private valueSvc: ValueService;
     private colModel: ColumnModel;
-    private showRowGroupColsService?: IShowRowGroupColsService;
+    private showRowGroupCols?: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueSvc = beans.valueSvc;
         this.colModel = beans.colModel;
-        this.showRowGroupColsService = beans.showRowGroupColsService;
+        this.showRowGroupCols = beans.showRowGroupCols;
     }
 
     private isAccentedSort: boolean;
@@ -138,7 +138,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
                 return undefined;
             }
 
-            const displayCol = this.showRowGroupColsService?.getShowRowGroupCol(column.getId());
+            const displayCol = this.showRowGroupCols?.getShowRowGroupCol(column.getId());
             if (!displayCol) {
                 return undefined;
             }

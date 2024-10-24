@@ -60,7 +60,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private colAutosize?: ColumnAutosizeService;
     private funcColsSvc: FuncColsService;
     private quickFilter?: QuickFilterService;
-    private showRowGroupColsService?: IShowRowGroupColsService;
+    private showRowGroupCols?: IShowRowGroupColsService;
     private rowAutoHeightService?: RowAutoHeightService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -77,7 +77,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.colAutosize = beans.colAutosize;
         this.funcColsSvc = beans.funcColsSvc;
         this.quickFilter = beans.quickFilter;
-        this.showRowGroupColsService = beans.showRowGroupColsService;
+        this.showRowGroupCols = beans.showRowGroupCols;
         this.rowAutoHeightService = beans.rowAutoHeightService;
     }
 
@@ -211,7 +211,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         this.positionLockedCols(cols);
-        this.showRowGroupColsService?.refresh();
+        this.showRowGroupCols?.refresh();
         this.quickFilter?.refreshQuickFilterCols();
 
         this.setColSpanActive();

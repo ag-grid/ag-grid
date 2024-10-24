@@ -17,11 +17,11 @@ export class GroupHideOpenParentsService extends BeanStub implements IGroupHideO
     beanName = 'groupHideOpenParentsService' as const;
 
     private colModel: ColumnModel;
-    private showRowGroupColsService?: IShowRowGroupColsService;
+    private showRowGroupCols?: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
-        this.showRowGroupColsService = beans.showRowGroupColsService;
+        this.showRowGroupCols = beans.showRowGroupCols;
     }
 
     public updateGroupDataForHideOpenParents(changedPath?: ChangedPath): void {
@@ -50,7 +50,7 @@ export class GroupHideOpenParentsService extends BeanStub implements IGroupHideO
         }
 
         rowNodes.forEach((childRowNode) => {
-            const groupDisplayCols = this.showRowGroupColsService?.getShowRowGroupCols() ?? [];
+            const groupDisplayCols = this.showRowGroupCols?.getShowRowGroupCols() ?? [];
             groupDisplayCols.forEach((groupDisplayCol) => {
                 const showRowGroup = groupDisplayCol.getColDef().showRowGroup;
                 if (typeof showRowGroup !== 'string') {

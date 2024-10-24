@@ -67,7 +67,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
     }
 
     public getGroupDisplayColumns(): AgColumn[] {
-        return this.beans.showRowGroupColsService?.getShowRowGroupCols() ?? [];
+        return this.beans.showRowGroupCols?.getShowRowGroupCols() ?? [];
     }
 
     public isPivotMode(): boolean {
