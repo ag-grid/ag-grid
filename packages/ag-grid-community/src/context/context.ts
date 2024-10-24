@@ -288,7 +288,7 @@ export interface CoreBeanCollection {
     pivotColDefSvc?: IPivotColDefService;
     chartSvc?: IChartService;
     aggColumnNameSvc?: IAggColumnNameService;
-    renderStatusService?: IRenderStatusService;
+    renderStatus?: IRenderStatusService;
     rowDragService?: RowDragService;
     stickyRowService?: StickyRowService;
     groupHideOpenParentsService?: IGroupHideOpenParentsService;
@@ -449,7 +449,7 @@ export type BeanName =
     | 'pageBoundsListener'
     | 'pageBounds'
     | 'registry'
-    | 'renderStatusService'
+    | 'renderStatus'
     | 'rowAutoHeightService'
     | 'rowChildrenService'
     | 'rowContainerHeight'

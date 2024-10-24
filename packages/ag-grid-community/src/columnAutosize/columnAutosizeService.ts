@@ -28,7 +28,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private animationFrameSvc?: AnimationFrameService;
     private autoWidthCalculator: AutoWidthCalculator;
     private ctrlsSvc: CtrlsService;
-    private renderStatusService?: IRenderStatusService;
+    private renderStatus?: IRenderStatusService;
     private scrollVisibleSvc: ScrollVisibleService;
 
     private timesDelayed = 0;
@@ -43,7 +43,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.animationFrameSvc = beans.animationFrameSvc;
         this.autoWidthCalculator = beans.autoWidthCalculator!;
         this.ctrlsSvc = beans.ctrlsSvc;
-        this.renderStatusService = beans.renderStatusService;
+        this.renderStatus = beans.renderStatus;
         this.scrollVisibleSvc = beans.scrollVisibleSvc;
     }
 
@@ -77,7 +77,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         // hasn't fully drawn out all the cells yet (due to cell renderers in animation frames).
         this.animationFrameSvc?.flushAllFrames();
 
-        if (this.timesDelayed < 5 && this.renderStatusService && !this.renderStatusService.areHeaderCellsRendered()) {
+        if (this.timesDelayed < 5 && this.renderStatus && !this.renderStatus.areHeaderCellsRendered()) {
             // This is needed for React, as it doesn't render the headers synchronously all the time.
             // Added a defensive check to avoid infinite loop in case headers are never rendered.
             this.timesDelayed++;

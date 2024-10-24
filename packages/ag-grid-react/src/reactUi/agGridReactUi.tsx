@@ -130,14 +130,14 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
 
         const frameworkOverrides = new ReactFrameworkOverrides(processQueuedUpdates);
         frameworkOverridesRef.current = frameworkOverrides;
-        const renderStatusService = new RenderStatusService();
+        const renderStatus = new RenderStatusService();
         const gridParams: GridParams = {
             providedBeanInstances: {
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(
                     portalManager.current,
                     mergedGridOps.reactiveCustomComponents ?? _getGlobalGridOption('reactiveCustomComponents') ?? true
                 ),
-                renderStatusService,
+                renderStatus,
             },
             modules,
             frameworkOverrides,
@@ -146,7 +146,7 @@ export const AgGridReactUi = <TData,>(props: AgGridReactProps<TData>) => {
 
         const createUiCallback = (context: Context) => {
             setContext(context);
-            context.createBean(renderStatusService);
+            context.createBean(renderStatus);
 
             destroyFuncs.current.push(() => {
                 context.destroy();
