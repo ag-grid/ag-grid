@@ -2,12 +2,14 @@ import type { Registry } from '../components/framework/registry';
 import { KeyCode } from '../constants/keyCode';
 import type { BeanCollection } from '../context/context';
 import type { AgPickerFieldParams } from '../interfaces/agFieldParams';
+import { _registerComponentCSS } from '../main-umd-noStyles';
 import { _shouldDisplayTooltip } from '../tooltip/tooltipFeature';
 import type { ITooltipCtrl, TooltipFeature } from '../tooltip/tooltipFeature';
 import { _setAriaControls } from '../utils/aria';
 import type { ListOption } from './agList';
 import { AgList } from './agList';
 import { AgPickerField } from './agPickerField';
+import { agSelectCSS } from './agSelect.css-GENERATED';
 import type { ComponentSelector } from './component';
 
 export interface AgSelectParams<TValue = string>
@@ -45,6 +47,7 @@ export class AgSelect<TValue = string | null> extends AgPickerField<
     public override wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
         this.registry = beans.registry;
+        _registerComponentCSS(agSelectCSS, beans);
     }
 
     public override postConstruct(): void {

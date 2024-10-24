@@ -1,13 +1,15 @@
 import type { BeanCollection, ComponentSelector } from 'ag-grid-community';
-import { Component, RefPlaceholder } from 'ag-grid-community';
+import { Component, RefPlaceholder, _registerComponentCSS } from 'ag-grid-community';
 
 import type { GridLicenseManager as LicenseManager } from './gridLicenseManager';
+import { watermarkCSS } from './watermark.css-GENERATED';
 
 export class AgWatermark extends Component {
     licenseManager: LicenseManager;
 
     public wireBeans(beans: BeanCollection): void {
         this.licenseManager = beans.licenseManager as LicenseManager;
+        _registerComponentCSS(watermarkCSS, beans);
     }
 
     private readonly eLicenseTextRef: HTMLElement = RefPlaceholder;

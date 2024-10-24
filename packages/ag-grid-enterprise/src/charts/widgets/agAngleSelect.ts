@@ -23,7 +23,7 @@ export type AgAngleSelectEvent = 'fieldValueChanged';
 export class AgAngleSelect extends AgAbstractLabel<AgAngleSelectParams, AgAngleSelectEvent> {
     protected dragService?: DragService;
 
-    public wireBeans(beans: BeanCollection) {
+    public override wireBeans(beans: BeanCollection) {
         this.dragService = beans.dragService;
     }
 

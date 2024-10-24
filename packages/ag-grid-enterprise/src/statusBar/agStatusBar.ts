@@ -9,8 +9,9 @@ import type {
     UserComponentFactory,
     WithoutGridCommon,
 } from 'ag-grid-community';
-import { AgPromise, Component, RefPlaceholder, _removeFromParent } from 'ag-grid-community';
+import { AgPromise, Component, RefPlaceholder, _registerComponentCSS, _removeFromParent } from 'ag-grid-community';
 
+import { agStatusBarCSS } from './agStatusBar.css-GENERATED';
 import type { StatusBarService } from './statusBarService';
 
 function getStatusPanelCompDetails(
@@ -35,6 +36,7 @@ export class AgStatusBar extends Component {
     public wireBeans(beans: BeanCollection) {
         this.userComponentFactory = beans.userComponentFactory;
         this.statusBarService = beans.statusBarService as StatusBarService;
+        _registerComponentCSS(agStatusBarCSS, beans);
     }
 
     private readonly eStatusBarLeft: HTMLElement = RefPlaceholder;

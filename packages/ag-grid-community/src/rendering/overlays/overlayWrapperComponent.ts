@@ -4,6 +4,7 @@ import type { BeanCollection } from '../../context/context';
 import type { GridOptions } from '../../entities/gridOptions';
 import type { FocusService } from '../../focusService';
 import { _getActiveDomElement, _isNothingFocused } from '../../gridOptionsUtils';
+import { _registerComponentCSS } from '../../main-umd-noStyles';
 import type { LayoutView, UpdateLayoutClassesParams } from '../../styling/layoutFeature';
 import { LayoutCssClasses, LayoutFeature } from '../../styling/layoutFeature';
 import { _last } from '../../utils/array';
@@ -14,6 +15,7 @@ import type { ComponentSelector } from '../../widgets/component';
 import { Component, RefPlaceholder } from '../../widgets/component';
 import type { IOverlayComp } from './overlayComponent';
 import type { OverlayService } from './overlayService';
+import { overlayWrapperComponentCSS } from './overlayWrapperComponent.css-GENERATED';
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
     private overlayService: OverlayService;
@@ -23,6 +25,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.overlayService = beans.overlayService!;
         this.focusService = beans.focusService;
         this.visibleColsService = beans.visibleColsService;
+        _registerComponentCSS(overlayWrapperComponentCSS, beans);
     }
 
     private readonly eOverlayWrapper: HTMLElement = RefPlaceholder;

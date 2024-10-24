@@ -1,10 +1,13 @@
+import type { BeanCollection } from '../context/context';
 import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IComponent } from '../interfaces/iComponent';
+import { _registerComponentCSS } from '../main-umd-noStyles';
 import { _clearElement } from '../utils/dom';
 import type { IconName } from '../utils/icon';
 import { _createIcon } from '../utils/icon';
 import { _escapeString } from '../utils/string';
 import { Component, RefPlaceholder } from '../widgets/component';
+import { dragAndDropImageComponentCSS } from './dragAndDropImageComponent.css-GENERATED';
 import type { DragAndDropIcon, DragSource } from './dragAndDropService';
 
 export interface IDragAndDropImageParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -44,6 +47,10 @@ export class DragAndDropImageComponent extends Component implements IDragAndDrop
             pivot: create('columnMovePivot'),
             notAllowed: create('dropNotAllowed'),
         };
+    }
+
+    public wireBeans(beans: BeanCollection): void {
+        _registerComponentCSS(dragAndDropImageComponentCSS, beans);
     }
 
     public init(params: IDragAndDropImageParams): void {

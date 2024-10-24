@@ -1,15 +1,24 @@
-import type { DragAndDropIcon, DragItem, DraggingEvent, DropTarget, ListOption } from 'ag-grid-community';
+import type {
+    BeanCollection,
+    DragAndDropIcon,
+    DragItem,
+    DraggingEvent,
+    DropTarget,
+    ListOption,
+} from 'ag-grid-community';
 import {
     AgSelect,
     Component,
     DragSourceType,
     _escapeString,
     _getActiveDomElement,
+    _registerComponentCSS,
     _removeFromParent,
 } from 'ag-grid-community';
 
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';
+import { agPillSelectCSS } from './agPillSelect.css-GENERATED';
 
 export interface AgPillSelectParams<TValue = string | null> {
     valueList?: TValue[];
@@ -47,6 +56,10 @@ export class AgPillSelect<TValue = string | null> extends Component {
         this.selectedValues = selectedValueList ?? [];
         this.valueList = valueList ?? [];
         this.valueFormatter = valueFormatter ?? ((value) => _escapeString(value as any)!);
+    }
+
+    public wireBens(beans: BeanCollection): void {
+        _registerComponentCSS(agPillSelectCSS, beans);
     }
 
     public postConstruct(): void {

@@ -8,8 +8,17 @@ import type {
     IDetailCellRenderer,
     IDetailCellRendererParams,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder, _getGridRegisteredModules, _missing, _warn, createGrid } from 'ag-grid-community';
+import {
+    Component,
+    RefPlaceholder,
+    _getGridRegisteredModules,
+    _missing,
+    _registerComponentCSS,
+    _warn,
+    createGrid,
+} from 'ag-grid-community';
 
+import { detailCellRendererCSS } from './detailCellRenderer.css-GENERATED';
 import { DetailCellRendererCtrl } from './detailCellRendererCtrl';
 import { DetailFrameworkComponentWrapper } from './detailFrameworkComponentWrapper';
 
@@ -23,6 +32,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
     public wireBeans(beans: BeanCollection): void {
         this.context = beans.context;
+        _registerComponentCSS(detailCellRendererCSS, beans);
     }
 
     public init(params: IDetailCellRendererParams): void {

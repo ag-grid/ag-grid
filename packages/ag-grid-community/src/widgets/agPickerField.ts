@@ -20,7 +20,7 @@ export abstract class AgPickerField<
 > extends AgAbstractField<TValue, TConfig, TEventType | AgPickerFieldEvent> {
     protected popupService: PopupService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public override wireBeans(beans: BeanCollection): void {
         this.popupService = beans.popupService!;
     }
 

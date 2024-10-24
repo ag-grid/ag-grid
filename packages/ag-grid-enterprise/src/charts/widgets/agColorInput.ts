@@ -9,7 +9,7 @@ export type AgColorInputEvent = 'colorChanged';
 export class AgColorInput extends AgInputTextField<AgInputTextFieldParams, AgColorInputEvent> {
     private chartTranslationService: ChartTranslationService;
 
-    public wireBeans(beans: BeanCollection): void {
+    public override wireBeans(beans: BeanCollection): void {
         this.chartTranslationService = beans.chartTranslationService as ChartTranslationService;
     }
     private readonly eColor: HTMLElement = RefPlaceholder;

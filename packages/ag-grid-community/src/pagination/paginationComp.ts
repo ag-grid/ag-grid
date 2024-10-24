@@ -5,6 +5,7 @@ import type { PaginationNumberFormatterParams } from '../interfaces/iCallbackPar
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { FocusableContainer } from '../interfaces/iFocusableContainer';
 import type { IRowModel } from '../interfaces/iRowModel';
+import { _registerComponentCSS } from '../main-umd-noStyles';
 import type { AriaAnnouncementService } from '../rendering/ariaAnnouncementService';
 import { _setAriaDisabled } from '../utils/aria';
 import { _addFocusableContainerListener } from '../utils/focus';
@@ -15,6 +16,7 @@ import { RefPlaceholder } from '../widgets/component';
 import { TabGuardComp } from '../widgets/tabGuardComp';
 import type { PageSizeSelectorComp } from './pageSizeSelector/pageSizeSelectorComp';
 import { PageSizeSelectorSelector } from './pageSizeSelector/pageSizeSelectorComp';
+import { paginationCompCSS } from './paginationComp.css-GENERATED';
 import type { PaginationService } from './paginationService';
 
 export class PaginationComp extends TabGuardComp implements FocusableContainer {
@@ -28,6 +30,7 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
         this.paginationService = beans.paginationService!;
         this.focusService = beans.focusService;
         this.ariaAnnouncementService = beans.ariaAnnouncementService;
+        _registerComponentCSS(paginationCompCSS, beans);
     }
 
     private readonly btFirst: HTMLElement = RefPlaceholder;

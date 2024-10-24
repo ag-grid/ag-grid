@@ -1,11 +1,14 @@
 import { GROUP_AUTO_COLUMN_ID } from '../../columns/columnUtils';
 import { KeyCode } from '../../constants/keyCode';
+import type { BeanCollection } from '../../context/context';
 import { _getActiveDomElement } from '../../gridOptionsUtils';
+import { _registerComponentCSS } from '../../main-umd-noStyles';
 import { _getAriaCheckboxStateName, _setAriaLive } from '../../utils/aria';
 import { _stopPropagationForAgGrid } from '../../utils/event';
 import type { AgCheckbox } from '../../widgets/agCheckbox';
 import { AgCheckboxSelector } from '../../widgets/agCheckbox';
 import { Component, RefPlaceholder } from '../../widgets/component';
+import { checkboxCellRendererCSS } from './checkboxCellRenderer.css-GENERATED';
 import type { ICellRenderer, ICellRendererParams } from './iCellRenderer';
 
 export interface ICheckboxCellRendererParams<TData = any, TContext = any>
@@ -26,6 +29,10 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             </div>`,
             [AgCheckboxSelector]
         );
+    }
+
+    public wireBeans(beans: BeanCollection): void {
+        _registerComponentCSS(checkboxCellRendererCSS, beans);
     }
 
     public init(params: ICheckboxCellRendererParams): void {

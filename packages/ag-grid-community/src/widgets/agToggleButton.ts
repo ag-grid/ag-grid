@@ -1,4 +1,4 @@
-import type { CoreBeanCollection } from '../context/context';
+import type { BeanCollection } from '../context/context';
 import type { AgCheckboxParams } from '../interfaces/agFieldParams';
 import { _registerComponentCSS } from '../theming/inject';
 import { AgCheckbox } from './agCheckbox';
@@ -12,7 +12,7 @@ export class AgToggleButton extends AgCheckbox<AgToggleButtonParams> {
         super(config, 'ag-toggle-button');
     }
 
-    public wireBeans(beans: CoreBeanCollection): void {
+    public override wireBeans(beans: BeanCollection): void {
         _registerComponentCSS(agToggleButtonCSS, beans);
     }
 
