@@ -47,10 +47,10 @@
 
     :global(.icon) {
         --icon-size: #{$spacing-size-5};
-        --color-icon: var(--color-util-gray-400);
+        --icon-color: var(--color-util-gray-400);
 
         #{$selector-darkmode} & {
-            --color-icon: var(--color-fg-primary);
+            --icon-color: var(--color-fg-primary);
         }
     }
 }

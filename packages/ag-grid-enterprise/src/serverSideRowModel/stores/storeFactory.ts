@@ -1,8 +1,8 @@
 import type {
     BeanCollection,
     ColumnModel,
-    FuncColsService,
     GetServerSideGroupLevelParamsParams,
+    IColsService,
     NamedBean,
     RowAutoHeightService,
     RowNode,
@@ -18,12 +18,14 @@ export class StoreFactory extends BeanStub implements NamedBean {
     beanName = 'ssrmStoreFactory' as const;
 
     private columnModel: ColumnModel;
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
+    private pivotColsService?: IColsService;
     private rowAutoHeightService?: RowAutoHeightService;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
+        this.pivotColsService = beans.pivotColsService;
         this.rowAutoHeightService = beans.rowAutoHeightService;
     }
 
@@ -98,8 +100,8 @@ export class StoreFactory extends BeanStub implements NamedBean {
         const params: WithoutGridCommon<GetServerSideGroupLevelParamsParams> = {
             level: parentNode.level + 1,
             parentRowNode: parentNode.level >= 0 ? parentNode : undefined,
-            rowGroupColumns: this.funcColsService.rowGroupCols,
-            pivotColumns: this.funcColsService.pivotCols,
+            rowGroupColumns: this.rowGroupColsService?.columns ?? [],
+            pivotColumns: this.pivotColsService?.columns ?? [],
             pivotMode: this.columnModel.isPivotMode(),
         };
 

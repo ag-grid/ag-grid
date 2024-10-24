@@ -1,5 +1,8 @@
+@use '../../design-system' as *;
+
 .icon {
-    fill: var(--color-icon);
+    fill: var(--icon-color, var(--color-fg-primary));
     width: var(--icon-size);
     height: var(--icon-size);
+    transition: fill $transition-default-timing;
 }

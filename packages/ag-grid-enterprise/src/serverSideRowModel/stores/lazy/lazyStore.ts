@@ -1,7 +1,7 @@
 import type {
     AgColumn,
     BeanCollection,
-    FuncColsService,
+    IColsService,
     IRowNode,
     ISelectionService,
     IServerSideStore,
@@ -36,13 +36,13 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private blockUtils: BlockUtils;
     private storeUtils: StoreUtils;
     private selectionService?: ISelectionService;
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.blockUtils = beans.ssrmBlockUtils as BlockUtils;
         this.storeUtils = beans.ssrmStoreUtils as StoreUtils;
         this.selectionService = beans.selectionService;
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
     }
 
     // display indexes
@@ -94,7 +94,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (!usingTreeData && this.group) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field!;
-            this.rowGroupColumn = this.funcColsService.rowGroupCols[this.level];
+            this.rowGroupColumn = this.rowGroupColsService?.columns[this.level] as AgColumn;
         }
     }
 

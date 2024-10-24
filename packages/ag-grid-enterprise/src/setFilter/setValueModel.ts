@@ -1,8 +1,8 @@
 import type {
     AgColumn,
     AgEventType,
-    FuncColsService,
     GridOptionsService,
+    IColsService,
     IEventEmitter,
     IEventListener,
     RowNode,
@@ -41,7 +41,7 @@ export enum SetFilterModelValuesType {
 
 export interface SetValueModelParams<V> {
     gos: GridOptionsService;
-    funcColsService: FuncColsService;
+    rowGroupColsService?: IColsService;
     valueService: ValueService;
     filterParams: SetFilterParams<any, V>;
     setIsLoading: (loading: boolean) => void;
@@ -110,7 +110,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
     constructor(params: SetValueModelParams<V>) {
         const {
             usingComplexObjects,
-            funcColsService,
+            rowGroupColsService,
             valueService,
             treeDataTreeList,
             groupingTreeList,
@@ -178,13 +178,13 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
                 this.filterParams,
                 this.createKey,
                 this.caseFormat,
-                funcColsService,
                 valueService,
                 treeDataOrGrouping,
                 !!treeDataTreeList,
                 getDataPath,
                 groupAllowUnbalanced,
-                addManagedEventListeners
+                addManagedEventListeners,
+                rowGroupColsService
             );
         }
 

@@ -130,10 +130,8 @@ export class VirtualList<
         switch (e.key) {
             case KeyCode.UP:
             case KeyCode.DOWN:
-                if (this.navigate(e.key === KeyCode.UP)) {
-                    e.preventDefault();
-                }
-
+                e.preventDefault();
+                this.navigate(e.key === KeyCode.UP);
                 break;
             case KeyCode.PAGE_HOME:
             case KeyCode.PAGE_END:
@@ -151,20 +149,18 @@ export class VirtualList<
         this.forceFocusOutOfContainer(e.shiftKey);
     }
 
-    private navigate(up: boolean): boolean {
+    private navigate(up: boolean): void {
         if (this.lastFocusedRowIndex == null) {
-            return false;
+            return;
         }
 
         const nextRow = this.lastFocusedRowIndex + (up ? -1 : 1);
 
         if (nextRow < 0 || nextRow >= this.model.getRowCount()) {
-            return false;
+            return;
         }
 
         this.focusRow(nextRow);
-
-        return true;
     }
 
     public navigateToPage(

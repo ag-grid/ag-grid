@@ -76,7 +76,7 @@
         color: var(--color-positive);
 
         svg {
-            --color-icon: var(--color-positive);
+            --icon-color: var(--color-positive);
         }
     }
 
@@ -84,7 +84,7 @@
         color: var(--color-negative);
 
         svg {
-            --color-icon: var(--color-negative);
+            --icon-color: var(--color-negative);
         }
     }
 
