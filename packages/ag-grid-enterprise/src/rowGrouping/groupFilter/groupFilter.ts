@@ -29,12 +29,12 @@ interface FilterColumnPair {
 export type GroupFilterEvent = 'columnRowGroupChanged' | 'selectedColumnChanged';
 export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilterComp {
     private filterManager?: FilterManager;
-    private columnNameService: ColumnNameService;
+    private columnNames: ColumnNameService;
     private funcColsService: FuncColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.filterManager = beans.filterManager;
-        this.columnNameService = beans.columnNameService;
+        this.columnNames = beans.columnNames;
         this.funcColsService = beans.funcColsService;
     }
 
@@ -158,7 +158,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
         this.eGroupFieldSelect.addOptions(
             sourceColumns.map((sourceColumn) => ({
                 value: sourceColumn.getId(),
-                text: this.columnNameService.getDisplayNameForColumn(sourceColumn, 'groupFilter', false) ?? undefined,
+                text: this.columnNames.getDisplayNameForColumn(sourceColumn, 'groupFilter', false) ?? undefined,
             }))
         );
         this.eGroupFieldSelect.setValue(this.selectedColumn!.getId());

@@ -21,7 +21,7 @@ import type {
 
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public columnModel: ColumnModel;
-    private columnNameService: ColumnNameService;
+    private columnNames: ColumnNameService;
     public funcColsService: FuncColsService;
     public valueSvc: ValueService;
     public gos: GridOptionsService;
@@ -36,7 +36,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         const {
             columnModel,
             funcColsService,
-            columnNameService,
+            columnNames,
             valueSvc,
             gos,
             processCellCallback,
@@ -47,7 +47,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
         this.columnModel = columnModel;
         this.funcColsService = funcColsService;
-        this.columnNameService = columnNameService;
+        this.columnNames = columnNames;
         this.valueSvc = valueSvc;
         this.gos = gos;
         this.processCellCallback = processCellCallback;
@@ -137,7 +137,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             return callback(this.gos.addGridCommonParams({ column }));
         }
 
-        return this.columnNameService.getDisplayNameForColumn(column, 'csv', true);
+        return this.columnNames.getDisplayNameForColumn(column, 'csv', true);
     }
 
     private createValueForGroupNode(column: AgColumn, node: RowNode): string {

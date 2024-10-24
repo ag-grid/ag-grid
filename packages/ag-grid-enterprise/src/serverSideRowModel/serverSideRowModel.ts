@@ -55,7 +55,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     beanName = 'rowModel' as const;
 
     private columnModel: ColumnModel;
-    private columnNameService: ColumnNameService;
+    private columnNames: ColumnNameService;
     private pivotResultColsService?: IPivotResultColsService;
     private funcColsService: FuncColsService;
     private filterManager?: FilterManager;
@@ -67,7 +67,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
-        this.columnNameService = beans.columnNameService;
+        this.columnNames = beans.columnNames;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.funcColsService = beans.funcColsService;
         this.filterManager = beans.filterManager;
@@ -365,7 +365,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
                 ({
                     id: col.getId(),
                     aggFunc: col.getAggFunc(),
-                    displayName: this.columnNameService.getDisplayNameForColumn(col, 'model'),
+                    displayName: this.columnNames.getDisplayNameForColumn(col, 'model'),
                     field: col.getColDef().field,
                 }) as ColumnVO
         );

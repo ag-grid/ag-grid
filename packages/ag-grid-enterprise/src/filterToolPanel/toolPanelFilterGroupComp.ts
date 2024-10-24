@@ -24,11 +24,11 @@ import { ToolPanelFilterComp } from './toolPanelFilterComp';
 export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
 
 export class ToolPanelFilterGroupComp extends Component {
-    private columnNameService: ColumnNameService;
+    private columnNames: ColumnNameService;
     private registry: Registry;
 
     public wireBeans(beans: BeanCollection) {
-        this.columnNameService = beans.columnNameService;
+        this.columnNames = beans.columnNames;
         this.registry = beans.registry;
     }
 
@@ -251,11 +251,11 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private getColumnGroupName(columnGroup: AgProvidedColumnGroup): string | null {
-        return this.columnNameService.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'filterToolPanel');
+        return this.columnNames.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'filterToolPanel');
     }
 
     private getColumnName(column: AgColumn): string | null {
-        return this.columnNameService.getDisplayNameForColumn(column, 'filterToolPanel', false);
+        return this.columnNames.getDisplayNameForColumn(column, 'filterToolPanel', false);
     }
 
     private destroyFilters() {

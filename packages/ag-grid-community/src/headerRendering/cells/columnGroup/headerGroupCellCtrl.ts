@@ -55,7 +55,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         compBean = setupCompBean(this, this.beans.context, compBean);
         this.setGui(eGui, compBean);
 
-        this.displayName = this.beans.columnNameService.getDisplayNameForColumnGroup(this.column, 'header');
+        this.displayName = this.beans.columnNames.getDisplayNameForColumnGroup(this.column, 'header');
 
         this.addClasses();
         this.setupMovingCss(compBean);

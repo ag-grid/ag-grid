@@ -18,13 +18,13 @@ export class CsvCreator
     beanName = 'csvCreator' as const;
 
     private columnModel: ColumnModel;
-    private columnNameService: ColumnNameService;
+    private columnNames: ColumnNameService;
     private funcColsService: FuncColsService;
     private valueSvc: ValueService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
-        this.columnNameService = beans.columnNameService;
+        this.columnNames = beans.columnNames;
         this.funcColsService = beans.funcColsService;
         this.valueSvc = beans.valueSvc;
     }
@@ -69,7 +69,7 @@ export class CsvCreator
     }
 
     public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
-        const { columnModel, columnNameService, funcColsService, valueSvc, gos } = this;
+        const { columnModel, columnNames, funcColsService, valueSvc, gos } = this;
         const {
             processCellCallback,
             processHeaderCallback,
@@ -81,7 +81,7 @@ export class CsvCreator
 
         return new CsvSerializingSession({
             columnModel,
-            columnNameService,
+            columnNames,
             funcColsService,
             valueSvc,
             gos,

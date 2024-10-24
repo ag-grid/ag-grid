@@ -23,7 +23,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'menuItemMapper' as const;
 
     private columnModel: ColumnModel;
-    private columnNameService: ColumnNameService;
+    private columnNames: ColumnNameService;
     private funcColsService: FuncColsService;
     private chartMenuItemMapper: ChartMenuItemMapper;
     private sortController?: SortController;
@@ -35,7 +35,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
-        this.columnNameService = beans.columnNameService;
+        this.columnNames = beans.columnNames;
         this.funcColsService = beans.funcColsService;
         this.chartMenuItemMapper = beans.chartMenuItemMapper as ChartMenuItemMapper;
         this.sortController = beans.sortController;
@@ -160,7 +160,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     name:
                         localeTextFunc('groupBy', 'Group by') +
                         ' ' +
-                        _escapeString(this.columnNameService.getDisplayNameForColumn(column, 'header')),
+                        _escapeString(this.columnNames.getDisplayNameForColumn(column, 'header')),
                     disabled:
                         this.gos.get('functionsReadOnly') ||
                         column?.isRowGroupActive() ||
@@ -193,7 +193,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     const underlyingColumn = this.columnModel.getColDefCol(showRowGroup);
                     const ungroupByName =
                         underlyingColumn != null
-                            ? _escapeString(this.columnNameService.getDisplayNameForColumn(underlyingColumn, 'header'))
+                            ? _escapeString(this.columnNames.getDisplayNameForColumn(underlyingColumn, 'header'))
                             : showRowGroup;
                     return {
                         name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName,
@@ -210,7 +210,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     name:
                         localeTextFunc('ungroupBy', 'Un-Group by') +
                         ' ' +
-                        _escapeString(this.columnNameService.getDisplayNameForColumn(column, 'header')),
+                        _escapeString(this.columnNames.getDisplayNameForColumn(column, 'header')),
                     disabled:
                         this.gos.get('functionsReadOnly') ||
                         !column?.isRowGroupActive() ||

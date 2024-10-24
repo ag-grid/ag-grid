@@ -36,7 +36,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
     beanName = 'autoColService' as const;
 
     private columnModel: ColumnModel;
-    private columnNameService: ColumnNameService;
+    private columnNames: ColumnNameService;
     private columnFactory: ColumnFactory;
     private funcColsService: FuncColsService;
     private context: Context;
@@ -47,7 +47,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
-        this.columnNameService = beans.columnNameService;
+        this.columnNames = beans.columnNames;
         this.columnFactory = beans.columnFactory;
         this.funcColsService = beans.funcColsService;
         this.context = beans.context;
@@ -305,7 +305,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         if (rowGroupCol) {
             const colDef = rowGroupCol.getColDef();
             Object.assign(res, {
-                headerName: this.columnNameService.getDisplayNameForColumn(rowGroupCol, 'header'),
+                headerName: this.columnNames.getDisplayNameForColumn(rowGroupCol, 'header'),
                 headerValueGetter: colDef.headerValueGetter,
             });
 

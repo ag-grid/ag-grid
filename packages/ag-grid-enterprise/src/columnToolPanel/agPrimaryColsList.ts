@@ -44,13 +44,13 @@ const PRIMARY_COLS_LIST_PANEL_CLASS = 'ag-column-select-list';
 export type AgPrimaryColsListEvent = 'groupExpanded' | 'selectionChanged';
 export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private columnModel: ColumnModel;
-    private columnNameService: ColumnNameService;
+    private columnNames: ColumnNameService;
     private colDefService: ToolPanelColDefService;
     private modelItemUtils: ModelItemUtils;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
-        this.columnNameService = beans.columnNameService;
+        this.columnNames = beans.columnNames;
         this.colDefService = beans.toolPanelColDefService as ToolPanelColDefService;
         this.modelItemUtils = beans.modelItemUtils as ModelItemUtils;
     }
@@ -296,7 +296,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 return;
             }
 
-            const displayName = this.columnNameService.getDisplayNameForProvidedColumnGroup(
+            const displayName = this.columnNames.getDisplayNameForProvidedColumnGroup(
                 null,
                 columnGroup,
                 'columnToolPanel'
@@ -322,7 +322,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 return;
             }
 
-            const displayName = this.columnNameService.getDisplayNameForColumn(column, 'columnToolPanel');
+            const displayName = this.columnNames.getDisplayNameForColumn(column, 'columnToolPanel');
 
             parentList.push(new ColumnModelItem(displayName, column, dept));
         };

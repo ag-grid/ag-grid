@@ -84,7 +84,7 @@ const orderedCoreBeans: BeanName[] = [
     'columnFlexService',
     'columnResizeService',
     'funcColsService',
-    'columnNameService',
+    'columnNames',
     'columnViewport',
     'pivotResultColsService',
     'showRowGroupColsService',

@@ -11,10 +11,10 @@ import type { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParent 
 // they can provide a getModelAsString() method on the filter instead. this class just displays
 // the string returned from getModelAsString()
 export class ReadOnlyFloatingFilter extends Component implements IFloatingFilterComp<IFilter & IFloatingFilterParent> {
-    private columnNameService: ColumnNameService;
+    private columnNames: ColumnNameService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.columnNameService = beans.columnNameService;
+        this.columnNames = beans.columnNames;
     }
 
     private readonly eFloatingFilterText: AgInputTextField = RefPlaceholder;
@@ -39,7 +39,7 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
 
     public init(params: IFloatingFilterParams): void {
         this.params = params;
-        const displayName = this.columnNameService.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
+        const displayName = this.columnNames.getDisplayNameForColumn(params.column as AgColumn, 'header', true);
         const translate = this.getLocaleTextFunc();
         this.eFloatingFilterText
             .setDisabled(true)
