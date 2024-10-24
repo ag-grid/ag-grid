@@ -57,7 +57,7 @@ export class GridBodyCtrl extends BeanStub {
     private rowContainerHeight: RowContainerHeightService;
     private ctrlsSvc: CtrlsService;
     private colModel: ColumnModel;
-    private scrollVisibleService: ScrollVisibleService;
+    private scrollVisibleSvc: ScrollVisibleService;
     private contextMenuService?: IContextMenuService;
     private rowDragService?: RowDragService;
     private pinnedRowModel?: PinnedRowModel;
@@ -72,7 +72,7 @@ export class GridBodyCtrl extends BeanStub {
         this.rowContainerHeight = beans.rowContainerHeight;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.colModel = beans.colModel;
-        this.scrollVisibleService = beans.scrollVisibleService;
+        this.scrollVisibleSvc = beans.scrollVisibleSvc;
         this.contextMenuService = beans.contextMenuService;
         this.rowDragService = beans.rowDragService;
         this.pinnedRowModel = beans.pinnedRowModel;
@@ -227,12 +227,12 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private onScrollVisibilityChanged(): void {
-        const visible = this.scrollVisibleService.isVerticalScrollShowing();
+        const visible = this.scrollVisibleSvc.isVerticalScrollShowing();
         this.setVerticalScrollPaddingVisible(visible);
         this.setStickyWidth(visible);
         this.setStickyBottomOffsetBottom();
 
-        const scrollbarWidth = visible ? this.scrollVisibleService.getScrollbarWidth() || 0 : 0;
+        const scrollbarWidth = visible ? this.scrollVisibleSvc.getScrollbarWidth() || 0 : 0;
         const pad = _isInvisibleScrollbar() ? 16 : 0;
         const width = `calc(100% + ${scrollbarWidth + pad}px)`;
 
@@ -248,11 +248,11 @@ export class GridBodyCtrl extends BeanStub {
     private updateScrollingClasses(): void {
         this.eGridBody.classList.toggle(
             'ag-body-vertical-content-no-gap',
-            !this.scrollVisibleService.hasVerticalScrollGap()
+            !this.scrollVisibleSvc.hasVerticalScrollGap()
         );
         this.eGridBody.classList.toggle(
             'ag-body-horizontal-content-no-gap',
-            !this.scrollVisibleService.hasHorizontalScrollGap()
+            !this.scrollVisibleSvc.hasHorizontalScrollGap()
         );
     }
 
@@ -505,7 +505,7 @@ export class GridBodyCtrl extends BeanStub {
             this.comp.setStickyTopWidth('100%');
             this.comp.setStickyBottomWidth('100%');
         } else {
-            const scrollbarWidth = this.scrollVisibleService.getScrollbarWidth();
+            const scrollbarWidth = this.scrollVisibleSvc.getScrollbarWidth();
             this.comp.setStickyTopWidth(`calc(100% - ${scrollbarWidth}px)`);
             this.comp.setStickyBottomWidth(`calc(100% - ${scrollbarWidth}px)`);
         }
@@ -537,8 +537,8 @@ export class GridBodyCtrl extends BeanStub {
 
     private setStickyBottomOffsetBottom(): void {
         const pinnedBottomHeight = this.pinnedRowModel?.getPinnedBottomTotalHeight() ?? 0;
-        const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
-        const scrollbarWidth = hScrollShowing ? this.scrollVisibleService.getScrollbarWidth() || 0 : 0;
+        const hScrollShowing = this.scrollVisibleSvc.isHorizontalScrollShowing();
+        const scrollbarWidth = hScrollShowing ? this.scrollVisibleSvc.getScrollbarWidth() || 0 : 0;
         const height = pinnedBottomHeight + scrollbarWidth;
 
         this.comp.setStickyBottomBottom(`${height}px`);

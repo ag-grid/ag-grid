@@ -253,7 +253,7 @@ export interface CoreBeanCollection {
     clipboardSvc?: IClipboardService;
     mouseEventSvc: MouseEventService;
     cellNavigation?: CellNavigationService;
-    scrollVisibleService: ScrollVisibleService;
+    scrollVisibleSvc: ScrollVisibleService;
     pinnedColumnService?: PinnedColumnService;
     expressionService?: ExpressionService;
     autoWidthCalculator?: AutoWidthCalculator;
@@ -460,7 +460,7 @@ export type BeanName =
     | 'rowNodeSorter'
     | 'rowRenderer'
     | 'rowStyleSvc'
-    | 'scrollVisibleService'
+    | 'scrollVisibleSvc'
     | 'selectionController'
     | 'selectionSvc'
     | 'showRowGroupCols'

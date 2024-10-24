@@ -8,11 +8,11 @@ import type { ScrollVisibleService } from './scrollVisibleService';
 
 export class FakeVScrollComp extends AbstractFakeScrollComp {
     private ctrlsSvc: CtrlsService;
-    private scrollVisibleService: ScrollVisibleService;
+    private scrollVisibleSvc: ScrollVisibleService;
 
     public wireBeans(beans: BeanCollection) {
         this.ctrlsSvc = beans.ctrlsSvc;
-        this.scrollVisibleService = beans.scrollVisibleService;
+        this.scrollVisibleSvc = beans.scrollVisibleSvc;
     }
 
     constructor() {
@@ -36,10 +36,10 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
     }
 
     protected setScrollVisible(): void {
-        const vScrollShowing = this.scrollVisibleService.isVerticalScrollShowing();
+        const vScrollShowing = this.scrollVisibleSvc.isVerticalScrollShowing();
         const invisibleScrollbar = this.invisibleScrollbar;
 
-        const scrollbarWidth = vScrollShowing ? this.scrollVisibleService.getScrollbarWidth() || 0 : 0;
+        const scrollbarWidth = vScrollShowing ? this.scrollVisibleSvc.getScrollbarWidth() || 0 : 0;
         const adjustedScrollbarWidth = scrollbarWidth === 0 && invisibleScrollbar ? 16 : scrollbarWidth;
 
         this.addOrRemoveCssClass('ag-scrollbar-invisible', invisibleScrollbar);

@@ -324,7 +324,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     private getViewportHeight(): number {
         const scrollPosition = this.ctrlsSvc.getGridBodyCtrl().getScrollFeature().getVScrollPosition();
-        const scrollbarWidth = this.beans.scrollVisibleService.getScrollbarWidth();
+        const scrollbarWidth = this.beans.scrollVisibleSvc.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
         if (this.ctrlsSvc.get('center').isHorizontalScrollShowing()) {

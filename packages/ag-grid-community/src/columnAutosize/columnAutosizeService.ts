@@ -29,7 +29,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private autoWidthCalculator: AutoWidthCalculator;
     private ctrlsSvc: CtrlsService;
     private renderStatusService?: IRenderStatusService;
-    private scrollVisibleService: ScrollVisibleService;
+    private scrollVisibleSvc: ScrollVisibleService;
 
     private timesDelayed = 0;
 
@@ -44,7 +44,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.autoWidthCalculator = beans.autoWidthCalculator!;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.renderStatusService = beans.renderStatusService;
-        this.scrollVisibleService = beans.scrollVisibleService;
+        this.scrollVisibleSvc = beans.scrollVisibleSvc;
     }
 
     public postConstruct(): void {
@@ -259,7 +259,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
         const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
         const removeScrollWidth = gridBodyCtrl.isVerticalScrollShowing();
-        const scrollWidthToRemove = removeScrollWidth ? this.scrollVisibleService.getScrollbarWidth() : 0;
+        const scrollWidthToRemove = removeScrollWidth ? this.scrollVisibleSvc.getScrollbarWidth() : 0;
         // bodyViewportWidth should be calculated from eGridBody, not eBodyViewport
         // because we change the width of the bodyViewport to hide the real browser scrollbar
         const bodyViewportWidth = _getInnerWidth(gridBodyCtrl.getGridBodyElement());

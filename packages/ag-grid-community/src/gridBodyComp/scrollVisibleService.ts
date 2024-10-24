@@ -11,7 +11,7 @@ export interface SetScrollsVisibleParams {
 }
 
 export class ScrollVisibleService extends BeanStub implements NamedBean {
-    beanName = 'scrollVisibleService' as const;
+    beanName = 'scrollVisibleSvc' as const;
 
     private ctrlsSvc: CtrlsService;
     private colAnimation?: ColumnAnimationService;

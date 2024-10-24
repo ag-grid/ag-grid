@@ -17,14 +17,14 @@ export class ViewportSizeFeature extends BeanStub {
     private ctrlsSvc: CtrlsService;
     private pinnedColumnService?: PinnedColumnService;
     private colFlex?: ColumnFlexService;
-    private scrollVisibleService: ScrollVisibleService;
+    private scrollVisibleSvc: ScrollVisibleService;
     private colViewport: ColumnViewportService;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsSvc = beans.ctrlsSvc;
         this.pinnedColumnService = beans.pinnedColumnService;
         this.colFlex = beans.colFlex;
-        this.scrollVisibleService = beans.scrollVisibleService;
+        this.scrollVisibleSvc = beans.scrollVisibleSvc;
         this.colViewport = beans.colViewport;
     }
 
@@ -77,7 +77,7 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private onCenterViewportResized(): void {
-        this.scrollVisibleService.onCentreViewportResized();
+        this.scrollVisibleSvc.onCentreViewportResized();
         if (this.centerContainerCtrl.isViewportInTheDOMTree()) {
             this.pinnedColumnService?.keepPinnedColumnsNarrowerThanViewport();
             this.checkViewportAndScrolls();
@@ -145,7 +145,7 @@ export class ViewportSizeFeature extends BeanStub {
             verticalScrollShowing: this.gridBodyCtrl.isVerticalScrollShowing(),
         };
 
-        this.scrollVisibleService.setScrollsVisible(params);
+        this.scrollVisibleSvc.setScrollsVisible(params);
     }
 
     private isHorizontalScrollShowing(): boolean {

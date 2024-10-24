@@ -6,11 +6,11 @@ import type { ScrollVisibleService } from './scrollVisibleService';
 
 export class CenterWidthFeature extends BeanStub {
     private visibleCols: VisibleColsService;
-    private scrollVisibleService: ScrollVisibleService;
+    private scrollVisibleSvc: ScrollVisibleService;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleCols = beans.visibleCols;
-        this.scrollVisibleService = beans.scrollVisibleService;
+        this.scrollVisibleSvc = beans.scrollVisibleSvc;
     }
 
     constructor(
@@ -57,8 +57,8 @@ export class CenterWidthFeature extends BeanStub {
 
             if (this.addSpacer) {
                 const relevantWidth = this.gos.get('enableRtl') ? leftWidth : rightWidth;
-                if (relevantWidth === 0 && this.scrollVisibleService.isVerticalScrollShowing()) {
-                    totalWidth += this.scrollVisibleService.getScrollbarWidth();
+                if (relevantWidth === 0 && this.scrollVisibleSvc.isVerticalScrollShowing()) {
+                    totalWidth += this.scrollVisibleSvc.getScrollbarWidth();
                 }
             }
         }

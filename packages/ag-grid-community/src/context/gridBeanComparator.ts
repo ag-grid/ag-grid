@@ -55,7 +55,7 @@ const orderedCoreBeans: BeanName[] = [
     'mouseEventSvc',
     'cellNavigation',
     'cellStyles',
-    'scrollVisibleService',
+    'scrollVisibleSvc',
     'sortSvc',
     'colHover',
     'colAnimation',

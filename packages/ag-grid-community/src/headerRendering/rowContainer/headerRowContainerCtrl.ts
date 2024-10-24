@@ -29,7 +29,7 @@ export interface IHeaderRowContainerComp {
 
 export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     private ctrlsSvc: CtrlsService;
-    private scrollVisibleService: ScrollVisibleService;
+    private scrollVisibleSvc: ScrollVisibleService;
     private pinnedColumnService?: PinnedColumnService;
     private colModel: ColumnModel;
     private focusSvc: FocusService;
@@ -38,7 +38,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsSvc = beans.ctrlsSvc;
-        this.scrollVisibleService = beans.scrollVisibleService;
+        this.scrollVisibleSvc = beans.scrollVisibleSvc;
         this.pinnedColumnService = beans.pinnedColumnService;
         this.colModel = beans.colModel;
         this.focusSvc = beans.focusSvc;
@@ -314,14 +314,13 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
             const hidden = width == 0;
             const hiddenChanged = this.hidden !== hidden;
             const isRtl = this.gos.get('enableRtl');
-            const scrollbarWidth = this.scrollVisibleService.getScrollbarWidth();
+            const scrollbarWidth = this.scrollVisibleSvc.getScrollbarWidth();
 
             // if there is a scroll showing (and taking up space, so Windows, and not iOS)
             // in the body, then we add extra space to keep header aligned with the body,
             // as body width fits the cols and the scrollbar
             const addPaddingForScrollbar =
-                this.scrollVisibleService.isVerticalScrollShowing() &&
-                ((isRtl && pinningLeft) || (!isRtl && pinningRight));
+                this.scrollVisibleSvc.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
             const widthWithPadding = addPaddingForScrollbar ? width + scrollbarWidth : width;
 
             this.comp.setPinnedContainerWidth(`${widthWithPadding}px`);

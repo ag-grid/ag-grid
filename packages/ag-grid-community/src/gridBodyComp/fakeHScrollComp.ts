@@ -13,13 +13,13 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     private visibleCols: VisibleColsService;
     private pinnedRowModel?: PinnedRowModel;
     private ctrlsSvc: CtrlsService;
-    private scrollVisibleService: ScrollVisibleService;
+    private scrollVisibleSvc: ScrollVisibleService;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleCols = beans.visibleCols;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.ctrlsSvc = beans.ctrlsSvc;
-        this.scrollVisibleService = beans.scrollVisibleService;
+        this.scrollVisibleSvc = beans.scrollVisibleSvc;
     }
 
     private readonly eLeftSpacer: HTMLElement = RefPlaceholder;
@@ -97,13 +97,13 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     }
 
     private setFakeHScrollSpacerWidths(): void {
-        const vScrollShowing = this.scrollVisibleService.isVerticalScrollShowing();
+        const vScrollShowing = this.scrollVisibleSvc.isVerticalScrollShowing();
 
         // we pad the right based on a) if cols are pinned to the right and
         // b) if v scroll is showing on the right (normal position of scroll)
         let rightSpacing = this.visibleCols.getDisplayedColumnsRightWidth();
         const scrollOnRight = !this.enableRtl && vScrollShowing;
-        const scrollbarWidth = this.scrollVisibleService.getScrollbarWidth();
+        const scrollbarWidth = this.scrollVisibleSvc.getScrollbarWidth();
 
         if (scrollOnRight) {
             rightSpacing += scrollbarWidth;
@@ -127,10 +127,10 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
     private setScrollVisibleDebounce = 0;
 
     protected setScrollVisible(): void {
-        const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
+        const hScrollShowing = this.scrollVisibleSvc.isHorizontalScrollShowing();
         const invisibleScrollbar = this.invisibleScrollbar;
         const isSuppressHorizontalScroll = this.gos.get('suppressHorizontalScroll');
-        const scrollbarWidth = hScrollShowing ? this.scrollVisibleService.getScrollbarWidth() || 0 : 0;
+        const scrollbarWidth = hScrollShowing ? this.scrollVisibleSvc.getScrollbarWidth() || 0 : 0;
         const adjustedScrollbarWidth = scrollbarWidth === 0 && invisibleScrollbar ? 16 : scrollbarWidth;
         const scrollContainerSize = !isSuppressHorizontalScroll ? adjustedScrollbarWidth : 0;
 
