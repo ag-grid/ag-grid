@@ -71,11 +71,11 @@ export class AgFillHandle extends AbstractSelectionHandle {
         super.updateValuesOnMove(e);
 
         if (!this.initialXY) {
-            this.initialXY = this.mouseEventService.getNormalisedPosition(e);
+            this.initialXY = this.mouseEventSvc.getNormalisedPosition(e);
         }
 
         const { x, y } = this.initialXY;
-        const { x: newX, y: newY } = this.mouseEventService.getNormalisedPosition(e);
+        const { x: newX, y: newY } = this.mouseEventSvc.getNormalisedPosition(e);
         const diffX = Math.abs(x - newX);
         const diffY = Math.abs(y - newY);
         const allowedDirection = this.getFillHandleDirection();

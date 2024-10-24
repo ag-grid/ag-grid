@@ -148,14 +148,14 @@ export class DragAndDropService extends BeanStub implements NamedBean {
 
     private ctrlsSvc: CtrlsService;
     private dragSvc: DragService;
-    private mouseEventService: MouseEventService;
+    private mouseEventSvc: MouseEventService;
     private environment: Environment;
     private userCompFactory: UserComponentFactory;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsSvc = beans.ctrlsSvc;
         this.dragSvc = beans.dragSvc!;
-        this.mouseEventService = beans.mouseEventService;
+        this.mouseEventSvc = beans.mouseEventSvc;
         this.environment = beans.environment;
         this.userCompFactory = beans.userCompFactory;
     }
@@ -607,7 +607,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     }
 
     private processDragAndDropImageComponent(dragAndDropImageComponent: DragAndDropImageComponent): void {
-        const { dragSource, mouseEventService, environment } = this;
+        const { dragSource, mouseEventSvc, environment } = this;
 
         if (!dragSource) {
             return;
@@ -617,7 +617,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
         eGui.style.setProperty('position', 'absolute');
         eGui.style.setProperty('z-index', '9999');
 
-        mouseEventService.stampTopLevelGridCompWithGridInstance(eGui);
+        mouseEventSvc.stampTopLevelGridCompWithGridInstance(eGui);
         environment.applyThemeClasses(eGui);
         dragAndDropImageComponent.setIcon(null);
 

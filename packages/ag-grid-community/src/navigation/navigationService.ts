@@ -84,7 +84,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         const rangeServiceShouldHandleShift = !!this.rangeSvc && event.shiftKey;
 
         // home and end can be processed without knowing the currently selected cell, this can occur for full width rows.
-        const currentCell: CellPosition | null = this.beans.mouseEventService.getCellPositionForEvent(event);
+        const currentCell: CellPosition | null = this.beans.mouseEventSvc.getCellPositionForEvent(event);
 
         let processed = false;
 

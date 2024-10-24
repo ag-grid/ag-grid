@@ -52,7 +52,7 @@ const orderedCoreBeans: BeanName[] = [
     'filterMenuFactory',
     'dragAndDrop',
     'focusSvc',
-    'mouseEventService',
+    'mouseEventSvc',
     'cellNavigation',
     'cellStyles',
     'scrollVisibleService',

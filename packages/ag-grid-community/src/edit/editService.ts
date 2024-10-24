@@ -25,7 +25,7 @@ export class EditService extends BeanStub implements NamedBean {
     private userCompFactory: UserComponentFactory;
     private valueSvc: ValueService;
     private rowRenderer: RowRenderer;
-    private mouseEventService: MouseEventService;
+    private mouseEventSvc: MouseEventService;
     private popupSvc?: PopupService;
 
     public wireBeans(beans: CoreBeanCollection): void {
@@ -159,7 +159,7 @@ export class EditService extends BeanStub implements NamedBean {
                 // see if click came from inside the viewports
                 viewports.some((viewport) => viewport.contains(elementWithFocus)) &&
                 // and also that it's not from a detail grid
-                this.mouseEventService.isElementInThisGrid(elementWithFocus);
+                this.mouseEventSvc.isElementInThisGrid(elementWithFocus);
 
             if (!clickInsideGrid) {
                 const popupSvc = this.popupSvc;

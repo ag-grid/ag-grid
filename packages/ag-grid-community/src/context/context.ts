@@ -251,7 +251,7 @@ export interface CoreBeanCollection {
     csvCreator?: ICsvCreator;
     excelCreator?: IExcelCreator;
     clipboardSvc?: IClipboardService;
-    mouseEventService: MouseEventService;
+    mouseEventSvc: MouseEventService;
     cellNavigation?: CellNavigationService;
     scrollVisibleService: ScrollVisibleService;
     pinnedColumnService?: PinnedColumnService;
@@ -434,7 +434,7 @@ export type BeanName =
     | 'menuSvc'
     | 'menuUtils'
     | 'modelItemUtils'
-    | 'mouseEventService'
+    | 'mouseEventSvc'
     | 'navigation'
     | 'overlays'
     | 'paginationAutoPageSizeService'

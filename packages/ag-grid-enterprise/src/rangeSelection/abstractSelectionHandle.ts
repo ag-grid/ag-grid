@@ -20,13 +20,13 @@ export enum SelectionHandleType {
 export abstract class AbstractSelectionHandle extends Component {
     protected dragSvc: DragService;
     protected rangeSvc: RangeService;
-    protected mouseEventService: MouseEventService;
+    protected mouseEventSvc: MouseEventService;
     protected ctrlsSvc: CtrlsService;
 
     public wireBeans(beans: BeanCollection) {
         this.dragSvc = beans.dragSvc!;
         this.rangeSvc = beans.rangeSvc as RangeService;
-        this.mouseEventService = beans.mouseEventService;
+        this.mouseEventSvc = beans.mouseEventSvc;
         this.ctrlsSvc = beans.ctrlsSvc;
     }
 
@@ -138,7 +138,7 @@ export abstract class AbstractSelectionHandle extends Component {
     }
 
     protected updateValuesOnMove(e: MouseEvent) {
-        const cell = this.mouseEventService.getCellPositionForEvent(e);
+        const cell = this.mouseEventSvc.getCellPositionForEvent(e);
 
         if (!cell || (this.lastCellHovered && _areCellsEqual(cell, this.lastCellHovered))) {
             return;

@@ -64,7 +64,7 @@ function _normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string {
 }
 
 export class RowContainerEventsFeature extends BeanStub {
-    private mouseEventService: MouseEventService;
+    private mouseEventSvc: MouseEventService;
     private contextMenuService?: IContextMenuService;
     private navigation?: NavigationService;
     private focusSvc: FocusService;
@@ -77,7 +77,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private selectionSvc?: ISelectionService;
 
     public wireBeans(beans: BeanCollection) {
-        this.mouseEventService = beans.mouseEventService;
+        this.mouseEventSvc = beans.mouseEventSvc;
         this.contextMenuService = beans.contextMenuService;
         this.navigation = beans.navigation;
         this.focusSvc = beans.focusSvc;
@@ -120,12 +120,12 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        if (!this.mouseEventService.isEventFromThisGrid(mouseEvent) || _isStopPropagationForAgGrid(mouseEvent)) {
+        if (!this.mouseEventSvc.isEventFromThisGrid(mouseEvent) || _isStopPropagationForAgGrid(mouseEvent)) {
             return;
         }
 
         const rowComp = this.getRowForEvent(mouseEvent.target);
-        const cellCtrl = this.mouseEventService.getRenderedCellForEvent(mouseEvent)!;
+        const cellCtrl = this.mouseEventSvc.getRenderedCellForEvent(mouseEvent)!;
 
         if (eventName === 'contextmenu') {
             this.contextMenuService?.handleContextMenuMouseEvent(mouseEvent, undefined, rowComp, cellCtrl);
@@ -148,7 +148,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const touchListener = new TouchListener(this.element);
         const longTapListener = (event: LongTapEvent) => {
             const rowComp = this.getRowForEvent(event.touchEvent.target);
-            const cellComp = this.mouseEventService.getRenderedCellForEvent(event.touchEvent)!;
+            const cellComp = this.mouseEventSvc.getRenderedCellForEvent(event.touchEvent)!;
 
             this.contextMenuService?.handleContextMenuMouseEvent(undefined, event.touchEvent, rowComp, cellComp);
         };
@@ -270,7 +270,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
         // for copy / paste, we don't want to execute when the event
         // was from a child grid (happens in master detail)
-        if (!this.mouseEventService.isEventFromThisGrid(keyboardEvent)) {
+        if (!this.mouseEventSvc.isEventFromThisGrid(keyboardEvent)) {
             return;
         }
 

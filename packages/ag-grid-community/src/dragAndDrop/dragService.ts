@@ -15,10 +15,10 @@ import { _areEventsNear } from '../utils/mouse';
 export class DragService extends BeanStub implements NamedBean {
     beanName = 'dragSvc' as const;
 
-    private mouseEventService: MouseEventService;
+    private mouseEventSvc: MouseEventService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.mouseEventService = beans.mouseEventService;
+        this.mouseEventSvc = beans.mouseEventSvc;
     }
 
     private currentDragParams: DragListenerParams | null;
@@ -308,7 +308,7 @@ export class DragService extends BeanStub implements NamedBean {
             isEnableCellTextSelect &&
             isMouseMove &&
             mouseEvent.cancelable &&
-            this.mouseEventService.isEventFromThisGrid(mouseEvent) &&
+            this.mouseEventSvc.isEventFromThisGrid(mouseEvent) &&
             !this.isOverFormFieldElement(mouseEvent)
         );
     }

@@ -63,7 +63,7 @@ export class GridBodyCtrl extends BeanStub {
     private pinnedRowModel?: PinnedRowModel;
     private editService?: EditService;
     private popupSvc?: PopupService;
-    private mouseEventService: MouseEventService;
+    private mouseEventSvc: MouseEventService;
     private rowModel: IRowModel;
     private filterManager?: FilterManager;
     private environment: Environment;
@@ -78,7 +78,7 @@ export class GridBodyCtrl extends BeanStub {
         this.pinnedRowModel = beans.pinnedRowModel;
         this.editService = beans.editService;
         this.popupSvc = beans.popupSvc;
-        this.mouseEventService = beans.mouseEventService;
+        this.mouseEventSvc = beans.mouseEventSvc;
         this.rowModel = beans.rowModel;
         this.filterManager = beans.filterManager;
         this.environment = beans.environment;
@@ -370,7 +370,7 @@ export class GridBodyCtrl extends BeanStub {
         const { deltaX, deltaY, shiftKey } = e;
         const isHorizontalScroll = shiftKey || Math.abs(deltaX) > Math.abs(deltaY);
 
-        if (isHorizontalScroll && this.mouseEventService.isEventFromThisGrid(e)) {
+        if (isHorizontalScroll && this.mouseEventSvc.isEventFromThisGrid(e)) {
             this.scrollGridBodyToMatchEvent(e);
         }
     }

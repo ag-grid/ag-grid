@@ -83,7 +83,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private sortSvc?: SortService;
     private filterManager?: FilterManager;
     private selectionSvc?: ISelectionService;
-    private mouseEventService: MouseEventService;
+    private mouseEventSvc: MouseEventService;
     private ctrlsSvc: CtrlsService;
     private funcColsSvc: FuncColsService;
 
@@ -95,7 +95,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.sortSvc = beans.sortSvc;
         this.filterManager = beans.filterManager;
         this.selectionSvc = beans.selectionSvc;
-        this.mouseEventService = beans.mouseEventService;
+        this.mouseEventSvc = beans.mouseEventSvc;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.funcColsSvc = beans.funcColsSvc;
     }
@@ -217,7 +217,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
         this.lastDraggingEvent = draggingEvent;
 
-        const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
+        const pixel = this.mouseEventSvc.getNormalisedPosition(draggingEvent).y;
         const managedDrag = this.gos.get('rowDragManaged');
 
         if (managedDrag) {
@@ -254,7 +254,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private moveRowAndClearHighlight(draggingEvent: DraggingEvent): void {
         const lastHighlightedRowNode = this.clientSideRowModel.getLastHighlightedRowNode();
         const isBelow = lastHighlightedRowNode && lastHighlightedRowNode.highlighted === 'Below';
-        const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
+        const pixel = this.mouseEventSvc.getNormalisedPosition(draggingEvent).y;
         const rowNodes = draggingEvent.dragItem.rowNodes as RowNode[];
 
         let increment = isBelow ? 1 : 0;
@@ -425,7 +425,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private draggingToRowDragEvent<T extends RowDragEventType>(type: T, draggingEvent: DraggingEvent): RowDragEvent<T> {
-        const yNormalised = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
+        const yNormalised = this.mouseEventSvc.getNormalisedPosition(draggingEvent).y;
         const mouseIsPastLastRow = yNormalised > this.pageBoundsService.getCurrentPageHeight();
 
         let overIndex = -1;
