@@ -63,7 +63,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private rowContainerHeight: RowContainerHeightService;
     private ctrlsSvc: CtrlsService;
     private environment: Environment;
-    private stickyRowService?: StickyRowService;
+    private stickyRowSvc?: StickyRowService;
 
     public wireBeans(beans: BeanCollection): void {
         this.animationFrameSvc = beans.animationFrameSvc;
@@ -77,7 +77,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.rowContainerHeight = beans.rowContainerHeight;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.environment = beans.environment;
-        this.stickyRowService = beans.stickyRowService;
+        this.stickyRowSvc = beans.stickyRowSvc;
     }
 
     private gridBodyCtrl: GridBodyCtrl;
@@ -160,7 +160,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             () => this.redrawRows()
         );
 
-        this.stickyRowFeature = this.stickyRowService?.createStickyRowFeature(
+        this.stickyRowFeature = this.stickyRowSvc?.createStickyRowFeature(
             this,
             this.createRowCon.bind(this),
             this.destroyRowCtrls.bind(this)

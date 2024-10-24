@@ -290,7 +290,7 @@ export interface CoreBeanCollection {
     aggColumnNameSvc?: IAggColumnNameService;
     renderStatus?: IRenderStatusService;
     rowDragSvc?: RowDragService;
-    stickyRowService?: StickyRowService;
+    stickyRowSvc?: StickyRowService;
     groupHideOpenParentsService?: IGroupHideOpenParentsService;
     filterValueService?: FilterValueService;
     clientSideNodeManager?: IClientSideNodeManager;
@@ -479,7 +479,7 @@ export type BeanName =
     | 'ssrmTransactionManager'
     | 'stateSvc'
     | 'statusBarService'
-    | 'stickyRowService'
+    | 'stickyRowSvc'
     | 'syncSvc'
     | 'templateService'
     | 'toolPanelColDefService'

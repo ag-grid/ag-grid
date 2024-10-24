@@ -39,7 +39,7 @@ const orderedCoreBeans: BeanName[] = [
     'pageBounds',
     'pagination',
     'pageBoundsListener',
-    'stickyRowService',
+    'stickyRowSvc',
     'rowRenderer',
     'expressionSvc',
     'colFactory',
