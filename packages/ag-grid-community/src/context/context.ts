@@ -264,7 +264,7 @@ export interface CoreBeanCollection {
     enterpriseMenuFactory?: IMenuFactory;
     contextMenuSvc?: IContextMenuService;
     editSvc?: EditService;
-    rowEditService?: RowEditService;
+    rowEditSvc?: RowEditService;
     alignedGridsService?: AlignedGridsService;
     paginationAutoPageSizeService?: PaginationAutoPageSizeService;
     paginationService?: PaginationService;
@@ -454,7 +454,7 @@ export type BeanName =
     | 'rowChildrenService'
     | 'rowContainerHeight'
     | 'rowDragService'
-    | 'rowEditService'
+    | 'rowEditSvc'
     | 'rowModel'
     | 'rowNodeBlockLoader'
     | 'rowNodeSorter'

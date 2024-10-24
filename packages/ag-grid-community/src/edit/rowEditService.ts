@@ -5,7 +5,7 @@ import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { RowCtrl } from '../rendering/row/rowCtrl';
 
 export class RowEditService extends BeanStub implements NamedBean {
-    beanName = 'rowEditService' as const;
+    beanName = 'rowEditSvc' as const;
 
     public startEditing(
         rowCtrl: RowCtrl,

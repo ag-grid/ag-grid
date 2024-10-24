@@ -1175,7 +1175,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        this.beans.rowEditService?.stopEditing(this, cancel);
+        this.beans.rowEditSvc?.stopEditing(this, cancel);
     }
 
     public setEditingRow(value: boolean): void {
@@ -1192,7 +1192,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return true;
         }
 
-        return this.beans.rowEditService?.startEditing(this, key, sourceRenderedCell, event) ?? true;
+        return this.beans.rowEditSvc?.startEditing(this, key, sourceRenderedCell, event) ?? true;
     }
 
     public getAllCellCtrls(): CellCtrl[] {
