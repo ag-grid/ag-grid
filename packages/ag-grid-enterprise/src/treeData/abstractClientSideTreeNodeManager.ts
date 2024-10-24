@@ -110,7 +110,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
         const rootNode = this.rootNode;
         if (rootNode && this.gos.get('treeData')) {
             const newGroupDisplayColIds =
-                this.beans.showRowGroupColsService
+                this.beans.showRowGroupCols
                     ?.getShowRowGroupCols()
                     ?.map((c) => c.getId())
                     .join('-') ?? '';
