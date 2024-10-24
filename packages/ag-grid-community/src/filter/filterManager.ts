@@ -182,7 +182,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     ): void {
         const { source, additionalEventAttributes, columns = [] } = params;
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
-        (this.columnFilterService ? this.colFilter.updateBeforeFilterChanged(params) : AgPromise.resolve()).then(() => {
+        (this.colFilter ? this.colFilter.updateBeforeFilterChanged(params) : AgPromise.resolve()).then(() => {
             const filterChangedEvent: WithoutGridCommon<FilterChangedEvent> = {
                 source,
                 type: 'filterChanged',
