@@ -175,7 +175,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         let nodeManager: IClientSideNodeManager<any> | undefined;
         if (isTree) {
-            nodeManager = childrenField ? beans.clientSideChildrenTreeNodeManager : beans.clientSidePathTreeNodeManager;
+            nodeManager = childrenField ? beans.clientSideChildrenTreeNodeManager : beans.csrmPathTreeNodeSvc;
         }
 
         if (!nodeManager) {

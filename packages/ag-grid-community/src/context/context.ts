@@ -294,7 +294,7 @@ export interface CoreBeanCollection {
     groupHideOpenParentsSvc?: IGroupHideOpenParentsService;
     filterValueSvc?: FilterValueService;
     csrmNodeSvc?: IClientSideNodeManager;
-    clientSidePathTreeNodeManager?: IClientSideNodeManager;
+    csrmPathTreeNodeSvc?: IClientSideNodeManager;
     clientSideChildrenTreeNodeManager?: IClientSideNodeManager;
     cellFlashSvc?: CellFlashService;
     masterDetailSvc?: IMasterDetailService;
@@ -491,5 +491,5 @@ export type BeanName =
     | 'validationLogger'
     | 'validation'
     | 'csrmNodeSvc'
-    | 'clientSidePathTreeNodeManager'
+    | 'csrmPathTreeNodeSvc'
     | 'clientSideChildrenTreeNodeManager';
