@@ -619,7 +619,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
 
     /** Add an event listener. */
     public addEventListener<T extends RowNodeEventType>(eventType: T, userListener: AgRowNodeEventListener<T>): void {
-        this.beans.validationService?.checkRowEvents(eventType);
+        this.beans.validation?.checkRowEvents(eventType);
         if (!this.__localEventService) {
             this.__localEventService = new LocalEventService();
         }

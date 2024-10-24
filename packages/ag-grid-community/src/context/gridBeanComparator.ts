@@ -24,7 +24,7 @@ const orderedCoreBeans: BeanName[] = [
     'rowContainerHeight',
     'horizontalResizeService',
     'localeSvc',
-    'validationService',
+    'validation',
     'pinnedRowModel',
     'dragSvc',
     'columnGroupService',

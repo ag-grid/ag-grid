@@ -8,7 +8,7 @@ import type { AgComponentSelector, ComponentSelector } from '../../widgets/compo
 export class Registry extends BeanStub implements NamedBean {
     beanName = 'registry' as const;
 
-    private validationService?: ValidationService;
+    private validation?: ValidationService;
 
     private agGridDefaults: { [key in UserComponentName]?: any } = {};
 
@@ -21,7 +21,7 @@ export class Registry extends BeanStub implements NamedBean {
     private selectors: { [name in AgComponentSelector]?: ComponentSelector } = {};
 
     public wireBeans(beans: BeanCollection): void {
-        this.validationService = beans.validationService;
+        this.validation = beans.validation;
     }
 
     public postConstruct(): void {
@@ -99,7 +99,7 @@ export class Registry extends BeanStub implements NamedBean {
             return createResult(defaultComponent, false, this.agGridDefaultParams[name as UserComponentName]);
         }
 
-        this.validationService?.missingUserComponent(propertyName, name, this.agGridDefaults, this.jsComps);
+        this.validation?.missingUserComponent(propertyName, name, this.agGridDefaults, this.jsComps);
 
         return null;
     }

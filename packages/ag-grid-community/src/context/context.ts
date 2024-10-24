@@ -224,7 +224,7 @@ export interface CoreBeanCollection {
     syncSvc: SyncService;
     ariaAnnounce: AriaAnnouncementService;
     rangeSvc?: IRangeService;
-    validationService?: ValidationService;
+    validation?: ValidationService;
     gridApi: GridApi;
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
@@ -489,7 +489,7 @@ export type BeanName =
     | 'valueCache'
     | 'valueSvc'
     | 'validationLogger'
-    | 'validationService'
+    | 'validation'
     | 'clientSideNodeManager'
     | 'clientSidePathTreeNodeManager'
     | 'clientSideChildrenTreeNodeManager';

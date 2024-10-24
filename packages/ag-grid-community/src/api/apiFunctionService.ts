@@ -57,7 +57,7 @@ export class ApiFunctionService extends BeanStub implements NamedBean {
     ): void {
         const { fns, beans } = this;
         if (fns !== defaultFns) {
-            fns[functionName] = beans?.validationService?.validateApiFunction(functionName, func) ?? func;
+            fns[functionName] = beans?.validation?.validateApiFunction(functionName, func) ?? func;
         }
     }
 
