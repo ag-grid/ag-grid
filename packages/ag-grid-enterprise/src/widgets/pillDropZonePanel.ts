@@ -17,8 +17,8 @@ import {
     _clearElement,
     _createIconNoSpan,
     _getActiveDomElement,
-    _injectComponentCSS,
     _last,
+    _registerComponentCSS,
     _setAriaHidden,
     _setAriaLabel,
     _setAriaPosInSet,
@@ -52,7 +52,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
         this.dragAndDropService = beans.dragAndDropService;
-        _injectComponentCSS(pillDropZonePanelCSS, beans);
+        _registerComponentCSS(pillDropZonePanelCSS, beans);
     }
 
     private state: PillState = 'notDragging';

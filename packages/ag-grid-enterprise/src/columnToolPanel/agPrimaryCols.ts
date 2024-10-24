@@ -1,5 +1,5 @@
 import type { BeanCollection, ColDef, ColGroupDef, ColumnEventType, ComponentSelector } from 'ag-grid-community';
-import { Component, PositionableFeature, RefPlaceholder, _injectComponentCSS } from 'ag-grid-community';
+import { Component, PositionableFeature, RefPlaceholder, _registerComponentCSS } from 'ag-grid-community';
 
 import { agPrimaryColsCSS } from './agPrimaryCols.css-GENERATED';
 import type { AgPrimaryColsHeader } from './agPrimaryColsHeader';
@@ -28,7 +28,7 @@ export class AgPrimaryCols extends Component {
     }
 
     public wireBeans(beans: BeanCollection): void {
-        _injectComponentCSS(agPrimaryColsCSS, beans);
+        _registerComponentCSS(agPrimaryColsCSS, beans);
     }
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu

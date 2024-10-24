@@ -61,7 +61,7 @@ export {
     _getEditorRendererDetails,
 } from './components/framework/userCompUtils';
 export { _unwrapUserComp } from './components/framework/unwrapUserComp';
-export { _injectComponentCSS } from './theming/inject';
+export { _registerComponentCSS } from './theming/inject';
 
 // context
 export { BeanStub } from './context/beanStub';

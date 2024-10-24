@@ -7,8 +7,8 @@ import {
     _getActiveDomElement,
     _getInnerHeight,
     _getInnerWidth,
-    _injectComponentCSS,
     _isVisible,
+    _registerComponentCSS,
     _setDisplayed,
 } from 'ag-grid-community';
 
@@ -37,7 +37,7 @@ const CLOSE_BTN_TEMPLATE = /* html */ `<div class="ag-button"></div>`;
 
 export class AgPanel<TConfig extends PanelOptions = PanelOptions> extends Component {
     public wireBeans(beans: BeanCollection) {
-        _injectComponentCSS(agPanelCSS, beans);
+        _registerComponentCSS(agPanelCSS, beans);
     }
 
     protected closable = true;

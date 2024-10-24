@@ -30,12 +30,14 @@ import {
     _getEditorRendererDetails,
     _isEventFromPrintableCharacter,
     _isVisible,
+    _registerComponentCSS,
     _setAriaActiveDescendant,
     _shouldDisplayTooltip,
     _stopPropagationForAgGrid,
 } from 'ag-grid-community';
 
 import { AgPillContainer } from './AgPillContainer';
+import { agRichSelectCSS } from './agRichSelect.css-GENERATED';
 import type { AgRichSelectListEvent } from './agRichSelectList';
 import { AgRichSelectList } from './agRichSelectList';
 
@@ -55,6 +57,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.userComponentFactory = beans.userComponentFactory;
         this.ariaAnnouncementService = beans.ariaAnnouncementService;
         this.registry = beans.registry;
+
+        _registerComponentCSS(agRichSelectCSS, beans);
     }
 
     private searchString = '';

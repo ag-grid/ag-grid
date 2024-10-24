@@ -13,8 +13,10 @@ import {
     RefPlaceholder,
     _isNothingFocused,
     _makeNull,
+    _registerComponentCSS,
 } from 'ag-grid-community';
 
+import { agAutocompleteCSS } from './agAutocomplete.css-GENERATED';
 import { AgAutocompleteList } from './agAutocompleteList';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocompleteParams';
 
@@ -49,6 +51,8 @@ export class AgAutocomplete extends Component<AgAutocompleteEvent> {
 
     public wireBeans(beans: BeanCollection): void {
         this.popupService = beans.popupService!;
+
+        _registerComponentCSS(agAutocompleteCSS, beans);
     }
 
     private eAutocompleteInput: AgInputTextField = RefPlaceholder;

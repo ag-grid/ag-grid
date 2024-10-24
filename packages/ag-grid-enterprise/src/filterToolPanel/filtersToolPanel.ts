@@ -1,4 +1,5 @@
 import type {
+    BeanCollection,
     ColDef,
     ColGroupDef,
     FiltersToolPanelState,
@@ -7,12 +8,13 @@ import type {
     IToolPanelFiltersCompParams,
     IToolPanelParams,
 } from 'ag-grid-community';
-import { Component, RefPlaceholder } from 'ag-grid-community';
+import { Component, RefPlaceholder, _registerComponentCSS } from 'ag-grid-community';
 
 import type { AgFiltersToolPanelHeader } from './agFiltersToolPanelHeader';
 import { AgFiltersToolPanelHeaderSelector } from './agFiltersToolPanelHeader';
 import type { AgFiltersToolPanelList } from './agFiltersToolPanelList';
 import { AgFiltersToolPanelListSelector } from './agFiltersToolPanelList';
+import { filtersToolPanelCSS } from './filtersToolPanel.css-GENERATED';
 
 export interface ToolPanelFiltersCompParams<TData = any, TContext = any>
     extends IToolPanelParams<TData, TContext, FiltersToolPanelState>,
@@ -34,6 +36,10 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
          </div>`,
             [AgFiltersToolPanelHeaderSelector, AgFiltersToolPanelListSelector]
         );
+    }
+
+    public wireBeans(beans: BeanCollection): void {
+        _registerComponentCSS(filtersToolPanelCSS, beans);
     }
 
     public init(params: ToolPanelFiltersCompParams): void {

@@ -17,11 +17,13 @@ import {
     RefPlaceholder,
     _addFocusableContainerListener,
     _getActiveDomElement,
+    _registerComponentCSS,
     _removeFromParent,
     _setAriaControls,
     _warn,
 } from 'ag-grid-community';
 
+import { agSideBarCSS } from './agSideBar.css-GENERATED';
 import type { AgSideBarButtons, SideBarButtonClickedEvent } from './agSideBarButtons';
 import { AgSideBarButtonsSelector } from './agSideBarButtons';
 import { parseSideBarDef } from './sideBarDefParser';
@@ -37,6 +39,8 @@ export class AgSideBar extends Component implements ISideBar {
         this.focusService = beans.focusService;
         this.filterManager = beans.filterManager;
         this.sideBarService = beans.sideBarService as SideBarService;
+
+        _registerComponentCSS(agSideBarCSS, beans);
     }
 
     private readonly sideBarButtons: AgSideBarButtons = RefPlaceholder;

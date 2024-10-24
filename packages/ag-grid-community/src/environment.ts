@@ -4,6 +4,9 @@ import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { GridTheme } from './entities/gridOptions';
+import { _getAllRegisteredModules } from './modules/moduleRegistry';
+import { coreCSS } from './theming/core/core.css-GENERATED';
+import { _injectGlobalCSS } from './theming/inject';
 import { _observeResize } from './utils/dom';
 import { _error, _warn } from './validation/logging';
 
@@ -39,6 +42,7 @@ export class Environment extends BeanStub implements NamedBean {
 
     private gridTheme: GridTheme | undefined;
     private themeClass: string | undefined;
+    private globalCSS: string[] = [];
 
     public postConstruct(): void {
         this.addManagedPropertyListener('theme', () => this.handleThemeGridOptionChange());
@@ -130,6 +134,14 @@ export class Environment extends BeanStub implements NamedBean {
         return oldRowHeight != '' ? parseFloat(oldRowHeight) : -1;
     }
 
+    public addGlobalCSS(css: string): void {
+        if (this.gridTheme) {
+            _injectGlobalCSS(css, this.eGridDiv);
+        } else {
+            this.globalCSS.push(css);
+        }
+    }
+
     private getCSSVariablePixelValue(variable: Variable): number {
         const cached = this.lastKnownValues.get(variable);
         if (cached != null) {
@@ -202,7 +214,7 @@ export class Environment extends BeanStub implements NamedBean {
     }
 
     private handleThemeGridOptionChange(): void {
-        const { gos, gridTheme: oldGridTheme, themeClass: oldThemeClass } = this;
+        const { gos, globalCSS, gridTheme: oldGridTheme, themeClass: oldThemeClass } = this;
         const themeGridOption = gos.get('theme');
         let newGridTheme: GridTheme | undefined;
         let newThemeClass: string | undefined;
@@ -216,6 +228,18 @@ export class Environment extends BeanStub implements NamedBean {
             newThemeClass = newGridTheme.getCssClass();
         }
         if (newGridTheme !== oldGridTheme) {
+            if (newGridTheme) {
+                _injectGlobalCSS(coreCSS, this.eGridDiv);
+
+                const moduleCSS = Array.from(_getAllRegisteredModules())
+                    .sort((a, b) => a.moduleName.localeCompare(b.moduleName))
+                    .flatMap((module) => module.css || []);
+
+                for (const css of [...moduleCSS, ...globalCSS]) {
+                    _injectGlobalCSS(css, this.eGridDiv);
+                }
+                globalCSS.length = 0;
+            }
             oldGridTheme?.stopUse();
             this.gridTheme = newGridTheme;
             newGridTheme?.startUse({

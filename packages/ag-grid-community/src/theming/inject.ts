@@ -7,13 +7,11 @@ type Injection = {
 
 const injections = new WeakMap<HTMLElement, Injection>();
 
-export const _injectComponentCSS = (css: string | undefined, beans: CoreBeanCollection) => {
-    _injectGlobalCSS(css, beans.eGridDiv);
+export const _registerComponentCSS = (css: string, beans: CoreBeanCollection) => {
+    beans.environment.addGlobalCSS(css);
 };
 
-export const _injectGlobalCSS = (css: string | undefined, container: HTMLElement) => {
-    if (!css) return;
-
+export const _injectGlobalCSS = (css: string, container: HTMLElement, id = '') => {
     const root = container.getRootNode() === document ? document.head : container;
 
     let injection = injections.get(root);
@@ -24,7 +22,7 @@ export const _injectGlobalCSS = (css: string | undefined, container: HTMLElement
     if (injection.css.has(css)) return;
 
     const style = document.createElement('style');
-    style.dataset.agGlobalCss = '';
+    style.dataset.agGlobalCss = id;
     style.textContent = css;
 
     if (injection.last) {

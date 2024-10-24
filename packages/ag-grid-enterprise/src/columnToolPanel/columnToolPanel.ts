@@ -8,12 +8,13 @@ import type {
     IToolPanelComp,
     IToolPanelParams,
 } from 'ag-grid-community';
-import { Component, _clearElement, _last } from 'ag-grid-community';
+import { Component, _clearElement, _last, _registerComponentCSS } from 'ag-grid-community';
 
 import type { PivotDropZonePanel } from '../rowGrouping/columnDropZones/pivotDropZonePanel';
 import type { RowGroupDropZonePanel } from '../rowGrouping/columnDropZones/rowGroupDropZonePanel';
 import type { ValuesDropZonePanel } from '../rowGrouping/columnDropZones/valueDropZonePanel';
 import { AgPrimaryCols } from './agPrimaryCols';
+import { columnToolPanelCSS } from './columnToolPanel.css-GENERATED';
 import type { ColumnToolPanelFactory } from './columnToolPanelFactory';
 import type { PivotModePanel } from './pivotModePanel';
 
@@ -40,6 +41,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     public wireBeans(beans: BeanCollection): void {
         this.columnToolPanelFactory = beans.columnToolPanelFactory as ColumnToolPanelFactory;
+
+        _registerComponentCSS(columnToolPanelCSS, beans);
     }
 
     // lazy initialise the panel
