@@ -59,7 +59,7 @@ function getFullWidthGroupRowInnerCellRenderer(
 }
 
 export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendererCtrl {
-    private expressionService?: ExpressionService;
+    private expressionSvc?: ExpressionService;
     private valueSvc: ValueService;
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
@@ -71,7 +71,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     private groupHideOpenParentsService?: IGroupHideOpenParentsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.expressionService = beans.expressionService;
+        this.expressionSvc = beans.expressionSvc;
         this.valueSvc = beans.valueSvc;
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
@@ -397,9 +397,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             if (typeof totalValueGetter === 'function') {
                 footerValue = totalValueGetter(paramsClone);
             } else if (typeof totalValueGetter === 'string') {
-                footerValue = this.expressionService
-                    ? this.expressionService.evaluate(totalValueGetter, paramsClone)
-                    : '';
+                footerValue = this.expressionSvc ? this.expressionSvc.evaluate(totalValueGetter, paramsClone) : '';
             } else {
                 _warn(179);
             }

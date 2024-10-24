@@ -41,7 +41,7 @@ const orderedCoreBeans: BeanName[] = [
     'pageBoundsListener',
     'stickyRowService',
     'rowRenderer',
-    'expressionService',
+    'expressionSvc',
     'colFactory',
     'alignedGridsService',
     'navigation',

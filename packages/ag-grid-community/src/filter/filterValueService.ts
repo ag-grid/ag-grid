@@ -11,11 +11,11 @@ export class FilterValueService extends BeanStub implements NamedBean {
     beanName: BeanName = 'filterValueService';
 
     private valueSvc: ValueService;
-    private expressionService?: ExpressionService;
+    private expressionSvc?: ExpressionService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueSvc = beans.valueSvc;
-        this.expressionService = beans.expressionService;
+        this.expressionSvc = beans.expressionSvc;
     }
 
     public getValue(column: AgColumn, rowNode?: IRowNode | null) {
@@ -49,6 +49,6 @@ export class FilterValueService extends BeanStub implements NamedBean {
         if (typeof valueGetter === 'function') {
             return valueGetter(params);
         }
-        return this.expressionService?.evaluate(valueGetter, params);
+        return this.expressionSvc?.evaluate(valueGetter, params);
     }
 }

@@ -32,11 +32,11 @@ export function _camelCaseToHumanText(camelCase: string | undefined): string | n
 export class ColumnNameService extends BeanStub implements NamedBean {
     beanName = 'colNames' as const;
 
-    private expressionService?: ExpressionService;
+    private expressionSvc?: ExpressionService;
     private aggColumnNameService?: IAggColumnNameService;
 
     public wireBeans(beans: BeanCollection) {
-        this.expressionService = beans.expressionService;
+        this.expressionSvc = beans.expressionSvc;
         this.aggColumnNameService = beans.aggColumnNameService;
     }
 
@@ -100,7 +100,7 @@ export class ColumnNameService extends BeanStub implements NamedBean {
                 return headerValueGetter(params);
             } else if (typeof headerValueGetter === 'string') {
                 // valueGetter is an expression, so execute the expression
-                return this.expressionService?.evaluate(headerValueGetter, params) ?? null;
+                return this.expressionSvc?.evaluate(headerValueGetter, params) ?? null;
             }
             return '';
         } else if (colDef.headerName != null) {

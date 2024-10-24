@@ -48,7 +48,7 @@ export class CellCustomStyleFeature extends BeanStub {
         });
 
         processClassRules(
-            this.beans.expressionService,
+            this.beans.expressionSvc,
             // if current was previous, skip
             cellClassRules === this.cellClassRules ? undefined : this.cellClassRules,
             cellClassRules,

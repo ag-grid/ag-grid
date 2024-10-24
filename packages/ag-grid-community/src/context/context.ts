@@ -255,7 +255,7 @@ export interface CoreBeanCollection {
     cellNavigation?: CellNavigationService;
     scrollVisibleSvc: ScrollVisibleService;
     pinnedCols?: PinnedColumnService;
-    expressionService?: ExpressionService;
+    expressionSvc?: ExpressionService;
     autoWidthCalculator?: AutoWidthCalculator;
     agComponentUtils?: AgComponentUtils;
     frameworkComponentWrapper: FrameworkComponentWrapper;
@@ -401,7 +401,7 @@ export type BeanName =
     | 'eGridDiv'
     | 'enterpriseChartProxyFactory'
     | 'expansionService'
-    | 'expressionService'
+    | 'expressionSvc'
     | 'filterAggregatesStage'
     | 'filterManager'
     | 'filterMenuFactory'

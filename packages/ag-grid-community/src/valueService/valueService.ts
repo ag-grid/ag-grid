@@ -24,13 +24,13 @@ import type { ValueCache } from './valueCache';
 export class ValueService extends BeanStub implements NamedBean {
     beanName = 'valueSvc' as const;
 
-    private expressionService?: ExpressionService;
+    private expressionSvc?: ExpressionService;
     private colModel: ColumnModel;
     private valueCache?: ValueCache;
     private dataTypeSvc?: DataTypeService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.expressionService = beans.expressionService;
+        this.expressionSvc = beans.expressionSvc;
         this.colModel = beans.colModel;
         this.valueCache = beans.valueCache;
         this.dataTypeSvc = beans.dataTypeSvc;
@@ -190,7 +190,7 @@ export class ValueService extends BeanStub implements NamedBean {
             if (typeof valueParser === 'function') {
                 return valueParser(params);
             }
-            return this.expressionService?.evaluate(valueParser, params);
+            return this.expressionSvc?.evaluate(valueParser, params);
         }
         return newValue;
     }
@@ -232,7 +232,7 @@ export class ValueService extends BeanStub implements NamedBean {
             if (typeof formatter === 'function') {
                 result = formatter(params);
             } else {
-                result = this.expressionService ? this.expressionService.evaluate(formatter, params) : null;
+                result = this.expressionSvc ? this.expressionSvc.evaluate(formatter, params) : null;
             }
         } else if (colDef.refData) {
             return colDef.refData[value] || '';
@@ -321,7 +321,7 @@ export class ValueService extends BeanStub implements NamedBean {
             if (typeof valueSetter === 'function') {
                 valueWasDifferent = valueSetter(params);
             } else {
-                valueWasDifferent = this.expressionService?.evaluate(valueSetter, params);
+                valueWasDifferent = this.expressionSvc?.evaluate(valueSetter, params);
             }
         } else {
             valueWasDifferent = this.setValueUsingField(rowNode.data, field, newValue, column.isFieldContainsDots());
@@ -462,7 +462,7 @@ export class ValueService extends BeanStub implements NamedBean {
         if (typeof valueGetter === 'function') {
             result = valueGetter(params);
         } else {
-            result = this.expressionService?.evaluate(valueGetter, params);
+            result = this.expressionSvc?.evaluate(valueGetter, params);
         }
 
         return result;

@@ -9,7 +9,7 @@ import { ValueService } from './valueService';
 let colDef: ColDef;
 let column: jest.Mocked<AgColumn>;
 let gos: jest.Mocked<GridOptionsService>;
-let expressionService: jest.Mocked<ExpressionService>;
+let expressionSvc: jest.Mocked<ExpressionService>;
 let valueSvc: ValueService;
 
 describe('formatValue', () => {
@@ -20,10 +20,10 @@ describe('formatValue', () => {
 
         gos = mock<GridOptionsService>('get', 'addGridCommonParams');
         gos.addGridCommonParams.mockImplementation((params) => params as any);
-        expressionService = mock<ExpressionService>('evaluate');
+        expressionSvc = mock<ExpressionService>('evaluate');
         valueSvc = new ValueService();
         (valueSvc as any).gos = gos;
-        (valueSvc as any).expressionService = expressionService;
+        (valueSvc as any).expressionSvc = expressionSvc;
     });
 
     it('uses supplied formatter if provided', () => {
@@ -34,7 +34,7 @@ describe('formatValue', () => {
         const formattedValue = valueSvc.formatValue(column, null, value, formatter);
 
         expect(formattedValue).toBe(returnValue);
-        expect(expressionService.evaluate).toHaveBeenCalledTimes(0);
+        expect(expressionSvc.evaluate).toHaveBeenCalledTimes(0);
     });
 
     it('uses value formatter from column definition if no formatter provided', () => {
@@ -46,7 +46,7 @@ describe('formatValue', () => {
         const formattedValue = valueSvc.formatValue(column, null, value);
 
         expect(formattedValue).toBe(returnValue);
-        expect(expressionService.evaluate).toHaveBeenCalledTimes(0);
+        expect(expressionSvc.evaluate).toHaveBeenCalledTimes(0);
     });
 
     it('does not use value formatter from column definition if disabled', () => {
@@ -55,7 +55,7 @@ describe('formatValue', () => {
         const formattedValue = valueSvc.formatValue(column, null, 'bar', undefined, false);
 
         expect(formattedValue).toBeNull();
-        expect(expressionService.evaluate).toHaveBeenCalledTimes(0);
+        expect(expressionSvc.evaluate).toHaveBeenCalledTimes(0);
     });
 
     it('uses pinned value formatter from column definition if row is pinned', () => {
@@ -70,7 +70,7 @@ describe('formatValue', () => {
         const formattedValue = valueSvc.formatValue(column, node, value);
 
         expect(formattedValue).toBe(returnValue);
-        expect(expressionService.evaluate).toHaveBeenCalledTimes(0);
+        expect(expressionSvc.evaluate).toHaveBeenCalledTimes(0);
     });
 
     it('looks at refData if no formatter found', () => {
