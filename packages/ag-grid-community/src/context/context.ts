@@ -293,7 +293,7 @@ export interface CoreBeanCollection {
     stickyRowSvc?: StickyRowService;
     groupHideOpenParentsSvc?: IGroupHideOpenParentsService;
     filterValueSvc?: FilterValueService;
-    clientSideNodeManager?: IClientSideNodeManager;
+    csrmNodeSvc?: IClientSideNodeManager;
     clientSidePathTreeNodeManager?: IClientSideNodeManager;
     clientSideChildrenTreeNodeManager?: IClientSideNodeManager;
     cellFlashSvc?: CellFlashService;
@@ -490,6 +490,6 @@ export type BeanName =
     | 'valueSvc'
     | 'validationLogger'
     | 'validation'
-    | 'clientSideNodeManager'
+    | 'csrmNodeSvc'
     | 'clientSidePathTreeNodeManager'
     | 'clientSideChildrenTreeNodeManager';

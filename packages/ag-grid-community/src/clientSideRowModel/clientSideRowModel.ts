@@ -179,7 +179,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (!nodeManager) {
-            nodeManager = beans.clientSideNodeManager!;
+            nodeManager = beans.csrmNodeSvc!;
         }
 
         if (oldNodeManager !== nodeManager) {
