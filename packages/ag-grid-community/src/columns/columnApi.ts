@@ -20,7 +20,7 @@ export function getColumnDefs<TData = any>(beans: BeanCollection): (ColDef<TData
 }
 
 export function getDisplayNameForColumn(beans: BeanCollection, column: Column, location: HeaderLocation): string {
-    return beans.columnNames.getDisplayNameForColumn(column as AgColumn, location) || '';
+    return beans.colNames.getDisplayNameForColumn(column as AgColumn, location) || '';
 }
 
 export function getColumn<TValue = any, TData = any>(

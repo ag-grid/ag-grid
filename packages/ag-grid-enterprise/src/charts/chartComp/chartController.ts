@@ -424,8 +424,8 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         if (column) {
             col.displayName = this.model.getColDisplayName(column, this.model.isPivotMode());
         } else {
-            const columnNames = this.model.columnNames[col.colId];
-            col.displayName = columnNames ? columnNames.join(' - ') : this.model.getColDisplayName(column!);
+            const colNames = this.model.colNames[col.colId];
+            col.displayName = colNames ? colNames.join(' - ') : this.model.getColDisplayName(column!);
         }
         return col;
     }

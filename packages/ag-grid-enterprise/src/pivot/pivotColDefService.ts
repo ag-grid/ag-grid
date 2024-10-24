@@ -22,12 +22,12 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
 
     private colModel: ColumnModel;
     private funcColsService: FuncColsService;
-    private columnNames: ColumnNameService;
+    private colNames: ColumnNameService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
         this.funcColsService = beans.funcColsService;
-        this.columnNames = beans.columnNames;
+        this.colNames = beans.colNames;
     }
 
     private fieldSeparator: string;
@@ -161,7 +161,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             return [this.createColDef(null, '-', pivotKeys)];
         }
         return measureColumns.map((measureCol) => {
-            const columnName = this.columnNames.getDisplayNameForColumn(measureCol, 'header');
+            const columnName = this.colNames.getDisplayNameForColumn(measureCol, 'header');
             return {
                 ...this.createColDef(measureCol, columnName, pivotKeys),
                 columnGroupShow: 'open',
@@ -190,7 +190,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
                 const leafGroup = !def.children.some((child) => (child as ColGroupDef).children);
 
                 this.funcColsService.valueCols.forEach((valueColumn) => {
-                    const columnName: string | null = this.columnNames.getDisplayNameForColumn(valueColumn, 'header');
+                    const columnName: string | null = this.colNames.getDisplayNameForColumn(valueColumn, 'header');
                     const totalColDef = this.createColDef(valueColumn, columnName, def.pivotKeys);
                     totalColDef.pivotTotalColumnIds = childAcc.get(valueColumn.getColId());
 
@@ -317,7 +317,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         for (let i = 0; i < valueCols.length; i++) {
             const valueCol = valueCols[i];
 
-            const columnName: string | null = this.columnNames.getDisplayNameForColumn(valueCol, 'header');
+            const columnName: string | null = this.colNames.getDisplayNameForColumn(valueCol, 'header');
             const colDef = this.createColDef(valueCol, columnName, []);
 
             const colIds: string[] = [];
@@ -489,7 +489,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
             if (children.length === 0) {
                 const potentialAggCol = this.colModel.getColDefCol(key);
                 if (potentialAggCol) {
-                    const headerName = this.columnNames.getDisplayNameForColumn(potentialAggCol, 'header') ?? key;
+                    const headerName = this.colNames.getDisplayNameForColumn(potentialAggCol, 'header') ?? key;
                     const colDef = this.createColDef(potentialAggCol, headerName, undefined, false);
                     colDef.colId = id;
                     colDef.aggFunc = potentialAggCol.getAggFunc();

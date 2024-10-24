@@ -35,7 +35,7 @@ export interface ChartDatasourceParams {
 
 interface IData {
     chartData: any[];
-    columnNames: { [key: string]: string[] };
+    colNames: { [key: string]: string[] };
     groupChartData?: any[];
 }
 
@@ -62,12 +62,12 @@ export class ChartDatasource extends BeanStub {
         if (params.crossFiltering) {
             if (params.grouping) {
                 _warn(141);
-                return { chartData: [], columnNames: {} };
+                return { chartData: [], colNames: {} };
             }
 
             if (!_isClientSideRowModel(this.gos)) {
                 _warn(142);
-                return { chartData: [], columnNames: {} };
+                return { chartData: [], colNames: {} };
             }
         }
 
@@ -84,7 +84,7 @@ export class ChartDatasource extends BeanStub {
     private extractRowsFromGridRowModel(params: ChartDatasourceParams): IData {
         const { crossFiltering, startRow, endRow, valueCols, dimensionCols, grouping } = params;
         let extractedRowData: any[] = [];
-        const columnNames: { [key: string]: string[] } = {};
+        const colNames: { [key: string]: string[] } = {};
 
         // maps used to keep track of expanded groups that need to be removed
         const groupNodeIndexes: { [key: string]: number } = {};
@@ -116,23 +116,23 @@ export class ChartDatasource extends BeanStub {
 
         if (numRows > 0) {
             valueCols.forEach((col) => {
-                let columnNamesArr: string[] = [];
+                let colNamesArr: string[] = [];
 
                 // pivot keys should be added first
                 const pivotKeys = col.getColDef().pivotKeys;
                 if (pivotKeys) {
-                    columnNamesArr = pivotKeys.slice();
+                    colNamesArr = pivotKeys.slice();
                 }
 
                 // then add column header name to results
                 const headerName = col.getColDef().headerName;
                 if (headerName) {
-                    columnNamesArr.push(headerName);
+                    colNamesArr.push(headerName);
                 }
 
                 // add array of column names to results
-                if (columnNamesArr.length > 0) {
-                    columnNames[col.getId()] = columnNamesArr;
+                if (colNamesArr.length > 0) {
+                    colNames[col.getId()] = colNamesArr;
                 }
             });
         }
@@ -244,7 +244,7 @@ export class ChartDatasource extends BeanStub {
             }
         }
 
-        return { chartData: extractedRowData, columnNames, groupChartData };
+        return { chartData: extractedRowData, colNames, groupChartData };
     }
 
     private aggregateRowsByDimension(params: ChartDatasourceParams, dataFromGrid: any[]): any[] {

@@ -14,12 +14,12 @@ export class ChartColumnService extends BeanStub implements NamedBean {
     beanName = 'chartColumnService' as const;
 
     private colModel: ColumnModel;
-    private columnNames: ColumnNameService;
+    private colNames: ColumnNameService;
     private valueSvc: ValueService;
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
-        this.columnNames = beans.columnNames;
+        this.colNames = beans.colNames;
         this.valueSvc = beans.valueSvc;
     }
 
@@ -43,14 +43,14 @@ export class ChartColumnService extends BeanStub implements NamedBean {
 
     public getColDisplayName(col: AgColumn, includePath?: boolean): string | null {
         const headerLocation = 'chart';
-        const columnDisplayName = this.columnNames.getDisplayNameForColumn(col, headerLocation);
+        const columnDisplayName = this.colNames.getDisplayNameForColumn(col, headerLocation);
         if (includePath) {
             const displayNames = [columnDisplayName];
             const getDisplayName = (colGroup: AgColumnGroup | null) => {
                 if (!colGroup) {
                     return;
                 }
-                const colGroupName = this.columnNames.getDisplayNameForColumnGroup(colGroup, headerLocation);
+                const colGroupName = this.colNames.getDisplayNameForColumnGroup(colGroup, headerLocation);
                 if (colGroupName?.length) {
                     displayNames.unshift(colGroupName);
                     getDisplayName(colGroup.getParent());

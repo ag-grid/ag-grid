@@ -32,13 +32,13 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
 
     private valueSvc: ValueService;
     private colModel: ColumnModel;
-    private columnNames: ColumnNameService;
+    private colNames: ColumnNameService;
     private dataTypeService?: DataTypeService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueSvc = beans.valueSvc;
         this.colModel = beans.colModel;
-        this.columnNames = beans.columnNames;
+        this.colNames = beans.colNames;
         this.dataTypeService = beans.dataTypeService;
     }
 
@@ -193,7 +193,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             ) {
                 entries.push({
                     key: column.getColId(),
-                    displayValue: this.columnNames.getDisplayNameForColumn(column, 'advancedFilter')!,
+                    displayValue: this.colNames.getDisplayNameForColumn(column, 'advancedFilter')!,
                 });
             }
         });

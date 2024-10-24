@@ -29,14 +29,14 @@ type MenuItemProperty = {
 
 export class ToolPanelContextMenu extends Component {
     private colModel: ColumnModel;
-    private columnNames: ColumnNameService;
+    private colNames: ColumnNameService;
     private funcColsService: FuncColsService;
     private popupService: PopupService;
     private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
-        this.columnNames = beans.columnNames;
+        this.colNames = beans.colNames;
         this.funcColsService = beans.funcColsService;
         this.popupService = beans.popupService!;
         this.focusService = beans.focusService;
@@ -62,13 +62,9 @@ export class ToolPanelContextMenu extends Component {
         this.buildMenuItemMap();
 
         if (isColumn(this.column)) {
-            this.displayName = this.columnNames.getDisplayNameForColumn(this.column, 'columnToolPanel');
+            this.displayName = this.colNames.getDisplayNameForColumn(this.column, 'columnToolPanel');
         } else {
-            this.displayName = this.columnNames.getDisplayNameForProvidedColumnGroup(
-                null,
-                this.column,
-                'columnToolPanel'
-            );
+            this.displayName = this.colNames.getDisplayNameForProvidedColumnGroup(null, this.column, 'columnToolPanel');
         }
 
         if (this.isActive()) {

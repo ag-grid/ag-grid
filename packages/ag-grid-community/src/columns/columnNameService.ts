@@ -30,7 +30,7 @@ export function _camelCaseToHumanText(camelCase: string | undefined): string | n
 }
 
 export class ColumnNameService extends BeanStub implements NamedBean {
-    beanName = 'columnNames' as const;
+    beanName = 'colNames' as const;
 
     private expressionService?: ExpressionService;
     private aggColumnNameService?: IAggColumnNameService;

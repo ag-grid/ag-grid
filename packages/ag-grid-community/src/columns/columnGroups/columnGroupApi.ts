@@ -25,7 +25,7 @@ export function getDisplayNameForColumnGroup(
     columnGroup: ColumnGroup,
     location: HeaderLocation
 ): string {
-    return beans.columnNames.getDisplayNameForColumnGroup(columnGroup as AgColumnGroup, location) || '';
+    return beans.colNames.getDisplayNameForColumnGroup(columnGroup as AgColumnGroup, location) || '';
 }
 
 export function getColumnGroupState(beans: BeanCollection): { groupId: string; open: boolean }[] {

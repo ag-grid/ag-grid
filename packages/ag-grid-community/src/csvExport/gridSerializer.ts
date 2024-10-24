@@ -31,7 +31,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
     private visibleCols: VisibleColsService;
     private colModel: ColumnModel;
-    private columnNames: ColumnNameService;
+    private colNames: ColumnNameService;
     private rowModel: IRowModel;
     private pinnedRowModel?: PinnedRowModel;
     private selectionService?: ISelectionService;
@@ -41,7 +41,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.visibleCols = beans.visibleCols;
         this.colModel = beans.colModel;
-        this.columnNames = beans.columnNames;
+        this.colNames = beans.colNames;
         this.rowModel = beans.rowModel;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.selectionService = beans.selectionService;
@@ -422,7 +422,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     })
                 );
             } else {
-                name = this.columnNames.getDisplayNameForColumnGroup(columnGroup, 'header')!;
+                name = this.colNames.getDisplayNameForColumnGroup(columnGroup, 'header')!;
             }
 
             const collapsibleGroupRanges = columnGroup

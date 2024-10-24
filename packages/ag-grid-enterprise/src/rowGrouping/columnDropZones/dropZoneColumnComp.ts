@@ -23,7 +23,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     private popupService: PopupService;
     private sortController?: SortController;
     private colModel: ColumnModel;
-    private columnNames: ColumnNameService;
+    private colNames: ColumnNameService;
     private funcColsService: FuncColsService;
     private aggFuncService?: IAggFuncService;
 
@@ -32,7 +32,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         this.popupService = beans.popupService!;
         this.sortController = beans.sortController;
         this.colModel = beans.colModel;
-        this.columnNames = beans.columnNames;
+        this.colNames = beans.colNames;
         this.funcColsService = beans.funcColsService;
         this.aggFuncService = beans.aggFuncService;
     }
@@ -65,7 +65,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             this.agComponents = [this.sortController.getSortIndicatorSelector()];
         }
 
-        this.displayName = this.columnNames.getDisplayNameForColumn(this.column, 'columnDrop');
+        this.displayName = this.colNames.getDisplayNameForColumn(this.column, 'columnDrop');
 
         super.postConstruct();
 
