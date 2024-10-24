@@ -66,7 +66,7 @@ function _normaliseQwertyAzerty(keyboardEvent: KeyboardEvent): string {
 export class RowContainerEventsFeature extends BeanStub {
     private mouseEventService: MouseEventService;
     private contextMenuService?: IContextMenuService;
-    private navigationService?: NavigationService;
+    private$navigation?: NavigationService;
     private focusService: FocusService;
     private undoRedoService?: UndoRedoService;
     private visibleCols: VisibleColsService;
@@ -79,7 +79,7 @@ export class RowContainerEventsFeature extends BeanStub {
     public wireBeans(beans: BeanCollection) {
         this.mouseEventService = beans.mouseEventService;
         this.contextMenuService = beans.contextMenuService;
-        this.navigationService = beans.navigationService;
+        this$navigation = beans$navigation;
         this.focusService = beans.focusService;
         this.undoRedoService = beans.undoRedoService;
         this.visibleCols = beans.visibleCols;
@@ -200,7 +200,7 @@ export class RowContainerEventsFeature extends BeanStub {
         if (gridProcessingAllowed) {
             if (eventName === 'keydown') {
                 // first see if it's a scroll key, page up / down, home / end etc
-                const wasScrollKey = !editing && this.navigationService?.handlePageScrollingKey(keyboardEvent);
+                const wasScrollKey = !editing && this$navigation?.handlePageScrollingKey(keyboardEvent);
 
                 // if not a scroll key, then we pass onto cell
                 if (!wasScrollKey) {
@@ -235,7 +235,7 @@ export class RowContainerEventsFeature extends BeanStub {
                     case KeyCode.PAGE_END:
                     case KeyCode.PAGE_UP:
                     case KeyCode.PAGE_DOWN:
-                        this.navigationService?.handlePageScrollingKey(keyboardEvent, true);
+                        this$navigation?.handlePageScrollingKey(keyboardEvent, true);
                         break;
 
                     case KeyCode.UP:

@@ -41,7 +41,7 @@ export class FocusService extends BeanStub implements NamedBean {
     private visibleCols: VisibleColsService;
     private headerNavigation?: HeaderNavigationService;
     private rowRenderer: RowRenderer;
-    private navigationService?: NavigationService;
+    private$navigation?: NavigationService;
     private ctrlsService: CtrlsService;
     private filterManager?: FilterManager;
     private overlayService?: OverlayService;
@@ -52,7 +52,7 @@ export class FocusService extends BeanStub implements NamedBean {
         this.visibleCols = beans.visibleCols;
         this.headerNavigation = beans.headerNavigation;
         this.rowRenderer = beans.rowRenderer;
-        this.navigationService = beans.navigationService;
+        this$navigation = beans$navigation;
         this.ctrlsService = beans.ctrlsService;
         this.filterManager = beans.filterManager;
         this.overlayService = beans.overlayService;
@@ -731,12 +731,12 @@ export class FocusService extends BeanStub implements NamedBean {
             const { rowIndex, rowPinned } = nextRow;
             column ??= this.getFocusedHeader()?.column as AgColumn;
             if (column && rowIndex !== undefined && rowIndex !== null) {
-                this.navigationService?.ensureCellVisible({ rowIndex, column, rowPinned });
+                this$navigation?.ensureCellVisible({ rowIndex, column, rowPinned });
 
                 if (backwards) {
                     // if full width we need to focus into the full width cell in the correct direction
                     const rowCtrl = this.rowRenderer.getRowByPosition(nextRow);
-                    if (rowCtrl?.isFullWidth() && this.navigationService?.tryToFocusFullWidthRow(nextRow, backwards)) {
+                    if (rowCtrl?.isFullWidth() && this$navigation?.tryToFocusFullWidthRow(nextRow, backwards)) {
                         return true;
                     }
                 }

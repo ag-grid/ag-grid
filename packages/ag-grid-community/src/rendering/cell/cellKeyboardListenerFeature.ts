@@ -73,7 +73,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         if (event.shiftKey && this.cellCtrl.isRangeSelectionEnabled()) {
             this.onShiftRangeSelect(event);
         } else {
-            this.beans.navigationService?.navigateToNextCell(event, key, this.cellCtrl.getCellPosition(), true);
+            this.beans$navigation?.navigateToNextCell(event, key, this.cellCtrl.getCellPosition(), true);
         }
 
         // if we don't prevent default, the grid will scroll with the navigation keys
@@ -88,12 +88,12 @@ export class CellKeyboardListenerFeature extends BeanStub {
         const endCell = this.beans.rangeService.extendLatestRangeInDirection(event);
 
         if (endCell) {
-            this.beans.navigationService?.ensureCellVisible(endCell);
+            this.beans$navigation?.ensureCellVisible(endCell);
         }
     }
 
     private onTabKeyDown(event: KeyboardEvent): void {
-        this.beans.navigationService?.onTabKeyDown(this.cellCtrl, event);
+        this.beans$navigation?.onTabKeyDown(this.cellCtrl, event);
     }
 
     private onBackspaceOrDeleteKeyDown(key: string, event: KeyboardEvent): void {
@@ -127,7 +127,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         } else {
             if (this.beans.gos.get('enterNavigatesVertically')) {
                 const key = e.shiftKey ? KeyCode.UP : KeyCode.DOWN;
-                this.beans.navigationService?.navigateToNextCell(null, key, this.cellCtrl.getCellPosition(), false);
+                this.beans$navigation?.navigateToNextCell(null, key, this.cellCtrl.getCellPosition(), false);
             } else {
                 this.cellCtrl.startRowOrCellEdit(KeyCode.ENTER, e);
                 if (this.cellCtrl.isEditing()) {

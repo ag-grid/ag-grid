@@ -39,7 +39,7 @@ interface NavigateParams {
 }
 
 export class NavigationService extends BeanStub implements NamedBean {
-    beanName = 'navigationService' as const;
+    beanName = $navigation' as const;
 
     private pageBoundsService: PageBoundsService;
     private focusService: FocusService;

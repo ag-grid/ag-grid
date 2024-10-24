@@ -44,7 +44,7 @@ const orderedCoreBeans: BeanName[] = [
     'expressionService',
     'columnFactory',
     'alignedGridsService',
-    'navigationService',
+    $navigation',
     'valueCache',
     'valueSvc',
     'loggerFactory',
