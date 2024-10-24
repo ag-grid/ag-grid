@@ -9,7 +9,6 @@ import type { CellCtrl } from './cellCtrl';
 
 export class CellMouseListenerFeature extends BeanStub {
     private readonly cellCtrl: CellCtrl;
-    private readonly beans: BeanCollection;
     private readonly column: AgColumn;
 
     private lastIPadMouseClickEvent: number;
@@ -139,6 +138,7 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         const ranges = rangeService && rangeService.getCellRanges().length != 0;
+        const containsWidget = this.containsWidget(target);
 
         if (!shiftKey || !ranges) {
             const isEnableCellTextSelection = gos.get('enableCellTextSelection');
@@ -150,7 +150,10 @@ export class CellMouseListenerFeature extends BeanStub {
             // due to a click on a cell editor for example, otherwise cell selection within
             // an editor would be blocked.
             const forceBrowserFocus =
-                (_isBrowserSafari() || shouldFocus) && !cellCtrl.isEditing() && !_isFocusableFormField(target);
+                (_isBrowserSafari() || shouldFocus) &&
+                !cellCtrl.isEditing() &&
+                !_isFocusableFormField(target) &&
+                !containsWidget;
 
             cellCtrl.focusCell(forceBrowserFocus);
         }
@@ -185,7 +188,7 @@ export class CellMouseListenerFeature extends BeanStub {
 
         // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
         // is focused but we don't want to change the range selection, so return here.
-        if (this.containsWidget(target)) {
+        if (containsWidget) {
             return;
         }
 
@@ -220,7 +223,10 @@ export class CellMouseListenerFeature extends BeanStub {
     }
 
     private containsWidget(target: HTMLElement): boolean {
-        return _isElementChildOfClass(target, 'ag-selection-checkbox', 3);
+        return (
+            _isElementChildOfClass(target, 'ag-selection-checkbox', 3) ||
+            _isElementChildOfClass(target, 'ag-drag-handle', 3)
+        );
     }
 
     private onMouseOut(mouseEvent: MouseEvent): void {

@@ -1,8 +1,8 @@
 import type {
     AgColumn,
     AgEventType,
-    FuncColsService,
     GridOptionsService,
+    IColsService,
     IEventEmitter,
     IEventListener,
     RowNode,
@@ -41,7 +41,7 @@ export enum SetFilterModelValuesType {
 
 export interface SetValueModelParams<V> {
     gos: GridOptionsService;
-    funcColsService: FuncColsService;
+    rowGroupColsService?: IColsService;
     valueService: ValueService;
     filterParams: SetFilterParams<any, V>;
     setIsLoading: (loading: boolean) => void;
@@ -110,7 +110,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
     constructor(params: SetValueModelParams<V>) {
         const {
             usingComplexObjects,
-            funcColsService,
+            rowGroupColsService,
             valueService,
             treeDataTreeList,
             groupingTreeList,
@@ -158,16 +158,12 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
             this.entryComparator = this.createTreeDataOrGroupingComparator() as any;
         } else if (treeList && !treeListPathGetter && !keyComparator) {
             this.entryComparator = (
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 [_aKey, aValue]: [string | null, V | null],
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 [_bKey, bValue]: [string | null, V | null]
             ) => _defaultComparator(aValue, bValue);
         } else {
             this.entryComparator = (
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 [_aKey, aValue]: [string | null, V | null],
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 [_bKey, bValue]: [string | null, V | null]
             ) => keyComparator(aValue, bValue);
         }
@@ -182,13 +178,13 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
                 this.filterParams,
                 this.createKey,
                 this.caseFormat,
-                funcColsService,
                 valueService,
                 treeDataOrGrouping,
                 !!treeDataTreeList,
                 getDataPath,
                 groupAllowUnbalanced,
-                addManagedEventListeners
+                addManagedEventListeners,
+                rowGroupColsService
             );
         }
 
@@ -732,9 +728,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
         b: [string | null, string[] | null]
     ) => number {
         return (
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             [_aKey, aValue]: [string | null, string[] | null],
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             [_bKey, bValue]: [string | null, string[] | null]
         ) => {
             if (aValue == null) {

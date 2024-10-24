@@ -1,7 +1,7 @@
 import type { ApiFunction, ApiFunctionName } from '../api/iApiFunction';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
-import type { BeanCollection } from '../context/context';
+import type { BeanCollection, UserComponentName } from '../context/context';
 import type { GridOptions } from '../entities/gridOptions';
 import { INITIAL_GRID_OPTION_KEYS } from '../gridOptionsInitial';
 import type { PropertyChangedSource } from '../gridOptionsService';
@@ -12,20 +12,20 @@ import { _warnOnce } from '../utils/function';
 import { _fuzzySuggestions } from '../utils/fuzzyMatch';
 import { validateApiFunction } from './apiFunctionValidator';
 import { ENTERPRISE_MODULE_NAMES } from './enterpriseModuleNames';
-import type { ErrorId, GetErrorParams } from './errorMessages/errorText';
+import type { ErrorId, GetErrorParams, MissingModuleErrors } from './errorMessages/errorText';
+import { MISSING_MODULE_REASONS } from './errorMessages/errorText';
 import { getError } from './errorMessages/errorText';
 import { _error, _warn, provideValidationServiceLogger } from './logging';
 import { GRID_OPTIONS_VALIDATORS } from './rules/gridOptionsValidations';
+import { USER_COMP_MODULES } from './rules/userCompValidations';
 import type { DependentValues, OptionsValidation, OptionsValidator, RequiredOptions } from './validationTypes';
 
 export class ValidationService extends BeanStub implements NamedBean {
     beanName = 'validationService' as const;
 
-    private beans: BeanCollection;
     private gridOptions: GridOptions;
 
     public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
         this.gridOptions = beans.gridOptions;
         provideValidationServiceLogger(this);
     }
@@ -51,9 +51,10 @@ export class ValidationService extends BeanStub implements NamedBean {
         return validateApiFunction(functionName, apiFunction, this.beans);
     }
 
-    public missingModule(moduleName: ModuleName, reason: string, gridId: string): void {
+    public missingModule(moduleName: ModuleName, reasonOrId: string | keyof MissingModuleErrors, gridId: string): void {
         const gridScoped = _areModulesGridScoped();
         const isEnterprise = ENTERPRISE_MODULE_NAMES[moduleName as EnterpriseModuleName] === 1;
+        const reason = typeof reasonOrId === 'string' ? reasonOrId : MISSING_MODULE_REASONS[reasonOrId];
         _error(200, {
             reason,
             moduleName,
@@ -61,6 +62,28 @@ export class ValidationService extends BeanStub implements NamedBean {
             gridId,
             isEnterprise,
         });
+    }
+
+    public missingUserComponent(
+        propertyName: string,
+        componentName: string,
+        agGridDefaults: { [key in UserComponentName]?: any },
+        jsComps: { [key: string]: any }
+    ): void {
+        const moduleForComponent = USER_COMP_MODULES[componentName as UserComponentName];
+        if (moduleForComponent) {
+            this.gos.assertModuleRegistered(
+                moduleForComponent,
+                `AG Grid '${propertyName}' component: ${componentName}`
+            );
+        } else {
+            _warn(101, {
+                propertyName,
+                componentName,
+                agGridDefaults,
+                jsComps,
+            });
+        }
     }
 
     public checkRowEvents(eventType: RowNodeEventType): void {
@@ -243,7 +266,7 @@ export class ValidationService extends BeanStub implements NamedBean {
         });
 
         if (Object.keys(invalidProperties).length > 0 && docsUrl) {
-            const url = this.getFrameworkOverrides().getDocLink(docsUrl);
+            const url = this.beans.frameworkOverrides.getDocLink(docsUrl);
             _warnOnce(`to see all the valid ${containerName} properties please check: ${url}`);
         }
     }

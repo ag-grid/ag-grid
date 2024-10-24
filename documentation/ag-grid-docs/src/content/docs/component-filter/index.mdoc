@@ -140,28 +140,28 @@ laterOnInYourApplicationSomewhere() {
 ```ts
 // let's assume a React component as follows
 export default forwardRef((props, ref) => {
-   useImperativeHandle(ref, () => {
-       return {
-           ... // required filter methods
+    useImperativeHandle(ref, () => {
+        return {
+            ... // required filter methods
 
-           // put a custom method on the filter
-           myMethod() {
-               // does something
-           }
-       }
-   });
+            // put a custom method on the filter
+            myMethod() {
+                // does something
+            }
+        }
+    });
 
-   ... // rest of component
+    ... // rest of component
 }
 
 // later in your app, if you want to execute myMethod()...
 laterOnInYourApplicationSomewhere() {
-   // get reference to the AG Grid Filter component on name column
-   api.getColumnFilterInstance('name').then(filterInstance => {
-       getInstance(filterInstance, comp => if (comp != null) {
-           comp.myMethod();
-       });
-   });
+    // get reference to the AG Grid Filter component on name column
+    api.getColumnFilterInstance('name').then(filterInstance => {
+        getInstance(filterInstance, comp => if (comp != null) {
+            comp.myMethod();
+        });
+    });
 }
 ```
 {% /if %}

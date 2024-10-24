@@ -15,19 +15,19 @@ import { StatusBarService } from './statusBarService';
 export const StatusBarCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('StatusBarCoreModule'),
     beans: [StatusBarService],
-    userComponents: [
-        { name: 'agAggregationComponent', classImp: AggregationComp },
-        { name: 'agTotalRowCountComponent', classImp: TotalRowsComp },
-        { name: 'agFilteredRowCountComponent', classImp: FilteredRowsComp },
-        { name: 'agTotalAndFilteredRowCountComponent', classImp: TotalAndFilteredRowsComp },
-    ],
+    userComponents: {
+        agAggregationComponent: AggregationComp,
+        agTotalRowCountComponent: TotalRowsComp,
+        agFilteredRowCountComponent: FilteredRowsComp,
+        agTotalAndFilteredRowCountComponent: TotalAndFilteredRowsComp,
+    },
     selectors: [AgStatusBarSelector],
     dependsOn: [EnterpriseCoreModule, KeyboardNavigationCoreModule],
 };
 
 export const StatusBarSelectionModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('StatusBarSelectionModule'),
-    userComponents: [{ name: 'agSelectedRowCountComponent', classImp: SelectedRowsComp }],
+    userComponents: { agSelectedRowCountComponent: SelectedRowsComp },
     dependsOn: [StatusBarCoreModule],
 };
 

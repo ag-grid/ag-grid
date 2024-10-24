@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const fs = require('fs');
 const path = require('path');
 const { minify } = require('csso');
-const glob = require('glob');
 
 /*
  * the first half of this file is the original post processing to add sanity checks, rename minified files and add

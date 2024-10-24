@@ -17,6 +17,7 @@ import { _isModuleRegistered } from './modules/moduleRegistry';
 import type { AnyGridOptions } from './propertyKeys';
 import { _logIfDebug } from './utils/function';
 import { _exists } from './utils/generic';
+import type { MissingModuleErrors } from './validation/errorMessages/errorText';
 import type { ValidationService } from './validation/validationService';
 
 type GetKeys<T, U> = {
@@ -108,7 +109,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
 
         // Ensure the propertyEventService has framework overrides set so that it can fire events outside of angular
-        this.propertyEventService.setFrameworkOverrides(this.frameworkOverrides);
+        this.propertyEventService.setFrameworkOverrides(this.beans.frameworkOverrides);
 
         this.addManagedEventListeners({
             gridOptionsChanged: ({ options }) => {
@@ -233,7 +234,7 @@ export class GridOptionsService extends BeanStub implements NamedBean {
             const eventHandlerName = _getCallbackForEvent(eventName);
             const eventHandler = (this.gridOptions as any)[eventHandlerName];
             if (typeof eventHandler === 'function') {
-                this.frameworkOverrides.wrapOutgoing(() => {
+                this.beans.frameworkOverrides.wrapOutgoing(() => {
                     eventHandler(event);
                 });
             }
@@ -260,10 +261,14 @@ export class GridOptionsService extends BeanStub implements NamedBean {
         return updatedParams;
     }
 
-    public assertModuleRegistered(moduleName: ModuleName, reason: string): boolean {
+    public assertModuleRegistered<
+        TId extends keyof MissingModuleErrors,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        TShowMessageAtCallLocation = MissingModuleErrors[TId],
+    >(moduleName: ModuleName, reasonOrId: string | TId): boolean {
         const registered = this.isModuleRegistered(moduleName);
         if (!registered) {
-            this.validationService?.missingModule(moduleName, reason, this.gridId);
+            this.validationService?.missingModule(moduleName, reasonOrId, this.gridId);
         }
         return registered;
     }

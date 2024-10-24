@@ -24,12 +24,20 @@ export default [
             'import-x/consistent-type-specifier-style': 'error',
             '@typescript-eslint/no-this-alias': 'off',
             '@typescript-eslint/no-unused-vars': [
-                'warn',
+                'error',
                 {
-                    argsIgnorePattern: '^_+$',
+                    argsIgnorePattern: '^_',
                     varsIgnorePattern: '^_+$',
                 },
             ],
+            'no-undef': 'warn',
+        },
+    },
+    {
+        // cypress uses a global API based on undefined variables
+        files: ['**/*.spec.{ts,js}', '**/*test.{ts,js}', '**/{cypress,_copiedFromCore,__tests__}/**'],
+        rules: {
+            'no-undef': 'off',
         },
     },
 ];

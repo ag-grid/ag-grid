@@ -15,12 +15,10 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
 
     private rowRenderer: RowRenderer;
     private focusService: FocusService;
-    private beans: BeanCollection;
 
     public wireBeans(beans: BeanCollection) {
         this.rowRenderer = beans.rowRenderer;
         this.focusService = beans.focusService;
-        this.beans = beans;
     }
 
     // rowRenderer tells us these
@@ -35,10 +33,10 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
 
     // we don't implement as lazy row heights is not supported in this row model
     public ensureRowHeightsValid(
-        startPixel: number,
-        endPixel: number,
-        startLimitIndex: number,
-        endLimitIndex: number
+        _startPixel: number,
+        _endPixel: number,
+        _startLimitIndex: number,
+        _endLimitIndex: number
     ): boolean {
         return false;
     }

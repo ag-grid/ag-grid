@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const fs = require('fs');
 
 function copyFile(sourceFile, destinationFile, addTsNoCheck = true) {
@@ -8,7 +9,9 @@ function copyFile(sourceFile, destinationFile, addTsNoCheck = true) {
         }
 
         // Prepend '@ts-nocheck' to the content so we don't have to worry about typescript errors
-        const modifiedContent = addTsNoCheck ? `// @ts-nocheck\n${data}` : data;
+        const modifiedContent = addTsNoCheck
+            ? `// eslint-disable-next-line @typescript-eslint/ban-ts-comment\n// @ts-nocheck\n${data}`
+            : data;
         fs.writeFile(
             destinationFile,
             modifiedContent,

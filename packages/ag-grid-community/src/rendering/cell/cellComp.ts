@@ -24,7 +24,6 @@ export class CellComp extends Component {
     private eCellWrapper: HTMLElement | undefined;
     private eCellValue: HTMLElement | undefined;
 
-    private beans: BeanCollection;
     private column: AgColumn;
     private rowNode: RowNode;
     private eRow: HTMLElement;
@@ -241,8 +240,10 @@ export class CellComp extends Component {
         if (this.includeDndSource) {
             if (this.dndSourceComp == null) {
                 this.dndSourceComp = this.cellCtrl.createDndSource();
-                // put the checkbox in before the value
-                this.eCellWrapper!.insertBefore(this.dndSourceComp.getGui(), this.eCellValue!);
+                if (this.dndSourceComp) {
+                    // put the checkbox in before the value
+                    this.eCellWrapper!.insertBefore(this.dndSourceComp.getGui(), this.eCellValue!);
+                }
             }
         }
 

@@ -5,17 +5,17 @@ Any valid Vue component can be a status bar component, however it is also possib
 {% if isFramework("vue") %}
 ```ts
 interface IStatusPanel {
-   // Called when the `statusBar` grid option is updated.
-   // If this method returns `true`, the grid assumes that
-   // the status panel has updated with the latest params,
-   // and takes no further action. If this method returns `false`,
-   // or is not implemented, the grid will destroy and
-   // recreate the status panel.
-   refresh(params: IStatusPanelParams): boolean;
+    // Called when the `statusBar` grid option is updated.
+    // If this method returns `true`, the grid assumes that
+    // the status panel has updated with the latest params,
+    // and takes no further action. If this method returns `false`,
+    // or is not implemented, the grid will destroy and
+    // recreate the status panel.
+    refresh(params: IStatusPanelParams): boolean;
 
-   // Gets called when the grid is destroyed.
-   // If your status bar components needs to do any cleanup, do it here.
-   destroy(): void;
+    // Gets called when the grid is destroyed.
+    // If your status bar components needs to do any cleanup, do it here.
+    destroy(): void;
 }
 ```
 {% /if %}

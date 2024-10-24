@@ -6,9 +6,7 @@ import { baseEnterpriseModule } from '../moduleUtils';
 import {
     GroupFilterModule,
     GroupFloatingFilterModule,
-    RowGroupingApiModule,
     RowGroupingCoreModule,
-    RowGroupingNoPivotModule,
     RowGroupingPanelModule,
 } from '../rowGrouping/rowGroupingModule';
 import {
@@ -26,12 +24,14 @@ import {
     setValueColumns,
 } from './pivotApi';
 import { PivotColDefService } from './pivotColDefService';
+import { PivotColsService } from './pivotColsService';
 import { PivotResultColsService } from './pivotResultColsService';
 import { PivotStage } from './pivotStage';
+import { ValueColsService } from './valueColsService';
 
 export const PivotCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('PivotCoreModule'),
-    beans: [PivotResultColsService, PivotColDefService, PivotStage],
+    beans: [PivotResultColsService, PivotColDefService, PivotStage, PivotColsService, ValueColsService],
     dependsOn: [RowGroupingCoreModule, ColumnGroupCoreModule],
 };
 

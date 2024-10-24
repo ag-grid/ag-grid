@@ -3,6 +3,7 @@ import type {
     IExpansionService,
     IsServerSideGroupOpenByDefaultParams,
     NamedBean,
+    RowGroupOpenedEvent,
     RowNode,
     WithoutGridCommon,
 } from 'ag-grid-community';
@@ -75,5 +76,9 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
 
     public onGroupExpandedOrCollapsed(): void {
         // do nothing
+    }
+
+    protected override dispatchExpandedEvent(event: RowGroupOpenedEvent): void {
+        this.eventService.dispatchEvent(event);
     }
 }

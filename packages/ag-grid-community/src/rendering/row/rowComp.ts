@@ -13,8 +13,6 @@ import type { IRowComp, RowCtrl } from './rowCtrl';
 export class RowComp extends Component {
     private fullWidthCellRenderer: ICellRendererComp | null | undefined;
 
-    private beans: BeanCollection;
-
     private rowCtrl: RowCtrl;
 
     private domOrder: boolean;

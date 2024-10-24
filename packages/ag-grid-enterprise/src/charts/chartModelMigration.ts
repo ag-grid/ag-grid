@@ -2,11 +2,8 @@ import type { AgChartThemeName } from 'ag-charts-types';
 
 import type { ChartModel } from 'ag-grid-community';
 
-// @ts-ignore
 import { VERSION } from '../version';
-// @ts-ignore
 import { ALL_AXIS_TYPES, getLegacyAxisType } from './chartComp/utils/axisTypeMapper';
-// @ts-ignore
 import { getCanonicalChartType, getSeriesType, isPieChartSeries } from './chartComp/utils/seriesTypeMapper';
 
 const DEBUG = false;
@@ -141,6 +138,9 @@ function migrateV26_2(model: ChartModel) {
     model = jsonDelete('chartOptions.yAxis', model);
     const {
         chartType: providedChartType,
+        // disable no-unused-vars because `series` is required here, even though
+        // unused, because it serves to take the `series` key out of otherChartOptions
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         chartOptions: { axes, series, seriesDefaults, ...otherChartOptions },
         ...otherModelProps
     } = model as any;
@@ -530,4 +530,4 @@ function jsonMutate(path: string | string[], json: any, mutator: (v: any) => any
     return json;
 }
 
-const merge = (r: {}, n: {}) => ({ ...r, ...n });
+const merge = (r: object, n: object) => ({ ...r, ...n });

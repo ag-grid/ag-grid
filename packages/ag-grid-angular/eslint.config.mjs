@@ -7,11 +7,10 @@ export default [
     },
     {
         rules: {
-            '@typescript-eslint/ban-types': 'warn',
-            '@typescript-eslint/no-this-alias': 'warn',
-            '@typescript-eslint/no-var-requires': 'warn',
-            '@typescript-eslint/no-unused-vars': 'warn',
-            'no-undef': 'warn',
+            '@typescript-eslint/ban-types': 'error',
+            '@typescript-eslint/no-this-alias': 'off',
+            '@typescript-eslint/no-var-requires': 'error',
+            '@typescript-eslint/no-unused-vars': 'error',
         },
     },
     {

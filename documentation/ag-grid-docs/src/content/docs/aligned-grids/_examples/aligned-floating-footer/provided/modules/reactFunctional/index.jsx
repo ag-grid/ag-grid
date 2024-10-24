@@ -94,7 +94,7 @@ const GridExample = () => {
                     rowData={bottomData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
-                    headerHeight="0"
+                    headerHeight={0}
                     alwaysShowVerticalScroll
                     rowStyle={{ fontWeight: 'bold' }}
                 />

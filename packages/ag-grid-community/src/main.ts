@@ -14,7 +14,7 @@ export type { ColumnGroupService } from './columns/columnGroups/columnGroupServi
 export type { ColumnModel } from './columns/columnModel';
 export { ColumnCollections as _ColumnCollections, ColKey } from './columns/columnModel';
 export type { ColumnAutosizeService } from './columnAutosize/columnAutosizeService';
-export type { FuncColsService } from './columns/funcColsService';
+export { BaseColsService } from './columns/baseColsService';
 export type { ColumnStateService } from './columns/columnStateService';
 export { ColumnState, ColumnStateParams, ApplyColumnStateParams } from './columns/columnStateService';
 export type { ColumnMoveService } from './columnMove/columnMoveService';
@@ -310,6 +310,7 @@ export { _requestAnimationFrame } from './misc/animationFrameService';
 export type { AnimationFrameService } from './misc/animationFrameService';
 export { AlignedGrid } from './interfaces/iAlignedGrid';
 export type { MenuService } from './misc/menu/menuService';
+export type { IColsService } from './interfaces/iColsService';
 
 // editing / cellEditors
 export {
@@ -437,7 +438,6 @@ export {
 export { IClientSideNodeManager, ClientSideNodeManagerUpdateRowDataResult } from './interfaces/iClientSideNodeManager';
 export { AbstractClientSideNodeManager } from './clientSideRowModel/abstractClientSideNodeManager';
 export { IGroupHideOpenParentsService } from './interfaces/iGroupHideOpenParentsService';
-export type { RowNodeEventThrottle } from './clientSideRowModel/rowNodeEventThrottle';
 export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService';
 
 export { ColumnVO } from './interfaces/iColumnVO';
@@ -980,7 +980,6 @@ export * from './interfaces/iSparklineCellRendererParams';
 export { BaseCreator } from './csvExport/baseCreator';
 export { BaseGridSerializingSession } from './csvExport/sessions/baseGridSerializingSession';
 export { _downloadFile } from './csvExport/downloader';
-export type { GridSerializer } from './csvExport/gridSerializer';
 export { RowSpanningAccumulator, GridSerializingParams, RowAccumulator } from './csvExport/interfaces';
 
 // modules

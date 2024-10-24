@@ -28,7 +28,7 @@ The majority of application code run by AG Grid will be executed inside NgZone i
 ```html
 onCellClicked(event: CellClickedEvent) {
   // This code will run inside NgZone
-  console.log("Inside NgZone", NgZone.isInAngularZone())   
+  console.log("Inside NgZone", NgZone.isInAngularZone())
 }
 
 <ag-grid-angular (cellClicked)="onCellClicked($event)">

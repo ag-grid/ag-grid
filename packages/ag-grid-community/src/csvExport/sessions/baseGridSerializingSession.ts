@@ -1,6 +1,5 @@
 import type { ColumnModel } from '../../columns/columnModel';
 import type { ColumnNameService } from '../../columns/columnNameService';
-import type { FuncColsService } from '../../columns/funcColsService';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
 import type { GridOptionsService } from '../../gridOptionsService';
@@ -11,6 +10,7 @@ import type {
     ProcessHeaderForExportParams,
     ProcessRowGroupForExportParams,
 } from '../../interfaces/exportParams';
+import type { IColsService } from '../../interfaces/iColsService';
 import type { ValueService } from '../../valueService/valueService';
 import type {
     GridSerializingParams,
@@ -22,7 +22,7 @@ import type {
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
-    public funcColsService: FuncColsService;
+    private rowGroupsColsService?: IColsService;
     public valueService: ValueService;
     public gos: GridOptionsService;
     public processCellCallback?: (params: ProcessCellForExportParams) => string;
@@ -35,7 +35,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     constructor(config: GridSerializingParams) {
         const {
             columnModel,
-            funcColsService,
+            rowGroupColsService,
             columnNameService,
             valueService,
             gos,
@@ -46,7 +46,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         } = config;
 
         this.columnModel = columnModel;
-        this.funcColsService = funcColsService;
+        this.rowGroupsColsService = rowGroupColsService;
         this.columnNameService = columnNameService;
         this.valueService = valueService;
         this.gos = gos;
@@ -120,7 +120,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 const colDef = column.getColDef();
                 const isFullWidth = colDef == null || colDef.showRowGroup === true;
 
-                return isFullWidth || colDef.showRowGroup === this.funcColsService.rowGroupCols[0].getId();
+                return isFullWidth || colDef.showRowGroup === this.rowGroupsColsService?.columns[0].getId();
             }
         }
 

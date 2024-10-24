@@ -68,7 +68,7 @@ export const getAgGridProperties = (): [Properties, Properties, Properties] => {
             };
 
             watch[propertyName] = {
-                handler(currentValue: any, previousValue: any) {
+                handler(currentValue: any, _previousValue: any) {
                     let currValue = currentValue;
 
                     if (propertyName === 'rowData' && currentValue != undefined) {

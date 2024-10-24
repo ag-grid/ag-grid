@@ -118,6 +118,10 @@
     padding-left: var(--indent-initial-offset);
     text-transform: uppercase;
     color: var(--color-util-gray-500);
+
+    #{$selector-darkmode} & {
+        color: var(--color-util-gray-600);
+    }
 }
 
 .divider {

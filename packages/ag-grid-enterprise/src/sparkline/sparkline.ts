@@ -312,7 +312,7 @@ export abstract class Sparkline {
 
     // Efficiently update sparkline nodes on hightlight changes.
     protected highlightedDatum?: SeriesNodeDatum;
-    protected highlightDatum(closestDatum: SeriesNodeDatum): void {
+    protected highlightDatum(_closestDatum: SeriesNodeDatum): void {
         this.updateNodes();
     }
 
@@ -368,7 +368,7 @@ export abstract class Sparkline {
      * Dehighlight all nodes and remove tooltip.
      * @param event
      */
-    private onMouseOut(event: MouseEvent) {
+    private onMouseOut(_: MouseEvent) {
         this.dehighlightDatum();
         this.tooltip.toggle(false);
         this.renderScene();

@@ -4,8 +4,8 @@ import type {
     ChangedPath,
     ClientSideRowModelStage,
     ColumnModel,
-    FuncColsService,
     GridOptions,
+    IColsService,
     IRowNodeStage,
     ISelectionService,
     IShowRowGroupColsService,
@@ -70,16 +70,14 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     public step: ClientSideRowModelStage = 'group';
 
     private columnModel: ColumnModel;
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
     private valueService: ValueService;
-    private beans: BeanCollection;
     private selectionService?: ISelectionService;
     private showRowGroupColsService: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection) {
-        this.beans = beans;
         this.columnModel = beans.columnModel;
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
         this.valueService = beans.valueService;
         this.selectionService = beans.selectionService;
         this.showRowGroupColsService = beans.showRowGroupColsService!;
@@ -143,7 +141,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
         const { rowNode, changedPath, rowNodeTransactions, rowNodesOrderChanged } = params;
 
-        const groupedCols = this.funcColsService.rowGroupCols;
+        const groupedCols = this.rowGroupColsService?.columns;
 
         const details: GroupingDetails = {
             expandByDefault: this.gos.get('groupDefaultExpanded'),
@@ -437,7 +435,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
                     rowGroupColumn: rowNode.rowGroupColumn,
                     leafNode: rowNode.allLeafChildren?.[0],
                 };
-                this.setGroupData(rowNode, groupInfo, details);
+                this.setGroupData(rowNode, groupInfo);
                 recurse(rowNode.childrenAfterGroup);
             });
         };
@@ -569,7 +567,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         groupNode.field = groupInfo.field;
         groupNode.rowGroupColumn = groupInfo.rowGroupColumn;
 
-        this.setGroupData(groupNode, groupInfo, details);
+        this.setGroupData(groupNode, groupInfo);
 
         groupNode.key = groupInfo.key;
         groupNode.id = this.createGroupId(groupNode, parent, level);
@@ -613,7 +611,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         return _ROW_ID_PREFIX_ROW_GROUP + createGroupId(node, parent, level);
     }
 
-    private setGroupData(groupNode: RowNode, groupInfo: GroupInfo, details: GroupingDetails): void {
+    private setGroupData(groupNode: RowNode, groupInfo: GroupInfo): void {
         groupNode.groupData = {};
         const groupDisplayCols = this.showRowGroupColsService.getShowRowGroupCols();
         groupDisplayCols.forEach((col) => {

@@ -13,7 +13,7 @@ import {
     SelectionColumnModule,
 } from './columns/columnModule';
 import { CellRendererFunctionModule } from './components/framework/cellRendererFunctionModule';
-import { DragAndDropModule, RowDragModule } from './dragAndDrop/dragModule';
+import { DragAndDropModule, NativeDragModule, RowDragModule } from './dragAndDrop/dragModule';
 import { EditModule } from './edit/editModule';
 import { FilterModule } from './filter/filterModule';
 import { ColumnGroupHeaderCompModule, ColumnHeaderCompModule } from './headerRendering/cells/headerModule';
@@ -99,5 +99,6 @@ export const CommunityFeaturesModule: _ModuleWithoutApi = {
         PinnedColumnModule,
         LocaleModule,
         RowAutoHeightModule,
+        NativeDragModule,
     ],
 };

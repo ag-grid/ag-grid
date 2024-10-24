@@ -148,7 +148,6 @@ export function stringToArray(strData: string, delimiter = ','): string[][] {
 export class ClipboardService extends BeanStub implements NamedBean, IClipboardService {
     beanName = 'clipboardService' as const;
 
-    private beans: BeanCollection;
     private selectionService?: ISelectionService;
     private rowModel: IRowModel;
     private valueService: ValueService;
@@ -158,7 +157,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
         this.selectionService = beans.selectionService;
         this.rowModel = beans.rowModel;
         this.valueService = beans.valueService;
@@ -1079,7 +1077,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             let column = node.rowGroupColumn as AgColumn;
 
             if (!column && node.footer && node.level === -1) {
-                column = this.beans.funcColsService.rowGroupCols[0];
+                column = this.beans.rowGroupColsService?.columns[0] as AgColumn;
             }
             return processCellForClipboard({
                 value,

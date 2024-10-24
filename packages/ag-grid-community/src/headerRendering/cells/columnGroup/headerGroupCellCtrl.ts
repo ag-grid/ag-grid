@@ -3,7 +3,6 @@ import { setupCompBean } from '../../../components/emptyBean';
 import { _getHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
 import { KeyCode } from '../../../constants/keyCode';
 import type { BeanStub } from '../../../context/beanStub';
-import type { BeanCollection } from '../../../context/context';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { ColumnEventType } from '../../../events';
@@ -40,8 +39,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private displayName: string | null;
     private tooltipFeature: TooltipFeature | undefined;
 
-    constructor(columnGroup: AgColumnGroup, beans: BeanCollection, parentRowCtrl: HeaderRowCtrl) {
-        super(columnGroup, beans, parentRowCtrl);
+    constructor(columnGroup: AgColumnGroup, parentRowCtrl: HeaderRowCtrl) {
+        super(columnGroup, parentRowCtrl);
         this.column = columnGroup;
     }
 

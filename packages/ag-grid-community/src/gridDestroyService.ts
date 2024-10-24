@@ -1,17 +1,10 @@
 import type { NamedBean } from './context/bean';
 import { BeanStub } from './context/beanStub';
-import type { BeanCollection } from './context/context';
 
 export class GridDestroyService extends BeanStub implements NamedBean {
     beanName = 'gridDestroyService' as const;
 
-    private beans: BeanCollection;
-
     private destroyCalled = false;
-
-    public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
-    }
 
     public override destroy(): void {
         // prevent infinite loop

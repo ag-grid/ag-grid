@@ -58,7 +58,7 @@ export class FlashCellService extends BeanStub implements NamedBean {
         const eGui = cellCtrl.getGui();
 
         // then once that is applied, we remove the highlight with animation
-        this.frameworkOverrides.wrapIncoming(() => {
+        this.beans.frameworkOverrides.wrapIncoming(() => {
             window.setTimeout(() => {
                 if (!cellCtrl.isAlive()) {
                     return;

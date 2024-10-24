@@ -5,7 +5,7 @@ We recommend the use of  `useCallback` to avoid wasted renders: see [React Best 
 
 ```ts
 const onCellClicked = useCallback((params: CellClickedEvent) => {
-  console.log('Cell was clicked')   
+  console.log('Cell was clicked')
 }, []);
 
 <AgGridReact onCellClicked={onCellClicked}> </AgGridReact>

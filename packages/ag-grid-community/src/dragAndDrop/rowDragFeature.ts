@@ -1,8 +1,8 @@
 import { AutoScrollService } from '../autoScrollService';
-import type { FuncColsService } from '../columns/funcColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
+import { _getCellByPosition } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type {
     RowDragCancelEvent,
@@ -16,8 +16,8 @@ import type { FilterManager } from '../filter/filterManager';
 import type { FocusService } from '../focusService';
 import type { MouseEventService } from '../gridBodyComp/mouseEventService';
 import { _getRowIdCallback, _isClientSideRowModel } from '../gridOptionsUtils';
-import type { IRangeService } from '../interfaces/IRangeService';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import type { IColsService } from '../interfaces/iColsService';
 import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { PageBoundsService } from '../pagination/pageBoundsService';
@@ -85,8 +85,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private selectionService?: ISelectionService;
     private mouseEventService: MouseEventService;
     private ctrlsService: CtrlsService;
-    private funcColsService: FuncColsService;
-    private rangeService?: IRangeService;
+    private rowGroupColsService?: IColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.dragAndDropService = beans.dragAndDropService!;
@@ -98,8 +97,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.selectionService = beans.selectionService;
         this.mouseEventService = beans.mouseEventService;
         this.ctrlsService = beans.ctrlsService;
-        this.funcColsService = beans.funcColsService;
-        this.rangeService = beans.rangeService;
+        this.rowGroupColsService = beans.rowGroupColsService;
     }
 
     private clientSideRowModel: IClientSideRowModel;
@@ -150,8 +148,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public shouldPreventRowMove(): boolean {
-        const rowGroupCols = this.funcColsService.rowGroupCols;
-        if (rowGroupCols.length) {
+        if (this.rowGroupColsService?.columns.length) {
             return true;
         }
         const isFilterPresent = this.filterManager?.isAnyFilterPresent();
@@ -298,11 +295,17 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private moveRows(rowNodes: RowNode[], pixel: number, increment: number = 0): void {
-        const rowWasMoved = this.clientSideRowModel.ensureRowsAtPixel(rowNodes, pixel, increment);
+        // Get the focussed cell so we can ensure it remains focussed after the move
+        const cellPosition = this.focusService.getFocusedCell();
+        const cellCtrl = cellPosition && _getCellByPosition(this.beans, cellPosition);
 
+        const rowWasMoved = this.clientSideRowModel.ensureRowsAtPixel(rowNodes, pixel, increment);
         if (rowWasMoved) {
-            this.focusService.clearFocusedCell();
-            this.rangeService?.removeAllCellRanges();
+            if (cellCtrl) {
+                cellCtrl.focusCell();
+            } else {
+                this.focusService.clearFocusedCell();
+            }
         }
     }
 

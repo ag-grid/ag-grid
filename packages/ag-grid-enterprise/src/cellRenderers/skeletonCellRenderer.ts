@@ -47,7 +47,7 @@ export class SkeletonCellRenderer extends Component implements ILoadingCellRende
         _setAriaLabel(this.getGui(), ariaLoading);
     }
 
-    public refresh(params: ILoadingCellRendererParams): boolean {
+    public refresh(_params: ILoadingCellRendererParams): boolean {
         return false;
     }
 

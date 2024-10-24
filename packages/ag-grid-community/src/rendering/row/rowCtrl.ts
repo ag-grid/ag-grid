@@ -29,7 +29,6 @@ import type { CellPosition } from '../../interfaces/iCellPosition';
 import type { ColumnInstanceId, ColumnPinnedType } from '../../interfaces/iColumn';
 import type { WithoutGridCommon } from '../../interfaces/iCommon';
 import type { IEventListener } from '../../interfaces/iEventEmitter';
-import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
@@ -140,12 +139,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     constructor(
         private readonly rowNode: RowNode,
-        private readonly beans: BeanCollection,
+        beans: BeanCollection,
         animateIn: boolean,
         private readonly useAnimationFrameForCreate: boolean,
         private readonly printLayout: boolean
     ) {
         super();
+        this.beans = beans;
         this.gos = beans.gos;
         this.paginationPage = beans.paginationService?.getCurrentPage() ?? 0;
         this.suppressRowTransform = this.gos.get('suppressRowTransform');
@@ -1386,10 +1386,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const maxPixel = this.applyPaginationOffset(range.bottom, true) + 100;
 
         return Math.min(Math.max(minPixel, rowTop), maxPixel);
-    }
-
-    protected override getFrameworkOverrides(): IFrameworkOverrides {
-        return this.beans.frameworkOverrides;
     }
 
     public forEachGui(gui: RowGui | undefined, callback: (gui: RowGui) => void): void {

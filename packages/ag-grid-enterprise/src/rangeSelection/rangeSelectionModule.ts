@@ -27,12 +27,12 @@ export const RangeSelectionApiModule: _ModuleWithApi<_RangeSelectionGridApi> = {
 
 export const RangeSelectionFillHandleModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('RangeSelectionFillHandleModule'),
-    dynamicBeans: [{ name: 'fillHandle', classImp: AgFillHandle }],
+    dynamicBeans: { fillHandle: AgFillHandle },
 };
 
 export const RangeSelectionRangeHandleModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('RangeSelectionRangeHandleModule'),
-    dynamicBeans: [{ name: 'rangeHandle', classImp: AgRangeHandle }],
+    dynamicBeans: { rangeHandle: AgRangeHandle },
 };
 
 export const RangeSelectionModule: _ModuleWithoutApi = {

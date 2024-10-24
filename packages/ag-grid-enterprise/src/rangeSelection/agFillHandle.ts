@@ -39,14 +39,12 @@ interface ValueContext {
 type Direction = 'x' | 'y';
 
 export class AgFillHandle extends AbstractSelectionHandle {
-    private beans: BeanCollection;
     private valueService: ValueService;
     private cellNavigationService: CellNavigationService;
     private visibleColsService: VisibleColsService;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
-        this.beans = beans;
         this.valueService = beans.valueService;
         this.cellNavigationService = beans.cellNavigationService!;
         this.visibleColsService = beans.visibleColsService;
@@ -95,8 +93,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected onDrag(_e: MouseEvent) {
+    protected onDrag(_: MouseEvent) {
         if (!this.initialPosition) {
             const cellCtrl = this.getCellCtrl();
             if (!cellCtrl) {

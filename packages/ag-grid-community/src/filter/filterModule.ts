@@ -79,7 +79,7 @@ export const ColumnFilterApiModule: _ModuleWithApi<_ColumnFilterGridApi> = {
 
 export const FloatingFilterCoreModule: _ModuleWithoutApi = {
     ...baseCommunityModule('FloatingFilterCoreModule'),
-    dynamicBeans: [{ name: 'headerFilterCellCtrl', classImp: HeaderFilterCellCtrl as any }],
+    dynamicBeans: { headerFilterCellCtrl: HeaderFilterCellCtrl as any },
     dependsOn: [ColumnFilterModule],
 };
 
@@ -90,29 +90,29 @@ export const FloatingFilterModule: _ModuleWithoutApi = {
 
 export const ReadOnlyFloatingFilterModule: _ModuleWithoutApi = {
     ...baseCommunityModule('ReadOnlyFloatingFilterModule'),
-    userComponents: [{ name: 'agReadOnlyFloatingFilter', classImp: ReadOnlyFloatingFilter }],
+    userComponents: { agReadOnlyFloatingFilter: ReadOnlyFloatingFilter },
     dependsOn: [FloatingFilterCoreModule],
 };
 
 export const SimpleFilterModule: _ModuleWithoutApi = {
     ...baseCommunityModule('SimpleFilterModule'),
     dependsOn: [ColumnFilterModule],
-    userComponents: [
-        { name: 'agTextColumnFilter', classImp: TextFilter },
-        { name: 'agNumberColumnFilter', classImp: NumberFilter },
-        { name: 'agDateColumnFilter', classImp: DateFilter },
-        { name: 'agDateInput', classImp: DefaultDateComponent },
-    ],
+    userComponents: {
+        agTextColumnFilter: TextFilter,
+        agNumberColumnFilter: NumberFilter,
+        agDateColumnFilter: DateFilter,
+        agDateInput: DefaultDateComponent,
+    },
 };
 
 export const SimpleFloatingFilterModule: _ModuleWithoutApi = {
     ...baseCommunityModule('SimpleFloatingFilterModule'),
     dependsOn: [SimpleFilterModule, FloatingFilterCoreModule],
-    userComponents: [
-        { name: 'agTextColumnFloatingFilter', classImp: TextFloatingFilter },
-        { name: 'agNumberColumnFloatingFilter', classImp: NumberFloatingFilter },
-        { name: 'agDateColumnFloatingFilter', classImp: DateFloatingFilter },
-    ],
+    userComponents: {
+        agTextColumnFloatingFilter: TextFloatingFilter,
+        agNumberColumnFloatingFilter: NumberFloatingFilter,
+        agDateColumnFloatingFilter: DateFloatingFilter,
+    },
 };
 
 export const QuickFilterCoreModule: _ModuleWithoutApi = {

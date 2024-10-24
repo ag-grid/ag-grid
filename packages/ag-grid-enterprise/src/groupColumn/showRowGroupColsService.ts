@@ -3,7 +3,7 @@ import type {
     AgColumn,
     BeanCollection,
     ColumnModel,
-    FuncColsService,
+    IColsService,
     IShowRowGroupColsService,
     NamedBean,
 } from 'ag-grid-community';
@@ -12,11 +12,11 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
     beanName = 'showRowGroupColsService' as const;
 
     private columnModel: ColumnModel;
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
     }
 
     private showRowGroupCols: AgColumn[];
@@ -41,9 +41,8 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
 
             if (isString) {
                 this.showRowGroupColsMap[showRowGroup] = col;
-            } else {
-                const rowGroupCols = this.funcColsService.rowGroupCols;
-                rowGroupCols.forEach((rowGroupCol) => {
+            } else if (this.rowGroupColsService) {
+                this.rowGroupColsService.columns.forEach((rowGroupCol) => {
                     this.showRowGroupColsMap[rowGroupCol.getId()] = col;
                 });
             }
@@ -56,5 +55,19 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
 
     public getShowRowGroupCol(id: string): AgColumn | undefined {
         return this.showRowGroupColsMap[id];
+    }
+
+    public getSourceColumnsForGroupColumn(groupCol: AgColumn): AgColumn[] | null {
+        const sourceColumnId = groupCol.getColDef().showRowGroup;
+        if (!sourceColumnId) {
+            return null;
+        }
+
+        if (sourceColumnId === true) {
+            return this.rowGroupColsService?.columns.slice(0) ?? null;
+        }
+
+        const column = this.columnModel.getColDefCol(sourceColumnId);
+        return column ? [column] : null;
     }
 }

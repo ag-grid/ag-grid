@@ -1,7 +1,7 @@
 import type {
-    FuncColsService,
     GridOptionsService,
     IClientSideRowModel,
+    IColsService,
     RowNode,
     SetFilterParams,
     ValueFormatterFunc,
@@ -85,8 +85,8 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
     gos.addGridCommonParams.mockImplementation((params) => params as any);
     gos.get.mockImplementation((prop) => (prop === 'rowModelType' ? 'clientSide' : undefined));
 
-    const funcColsService = mock<FuncColsService>();
-    funcColsService.rowGroupCols = [];
+    const rowGroupColsService = mock<IColsService>();
+    rowGroupColsService.columns = [];
 
     return new SetValueModel<string>({
         filterParams: svmParams,
@@ -98,7 +98,7 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
         gos,
         valueService,
         addManagedEventListeners: () => [],
-        funcColsService,
+        rowGroupColsService,
     });
 }
 

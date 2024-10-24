@@ -26,14 +26,14 @@ import CubeComponent from './CubeComponent';
 const GridExample = () => {
   // other properties & methods
   
-   const columnDefs = useMemo( () => [{field: 'value', cellRenderer: CubeComponent}], []);
+    const columnDefs = useMemo( () => [{field: 'value', cellRenderer: CubeComponent}], []);
 
-   return (
+    return (
         <AgGridReact
-           columnDefs={columnDefs}
-           ...other properties            
+            columnDefs={columnDefs}
+            ...other properties            
         />
-   );
+    );
 };
 ```
 {% /if %}

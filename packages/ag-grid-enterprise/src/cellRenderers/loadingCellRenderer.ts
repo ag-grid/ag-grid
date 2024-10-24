@@ -31,7 +31,7 @@ export class LoadingCellRenderer extends Component implements ILoadingCellRender
         this.eLoadingText.innerText = localeTextFunc('loadingOoo', 'Loading');
     }
 
-    public refresh(params: ILoadingCellRendererParams): boolean {
+    public refresh(_params: ILoadingCellRendererParams): boolean {
         return false;
     }
 

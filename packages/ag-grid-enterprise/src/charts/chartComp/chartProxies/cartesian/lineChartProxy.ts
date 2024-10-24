@@ -9,7 +9,7 @@ export class LineChartProxy extends CartesianChartProxy<'line'> {
     }
 
     protected override getAxes(params: UpdateParams): AgCartesianAxisOptions[] {
-        return [
+        const axes: AgCartesianAxisOptions[] = [
             {
                 type: this.getXAxisType(params),
                 position: 'bottom',
@@ -19,6 +19,14 @@ export class LineChartProxy extends CartesianChartProxy<'line'> {
                 position: 'left',
             },
         ];
+
+        // Add a default label formatter to show '%' for normalized charts if none is provided
+        if (this.isNormalised()) {
+            const numberAxis = axes[1];
+            numberAxis.label = { ...numberAxis.label, formatter: (params) => Math.round(params.value) + '%' };
+        }
+
+        return axes;
     }
 
     protected override getSeries(params: UpdateParams) {

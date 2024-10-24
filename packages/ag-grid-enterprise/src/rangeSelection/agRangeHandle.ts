@@ -12,7 +12,7 @@ export class AgRangeHandle extends AbstractSelectionHandle {
         super(/* html */ `<div class="ag-range-handle"></div>`);
     }
 
-    protected onDrag(e: MouseEvent) {
+    protected onDrag(_: MouseEvent) {
         const lastCellHovered = this.getLastCellHovered();
 
         if (!lastCellHovered) {
@@ -57,7 +57,7 @@ export class AgRangeHandle extends AbstractSelectionHandle {
         this.rangeService.extendLatestRangeToCell(this.endPosition);
     }
 
-    protected onDragEnd(e: MouseEvent) {
+    protected onDragEnd(_: MouseEvent) {
         const cellRange = _last(this.rangeService.getCellRanges())!;
 
         this.fixRangeStartEnd(cellRange);

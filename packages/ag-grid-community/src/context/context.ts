@@ -1,7 +1,6 @@
 import type { AlignedGridsService } from '../alignedGrids/alignedGridsService';
 import type { ApiFunctionService } from '../api/apiFunctionService';
 import type { GridApi } from '../api/gridApi';
-import type { RowNodeEventThrottle } from '../clientSideRowModel/rowNodeEventThrottle';
 import type { ColumnAutosizeService } from '../columnAutosize/columnAutosizeService';
 import type { ColumnMoveService } from '../columnMove/columnMoveService';
 import type { ColumnResizeService } from '../columnResize/columnResizeService';
@@ -15,7 +14,6 @@ import type { ColumnNameService } from '../columns/columnNameService';
 import type { ColumnStateService } from '../columns/columnStateService';
 import type { ColumnViewportService } from '../columns/columnViewportService';
 import type { DataTypeService } from '../columns/dataTypeService';
-import type { FuncColsService } from '../columns/funcColsService';
 import type { SelectionColService } from '../columns/selectionColService';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { AgComponentUtils } from '../components/framework/agComponentUtils';
@@ -51,6 +49,7 @@ import type { IAggFuncService } from '../interfaces/iAggFuncService';
 import type { IAutoColService } from '../interfaces/iAutoColService';
 import type { IClientSideNodeManager } from '../interfaces/iClientSideNodeManager';
 import type { IClipboardService } from '../interfaces/iClipboardService';
+import type { IColsService } from '../interfaces/iColsService';
 import type { IContextMenuService } from '../interfaces/iContextMenu';
 import type { ICsvCreator } from '../interfaces/iCsvCreator';
 import type { IDetailGridApiService } from '../interfaces/iDetailGridApiService';
@@ -117,6 +116,7 @@ export interface SingletonBean extends GenericSingletonBean<BeanName, BeanCollec
 
 export type DynamicBeanName =
     | 'detailCellRendererCtrl'
+    | 'dndSourceComp'
     | 'fillHandle'
     | 'groupCellRendererCtrl'
     | 'headerFilterCellCtrl'
@@ -173,15 +173,15 @@ export type UserComponentName =
     | 'agTotalRowCountComponent'
     | 'agFilteredRowCountComponent'
     | 'agTotalAndFilteredRowCountComponent';
-export interface NamedClass<TName = string> {
-    classImp: new (...args: []) => object;
-    name: TName;
-}
-export type DynamicBeanMeta = NamedClass<DynamicBeanName>;
-export type ComponentMeta = NamedClass<UserComponentName> & {
-    /** Default params for provided components */
-    params?: any;
-};
+
+export type ClassImp = new (...args: []) => object;
+export type ComponentMeta =
+    | ClassImp
+    | {
+          classImp: ClassImp;
+          /** Default params for provided components */
+          params?: any;
+      };
 
 export interface CoreBeanCollection {
     context: Context;
@@ -220,7 +220,6 @@ export interface CoreBeanCollection {
     rowModel: IRowModel;
     ctrlsService: CtrlsService;
     valueCache?: ValueCache;
-    rowNodeEventThrottle?: RowNodeEventThrottle;
     localeService?: LocaleService;
     syncService: SyncService;
     ariaAnnouncementService: AriaAnnouncementService;
@@ -236,7 +235,9 @@ export interface CoreBeanCollection {
     selectionColService?: SelectionColService;
     columnDefFactory?: ColumnDefFactory;
     columnAutosizeService?: ColumnAutosizeService;
-    funcColsService: FuncColsService;
+    rowGroupColsService?: IColsService;
+    valueColsService?: IColsService;
+    pivotColsService?: IColsService;
     quickFilterService?: QuickFilterService;
     showRowGroupColsService?: IShowRowGroupColsService;
     dataTypeService?: DataTypeService;
@@ -411,7 +412,9 @@ export type BeanName =
     | 'flashCellService'
     | 'flattenStage'
     | 'focusService'
-    | 'funcColsService'
+    | 'pivotColsService'
+    | 'rowGroupColsService'
+    | 'valueColsService'
     | 'frameworkComponentWrapper'
     | 'frameworkOverrides'
     | 'globalEventListener'
@@ -458,7 +461,6 @@ export type BeanName =
     | 'rowEditService'
     | 'rowModel'
     | 'rowNodeBlockLoader'
-    | 'rowNodeEventThrottle'
     | 'rowNodeSorter'
     | 'rowRenderer'
     | 'rowStyleService'

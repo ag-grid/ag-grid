@@ -63,8 +63,6 @@ export interface RowNodeMap {
 export class ClientSideRowModel extends BeanStub implements IClientSideRowModel, NamedBean {
     beanName = 'rowModel' as const;
 
-    private beans: BeanCollection;
-
     private columnModel: ColumnModel;
     private selectionService?: ISelectionService;
     private valueCache?: ValueCache;
@@ -83,8 +81,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private filterAggregatesStage?: IRowNodeStage;
 
     public wireBeans(beans: BeanCollection): void {
-        this.beans = beans;
-
         this.columnModel = beans.columnModel;
         this.selectionService = beans.selectionService;
         this.valueCache = beans.valueCache;

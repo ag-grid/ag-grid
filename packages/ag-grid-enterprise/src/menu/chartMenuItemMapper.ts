@@ -20,16 +20,16 @@ export class ChartMenuItemMapper extends BeanStub implements NamedBean {
     }
 
     public getChartItems(key: 'pivotChart' | 'chartRange'): MenuItemDef | undefined {
+        const isPivot = key === 'pivotChart';
         if (!this.chartService) {
-            this.gos.assertModuleRegistered('GridChartsCoreModule', `the Context Menu key "${key}"`);
+            this.gos.assertModuleRegistered('GridChartsCoreModule', isPivot ? 2 : 3);
             return undefined;
         }
 
         const getLocaleTextFunc = this.getLocaleTextFunc.bind(this);
-        const builder =
-            key === 'pivotChart'
-                ? new PivotMenuItemMapper(this.gos, this.chartService, getLocaleTextFunc)
-                : new RangeMenuItemMapper(this.gos, this.chartService, getLocaleTextFunc);
+        const builder = isPivot
+            ? new PivotMenuItemMapper(this.gos, this.chartService, getLocaleTextFunc)
+            : new RangeMenuItemMapper(this.gos, this.chartService, getLocaleTextFunc);
 
         const isEnterprise = this.chartService.isEnterprise();
 

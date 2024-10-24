@@ -106,6 +106,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         const compDetailsList: UserCompDetails[] = [];
         const floatingFilterParamsList: IFloatingFilterParams<IFilter>[] = [];
         const filterParams = params.filterParams as MultiFilterParams;
+        const currentParentModel = params.currentParentModel;
 
         getMultiFilterDefs(filterParams).forEach((filterDef, index) => {
             const floatingFilterParams: IFloatingFilterParams<IFilter> = {
@@ -121,6 +122,8 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                         callback(child);
                     });
                 },
+                // return the parent model for the specific filter
+                currentParentModel: () => currentParentModel()?.filterModels?.[index] ?? null,
             };
             _mergeDeep(floatingFilterParams.filterParams, filterDef.filterParams);
 
@@ -173,7 +176,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
 
     private getCompDetails(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
         const defaultComponentName =
-            _getDefaultFloatingFilterType(this.frameworkOverrides, filterDef, () =>
+            _getDefaultFloatingFilterType(this.beans.frameworkOverrides, filterDef, () =>
                 this.filterManager!.getDefaultFloatingFilter(this.params.column as AgColumn)
             ) ?? 'agReadOnlyFloatingFilter';
 

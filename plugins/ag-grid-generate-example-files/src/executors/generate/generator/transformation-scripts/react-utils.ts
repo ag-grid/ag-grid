@@ -96,11 +96,11 @@ export const getValueType = (value: string) => {
     return type;
 };
 
-export const convertFunctionToConstCallback = (code: string, callbackDependencies: {}) => {
+export const convertFunctionToConstCallback = (code: string, callbackDependencies: Record<string, any>) => {
     const functionName = getFunctionName(code);
     return `${code.replace(/function\s+([^(\s]+)\s*\(([^)]*)\)/, 'const $1 = useCallback(($2) =>')}, [${callbackDependencies[functionName] || ''}])`;
 };
-export const convertFunctionToConstCallbackTs = (code: string, callbackDependencies: {}) => {
+export const convertFunctionToConstCallbackTs = (code: string, callbackDependencies: Record<string, any>) => {
     const functionName = getFunctionName(code); //:(\s+[^\{]*)
     return `${code.replace(/function\s+([^(\s]+)\s*\(([^)]*)\)(:?\s+[^{]*)/, 'const $1 = useCallback(($2) $3 =>')}, [${callbackDependencies[functionName] || ''}])`;
 };
