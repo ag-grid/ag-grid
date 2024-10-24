@@ -72,14 +72,14 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     private colModel: ColumnModel;
     private funcColsService: FuncColsService;
     private valueSvc: ValueService;
-    private selectionService?: ISelectionService;
+    private selectionSvc?: ISelectionService;
     private showRowGroupColsService: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
         this.funcColsService = beans.funcColsService;
         this.valueSvc = beans.valueSvc;
-        this.selectionService = beans.selectionService;
+        this.selectionSvc = beans.selectionSvc;
         this.showRowGroupColsService = beans.showRowGroupColsService!;
     }
 
@@ -107,7 +107,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         this.positionLeafsAndGroups(changedPath);
         this.orderGroups(details);
 
-        this.selectionService?.updateSelectableAfterGrouping(changedPath);
+        this.selectionSvc?.updateSelectableAfterGrouping(changedPath);
     }
 
     private positionLeafsAndGroups(changedPath: ChangedPath) {
@@ -361,7 +361,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
                         this.removeFromParent(rowNode, batchRemover);
                         // we remove selection on filler nodes here, as the selection would not be removed
                         // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-                        this.selectionService?.setSelectedParams({
+                        this.selectionSvc?.setSelectedParams({
                             rowNode,
                             newValue: false,
                             source: 'rowGroupChanged',
@@ -449,7 +449,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
         }
 
         // groups are about to get disposed, so need to deselect any that are selected
-        this.selectionService?.filterFromSelection?.((node: RowNode) => node && !node.group);
+        this.selectionSvc?.filterFromSelection?.((node: RowNode) => node && !node.group);
 
         const { groupedCols } = details;
         const rootNode: GroupRow = details.rootNode;

@@ -30,7 +30,7 @@ const orderedCoreBeans: BeanName[] = [
     'columnGroupService',
     'visibleCols',
     'popupSvc',
-    'selectionService',
+    'selectionSvc',
     'colFilter',
     'quickFilterService',
     'filterManager',

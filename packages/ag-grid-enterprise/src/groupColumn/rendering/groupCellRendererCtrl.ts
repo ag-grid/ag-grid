@@ -67,7 +67,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     private ctrlsService: CtrlsService;
     private funcColsService: FuncColsService;
     private rowDragService?: RowDragService;
-    private selectionService?: ISelectionService;
+    private selectionSvc?: ISelectionService;
     private groupHideOpenParentsService?: IGroupHideOpenParentsService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -78,7 +78,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         this.userCompFactory = beans.userCompFactory;
         this.ctrlsService = beans.ctrlsService;
         this.funcColsService = beans.funcColsService;
-        this.selectionService = beans.selectionService;
+        this.selectionSvc = beans.selectionSvc;
         this.groupHideOpenParentsService = beans.groupHideOpenParentsService;
     }
 
@@ -722,10 +722,10 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             !rowNode.rowPinned &&
             // details cannot be selected
             !rowNode.detail &&
-            !!this.selectionService;
+            !!this.selectionSvc;
 
         if (checkboxNeeded) {
-            const cbSelectionComponent = this.selectionService!.createCheckboxSelectionComponent();
+            const cbSelectionComponent = this.selectionSvc!.createCheckboxSelectionComponent();
             this.createBean(cbSelectionComponent);
 
             cbSelectionComponent.init({

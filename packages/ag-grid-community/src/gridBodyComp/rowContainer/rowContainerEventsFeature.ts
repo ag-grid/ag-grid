@@ -74,7 +74,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private pinnedRowModel?: PinnedRowModel;
     private rangeService?: IRangeService;
     private clipboardService?: IClipboardService;
-    private selectionService?: ISelectionService;
+    private selectionSvc?: ISelectionService;
 
     public wireBeans(beans: BeanCollection) {
         this.mouseEventService = beans.mouseEventService;
@@ -87,7 +87,7 @@ export class RowContainerEventsFeature extends BeanStub {
         this.pinnedRowModel = beans.pinnedRowModel;
         this.rangeService = beans.rangeService;
         this.clipboardService = beans.clipboardService;
-        this.selectionService = beans.selectionService;
+        this.selectionSvc = beans.selectionSvc;
     }
 
     private element: HTMLElement;
@@ -300,7 +300,7 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndA(event: KeyboardEvent): void {
-        const { pinnedRowModel, rowModel, rangeService, selectionService, gos } = this;
+        const { pinnedRowModel, rowModel, rangeService, selectionSvc, gos } = this;
 
         if (rangeService && _isCellSelectionEnabled(gos) && rowModel.isRowsToRender()) {
             const [isEmptyPinnedTop, isEmptyPinnedBottom] = [
@@ -333,8 +333,8 @@ export class RowContainerEventsFeature extends BeanStub {
                 columnStart: allDisplayedColumns[0],
                 columnEnd: _last(allDisplayedColumns),
             });
-        } else if (selectionService) {
-            selectionService?.selectAllRowNodes({ source: 'keyboardSelectAll', selectAll: _getSelectAll(gos) });
+        } else if (selectionSvc) {
+            selectionSvc?.selectAllRowNodes({ source: 'keyboardSelectAll', selectAll: _getSelectAll(gos) });
         }
 
         event.preventDefault();

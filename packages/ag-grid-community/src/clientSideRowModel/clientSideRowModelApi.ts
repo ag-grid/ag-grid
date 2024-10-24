@@ -71,5 +71,5 @@ export function flushAsyncTransactions(beans: BeanCollection): void {
 }
 
 export function getBestCostNodeSelection<TData = any>(beans: BeanCollection): IRowNode<TData>[] | undefined {
-    return beans.selectionService?.getBestCostNodeSelection();
+    return beans.selectionSvc?.getBestCostNodeSelection();
 }

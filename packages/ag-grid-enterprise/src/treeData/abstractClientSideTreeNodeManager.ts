@@ -252,7 +252,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
 
         this.commitDestroyedRows();
 
-        this.beans.selectionService?.updateSelectableAfterGrouping(changedPath);
+        this.beans.selectionSvc?.updateSelectableAfterGrouping(changedPath);
     }
 
     /** Calls commitChild for each invalidated child, recursively. We commit only the invalidated paths. */
@@ -525,7 +525,7 @@ export abstract class AbstractClientSideTreeNodeManager<TData> extends AbstractC
         if (!row.data && row.isSelected()) {
             //we remove selection on filler nodes here, as the selection would not be removed
             // from the RowNodeManager, as filler nodes don't exist on the RowNodeManager
-            this.beans.selectionService?.setSelectedParams({
+            this.beans.selectionSvc?.setSelectedParams({
                 rowNode: row,
                 newValue: false,
                 source: 'rowGroupChanged',

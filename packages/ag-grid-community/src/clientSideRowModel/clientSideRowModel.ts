@@ -64,7 +64,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     beanName = 'rowModel' as const;
 
     private colModel: ColumnModel;
-    private selectionService?: ISelectionService;
+    private selectionSvc?: ISelectionService;
     private valueCache?: ValueCache;
     private environment: Environment;
     private groupHideOpenParentsService?: IGroupHideOpenParentsService;
@@ -82,7 +82,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
-        this.selectionService = beans.selectionService;
+        this.selectionSvc = beans.selectionSvc;
         this.valueCache = beans.valueCache;
         this.environment = beans.environment;
         this.groupHideOpenParentsService = beans.groupHideOpenParentsService;
@@ -1201,8 +1201,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         // no need to invalidate cache, as the cache is stored on the rowNode,
         // so new rowNodes means the cache is wiped anyway.
 
-        // - clears selection, done before we set row data to ensure it isn't readded via `selectionService.syncInOldRowNode`
-        this.selectionService?.reset('rowDataChanged');
+        // - clears selection, done before we set row data to ensure it isn't readded via `selectionSvc.syncInOldRowNode`
+        this.selectionSvc?.reset('rowDataChanged');
 
         if (!Array.isArray(rowData)) {
             _warn(1);

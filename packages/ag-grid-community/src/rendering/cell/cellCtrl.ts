@@ -896,7 +896,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public createSelectionCheckbox(): CheckboxSelectionComponent | undefined {
-        const cbSelectionComponent = this.beans.selectionService?.createCheckboxSelectionComponent();
+        const cbSelectionComponent = this.beans.selectionSvc?.createCheckboxSelectionComponent();
         if (!cbSelectionComponent) {
             return undefined;
         }

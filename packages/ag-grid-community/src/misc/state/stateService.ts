@@ -57,7 +57,7 @@ export class StateService extends BeanStub implements NamedBean {
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private paginationService?: PaginationService;
-    private selectionService?: ISelectionService;
+    private selectionSvc?: ISelectionService;
     private expansionService?: IExpansionService;
     private colAnimation?: ColumnAnimationService;
     private columnStateService: ColumnStateService;
@@ -75,7 +75,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.paginationService = beans.paginationService;
-        this.selectionService = beans.selectionService;
+        this.selectionSvc = beans.selectionSvc;
         this.expansionService = beans.expansionService;
         this.colAnimation = beans.colAnimation;
         this.columnStateService = beans.columnStateService;
@@ -733,10 +733,10 @@ export class StateService extends BeanStub implements NamedBean {
         | ServerSideRowSelectionState
         | ServerSideRowGroupSelectionState
         | undefined {
-        if (!this.selectionService) {
+        if (!this.selectionSvc) {
             return undefined;
         }
-        const selectionState = this.selectionService.getSelectionState();
+        const selectionState = this.selectionSvc.getSelectionState();
         const noSelections =
             !selectionState ||
             (!Array.isArray(selectionState) &&
@@ -749,7 +749,7 @@ export class StateService extends BeanStub implements NamedBean {
     private setRowSelectionState(
         rowSelectionState: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState
     ): void {
-        this.selectionService?.setSelectionState(rowSelectionState, 'gridInitializing');
+        this.selectionSvc?.setSelectionState(rowSelectionState, 'gridInitializing');
     }
 
     private getRowGroupExpansionState(): RowGroupExpansionState | undefined {

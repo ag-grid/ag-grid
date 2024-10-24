@@ -1053,7 +1053,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         this.beans.eventSvc.dispatchEvent(this.createRowEventWithSource('rowClicked', mouseEvent));
 
-        this.beans.selectionService?.handleRowClick(this.rowNode, mouseEvent);
+        this.beans.selectionSvc?.handleRowClick(this.rowNode, mouseEvent);
     }
 
     public setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
@@ -1320,7 +1320,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onRowSelected(gui?: RowGui): void {
-        this.beans.selectionService?.onRowCtrlSelected(
+        this.beans.selectionSvc?.onRowCtrlSelected(
             this,
             (gui) => {
                 if (gui === this.centerGui || gui === this.fullWidthGui) {
@@ -1332,7 +1332,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public announceDescription(): void {
-        this.beans.selectionService?.announceAriaRowSelection(this.rowNode);
+        this.beans.selectionSvc?.announceAriaRowSelection(this.rowNode);
     }
 
     public addHoverFunctionality(eGui: RowGui): void {

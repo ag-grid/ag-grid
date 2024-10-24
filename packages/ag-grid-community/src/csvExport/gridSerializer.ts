@@ -34,7 +34,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
     private colNames: ColumnNameService;
     private rowModel: IRowModel;
     private pinnedRowModel?: PinnedRowModel;
-    private selectionService?: ISelectionService;
+    private selectionSvc?: ISelectionService;
     private rowNodeSorter?: RowNodeSorter;
     private sortSvc?: SortService;
 
@@ -44,7 +44,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         this.colNames = beans.colNames;
         this.rowModel = beans.rowModel;
         this.pinnedRowModel = beans.pinnedRowModel;
-        this.selectionService = beans.selectionService;
+        this.selectionSvc = beans.selectionSvc;
         this.rowNodeSorter = beans.rowNodeSorter;
         this.sortSvc = beans.sortSvc;
     }
@@ -263,7 +263,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
             // onlySelectedNonStandardModel: if user wants selected in non standard row model
             // (eg viewport) then again RowModel cannot be used, so need to use selected instead.
             if (params.onlySelectedAllPages || onlySelectedNonStandardModel) {
-                const selectedNodes = this.selectionService?.getSelectedNodes() ?? [];
+                const selectedNodes = this.selectionSvc?.getSelectedNodes() ?? [];
                 this.replicateSortedOrder(selectedNodes);
                 // serialize each node
                 selectedNodes.forEach(processRow);

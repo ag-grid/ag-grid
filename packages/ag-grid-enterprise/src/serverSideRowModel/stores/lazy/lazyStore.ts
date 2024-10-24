@@ -35,13 +35,13 @@ import { LazyCache } from './lazyCache';
 export class LazyStore extends BeanStub implements IServerSideStore {
     private blockUtils: BlockUtils;
     private storeUtils: StoreUtils;
-    private selectionService?: ISelectionService;
+    private selectionSvc?: ISelectionService;
     private funcColsService: FuncColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.blockUtils = beans.ssrmBlockUtils as BlockUtils;
         this.storeUtils = beans.ssrmStoreUtils as StoreUtils;
-        this.selectionService = beans.selectionService;
+        this.selectionSvc = beans.selectionSvc;
         this.funcColsService = beans.funcColsService;
     }
 
@@ -190,7 +190,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     }
 
     private updateSelectionAfterTransaction(updatedNodes?: RowNode[], removedNodes?: RowNode[]) {
-        if (!this.selectionService) {
+        if (!this.selectionSvc) {
             return;
         }
         const nodesToDeselect: RowNode[] = [];
@@ -207,7 +207,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         });
 
         if (nodesToDeselect.length) {
-            this.selectionService.setNodesSelected({
+            this.selectionSvc.setNodesSelected({
                 newValue: false,
                 clearSelection: false,
                 nodes: nodesToDeselect,

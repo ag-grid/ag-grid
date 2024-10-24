@@ -19,14 +19,14 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
 
     private filterManager?: FilterManager;
     private sortSvc?: SortService;
-    private selectionService?: ISelectionService;
+    private selectionSvc?: ISelectionService;
     private rowRenderer: RowRenderer;
     private rowNodeBlockLoader: RowNodeBlockLoader;
 
     public wireBeans(beans: BeanCollection): void {
         this.filterManager = beans.filterManager;
         this.sortSvc = beans.sortSvc;
-        this.selectionService = beans.selectionService;
+        this.selectionSvc = beans.selectionSvc;
         this.rowRenderer = beans.rowRenderer;
         this.rowNodeBlockLoader = beans.rowNodeBlockLoader!;
     }
@@ -162,7 +162,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
         const userGeneratingIds = getRowIdFunc != null;
 
         if (!userGeneratingIds) {
-            this.selectionService?.reset('rowDataChanged');
+            this.selectionSvc?.reset('rowDataChanged');
         }
 
         this.resetCache();

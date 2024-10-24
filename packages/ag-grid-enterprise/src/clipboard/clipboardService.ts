@@ -148,7 +148,7 @@ export function stringToArray(strData: string, delimiter = ','): string[][] {
 export class ClipboardService extends BeanStub implements NamedBean, IClipboardService {
     beanName = 'clipboardService' as const;
 
-    private selectionService?: ISelectionService;
+    private selectionSvc?: ISelectionService;
     private rowModel: IRowModel;
     private valueSvc: ValueService;
     private focusSvc: FocusService;
@@ -157,7 +157,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.selectionService = beans.selectionService;
+        this.selectionSvc = beans.selectionSvc;
         this.rowModel = beans.rowModel;
         this.valueSvc = beans.valueSvc;
         this.focusSvc = beans.focusSvc;
@@ -746,7 +746,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             // If `cellSelection` is defined, user is using the new cell selection API, so we only copy
             // cells by default.
             const shouldCopyRowsInstead =
-                typeof rowSelection === 'object' && rowSelection.copySelectedRows && !this.selectionService?.isEmpty();
+                typeof rowSelection === 'object' && rowSelection.copySelectedRows && !this.selectionSvc?.isEmpty();
             return !shouldCopyRowsInstead;
         } else {
             // If user is using the deprecated API, we preserve the previous behaviour
@@ -757,7 +757,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private shouldCopyRows(rowSelection?: GridOptions['rowSelection']) {
-        if (this.selectionService?.isEmpty() ?? true) {
+        if (this.selectionSvc?.isEmpty() ?? true) {
             return false;
         }
 
@@ -792,7 +792,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private clearSelectedRows(): void {
-        const selected = this.selectionService?.getSelectedNodes() ?? [];
+        const selected = this.selectionSvc?.getSelectedNodes() ?? [];
         const columns = this.visibleCols.allCols;
 
         for (const row of selected) {
@@ -1013,7 +1013,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         });
 
         this.copyDataToClipboard(data);
-        const rowNodes = this.selectionService?.getSelectedNodes() || [];
+        const rowNodes = this.selectionSvc?.getSelectedNodes() || [];
         this.dispatchFlashCells(this.getCellsToFlashFromRowNodes(rowNodes));
     }
 

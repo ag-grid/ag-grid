@@ -21,12 +21,12 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
 
     private valueCache?: ValueCache;
     private serverSideRowModel: ServerSideRowModel;
-    private selectionService?: ServerSideSelectionService;
+    private selectionSvc?: ServerSideSelectionService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueCache = beans.valueCache;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
-        this.selectionService = beans.selectionService as ServerSideSelectionService;
+        this.selectionSvc = beans.selectionSvc as ServerSideSelectionService;
     }
 
     private asyncTransactionsTimeout: number | undefined;
@@ -140,9 +140,9 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
             return { status: ServerSideTransactionResultStatus.StoreNotStarted };
         } else if (res) {
             this.valueCache?.onDataChanged();
-            if (res.remove && this.selectionService) {
+            if (res.remove && this.selectionSvc) {
                 const removedRowIds = res.remove.map((row) => row.id!);
-                this.selectionService.deleteSelectionStateFromParent(transaction.route || [], removedRowIds);
+                this.selectionSvc.deleteSelectionStateFromParent(transaction.route || [], removedRowIds);
             }
 
             this.eventSvc.dispatchEvent({ type: 'storeUpdated' });

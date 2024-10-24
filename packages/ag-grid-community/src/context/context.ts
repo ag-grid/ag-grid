@@ -215,7 +215,7 @@ export interface CoreBeanCollection {
     filterManager?: FilterManager;
     rowContainerHeight: RowContainerHeightService;
     frameworkOverrides: IFrameworkOverrides;
-    selectionService?: ISelectionService;
+    selectionSvc?: ISelectionService;
     rowStyleService?: RowStyleService;
     rowModel: IRowModel;
     ctrlsService: CtrlsService;
@@ -462,7 +462,7 @@ export type BeanName =
     | 'rowStyleService'
     | 'scrollVisibleService'
     | 'selectionController'
-    | 'selectionService'
+    | 'selectionSvc'
     | 'showRowGroupColsService'
     | 'sideBarService'
     | 'sortSvc'

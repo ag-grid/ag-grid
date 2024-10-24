@@ -203,12 +203,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private setupSelectAll(compBean: BeanStub): void {
-        if (!this.beans.selectionService) {
+        if (!this.beans.selectionSvc) {
             return;
         }
-        this.selectAllFeature = compBean.createManagedBean(
-            this.beans.selectionService.createSelectAllFeature(this.column)
-        );
+        this.selectAllFeature = compBean.createManagedBean(this.beans.selectionSvc.createSelectAllFeature(this.column));
         this.selectAllFeature.setComp(this);
     }
 

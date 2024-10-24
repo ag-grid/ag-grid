@@ -187,7 +187,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
             const currentSelection = this.rowNode.isSelected();
             const newSelection = !currentSelection;
             const groupSelectsFiltered = _getGroupSelection(gos) === 'filteredDescendants';
-            const updatedCount = this.beans.selectionService?.setSelectedParams({
+            const updatedCount = this.beans.selectionSvc?.setSelectedParams({
                 rowNode: this.rowNode,
                 newValue: newSelection,
                 rangeSelect: event.shiftKey,
@@ -196,7 +196,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 source: 'spaceKey',
             });
             if (currentSelection === undefined && updatedCount === 0) {
-                this.beans.selectionService?.setSelectedParams({
+                this.beans.selectionSvc?.setSelectedParams({
                     rowNode: this.rowNode,
                     newValue: false,
                     rangeSelect: event.shiftKey,

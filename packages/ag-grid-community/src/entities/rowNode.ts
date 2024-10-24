@@ -310,7 +310,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         this.data = data;
         this.beans.valueCache?.onDataChanged();
         this.updateDataOnDetailNode();
-        this.beans.selectionService?.checkRowSelectable(this);
+        this.beans.selectionSvc?.checkRowSelectable(this);
         this.resetQuickFilterAggregateText();
 
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, update);
@@ -360,16 +360,16 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
     }
 
     public setDataAndId(data: TData, id: string | undefined): void {
-        const { selectionService } = this.beans;
-        const oldNode = selectionService?.createDaemonNode?.(this);
+        const { selectionSvc } = this.beans;
+        const oldNode = selectionSvc?.createDaemonNode?.(this);
         const oldData = this.data;
 
         this.data = data;
         this.updateDataOnDetailNode();
         this.setId(id);
-        if (selectionService) {
-            selectionService.checkRowSelectable(this);
-            selectionService.syncInRowNode(this, oldNode);
+        if (selectionSvc) {
+            selectionSvc.checkRowSelectable(this);
+            selectionSvc.syncInRowNode(this, oldNode);
         }
 
         const event: DataChangedEvent<TData> = this.createDataChangedEvent(data, oldData, false);
@@ -503,7 +503,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         const valueChanged = this.beans.valueSvc.setValue(this, column, newValue, eventSource);
 
         this.dispatchCellChangedEvent(column, newValue, oldValue);
-        this.beans.selectionService?.checkRowSelectable(this);
+        this.beans.selectionSvc?.checkRowSelectable(this);
 
         return valueChanged;
     }
@@ -599,7 +599,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         clearSelection: boolean = false,
         source: SelectionEventSourceType = 'api'
     ): void {
-        this.beans.selectionService?.setSelectedParams({
+        this.beans.selectionSvc?.setSelectedParams({
             rowNode: this,
             newValue,
             clearSelection,

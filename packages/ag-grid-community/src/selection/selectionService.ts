@@ -24,7 +24,7 @@ import { BaseSelectionService } from './baseSelectionService';
 import { RowRangeSelectionContext } from './rowRangeSelectionContext';
 
 export class SelectionService extends BaseSelectionService implements NamedBean, ISelectionService {
-    beanName = 'selectionService' as const;
+    beanName = 'selectionSvc' as const;
 
     private pageBoundsService: PageBoundsService;
 
