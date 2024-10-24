@@ -10,7 +10,7 @@ import type {
 import { BeanStub, _exists } from 'ag-grid-community';
 
 export class AggColumnNameService extends BeanStub implements NamedBean, IAggColumnNameService {
-    beanName = 'aggColumnNameService' as const;
+    beanName = 'aggColumnNameSvc' as const;
 
     private funcColsSvc: FuncColsService;
     private colModel: ColumnModel;
