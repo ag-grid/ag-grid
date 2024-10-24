@@ -36,7 +36,7 @@ export class AgHorizontalResize extends Component {
     }
 
     private dispatchResizeEvent(start: boolean, end: boolean, width: number) {
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'toolPanelSizeChanged',
             width: width,
             started: start,

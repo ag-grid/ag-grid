@@ -110,11 +110,11 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
 
         if (atLeastOneTransactionApplied) {
             this.valueCache?.onDataChanged();
-            this.eventService.dispatchEvent({ type: 'storeUpdated' });
+            this.eventSvc.dispatchEvent({ type: 'storeUpdated' });
         }
 
         if (resultsForEvent.length > 0) {
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'asyncTransactionsFlushed',
                 results: resultsForEvent,
             });
@@ -145,7 +145,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
                 this.selectionService.deleteSelectionStateFromParent(transaction.route || [], removedRowIds);
             }
 
-            this.eventService.dispatchEvent({ type: 'storeUpdated' });
+            this.eventSvc.dispatchEvent({ type: 'storeUpdated' });
             return res;
         } else {
             return { status: ServerSideTransactionResultStatus.StoreNotFound };

@@ -66,6 +66,6 @@ export class PageBoundsService extends BeanStub implements NamedBean {
 
         this.pixelOffset = value;
         // this event is required even when pagination is off
-        this.eventService.dispatchEvent({ type: 'paginationPixelOffsetChanged' });
+        this.eventSvc.dispatchEvent({ type: 'paginationPixelOffsetChanged' });
     }
 }

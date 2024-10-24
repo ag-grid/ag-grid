@@ -206,7 +206,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
             cellChanged: listener,
         });
 
-        this.addManagedListeners(this.beans.eventService, { newColumnsLoaded: listener });
+        this.addManagedListeners(this.beans.eventSvc, { newColumnsLoaded: listener });
 
         this.workOutVisibility();
     }
@@ -231,7 +231,7 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
     public postConstruct(): void {
         const listener = this.workOutVisibility.bind(this);
         // we do not show the component if sort, filter or grouping is active
-        this.addManagedListeners<AgEventType>(this.beans.eventService, {
+        this.addManagedListeners<AgEventType>(this.beans.eventSvc, {
             sortChanged: listener,
             filterChanged: listener,
             columnRowGroupChanged: listener,

@@ -190,7 +190,7 @@ export interface CoreBeanCollection {
     environment: Environment;
     rowRenderer: RowRenderer;
     valueSvc: ValueService;
-    eventService: EventService;
+    eventSvc: EventService;
     columnModel: ColumnModel;
     columnViewportService: ColumnViewportService;
     columnNameService: ColumnNameService;
@@ -397,7 +397,7 @@ export type BeanName =
     | 'excelCreator'
     | 'enterpriseMenuFactory'
     | 'environment'
-    | 'eventService'
+    | 'eventSvc'
     | 'eGridDiv'
     | 'enterpriseChartProxyFactory'
     | 'expansionService'

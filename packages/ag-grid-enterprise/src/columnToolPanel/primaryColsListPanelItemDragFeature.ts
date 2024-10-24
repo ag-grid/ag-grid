@@ -42,7 +42,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
                 dragSourceType: DragSourceType.ToolPanel,
                 listItemDragStartEvent: 'columnPanelItemDragStart',
                 listItemDragEndEvent: 'columnPanelItemDragEnd',
-                eventSource: this.eventService,
+                eventSource: this.eventSvc,
                 getCurrentDragValue: (listItemDragStartEvent: ColumnPanelItemDragStartEvent) =>
                     this.getCurrentDragValue(listItemDragStartEvent),
                 isMoveBlocked: (currentDragValue: AgColumn | AgProvidedColumnGroup | null) =>

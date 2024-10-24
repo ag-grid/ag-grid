@@ -76,7 +76,7 @@ export class ColumnHoverService extends BeanStub implements NamedBean {
 
     private updateState(columns: AgColumn[] | null): void {
         this.selectedColumns = columns;
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'columnHoverChanged',
         });
     }

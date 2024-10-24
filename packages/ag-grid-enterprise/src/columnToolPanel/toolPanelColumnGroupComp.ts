@@ -220,13 +220,13 @@ export class ToolPanelColumnGroupComp extends Component {
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
                 hideColumnOnExit = !this.gos.get('suppressDragLeaveHidesColumns');
-                this.eventService.dispatchEvent({
+                this.eventSvc.dispatchEvent({
                     type: 'columnPanelItemDragStart',
                     column: this.columnGroup,
                 });
             },
             onDragStopped: () => {
-                this.eventService.dispatchEvent({
+                this.eventSvc.dispatchEvent({
                     type: 'columnPanelItemDragEnd',
                 });
             },

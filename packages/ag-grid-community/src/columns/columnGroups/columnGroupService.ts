@@ -116,7 +116,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
         this.visibleColsService.refresh(source, true);
 
         if (impactedGroups.length) {
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'columnGroupOpened',
                 columnGroup: impactedGroups.length === 1 ? impactedGroups[0] : undefined,
                 columnGroups: impactedGroups,

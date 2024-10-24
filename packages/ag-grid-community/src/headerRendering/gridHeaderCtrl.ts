@@ -131,7 +131,7 @@ export class GridHeaderCtrl extends BeanStub {
         const px = `${totalHeaderHeight + 1}px`;
         this.comp.setHeightAndMinHeight(px);
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'headerHeightChanged',
         });
     }

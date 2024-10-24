@@ -80,7 +80,7 @@ export class ClientSideExpansionService extends BaseExpansionService implements 
 
         this.rowModel.refreshModel({ step: 'map' });
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'expandOrCollapseAll',
             source: expand ? 'expandAll' : 'collapseAll',
         });
@@ -110,7 +110,7 @@ export class ClientSideExpansionService extends BaseExpansionService implements 
 
         const func = () => {
             this.rowModel.onRowGroupOpened();
-            this.events.forEach((e) => this.eventService.dispatchEvent(e));
+            this.events.forEach((e) => this.eventSvc.dispatchEvent(e));
             this.events = [];
         };
 

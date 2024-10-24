@@ -281,17 +281,17 @@ export class RowRenderer extends BeanStub implements NamedBean {
         };
 
         const addCellSelectionListeners = () => {
-            this.eventService.addEventListener('cellSelectionChanged', onCellSelectionChanged);
-            this.eventService.addEventListener('columnMoved', onColumnMovedPinnedVisible);
-            this.eventService.addEventListener('columnPinned', onColumnMovedPinnedVisible);
-            this.eventService.addEventListener('columnVisible', onColumnMovedPinnedVisible);
+            this.eventSvc.addEventListener('cellSelectionChanged', onCellSelectionChanged);
+            this.eventSvc.addEventListener('columnMoved', onColumnMovedPinnedVisible);
+            this.eventSvc.addEventListener('columnPinned', onColumnMovedPinnedVisible);
+            this.eventSvc.addEventListener('columnVisible', onColumnMovedPinnedVisible);
         };
 
         const removeCellSelectionListeners = () => {
-            this.eventService.removeEventListener('cellSelectionChanged', onCellSelectionChanged);
-            this.eventService.removeEventListener('columnMoved', onColumnMovedPinnedVisible);
-            this.eventService.removeEventListener('columnPinned', onColumnMovedPinnedVisible);
-            this.eventService.removeEventListener('columnVisible', onColumnMovedPinnedVisible);
+            this.eventSvc.removeEventListener('cellSelectionChanged', onCellSelectionChanged);
+            this.eventSvc.removeEventListener('columnMoved', onColumnMovedPinnedVisible);
+            this.eventSvc.removeEventListener('columnPinned', onColumnMovedPinnedVisible);
+            this.eventSvc.removeEventListener('columnVisible', onColumnMovedPinnedVisible);
         };
         this.addDestroyFunc(() => removeCellSelectionListeners());
         this.addManagedPropertyListeners(['enableRangeSelection', 'cellSelection'], () => {
@@ -1055,7 +1055,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private dispatchDisplayedRowsChanged(afterScroll: boolean = false): void {
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'displayedRowsChanged',
             afterScroll,
         });
@@ -1293,7 +1293,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.firstRenderedRow = newFirst;
             this.lastRenderedRow = newLast;
 
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'viewportChanged',
                 firstRow: newFirst,
                 lastRow: newLast,
@@ -1314,7 +1314,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         // See AG-7018
         window.requestAnimationFrame(() => {
-            this.beans.eventService.dispatchEvent({
+            this.beans.eventSvc.dispatchEvent({
                 type: 'firstDataRendered',
                 firstRow: this.firstRenderedRow,
                 lastRow: this.lastRenderedRow,
@@ -1336,7 +1336,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.pageBoundsService.getLastRow()
         );
         if (rowModelHeightsChanged || stickyHeightsChanged) {
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'recalculateRowBounds',
             });
         }

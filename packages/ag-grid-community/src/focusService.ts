@@ -282,7 +282,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
         this.focusedCellPosition = null;
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'cellFocusCleared',
             ...focusEventParams,
         });
@@ -307,7 +307,7 @@ export class FocusService extends BeanStub implements NamedBean {
             column: gridColumn,
         };
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'cellFocused',
             ...this.getFocusEventParams(this.focusedCellPosition),
             forceBrowserFocus,

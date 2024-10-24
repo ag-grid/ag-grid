@@ -859,7 +859,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                 ? currentCellFocused != null && _isRowBefore(cellPosition, currentCellFocused)
                 : backwards;
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'fullWidthRowFocused',
             rowIndex: cellPosition.rowIndex,
             rowPinned: cellPosition.rowPinned,

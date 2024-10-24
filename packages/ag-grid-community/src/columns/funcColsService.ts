@@ -84,7 +84,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
         column.setAggFunc(aggFunc);
 
-        dispatchColumnChangedEvent(this.eventService, 'columnValueChanged', [column], source);
+        dispatchColumnChangedEvent(this.eventSvc, 'columnValueChanged', [column], source);
     }
 
     public setRowGroupColumns(colKeys: ColKey[], source: ColumnEventType): void {
@@ -233,7 +233,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
         this.rowGroupCols.splice(fromIndex, 1);
         this.rowGroupCols.splice(toIndex, 0, column);
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'columnRowGroupChanged',
             columns: impactedColumns,
             column: impactedColumns.length === 1 ? impactedColumns[0] : null,
@@ -298,7 +298,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
         this.visibleColsService.refresh(source);
 
-        dispatchColumnChangedEvent(this.eventService, eventName, [...changes.keys()], source);
+        dispatchColumnChangedEvent(this.eventSvc, eventName, [...changes.keys()], source);
     }
 
     private updateColList(
@@ -359,7 +359,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
         this.visibleColsService.refresh(source);
 
         const eventColumns = Array.from(updatedCols);
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: eventType,
             columns: eventColumns,
             column: eventColumns.length === 1 ? eventColumns[0] : null,

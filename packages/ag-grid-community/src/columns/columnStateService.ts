@@ -230,7 +230,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
             this.orderLiveColsLikeState(params);
             this.visibleColsService.refresh(source);
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'columnEverythingChanged',
                 source,
             });
@@ -632,7 +632,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
                 const changesArr = [...changes];
 
-                this.eventService.dispatchEvent({
+                this.eventSvc.dispatchEvent({
                     type: eventType,
                     columns: changesArr,
                     column: changesArr.length === 1 ? changesArr[0] : null,
@@ -681,17 +681,17 @@ export class ColumnStateService extends BeanStub implements NamedBean {
             };
             const changedValues = getChangedColumns(valueChangePredicate);
             if (changedValues.length > 0) {
-                dispatchColumnChangedEvent(this.eventService, 'columnValueChanged', changedValues, source);
+                dispatchColumnChangedEvent(this.eventSvc, 'columnValueChanged', changedValues, source);
             }
 
             const resizeChangePredicate = (cs: ColumnState, c: AgColumn) => cs.width != c.getActualWidth();
-            dispatchColumnResizedEvent(this.eventService, getChangedColumns(resizeChangePredicate), true, source);
+            dispatchColumnResizedEvent(this.eventSvc, getChangedColumns(resizeChangePredicate), true, source);
 
             const pinnedChangePredicate = (cs: ColumnState, c: AgColumn) => cs.pinned != c.getPinned();
-            dispatchColumnPinnedEvent(this.eventService, getChangedColumns(pinnedChangePredicate), source);
+            dispatchColumnPinnedEvent(this.eventSvc, getChangedColumns(pinnedChangePredicate), source);
 
             const visibilityChangePredicate = (cs: ColumnState, c: AgColumn) => cs.hide == c.isVisible();
-            dispatchColumnVisibleEvent(this.eventService, getChangedColumns(visibilityChangePredicate), source);
+            dispatchColumnVisibleEvent(this.eventSvc, getChangedColumns(visibilityChangePredicate), source);
 
             const sortChangePredicate = (cs: ColumnState, c: AgColumn) =>
                 cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
@@ -742,7 +742,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'columnMoved',
             columns: movedColumns,
             column: movedColumns.length === 1 ? movedColumns[0] : null,

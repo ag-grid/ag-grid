@@ -695,7 +695,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             uiLevelChanged: this.onUiLevelChanged.bind(this),
         });
 
-        this.addManagedListeners(this.beans.eventService, {
+        this.addManagedListeners(this.beans.eventSvc, {
             paginationPixelOffsetChanged: this.onPaginationPixelOffsetChanged.bind(this),
             heightScaleChanged: this.onTopChanged.bind(this),
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
@@ -996,7 +996,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        this.beans.eventService.dispatchEvent(this.createRowEventWithSource('rowDoubleClicked', mouseEvent));
+        this.beans.eventSvc.dispatchEvent(this.createRowEventWithSource('rowDoubleClicked', mouseEvent));
     }
 
     private getColumnForFullWidth(fullWidthRowGui?: RowGui): AgColumn {
@@ -1051,7 +1051,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        this.beans.eventService.dispatchEvent(this.createRowEventWithSource('rowClicked', mouseEvent));
+        this.beans.eventSvc.dispatchEvent(this.createRowEventWithSource('rowClicked', mouseEvent));
 
         this.beans.selectionService?.handleRowClick(this.rowNode, mouseEvent);
     }
@@ -1464,7 +1464,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         const event: VirtualRowRemovedEvent = this.createRowEvent('virtualRowRemoved');
 
         this.dispatchLocalEvent(event);
-        this.beans.eventService.dispatchEvent(event);
+        this.beans.eventSvc.dispatchEvent(event);
         super.destroy();
     }
 

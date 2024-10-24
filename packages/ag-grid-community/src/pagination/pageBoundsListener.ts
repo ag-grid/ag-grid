@@ -32,7 +32,7 @@ export class PageBoundsListener extends BeanStub implements NamedBean {
     private onModelUpdated(modelUpdatedEvent?: WithoutGridCommon<ModelUpdatedEvent>): void {
         this.calculatePages();
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'paginationChanged',
             animate: modelUpdatedEvent?.animate ?? false,
             newData: modelUpdatedEvent?.newData ?? false,

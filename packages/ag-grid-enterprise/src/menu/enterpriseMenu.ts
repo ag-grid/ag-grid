@@ -330,7 +330,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         columnGroup?: AgProvidedColumnGroup,
         defaultTab?: string
     ): void {
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'columnMenuVisibleChanged',
             visible,
             switchingTab,

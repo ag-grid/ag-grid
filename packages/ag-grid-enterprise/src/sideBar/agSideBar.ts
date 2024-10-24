@@ -377,7 +377,7 @@ export class AgSideBar extends Component implements ISideBar {
     ): void {
         const switchingToolPanel = !!key && !!previousKey;
         if (previousKey) {
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'toolPanelVisibleChanged',
                 source,
                 key: previousKey,
@@ -386,7 +386,7 @@ export class AgSideBar extends Component implements ISideBar {
             });
         }
         if (key) {
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'toolPanelVisibleChanged',
                 source,
                 key,
@@ -455,7 +455,7 @@ export class AgSideBar extends Component implements ISideBar {
     }
 
     private dispatchSideBarUpdated(): void {
-        this.eventService.dispatchEvent({ type: 'sideBarUpdated' });
+        this.eventSvc.dispatchEvent({ type: 'sideBarUpdated' });
     }
 
     private destroyToolPanelWrappers(): void {

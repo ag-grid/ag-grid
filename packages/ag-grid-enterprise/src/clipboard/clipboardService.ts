@@ -307,7 +307,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     ): void {
         const source = 'clipboard';
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'pasteStart',
             source,
         });
@@ -343,7 +343,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         // so need to put it back. otherwise paste operation loosed focus on cell and keyboard
         // navigation stops.
         this.refocusLastFocusedCell();
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'pasteEnd',
             source,
         });
@@ -581,7 +581,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         rowNodes.forEach((rowNode) => {
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'rowValueChanged',
                 node: rowNode,
                 data: rowNode.data,
@@ -690,14 +690,14 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             return;
         }
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'cutStart',
             source,
         });
 
         this.copyOrCutToClipboard(params, true);
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'cutEnd',
             source,
         });
@@ -772,7 +772,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private clearCellsAfterCopy(type: CellClearType) {
-        this.eventService.dispatchEvent({ type: 'keyShortcutChangedCellStart' });
+        this.eventSvc.dispatchEvent({ type: 'keyShortcutChangedCellStart' });
         if (type === CellClearType.CellRange) {
             this.rangeService!.clearCellRangeCellValues({ cellEventSource: 'clipboardService' });
         } else if (type === CellClearType.SelectedRows) {
@@ -788,7 +788,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 this.clearCellValue(rowNode, focusedCell.column as AgColumn);
             }
         }
-        this.eventService.dispatchEvent({ type: 'keyShortcutChangedCellEnd' });
+        this.eventSvc.dispatchEvent({ type: 'keyShortcutChangedCellEnd' });
     }
 
     private clearSelectedRows(): void {
@@ -1096,7 +1096,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     // eslint-disable-next-line @typescript-eslint/ban-types
     private dispatchFlashCells(cellsToFlash: {}): void {
         window.setTimeout(() => {
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'flashCells',
                 cells: cellsToFlash,
             });

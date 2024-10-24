@@ -252,7 +252,7 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
             }
         });
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'selectionChanged',
             source,
         });

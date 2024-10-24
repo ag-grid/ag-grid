@@ -19,7 +19,7 @@ import { SetFilter } from './setFilter';
 import type { SetValueModel } from './setValueModel';
 
 let rowModel: jest.Mocked<IRowModel>;
-let eventService: jest.Mocked<EventService>;
+let eventSvc: jest.Mocked<EventService>;
 let valueSvc: jest.Mocked<ValueService>;
 let context: jest.Mocked<Context>;
 let eMiniFilter: jest.Mocked<AgInputTextField>;
@@ -33,7 +33,7 @@ let setValueModel: jest.Mocked<SetValueModel<string>>;
 beforeEach(() => {
     rowModel = mock<IClientSideRowModel>('forEachLeafNode', 'isRowDataLoaded');
 
-    eventService = mock<EventService>('addEventListener');
+    eventSvc = mock<EventService>('addEventListener');
 
     valueSvc = mock<ValueService>('formatValue');
     valueSvc.formatValue.mockImplementation((_1, _2, value) => value);
@@ -96,7 +96,7 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
     colDef.filterParams = params;
 
     const setFilter = new SetFilter();
-    (setFilter as any).eventService = eventService;
+    (setFilter as any).eventSvc = eventSvc;
     (setFilter as any).valueSvc = valueSvc;
     (setFilter as any).rowModel = rowModel;
     (setFilter as any).context = context;

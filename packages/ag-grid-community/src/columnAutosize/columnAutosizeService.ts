@@ -142,7 +142,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             this.autoSizeColumnGroupsByColumns(colKeys, source, stopAtGroup);
         }
 
-        dispatchColumnResizedEvent(this.eventService, columnsAutosized, true, 'autosizeColumns');
+        dispatchColumnResizedEvent(this.eventSvc, columnsAutosized, true, 'autosizeColumns');
     }
 
     public autoSizeColumn(key: Maybe<ColKey>, source: ColumnEventType, skipHeader?: boolean): void {
@@ -422,7 +422,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        dispatchColumnResizedEvent(this.eventService, colsToDispatchEventFor, true, source);
+        dispatchColumnResizedEvent(this.eventSvc, colsToDispatchEventFor, true, source);
     }
 
     public applyAutosizeStrategy(): void {

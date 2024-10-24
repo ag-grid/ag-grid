@@ -646,7 +646,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     private raiseChartOptionsChangedEvent(): void {
         const { chartId, chartType } = this.getChartModel();
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'chartOptionsChanged',
             chartId,
             chartType,
@@ -656,7 +656,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     private raiseChartRangeSelectionChangedEvent(): void {
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'chartRangeSelectionChanged',
             id: this.model.chartId,
             chartId: this.model.chartId,

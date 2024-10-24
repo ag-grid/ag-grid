@@ -56,7 +56,7 @@ export class EditService extends BeanStub implements NamedBean {
         cellCtrl.setEditing(true, compDetails);
         cellCtrl.getComp().setEditDetails(compDetails, popup, position, this.gos.get('reactiveCustomComponents'));
 
-        this.eventService.dispatchEvent(cellCtrl.createEvent(event, 'cellEditingStarted'));
+        this.eventSvc.dispatchEvent(cellCtrl.createEvent(event, 'cellEditingStarted'));
 
         return !(compDetails?.params as DefaultProvidedCellEditorParams)?.suppressPreventDefault;
     }
@@ -79,7 +79,7 @@ export class EditService extends BeanStub implements NamedBean {
         cellCtrl.updateAndFormatValue(false);
         cellCtrl.refreshCell({ forceRefresh: true, suppressFlash: true });
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             ...cellCtrl.createEvent(null, 'cellEditingStopped'),
             oldValue,
             newValue,

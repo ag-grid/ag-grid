@@ -160,7 +160,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
         // in case applications use it
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'columnEverythingChanged',
             source,
         });
@@ -173,7 +173,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.changeEventsDispatching = false;
         }
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'newColumnsLoaded',
             source,
         });
@@ -226,7 +226,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const dispatchChangedEvent = !_areEqual(prevColTree, this.cols!.tree);
         if (dispatchChangedEvent) {
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'gridColumnsChanged',
             });
         }
@@ -428,7 +428,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.refreshCols(false);
         this.visibleColsService.refresh(source);
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'columnPivotModeChanged',
         });
     }

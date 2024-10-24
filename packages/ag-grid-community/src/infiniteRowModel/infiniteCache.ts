@@ -268,7 +268,7 @@ export class InfiniteCache extends BeanStub {
 
             // this results in both row models (infinite and server side) firing ModelUpdated,
             // however server side row model also updates the row indexes first
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'storeUpdated',
             });
         }

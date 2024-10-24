@@ -16,7 +16,7 @@ const defaultFns = {
     wireBeans() {},
 };
 
-const dispatchEvent = (beans: BeanCollection, event: AllEvents): void => beans.eventService.dispatchEvent(event);
+const dispatchEvent = (beans: BeanCollection, event: AllEvents): void => beans.eventSvc.dispatchEvent(event);
 
 // We use a class for AGGridApi so in stack traces calling grid.api.xxx() if an error is thrown it will print "GridApi.xxx"
 class GridApiClass {}

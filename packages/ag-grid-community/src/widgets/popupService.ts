@@ -572,7 +572,7 @@ export class PopupService extends BeanStub implements NamedBean {
             eDocument.removeEventListener('touchstart', hidePopupOnTouchEvent);
             eDocument.removeEventListener('contextmenu', hidePopupOnMouseEvent);
 
-            this.eventService.removeEventListener('dragStarted', hidePopupOnMouseEvent as any);
+            this.eventSvc.removeEventListener('dragStarted', hidePopupOnMouseEvent as any);
 
             if (closedCallback) {
                 closedCallback(mouseEvent || touchEvent || keyboardEvent);
@@ -594,7 +594,7 @@ export class PopupService extends BeanStub implements NamedBean {
 
             if (modal) {
                 eDocument.addEventListener('mousedown', hidePopupOnMouseEvent);
-                this.eventService.addEventListener('dragStarted', hidePopupOnMouseEvent as any);
+                this.eventSvc.addEventListener('dragStarted', hidePopupOnMouseEvent as any);
                 eDocument.addEventListener('touchstart', hidePopupOnTouchEvent);
                 eDocument.addEventListener('contextmenu', hidePopupOnMouseEvent);
             }

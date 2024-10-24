@@ -113,7 +113,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
             // even though we are not going to resize beyond min/max size, we still need to dispatch event when finished
             if (finished) {
                 const columns = resizeSets && resizeSets.length > 0 ? resizeSets[0].columns : null;
-                dispatchColumnResizedEvent(this.eventService, columns, finished, source);
+                dispatchColumnResizedEvent(this.eventSvc, columns, finished, source);
             }
 
             return; // don't resize!
@@ -238,7 +238,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         const colsForEvent = allResizedCols.concat(flexedCols);
 
         if (atLeastOneColChanged || finished) {
-            dispatchColumnResizedEvent(this.eventService, colsForEvent, finished, source, flexedCols);
+            dispatchColumnResizedEvent(this.eventSvc, colsForEvent, finished, source, flexedCols);
         }
     }
 

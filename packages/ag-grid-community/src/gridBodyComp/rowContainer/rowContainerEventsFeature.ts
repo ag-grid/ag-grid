@@ -217,7 +217,7 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         if (eventName === 'keydown') {
-            this.eventService.dispatchEvent(cellCtrl.createEvent(keyboardEvent, 'cellKeyDown'));
+            this.eventSvc.dispatchEvent(cellCtrl.createEvent(keyboardEvent, 'cellKeyDown'));
         }
     }
 
@@ -251,7 +251,7 @@ export class RowContainerEventsFeature extends BeanStub {
         }
 
         if (eventName === 'keydown') {
-            this.eventService.dispatchEvent(rowComp.createRowEvent('cellKeyDown', keyboardEvent));
+            this.eventSvc.dispatchEvent(rowComp.createRowEvent('cellKeyDown', keyboardEvent));
         }
     }
 

@@ -112,7 +112,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
 
     private onCheckboxChanged(isSelected?: boolean): void {
         const { column, node, value } = this.params;
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'cellEditingStarted',
             column: column!,
             colDef: column!.getColDef(),
@@ -125,7 +125,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
 
         const valueChanged = this.params.node.setDataValue(this.params.column!, isSelected, 'edit');
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'cellEditingStopped',
             column: column!,
             colDef: column!.getColDef(),

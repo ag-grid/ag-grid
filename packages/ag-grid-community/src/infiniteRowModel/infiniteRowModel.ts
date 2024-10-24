@@ -169,7 +169,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
     }
 
     private dispatchModelUpdatedEvent() {
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'modelUpdated',
             // not sure if these should all be false - noticed if after implementing,
             // maybe they should be true?
@@ -217,7 +217,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
 
         this.infiniteCache = this.createBean(new InfiniteCache(this.cacheParams));
 
-        this.eventService.dispatchEventOnce({
+        this.eventSvc.dispatchEventOnce({
             type: 'rowCountReady',
         });
 

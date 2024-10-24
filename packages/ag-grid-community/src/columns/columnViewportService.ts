@@ -205,7 +205,7 @@ export class ColumnViewportService extends BeanStub implements NamedBean {
     public checkViewportColumns(afterScroll: boolean = false): void {
         const viewportColumnsChanged = this.extractViewport();
         if (viewportColumnsChanged) {
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'virtualColumnsChanged',
                 afterScroll,
             });

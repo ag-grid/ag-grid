@@ -124,7 +124,7 @@ export abstract class AbstractHeaderCellCtrl<
     protected setGui(eGui: HTMLElement, compBean: BeanStub): void {
         this.eGui = eGui;
         this.addDomData(compBean);
-        compBean.addManagedListeners(this.beans.eventService, {
+        compBean.addManagedListeners(this.beans.eventSvc, {
             displayedColumnsChanged: this.onDisplayedColumnsChanged.bind(this),
         });
 
@@ -137,7 +137,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     private onGuiFocus(): void {
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'headerFocused',
             column: this.column,
         });
@@ -436,7 +436,7 @@ export abstract class AbstractHeaderCellCtrl<
         eventType: 'columnHeaderContextMenu' | 'columnHeaderClicked',
         column: AgColumn | AgProvidedColumnGroup
     ): void {
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: eventType,
             column,
         });
@@ -447,14 +447,14 @@ export abstract class AbstractHeaderCellCtrl<
             return;
         }
         if (col.isColumn) {
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'columnHeaderHeightChanged',
                 column: col,
                 columns: [col],
                 source: 'autosizeColumnHeaderHeight',
             });
         } else {
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'columnGroupHeaderHeightChanged',
                 columnGroup: col,
                 source: 'autosizeColumnGroupHeaderHeight',

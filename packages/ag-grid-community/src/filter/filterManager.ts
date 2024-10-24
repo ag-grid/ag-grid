@@ -196,7 +196,7 @@ export class FilterManager extends BeanStub implements NamedBean {
                 _mergeDeep(filterChangedEvent, additionalEventAttributes);
             }
 
-            this.eventService.dispatchEvent(filterChangedEvent);
+            this.eventSvc.dispatchEvent(filterChangedEvent);
 
             this.columnFilterService?.updateAfterFilterChanged();
         });

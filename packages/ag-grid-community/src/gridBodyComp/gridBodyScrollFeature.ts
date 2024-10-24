@@ -296,13 +296,13 @@ export class GridBodyScrollFeature extends BeanStub {
             left: this.scrollLeft,
             top: this.scrollTop,
         };
-        this.eventService.dispatchEvent(bodyScrollEvent);
+        this.eventSvc.dispatchEvent(bodyScrollEvent);
 
         window.clearTimeout(this.scrollTimer);
 
         this.scrollTimer = window.setTimeout(() => {
             this.scrollTimer = 0;
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 ...bodyScrollEvent,
                 type: 'bodyScrollEnd',
             });

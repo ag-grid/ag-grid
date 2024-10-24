@@ -105,8 +105,8 @@ export class GridOptionsService extends BeanStub implements NamedBean {
     private propertyEventService: LocalEventService<keyof GridOptions> = new LocalEventService();
 
     public postConstruct(): void {
-        this.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), true);
-        this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
+        this.eventSvc.addGlobalListener(this.globalEventHandlerFactory().bind(this), true);
+        this.eventSvc.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
 
         // Ensure the propertyEventService has framework overrides set so that it can fire events outside of angular
         this.propertyEventService.setFrameworkOverrides(this.beans.frameworkOverrides);

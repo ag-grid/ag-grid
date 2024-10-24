@@ -113,14 +113,14 @@ export class UndoRedoService extends BeanStub implements NamedBean {
     }
 
     public undo(source: 'api' | 'ui'): void {
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'undoStarted',
             source,
         });
 
         const operationPerformed = this.undoRedo(this.undoStack, this.redoStack, 'initialRange', 'oldValue', 'undo');
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'undoEnded',
             source,
             operationPerformed,
@@ -128,14 +128,14 @@ export class UndoRedoService extends BeanStub implements NamedBean {
     }
 
     public redo(source: 'api' | 'ui'): void {
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'redoStarted',
             source,
         });
 
         const operationPerformed = this.undoRedo(this.redoStack, this.undoStack, 'finalRange', 'newValue', 'redo');
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'redoEnded',
             source,
             operationPerformed,

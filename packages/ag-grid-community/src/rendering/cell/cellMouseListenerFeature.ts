@@ -54,7 +54,7 @@ export class CellMouseListenerFeature extends BeanStub {
             return;
         }
 
-        const { eventService, rangeService, gos } = this.beans;
+        const { eventSvc, rangeService, gos } = this.beans;
         const isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
 
         if (rangeService && isMultiKey) {
@@ -66,7 +66,7 @@ export class CellMouseListenerFeature extends BeanStub {
         }
 
         const cellClickedEvent: CellClickedEvent = this.cellCtrl.createEvent(mouseEvent, 'cellClicked');
-        eventService.dispatchEvent(cellClickedEvent);
+        eventSvc.dispatchEvent(cellClickedEvent);
 
         const colDef = this.column.getColDef();
 
@@ -103,12 +103,12 @@ export class CellMouseListenerFeature extends BeanStub {
 
     private onCellDoubleClicked(mouseEvent: MouseEvent) {
         const { column, beans, cellCtrl } = this;
-        const { eventService, frameworkOverrides, gos } = beans;
+        const { eventSvc, frameworkOverrides, gos } = beans;
 
         const colDef = column.getColDef();
         // always dispatch event to eventService
         const cellDoubleClickedEvent: CellDoubleClickedEvent = cellCtrl.createEvent(mouseEvent, 'cellDoubleClicked');
-        eventService.dispatchEvent(cellDoubleClickedEvent);
+        eventSvc.dispatchEvent(cellDoubleClickedEvent);
 
         // check if colDef also wants to handle event
         if (typeof colDef.onCellDoubleClicked === 'function') {
@@ -130,7 +130,7 @@ export class CellMouseListenerFeature extends BeanStub {
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
         const target = mouseEvent.target as HTMLElement;
         const { cellCtrl, beans } = this;
-        const { eventService, rangeService, focusService, gos } = beans;
+        const { eventSvc, rangeService, focusService, gos } = beans;
 
         // do not change the range for right-clicks inside an existing range
         if (this.isRightClickInExistingRange(mouseEvent)) {
@@ -203,7 +203,7 @@ export class CellMouseListenerFeature extends BeanStub {
             }
         }
 
-        eventService.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseDown'));
+        eventSvc.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseDown'));
     }
 
     private isRightClickInExistingRange(mouseEvent: MouseEvent): boolean {
@@ -233,7 +233,7 @@ export class CellMouseListenerFeature extends BeanStub {
         if (this.mouseStayingInsideCell(mouseEvent)) {
             return;
         }
-        this.beans.eventService.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOut'));
+        this.beans.eventSvc.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOut'));
         this.beans.columnHoverService?.clearMouseOver();
     }
 
@@ -241,7 +241,7 @@ export class CellMouseListenerFeature extends BeanStub {
         if (this.mouseStayingInsideCell(mouseEvent)) {
             return;
         }
-        this.beans.eventService.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOver'));
+        this.beans.eventSvc.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOver'));
         this.beans.columnHoverService?.setMouseOver([this.column]);
     }
 

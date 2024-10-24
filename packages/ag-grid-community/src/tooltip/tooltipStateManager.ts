@@ -320,7 +320,7 @@ export class TooltipStateManager extends BeanStub {
             lastTooltipHideTime = new Date().getTime();
         }
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'tooltipHide',
             parentGui: this.tooltipCtrl.getGui(),
         });
@@ -399,7 +399,7 @@ export class TooltipStateManager extends BeanStub {
             }
         }
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'tooltipShow',
             tooltipGui: eGui,
             parentGui: this.tooltipCtrl.getGui(),

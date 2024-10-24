@@ -198,7 +198,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
     }
 
     private dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: AgColumn): void {
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'columnMenuVisibleChanged',
             visible,
             switchingTab: false,

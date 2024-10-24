@@ -463,7 +463,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 if (columnTypeOverridesExist) {
                     this.columnAutosizeService?.processResizeOperations();
                 }
-                this.eventService.dispatchEvent({
+                this.eventSvc.dispatchEvent({
                     type: 'dataTypesInferred',
                 });
             },

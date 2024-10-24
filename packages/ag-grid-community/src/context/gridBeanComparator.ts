@@ -13,7 +13,7 @@ import type { GenericBean } from './genericBean';
 const orderedCoreBeans: BeanName[] = [
     // core beans only
     'environment',
-    'eventService',
+    'eventSvc',
     'gos',
     'paginationAutoPageSizeService',
     'apiFunctionService',

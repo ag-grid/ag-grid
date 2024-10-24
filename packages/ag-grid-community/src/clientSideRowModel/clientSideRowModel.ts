@@ -804,7 +804,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         this.isRefreshingModel = false;
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'modelUpdated',
             animate: params.animate,
             keepRenderedRows: params.keepRenderedRows,
@@ -1155,7 +1155,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         if (this.rowNodesCountReady) {
             // only if row data has been set
             this.rowCountReady = true;
-            this.eventService.dispatchEventOnce({ type: 'rowCountReady' });
+            this.eventSvc.dispatchEventOnce({ type: 'rowCountReady' });
         }
     }
 
@@ -1227,7 +1227,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private dispatchUpdateEventsAndRefresh(): void {
         // this event kicks off:
         // - shows 'no rows' overlay if needed
-        this.eventService.dispatchEvent({ type: 'rowDataUpdated' });
+        this.eventSvc.dispatchEvent({ type: 'rowDataUpdated' });
 
         this.refreshModel({
             step: 'group',
@@ -1288,7 +1288,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         if (rowNodeTrans.length > 0) {
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'asyncTransactionsFlushed',
                 results: rowNodeTrans,
             });
@@ -1333,7 +1333,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const animate = !this.gos.get('suppressAnimationFrame');
 
-        this.eventService.dispatchEvent({ type: 'rowDataUpdated', transactions });
+        this.eventSvc.dispatchEvent({ type: 'rowDataUpdated', transactions });
 
         this.refreshModel(
             {

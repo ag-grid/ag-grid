@@ -57,12 +57,12 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
 
         if (newLeftWidth != this.leftWidth) {
             this.leftWidth = newLeftWidth;
-            this.eventService.dispatchEvent({ type: 'leftPinnedWidthChanged' });
+            this.eventSvc.dispatchEvent({ type: 'leftPinnedWidthChanged' });
         }
 
         if (newRightWidth != this.rightWidth) {
             this.rightWidth = newRightWidth;
-            this.eventService.dispatchEvent({ type: 'rightPinnedWidthChanged' });
+            this.eventSvc.dispatchEvent({ type: 'rightPinnedWidthChanged' });
         }
     }
 
@@ -148,7 +148,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
 
         if (updatedCols.length) {
             this.visibleColsService.refresh(source);
-            dispatchColumnPinnedEvent(this.eventService, updatedCols, source);
+            dispatchColumnPinnedEvent(this.eventSvc, updatedCols, source);
         }
 
         this.columnAnimationService?.finish();

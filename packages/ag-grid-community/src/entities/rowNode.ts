@@ -483,7 +483,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         const oldValue = this.beans.valueSvc.getValueForDisplay(column, this);
 
         if (this.beans.gos.get('readOnlyEdit')) {
-            this.beans.eventService.dispatchEvent({
+            this.beans.eventSvc.dispatchEvent({
                 type: 'cellEditRequest',
                 event: null,
                 rowIndex: this.rowIndex!,

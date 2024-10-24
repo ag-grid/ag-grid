@@ -746,7 +746,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         if (this.groupSelectsDescendants) {
             const selectionChanged = this.updateGroupsFromChildrenSelections?.('rowGroupChanged', changedPath);
             if (selectionChanged) {
-                this.eventService.dispatchEvent({
+                this.eventSvc.dispatchEvent({
                     type: 'selectionChanged',
                     source: 'rowGroupChanged',
                 });

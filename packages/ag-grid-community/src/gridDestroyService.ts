@@ -12,7 +12,7 @@ export class GridDestroyService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'gridPreDestroyed',
             state: this.beans.stateService?.getState() ?? {},
         });

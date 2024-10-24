@@ -46,7 +46,7 @@ export class RowEditService extends BeanStub implements NamedBean {
         }
 
         if (fireRowEditEvent) {
-            this.eventService.dispatchEvent(rowCtrl.createRowEvent('rowValueChanged'));
+            this.eventSvc.dispatchEvent(rowCtrl.createRowEvent('rowValueChanged'));
         }
 
         if (isRowEdit) {
@@ -64,6 +64,6 @@ export class RowEditService extends BeanStub implements NamedBean {
             ? rowCtrl.createRowEvent('rowEditingStarted')
             : rowCtrl.createRowEvent('rowEditingStopped');
 
-        this.eventService.dispatchEvent(event);
+        this.eventSvc.dispatchEvent(event);
     }
 }

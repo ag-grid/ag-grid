@@ -336,7 +336,7 @@ export class PaginationService extends BeanStub implements NamedBean {
         keepRenderedRows?: boolean;
     }): void {
         const { keepRenderedRows = false, newPage = false, newPageSize = false } = params;
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'paginationChanged',
             animate: false,
             newData: false,

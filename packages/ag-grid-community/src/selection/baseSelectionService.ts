@@ -155,7 +155,7 @@ export abstract class BaseSelectionService extends BeanStub {
     }
 
     protected dispatchSelectionChanged(source: SelectionEventSourceType): void {
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'selectionChanged',
             source,
         });
@@ -280,7 +280,7 @@ export abstract class BaseSelectionService extends BeanStub {
             sibling.dispatchRowEvent('rowSelected');
         }
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             ..._createGlobalRowEvent(rowNode, this.gos, 'rowSelected'),
             event: e || null,
             source,

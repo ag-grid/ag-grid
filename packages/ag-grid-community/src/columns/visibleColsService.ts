@@ -91,7 +91,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.columnViewportService.checkViewportColumns(false);
         this.setFirstRightAndLastLeftPinned(source);
 
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'displayedColumnsChanged',
             source,
         });
@@ -117,13 +117,13 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
             // this event is fired to allow the grid viewport to resize before the
             // scrollbar tries to update its visibility.
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'columnContainerWidthChanged',
             });
 
             // when this fires, it is picked up by the gridPanel, which ends up in
             // gridPanel calling setWidthAndScrollPosition(), which in turn calls setViewportPosition()
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'displayedColumnsWidthChanged',
             });
         }

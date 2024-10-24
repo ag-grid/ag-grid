@@ -575,7 +575,7 @@ export class GridChartComp extends Component {
             .getChart()
             .waitForUpdate()
             .then(() => {
-                this.eventService.dispatchEvent({
+                this.eventSvc.dispatchEvent({
                     type: 'chartCreated',
                     chartId: this.chartController.getChartId(),
                 });
@@ -583,7 +583,7 @@ export class GridChartComp extends Component {
     }
 
     private raiseChartDestroyedEvent(): void {
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'chartDestroyed',
             chartId: this.chartController.getChartId(),
         });

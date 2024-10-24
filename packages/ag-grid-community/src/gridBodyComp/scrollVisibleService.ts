@@ -94,7 +94,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
             this.horizontalScrollGap = horizontalGap;
             this.verticalScrollGap = verticalGap;
 
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'scrollGapChanged',
             });
         }
@@ -109,7 +109,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
             this.horizontalScrollShowing = params.horizontalScrollShowing;
             this.verticalScrollShowing = params.verticalScrollShowing;
 
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'scrollVisibilityChanged',
             });
         }
@@ -145,7 +145,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
             if (scrollbarWidth != null) {
                 this.scrollbarWidth = scrollbarWidth;
 
-                this.eventService.dispatchEvent({
+                this.eventSvc.dispatchEvent({
                     type: 'scrollbarWidthChanged',
                 });
             }

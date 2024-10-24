@@ -79,6 +79,6 @@ export class ServerSideExpansionService extends BaseExpansionService implements 
     }
 
     protected override dispatchExpandedEvent(event: RowGroupOpenedEvent): void {
-        this.eventService.dispatchEvent(event);
+        this.eventSvc.dispatchEvent(event);
     }
 }

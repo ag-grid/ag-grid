@@ -187,7 +187,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
             const changedColumns = items.filter((item) => item.initialSize !== item.frozenSize).map((item) => item.col);
             const flexingColumns = items.filter((item) => item.flex).map((item) => item.col);
 
-            dispatchColumnResizedEvent(this.eventService, changedColumns, true, source, flexingColumns);
+            dispatchColumnResizedEvent(this.eventSvc, changedColumns, true, source, flexingColumns);
         }
 
         return unconstrainedFlexColumns;

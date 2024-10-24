@@ -396,7 +396,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
     }
 
     protected dispatchRowDataUpdateStartedEvent(rowData?: TData[] | null): void {
-        this.eventService.dispatchEvent({
+        this.eventSvc.dispatchEvent({
             type: 'rowDataUpdateStarted',
             firstRowData: rowData?.length ? rowData[0] : null,
         });
@@ -421,7 +421,7 @@ export abstract class AbstractClientSideNodeManager<TData = any>
         selectionService?.updateGroupsFromChildrenSelections?.(source);
 
         if (selectionChanged) {
-            this.eventService.dispatchEvent({
+            this.eventSvc.dispatchEvent({
                 type: 'selectionChanged',
                 source: source,
             });
