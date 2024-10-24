@@ -835,7 +835,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onColumnHover(): void {
-        this.beans.columnHoverService?.onCellColumnHover(this.column, this.cellComp);
+        this.beans.colHover?.onCellColumnHover(this.column, this.cellComp);
     }
 
     public onColDefChanged(): void {

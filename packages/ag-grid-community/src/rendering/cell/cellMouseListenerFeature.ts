@@ -234,7 +234,7 @@ export class CellMouseListenerFeature extends BeanStub {
             return;
         }
         this.beans.eventSvc.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOut'));
-        this.beans.columnHoverService?.clearMouseOver();
+        this.beans.colHover?.clearMouseOver();
     }
 
     private onMouseOver(mouseEvent: MouseEvent): void {
@@ -242,7 +242,7 @@ export class CellMouseListenerFeature extends BeanStub {
             return;
         }
         this.beans.eventSvc.dispatchEvent(this.cellCtrl.createEvent(mouseEvent, 'cellMouseOver'));
-        this.beans.columnHoverService?.setMouseOver([this.column]);
+        this.beans.colHover?.setMouseOver([this.column]);
     }
 
     private mouseStayingInsideCell(e: MouseEvent): boolean {

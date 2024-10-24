@@ -568,7 +568,7 @@ export class AgColumn<TValue = any> extends BeanStub<ColumnEventName> implements
     }
 
     public isHovered(): boolean {
-        return !!this.beans.columnHoverService?.isHovered(this);
+        return !!this.beans.colHover?.isHovered(this);
     }
 
     public setPinned(pinned: ColumnPinnedType): void {

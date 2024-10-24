@@ -96,7 +96,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         } else {
             _setDisplayed(eResize, false);
         }
-        this.beans.columnHoverService?.createHoverFeature(compBean, [this.column], eGui);
+        this.beans.colHover?.createHoverFeature(compBean, [this.column], eGui);
         compBean.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
         compBean.createManagedBean(
             new ManagedFocusFeature(eGui, {
@@ -588,7 +588,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private addColumnHoverListener(compBean: BeanStub): void {
-        this.beans.columnHoverService?.addHeaderColumnHoverListener(compBean, this.comp, this.column);
+        this.beans.colHover?.addHeaderColumnHoverListener(compBean, this.comp, this.column);
     }
 
     public getColId(): string {

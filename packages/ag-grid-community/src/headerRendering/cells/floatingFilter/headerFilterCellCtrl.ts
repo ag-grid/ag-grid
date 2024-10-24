@@ -233,7 +233,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private setupHover(compBean: BeanStub): void {
-        this.beans.columnHoverService?.addHeaderFilterColumnHoverListener(compBean, this.comp, this.column, this.eGui);
+        this.beans.colHover?.addHeaderFilterColumnHoverListener(compBean, this.comp, this.column, this.eGui);
     }
 
     private setupLeft(compBean: BeanStub): void {

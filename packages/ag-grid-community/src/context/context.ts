@@ -204,7 +204,7 @@ export interface CoreBeanCollection {
     focusSvc: FocusService;
     popupSvc?: PopupService;
     cellStyles?: CellStyleService;
-    columnHoverService?: ColumnHoverService;
+    colHover?: ColumnHoverService;
     userComponentFactory: UserComponentFactory;
     registry: Registry;
     animationFrameService?: AnimationFrameService;
@@ -371,7 +371,7 @@ export type BeanName =
     | 'columnFilterService'
     | 'colFlex'
     | 'columnGroupService'
-    | 'columnHoverService'
+    | 'colHover'
     | 'columnMenuFactory'
     | 'colModel'
     | 'colMoves'

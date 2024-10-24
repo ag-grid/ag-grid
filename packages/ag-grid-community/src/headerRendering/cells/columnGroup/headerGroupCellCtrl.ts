@@ -76,7 +76,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const pinned = this.getParentRowCtrl().getPinned();
         const leafCols = this.column.getProvidedColumnGroup().getLeafColumns();
 
-        this.beans.columnHoverService?.createHoverFeature(compBean, leafCols, eGui);
+        this.beans.colHover?.createHoverFeature(compBean, leafCols, eGui);
         compBean.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
         compBean.createManagedBean(new GroupWidthFeature(comp, this.column));
         if (this.beans.colResize) {
