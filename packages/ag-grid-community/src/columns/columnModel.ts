@@ -48,7 +48,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     beanName = 'colModel' as const;
 
     private context: Context;
-    private columnFactory: ColumnFactory;
+    private colFactory: ColumnFactory;
     private visibleCols: VisibleColsService;
     private colViewport: ColumnViewportService;
     private pivotResultColsService?: IPivotResultColsService;
@@ -65,7 +65,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.context = beans.context;
-        this.columnFactory = beans.columnFactory;
+        this.colFactory = beans.colFactory;
         this.visibleCols = beans.visibleCols;
         this.colViewport = beans.colViewport;
         this.pivotResultColsService = beans.pivotResultColsService;
@@ -136,7 +136,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         const oldCols = this.colDefCols?.list;
         const oldTree = this.colDefCols?.tree;
-        const newTree = this.columnFactory.createColumnTree(this.colDefs, true, oldTree, source);
+        const newTree = this.colFactory.createColumnTree(this.colDefs, true, oldTree, source);
 
         _destroyColumnTree(this.context, this.colDefCols?.tree, newTree.columnTree);
 

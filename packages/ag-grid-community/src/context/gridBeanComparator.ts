@@ -42,7 +42,7 @@ const orderedCoreBeans: BeanName[] = [
     'stickyRowService',
     'rowRenderer',
     'expressionService',
-    'columnFactory',
+    'colFactory',
     'alignedGridsService',
     'navigation',
     'valueCache',

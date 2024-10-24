@@ -46,7 +46,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private colState: ColumnStateService;
     private filterManager?: FilterManager;
     private columnAutosizeService?: ColumnAutosizeService;
-    private columnFactory: ColumnFactory;
+    private colFactory: ColumnFactory;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
@@ -56,7 +56,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.colState = beans.colState;
         this.filterManager = beans.filterManager;
         this.columnAutosizeService = beans.columnAutosizeService;
-        this.columnFactory = beans.columnFactory;
+        this.colFactory = beans.colFactory;
     }
 
     private dataTypeDefinitions: {
@@ -520,7 +520,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (!userColDef) {
             return false;
         }
-        const newColDef = this.columnFactory.addColumnDefaultAndTypes(userColDef, column.getColId());
+        const newColDef = this.colFactory.addColumnDefaultAndTypes(userColDef, column.getColId());
         column.setColDef(newColDef, userColDef, source);
         return true;
     }

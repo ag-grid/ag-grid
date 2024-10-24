@@ -229,7 +229,7 @@ export interface CoreBeanCollection {
     gridOptions: GridOptions;
     eGridDiv: HTMLElement;
     colState: ColumnStateService;
-    columnFactory: ColumnFactory;
+    colFactory: ColumnFactory;
     pivotResultColsService?: IPivotResultColsService;
     autoColService?: IAutoColService;
     selectionColService?: SelectionColService;
@@ -367,7 +367,7 @@ export type BeanName =
     | 'columnController'
     | 'columnDefFactory'
     | 'columnEditorFactory'
-    | 'columnFactory'
+    | 'colFactory'
     | 'colFilter'
     | 'colFlex'
     | 'columnGroupService'

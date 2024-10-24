@@ -37,7 +37,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
 
     private colModel: ColumnModel;
     private colNames: ColumnNameService;
-    private columnFactory: ColumnFactory;
+    private colFactory: ColumnFactory;
     private funcColsService: FuncColsService;
     private context: Context;
     private columnGroupService?: ColumnGroupService;
@@ -48,7 +48,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
         this.colNames = beans.colNames;
-        this.columnFactory = beans.columnFactory;
+        this.colFactory = beans.colFactory;
         this.funcColsService = beans.funcColsService;
         this.context = beans.context;
         this.columnGroupService = beans.columnGroupService;
@@ -244,7 +244,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         const colDef = this.createAutoColDef(colToUpdate.getId(), underlyingColumn ?? undefined, index);
 
         colToUpdate.setColDef(colDef, null, source);
-        this.columnFactory.applyColumnState(colToUpdate, colDef, source);
+        this.colFactory.applyColumnState(colToUpdate, colDef, source);
     }
 
     private createAutoColDef(colId: string, underlyingColumn?: AgColumn, index?: number): ColDef {
@@ -254,7 +254,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         const autoGroupColumnDef = this.gos.get('autoGroupColumnDef');
         _mergeDeep(res, autoGroupColumnDef);
 
-        res = this.columnFactory.addColumnDefaultAndTypes(res, colId);
+        res = this.colFactory.addColumnDefaultAndTypes(res, colId);
 
         // For tree data the filter is always allowed
         if (!this.gos.get('treeData')) {

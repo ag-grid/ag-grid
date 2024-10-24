@@ -17,7 +17,7 @@ import type { DataTypeService } from './dataTypeService';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 export class ColumnFactory extends BeanStub implements NamedBean {
-    beanName = 'columnFactory' as const;
+    beanName = 'colFactory' as const;
 
     private dataTypeService?: DataTypeService;
     private columnGroupService?: ColumnGroupService;
