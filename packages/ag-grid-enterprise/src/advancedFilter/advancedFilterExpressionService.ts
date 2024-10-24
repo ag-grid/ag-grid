@@ -89,7 +89,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             case 'dateString': {
                 // displayed string format may be different from data string format, so parse before converting to date
                 const parsedDateString = this.valueSvc.parseValue(column, null, operand, undefined);
-                return this.dataTypeService
+                return this.dataTypeSvc
                     ? _serialiseDate(this.dataTypeSvc.getDateParserFunction(column)(parsedDateString) ?? null, false)
                     : parsedDateString;
             }
