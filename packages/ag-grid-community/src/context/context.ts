@@ -198,7 +198,7 @@ export interface CoreBeanCollection {
     columnMove?: ColumnMoveService;
     columnFlex?: ColumnFlexService;
     columnResize?: ColumnResizeService;
-    headerNavigationService?: HeaderNavigationService;
+    headerNavigation?: HeaderNavigationService;
     navigationService?: NavigationService;
     columnAnimationService?: ColumnAnimationService;
     focusService: FocusService;
@@ -423,7 +423,7 @@ export type BeanName =
     | 'gridSerializer'
     | 'groupHideOpenParentsService'
     | 'groupStage'
-    | 'headerNavigationService'
+    | 'headerNavigation'
     | 'horizontalResizeService'
     | 'lazyBlockLoadingService'
     | 'licenseManager'

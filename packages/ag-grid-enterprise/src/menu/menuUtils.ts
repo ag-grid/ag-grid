@@ -23,12 +23,12 @@ export class MenuUtils extends BeanStub implements NamedBean {
     beanName = 'menuUtils' as const;
 
     private focusService: FocusService;
-    private headerNavigationService?: HeaderNavigationService;
+    private headerNavigation?: HeaderNavigationService;
     private visibleCols: VisibleColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
-        this.headerNavigationService = beans.headerNavigationService;
+        this.headerNavigation = beans.headerNavigation;
         this.visibleCols = beans.visibleCols;
     }
 
@@ -140,7 +140,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
             const focusableEl = this.focusService.findTabbableParent(eventSource);
             if (focusableEl) {
                 if (column) {
-                    this.headerNavigationService?.scrollToColumn(column);
+                    this.headerNavigation?.scrollToColumn(column);
                 }
                 focusableEl.focus();
             }

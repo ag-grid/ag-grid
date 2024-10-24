@@ -39,7 +39,7 @@ export class FocusService extends BeanStub implements NamedBean {
     private eGridDiv: HTMLElement;
     private columnModel: ColumnModel;
     private visibleCols: VisibleColsService;
-    private headerNavigationService?: HeaderNavigationService;
+    private headerNavigation?: HeaderNavigationService;
     private rowRenderer: RowRenderer;
     private navigationService?: NavigationService;
     private ctrlsService: CtrlsService;
@@ -50,7 +50,7 @@ export class FocusService extends BeanStub implements NamedBean {
         this.eGridDiv = beans.eGridDiv;
         this.columnModel = beans.columnModel;
         this.visibleCols = beans.visibleCols;
-        this.headerNavigationService = beans.headerNavigationService;
+        this.headerNavigation = beans.headerNavigation;
         this.rowRenderer = beans.rowRenderer;
         this.navigationService = beans.navigationService;
         this.ctrlsService = beans.ctrlsService;
@@ -496,7 +496,7 @@ export class FocusService extends BeanStub implements NamedBean {
             return this.focusGridView(column as AgColumn);
         }
 
-        this.headerNavigationService?.scrollToColumn(column as AgColumn, direction);
+        this.headerNavigation?.scrollToColumn(column as AgColumn, direction);
 
         const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned());
 
@@ -505,7 +505,7 @@ export class FocusService extends BeanStub implements NamedBean {
             headerRowContainerCtrl?.focusHeader(headerPosition.headerRowIndex, column as AgColumn, event) || false;
 
         if (focusSuccess && (rowWithoutSpanValue != null || fromCell)) {
-            this.headerNavigationService?.setCurrentHeaderRowWithoutSpan(rowWithoutSpanValue ?? -1);
+            this.headerNavigation?.setCurrentHeaderRowWithoutSpan(rowWithoutSpanValue ?? -1);
         }
 
         return focusSuccess;

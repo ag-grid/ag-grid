@@ -49,7 +49,7 @@ export function getHeaderIndexToFocus(column: AgColumn | AgColumnGroup, currentI
 }
 
 export class HeaderNavigationService extends BeanStub implements NamedBean {
-    beanName = 'headerNavigationService' as const;
+    beanName = 'headerNavigation' as const;
 
     private focusService: FocusService;
     private ctrlsService: CtrlsService;

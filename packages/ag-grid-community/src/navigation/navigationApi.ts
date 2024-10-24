@@ -33,7 +33,7 @@ export function setFocusedHeader(
     colKey: string | Column | ColumnGroup,
     floatingFilter: boolean = false
 ): void {
-    const headerPosition = beans.headerNavigationService?.getHeaderPositionForColumn(colKey, floatingFilter);
+    const headerPosition = beans.headerNavigation?.getHeaderPositionForColumn(colKey, floatingFilter);
 
     if (!headerPosition) {
         return;

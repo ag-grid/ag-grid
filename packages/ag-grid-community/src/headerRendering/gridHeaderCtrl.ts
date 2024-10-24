@@ -24,7 +24,7 @@ export interface IGridHeaderComp {
 }
 
 export class GridHeaderCtrl extends BeanStub {
-    private headerNavigationService?: HeaderNavigationService;
+    private headerNavigation?: HeaderNavigationService;
     private focusService: FocusService;
     private columnModel: ColumnModel;
     private visibleCols: VisibleColsService;
@@ -33,7 +33,7 @@ export class GridHeaderCtrl extends BeanStub {
     private menuService?: MenuService;
 
     public wireBeans(beans: BeanCollection) {
-        this.headerNavigationService = beans.headerNavigationService;
+        this.headerNavigation = beans.headerNavigation;
         this.focusService = beans.focusService;
         this.columnModel = beans.columnModel;
         this.visibleCols = beans.visibleCols;
@@ -50,7 +50,7 @@ export class GridHeaderCtrl extends BeanStub {
         this.comp = comp;
         this.eGui = eGui;
 
-        if (this.headerNavigationService) {
+        if (this.headerNavigation) {
             this.createManagedBean(
                 new ManagedFocusFeature(eFocusableElement, {
                     onTabKeyDown: this.onTabKeyDown.bind(this),
@@ -156,7 +156,7 @@ export class GridHeaderCtrl extends BeanStub {
         const direction = backwards !== isRtl ? 'LEFT' : 'RIGHT';
 
         if (
-            this.headerNavigationService!.navigateHorizontally(direction, true, e) ||
+            this.headerNavigation!.navigateHorizontally(direction, true, e) ||
             (!backwards && this.focusService.focusOverlay(false)) ||
             this.focusService.focusNextGridCoreContainer(backwards, true)
         ) {
@@ -176,7 +176,7 @@ export class GridHeaderCtrl extends BeanStub {
                 if (!_exists(direction)) {
                     direction = 'RIGHT';
                 }
-                if (this.headerNavigationService!.navigateHorizontally(direction, false, e)) {
+                if (this.headerNavigation!.navigateHorizontally(direction, false, e)) {
                     // preventDefault so that the arrow keys don't cause an extra scroll
                     e.preventDefault();
                 }
@@ -189,7 +189,7 @@ export class GridHeaderCtrl extends BeanStub {
                 if (!_exists(direction)) {
                     direction = 'DOWN';
                 }
-                if (this.headerNavigationService!.navigateVertically(direction, null, e)) {
+                if (this.headerNavigation!.navigateVertically(direction, null, e)) {
                     // preventDefault so that the arrow keys don't cause an extra scroll
                     e.preventDefault();
                 }
