@@ -34,13 +34,13 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     private columnModel: ColumnModel;
     private columnFlexService?: ColumnFlexService;
-    private columnViewportService: ColumnViewportService;
+    private columnViewport: ColumnViewportService;
     private columnGroupService?: ColumnGroupService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.columnFlexService = beans.columnFlexService;
-        this.columnViewportService = beans.columnViewportService;
+        this.columnViewport = beans.columnViewport;
         this.columnGroupService = beans.columnGroupService;
     }
 
@@ -88,7 +88,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.autoHeightCols = this.allCols.filter((col) => col.isAutoHeight());
         this.columnFlexService?.refreshFlexedColumns();
         this.updateBodyWidths();
-        this.columnViewportService.checkViewportColumns(false);
+        this.columnViewport.checkViewportColumns(false);
         this.setFirstRightAndLastLeftPinned(source);
 
         this.eventSvc.dispatchEvent({

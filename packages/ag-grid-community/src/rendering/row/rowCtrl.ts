@@ -553,14 +553,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private createAllCellCtrls() {
-        const columnViewportService = this.beans.columnViewportService;
+        const columnViewport = this.beans.columnViewport;
         const presentedColsService = this.beans.visibleColsService;
         if (this.printLayout) {
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, presentedColsService.allCols);
             this.leftCellCtrls = { list: [], map: {} };
             this.rightCellCtrls = { list: [], map: {} };
         } else {
-            const centerCols = columnViewportService.getColsWithinViewport(this.rowNode);
+            const centerCols = columnViewport.getColsWithinViewport(this.rowNode);
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, centerCols);
 
             const leftCols = presentedColsService.getLeftColsForRow(this.rowNode);

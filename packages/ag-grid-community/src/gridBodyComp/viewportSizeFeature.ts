@@ -18,14 +18,14 @@ export class ViewportSizeFeature extends BeanStub {
     private pinnedColumnService?: PinnedColumnService;
     private columnFlexService?: ColumnFlexService;
     private scrollVisibleService: ScrollVisibleService;
-    private columnViewportService: ColumnViewportService;
+    private columnViewport: ColumnViewportService;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
         this.pinnedColumnService = beans.pinnedColumnService;
         this.columnFlexService = beans.columnFlexService;
         this.scrollVisibleService = beans.scrollVisibleService;
-        this.columnViewportService = beans.columnViewportService;
+        this.columnViewport = beans.columnViewport;
     }
 
     private centerContainerCtrl: RowContainerCtrl;
@@ -159,6 +159,6 @@ export class ViewportSizeFeature extends BeanStub {
         const scrollWidth = this.centerContainerCtrl.getCenterWidth();
         const scrollPosition = this.centerContainerCtrl.getViewportScrollLeft();
 
-        this.columnViewportService.setScrollPosition(scrollWidth, scrollPosition);
+        this.columnViewport.setScrollPosition(scrollWidth, scrollPosition);
     }
 }

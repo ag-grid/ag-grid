@@ -232,7 +232,7 @@ export interface IRowContainerComp {
 export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     private dragService?: DragService;
     private ctrlsService: CtrlsService;
-    private columnViewportService: ColumnViewportService;
+    private columnViewport: ColumnViewportService;
     private rowRenderer: RowRenderer;
     private rangeService?: IRangeService;
     private pinnedColumnService?: PinnedColumnService;
@@ -240,7 +240,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     public wireBeans(beans: BeanCollection) {
         this.dragService = beans.dragService;
         this.ctrlsService = beans.ctrlsService;
-        this.columnViewportService = beans.columnViewportService;
+        this.columnViewport = beans.columnViewport;
         this.rowRenderer = beans.rowRenderer;
         this.rangeService = beans.rangeService;
         this.pinnedColumnService = beans.pinnedColumnService;
@@ -409,7 +409,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         const scrollWidth = this.getCenterWidth();
         const scrollPosition = this.getCenterViewportScrollLeft();
 
-        this.columnViewportService.setScrollPosition(scrollWidth, scrollPosition, afterScroll);
+        this.columnViewport.setScrollPosition(scrollWidth, scrollPosition, afterScroll);
     }
 
     public hasHorizontalScrollGap(): boolean {
