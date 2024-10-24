@@ -123,7 +123,7 @@ export class RowDragComp extends Component {
             dragSourceDomDataKey: this.gos.getDomDataKey(),
         };
 
-        this.beans.dragAndDropService!.addDragSource(this.dragSource, true);
+        this.beans.dragAndDrop!.addDragSource(this.dragSource, true);
     }
 
     public override destroy(): void {
@@ -137,7 +137,7 @@ export class RowDragComp extends Component {
             return;
         }
 
-        this.beans.dragAndDropService!.removeDragSource(this.dragSource);
+        this.beans.dragAndDrop!.removeDragSource(this.dragSource);
         this.dragSource = null;
     }
 
@@ -258,7 +258,7 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         const rowDragFeature = this.beans.rowDragService!.getRowDragFeature();
         const shouldPreventRowMove = rowDragFeature && rowDragFeature.shouldPreventRowMove();
         const suppressRowDrag = this.gos.get('suppressRowDrag');
-        const hasExternalDropZones = this.beans.dragAndDropService!.hasExternalDropZones();
+        const hasExternalDropZones = this.beans.dragAndDrop!.hasExternalDropZones();
         const neverDisplayed = (shouldPreventRowMove && !hasExternalDropZones) || suppressRowDrag;
 
         this.setDisplayedOrVisible(neverDisplayed);

@@ -35,7 +35,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
     private ctrlsService: CtrlsService;
     private visibleCols: VisibleColsService;
     private focusSvc: FocusService;
-    private dragAndDropService: DragAndDropService;
+    private dragAndDrop: DragAndDropService;
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
@@ -43,7 +43,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         this.ctrlsService = beans.ctrlsService;
         this.visibleCols = beans.visibleCols;
         this.focusSvc = beans.focusSvc;
-        this.dragAndDropService = beans.dragAndDropService!;
+        this.dragAndDrop = beans.dragAndDrop!;
     }
 
     public moveColumnByIndex(fromIndex: number, toIndex: number, source: ColumnEventType): void {
@@ -278,7 +278,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             },
         };
 
-        this.dragAndDropService.addDragSource(dragSource, true);
+        this.dragAndDrop.addDragSource(dragSource, true);
 
         return dragSource;
     }

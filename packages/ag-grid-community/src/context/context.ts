@@ -209,7 +209,7 @@ export interface CoreBeanCollection {
     registry: Registry;
     animationFrameSvc?: AnimationFrameService;
     dragSvc?: DragService;
-    dragAndDropService?: DragAndDropService;
+    dragAndDrop?: DragAndDropService;
     sortController?: SortController;
     columnFilterService?: ColumnFilterService;
     filterManager?: FilterManager;
@@ -391,7 +391,7 @@ export type BeanName =
     | 'dataTypeService'
     | 'visibleCols'
     | 'detailGridApiService'
-    | 'dragAndDropService'
+    | 'dragAndDrop'
     | 'dragSvc'
     | 'editService'
     | 'excelCreator'

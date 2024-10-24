@@ -144,7 +144,7 @@ export type DragAndDropIcon =
     | 'hide';
 
 export class DragAndDropService extends BeanStub implements NamedBean {
-    beanName = 'dragAndDropService' as const;
+    beanName = 'dragAndDrop' as const;
 
     private ctrlsService: CtrlsService;
     private dragSvc: DragService;

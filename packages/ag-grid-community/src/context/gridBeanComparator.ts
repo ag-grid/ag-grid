@@ -50,7 +50,7 @@ const orderedCoreBeans: BeanName[] = [
     'loggerFactory',
     'autoWidthCalculator',
     'filterMenuFactory',
-    'dragAndDropService',
+    'dragAndDrop',
     'focusSvc',
     'mouseEventService',
     'cellNavigation',

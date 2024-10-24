@@ -50,9 +50,9 @@ export class GridCtrl extends BeanStub {
 
         this.eGui.setAttribute('grid-id', this.beans.context.getGridId());
 
-        const { dragAndDropService, mouseEventService, ctrlsService } = this.beans;
+        const { dragAndDrop, mouseEventService, ctrlsService } = this.beans;
 
-        dragAndDropService?.registerGridDropTarget(() => this.eGui, this);
+        dragAndDrop?.registerGridDropTarget(() => this.eGui, this);
 
         mouseEventService.stampTopLevelGridCompWithGridInstance(eGridDiv);
 

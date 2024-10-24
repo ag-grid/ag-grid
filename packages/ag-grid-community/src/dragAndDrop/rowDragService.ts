@@ -11,18 +11,18 @@ import { RowDragFeature } from './rowDragFeature';
 export class RowDragService extends BeanStub implements NamedBean {
     beanName = 'rowDragService' as const;
 
-    private dragAndDropService: DragAndDropService;
+    private dragAndDrop: DragAndDropService;
 
     private rowDragFeature?: RowDragFeature;
 
     public wireBeans(beans: BeanCollection): void {
-        this.dragAndDropService = beans.dragAndDropService!;
+        this.dragAndDrop = beans.dragAndDrop!;
     }
 
     public setupRowDrag(element: HTMLElement, ctrl: BeanStub): void {
         const rowDragFeature = ctrl.createManagedBean(new RowDragFeature(element));
-        this.dragAndDropService.addDropTarget(rowDragFeature);
-        ctrl.addDestroyFunc(() => this.dragAndDropService.removeDropTarget(rowDragFeature));
+        this.dragAndDrop.addDropTarget(rowDragFeature);
+        ctrl.addDestroyFunc(() => this.dragAndDrop.removeDropTarget(rowDragFeature));
         this.rowDragFeature = rowDragFeature;
     }
 

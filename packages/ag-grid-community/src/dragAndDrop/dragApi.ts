@@ -6,10 +6,10 @@ export function addRowDropZone(beans: BeanCollection, params: RowDropZoneParams)
 }
 
 export function removeRowDropZone(beans: BeanCollection, params: RowDropZoneParams): void {
-    const activeDropTarget = beans.dragAndDropService?.findExternalZone(params);
+    const activeDropTarget = beans.dragAndDrop?.findExternalZone(params);
 
     if (activeDropTarget) {
-        beans.dragAndDropService?.removeDropTarget(activeDropTarget);
+        beans.dragAndDrop?.removeDropTarget(activeDropTarget);
     }
 }
 

@@ -45,11 +45,11 @@ function _insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number) {
 
 export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem> extends Component {
     private focusSvc: FocusService;
-    private dragAndDropService?: DragAndDropService;
+    private dragAndDrop?: DragAndDropService;
 
     public wireBeans(beans: BeanCollection) {
         this.focusSvc = beans.focusSvc;
-        this.dragAndDropService = beans.dragAndDropService;
+        this.dragAndDrop = beans.dragAndDrop;
     }
 
     private state: PillState = 'notDragging';
@@ -207,7 +207,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
             isInterestedIn: this.isInterestedIn.bind(this),
         };
 
-        this.dragAndDropService?.addDropTarget(this.dropTarget);
+        this.dragAndDrop?.addDropTarget(this.dropTarget);
     }
 
     protected minimumAllowedNewInsertIndex(): number {

@@ -36,13 +36,13 @@ import { ToolPanelContextMenu } from './toolPanelContextMenu';
 
 export class ToolPanelColumnGroupComp extends Component {
     private colModel: ColumnModel;
-    private dragAndDropService: DragAndDropService;
+    private dragAndDrop: DragAndDropService;
     private modelItemUtils: ModelItemUtils;
     private registry: Registry;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
-        this.dragAndDropService = beans.dragAndDropService!;
+        this.dragAndDrop = beans.dragAndDrop!;
         this.modelItemUtils = beans.modelItemUtils as ModelItemUtils;
         this.registry = beans.registry;
     }
@@ -250,8 +250,8 @@ export class ToolPanelColumnGroupComp extends Component {
             },
         };
 
-        this.dragAndDropService.addDragSource(dragSource, true);
-        this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
+        this.dragAndDrop.addDragSource(dragSource, true);
+        this.addDestroyFunc(() => this.dragAndDrop.removeDragSource(dragSource));
     }
 
     private createDragItem() {

@@ -23,12 +23,12 @@ export interface DropListener {
 }
 
 export class BodyDropTarget extends BeanStub implements DropTarget {
-    private dragAndDropService: DragAndDropService;
+    private dragAndDrop: DragAndDropService;
     private colModel: ColumnModel;
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection) {
-        this.dragAndDropService = beans.dragAndDropService!;
+        this.dragAndDrop = beans.dragAndDrop!;
         this.colModel = beans.colModel;
         this.ctrlsService = beans.ctrlsService;
     }
@@ -79,8 +79,8 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
         this.moveColumnFeature = this.createManagedBean(new MoveColumnFeature(this.pinned));
         this.bodyDropPivotTarget = this.createManagedBean(new BodyDropPivotTarget(this.pinned));
 
-        this.dragAndDropService.addDropTarget(this);
-        this.addDestroyFunc(() => this.dragAndDropService.removeDropTarget(this));
+        this.dragAndDrop.addDropTarget(this);
+        this.addDestroyFunc(() => this.dragAndDrop.removeDropTarget(this));
     }
 
     public isInterestedIn(type: DragSourceType): boolean {
