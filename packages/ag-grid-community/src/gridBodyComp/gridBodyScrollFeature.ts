@@ -395,7 +395,7 @@ export class GridBodyScrollFeature extends BeanStub {
         const maxScrollLeft =
             this.centerRowsCtrl.getViewportElement().scrollWidth - this.centerRowsCtrl.getCenterWidth();
 
-        // if this is call is coming from the alignedGridsService, we don't need to validate the
+        // if this is call is coming from the alignedGridsSvc, we don't need to validate the
         // scroll, because it has already been validated by the grid firing the scroll event.
         if (!fromAlignedGridsService && this.shouldBlockScrollUpdate(ScrollDirection.Horizontal, hScrollPosition)) {
             if (this.enableRtl && _isRtlNegativeScroll()) {
@@ -407,7 +407,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
         _setScrollLeft(this.centerRowsCtrl.getViewportElement(), Math.abs(hScrollPosition), this.enableRtl);
         // we need to manually do the event handling (rather than wait for the event)
-        // for the alignedGridsService, as if we don't, the aligned grid service gets
+        // for the alignedGridsSvc, as if we don't, the aligned grid service gets
         // notified async, and then it's 'consuming' flag doesn't get used right, and
         // we can end up with an infinite loop
         this.doHorizontalScroll(hScrollPosition);

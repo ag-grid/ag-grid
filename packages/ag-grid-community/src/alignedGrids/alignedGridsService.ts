@@ -23,7 +23,7 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 import { _error, _warn } from '../validation/logging';
 
 export class AlignedGridsService extends BeanStub implements NamedBean {
-    beanName = 'alignedGridsService' as const;
+    beanName = 'alignedGridsSvc' as const;
 
     private colModel: ColumnModel;
     private colResize?: ColumnResizeService;

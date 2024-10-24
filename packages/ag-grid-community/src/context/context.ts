@@ -265,7 +265,7 @@ export interface CoreBeanCollection {
     contextMenuSvc?: IContextMenuService;
     editSvc?: EditService;
     rowEditSvc?: RowEditService;
-    alignedGridsService?: AlignedGridsService;
+    alignedGridsSvc?: AlignedGridsService;
     paginationAutoPageSizeService?: PaginationAutoPageSizeService;
     paginationService?: PaginationService;
     pageBoundsService: PageBoundsService;
@@ -338,7 +338,7 @@ export type BeanName =
     | 'agComponentUtils'
     | 'aggColumnNameService'
     | 'aggregationStage'
-    | 'alignedGridsService'
+    | 'alignedGridsSvc'
     | 'animationFrameSvc'
     | 'apiFunctionService'
     | 'ariaAnnounce'

@@ -43,7 +43,7 @@ const orderedCoreBeans: BeanName[] = [
     'rowRenderer',
     'expressionSvc',
     'colFactory',
-    'alignedGridsService',
+    'alignedGridsSvc',
     'navigation',
     'valueCache',
     'valueSvc',
