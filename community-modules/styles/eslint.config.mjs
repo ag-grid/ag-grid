@@ -6,6 +6,9 @@ export default [
         rules: {
             '@typescript-eslint/no-var-requires': 'error',
             '@typescript-eslint/no-unused-vars': 'error',
+
+            // todo: enable this rule
+            'dot-notation': 'off',
         },
     },
 ];

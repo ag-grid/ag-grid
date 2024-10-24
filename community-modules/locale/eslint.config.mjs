@@ -22,6 +22,9 @@ export default [
             '@typescript-eslint/no-non-null-asserted-optional-chain': 'error',
             '@typescript-eslint/no-unnecessary-type-constraint': 'error',
             '@typescript-eslint/no-this-alias': 'error',
+
+            // todo: enable this rule
+            'dot-notation': 'off',
         },
     },
 ];

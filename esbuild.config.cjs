@@ -31,12 +31,25 @@ const postBuildMinificationPlugin = {
                     sourcemap: true,
                 });
 
+                const mangled = await esbuild.transform(contents, {
+                    sourcemap: true,
+                    // ends in a single underscore i.e property_
+                    mangleProps: /[^_]_$/,
+                });
+
                 if (signal.aborted) return;
                 const { name, ext } = path.parse(outputFile);
                 const minifiedFile = path.resolve(path.dirname(outputFile), `${name}.min${ext}`);
                 await Promise.all([
                     fs.writeFile(minifiedFile, minified.code, { signal }),
                     fs.writeFile(`${minifiedFile}.map`, minified.map, { signal }),
+                ]);
+
+                if (signal.aborted) return;
+                const mangledFile = path.resolve(path.dirname(outputFile), `${name}.man${ext}`);
+                await Promise.all([
+                    fs.writeFile(mangledFile, mangled.code, { signal }),
+                    fs.writeFile(`${mangledFile}.map`, mangled.map, { signal }),
                 ]);
             } catch (e) {
                 if (e.name !== 'AbortError') throw e;

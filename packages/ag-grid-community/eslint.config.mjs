@@ -31,6 +31,50 @@ export default [
             '@typescript-eslint/no-this-alias': 'off',
             '@typescript-eslint/no-for-in-array': 'error',
             'no-restricted-syntax': ['error', 'ForInStatement'],
+
+            '@typescript-eslint/naming-convention': [
+                'error',
+                {
+                    selector: 'classMethod',
+                    modifiers: ['private'],
+                    format: ['camelCase'],
+                    trailingUnderscore: 'require',
+                },
+                {
+                    selector: 'classMethod',
+                    modifiers: ['protected'],
+                    format: ['camelCase'],
+                    trailingUnderscore: 'forbid',
+                },
+                {
+                    selector: 'classMethod',
+                    modifiers: ['public'],
+                    format: ['camelCase'],
+                    trailingUnderscore: 'forbid',
+                },
+                {
+                    selector: 'classProperty',
+                    modifiers: ['private'],
+                    format: ['camelCase'],
+                    trailingUnderscore: 'require',
+                },
+                {
+                    selector: 'classProperty',
+                    modifiers: ['protected'],
+                    format: ['camelCase'],
+                    trailingUnderscore: 'forbid',
+                },
+                {
+                    selector: 'classProperty',
+                    modifiers: ['public'],
+                    format: ['camelCase'],
+                    trailingUnderscore: 'forbid',
+                },
+            ],
+
+            // todo: enable this rule
+            'dot-notation': 'off',
+            '@typescript-eslint/method-signature-style': 'off',
         },
     },
     {

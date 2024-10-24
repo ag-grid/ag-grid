@@ -2,15 +2,15 @@
   "name": "ag-grid-community",
   "version": "32.2.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
-  "main": "./dist/package/main.cjs.js",
+  "main": "./dist/package/main.cjs.man.js",
   "types": "./dist/types/src/main.d.ts",
-  "module": "./dist/package/main.esm.mjs",
+  "module": "./dist/package/main.esm.man.mjs",
   "exports": {
     ".": {
-      "import": "./dist/package/main.esm.mjs",
-      "require": "./dist/package/main.cjs.js",
+      "import": "./dist/package/main.esm.man.mjs",
+      "require": "./dist/package/main.cjs.man.js",
       "types": "./dist/types/src/main.d.ts",
-      "default": "./dist/package/main.cjs.js"
+      "default": "./dist/package/main.cjs.man.js"
     },
     "./styles/ag-grid-no-native-widgets.css": "./styles/ag-grid-no-native-widgets.css",
     "./styles/ag-grid-no-native-widgets.min.css": "./styles/ag-grid-no-native-widgets.min.css",

@@ -31,6 +31,10 @@ export default [
             '@typescript-eslint/no-this-alias': 'off',
             '@typescript-eslint/no-for-in-array': 'error',
             'no-restricted-syntax': ['error', 'ForInStatement'],
+
+            // todo: enable this rule
+            'dot-notation': 'off',
+            '@typescript-eslint/method-signature-style': 'off',
         },
     },
     {
