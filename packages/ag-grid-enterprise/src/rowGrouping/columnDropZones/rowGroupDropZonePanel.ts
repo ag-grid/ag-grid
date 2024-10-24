@@ -1,11 +1,27 @@
-import type { AgColumn, DragAndDropIcon, DraggingEvent } from 'ag-grid-community';
+import type { AgColumn, BeanCollection, DragAndDropIcon, DraggingEvent, IColsService } from 'ag-grid-community';
 import { _createIconNoSpan } from 'ag-grid-community';
 
 import { BaseDropZonePanel } from './baseDropZonePanel';
 
 export class RowGroupDropZonePanel extends BaseDropZonePanel {
+    private rowGroupColsService?: IColsService;
+
     constructor(horizontal: boolean) {
         super(horizontal, 'rowGroup');
+    }
+
+    public override wireBeans(beans: BeanCollection): void {
+        super.wireBeans(beans);
+        this.rowGroupColsService = beans.rowGroupColsService;
+    }
+
+    protected override minimumAllowedNewInsertIndex(): number {
+        const numberOfLockedCols = this.gos.get('groupLockGroupColumns');
+        const numberOfGroupCols = this.rowGroupColsService?.columns.length ?? 0;
+        if (numberOfLockedCols === -1) {
+            return numberOfGroupCols;
+        }
+        return Math.min(numberOfLockedCols, numberOfGroupCols);
     }
 
     public postConstruct(): void {
