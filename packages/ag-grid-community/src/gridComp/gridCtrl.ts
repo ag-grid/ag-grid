@@ -75,7 +75,7 @@ export class GridCtrl extends BeanStub {
     public getOptionalSelectors(): OptionalGridComponents {
         const beans = this.beans;
         return {
-            paginationSelector: beans.paginationService?.getPaginationSelector(),
+            paginationSelector: beans.pagination?.getPaginationSelector(),
             gridHeaderDropZonesSelector: beans.registry.getSelector('AG-GRID-HEADER-DROP-ZONES'),
             sideBarSelector: beans.sideBarService?.getSideBarSelector(),
             statusBarSelector: beans.registry?.getSelector('AG-STATUS-BAR'),

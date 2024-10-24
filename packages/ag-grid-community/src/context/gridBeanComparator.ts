@@ -37,7 +37,7 @@ const orderedCoreBeans: BeanName[] = [
     'colModel',
     'headerNavigation',
     'pageBoundsService',
-    'paginationService',
+    'pagination',
     'pageBoundsListener',
     'stickyRowService',
     'rowRenderer',

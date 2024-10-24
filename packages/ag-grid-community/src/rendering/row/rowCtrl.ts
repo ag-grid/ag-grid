@@ -147,7 +147,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         super();
         this.beans = beans;
         this.gos = beans.gos;
-        this.paginationPage = beans.paginationService?.getCurrentPage() ?? 0;
+        this.paginationPage = beans.pagination?.getCurrentPage() ?? 0;
         this.suppressRowTransform = this.gos.get('suppressRowTransform');
 
         this.instanceId = (rowNode.id + '-' + instanceIdSequence++) as RowCtrlInstanceId;
@@ -1506,7 +1506,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private onPaginationChanged(): void {
-        const currentPage = this.beans.paginationService?.getCurrentPage() ?? 0;
+        const currentPage = this.beans.pagination?.getCurrentPage() ?? 0;
         // it is possible this row is in the new page, but the page number has changed, which means
         // it needs to reposition itself relative to the new page
         if (this.paginationPage !== currentPage) {

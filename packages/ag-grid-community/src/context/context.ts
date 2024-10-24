@@ -267,7 +267,7 @@ export interface CoreBeanCollection {
     rowEditSvc?: RowEditService;
     alignedGridsSvc?: AlignedGridsService;
     paginationAutoPageSizeSvc?: PaginationAutoPageSizeService;
-    paginationService?: PaginationService;
+    pagination?: PaginationService;
     pageBoundsService: PageBoundsService;
     apiFunctionService: ApiFunctionService;
     detailGridApiService?: IDetailGridApiService;
@@ -438,7 +438,7 @@ export type BeanName =
     | 'navigation'
     | 'overlays'
     | 'paginationAutoPageSizeSvc'
-    | 'paginationService'
+    | 'pagination'
     | 'pinnedRowModel'
     | 'pinnedCols'
     | 'pivotColDefService'

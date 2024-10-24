@@ -10,7 +10,7 @@ import type { PageBoundsService } from './pageBoundsService';
 import { PaginationSelector } from './paginationComp';
 
 export class PaginationService extends BeanStub implements NamedBean {
-    beanName = 'paginationService' as const;
+    beanName = 'pagination' as const;
 
     private rowModel: IRowModel;
     private pageBoundsService: PageBoundsService;

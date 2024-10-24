@@ -49,7 +49,7 @@ export interface ScrollPartner {
 export class GridBodyScrollFeature extends BeanStub {
     private ctrlsSvc: CtrlsService;
     private animationFrameSvc?: AnimationFrameService;
-    private paginationService?: PaginationService;
+    private pagination?: PaginationService;
     private pageBoundsService: PageBoundsService;
     private rowModel: IRowModel;
     private heightScaler: RowContainerHeightService;
@@ -60,7 +60,7 @@ export class GridBodyScrollFeature extends BeanStub {
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsSvc = beans.ctrlsSvc;
         this.animationFrameSvc = beans.animationFrameSvc;
-        this.paginationService = beans.paginationService;
+        this.pagination = beans.pagination;
         this.pageBoundsService = beans.pageBoundsService;
         this.rowModel = beans.rowModel;
         this.heightScaler = beans.rowContainerHeight;
@@ -517,7 +517,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
         this.beans.frameworkOverrides.wrapIncoming(() => {
             if (!paginationPanelEnabled) {
-                this.paginationService?.goToPageWithIndex(index);
+                this.pagination?.goToPageWithIndex(index);
             }
 
             const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();

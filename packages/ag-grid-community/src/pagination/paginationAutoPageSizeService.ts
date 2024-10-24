@@ -11,11 +11,11 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
     beanName = 'paginationAutoPageSizeSvc' as const;
 
     private ctrlsSvc: CtrlsService;
-    private paginationService: PaginationService;
+    private pagination: PaginationService;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsSvc = beans.ctrlsSvc;
-        this.paginationService = beans.paginationService!;
+        this.pagination = beans.pagination!;
     }
 
     private centerRowsCtrl: RowContainerCtrl;
@@ -45,7 +45,7 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
 
     private onPaginationAutoSizeChanged(): void {
         if (this.notActive()) {
-            this.paginationService.unsetAutoCalculatedPageSize();
+            this.pagination.unsetAutoCalculatedPageSize();
         } else {
             this.checkPageSize();
         }
@@ -62,7 +62,7 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
             const update = () => {
                 const rowHeight = Math.max(_getRowHeightAsNumber(this.gos), 1); // prevent divide by zero error if row height is 0
                 const newPageSize = Math.floor(bodyHeight / rowHeight);
-                this.paginationService.setPageSize(newPageSize, 'autoCalculated');
+                this.pagination.setPageSize(newPageSize, 'autoCalculated');
             };
 
             if (!this.isBodyRendered) {

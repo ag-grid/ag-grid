@@ -53,7 +53,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     beanName = 'rowRenderer' as const;
 
     private animationFrameSvc?: AnimationFrameService;
-    private paginationService?: PaginationService;
+    private pagination?: PaginationService;
     private pageBoundsService: PageBoundsService;
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
@@ -67,7 +67,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.animationFrameSvc = beans.animationFrameSvc;
-        this.paginationService = beans.paginationService;
+        this.pagination = beans.pagination;
         this.pageBoundsService = beans.pageBoundsService;
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
@@ -1402,7 +1402,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (!this.rowModel.isRowPresent(rowNode)) {
             return false;
         }
-        return this.paginationService ? this.paginationService.isRowPresent(rowNode) : true;
+        return this.pagination ? this.pagination.isRowPresent(rowNode) : true;
     }
 
     private createRowCon(rowNode: RowNode, animate: boolean, afterScroll: boolean): RowCtrl {

@@ -25,7 +25,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     private rowModel: IRowModel;
     private rowRenderer: RowRenderer;
     private pinnedRowModel?: PinnedRowModel;
-    private paginationService?: PaginationService;
+    private pagination?: PaginationService;
     private pageBoundsService: PageBoundsService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -33,7 +33,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         this.rowModel = beans.rowModel;
         this.rowRenderer = beans.rowRenderer;
         this.pinnedRowModel = beans.pinnedRowModel;
-        this.paginationService = beans.paginationService;
+        this.pagination = beans.pagination;
         this.pageBoundsService = beans.pageBoundsService;
     }
 
@@ -385,7 +385,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
 
             // If we are tabbing and there is a paging panel present, tabbing should go
             // to the paging panel instead of loading the next page.
-            if (!rowBelow.rowPinned && !(this.paginationService?.isRowInPage(rowBelow) ?? true)) {
+            if (!rowBelow.rowPinned && !(this.pagination?.isRowInPage(rowBelow) ?? true)) {
                 return null;
             }
 
@@ -417,7 +417,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
 
             // If we are tabbing and there is a paging panel present, tabbing should go
             // to the paging panel instead of loading the next page.
-            if (!rowAbove.rowPinned && !(this.paginationService?.isRowInPage(rowAbove) ?? true)) {
+            if (!rowAbove.rowPinned && !(this.pagination?.isRowInPage(rowAbove) ?? true)) {
                 return null;
             }
 

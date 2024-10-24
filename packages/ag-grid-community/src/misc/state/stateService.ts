@@ -56,7 +56,7 @@ export class StateService extends BeanStub implements NamedBean {
     private focusSvc: FocusService;
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
-    private paginationService?: PaginationService;
+    private pagination?: PaginationService;
     private selectionSvc?: ISelectionService;
     private expansionService?: IExpansionService;
     private colAnimation?: ColumnAnimationService;
@@ -74,7 +74,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.focusSvc = beans.focusSvc;
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
-        this.paginationService = beans.paginationService;
+        this.pagination = beans.pagination;
         this.selectionSvc = beans.selectionSvc;
         this.expansionService = beans.expansionService;
         this.colAnimation = beans.colAnimation;
@@ -703,11 +703,11 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getPaginationState(): PaginationState | undefined {
-        if (!this.paginationService) {
+        if (!this.pagination) {
             return undefined;
         }
-        const page = this.paginationService.getCurrentPage();
-        const pageSize = !this.gos.get('paginationAutoPageSize') ? this.paginationService.getPageSize() : undefined;
+        const page = this.pagination.getCurrentPage();
+        const pageSize = !this.gos.get('paginationAutoPageSize') ? this.pagination.getPageSize() : undefined;
 
         if (!page && !pageSize) {
             return;
@@ -716,15 +716,15 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setPaginationState(paginationState: PaginationState): void {
-        if (!this.paginationService) {
+        if (!this.pagination) {
             return;
         }
         if (paginationState.pageSize && !this.gos.get('paginationAutoPageSize')) {
-            this.paginationService.setPageSize(paginationState.pageSize, 'initialState');
+            this.pagination.setPageSize(paginationState.pageSize, 'initialState');
         }
 
         if (typeof paginationState.page === 'number') {
-            this.paginationService.setPage(paginationState.page);
+            this.pagination.setPage(paginationState.page);
         }
     }
 

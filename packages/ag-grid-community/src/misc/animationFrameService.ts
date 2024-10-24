@@ -34,11 +34,11 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     beanName = 'animationFrameSvc' as const;
 
     private ctrlsSvc: CtrlsService;
-    private paginationService?: PaginationService;
+    private pagination?: PaginationService;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsSvc = beans.ctrlsSvc;
-        this.paginationService = beans.paginationService;
+        this.pagination = beans.pagination;
     }
 
     // p1 and p2 are create tasks are to do with row and cell creation.
@@ -68,7 +68,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
         this.scrollGoingDown = scrollTop >= this.lastScrollTop;
 
         if (isPaginationActive && scrollTop === 0) {
-            const currentPage = this.paginationService?.getCurrentPage() ?? 0;
+            const currentPage = this.pagination?.getCurrentPage() ?? 0;
             if (currentPage !== this.lastPage) {
                 this.lastPage = currentPage;
                 this.scrollGoingDown = true;

@@ -19,13 +19,13 @@ import type { PaginationService } from './paginationService';
 
 export class PaginationComp extends TabGuardComp implements FocusableContainer {
     private rowModel: IRowModel;
-    private paginationService: PaginationService;
+    private pagination: PaginationService;
     private focusSvc: FocusService;
     private ariaAnnounce: AriaAnnouncementService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
-        this.paginationService = beans.paginationService!;
+        this.pagination = beans.pagination!;
         this.focusSvc = beans.focusSvc;
         this.ariaAnnounce = beans.ariaAnnounce;
     }
@@ -147,7 +147,7 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
 
     private onBtFirst() {
         if (!this.previousAndFirstButtonsDisabled) {
-            this.paginationService.goToFirstPage();
+            this.pagination.goToFirstPage();
         }
     }
 
@@ -200,26 +200,26 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
 
     private onBtNext() {
         if (!this.nextButtonDisabled) {
-            this.paginationService.goToNextPage();
+            this.pagination.goToNextPage();
         }
     }
 
     private onBtPrevious() {
         if (!this.previousAndFirstButtonsDisabled) {
-            this.paginationService.goToPreviousPage();
+            this.pagination.goToPreviousPage();
         }
     }
 
     private onBtLast() {
         if (!this.lastButtonDisabled) {
-            this.paginationService.goToLastPage();
+            this.pagination.goToLastPage();
         }
     }
 
     private enableOrDisableButtons() {
-        const currentPage = this.paginationService.getCurrentPage();
+        const currentPage = this.pagination.getCurrentPage();
         const maxRowFound = this.rowModel.isLastRowIndexKnown();
-        const totalPages = this.paginationService.getTotalPages();
+        const totalPages = this.pagination.getTotalPages();
 
         this.previousAndFirstButtonsDisabled = currentPage === 0;
         this.toggleButtonDisabled(this.btFirst, this.previousAndFirstButtonsDisabled);
@@ -242,14 +242,14 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
 
     private isZeroPagesToDisplay() {
         const maxRowFound = this.rowModel.isLastRowIndexKnown();
-        const totalPages = this.paginationService.getTotalPages();
+        const totalPages = this.pagination.getTotalPages();
         return maxRowFound && totalPages === 0;
     }
 
     private updateLabels(): void {
         const lastPageFound = this.rowModel.isLastRowIndexKnown();
-        const totalPages = this.paginationService.getTotalPages();
-        const masterRowCount = this.paginationService.getMasterRowCount();
+        const totalPages = this.pagination.getTotalPages();
+        const masterRowCount = this.pagination.getMasterRowCount();
         const rowCount = lastPageFound ? masterRowCount : null;
 
         // When `pivotMode=true` and no grouping or value columns exist, a single 'hidden' group row (root node) is in
@@ -266,8 +266,8 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
             }
         }
 
-        const currentPage = this.paginationService.getCurrentPage();
-        const pageSize = this.paginationService.getPageSize();
+        const currentPage = this.pagination.getCurrentPage();
+        const pageSize = this.pagination.getPageSize();
 
         let startRow: any;
         let endRow: any;
