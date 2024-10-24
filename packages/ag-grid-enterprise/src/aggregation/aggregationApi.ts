@@ -1,14 +1,14 @@
 import type { BeanCollection, ColDef, ColGroupDef, Column, IAggFunc } from 'ag-grid-community';
 
 export function addAggFuncs(beans: BeanCollection, aggFuncs: { [key: string]: IAggFunc }): void {
-    if (beans.aggFuncService) {
-        beans.aggFuncService.addAggFuncs(aggFuncs);
+    if (beans.aggFuncSvc) {
+        beans.aggFuncSvc.addAggFuncs(aggFuncs);
     }
 }
 
 export function clearAggFuncs(beans: BeanCollection): void {
-    if (beans.aggFuncService) {
-        beans.aggFuncService.clear();
+    if (beans.aggFuncSvc) {
+        beans.aggFuncSvc.clear();
     }
 }
 

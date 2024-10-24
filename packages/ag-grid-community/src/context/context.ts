@@ -275,7 +275,7 @@ export interface CoreBeanCollection {
     expansionSvc?: IExpansionService;
     sideBar?: ISideBarService;
     ssrmTransactionManager?: IServerSideTransactionManager;
-    aggFuncService?: IAggFuncService;
+    aggFuncSvc?: IAggFuncService;
     advancedFilterService: IAdvancedFilterService;
     filterStage?: IRowNodeStage;
     sortStage?: IRowNodeStage;
@@ -334,7 +334,7 @@ export type BeanName =
     | 'advancedFilterExpressionService'
     | 'advancedFilterService'
     | 'advancedSettingsMenuFactory'
-    | 'aggFuncService'
+    | 'aggFuncSvc'
     | 'agComponentUtils'
     | 'aggColumnNameService'
     | 'aggregationStage'

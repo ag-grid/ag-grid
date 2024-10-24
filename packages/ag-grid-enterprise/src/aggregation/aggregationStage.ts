@@ -44,13 +44,13 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
 
     private colModel: ColumnModel;
     private valueSvc: ValueService;
-    private aggFuncService: AggFuncService;
+    private aggFuncSvc: AggFuncService;
     private funcColsSvc: FuncColsService;
     private pivotResultCols?: IPivotResultColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
-        this.aggFuncService = beans.aggFuncService as AggFuncService;
+        this.aggFuncSvc = beans.aggFuncSvc as AggFuncService;
         this.funcColsSvc = beans.funcColsSvc;
         this.pivotResultCols = beans.pivotResultCols;
         this.valueSvc = beans.valueSvc;
@@ -297,7 +297,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         pivotResultColumn?: AgColumn
     ): any {
         const aggFunc =
-            typeof aggFuncOrString === 'string' ? this.aggFuncService.getAggFunc(aggFuncOrString) : aggFuncOrString;
+            typeof aggFuncOrString === 'string' ? this.aggFuncSvc.getAggFunc(aggFuncOrString) : aggFuncOrString;
 
         if (typeof aggFunc !== 'function') {
             _error(109, { aggFuncOrString });

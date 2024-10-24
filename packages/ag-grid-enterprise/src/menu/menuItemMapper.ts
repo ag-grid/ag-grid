@@ -30,7 +30,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private colAutosize?: ColumnAutosizeService;
     private expansionSvc?: IExpansionService;
     private clipboardSvc?: IClipboardService;
-    private aggFuncService?: IAggFuncService;
+    private aggFuncSvc?: IAggFuncService;
     private columnChooserFactory?: ColumnChooserFactory;
 
     public wireBeans(beans: BeanCollection) {
@@ -42,7 +42,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         this.colAutosize = beans.colAutosize;
         this.expansionSvc = beans.expansionSvc;
         this.clipboardSvc = beans.clipboardSvc;
-        this.aggFuncService = beans.aggFuncService;
+        this.aggFuncSvc = beans.aggFuncSvc;
         this.columnChooserFactory = beans.columnChooserFactory as ColumnChooserFactory;
     }
 
@@ -139,7 +139,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return {
                         name: localeTextFunc('valueAggregation', 'Value Aggregation'),
                         icon: _createIconNoSpan('menuValue', this.gos, null),
-                        subMenu: this.createAggregationSubMenu(column!, this.aggFuncService!),
+                        subMenu: this.createAggregationSubMenu(column!, this.aggFuncSvc!),
                         disabled: this.gos.get('functionsReadOnly'),
                     };
                 } else {
@@ -379,7 +379,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         }
     }
 
-    private createAggregationSubMenu(column: AgColumn, aggFuncService: IAggFuncService): MenuItemDef[] {
+    private createAggregationSubMenu(column: AgColumn, aggFuncSvc: IAggFuncService): MenuItemDef[] {
         const localeTextFunc = this.getLocaleTextFunc();
 
         let columnToUse: AgColumn | undefined;
@@ -393,7 +393,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         const result: MenuItemDef[] = [];
         if (columnToUse) {
             const columnIsAlreadyAggValue = columnToUse.isValueActive();
-            const funcNames = aggFuncService.getFuncNames(columnToUse);
+            const funcNames = aggFuncSvc.getFuncNames(columnToUse);
 
             result.push({
                 name: localeTextFunc('noAggregation', 'None'),
@@ -406,7 +406,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
 
             funcNames.forEach((funcName) => {
                 result.push({
-                    name: localeTextFunc(funcName, aggFuncService.getDefaultFuncLabel(funcName)),
+                    name: localeTextFunc(funcName, aggFuncSvc.getDefaultFuncLabel(funcName)),
                     action: () => {
                         this.funcColsSvc.setColumnAggFunc(columnToUse, funcName, 'contextMenu');
                         this.funcColsSvc.addValueColumns([columnToUse!], 'contextMenu');

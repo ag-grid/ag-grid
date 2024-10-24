@@ -16,12 +16,12 @@ import type { ColumnModelItem } from './columnModelItem';
 export class ModelItemUtils extends BeanStub implements NamedBean {
     beanName = 'modelItemUtils' as const;
 
-    private aggFuncService?: IAggFuncService;
+    private aggFuncSvc?: IAggFuncService;
     private colModel: ColumnModel;
     private colState: ColumnStateService;
 
     public wireBeans(beans: BeanCollection) {
-        this.aggFuncService = beans.aggFuncService;
+        this.aggFuncSvc = beans.aggFuncSvc;
         this.colModel = beans.colModel;
         this.colState = beans.colState;
     }
@@ -99,9 +99,7 @@ export class ModelItemUtils extends BeanStub implements NamedBean {
 
             if (col.isAllowValue()) {
                 const aggFunc =
-                    typeof col.getAggFunc() === 'string'
-                        ? col.getAggFunc()
-                        : this.aggFuncService?.getDefaultAggFunc(col);
+                    typeof col.getAggFunc() === 'string' ? col.getAggFunc() : this.aggFuncSvc?.getDefaultAggFunc(col);
                 colStateItems.push({
                     colId: col.getId(),
                     aggFunc: aggFunc,

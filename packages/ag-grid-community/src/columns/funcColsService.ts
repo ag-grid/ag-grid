@@ -18,12 +18,12 @@ export class FuncColsService extends BeanStub implements NamedBean {
     beanName = 'funcColsSvc' as const;
 
     private colModel: ColumnModel;
-    private aggFuncService?: IAggFuncService;
+    private aggFuncSvc?: IAggFuncService;
     private visibleCols: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
-        this.aggFuncService = beans.aggFuncService;
+        this.aggFuncSvc = beans.aggFuncSvc;
         this.visibleCols = beans.visibleCols;
     }
 
@@ -192,8 +192,8 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
         column.setValueActive(active, source);
 
-        if (active && !column.getAggFunc() && this.aggFuncService) {
-            const initialAggFunc = this.aggFuncService.getDefaultAggFunc(column);
+        if (active && !column.getAggFunc() && this.aggFuncSvc) {
+            const initialAggFunc = this.aggFuncSvc.getDefaultAggFunc(column);
             column.setAggFunc(initialAggFunc);
         }
     }

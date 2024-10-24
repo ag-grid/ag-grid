@@ -25,7 +25,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     private colModel: ColumnModel;
     private colNames: ColumnNameService;
     private funcColsSvc: FuncColsService;
-    private aggFuncService?: IAggFuncService;
+    private aggFuncSvc?: IAggFuncService;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
@@ -34,7 +34,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         this.colModel = beans.colModel;
         this.colNames = beans.colNames;
         this.funcColsSvc = beans.funcColsSvc;
-        this.aggFuncService = beans.aggFuncService;
+        this.aggFuncSvc = beans.aggFuncSvc;
     }
 
     private readonly eSortIndicator: SortIndicatorComp = RefPlaceholder;
@@ -238,7 +238,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         this.popupShowing = true;
 
         const virtualList = new VirtualList({ cssIdentifier: 'select-agg-func' });
-        const rows = this.aggFuncService!.getFuncNames(this.column);
+        const rows = this.aggFuncSvc!.getFuncNames(this.column);
         const eGui = this.getGui();
         const virtualListGui = virtualList.getGui();
 
