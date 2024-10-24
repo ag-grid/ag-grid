@@ -211,7 +211,7 @@ export interface CoreBeanCollection {
     dragSvc?: DragService;
     dragAndDrop?: DragAndDropService;
     sortSvc?: SortService;
-    columnFilterService?: ColumnFilterService;
+    colFilter?: ColumnFilterService;
     filterManager?: FilterManager;
     rowContainerHeightService: RowContainerHeightService;
     frameworkOverrides: IFrameworkOverrides;
@@ -368,7 +368,7 @@ export type BeanName =
     | 'columnDefFactory'
     | 'columnEditorFactory'
     | 'columnFactory'
-    | 'columnFilterService'
+    | 'colFilter'
     | 'colFlex'
     | 'columnGroupService'
     | 'colHover'

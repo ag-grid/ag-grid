@@ -75,7 +75,7 @@ function setFilterNumberComparator(a: string, b: string): number {
 }
 
 export class ColumnFilterService extends BeanStub implements NamedBean {
-    beanName: BeanName = 'columnFilterService';
+    beanName: BeanName = 'colFilter';
 
     private valueSvc: ValueService;
     private colModel: ColumnModel;

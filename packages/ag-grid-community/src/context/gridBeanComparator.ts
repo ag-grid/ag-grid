@@ -31,7 +31,7 @@ const orderedCoreBeans: BeanName[] = [
     'visibleCols',
     'popupSvc',
     'selectionService',
-    'columnFilterService',
+    'colFilter',
     'quickFilterService',
     'filterManager',
     'colModel',
