@@ -16,14 +16,14 @@ import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 export class ViewportSizeFeature extends BeanStub {
     private ctrlsService: CtrlsService;
     private pinnedColumnService?: PinnedColumnService;
-    private columnFlexService?: ColumnFlexService;
+    private columnFlex?: ColumnFlexService;
     private scrollVisibleService: ScrollVisibleService;
     private columnViewport: ColumnViewportService;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
         this.pinnedColumnService = beans.pinnedColumnService;
-        this.columnFlexService = beans.columnFlexService;
+        this.columnFlex = beans.columnFlex;
         this.scrollVisibleService = beans.scrollVisibleService;
         this.columnViewport = beans.columnViewport;
     }
@@ -86,7 +86,7 @@ export class ViewportSizeFeature extends BeanStub {
 
             if (newWidth !== this.centerWidth) {
                 this.centerWidth = newWidth;
-                this.columnFlexService?.refreshFlexedColumns({
+                this.columnFlex?.refreshFlexedColumns({
                     viewportWidth: this.centerWidth,
                     updateBodyWidths: true,
                     fireResizedEvent: true,

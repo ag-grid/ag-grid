@@ -19,7 +19,7 @@ type FlexItem = {
 };
 
 export class ColumnFlexService extends BeanStub implements NamedBean {
-    beanName = 'columnFlexService' as const;
+    beanName = 'columnFlex' as const;
 
     private visibleCols: VisibleColsService;
 

@@ -28,13 +28,13 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
     private columnModel: ColumnModel;
     private columnViewport: ColumnViewportService;
     private visibleCols: VisibleColsService;
-    private columnFlexService?: ColumnFlexService;
+    private columnFlex?: ColumnFlexService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.columnViewport = beans.columnViewport;
         this.visibleCols = beans.visibleCols;
-        this.columnFlexService = beans.columnFlexService;
+        this.columnFlex = beans.columnFlex;
     }
 
     public setColumnWidths(
@@ -222,7 +222,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
 
         if (atLeastOneColChanged) {
             flexedCols =
-                this.columnFlexService?.refreshFlexedColumns({
+                this.columnFlex?.refreshFlexedColumns({
                     skipSetLeft: true,
                 }) ?? [];
             this.visibleCols.setLeftValues(source);
