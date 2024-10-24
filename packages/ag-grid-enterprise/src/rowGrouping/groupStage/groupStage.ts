@@ -4,8 +4,8 @@ import type {
     ChangedPath,
     ClientSideRowModelStage,
     ColumnModel,
-    FuncColsService,
     GridOptions,
+    IColsService,
     IRowNodeStage,
     ISelectionService,
     IShowRowGroupColsService,
@@ -70,14 +70,14 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     public step: ClientSideRowModelStage = 'group';
 
     private columnModel: ColumnModel;
-    private funcColsService: FuncColsService;
+    private rowGroupColsService?: IColsService;
     private valueService: ValueService;
     private selectionService?: ISelectionService;
     private showRowGroupColsService: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
-        this.funcColsService = beans.funcColsService;
+        this.rowGroupColsService = beans.rowGroupColsService;
         this.valueService = beans.valueService;
         this.selectionService = beans.selectionService;
         this.showRowGroupColsService = beans.showRowGroupColsService!;
@@ -141,7 +141,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
         const { rowNode, changedPath, rowNodeTransactions, rowNodesOrderChanged } = params;
 
-        const groupedCols = this.funcColsService.rowGroupCols;
+        const groupedCols = this.rowGroupColsService?.columns;
 
         const details: GroupingDetails = {
             expandByDefault: this.gos.get('groupDefaultExpanded'),

@@ -31,7 +31,7 @@ iframe {
 
     :global(.icon) {
         --icon-size: #{$spacing-size-6};
-        --color-icon: var(--color-fg-primary);
+        --icon-color: var(--color-fg-primary);
     }
 }
 
@@ -52,7 +52,7 @@ iframe {
     }
 
     svg {
-        --color-icon: var(--color-fg-secondary);
+        --icon-color: var(--color-fg-secondary);
 
         opacity: 0.5;
         transition: opacity $transition-default-timing;
