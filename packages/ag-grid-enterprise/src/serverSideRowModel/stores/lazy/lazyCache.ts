@@ -9,7 +9,7 @@ import type {
     RowNodeSorter,
     RowRenderer,
     ServerSideGroupLevelParams,
-    SortController,
+    SortService,
     WithoutGridCommon,
 } from 'ag-grid-community';
 import { BeanStub, _getRowHeightAsNumber, _getRowIdCallback, _warn } from 'ag-grid-community';
@@ -37,7 +37,7 @@ export class LazyCache extends BeanStub {
     private nodeManager: NodeManager;
     private serverSideRowModel: ServerSideRowModel;
     private rowNodeSorter?: RowNodeSorter;
-    private sortController?: SortController;
+    private sortSvc?: SortService;
     private lazyBlockLoadingService: LazyBlockLoadingService;
     private colModel: ColumnModel;
 
@@ -48,7 +48,7 @@ export class LazyCache extends BeanStub {
         this.nodeManager = beans.ssrmNodeManager as NodeManager;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.rowNodeSorter = beans.rowNodeSorter;
-        this.sortController = beans.sortController;
+        this.sortSvc = beans.sortSvc;
         this.lazyBlockLoadingService = beans.lazyBlockLoadingService as LazyBlockLoadingService;
         this.colModel = beans.colModel;
     }
@@ -1043,7 +1043,7 @@ export class LazyCache extends BeanStub {
      * Client side sorting
      */
     public clientSideSortRows() {
-        const sortOptions = this.sortController?.getSortOptions() ?? [];
+        const sortOptions = this.sortSvc?.getSortOptions() ?? [];
         const isAnySort = sortOptions.some((opt) => opt.sort != null);
         if (!isAnySort || !this.rowNodeSorter) {
             return;

@@ -15,7 +15,7 @@ import type { IRowNodeStage, StageExecuteParams } from '../interfaces/iRowNodeSt
 import type { SortOption } from '../interfaces/iSortOption';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { RowNodeSorter, SortedRowNode } from '../sort/rowNodeSorter';
-import type { SortController } from '../sort/sortController';
+import type { SortService } from '../sort/sortService';
 import type { ChangedPath } from '../utils/changedPath';
 import { _exists, _missing } from '../utils/generic';
 
@@ -55,14 +55,14 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
     public refreshProps: Set<keyof GridOptions<any>> = new Set(['postSortRows', 'groupDisplayType', 'accentedSort']);
     public step: ClientSideRowModelStage = 'sort';
 
-    private sortController: SortController;
+    private sortSvc: SortService;
     private colModel: ColumnModel;
     private funcColsService: FuncColsService;
     private rowNodeSorter: RowNodeSorter;
     private groupHideOpenParentsService?: IGroupHideOpenParentsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.sortController = beans.sortController!;
+        this.sortSvc = beans.sortSvc!;
         this.colModel = beans.colModel;
         this.funcColsService = beans.funcColsService;
         this.rowNodeSorter = beans.rowNodeSorter!;
@@ -70,7 +70,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
     }
 
     public execute(params: StageExecuteParams): void {
-        const sortOptions: SortOption[] = this.sortController.getSortOptions();
+        const sortOptions: SortOption[] = this.sortSvc.getSortOptions();
 
         const sortActive = _exists(sortOptions) && sortOptions.length > 0;
         const deltaSort =

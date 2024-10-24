@@ -188,10 +188,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
                 });
             },
             progressSort: (multiSort?: boolean) => {
-                this.beans.sortController?.progressSort(this.column, !!multiSort, 'uiColumnSorted');
+                this.beans.sortSvc?.progressSort(this.column, !!multiSort, 'uiColumnSorted');
             },
             setSort: (sort: SortDirection, multiSort?: boolean) => {
-                this.beans.sortController?.setSortForColumn(this.column, sort, !!multiSort, 'uiColumnSorted');
+                this.beans.sortSvc?.setSortForColumn(this.column, sort, !!multiSort, 'uiColumnSorted');
             },
             eGridHeader: this.getGui(),
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
@@ -234,7 +234,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         if (e.ctrlKey || e.metaKey) {
             this.showMenuOnKeyPress(e, true);
         } else if (this.sortable) {
-            this.beans.sortController?.progressSort(this.column, e.shiftKey, 'uiColumnSorted');
+            this.beans.sortSvc?.progressSort(this.column, e.shiftKey, 'uiColumnSorted');
         }
     }
 
@@ -519,7 +519,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private refreshAriaSort(): void {
         if (this.sortable) {
             const translate = this.getLocaleTextFunc();
-            const sort = this.beans.sortController?.getDisplaySortForColumn(this.column) || null;
+            const sort = this.beans.sortSvc?.getDisplaySortForColumn(this.column) || null;
             this.comp.setAriaSort(_getAriaSortState(sort));
             this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort'));
         } else {

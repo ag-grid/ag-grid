@@ -12,7 +12,7 @@ import type {
     PartialCellRange,
     RowNode,
     RowNodeSorter,
-    SortController,
+    SortService,
     ValueService,
 } from 'ag-grid-community';
 import { BeanStub, _isClientSideRowModel, _isServerSideRowModel, _last, _warn } from 'ag-grid-community';
@@ -45,11 +45,11 @@ export class ChartDatasource extends BeanStub {
     private valueSvc: ValueService;
     private colModel: ColumnModel;
     private rowNodeSorter?: RowNodeSorter;
-    private sortController?: SortController;
+    private sortSvc?: SortService;
     private aggregationStage?: IRowNodeStage & IAggregationStage;
 
     public wireBeans(beans: BeanCollection): void {
-        this.sortController = beans.sortController;
+        this.sortSvc = beans.sortSvc;
         this.gridRowModel = beans.rowModel;
         this.colModel = beans.colModel;
         this.valueSvc = beans.valueSvc;
@@ -408,7 +408,7 @@ export class ChartDatasource extends BeanStub {
     }
 
     private sortRowNodes(rowNodes: RowNode[]): RowNode[] {
-        const sortOptions = this.sortController?.getSortOptions();
+        const sortOptions = this.sortSvc?.getSortOptions();
         if (!sortOptions || sortOptions.length == 0 || !this.rowNodeSorter) {
             return rowNodes;
         }

@@ -9,8 +9,8 @@ import type {
     FuncColsService,
     IAggFuncService,
     PopupService,
-    SortController,
     SortIndicatorComp,
+    SortService,
 } from 'ag-grid-community';
 import { Component, DragSourceType, KeyCode, RefPlaceholder, _loadTemplate } from 'ag-grid-community';
 
@@ -21,7 +21,7 @@ import type { TDropZone } from './baseDropZonePanel';
 
 export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     private popupSvc: PopupService;
-    private sortController?: SortController;
+    private sortSvc?: SortService;
     private colModel: ColumnModel;
     private colNames: ColumnNameService;
     private funcColsService: FuncColsService;
@@ -30,7 +30,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.popupSvc = beans.popupSvc!;
-        this.sortController = beans.sortController;
+        this.sortSvc = beans.sortSvc;
         this.colModel = beans.colModel;
         this.colNames = beans.colNames;
         this.funcColsService = beans.funcColsService;
@@ -57,19 +57,19 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             <span role="option">
                 <span data-ref="eDragHandle" class="ag-drag-handle ag-column-drop-cell-drag-handle" role="presentation"></span>
                 <span data-ref="eText" class="ag-column-drop-cell-text" aria-hidden="true"></span>
-                ${this.sortController ? '<ag-sort-indicator data-ref="eSortIndicator"></ag-sort-indicator>' : ''}
+                ${this.sortSvc ? '<ag-sort-indicator data-ref="eSortIndicator"></ag-sort-indicator>' : ''}
                 <span data-ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
             </span>
         `;
-        if (this.sortController) {
-            this.agComponents = [this.sortController.getSortIndicatorSelector()];
+        if (this.sortSvc) {
+            this.agComponents = [this.sortSvc.getSortIndicatorSelector()];
         }
 
         this.displayName = this.colNames.getDisplayNameForColumn(this.column, 'columnDrop');
 
         super.postConstruct();
 
-        if (this.sortController) {
+        if (this.sortSvc) {
             this.setupSort();
 
             this.addManagedEventListeners({
@@ -178,7 +178,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
             this.eSortIndicator.setupSort(this.column, true);
             const performSort = (event: MouseEvent | KeyboardEvent) => {
                 event.preventDefault();
-                this.sortController!.progressSortFromEvent(this.column, event);
+                this.sortSvc!.progressSortFromEvent(this.column, event);
             };
 
             this.addGuiEventListener('click', performSort);

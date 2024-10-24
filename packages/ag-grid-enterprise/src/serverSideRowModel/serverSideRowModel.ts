@@ -19,8 +19,8 @@ import type {
     RowModelType,
     RowRenderer,
     ServerSideGroupLevelState,
-    SortController,
     SortModelItem,
+    SortService,
     StoreRefreshAfterParams,
 } from 'ag-grid-community';
 import {
@@ -59,7 +59,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     private pivotResultColsService?: IPivotResultColsService;
     private funcColsService: FuncColsService;
     private filterManager?: FilterManager;
-    private sortController?: SortController;
+    private sortSvc?: SortService;
     private rowRenderer: RowRenderer;
     private nodeManager: NodeManager;
     private storeFactory: StoreFactory;
@@ -71,7 +71,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.pivotResultColsService = beans.pivotResultColsService;
         this.funcColsService = beans.funcColsService;
         this.filterManager = beans.filterManager;
-        this.sortController = beans.sortController;
+        this.sortSvc = beans.sortSvc;
         this.rowRenderer = beans.rowRenderer;
         this.nodeManager = beans.ssrmNodeManager as NodeManager;
         this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
@@ -228,7 +228,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             return allColsUnchanged && !missingCols;
         };
 
-        const sortModelDifferent = !_jsonEquals(this.storeParams.sortModel, this.sortController?.getSortModel() ?? []);
+        const sortModelDifferent = !_jsonEquals(this.storeParams.sortModel, this.sortSvc?.getSortModel() ?? []);
         const rowGroupDifferent = !areColsSame({
             oldCols: this.storeParams.rowGroupCols,
             newCols: rowGroupColumnVos,
@@ -389,7 +389,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             filterModel: this.filterManager?.isAdvancedFilterEnabled()
                 ? this.filterManager?.getAdvancedFilterModel()
                 : this.filterManager?.getFilterModel() ?? {},
-            sortModel: this.sortController?.getSortModel() ?? [],
+            sortModel: this.sortSvc?.getSortModel() ?? [],
 
             datasource: this.datasource,
             lastAccessedSequence: { value: 0 },

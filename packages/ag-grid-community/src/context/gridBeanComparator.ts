@@ -56,7 +56,7 @@ const orderedCoreBeans: BeanName[] = [
     'cellNavigation',
     'cellStyles',
     'scrollVisibleService',
-    'sortController',
+    'sortSvc',
     'colHover',
     'colAnimation',
     'autoColService',

@@ -20,7 +20,7 @@ import type { IRowModel } from '../interfaces/iRowModel';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { RowNodeSorter } from '../sort/rowNodeSorter';
-import type { SortController } from '../sort/sortController';
+import type { SortService } from '../sort/sortService';
 import { _last } from '../utils/array';
 import type { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from './interfaces';
 
@@ -36,7 +36,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
     private pinnedRowModel?: PinnedRowModel;
     private selectionService?: ISelectionService;
     private rowNodeSorter?: RowNodeSorter;
-    private sortController?: SortController;
+    private sortSvc?: SortService;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleCols = beans.visibleCols;
@@ -46,7 +46,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         this.pinnedRowModel = beans.pinnedRowModel;
         this.selectionService = beans.selectionService;
         this.rowNodeSorter = beans.rowNodeSorter;
-        this.sortController = beans.sortController;
+        this.sortSvc = beans.sortSvc;
     }
 
     public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T> = {}): string {
@@ -285,10 +285,10 @@ export class GridSerializer extends BeanStub implements NamedBean {
     }
 
     private replicateSortedOrder(rows: RowNode[]) {
-        if (!this.sortController || !this.rowNodeSorter) {
+        if (!this.sortSvc || !this.rowNodeSorter) {
             return;
         }
-        const sortOptions = this.sortController.getSortOptions();
+        const sortOptions = this.sortSvc.getSortOptions();
         const compareNodes = (rowA: RowNode, rowB: RowNode): number => {
             if (rowA.rowIndex != null && rowB.rowIndex != null) {
                 // if the rows have rowIndexes, this is the easiest way to compare,

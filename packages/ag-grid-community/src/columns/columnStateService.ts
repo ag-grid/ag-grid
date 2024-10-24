@@ -10,7 +10,7 @@ import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
 import type { IPivotResultColsService } from '../interfaces/iPivotResultColsService';
 import type { ColumnAnimationService } from '../rendering/columnAnimationService';
-import type { SortController } from '../sort/sortController';
+import type { SortService } from '../sort/sortService';
 import { _areEqual, _removeFromArray } from '../utils/array';
 import { _exists, _missing } from '../utils/generic';
 import { _warn } from '../validation/logging';
@@ -78,7 +78,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
     beanName = 'columnStateService' as const;
 
     private colModel: ColumnModel;
-    private sortController?: SortController;
+    private sortSvc?: SortService;
     private funcColsService: FuncColsService;
     private visibleCols: VisibleColsService;
     private colAnimation?: ColumnAnimationService;
@@ -88,7 +88,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
-        this.sortController = beans.sortController;
+        this.sortSvc = beans.sortSvc;
         this.funcColsService = beans.funcColsService;
         this.visibleCols = beans.visibleCols;
         this.colAnimation = beans.colAnimation;
@@ -697,7 +697,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
                 cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
             const changedColumns = getChangedColumns(sortChangePredicate);
             if (changedColumns.length > 0) {
-                this.sortController?.dispatchSortChangedEvents(source, changedColumns);
+                this.sortSvc?.dispatchSortChangedEvents(source, changedColumns);
             }
 
             // special handling for moved column events

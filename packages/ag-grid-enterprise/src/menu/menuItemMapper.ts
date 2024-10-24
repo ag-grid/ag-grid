@@ -11,7 +11,7 @@ import type {
     IExpansionService,
     MenuItemDef,
     NamedBean,
-    SortController,
+    SortService,
 } from 'ag-grid-community';
 import { BeanStub, _createIconNoSpan, _escapeString, _exists, _getRowNode, _warn } from 'ag-grid-community';
 
@@ -26,7 +26,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private colNames: ColumnNameService;
     private funcColsService: FuncColsService;
     private chartMenuItemMapper: ChartMenuItemMapper;
-    private sortController?: SortController;
+    private sortSvc?: SortService;
     private columnAutosizeService?: ColumnAutosizeService;
     private expansionService?: IExpansionService;
     private clipboardService?: IClipboardService;
@@ -38,7 +38,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         this.colNames = beans.colNames;
         this.funcColsService = beans.funcColsService;
         this.chartMenuItemMapper = beans.chartMenuItemMapper as ChartMenuItemMapper;
-        this.sortController = beans.sortController;
+        this.sortSvc = beans.sortSvc;
         this.columnAutosizeService = beans.columnAutosizeService;
         this.expansionService = beans.expansionService;
         this.clipboardService = beans.clipboardService;
@@ -358,19 +358,19 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 return {
                     name: localeTextFunc('sortAscending', 'Sort Ascending'),
                     icon: _createIconNoSpan('sortAscending', this.gos, null),
-                    action: () => this.sortController?.setSortForColumn(column!, 'asc', false, source),
+                    action: () => this.sortSvc?.setSortForColumn(column!, 'asc', false, source),
                 };
             case 'sortDescending':
                 return {
                     name: localeTextFunc('sortDescending', 'Sort Descending'),
                     icon: _createIconNoSpan('sortDescending', this.gos, null),
-                    action: () => this.sortController?.setSortForColumn(column!, 'desc', false, source),
+                    action: () => this.sortSvc?.setSortForColumn(column!, 'desc', false, source),
                 };
             case 'sortUnSort':
                 return {
                     name: localeTextFunc('sortUnSort', 'Clear Sort'),
                     icon: _createIconNoSpan('sortUnSort', this.gos, null),
-                    action: () => this.sortController?.setSortForColumn(column!, null, false, source),
+                    action: () => this.sortSvc?.setSortForColumn(column!, null, false, source),
                 };
             default: {
                 _warn(176, { key });

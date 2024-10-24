@@ -94,7 +94,7 @@ import type { RowAutoHeightService } from '../rendering/row/rowAutoHeightService
 import type { RowContainerHeightService } from '../rendering/rowContainerHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
 import type { RowNodeSorter } from '../sort/rowNodeSorter';
-import type { SortController } from '../sort/sortController';
+import type { SortService } from '../sort/sortService';
 import type { CellStyleService } from '../styling/cellStyleService';
 import type { RowStyleService } from '../styling/rowStyleService';
 import type { SyncService } from '../syncService';
@@ -210,7 +210,7 @@ export interface CoreBeanCollection {
     animationFrameSvc?: AnimationFrameService;
     dragSvc?: DragService;
     dragAndDrop?: DragAndDropService;
-    sortController?: SortController;
+    sortSvc?: SortService;
     columnFilterService?: ColumnFilterService;
     filterManager?: FilterManager;
     rowContainerHeightService: RowContainerHeightService;
@@ -465,7 +465,7 @@ export type BeanName =
     | 'selectionService'
     | 'showRowGroupColsService'
     | 'sideBarService'
-    | 'sortController'
+    | 'sortSvc'
     | 'sortStage'
     | 'sparklineTooltipSingleton'
     | 'ssrmBlockUtils'

@@ -2,7 +2,7 @@ import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
 import { _ALL_EVENTS } from '../../eventTypes';
 import { _getCallbackForEvent } from '../../gridOptionsUtils';
 import { _ALL_GRID_OPTIONS, _BOOLEAN_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
-import { DEFAULT_SORTING_ORDER } from '../../sort/sortController';
+import { DEFAULT_SORTING_ORDER } from '../../sort/sortService';
 import { _mergeDeep } from '../../utils/object';
 import { toStringWithNullUndefined } from '../logging';
 import type { Deprecations, OptionsValidator, Validations } from '../validationTypes';

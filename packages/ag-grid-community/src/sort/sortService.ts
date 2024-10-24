@@ -15,8 +15,8 @@ import type { Component, ComponentSelector } from '../widgets/component';
 import { SortIndicatorComp, SortIndicatorSelector } from './sortIndicatorComp';
 
 export const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
-export class SortController extends BeanStub implements NamedBean {
-    beanName = 'sortController' as const;
+export class SortService extends BeanStub implements NamedBean {
+    beanName = 'sortSvc' as const;
 
     private colModel: ColumnModel;
     private funcColsService: FuncColsService;
