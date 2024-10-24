@@ -56,4 +56,18 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
     public getShowRowGroupCol(id: string): AgColumn | undefined {
         return this.showRowGroupColsMap[id];
     }
+
+    public getSourceColumnsForGroupColumn(groupCol: AgColumn): AgColumn[] | null {
+        const sourceColumnId = groupCol.getColDef().showRowGroup;
+        if (!sourceColumnId) {
+            return null;
+        }
+
+        if (sourceColumnId === true) {
+            return this.rowGroupColsService?.columns.slice(0) ?? null;
+        }
+
+        const column = this.columnModel.getColDefCol(sourceColumnId);
+        return column ? [column] : null;
+    }
 }

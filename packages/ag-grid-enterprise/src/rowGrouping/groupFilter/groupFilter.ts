@@ -1,14 +1,13 @@
 import type {
     AgColumn,
     BeanCollection,
-    ColumnModel,
     ColumnNameService,
     FilterDestroyedEvent,
     FilterManager,
     IAfterGuiAttachedParams,
-    IColsService,
     IFilterComp,
     IFilterParams,
+    IShowRowGroupColsService,
 } from 'ag-grid-community';
 import {
     AgPromise,
@@ -29,16 +28,14 @@ interface FilterColumnPair {
 
 export type GroupFilterEvent = 'columnRowGroupChanged' | 'selectedColumnChanged';
 export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilterComp {
-    private columnModel: ColumnModel;
     private filterManager?: FilterManager;
     private columnNameService: ColumnNameService;
-    private rowGroupColsService?: IColsService;
+    private showRowGroupColsService?: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.filterManager = beans.filterManager;
         this.columnNameService = beans.columnNameService;
-        this.rowGroupColsService = beans.rowGroupColsService;
-        this.columnModel = beans.columnModel;
+        this.showRowGroupColsService = beans.showRowGroupColsService;
     }
 
     private readonly eGroupField: HTMLElement = RefPlaceholder;
@@ -110,26 +107,12 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
             _warn(237);
             return [];
         }
-        const sourceColumns = this.getSourceColumnsForGroupColumn?.(this.groupColumn);
+        const sourceColumns = this.showRowGroupColsService?.getSourceColumnsForGroupColumn?.(this.groupColumn);
         if (!sourceColumns) {
             _warn(183);
             return [];
         }
         return sourceColumns;
-    }
-
-    public getSourceColumnsForGroupColumn(groupCol: AgColumn): AgColumn[] | null {
-        const sourceColumnId = groupCol.getColDef().showRowGroup;
-        if (!sourceColumnId) {
-            return null;
-        }
-
-        if (sourceColumnId === true) {
-            return this.rowGroupColsService?.columns.slice(0) ?? null;
-        }
-
-        const column = this.columnModel.getColDefCol(sourceColumnId);
-        return column ? [column] : null;
     }
 
     private updateGroupField(): AgColumn[] | null {
