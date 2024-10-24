@@ -232,7 +232,7 @@ export interface CoreBeanCollection {
     colFactory: ColumnFactory;
     pivotResultCols?: IPivotResultColsService;
     autoColSvc?: IAutoColService;
-    selectionColService?: SelectionColService;
+    selectionColSvc?: SelectionColService;
     columnDefFactory?: ColumnDefFactory;
     columnAutosizeService?: ColumnAutosizeService;
     funcColsService: FuncColsService;
@@ -385,7 +385,7 @@ export type BeanName =
     | 'pivotResultCols'
     | 'context'
     | 'contextMenuService'
-    | 'selectionColService'
+    | 'selectionColSvc'
     | 'ctrlsSvc'
     | 'csvCreator'
     | 'dataTypeService'

@@ -84,7 +84,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
     private colAnimation?: ColumnAnimationService;
     private pivotResultCols?: IPivotResultColsService;
     private autoColSvc?: IAutoColService;
-    private selectionColService?: SelectionColService;
+    private selectionColSvc?: SelectionColService;
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
@@ -94,7 +94,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
         this.colAnimation = beans.colAnimation;
         this.pivotResultCols = beans.pivotResultCols;
         this.autoColSvc = beans.autoColSvc;
-        this.selectionColService = beans.selectionColService;
+        this.selectionColSvc = beans.selectionColSvc;
     }
 
     public applyColumnState(params: ApplyColumnStateParams, source: ColumnEventType): boolean {
@@ -223,9 +223,9 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
             // sync selection columns with ColumnState
             syncColStates(
-                (colId: string) => this.selectionColService?.getSelectionCol(colId) ?? null,
+                (colId: string) => this.selectionColSvc?.getSelectionCol(colId) ?? null,
                 selectionColStates,
-                this.selectionColService?.getSelectionCols()?.slice()
+                this.selectionColSvc?.getSelectionCols()?.slice()
             );
 
             this.orderLiveColsLikeState(params);

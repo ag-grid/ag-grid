@@ -21,7 +21,7 @@ import {
 export const CONTROLS_COLUMN_ID_PREFIX = 'ag-Grid-SelectionColumn' as const;
 
 export class SelectionColService extends BeanStub implements NamedBean {
-    beanName = 'selectionColService' as const;
+    beanName = 'selectionColSvc' as const;
 
     private context: Context;
     private columnGroupService?: ColumnGroupService;

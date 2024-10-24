@@ -53,7 +53,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private colViewport: ColumnViewportService;
     private pivotResultCols?: IPivotResultColsService;
     private autoColSvc?: IAutoColService;
-    private selectionColService?: SelectionColService;
+    private selectionColSvc?: SelectionColService;
     private valueCache?: ValueCache;
     private columnDefFactory?: ColumnDefFactory;
     private colState: ColumnStateService;
@@ -70,7 +70,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.colViewport = beans.colViewport;
         this.pivotResultCols = beans.pivotResultCols;
         this.autoColSvc = beans.autoColSvc;
-        this.selectionColService = beans.selectionColService;
+        this.selectionColSvc = beans.selectionColSvc;
         this.valueCache = beans.valueCache;
         this.columnDefFactory = beans.columnDefFactory;
         this.colState = beans.colState;
@@ -203,7 +203,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.autoColSvc?.addAutoCols(cols);
 
         this.createSelectionCols(cols);
-        this.selectionColService?.addSelectionCols(cols);
+        this.selectionColSvc?.addSelectionCols(cols);
 
         const shouldSortNewColDefs = _shouldMaintainColumnOrder(this.gos, this.showingPivotResult);
         if (!newColDefs || shouldSortNewColDefs) {
@@ -288,7 +288,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private createSelectionCols(cols: ColumnCollections): void {
-        this.selectionColService?.createSelectionCols(cols, (updateOrder) => {
+        this.selectionColSvc?.createSelectionCols(cols, (updateOrder) => {
             this.lastOrder = updateOrder(this.lastOrder) ?? null;
             this.lastPivotOrder = updateOrder(this.lastPivotOrder) ?? null;
         });
@@ -486,7 +486,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         return [
             this.colDefCols?.list ?? [],
             this.autoColSvc?.autoCols?.list ?? [],
-            this.selectionColService?.selectionCols?.list ?? [],
+            this.selectionColSvc?.selectionCols?.list ?? [],
             pivotResultColsList ?? [],
         ].flat();
     }
