@@ -242,7 +242,7 @@ export interface CoreBeanCollection {
     globalEventListener: AgGlobalEventListener;
     globalSyncEventListener: AgGlobalEventListener;
     stateSvc?: StateService;
-    overlayService?: OverlayService;
+    overlays?: OverlayService;
     pinnedRowModel?: PinnedRowModel;
     menuService?: MenuService;
     apiEventService?: ApiEventService;
@@ -436,7 +436,7 @@ export type BeanName =
     | 'modelItemUtils'
     | 'mouseEventService'
     | 'navigation'
-    | 'overlayService'
+    | 'overlays'
     | 'paginationAutoPageSizeService'
     | 'paginationService'
     | 'pinnedRowModel'

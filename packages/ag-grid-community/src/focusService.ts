@@ -44,7 +44,7 @@ export class FocusService extends BeanStub implements NamedBean {
     private navigation?: NavigationService;
     private ctrlsSvc: CtrlsService;
     private filterManager?: FilterManager;
-    private overlayService?: OverlayService;
+    private overlays?: OverlayService;
 
     public wireBeans(beans: BeanCollection): void {
         this.eGridDiv = beans.eGridDiv;
@@ -55,7 +55,7 @@ export class FocusService extends BeanStub implements NamedBean {
         this.navigation = beans.navigation;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.filterManager = beans.filterManager;
-        this.overlayService = beans.overlayService;
+        this.overlays = beans.overlays;
     }
 
     private gridCtrl: GridCtrl;
@@ -356,11 +356,11 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public isHeaderFocusSuppressed(): boolean {
-        return this.gos.get('suppressHeaderFocus') || !!this.overlayService?.isExclusive();
+        return this.gos.get('suppressHeaderFocus') || !!this.overlays?.isExclusive();
     }
 
     public isCellFocusSuppressed(): boolean {
-        return this.gos.get('suppressCellFocus') || !!this.overlayService?.isExclusive();
+        return this.gos.get('suppressCellFocus') || !!this.overlays?.isExclusive();
     }
 
     public focusHeaderPosition(params: {
@@ -512,7 +512,7 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public focusFirstHeader(): boolean {
-        if (this.overlayService?.isExclusive() && this.focusOverlay()) {
+        if (this.overlays?.isExclusive() && this.focusOverlay()) {
             return true;
         }
 
@@ -535,7 +535,7 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public focusLastHeader(event?: KeyboardEvent): boolean {
-        if (this.overlayService?.isExclusive() && this.focusOverlay(true)) {
+        if (this.overlays?.isExclusive() && this.focusOverlay(true)) {
             return true;
         }
 
@@ -699,12 +699,12 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public focusOverlay(backwards?: boolean): boolean {
-        const overlayGui = this.overlayService?.isVisible() && this.overlayService.getOverlayWrapper()?.getGui();
+        const overlayGui = this.overlays?.isVisible() && this.overlays.getOverlayWrapper()?.getGui();
         return !!overlayGui && this.focusInto(overlayGui, backwards);
     }
 
     public focusGridView(column?: AgColumn, backwards: boolean = false, canFocusOverlay = true): boolean {
-        if (this.overlayService?.isExclusive()) {
+        if (this.overlays?.isExclusive()) {
             return canFocusOverlay && this.focusOverlay(backwards);
         }
 

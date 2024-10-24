@@ -16,11 +16,11 @@ import type { IOverlayComp } from './overlayComponent';
 import type { OverlayService } from './overlayService';
 
 export class OverlayWrapperComponent extends Component implements LayoutView {
-    private overlayService: OverlayService;
+    private overlays: OverlayService;
     private focusSvc: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.overlayService = beans.overlayService!;
+        this.overlays = beans.overlays!;
         this.focusSvc = beans.focusSvc;
         this.visibleCols = beans.visibleCols;
     }
@@ -77,7 +77,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.createManagedBean(new LayoutFeature(this));
         this.setDisplayed(false, { skipAriaHidden: true });
 
-        this.overlayService.setOverlayWrapperComp(this);
+        this.overlays.setOverlayWrapperComp(this);
         this.addManagedElementListeners(this.getFocusableElement(), { keydown: this.handleKeyDown.bind(this) });
     }
 
@@ -193,7 +193,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     public override destroy(): void {
         this.elToFocusAfter = null;
         this.destroyActiveOverlay();
-        this.overlayService.setOverlayWrapperComp(undefined);
+        this.overlays.setOverlayWrapperComp(undefined);
         super.destroy();
     }
 }

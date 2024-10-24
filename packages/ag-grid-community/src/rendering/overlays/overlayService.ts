@@ -20,7 +20,7 @@ const enum OverlayServiceState {
 }
 
 export class OverlayService extends BeanStub implements NamedBean {
-    beanName = 'overlayService' as const;
+    beanName = 'overlays' as const;
 
     private userCompFactory: UserComponentFactory;
     private rowModel: IRowModel;

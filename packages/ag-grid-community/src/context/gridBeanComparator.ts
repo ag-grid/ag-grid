@@ -72,7 +72,7 @@ const orderedCoreBeans: BeanName[] = [
     'pinnedColumnService',
     'dataTypeSvc',
     'syncSvc',
-    'overlayService',
+    'overlays',
     'stateSvc',
     'expansionService',
     'apiEventService',

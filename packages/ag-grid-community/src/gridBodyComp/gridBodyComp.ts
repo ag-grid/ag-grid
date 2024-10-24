@@ -58,11 +58,11 @@ function getGridBodyTemplate(includeOverlay?: boolean): {
 
 export class GridBodyComp extends Component {
     private rangeSvc?: IRangeService;
-    private overlayService?: OverlayService;
+    private overlays?: OverlayService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rangeSvc = beans.rangeSvc;
-        this.overlayService = beans.overlayService;
+        this.overlays = beans.overlays;
     }
 
     private readonly eBodyViewport: HTMLElement = RefPlaceholder;
@@ -75,7 +75,7 @@ export class GridBodyComp extends Component {
     private ctrl: GridBodyCtrl;
 
     public postConstruct() {
-        const overlaySelector = this.overlayService?.getOverlayWrapperSelector();
+        const overlaySelector = this.overlays?.getOverlayWrapperSelector();
 
         const { paramsMap, template } = getGridBodyTemplate(!!overlaySelector);
 
