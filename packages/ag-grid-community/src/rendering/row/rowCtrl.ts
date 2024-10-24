@@ -1147,11 +1147,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private isFirstRowOnPage(): boolean {
-        return this.rowNode.rowIndex === this.beans.pageBoundsService.getFirstRow();
+        return this.rowNode.rowIndex === this.beans.pageBounds.getFirstRow();
     }
 
     private isLastRowOnPage(): boolean {
-        return this.rowNode.rowIndex === this.beans.pageBoundsService.getLastRow();
+        return this.rowNode.rowIndex === this.beans.pageBounds.getLastRow();
     }
 
     private refreshFirstAndLastRowStyles(): void {
@@ -1534,7 +1534,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return topPx;
         }
 
-        const pixelOffset = this.beans.pageBoundsService.getPixelOffset();
+        const pixelOffset = this.beans.pageBounds.getPixelOffset();
         const multiplier = reverse ? 1 : -1;
 
         return topPx + pixelOffset * multiplier;

@@ -26,11 +26,11 @@ import { RowRangeSelectionContext } from './rowRangeSelectionContext';
 export class SelectionService extends BaseSelectionService implements NamedBean, ISelectionService {
     beanName = 'selectionSvc' as const;
 
-    private pageBoundsService: PageBoundsService;
+    private pageBounds: PageBoundsService;
 
     public override wireBeans(beans: BeanCollection): void {
         super.wireBeans(beans);
-        this.pageBoundsService = beans.pageBoundsService;
+        this.pageBounds = beans.pageBounds;
     }
 
     private selectedNodes: Map<string, RowNode> = new Map();
@@ -599,8 +599,8 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
     }
 
     private forEachNodeOnPage(callback: (rowNode: RowNode) => void) {
-        const firstRow = this.pageBoundsService.getFirstRow();
-        const lastRow = this.pageBoundsService.getLastRow();
+        const firstRow = this.pageBounds.getFirstRow();
+        const lastRow = this.pageBounds.getLastRow();
         for (let i = firstRow; i <= lastRow; i++) {
             const node = this.rowModel.getRow(i);
             if (node) {

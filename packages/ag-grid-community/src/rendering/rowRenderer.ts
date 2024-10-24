@@ -54,7 +54,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     private animationFrameSvc?: AnimationFrameService;
     private pagination?: PaginationService;
-    private pageBoundsService: PageBoundsService;
+    private pageBounds: PageBoundsService;
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private pinnedRowModel?: PinnedRowModel;
@@ -68,7 +68,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.animationFrameSvc = beans.animationFrameSvc;
         this.pagination = beans.pagination;
-        this.pageBoundsService = beans.pageBoundsService;
+        this.pageBounds = beans.pageBounds;
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.pinnedRowModel = beans.pinnedRowModel;
@@ -642,7 +642,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return;
         }
 
-        let containerHeight = this.pageBoundsService.getCurrentPageHeight();
+        let containerHeight = this.pageBounds.getCurrentPageHeight();
         // we need at least 1 pixel for the horizontal scroll to work. so if there are now rows,
         // we still want the scroll to be present, otherwise there would be no way to scroll the header
         // which might be needed us user wants to access columns
@@ -1217,8 +1217,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
             newLast = -1; // setting to -1 means nothing in range
         } else if (this.printLayout) {
             this.environment.refreshRowHeightVariable();
-            newFirst = this.pageBoundsService.getFirstRow();
-            newLast = this.pageBoundsService.getLastRow();
+            newFirst = this.pageBounds.getFirstRow();
+            newLast = this.pageBounds.getLastRow();
         } else {
             const bufferPixels = this.getRowBufferInPixels();
             const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
@@ -1228,8 +1228,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
             let firstPixel: number;
             let lastPixel: number;
             do {
-                const paginationOffset = this.pageBoundsService.getPixelOffset();
-                const { pageFirstPixel, pageLastPixel } = this.pageBoundsService.getCurrentPagePixelRange();
+                const paginationOffset = this.pageBounds.getPixelOffset();
+                const { pageFirstPixel, pageLastPixel } = this.pageBounds.getCurrentPagePixelRange();
                 const divStretchOffset = this.rowContainerHeight.getDivStretchOffset();
 
                 const bodyVRange = gridBodyCtrl.getScrollFeature().getVScrollPosition();
@@ -1256,8 +1256,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
             let firstRowIndex = this.rowModel.getRowIndexAtPixel(firstPixel);
             let lastRowIndex = this.rowModel.getRowIndexAtPixel(lastPixel);
 
-            const pageFirstRow = this.pageBoundsService.getFirstRow();
-            const pageLastRow = this.pageBoundsService.getLastRow();
+            const pageFirstRow = this.pageBounds.getFirstRow();
+            const pageLastRow = this.pageBounds.getLastRow();
 
             // adjust, in case buffer extended actual size
             if (firstRowIndex < pageFirstRow) {
@@ -1332,8 +1332,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const rowModelHeightsChanged = this.rowModel.ensureRowHeightsValid(
             topPixel,
             bottomPixel,
-            this.pageBoundsService.getFirstRow(),
-            this.pageBoundsService.getLastRow()
+            this.pageBounds.getFirstRow(),
+            this.pageBounds.getLastRow()
         );
         if (rowModelHeightsChanged || stickyHeightsChanged) {
             this.eventSvc.dispatchEvent({

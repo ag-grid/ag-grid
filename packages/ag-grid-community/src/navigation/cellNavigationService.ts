@@ -26,7 +26,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     private rowRenderer: RowRenderer;
     private pinnedRowModel?: PinnedRowModel;
     private pagination?: PaginationService;
-    private pageBoundsService: PageBoundsService;
+    private pageBounds: PageBoundsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleCols = beans.visibleCols;
@@ -34,7 +34,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         this.rowRenderer = beans.rowRenderer;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.pagination = beans.pagination;
-        this.pageBoundsService = beans.pageBoundsService;
+        this.pageBounds = beans.pageBounds;
     }
 
     // returns null if no cell to focus on, ie at the end of the grid
@@ -59,7 +59,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         let rowIndex: number;
 
         if (upKey || downKey) {
-            rowIndex = upKey ? this.pageBoundsService.getFirstRow() : this.pageBoundsService.getLastRow();
+            rowIndex = upKey ? this.pageBounds.getFirstRow() : this.pageBounds.getLastRow();
             column = focusedCell.column as AgColumn;
         } else {
             const allColumns = this.visibleCols.allCols;
@@ -188,7 +188,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
                     // if on last row of pinned top, then next row is main body (if rows exist),
                     // otherwise it's the pinned bottom
                     if (this.rowModel.isRowsToRender()) {
-                        return { rowIndex: this.pageBoundsService.getFirstRow(), rowPinned: null } as RowPosition;
+                        return { rowIndex: this.pageBounds.getFirstRow(), rowPinned: null } as RowPosition;
                     }
 
                     if (this.pinnedRowModel?.isRowsToRender('bottom')) {
@@ -278,7 +278,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             return lastBottomIndex <= index;
         }
 
-        const lastBodyIndex = this.pageBoundsService.getLastRow();
+        const lastBodyIndex = this.pageBounds.getLastRow();
         return lastBodyIndex <= index;
     }
 
@@ -286,7 +286,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
         // if already on top row, do nothing
         const index = rowPosition.rowIndex;
         const pinned = rowPosition.rowPinned;
-        const isFirstRow = pinned ? index === 0 : index === this.pageBoundsService.getFirstRow();
+        const isFirstRow = pinned ? index === 0 : index === this.pageBounds.getFirstRow();
         let ignoreSticky = false;
 
         // if already on top row, do nothing
@@ -346,7 +346,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     }
 
     private getLastBodyCell(): RowPosition {
-        const lastBodyRow = this.pageBoundsService.getLastRow();
+        const lastBodyRow = this.pageBounds.getLastRow();
 
         return { rowIndex: lastBodyRow, rowPinned: null } as RowPosition;
     }

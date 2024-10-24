@@ -78,7 +78,7 @@ type RowDragEventType = 'rowDragEnter' | 'rowDragLeave' | 'rowDragMove' | 'rowDr
 export class RowDragFeature extends BeanStub implements DropTarget {
     private dragAndDrop: DragAndDropService;
     private rowModel: IRowModel;
-    private pageBoundsService: PageBoundsService;
+    private pageBounds: PageBoundsService;
     private focusSvc: FocusService;
     private sortSvc?: SortService;
     private filterManager?: FilterManager;
@@ -90,7 +90,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     public wireBeans(beans: BeanCollection): void {
         this.dragAndDrop = beans.dragAndDrop!;
         this.rowModel = beans.rowModel;
-        this.pageBoundsService = beans.pageBoundsService;
+        this.pageBounds = beans.pageBounds;
         this.focusSvc = beans.focusSvc;
         this.sortSvc = beans.sortSvc;
         this.filterManager = beans.filterManager;
@@ -426,7 +426,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
 
     private draggingToRowDragEvent<T extends RowDragEventType>(type: T, draggingEvent: DraggingEvent): RowDragEvent<T> {
         const yNormalised = this.mouseEventSvc.getNormalisedPosition(draggingEvent).y;
-        const mouseIsPastLastRow = yNormalised > this.pageBoundsService.getCurrentPageHeight();
+        const mouseIsPastLastRow = yNormalised > this.pageBounds.getCurrentPageHeight();
 
         let overIndex = -1;
         let overNode: RowNode | undefined;

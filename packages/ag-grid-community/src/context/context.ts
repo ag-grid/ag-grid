@@ -268,7 +268,7 @@ export interface CoreBeanCollection {
     alignedGridsSvc?: AlignedGridsService;
     paginationAutoPageSizeSvc?: PaginationAutoPageSizeService;
     pagination?: PaginationService;
-    pageBoundsService: PageBoundsService;
+    pageBounds: PageBoundsService;
     apiFunctionService: ApiFunctionService;
     detailGridApiService?: IDetailGridApiService;
     gridDestroyService: GridDestroyService;
@@ -447,7 +447,7 @@ export type BeanName =
     | 'quickFilter'
     | 'rangeSvc'
     | 'pageBoundsListener'
-    | 'pageBoundsService'
+    | 'pageBounds'
     | 'registry'
     | 'renderStatusService'
     | 'rowAutoHeightService'

@@ -12,12 +12,12 @@ export class PageBoundsListener extends BeanStub implements NamedBean {
 
     private rowModel: IRowModel;
     private pagination?: PaginationService;
-    private pageBoundsService: PageBoundsService;
+    private pageBounds: PageBoundsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
         this.pagination = beans.pagination;
-        this.pageBoundsService = beans.pageBoundsService;
+        this.pageBounds = beans.pageBounds;
     }
 
     public postConstruct(): void {
@@ -46,7 +46,7 @@ export class PageBoundsListener extends BeanStub implements NamedBean {
         if (this.pagination) {
             this.pagination.calculatePages();
         } else {
-            this.pageBoundsService.calculateBounds(0, this.rowModel.getRowCount() - 1);
+            this.pageBounds.calculateBounds(0, this.rowModel.getRowCount() - 1);
         }
     }
 }

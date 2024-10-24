@@ -6,7 +6,7 @@ import { _exists, _missing } from '../utils/generic';
 
 // note that everything in this service is used even when pagination is off
 export class PageBoundsService extends BeanStub implements NamedBean {
-    beanName = 'pageBoundsService' as const;
+    beanName = 'pageBounds' as const;
 
     private rowModel: IRowModel;
 

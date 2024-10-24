@@ -36,7 +36,7 @@ const orderedCoreBeans: BeanName[] = [
     'filterManager',
     'colModel',
     'headerNavigation',
-    'pageBoundsService',
+    'pageBounds',
     'pagination',
     'pageBoundsListener',
     'stickyRowService',

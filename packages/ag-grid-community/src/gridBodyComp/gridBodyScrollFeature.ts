@@ -50,7 +50,7 @@ export class GridBodyScrollFeature extends BeanStub {
     private ctrlsSvc: CtrlsService;
     private animationFrameSvc?: AnimationFrameService;
     private pagination?: PaginationService;
-    private pageBoundsService: PageBoundsService;
+    private pageBounds: PageBoundsService;
     private rowModel: IRowModel;
     private heightScaler: RowContainerHeightService;
     private rowRenderer: RowRenderer;
@@ -61,7 +61,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.ctrlsSvc = beans.ctrlsSvc;
         this.animationFrameSvc = beans.animationFrameSvc;
         this.pagination = beans.pagination;
-        this.pageBoundsService = beans.pageBoundsService;
+        this.pageBounds = beans.pageBounds;
         this.rowModel = beans.rowModel;
         this.heightScaler = beans.rowContainerHeight;
         this.rowRenderer = beans.rowRenderer;
@@ -531,7 +531,7 @@ export class GridBodyScrollFeature extends BeanStub {
                 const startingRowTop = rowNode!.rowTop;
                 const startingRowHeight = rowNode!.rowHeight;
 
-                const paginationOffset = this.pageBoundsService.getPixelOffset();
+                const paginationOffset = this.pageBounds.getPixelOffset();
                 const rowTopPixel = rowNode!.rowTop! - paginationOffset;
                 const rowBottomPixel = rowTopPixel + rowNode!.rowHeight!;
 

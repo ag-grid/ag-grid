@@ -14,13 +14,13 @@ export class StickyRowFeature extends BeanStub {
     private rowModel: IRowModel;
     private rowRenderer: RowRenderer;
     private ctrlsSvc: CtrlsService;
-    private pageBoundsService: PageBoundsService;
+    private pageBounds: PageBoundsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
         this.rowRenderer = beans.rowRenderer;
         this.ctrlsSvc = beans.ctrlsSvc;
-        this.pageBoundsService = beans.pageBoundsService;
+        this.pageBounds = beans.pageBounds;
     }
 
     private stickyTopRowCtrls: RowCtrl[] = [];
@@ -486,7 +486,7 @@ export class StickyRowFeature extends BeanStub {
         let extraHeight = 0;
         if (isTop) {
             newStickyNodes.forEach((node) => {
-                if (node.rowIndex! < this.pageBoundsService.getFirstRow()) {
+                if (node.rowIndex! < this.pageBounds.getFirstRow()) {
                     extraHeight += node.rowHeight!;
                 }
             });
@@ -496,7 +496,7 @@ export class StickyRowFeature extends BeanStub {
             this.setOffsetTop(extraHeight);
         } else {
             newStickyNodes.forEach((node) => {
-                if (node.rowIndex! > this.pageBoundsService.getLastRow()) {
+                if (node.rowIndex! > this.pageBounds.getLastRow()) {
                     extraHeight += node.rowHeight!;
                 }
             });
