@@ -68,7 +68,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     private funcColsSvc: FuncColsService;
     private rowDragSvc?: RowDragService;
     private selectionSvc?: ISelectionService;
-    private groupHideOpenParentsService?: IGroupHideOpenParentsService;
+    private groupHideOpenParentsSvc?: IGroupHideOpenParentsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionSvc = beans.expressionSvc;
@@ -79,7 +79,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         this.ctrlsSvc = beans.ctrlsSvc;
         this.funcColsSvc = beans.funcColsSvc;
         this.selectionSvc = beans.selectionSvc;
-        this.groupHideOpenParentsService = beans.groupHideOpenParentsService;
+        this.groupHideOpenParentsSvc = beans.groupHideOpenParentsSvc;
     }
 
     private params: GroupCellRendererParams;
@@ -314,8 +314,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
     private setupShowingValueForOpenedParent(): void {
         this.showingValueForOpenedParent =
-            this.groupHideOpenParentsService?.isShowingValueForOpenedParent(this.params.node, this.params.column!) ??
-            false;
+            this.groupHideOpenParentsSvc?.isShowingValueForOpenedParent(this.params.node, this.params.column!) ?? false;
     }
 
     private addValueElement(): void {

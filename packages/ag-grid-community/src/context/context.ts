@@ -291,7 +291,7 @@ export interface CoreBeanCollection {
     renderStatus?: IRenderStatusService;
     rowDragSvc?: RowDragService;
     stickyRowSvc?: StickyRowService;
-    groupHideOpenParentsService?: IGroupHideOpenParentsService;
+    groupHideOpenParentsSvc?: IGroupHideOpenParentsService;
     filterValueService?: FilterValueService;
     clientSideNodeManager?: IClientSideNodeManager;
     clientSidePathTreeNodeManager?: IClientSideNodeManager;
@@ -421,7 +421,7 @@ export type BeanName =
     | 'gos'
     | 'gridOptionsWrapper'
     | 'gridSerializer'
-    | 'groupHideOpenParentsService'
+    | 'groupHideOpenParentsSvc'
     | 'groupStage'
     | 'headerNavigation'
     | 'horizontalResizeSvc'

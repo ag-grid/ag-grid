@@ -59,14 +59,14 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
     private colModel: ColumnModel;
     private funcColsSvc: FuncColsService;
     private rowNodeSorter: RowNodeSorter;
-    private groupHideOpenParentsService?: IGroupHideOpenParentsService;
+    private groupHideOpenParentsSvc?: IGroupHideOpenParentsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.sortSvc = beans.sortSvc!;
         this.colModel = beans.colModel;
         this.funcColsSvc = beans.funcColsSvc;
         this.rowNodeSorter = beans.rowNodeSorter!;
-        this.groupHideOpenParentsService = beans.groupHideOpenParentsService;
+        this.groupHideOpenParentsSvc = beans.groupHideOpenParentsSvc;
     }
 
     public execute(params: StageExecuteParams): void {
@@ -120,7 +120,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
 
         const callback = (rowNode: RowNode) => {
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
-            this.groupHideOpenParentsService?.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterAggFilter, true);
+            this.groupHideOpenParentsSvc?.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterAggFilter, true);
 
             // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
             const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;

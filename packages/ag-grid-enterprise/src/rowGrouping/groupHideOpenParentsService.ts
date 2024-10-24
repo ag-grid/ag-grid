@@ -14,7 +14,7 @@ import { BeanStub, _error, _missing } from 'ag-grid-community';
 import { setRowNodeGroupValue } from './rowGroupingUtils';
 
 export class GroupHideOpenParentsService extends BeanStub implements IGroupHideOpenParentsService {
-    beanName = 'groupHideOpenParentsService' as const;
+    beanName = 'groupHideOpenParentsSvc' as const;
 
     private colModel: ColumnModel;
     private showRowGroupCols?: IShowRowGroupColsService;

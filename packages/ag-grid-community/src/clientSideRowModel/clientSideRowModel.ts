@@ -67,7 +67,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private selectionSvc?: ISelectionService;
     private valueCache?: ValueCache;
     private environment: Environment;
-    private groupHideOpenParentsService?: IGroupHideOpenParentsService;
+    private groupHideOpenParentsSvc?: IGroupHideOpenParentsService;
 
     // standard stages
     private filterStage?: IRowNodeStage;
@@ -85,7 +85,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         this.selectionSvc = beans.selectionSvc;
         this.valueCache = beans.valueCache;
         this.environment = beans.environment;
-        this.groupHideOpenParentsService = beans.groupHideOpenParentsService;
+        this.groupHideOpenParentsSvc = beans.groupHideOpenParentsSvc;
 
         this.filterStage = beans.filterStage!;
         this.sortStage = beans.sortStage!;
@@ -1102,10 +1102,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         } else {
             changedPath.forEachChangedNodeDepthFirst((rowNode) => {
                 // this needs to run before sorting
-                this.groupHideOpenParentsService?.pullDownGroupDataForHideOpenParents(
-                    rowNode.childrenAfterAggFilter,
-                    true
-                );
+                this.groupHideOpenParentsSvc?.pullDownGroupDataForHideOpenParents(rowNode.childrenAfterAggFilter, true);
 
                 rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
 
@@ -1114,7 +1111,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
 
         // this needs to run after sorting
-        this.groupHideOpenParentsService?.updateGroupDataForHideOpenParents(changedPath);
+        this.groupHideOpenParentsSvc?.updateGroupDataForHideOpenParents(changedPath);
     }
 
     private doRowGrouping(
