@@ -19,7 +19,7 @@ import {
 } from 'ag-grid-community';
 
 export class MasterDetailService extends BeanStub implements NamedBean, IMasterDetailService {
-    beanName: BeanName = 'masterDetailService' as const;
+    beanName: BeanName = 'masterDetailSvc' as const;
 
     private enabled: boolean;
     private rowModel: IRowModel;

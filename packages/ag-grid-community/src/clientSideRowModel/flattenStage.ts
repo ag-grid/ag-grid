@@ -32,11 +32,11 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
     public step: ClientSideRowModelStage = 'map';
 
     private colModel: ColumnModel;
-    private masterDetailService: IMasterDetailService | undefined;
+    private masterDetailSvc: IMasterDetailService | undefined;
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
-        this.masterDetailService = beans.masterDetailService;
+        this.masterDetailSvc = beans.masterDetailSvc;
     }
 
     public execute(params: StageExecuteParams): RowNode[] {
@@ -173,7 +173,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage, NamedBean {
                     }
                 }
             } else {
-                const detailNode = this.masterDetailService?.getDetail(rowNode);
+                const detailNode = this.masterDetailSvc?.getDetail(rowNode);
                 if (detailNode) {
                     this.addRowNodeToRowsToDisplay(details, detailNode, result, uiLevel);
                 }

@@ -297,7 +297,7 @@ export interface CoreBeanCollection {
     clientSidePathTreeNodeManager?: IClientSideNodeManager;
     clientSideChildrenTreeNodeManager?: IClientSideNodeManager;
     cellFlashSvc?: CellFlashService;
-    masterDetailService?: IMasterDetailService;
+    masterDetailSvc?: IMasterDetailService;
     tooltipService?: TooltipService;
     columnGroupService?: ColumnGroupService;
     rowAutoHeightService?: RowAutoHeightService;
@@ -429,7 +429,7 @@ export type BeanName =
     | 'licenseManager'
     | 'localeSvc'
     | 'loggerFactory'
-    | 'masterDetailService'
+    | 'masterDetailSvc'
     | 'menuItemMapper'
     | 'menuSvc'
     | 'menuUtils'

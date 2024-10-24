@@ -1061,7 +1061,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        this.beans.masterDetailService?.setupDetailRowAutoHeight(this, eDetailGui);
+        this.beans.masterDetailSvc?.setupDetailRowAutoHeight(this, eDetailGui);
     }
 
     private createFullWidthCompDetails(eRow: HTMLElement, pinned: ColumnPinnedType): UserCompDetails {
