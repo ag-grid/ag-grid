@@ -146,14 +146,14 @@ export type DragAndDropIcon =
 export class DragAndDropService extends BeanStub implements NamedBean {
     beanName = 'dragAndDrop' as const;
 
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private dragSvc: DragService;
     private mouseEventService: MouseEventService;
     private environment: Environment;
     private userCompFactory: UserComponentFactory;
 
     public wireBeans(beans: BeanCollection): void {
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.dragSvc = beans.dragSvc!;
         this.mouseEventService = beans.mouseEventService;
         this.environment = beans.environment;
@@ -456,7 +456,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     }
 
     public isDropZoneWithinThisGrid(draggingEvent: DraggingEvent): boolean {
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        const gridBodyCon = this.ctrlsSvc.getGridBodyCtrl();
         const gridGui = gridBodyCon.getGui();
         const { dropZoneTarget } = draggingEvent;
 

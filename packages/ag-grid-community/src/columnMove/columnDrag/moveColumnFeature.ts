@@ -30,7 +30,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     private visibleCols: VisibleColsService;
     private colMoves: ColumnMoveService;
     private dragAndDrop: DragAndDropService;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private pinnedColumnService?: PinnedColumnService;
 
     public wireBeans(beans: BeanCollection) {
@@ -38,7 +38,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         this.visibleCols = beans.visibleCols;
         this.colMoves = beans.colMoves!;
         this.dragAndDrop = beans.dragAndDrop!;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.pinnedColumnService = beans.pinnedColumnService;
     }
 
@@ -68,7 +68,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     public postConstruct(): void {
-        this.ctrlsService.whenReady(this, (p) => {
+        this.ctrlsSvc.whenReady(this, (p) => {
             this.gridBodyCon = p.gridBodyCtrl;
         });
     }
@@ -146,13 +146,13 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             return;
         }
 
-        const { pinned, gos, ctrlsService } = this;
+        const { pinned, gos, ctrlsSvc } = this;
 
         const mouseX = normaliseX({
             x: draggingEvent.x,
             pinned,
             gos,
-            ctrlsService,
+            ctrlsSvc,
         });
 
         // if the user is dragging into the panel, ie coming from the side panel into the main grid,
@@ -528,7 +528,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     private getNormalisedColumnLeft(col: AgColumn, padding: number, isRtl: boolean): number | null {
-        const { gos, ctrlsService } = this;
+        const { gos, ctrlsSvc } = this;
         const left = col.getLeft();
 
         if (left == null) {
@@ -543,7 +543,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             useHeaderRow: isRtl,
             skipScrollPadding: true,
             gos,
-            ctrlsService,
+            ctrlsSvc,
         });
     }
 
@@ -601,7 +601,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
         // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
         // putting in 50 buffer, so even if user gets to edge of grid, a scroll will happen
-        const centerCtrl = this.ctrlsService.get('center');
+        const centerCtrl = this.ctrlsSvc.get('center');
         const firstVisiblePixel = centerCtrl.getCenterViewportScrollLeft();
         const lastVisiblePixel = firstVisiblePixel + centerCtrl.getCenterWidth();
 

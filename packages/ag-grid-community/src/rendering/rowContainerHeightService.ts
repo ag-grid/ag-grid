@@ -13,10 +13,10 @@ import { _logIfDebug } from '../utils/function';
 export class RowContainerHeightService extends BeanStub implements NamedBean {
     beanName = 'rowContainerHeight' as const;
 
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
     }
 
     private maxDivHeight: number;
@@ -60,7 +60,7 @@ export class RowContainerHeightService extends BeanStub implements NamedBean {
             return;
         }
 
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        const gridBodyCon = this.ctrlsSvc.getGridBodyCtrl();
         const newScrollY = gridBodyCon.getScrollFeature().getVScrollPosition().top;
         const newBodyHeight = this.getUiBodyHeight();
 
@@ -135,7 +135,7 @@ export class RowContainerHeightService extends BeanStub implements NamedBean {
     }
 
     private getUiBodyHeight(): number {
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        const gridBodyCon = this.ctrlsSvc.getGridBodyCtrl();
         const pos = gridBodyCon.getScrollFeature().getVScrollPosition();
         return pos.bottom - pos.top;
     }

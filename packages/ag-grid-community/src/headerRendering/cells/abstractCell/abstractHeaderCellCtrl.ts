@@ -46,7 +46,7 @@ export abstract class AbstractHeaderCellCtrl<
     private pinnedColumnService?: PinnedColumnService;
     protected focusSvc: FocusService;
     protected userCompFactory: UserComponentFactory;
-    protected ctrlsService: CtrlsService;
+    protected ctrlsSvc: CtrlsService;
     protected dragAndDrop?: DragAndDropService;
     protected menuService?: MenuService;
 
@@ -54,7 +54,7 @@ export abstract class AbstractHeaderCellCtrl<
         this.pinnedColumnService = beans.pinnedColumnService;
         this.focusSvc = beans.focusSvc;
         this.userCompFactory = beans.userCompFactory;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.dragAndDrop = beans.dragAndDrop;
         this.menuService = beans.menuService;
     }
@@ -313,7 +313,7 @@ export abstract class AbstractHeaderCellCtrl<
         if (pinned) {
             const leftWidth = this.pinnedColumnService?.getPinnedLeftWidth() ?? 0;
             const rightWidth = this.pinnedColumnService?.getPinnedRightWidth() ?? 0;
-            const bodyWidth = _getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
+            const bodyWidth = _getInnerWidth(this.ctrlsSvc.getGridBodyCtrl().getBodyViewportElement()) - 50;
 
             if (leftWidth + rightWidth + diff > bodyWidth) {
                 if (bodyWidth > leftWidth + rightWidth) {

@@ -18,12 +18,12 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
 
     private popupSvc?: PopupService;
     private focusSvc: FocusService;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.popupSvc = beans.popupSvc;
         this.focusSvc = beans.focusSvc;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
     }
 
     private hidePopup: () => void;
@@ -127,7 +127,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         const afterGuiDetached = () => comp?.afterGuiDetached();
 
         const anchorToElement = _isColumnMenuAnchoringEnabled(this.gos)
-            ? eventSource ?? this.ctrlsService.getGridBodyCtrl().getGui()
+            ? eventSource ?? this.ctrlsSvc.getGridBodyCtrl().getGui()
             : undefined;
         const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
             column.setMenuVisible(false, 'contextMenu');

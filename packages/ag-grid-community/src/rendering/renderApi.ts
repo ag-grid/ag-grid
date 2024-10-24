@@ -11,7 +11,7 @@ export function setGridAriaProperty(beans: BeanCollection, property: string, val
     if (!property) {
         return;
     }
-    const eGrid = beans.ctrlsService.getGridBodyCtrl().getGui();
+    const eGrid = beans.ctrlsSvc.getGridBodyCtrl().getGui();
     const ariaProperty = `aria-${property}`;
 
     if (value === null) {
@@ -39,7 +39,7 @@ export function flashCells<TData = any>(beans: BeanCollection, params: FlashCell
 
 export function refreshHeader(beans: BeanCollection) {
     beans.frameworkOverrides.wrapIncoming(() =>
-        beans.ctrlsService.getHeaderRowContainerCtrls().forEach((c) => c.refresh())
+        beans.ctrlsSvc.getHeaderRowContainerCtrls().forEach((c) => c.refresh())
     );
 }
 

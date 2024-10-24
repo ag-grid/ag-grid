@@ -83,11 +83,11 @@ interface Position {
 export class PopupService extends BeanStub implements NamedBean {
     beanName = 'popupSvc' as const;
 
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.environment = beans.environment;
     }
 
@@ -96,7 +96,7 @@ export class PopupService extends BeanStub implements NamedBean {
     private popupList: AgPopup[] = [];
 
     public postConstruct(): void {
-        this.ctrlsService.whenReady(this, (p) => {
+        this.ctrlsSvc.whenReady(this, (p) => {
             this.gridCtrl = p.gridCtrl;
         });
         this.addManagedEventListeners({ gridStylesChanged: this.handleThemeChange.bind(this) });

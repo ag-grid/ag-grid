@@ -13,14 +13,14 @@ export interface SetScrollsVisibleParams {
 export class ScrollVisibleService extends BeanStub implements NamedBean {
     beanName = 'scrollVisibleService' as const;
 
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private colAnimation?: ColumnAnimationService;
 
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
 
     public wireBeans(beans: BeanCollection) {
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.colAnimation = beans.colAnimation;
     }
 
@@ -69,7 +69,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     }
 
     private updateScrollVisibleImpl(): void {
-        const centerRowCtrl = this.ctrlsService.get('center');
+        const centerRowCtrl = this.ctrlsSvc.get('center');
 
         if (!centerRowCtrl || this.colAnimation?.isActive()) {
             return;
@@ -85,7 +85,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     }
 
     private updateScrollGap(): void {
-        const centerRowCtrl = this.ctrlsService.get('center');
+        const centerRowCtrl = this.ctrlsSvc.get('center');
         const horizontalGap = centerRowCtrl.hasHorizontalScrollGap();
         const verticalGap = centerRowCtrl.hasVerticalScrollGap();
         const atLeastOneDifferent =

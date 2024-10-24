@@ -10,7 +10,7 @@ export function getHeaderRowCount(colModel: ColumnModel): number {
 
 export function getGroupRowsHeight(beans: BeanCollection): number[] {
     const heights: number[] = [];
-    const headerRowContainerCtrls = beans.ctrlsService.getHeaderRowContainerCtrls();
+    const headerRowContainerCtrls = beans.ctrlsSvc.getHeaderRowContainerCtrls();
 
     for (const headerRowContainerCtrl of headerRowContainerCtrls) {
         if (!headerRowContainerCtrl) {

@@ -64,7 +64,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private userCompFactory: UserComponentFactory;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private funcColsService: FuncColsService;
     private rowDragService?: RowDragService;
     private selectionSvc?: ISelectionService;
@@ -76,7 +76,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.userCompFactory = beans.userCompFactory;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.funcColsService = beans.funcColsService;
         this.selectionSvc = beans.selectionSvc;
         this.groupHideOpenParentsService = beans.groupHideOpenParentsService;
@@ -584,7 +584,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     }
 
     private scrollToStickyNode(rowNode: RowNode): void {
-        const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
         const scrollFeature = gridBodyCtrl.getScrollFeature();
 
         scrollFeature.setVerticalScrollPosition(rowNode.rowTop! - rowNode.stickyRowTop);

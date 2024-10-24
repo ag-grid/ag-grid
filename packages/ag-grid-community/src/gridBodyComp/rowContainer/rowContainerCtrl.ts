@@ -231,7 +231,7 @@ export interface IRowContainerComp {
 
 export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     private dragSvc?: DragService;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private colViewport: ColumnViewportService;
     private rowRenderer: RowRenderer;
     private rangeService?: IRangeService;
@@ -239,7 +239,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
 
     public wireBeans(beans: BeanCollection) {
         this.dragSvc = beans.dragSvc;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.colViewport = beans.colViewport;
         this.rowRenderer = beans.rowRenderer;
         this.rangeService = beans.rangeService;
@@ -284,7 +284,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     private registerWithCtrlsService(): void {
         // we don't register full width containers
         if (this.options.fullWidth) return;
-        this.ctrlsService.register(this.name as any, this);
+        this.ctrlsSvc.register(this.name as any, this);
     }
 
     private forContainers(names: RowContainerName[], callback: () => void): void {

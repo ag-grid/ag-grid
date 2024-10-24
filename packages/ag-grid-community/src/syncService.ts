@@ -12,12 +12,12 @@ import { _logIfDebug } from './utils/function';
 export class SyncService extends BeanStub implements NamedBean {
     beanName = 'syncService' as const;
 
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private colModel: ColumnModel;
     private rowModel: IRowModel;
 
     public wireBeans(beans: BeanCollection) {
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.colModel = beans.colModel;
         this.rowModel = beans.rowModel;
     }
@@ -30,7 +30,7 @@ export class SyncService extends BeanStub implements NamedBean {
 
     public start(): void {
         // we wait until the UI has finished initialising before setting in columns and rows
-        this.ctrlsService.whenReady(this, () => {
+        this.ctrlsSvc.whenReady(this, () => {
             const columnDefs = this.gos.get('columnDefs');
             if (columnDefs) {
                 this.setColumnsAndData(columnDefs);

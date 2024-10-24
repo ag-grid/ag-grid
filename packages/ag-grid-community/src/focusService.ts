@@ -42,7 +42,7 @@ export class FocusService extends BeanStub implements NamedBean {
     private headerNavigation?: HeaderNavigationService;
     private rowRenderer: RowRenderer;
     private navigation?: NavigationService;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private filterManager?: FilterManager;
     private overlayService?: OverlayService;
 
@@ -53,7 +53,7 @@ export class FocusService extends BeanStub implements NamedBean {
         this.headerNavigation = beans.headerNavigation;
         this.rowRenderer = beans.rowRenderer;
         this.navigation = beans.navigation;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.filterManager = beans.filterManager;
         this.overlayService = beans.overlayService;
     }
@@ -114,7 +114,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
         this.registerKeyboardFocusEvents();
 
-        this.ctrlsService.whenReady(this, (p) => {
+        this.ctrlsSvc.whenReady(this, (p) => {
             this.gridCtrl = p.gridCtrl;
         });
     }
@@ -498,7 +498,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
         this.headerNavigation?.scrollToColumn(column as AgColumn, direction);
 
-        const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned());
+        const headerRowContainerCtrl = this.ctrlsSvc.getHeaderRowContainerCtrl(column.getPinned());
 
         // this will automatically call the setFocusedHeader method above
         const focusSuccess =
@@ -823,6 +823,6 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public getHeaderRowCount(): number {
-        return this.ctrlsService.getHeaderRowContainerCtrl()?.getRowCount() ?? 0;
+        return this.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0;
     }
 }

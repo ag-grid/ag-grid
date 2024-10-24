@@ -51,7 +51,7 @@ export class StateService extends BeanStub implements NamedBean {
     beanName = 'stateService' as const;
 
     private filterManager?: FilterManager;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private pivotResultColsService?: IPivotResultColsService;
     private focusSvc: FocusService;
     private colModel: ColumnModel;
@@ -69,7 +69,7 @@ export class StateService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.filterManager = beans.filterManager;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.focusSvc = beans.focusSvc;
         this.colModel = beans.colModel;
@@ -118,7 +118,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.cachedState = this.getInitialState();
         this.setCachedStateValue('version', VERSION);
 
-        this.ctrlsService.whenReady(this, () =>
+        this.ctrlsSvc.whenReady(this, () =>
             this.suppressEventsAndDispatchInitEvent(() => this.setupStateOnGridReady())
         );
 
@@ -648,7 +648,7 @@ export class StateService extends BeanStub implements NamedBean {
             // can't restore, so don't provide
             return undefined;
         }
-        const scrollFeature = this.ctrlsService.getGridBodyCtrl()?.getScrollFeature();
+        const scrollFeature = this.ctrlsSvc.getGridBodyCtrl()?.getScrollFeature();
         const { left } = scrollFeature?.getHScrollPosition() ?? { left: 0 };
         const { top } = scrollFeature?.getVScrollPosition() ?? { top: 0 };
         return top || left
@@ -664,7 +664,7 @@ export class StateService extends BeanStub implements NamedBean {
             return;
         }
         const { top, left } = scrollState;
-        this.ctrlsService.getGridBodyCtrl()?.getScrollFeature().setScrollPosition(top, left);
+        this.ctrlsSvc.getGridBodyCtrl()?.getScrollFeature().setScrollPosition(top, left);
     }
 
     private getSideBarState(): SideBarState | undefined {

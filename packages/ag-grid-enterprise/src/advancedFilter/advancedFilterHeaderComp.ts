@@ -17,12 +17,12 @@ import { AdvancedFilterComp } from './advancedFilterComp';
 export class AdvancedFilterHeaderComp extends Component {
     private colModel: ColumnModel;
     private focusSvc: FocusService;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
         this.focusSvc = beans.focusSvc;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
     }
 
     private eAdvancedFilter: AdvancedFilterComp | undefined;
@@ -124,7 +124,7 @@ export class AdvancedFilterHeaderComp extends Component {
     }
 
     private setAriaRowIndex(): void {
-        _setAriaRowIndex(this.getGui(), this.ctrlsService.getHeaderRowContainerCtrl()?.getRowCount() ?? 0);
+        _setAriaRowIndex(this.getGui(), this.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0);
     }
 
     private onGridColumnsChanged(): void {

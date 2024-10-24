@@ -27,14 +27,14 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
 
     private colModel: ColumnModel;
     private colResize?: ColumnResizeService;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private columnStateService: ColumnStateService;
     private columnGroupService?: ColumnGroupService;
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
         this.colResize = beans.colResize;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.columnStateService = beans.columnStateService;
         this.columnGroupService = beans.columnGroupService;
     }
@@ -139,7 +139,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
 
     private onScrollEvent(event: BodyScrollEvent): void {
         this.onEvent(() => {
-            const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+            const gridBodyCon = this.ctrlsSvc.getGridBodyCtrl();
             gridBodyCon.getScrollFeature().setHorizontalScrollPosition(event.left, true);
         });
     }
@@ -226,7 +226,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
         // in time, all the methods below should use the column ids, it's a more generic way
         // of handling columns, and also allows for single or multi column events
         const masterColumns = this.getMasterColumns(colEvent);
-        const { columnStateService, colResize, ctrlsService } = this;
+        const { columnStateService, colResize, ctrlsSvc } = this;
         switch (colEvent.type) {
             case 'columnMoved':
                 // when the user moves columns via applyColumnState, we can't depend on moving specific columns
@@ -285,7 +285,7 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 break;
             }
         }
-        const gridBodyCon = ctrlsService.getGridBodyCtrl();
+        const gridBodyCon = ctrlsSvc.getGridBodyCtrl();
         const isVerticalScrollShowing = gridBodyCon.isVerticalScrollShowing();
         this.getAlignedGridApis().forEach((api) => {
             api.setGridOption('alwaysShowVerticalScroll', isVerticalScrollShowing);

@@ -7,11 +7,11 @@ import { SetHeightFeature } from './rowContainer/setHeightFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 export class FakeVScrollComp extends AbstractFakeScrollComp {
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private scrollVisibleService: ScrollVisibleService;
 
     public wireBeans(beans: BeanCollection) {
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.scrollVisibleService = beans.scrollVisibleService;
     }
 
@@ -30,7 +30,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         super.postConstruct();
 
         this.createManagedBean(new SetHeightFeature(this.eContainer));
-        this.ctrlsService.register('fakeVScrollComp', this);
+        this.ctrlsSvc.register('fakeVScrollComp', this);
 
         this.addManagedEventListeners({ rowContainerHeightChanged: this.onRowContainerHeightChanged.bind(this) });
     }
@@ -50,8 +50,8 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
     }
 
     private onRowContainerHeightChanged(): void {
-        const { ctrlsService } = this;
-        const gridBodyCtrl = ctrlsService.getGridBodyCtrl();
+        const { ctrlsSvc } = this;
+        const gridBodyCtrl = ctrlsSvc.getGridBodyCtrl();
         const gridBodyViewportEl = gridBodyCtrl.getBodyViewportElement();
 
         const eViewportScrollTop = this.getScrollPosition();

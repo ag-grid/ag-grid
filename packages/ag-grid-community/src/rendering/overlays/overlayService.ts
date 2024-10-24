@@ -24,7 +24,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
     private userCompFactory: UserComponentFactory;
     private rowModel: IRowModel;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private isClientSide: boolean;
     private colModel: ColumnModel;
 
@@ -37,7 +37,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.userCompFactory = beans.userCompFactory;
         this.rowModel = beans.rowModel;
         this.colModel = beans.colModel;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
     }
 
     private overlayWrapperComp: OverlayWrapperComponent | undefined;
@@ -220,7 +220,7 @@ export class OverlayService extends BeanStub implements NamedBean {
         let newPadding: number = 0;
 
         if (this.state === OverlayServiceState.NoRows) {
-            const headerCtrl = this.ctrlsService.get('gridHeaderCtrl');
+            const headerCtrl = this.ctrlsSvc.get('gridHeaderCtrl');
             const headerHeight = headerCtrl?.getHeaderHeight() || 0;
 
             newPadding = headerHeight;

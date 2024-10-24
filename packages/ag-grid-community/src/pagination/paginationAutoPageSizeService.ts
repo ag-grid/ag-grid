@@ -10,11 +10,11 @@ import type { PaginationService } from './paginationService';
 export class PaginationAutoPageSizeService extends BeanStub implements NamedBean {
     beanName = 'paginationAutoPageSizeService' as const;
 
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private paginationService: PaginationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.paginationService = beans.paginationService!;
     }
 
@@ -25,7 +25,7 @@ export class PaginationAutoPageSizeService extends BeanStub implements NamedBean
     private isBodyRendered: boolean;
 
     public postConstruct(): void {
-        this.ctrlsService.whenReady(this, (p) => {
+        this.ctrlsSvc.whenReady(this, (p) => {
             this.centerRowsCtrl = p.center;
 
             const listener = this.checkPageSize.bind(this);

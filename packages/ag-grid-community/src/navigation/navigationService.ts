@@ -45,7 +45,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     private focusSvc: FocusService;
     private visibleCols: VisibleColsService;
     private rowModel: IRowModel;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private rowRenderer: RowRenderer;
     private cellNavigation: CellNavigationService;
     private pinnedRowModel?: PinnedRowModel;
@@ -56,7 +56,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         this.focusSvc = beans.focusSvc;
         this.visibleCols = beans.visibleCols;
         this.rowModel = beans.rowModel;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.rowRenderer = beans.rowRenderer;
         this.cellNavigation = beans.cellNavigation!;
         this.pinnedRowModel = beans.pinnedRowModel;
@@ -72,7 +72,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     public postConstruct(): void {
-        this.ctrlsService.whenReady(this, (p) => {
+        this.ctrlsSvc.whenReady(this, (p) => {
             this.gridBodyCon = p.gridBodyCtrl;
         });
     }
@@ -178,7 +178,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     // this method is throttled, see the `constructor`
     private onPageDown(gridCell: CellPosition): void {
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        const gridBodyCon = this.ctrlsSvc.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
         const pixelsInOnePage = this.getViewportHeight();
 
@@ -196,7 +196,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
     // this method is throttled, see the `constructor`
     private onPageUp(gridCell: CellPosition): void {
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        const gridBodyCon = this.ctrlsSvc.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
 
         const pagingPixelOffset = this.pageBoundsService.getPixelOffset();
@@ -323,11 +323,11 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     private getViewportHeight(): number {
-        const scrollPosition = this.ctrlsService.getGridBodyCtrl().getScrollFeature().getVScrollPosition();
+        const scrollPosition = this.ctrlsSvc.getGridBodyCtrl().getScrollFeature().getVScrollPosition();
         const scrollbarWidth = this.beans.scrollVisibleService.getScrollbarWidth();
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
-        if (this.ctrlsService.get('center').isHorizontalScrollShowing()) {
+        if (this.ctrlsSvc.get('center').isHorizontalScrollShowing()) {
             pixelsInOnePage -= scrollbarWidth;
         }
 

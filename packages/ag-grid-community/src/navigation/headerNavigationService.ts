@@ -52,14 +52,14 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     beanName = 'headerNavigation' as const;
 
     private focusSvc: FocusService;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private columnGroupService?: ColumnGroupService;
 
     public wireBeans(beans: BeanCollection): void {
         this.focusSvc = beans.focusSvc;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.columnGroupService = beans.columnGroupService;
@@ -69,7 +69,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     private currentHeaderRowWithoutSpan: number = -1;
 
     public postConstruct(): void {
-        this.ctrlsService.whenReady(this, (p) => {
+        this.ctrlsSvc.whenReady(this, (p) => {
             this.gridBodyCon = p.gridBodyCtrl;
         });
 
@@ -96,7 +96,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             return null;
         }
 
-        const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
+        const centerHeaderContainer = this.ctrlsSvc.getHeaderRowContainerCtrl();
         const allCtrls = centerHeaderContainer?.getAllCtrls();
         const isFloatingFilterVisible = _last(allCtrls || []).getType() === 'filter';
         const headerRowCount = this.focusSvc.getHeaderRowCount() - 1;
@@ -333,7 +333,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     }
 
     private getHeaderRowType(rowIndex: number): HeaderRowType | undefined {
-        const centerHeaderContainer = this.ctrlsService.getHeaderRowContainerCtrl();
+        const centerHeaderContainer = this.ctrlsSvc.getHeaderRowContainerCtrl();
         if (centerHeaderContainer) {
             return centerHeaderContainer.getRowType(rowIndex);
         }
@@ -420,7 +420,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             return;
         }
 
-        const childContainer = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned());
+        const childContainer = this.ctrlsSvc.getHeaderRowContainerCtrl(column.getPinned());
         const type = childContainer?.getRowType(level);
 
         if (type == 'group') {

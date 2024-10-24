@@ -12,13 +12,13 @@ import type { ScrollVisibleService } from './scrollVisibleService';
 export class FakeHScrollComp extends AbstractFakeScrollComp {
     private visibleCols: VisibleColsService;
     private pinnedRowModel?: PinnedRowModel;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private scrollVisibleService: ScrollVisibleService;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleCols = beans.visibleCols;
         this.pinnedRowModel = beans.pinnedRowModel;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.scrollVisibleService = beans.scrollVisibleService;
     }
 
@@ -54,7 +54,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
         this.addManagedPropertyListener('domLayout', spacerWidthsListener);
 
-        this.ctrlsService.register('fakeHScrollComp', this);
+        this.ctrlsSvc.register('fakeHScrollComp', this);
         this.createManagedBean(new CenterWidthFeature((width) => (this.eContainer.style.width = `${width}px`)));
 
         this.addManagedPropertyListeners(['suppressHorizontalScroll'], this.onScrollVisibilityChanged.bind(this));

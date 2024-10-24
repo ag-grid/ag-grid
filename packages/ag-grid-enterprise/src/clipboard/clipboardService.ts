@@ -177,7 +177,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             this.clientSideRowModel = this.rowModel;
         }
 
-        this.beans.ctrlsService.whenReady(this, (p) => {
+        this.beans.ctrlsSvc.whenReady(this, (p) => {
             this.gridCtrl = p.gridCtrl;
         });
     }

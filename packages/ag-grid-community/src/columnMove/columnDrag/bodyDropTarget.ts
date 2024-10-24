@@ -25,12 +25,12 @@ export interface DropListener {
 export class BodyDropTarget extends BeanStub implements DropTarget {
     private dragAndDrop: DragAndDropService;
     private colModel: ColumnModel;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
 
     public wireBeans(beans: BeanCollection) {
         this.dragAndDrop = beans.dragAndDrop!;
         this.colModel = beans.colModel;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
     }
 
     private pinned: ColumnPinnedType;
@@ -50,7 +50,7 @@ export class BodyDropTarget extends BeanStub implements DropTarget {
     }
 
     public postConstruct(): void {
-        this.ctrlsService.whenReady(this, (p) => {
+        this.ctrlsSvc.whenReady(this, (p) => {
             switch (this.pinned) {
                 case 'left':
                     this.eSecondaryContainers = [

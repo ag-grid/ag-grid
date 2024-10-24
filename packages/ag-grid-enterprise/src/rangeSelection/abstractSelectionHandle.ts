@@ -21,13 +21,13 @@ export abstract class AbstractSelectionHandle extends Component {
     protected dragSvc: DragService;
     protected rangeService: RangeService;
     protected mouseEventService: MouseEventService;
-    protected ctrlsService: CtrlsService;
+    protected ctrlsSvc: CtrlsService;
 
     public wireBeans(beans: BeanCollection) {
         this.dragSvc = beans.dragSvc!;
         this.rangeService = beans.rangeService as RangeService;
         this.mouseEventService = beans.mouseEventService;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
     }
 
     private cellCtrl: CellCtrl;
@@ -126,7 +126,7 @@ export abstract class AbstractSelectionHandle extends Component {
     }
 
     protected onDragStart(_: MouseEvent) {
-        [this.cellHoverListener] = this.addManagedElementListeners(this.ctrlsService.get('gridCtrl').getGui(), {
+        [this.cellHoverListener] = this.addManagedElementListeners(this.ctrlsSvc.get('gridCtrl').getGui(), {
             mousemove: this.updateValuesOnMove.bind(this),
         });
 

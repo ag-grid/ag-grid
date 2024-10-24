@@ -61,7 +61,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
 
     private popupSvc: PopupService;
     private focusSvc: FocusService;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private visibleCols: VisibleColsService;
     private filterManager?: FilterManager;
     private menuUtils: MenuUtils;
@@ -71,7 +71,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
     public wireBeans(beans: BeanCollection) {
         this.popupSvc = beans.popupSvc!;
         this.focusSvc = beans.focusSvc;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.visibleCols = beans.visibleCols;
         this.filterManager = beans.filterManager;
         this.menuUtils = beans.menuUtils as MenuUtils;
@@ -298,7 +298,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             ? {
                   menu,
                   eMenuGui: menu.getGui(),
-                  anchorToElement: eventSource || this.ctrlsService.getGridBodyCtrl().getGui(),
+                  anchorToElement: eventSource || this.ctrlsSvc.getGridBodyCtrl().getGui(),
                   restoreFocusParams,
               }
             : undefined;

@@ -47,7 +47,7 @@ export interface ScrollPartner {
 }
 
 export class GridBodyScrollFeature extends BeanStub {
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private animationFrameSvc?: AnimationFrameService;
     private paginationService?: PaginationService;
     private pageBoundsService: PageBoundsService;
@@ -58,7 +58,7 @@ export class GridBodyScrollFeature extends BeanStub {
     private visibleCols: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.animationFrameSvc = beans.animationFrameSvc;
         this.paginationService = beans.paginationService;
         this.pageBoundsService = beans.pageBoundsService;
@@ -118,7 +118,7 @@ export class GridBodyScrollFeature extends BeanStub {
             displayedColumnsWidthChanged: this.onDisplayedColumnsWidthChanged.bind(this),
         });
 
-        this.ctrlsService.whenReady(this, (p) => {
+        this.ctrlsSvc.whenReady(this, (p) => {
             this.centerRowsCtrl = p.center;
             this.onDisplayedColumnsWidthChanged();
             this.addScrollListener();
@@ -136,13 +136,13 @@ export class GridBodyScrollFeature extends BeanStub {
         });
 
         for (const source of HORIZONTAL_SOURCES) {
-            const scrollPartner: ScrollPartner = this.ctrlsService.get(source);
+            const scrollPartner: ScrollPartner = this.ctrlsSvc.get(source);
             this.registerScrollPartner(scrollPartner, this.onHScroll.bind(this, source));
         }
     }
 
     private addVerticalScrollListeners(): void {
-        const fakeVScrollComp = this.ctrlsService.get('fakeVScrollComp');
+        const fakeVScrollComp = this.ctrlsSvc.get('fakeVScrollComp');
         const isDebounce = this.gos.get('debounceVerticalScrollbar');
 
         const onVScroll = isDebounce
@@ -201,7 +201,7 @@ export class GridBodyScrollFeature extends BeanStub {
             return this.centerRowsCtrl.getViewportElement();
         }
 
-        return this.ctrlsService.get(source).getViewportElement();
+        return this.ctrlsSvc.get(source).getViewportElement();
     }
 
     private isControllingScroll(
@@ -248,7 +248,7 @@ export class GridBodyScrollFeature extends BeanStub {
         if (source === VIEWPORT) {
             scrollTop = this.eBodyViewport.scrollTop;
         } else {
-            scrollTop = this.ctrlsService.get('fakeVScrollComp').getScrollPosition();
+            scrollTop = this.ctrlsSvc.get('fakeVScrollComp').getScrollPosition();
         }
 
         if (this.shouldBlockScrollUpdate(ScrollDirection.Vertical, scrollTop, true)) {
@@ -258,7 +258,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.nextScrollTop = scrollTop;
 
         if (source === VIEWPORT) {
-            this.ctrlsService.get('fakeVScrollComp').setScrollPosition(scrollTop);
+            this.ctrlsSvc.get('fakeVScrollComp').setScrollPosition(scrollTop);
         } else {
             this.eBodyViewport.scrollTop = scrollTop;
         }
@@ -276,7 +276,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private doHorizontalScroll(scrollLeft: number): void {
-        const fakeScrollLeft = this.ctrlsService.get('fakeHScrollComp').getScrollPosition();
+        const fakeScrollLeft = this.ctrlsSvc.get('fakeHScrollComp').getScrollPosition();
 
         if (this.scrollLeft === scrollLeft && scrollLeft === fakeScrollLeft) {
             return;
@@ -520,7 +520,7 @@ export class GridBodyScrollFeature extends BeanStub {
                 this.paginationService?.goToPageWithIndex(index);
             }
 
-            const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+            const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
             const stickyTopHeight = gridBodyCtrl.getStickyTopHeight();
             const stickyBottomHeight = gridBodyCtrl.getStickyBottomHeight();
 

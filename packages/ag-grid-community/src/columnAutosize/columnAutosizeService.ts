@@ -27,7 +27,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private visibleCols: VisibleColsService;
     private animationFrameSvc?: AnimationFrameService;
     private autoWidthCalculator: AutoWidthCalculator;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private renderStatusService?: IRenderStatusService;
     private scrollVisibleService: ScrollVisibleService;
 
@@ -42,7 +42,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.visibleCols = beans.visibleCols;
         this.animationFrameSvc = beans.animationFrameSvc;
         this.autoWidthCalculator = beans.autoWidthCalculator!;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.renderStatusService = beans.renderStatusService;
         this.scrollVisibleService = beans.scrollVisibleService;
     }
@@ -174,7 +174,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         const resizedColumns: AgColumn[] = [];
 
         for (const columnGroup of columnGroups) {
-            for (const headerContainerCtrl of this.ctrlsService.getHeaderRowContainerCtrls()) {
+            for (const headerContainerCtrl of this.ctrlsSvc.getHeaderRowContainerCtrls()) {
                 headerGroupCtrl = headerContainerCtrl.getHeaderCtrlForColumn(columnGroup) as
                     | HeaderGroupCellCtrl
                     | undefined;
@@ -257,7 +257,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+        const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
         const removeScrollWidth = gridBodyCtrl.isVerticalScrollShowing();
         const scrollWidthToRemove = removeScrollWidth ? this.scrollVisibleService.getScrollbarWidth() : 0;
         // bodyViewportWidth should be calculated from eGridBody, not eBodyViewport

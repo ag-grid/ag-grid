@@ -21,7 +21,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
     beanName = 'pinnedColumnService' as const;
 
     private visibleCols: VisibleColsService;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private colModel: ColumnModel;
     private colAnimation?: ColumnAnimationService;
 
@@ -29,7 +29,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleCols = beans.visibleCols;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.colModel = beans.colModel;
         this.colAnimation = beans.colAnimation;
     }
@@ -38,7 +38,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
     private rightWidth: number;
 
     public postConstruct(): void {
-        this.ctrlsService.whenReady(this, (p) => {
+        this.ctrlsSvc.whenReady(this, (p) => {
             this.gridBodyCtrl = p.gridBodyCtrl;
         });
         const listener = this.checkContainerWidths.bind(this);

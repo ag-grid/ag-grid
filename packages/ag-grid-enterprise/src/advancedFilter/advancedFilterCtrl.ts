@@ -9,13 +9,13 @@ import { AdvancedFilterBuilderComp } from './builder/advancedFilterBuilderComp';
 
 export type AdvancedFilterCtrlEvent = 'advancedFilterBuilderClosed';
 export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implements IAdvancedFilterCtrl {
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private popupSvc: PopupService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.popupSvc = beans.popupSvc!;
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
         this.environment = beans.environment;
@@ -35,7 +35,7 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
     public postConstruct(): void {
         this.hasAdvancedFilterParent = !!this.gos.get('advancedFilterParent');
 
-        this.ctrlsService.whenReady(this, () => this.setAdvancedFilterComp());
+        this.ctrlsSvc.whenReady(this, () => this.setAdvancedFilterComp());
 
         this.addManagedEventListeners({
             advancedFilterEnabledChanged: ({ enabled }) => this.onEnabledChanged(enabled),

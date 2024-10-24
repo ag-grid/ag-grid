@@ -2,10 +2,10 @@ import type { BeanCollection, CtrlsService, IRenderStatusService } from 'ag-grid
 import { BeanStub } from 'ag-grid-community';
 
 export class RenderStatusService extends BeanStub implements IRenderStatusService {
-    private ctrlsService!: CtrlsService;
+    private ctrlsSvc!: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
     }
 
     public areHeaderCellsRendered(): boolean {

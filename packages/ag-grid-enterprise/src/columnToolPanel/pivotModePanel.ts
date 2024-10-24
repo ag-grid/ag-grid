@@ -3,11 +3,11 @@ import { AgToggleButtonSelector, Component, RefPlaceholder } from 'ag-grid-commu
 
 export class PivotModePanel extends Component {
     private colModel: ColumnModel;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
     }
 
     private readonly cbPivotMode: AgCheckbox = RefPlaceholder;
@@ -37,7 +37,7 @@ export class PivotModePanel extends Component {
         const newValue = !!this.cbPivotMode.getValue();
         if (newValue !== this.colModel.isPivotMode()) {
             this.gos.updateGridOptions({ options: { pivotMode: newValue }, source: 'toolPanelUi' as any });
-            this.ctrlsService.getHeaderRowContainerCtrls().forEach((c) => c.refresh());
+            this.ctrlsSvc.getHeaderRowContainerCtrls().forEach((c) => c.refresh());
         }
     }
 

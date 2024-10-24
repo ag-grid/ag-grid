@@ -33,11 +33,11 @@ export function _requestAnimationFrame(gos: GridOptionsService, callback: any) {
 export class AnimationFrameService extends BeanStub implements NamedBean {
     beanName = 'animationFrameSvc' as const;
 
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private paginationService?: PaginationService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.paginationService = beans.paginationService;
     }
 
@@ -150,7 +150,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
         // 16ms is 60 fps
         const noMaxMillis = millis <= 0;
 
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        const gridBodyCon = this.ctrlsSvc.getGridBodyCtrl();
 
         while (noMaxMillis || duration < millis) {
             const gridBodyDidSomething = gridBodyCon.getScrollFeature().scrollGridIfNeeded();

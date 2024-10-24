@@ -1381,7 +1381,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     // moves the row closer to the viewport if it is far away, so the row slide in / out
     // at a speed the user can see.
     private roundRowTopToBounds(rowTop: number): number {
-        const range = this.beans.ctrlsService.getGridBodyCtrl().getScrollFeature().getApproximateVScollPosition();
+        const range = this.beans.ctrlsSvc.getGridBodyCtrl().getScrollFeature().getApproximateVScollPosition();
         const minPixel = this.applyPaginationOffset(range.top, true) - 100;
         const maxPixel = this.applyPaginationOffset(range.bottom, true) + 100;
 
@@ -1657,7 +1657,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         const headerRowCount =
-            (this.beans.ctrlsService.getHeaderRowContainerCtrl()?.getRowCount() ?? 0) +
+            (this.beans.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0) +
             (this.beans.filterManager?.getHeaderRowCount() ?? 0);
         const rowIsEven = this.rowNode.rowIndex! % 2 === 0;
         const ariaRowIndex = headerRowCount + this.rowNode.rowIndex! + 1;

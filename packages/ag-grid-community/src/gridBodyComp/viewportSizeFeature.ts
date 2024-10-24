@@ -14,14 +14,14 @@ import type { RowContainerCtrl } from './rowContainer/rowContainerCtrl';
 // and adjusts grid as necessary. there are two viewports, one for horizontal and one for
 // vertical scrolling.
 export class ViewportSizeFeature extends BeanStub {
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private pinnedColumnService?: PinnedColumnService;
     private colFlex?: ColumnFlexService;
     private scrollVisibleService: ScrollVisibleService;
     private colViewport: ColumnViewportService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.pinnedColumnService = beans.pinnedColumnService;
         this.colFlex = beans.colFlex;
         this.scrollVisibleService = beans.scrollVisibleService;
@@ -40,7 +40,7 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     public postConstruct(): void {
-        this.ctrlsService.whenReady(this, (p) => {
+        this.ctrlsSvc.whenReady(this, (p) => {
             this.gridBodyCtrl = p.gridBodyCtrl;
             this.listenForResize();
         });

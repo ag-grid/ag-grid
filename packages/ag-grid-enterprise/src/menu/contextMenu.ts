@@ -34,7 +34,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     beanName = 'contextMenuService' as const;
 
     private popupSvc: PopupService;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private colModel: ColumnModel;
     private menuUtils: MenuUtils;
     private rangeService?: IRangeService;
@@ -44,7 +44,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
 
     public wireBeans(beans: BeanCollection): void {
         this.popupSvc = beans.popupSvc!;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.colModel = beans.colModel;
         this.menuUtils = beans.menuUtils as MenuUtils;
         this.rangeService = beans.rangeService;
@@ -184,7 +184,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         }
 
         // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel
-        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        const gridBodyCon = this.ctrlsSvc.getGridBodyCtrl();
         const anchorToElement = cellCtrl ? cellCtrl.getGui() : gridBodyCon.getGridBodyElement();
 
         this.showContextMenu({
@@ -218,7 +218,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         anchorToElement: HTMLElement
     ): boolean {
         const menuItems = this.getMenuItems(node, column, value);
-        const eGridBodyGui = this.ctrlsService.getGridBodyCtrl().getGui();
+        const eGridBodyGui = this.ctrlsSvc.getGridBodyCtrl().getGui();
 
         if (menuItems === undefined || !menuItems?.length) {
             return false;
@@ -340,7 +340,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     }
 
     private getContextMenuAnchorElement(rowNode?: RowNode | null, column?: AgColumn | null): HTMLElement {
-        const gridBodyEl = this.ctrlsService.getGridBodyCtrl().getGridBodyElement();
+        const gridBodyEl = this.ctrlsSvc.getGridBodyCtrl().getGridBodyElement();
         const rowCtrl = this.getRowCtrl(rowNode);
 
         if (!rowCtrl) {

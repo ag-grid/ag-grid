@@ -84,7 +84,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private filterManager?: FilterManager;
     private selectionSvc?: ISelectionService;
     private mouseEventService: MouseEventService;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private funcColsService: FuncColsService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -96,7 +96,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.filterManager = beans.filterManager;
         this.selectionSvc = beans.selectionSvc;
         this.mouseEventService = beans.mouseEventService;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.funcColsService = beans.funcColsService;
     }
 
@@ -115,7 +115,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             this.clientSideRowModel = this.rowModel;
         }
 
-        this.ctrlsService.whenReady(this, (p) => {
+        this.ctrlsSvc.whenReady(this, (p) => {
             const gridBodyCon = p.gridBodyCtrl;
             this.autoScrollService = new AutoScrollService({
                 scrollContainer: gridBodyCon.getBodyViewportElement(),

@@ -50,7 +50,7 @@ export class GridCtrl extends BeanStub {
 
         this.eGui.setAttribute('grid-id', this.beans.context.getGridId());
 
-        const { dragAndDrop, mouseEventService, ctrlsService } = this.beans;
+        const { dragAndDrop, mouseEventService, ctrlsSvc } = this.beans;
 
         dragAndDrop?.registerGridDropTarget(() => this.eGui, this);
 
@@ -63,7 +63,7 @@ export class GridCtrl extends BeanStub {
         const unsubscribeFromResize = _observeResize(this.gos, this.eGridHostDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
 
-        ctrlsService.register('gridCtrl', this);
+        ctrlsSvc.register('gridCtrl', this);
     }
 
     public isDetailGrid(): boolean {

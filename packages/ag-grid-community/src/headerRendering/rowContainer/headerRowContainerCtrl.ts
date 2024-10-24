@@ -28,7 +28,7 @@ export interface IHeaderRowContainerComp {
 }
 
 export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private scrollVisibleService: ScrollVisibleService;
     private pinnedColumnService?: PinnedColumnService;
     private colModel: ColumnModel;
@@ -37,7 +37,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
     private colMoves?: ColumnMoveService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.scrollVisibleService = beans.scrollVisibleService;
         this.pinnedColumnService = beans.pinnedColumnService;
         this.colModel = beans.colModel;
@@ -78,7 +78,7 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         });
 
         const headerType = `${typeof this.pinned === 'string' ? this.pinned : 'center'}Header` as const;
-        this.ctrlsService.register(headerType, this);
+        this.ctrlsSvc.register(headerType, this);
 
         if (this.colModel.ready) {
             this.refresh();

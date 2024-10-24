@@ -55,7 +55,7 @@ export interface IGridBodyComp extends LayoutView {
 
 export class GridBodyCtrl extends BeanStub {
     private rowContainerHeight: RowContainerHeightService;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private colModel: ColumnModel;
     private scrollVisibleService: ScrollVisibleService;
     private contextMenuService?: IContextMenuService;
@@ -70,7 +70,7 @@ export class GridBodyCtrl extends BeanStub {
 
     public wireBeans(beans: BeanCollection): void {
         this.rowContainerHeight = beans.rowContainerHeight;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.colModel = beans.colModel;
         this.scrollVisibleService = beans.scrollVisibleService;
         this.contextMenuService = beans.contextMenuService;
@@ -162,7 +162,7 @@ export class GridBodyCtrl extends BeanStub {
 
         this.filterManager?.setupAdvancedFilterHeaderComp(eTop);
 
-        this.ctrlsService.register('gridBodyCtrl', this);
+        this.ctrlsSvc.register('gridBodyCtrl', this);
     }
 
     public getComp(): IGridBodyComp {
@@ -286,7 +286,7 @@ export class GridBodyCtrl extends BeanStub {
 
     public updateRowCount(): void {
         const headerCount =
-            (this.ctrlsService.getHeaderRowContainerCtrl()?.getRowCount() ?? 0) +
+            (this.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0) +
             (this.filterManager?.getHeaderRowCount() ?? 0);
 
         const rowCount = this.rowModel.isLastRowIndexKnown() ? this.rowModel.getRowCount() : -1;
@@ -414,7 +414,7 @@ export class GridBodyCtrl extends BeanStub {
 
         const { target } = (mouseEvent || touch)!;
 
-        if (target === this.eBodyViewport || target === this.ctrlsService.get('center').getViewportElement()) {
+        if (target === this.eBodyViewport || target === this.ctrlsSvc.get('center').getViewportElement()) {
             // show it
             this.contextMenuService?.showContextMenu({
                 mouseEvent,
@@ -516,7 +516,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private setStickyTopOffsetTop(): void {
-        const headerCtrl = this.ctrlsService.get('gridHeaderCtrl');
+        const headerCtrl = this.ctrlsSvc.get('gridHeaderCtrl');
         const headerHeight = headerCtrl.getHeaderHeight() + (this.filterManager?.getHeaderHeight() ?? 0);
         const pinnedTopHeight = this.pinnedRowModel?.getPinnedTopTotalHeight() ?? 0;
 

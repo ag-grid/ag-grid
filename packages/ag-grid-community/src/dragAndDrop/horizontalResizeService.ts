@@ -16,11 +16,11 @@ export class HorizontalResizeService extends BeanStub implements NamedBean {
     beanName = 'horizontalResizeService' as const;
 
     private dragSvc: DragService;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.dragSvc = beans.dragSvc!;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
     }
 
     private dragStartX: number;
@@ -57,7 +57,7 @@ export class HorizontalResizeService extends BeanStub implements NamedBean {
     }
 
     private setResizeIcons(): void {
-        const ctrl = this.ctrlsService.get('gridCtrl');
+        const ctrl = this.ctrlsSvc.get('gridCtrl');
         // change the body cursor, so when drag moves out of the drag bar, the cursor is still 'resize' (or 'move'
         ctrl.setResizeCursor(true);
         // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
@@ -70,7 +70,7 @@ export class HorizontalResizeService extends BeanStub implements NamedBean {
     }
 
     private resetIcons(): void {
-        const ctrl = this.ctrlsService.get('gridCtrl');
+        const ctrl = this.ctrlsSvc.get('gridCtrl');
         ctrl.setResizeCursor(false);
         ctrl.disableUserSelect(false);
     }

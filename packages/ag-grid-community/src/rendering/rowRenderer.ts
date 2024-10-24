@@ -61,7 +61,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private rowModel: IRowModel;
     private focusSvc: FocusService;
     private rowContainerHeight: RowContainerHeightService;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private environment: Environment;
     private stickyRowService?: StickyRowService;
 
@@ -75,7 +75,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.rowModel = beans.rowModel;
         this.focusSvc = beans.focusSvc;
         this.rowContainerHeight = beans.rowContainerHeight;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.environment = beans.environment;
         this.stickyRowService = beans.stickyRowService;
     }
@@ -116,7 +116,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private dataFirstRenderedFired = false;
 
     public postConstruct(): void {
-        this.ctrlsService.whenReady(this, (p) => {
+        this.ctrlsSvc.whenReady(this, (p) => {
             this.gridBodyCtrl = p.gridBodyCtrl;
             this.initialise();
         });
@@ -1221,7 +1221,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             newLast = this.pageBoundsService.getLastRow();
         } else {
             const bufferPixels = this.getRowBufferInPixels();
-            const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
+            const gridBodyCtrl = this.ctrlsSvc.getGridBodyCtrl();
             const suppressRowVirtualisation = this.gos.get('suppressRowVirtualisation');
 
             let rowHeightsChanged = false;

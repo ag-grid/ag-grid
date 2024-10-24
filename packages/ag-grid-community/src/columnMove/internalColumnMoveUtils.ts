@@ -379,10 +379,10 @@ export function normaliseX(params: {
     useHeaderRow?: boolean;
     skipScrollPadding?: boolean;
     gos: GridOptionsService;
-    ctrlsService: CtrlsService;
+    ctrlsSvc: CtrlsService;
 }): number {
-    const { pinned, fromKeyboard, gos, ctrlsService, useHeaderRow, skipScrollPadding } = params;
-    let eViewport = ctrlsService.getHeaderRowContainerCtrl(pinned)?.getViewportElement();
+    const { pinned, fromKeyboard, gos, ctrlsSvc, useHeaderRow, skipScrollPadding } = params;
+    let eViewport = ctrlsSvc.getHeaderRowContainerCtrl(pinned)?.getViewportElement();
 
     let { x } = params;
 
@@ -404,7 +404,7 @@ export function normaliseX(params: {
 
     // adjust for scroll only if centre container (the pinned containers don't scroll)
     if (pinned == null && !skipScrollPadding) {
-        x += ctrlsService.get('center').getCenterViewportScrollLeft();
+        x += ctrlsSvc.get('center').getCenterViewportScrollLeft();
     }
 
     return x;

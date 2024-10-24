@@ -218,7 +218,7 @@ export interface CoreBeanCollection {
     selectionSvc?: ISelectionService;
     rowStyleSvc?: RowStyleService;
     rowModel: IRowModel;
-    ctrlsService: CtrlsService;
+    ctrlsSvc: CtrlsService;
     valueCache?: ValueCache;
     localeService?: LocaleService;
     syncService: SyncService;
@@ -386,7 +386,7 @@ export type BeanName =
     | 'context'
     | 'contextMenuService'
     | 'selectionColService'
-    | 'ctrlsService'
+    | 'ctrlsSvc'
     | 'csvCreator'
     | 'dataTypeService'
     | 'visibleCols'

@@ -70,7 +70,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
             rowDragEnd: listener,
         });
 
-        this.beans.ctrlsService.whenReady(this, (p) => {
+        this.beans.ctrlsSvc.whenReady(this, (p) => {
             this.gridBodyCtrl = p.gridBodyCtrl;
         });
     }

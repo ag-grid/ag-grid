@@ -28,7 +28,7 @@ export class GridHeaderCtrl extends BeanStub {
     private focusSvc: FocusService;
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private filterManager?: FilterManager;
     private menuService?: MenuService;
 
@@ -37,7 +37,7 @@ export class GridHeaderCtrl extends BeanStub {
         this.focusSvc = beans.focusSvc;
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.filterManager = beans.filterManager;
         this.menuService = beans.menuService;
     }
@@ -73,7 +73,7 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedElementListeners(this.eGui, { contextmenu: listener });
         this.mockContextMenuForIPad(listener);
 
-        this.ctrlsService.register('gridHeaderCtrl', this);
+        this.ctrlsSvc.register('gridHeaderCtrl', this);
     }
 
     private setupHeaderHeight(): void {
@@ -219,7 +219,7 @@ export class GridHeaderCtrl extends BeanStub {
 
         const { target } = (mouseEvent ?? touch)!;
 
-        if (target === this.eGui || target === this.ctrlsService.getHeaderRowContainerCtrl()?.getViewportElement()) {
+        if (target === this.eGui || target === this.ctrlsSvc.getHeaderRowContainerCtrl()?.getViewportElement()) {
             this.menuService.showHeaderContextMenu(undefined, mouseEvent, touchEvent);
         }
     }

@@ -53,7 +53,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private visibleCols: VisibleColsService;
     private cellNavigation: CellNavigationService;
     private pinnedRowModel?: PinnedRowModel;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
@@ -62,7 +62,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.visibleCols = beans.visibleCols;
         this.cellNavigation = beans.cellNavigation!;
         this.pinnedRowModel = beans.pinnedRowModel;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
     }
 
     private cellRanges: CellRange[] = [];
@@ -100,7 +100,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             columnPinned: refreshLastRangeStart,
         });
 
-        this.ctrlsService.whenReady(this, (p) => {
+        this.ctrlsSvc.whenReady(this, (p) => {
             const gridBodyCtrl = p.gridBodyCtrl;
             this.autoScrollService = new AutoScrollService({
                 scrollContainer: gridBodyCtrl.getBodyViewportElement()!,
@@ -753,7 +753,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             this.cellRanges.push(this.draggingRange);
         }
 
-        this.ctrlsService.getGridBodyCtrl().addScrollEventListener(this.bodyScrollListener);
+        this.ctrlsSvc.getGridBodyCtrl().addScrollEventListener(this.bodyScrollListener);
 
         this.dispatchChangedEvent(true, false, this.draggingRange.id);
     }
@@ -930,7 +930,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         this.autoScrollService.ensureCleared();
 
-        this.ctrlsService.getGridBodyCtrl().removeScrollEventListener(this.bodyScrollListener);
+        this.ctrlsSvc.getGridBodyCtrl().removeScrollEventListener(this.bodyScrollListener);
         this.lastMouseEvent = null;
         this.dragging = false;
         this.draggingRange = undefined;

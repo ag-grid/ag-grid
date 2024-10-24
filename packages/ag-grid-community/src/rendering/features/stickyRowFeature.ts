@@ -13,13 +13,13 @@ import type { RowCtrlByRowNodeIdMap, RowRenderer } from '../rowRenderer';
 export class StickyRowFeature extends BeanStub {
     private rowModel: IRowModel;
     private rowRenderer: RowRenderer;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private pageBoundsService: PageBoundsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
         this.rowRenderer = beans.rowRenderer;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.pageBoundsService = beans.pageBoundsService;
     }
 
@@ -47,7 +47,7 @@ export class StickyRowFeature extends BeanStub {
     public postConstruct(): void {
         this.isClientSide = _isClientSideRowModel(this.gos);
 
-        this.ctrlsService.whenReady(this, (params) => {
+        this.ctrlsSvc.whenReady(this, (params) => {
             this.gridBodyCtrl = params.gridBodyCtrl;
         });
 

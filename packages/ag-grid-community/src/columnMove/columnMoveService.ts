@@ -32,7 +32,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
 
     private colModel: ColumnModel;
     private colAnimation?: ColumnAnimationService;
-    private ctrlsService: CtrlsService;
+    private ctrlsSvc: CtrlsService;
     private visibleCols: VisibleColsService;
     private focusSvc: FocusService;
     private dragAndDrop: DragAndDropService;
@@ -40,7 +40,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
         this.colAnimation = beans.colAnimation;
-        this.ctrlsService = beans.ctrlsService;
+        this.ctrlsSvc = beans.ctrlsSvc;
         this.visibleCols = beans.visibleCols;
         this.focusSvc = beans.focusSvc;
         this.dragAndDrop = beans.dragAndDrop!;
@@ -157,7 +157,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         pinned: ColumnPinnedType,
         bean: BeanStub
     ): void {
-        const { ctrlsService, gos, colModel, visibleCols } = this;
+        const { ctrlsSvc, gos, colModel, visibleCols } = this;
         const rect = eGui.getBoundingClientRect();
         const left = rect.left;
         const isGroup = isColumnGroup(column);
@@ -169,7 +169,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             pinned,
             fromKeyboard: true,
             gos,
-            ctrlsService,
+            ctrlsSvc,
         });
         const headerPosition = this.focusSvc.getFocusedHeader();
 
@@ -196,7 +196,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             targetColumn = column;
         }
 
-        ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(targetColumn, 'auto');
+        ctrlsSvc.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(targetColumn, 'auto');
 
         if ((!bean.isAlive() || gos.get('ensureDomOrder')) && headerPosition) {
             let restoreFocusColumn: AgColumn | AgColumnGroup | undefined;

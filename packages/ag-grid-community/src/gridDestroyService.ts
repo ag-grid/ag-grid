@@ -21,7 +21,7 @@ export class GridDestroyService extends BeanStub implements NamedBean {
         this.destroyCalled = true;
 
         // destroy the UI first (as they use the services)
-        this.beans.ctrlsService.get('gridCtrl')?.destroyGridUi();
+        this.beans.ctrlsSvc.get('gridCtrl')?.destroyGridUi();
 
         // destroy the services
         this.beans.context.destroy();
