@@ -55,7 +55,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private autoColSvc?: IAutoColService;
     private selectionColSvc?: SelectionColService;
     private valueCache?: ValueCache;
-    private columnDefFactory?: ColumnDefFactory;
+    private colDefFactory?: ColumnDefFactory;
     private colState: ColumnStateService;
     private columnAutosizeService?: ColumnAutosizeService;
     private funcColsService: FuncColsService;
@@ -72,7 +72,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.autoColSvc = beans.autoColSvc;
         this.selectionColSvc = beans.selectionColSvc;
         this.valueCache = beans.valueCache;
-        this.columnDefFactory = beans.columnDefFactory;
+        this.colDefFactory = beans.colDefFactory;
         this.colState = beans.colState;
         this.columnAutosizeService = beans.columnAutosizeService;
         this.funcColsService = beans.funcColsService;
@@ -394,7 +394,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
         return this.colDefCols
-            ? this.columnDefFactory?.getColumnDefs(
+            ? this.colDefFactory?.getColumnDefs(
                   this.colDefCols.list,
                   this.showingPivotResult,
                   this.lastOrder,

@@ -64,7 +64,7 @@ const orderedCoreBeans: BeanName[] = [
     'changeDetectionService',
     'animationFrameSvc',
     'undoRedoService',
-    'columnDefFactory',
+    'colDefFactory',
     'rowStyleSvc',
     'rowNodeBlockLoader',
     'rowNodeSorter',

@@ -233,7 +233,7 @@ export interface CoreBeanCollection {
     pivotResultCols?: IPivotResultColsService;
     autoColSvc?: IAutoColService;
     selectionColSvc?: SelectionColService;
-    columnDefFactory?: ColumnDefFactory;
+    colDefFactory?: ColumnDefFactory;
     columnAutosizeService?: ColumnAutosizeService;
     funcColsService: FuncColsService;
     quickFilterService?: QuickFilterService;
@@ -365,7 +365,7 @@ export type BeanName =
     | 'columnAutosizeService'
     | 'columnChooserFactory'
     | 'columnController'
-    | 'columnDefFactory'
+    | 'colDefFactory'
     | 'columnEditorFactory'
     | 'colFactory'
     | 'colFilter'

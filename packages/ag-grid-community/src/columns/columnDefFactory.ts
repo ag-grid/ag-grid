@@ -43,7 +43,7 @@ export function _deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | u
 }
 
 export class ColumnDefFactory extends BeanStub implements NamedBean {
-    beanName = 'columnDefFactory' as const;
+    beanName = 'colDefFactory' as const;
 
     private funcColsService: FuncColsService;
 
