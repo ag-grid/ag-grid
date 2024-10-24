@@ -244,7 +244,7 @@ export class CellCtrl extends BeanStub {
             return;
         }
 
-        this.beans.rowAutoHeightService?.setupCellAutoHeight(this, eCellWrapper, compBean);
+        this.beans.rowAutoHeight?.setupCellAutoHeight(this, eCellWrapper, compBean);
     }
 
     public getCellAriaRole(): string {

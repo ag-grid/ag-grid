@@ -15,7 +15,7 @@ import { _debounce } from '../../utils/function';
 import type { CellCtrl } from '../cell/cellCtrl';
 
 export class RowAutoHeightService extends BeanStub implements NamedBean {
-    beanName = 'rowAutoHeightService' as const;
+    beanName = 'rowAutoHeight' as const;
 
     private visibleCols: VisibleColsService;
     private colViewport: ColumnViewportService;

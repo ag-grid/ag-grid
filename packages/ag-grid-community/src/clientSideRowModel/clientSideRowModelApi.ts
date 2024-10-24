@@ -40,7 +40,7 @@ export function forEachNodeAfterFilterAndSort<TData = any>(
 }
 
 export function resetRowHeights(beans: BeanCollection): void {
-    if (beans.rowAutoHeightService?.active) {
+    if (beans.rowAutoHeight?.active) {
         _warn(3);
         return;
     }

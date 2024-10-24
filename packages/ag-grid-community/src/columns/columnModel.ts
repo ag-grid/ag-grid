@@ -61,7 +61,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private funcColsSvc: FuncColsService;
     private quickFilter?: QuickFilterService;
     private showRowGroupCols?: IShowRowGroupColsService;
-    private rowAutoHeightService?: RowAutoHeightService;
+    private rowAutoHeight?: RowAutoHeightService;
 
     public wireBeans(beans: BeanCollection): void {
         this.context = beans.context;
@@ -78,7 +78,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.funcColsSvc = beans.funcColsSvc;
         this.quickFilter = beans.quickFilter;
         this.showRowGroupCols = beans.showRowGroupCols;
-        this.rowAutoHeightService = beans.rowAutoHeightService;
+        this.rowAutoHeight = beans.rowAutoHeight;
     }
 
     // as provided by gridProp columnsDefs
@@ -215,7 +215,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.quickFilter?.refreshQuickFilterCols();
 
         this.setColSpanActive();
-        this.rowAutoHeightService?.setAutoHeightActive(cols);
+        this.rowAutoHeight?.setAutoHeightActive(cols);
 
         // make sure any part of the gui that tries to draw, eg the header,
         // will get empty lists of columns rather than stale columns.

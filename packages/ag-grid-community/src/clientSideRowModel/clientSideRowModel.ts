@@ -1411,7 +1411,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private onGridStylesChanges(e: CssVariablesChanged) {
         if (e.rowHeightChanged) {
-            if (this.beans.rowAutoHeightService?.active) {
+            if (this.beans.rowAutoHeight?.active) {
                 return;
             }
 

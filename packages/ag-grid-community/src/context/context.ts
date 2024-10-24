@@ -300,7 +300,7 @@ export interface CoreBeanCollection {
     masterDetailSvc?: IMasterDetailService;
     tooltipSvc?: TooltipService;
     columnGroupSvc?: ColumnGroupService;
-    rowAutoHeightService?: RowAutoHeightService;
+    rowAutoHeight?: RowAutoHeightService;
     rowChildrenService?: IRowChildrenService;
 }
 
@@ -450,7 +450,7 @@ export type BeanName =
     | 'pageBounds'
     | 'registry'
     | 'renderStatus'
-    | 'rowAutoHeightService'
+    | 'rowAutoHeight'
     | 'rowChildrenService'
     | 'rowContainerHeight'
     | 'rowDragSvc'

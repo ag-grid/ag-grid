@@ -19,12 +19,12 @@ export class StoreFactory extends BeanStub implements NamedBean {
 
     private colModel: ColumnModel;
     private funcColsSvc: FuncColsService;
-    private rowAutoHeightService?: RowAutoHeightService;
+    private rowAutoHeight?: RowAutoHeightService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
         this.funcColsSvc = beans.funcColsSvc;
-        this.rowAutoHeightService = beans.rowAutoHeightService;
+        this.rowAutoHeight = beans.rowAutoHeight;
     }
 
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): LazyStore {
@@ -68,7 +68,7 @@ export class StoreFactory extends BeanStub implements NamedBean {
             return;
         }
 
-        if (this.rowAutoHeightService?.active) {
+        if (this.rowAutoHeight?.active) {
             _warn(204);
             return undefined;
         }

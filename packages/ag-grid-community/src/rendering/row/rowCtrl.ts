@@ -244,7 +244,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.onSuppressCellFocusChanged(this.beans.gos.get('suppressCellFocus'));
 
         this.listenOnDomOrder(gui);
-        this.beans.rowAutoHeightService?.checkAutoHeights(this.rowNode);
+        this.beans.rowAutoHeight?.checkAutoHeights(this.rowNode);
         this.onRowHeightChanged(gui);
         this.updateRowIndexes(gui);
         this.setFocusedClasses(gui);
@@ -815,7 +815,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // then set data, and any old valueGetter's (ie from cols that were removed) would still get called.
         this.updateColumnLists(true);
 
-        this.beans.rowAutoHeightService?.checkAutoHeights(this.rowNode);
+        this.beans.rowAutoHeight?.checkAutoHeights(this.rowNode);
     }
 
     private onVirtualColumnsChanged(): void {
