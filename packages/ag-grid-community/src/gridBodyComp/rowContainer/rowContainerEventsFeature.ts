@@ -68,7 +68,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private contextMenuService?: IContextMenuService;
     private navigation?: NavigationService;
     private focusSvc: FocusService;
-    private undoRedoService?: UndoRedoService;
+    private undoRedo?: UndoRedoService;
     private visibleCols: VisibleColsService;
     private rowModel: IRowModel;
     private pinnedRowModel?: PinnedRowModel;
@@ -81,7 +81,7 @@ export class RowContainerEventsFeature extends BeanStub {
         this.contextMenuService = beans.contextMenuService;
         this.navigation = beans.navigation;
         this.focusSvc = beans.focusSvc;
-        this.undoRedoService = beans.undoRedoService;
+        this.undoRedo = beans.undoRedo;
         this.visibleCols = beans.visibleCols;
         this.rowModel = beans.rowModel;
         this.pinnedRowModel = beans.pinnedRowModel;
@@ -393,19 +393,19 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndZ(event: KeyboardEvent): void {
-        if (!this.gos.get('undoRedoCellEditing') || !this.undoRedoService) {
+        if (!this.gos.get('undoRedoCellEditing') || !this.undoRedo) {
             return;
         }
         event.preventDefault();
 
         if (event.shiftKey) {
-            this.undoRedoService.redo('ui');
+            this.undoRedo.redo('ui');
         } else {
-            this.undoRedoService.undo('ui');
+            this.undoRedo.undo('ui');
         }
     }
 
     private onCtrlAndY(): void {
-        this.undoRedoService?.redo('ui');
+        this.undoRedo?.redo('ui');
     }
 }

@@ -13,7 +13,7 @@ import type { CellValueChange, LastFocusedCell } from './iUndoRedo';
 import { RangeUndoRedoAction, UndoRedoAction, UndoRedoStack } from './undoRedoStack';
 
 export class UndoRedoService extends BeanStub implements NamedBean {
-    beanName = 'undoRedoService' as const;
+    beanName = 'undoRedo' as const;
 
     private rangeSvc?: IRangeService;
 

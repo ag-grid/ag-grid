@@ -246,7 +246,7 @@ export interface CoreBeanCollection {
     pinnedRowModel?: PinnedRowModel;
     menuSvc?: MenuService;
     apiEventSvc?: ApiEventService;
-    undoRedoService?: UndoRedoService;
+    undoRedo?: UndoRedoService;
     rowNodeBlockLoader?: RowNodeBlockLoader;
     csvCreator?: ICsvCreator;
     excelCreator?: IExcelCreator;
@@ -484,7 +484,7 @@ export type BeanName =
     | 'templateService'
     | 'toolPanelColDefService'
     | 'tooltipService'
-    | 'undoRedoService'
+    | 'undoRedo'
     | 'userCompFactory'
     | 'valueCache'
     | 'valueSvc'

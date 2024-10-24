@@ -10,11 +10,11 @@ import type { CellPosition } from '../interfaces/iCellPosition';
 import { _warn } from '../validation/logging';
 
 export function undoCellEditing(beans: BeanCollection): void {
-    beans.undoRedoService?.undo('api');
+    beans.undoRedo?.undo('api');
 }
 
 export function redoCellEditing(beans: BeanCollection): void {
-    beans.undoRedoService?.redo('api');
+    beans.undoRedo?.redo('api');
 }
 
 export function getCellEditorInstances<TData = any>(
@@ -91,9 +91,9 @@ export function startEditingCell(beans: BeanCollection, params: StartEditingCell
 }
 
 export function getCurrentUndoSize(beans: BeanCollection): number {
-    return beans.undoRedoService?.getCurrentUndoStackSize() ?? 0;
+    return beans.undoRedo?.getCurrentUndoStackSize() ?? 0;
 }
 
 export function getCurrentRedoSize(beans: BeanCollection): number {
-    return beans.undoRedoService?.getCurrentRedoStackSize() ?? 0;
+    return beans.undoRedo?.getCurrentRedoStackSize() ?? 0;
 }
