@@ -26,6 +26,8 @@ import {
     KeyCode,
     _createIconNoSpan,
     _getCellRendererDetails,
+    _getCheckboxLocation,
+    _getCheckboxes,
     _getGrandTotalRow,
     _isElementInEventPath,
     _isStopPropagationForAgGrid,
@@ -249,7 +251,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return true;
         }
 
-        if (colDef!.showRowGroup === true) {
+        if (colDef.showRowGroup === true) {
             return true;
         }
 
@@ -259,9 +261,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return true;
         }
 
-        const firstRowGroupCol = rowGroupCols[0];
-
-        return firstRowGroupCol.getId() === colDef!.showRowGroup;
+        return rowGroupCols[0].getId() === colDef.showRowGroup;
     }
 
     // if we are doing embedded full width rows, we only show the renderer when
@@ -705,17 +705,18 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         this.eGui.insertAdjacentElement('afterbegin', rowDragComp.getGui());
     }
 
-    private isUserWantsSelected(): boolean {
-        const paramsCheckbox = this.params.checkbox;
-
-        // if a function, we always return true as change detection can show or hide the checkbox.
-        return typeof paramsCheckbox === 'function' || paramsCheckbox === true;
-    }
-
     private addCheckboxIfNeeded(): void {
         const rowNode = this.displayedGroupNode;
+        const rowSelection = this.gos.get('rowSelection');
+        const checkboxLocation = _getCheckboxLocation(rowSelection);
+        const checkboxes =
+            typeof rowSelection === 'object'
+                ? checkboxLocation === 'autoGroupColumn' && _getCheckboxes(rowSelection)
+                : this.params.checkbox;
+        const userWantsSelected = typeof checkboxes === 'function' || checkboxes === true;
+
         const checkboxNeeded =
-            this.isUserWantsSelected() &&
+            userWantsSelected &&
             // footers cannot be selected
             !rowNode.footer &&
             // pinned rows cannot be selected
@@ -732,7 +733,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
                 rowNode: this.params.node as RowNode, // when groupHideOpenParents = true and group expanded, we want the checkbox to refer to leaf node state (not group node state)
                 column: this.params.column as AgColumn,
                 overrides: {
-                    isVisible: this.params.checkbox,
+                    isVisible: checkboxes,
                     callbackParams: this.params,
                     removeHidden: true,
                 },
