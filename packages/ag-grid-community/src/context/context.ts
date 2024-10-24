@@ -292,7 +292,7 @@ export interface CoreBeanCollection {
     rowDragSvc?: RowDragService;
     stickyRowSvc?: StickyRowService;
     groupHideOpenParentsSvc?: IGroupHideOpenParentsService;
-    filterValueService?: FilterValueService;
+    filterValueSvc?: FilterValueService;
     clientSideNodeManager?: IClientSideNodeManager;
     clientSidePathTreeNodeManager?: IClientSideNodeManager;
     clientSideChildrenTreeNodeManager?: IClientSideNodeManager;
@@ -406,7 +406,7 @@ export type BeanName =
     | 'filterManager'
     | 'filterMenuFactory'
     | 'filterStage'
-    | 'filterValueService'
+    | 'filterValueSvc'
     | 'flashCellService'
     | 'flattenStage'
     | 'focusSvc'

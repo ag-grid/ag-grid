@@ -8,7 +8,7 @@ import type { ExpressionService } from '../valueService/expressionService';
 import type { ValueService } from '../valueService/valueService';
 
 export class FilterValueService extends BeanStub implements NamedBean {
-    beanName: BeanName = 'filterValueService';
+    beanName: BeanName = 'filterValueSvc';
 
     private valueSvc: ValueService;
     private expressionSvc?: ExpressionService;

@@ -84,7 +84,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     private rowRenderer: RowRenderer;
     private dataTypeSvc?: DataTypeService;
     private filterManager?: FilterManager;
-    private filterValueService: FilterValueService;
+    private filterValueSvc: FilterValueService;
     private autoColSvc?: IAutoColService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -95,7 +95,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         this.rowRenderer = beans.rowRenderer;
         this.dataTypeSvc = beans.dataTypeSvc;
         this.filterManager = beans.filterManager;
-        this.filterValueService = beans.filterValueService!;
+        this.filterValueSvc = beans.filterValueSvc!;
         this.autoColSvc = beans.autoColSvc;
     }
 
@@ -451,7 +451,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     private createGetValue(filterColumn: AgColumn): IFilterParams['getValue'] {
         return (rowNode, column) => {
             const columnToUse = column ? this.colModel.getCol(column) : filterColumn;
-            return columnToUse ? this.filterValueService.getValue(columnToUse, rowNode) : undefined;
+            return columnToUse ? this.filterValueSvc.getValue(columnToUse, rowNode) : undefined;
         };
     }
 

@@ -16,14 +16,14 @@ export type QuickFilterServiceEvent = 'quickFilterChanged';
 export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implements NamedBean {
     beanName = 'quickFilter' as const;
 
-    private filterValueService: FilterValueService;
+    private filterValueSvc: FilterValueService;
     private colModel: ColumnModel;
     private rowModel: IRowModel;
     private pivotResultCols?: IPivotResultColsService;
     private autoColSvc?: IAutoColService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.filterValueService = beans.filterValueService!;
+        this.filterValueSvc = beans.filterValueSvc!;
         this.colModel = beans.colModel;
         this.rowModel = beans.rowModel;
         this.pivotResultCols = beans.pivotResultCols;
@@ -195,7 +195,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     }
 
     private getQuickFilterTextForColumn(column: AgColumn, node: RowNode): string {
-        let value = this.filterValueService.getValue(column, node);
+        let value = this.filterValueSvc.getValue(column, node);
         const colDef = column.getColDef();
 
         if (colDef.getQuickFilterText) {
