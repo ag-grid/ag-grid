@@ -9,5 +9,9 @@ import { FiltersToolPanel } from './filtersToolPanel';
 export const FiltersToolPanelModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('FiltersToolPanelModule'),
     userComponents: { agFiltersToolPanel: FiltersToolPanel },
+    icons: {
+        // filter tool panel tab
+        filtersToolPanel: 'filter',
+    },
     dependsOn: [SideBarModule, EnterpriseCoreModule, ColumnFilterModule, SideBarSharedModule],
 };

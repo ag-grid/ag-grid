@@ -104,7 +104,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 return pinnedColumnService && column
                     ? {
                           name: localeTextFunc('pinColumn', 'Pin Column'),
-                          icon: _createIconNoSpan('menuPin', this.gos, null),
+                          icon: _createIconNoSpan('menuPin', this.beans, null),
                           subMenu: ['clearPinned', 'pinLeft', 'pinRight'],
                       }
                     : null;
@@ -140,7 +140,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
 
                     return {
                         name: localeTextFunc('valueAggregation', 'Value Aggregation'),
-                        icon: _createIconNoSpan('menuValue', this.gos, null),
+                        icon: _createIconNoSpan('menuValue', this.beans, null),
                         subMenu: this.createAggregationSubMenu(column!, this.aggFuncService!),
                         disabled: this.gos.get('functionsReadOnly'),
                     };
@@ -169,10 +169,10 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         column?.isRowGroupActive() ||
                         !column?.getColDef().enableRowGroup,
                     action: () => this.rowGroupColsService?.addColumns([column], source),
-                    icon: _createIconNoSpan('menuAddRowGroup', this.gos, null),
+                    icon: _createIconNoSpan('menuAddRowGroup', this.beans, null),
                 };
             case 'rowUnGroup': {
-                const icon = _createIconNoSpan('menuRemoveRowGroup', this.gos, null);
+                const icon = _createIconNoSpan('menuRemoveRowGroup', this.beans, null);
                 const showRowGroup = column?.getColDef().showRowGroup;
                 const lockedGroups = this.gos.get('groupLockGroupColumns');
                 // Handle single auto group column
@@ -247,7 +247,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
-                        icon: _createIconNoSpan('clipboardCopy', this.gos, null),
+                        icon: _createIconNoSpan('clipboardCopy', this.beans, null),
                         action: () => this.clipboardService!.copyToClipboard(),
                     };
                 } else {
@@ -258,7 +258,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return {
                         name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                        icon: _createIconNoSpan('clipboardCopy', this.gos, null),
+                        icon: _createIconNoSpan('clipboardCopy', this.beans, null),
                         action: () => this.clipboardService!.copyToClipboard({ includeHeaders: true }),
                     };
                 } else {
@@ -269,7 +269,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return {
                         name: localeTextFunc('copyWithGroupHeaders', 'Copy with Group Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
-                        icon: _createIconNoSpan('clipboardCopy', this.gos, null),
+                        icon: _createIconNoSpan('clipboardCopy', this.beans, null),
                         action: () =>
                             this.clipboardService!.copyToClipboard({ includeHeaders: true, includeGroupHeaders: true }),
                     };
@@ -284,7 +284,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     return {
                         name: localeTextFunc('cut', 'Cut'),
                         shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
-                        icon: _createIconNoSpan('clipboardCut', this.gos, null),
+                        icon: _createIconNoSpan('clipboardCut', this.beans, null),
                         disabled: !isEditable || this.gos.get('suppressCutToClipboard'),
                         action: () => this.clipboardService!.cutToClipboard(undefined, 'contextMenu'),
                     };
@@ -297,7 +297,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         name: localeTextFunc('paste', 'Paste'),
                         shortcut: localeTextFunc('ctrlV', 'Ctrl+V'),
                         disabled: true,
-                        icon: _createIconNoSpan('clipboardPaste', this.gos, null),
+                        icon: _createIconNoSpan('clipboardPaste', this.beans, null),
                         action: () => this.clipboardService!.pasteFromClipboard(),
                     };
                 } else {
@@ -318,19 +318,19 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 return {
                     name: localeTextFunc('export', 'Export'),
                     subMenu: exportSubMenuItems,
-                    icon: _createIconNoSpan('save', this.gos, null),
+                    icon: _createIconNoSpan('save', this.beans, null),
                 };
             }
             case 'csvExport':
                 return {
                     name: localeTextFunc('csvExport', 'CSV Export'),
-                    icon: _createIconNoSpan('csvExport', this.gos, null),
+                    icon: _createIconNoSpan('csvExport', this.beans, null),
                     action: () => this.beans.csvCreator?.exportDataAsCsv(),
                 };
             case 'excelExport':
                 return {
                     name: localeTextFunc('excelExport', 'Excel Export'),
-                    icon: _createIconNoSpan('excelExport', this.gos, null),
+                    icon: _createIconNoSpan('excelExport', this.beans, null),
                     action: () => this.beans.excelCreator?.exportDataAsExcel(),
                 };
             case 'separator':
@@ -342,7 +342,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                 if (column) {
                     return {
                         name: localeTextFunc('columnFilter', 'Column Filter'),
-                        icon: _createIconNoSpan('filter', this.gos, null),
+                        icon: _createIconNoSpan('filter', this.beans, null),
                         action: () =>
                             this.beans.menuService!.showFilterMenu({
                                 column,
@@ -357,26 +357,26 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             case 'columnChooser':
                 return {
                     name: localeTextFunc('columnChooser', 'Choose Columns'),
-                    icon: _createIconNoSpan('columns', this.gos, null),
+                    icon: _createIconNoSpan('columns', this.beans, null),
                     action: () =>
                         this.columnChooserFactory?.showColumnChooser({ column, eventSource: sourceElement() }),
                 };
             case 'sortAscending':
                 return {
                     name: localeTextFunc('sortAscending', 'Sort Ascending'),
-                    icon: _createIconNoSpan('sortAscending', this.gos, null),
+                    icon: _createIconNoSpan('sortAscending', this.beans, null),
                     action: () => this.sortController?.setSortForColumn(column!, 'asc', false, source),
                 };
             case 'sortDescending':
                 return {
                     name: localeTextFunc('sortDescending', 'Sort Descending'),
-                    icon: _createIconNoSpan('sortDescending', this.gos, null),
+                    icon: _createIconNoSpan('sortDescending', this.beans, null),
                     action: () => this.sortController?.setSortForColumn(column!, 'desc', false, source),
                 };
             case 'sortUnSort':
                 return {
                     name: localeTextFunc('sortUnSort', 'Clear Sort'),
-                    icon: _createIconNoSpan('sortUnSort', this.gos, null),
+                    icon: _createIconNoSpan('sortUnSort', this.beans, null),
                     action: () => this.sortController?.setSortForColumn(column!, null, false, source),
                 };
             default: {

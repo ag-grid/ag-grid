@@ -9,6 +9,15 @@ import { SetFloatingFilterComp } from './setFloatingFilter';
 export const SetFilterCoreModule: _ModuleWithoutApi = {
     ...baseEnterpriseModule('SetFilterCoreModule'),
     userComponents: { agSetColumnFilter: SetFilter },
+    icons: {
+        // set filter tree list group contracted (click to expand)
+        setFilterGroupClosed: 'tree-closed',
+        // set filter tree list group expanded (click to contract)
+        setFilterGroupOpen: 'tree-open',
+        // set filter tree list expand/collapse all button, shown when some children are expanded and
+        //     others are collapsed
+        setFilterGroupIndeterminate: 'tree-indeterminate',
+    },
     dependsOn: [EnterpriseCoreModule, ColumnFilterModule],
 };
 

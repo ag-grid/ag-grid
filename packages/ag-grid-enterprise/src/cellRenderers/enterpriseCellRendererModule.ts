@@ -9,6 +9,10 @@ export const LoadingCellRendererModule: _ModuleWithoutApi = {
     userComponents: {
         agLoadingCellRenderer: LoadingCellRenderer,
     },
+    icons: {
+        // rotating spinner shown by the loading cell renderer
+        groupLoading: 'loading',
+    },
 };
 
 export const SkeletonCellRendererModule: _ModuleWithoutApi = {

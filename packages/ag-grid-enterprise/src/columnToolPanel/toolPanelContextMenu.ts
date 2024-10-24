@@ -6,6 +6,7 @@ import type {
     ColumnNameService,
     FocusService,
     IColsService,
+    IconName,
     MenuItemDef,
     PopupService,
 } from 'ag-grid-community';
@@ -23,8 +24,8 @@ type MenuItemProperty = {
     deactivateLabel: (name: string) => string;
     activateFunction: () => void;
     deActivateFunction: () => void;
-    addIcon: string;
-    removeIcon: string;
+    addIcon: IconName;
+    removeIcon: IconName;
 };
 
 export class ToolPanelContextMenu extends Component {
@@ -237,7 +238,7 @@ export class ToolPanelContextMenu extends Component {
             if (isInactive) {
                 ret.push({
                     name: val.activateLabel(this.displayName!),
-                    icon: _createIconNoSpan(val.addIcon, this.gos, null),
+                    icon: _createIconNoSpan(val.addIcon, this.beans, null),
                     action: () => val.activateFunction(),
                 });
             }
@@ -245,7 +246,7 @@ export class ToolPanelContextMenu extends Component {
             if (isActive) {
                 ret.push({
                     name: val.deactivateLabel(this.displayName!),
-                    icon: _createIconNoSpan(val.removeIcon, this.gos, null),
+                    icon: _createIconNoSpan(val.removeIcon, this.beans, null),
                     action: () => val.deActivateFunction(),
                 });
             }
