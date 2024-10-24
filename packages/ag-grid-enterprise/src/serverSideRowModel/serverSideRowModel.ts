@@ -63,7 +63,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     private rowRenderer: RowRenderer;
     private nodeManager: NodeManager;
     private storeFactory: StoreFactory;
-    private pivotColDefService?: IPivotColDefService;
+    private pivotColDefSvc?: IPivotColDefService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
@@ -75,7 +75,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.rowRenderer = beans.rowRenderer;
         this.nodeManager = beans.ssrmNodeManager as NodeManager;
         this.storeFactory = beans.ssrmStoreFactory as StoreFactory;
-        this.pivotColDefService = beans.pivotColDefService;
+        this.pivotColDefSvc = beans.pivotColDefSvc;
     }
 
     private onRowHeightChanged_debounced = _debounce(this, this.onRowHeightChanged.bind(this), 100);
@@ -283,12 +283,12 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public generateSecondaryColumns(pivotFields: string[]) {
-        if (!this.pivotColDefService) {
+        if (!this.pivotColDefSvc) {
             this.gos.assertModuleRegistered('PivotCoreModule', 10);
             return;
         }
 
-        const pivotColumnGroupDefs = this.pivotColDefService.createColDefsFromFields(pivotFields);
+        const pivotColumnGroupDefs = this.pivotColDefSvc.createColDefsFromFields(pivotFields);
         this.managingPivotResultColumns = true;
         this.pivotResultCols?.setPivotResultCols(pivotColumnGroupDefs, 'rowModelUpdated');
     }

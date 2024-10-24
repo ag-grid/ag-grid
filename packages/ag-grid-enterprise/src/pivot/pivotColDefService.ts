@@ -18,7 +18,7 @@ export interface PivotColDefServiceResult {
 
 const PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
 export class PivotColDefService extends BeanStub implements NamedBean, IPivotColDefService {
-    beanName = 'pivotColDefService' as const;
+    beanName = 'pivotColDefSvc' as const;
 
     private colModel: ColumnModel;
     private funcColsSvc: FuncColsService;

@@ -35,14 +35,14 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
     private colModel: ColumnModel;
     private pivotResultCols: IPivotResultColsService;
     private funcColsSvc: FuncColsService;
-    private pivotColDefService: PivotColDefService;
+    private pivotColDefSvc: PivotColDefService;
 
     public wireBeans(beans: BeanCollection) {
         this.valueSvc = beans.valueSvc;
         this.colModel = beans.colModel;
         this.pivotResultCols = beans.pivotResultCols!;
         this.funcColsSvc = beans.funcColsSvc;
-        this.pivotColDefService = beans.pivotColDefService as PivotColDefService;
+        this.pivotColDefSvc = beans.pivotColDefSvc as PivotColDefService;
     }
 
     private uniqueValues: any = {};
@@ -149,7 +149,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
             aggregationFuncsChanged ||
             anyGridOptionsChanged
         ) {
-            const { pivotColumnGroupDefs, pivotColumnDefs } = this.pivotColDefService.createPivotColumnDefs(
+            const { pivotColumnGroupDefs, pivotColumnDefs } = this.pivotColDefSvc.createPivotColumnDefs(
                 this.uniqueValues
             );
             this.pivotColumnDefs = pivotColumnDefs;

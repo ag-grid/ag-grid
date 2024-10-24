@@ -285,7 +285,7 @@ export interface CoreBeanCollection {
     pivotStage?: IRowNodeStage;
     filterAggregatesStage?: IRowNodeStage;
     rowNodeSorter?: RowNodeSorter;
-    pivotColDefService?: IPivotColDefService;
+    pivotColDefSvc?: IPivotColDefService;
     chartService?: IChartService;
     aggColumnNameService?: IAggColumnNameService;
     renderStatusService?: IRenderStatusService;
@@ -441,7 +441,7 @@ export type BeanName =
     | 'pagination'
     | 'pinnedRowModel'
     | 'pinnedCols'
-    | 'pivotColDefService'
+    | 'pivotColDefSvc'
     | 'pivotStage'
     | 'popupSvc'
     | 'quickFilter'
