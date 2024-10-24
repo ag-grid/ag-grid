@@ -10,11 +10,11 @@ import type { ValueService } from '../valueService/valueService';
 export class FilterValueService extends BeanStub implements NamedBean {
     beanName: BeanName = 'filterValueService';
 
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private expressionService?: ExpressionService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.expressionService = beans.expressionService;
     }
 
@@ -27,7 +27,7 @@ export class FilterValueService extends BeanStub implements NamedBean {
         if (filterValueGetter) {
             return this.executeFilterValueGetter(filterValueGetter, rowNode.data, column, rowNode, colDef);
         }
-        return this.valueService.getValue(column, rowNode);
+        return this.valueSvc.getValue(column, rowNode);
     }
 
     private executeFilterValueGetter(
@@ -43,7 +43,7 @@ export class FilterValueService extends BeanStub implements NamedBean {
             node,
             column,
             colDef,
-            getValue: this.valueService.getValueCallback.bind(this, node),
+            getValue: this.valueSvc.getValueCallback.bind(this, node),
         });
 
         if (typeof valueGetter === 'function') {

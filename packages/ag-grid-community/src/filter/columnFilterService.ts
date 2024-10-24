@@ -77,7 +77,7 @@ function setFilterNumberComparator(a: string, b: string): number {
 export class ColumnFilterService extends BeanStub implements NamedBean {
     beanName: BeanName = 'columnFilterService';
 
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private columnModel: ColumnModel;
     private rowModel: IRowModel;
     private userComponentFactory: UserComponentFactory;
@@ -88,7 +88,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     private autoColService?: IAutoColService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.columnModel = beans.columnModel;
         this.rowModel = beans.rowModel;
         this.userComponentFactory = beans.userComponentFactory;
@@ -1038,7 +1038,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                         formatValue({
                             column: params.column,
                             node: params.node,
-                            value: this.valueService.getValue(params.column as AgColumn, params.node),
+                            value: this.valueSvc.getValue(params.column as AgColumn, params.node),
                         });
                 }
                 break;

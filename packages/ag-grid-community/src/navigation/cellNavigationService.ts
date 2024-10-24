@@ -19,7 +19,7 @@ import { _missing } from '../utils/generic';
 import { _warn } from '../validation/logging';
 
 export class CellNavigationService extends BeanStub implements NamedBean {
-    beanName = 'cellNavigationService' as const;
+    beanName = 'cellNavigation' as const;
 
     private visibleColsService: VisibleColsService;
     private rowModel: IRowModel;

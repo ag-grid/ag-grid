@@ -42,7 +42,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private rowModel: IRowModel;
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private columnStateService: ColumnStateService;
     private filterManager?: FilterManager;
     private columnAutosizeService?: ColumnAutosizeService;
@@ -52,7 +52,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.rowModel = beans.rowModel;
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.columnStateService = beans.columnStateService;
         this.filterManager = beans.filterManager;
         this.columnAutosizeService = beans.columnAutosizeService;
@@ -100,7 +100,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 if (valueFormatter === dataTypeDefinition.groupSafeValueFormatter) {
                     valueFormatter = dataTypeDefinition.valueFormatter;
                 }
-                return this.valueService.formatValue(column as AgColumn, node, value, valueFormatter as any)!;
+                return this.valueSvc.formatValue(column as AgColumn, node, value, valueFormatter as any)!;
             };
         };
         Object.entries(defaultDataTypes).forEach(([cellDataType, dataTypeDefinition]) => {

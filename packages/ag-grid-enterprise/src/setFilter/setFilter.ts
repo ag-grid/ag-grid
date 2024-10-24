@@ -52,13 +52,13 @@ import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter<V> {
     private funcColsService: FuncColsService;
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private dataTypeService?: DataTypeService;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.funcColsService = beans.funcColsService;
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.dataTypeService = beans.dataTypeService;
     }
 
@@ -346,7 +346,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             usingComplexObjects: !!keyCreator,
             gos: this.gos,
             funcColsService: this.funcColsService,
-            valueService: this.valueService,
+            valueSvc: this.valueSvc,
             treeDataTreeList: this.treeDataTreeList,
             groupingTreeList: this.groupingTreeList,
             addManagedEventListeners: (handlers) => this.addManagedEventListeners(handlers),
@@ -409,7 +409,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             value = _last(value) as string;
         }
 
-        const formattedValue = this.valueService.formatValue(
+        const formattedValue = this.valueSvc.formatValue(
             this.setFilterParams!.column as AgColumn,
             null,
             value,
@@ -969,7 +969,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
     private doesFilterPassForGrouping(node: IRowNode): boolean {
         const dataPath = this.funcColsService.rowGroupCols.map((groupCol) =>
-            this.valueService.getKeyForNode(groupCol, node)
+            this.valueSvc.getKeyForNode(groupCol, node)
         );
         dataPath.push(this.getValueFromNode(node));
         return this.isInAppliedModel(

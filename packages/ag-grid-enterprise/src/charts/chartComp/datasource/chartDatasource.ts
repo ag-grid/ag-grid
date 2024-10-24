@@ -42,7 +42,7 @@ interface IData {
 export class ChartDatasource extends BeanStub {
     private gridRowModel: IRowModel;
     private pivotResultColsService?: IPivotResultColsService;
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private columnModel: ColumnModel;
     private rowNodeSorter?: RowNodeSorter;
     private sortController?: SortController;
@@ -52,7 +52,7 @@ export class ChartDatasource extends BeanStub {
         this.sortController = beans.sortController;
         this.gridRowModel = beans.rowModel;
         this.columnModel = beans.columnModel;
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.rowNodeSorter = beans.rowNodeSorter;
         this.aggregationStage = beans.aggregationStage as (IRowNodeStage & IAggregationStage) | undefined;
@@ -156,7 +156,7 @@ export class ChartDatasource extends BeanStub {
                 const column = this.columnModel.getCol(colId);
 
                 if (column) {
-                    const valueObject = this.valueService.getValue(column, rowNode);
+                    const valueObject = this.valueSvc.getValue(column, rowNode);
 
                     // when grouping we also need to build up multi category labels for charts
                     if (grouping) {
@@ -205,7 +205,7 @@ export class ChartDatasource extends BeanStub {
                     const filteredOutColId = colId + '-filtered-out';
 
                     // add data value to value column
-                    const value = this.valueService.getValue(col, rowNode);
+                    const value = this.valueSvc.getValue(col, rowNode);
                     const actualValue =
                         value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;
 
@@ -218,7 +218,7 @@ export class ChartDatasource extends BeanStub {
                     }
                 } else {
                     // add data value to value column
-                    let value = this.valueService.getValue(col, rowNode);
+                    let value = this.valueSvc.getValue(col, rowNode);
 
                     // aggregated value
                     if (value && Object.prototype.hasOwnProperty.call(value, 'toString')) {

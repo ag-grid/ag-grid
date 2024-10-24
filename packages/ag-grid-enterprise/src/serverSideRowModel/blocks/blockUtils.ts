@@ -30,7 +30,7 @@ export const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey' as const;
 export class BlockUtils extends BeanStub implements NamedBean {
     beanName = 'ssrmBlockUtils' as const;
 
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private showRowGroupColsService?: IShowRowGroupColsService;
     private nodeManager: NodeManager;
     private expansionService?: ServerSideExpansionService;
@@ -38,7 +38,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     private storeFactory: StoreFactory;
 
     public wireBeans(beans: BeanCollection) {
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.showRowGroupColsService = beans.showRowGroupColsService;
         this.nodeManager = beans.ssrmNodeManager as NodeManager;
         this.expansionService = beans.expansionService as ServerSideExpansionService;
@@ -116,7 +116,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     private setRowGroupInfo(rowNode: RowNode): void {
-        rowNode.key = this.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
+        rowNode.key = this.valueSvc.getValue(rowNode.rowGroupColumn!, rowNode);
 
         if (rowNode.key === null || rowNode.key === undefined) {
             _doOnce(() => {
@@ -235,7 +235,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
             if (usingTreeData) {
                 rowNode.groupData[col.getColId()] = rowNode.key;
             } else if (col.isRowGroupDisplayed(rowNode.rowGroupColumn!.getId())) {
-                const groupValue = this.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
+                const groupValue = this.valueSvc.getValue(rowNode.rowGroupColumn!, rowNode);
                 rowNode.groupData[col.getColId()] = groupValue;
             }
         });

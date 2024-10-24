@@ -22,7 +22,7 @@ import type { ExpressionService } from './expressionService';
 import type { ValueCache } from './valueCache';
 
 export class ValueService extends BeanStub implements NamedBean {
-    beanName = 'valueService' as const;
+    beanName = 'valueSvc' as const;
 
     private expressionService?: ExpressionService;
     private columnModel: ColumnModel;

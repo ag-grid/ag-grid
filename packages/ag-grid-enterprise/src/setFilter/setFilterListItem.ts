@@ -69,12 +69,12 @@ export interface SetFilterListItemParams<V> {
 export type SetFilterListItemEvent = 'selectionChanged' | 'expandedChanged';
 /** @param V type of value in the Set Filter */
 export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private userComponentFactory: UserComponentFactory;
     private registry: Registry;
 
     public wireBeans(beans: BeanCollection) {
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.userComponentFactory = beans.userComponentFactory;
         this.registry = beans.registry;
     }
@@ -394,7 +394,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     }
 
     private getFormattedValue(column: AgColumn, value: any) {
-        return this.valueService.formatValue(column, null, value, this.valueFormatter, false);
+        return this.valueSvc.formatValue(column, null, value, this.valueFormatter, false);
     }
 
     private renderCell(): void {

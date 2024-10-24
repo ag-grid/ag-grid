@@ -111,7 +111,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
                 rangeService.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
             } else if (cellCtrl.isCellEditable()) {
                 const column = cellCtrl.getColumn();
-                const emptyValue = this.beans.valueService.getDeleteValue(column, rowNode);
+                const emptyValue = this.beans.valueSvc.getDeleteValue(column, rowNode);
                 rowNode.setDataValue(column, emptyValue, 'cellClear');
             }
         } else {

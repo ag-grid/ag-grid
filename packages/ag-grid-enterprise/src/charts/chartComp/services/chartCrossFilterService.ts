@@ -14,13 +14,13 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
     beanName = 'chartCrossFilterService' as const;
 
     private columnModel: ColumnModel;
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private filterManager?: FilterManager;
     private clientSideRowModel?: IClientSideRowModel;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.filterManager = beans.filterManager;
         if (_isClientSideRowModel(this.gos, beans.rowModel)) {
             this.clientSideRowModel = beans.rowModel;
@@ -97,7 +97,7 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
         const column = this.getColumnById(colId);
         this.clientSideRowModel?.forEachNodeAfterFilter((rowNode: RowNode) => {
             if (column && !rowNode.group) {
-                const value = this.valueService.getValue(column, rowNode) + '';
+                const value = this.valueSvc.getValue(column, rowNode) + '';
                 if (!filteredValues.includes(value)) {
                     filteredValues.push(value);
                 }

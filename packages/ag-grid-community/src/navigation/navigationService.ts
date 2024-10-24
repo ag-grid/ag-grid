@@ -47,7 +47,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     private rowModel: IRowModel;
     private ctrlsService: CtrlsService;
     private rowRenderer: RowRenderer;
-    private cellNavigationService: CellNavigationService;
+    private cellNavigation: CellNavigationService;
     private pinnedRowModel?: PinnedRowModel;
     private rangeService?: IRangeService;
 
@@ -58,7 +58,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         this.rowModel = beans.rowModel;
         this.ctrlsService = beans.ctrlsService;
         this.rowRenderer = beans.rowRenderer;
-        this.cellNavigationService = beans.cellNavigationService!;
+        this.cellNavigation = beans.cellNavigation!;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.rangeService = beans.rangeService;
     }
@@ -350,7 +350,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     }
 
     private onCtrlUpDownLeftRight(key: string, gridCell: CellPosition): void {
-        const cellToFocus = this.cellNavigationService.getNextCellToFocus(key, gridCell, true)!;
+        const cellToFocus = this.cellNavigation.getNextCellToFocus(key, gridCell, true)!;
         const { rowIndex } = cellToFocus;
         const column = cellToFocus.column as AgColumn;
 
@@ -616,7 +616,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             if (!backwards) {
                 nextPosition = this.getLastCellOfColSpan(nextPosition);
             }
-            nextPosition = this.cellNavigationService.getNextTabbedCell(nextPosition, backwards);
+            nextPosition = this.cellNavigation.getNextTabbedCell(nextPosition, backwards);
 
             // allow user to override what cell to go to next
             const userFunc = this.gos.getCallback('tabToNextCell');
@@ -750,7 +750,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                 nextCell = this.getLastCellOfColSpan(nextCell);
             }
 
-            nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
+            nextCell = this.cellNavigation.getNextCellToFocus(key, nextCell);
 
             // eg if going down, and nextCell=undefined, means we are gone past the last row
             hitEdgeOfGrid = _missing(nextCell);

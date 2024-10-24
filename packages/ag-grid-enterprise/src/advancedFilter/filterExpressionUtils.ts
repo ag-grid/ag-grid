@@ -7,7 +7,7 @@ export interface FilterExpressionParserParams {
     expression: string;
     columnModel: ColumnModel;
     dataTypeService?: DataTypeService;
-    valueService: ValueService;
+    valueSvc: ValueService;
     advancedFilterExpressionService: AdvancedFilterExpressionService;
 }
 

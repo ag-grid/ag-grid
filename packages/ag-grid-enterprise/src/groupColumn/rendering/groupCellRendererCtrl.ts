@@ -60,7 +60,7 @@ function getFullWidthGroupRowInnerCellRenderer(
 
 export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendererCtrl {
     private expressionService?: ExpressionService;
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
     private userComponentFactory: UserComponentFactory;
@@ -72,7 +72,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
 
     public wireBeans(beans: BeanCollection): void {
         this.expressionService = beans.expressionService;
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
         this.userComponentFactory = beans.userComponentFactory;
@@ -370,7 +370,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         const params = this.params;
 
         const { value, node } = this.params;
-        const valueFormatted = this.valueService.formatValue(relatedColumn, node, value);
+        const valueFormatted = this.valueSvc.formatValue(relatedColumn, node, value);
 
         // we don't update the original params, as they could of come through React,
         // as react has RowGroupCellRenderer, which means the params could be props which

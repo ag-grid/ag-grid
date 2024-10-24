@@ -23,7 +23,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     public columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
     public funcColsService: FuncColsService;
-    public valueService: ValueService;
+    public valueSvc: ValueService;
     public gos: GridOptionsService;
     public processCellCallback?: (params: ProcessCellForExportParams) => string;
     public processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;
@@ -37,7 +37,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             columnModel,
             funcColsService,
             columnNameService,
-            valueService,
+            valueSvc,
             gos,
             processCellCallback,
             processHeaderCallback,
@@ -48,7 +48,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         this.columnModel = columnModel;
         this.funcColsService = funcColsService;
         this.columnNameService = columnNameService;
-        this.valueService = valueService;
+        this.valueSvc = valueSvc;
         this.gos = gos;
         this.processCellCallback = processCellCallback;
         this.processHeaderCallback = processHeaderCallback;
@@ -83,7 +83,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         const value =
             (!hideOpenParents || node.footer) && this.shouldRenderGroupSummaryCell(node, column, index)
                 ? this.createValueForGroupNode(column, node)
-                : this.valueService.getValue(column, node);
+                : this.valueSvc.getValue(column, node);
 
         const processedValue = this.processCell({
             accumulatedRowIndex,
@@ -160,7 +160,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
             ) {
                 return value;
             }
-            return this.valueService.formatValue(node.rowGroupColumn, node, value) ?? value;
+            return this.valueSvc.formatValue(node.rowGroupColumn, node, value) ?? value;
         };
 
         const isFooter = node.footer;
@@ -199,14 +199,14 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                             value: value,
                             type: type,
                             parseValue: (valueToParse: string) =>
-                                this.valueService.parseValue(
+                                this.valueSvc.parseValue(
                                     column,
                                     rowNode,
                                     valueToParse,
-                                    this.valueService.getValue(column, rowNode)
+                                    this.valueSvc.getValue(column, rowNode)
                                 ),
                             formatValue: (valueToFormat: any) =>
-                                this.valueService.formatValue(column, rowNode, valueToFormat) ?? valueToFormat,
+                                this.valueSvc.formatValue(column, rowNode, valueToFormat) ?? valueToFormat,
                         })
                     ) ?? '',
             };
@@ -215,7 +215,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         if (column.getColDef().useValueFormatterForExport !== false) {
             return {
                 value: value ?? '',
-                valueFormatted: this.valueService.formatValue(column, rowNode, value),
+                valueFormatted: this.valueSvc.formatValue(column, rowNode, value),
             };
         }
 

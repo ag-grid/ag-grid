@@ -43,7 +43,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
     public step: ClientSideRowModelStage = 'aggregate';
 
     private columnModel: ColumnModel;
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private aggFuncService: AggFuncService;
     private funcColsService: FuncColsService;
     private pivotResultColsService?: IPivotResultColsService;
@@ -53,7 +53,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         this.aggFuncService = beans.aggFuncService as AggFuncService;
         this.funcColsService = beans.funcColsService;
         this.pivotResultColsService = beans.pivotResultColsService;
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
     }
 
     // it's possible to recompute the aggregate without doing the other parts
@@ -262,7 +262,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
             return [];
         }
 
-        return mapPointer.map((rowNode: RowNode) => this.valueService.getValue(valueColumn, rowNode));
+        return mapPointer.map((rowNode: RowNode) => this.valueSvc.getValue(valueColumn, rowNode));
     }
 
     private getValuesNormal(rowNode: RowNode, valueColumns: AgColumn[], filteredOnly: boolean): any[][] {
@@ -281,7 +281,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
                 const valueColumn = valueColumns[j];
                 // if the row is a group, then it will only have an agg result value,
                 // which means valueGetter is never used.
-                const value = this.valueService.getValue(valueColumn, childNode);
+                const value = this.valueSvc.getValue(valueColumn, childNode);
                 values[j].push(value);
             }
         }

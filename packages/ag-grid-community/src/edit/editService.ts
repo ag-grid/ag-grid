@@ -23,7 +23,7 @@ export class EditService extends BeanStub implements NamedBean {
 
     private navigationService?: NavigationService;
     private userComponentFactory: UserComponentFactory;
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private rowRenderer: RowRenderer;
     private mouseEventService: MouseEventService;
     private popupService?: PopupService;
@@ -31,7 +31,7 @@ export class EditService extends BeanStub implements NamedBean {
     public wireBeans(beans: CoreBeanCollection): void {
         this.navigationService = beans.navigationService;
         this.userComponentFactory = beans.userComponentFactory;
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.rowRenderer = beans.rowRenderer;
         this.popupService = beans.popupService;
     }
@@ -66,7 +66,7 @@ export class EditService extends BeanStub implements NamedBean {
         const { newValue, newValueExists } = this.takeValueFromCellEditor(cancel, cellComp);
         const rowNode = cellCtrl.getRowNode();
         const column = cellCtrl.getColumn();
-        const oldValue = this.valueService.getValueForDisplay(column, rowNode);
+        const oldValue = this.valueSvc.getValueForDisplay(column, rowNode);
         let valueChanged = false;
 
         if (newValueExists) {
@@ -246,7 +246,7 @@ export class EditService extends BeanStub implements NamedBean {
         const column = cellCtrl.getColumn();
         const rowNode = cellCtrl.getRowNode();
         return this.gos.addGridCommonParams({
-            value: this.valueService.getValueForDisplay(column, rowNode),
+            value: this.valueSvc.getValueForDisplay(column, rowNode),
             eventKey: key,
             column: column,
             colDef: column.getColDef(),
@@ -257,7 +257,7 @@ export class EditService extends BeanStub implements NamedBean {
             onKeyDown: cellCtrl.onKeyDown.bind(cellCtrl),
             stopEditing: cellCtrl.stopEditingAndFocus.bind(cellCtrl),
             eGridCell: cellCtrl.getGui(),
-            parseValue: (newValue: any) => this.valueService.parseValue(column, rowNode, newValue, cellCtrl.getValue()),
+            parseValue: (newValue: any) => this.valueSvc.parseValue(column, rowNode, newValue, cellCtrl.getValue()),
             formatValue: cellCtrl.formatValue.bind(cellCtrl),
         });
     }

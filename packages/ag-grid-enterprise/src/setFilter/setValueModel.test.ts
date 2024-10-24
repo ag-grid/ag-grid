@@ -67,8 +67,8 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
         isRowDataLoaded: () => true,
     } as IClientSideRowModel;
 
-    const valueService = mock<ValueService>('formatValue');
-    valueService.formatValue.mockImplementation((_1, _2, value) => value);
+    const valueSvc = mock<ValueService>('formatValue');
+    valueSvc.formatValue.mockImplementation((_1, _2, value) => value);
 
     const svmParams: SetFilterParams = {
         rowModel,
@@ -96,7 +96,7 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
         createKey: (value) => _makeNull(Array.isArray(value) ? (value as any) : _toStringOrNull(value)!),
         valueFormatter: (params) => _toStringOrNull(params.value)!,
         gos,
-        valueService,
+        valueSvc,
         addManagedEventListeners: () => [],
         funcColsService,
     });

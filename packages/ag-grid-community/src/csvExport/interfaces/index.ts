@@ -37,7 +37,7 @@ export interface GridSerializingParams {
     columnModel: ColumnModel;
     funcColsService: FuncColsService;
     columnNameService: ColumnNameService;
-    valueService: ValueService;
+    valueSvc: ValueService;
     gos: GridOptionsService;
     processCellCallback?: (params: ProcessCellForExportParams) => string;
     processHeaderCallback?: (params: ProcessHeaderForExportParams) => string;

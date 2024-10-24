@@ -150,19 +150,19 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
     private selectionService?: ISelectionService;
     private rowModel: IRowModel;
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private focusService: FocusService;
     private visibleColsService: VisibleColsService;
-    private cellNavigationService: CellNavigationService;
+    private cellNavigation: CellNavigationService;
     private rangeService?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
         this.selectionService = beans.selectionService;
         this.rowModel = beans.rowModel;
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.focusService = beans.focusService;
         this.visibleColsService = beans.visibleColsService;
-        this.cellNavigationService = beans.cellNavigationService!;
+        this.cellNavigation = beans.cellNavigation!;
         this.rangeService = beans.rangeService;
     }
 
@@ -516,7 +516,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                         const value = this.processCell(
                             rowNode,
                             column,
-                            this.valueService.getValue(column, rowNode),
+                            this.valueSvc.getValue(column, rowNode),
                             EXPORT_TYPE_DRAG_COPY,
                             processCellForClipboardFunc,
                             false,
@@ -614,7 +614,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 }
                 const res = _getRowNode(this.beans, rowPointer);
                 // move to next row down for next set of values
-                rowPointer = this.cellNavigationService.getRowBelow({
+                rowPointer = this.cellNavigation.getRowBelow({
                     rowPinned: rowPointer.rowPinned,
                     rowIndex: rowPointer.rowIndex,
                 });
@@ -806,7 +806,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         if (!column.isCellEditable(rowNode)) {
             return;
         }
-        const emptyValue = this.valueService.getDeleteValue(column, rowNode);
+        const emptyValue = this.valueSvc.getDeleteValue(column, rowNode);
         rowNode.setDataValue(column, emptyValue, 'clipboardService');
     }
 
@@ -854,7 +854,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
             rowCallback(currentRow, rowNode, range.columns as AgColumn[], rangeIndex++, isLastRow && isLastRange);
 
-            currentRow = this.cellNavigationService.getRowBelow(currentRow);
+            currentRow = this.cellNavigation.getRowBelow(currentRow);
         }
     }
 
@@ -957,7 +957,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             if (_isSameRow(node, lastRow)) {
                 break;
             }
-            node = this.cellNavigationService.getRowBelow(node);
+            node = this.cellNavigation.getRowBelow(node);
         }
 
         return { rowPositions, cellsToFlash };
@@ -1060,7 +1060,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             ) {
                 return value;
             }
-            return this.valueService.formatValue(node.rowGroupColumn as AgColumn, node, value) ?? value;
+            return this.valueSvc.formatValue(node.rowGroupColumn as AgColumn, node, value) ?? value;
         };
         let value = getValueFromNode();
 
@@ -1085,9 +1085,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 column,
                 type: 'clipboard',
                 formatValue: (valueToFormat: any) =>
-                    this.valueService.formatValue(column, node, valueToFormat) ?? valueToFormat,
+                    this.valueSvc.formatValue(column, node, valueToFormat) ?? valueToFormat,
                 parseValue: (valueToParse: string) =>
-                    this.valueService.parseValue(column, node, valueToParse, this.valueService.getValue(column, node)),
+                    this.valueSvc.parseValue(column, node, valueToParse, this.valueSvc.getValue(column, node)),
             });
         }
         return value;
@@ -1119,13 +1119,13 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                 value,
                 type,
                 formatValue: (valueToFormat: any) =>
-                    this.valueService.formatValue(column, rowNode ?? null, valueToFormat) ?? valueToFormat,
+                    this.valueSvc.formatValue(column, rowNode ?? null, valueToFormat) ?? valueToFormat,
                 parseValue: (valueToParse: string) =>
-                    this.valueService.parseValue(
+                    this.valueSvc.parseValue(
                         column,
                         rowNode ?? null,
                         valueToParse,
-                        this.valueService.getValue(column, rowNode)
+                        this.valueSvc.getValue(column, rowNode)
                     ),
             };
 
@@ -1133,16 +1133,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
 
         if (canParse && column.getColDef().useValueParserForImport !== false) {
-            return this.valueService.parseValue(
-                column,
-                rowNode ?? null,
-                value,
-                this.valueService.getValue(column, rowNode)
-            );
+            return this.valueSvc.parseValue(column, rowNode ?? null, value, this.valueSvc.getValue(column, rowNode));
         }
 
         if (canFormat && column.getColDef().useValueFormatterForExport !== false) {
-            return this.valueService.formatValue(column, rowNode ?? null, value) ?? (value as any);
+            return this.valueSvc.formatValue(column, rowNode ?? null, value) ?? (value as any);
         }
 
         return value;

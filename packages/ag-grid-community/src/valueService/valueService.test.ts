@@ -10,7 +10,7 @@ let colDef: ColDef;
 let column: jest.Mocked<AgColumn>;
 let gos: jest.Mocked<GridOptionsService>;
 let expressionService: jest.Mocked<ExpressionService>;
-let valueService: ValueService;
+let valueSvc: ValueService;
 
 describe('formatValue', () => {
     beforeEach(() => {
@@ -21,9 +21,9 @@ describe('formatValue', () => {
         gos = mock<GridOptionsService>('get', 'addGridCommonParams');
         gos.addGridCommonParams.mockImplementation((params) => params as any);
         expressionService = mock<ExpressionService>('evaluate');
-        valueService = new ValueService();
-        (valueService as any).gos = gos;
-        (valueService as any).expressionService = expressionService;
+        valueSvc = new ValueService();
+        (valueSvc as any).gos = gos;
+        (valueSvc as any).expressionService = expressionService;
     });
 
     it('uses supplied formatter if provided', () => {
@@ -31,7 +31,7 @@ describe('formatValue', () => {
         const formatter = () => returnValue;
         const value = 'bar';
 
-        const formattedValue = valueService.formatValue(column, null, value, formatter);
+        const formattedValue = valueSvc.formatValue(column, null, value, formatter);
 
         expect(formattedValue).toBe(returnValue);
         expect(expressionService.evaluate).toHaveBeenCalledTimes(0);
@@ -43,7 +43,7 @@ describe('formatValue', () => {
         colDef.valueFormatter = formatter;
         const value = 'bar';
 
-        const formattedValue = valueService.formatValue(column, null, value);
+        const formattedValue = valueSvc.formatValue(column, null, value);
 
         expect(formattedValue).toBe(returnValue);
         expect(expressionService.evaluate).toHaveBeenCalledTimes(0);
@@ -52,7 +52,7 @@ describe('formatValue', () => {
     it('does not use value formatter from column definition if disabled', () => {
         const formatter = (params: ValueFormatterParams) => params.value.toString();
         colDef.valueFormatter = formatter;
-        const formattedValue = valueService.formatValue(column, null, 'bar', undefined, false);
+        const formattedValue = valueSvc.formatValue(column, null, 'bar', undefined, false);
 
         expect(formattedValue).toBeNull();
         expect(expressionService.evaluate).toHaveBeenCalledTimes(0);
@@ -67,7 +67,7 @@ describe('formatValue', () => {
         node.rowPinned = 'top';
         expect(node.isRowPinned()).toBe(true);
 
-        const formattedValue = valueService.formatValue(column, node, value);
+        const formattedValue = valueSvc.formatValue(column, node, value);
 
         expect(formattedValue).toBe(returnValue);
         expect(expressionService.evaluate).toHaveBeenCalledTimes(0);
@@ -77,14 +77,14 @@ describe('formatValue', () => {
         const value = 'foo';
         const refDataValue = 'bar';
         colDef.refData = { [value]: refDataValue };
-        const formattedValue = valueService.formatValue(column, null, value);
+        const formattedValue = valueSvc.formatValue(column, null, value);
 
         expect(formattedValue).toBe(refDataValue);
     });
 
     it('returns empty string if refData exists but key cannot be found', () => {
         colDef.refData = {};
-        const formattedValue = valueService.formatValue(column, null, 'foo');
+        const formattedValue = valueSvc.formatValue(column, null, 'foo');
 
         expect(formattedValue).toBe('');
     });
@@ -95,14 +95,14 @@ describe('formatValue', () => {
         const formatter = (params: ValueFormatterParams) => params.value.toString();
         colDef.refData = { [value]: 'bob' };
 
-        const formattedValue = valueService.formatValue(column, null, value, formatter);
+        const formattedValue = valueSvc.formatValue(column, null, value, formatter);
 
         expect(formattedValue).toBe(returnValue);
     });
 
     it('formats array values with spaces by default if not otherwise formatted', () => {
         const value = [1, 2, 3];
-        const formattedValue = valueService.formatValue(column, null, value);
+        const formattedValue = valueSvc.formatValue(column, null, value);
 
         expect(formattedValue).toBe('1, 2, 3');
     });

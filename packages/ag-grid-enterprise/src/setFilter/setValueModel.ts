@@ -42,7 +42,7 @@ export enum SetFilterModelValuesType {
 export interface SetValueModelParams<V> {
     gos: GridOptionsService;
     funcColsService: FuncColsService;
-    valueService: ValueService;
+    valueSvc: ValueService;
     filterParams: SetFilterParams<any, V>;
     setIsLoading: (loading: boolean) => void;
     translate: (key: keyof ISetFilterLocaleText) => string;
@@ -111,7 +111,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
         const {
             usingComplexObjects,
             funcColsService,
-            valueService,
+            valueSvc,
             treeDataTreeList,
             groupingTreeList,
             filterParams,
@@ -179,7 +179,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
                 this.createKey,
                 this.caseFormat,
                 funcColsService,
-                valueService,
+                valueSvc,
                 treeDataOrGrouping,
                 !!treeDataTreeList,
                 getDataPath,
@@ -205,12 +205,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
                   treeListFormatter,
                   treeDataTreeList || groupingTreeList
               )
-            : (new FlatSetDisplayValueModel<V>(
-                  valueService,
-                  valueFormatter,
-                  this.formatter,
-                  column as AgColumn
-              ) as any);
+            : (new FlatSetDisplayValueModel<V>(valueSvc, valueFormatter, this.formatter, column as AgColumn) as any);
 
         this.updateAllValues().then((updatedKeys) => this.resetSelectionState(updatedKeys || []));
     }

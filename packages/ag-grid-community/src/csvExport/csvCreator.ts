@@ -20,13 +20,13 @@ export class CsvCreator
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
     private funcColsService: FuncColsService;
-    private valueService: ValueService;
+    private valueSvc: ValueService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.funcColsService = beans.funcColsService;
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
     }
 
     protected getMergedParams(params?: CsvExportParams): CsvExportParams {
@@ -69,7 +69,7 @@ export class CsvCreator
     }
 
     public createSerializingSession(params?: CsvExportParams): CsvSerializingSession {
-        const { columnModel, columnNameService, funcColsService, valueService, gos } = this;
+        const { columnModel, columnNameService, funcColsService, valueSvc, gos } = this;
         const {
             processCellCallback,
             processHeaderCallback,
@@ -83,7 +83,7 @@ export class CsvCreator
             columnModel,
             columnNameService,
             funcColsService,
-            valueService,
+            valueSvc,
             gos,
             processCellCallback: processCellCallback || undefined,
             processHeaderCallback: processHeaderCallback || undefined,

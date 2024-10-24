@@ -30,13 +30,13 @@ import {
 export class AdvancedFilterExpressionService extends BeanStub implements NamedBean {
     beanName = 'advancedFilterExpressionService' as const;
 
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
     private dataTypeService?: DataTypeService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
         this.dataTypeService = beans.dataTypeService;
@@ -85,10 +85,10 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             case 'number':
                 return _exists(operand) ? Number(operand) : null;
             case 'date':
-                return _serialiseDate(this.valueService.parseValue(column, null, operand, undefined), false);
+                return _serialiseDate(this.valueSvc.parseValue(column, null, operand, undefined), false);
             case 'dateString': {
                 // displayed string format may be different from data string format, so parse before converting to date
-                const parsedDateString = this.valueService.parseValue(column, null, operand, undefined);
+                const parsedDateString = this.valueSvc.parseValue(column, null, operand, undefined);
                 return this.dataTypeService
                     ? _serialiseDate(
                           this.dataTypeService.getDateParserFunction(column)(parsedDateString) ?? null,
@@ -112,7 +112,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                     break;
                 case 'date': {
                     const dateValue = _parseDateTimeFromString(filter);
-                    operand1 = column ? this.valueService.formatValue(column, null, dateValue) : null;
+                    operand1 = column ? this.valueSvc.formatValue(column, null, dateValue) : null;
                     break;
                 }
                 case 'dateString': {
@@ -126,7 +126,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                     } else {
                         dateStringStringValue = filter;
                     }
-                    operand1 = column ? this.valueService.formatValue(column, null, dateStringStringValue) : null;
+                    operand1 = column ? this.valueSvc.formatValue(column, null, dateStringStringValue) : null;
                     break;
                 }
             }
@@ -288,7 +288,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                 } else {
                     params = {
                         valueConverter: (value, node) =>
-                            this.valueService.formatValue(column, node, value) ??
+                            this.valueSvc.formatValue(column, node, value) ??
                             (typeof value.toString === 'function' ? value.toString() : ''),
                     };
                 }

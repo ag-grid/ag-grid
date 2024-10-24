@@ -176,7 +176,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                             return;
                         }
 
-                        let value = this.beans.valueService.getValue(col, rowNode);
+                        let value = this.beans.valueSvc.getValue(col, rowNode);
 
                         // if empty cell, skip it, doesn't impact count or anything
                         if (_missing(value) || value === '') {
@@ -214,7 +214,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                         }
                     });
 
-                    currentRow = this.beans.cellNavigationService!.getRowBelow(currentRow);
+                    currentRow = this.beans.cellNavigation!.getRowBelow(currentRow);
                 }
             }
         }

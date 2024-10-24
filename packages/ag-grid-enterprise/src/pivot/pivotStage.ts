@@ -31,14 +31,14 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
     ]);
     public step: ClientSideRowModelStage = 'pivot';
 
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private columnModel: ColumnModel;
     private pivotResultColsService: IPivotResultColsService;
     private funcColsService: FuncColsService;
     private pivotColDefService: PivotColDefService;
 
     public wireBeans(beans: BeanCollection) {
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.columnModel = beans.columnModel;
         this.pivotResultColsService = beans.pivotResultColsService!;
         this.funcColsService = beans.funcColsService;
@@ -230,7 +230,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
 
         // map the children out based on the pivot column
         children.forEach((child: RowNode) => {
-            let key: string = this.valueService.getKeyForNode(pivotColumn, child);
+            let key: string = this.valueSvc.getKeyForNode(pivotColumn, child);
 
             if (_missing(key)) {
                 key = '';

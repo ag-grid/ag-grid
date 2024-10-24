@@ -71,14 +71,14 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
 
     private columnModel: ColumnModel;
     private funcColsService: FuncColsService;
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private selectionService?: ISelectionService;
     private showRowGroupColsService: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
         this.funcColsService = beans.funcColsService;
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.selectionService = beans.selectionService;
         this.showRowGroupColsService = beans.showRowGroupColsService!;
     }
@@ -622,7 +622,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
             const isRowGroupDisplayed = groupColumn !== null && col.isRowGroupDisplayed(groupColumn.getId());
             if (isRowGroupDisplayed) {
                 // if maintain group value type, get the value from any leaf node.
-                groupNode.groupData![col.getColId()] = this.valueService.getValue(groupColumn, groupInfo.leafNode);
+                groupNode.groupData![col.getColId()] = this.valueSvc.getValue(groupColumn, groupInfo.leafNode);
             }
         });
     }
@@ -666,7 +666,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     private getGroupInfo(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {
         const res: GroupInfo[] = [];
         details.groupedCols.forEach((groupCol) => {
-            let key: string = this.valueService.getKeyForNode(groupCol, rowNode);
+            let key: string = this.valueSvc.getKeyForNode(groupCol, rowNode);
             let keyExists = key !== null && key !== undefined && key !== '';
 
             // unbalanced tree and pivot mode don't work together - not because of the grid, it doesn't make

@@ -398,8 +398,8 @@ export class CellCtrl extends BeanStub {
         const res: ICellRendererParams = this.beans.gos.addGridCommonParams({
             value: this.value,
             valueFormatted: this.valueFormatted,
-            getValue: () => this.beans.valueService.getValueForDisplay(this.column, this.rowNode),
-            setValue: (value: any) => this.beans.valueService.setValue(this.rowNode, this.column, value),
+            getValue: () => this.beans.valueSvc.getValueForDisplay(this.column, this.rowNode),
+            setValue: (value: any) => this.beans.valueSvc.setValue(this.rowNode, this.column, value),
             formatValue: this.formatValue.bind(this),
             data: this.rowNode.data,
             node: this.rowNode,
@@ -539,14 +539,14 @@ export class CellCtrl extends BeanStub {
     }
 
     private callValueFormatter(value: any): string | null {
-        return this.beans.valueService.formatValue(this.column, this.rowNode, value);
+        return this.beans.valueSvc.formatValue(this.column, this.rowNode, value);
     }
 
     public updateAndFormatValue(compareValues: boolean): boolean {
         const oldValue = this.value;
         const oldValueFormatted = this.valueFormatted;
 
-        this.value = this.beans.valueService.getValueForDisplay(this.column, this.rowNode);
+        this.value = this.beans.valueSvc.getValueForDisplay(this.column, this.rowNode);
         this.valueFormatted = this.callValueFormatter(this.value);
 
         if (compareValues) {

@@ -682,7 +682,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     private createChangePath(rowNodeTransactions: (RowNodeTransaction | null)[] | undefined): ChangedPath {
         // for updates, if the row is updated at all, then we re-calc all the values
         // in that row. we could compare each value to each old value, however if we
-        // did this, we would be calling the valueService twice, once on the old value
+        // did this, we would be calling the valueSvc twice, once on the old value
         // and once on the new value. so it's less valueGetter calls if we just assume
         // each column is different. that way the changedPath is used so that only
         // the impacted parent rows are recalculated, parents who's children have

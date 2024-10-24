@@ -480,7 +480,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
         // this method is for the client to call, so the cell listens for the change
         // event, and also flashes the cell when the change occurs.
         const column = getColumnFromKey()!;
-        const oldValue = this.beans.valueService.getValueForDisplay(column, this);
+        const oldValue = this.beans.valueSvc.getValueForDisplay(column, this);
 
         if (this.beans.gos.get('readOnlyEdit')) {
             this.beans.eventService.dispatchEvent({
@@ -500,7 +500,7 @@ export class RowNode<TData = any> implements IEventEmitter<RowNodeEventType>, IR
             return false;
         }
 
-        const valueChanged = this.beans.valueService.setValue(this, column, newValue, eventSource);
+        const valueChanged = this.beans.valueSvc.setValue(this, column, newValue, eventSource);
 
         this.dispatchCellChangedEvent(column, newValue, oldValue);
         this.beans.selectionService?.checkRowSelectable(this);

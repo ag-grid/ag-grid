@@ -20,7 +20,7 @@ import type { SetValueModel } from './setValueModel';
 
 let rowModel: jest.Mocked<IRowModel>;
 let eventService: jest.Mocked<EventService>;
-let valueService: jest.Mocked<ValueService>;
+let valueSvc: jest.Mocked<ValueService>;
 let context: jest.Mocked<Context>;
 let eMiniFilter: jest.Mocked<AgInputTextField>;
 let eGui: jest.Mocked<HTMLElement>;
@@ -35,8 +35,8 @@ beforeEach(() => {
 
     eventService = mock<EventService>('addEventListener');
 
-    valueService = mock<ValueService>('formatValue');
-    valueService.formatValue.mockImplementation((_1, _2, value) => value);
+    valueSvc = mock<ValueService>('formatValue');
+    valueSvc.formatValue.mockImplementation((_1, _2, value) => value);
 
     context = mock<Context>('createBean');
     context.createBean.mockImplementation((bean) => bean);
@@ -97,7 +97,7 @@ function createSetFilter(filterParams?: any): SetFilter<unknown> {
 
     const setFilter = new SetFilter();
     (setFilter as any).eventService = eventService;
-    (setFilter as any).valueService = valueService;
+    (setFilter as any).valueSvc = valueSvc;
     (setFilter as any).rowModel = rowModel;
     (setFilter as any).context = context;
     (setFilter as any).stubContext = context;

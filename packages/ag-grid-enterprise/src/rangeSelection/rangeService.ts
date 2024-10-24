@@ -51,7 +51,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private dragService: DragService;
     private columnModel: ColumnModel;
     private visibleColsService: VisibleColsService;
-    private cellNavigationService: CellNavigationService;
+    private cellNavigation: CellNavigationService;
     private pinnedRowModel?: PinnedRowModel;
     private ctrlsService: CtrlsService;
 
@@ -60,7 +60,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.dragService = beans.dragService!;
         this.columnModel = beans.columnModel;
         this.visibleColsService = beans.visibleColsService;
-        this.cellNavigationService = beans.cellNavigationService!;
+        this.cellNavigation = beans.cellNavigation!;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.ctrlsService = beans.ctrlsService;
     }
@@ -328,7 +328,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         const endCellColumn = startCell.column === firstCol ? lastCol : firstCol;
 
         const endCell: CellPosition = { column: endCellColumn, rowIndex: endCellIndex, rowPinned: endCellFloating };
-        const newEndCell = this.cellNavigationService.getNextCellToFocus(key, endCell, ctrlKey);
+        const newEndCell = this.cellNavigation.getNextCellToFocus(key, endCell, ctrlKey);
 
         // if user is at end of grid, so no cell to extend to, we return false
         if (!newEndCell) {
@@ -416,7 +416,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                     if (!column || !column.isCellEditable(rowNode)) {
                         continue;
                     }
-                    const emptyValue = this.beans.valueService.getDeleteValue(column, rowNode);
+                    const emptyValue = this.beans.valueSvc.getDeleteValue(column, rowNode);
                     rowNode.setDataValue(column, emptyValue, cellEventSource);
                 }
             });
@@ -599,7 +599,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             if (_isSameRow(currentRow, bottomRow)) {
                 break;
             }
-            currentRow = this.cellNavigationService.getRowBelow(currentRow);
+            currentRow = this.cellNavigation.getRowBelow(currentRow);
         }
     }
 
@@ -799,7 +799,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                     columns: [...cols],
                     startColumn: lastRange.startColumn,
                     startRow: { ...startRow },
-                    endRow: this.cellNavigationService.getRowAbove(intersectionStartRow)!,
+                    endRow: this.cellNavigation.getRowAbove(intersectionStartRow)!,
                 };
                 newRanges.push(top);
             }
@@ -820,7 +820,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
                 newRanges.push({
                     columns: [...cols],
                     startColumn: lastRange.startColumn,
-                    startRow: this.cellNavigationService.getRowBelow(intersectionEndRow)!,
+                    startRow: this.cellNavigation.getRowBelow(intersectionEndRow)!,
                     endRow: { ...endRow },
                 });
             }

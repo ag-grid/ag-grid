@@ -20,12 +20,12 @@ export interface SortedRowNode {
 export class RowNodeSorter extends BeanStub implements NamedBean {
     beanName = 'rowNodeSorter' as const;
 
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private columnModel: ColumnModel;
     private showRowGroupColsService?: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.columnModel = beans.columnModel;
         this.showRowGroupColsService = beans.showRowGroupColsService;
     }
@@ -122,7 +122,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
     private getValue(node: RowNode, column: AgColumn): any {
         if (!this.primaryColumnsSortGroups) {
-            return this.valueService.getValue(column, node, false);
+            return this.valueSvc.getValue(column, node, false);
         }
 
         const isNodeGroupedAtLevel = node.rowGroupColumn === column;
@@ -133,7 +133,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             if (isGroupRows) {
                 const leafChild = node.allLeafChildren?.[0];
                 if (leafChild) {
-                    return this.valueService.getValue(column, leafChild, false);
+                    return this.valueSvc.getValue(column, leafChild, false);
                 }
                 return undefined;
             }
@@ -149,6 +149,6 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             return undefined;
         }
 
-        return this.valueService.getValue(column, node, false);
+        return this.valueSvc.getValue(column, node, false);
     }
 }

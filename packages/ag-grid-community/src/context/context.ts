@@ -189,7 +189,7 @@ export interface CoreBeanCollection {
     gos: GridOptionsService;
     environment: Environment;
     rowRenderer: RowRenderer;
-    valueService: ValueService;
+    valueSvc: ValueService;
     eventService: EventService;
     columnModel: ColumnModel;
     columnViewportService: ColumnViewportService;
@@ -252,7 +252,7 @@ export interface CoreBeanCollection {
     excelCreator?: IExcelCreator;
     clipboardService?: IClipboardService;
     mouseEventService: MouseEventService;
-    cellNavigationService?: CellNavigationService;
+    cellNavigation?: CellNavigationService;
     scrollVisibleService: ScrollVisibleService;
     pinnedColumnService?: PinnedColumnService;
     expressionService?: ExpressionService;
@@ -348,7 +348,7 @@ export type BeanName =
     | 'beans'
     | 'cellEditorFactory'
     | 'cellFlashService'
-    | 'cellNavigationService'
+    | 'cellNavigation'
     | 'cellRendererFactory'
     | 'cellRendererService'
     | 'cellStyleService'
@@ -487,7 +487,7 @@ export type BeanName =
     | 'undoRedoService'
     | 'userComponentFactory'
     | 'valueCache'
-    | 'valueService'
+    | 'valueSvc'
     | 'validationLogger'
     | 'validationService'
     | 'clientSideNodeManager'

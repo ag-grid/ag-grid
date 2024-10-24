@@ -39,7 +39,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     private menuUtils: MenuUtils;
     private rangeService?: IRangeService;
     private focusService: FocusService;
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private rowRenderer: RowRenderer;
 
     public wireBeans(beans: BeanCollection): void {
@@ -49,7 +49,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         this.menuUtils = beans.menuUtils as MenuUtils;
         this.rangeService = beans.rangeService;
         this.focusService = beans.focusService;
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.rowRenderer = beans.rowRenderer;
     }
 
@@ -150,7 +150,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         let { anchorToElement, value } = params;
 
         if (rowNode && column && value == null) {
-            value = this.valueService.getValueForDisplay(column, rowNode);
+            value = this.valueSvc.getValueForDisplay(column, rowNode);
         }
 
         if (anchorToElement == null) {
@@ -180,7 +180,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         if (column) {
             const event = mouseEvent ? mouseEvent : touchEvent;
             cellCtrl.dispatchCellContextMenuEvent(event ?? null);
-            value = this.valueService.getValue(column, rowNode);
+            value = this.valueSvc.getValue(column, rowNode);
         }
 
         // if user clicked on a cell, anchor to that cell, otherwise anchor to the grid panel

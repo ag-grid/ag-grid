@@ -15,12 +15,12 @@ export class ChartColumnService extends BeanStub implements NamedBean {
 
     private columnModel: ColumnModel;
     private columnNameService: ColumnNameService;
-    private valueService: ValueService;
+    private valueSvc: ValueService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.columnNameService = beans.columnNameService;
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
     }
 
     private valueColsWithoutSeriesType: Set<string> = new Set();
@@ -135,7 +135,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
             return this.valueColsWithoutSeriesType.has(colId);
         }
 
-        let cellValue = this.valueService.getValue(col, row);
+        let cellValue = this.valueSvc.getValue(col, row);
 
         if (cellValue == null) {
             cellValue = this.extractLeafData(row, col);
@@ -161,7 +161,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
 
         for (let i = 0; i < row.allLeafChildren.length; i++) {
             const childRow = row.allLeafChildren[i];
-            const value = this.valueService.getValue(col, childRow);
+            const value = this.valueSvc.getValue(col, childRow);
 
             if (value != null) {
                 return value;

@@ -25,14 +25,14 @@ import type {
 export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvancedFilterService {
     beanName = 'advancedFilterService' as const;
 
-    private valueService: ValueService;
+    private valueSvc: ValueService;
     private columnModel: ColumnModel;
     private dataTypeService?: DataTypeService;
     private advancedFilterExpressionService: AdvancedFilterExpressionService;
     private filterValueService: FilterValueService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.valueService = beans.valueService;
+        this.valueSvc = beans.valueSvc;
         this.columnModel = beans.columnModel;
         this.dataTypeService = beans.dataTypeService;
         this.advancedFilterExpressionService = beans.advancedFilterExpressionService as AdvancedFilterExpressionService;
@@ -130,7 +130,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
             expression,
             columnModel: this.columnModel,
             dataTypeService: this.dataTypeService,
-            valueService: this.valueService,
+            valueSvc: this.valueSvc,
             advancedFilterExpressionService: this.advancedFilterExpressionService,
         });
     }
