@@ -506,7 +506,7 @@ export class CellCtrl extends BeanStub {
             const flashCell = !suppressFlash && !processingFilterChange && colDef.enableCellChangeFlash;
 
             if (flashCell) {
-                this.beans.cellFlashService?.flashCell(this);
+                this.beans.cellFlashSvc?.flashCell(this);
             }
 
             this.cellCustomStyleFeature?.applyUserStyles();

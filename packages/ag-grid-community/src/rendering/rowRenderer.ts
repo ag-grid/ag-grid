@@ -236,9 +236,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
             },
             cellFocusCleared: () => this.onCellFocusChanged(),
             flashCells: (event) => {
-                const { cellFlashService } = this.beans;
-                if (cellFlashService) {
-                    this.getAllCellCtrls().forEach((cellCtrl) => cellFlashService.onFlashCells(cellCtrl, event));
+                const { cellFlashSvc } = this.beans;
+                if (cellFlashSvc) {
+                    this.getAllCellCtrls().forEach((cellCtrl) => cellFlashSvc.onFlashCells(cellCtrl, event));
                 }
             },
             columnHoverChanged: () => {

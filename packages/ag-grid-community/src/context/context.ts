@@ -296,7 +296,7 @@ export interface CoreBeanCollection {
     clientSideNodeManager?: IClientSideNodeManager;
     clientSidePathTreeNodeManager?: IClientSideNodeManager;
     clientSideChildrenTreeNodeManager?: IClientSideNodeManager;
-    cellFlashService?: CellFlashService;
+    cellFlashSvc?: CellFlashService;
     masterDetailService?: IMasterDetailService;
     tooltipService?: TooltipService;
     columnGroupService?: ColumnGroupService;
@@ -347,7 +347,7 @@ export type BeanName =
     | 'autoWidthCalculator'
     | 'beans'
     | 'cellEditorFactory'
-    | 'cellFlashService'
+    | 'cellFlashSvc'
     | 'cellNavigation'
     | 'cellRendererFactory'
     | 'cellRendererService'
