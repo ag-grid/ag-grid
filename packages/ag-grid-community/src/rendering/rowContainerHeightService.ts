@@ -11,7 +11,7 @@ import { _logIfDebug } from '../utils/function';
  */
 
 export class RowContainerHeightService extends BeanStub implements NamedBean {
-    beanName = 'rowContainerHeightService' as const;
+    beanName = 'rowContainerHeight' as const;
 
     private ctrlsService: CtrlsService;
 

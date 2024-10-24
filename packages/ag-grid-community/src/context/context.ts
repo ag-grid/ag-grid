@@ -213,7 +213,7 @@ export interface CoreBeanCollection {
     sortSvc?: SortService;
     colFilter?: ColumnFilterService;
     filterManager?: FilterManager;
-    rowContainerHeightService: RowContainerHeightService;
+    rowContainerHeight: RowContainerHeightService;
     frameworkOverrides: IFrameworkOverrides;
     selectionService?: ISelectionService;
     rowStyleService?: RowStyleService;
@@ -452,7 +452,7 @@ export type BeanName =
     | 'renderStatusService'
     | 'rowAutoHeightService'
     | 'rowChildrenService'
-    | 'rowContainerHeightService'
+    | 'rowContainerHeight'
     | 'rowDragService'
     | 'rowEditService'
     | 'rowModel'

@@ -63,7 +63,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.paginationService = beans.paginationService;
         this.pageBoundsService = beans.pageBoundsService;
         this.rowModel = beans.rowModel;
-        this.heightScaler = beans.rowContainerHeightService;
+        this.heightScaler = beans.rowContainerHeight;
         this.rowRenderer = beans.rowRenderer;
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;

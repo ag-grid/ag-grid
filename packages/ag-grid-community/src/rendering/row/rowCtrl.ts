@@ -1553,7 +1553,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             const skipScaling = this.rowNode.isRowPinned() || this.rowNode.sticky;
             const afterScalingPixels = skipScaling
                 ? afterPaginationPixels
-                : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
+                : this.beans.rowContainerHeight.getRealPixelPosition(afterPaginationPixels);
             const topPx = `${afterScalingPixels}px`;
             this.setRowTopStyle(topPx);
         }
@@ -1591,7 +1591,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             // we don't apply scaling if row is pinned
             rowTop = rowNode.isRowPinned()
                 ? afterPaginationPixels
-                : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
+                : this.beans.rowContainerHeight.getRealPixelPosition(afterPaginationPixels);
         }
 
         return rowTop + 'px';

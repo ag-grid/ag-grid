@@ -21,7 +21,7 @@ const orderedCoreBeans: BeanName[] = [
     'registry',
     'agComponentUtils',
     'userCompFactory',
-    'rowContainerHeightService',
+    'rowContainerHeight',
     'horizontalResizeService',
     'localeService',
     'validationService',

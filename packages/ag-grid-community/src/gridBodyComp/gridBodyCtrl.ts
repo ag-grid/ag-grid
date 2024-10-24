@@ -54,7 +54,7 @@ export interface IGridBodyComp extends LayoutView {
 }
 
 export class GridBodyCtrl extends BeanStub {
-    private rowContainerHeightService: RowContainerHeightService;
+    private rowContainerHeight: RowContainerHeightService;
     private ctrlsService: CtrlsService;
     private colModel: ColumnModel;
     private scrollVisibleService: ScrollVisibleService;
@@ -69,7 +69,7 @@ export class GridBodyCtrl extends BeanStub {
     private environment: Environment;
 
     public wireBeans(beans: BeanCollection): void {
-        this.rowContainerHeightService = beans.rowContainerHeightService;
+        this.rowContainerHeight = beans.rowContainerHeight;
         this.ctrlsService = beans.ctrlsService;
         this.colModel = beans.colModel;
         this.scrollVisibleService = beans.scrollVisibleService;
@@ -319,9 +319,7 @@ export class GridBodyCtrl extends BeanStub {
             // we don't want to use row animation if scaling, as rows jump strangely as you scroll,
             // when scaling and doing row animation.
             const animateRows =
-                initialSizeMeasurementComplete &&
-                _isAnimateRows(this.gos) &&
-                !this.rowContainerHeightService.isStretching();
+                initialSizeMeasurementComplete && _isAnimateRows(this.gos) && !this.rowContainerHeight.isStretching();
             const animateRowsCssClass: RowAnimationCssClasses = animateRows
                 ? 'ag-row-animation'
                 : 'ag-row-no-animation';

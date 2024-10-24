@@ -60,7 +60,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private pinnedRowModel?: PinnedRowModel;
     private rowModel: IRowModel;
     private focusSvc: FocusService;
-    private rowContainerHeightService: RowContainerHeightService;
+    private rowContainerHeight: RowContainerHeightService;
     private ctrlsService: CtrlsService;
     private environment: Environment;
     private stickyRowService?: StickyRowService;
@@ -74,7 +74,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.pinnedRowModel = beans.pinnedRowModel;
         this.rowModel = beans.rowModel;
         this.focusSvc = beans.focusSvc;
-        this.rowContainerHeightService = beans.rowContainerHeightService;
+        this.rowContainerHeight = beans.rowContainerHeight;
         this.ctrlsService = beans.ctrlsService;
         this.environment = beans.environment;
         this.stickyRowService = beans.stickyRowService;
@@ -638,7 +638,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private updateContainerHeights(additionalHeight = 0): void {
         // when doing print layout, we don't explicitly set height on the containers
         if (this.printLayout) {
-            this.rowContainerHeightService.setModelHeight(null);
+            this.rowContainerHeight.setModelHeight(null);
             return;
         }
 
@@ -652,7 +652,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             containerHeight = 1;
         }
 
-        this.rowContainerHeightService.setModelHeight(containerHeight + additionalHeight);
+        this.rowContainerHeight.setModelHeight(containerHeight + additionalHeight);
     }
 
     private getLockOnRefresh(): void {
@@ -1208,7 +1208,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private workOutFirstAndLastRowsToRender(): void {
-        this.rowContainerHeightService.updateOffset();
+        this.rowContainerHeight.updateOffset();
         let newFirst: number;
         let newLast: number;
 
@@ -1230,7 +1230,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             do {
                 const paginationOffset = this.pageBoundsService.getPixelOffset();
                 const { pageFirstPixel, pageLastPixel } = this.pageBoundsService.getCurrentPagePixelRange();
-                const divStretchOffset = this.rowContainerHeightService.getDivStretchOffset();
+                const divStretchOffset = this.rowContainerHeight.getDivStretchOffset();
 
                 const bodyVRange = gridBodyCtrl.getScrollFeature().getVScrollPosition();
                 const bodyTopPixel = bodyVRange.top;
