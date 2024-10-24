@@ -1,4 +1,4 @@
-import type { BeanCollection, ColDef, Column, IAggFunc } from 'ag-grid-community';
+import type { BeanCollection, ColDef, ColGroupDef, Column, IAggFunc } from 'ag-grid-community';
 
 export function addAggFuncs(beans: BeanCollection, aggFuncs: { [key: string]: IAggFunc }): void {
     if (beans.aggFuncService) {
