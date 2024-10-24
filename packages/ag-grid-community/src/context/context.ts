@@ -200,7 +200,7 @@ export interface CoreBeanCollection {
     columnResize?: ColumnResizeService;
     headerNavigation?: HeaderNavigationService;
     navigation?: NavigationService;
-    columnAnimationService?: ColumnAnimationService;
+    colAnimation?: ColumnAnimationService;
     focusService: FocusService;
     popupService?: PopupService;
     cellStyleService?: CellStyleService;
@@ -361,7 +361,7 @@ export type BeanName =
     | 'chartTranslationService'
     | 'chartService'
     | 'clipboardService'
-    | 'columnAnimationService'
+    | 'colAnimation'
     | 'columnAutosizeService'
     | 'columnChooserFactory'
     | 'columnController'

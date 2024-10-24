@@ -5,7 +5,7 @@ import type { CtrlsService } from '../ctrlsService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 
 export class ColumnAnimationService extends BeanStub implements NamedBean {
-    beanName = 'columnAnimationService' as const;
+    beanName = 'colAnimation' as const;
 
     private ctrlsService: CtrlsService;
 

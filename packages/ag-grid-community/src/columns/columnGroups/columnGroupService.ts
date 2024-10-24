@@ -38,12 +38,12 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
     private columnModel: ColumnModel;
     private visibleCols: VisibleColsService;
-    private columnAnimationService?: ColumnAnimationService;
+    private colAnimation?: ColumnAnimationService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.visibleCols = beans.visibleCols;
-        this.columnAnimationService = beans.columnAnimationService;
+        this.colAnimation = beans.colAnimation;
     }
 
     public getColumnGroupState(): { groupId: string; open: boolean }[] {
@@ -93,7 +93,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.columnAnimationService?.start();
+        this.colAnimation?.start();
 
         const impactedGroups: AgProvidedColumnGroup[] = [];
 
@@ -123,7 +123,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
             });
         }
 
-        this.columnAnimationService?.finish();
+        this.colAnimation?.finish();
     }
 
     // called by headerRenderer - when a header is opened or closed

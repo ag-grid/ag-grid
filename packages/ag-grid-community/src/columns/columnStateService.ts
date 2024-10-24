@@ -81,7 +81,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
     private sortController?: SortController;
     private funcColsService: FuncColsService;
     private visibleCols: VisibleColsService;
-    private columnAnimationService?: ColumnAnimationService;
+    private colAnimation?: ColumnAnimationService;
     private pivotResultColsService?: IPivotResultColsService;
     private autoColService?: IAutoColService;
     private selectionColService?: SelectionColService;
@@ -91,7 +91,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
         this.sortController = beans.sortController;
         this.funcColsService = beans.funcColsService;
         this.visibleCols = beans.visibleCols;
-        this.columnAnimationService = beans.columnAnimationService;
+        this.colAnimation = beans.colAnimation;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.autoColService = beans.autoColService;
         this.selectionColService = beans.selectionColService;
@@ -239,7 +239,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
             return { unmatchedAndAutoStates, unmatchedCount };
         };
 
-        this.columnAnimationService?.start();
+        this.colAnimation?.start();
 
         // eslint-disable-next-line prefer-const
         let { unmatchedAndAutoStates, unmatchedCount } = applyStates(params.state || [], providedCols, (id) =>
@@ -256,7 +256,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
                 (id) => this.pivotResultColsService?.getPivotResultCol(id) ?? null
             ).unmatchedCount;
         }
-        this.columnAnimationService?.finish();
+        this.colAnimation?.finish();
 
         return unmatchedCount === 0; // Successful if no states unaccounted for
     }

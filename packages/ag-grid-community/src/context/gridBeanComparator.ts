@@ -58,7 +58,7 @@ const orderedCoreBeans: BeanName[] = [
     'scrollVisibleService',
     'sortController',
     'columnHoverService',
-    'columnAnimationService',
+    'colAnimation',
     'autoColService',
     'selectionColService',
     'changeDetectionService',

@@ -14,14 +14,14 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     beanName = 'scrollVisibleService' as const;
 
     private ctrlsService: CtrlsService;
-    private columnAnimationService?: ColumnAnimationService;
+    private colAnimation?: ColumnAnimationService;
 
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
 
     public wireBeans(beans: BeanCollection) {
         this.ctrlsService = beans.ctrlsService;
-        this.columnAnimationService = beans.columnAnimationService;
+        this.colAnimation = beans.colAnimation;
     }
 
     private horizontalScrollShowing: boolean;
@@ -59,9 +59,9 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         // location at the start of the animation, so pre animation the H scrollbar is still
         // needed, but post animation it is not. So if animation is active, we only update
         // after the animation has ended.
-        if (this.columnAnimationService?.isActive()) {
-            this.columnAnimationService.executeLaterVMTurn(() => {
-                this.columnAnimationService!.executeLaterVMTurn(() => this.updateScrollVisibleImpl());
+        if (this.colAnimation?.isActive()) {
+            this.colAnimation.executeLaterVMTurn(() => {
+                this.colAnimation!.executeLaterVMTurn(() => this.updateScrollVisibleImpl());
             });
         } else {
             this.updateScrollVisibleImpl();
@@ -71,7 +71,7 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     private updateScrollVisibleImpl(): void {
         const centerRowCtrl = this.ctrlsService.get('center');
 
-        if (!centerRowCtrl || this.columnAnimationService?.isActive()) {
+        if (!centerRowCtrl || this.colAnimation?.isActive()) {
             return;
         }
 

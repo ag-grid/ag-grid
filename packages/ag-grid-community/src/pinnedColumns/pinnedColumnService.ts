@@ -23,7 +23,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
     private visibleCols: VisibleColsService;
     private ctrlsService: CtrlsService;
     private columnModel: ColumnModel;
-    private columnAnimationService?: ColumnAnimationService;
+    private colAnimation?: ColumnAnimationService;
 
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -31,7 +31,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         this.visibleCols = beans.visibleCols;
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;
-        this.columnAnimationService = beans.columnAnimationService;
+        this.colAnimation = beans.colAnimation;
     }
 
     private leftWidth: number;
@@ -118,7 +118,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.columnAnimationService?.start();
+        this.colAnimation?.start();
 
         let actualPinned: ColumnPinnedType;
         if (pinned === true || pinned === 'left') {
@@ -151,7 +151,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             dispatchColumnPinnedEvent(this.eventSvc, updatedCols, source);
         }
 
-        this.columnAnimationService?.finish();
+        this.colAnimation?.finish();
     }
 
     private getPinnedColumnsOverflowingViewport(viewportWidth: number): AgColumn[] {
