@@ -36,13 +36,13 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
     private menuItemMapper: MenuItemMapper;
     private colModel: ColumnModel;
-    private funcColsService: FuncColsService;
+    private funcColsSvc: FuncColsService;
     private menuService: MenuService;
 
     public wireBeans(beans: BeanCollection) {
         this.menuItemMapper = beans.menuItemMapper as MenuItemMapper;
         this.colModel = beans.colModel;
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
         this.menuService = beans.menuService!;
     }
 
@@ -122,7 +122,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
         const allowPinning = !column.getColDef().lockPinned;
 
-        const rowGroupCount = this.funcColsService.rowGroupCols.length;
+        const rowGroupCount = this.funcColsSvc.rowGroupCols.length;
         const doingGrouping = rowGroupCount > 0;
 
         const allowValue = column.isAllowValue();
@@ -180,7 +180,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             result.push('rowUnGroup');
         } else if (allowRowGroup && column.isPrimary()) {
             if (column.isRowGroupActive()) {
-                const groupLocked = isRowGroupColLocked(this.funcColsService, this.gos, column);
+                const groupLocked = isRowGroupColLocked(this.funcColsSvc, this.gos, column);
                 if (!groupLocked) {
                     result.push('rowUnGroup');
                 }

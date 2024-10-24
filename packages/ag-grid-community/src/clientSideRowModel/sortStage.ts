@@ -57,14 +57,14 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
 
     private sortSvc: SortService;
     private colModel: ColumnModel;
-    private funcColsService: FuncColsService;
+    private funcColsSvc: FuncColsService;
     private rowNodeSorter: RowNodeSorter;
     private groupHideOpenParentsService?: IGroupHideOpenParentsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.sortSvc = beans.sortSvc!;
         this.colModel = beans.colModel;
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
         this.rowNodeSorter = beans.rowNodeSorter!;
         this.groupHideOpenParentsService = beans.groupHideOpenParentsService;
     }
@@ -131,7 +131,7 @@ export class SortStage extends BeanStub implements NamedBean, IRowNodeStage {
             const skipSortingGroups =
                 groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
             if (skipSortingGroups) {
-                const nextGroup = this.funcColsService.rowGroupCols?.[rowNode.level + 1];
+                const nextGroup = this.funcColsSvc.rowGroupCols?.[rowNode.level + 1];
                 // if the sort is null, then sort was explicitly removed, so remove sort from this group.
                 const wasSortExplicitlyRemoved = nextGroup?.getSort() === null;
 

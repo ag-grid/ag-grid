@@ -41,7 +41,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     private rowModel: IRowModel;
     private colModel: ColumnModel;
-    private funcColsService: FuncColsService;
+    private funcColsSvc: FuncColsService;
     private valueSvc: ValueService;
     private colState: ColumnStateService;
     private filterManager?: FilterManager;
@@ -51,7 +51,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
         this.colModel = beans.colModel;
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
         this.valueSvc = beans.valueSvc;
         this.colState = beans.colState;
         this.filterManager = beans.filterManager;
@@ -503,7 +503,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         });
         if (columnTypeOverridesExist) {
             state.push(
-                ...this.funcColsService.generateColumnStateForRowGroupAndPivotIndexes(
+                ...this.funcColsSvc.generateColumnStateForRowGroupAndPivotIndexes(
                     newRowGroupColumnStateWithoutIndex,
                     newPivotColumnStateWithoutIndex
                 )

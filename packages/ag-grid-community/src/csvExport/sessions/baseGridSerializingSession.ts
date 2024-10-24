@@ -22,7 +22,7 @@ import type {
 export abstract class BaseGridSerializingSession<T> implements GridSerializingSession<T> {
     public colModel: ColumnModel;
     private colNames: ColumnNameService;
-    public funcColsService: FuncColsService;
+    public funcColsSvc: FuncColsService;
     public valueSvc: ValueService;
     public gos: GridOptionsService;
     public processCellCallback?: (params: ProcessCellForExportParams) => string;
@@ -35,7 +35,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     constructor(config: GridSerializingParams) {
         const {
             colModel,
-            funcColsService,
+            funcColsSvc,
             colNames,
             valueSvc,
             gos,
@@ -46,7 +46,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         } = config;
 
         this.colModel = colModel;
-        this.funcColsService = funcColsService;
+        this.funcColsSvc = funcColsSvc;
         this.colNames = colNames;
         this.valueSvc = valueSvc;
         this.gos = gos;
@@ -120,7 +120,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
                 const colDef = column.getColDef();
                 const isFullWidth = colDef == null || colDef.showRowGroup === true;
 
-                return isFullWidth || colDef.showRowGroup === this.funcColsService.rowGroupCols[0].getId();
+                return isFullWidth || colDef.showRowGroup === this.funcColsSvc.rowGroupCols[0].getId();
             }
         }
 

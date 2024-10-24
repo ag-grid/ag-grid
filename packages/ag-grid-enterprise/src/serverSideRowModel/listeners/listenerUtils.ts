@@ -5,15 +5,15 @@ export class ListenerUtils extends BeanStub implements NamedBean {
     beanName = 'ssrmListenerUtils' as const;
 
     private pivotResultCols?: IPivotResultColsService;
-    private funcColsService: FuncColsService;
+    private funcColsSvc: FuncColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.pivotResultCols = beans.pivotResultCols;
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
     }
 
     public isSortingWithValueColumn(changedColumnsInSort: string[]): boolean {
-        const valueColIds = this.funcColsService.valueCols.map((col) => col.getColId());
+        const valueColIds = this.funcColsSvc.valueCols.map((col) => col.getColId());
 
         for (let i = 0; i < changedColumnsInSort.length; i++) {
             if (valueColIds.indexOf(changedColumnsInSort[i]) > -1) {

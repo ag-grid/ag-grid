@@ -36,13 +36,13 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private blockUtils: BlockUtils;
     private storeUtils: StoreUtils;
     private selectionSvc?: ISelectionService;
-    private funcColsService: FuncColsService;
+    private funcColsSvc: FuncColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.blockUtils = beans.ssrmBlockUtils as BlockUtils;
         this.storeUtils = beans.ssrmStoreUtils as StoreUtils;
         this.selectionSvc = beans.selectionSvc;
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
     }
 
     // display indexes
@@ -94,7 +94,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (!usingTreeData && this.group) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
             this.groupField = groupColVo.field!;
-            this.rowGroupColumn = this.funcColsService.rowGroupCols[this.level];
+            this.rowGroupColumn = this.funcColsSvc.rowGroupCols[this.level];
         }
     }
 

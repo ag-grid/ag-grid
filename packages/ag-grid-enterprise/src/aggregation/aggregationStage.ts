@@ -45,13 +45,13 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
     private colModel: ColumnModel;
     private valueSvc: ValueService;
     private aggFuncService: AggFuncService;
-    private funcColsService: FuncColsService;
+    private funcColsSvc: FuncColsService;
     private pivotResultCols?: IPivotResultColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
         this.aggFuncService = beans.aggFuncService as AggFuncService;
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
         this.pivotResultCols = beans.pivotResultCols;
         this.valueSvc = beans.valueSvc;
     }
@@ -64,7 +64,7 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
         // and there is no cleanup to be done (as value columns don't change between transactions or change
         // detections). if no value columns and no changed path, means we have to go through all nodes in
         // case we need to clean up agg data from before.
-        const noValueColumns = !this.funcColsService.valueCols?.length;
+        const noValueColumns = !this.funcColsSvc.valueCols?.length;
         const noUserAgg = !this.gos.getCallback('getGroupRowAgg');
         const changedPathActive = params.changedPath && params.changedPath.isActive();
         if (noValueColumns && noUserAgg && changedPathActive) {
@@ -79,8 +79,8 @@ export class AggregationStage extends BeanStub implements NamedBean, IRowNodeSta
     private createAggDetails(params: StageExecuteParams): AggregationDetails {
         const pivotActive = this.colModel.isPivotActive();
 
-        const measureColumns = this.funcColsService.valueCols;
-        const pivotColumns = pivotActive ? this.funcColsService.pivotCols : [];
+        const measureColumns = this.funcColsSvc.valueCols;
+        const pivotColumns = pivotActive ? this.funcColsSvc.pivotCols : [];
 
         const aggDetails: AggregationDetails = {
             alwaysAggregateAtRootLevel: this.gos.get('alwaysAggregateAtRootLevel'),

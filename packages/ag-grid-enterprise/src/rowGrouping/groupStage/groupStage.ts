@@ -70,14 +70,14 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     public step: ClientSideRowModelStage = 'group';
 
     private colModel: ColumnModel;
-    private funcColsService: FuncColsService;
+    private funcColsSvc: FuncColsService;
     private valueSvc: ValueService;
     private selectionSvc?: ISelectionService;
     private showRowGroupColsService: IShowRowGroupColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
         this.valueSvc = beans.valueSvc;
         this.selectionSvc = beans.selectionSvc;
         this.showRowGroupColsService = beans.showRowGroupColsService!;
@@ -141,7 +141,7 @@ export class GroupStage extends BeanStub implements NamedBean, IRowNodeStage {
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
         const { rowNode, changedPath, rowNodeTransactions, rowNodesOrderChanged } = params;
 
-        const groupedCols = this.funcColsService.rowGroupCols;
+        const groupedCols = this.funcColsSvc.rowGroupCols;
 
         const details: GroupingDetails = {
             expandByDefault: this.gos.get('groupDefaultExpanded'),

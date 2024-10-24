@@ -38,7 +38,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
     private colModel: ColumnModel;
     private colNames: ColumnNameService;
     private colFactory: ColumnFactory;
-    private funcColsService: FuncColsService;
+    private funcColsSvc: FuncColsService;
     private context: Context;
     private columnGroupService?: ColumnGroupService;
 
@@ -49,7 +49,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         this.colModel = beans.colModel;
         this.colNames = beans.colNames;
         this.colFactory = beans.colFactory;
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
         this.context = beans.context;
         this.columnGroupService = beans.columnGroupService;
     }
@@ -83,7 +83,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         // of the group column in this instance.
         const suppressAutoColumn = isPivotMode ? this.gos.get('pivotSuppressAutoColumn') : this.isSuppressAutoCol();
 
-        const rowGroupCols = this.funcColsService.rowGroupCols;
+        const rowGroupCols = this.funcColsSvc.rowGroupCols;
 
         const groupingActive = rowGroupCols.length > 0 || this.gos.get('treeData');
 

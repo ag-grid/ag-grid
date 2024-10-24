@@ -41,7 +41,7 @@ export enum SetFilterModelValuesType {
 
 export interface SetValueModelParams<V> {
     gos: GridOptionsService;
-    funcColsService: FuncColsService;
+    funcColsSvc: FuncColsService;
     valueSvc: ValueService;
     filterParams: SetFilterParams<any, V>;
     setIsLoading: (loading: boolean) => void;
@@ -110,7 +110,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
     constructor(params: SetValueModelParams<V>) {
         const {
             usingComplexObjects,
-            funcColsService,
+            funcColsSvc,
             valueSvc,
             treeDataTreeList,
             groupingTreeList,
@@ -178,7 +178,7 @@ export class SetValueModel<V> implements IEventEmitter<SetValueModelEvent> {
                 this.filterParams,
                 this.createKey,
                 this.caseFormat,
-                funcColsService,
+                funcColsSvc,
                 valueSvc,
                 treeDataOrGrouping,
                 !!treeDataTreeList,

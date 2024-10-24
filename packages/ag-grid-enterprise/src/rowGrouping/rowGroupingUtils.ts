@@ -7,11 +7,7 @@ import type {
     RowNode,
 } from 'ag-grid-community';
 
-export function isRowGroupColLocked(
-    funcColsService: FuncColsService,
-    gos: GridOptionsService,
-    column: AgColumn
-): boolean {
+export function isRowGroupColLocked(funcColsSvc: FuncColsService, gos: GridOptionsService, column: AgColumn): boolean {
     const groupLockGroupColumns = gos.get('groupLockGroupColumns');
     if (!column.isRowGroupActive() || groupLockGroupColumns === 0) {
         return false;
@@ -21,7 +17,7 @@ export function isRowGroupColLocked(
         return true;
     }
 
-    const rowGroupCols = funcColsService.rowGroupCols;
+    const rowGroupCols = funcColsSvc.rowGroupCols;
     const colIndex = rowGroupCols.findIndex((groupCol) => groupCol.getColId() === column.getColId());
     return groupLockGroupColumns > colIndex;
 }

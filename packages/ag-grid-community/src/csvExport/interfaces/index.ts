@@ -35,7 +35,7 @@ export interface RowSpanningAccumulator {
 
 export interface GridSerializingParams {
     colModel: ColumnModel;
-    funcColsService: FuncColsService;
+    funcColsSvc: FuncColsService;
     colNames: ColumnNameService;
     valueSvc: ValueService;
     gos: GridOptionsService;

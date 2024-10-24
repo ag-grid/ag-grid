@@ -12,11 +12,11 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
     beanName = 'showRowGroupColsService' as const;
 
     private colModel: ColumnModel;
-    private funcColsService: FuncColsService;
+    private funcColsSvc: FuncColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
     }
 
     private showRowGroupCols: AgColumn[];
@@ -42,7 +42,7 @@ export class ShowRowGroupColsService extends BeanStub implements NamedBean, ISho
             if (isString) {
                 this.showRowGroupColsMap[showRowGroup] = col;
             } else {
-                const rowGroupCols = this.funcColsService.rowGroupCols;
+                const rowGroupCols = this.funcColsSvc.rowGroupCols;
                 rowGroupCols.forEach((rowGroupCol) => {
                     this.showRowGroupColsMap[rowGroupCol.getId()] = col;
                 });

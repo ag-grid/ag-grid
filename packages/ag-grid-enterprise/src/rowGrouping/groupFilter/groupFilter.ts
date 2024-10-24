@@ -30,12 +30,12 @@ export type GroupFilterEvent = 'columnRowGroupChanged' | 'selectedColumnChanged'
 export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilterComp {
     private filterManager?: FilterManager;
     private colNames: ColumnNameService;
-    private funcColsService: FuncColsService;
+    private funcColsSvc: FuncColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.filterManager = beans.filterManager;
         this.colNames = beans.colNames;
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
     }
 
     private readonly eGroupField: HTMLElement = RefPlaceholder;
@@ -107,7 +107,7 @@ export class GroupFilter extends TabGuardComp<GroupFilterEvent> implements IFilt
             _warn(237);
             return [];
         }
-        const sourceColumns = this.funcColsService.getSourceColumnsForGroupColumn(this.groupColumn);
+        const sourceColumns = this.funcColsSvc.getSourceColumnsForGroupColumn(this.groupColumn);
         if (!sourceColumns) {
             _warn(183);
             return [];

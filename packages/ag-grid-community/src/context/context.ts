@@ -235,7 +235,7 @@ export interface CoreBeanCollection {
     selectionColSvc?: SelectionColService;
     colDefFactory?: ColumnDefFactory;
     colAutosize?: ColumnAutosizeService;
-    funcColsService: FuncColsService;
+    funcColsSvc: FuncColsService;
     quickFilterService?: QuickFilterService;
     showRowGroupColsService?: IShowRowGroupColsService;
     dataTypeService?: DataTypeService;
@@ -410,7 +410,7 @@ export type BeanName =
     | 'flashCellService'
     | 'flattenStage'
     | 'focusSvc'
-    | 'funcColsService'
+    | 'funcColsSvc'
     | 'frameworkComponentWrapper'
     | 'frameworkOverrides'
     | 'globalEventListener'

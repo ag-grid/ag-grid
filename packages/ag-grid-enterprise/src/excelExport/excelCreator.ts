@@ -253,14 +253,14 @@ export class ExcelCreator
 
     private colModel: ColumnModel;
     private colNames: ColumnNameService;
-    private funcColsService: FuncColsService;
+    private funcColsSvc: FuncColsService;
     private valueSvc: ValueService;
     private cellStyles?: CellStyleService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
         this.colNames = beans.colNames;
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
         this.valueSvc = beans.valueSvc;
         this.cellStyles = beans.cellStyles;
     }
@@ -341,13 +341,13 @@ export class ExcelCreator
     }
 
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
-        const { colModel, colNames, funcColsService, valueSvc, gos } = this;
+        const { colModel, colNames, funcColsSvc, valueSvc, gos } = this;
 
         const config: ExcelGridSerializingParams = {
             ...params,
             colModel,
             colNames,
-            funcColsService,
+            funcColsSvc,
             valueSvc,
             gos,
             suppressRowOutline: params.suppressRowOutline || params.skipRowGroups,

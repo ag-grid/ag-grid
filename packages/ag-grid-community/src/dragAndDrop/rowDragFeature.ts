@@ -85,7 +85,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     private selectionSvc?: ISelectionService;
     private mouseEventService: MouseEventService;
     private ctrlsSvc: CtrlsService;
-    private funcColsService: FuncColsService;
+    private funcColsSvc: FuncColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.dragAndDrop = beans.dragAndDrop!;
@@ -97,7 +97,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         this.selectionSvc = beans.selectionSvc;
         this.mouseEventService = beans.mouseEventService;
         this.ctrlsSvc = beans.ctrlsSvc;
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
     }
 
     private clientSideRowModel: IClientSideRowModel;
@@ -148,7 +148,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     public shouldPreventRowMove(): boolean {
-        const rowGroupCols = this.funcColsService.rowGroupCols;
+        const rowGroupCols = this.funcColsSvc.rowGroupCols;
         if (rowGroupCols.length) {
             return true;
         }

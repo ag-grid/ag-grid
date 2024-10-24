@@ -15,7 +15,7 @@ import type { ColumnState, ModifyColumnsNoEventsCallbacks } from './columnStateS
 import type { VisibleColsService } from './visibleColsService';
 
 export class FuncColsService extends BeanStub implements NamedBean {
-    beanName = 'funcColsService' as const;
+    beanName = 'funcColsSvc' as const;
 
     private colModel: ColumnModel;
     private aggFuncService?: IAggFuncService;

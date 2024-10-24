@@ -58,7 +58,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private colDefFactory?: ColumnDefFactory;
     private colState: ColumnStateService;
     private colAutosize?: ColumnAutosizeService;
-    private funcColsService: FuncColsService;
+    private funcColsSvc: FuncColsService;
     private quickFilterService?: QuickFilterService;
     private showRowGroupColsService?: IShowRowGroupColsService;
     private rowAutoHeightService?: RowAutoHeightService;
@@ -75,7 +75,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.colDefFactory = beans.colDefFactory;
         this.colState = beans.colState;
         this.colAutosize = beans.colAutosize;
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
         this.quickFilterService = beans.quickFilterService;
         this.showRowGroupColsService = beans.showRowGroupColsService;
         this.rowAutoHeightService = beans.rowAutoHeightService;
@@ -149,7 +149,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         this.colDefCols = { tree, treeDepth, list, map };
 
-        this.funcColsService.extractCols(source, oldCols);
+        this.funcColsSvc.extractCols(source, oldCols);
 
         this.ready = true;
 
@@ -264,7 +264,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // show columns we are aggregating on
 
         const showAutoGroupAndValuesOnly = this.isPivotMode() && !this.showingPivotResult;
-        const valueColumns = this.funcColsService.valueCols;
+        const valueColumns = this.funcColsSvc.valueCols;
 
         const res = this.cols.list.filter((col) => {
             const isAutoGroupCol = isColumnGroupAutoCol(col);
@@ -435,7 +435,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     // + clientSideRowModel
     public isPivotActive(): boolean {
-        const pivotColumns = this.funcColsService.pivotCols;
+        const pivotColumns = this.funcColsSvc.pivotCols;
         return this.pivotMode && !!pivotColumns?.length;
     }
 

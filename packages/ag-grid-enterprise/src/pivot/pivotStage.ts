@@ -34,14 +34,14 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
     private valueSvc: ValueService;
     private colModel: ColumnModel;
     private pivotResultCols: IPivotResultColsService;
-    private funcColsService: FuncColsService;
+    private funcColsSvc: FuncColsService;
     private pivotColDefService: PivotColDefService;
 
     public wireBeans(beans: BeanCollection) {
         this.valueSvc = beans.valueSvc;
         this.colModel = beans.colModel;
         this.pivotResultCols = beans.pivotResultCols!;
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
         this.pivotColDefService = beans.pivotColDefService as PivotColDefService;
     }
 
@@ -84,7 +84,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
     }
 
     private executePivotOn(changedPath: ChangedPath): void {
-        const numberOfAggregationColumns = this.funcColsService.valueCols.length ?? 1;
+        const numberOfAggregationColumns = this.funcColsSvc.valueCols.length ?? 1;
 
         // As unique values creates one column per aggregation column, divide max columns by number of aggregation columns
         // to get the max number of unique values.
@@ -110,7 +110,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
 
         const uniqueValuesChanged = this.setUniqueValues(uniqueValues);
 
-        const aggregationColumns = this.funcColsService.valueCols;
+        const aggregationColumns = this.funcColsSvc.valueCols;
         const aggregationColumnsHash = aggregationColumns
             .map((column) => `${column.getId()}-${column.getColDef().headerName}`)
             .join('#');
@@ -121,7 +121,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
         this.aggregationColumnsHashLastTime = aggregationColumnsHash;
         this.aggregationFuncsHashLastTime = aggregationFuncsHash;
 
-        const groupColumnsHash = this.funcColsService.rowGroupCols.map((column) => column.getId()).join('#');
+        const groupColumnsHash = this.funcColsSvc.rowGroupCols.map((column) => column.getId()).join('#');
         const groupColumnsChanged = groupColumnsHash !== this.groupColumnsHashLastTime;
         this.groupColumnsHashLastTime = groupColumnsHash;
 
@@ -206,7 +206,7 @@ export class PivotStage extends BeanStub implements NamedBean, IRowNodeStage {
     }
 
     private bucketRowNode(rowNode: RowNode, uniqueValues: any): void {
-        const pivotColumns = this.funcColsService.pivotCols;
+        const pivotColumns = this.funcColsSvc.pivotCols;
 
         if (pivotColumns.length === 0) {
             rowNode.childrenMapped = null;

@@ -45,10 +45,10 @@ export function _deepCloneDefinition<T>(object: T, keysToSkip?: string[]): T | u
 export class ColumnDefFactory extends BeanStub implements NamedBean {
     beanName = 'colDefFactory' as const;
 
-    private funcColsService: FuncColsService;
+    private funcColsSvc: FuncColsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
     }
 
     public getColumnDefs(
@@ -65,8 +65,8 @@ export class ColumnDefFactory extends BeanStub implements NamedBean {
             cols.sort((a, b) => colsList.indexOf(a) - colsList.indexOf(b));
         }
 
-        const rowGroupColumns = this.funcColsService.rowGroupCols;
-        const pivotColumns = this.funcColsService.pivotCols;
+        const rowGroupColumns = this.funcColsSvc.rowGroupCols;
+        const pivotColumns = this.funcColsSvc.pivotCols;
 
         return this.buildColumnDefs(cols, rowGroupColumns, pivotColumns);
     }

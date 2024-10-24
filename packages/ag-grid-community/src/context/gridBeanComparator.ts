@@ -83,7 +83,7 @@ const orderedCoreBeans: BeanName[] = [
     'colAutosize',
     'colFlex',
     'colResize',
-    'funcColsService',
+    'funcColsSvc',
     'colNames',
     'colViewport',
     'pivotResultCols',

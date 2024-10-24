@@ -24,14 +24,14 @@ interface SelectionState {
 
 export class GroupSelectsChildrenStrategy extends BeanStub implements ISelectionStrategy {
     private rowModel: IRowModel;
-    private funcColsService: FuncColsService;
+    private funcColsSvc: FuncColsService;
     private filterManager?: FilterManager;
     private selectionSvc: ISelectionService;
     private selectionCtx = new ServerSideRowRangeSelectionContext();
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
         this.filterManager = beans.filterManager;
         this.selectionSvc = beans.selectionSvc!;
     }
@@ -56,7 +56,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 nodeId,
             };
 
-            if (treeData || level <= this.funcColsService.rowGroupCols.length) {
+            if (treeData || level <= this.funcColsSvc.rowGroupCols.length) {
                 normalisedState.selectAllChildren = state.selectAllChildren;
             }
 

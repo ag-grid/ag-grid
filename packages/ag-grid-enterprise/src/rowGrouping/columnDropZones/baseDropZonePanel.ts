@@ -18,12 +18,12 @@ export type TDropZone = 'rowGroup' | 'pivot' | 'aggregation';
 
 export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumnComp, AgColumn> {
     protected colModel: ColumnModel;
-    protected funcColsService: FuncColsService;
+    protected funcColsSvc: FuncColsService;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.colModel = beans.colModel;
-        this.funcColsService = beans.funcColsService;
+        this.funcColsSvc = beans.funcColsSvc;
     }
 
     constructor(
@@ -55,7 +55,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
 
     protected override minimumAllowedNewInsertIndex(): number {
         const numberOfLockedCols = this.gos.get('groupLockGroupColumns');
-        const numberOfGroupCols = this.funcColsService.rowGroupCols.length;
+        const numberOfGroupCols = this.funcColsSvc.rowGroupCols.length;
         if (numberOfLockedCols === -1) {
             return numberOfGroupCols;
         }
