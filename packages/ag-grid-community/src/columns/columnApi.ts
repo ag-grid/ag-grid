@@ -99,5 +99,5 @@ export function getAllDisplayedColumns(beans: BeanCollection): Column[] {
 }
 
 export function getAllDisplayedVirtualColumns(beans: BeanCollection): Column[] {
-    return beans.columnViewport.getViewportColumns();
+    return beans.colViewport.getViewportColumns();
 }

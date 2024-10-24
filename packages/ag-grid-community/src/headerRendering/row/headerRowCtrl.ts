@@ -332,10 +332,10 @@ export class HeaderRowCtrl extends BeanStub {
 
         let viewportColumns: (AgColumn | AgColumnGroup)[] = [];
         const actualDepth = this.getActualDepth();
-        const { columnViewport } = this.beans;
+        const { colViewport } = this.beans;
 
         (['left', null, 'right'] as ColumnPinnedType[]).forEach((pinned) => {
-            const items = columnViewport.getHeadersToRender(pinned, actualDepth);
+            const items = colViewport.getHeadersToRender(pinned, actualDepth);
             viewportColumns = viewportColumns.concat(items);
         });
 
@@ -348,7 +348,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     private getColumnsInViewportNormalLayout(): (AgColumn | AgColumnGroup)[] {
         // when in normal layout, we add the columns for that container only
-        return this.beans.columnViewport.getHeadersToRender(this.pinned, this.getActualDepth());
+        return this.beans.colViewport.getHeadersToRender(this.pinned, this.getActualDepth());
     }
 
     public findHeaderCellCtrl(

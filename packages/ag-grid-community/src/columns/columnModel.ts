@@ -50,7 +50,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private context: Context;
     private columnFactory: ColumnFactory;
     private visibleCols: VisibleColsService;
-    private columnViewport: ColumnViewportService;
+    private colViewport: ColumnViewportService;
     private pivotResultColsService?: IPivotResultColsService;
     private autoColService?: IAutoColService;
     private selectionColService?: SelectionColService;
@@ -67,7 +67,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.context = beans.context;
         this.columnFactory = beans.columnFactory;
         this.visibleCols = beans.visibleCols;
-        this.columnViewport = beans.columnViewport;
+        this.colViewport = beans.colViewport;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.autoColService = beans.autoColService;
         this.selectionColService = beans.selectionColService;
@@ -156,7 +156,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.refreshCols(true);
 
         this.visibleCols.refresh(source);
-        this.columnViewport.checkViewportColumns();
+        this.colViewport.checkViewportColumns();
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
         // in case applications use it
@@ -222,7 +222,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // for example, the header will received gridColumnsChanged event, so will try and draw,
         // but it will draw successfully when it acts on the virtualColumnsChanged event
         this.visibleCols.clear();
-        this.columnViewport.clear();
+        this.colViewport.clear();
 
         const dispatchChangedEvent = !_areEqual(prevColTree, this.cols!.tree);
         if (dispatchChangedEvent) {

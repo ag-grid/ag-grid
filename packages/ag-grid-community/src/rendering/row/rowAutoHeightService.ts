@@ -18,7 +18,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
     beanName = 'rowAutoHeightService' as const;
 
     private visibleCols: VisibleColsService;
-    private columnViewport: ColumnViewportService;
+    private colViewport: ColumnViewportService;
     private rowModel: IRowModel;
     private colModel: ColumnModel;
 
@@ -28,7 +28,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleCols = beans.visibleCols;
-        this.columnViewport = beans.columnViewport;
+        this.colViewport = beans.colViewport;
         this.rowModel = beans.rowModel;
         this.colModel = beans.colModel;
     }
@@ -80,7 +80,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
                             activeColsForRow = this.visibleCols.getRightColsForRow(rowNode);
                             break;
                         case null:
-                            activeColsForRow = this.columnViewport.getColsWithinViewport(rowNode);
+                            activeColsForRow = this.colViewport.getColsWithinViewport(rowNode);
                             break;
                     }
                     if (activeColsForRow.includes(col)) {

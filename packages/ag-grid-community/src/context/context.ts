@@ -192,7 +192,7 @@ export interface CoreBeanCollection {
     valueSvc: ValueService;
     eventSvc: EventService;
     colModel: ColumnModel;
-    columnViewport: ColumnViewportService;
+    colViewport: ColumnViewportService;
     columnNames: ColumnNameService;
     visibleCols: VisibleColsService;
     columnMove?: ColumnMoveService;
@@ -381,7 +381,7 @@ export type BeanName =
     | 'columnStateService'
     | 'columnToolPanelFactory'
     | 'columnUtils'
-    | 'columnViewport'
+    | 'colViewport'
     | 'pivotResultColsService'
     | 'context'
     | 'contextMenuService'
