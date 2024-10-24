@@ -16,7 +16,7 @@ const orderedCoreBeans: BeanName[] = [
     'eventSvc',
     'gos',
     'paginationAutoPageSizeSvc',
-    'apiFunctionService',
+    'apiFunctionSvc',
     'gridApi',
     'registry',
     'agComponentUtils',

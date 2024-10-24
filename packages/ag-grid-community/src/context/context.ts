@@ -269,7 +269,7 @@ export interface CoreBeanCollection {
     paginationAutoPageSizeSvc?: PaginationAutoPageSizeService;
     pagination?: PaginationService;
     pageBounds: PageBoundsService;
-    apiFunctionService: ApiFunctionService;
+    apiFunctionSvc: ApiFunctionService;
     detailGridApiService?: IDetailGridApiService;
     gridDestroyService: GridDestroyService;
     expansionService?: IExpansionService;
@@ -340,7 +340,7 @@ export type BeanName =
     | 'aggregationStage'
     | 'alignedGridsSvc'
     | 'animationFrameSvc'
-    | 'apiFunctionService'
+    | 'apiFunctionSvc'
     | 'ariaAnnounce'
     | 'apiEventSvc'
     | 'autoColSvc'
