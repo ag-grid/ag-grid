@@ -61,7 +61,7 @@ export class StateService extends BeanStub implements NamedBean {
     private expansionSvc?: IExpansionService;
     private colAnimation?: ColumnAnimationService;
     private colState: ColumnStateService;
-    private sideBarService?: ISideBarService;
+    private sideBar?: ISideBarService;
     private rangeSvc?: IRangeService;
     private rowModel: IRowModel;
     private columnGroupService?: ColumnGroupService;
@@ -79,7 +79,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.expansionSvc = beans.expansionSvc;
         this.colAnimation = beans.colAnimation;
         this.colState = beans.colState;
-        this.sideBarService = beans.sideBarService;
+        this.sideBar = beans.sideBar;
         this.rangeSvc = beans.rangeSvc;
         this.rowModel = beans.rowModel;
         this.columnGroupService = beans.columnGroupService;
@@ -668,7 +668,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getSideBarState(): SideBarState | undefined {
-        return this.sideBarService?.getSideBarComp()?.getState();
+        return this.sideBar?.getSideBarComp()?.getState();
     }
 
     private getFocusedCellState(): FocusedCellState | undefined {

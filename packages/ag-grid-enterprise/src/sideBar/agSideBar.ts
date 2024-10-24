@@ -31,12 +31,12 @@ import { ToolPanelWrapper } from './toolPanelWrapper';
 export class AgSideBar extends Component implements ISideBar {
     private focusSvc: FocusService;
     private filterManager?: FilterManager;
-    private sideBarService: SideBarService;
+    private sideBar: SideBarService;
 
     public wireBeans(beans: BeanCollection) {
         this.focusSvc = beans.focusSvc;
         this.filterManager = beans.filterManager;
-        this.sideBarService = beans.sideBarService as SideBarService;
+        this.sideBar = beans.sideBar as SideBarService;
     }
 
     private readonly sideBarButtons: AgSideBarButtons = RefPlaceholder;
@@ -64,7 +64,7 @@ export class AgSideBar extends Component implements ISideBar {
 
         this.addManagedPropertyListener('sideBar', this.onSideBarUpdated.bind(this));
 
-        this.sideBarService.registerSideBarComp(this);
+        this.sideBar.registerSideBarComp(this);
         const eGui = this.getFocusableElement();
         this.createManagedBean(
             new ManagedFocusFeature(eGui, {

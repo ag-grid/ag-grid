@@ -273,7 +273,7 @@ export interface CoreBeanCollection {
     detailGridApiSvc?: IDetailGridApiService;
     gridDestroySvc: GridDestroyService;
     expansionSvc?: IExpansionService;
-    sideBarService?: ISideBarService;
+    sideBar?: ISideBarService;
     ssrmTransactionManager?: IServerSideTransactionManager;
     aggFuncService?: IAggFuncService;
     advancedFilterService: IAdvancedFilterService;
@@ -464,7 +464,7 @@ export type BeanName =
     | 'selectionController'
     | 'selectionSvc'
     | 'showRowGroupCols'
-    | 'sideBarService'
+    | 'sideBar'
     | 'sortSvc'
     | 'sortStage'
     | 'sparklineTooltipSingleton'
