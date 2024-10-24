@@ -295,7 +295,7 @@ export interface CoreBeanCollection {
     filterValueSvc?: FilterValueService;
     csrmNodeSvc?: IClientSideNodeManager;
     csrmPathTreeNodeSvc?: IClientSideNodeManager;
-    clientSideChildrenTreeNodeManager?: IClientSideNodeManager;
+    csrmChildrenTreeNodeSvc?: IClientSideNodeManager;
     cellFlashSvc?: CellFlashService;
     masterDetailSvc?: IMasterDetailService;
     tooltipSvc?: TooltipService;
@@ -492,4 +492,4 @@ export type BeanName =
     | 'validation'
     | 'csrmNodeSvc'
     | 'csrmPathTreeNodeSvc'
-    | 'clientSideChildrenTreeNodeManager';
+    | 'csrmChildrenTreeNodeSvc';
