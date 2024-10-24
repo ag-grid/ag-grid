@@ -19,13 +19,13 @@ export enum SelectionHandleType {
 
 export abstract class AbstractSelectionHandle extends Component {
     protected dragSvc: DragService;
-    protected rangeService: RangeService;
+    protected rangeSvc: RangeService;
     protected mouseEventService: MouseEventService;
     protected ctrlsSvc: CtrlsService;
 
     public wireBeans(beans: BeanCollection) {
         this.dragSvc = beans.dragSvc!;
-        this.rangeService = beans.rangeService as RangeService;
+        this.rangeSvc = beans.rangeSvc as RangeService;
         this.mouseEventService = beans.mouseEventService;
         this.ctrlsSvc = beans.ctrlsSvc;
     }
@@ -51,7 +51,7 @@ export abstract class AbstractSelectionHandle extends Component {
             onDragStart: this.onDragStart.bind(this),
             onDragging: (e: MouseEvent | Touch) => {
                 this.dragging = true;
-                this.rangeService.autoScrollService.check(e as MouseEvent);
+                this.rangeSvc.autoScrollService.check(e as MouseEvent);
 
                 if (this.changedCalculatedValues) {
                     this.onDrag(e);
@@ -150,7 +150,7 @@ export abstract class AbstractSelectionHandle extends Component {
 
     private clearDragProperties(): void {
         this.clearValues();
-        this.rangeService.autoScrollService.ensureCleared();
+        this.rangeSvc.autoScrollService.ensureCleared();
 
         // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
         // be affected by a drag on any. Move it to the root element.
@@ -165,7 +165,7 @@ export abstract class AbstractSelectionHandle extends Component {
         const oldCellComp = this.getCellCtrl();
         const eGui = this.getGui();
 
-        const cellRange = _last(this.rangeService.getCellRanges());
+        const cellRange = _last(this.rangeSvc.getCellRanges());
 
         const start = cellRange.startRow;
         const end = cellRange.endRow;

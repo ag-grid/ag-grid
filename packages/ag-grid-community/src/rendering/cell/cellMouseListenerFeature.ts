@@ -54,14 +54,14 @@ export class CellMouseListenerFeature extends BeanStub {
             return;
         }
 
-        const { eventSvc, rangeService, gos } = this.beans;
+        const { eventSvc, rangeSvc, gos } = this.beans;
         const isMultiKey = mouseEvent.ctrlKey || mouseEvent.metaKey;
 
-        if (rangeService && isMultiKey) {
+        if (rangeSvc && isMultiKey) {
             // the mousedown event has created the range already, so we only intersect if there is more than one
             // range on this cell
-            if (rangeService.getCellRangeCount(this.cellCtrl.getCellPosition()) > 1) {
-                rangeService.intersectLastRange(true);
+            if (rangeSvc.getCellRangeCount(this.cellCtrl.getCellPosition()) > 1) {
+                rangeSvc.intersectLastRange(true);
             }
         }
 
@@ -83,7 +83,7 @@ export class CellMouseListenerFeature extends BeanStub {
             (gos.get('singleClickEdit') || colDef.singleClickEdit) && !gos.get('suppressClickEdit');
 
         // edit on single click, but not if extending a range
-        if (editOnSingleClick && !(mouseEvent.shiftKey && rangeService?.getCellRanges().length != 0)) {
+        if (editOnSingleClick && !(mouseEvent.shiftKey && rangeSvc?.getCellRanges().length != 0)) {
             this.cellCtrl.startRowOrCellEdit();
         }
     }
@@ -130,14 +130,14 @@ export class CellMouseListenerFeature extends BeanStub {
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
         const target = mouseEvent.target as HTMLElement;
         const { cellCtrl, beans } = this;
-        const { eventSvc, rangeService, focusSvc, gos } = beans;
+        const { eventSvc, rangeSvc, focusSvc, gos } = beans;
 
         // do not change the range for right-clicks inside an existing range
         if (this.isRightClickInExistingRange(mouseEvent)) {
             return;
         }
 
-        const ranges = rangeService && rangeService.getCellRanges().length != 0;
+        const ranges = rangeSvc && rangeSvc.getCellRanges().length != 0;
         const containsWidget = this.containsWidget(target);
 
         if (!shiftKey || !ranges) {
@@ -192,14 +192,14 @@ export class CellMouseListenerFeature extends BeanStub {
             return;
         }
 
-        if (rangeService) {
+        if (rangeSvc) {
             const thisCell = this.cellCtrl.getCellPosition();
 
             if (shiftKey) {
-                rangeService.extendLatestRangeToCell(thisCell);
+                rangeSvc.extendLatestRangeToCell(thisCell);
             } else {
                 const isMultiKey = ctrlKey || metaKey;
-                rangeService.setRangeToCell(thisCell, isMultiKey);
+                rangeSvc.setRangeToCell(thisCell, isMultiKey);
             }
         }
 
@@ -207,10 +207,10 @@ export class CellMouseListenerFeature extends BeanStub {
     }
 
     private isRightClickInExistingRange(mouseEvent: MouseEvent): boolean {
-        const { rangeService } = this.beans;
+        const { rangeSvc } = this.beans;
 
-        if (rangeService) {
-            const cellInRange = rangeService.isCellInAnyRange(this.cellCtrl.getCellPosition());
+        if (rangeSvc) {
+            const cellInRange = rangeSvc.isCellInAnyRange(this.cellCtrl.getCellPosition());
             const isRightClick =
                 mouseEvent.button === 2 || (mouseEvent.ctrlKey && this.beans.gos.get('allowContextMenuWithControlKey'));
 

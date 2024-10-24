@@ -81,11 +81,11 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     private onShiftRangeSelect(event: KeyboardEvent): void {
-        if (!this.beans.rangeService) {
+        if (!this.beans.rangeSvc) {
             return;
         }
 
-        const endCell = this.beans.rangeService.extendLatestRangeInDirection(event);
+        const endCell = this.beans.rangeSvc.extendLatestRangeInDirection(event);
 
         if (endCell) {
             this.beans.navigation?.ensureCellVisible(endCell);
@@ -98,7 +98,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
 
     private onBackspaceOrDeleteKeyDown(key: string, event: KeyboardEvent): void {
         const { cellCtrl, beans, rowNode } = this;
-        const { gos, rangeService, eventSvc } = beans;
+        const { gos, rangeSvc, eventSvc } = beans;
 
         if (cellCtrl.isEditing()) {
             return;
@@ -107,8 +107,8 @@ export class CellKeyboardListenerFeature extends BeanStub {
         eventSvc.dispatchEvent({ type: 'keyShortcutChangedCellStart' });
 
         if (_isDeleteKey(key, gos.get('enableCellEditingOnBackspace'))) {
-            if (rangeService && _isCellSelectionEnabled(gos)) {
-                rangeService.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
+            if (rangeSvc && _isCellSelectionEnabled(gos)) {
+                rangeSvc.clearCellRangeCellValues({ dispatchWrapperEvents: true, wrapperEventSource: 'deleteKey' });
             } else if (cellCtrl.isCellEditable()) {
                 const column = cellCtrl.getColumn();
                 const emptyValue = this.beans.valueSvc.getDeleteValue(column, rowNode);

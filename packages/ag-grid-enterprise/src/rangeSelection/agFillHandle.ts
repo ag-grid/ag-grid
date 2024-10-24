@@ -125,7 +125,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         let finalRange: CellRange | undefined;
 
         if (!this.isUp && !this.isLeft) {
-            finalRange = this.rangeService.createCellRangeFromCellRangeParams({
+            finalRange = this.rangeSvc.createCellRangeFromCellRangeParams({
                 rowStartIndex: rangeStartRow.rowIndex,
                 rowStartPinned: rangeStartRow.rowPinned,
                 columnStart: initialRange.columns[0],
@@ -136,7 +136,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         } else {
             const startRow = isX ? rangeStartRow : this.lastCellMarked;
 
-            finalRange = this.rangeService.createCellRangeFromCellRangeParams({
+            finalRange = this.rangeSvc.createCellRangeFromCellRangeParams({
                 rowStartIndex: startRow!.rowIndex,
                 rowStartPinned: startRow!.rowPinned,
                 columnStart: isX ? this.lastCellMarked!.column : initialRange.columns[0],
@@ -153,7 +153,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             });
 
             this.handleValueChanged(initialRange, finalRange, e);
-            this.rangeService.setCellRanges([finalRange]);
+            this.rangeSvc.setCellRanges([finalRange]);
 
             this.eventSvc.dispatchEvent({
                 type: 'fillEnd',
@@ -188,10 +188,10 @@ export class AgFillHandle extends AbstractSelectionHandle {
     }
 
     private handleValueChanged(initialRange: CellRange, finalRange: CellRange, e: MouseEvent) {
-        const initialRangeEndRow = this.rangeService.getRangeEndRow(initialRange);
-        const initialRangeStartRow = this.rangeService.getRangeStartRow(initialRange);
-        const finalRangeEndRow = this.rangeService.getRangeEndRow(finalRange);
-        const finalRangeStartRow = this.rangeService.getRangeStartRow(finalRange);
+        const initialRangeEndRow = this.rangeSvc.getRangeEndRow(initialRange);
+        const initialRangeStartRow = this.rangeSvc.getRangeStartRow(initialRange);
+        const finalRangeEndRow = this.rangeSvc.getRangeEndRow(finalRange);
+        const finalRangeStartRow = this.rangeSvc.getRangeStartRow(finalRange);
         const isVertical = this.dragAxis === 'y';
 
         // if the range is being reduced in size, all we need to do is
@@ -314,7 +314,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                         }
                     }
                     if (!fromUserFunction || cellValue !== currentValue) {
-                        rowNode.setDataValue(col, currentValue, 'rangeService');
+                        rowNode.setDataValue(col, currentValue, 'rangeSvc');
                     } else {
                         skipValue = true;
                     }
@@ -347,7 +347,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             columns,
             startColumn: columns[0],
         };
-        this.rangeService.clearCellRangeCellValues({ cellRanges: [cellRange] });
+        this.rangeSvc.clearCellRangeCellValues({ cellRanges: [cellRange] });
     }
 
     private processValues(params: {
@@ -502,7 +502,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     }
 
     private extendVertical(initialPosition: CellPosition, endPosition: CellPosition, isMovingUp?: boolean) {
-        const { rangeService, beans } = this;
+        const { rangeSvc, beans } = this;
 
         let row: RowPosition | null = initialPosition;
 
@@ -514,7 +514,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
                 const column = cellRange.columns[i];
                 const rowPos = { rowIndex: row.rowIndex, rowPinned: row.rowPinned };
                 const cellPos = { ...rowPos, column };
-                const cellInRange = rangeService.isCellInSpecificRange(cellPos, cellRange);
+                const cellInRange = rangeSvc.isCellInSpecificRange(cellPos, cellRange);
                 const isInitialRow = _isSameRow(row, initialPosition);
 
                 if (isMovingUp) {
@@ -654,7 +654,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     }
 
     public override refresh(cellCtrl: CellCtrl) {
-        const cellRange = this.rangeService.getCellRanges()[0];
+        const cellRange = this.rangeSvc.getCellRanges()[0];
         const isColumnRange = !cellRange.startRow || !cellRange.endRow;
 
         if (isColumnRange) {

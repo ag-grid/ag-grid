@@ -72,7 +72,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private visibleCols: VisibleColsService;
     private rowModel: IRowModel;
     private pinnedRowModel?: PinnedRowModel;
-    private rangeService?: IRangeService;
+    private rangeSvc?: IRangeService;
     private clipboardService?: IClipboardService;
     private selectionSvc?: ISelectionService;
 
@@ -85,7 +85,7 @@ export class RowContainerEventsFeature extends BeanStub {
         this.visibleCols = beans.visibleCols;
         this.rowModel = beans.rowModel;
         this.pinnedRowModel = beans.pinnedRowModel;
-        this.rangeService = beans.rangeService;
+        this.rangeSvc = beans.rangeSvc;
         this.clipboardService = beans.clipboardService;
         this.selectionSvc = beans.selectionSvc;
     }
@@ -300,9 +300,9 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndA(event: KeyboardEvent): void {
-        const { pinnedRowModel, rowModel, rangeService, selectionSvc, gos } = this;
+        const { pinnedRowModel, rowModel, rangeSvc, selectionSvc, gos } = this;
 
-        if (rangeService && _isCellSelectionEnabled(gos) && rowModel.isRowsToRender()) {
+        if (rangeSvc && _isCellSelectionEnabled(gos) && rowModel.isRowsToRender()) {
             const [isEmptyPinnedTop, isEmptyPinnedBottom] = [
                 pinnedRowModel?.isEmpty('top') ?? true,
                 pinnedRowModel?.isEmpty('bottom') ?? true,
@@ -325,7 +325,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 return;
             }
 
-            rangeService.setCellRange({
+            rangeSvc.setCellRange({
                 rowStartIndex: 0,
                 rowStartPinned: floatingStart,
                 rowEndIndex: rowEnd,

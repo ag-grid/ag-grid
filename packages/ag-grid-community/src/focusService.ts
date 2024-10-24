@@ -748,7 +748,7 @@ export class FocusService extends BeanStub implements NamedBean {
                     forceBrowserFocus: true,
                 });
 
-                this.beans.rangeService?.setRangeToCell({ rowIndex, rowPinned, column });
+                this.beans.rangeSvc?.setRangeToCell({ rowIndex, rowPinned, column });
 
                 return true;
             }

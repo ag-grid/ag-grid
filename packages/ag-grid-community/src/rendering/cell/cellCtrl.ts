@@ -160,9 +160,9 @@ export class CellCtrl extends BeanStub {
             this.enableTooltipFeature();
         }
 
-        const cellSelectionEnabled = this.beans.rangeService && _isCellSelectionEnabled(this.beans.gos);
+        const cellSelectionEnabled = this.beans.rangeSvc && _isCellSelectionEnabled(this.beans.gos);
         if (cellSelectionEnabled) {
-            this.cellRangeFeature = this.beans.rangeService!.createCellRangeFeature(this.beans, this);
+            this.cellRangeFeature = this.beans.rangeSvc!.createCellRangeFeature(this.beans, this);
         }
     }
     private removeFeatures(): void {

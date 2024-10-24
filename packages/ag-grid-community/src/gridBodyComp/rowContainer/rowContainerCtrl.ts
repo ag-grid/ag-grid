@@ -234,7 +234,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     private ctrlsSvc: CtrlsService;
     private colViewport: ColumnViewportService;
     private rowRenderer: RowRenderer;
-    private rangeService?: IRangeService;
+    private rangeSvc?: IRangeService;
     private pinnedColumnService?: PinnedColumnService;
 
     public wireBeans(beans: BeanCollection) {
@@ -242,7 +242,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
         this.ctrlsSvc = beans.ctrlsSvc;
         this.colViewport = beans.colViewport;
         this.rowRenderer = beans.rowRenderer;
-        this.rangeService = beans.rangeService;
+        this.rangeSvc = beans.rangeSvc;
         this.pinnedColumnService = beans.pinnedColumnService;
     }
 
@@ -328,9 +328,9 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
                 new SetHeightFeature(this.eContainer, this.name === 'center' ? eViewport : undefined)
             )
         );
-        if (this.rangeService) {
+        if (this.rangeSvc) {
             this.forContainers(allNoFW, () =>
-                this.createManagedBean(this.rangeService!.createDragListenerFeature(this.eContainer))
+                this.createManagedBean(this.rangeSvc!.createDragListenerFeature(this.eContainer))
             );
         }
 

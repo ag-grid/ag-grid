@@ -1022,8 +1022,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const node = this.rowNode;
 
-        if (this.beans.rangeService) {
-            this.beans.rangeService.removeAllCellRanges();
+        if (this.beans.rangeSvc) {
+            this.beans.rangeSvc.removeAllCellRanges();
         }
 
         const fullWidthRowGui = this.findFullWidthRowGui(mouseEvent.target as HTMLElement);

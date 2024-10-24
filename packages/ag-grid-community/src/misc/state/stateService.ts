@@ -62,7 +62,7 @@ export class StateService extends BeanStub implements NamedBean {
     private colAnimation?: ColumnAnimationService;
     private columnStateService: ColumnStateService;
     private sideBarService?: ISideBarService;
-    private rangeService?: IRangeService;
+    private rangeSvc?: IRangeService;
     private rowModel: IRowModel;
     private columnGroupService?: ColumnGroupService;
     private updateRowGroupExpansionStateTimer: ReturnType<typeof setTimeout> | number = 0;
@@ -80,7 +80,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.colAnimation = beans.colAnimation;
         this.columnStateService = beans.columnStateService;
         this.sideBarService = beans.sideBarService;
-        this.rangeService = beans.rangeService;
+        this.rangeSvc = beans.rangeSvc;
         this.rowModel = beans.rowModel;
         this.columnGroupService = beans.columnGroupService;
     }
@@ -593,7 +593,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private getRangeSelectionState(): CellSelectionState | undefined {
-        const cellRanges = this.rangeService?.getCellRanges().map((cellRange) => {
+        const cellRanges = this.rangeSvc?.getCellRanges().map((cellRange) => {
             const { id, type, startRow, endRow, columns, startColumn } = cellRange;
             return {
                 id,
@@ -608,9 +608,9 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setCellSelectionState(cellSelectionState: CellSelectionState): void {
-        const { gos, rangeService, colModel, visibleCols } = this;
+        const { gos, rangeSvc, colModel, visibleCols } = this;
 
-        if (!_isCellSelectionEnabled(gos) || !rangeService) {
+        if (!_isCellSelectionEnabled(gos) || !rangeSvc) {
             return;
         }
 
@@ -640,7 +640,7 @@ export class StateService extends BeanStub implements NamedBean {
             });
         });
 
-        rangeService.setCellRanges(cellRanges);
+        rangeSvc.setCellRanges(cellRanges);
     }
 
     private getScrollState(): ScrollState | undefined {

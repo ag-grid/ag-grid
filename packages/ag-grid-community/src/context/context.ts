@@ -223,7 +223,7 @@ export interface CoreBeanCollection {
     localeSvc?: LocaleService;
     syncSvc: SyncService;
     ariaAnnounce: AriaAnnouncementService;
-    rangeService?: IRangeService;
+    rangeSvc?: IRangeService;
     validationService?: ValidationService;
     gridApi: GridApi;
     gridOptions: GridOptions;
@@ -445,7 +445,7 @@ export type BeanName =
     | 'pivotStage'
     | 'popupSvc'
     | 'quickFilterService'
-    | 'rangeService'
+    | 'rangeSvc'
     | 'pageBoundsListener'
     | 'pageBoundsService'
     | 'registry'

@@ -34,10 +34,10 @@ function _formatNumberTwoDecimalPlacesAndCommas(value: number, getLocaleTextFunc
 }
 
 export class AggregationComp extends Component implements IStatusPanelComp {
-    private rangeService?: IRangeService;
+    private rangeSvc?: IRangeService;
 
     public wireBeans(beans: BeanCollection) {
-        this.rangeService = beans.rangeService;
+        this.rangeSvc = beans.rangeSvc;
     }
 
     private readonly sumAggregationComp: AgNameValue = RefPlaceholder;
@@ -132,7 +132,7 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     }
 
     private onCellSelectionChanged(): void {
-        const cellRanges = this.rangeService?.getCellRanges();
+        const cellRanges = this.rangeSvc?.getCellRanges();
 
         let sum = 0;
         let count = 0;
@@ -142,12 +142,12 @@ export class AggregationComp extends Component implements IStatusPanelComp {
 
         const cellsSoFar: any = {};
 
-        if (cellRanges?.length && this.rangeService) {
+        if (cellRanges?.length && this.rangeSvc) {
             for (let i = 0; i < cellRanges.length; i++) {
                 const cellRange = cellRanges[i];
 
-                let currentRow: RowPosition | null = this.rangeService.getRangeStartRow(cellRange);
-                const lastRow = this.rangeService.getRangeEndRow(cellRange);
+                let currentRow: RowPosition | null = this.rangeSvc.getRangeStartRow(cellRange);
+                const lastRow = this.rangeSvc.getRangeEndRow(cellRange);
 
                 while (true) {
                     const finishedAllRows = _missing(currentRow) || !currentRow || _isRowBefore(lastRow, currentRow);

@@ -49,7 +49,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     private rowRenderer: RowRenderer;
     private cellNavigation: CellNavigationService;
     private pinnedRowModel?: PinnedRowModel;
-    private rangeService?: IRangeService;
+    private rangeSvc?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
         this.pageBoundsService = beans.pageBoundsService;
@@ -60,7 +60,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         this.rowRenderer = beans.rowRenderer;
         this.cellNavigation = beans.cellNavigation!;
         this.pinnedRowModel = beans.pinnedRowModel;
-        this.rangeService = beans.rangeService;
+        this.rangeSvc = beans.rangeSvc;
     }
 
     private gridBodyCon: GridBodyCtrl;
@@ -81,7 +81,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         const key = event.key;
         const alt = event.altKey;
         const ctrl = event.ctrlKey || event.metaKey;
-        const rangeServiceShouldHandleShift = !!this.rangeService && event.shiftKey;
+        const rangeServiceShouldHandleShift = !!this.rangeSvc && event.shiftKey;
 
         // home and end can be processed without knowing the currently selected cell, this can occur for full width rows.
         const currentCell: CellPosition | null = this.beans.mouseEventService.getCellPositionForEvent(event);
@@ -173,7 +173,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             forceBrowserFocus: true,
         });
 
-        this.rangeService?.setRangeToCell({ rowIndex: focusIndex, rowPinned: null, column: focusColumn });
+        this.rangeSvc?.setRangeToCell({ rowIndex: focusIndex, rowPinned: null, column: focusColumn });
     }
 
     // this method is throttled, see the `constructor`
@@ -697,7 +697,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
-            this.rangeService?.setRangeToCell(nextPosition);
+            this.rangeSvc?.setRangeToCell(nextPosition);
 
             // we successfully tabbed onto a grid cell, so return true
             return nextCell;
@@ -879,7 +879,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             forceBrowserFocus: true,
         });
 
-        this.rangeService?.setRangeToCell(cellPosition);
+        this.rangeSvc?.setRangeToCell(cellPosition);
     }
 
     private isValidNavigateCell(cell: CellPosition): boolean {

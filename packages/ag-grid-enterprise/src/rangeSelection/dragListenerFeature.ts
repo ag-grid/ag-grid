@@ -3,11 +3,11 @@ import { BeanStub, _isCellSelectionEnabled } from 'ag-grid-community';
 
 export class DragListenerFeature extends BeanStub {
     private dragSvc: DragService;
-    private rangeService: IRangeService;
+    private rangeSvc: IRangeService;
 
     public wireBeans(beans: BeanCollection) {
         this.dragSvc = beans.dragSvc!;
-        this.rangeService = beans.rangeService!;
+        this.rangeSvc = beans.rangeSvc!;
     }
 
     private eContainer: HTMLElement;
@@ -22,9 +22,9 @@ export class DragListenerFeature extends BeanStub {
     public postConstruct(): void {
         this.params = {
             eElement: this.eContainer,
-            onDragStart: this.rangeService.onDragStart.bind(this.rangeService),
-            onDragStop: this.rangeService.onDragStop.bind(this.rangeService),
-            onDragging: this.rangeService.onDragging.bind(this.rangeService),
+            onDragStart: this.rangeSvc.onDragStart.bind(this.rangeSvc),
+            onDragStop: this.rangeSvc.onDragStop.bind(this.rangeSvc),
+            onDragging: this.rangeSvc.onDragging.bind(this.rangeSvc),
         };
 
         this.addManagedPropertyListeners(['enableRangeSelection', 'cellSelection'], () => {

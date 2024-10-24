@@ -42,10 +42,10 @@ export type ChartControllerEvent =
     | 'chartSeriesChartTypeChanged'
     | 'chartLinkedChanged';
 export class ChartController extends BeanStub<ChartControllerEvent> {
-    private rangeService: IRangeService;
+    private rangeSvc: IRangeService;
 
     public wireBeans(beans: BeanCollection) {
-        this.rangeService = beans.rangeService!;
+        this.rangeSvc = beans.rangeSvc!;
     }
 
     private chartProxy: ChartProxy;
@@ -58,8 +58,8 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         this.setChartRange();
 
         if (this.model.unlinked) {
-            if (this.rangeService) {
-                this.rangeService.setCellRanges([]);
+            if (this.rangeSvc) {
+                this.rangeSvc.setCellRanges([]);
             }
         }
         const listener = this.updateForGridChange.bind(this, {});
@@ -133,7 +133,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
 
         // if the chart should be unlinked or chart ranges suppressed, remove all cell ranges; otherwise, set the chart range
         const removeChartCellRanges = chartModelParams.unlinkChart || chartModelParams.suppressChartRanges;
-        removeChartCellRanges ? this.rangeService?.setCellRanges([]) : this.setChartRange();
+        removeChartCellRanges ? this.rangeSvc?.setCellRanges([]) : this.setChartRange();
     }
 
     public updateForGridChange(params?: { maintainColState?: boolean; setColsFromRange?: boolean }): void {
@@ -435,8 +435,8 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     public setChartRange(silent = false): void {
-        if (this.rangeService && !this.model.suppressChartRanges && !this.model.unlinked) {
-            this.rangeService.setCellRanges(this.getCellRanges());
+        if (this.rangeSvc && !this.model.suppressChartRanges && !this.model.unlinked) {
+            this.rangeSvc.setCellRanges(this.getCellRanges());
         }
 
         if (!silent) {
@@ -450,8 +450,8 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
 
         if (this.model.unlinked) {
             // remove range from grid
-            if (this.rangeService) {
-                this.rangeService.setCellRanges([]);
+            if (this.rangeSvc) {
+                this.rangeSvc.setCellRanges([]);
             }
         } else {
             // update chart data may have changed
@@ -572,7 +572,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     ): PartialCellRange | undefined {
         return (
             params.cellRange &&
-            this.rangeService?.createPartialCellRangeFromRangeParams(params.cellRange as CellRangeParams, true)
+            this.rangeSvc?.createPartialCellRangeFromRangeParams(params.cellRange as CellRangeParams, true)
         );
     }
 
@@ -667,8 +667,8 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     public override destroy(): void {
         super.destroy();
 
-        if (this.rangeService) {
-            this.rangeService.setCellRanges([]);
+        if (this.rangeSvc) {
+            this.rangeSvc.setCellRanges([]);
         }
     }
 }

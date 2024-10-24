@@ -45,7 +45,7 @@ import { CellRangeFeature } from './cellRangeFeature';
 import { DragListenerFeature } from './dragListenerFeature';
 
 export class RangeService extends BeanStub implements NamedBean, IRangeService {
-    beanName = 'rangeService' as const;
+    beanName = 'rangeSvc' as const;
 
     private rowModel: IRowModel;
     private dragSvc: DragService;
@@ -388,7 +388,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     public clearCellRangeCellValues(params: ClearCellRangeParams): void {
         let { cellRanges } = params;
-        const { cellEventSource = 'rangeService', dispatchWrapperEvents, wrapperEventSource = 'deleteKey' } = params;
+        const { cellEventSource = 'rangeSvc', dispatchWrapperEvents, wrapperEventSource = 'deleteKey' } = params;
 
         if (dispatchWrapperEvents) {
             this.eventSvc.dispatchEvent({

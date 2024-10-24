@@ -58,13 +58,13 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
     beanName = 'chartService' as const;
 
     private visibleCols: VisibleColsService;
-    private rangeService?: IRangeService;
+    private rangeSvc?: IRangeService;
     private environment: Environment;
     private focusSvc: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
         this.visibleCols = beans.visibleCols;
-        this.rangeService = beans.rangeService;
+        this.rangeSvc = beans.rangeSvc;
         this.environment = beans.environment;
         this.focusSvc = beans.focusSvc;
     }
@@ -324,7 +324,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
     }
 
     private getSelectedRange(): PartialCellRange {
-        const ranges = this.rangeService?.getCellRanges() ?? [];
+        const ranges = this.rangeSvc?.getCellRanges() ?? [];
         return ranges.length > 0 ? ranges[0] : { columns: [] };
     }
 
@@ -343,8 +343,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
               }
             : cellRangeParams;
         const cellRange =
-            rangeParams &&
-            this.rangeService?.createPartialCellRangeFromRangeParams(rangeParams as CellRangeParams, true);
+            rangeParams && this.rangeSvc?.createPartialCellRangeFromRangeParams(rangeParams as CellRangeParams, true);
         if (!cellRange) {
             _warn(127, { allRange });
         }

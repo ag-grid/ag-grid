@@ -57,11 +57,11 @@ function getGridBodyTemplate(includeOverlay?: boolean): {
 }
 
 export class GridBodyComp extends Component {
-    private rangeService?: IRangeService;
+    private rangeSvc?: IRangeService;
     private overlayService?: OverlayService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.rangeService = beans.rangeService;
+        this.rangeSvc = beans.rangeSvc;
         this.overlayService = beans.overlayService;
     }
 
@@ -156,7 +156,7 @@ export class GridBodyComp extends Component {
             this.eStickyBottom
         );
 
-        if ((this.rangeService && _isCellSelectionEnabled(this.gos)) || _isMultiRowSelection(this.gos)) {
+        if ((this.rangeSvc && _isCellSelectionEnabled(this.gos)) || _isMultiRowSelection(this.gos)) {
             _setAriaMultiSelectable(this.getGui(), true);
         }
     }

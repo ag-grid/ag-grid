@@ -37,7 +37,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     private ctrlsSvc: CtrlsService;
     private colModel: ColumnModel;
     private menuUtils: MenuUtils;
-    private rangeService?: IRangeService;
+    private rangeSvc?: IRangeService;
     private focusSvc: FocusService;
     private valueSvc: ValueService;
     private rowRenderer: RowRenderer;
@@ -47,7 +47,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
         this.ctrlsSvc = beans.ctrlsSvc;
         this.colModel = beans.colModel;
         this.menuUtils = beans.menuUtils as MenuUtils;
-        this.rangeService = beans.rangeService;
+        this.rangeSvc = beans.rangeSvc;
         this.focusSvc = beans.focusSvc;
         this.valueSvc = beans.valueSvc;
         this.rowRenderer = beans.rowRenderer;
@@ -81,7 +81,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
                 defaultMenuOptions.push('pivotChart');
             }
 
-            if (this.rangeService && !this.rangeService.isEmpty()) {
+            if (this.rangeSvc && !this.rangeSvc.isEmpty()) {
                 defaultMenuOptions.push('chartRange');
             }
         }

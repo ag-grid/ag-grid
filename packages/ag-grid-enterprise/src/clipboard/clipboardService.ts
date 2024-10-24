@@ -154,7 +154,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private focusSvc: FocusService;
     private visibleCols: VisibleColsService;
     private cellNavigation: CellNavigationService;
-    private rangeService?: IRangeService;
+    private rangeSvc?: IRangeService;
 
     public wireBeans(beans: BeanCollection): void {
         this.selectionSvc = beans.selectionSvc;
@@ -163,7 +163,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.focusSvc = beans.focusSvc;
         this.visibleCols = beans.visibleCols;
         this.cellNavigation = beans.cellNavigation!;
-        this.rangeService = beans.rangeService;
+        this.rangeSvc = beans.rangeSvc;
     }
 
     private clientSideRowModel: IClientSideRowModel | null = null;
@@ -283,11 +283,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             focusedCell: CellPosition,
             changedPath: ChangedPath | undefined
         ) => {
-            const rangeActive = this.rangeService?.isMoreThanOneCell();
+            const rangeActive = this.rangeSvc?.isMoreThanOneCell();
             const pasteIntoRange = rangeActive && !this.hasOnlyOneValueToPaste(parsedData!);
 
             if (pasteIntoRange) {
-                this.pasteIntoActiveRange(this.rangeService!, parsedData!, cellsToFlash, updatedRowNodes, changedPath);
+                this.pasteIntoActiveRange(this.rangeSvc!, parsedData!, cellsToFlash, updatedRowNodes, changedPath);
             } else {
                 this.pasteStartingFromFocusedCell(parsedData!, cellsToFlash, updatedRowNodes, focusedCell, changedPath);
             }
@@ -350,14 +350,14 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private pasteIntoActiveRange(
-        rangeService: IRangeService,
+        rangeSvc: IRangeService,
         clipboardData: string[][],
         cellsToFlash: any,
         updatedRowNodes: RowNode[],
         changedPath: ChangedPath | undefined
     ) {
         // true if clipboard data can be evenly pasted into range, otherwise false
-        const abortRepeatingPasteIntoRows = this.getRangeSize(rangeService) % clipboardData.length != 0;
+        const abortRepeatingPasteIntoRows = this.getRangeSize(rangeSvc) % clipboardData.length != 0;
 
         let indexOffset = 0;
         let dataRowIndex = 0;
@@ -466,7 +466,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
     // if range is active, and only one cell, then we paste this cell into all cells in the active range.
     private isPasteSingleValueIntoRange(parsedData: string[][]): boolean {
-        return this.hasOnlyOneValueToPaste(parsedData) && this.rangeService != null && !this.rangeService.isEmpty();
+        return this.hasOnlyOneValueToPaste(parsedData) && this.rangeSvc != null && !this.rangeSvc.isEmpty();
     }
 
     private pasteSingleValueIntoRange(
@@ -492,7 +492,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     public copyRangeDown(): void {
-        if (!this.rangeService || this.rangeService.isEmpty()) {
+        if (!this.rangeSvc || this.rangeSvc.isEmpty()) {
             return;
         }
 
@@ -738,7 +738,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private shouldCopyCells(cellSelection?: GridOptions['cellSelection'], rowSelection?: GridOptions['rowSelection']) {
-        if (!this.rangeService || this.rangeService.isEmpty()) {
+        if (!this.rangeSvc || this.rangeSvc.isEmpty()) {
             return false;
         }
 
@@ -751,7 +751,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         } else {
             // If user is using the deprecated API, we preserve the previous behaviour
             const suppressCopySingleCellRanges = this.gos.get('suppressCopySingleCellRanges');
-            const shouldSkip = !this.rangeService.isMoreThanOneCell() && suppressCopySingleCellRanges;
+            const shouldSkip = !this.rangeSvc.isMoreThanOneCell() && suppressCopySingleCellRanges;
             return !shouldSkip;
         }
     }
@@ -774,7 +774,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private clearCellsAfterCopy(type: CellClearType) {
         this.eventSvc.dispatchEvent({ type: 'keyShortcutChangedCellStart' });
         if (type === CellClearType.CellRange) {
-            this.rangeService!.clearCellRangeCellValues({ cellEventSource: 'clipboardService' });
+            this.rangeSvc!.clearCellRangeCellValues({ cellEventSource: 'clipboardService' });
         } else if (type === CellClearType.SelectedRows) {
             this.clearSelectedRows();
         } else {
@@ -811,11 +811,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private iterateActiveRanges(onlyFirst: boolean, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
-        if (!this.rangeService || this.rangeService.isEmpty()) {
+        if (!this.rangeSvc || this.rangeSvc.isEmpty()) {
             return;
         }
 
-        const cellRanges = this.rangeService.getCellRanges();
+        const cellRanges = this.rangeSvc.getCellRanges();
 
         if (onlyFirst) {
             this.iterateActiveRange(cellRanges[0], rowCallback, columnCallback, true);
@@ -832,12 +832,12 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         columnCallback?: ColumnCallback,
         isLastRange?: boolean
     ): void {
-        if (!this.rangeService) {
+        if (!this.rangeSvc) {
             return;
         }
 
-        let currentRow: RowPosition | null = this.rangeService.getRangeStartRow(range);
-        const lastRow = this.rangeService.getRangeEndRow(range);
+        let currentRow: RowPosition | null = this.rangeSvc.getRangeStartRow(range);
+        const lastRow = this.rangeSvc.getRangeEndRow(range);
 
         if (columnCallback && range.columns) {
             columnCallback(range.columns as AgColumn[]);
@@ -859,32 +859,29 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     public copySelectedRangeToClipboard(params: IClipboardCopyParams = {}): void {
-        if (!this.rangeService || this.rangeService.isEmpty()) {
+        if (!this.rangeSvc || this.rangeSvc.isEmpty()) {
             return;
         }
 
-        const allRangesMerge = this.rangeService.areAllRangesAbleToMerge();
+        const allRangesMerge = this.rangeSvc.areAllRangesAbleToMerge();
         const { data, cellsToFlash } = allRangesMerge
-            ? this.buildDataFromMergedRanges(this.rangeService, params)
-            : this.buildDataFromRanges(this.rangeService, params);
+            ? this.buildDataFromMergedRanges(this.rangeSvc, params)
+            : this.buildDataFromRanges(this.rangeSvc, params);
 
         this.copyDataToClipboard(data);
         this.dispatchFlashCells(cellsToFlash);
     }
 
-    private buildDataFromMergedRanges(
-        rangeService: IRangeService,
-        params: IClipboardCopyParams
-    ): DataForCellRangesType {
+    private buildDataFromMergedRanges(rangeSvc: IRangeService, params: IClipboardCopyParams): DataForCellRangesType {
         const columnsSet: Set<AgColumn> = new Set();
-        const ranges = rangeService.getCellRanges();
+        const ranges = rangeSvc.getCellRanges();
         const rowPositionsMap: Map<string, boolean> = new Map();
         const allRowPositions: RowPosition[] = [];
         const allCellsToFlash: CellsToFlashType = {};
 
         ranges.forEach((range) => {
             range.columns.forEach((col: AgColumn) => columnsSet.add(col));
-            const { rowPositions, cellsToFlash } = this.getRangeRowPositionsAndCellsToFlash(rangeService, range);
+            const { rowPositions, cellsToFlash } = this.getRangeRowPositionsAndCellsToFlash(rangeSvc, range);
             rowPositions.forEach((rowPosition) => {
                 const rowPositionAsString = `${rowPosition.rowIndex}-${rowPosition.rowPinned || 'null'}`;
                 if (!rowPositionsMap.get(rowPositionAsString)) {
@@ -915,13 +912,13 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         return { data, cellsToFlash: allCellsToFlash };
     }
 
-    private buildDataFromRanges(rangeService: IRangeService, params: IClipboardCopyParams): DataForCellRangesType {
-        const ranges = rangeService.getCellRanges();
+    private buildDataFromRanges(rangeSvc: IRangeService, params: IClipboardCopyParams): DataForCellRangesType {
+        const ranges = rangeSvc.getCellRanges();
         const data: string[] = [];
         const allCellsToFlash: CellsToFlashType = {};
 
         ranges.forEach((range) => {
-            const { rowPositions, cellsToFlash } = this.getRangeRowPositionsAndCellsToFlash(rangeService, range);
+            const { rowPositions, cellsToFlash } = this.getRangeRowPositionsAndCellsToFlash(rangeSvc, range);
             Object.assign(allCellsToFlash, cellsToFlash);
             data.push(
                 this.buildExportParams({
@@ -937,13 +934,13 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private getRangeRowPositionsAndCellsToFlash(
-        rangeService: IRangeService,
+        rangeSvc: IRangeService,
         range: CellRange
     ): { rowPositions: RowPosition[]; cellsToFlash: CellsToFlashType } {
         const rowPositions: RowPosition[] = [];
         const cellsToFlash: CellsToFlashType = {};
-        const startRow = rangeService.getRangeStartRow(range);
-        const lastRow = rangeService.getRangeEndRow(range);
+        const startRow = rangeSvc.getRangeStartRow(range);
+        const lastRow = rangeSvc.getRangeEndRow(range);
 
         let node: RowPosition | null = startRow;
 
@@ -1230,14 +1227,14 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         }
     }
 
-    private getRangeSize(rangeService: IRangeService): number {
-        const ranges = rangeService.getCellRanges();
+    private getRangeSize(rangeSvc: IRangeService): number {
+        const ranges = rangeSvc.getCellRanges();
         let startRangeIndex = 0;
         let endRangeIndex = 0;
 
         if (ranges.length > 0) {
-            startRangeIndex = rangeService.getRangeStartRow(ranges[0]).rowIndex;
-            endRangeIndex = rangeService.getRangeEndRow(ranges[0]).rowIndex;
+            startRangeIndex = rangeSvc.getRangeStartRow(ranges[0]).rowIndex;
+            endRangeIndex = rangeSvc.getRangeEndRow(ranges[0]).rowIndex;
         }
 
         return startRangeIndex - endRangeIndex + 1;
