@@ -8,7 +8,7 @@ import { CellCustomStyleFeature } from './cellCustomStyleFeature';
 import { processClassRules } from './stylingUtils';
 
 export class CellStyleService extends BeanStub implements NamedBean {
-    beanName = 'cellStyleService' as const;
+    beanName = 'cellStyles' as const;
 
     private expressionService?: ExpressionService;
 

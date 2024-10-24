@@ -255,14 +255,14 @@ export class ExcelCreator
     private colNames: ColumnNameService;
     private funcColsService: FuncColsService;
     private valueSvc: ValueService;
-    private cellStyleService?: CellStyleService;
+    private cellStyles?: CellStyleService;
 
     public wireBeans(beans: BeanCollection) {
         this.colModel = beans.colModel;
         this.colNames = beans.colNames;
         this.funcColsService = beans.funcColsService;
         this.valueSvc = beans.valueSvc;
-        this.cellStyleService = beans.cellStyleService;
+        this.cellStyles = beans.cellStyles;
     }
 
     protected getMergedParams(params?: ExcelExportParams): ExcelExportParams {
@@ -400,7 +400,7 @@ export class ExcelCreator
         });
 
         const colDef = (column as AgColumn).getDefinition();
-        this.cellStyleService?.processAllCellClasses(
+        this.cellStyles?.processAllCellClasses(
             colDef,
             this.gos.addGridCommonParams({
                 value,

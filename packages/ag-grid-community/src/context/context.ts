@@ -203,7 +203,7 @@ export interface CoreBeanCollection {
     colAnimation?: ColumnAnimationService;
     focusSvc: FocusService;
     popupSvc?: PopupService;
-    cellStyleService?: CellStyleService;
+    cellStyles?: CellStyleService;
     columnHoverService?: ColumnHoverService;
     userComponentFactory: UserComponentFactory;
     registry: Registry;
@@ -351,7 +351,7 @@ export type BeanName =
     | 'cellNavigation'
     | 'cellRendererFactory'
     | 'cellRendererService'
-    | 'cellStyleService'
+    | 'cellStyles'
     | 'changeDetectionService'
     | 'chartColumnService'
     | 'chartCrossFilterService'

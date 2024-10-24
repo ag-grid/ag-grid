@@ -103,7 +103,7 @@ export class CellCustomStyleFeature extends BeanStub {
             this.staticClasses.forEach((className) => this.cellComp.addOrRemoveCssClass(className, false));
         }
 
-        this.staticClasses = this.beans.cellStyleService!.getStaticCellClasses(colDef, cellClassParams);
+        this.staticClasses = this.beans.cellStyles!.getStaticCellClasses(colDef, cellClassParams);
 
         if (this.staticClasses.length) {
             this.staticClasses.forEach((className) => this.cellComp.addOrRemoveCssClass(className, true));

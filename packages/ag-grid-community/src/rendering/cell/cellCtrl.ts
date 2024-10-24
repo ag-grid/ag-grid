@@ -146,7 +146,7 @@ export class CellCtrl extends BeanStub {
 
     private addFeatures(): void {
         this.cellPositionFeature = new CellPositionFeature(this, this.beans);
-        this.cellCustomStyleFeature = this.beans.cellStyleService?.createCellCustomStyleFeature(this, this.beans);
+        this.cellCustomStyleFeature = this.beans.cellStyles?.createCellCustomStyleFeature(this, this.beans);
         this.cellMouseListenerFeature = new CellMouseListenerFeature(this, this.beans, this.column);
 
         this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(
