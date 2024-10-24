@@ -69,7 +69,7 @@ export class RowContainerEventsFeature extends BeanStub {
     private navigationService?: NavigationService;
     private focusService: FocusService;
     private undoRedoService?: UndoRedoService;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private rowModel: IRowModel;
     private pinnedRowModel?: PinnedRowModel;
     private rangeService?: IRangeService;
@@ -82,7 +82,7 @@ export class RowContainerEventsFeature extends BeanStub {
         this.navigationService = beans.navigationService;
         this.focusService = beans.focusService;
         this.undoRedoService = beans.undoRedoService;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.rowModel = beans.rowModel;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.rangeService = beans.rangeService;
@@ -320,7 +320,7 @@ export class RowContainerEventsFeature extends BeanStub {
                 rowEnd = pinnedRowModel?.getPinnedBottomRowCount() ?? 0 - 1;
             }
 
-            const allDisplayedColumns = this.visibleColsService.allCols;
+            const allDisplayedColumns = this.visibleCols.allCols;
             if (!allDisplayedColumns?.length) {
                 return;
             }

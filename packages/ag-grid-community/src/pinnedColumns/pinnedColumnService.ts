@@ -20,7 +20,7 @@ import { _warn } from '../validation/logging';
 export class PinnedColumnService extends BeanStub implements NamedBean {
     beanName = 'pinnedColumnService' as const;
 
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private ctrlsService: CtrlsService;
     private columnModel: ColumnModel;
     private columnAnimationService?: ColumnAnimationService;
@@ -28,7 +28,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
     private gridBodyCtrl: GridBodyCtrl;
 
     public wireBeans(beans: BeanCollection): void {
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;
         this.columnAnimationService = beans.columnAnimationService;
@@ -52,8 +52,8 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
     private checkContainerWidths() {
         const printLayout = _isDomLayout(this.gos, 'print');
 
-        const newLeftWidth = printLayout ? 0 : this.visibleColsService.getColsLeftWidth();
-        const newRightWidth = printLayout ? 0 : this.visibleColsService.getDisplayedColumnsRightWidth();
+        const newLeftWidth = printLayout ? 0 : this.visibleCols.getColsLeftWidth();
+        const newRightWidth = printLayout ? 0 : this.visibleCols.getDisplayedColumnsRightWidth();
 
         if (newLeftWidth != this.leftWidth) {
             this.leftWidth = newLeftWidth;
@@ -147,7 +147,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         });
 
         if (updatedCols.length) {
-            this.visibleColsService.refresh(source);
+            this.visibleCols.refresh(source);
             dispatchColumnPinnedEvent(this.eventSvc, updatedCols, source);
         }
 
@@ -163,8 +163,8 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             return [];
         }
 
-        const pinnedLeftColumns = [...this.visibleColsService.leftCols];
-        const pinnedRightColumns = [...this.visibleColsService.rightCols];
+        const pinnedLeftColumns = [...this.visibleCols.leftCols];
+        const pinnedRightColumns = [...this.visibleCols.rightCols];
 
         let indexRight = 0;
         let indexLeft = 0;

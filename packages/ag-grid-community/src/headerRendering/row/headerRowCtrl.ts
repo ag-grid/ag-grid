@@ -153,7 +153,7 @@ export class HeaderRowCtrl extends BeanStub {
     }
 
     private getWidthForRow(): number {
-        const { visibleColsService: presentedColsService } = this.beans;
+        const { visibleCols: presentedColsService } = this.beans;
         if (this.isPrintLayout) {
             const pinned = this.pinned != null;
             if (pinned) {
@@ -228,13 +228,13 @@ export class HeaderRowCtrl extends BeanStub {
 
         // we want to keep columns that are focused, otherwise keyboard navigation breaks
         const isFocusedAndDisplayed = (ctrl: HeaderCellCtrl) => {
-            const { focusService, visibleColsService: visibleColsService } = this.beans;
+            const { focusService, visibleCols: visibleCols } = this.beans;
 
             const isFocused = focusService.isHeaderWrapperFocused(ctrl);
             if (!isFocused) {
                 return false;
             }
-            const isDisplayed = visibleColsService.isVisible(ctrl.getColumnGroupChild());
+            const isDisplayed = visibleCols.isVisible(ctrl.getColumnGroupChild());
             return isDisplayed;
         };
 

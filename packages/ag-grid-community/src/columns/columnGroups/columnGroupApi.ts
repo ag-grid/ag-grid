@@ -41,17 +41,17 @@ export function resetColumnGroupState(beans: BeanCollection): void {
 }
 
 export function getLeftDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] {
-    return beans.visibleColsService.treeLeft;
+    return beans.visibleCols.treeLeft;
 }
 
 export function getCenterDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] {
-    return beans.visibleColsService.treeCenter;
+    return beans.visibleCols.treeCenter;
 }
 
 export function getRightDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] {
-    return beans.visibleColsService.treeRight;
+    return beans.visibleCols.treeRight;
 }
 
 export function getAllDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] | null {
-    return beans.visibleColsService.getAllTrees();
+    return beans.visibleCols.getAllTrees();
 }

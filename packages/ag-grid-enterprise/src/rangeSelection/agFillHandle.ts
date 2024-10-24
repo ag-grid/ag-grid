@@ -41,13 +41,13 @@ type Direction = 'x' | 'y';
 export class AgFillHandle extends AbstractSelectionHandle {
     private valueSvc: ValueService;
     private cellNavigation: CellNavigationService;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.valueSvc = beans.valueSvc;
         this.cellNavigation = beans.cellNavigation!;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
     }
 
     private initialPosition: CellPosition | undefined;
@@ -483,7 +483,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             if (initialColumn === currentColumn) {
                 return;
             }
-            const displayedColumns = this.visibleColsService.allCols;
+            const displayedColumns = this.visibleCols.allCols;
             const initialIndex = displayedColumns.indexOf(initialColumn);
             const currentIndex = displayedColumns.indexOf(currentColumn);
 
@@ -579,7 +579,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     }
 
     private extendHorizontal(initialPosition: CellPosition, endPosition: CellPosition, isMovingLeft?: boolean) {
-        const allCols = this.visibleColsService.allCols;
+        const allCols = this.visibleCols.allCols;
         const startCol = allCols.indexOf((isMovingLeft ? endPosition.column : initialPosition.column) as AgColumn);
         const endCol = allCols.indexOf(
             (isMovingLeft ? this.getCellRange().columns[0] : endPosition.column) as AgColumn
@@ -622,7 +622,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     }
 
     private reduceHorizontal(initialPosition: CellPosition, endPosition: CellPosition) {
-        const allCols = this.visibleColsService.allCols;
+        const allCols = this.visibleCols.allCols;
         const startCol = allCols.indexOf(endPosition.column as AgColumn);
         const endCol = allCols.indexOf(initialPosition.column as AgColumn);
 

@@ -19,12 +19,12 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
     private columnModel: ColumnModel;
     private aggFuncService?: IAggFuncService;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.aggFuncService = beans.aggFuncService;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
     }
 
     public rowGroupCols: AgColumn[] = [];
@@ -296,7 +296,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
 
         autoGroupsNeedBuilding && this.columnModel.refreshCols(false);
 
-        this.visibleColsService.refresh(source);
+        this.visibleCols.refresh(source);
 
         dispatchColumnChangedEvent(this.eventSvc, eventName, [...changes.keys()], source);
     }
@@ -356,7 +356,7 @@ export class FuncColsService extends BeanStub implements NamedBean {
             this.columnModel.refreshCols(false);
         }
 
-        this.visibleColsService.refresh(source);
+        this.visibleCols.refresh(source);
 
         const eventColumns = Array.from(updatedCols);
         this.eventSvc.dispatchEvent({

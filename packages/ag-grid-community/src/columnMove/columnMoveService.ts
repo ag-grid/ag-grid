@@ -33,7 +33,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
     private columnModel: ColumnModel;
     private columnAnimationService?: ColumnAnimationService;
     private ctrlsService: CtrlsService;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private focusService: FocusService;
     private dragAndDropService: DragAndDropService;
 
@@ -41,7 +41,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         this.columnModel = beans.columnModel;
         this.columnAnimationService = beans.columnAnimationService;
         this.ctrlsService = beans.ctrlsService;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.focusService = beans.focusService;
         this.dragAndDropService = beans.dragAndDropService!;
     }
@@ -79,7 +79,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
 
         if (this.doesMovePassRules(movedColumns, toIndex)) {
             _moveInArray(this.columnModel.getCols(), movedColumns, toIndex);
-            this.visibleColsService.refresh(source);
+            this.visibleCols.refresh(source);
             this.eventSvc.dispatchEvent({
                 type: 'columnMoved',
                 columns: movedColumns,
@@ -157,7 +157,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         pinned: ColumnPinnedType,
         bean: BeanStub
     ): void {
-        const { ctrlsService, gos, columnModel, visibleColsService } = this;
+        const { ctrlsService, gos, columnModel, visibleCols } = this;
         const rect = eGui.getBoundingClientRect();
         const left = rect.left;
         const isGroup = isColumnGroup(column);
@@ -184,7 +184,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             gos,
             columnModel,
             columnMoveService: this,
-            visibleColsService,
+            visibleCols,
             finished: true,
         });
 
@@ -303,7 +303,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         allColumnsOriginalOrder.forEach((column) => (visibleState[column.getId()] = column.isVisible()));
 
         const allColumnsCurrentOrder: AgColumn[] = [];
-        this.visibleColsService.allCols.forEach((column) => {
+        this.visibleCols.allCols.forEach((column) => {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
                 allColumnsCurrentOrder.push(column);
                 _removeFromArray(allColumnsOriginalOrder, column);

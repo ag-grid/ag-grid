@@ -406,9 +406,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private areAllContainersReady(): boolean {
-        const isLeftReady = !!this.leftGui || !this.beans.visibleColsService.isPinningLeft();
+        const isLeftReady = !!this.leftGui || !this.beans.visibleCols.isPinningLeft();
         const isCenterReady = !!this.centerGui;
-        const isRightReady = !!this.rightGui || !this.beans.visibleColsService.isPinningRight();
+        const isRightReady = !!this.rightGui || !this.beans.visibleCols.isPinningRight();
 
         return isLeftReady && isCenterReady && isRightReady;
     }
@@ -554,7 +554,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private createAllCellCtrls() {
         const columnViewport = this.beans.columnViewport;
-        const presentedColsService = this.beans.visibleColsService;
+        const presentedColsService = this.beans.visibleCols;
         if (this.printLayout) {
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, presentedColsService.allCols);
             this.leftCellCtrls = { list: [], map: {} };
@@ -589,7 +589,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (mightWantToKeepCell) {
             const column = cellCtrl.getColumn();
-            const displayedColumns = this.beans.visibleColsService.allCols;
+            const displayedColumns = this.beans.visibleCols.allCols;
             const cellStillDisplayed = displayedColumns.indexOf(column as AgColumn) >= 0;
             return cellStillDisplayed ? KEEP_CELL : REMOVE_CELL;
         }
@@ -616,8 +616,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         }
 
         const oldRowTopExists = _exists(this.rowNode.oldRowTop);
-        const pinningLeft = this.beans.visibleColsService.isPinningLeft();
-        const pinningRight = this.beans.visibleColsService.isPinningRight();
+        const pinningLeft = this.beans.visibleCols.isPinningLeft();
+        const pinningRight = this.beans.visibleCols.isPinningRight();
 
         if (oldRowTopExists) {
             if (this.isFullWidth() && !this.gos.get('embedFullWidthRows')) {
@@ -1000,16 +1000,16 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     private getColumnForFullWidth(fullWidthRowGui?: RowGui): AgColumn {
-        const { visibleColsService } = this.beans;
+        const { visibleCols } = this.beans;
         switch (fullWidthRowGui?.containerType) {
             case 'center':
-                return visibleColsService.centerCols[0];
+                return visibleCols.centerCols[0];
             case 'left':
-                return visibleColsService.leftCols[0];
+                return visibleCols.leftCols[0];
             case 'right':
-                return visibleColsService.rightCols[0];
+                return visibleCols.rightCols[0];
             default:
-                return visibleColsService.allCols[0];
+                return visibleCols.allCols[0];
         }
     }
 

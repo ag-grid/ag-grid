@@ -27,7 +27,7 @@ export class GridHeaderCtrl extends BeanStub {
     private headerNavigationService?: HeaderNavigationService;
     private focusService: FocusService;
     private columnModel: ColumnModel;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private ctrlsService: CtrlsService;
     private filterManager?: FilterManager;
     private menuService?: MenuService;
@@ -36,7 +36,7 @@ export class GridHeaderCtrl extends BeanStub {
         this.headerNavigationService = beans.headerNavigationService;
         this.focusService = beans.focusService;
         this.columnModel = beans.columnModel;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.ctrlsService = beans.ctrlsService;
         this.filterManager = beans.filterManager;
         this.menuService = beans.menuService;
@@ -144,7 +144,7 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     private onDisplayedColumnsChanged(): void {
-        const columns = this.visibleColsService.allCols;
+        const columns = this.visibleCols.allCols;
         const shouldAllowOverflow = columns.some((col) => col.isSpanHeaderHeight());
 
         this.comp.addOrRemoveCssClass('ag-header-allow-overflow', shouldAllowOverflow);

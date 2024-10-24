@@ -10,13 +10,13 @@ import { CenterWidthFeature } from './centerWidthFeature';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 export class FakeHScrollComp extends AbstractFakeScrollComp {
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private pinnedRowModel?: PinnedRowModel;
     private ctrlsService: CtrlsService;
     private scrollVisibleService: ScrollVisibleService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.ctrlsService = beans.ctrlsService;
         this.scrollVisibleService = beans.scrollVisibleService;
@@ -101,7 +101,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
         // we pad the right based on a) if cols are pinned to the right and
         // b) if v scroll is showing on the right (normal position of scroll)
-        let rightSpacing = this.visibleColsService.getDisplayedColumnsRightWidth();
+        let rightSpacing = this.visibleCols.getDisplayedColumnsRightWidth();
         const scrollOnRight = !this.enableRtl && vScrollShowing;
         const scrollbarWidth = this.scrollVisibleService.getScrollbarWidth();
 
@@ -113,7 +113,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
         // we pad the left based on a) if cols are pinned to the left and
         // b) if v scroll is showing on the left (happens in LTR layout only)
-        let leftSpacing = this.visibleColsService.getColsLeftWidth();
+        let leftSpacing = this.visibleCols.getColsLeftWidth();
         const scrollOnLeft = this.enableRtl && vScrollShowing;
 
         if (scrollOnLeft) {

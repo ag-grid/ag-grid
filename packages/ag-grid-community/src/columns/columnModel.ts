@@ -49,7 +49,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     private context: Context;
     private columnFactory: ColumnFactory;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private columnViewport: ColumnViewportService;
     private pivotResultColsService?: IPivotResultColsService;
     private autoColService?: IAutoColService;
@@ -66,7 +66,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.context = beans.context;
         this.columnFactory = beans.columnFactory;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.columnViewport = beans.columnViewport;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.autoColService = beans.autoColService;
@@ -155,7 +155,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
         this.refreshCols(true);
 
-        this.visibleColsService.refresh(source);
+        this.visibleCols.refresh(source);
         this.columnViewport.checkViewportColumns();
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
@@ -221,7 +221,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // will get empty lists of columns rather than stale columns.
         // for example, the header will received gridColumnsChanged event, so will try and draw,
         // but it will draw successfully when it acts on the virtualColumnsChanged event
-        this.visibleColsService.clear();
+        this.visibleCols.clear();
         this.columnViewport.clear();
 
         const dispatchChangedEvent = !_areEqual(prevColTree, this.cols!.tree);
@@ -300,7 +300,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             return;
         }
         this.refreshCols(false);
-        this.visibleColsService.refresh(source);
+        this.visibleCols.refresh(source);
     }
 
     public setColsVisible(keys: (string | AgColumn)[], visible = false, source: ColumnEventType): void {
@@ -426,7 +426,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
         // so need to updateCols() to check it autoGroupCol needs to be added / removed
         this.refreshCols(false);
-        this.visibleColsService.refresh(source);
+        this.visibleCols.refresh(source);
 
         this.eventSvc.dispatchEvent({
             type: 'columnPivotModeChanged',

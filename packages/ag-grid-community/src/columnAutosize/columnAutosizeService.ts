@@ -24,7 +24,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     beanName = 'columnAutosizeService' as const;
 
     private columnModel: ColumnModel;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private animationFrameService?: AnimationFrameService;
     private autoWidthCalculator: AutoWidthCalculator;
     private ctrlsService: CtrlsService;
@@ -39,7 +39,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.animationFrameService = beans.animationFrameService;
         this.autoWidthCalculator = beans.autoWidthCalculator!;
         this.ctrlsService = beans.ctrlsService;
@@ -135,7 +135,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 continue;
             }
 
-            this.visibleColsService.refresh(source);
+            this.visibleCols.refresh(source);
         }
 
         if (!shouldSkipHeaderGroups) {
@@ -196,7 +196,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        const allDisplayedColumns = this.visibleColsService.allCols;
+        const allDisplayedColumns = this.visibleCols.allCols;
         this.autoSizeCols({ colKeys: allDisplayedColumns, skipHeader, source });
     }
 
@@ -308,7 +308,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
 
         // avoid divide by zero
-        const allDisplayedColumns = this.visibleColsService.allCols;
+        const allDisplayedColumns = this.visibleCols.allCols;
 
         const doColumnsAlreadyFit = gridWidth === getWidthOfColsInList(allDisplayedColumns);
         if (gridWidth <= 0 || !allDisplayedColumns.length || doColumnsAlreadyFit) {
@@ -415,8 +415,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             col.fireColumnWidthChangedEvent(source);
         });
 
-        this.visibleColsService.setLeftValues(source);
-        this.visibleColsService.updateBodyWidths();
+        this.visibleCols.setLeftValues(source);
+        this.visibleCols.updateBodyWidths();
 
         if (silent) {
             return;

@@ -54,14 +54,14 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     private focusService: FocusService;
     private ctrlsService: CtrlsService;
     private columnModel: ColumnModel;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private columnGroupService?: ColumnGroupService;
 
     public wireBeans(beans: BeanCollection): void {
         this.focusService = beans.focusService;
         this.ctrlsService = beans.ctrlsService;
         this.columnModel = beans.columnModel;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.columnGroupService = beans.columnGroupService;
     }
 
@@ -304,7 +304,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
             nextColumn = this.columnGroupService?.getGroupAtDirection(focusedHeader.column, direction) ?? undefined;
         } else {
             getColMethod = `getCol${direction}` as any;
-            nextColumn = this.visibleColsService[getColMethod](focusedHeader.column as AgColumn)!;
+            nextColumn = this.visibleCols[getColMethod](focusedHeader.column as AgColumn)!;
         }
 
         if (!nextColumn) {
@@ -413,7 +413,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
     }
 
     private findColAtEdgeForHeaderRow(level: number, position: 'start' | 'end'): HeaderPosition | undefined {
-        const displayedColumns = this.visibleColsService.allCols;
+        const displayedColumns = this.visibleCols.allCols;
         const column = displayedColumns[position === 'start' ? 0 : displayedColumns.length - 1];
 
         if (!column) {

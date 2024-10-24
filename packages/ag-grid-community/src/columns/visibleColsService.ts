@@ -30,7 +30,7 @@ function _removeAllFromUnorderedArray<T>(array: T[], toRemove: T[]) {
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 export class VisibleColsService extends BeanStub implements NamedBean {
-    beanName = 'visibleColsService' as const;
+    beanName = 'visibleCols' as const;
 
     private columnModel: ColumnModel;
     private columnFlexService?: ColumnFlexService;

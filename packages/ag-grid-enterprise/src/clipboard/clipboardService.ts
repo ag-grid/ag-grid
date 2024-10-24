@@ -152,7 +152,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     private rowModel: IRowModel;
     private valueSvc: ValueService;
     private focusService: FocusService;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private cellNavigation: CellNavigationService;
     private rangeService?: IRangeService;
 
@@ -161,7 +161,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.rowModel = beans.rowModel;
         this.valueSvc = beans.valueSvc;
         this.focusService = beans.focusService;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.cellNavigation = beans.cellNavigation!;
         this.rangeService = beans.rangeService;
     }
@@ -429,7 +429,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
         while (currentColumn != null) {
             columns.push(currentColumn);
-            currentColumn = this.visibleColsService.getColAfter(currentColumn);
+            currentColumn = this.visibleCols.getColAfter(currentColumn);
         }
 
         return columns;
@@ -793,7 +793,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
     private clearSelectedRows(): void {
         const selected = this.selectionService?.getSelectedNodes() ?? [];
-        const columns = this.visibleColsService.allCols;
+        const columns = this.visibleCols.allCols;
 
         for (const row of selected) {
             for (const col of columns) {
@@ -895,7 +895,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             Object.assign(allCellsToFlash, cellsToFlash);
         });
 
-        const allColumns = this.visibleColsService.allCols;
+        const allColumns = this.visibleCols.allCols;
         const exportedColumns = Array.from(columnsSet) as AgColumn[];
 
         exportedColumns.sort((a, b) => {
@@ -964,7 +964,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
     }
 
     private getCellsToFlashFromRowNodes(rowNodes: RowNode[]): CellsToFlashType {
-        const allDisplayedColumns = this.visibleColsService.allCols;
+        const allDisplayedColumns = this.visibleCols.allCols;
         const cellsToFlash: CellsToFlashType = {};
         for (let i = 0; i < rowNodes.length; i++) {
             const { rowIndex, rowPinned } = rowNodes[i];

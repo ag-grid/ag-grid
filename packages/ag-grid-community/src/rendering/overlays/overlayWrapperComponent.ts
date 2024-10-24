@@ -22,7 +22,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     public wireBeans(beans: BeanCollection): void {
         this.overlayService = beans.overlayService!;
         this.focusService = beans.focusService;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
     }
 
     private readonly eOverlayWrapper: HTMLElement = RefPlaceholder;
@@ -32,7 +32,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private updateListenerDestroyFunc: (() => null) | null = null;
     private activeOverlayWrapperCssClass: string | null = null;
     private elToFocusAfter: HTMLElement | null = null;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
 
     constructor() {
         // wrapping in outer div, and wrapper, is needed to center the loading icon
@@ -56,7 +56,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
         let isFocused = false;
         if (e.shiftKey) {
-            isFocused = this.focusService.focusGridView(_last(this.visibleColsService.allCols), true, false);
+            isFocused = this.focusService.focusGridView(_last(this.visibleCols.allCols), true, false);
         } else {
             isFocused = this.focusService.focusNextGridCoreContainer(false);
         }

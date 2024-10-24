@@ -80,7 +80,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
     private columnModel: ColumnModel;
     private sortController?: SortController;
     private funcColsService: FuncColsService;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private columnAnimationService?: ColumnAnimationService;
     private pivotResultColsService?: IPivotResultColsService;
     private autoColService?: IAutoColService;
@@ -90,7 +90,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
         this.columnModel = beans.columnModel;
         this.sortController = beans.sortController;
         this.funcColsService = beans.funcColsService;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.columnAnimationService = beans.columnAnimationService;
         this.pivotResultColsService = beans.pivotResultColsService;
         this.autoColService = beans.autoColService;
@@ -229,7 +229,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
             );
 
             this.orderLiveColsLikeState(params);
-            this.visibleColsService.refresh(source);
+            this.visibleCols.refresh(source);
             this.eventSvc.dispatchEvent({
                 type: 'columnEverythingChanged',
                 source,

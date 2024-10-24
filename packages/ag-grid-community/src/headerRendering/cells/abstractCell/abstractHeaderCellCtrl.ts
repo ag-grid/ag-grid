@@ -238,8 +238,8 @@ export abstract class AbstractHeaderCellCtrl<
         if (!comp || !column || !eGui) {
             return;
         }
-        refreshFirstAndLastStyles(comp, column, beans.visibleColsService);
-        _setAriaColIndex(eGui, beans.visibleColsService.getAriaColIndex(column)); // for react, we don't use JSX, as it slowed down column moving
+        refreshFirstAndLastStyles(comp, column, beans.visibleCols);
+        _setAriaColIndex(eGui, beans.visibleCols.getAriaColIndex(column)); // for react, we don't use JSX, as it slowed down column moving
     }
 
     protected addResizeAndMoveKeyboardListeners(compBean: BeanStub): void {

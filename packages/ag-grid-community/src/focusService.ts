@@ -38,7 +38,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
     private eGridDiv: HTMLElement;
     private columnModel: ColumnModel;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private headerNavigationService?: HeaderNavigationService;
     private rowRenderer: RowRenderer;
     private navigationService?: NavigationService;
@@ -49,7 +49,7 @@ export class FocusService extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.eGridDiv = beans.eGridDiv;
         this.columnModel = beans.columnModel;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.headerNavigationService = beans.headerNavigationService;
         this.rowRenderer = beans.rowRenderer;
         this.navigationService = beans.navigationService;
@@ -516,7 +516,7 @@ export class FocusService extends BeanStub implements NamedBean {
             return true;
         }
 
-        let firstColumn: AgColumn | AgColumnGroup = this.visibleColsService.allCols[0];
+        let firstColumn: AgColumn | AgColumnGroup = this.visibleCols.allCols[0];
         if (!firstColumn) {
             return false;
         }
@@ -540,7 +540,7 @@ export class FocusService extends BeanStub implements NamedBean {
         }
 
         const headerRowIndex = this.getHeaderRowCount() - 1;
-        const column = _last(this.visibleColsService.allCols);
+        const column = _last(this.visibleCols.allCols);
 
         return this.focusHeaderPosition({
             headerPosition: { headerRowIndex, column },
@@ -789,8 +789,7 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public focusNextFromAdvancedFilter(backwards?: boolean, forceFirstColumn?: boolean): boolean {
-        const column =
-            (forceFirstColumn ? undefined : this.advancedFilterFocusColumn) ?? this.visibleColsService.allCols?.[0];
+        const column = (forceFirstColumn ? undefined : this.advancedFilterFocusColumn) ?? this.visibleCols.allCols?.[0];
         if (backwards) {
             return this.focusHeaderPosition({
                 headerPosition: {

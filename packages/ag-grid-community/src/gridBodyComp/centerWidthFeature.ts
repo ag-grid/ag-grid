@@ -5,11 +5,11 @@ import { _isDomLayout } from '../gridOptionsUtils';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 export class CenterWidthFeature extends BeanStub {
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private scrollVisibleService: ScrollVisibleService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.scrollVisibleService = beans.scrollVisibleService;
     }
 
@@ -44,9 +44,9 @@ export class CenterWidthFeature extends BeanStub {
     private setWidth(): void {
         const printLayout = _isDomLayout(this.gos, 'print');
 
-        const centerWidth = this.visibleColsService.getBodyContainerWidth();
-        const leftWidth = this.visibleColsService.getColsLeftWidth();
-        const rightWidth = this.visibleColsService.getDisplayedColumnsRightWidth();
+        const centerWidth = this.visibleCols.getBodyContainerWidth();
+        const leftWidth = this.visibleCols.getColsLeftWidth();
+        const rightWidth = this.visibleCols.getDisplayedColumnsRightWidth();
 
         let totalWidth: number;
 

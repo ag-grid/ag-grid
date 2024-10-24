@@ -27,13 +27,13 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
 
     private columnModel: ColumnModel;
     private columnViewport: ColumnViewportService;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private columnFlexService?: ColumnFlexService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
         this.columnViewport = beans.columnViewport;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.columnFlexService = beans.columnFlexService;
     }
 
@@ -69,7 +69,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
             }
 
             if (shiftKey) {
-                const otherCol = this.visibleColsService.getColAfter(col);
+                const otherCol = this.visibleCols.getColAfter(col);
                 if (!otherCol) {
                     return;
                 }
@@ -225,8 +225,8 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
                 this.columnFlexService?.refreshFlexedColumns({
                     skipSetLeft: true,
                 }) ?? [];
-            this.visibleColsService.setLeftValues(source);
-            this.visibleColsService.updateBodyWidths();
+            this.visibleCols.setLeftValues(source);
+            this.visibleCols.updateBodyWidths();
             this.columnViewport.checkViewportColumns();
         }
 

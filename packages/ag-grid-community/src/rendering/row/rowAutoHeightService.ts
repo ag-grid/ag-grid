@@ -17,7 +17,7 @@ import type { CellCtrl } from '../cell/cellCtrl';
 export class RowAutoHeightService extends BeanStub implements NamedBean {
     beanName = 'rowAutoHeightService' as const;
 
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private columnViewport: ColumnViewportService;
     private rowModel: IRowModel;
     private columnModel: ColumnModel;
@@ -27,7 +27,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
     private wasEverActive = false;
 
     public wireBeans(beans: BeanCollection): void {
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.columnViewport = beans.columnViewport;
         this.rowModel = beans.rowModel;
         this.columnModel = beans.columnModel;
@@ -63,7 +63,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         let nonePresent = true;
         let newRowHeight = 0;
 
-        const displayedAutoHeightCols = this.visibleColsService.autoHeightCols;
+        const displayedAutoHeightCols = this.visibleCols.autoHeightCols;
         displayedAutoHeightCols.forEach((col) => {
             let cellHeight = autoHeights[col.getId()];
 
@@ -74,10 +74,10 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
                     let activeColsForRow: AgColumn[] = [];
                     switch (col.getPinned()) {
                         case 'left':
-                            activeColsForRow = this.visibleColsService.getLeftColsForRow(rowNode);
+                            activeColsForRow = this.visibleCols.getLeftColsForRow(rowNode);
                             break;
                         case 'right':
-                            activeColsForRow = this.visibleColsService.getRightColsForRow(rowNode);
+                            activeColsForRow = this.visibleCols.getRightColsForRow(rowNode);
                             break;
                         case null:
                             activeColsForRow = this.columnViewport.getColsWithinViewport(rowNode);

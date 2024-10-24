@@ -119,7 +119,7 @@ export class CellPositionFeature extends BeanStub {
             const pinned = this.column.getPinned();
             for (let i = 0; pointer && i < colSpan; i++) {
                 colsSpanning.push(pointer);
-                pointer = this.beans.visibleColsService.getColAfter(pointer);
+                pointer = this.beans.visibleCols.getColAfter(pointer);
                 if (!pointer || _missing(pointer)) {
                     break;
                 }
@@ -158,10 +158,10 @@ export class CellPositionFeature extends BeanStub {
             return leftPosition;
         }
 
-        const leftWidth = this.beans.visibleColsService.getColsLeftWidth();
+        const leftWidth = this.beans.visibleCols.getColsLeftWidth();
 
         if (this.column.getPinned() === 'right') {
-            const bodyWidth = this.beans.visibleColsService.getBodyContainerWidth();
+            const bodyWidth = this.beans.visibleCols.getBodyContainerWidth();
             return leftWidth + bodyWidth + (leftPosition || 0);
         }
 

@@ -29,7 +29,7 @@ type ProcessGroupHeaderCallback = (params: ProcessGroupHeaderForExportParams) =>
 export class GridSerializer extends BeanStub implements NamedBean {
     beanName = 'gridSerializer' as const;
 
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private columnModel: ColumnModel;
     private columnNames: ColumnNameService;
     private rowModel: IRowModel;
@@ -39,7 +39,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
     private sortController?: SortController;
 
     public wireBeans(beans: BeanCollection): void {
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.columnModel = beans.columnModel;
         this.columnNames = beans.columnNames;
         this.rowModel = beans.rowModel;
@@ -167,7 +167,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         return (gridSerializingSession) => {
             if (!params.skipColumnGroupHeaders) {
                 const idCreator: GroupInstanceIdCreator = new GroupInstanceIdCreator();
-                const displayedGroups: (AgColumn | AgColumnGroup)[] = this.visibleColsService.createGroups({
+                const displayedGroups: (AgColumn | AgColumnGroup)[] = this.visibleCols.createGroups({
                     columns: columnsToExport,
                     idCreator,
                     pinned: null,
@@ -365,7 +365,7 @@ export class GridSerializer extends BeanStub implements NamedBean {
         if (allColumns && !isPivotMode) {
             columnsToExport = this.columnModel.getCols();
         } else {
-            columnsToExport = this.visibleColsService.allCols;
+            columnsToExport = this.visibleCols.allCols;
         }
 
         if (skipRowGroups && !isTreeData) {

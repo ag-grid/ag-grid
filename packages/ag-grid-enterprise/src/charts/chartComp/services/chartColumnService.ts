@@ -38,7 +38,7 @@ export class ChartColumnService extends BeanStub implements NamedBean {
     }
 
     public getAllDisplayedColumns(): AgColumn[] {
-        return this.beans.visibleColsService.allCols;
+        return this.beans.visibleCols.allCols;
     }
 
     public getColDisplayName(col: AgColumn, includePath?: boolean): string | null {

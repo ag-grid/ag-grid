@@ -20,7 +20,7 @@ export interface ColumnMoveParams {
     gos: GridOptionsService;
     columnModel: ColumnModel;
     columnMoveService: ColumnMoveService;
-    visibleColsService: VisibleColsService;
+    visibleCols: VisibleColsService;
 }
 
 // returns the provided cols sorted in same order as they appear in this.cols, eg if this.cols
@@ -55,7 +55,7 @@ export function getBestColumnMoveIndexFromXPosition(
         gos,
         columnModel,
         columnMoveService,
-        visibleColsService,
+        visibleCols,
     } = params;
 
     let { allMovingColumns } = params;
@@ -103,7 +103,7 @@ export function getBestColumnMoveIndexFromXPosition(
         pinned,
         gos,
         columnModel,
-        visibleColsService,
+        visibleCols,
     });
 
     // if cols are not adjacent, then this returns null. when moving, we constrain the direction of the move
@@ -151,7 +151,7 @@ export function getBestColumnMoveIndexFromXPosition(
     // Remember what that move would look like in terms of displayed cols
     // keep going with further moves until we find a different result in displayed output
     // In this way potentialMoves contains all potential moves over 'hidden' columns
-    const displayedCols = visibleColsService.allCols;
+    const displayedCols = visibleCols.allCols;
 
     const potentialMoves: { move: number; fragCount: number }[] = [];
     let targetOrder: AgColumn[] | null = null;
@@ -243,14 +243,14 @@ function groupFragCount(columns: AgColumn[]): number {
     return count;
 }
 
-function getDisplayedColumns(visibleColsService: VisibleColsService, type: ColumnPinnedType): AgColumn[] {
+function getDisplayedColumns(visibleCols: VisibleColsService, type: ColumnPinnedType): AgColumn[] {
     switch (type) {
         case 'left':
-            return visibleColsService.leftCols;
+            return visibleCols.leftCols;
         case 'right':
-            return visibleColsService.rightCols;
+            return visibleCols.rightCols;
         default:
-            return visibleColsService.centerCols;
+            return visibleCols.centerCols;
     }
 }
 
@@ -261,9 +261,9 @@ function calculateValidMoves(params: {
     pinned: ColumnPinnedType;
     gos: GridOptionsService;
     columnModel: ColumnModel;
-    visibleColsService: VisibleColsService;
+    visibleCols: VisibleColsService;
 }): number[] {
-    const { movingCols, draggingRight, xPosition, pinned, gos, columnModel, visibleColsService } = params;
+    const { movingCols, draggingRight, xPosition, pinned, gos, columnModel, visibleCols } = params;
     const isMoveBlocked =
         gos.get('suppressMovableColumns') || movingCols.some((col) => col.getColDef().suppressMovable);
 
@@ -271,7 +271,7 @@ function calculateValidMoves(params: {
         return [];
     }
     // this is the list of cols on the screen, so it's these we use when comparing the x mouse position
-    const allDisplayedCols = getDisplayedColumns(visibleColsService, pinned);
+    const allDisplayedCols = getDisplayedColumns(visibleCols, pinned);
     // but this list is the list of all cols, when we move a col it's the index within this list that gets used,
     // so the result we return has to be and index location for this list
     const allGridCols = columnModel.getCols();

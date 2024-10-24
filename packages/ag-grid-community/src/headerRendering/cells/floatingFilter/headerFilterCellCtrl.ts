@@ -154,7 +154,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private findNextColumnWithFloatingFilter(backwards: boolean): AgColumn | null {
-        const presentedColsService = this.beans.visibleColsService;
+        const presentedColsService = this.beans.visibleCols;
         let nextCol: AgColumn | null = this.column;
 
         do {

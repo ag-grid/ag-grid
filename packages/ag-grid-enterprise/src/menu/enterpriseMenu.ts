@@ -62,7 +62,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
     private popupService: PopupService;
     private focusService: FocusService;
     private ctrlsService: CtrlsService;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private filterManager?: FilterManager;
     private menuUtils: MenuUtils;
     private menuService: MenuService;
@@ -72,7 +72,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         this.popupService = beans.popupService!;
         this.focusService = beans.focusService;
         this.ctrlsService = beans.ctrlsService;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.filterManager = beans.filterManager;
         this.menuUtils = beans.menuUtils as MenuUtils;
         this.menuService = beans.menuService!;
@@ -290,7 +290,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         const restoreFocusParams = {
             column,
             headerPosition: this.focusService.getFocusedHeader(),
-            columnIndex: this.visibleColsService.allCols.indexOf(column as AgColumn),
+            columnIndex: this.visibleCols.allCols.indexOf(column as AgColumn),
             eventSource,
         };
         const menu = this.createMenu(column, columnGroup, restoreFocusParams, restrictToTabs, eventSource);

@@ -24,12 +24,12 @@ export class MenuUtils extends BeanStub implements NamedBean {
 
     private focusService: FocusService;
     private headerNavigationService?: HeaderNavigationService;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
         this.headerNavigationService = beans.headerNavigationService;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
     }
 
     public restoreFocusOnClose(
@@ -130,7 +130,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
 
         // DO NOT REMOVE `await` from the statement below
         // even though `getAllCols` is a synchronous method, we use `await` to make it async
-        const isColumnStillVisible = await this.visibleColsService.allCols.some((col) => col === column);
+        const isColumnStillVisible = await this.visibleCols.allCols.some((col) => col === column);
 
         if (column && !column.isAlive()) {
             return;
@@ -148,7 +148,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
         // if the focusEl is no longer in the DOM, we try to focus
         // the header that is closest to the previous header position
         else if (headerPosition && columnIndex !== -1) {
-            const allColumns = this.visibleColsService.allCols;
+            const allColumns = this.visibleCols.allCols;
             const columnToFocus = allColumns[columnIndex] || _last(allColumns);
 
             if (columnToFocus) {

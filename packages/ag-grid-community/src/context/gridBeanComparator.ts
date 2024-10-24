@@ -28,7 +28,7 @@ const orderedCoreBeans: BeanName[] = [
     'pinnedRowModel',
     'dragService',
     'columnGroupService',
-    'visibleColsService',
+    'visibleCols',
     'popupService',
     'selectionService',
     'columnFilterService',

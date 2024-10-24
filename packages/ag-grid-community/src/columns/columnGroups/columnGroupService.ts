@@ -37,12 +37,12 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
     beanName = 'columnGroupService' as const;
 
     private columnModel: ColumnModel;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private columnAnimationService?: ColumnAnimationService;
 
     public wireBeans(beans: BeanCollection): void {
         this.columnModel = beans.columnModel;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.columnAnimationService = beans.columnAnimationService;
     }
 
@@ -113,7 +113,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
             impactedGroups.push(providedColumnGroup);
         });
 
-        this.visibleColsService.refresh(source, true);
+        this.visibleCols.refresh(source, true);
 
         if (impactedGroups.length) {
             this.eventSvc.dispatchEvent({
@@ -165,7 +165,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
 
         while (true) {
             // keep moving to the next col, until we get to another group
-            const column = this.visibleColsService[getDisplayColMethod](col);
+            const column = this.visibleCols[getDisplayColMethod](col);
 
             if (!column) {
                 return null;
@@ -200,7 +200,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
     }
 
     public updateOpenClosedVisibility(): void {
-        const allColumnGroups = this.visibleColsService.getAllTrees();
+        const allColumnGroups = this.visibleCols.getAllTrees();
 
         depthFirstAllColumnTreeSearch(allColumnGroups, false, (child) => {
             if (isColumnGroup(child)) {
@@ -219,7 +219,7 @@ export class ColumnGroupService extends BeanStub implements NamedBean {
             return colId;
         }
 
-        const allColumnGroups = this.visibleColsService.getAllTrees();
+        const allColumnGroups = this.visibleCols.getAllTrees();
         const checkPartId = typeof partId === 'number';
         let result: AgColumnGroup | null = null;
 

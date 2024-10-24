@@ -56,7 +56,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private paginationService?: PaginationService;
     private pageBoundsService: PageBoundsService;
     private columnModel: ColumnModel;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private pinnedRowModel?: PinnedRowModel;
     private rowModel: IRowModel;
     private focusService: FocusService;
@@ -70,7 +70,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.paginationService = beans.paginationService;
         this.pageBoundsService = beans.pageBoundsService;
         this.columnModel = beans.columnModel;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.rowModel = beans.rowModel;
         this.focusService = beans.focusService;
@@ -1062,8 +1062,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private onDisplayedColumnsChanged(): void {
-        const pinningLeft = this.visibleColsService.isPinningLeft();
-        const pinningRight = this.visibleColsService.isPinningRight();
+        const pinningLeft = this.visibleCols.isPinningLeft();
+        const pinningRight = this.visibleCols.isPinningRight();
         const atLeastOneChanged = this.pinningLeft !== pinningLeft || pinningRight !== this.pinningRight;
 
         if (atLeastOneChanged) {

@@ -62,7 +62,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     private expressionService?: ExpressionService;
     private valueSvc: ValueService;
     private columnModel: ColumnModel;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private userComponentFactory: UserComponentFactory;
     private ctrlsService: CtrlsService;
     private funcColsService: FuncColsService;
@@ -74,7 +74,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         this.expressionService = beans.expressionService;
         this.valueSvc = beans.valueSvc;
         this.columnModel = beans.columnModel;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.userComponentFactory = beans.userComponentFactory;
         this.ctrlsService = beans.ctrlsService;
         this.funcColsService = beans.funcColsService;
@@ -277,13 +277,13 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
         if (this.gos.get('enableRtl')) {
-            if (this.visibleColsService.isPinningLeft()) {
+            if (this.visibleCols.isPinningLeft()) {
                 return !pinnedRightCell;
             }
             return !bodyCell;
         }
 
-        if (this.visibleColsService.isPinningLeft()) {
+        if (this.visibleCols.isPinningLeft()) {
             return !pinnedLeftCell;
         }
 

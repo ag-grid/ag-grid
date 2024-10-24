@@ -60,7 +60,7 @@ export function getColumnHeaderRowHeight(beans: BeanCollection): number {
         beans.columnModel.isPivotMode() ? getPivotHeaderHeight(beans) : getHeaderHeight(beans)
     ) as number;
 
-    const allDisplayedCols = beans.visibleColsService.allCols;
+    const allDisplayedCols = beans.visibleCols.allCols;
 
     const displayedHeights = allDisplayedCols
         .filter((col) => col.isAutoHeaderHeight())

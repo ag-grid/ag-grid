@@ -57,13 +57,13 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
 export class ChartService extends BeanStub implements NamedBean, IChartService {
     beanName = 'chartService' as const;
 
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private rangeService?: IRangeService;
     private environment: Environment;
     private focusService: FocusService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.rangeService = beans.rangeService;
         this.environment = beans.environment;
         this.focusService = beans.focusService;
@@ -339,7 +339,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
                   rowStartPinned: undefined,
                   rowEndIndex: null,
                   rowEndPinned: undefined,
-                  columns: this.visibleColsService.allCols.map((col) => col.getColId()),
+                  columns: this.visibleCols.allCols.map((col) => col.getColId()),
               }
             : cellRangeParams;
         const cellRange =

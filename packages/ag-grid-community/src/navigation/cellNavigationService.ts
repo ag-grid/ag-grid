@@ -21,7 +21,7 @@ import { _warn } from '../validation/logging';
 export class CellNavigationService extends BeanStub implements NamedBean {
     beanName = 'cellNavigation' as const;
 
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private rowModel: IRowModel;
     private rowRenderer: RowRenderer;
     private pinnedRowModel?: PinnedRowModel;
@@ -29,7 +29,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     private pageBoundsService: PageBoundsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.rowModel = beans.rowModel;
         this.rowRenderer = beans.rowRenderer;
         this.pinnedRowModel = beans.pinnedRowModel;
@@ -62,7 +62,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             rowIndex = upKey ? this.pageBoundsService.getFirstRow() : this.pageBoundsService.getLastRow();
             column = focusedCell.column as AgColumn;
         } else {
-            const allColumns = this.visibleColsService.allCols;
+            const allColumns = this.visibleCols.allCols;
             const isRtl = this.gos.get('enableRtl');
             rowIndex = focusedCell.rowIndex;
             column = leftKey !== isRtl ? allColumns[0] : _last(allColumns);
@@ -144,7 +144,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             return null;
         }
 
-        const colToLeft = this.visibleColsService.getColBefore(lastCell.column as AgColumn);
+        const colToLeft = this.visibleCols.getColBefore(lastCell.column as AgColumn);
         if (!colToLeft) {
             return null;
         }
@@ -161,7 +161,7 @@ export class CellNavigationService extends BeanStub implements NamedBean {
             return null;
         }
 
-        const colToRight = this.visibleColsService.getColAfter(lastCell.column as AgColumn);
+        const colToRight = this.visibleCols.getColAfter(lastCell.column as AgColumn);
         // if already on right, do nothing
         if (!colToRight) {
             return null;
@@ -366,13 +366,13 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     }
 
     public getNextTabbedCellForwards(gridCell: CellPosition): CellPosition | null {
-        const displayedColumns = this.visibleColsService.allCols;
+        const displayedColumns = this.visibleCols.allCols;
 
         let newRowIndex: number | null = gridCell.rowIndex;
         let newFloating: string | null | undefined = gridCell.rowPinned;
 
         // move along to the next cell
-        let newColumn = this.visibleColsService.getColAfter(gridCell.column as AgColumn);
+        let newColumn = this.visibleCols.getColAfter(gridCell.column as AgColumn);
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {
@@ -397,13 +397,13 @@ export class CellNavigationService extends BeanStub implements NamedBean {
     }
 
     public getNextTabbedCellBackwards(gridCell: CellPosition): CellPosition | null {
-        const displayedColumns = this.visibleColsService.allCols;
+        const displayedColumns = this.visibleCols.allCols;
 
         let newRowIndex: number | null = gridCell.rowIndex;
         let newFloating: string | null | undefined = gridCell.rowPinned;
 
         // move along to the next cell
-        let newColumn = this.visibleColsService.getColBefore(gridCell.column as AgColumn);
+        let newColumn = this.visibleCols.getColBefore(gridCell.column as AgColumn);
 
         // check if end of the row, and if so, go forward a row
         if (!newColumn) {

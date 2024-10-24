@@ -17,11 +17,11 @@ export interface SideBarButtonClickedEvent extends AgEvent<'sideBarButtonClicked
 export type AgSideBarButtonsEvent = 'sideBarButtonClicked';
 export class AgSideBarButtons extends Component<AgSideBarButtonsEvent> {
     private focusService: FocusService;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
     }
 
     private buttonComps: SideBarButtonComp[] = [];

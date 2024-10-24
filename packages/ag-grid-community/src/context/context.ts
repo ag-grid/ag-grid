@@ -194,7 +194,7 @@ export interface CoreBeanCollection {
     columnModel: ColumnModel;
     columnViewport: ColumnViewportService;
     columnNames: ColumnNameService;
-    visibleColsService: VisibleColsService;
+    visibleCols: VisibleColsService;
     columnMoveService?: ColumnMoveService;
     columnFlexService?: ColumnFlexService;
     columnResizeService?: ColumnResizeService;
@@ -389,7 +389,7 @@ export type BeanName =
     | 'ctrlsService'
     | 'csvCreator'
     | 'dataTypeService'
-    | 'visibleColsService'
+    | 'visibleCols'
     | 'detailGridApiService'
     | 'dragAndDropService'
     | 'dragService'

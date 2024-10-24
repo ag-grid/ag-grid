@@ -30,11 +30,11 @@ export interface OptionalGridComponents {
 
 export class GridCtrl extends BeanStub {
     private focusService: FocusService;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
     }
 
     private view: IGridComp;
@@ -117,7 +117,7 @@ export class GridCtrl extends BeanStub {
 
         if (nextIndex === 0) {
             if (indexWithFocus > 0) {
-                const allColumns = this.visibleColsService.allCols;
+                const allColumns = this.visibleCols.allCols;
                 const lastColumn = _last(allColumns);
                 if (this.focusService.focusGridView(lastColumn, true)) {
                     return true;
@@ -136,7 +136,7 @@ export class GridCtrl extends BeanStub {
         }
 
         const focusableContainers = this.getFocusableContainers();
-        const allColumns = this.visibleColsService.allCols;
+        const allColumns = this.visibleCols.allCols;
 
         if (fromBottom) {
             if (focusableContainers.length > 1) {

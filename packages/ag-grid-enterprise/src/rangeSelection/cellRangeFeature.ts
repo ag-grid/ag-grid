@@ -149,7 +149,7 @@ export class CellRangeFeature implements ICellRangeFeature {
         let left = false;
 
         const thisCol = this.cellCtrl.getCellPosition().column as AgColumn;
-        const presentedColsService = this.beans.visibleColsService;
+        const presentedColsService = this.beans.visibleCols;
 
         let leftCol: AgColumn | null;
         let rightCol: AgColumn | null;

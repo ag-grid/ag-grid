@@ -23,13 +23,13 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
     private context: Context;
     private columnModel: ColumnModel;
     private columnFactory: ColumnFactory;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.context = beans.context;
         this.columnModel = beans.columnModel;
         this.columnFactory = beans.columnFactory;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
     }
 
     // if pivoting, these are the generated columns as a result of the pivot
@@ -118,7 +118,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
 
             this.columnModel.refreshCols(false);
         }
-        this.visibleColsService.refresh(source);
+        this.visibleCols.refresh(source);
     }
 
     private processPivotResultColDef(colDefs: (ColDef | ColGroupDef)[] | null) {

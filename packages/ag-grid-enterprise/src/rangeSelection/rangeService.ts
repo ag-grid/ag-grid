@@ -50,7 +50,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     private rowModel: IRowModel;
     private dragService: DragService;
     private columnModel: ColumnModel;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private cellNavigation: CellNavigationService;
     private pinnedRowModel?: PinnedRowModel;
     private ctrlsService: CtrlsService;
@@ -59,7 +59,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         this.rowModel = beans.rowModel;
         this.dragService = beans.dragService!;
         this.columnModel = beans.columnModel;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.cellNavigation = beans.cellNavigation!;
         this.pinnedRowModel = beans.pinnedRowModel;
         this.ctrlsService = beans.ctrlsService;
@@ -121,7 +121,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         // first move start column in last cell range (i.e. series chart range)
         this.refreshLastRangeStart();
 
-        const allColumns = this.visibleColsService.allCols;
+        const allColumns = this.visibleCols.allCols;
 
         // check that the columns in each range still exist and are visible
         this.cellRanges.forEach((cellRange) => {
@@ -164,7 +164,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
             return false;
         }
 
-        const allColumns = this.visibleColsService.allCols;
+        const allColumns = this.visibleCols.allCols;
         const allPositions = rangeColumns.map((c) => allColumns.indexOf(c)).sort((a, b) => a - b);
 
         return _last(allPositions) - allPositions[0] + 1 === rangeColumns.length;
@@ -296,7 +296,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public getRangeEdgeColumns(cellRange: CellRange): { left: AgColumn; right: AgColumn } {
-        const allColumns = this.visibleColsService.allCols;
+        const allColumns = this.visibleCols.allCols;
         const allIndices = cellRange.columns
             .map((c: AgColumn) => allColumns.indexOf(c))
             .filter((i) => i > -1)
@@ -650,7 +650,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     public isBottomRightCell(cellRange: CellRange, cell: CellPosition): boolean {
-        const allColumns = this.visibleColsService.allCols;
+        const allColumns = this.visibleCols.allCols;
         const allPositions = cellRange.columns.map((c: AgColumn) => allColumns.indexOf(c)).sort((a, b) => a - b);
         const { startRow, endRow } = cellRange;
         const lastRow = _isRowBefore(startRow!, endRow!) ? endRow : startRow;
@@ -960,7 +960,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     }
 
     private calculateColumnsBetween(columnFrom: AgColumn, columnTo: AgColumn): AgColumn[] | undefined {
-        const allColumns = this.visibleColsService.allCols;
+        const allColumns = this.visibleCols.allCols;
         const isSameColumn = columnFrom === columnTo;
         const fromIndex = allColumns.indexOf(columnFrom as AgColumn);
 

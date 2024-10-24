@@ -23,12 +23,12 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
 
     private focusService: FocusService;
     private menuUtils: MenuUtils;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
 
     public wireBeans(beans: BeanCollection) {
         this.focusService = beans.focusService;
         this.menuUtils = beans.menuUtils as MenuUtils;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
     }
 
     private activeColumnChooser: AgPrimaryCols | undefined;
@@ -83,7 +83,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
 
         const columnSelectPanel = this.createColumnSelectPanel(this, column, true, chooserParams);
         const translate = this.getLocaleTextFunc();
-        const columnIndex = this.visibleColsService.allCols.indexOf(column as AgColumn);
+        const columnIndex = this.visibleCols.allCols.indexOf(column as AgColumn);
         const headerPosition = column ? this.focusService.getFocusedHeader() : null;
 
         this.activeColumnChooserDialog = this.createBean(

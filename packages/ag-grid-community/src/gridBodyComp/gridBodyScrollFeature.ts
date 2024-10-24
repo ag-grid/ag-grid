@@ -55,7 +55,7 @@ export class GridBodyScrollFeature extends BeanStub {
     private heightScaler: RowContainerHeightService;
     private rowRenderer: RowRenderer;
     private columnModel: ColumnModel;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
@@ -66,7 +66,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.heightScaler = beans.rowContainerHeightService;
         this.rowRenderer = beans.rowRenderer;
         this.columnModel = beans.columnModel;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
     }
 
     private enableRtl: boolean;
@@ -600,7 +600,7 @@ export class GridBodyScrollFeature extends BeanStub {
         }
 
         // defensive
-        if (!this.visibleColsService.isColDisplayed(column)) {
+        if (!this.visibleCols.isColDisplayed(column)) {
             return;
         }
 
@@ -683,7 +683,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     private getColumnBounds(column: AgColumn): { colLeft: number; colMiddle: number; colRight: number } {
         const isRtl = this.enableRtl;
-        const bodyWidth = this.visibleColsService.getBodyContainerWidth();
+        const bodyWidth = this.visibleCols.getBodyContainerWidth();
         const colWidth = column.getActualWidth();
         const colLeft = column.getLeft()!;
         const multiplier = isRtl ? -1 : 1;

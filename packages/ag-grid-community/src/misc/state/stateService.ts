@@ -55,7 +55,7 @@ export class StateService extends BeanStub implements NamedBean {
     private pivotResultColsService?: IPivotResultColsService;
     private focusService: FocusService;
     private columnModel: ColumnModel;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private paginationService?: PaginationService;
     private selectionService?: ISelectionService;
     private expansionService?: IExpansionService;
@@ -73,7 +73,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.pivotResultColsService = beans.pivotResultColsService;
         this.focusService = beans.focusService;
         this.columnModel = beans.columnModel;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.paginationService = beans.paginationService;
         this.selectionService = beans.selectionService;
         this.expansionService = beans.expansionService;
@@ -608,7 +608,7 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setCellSelectionState(cellSelectionState: CellSelectionState): void {
-        const { gos, rangeService, columnModel, visibleColsService } = this;
+        const { gos, rangeService, columnModel, visibleCols } = this;
 
         if (!_isCellSelectionEnabled(gos) || !rangeService) {
             return;
@@ -629,7 +629,7 @@ export class StateService extends BeanStub implements NamedBean {
             let startColumn = columnModel.getCol(cellRange.startColId);
             if (!startColumn) {
                 // find the first remaining column
-                const allColumns = visibleColsService.allCols;
+                const allColumns = visibleCols.allCols;
                 const columnSet = new Set(columns);
                 startColumn = allColumns.find((column) => columnSet.has(column))!;
             }

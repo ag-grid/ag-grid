@@ -47,23 +47,23 @@ export function resetColumnState(beans: BeanCollection): void {
 }
 
 export function isPinning(beans: BeanCollection): boolean {
-    return beans.visibleColsService.isPinningLeft() || beans.visibleColsService.isPinningRight();
+    return beans.visibleCols.isPinningLeft() || beans.visibleCols.isPinningRight();
 }
 
 export function isPinningLeft(beans: BeanCollection): boolean {
-    return beans.visibleColsService.isPinningLeft();
+    return beans.visibleCols.isPinningLeft();
 }
 
 export function isPinningRight(beans: BeanCollection): boolean {
-    return beans.visibleColsService.isPinningRight();
+    return beans.visibleCols.isPinningRight();
 }
 
 export function getDisplayedColAfter(beans: BeanCollection, col: Column): Column | null {
-    return beans.visibleColsService.getColAfter(col as AgColumn);
+    return beans.visibleCols.getColAfter(col as AgColumn);
 }
 
 export function getDisplayedColBefore(beans: BeanCollection, col: Column): Column | null {
-    return beans.visibleColsService.getColBefore(col as AgColumn);
+    return beans.visibleCols.getColBefore(col as AgColumn);
 }
 
 export function setColumnsVisible(beans: BeanCollection, keys: (string | Column)[], visible: boolean): void {
@@ -83,19 +83,19 @@ export function getAllGridColumns(beans: BeanCollection): Column[] {
 }
 
 export function getDisplayedLeftColumns(beans: BeanCollection): Column[] {
-    return beans.visibleColsService.leftCols;
+    return beans.visibleCols.leftCols;
 }
 
 export function getDisplayedCenterColumns(beans: BeanCollection): Column[] {
-    return beans.visibleColsService.centerCols;
+    return beans.visibleCols.centerCols;
 }
 
 export function getDisplayedRightColumns(beans: BeanCollection): Column[] {
-    return beans.visibleColsService.rightCols;
+    return beans.visibleCols.rightCols;
 }
 
 export function getAllDisplayedColumns(beans: BeanCollection): Column[] {
-    return beans.visibleColsService.allCols;
+    return beans.visibleCols.allCols;
 }
 
 export function getAllDisplayedVirtualColumns(beans: BeanCollection): Column[] {

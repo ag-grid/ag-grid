@@ -27,7 +27,7 @@ const SCROLL_TIME_INTERVAL = 100;
 
 export class MoveColumnFeature extends BeanStub implements DropListener {
     private columnModel: ColumnModel;
-    private visibleColsService: VisibleColsService;
+    private visibleCols: VisibleColsService;
     private columnMoveService: ColumnMoveService;
     private dragAndDropService: DragAndDropService;
     private ctrlsService: CtrlsService;
@@ -35,7 +35,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 
     public wireBeans(beans: BeanCollection) {
         this.columnModel = beans.columnModel;
-        this.visibleColsService = beans.visibleColsService;
+        this.visibleCols = beans.visibleCols;
         this.columnMoveService = beans.columnMoveService!;
         this.dragAndDropService = beans.dragAndDropService!;
         this.ctrlsService = beans.ctrlsService;
@@ -307,7 +307,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         fakeEvent: boolean;
     }): ColumnMoveParams {
         const { allMovingColumns, isFromHeader, xPosition, fromLeft, fromEnter, fakeEvent } = params;
-        const { pinned, gos, columnModel, columnMoveService, visibleColsService } = this;
+        const { pinned, gos, columnModel, columnMoveService, visibleCols } = this;
 
         return {
             allMovingColumns,
@@ -320,7 +320,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             gos,
             columnModel,
             columnMoveService,
-            visibleColsService,
+            visibleCols,
         };
     }
 
@@ -437,7 +437,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         allMovingColumns: AgColumn[],
         isAttemptingToPin: boolean
     ): { fromLeft: boolean; xPosition: number } | undefined {
-        const { gos, visibleColsService } = this;
+        const { gos, visibleCols } = this;
         const isRtl = gos.get('enableRtl');
 
         const { firstMovingCol, column, position } = this.getColumnMoveAndTargetInfo(
@@ -450,7 +450,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
             return;
         }
 
-        const visibleColumns = visibleColsService.allCols;
+        const visibleColumns = visibleCols.allCols;
         const movingColIndex = visibleColumns.indexOf(firstMovingCol);
         const targetIndex = visibleColumns.indexOf(column!);
         const isBefore = (position === ColumnHighlightPosition.Before) !== isRtl;
