@@ -210,7 +210,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             displayName: this.displayName!,
             columnGroup: this.column,
             setExpanded: (expanded: boolean) => {
-                this.beans.columnGroupService!.setColumnGroupOpened(
+                this.beans.columnGroupSvc!.setColumnGroupOpened(
                     this.column.getProvidedColumnGroup(),
                     expanded,
                     'gridInitializing'
@@ -248,7 +248,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     }
 
     private setupTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
-        this.tooltipFeature = this.beans.tooltipService?.setupHeaderGroupTooltip(
+        this.tooltipFeature = this.beans.tooltipSvc?.setupHeaderGroupTooltip(
             this.tooltipFeature,
             this,
             value,
@@ -353,7 +353,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             const column = this.column;
             const newExpandedValue = !column.isExpanded();
 
-            this.beans.columnGroupService!.setColumnGroupOpened(
+            this.beans.columnGroupSvc!.setColumnGroupOpened(
                 column.getProvidedColumnGroup(),
                 newExpandedValue,
                 'uiColumnExpanded'

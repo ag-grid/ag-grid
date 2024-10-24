@@ -269,7 +269,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private setupTooltip(value?: string, shouldDisplayTooltip?: () => boolean): void {
-        this.tooltipFeature = this.beans.tooltipService?.setupHeaderTooltip(
+        this.tooltipFeature = this.beans.tooltipSvc?.setupHeaderTooltip(
             this.tooltipFeature,
             this,
             value,

@@ -1100,7 +1100,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             return;
         }
 
-        this.tooltipFeature = this.beans.tooltipService?.refreshRowTooltip(
+        this.tooltipFeature = this.beans.tooltipSvc?.refreshRowTooltip(
             this.tooltipFeature,
             this,
             value,

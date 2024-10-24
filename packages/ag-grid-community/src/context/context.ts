@@ -298,8 +298,8 @@ export interface CoreBeanCollection {
     clientSideChildrenTreeNodeManager?: IClientSideNodeManager;
     cellFlashSvc?: CellFlashService;
     masterDetailSvc?: IMasterDetailService;
-    tooltipService?: TooltipService;
-    columnGroupService?: ColumnGroupService;
+    tooltipSvc?: TooltipService;
+    columnGroupSvc?: ColumnGroupService;
     rowAutoHeightService?: RowAutoHeightService;
     rowChildrenService?: IRowChildrenService;
 }
@@ -370,7 +370,7 @@ export type BeanName =
     | 'colFactory'
     | 'colFilter'
     | 'colFlex'
-    | 'columnGroupService'
+    | 'columnGroupSvc'
     | 'colHover'
     | 'columnMenuFactory'
     | 'colModel'
@@ -483,7 +483,7 @@ export type BeanName =
     | 'syncSvc'
     | 'templateService'
     | 'toolPanelColDefService'
-    | 'tooltipService'
+    | 'tooltipSvc'
     | 'undoRedo'
     | 'userCompFactory'
     | 'valueCache'

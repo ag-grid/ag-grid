@@ -177,7 +177,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private enableTooltipFeature(value?: string, shouldDisplayTooltip?: () => boolean): void {
-        this.tooltipFeature = this.beans.tooltipService?.enableCellTooltipFeature(this, value, shouldDisplayTooltip);
+        this.tooltipFeature = this.beans.tooltipSvc?.enableCellTooltipFeature(this, value, shouldDisplayTooltip);
     }
 
     private disableTooltipFeature() {

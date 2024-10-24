@@ -9,15 +9,15 @@ export function setColumnGroupOpened(
     group: ProvidedColumnGroup | string,
     newValue: boolean
 ): void {
-    beans.columnGroupService?.setColumnGroupOpened(group as AgProvidedColumnGroup | string, newValue, 'api');
+    beans.columnGroupSvc?.setColumnGroupOpened(group as AgProvidedColumnGroup | string, newValue, 'api');
 }
 
 export function getColumnGroup(beans: BeanCollection, name: string, instanceId?: number): ColumnGroup | null {
-    return beans.columnGroupService?.getColumnGroup(name, instanceId) ?? null;
+    return beans.columnGroupSvc?.getColumnGroup(name, instanceId) ?? null;
 }
 
 export function getProvidedColumnGroup(beans: BeanCollection, name: string): ProvidedColumnGroup | null {
-    return beans.columnGroupService?.getProvidedColGroup(name) ?? null;
+    return beans.columnGroupSvc?.getProvidedColGroup(name) ?? null;
 }
 
 export function getDisplayNameForColumnGroup(
@@ -29,15 +29,15 @@ export function getDisplayNameForColumnGroup(
 }
 
 export function getColumnGroupState(beans: BeanCollection): { groupId: string; open: boolean }[] {
-    return beans.columnGroupService?.getColumnGroupState() ?? [];
+    return beans.columnGroupSvc?.getColumnGroupState() ?? [];
 }
 
 export function setColumnGroupState(beans: BeanCollection, stateItems: { groupId: string; open: boolean }[]): void {
-    beans.columnGroupService?.setColumnGroupState(stateItems, 'api');
+    beans.columnGroupSvc?.setColumnGroupState(stateItems, 'api');
 }
 
 export function resetColumnGroupState(beans: BeanCollection): void {
-    beans.columnGroupService?.resetColumnGroupState('api');
+    beans.columnGroupSvc?.resetColumnGroupState('api');
 }
 
 export function getLeftDisplayedColumnGroups(beans: BeanCollection): (Column | ColumnGroup)[] {

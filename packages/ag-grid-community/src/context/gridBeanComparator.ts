@@ -27,7 +27,7 @@ const orderedCoreBeans: BeanName[] = [
     'validation',
     'pinnedRowModel',
     'dragSvc',
-    'columnGroupService',
+    'columnGroupSvc',
     'visibleCols',
     'popupSvc',
     'selectionSvc',
