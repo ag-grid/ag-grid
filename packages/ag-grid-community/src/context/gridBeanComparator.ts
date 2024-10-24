@@ -22,7 +22,7 @@ const orderedCoreBeans: BeanName[] = [
     'agComponentUtils',
     'userCompFactory',
     'rowContainerHeight',
-    'horizontalResizeService',
+    'horizontalResizeSvc',
     'localeSvc',
     'validation',
     'pinnedRowModel',

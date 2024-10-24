@@ -12,14 +12,14 @@ import { _getInnerWidth, _setDisplayed } from '../utils/dom';
 import type { ColumnResizeService } from './columnResizeService';
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
-    private horizontalResizeService: HorizontalResizeService;
+    private horizontalResizeSvc: HorizontalResizeService;
     private pinnedCols?: PinnedColumnService;
     private ctrlsSvc: CtrlsService;
     private colResize?: ColumnResizeService;
     private colAutosize?: ColumnAutosizeService;
 
     public wireBeans(beans: BeanCollection) {
-        this.horizontalResizeService = beans.horizontalResizeService!;
+        this.horizontalResizeSvc = beans.horizontalResizeSvc!;
         this.pinnedCols = beans.pinnedCols;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.colResize = beans.colResize;
@@ -65,7 +65,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
                 return;
             }
 
-            const finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
+            const finishedWithResizeFunc = this.horizontalResizeSvc.addResizeBar({
                 eResizeBar: this.eResize,
                 onResizeStart: this.onResizeStart.bind(this),
                 onResizing: this.onResizing.bind(this, false),

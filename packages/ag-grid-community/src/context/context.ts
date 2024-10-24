@@ -259,7 +259,7 @@ export interface CoreBeanCollection {
     autoWidthCalculator?: AutoWidthCalculator;
     agComponentUtils?: AgComponentUtils;
     frameworkComponentWrapper: FrameworkComponentWrapper;
-    horizontalResizeService?: HorizontalResizeService;
+    horizontalResizeSvc?: HorizontalResizeService;
     filterMenuFactory?: IMenuFactory;
     enterpriseMenuFactory?: IMenuFactory;
     contextMenuService?: IContextMenuService;
@@ -424,7 +424,7 @@ export type BeanName =
     | 'groupHideOpenParentsService'
     | 'groupStage'
     | 'headerNavigation'
-    | 'horizontalResizeService'
+    | 'horizontalResizeSvc'
     | 'lazyBlockLoadingService'
     | 'licenseManager'
     | 'localeSvc'

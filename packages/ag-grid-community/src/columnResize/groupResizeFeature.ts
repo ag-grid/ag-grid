@@ -21,14 +21,14 @@ interface ColumnSizeAndRatios {
     groupAfterRatios?: number[];
 }
 export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature {
-    private horizontalResizeService: HorizontalResizeService;
+    private horizontalResizeSvc: HorizontalResizeService;
     private autoWidthCalculator: AutoWidthCalculator;
     private columnGroupService?: ColumnGroupService;
     private colResize?: ColumnResizeService;
     private colAutosize?: ColumnAutosizeService;
 
     public wireBeans(beans: BeanCollection) {
-        this.horizontalResizeService = beans.horizontalResizeService!;
+        this.horizontalResizeSvc = beans.horizontalResizeSvc!;
         this.autoWidthCalculator = beans.autoWidthCalculator!;
         this.columnGroupService = beans.columnGroupService;
         this.colResize = beans.colResize;
@@ -68,7 +68,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             return;
         }
 
-        const finishedWithResizeFunc = this.horizontalResizeService.addResizeBar({
+        const finishedWithResizeFunc = this.horizontalResizeSvc.addResizeBar({
             eResizeBar: this.eResize,
             onResizeStart: this.onResizeStart.bind(this),
             onResizing: this.onResizing.bind(this, false),

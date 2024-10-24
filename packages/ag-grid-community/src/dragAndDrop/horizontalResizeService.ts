@@ -13,7 +13,7 @@ export interface HorizontalResizeParams {
 }
 
 export class HorizontalResizeService extends BeanStub implements NamedBean {
-    beanName = 'horizontalResizeService' as const;
+    beanName = 'horizontalResizeSvc' as const;
 
     private dragSvc: DragService;
     private ctrlsSvc: CtrlsService;
