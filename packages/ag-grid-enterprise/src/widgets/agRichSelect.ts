@@ -47,13 +47,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     AgRichSelectList<TValue, AgRichSelectEvent>
 > {
     private userCompFactory: UserComponentFactory;
-    private ariaAnnouncementService: AriaAnnouncementService;
+    private ariaAnnounce: AriaAnnouncementService;
     private registry: Registry;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
         this.userCompFactory = beans.userCompFactory;
-        this.ariaAnnouncementService = beans.ariaAnnouncementService;
+        this.ariaAnnounce = beans.ariaAnnounce;
         this.registry = beans.registry;
     }
 
@@ -784,7 +784,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     private announceAriaValue(value: string): void {
-        this.ariaAnnouncementService.announceValue(value, 'richSelect');
+        this.ariaAnnounce.announceValue(value, 'richSelect');
     }
 
     public override destroy(): void {

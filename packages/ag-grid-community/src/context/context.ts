@@ -222,7 +222,7 @@ export interface CoreBeanCollection {
     valueCache?: ValueCache;
     localeSvc?: LocaleService;
     syncSvc: SyncService;
-    ariaAnnouncementService: AriaAnnouncementService;
+    ariaAnnounce: AriaAnnouncementService;
     rangeService?: IRangeService;
     validationService?: ValidationService;
     gridApi: GridApi;
@@ -341,7 +341,7 @@ export type BeanName =
     | 'alignedGridsService'
     | 'animationFrameSvc'
     | 'apiFunctionService'
-    | 'ariaAnnouncementService'
+    | 'ariaAnnounce'
     | 'apiEventService'
     | 'autoColService'
     | 'autoWidthCalculator'

@@ -21,13 +21,13 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
     private rowModel: IRowModel;
     private paginationService: PaginationService;
     private focusSvc: FocusService;
-    private ariaAnnouncementService: AriaAnnouncementService;
+    private ariaAnnounce: AriaAnnouncementService;
 
     public wireBeans(beans: BeanCollection): void {
         this.rowModel = beans.rowModel;
         this.paginationService = beans.paginationService!;
         this.focusSvc = beans.focusSvc;
-        this.ariaAnnouncementService = beans.ariaAnnouncementService;
+        this.ariaAnnounce = beans.ariaAnnounce;
     }
 
     private readonly btFirst: HTMLElement = RefPlaceholder;
@@ -333,11 +333,11 @@ export class PaginationComp extends TabGuardComp implements FocusableContainer {
 
         if (ariaRowStatus !== this.ariaRowStatus) {
             this.ariaRowStatus = ariaRowStatus;
-            this.ariaAnnouncementService.announceValue(ariaRowStatus, 'paginationRow');
+            this.ariaAnnounce.announceValue(ariaRowStatus, 'paginationRow');
         }
         if (ariaPageStatus !== this.ariaPageStatus) {
             this.ariaPageStatus = ariaPageStatus;
-            this.ariaAnnouncementService.announceValue(ariaPageStatus, 'paginationPage');
+            this.ariaAnnounce.announceValue(ariaPageStatus, 'paginationPage');
         }
     }
 

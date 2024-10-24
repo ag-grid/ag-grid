@@ -26,13 +26,13 @@ import { SelectAllFeature } from './selectAllFeature';
 
 export abstract class BaseSelectionService extends BeanStub {
     protected rowModel: IRowModel;
-    private ariaAnnouncementService: AriaAnnouncementService;
+    private ariaAnnounce: AriaAnnouncementService;
 
     protected isRowSelectable?: IsRowSelectable;
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
-        this.ariaAnnouncementService = beans.ariaAnnouncementService;
+        this.ariaAnnounce = beans.ariaAnnounce;
     }
 
     public postConstruct(): void {
@@ -151,7 +151,7 @@ export abstract class BaseSelectionService extends BeanStub {
             `Press SPACE to ${selected ? 'deselect' : 'select'} this row.`
         );
 
-        this.ariaAnnouncementService.announceValue(label, 'rowSelection');
+        this.ariaAnnounce.announceValue(label, 'rowSelection');
     }
 
     protected dispatchSelectionChanged(source: SelectionEventSourceType): void {

@@ -575,7 +575,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             .map((key: HeaderAriaDescriptionKey) => this.ariaDescriptionProperties.get(key))
             .join('. ');
 
-        this.beans.ariaAnnouncementService.announceValue(ariaDescription, 'columnHeader');
+        this.beans.ariaAnnounce.announceValue(ariaDescription, 'columnHeader');
     }
 
     private refreshAria(): void {
