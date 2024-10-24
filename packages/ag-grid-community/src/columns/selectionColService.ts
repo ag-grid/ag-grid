@@ -25,7 +25,7 @@ export class SelectionColService extends BeanStub implements NamedBean {
 
     private context: Context;
     private columnGroupService?: ColumnGroupService;
-    private autoColService?: IAutoColService;
+    private autoColSvc?: IAutoColService;
     private colModel: ColumnModel;
 
     // selection checkbox columns
@@ -34,7 +34,7 @@ export class SelectionColService extends BeanStub implements NamedBean {
     public wireBeans(beans: BeanCollection): void {
         this.context = beans.context;
         this.columnGroupService = beans.columnGroupService;
-        this.autoColService = beans.autoColService;
+        this.autoColSvc = beans.autoColSvc;
         this.colModel = beans.colModel;
     }
 
@@ -80,7 +80,7 @@ export class SelectionColService extends BeanStub implements NamedBean {
 
         destroyCollection();
         const treeDepth = this.columnGroupService?.findDepth(cols.tree) ?? 0;
-        const tree = this.autoColService?.balanceTreeForAutoCols(list, treeDepth) ?? [];
+        const tree = this.autoColSvc?.balanceTreeForAutoCols(list, treeDepth) ?? [];
         this.selectionCols = {
             list,
             tree,

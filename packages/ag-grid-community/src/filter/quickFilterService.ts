@@ -20,14 +20,14 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     private colModel: ColumnModel;
     private rowModel: IRowModel;
     private pivotResultCols?: IPivotResultColsService;
-    private autoColService?: IAutoColService;
+    private autoColSvc?: IAutoColService;
 
     public wireBeans(beans: BeanCollection): void {
         this.filterValueService = beans.filterValueService!;
         this.colModel = beans.colModel;
         this.rowModel = beans.rowModel;
         this.pivotResultCols = beans.pivotResultCols;
-        this.autoColService = beans.autoColService;
+        this.autoColSvc = beans.autoColSvc;
     }
 
     // the columns the quick filter should use. this will be all primary columns plus the autoGroupColumns if any exist
@@ -74,7 +74,7 @@ export class QuickFilterService extends BeanStub<QuickFilterServiceEvent> implem
     //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
     public refreshQuickFilterCols(): void {
         const pivotMode = this.colModel.isPivotMode();
-        const groupAutoCols = this.autoColService?.getAutoCols();
+        const groupAutoCols = this.autoColSvc?.getAutoCols();
         const providedCols = this.colModel.getColDefCols();
 
         let columnsForQuickFilter =

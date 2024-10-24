@@ -52,7 +52,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private visibleCols: VisibleColsService;
     private colViewport: ColumnViewportService;
     private pivotResultCols?: IPivotResultColsService;
-    private autoColService?: IAutoColService;
+    private autoColSvc?: IAutoColService;
     private selectionColService?: SelectionColService;
     private valueCache?: ValueCache;
     private columnDefFactory?: ColumnDefFactory;
@@ -69,7 +69,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.visibleCols = beans.visibleCols;
         this.colViewport = beans.colViewport;
         this.pivotResultCols = beans.pivotResultCols;
-        this.autoColService = beans.autoColService;
+        this.autoColSvc = beans.autoColSvc;
         this.selectionColService = beans.selectionColService;
         this.valueCache = beans.valueCache;
         this.columnDefFactory = beans.columnDefFactory;
@@ -200,7 +200,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const cols = this.selectCols(this.colDefCols);
 
         this.createAutoCols(cols);
-        this.autoColService?.addAutoCols(cols);
+        this.autoColSvc?.addAutoCols(cols);
 
         this.createSelectionCols(cols);
         this.selectionColService?.addSelectionCols(cols);
@@ -281,7 +281,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     }
 
     private createAutoCols(cols: ColumnCollections): void {
-        this.autoColService?.createAutoCols(cols, (updateOrder) => {
+        this.autoColSvc?.createAutoCols(cols, (updateOrder) => {
             this.lastOrder = updateOrder(this.lastOrder);
             this.lastPivotOrder = updateOrder(this.lastPivotOrder);
         });
@@ -446,7 +446,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
 
         // if we aren't going to force, update the auto cols in place
-        this.autoColService?.updateAutoCols(source);
+        this.autoColSvc?.updateAutoCols(source);
         this.createColsFromColDefs(source);
     }
 
@@ -485,7 +485,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const pivotResultColsList = this.pivotResultCols?.getPivotResultCols()?.list;
         return [
             this.colDefCols?.list ?? [],
-            this.autoColService?.autoCols?.list ?? [],
+            this.autoColSvc?.autoCols?.list ?? [],
             this.selectionColService?.selectionCols?.list ?? [],
             pivotResultColsList ?? [],
         ].flat();
@@ -531,6 +531,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
             }
         }
 
-        return this.autoColService?.getAutoCol(key) ?? null;
+        return this.autoColSvc?.getAutoCol(key) ?? null;
     }
 }

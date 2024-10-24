@@ -85,7 +85,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     private dataTypeService?: DataTypeService;
     private filterManager?: FilterManager;
     private filterValueService: FilterValueService;
-    private autoColService?: IAutoColService;
+    private autoColSvc?: IAutoColService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueSvc = beans.valueSvc;
@@ -96,7 +96,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         this.dataTypeService = beans.dataTypeService;
         this.filterManager = beans.filterManager;
         this.filterValueService = beans.filterValueService!;
-        this.autoColService = beans.autoColService;
+        this.autoColSvc = beans.autoColSvc;
     }
 
     private allColumnFilters = new Map<string, FilterWrapper>();
@@ -626,7 +626,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     private updateDependentFilters(): void {
         // Group column filters can be dependant on underlying column filters, but don't normally get created until they're used for the first time.
         // Instead, create them by default when any filter changes.
-        this.autoColService?.getAutoCols()?.forEach((groupColumn) => {
+        this.autoColSvc?.getAutoCols()?.forEach((groupColumn) => {
             if (groupColumn.getColDef().filter === 'agGroupColumnFilter') {
                 this.getOrCreateFilterWrapper(groupColumn);
             }

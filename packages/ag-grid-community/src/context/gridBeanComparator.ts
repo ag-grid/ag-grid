@@ -59,7 +59,7 @@ const orderedCoreBeans: BeanName[] = [
     'sortSvc',
     'colHover',
     'colAnimation',
-    'autoColService',
+    'autoColSvc',
     'selectionColService',
     'changeDetectionService',
     'animationFrameSvc',

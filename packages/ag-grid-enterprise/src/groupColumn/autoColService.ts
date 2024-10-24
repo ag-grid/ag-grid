@@ -33,7 +33,7 @@ import {
 } from 'ag-grid-community';
 
 export class AutoColService extends BeanStub implements NamedBean, IAutoColService {
-    beanName = 'autoColService' as const;
+    beanName = 'autoColSvc' as const;
 
     private colModel: ColumnModel;
     private colNames: ColumnNameService;

@@ -231,7 +231,7 @@ export interface CoreBeanCollection {
     colState: ColumnStateService;
     colFactory: ColumnFactory;
     pivotResultCols?: IPivotResultColsService;
-    autoColService?: IAutoColService;
+    autoColSvc?: IAutoColService;
     selectionColService?: SelectionColService;
     columnDefFactory?: ColumnDefFactory;
     columnAutosizeService?: ColumnAutosizeService;
@@ -343,7 +343,7 @@ export type BeanName =
     | 'apiFunctionService'
     | 'ariaAnnounce'
     | 'apiEventService'
-    | 'autoColService'
+    | 'autoColSvc'
     | 'autoWidthCalculator'
     | 'beans'
     | 'cellEditorFactory'

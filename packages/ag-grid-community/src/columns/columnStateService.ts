@@ -83,7 +83,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
     private visibleCols: VisibleColsService;
     private colAnimation?: ColumnAnimationService;
     private pivotResultCols?: IPivotResultColsService;
-    private autoColService?: IAutoColService;
+    private autoColSvc?: IAutoColService;
     private selectionColService?: SelectionColService;
 
     public wireBeans(beans: BeanCollection): void {
@@ -93,7 +93,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
         this.visibleCols = beans.visibleCols;
         this.colAnimation = beans.colAnimation;
         this.pivotResultCols = beans.pivotResultCols;
-        this.autoColService = beans.autoColService;
+        this.autoColSvc = beans.autoColSvc;
         this.selectionColService = beans.selectionColService;
     }
 
@@ -216,9 +216,9 @@ export class ColumnStateService extends BeanStub implements NamedBean {
 
             // sync newly created auto group columns with ColumnState
             syncColStates(
-                (colId: string) => this.autoColService?.getAutoCol(colId) ?? null,
+                (colId: string) => this.autoColSvc?.getAutoCol(colId) ?? null,
                 autoColStates,
-                this.autoColService?.getAutoCols()?.slice()
+                this.autoColSvc?.getAutoCols()?.slice()
             );
 
             // sync selection columns with ColumnState
@@ -283,7 +283,7 @@ export class ColumnStateService extends BeanStub implements NamedBean {
         let letPivotIndex = 1000;
 
         let colsToProcess: AgColumn[] = [];
-        const groupAutoCols = this.autoColService?.getAutoCols();
+        const groupAutoCols = this.autoColSvc?.getAutoCols();
         if (groupAutoCols) {
             colsToProcess = colsToProcess.concat(groupAutoCols);
         }
