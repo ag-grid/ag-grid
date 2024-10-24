@@ -25,14 +25,14 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     private autoWidthCalculator: AutoWidthCalculator;
     private columnGroupService?: ColumnGroupService;
     private colResize?: ColumnResizeService;
-    private columnAutosizeService?: ColumnAutosizeService;
+    private colAutosize?: ColumnAutosizeService;
 
     public wireBeans(beans: BeanCollection) {
         this.horizontalResizeService = beans.horizontalResizeService!;
         this.autoWidthCalculator = beans.autoWidthCalculator!;
         this.columnGroupService = beans.columnGroupService;
         this.colResize = beans.colResize;
-        this.columnAutosizeService = beans.columnAutosizeService;
+        this.colAutosize = beans.colAutosize;
     }
 
     private eResize: HTMLElement;
@@ -77,9 +77,9 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
 
         this.addDestroyFunc(finishedWithResizeFunc);
 
-        if (!this.gos.get('suppressAutoSize') && this.columnAutosizeService) {
+        if (!this.gos.get('suppressAutoSize') && this.colAutosize) {
             this.addDestroyFunc(
-                this.columnAutosizeService.addColumnGroupResize(this.eResize, this.columnGroup, () =>
+                this.colAutosize.addColumnGroupResize(this.eResize, this.columnGroup, () =>
                     this.resizeLeafColumnsToFit('uiColumnResized')
                 )
             );

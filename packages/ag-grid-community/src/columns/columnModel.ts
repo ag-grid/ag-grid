@@ -57,7 +57,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
     private valueCache?: ValueCache;
     private colDefFactory?: ColumnDefFactory;
     private colState: ColumnStateService;
-    private columnAutosizeService?: ColumnAutosizeService;
+    private colAutosize?: ColumnAutosizeService;
     private funcColsService: FuncColsService;
     private quickFilterService?: QuickFilterService;
     private showRowGroupColsService?: IShowRowGroupColsService;
@@ -74,7 +74,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.valueCache = beans.valueCache;
         this.colDefFactory = beans.colDefFactory;
         this.colState = beans.colState;
-        this.columnAutosizeService = beans.columnAutosizeService;
+        this.colAutosize = beans.colAutosize;
         this.funcColsService = beans.funcColsService;
         this.quickFilterService = beans.quickFilterService;
         this.showRowGroupColsService = beans.showRowGroupColsService;
@@ -179,7 +179,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         });
 
         if (source === 'gridInitializing') {
-            this.columnAutosizeService?.applyAutosizeStrategy();
+            this.colAutosize?.applyAutosizeStrategy();
         }
     }
 

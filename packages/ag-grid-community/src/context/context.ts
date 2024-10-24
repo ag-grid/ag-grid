@@ -234,7 +234,7 @@ export interface CoreBeanCollection {
     autoColSvc?: IAutoColService;
     selectionColSvc?: SelectionColService;
     colDefFactory?: ColumnDefFactory;
-    columnAutosizeService?: ColumnAutosizeService;
+    colAutosize?: ColumnAutosizeService;
     funcColsService: FuncColsService;
     quickFilterService?: QuickFilterService;
     showRowGroupColsService?: IShowRowGroupColsService;
@@ -362,7 +362,7 @@ export type BeanName =
     | 'chartService'
     | 'clipboardService'
     | 'colAnimation'
-    | 'columnAutosizeService'
+    | 'colAutosize'
     | 'columnChooserFactory'
     | 'columnController'
     | 'colDefFactory'

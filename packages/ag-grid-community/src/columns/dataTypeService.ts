@@ -45,7 +45,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private valueSvc: ValueService;
     private colState: ColumnStateService;
     private filterManager?: FilterManager;
-    private columnAutosizeService?: ColumnAutosizeService;
+    private colAutosize?: ColumnAutosizeService;
     private colFactory: ColumnFactory;
 
     public wireBeans(beans: BeanCollection): void {
@@ -55,7 +55,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
         this.valueSvc = beans.valueSvc;
         this.colState = beans.colState;
         this.filterManager = beans.filterManager;
-        this.columnAutosizeService = beans.columnAutosizeService;
+        this.colAutosize = beans.colAutosize;
         this.colFactory = beans.colFactory;
     }
 
@@ -447,8 +447,8 @@ export class DataTypeService extends BeanStub implements NamedBean {
         }
         this.isWaitingForRowData = true;
         const columnTypeOverridesExist = this.isColumnTypeOverrideInDataTypeDefinitions;
-        if (columnTypeOverridesExist && this.columnAutosizeService) {
-            this.columnAutosizeService.shouldQueueResizeOperations = true;
+        if (columnTypeOverridesExist && this.colAutosize) {
+            this.colAutosize.shouldQueueResizeOperations = true;
         }
         const [destroyFunc] = this.addManagedEventListeners({
             rowDataUpdateStarted: (event) => {
@@ -461,7 +461,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 this.processColumnsPendingInference(firstRowData, columnTypeOverridesExist);
                 this.columnStateUpdatesPendingInference = {};
                 if (columnTypeOverridesExist) {
-                    this.columnAutosizeService?.processResizeOperations();
+                    this.colAutosize?.processResizeOperations();
                 }
                 this.eventSvc.dispatchEvent({
                     type: 'dataTypesInferred',

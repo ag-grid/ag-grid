@@ -27,7 +27,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
     private funcColsService: FuncColsService;
     private chartMenuItemMapper: ChartMenuItemMapper;
     private sortSvc?: SortService;
-    private columnAutosizeService?: ColumnAutosizeService;
+    private colAutosize?: ColumnAutosizeService;
     private expansionService?: IExpansionService;
     private clipboardService?: IClipboardService;
     private aggFuncService?: IAggFuncService;
@@ -39,7 +39,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
         this.funcColsService = beans.funcColsService;
         this.chartMenuItemMapper = beans.chartMenuItemMapper as ChartMenuItemMapper;
         this.sortSvc = beans.sortSvc;
-        this.columnAutosizeService = beans.columnAutosizeService;
+        this.colAutosize = beans.colAutosize;
         this.expansionService = beans.expansionService;
         this.clipboardService = beans.clipboardService;
         this.aggFuncService = beans.aggFuncService;
@@ -148,12 +148,12 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             case 'autoSizeThis':
                 return {
                     name: localeTextFunc('autosizeThisColumn', 'Autosize This Column'),
-                    action: () => this.columnAutosizeService?.autoSizeColumn(column, source, skipHeaderOnAutoSize),
+                    action: () => this.colAutosize?.autoSizeColumn(column, source, skipHeaderOnAutoSize),
                 };
             case 'autoSizeAll':
                 return {
                     name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
-                    action: () => this.columnAutosizeService?.autoSizeAllColumns(source, skipHeaderOnAutoSize),
+                    action: () => this.colAutosize?.autoSizeAllColumns(source, skipHeaderOnAutoSize),
                 };
             case 'rowGroup':
                 return {

@@ -21,7 +21,7 @@ import { _warn } from '../validation/logging';
 import { TouchListener } from '../widgets/touchListener';
 
 export class ColumnAutosizeService extends BeanStub implements NamedBean {
-    beanName = 'columnAutosizeService' as const;
+    beanName = 'colAutosize' as const;
 
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
