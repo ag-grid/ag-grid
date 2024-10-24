@@ -261,7 +261,7 @@ export class CellCtrl extends BeanStub {
 
     private showValue(forceNewCellRendererInstance = false): void {
         const { beans, column, rowNode, cellRangeFeature } = this;
-        const { userComponentFactory, gos } = beans;
+        const { userCompFactory, gos } = beans;
         const valueToDisplay = this.getValueToDisplay();
         let compDetails: UserCompDetails | undefined;
 
@@ -269,10 +269,10 @@ export class CellCtrl extends BeanStub {
         const isSsrmLoading = rowNode.stub && rowNode.groupData?.[column.getId()] == null;
         if (isSsrmLoading) {
             const params = this.createCellRendererParams();
-            compDetails = _getLoadingCellRendererDetails(userComponentFactory, column.getColDef(), params);
+            compDetails = _getLoadingCellRendererDetails(userCompFactory, column.getColDef(), params);
         } else if (this.isCellRenderer()) {
             const params = this.createCellRendererParams();
-            compDetails = _getCellRendererDetails(userComponentFactory, column.getColDef(), params);
+            compDetails = _getCellRendererDetails(userCompFactory, column.getColDef(), params);
         }
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         if (cellRangeFeature) {

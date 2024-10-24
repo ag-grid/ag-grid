@@ -154,7 +154,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private lookupUserCompDetails(): UserCompDetails {
         const params = this.createParams();
         const colDef = this.column.getColDef();
-        return _getHeaderCompDetails(this.userComponentFactory, colDef, params)!;
+        return _getHeaderCompDetails(this.userCompFactory, colDef, params)!;
     }
 
     private createParams(): IHeaderParams {

@@ -1082,7 +1082,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             setTooltip: (value, shouldDisplayTooltip) => this.refreshRowTooltip(value, shouldDisplayTooltip),
         } as WithoutGridCommon<ICellRendererParams>);
 
-        const compFactory = this.beans.userComponentFactory;
+        const compFactory = this.beans.userCompFactory;
         switch (this.rowType) {
             case 'FullWidthDetail':
                 return _getFullWidthDetailCellRendererDetails(compFactory, params);

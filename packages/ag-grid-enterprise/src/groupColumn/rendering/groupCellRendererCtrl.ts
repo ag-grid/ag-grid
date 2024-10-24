@@ -43,19 +43,19 @@ const InnerRendererComponent: ComponentType = {
 };
 
 function getInnerRendererDetails(
-    userComponentFactory: UserComponentFactory,
+    userCompFactory: UserComponentFactory,
     def: GroupCellRendererParams,
     params: WithoutGridCommon<ICellRendererParams>
 ): UserCompDetails | undefined {
-    return userComponentFactory.getCompDetails(def, InnerRendererComponent, null, params);
+    return userCompFactory.getCompDetails(def, InnerRendererComponent, null, params);
 }
 
 function getFullWidthGroupRowInnerCellRenderer(
-    userComponentFactory: UserComponentFactory,
+    userCompFactory: UserComponentFactory,
     def: any,
     params: WithoutGridCommon<ICellRendererParams>
 ): UserCompDetails | undefined {
-    return userComponentFactory.getCompDetails(def, InnerRendererComponent, null, params);
+    return userCompFactory.getCompDetails(def, InnerRendererComponent, null, params);
 }
 
 export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendererCtrl {
@@ -63,7 +63,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
     private valueSvc: ValueService;
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
-    private userComponentFactory: UserComponentFactory;
+    private userCompFactory: UserComponentFactory;
     private ctrlsService: CtrlsService;
     private funcColsService: FuncColsService;
     private rowDragService?: RowDragService;
@@ -75,7 +75,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         this.valueSvc = beans.valueSvc;
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
-        this.userComponentFactory = beans.userComponentFactory;
+        this.userCompFactory = beans.userCompFactory;
         this.ctrlsService = beans.ctrlsService;
         this.funcColsService = beans.funcColsService;
         this.selectionService = beans.selectionService;
@@ -418,7 +418,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         // for full width rows, we don't do any of the below
         if (params.fullWidth) {
             return getFullWidthGroupRowInnerCellRenderer(
-                this.userComponentFactory,
+                this.userCompFactory,
                 this.gos.get('groupRowRendererParams'),
                 params
             );
@@ -438,7 +438,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         // 3) groupedColDef.cellRendererParams.innerRenderer
 
         // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
-        const innerCompDetails = getInnerRendererDetails(this.userComponentFactory, params, params);
+        const innerCompDetails = getInnerRendererDetails(this.userCompFactory, params, params);
 
         // avoid using GroupCellRenderer again, otherwise stack overflow, as we insert same renderer again and again.
         // this covers off chance user is grouping by a column that is also configured with GroupCellRenderer
@@ -458,7 +458,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         }
 
         // otherwise see if we can use the cellRenderer of the column we are grouping by
-        const relatedCompDetails = _getCellRendererDetails(this.userComponentFactory, relatedColDef, params);
+        const relatedCompDetails = _getCellRendererDetails(this.userCompFactory, relatedColDef, params);
 
         if (relatedCompDetails && !isGroupRowRenderer(relatedCompDetails)) {
             // Only if the original column is using a specific renderer, it it is a using a DEFAULT one ignore it
@@ -472,7 +472,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         ) {
             // edge case - this comes from a column which has been grouped dynamically, that has a renderer 'group'
             // and has an inner cell renderer
-            const res = getInnerRendererDetails(this.userComponentFactory, relatedColDef.cellRendererParams, params);
+            const res = getInnerRendererDetails(this.userCompFactory, relatedColDef.cellRendererParams, params);
             return res;
         }
     }

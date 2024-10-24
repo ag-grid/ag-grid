@@ -30,11 +30,11 @@ let isLocked = false;
 
 export class TooltipStateManager extends BeanStub {
     private popupSvc?: PopupService;
-    private userComponentFactory: UserComponentFactory;
+    private userCompFactory: UserComponentFactory;
 
     public wireBeans(beans: BeanCollection): void {
         this.popupSvc = beans.popupSvc;
-        this.userComponentFactory = beans.userComponentFactory;
+        this.userCompFactory = beans.userCompFactory;
     }
 
     private showTooltipTimeoutId: number | undefined;
@@ -305,7 +305,7 @@ export class TooltipStateManager extends BeanStub {
         // we disregard it
         const callback = this.newTooltipComponentCallback.bind(this, this.tooltipInstanceCount);
 
-        const userDetails = _getTooltipCompDetails(this.userComponentFactory, params);
+        const userDetails = _getTooltipCompDetails(this.userCompFactory, params);
         userDetails.newAgStackInstance()!.then(callback);
     }
 

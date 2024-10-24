@@ -52,11 +52,11 @@ interface AgMenuItemComponentParams {
 export type AgMenuItemComponentEvent = 'closeMenu' | 'menuItemActivated';
 
 function getMenuItemCompDetails(
-    userComponentFactory: UserComponentFactory,
+    userCompFactory: UserComponentFactory,
     def: MenuItemDef,
     params: WithoutGridCommon<IMenuItemParams>
 ): UserCompDetails {
-    return userComponentFactory.getCompDetails(def, MenuItemComponent, 'agMenuItem', params, true)!;
+    return userCompFactory.getCompDetails(def, MenuItemComponent, 'agMenuItem', params, true)!;
 }
 
 const MenuItemComponent: ComponentType = {
@@ -66,12 +66,12 @@ const MenuItemComponent: ComponentType = {
 
 export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
     private popupSvc?: PopupService;
-    private userComponentFactory: UserComponentFactory;
+    private userCompFactory: UserComponentFactory;
     private registry: Registry;
 
     public wireBeans(beans: BeanCollection) {
         this.popupSvc = beans.popupSvc;
-        this.userComponentFactory = beans.userComponentFactory;
+        this.userCompFactory = beans.userCompFactory;
         this.registry = beans.registry;
     }
 
@@ -107,7 +107,7 @@ export class AgMenuItemComponent extends BeanStub<AgMenuItemComponentEvent> {
         this.childComponent = childComponent;
         this.contextParams = contextParams;
         this.cssClassPrefix = this.params.menuItemParams?.cssClassPrefix ?? 'ag-menu-option';
-        const compDetails = getMenuItemCompDetails(this.userComponentFactory, this.params, {
+        const compDetails = getMenuItemCompDetails(this.userCompFactory, this.params, {
             ...menuItemDef,
             level,
             isAnotherSubMenuOpen,

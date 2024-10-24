@@ -80,7 +80,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
     private valueSvc: ValueService;
     private colModel: ColumnModel;
     private rowModel: IRowModel;
-    private userComponentFactory: UserComponentFactory;
+    private userCompFactory: UserComponentFactory;
     private rowRenderer: RowRenderer;
     private dataTypeService?: DataTypeService;
     private filterManager?: FilterManager;
@@ -91,7 +91,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
         this.valueSvc = beans.valueSvc;
         this.colModel = beans.colModel;
         this.rowModel = beans.rowModel;
-        this.userComponentFactory = beans.userComponentFactory;
+        this.userCompFactory = beans.userCompFactory;
         this.rowRenderer = beans.rowRenderer;
         this.dataTypeService = beans.dataTypeService;
         this.filterManager = beans.filterManager;
@@ -539,7 +539,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                 this.filterManager ? this.filterManager.doesRowPassOtherFilters(filterInstance, node) : true,
         };
 
-        const compDetails = _getFilterDetails(this.userComponentFactory, colDef, params, defaultFilter);
+        const compDetails = _getFilterDetails(this.userCompFactory, colDef, params, defaultFilter);
         if (!compDetails) {
             return { filterPromise: null, compDetails: null };
         }
@@ -669,7 +669,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
                 ),
         };
         const finalFilterParams = _mergeFilterParamsWithApplicationProvidedParams(
-            this.userComponentFactory,
+            this.userCompFactory,
             colDef,
             filterParams
         );
@@ -690,7 +690,7 @@ export class ColumnFilterService extends BeanStub implements NamedBean {
             showParentFilter,
         };
 
-        return _getFloatingFilterCompDetails(this.userComponentFactory, colDef, params, defaultFloatingFilterType);
+        return _getFloatingFilterCompDetails(this.userCompFactory, colDef, params, defaultFloatingFilterType);
     }
 
     public getCurrentFloatingFilterParentModel(column: AgColumn): any {

@@ -22,7 +22,7 @@ const enum OverlayServiceState {
 export class OverlayService extends BeanStub implements NamedBean {
     beanName = 'overlayService' as const;
 
-    private userComponentFactory: UserComponentFactory;
+    private userCompFactory: UserComponentFactory;
     private rowModel: IRowModel;
     private ctrlsService: CtrlsService;
     private isClientSide: boolean;
@@ -34,7 +34,7 @@ export class OverlayService extends BeanStub implements NamedBean {
     private wrapperPadding: number = 0;
 
     public wireBeans(beans: BeanCollection): void {
-        this.userComponentFactory = beans.userComponentFactory;
+        this.userCompFactory = beans.userCompFactory;
         this.rowModel = beans.rowModel;
         this.colModel = beans.colModel;
         this.ctrlsService = beans.ctrlsService;
@@ -161,7 +161,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
         this.state = OverlayServiceState.Loading;
         this.showOverlay(
-            _getLoadingOverlayCompDetails(this.userComponentFactory, {}),
+            _getLoadingOverlayCompDetails(this.userCompFactory, {}),
             'ag-overlay-loading-wrapper',
             'loadingOverlayComponentParams'
         );
@@ -175,7 +175,7 @@ export class OverlayService extends BeanStub implements NamedBean {
 
         this.state = OverlayServiceState.NoRows;
         this.showOverlay(
-            _getNoRowsOverlayCompDetails(this.userComponentFactory, {}),
+            _getNoRowsOverlayCompDetails(this.userCompFactory, {}),
             'ag-overlay-no-rows-wrapper',
             'noRowsOverlayComponentParams'
         );

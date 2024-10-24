@@ -150,14 +150,14 @@ export class DragAndDropService extends BeanStub implements NamedBean {
     private dragService: DragService;
     private mouseEventService: MouseEventService;
     private environment: Environment;
-    private userComponentFactory: UserComponentFactory;
+    private userCompFactory: UserComponentFactory;
 
     public wireBeans(beans: BeanCollection): void {
         this.ctrlsService = beans.ctrlsService;
         this.dragService = beans.dragService!;
         this.mouseEventService = beans.mouseEventService;
         this.environment = beans.environment;
-        this.userComponentFactory = beans.userComponentFactory;
+        this.userCompFactory = beans.userCompFactory;
     }
 
     private dragSourceAndParamsList: { params: DragListenerParams; dragSource: DragSource }[] = [];
@@ -587,7 +587,7 @@ export class DragAndDropService extends BeanStub implements NamedBean {
             return;
         }
 
-        const userCompDetails = _getDragAndDropImageCompDetails(this.userComponentFactory, {
+        const userCompDetails = _getDragAndDropImageCompDetails(this.userCompFactory, {
             dragSource,
         });
 

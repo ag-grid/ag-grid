@@ -205,7 +205,7 @@ export interface CoreBeanCollection {
     popupSvc?: PopupService;
     cellStyles?: CellStyleService;
     colHover?: ColumnHoverService;
-    userComponentFactory: UserComponentFactory;
+    userCompFactory: UserComponentFactory;
     registry: Registry;
     animationFrameService?: AnimationFrameService;
     dragService?: DragService;
@@ -485,7 +485,7 @@ export type BeanName =
     | 'toolPanelColDefService'
     | 'tooltipService'
     | 'undoRedoService'
-    | 'userComponentFactory'
+    | 'userCompFactory'
     | 'valueCache'
     | 'valueSvc'
     | 'validationLogger'

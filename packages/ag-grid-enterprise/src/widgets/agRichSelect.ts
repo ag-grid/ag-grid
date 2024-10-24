@@ -46,13 +46,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     AgRichSelectEvent,
     AgRichSelectList<TValue, AgRichSelectEvent>
 > {
-    private userComponentFactory: UserComponentFactory;
+    private userCompFactory: UserComponentFactory;
     private ariaAnnouncementService: AriaAnnouncementService;
     private registry: Registry;
 
     public override wireBeans(beans: BeanCollection) {
         super.wireBeans(beans);
-        this.userComponentFactory = beans.userComponentFactory;
+        this.userCompFactory = beans.userCompFactory;
         this.ariaAnnouncementService = beans.ariaAnnouncementService;
         this.registry = beans.registry;
     }
@@ -215,7 +215,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
 
         if (cellRenderer) {
             userCompDetails = _getEditorRendererDetails<RichSelectParams, IRichCellEditorRendererParams<TValue>>(
-                this.userComponentFactory,
+                this.userCompFactory,
                 config,
                 {
                     value,

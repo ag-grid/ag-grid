@@ -22,7 +22,7 @@ export class EditService extends BeanStub implements NamedBean {
     beanName = 'editService' as const;
 
     private navigation?: NavigationService;
-    private userComponentFactory: UserComponentFactory;
+    private userCompFactory: UserComponentFactory;
     private valueSvc: ValueService;
     private rowRenderer: RowRenderer;
     private mouseEventService: MouseEventService;
@@ -30,7 +30,7 @@ export class EditService extends BeanStub implements NamedBean {
 
     public wireBeans(beans: CoreBeanCollection): void {
         this.navigation = beans.navigation;
-        this.userComponentFactory = beans.userComponentFactory;
+        this.userCompFactory = beans.userCompFactory;
         this.valueSvc = beans.valueSvc;
         this.rowRenderer = beans.rowRenderer;
         this.popupSvc = beans.popupSvc;
@@ -44,7 +44,7 @@ export class EditService extends BeanStub implements NamedBean {
     ): boolean {
         const editorParams = this.createCellEditorParams(cellCtrl, key, cellStartedEdit);
         const colDef = cellCtrl.getColumn().getColDef();
-        const compDetails = _getCellEditorDetails(this.userComponentFactory, colDef, editorParams);
+        const compDetails = _getCellEditorDetails(this.userCompFactory, colDef, editorParams);
 
         // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
         const popup = compDetails?.popupFromSelector != null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup;
@@ -95,7 +95,7 @@ export class EditService extends BeanStub implements NamedBean {
             const { eventKey, cellStartedEdit } = cellCtrl.getEditCompDetails()!.params;
             const editorParams = this.createCellEditorParams(cellCtrl, eventKey, cellStartedEdit);
             const colDef = cellCtrl.getColumn().getColDef();
-            const compDetails = _getCellEditorDetails(this.userComponentFactory, colDef, editorParams);
+            const compDetails = _getCellEditorDetails(this.userCompFactory, colDef, editorParams);
             cellEditor.refresh(compDetails!.params);
         }
     }

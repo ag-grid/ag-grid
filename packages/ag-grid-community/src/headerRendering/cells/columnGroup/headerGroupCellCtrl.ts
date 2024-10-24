@@ -221,7 +221,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             },
         });
 
-        const compDetails = _getHeaderGroupCompDetails(this.userComponentFactory, params)!;
+        const compDetails = _getHeaderGroupCompDetails(this.userCompFactory, params)!;
         this.comp.setUserCompDetails(compDetails);
     }
 

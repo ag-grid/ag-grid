@@ -45,7 +45,7 @@ export abstract class AbstractHeaderCellCtrl<
 
     private pinnedColumnService?: PinnedColumnService;
     protected focusSvc: FocusService;
-    protected userComponentFactory: UserComponentFactory;
+    protected userCompFactory: UserComponentFactory;
     protected ctrlsService: CtrlsService;
     protected dragAndDropService?: DragAndDropService;
     protected menuService?: MenuService;
@@ -53,7 +53,7 @@ export abstract class AbstractHeaderCellCtrl<
     public wireBeans(beans: BeanCollection) {
         this.pinnedColumnService = beans.pinnedColumnService;
         this.focusSvc = beans.focusSvc;
-        this.userComponentFactory = beans.userComponentFactory;
+        this.userCompFactory = beans.userCompFactory;
         this.ctrlsService = beans.ctrlsService;
         this.dragAndDropService = beans.dragAndDropService;
         this.menuService = beans.menuService;

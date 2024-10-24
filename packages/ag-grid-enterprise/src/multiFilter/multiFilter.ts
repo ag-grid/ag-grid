@@ -54,12 +54,12 @@ function _forEachReverse<T>(list: T[] | null | undefined, action: (value: T, ind
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
     private filterManager?: FilterManager;
-    private userComponentFactory: UserComponentFactory;
+    private userCompFactory: UserComponentFactory;
     private focusSvc: FocusService;
 
     public wireBeans(beans: BeanCollection) {
         this.filterManager = beans.filterManager;
-        this.userComponentFactory = beans.userComponentFactory;
+        this.userCompFactory = beans.userCompFactory;
         this.focusSvc = beans.focusSvc;
     }
 
@@ -492,7 +492,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
                 doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, filterInstance),
         };
 
-        const compDetails = _getFilterDetails(this.userComponentFactory, filterDef, filterParams, 'agTextColumnFilter');
+        const compDetails = _getFilterDetails(this.userCompFactory, filterDef, filterParams, 'agTextColumnFilter');
         if (!compDetails) {
             return null;
         }
