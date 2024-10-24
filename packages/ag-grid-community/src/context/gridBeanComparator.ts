@@ -26,7 +26,7 @@ const orderedCoreBeans: BeanName[] = [
     'localeService',
     'validationService',
     'pinnedRowModel',
-    'dragService',
+    'dragSvc',
     'columnGroupService',
     'visibleCols',
     'popupSvc',

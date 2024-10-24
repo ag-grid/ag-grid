@@ -18,13 +18,13 @@ export enum SelectionHandleType {
 }
 
 export abstract class AbstractSelectionHandle extends Component {
-    protected dragService: DragService;
+    protected dragSvc: DragService;
     protected rangeService: RangeService;
     protected mouseEventService: MouseEventService;
     protected ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection) {
-        this.dragService = beans.dragService!;
+        this.dragSvc = beans.dragSvc!;
         this.rangeService = beans.rangeService as RangeService;
         this.mouseEventService = beans.mouseEventService;
         this.ctrlsService = beans.ctrlsService;
@@ -45,7 +45,7 @@ export abstract class AbstractSelectionHandle extends Component {
     protected shouldDestroyOnEndDragging: boolean = false;
 
     public postConstruct() {
-        this.dragService.addDragSource({
+        this.dragSvc.addDragSource({
             dragStartPixels: 0,
             eElement: this.getGui(),
             onDragStart: this.onDragStart.bind(this),

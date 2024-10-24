@@ -230,7 +230,7 @@ export interface IRowContainerComp {
 }
 
 export class RowContainerCtrl extends BeanStub implements ScrollPartner {
-    private dragService?: DragService;
+    private dragSvc?: DragService;
     private ctrlsService: CtrlsService;
     private colViewport: ColumnViewportService;
     private rowRenderer: RowRenderer;
@@ -238,7 +238,7 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     private pinnedColumnService?: PinnedColumnService;
 
     public wireBeans(beans: BeanCollection) {
-        this.dragService = beans.dragService;
+        this.dragSvc = beans.dragSvc;
         this.ctrlsService = beans.ctrlsService;
         this.colViewport = beans.colViewport;
         this.rowRenderer = beans.rowRenderer;
@@ -384,14 +384,14 @@ export class RowContainerCtrl extends BeanStub implements ScrollPartner {
     private onDisplayedColumnsWidthChanged(): void {
         this.forContainers(['center'], () => this.onHorizontalViewportChanged());
     }
-    // this methods prevents the grid views from being scrolled while the dragService is being used
+    // this methods prevents the grid views from being scrolled while the dragSvc is being used
     // eg. the view should not scroll up and down while dragging rows using the rowDragComp.
     private addPreventScrollWhileDragging(): void {
-        if (!this.dragService) {
+        if (!this.dragSvc) {
             return;
         }
         const preventScroll = (e: TouchEvent) => {
-            if (this.dragService!.isDragging()) {
+            if (this.dragSvc!.isDragging()) {
                 if (e.cancelable) {
                     e.preventDefault();
                 }

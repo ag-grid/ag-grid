@@ -2,11 +2,11 @@ import type { BeanCollection, DragListenerParams, DragService, IRangeService } f
 import { BeanStub, _isCellSelectionEnabled } from 'ag-grid-community';
 
 export class DragListenerFeature extends BeanStub {
-    private dragService: DragService;
+    private dragSvc: DragService;
     private rangeService: IRangeService;
 
     public wireBeans(beans: BeanCollection) {
-        this.dragService = beans.dragService!;
+        this.dragSvc = beans.dragSvc!;
         this.rangeService = beans.rangeService!;
     }
 
@@ -45,10 +45,10 @@ export class DragListenerFeature extends BeanStub {
     }
 
     private enableFeature() {
-        this.dragService.addDragSource(this.params);
+        this.dragSvc.addDragSource(this.params);
     }
 
     private disableFeature() {
-        this.dragService.removeDragSource(this.params);
+        this.dragSvc.removeDragSource(this.params);
     }
 }

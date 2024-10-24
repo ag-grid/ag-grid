@@ -48,7 +48,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
     beanName = 'rangeService' as const;
 
     private rowModel: IRowModel;
-    private dragService: DragService;
+    private dragSvc: DragService;
     private colModel: ColumnModel;
     private visibleCols: VisibleColsService;
     private cellNavigation: CellNavigationService;
@@ -57,7 +57,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
     public wireBeans(beans: BeanCollection) {
         this.rowModel = beans.rowModel;
-        this.dragService = beans.dragService!;
+        this.dragSvc = beans.dragSvc!;
         this.colModel = beans.colModel;
         this.visibleCols = beans.visibleCols;
         this.cellNavigation = beans.cellNavigation!;
@@ -713,7 +713,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
 
         // The browser changes the Event target of cached events when working with the ShadowDOM
         // so we need to retrieve the initial DragStartTarget.
-        const startTarget = this.dragService.getStartTarget();
+        const startTarget = this.dragSvc.getStartTarget();
 
         if (startTarget) {
             this.updateValuesOnMove(startTarget);
@@ -870,7 +870,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService {
         }
 
         if (cellCtrl?.isEditing()) {
-            this.dragService.cancelDrag(eventTarget as HTMLElement);
+            this.dragSvc.cancelDrag(eventTarget as HTMLElement);
             return;
         }
 

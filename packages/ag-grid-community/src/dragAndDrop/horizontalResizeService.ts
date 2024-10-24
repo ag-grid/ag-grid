@@ -15,11 +15,11 @@ export interface HorizontalResizeParams {
 export class HorizontalResizeService extends BeanStub implements NamedBean {
     beanName = 'horizontalResizeService' as const;
 
-    private dragService: DragService;
+    private dragSvc: DragService;
     private ctrlsService: CtrlsService;
 
     public wireBeans(beans: BeanCollection): void {
-        this.dragService = beans.dragService!;
+        this.dragSvc = beans.dragSvc!;
         this.ctrlsService = beans.ctrlsService;
     }
 
@@ -38,11 +38,11 @@ export class HorizontalResizeService extends BeanStub implements NamedBean {
             stopPropagationForTouch: true,
         };
 
-        this.dragService.addDragSource(dragSource);
+        this.dragSvc.addDragSource(dragSource);
 
         // we pass remove func back to the caller, so call can tell us when they
         // are finished, and then we remove the listener from the drag source
-        const finishedWithResizeFunc = () => this.dragService.removeDragSource(dragSource);
+        const finishedWithResizeFunc = () => this.dragSvc.removeDragSource(dragSource);
 
         return finishedWithResizeFunc;
     }
